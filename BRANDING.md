@@ -1,486 +1,412 @@
-# 🎨 Wise² Brand Identity & Guidelines
-## Visual Language, Tone, and Brand Values
+# Wise² Core — Official Brand System
+## Multi-Positioning Strategy for 4 Market Segments
+
+**Document Version:** 2.0 (Multi-Brand System)  
+**Status:** Active  
+**Last Updated:** 2026-07-07  
+**Audience:** Marketing, Sales, Design, Product
 
 ---
 
-## Brand Overview
+## Executive Summary
 
-**Wise²** is an enterprise technology platform for unified orchestration, automation, and intelligent infrastructure management. The brand reflects:
+Wise² Core is **not a single brand**. It's a **complete infrastructure platform positioned across 4 distinct market segments**, each with its own visual identity, messaging, and go-to-market strategy.
 
-- **Intelligence** - Smart, data-driven decisions
-- **Reliability** - Trustworthy, dependable systems
-- **Growth** - Scaling from 1 to millions
-- **Unity** - Bringing disparate systems together
+**The core foundation is identical.** The positioning is dramatically different.
 
 ---
 
-## Brand Values
+## The 4 Brand Positions
 
-### 🎯 Core Values
-| Value | Definition | Manifestation |
-|-------|-----------|---|
-| **Excellence** | Best-in-class quality | Zero technical debt, 80%+ test coverage |
-| **Reliability** | Systems you can trust | 99.9% uptime, automated backups |
-| **Simplicity** | Complexity made easy | 5-minute setup, developer-friendly |
-| **Security** | Enterprise-grade protection | RBAC, audit trails, encryption |
-| **Growth** | Built to scale | Horizontal scaling, cloud-native |
+### 1. MODERN TECH 🚀
+**For Developers & High-Growth Startups**
 
----
+| Attribute | Value |
+|-----------|-------|
+| **Primary Color** | #4A6FFF (Electric Blue) |
+| **Typography** | Segoe UI (Modern sans-serif) |
+| **Core Message** | "Ship Monday. Zero tech debt." |
+| **Target Audience** | Technical founders, engineers at startups |
+| **Tone** | Fast, energetic, forward-thinking |
+| **Video Pace** | 60fps, smooth animations |
+| **Go-To-Market** | Product Hunt, GitHub, dev communities |
 
-## Visual Identity
-
-### Color Palette
-
-#### Primary Colors
-```
-Brand Blue:    #0066CC (Trustworthy, Professional)
-Accent Purple: #7C3AED (Innovation, Forward-thinking)
-Success Green: #10B981 (Healthy, Operating)
-Warning Orange:#F59E0B (Attention, Action needed)
-Error Red:     #EF4444 (Critical, Alert)
-```
-
-#### Neutral Colors
-```
-Dark Gray:     #1F2937 (Text, Headers)
-Medium Gray:   #6B7280 (Secondary text)
-Light Gray:    #F3F4F6 (Backgrounds)
-White:         #FFFFFF (Surfaces)
-```
-
-#### Semantic Colors
-```
-Success:       #10B981 (Deployed, Healthy)
-Warning:       #F59E0B (Caution, Scheduled)
-Error:         #EF4444 (Failed, Down)
-Info:          #3B82F6 (Notice, Information)
-Pending:       #9CA3AF (Waiting, Pending)
-```
-
-### Typography
-
-#### Font System
-```
-Headlines:     Inter Bold 700
-Subheads:      Inter SemiBold 600
-Body:          Inter Regular 400
-Monospace:     Fira Code (Code, Configuration)
-```
-
-#### Sizing Scale
-```
-h1: 32px, line-height: 1.4, weight: 700
-h2: 24px, line-height: 1.4, weight: 600
-h3: 20px, line-height: 1.5, weight: 600
-Body: 16px, line-height: 1.6, weight: 400
-Small: 14px, line-height: 1.5, weight: 400
-Mono: 13px, line-height: 1.6, weight: 400
-```
-
-### Logo & Wordmark
-
-#### Logo Concept
-```
-W² Symbol
-├─ Two interlocking rings (unity, scale)
-├─ Upward trajectory (growth)
-└─ Minimalist geometric (modern, technical)
-
-Color:     #0066CC (Brand Blue)
-Variants:  Full color, monochrome, inverse
-Usage:     1" minimum at 72 DPI
-```
-
-#### Wordmark
-```
-WISE²
-├─ Sans-serif, bold
-├─ Superscript "2" indicates version/evolution
-├─ Color:        Brand Blue (#0066CC)
-└─ Usage:        All caps, with registered trademark
-```
+**Why this positioning?**
+Developers want speed. They don't care about compliance or formality — they want to ship. Modern Tech speaks their language: automation, no debt, full control.
 
 ---
 
-## Imagery & Icons
+### 2. CORPORATE ELEGANCE 🏛️
+**For Enterprise Executives & Fortune 500**
 
-### Photography Style
-- **Technical but human** - Show real people using systems
-- **Minimalist backgrounds** - Focus on the subject
-- **Color-coordinated** - Integrate brand colors naturally
-- **Modern aesthetics** - Clean, uncluttered compositions
+| Attribute | Value |
+|-----------|-------|
+| **Primary Color** | #2C2C2C (Dark Charcoal) |
+| **Accent** | #8B7355 (Gold) |
+| **Typography** | Georgia (Classic serif) |
+| **Core Message** | "Enterprise-ready. Zero compromise." |
+| **Target Audience** | CIOs, CTOs, VP Engineering |
+| **Tone** | Professional, authoritative, measured |
+| **Video Pace** | 60fps, elegant fades |
+| **Go-To-Market** | Enterprise conferences, direct sales |
 
-### Icon System
-```
-Style:       Outline, 2px stroke
-Grid:        24x24px base size
-Colors:      Brand Blue, grays, semantic colors
-Consistency: Geometric shapes, consistent visual weight
-```
-
-### Icon Categories
-```
-Navigation:   Home, menu, settings, notifications
-Actions:      Deploy, restart, stop, delete, edit
-Status:       Running, stopped, pending, failed, healthy
-Resources:    Services, deployments, users, settings
-```
+**Why this positioning?**
+Executives need assurance. They want to know the platform is reliable, compliant, and built by people who understand enterprise. Corporate Elegance signals: "This is serious infrastructure."
 
 ---
 
-## Tone of Voice
+### 3. INDUSTRIAL STEEL ⚙️
+**For Engineers & DevOps-First Organizations**
 
-### Brand Personality
-- **Professional but approachable** - Expert without being condescending
-- **Clear and direct** - No jargon unless necessary
-- **Confident** - We know this works
-- **Helpful** - We're here to help you succeed
+| Attribute | Value |
+|-----------|-------|
+| **Primary Color** | #888888 (Metallic Gray) |
+| **Accent** | #FF8C42 (Warning Orange) |
+| **Typography** | Courier New (Technical monospace) |
+| **Core Message** | "No shortcuts. No compromises." |
+| **Target Audience** | Staff engineers, DevOps, SREs |
+| **Tone** | Technical, precise, uncompromising |
+| **Video Pace** | 60fps, hard cuts |
+| **Go-To-Market** | Engineering conferences, GitHub |
 
-### Voice Guidelines
-
-#### For Documentation
-```
-✅ DO:
-- Use active voice ("Create a deployment" not "A deployment should be created")
-- Address the reader directly ("You can deploy..." not "One can deploy...")
-- Use clear, concrete examples
-- Break complex concepts into steps
-
-❌ DON'T:
-- Use corporate jargon ("leverage", "synergize")
-- Be overly formal or stuffy
-- Assume deep technical knowledge
-- Write walls of text
-```
-
-#### For Error Messages
-```
-✅ DO:
-- Be specific about what went wrong
-- Explain how to fix it
-- Use friendly language
-- Suggest next steps
-
-Example:
-"Authentication failed. Please check your API key and try again. 
-Need help? See our authentication guide: [link]"
-
-❌ DON'T:
-- Be vague ("Error occurred")
-- Blame the user ("You did this wrong")
-- Use technical jargon
-- Omit solutions
-```
-
-#### For Marketing Copy
-```
-✅ DO:
-- Highlight benefits, not features
-- Use numbers (3x faster, 99.9% uptime)
-- Tell stories, show results
-- Be honest about capabilities
-
-Example:
-"Wise² helped Company X deploy 50% faster, reducing time-to-market from 
-weeks to days. Real teams, real results."
-
-❌ DON'T:
-- Make exaggerated claims
-- Use hype without proof
-- Oversimplify complex concepts
-- Ignore limitations
-```
+**Why this positioning?**
+Engineers hate technical debt. Industrial Steel speaks to teams that care deeply about code quality and precision. It says: "Built by engineers, for engineers."
 
 ---
 
-## Product Design Principles
+### 4. PREMIUM LUXURY ✨
+**For Premium-Positioned Organizations**
 
-### Layout & Spacing
-```
-Base unit:     8px
-Spacing scale: 8, 16, 24, 32, 48, 64px
-Padding:       16px (standard)
-Margins:       24px (standard)
-Border radius: 8px (standard)
-```
+| Attribute | Value |
+|-----------|-------|
+| **Primary Color** | #B8860B (Deep Gold) |
+| **Secondary** | #F5F0E8 (Cream) |
+| **Typography** | Garamond (Elegant serif) |
+| **Core Message** | "Uncompromising excellence." |
+| **Target Audience** | Premium brands, high-value orgs |
+| **Tone** | Refined, distinguished, exclusive |
+| **Video Pace** | 30fps (cinematic) |
+| **Go-To-Market** | Executive forums, direct sales |
 
-### Component Design
-```
-Buttons:
-├─ Primary (Brand Blue background, white text)
-├─ Secondary (White background, blue text, blue border)
-├─ Danger (Error Red background, white text)
-└─ Disabled (Light Gray, muted)
-
-Cards:
-├─ White background, subtle shadow
-├─ 8px border radius
-├─ 16px padding
-└─ Clear visual hierarchy
-
-Forms:
-├─ Clear labels above inputs
-├─ Helpful placeholder text
-├─ Real-time validation feedback
-└─ Accessible error messages
-```
-
-### Data Visualization
-```
-Charts:
-├─ Use brand colors for primary data series
-├─ Use grays for secondary data
-├─ Clear legends and axis labels
-├─ Consistent styling across dashboards
-
-Dashboards:
-├─ Grid-based layout (24px grid)
-├─ Consistent card sizing
-├─ Clear data hierarchy
-└─ Status indicators (green=good, orange=warning, red=critical)
-```
+**Why this positioning?**
+Some organizations sell premium products to premium customers. They need infrastructure that matches their brand. Premium Luxury says: "We don't compromise, and neither should you."
 
 ---
 
-## Brand Applications
+## Visual Identity System
+
+### Color Specifications
+
+#### Modern Tech
+```
+Primary:        #4A6FFF    (Electric, energetic)
+Secondary:      #7A9EFF    (Light accent)
+Dark:           #0F1419    (Deep background)
+Text:           #FFFFFF    (Clean contrast)
+Success:        #10B981    (Green accent)
+```
+
+#### Corporate Elegance
+```
+Primary:        #2C2C2C    (Authority)
+Accent:         #8B7355    (Gold, distinction)
+Blue:           #1A3A52    (Professional)
+Light:          #F5F5F3    (Cream background)
+Gray:           #999999    (Secondary text)
+```
+
+#### Industrial Steel
+```
+Primary:        #888888    (Precision, metallic)
+Dark:           #0A0A0A    (Deep technical)
+Accent:         #FF8C42    (Action, attention)
+Light:          #CCCCCC    (Light steel)
+Text:           #FFFFFF    (High contrast)
+```
+
+#### Premium Luxury
+```
+Primary:        #B8860B    (Wealth, timeless)
+Secondary:      #F5F0E8    (Sophisticated)
+Dark:           #2C2424    (Elegant charcoal)
+Accent:         #A0826D    (Rose gold)
+Text:           #9B9B9B    (Refined gray)
+```
+
+### Typography System
+
+#### Modern Tech
+**Font:** Segoe UI (modern, approachable)
+- Headlines: Bold 700, 64-96px
+- Body: Regular 400, 24-28px
+- Code: Fira Code Regular
+
+#### Corporate Elegance
+**Fonts:** Georgia (authority) + Helvetica Neue (modern)
+- Headlines: Georgia Bold 700, 56-72px
+- Body: Helvetica Neue Regular 400, 28-32px
+- Code: Monaco Regular
+
+#### Industrial Steel
+**Font:** Courier New (technical authenticity)
+- Headlines: Impact Bold 700, 80-96px
+- Body: Courier Bold 700, 28-32px
+- Code: Courier New Regular
+
+#### Premium Luxury
+**Fonts:** Garamond + Didot (timeless elegance)
+- Headlines: Didot Elegant 700, 64-80px
+- Body: Garamond Regular 400, 24-28px
+- Code: Monaco Regular
+
+---
+
+## Messaging Framework
+
+### Modern Tech
+**Headline:** "Ship production-ready infrastructure Monday morning"  
+**Tagline:** "Zero tech debt. Full automation. Deploy immediately."  
+**Value Props:**
+- Speed (5-minute setup)
+- Developer velocity (hot-reload, automation)
+- Zero technical debt
+- Modern stack (Docker, PostgreSQL, Redis)
+
+**Audience Pain Point:** "Building infrastructure from scratch takes 3 months and creates technical debt immediately."  
+**Solution:** "We did the 3 months for you. Deploy our foundation Monday."
+
+---
+
+### Corporate Elegance
+**Headline:** "Enterprise infrastructure of distinction"  
+**Tagline:** "Complete foundation. Compliance-ready. Ship with authority."  
+**Value Props:**
+- Reliability (99.9% SLA)
+- Compliance ready (GDPR, HIPAA path)
+- Security (RBAC, encryption, audit trails)
+- Scale (architected for growth)
+
+**Audience Pain Point:** "Building enterprise infrastructure requires 6 months, deep compliance expertise, and massive risk."  
+**Solution:** "We've engineered the foundation. You own the application."
+
+---
+
+### Industrial Steel
+**Headline:** "Production infrastructure. No shortcuts."  
+**Tagline:** "Engineered for zero tech debt. Built for scale."  
+**Value Props:**
+- Precision (7,250 tested lines)
+- Zero debt (80%+ coverage enforced)
+- Observable (Prometheus, Grafana)
+- Automated (CI/CD, backups, deployments)
+
+**Audience Pain Point:** "Most platforms ship with tech debt built in. Our team refuses that compromise."  
+**Solution:** "Wise² is engineered the way we build — no shortcuts, ever."
+
+---
+
+### Premium Luxury
+**Headline:** "The choice of distinction"  
+**Tagline:** "Uncompromising quality. For organizations that know the difference."  
+**Value Props:**
+- Uncompromising standards (every line counts)
+- Distinction (not commoditized)
+- Heritage (built by the best)
+- Timeless (engineered to last)
+
+**Audience Pain Point:** "We need infrastructure that matches our brand's commitment to excellence."  
+**Solution:** "Wise² is built for organizations that refuse to compromise."
+
+---
+
+## Brand Guidelines: What Stays Consistent
+
+### The W² Logo
+**Always the same across all brands:**
+- Metallic gray 3D mark
+- Used as primary identifier
+- No recoloring by brand
+- Consistent across all platforms
+
+### Foundation Specifications
+**Never changes, all brands feature:**
+- 7,250+ lines of code
+- 80%+ test coverage
+- 5-minute setup
+- Zero technical debt
+- 99.9% uptime SLA
+- Docker + PostgreSQL + Redis
+
+### Repository & CTA
+**Identical across all brands:**
+- github.com/dwise03-bit/wise2-core
+- Same GitHub link in all materials
+- Phase 1 Complete status
+
+---
+
+## Brand Guidelines: What Changes by Brand
+
+### Color Scheme
+Each brand has a completely distinct palette. No mixing across brands.
+
+### Typography Primary Font
+Each brand leads with a different font family that reinforces positioning.
+
+### Tone & Messaging
+Completely different messaging approach for each audience.
+
+### Visual Effects
+Modern Tech uses smooth animations; Industrial Steel uses sharp cuts.
+
+### Go-to-Market Channels
+Each brand reaches its audience where they congregate.
+
+### Sales Motion
+Modern Tech: Self-serve, free tier, viral adoption  
+Corporate: Enterprise sales, RFP process, procurement  
+Industrial: Community evangelism, GitHub stars  
+Premium: Direct sales, executive engagement
+
+---
+
+## Implementation by Channel
 
 ### Website
+- **Modern Tech:** Bold blue, energetic, developer-focused CTA
+- **Corporate:** Gold accents, compliance certification prominent
+- **Industrial:** Gray, technical specs detailed
+- **Premium:** Cream/gold, "distinction" language
+
+### Social Media
+- **Modern Tech:** Fast videos, developer memes, energetic
+- **Corporate:** Thought leadership, compliance updates
+- **Industrial:** Technical deep-dives, metrics
+- **Premium:** Curated aesthetic, exclusivity
+
+### Ads & Marketing
+- **Modern Tech:** "Ready to ship? → Clone now"
+- **Corporate:** "Enterprise-ready? → Schedule demo"
+- **Industrial:** "Zero debt? → See how"
+- **Premium:** "Know the difference? → Discover why"
+
+### Email Marketing
+- **Modern Tech:** Casual, direct, benefit-first
+- **Corporate:** Professional, compliance-focused
+- **Industrial:** Technical, metrics-driven
+- **Premium:** Refined, exclusivity-focused
+
+### Sales Collateral
+- **Modern Tech:** Interactive demos, code samples
+- **Corporate:** Compliance matrix, SLA comparison
+- **Industrial:** Architecture diagrams, performance metrics
+- **Premium:** Case studies with premium brands
+
+---
+
+## Brand Application Examples
+
+### Example 1: Landing Page
+**Modern Tech Version:**
 ```
-Hero Section:
-├─ Background: Dark blue gradient (brand blue to purple)
-├─ Headline: Large, bold, white text
-├─ CTA: Primary button (blue background)
-└─ Imagery: Technical, clean, modern
-
-Feature Sections:
-├─ Alternate left/right layout
-├─ Icons + text + imagery
-├─ Consistent spacing
-└─ Brand color accents
-
-Social Proof:
-├─ Testimonials with real names/companies
-├─ Case studies with metrics
-├─ Statistics highlighting growth
-└─ Trust badges & certifications
-```
-
-### Documentation
-```
-Structure:
-├─ Clear navigation (left sidebar)
-├─ Table of contents (right sidebar)
-├─ Code examples (syntax highlighted)
-└─ Links to related docs
-
-Styling:
-├─ Clean typography hierarchy
-├─ Proper code formatting
-├─ Callouts for important info (tips, warnings)
-└─ Consistent color scheme
-```
-
-### Marketing Materials
-```
-Email Templates:
-├─ Subject line: Clear, benefit-focused
-├─ Header: Logo + company name
-├─ Body: Concise, scannable content
-├─ CTA: Primary button
-└─ Footer: Links, unsubscribe
-
-Social Media:
-├─ LinkedIn: Professional, data-driven
-├─ Twitter: Concise, technical, engaging
-├─ GitHub: Code-focused, community-driven
-└─ Blog: Long-form, educational
+Hero: "Ship Monday. Build less infrastructure."
+CTA: "Clone now. Deploy in 5 minutes."
+Colors: Electric blue, smooth animations
+Font: Segoe UI, modern sans-serif
 ```
 
-### Presentations
+**Corporate Elegance Version:**
 ```
-Slide Master:
-├─ Consistent footer with logo & slide number
-├─ Spacing & margins standardized
-├─ Font choices fixed (Inter for headers, body)
-├─ Color palette restricted
-└─ Background: White or light gray
-
-Content:
-├─ 1 idea per slide
-├─ Minimal text, maximum visuals
-├─ Consistent bullet formatting
-├─ Data visualizations over tables
-└─ Real-world examples & use cases
+Hero: "Enterprise foundation for companies that demand excellence"
+CTA: "Schedule a demo. See enterprise reliability in action."
+Colors: Charcoal + gold, measured fades
+Font: Georgia serif, authoritative
 ```
 
 ---
 
-## Brand Do's & Don'ts
+### Example 2: Ad Copy
+**Modern Tech:**
+"Zero tech debt. Ship Monday. Deploy Wise² Core in 5 minutes."
 
-### DO ✅
-- Use consistent color palette
-- Write in clear, direct language
-- Show real results with metrics
-- Make accessibility a priority
-- Update branding as platform evolves
-- Maintain professional standards
-- Use high-quality imagery
-- Include clear calls-to-action
+**Corporate Elegance:**
+"Enterprise-ready infrastructure. Compliance path included. Engineered for mission-critical systems."
 
-### DON'T ❌
-- Distort or modify logo
-- Mix brand colors (stick to palette)
-- Use outdated technical terminology
-- Make unsubstantiated claims
-- Forget about accessibility
-- Use low-quality imagery
-- Mix typography (use defined system)
-- Overcomplicate the message
+**Industrial Steel:**
+"No shortcuts. No compromises. 7,250 tested lines. Zero debt guaranteed."
+
+**Premium Luxury:**
+"For organizations that refuse to compromise. Uncompromising engineering. Engineered distinction."
 
 ---
 
-## Accessibility Standards
+## Video Production Guidelines
 
-### WCAG 2.1 AA Compliance
-```
-Color Contrast:
-├─ Text: 4.5:1 minimum (normal text)
-├─ Graphics: 3:1 minimum
-└─ UI Components: 3:1 minimum
+### Modern Tech Video
+- Duration: 20 seconds
+- Frame Rate: 60fps (smooth, energetic)
+- Color Scheme: Electric blue, light blue, black
+- Transition Style: Smooth cuts, glow effects
+- Music: Upbeat, modern, tech-forward
 
-Typography:
-├─ Minimum 16px for body text
-├─ Line height ≥ 1.5x font size
-├─ Letter spacing ≥ 0.12em
-└─ No full-width text blocks (max 80 characters)
+### Corporate Elegance Video
+- Duration: 20 seconds
+- Frame Rate: 60fps (measured pace)
+- Color Scheme: Charcoal, gold accents
+- Transition Style: Elegant fades, professional
+- Music: Refined, confident, authoritative
 
-Interaction:
-├─ Touch targets: 44x44px minimum
-├─ Keyboard navigation: Full support
-├─ Focus indicators: Clear and visible
-└─ Alt text: Descriptive for all images
-```
+### Industrial Steel Video
+- Duration: 20 seconds
+- Frame Rate: 60fps (sharp, technical)
+- Color Scheme: Gray, metallic, orange accents
+- Transition Style: Hard cuts, technical effects
+- Music: Industrial, technical, precise
 
-### Screen Reader Support
-```
-Images:
-├─ Meaningful images: Descriptive alt text
-├─ Decorative images: Empty alt attribute
-
-Icons:
-├─ Standalone: Always include aria-label
-├─ With text: Can be unlabeled
-└─ Interactive: Include role="button"
-
-Charts & Diagrams:
-├─ Include data table alternative
-├─ Provide text description
-└─ Make interactive elements keyboard-accessible
-```
+### Premium Luxury Video
+- Duration: 20 seconds
+- Frame Rate: 30fps (cinematic, unhurried)
+- Color Scheme: Gold, cream, elegant
+- Transition Style: Slow dissolves, refined
+- Music: Classical, ambient, sophisticated
 
 ---
 
-## Brand Metrics & Consistency
+## Supporting Documents
 
-### Visual Consistency Checklist
-- [ ] Logo usage correct (sizing, color, spacing)
-- [ ] Color palette adhered to
-- [ ] Typography scale followed
-- [ ] Spacing standards maintained
-- [ ] Icon style consistent
-- [ ] Accessibility standards met
-- [ ] Tone of voice appropriate
-- [ ] Imagery style aligned
+**For complete visual specifications, see:**
+- `DESIGN_SPECS_INSTAGRAM_REELS.md` — Modern Tech video specs (4,500+ lines)
+- `DESIGN_SPECS_CORPORATE_ELEGANCE.md` — Corporate Elegance video specs
+- `DESIGN_SPECS_INDUSTRIAL_STEEL.md` — Industrial Steel video specs
+- `DESIGN_SPECS_PREMIUM_LUXURY.md` — Premium Luxury video specs
 
-### Quality Assurance
-```
-Before Publishing:
-├─ Brand compliance review
-├─ Accessibility audit (axe DevTools)
-├─ Responsive design check (mobile, tablet, desktop)
-├─ Spell and grammar check
-├─ Link verification
-└─ Performance check
-```
+**For HTML brand samples, see:**
+- `brand_sample_1_industrial.html`
+- `brand_sample_2_corporate.html`
+- `brand_sample_3_modern_tech.html`
+- `brand_sample_4_premium.html`
 
 ---
 
-## Brand Evolution
+## Brand Stewardship
 
-### Version 1.0 (Current - Phase 1)
-```
-Focus: Foundation, reliability, clarity
-Aesthetic: Minimalist, professional
-Key Elements: Blue + purple, geometric logo, clean typography
-Message: "Enterprise Foundation Platform"
-```
+**Brand Owner:** Daniel Wise  
+**Last Review:** 2026-07-07  
+**Next Review:** 2026-10-07  
 
-### Planned Expansions (Phase 2-3)
-```
-Enhanced Imagery: More visual storytelling
-Extended Color System: Seasonal/thematic variations
-Component Library: Standardized UI kit
-Animation System: Microinteractions and transitions
-```
+**This document is the source of truth for Wise² branding. All marketing, sales, and product materials should align with this multi-brand positioning system.**
 
 ---
 
-## Brand Asset Repository
+## Quick Reference
 
-### Where to Find
-```
-Logo Files:       /assets/logos/
-Colors:           /assets/colors/palette.json
-Typography:       /assets/fonts/
-Icons:            /assets/icons/
-Templates:        /assets/templates/
-Photoshop Files:  /design/psd/
-Figma:            [design-system-link]
-```
-
-### Usage Rights
-```
-✅ Internal Use: All employees and contractors
-✅ Marketing: Approved materials, official channels
-✅ Documentation: API docs, technical guides
-❌ Resale: Cannot be sold or commercialized separately
-❌ Modification: Only by brand team approval
-❌ Third-Party: Requires licensing agreement
-```
-
----
-
-## Contact & Approvals
-
-### Brand Team
-```
-Brand Lead:      [contact]
-Design System:   [github/figma link]
-Guidelines:      This document (BRANDING.md)
-Questions:       [email] or [slack channel]
-
-Approval Process:
-1. Submit design for review
-2. Brand team provides feedback
-3. Iterate based on guidelines
-4. Final approval before publication
-```
-
----
-
-## Conclusion
-
-**Wise² Brand is:**
-- Professional and trustworthy
-- Modern and forward-thinking
-- Accessible and inclusive
-- Clear and purposeful
-- Scalable and consistent
-
-Every touchpoint should reflect these values while maintaining flexibility for different contexts and audiences.
-
----
-
-**Last Updated**: July 7, 2026  
-**Version**: 1.0 (Foundation Phase)  
-**Next Review**: October 2026 (Phase 2)
+| Need | See |
+|------|-----|
+| Video specs (Modern Tech) | DESIGN_SPECS_INSTAGRAM_REELS.md |
+| Video specs (Corporate) | DESIGN_SPECS_CORPORATE_ELEGANCE.md |
+| Video specs (Industrial) | DESIGN_SPECS_INDUSTRIAL_STEEL.md |
+| Video specs (Premium) | DESIGN_SPECS_PREMIUM_LUXURY.md |
+| HTML samples | brand_sample_[1-4]_*.html |
+| Color codes | This document (Color Specifications section) |
+| Fonts & sizing | This document (Typography System section) |
+| Messaging | This document (Messaging Framework section) |
