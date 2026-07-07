@@ -1,0 +1,165 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+export default function Home() {
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState("Hermes Ready");
+  const [status, setStatus] = useState<any>({});
+  const [containers, setContainers] = useState<string[]>([]);
+  const [logs, setLogs] = useState("");
+
+  async function loadAll() {
+    try {
+      const s = await fetch("/api/status").then(r => r.json());
+      setStatus(s);
+
+      const c = await fetch("/api/containers").then(r => r.json());
+      setContainers(c.containers || []);
+
+      const l = await fetch("/api/logs").then(r => r.json());
+      setLogs(l.logs || "");
+    } catch {}
+  }
+
+  useEffect(() => {
+    loadAll();
+    const interval = setInterval(loadAll, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  async function askHermes() {
+    const r = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await r.json();
+    setResponse(data.response);
+  }
+
+  async function action(endpoint:string) {
+    const r = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "x-admin-key": "WiseDefenseSecure2026"
+      }
+    });
+
+    const data = await r.json();
+    alert(data.message);
+    loadAll();
+  }
+
+  return (
+    <div style={{
+      background:"#0a0a0a",
+      color:"white",
+      minHeight:"100vh",
+      padding:"20px",
+      fontFamily:"Arial"
+    }}>
+      <div className="card" style={{marginBottom:"20px"}}>
+        <h1 style={{margin:0,fontSize:"32px"}}>
+          W² Command Center™
+        </h1>
+
+        <div style={{
+          color:"#9ca3af",
+          marginTop:"8px"
+        }}>
+          Wise Defense Platform • Security Operations Center
+        </div>
+      </div>
+
+      <h2>System Status</h2>
+
+      <div className="status-grid">
+        {Object.entries(status).map(([k,v]) => (
+          <div className="card" key={k}>
+            <div style={{
+              color:"#9ca3af",
+              fontSize:"12px"
+            }}>
+              {k.toUpperCase()}
+            </div>
+
+            <div style={{
+              marginTop:"8px",
+              fontWeight:"bold",
+              color:String(v)==="online"
+                ? "#22c55e"
+                : "#ef4444"
+            }}>
+              {String(v)==="online"
+                ? "ONLINE"
+                : "OFFLINE"}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <hr />
+
+      <h2>Containers</h2>
+
+      <div className="container-grid">
+        {containers.map(c => (
+          <div className="card" key={c}>
+            📦 {c}
+          </div>
+        ))}
+      </div>
+
+      <hr />
+
+      <h2>Hermes AI</h2>
+
+      <textarea
+        value={prompt}
+        onChange={(e)=>setPrompt(e.target.value)}
+        placeholder="Ask Hermes..."
+        style={{width:"100%",height:"120px"}}
+      />
+
+      <br /><br />
+
+      <button onClick={askHermes}>
+        Send
+      </button>
+
+      <pre>{response}</pre>
+
+      <hr />
+
+      <h2>Deployment Center</h2>
+
+      <button onClick={() => action("/api/restart-api")}>
+        Restart API
+      </button>
+
+      <button onClick={() => action("/api/restart-worker")}>
+        Restart Worker
+      </button>
+
+      <button onClick={() => action("/api/restart-discord")}>
+        Restart Discord
+      </button>
+
+      <button onClick={() => action("/api/deploy")}>
+        Deploy
+      </button>
+
+      <hr />
+
+      <h2>Live Logs</h2>
+
+      <pre className="logs">
+        {logs}
+      </pre>
+    </div>
+  );
+}

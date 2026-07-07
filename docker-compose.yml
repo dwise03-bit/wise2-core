@@ -1,4 +1,5 @@
-version: '3.9'
+# Docker Compose configuration for Wise² Core
+# Compatible with docker-compose 3.x and above
 
 # Wise² Core Docker Compose Configuration
 # This orchestrates all Wise² Core services on Raspberry Pi
@@ -95,16 +96,13 @@ services:
   # ============================================================================
 
   # API Gateway / Main Application
-  # (To be implemented in Phase 2)
   api:
     build:
-      context: .
-      dockerfile: infrastructure/docker/api.Dockerfile
+      context: ./services/api
     container_name: wise2-api
     environment:
       NODE_ENV: ${NODE_ENV}
       ENVIRONMENT: ${ENVIRONMENT}
-      APP_PORT: ${APP_PORT}
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${DB_NAME}
@@ -117,7 +115,7 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
     ports:
-      - "3000:${APP_PORT}"
+      - "3000:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -136,6 +134,93 @@ services:
         max-file: "3"
     # Uncomment for development hot reload:
     # command: npm run dev
+
+  # Dashboard (Web UI)
+  dashboard:
+    build:
+      context: ./services/dashboard
+    container_name: wise2-dashboard
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+      NEXT_PUBLIC_WS_URL: ws://localhost:3000
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Admin Dashboard
+  admin-dashboard:
+    build:
+      context: ./services/admin-dashboard
+    container_name: wise2-admin-dashboard
+    environment:
+      API_URL: http://api:3000
+    ports:
+      - "3002:3000"
+    depends_on:
+      - api
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Discord Bot
+  bot:
+    build:
+      context: ./services/bot
+    container_name: wise2-bot
+    environment:
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      API_URL: http://api:3000
+      ADMIN_ID: ${ADMIN_ID}
+      BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+    depends_on:
+      - api
+      - redis
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Background Worker
+  worker:
+    build:
+      context: ./services/worker
+    container_name: wise2-worker
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NODE_ENV: ${NODE_ENV}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
 
   # ============================================================================
   # Monitoring & Observability
