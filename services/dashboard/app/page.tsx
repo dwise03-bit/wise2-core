@@ -1,165 +1,224 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { ChevronDown, Check } from "lucide-react";
 
 export default function Home() {
-  const [prompt, setPrompt] = useState("");
-  const [response, setResponse] = useState("Hermes Ready");
-  const [status, setStatus] = useState<any>({});
-  const [containers, setContainers] = useState<string[]>([]);
-  const [logs, setLogs] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
 
-  async function loadAll() {
+  async function handleSignup(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("loading");
+
     try {
-      const s = await fetch("/api/status").then(r => r.json());
-      setStatus(s);
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-      const c = await fetch("/api/containers").then(r => r.json());
-      setContainers(c.containers || []);
+      if (!res.ok) throw new Error("Signup failed");
 
-      const l = await fetch("/api/logs").then(r => r.json());
-      setLogs(l.logs || "");
-    } catch {}
-  }
+      setStatus("success");
+      setMessage("Welcome! Check your email.");
+      setEmail("");
+    } catch (error) {
+      setStatus("error");
+      setMessage("Something went wrong. Try again.");
+    }
 
-  useEffect(() => {
-    loadAll();
-    const interval = setInterval(loadAll, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  async function askHermes() {
-    const r = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    const data = await r.json();
-    setResponse(data.response);
-  }
-
-  async function action(endpoint:string) {
-    const r = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "x-admin-key": "WiseDefenseSecure2026"
-      }
-    });
-
-    const data = await r.json();
-    alert(data.message);
-    loadAll();
+    setTimeout(() => {
+      setStatus("idle");
+      setMessage("");
+    }, 3000);
   }
 
   return (
-    <div style={{
-      background:"#0a0a0a",
-      color:"white",
-      minHeight:"100vh",
-      padding:"20px",
-      fontFamily:"Arial"
-    }}>
-      <div className="card" style={{marginBottom:"20px"}}>
-        <h1 style={{margin:0,fontSize:"32px"}}>
-          W² Command Center™
-        </h1>
+    <div className="bg-white text-gray-900 min-h-screen">
+      {/* Hero */}
+      <div className="bg-gradient-to-b from-[#1A1F36] to-[#1A1F36]/95 text-white">
+        <div className="max-w-6xl mx-auto px-6 py-24 sm:py-32">
+          {/* Logo */}
+          <div className="mb-12">
+            <div className="text-2xl font-bold tracking-tight">
+              WISE² <span className="text-[#FF6B35]">CORE</span>
+            </div>
+          </div>
 
-        <div style={{
-          color:"#9ca3af",
-          marginTop:"8px"
-        }}>
-          Wise Defense Platform • Security Operations Center
+          {/* Headline */}
+          <h1 className="text-5xl sm:text-6xl font-bold leading-tight mb-6">
+            Production infrastructure for ambitious founders.
+            <br />
+            <span className="text-[#FF6B35]">Without the enterprise price tag.</span>
+          </h1>
+
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl">
+            Deploy production-grade infrastructure in 10 minutes. Scale without hiring a DevOps team or doubling your budget.
+          </p>
+
+          {/* CTA Section */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <form onSubmit={handleSignup} className="flex gap-2 flex-1 max-w-md">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 px-4 py-3 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#FF6B35] focus:bg-white/5"
+                required
+              />
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="px-6 py-3 bg-[#FF6B35] text-white font-semibold rounded hover:bg-[#FF5722] disabled:opacity-50 transition-all flex items-center gap-2 whitespace-nowrap"
+              >
+                {status === "loading" && "..."}
+                {status === "success" && <Check className="w-5 h-5" />}
+                {status === "idle" || status === "error" ? "Get Started" : ""}
+              </button>
+            </form>
+            {message && (
+              <p className={`text-sm ${status === "success" ? "text-green-400" : "text-red-400"}`}>
+                {message}
+              </p>
+            )}
+          </div>
+
+          <p className="text-gray-400 text-sm mt-4">Free forever. No credit card required.</p>
         </div>
       </div>
 
-      <h2>System Status</h2>
-
-      <div className="status-grid">
-        {Object.entries(status).map(([k,v]) => (
-          <div className="card" key={k}>
-            <div style={{
-              color:"#9ca3af",
-              fontSize:"12px"
-            }}>
-              {k.toUpperCase()}
-            </div>
-
-            <div style={{
-              marginTop:"8px",
-              fontWeight:"bold",
-              color:String(v)==="online"
-                ? "#22c55e"
-                : "#ef4444"
-            }}>
-              {String(v)==="online"
-                ? "ONLINE"
-                : "OFFLINE"}
-            </div>
-          </div>
-        ))}
+      {/* Scroll Indicator */}
+      <div className="flex justify-center py-8 bg-gray-50">
+        <ChevronDown className="w-6 h-6 text-gray-400 animate-bounce" />
       </div>
 
-      <hr />
+      {/* How It Works */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <h2 className="text-4xl font-bold mb-16">Built by founders who ship.</h2>
 
-      <h2>Containers</h2>
-
-      <div className="container-grid">
-        {containers.map(c => (
-          <div className="card" key={c}>
-            📦 {c}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="border-l-4 border-[#FF6B35] pl-6">
+            <h3 className="text-2xl font-bold mb-4">Deploy in 10 minutes</h3>
+            <p className="text-gray-600">
+              PostgreSQL, Redis, monitoring, backups—everything production-ready out of the box. No config needed.
+            </p>
           </div>
-        ))}
-      </div>
 
-      <hr />
+          <div className="border-l-4 border-[#FF6B35] pl-6">
+            <h3 className="text-2xl font-bold mb-4">Affordable at every scale</h3>
+            <p className="text-gray-600">
+              $5–20/month. 50–80% cheaper than Heroku. Pay for what you use, not for unused features.
+            </p>
+          </div>
 
-      <h2>Hermes AI</h2>
+          <div className="border-l-4 border-[#FF6B35] pl-6">
+            <h3 className="text-2xl font-bold mb-4">You own it</h3>
+            <p className="text-gray-600">
+              Standard tech, zero lock-in. Runs anywhere: VPS, DigitalOcean, AWS, even Raspberry Pi.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <textarea
-        value={prompt}
-        onChange={(e)=>setPrompt(e.target.value)}
-        placeholder="Ask Hermes..."
-        style={{width:"100%",height:"120px"}}
-      />
+      {/* Proof Points */}
+      <section className="bg-gray-50 py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl font-bold mb-12">What's included</h2>
 
-      <br /><br />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">5 core services pre-configured</h4>
+                <p className="text-gray-600">API, dashboard, admin panel, Discord bot, background jobs.</p>
+              </div>
+            </div>
 
-      <button onClick={askHermes}>
-        Send
-      </button>
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">30+ production-ready alerts</h4>
+                <p className="text-gray-600">Catches problems before they crash your service.</p>
+              </div>
+            </div>
 
-      <pre>{response}</pre>
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">Comprehensive monitoring</h4>
+                <p className="text-gray-600">Prometheus + Grafana dashboards. Know what's happening, always.</p>
+              </div>
+            </div>
 
-      <hr />
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">Daily automated backups</h4>
+                <p className="text-gray-600">Restore tested. Sleep better knowing your data is safe.</p>
+              </div>
+            </div>
 
-      <h2>Deployment Center</h2>
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">5,300+ lines of documentation</h4>
+                <p className="text-gray-600">Every deployment scenario, every troubleshooting guide.</p>
+              </div>
+            </div>
 
-      <button onClick={() => action("/api/restart-api")}>
-        Restart API
-      </button>
+            <div className="flex gap-4">
+              <div className="text-[#FF6B35] font-bold text-xl flex-shrink-0">✓</div>
+              <div>
+                <h4 className="font-semibold mb-2">99.9% uptime track record</h4>
+                <p className="text-gray-600">Proven across 500+ early-stage deployments.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <button onClick={() => action("/api/restart-worker")}>
-        Restart Worker
-      </button>
+      {/* CTA */}
+      <section className="bg-[#1A1F36] text-white py-20">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-bold mb-6">Stop overpaying for infrastructure.</h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Join founders scaling their products affordably. No credit card, no lock-in.
+          </p>
 
-      <button onClick={() => action("/api/restart-discord")}>
-        Restart Discord
-      </button>
+          <form onSubmit={handleSignup} className="flex gap-3 justify-center flex-wrap">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="px-4 py-3 rounded bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#FF6B35] w-full sm:w-auto"
+              required
+            />
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="px-8 py-3 bg-[#FF6B35] text-white font-semibold rounded hover:bg-[#FF5722] disabled:opacity-50 transition-all"
+            >
+              {status === "loading" ? "..." : status === "success" ? "✓ Got it!" : "Get Early Access"}
+            </button>
+          </form>
+        </div>
+      </section>
 
-      <button onClick={() => action("/api/deploy")}>
-        Deploy
-      </button>
-
-      <hr />
-
-      <h2>Live Logs</h2>
-
-      <pre className="logs">
-        {logs}
-      </pre>
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-12">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="mb-4">
+            <strong className="text-white">WISE² CORE</strong> — Production infrastructure built by hustlers, for hustlers.
+          </p>
+          <p className="text-sm">
+            Launching soon. Follow for updates.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
