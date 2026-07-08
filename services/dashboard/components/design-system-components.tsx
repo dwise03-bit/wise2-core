@@ -321,7 +321,7 @@ export const FeatureBox: React.FC<FeatureBoxProps> = ({
   );
 };
 
-interface HeroTitleProps {
+interface HeroTitleProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'darrin' | 'danny' | 'dual';
   children: ReactNode;
   className?: string;
@@ -331,6 +331,7 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
   variant = 'dual',
   children,
   className = '',
+  ...props
 }) => {
   const glowClass = variant === 'darrin'
     ? 'animate-glow'
@@ -352,7 +353,9 @@ export const HeroTitle: React.FC<HeroTitleProps> = ({
           : variant === 'danny'
           ? '0 0 10px #FF4D4D, 0 0 20px #FF4D4D'
           : '0 0 10px #00D9FF, 0 0 20px #00D9FF',
+        ...props.style,
       }}
+      {...props}
     >
       {children}
     </h2>
