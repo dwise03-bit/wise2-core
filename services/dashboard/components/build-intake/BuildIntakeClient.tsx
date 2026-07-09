@@ -7,6 +7,7 @@ import FormLayout from './FormLayout';
 import WorkflowProgression from './WorkflowProgression';
 import { BackgroundGrid } from './Background/BackgroundGrid';
 import { FloatingParticles } from './Background/FloatingParticles';
+import { FloatingCharacters } from './FloatingCharacters';
 import { trackFormStep } from '@/lib/services';
 
 export default function BuildIntakeClient() {
@@ -63,6 +64,7 @@ export default function BuildIntakeClient() {
       {/* Background Effects */}
       <BackgroundGrid />
       <FloatingParticles />
+      <FloatingCharacters />
 
       {/* Main Content */}
       <motion.div
