@@ -29,7 +29,11 @@ export default function BuildIntakeClient() {
         // Reset form or redirect
         setCurrentStep(1);
       } else {
-        alert('Form submission failed. Please try again.');
+        console.log('Validation error details:', result);
+        const errorMsg = result.details
+          ? JSON.stringify(result.details, null, 2)
+          : result.error || 'Form submission failed';
+        alert(`Validation Error:\n\n${errorMsg}`);
       }
     } catch (error) {
       console.error('Form submission error:', error);

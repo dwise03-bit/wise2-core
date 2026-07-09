@@ -16,6 +16,7 @@ export function FormInput({
   label,
   error,
   className = '',
+  id,
   ...props
 }: FormInputProps) {
   const [focused, setFocused] = useState(false);
@@ -61,6 +62,7 @@ export function FormTextarea({
   label,
   error,
   className = '',
+  id,
   ...props
 }: FormTextareaProps) {
   const [focused, setFocused] = useState(false);
@@ -110,14 +112,16 @@ export function FormCheckbox({
   ...props
 }: FormCheckboxProps) {
   const [checked, setChecked] = useState(props.checked as boolean || false);
-  const colorClass = accentColor === 'blue' ? 'text-[#00D9FF]' : 'text-[#FF4D4D]';
-  const borderClass = accentColor === 'blue' ? 'border-[#00D9FF]' : 'border-[#FF4D4D]';
+  const isBlue = accentColor === 'blue';
+  const borderColor = isBlue ? '#00D9FF' : '#FF4D4D';
 
   return (
     <label className="flex items-start space-x-3 cursor-pointer group">
-      <div className={`flex-shrink-0 w-5 h-5 border-2 ${borderClass} rounded-sm mt-0.5 flex items-center justify-center transition`}
+      <div
+        className="flex-shrink-0 w-5 h-5 border-2 rounded-sm mt-0.5 flex items-center justify-center transition"
         style={{
-          backgroundColor: checked ? colorClass.split('-')[1] === 'blue' ? 'rgba(0, 217, 255, 0.1)' : 'rgba(255, 77, 77, 0.1)' : 'transparent',
+          borderColor: borderColor,
+          backgroundColor: checked ? '#22C55E' : 'transparent',
         }}
       >
         <input
@@ -129,7 +133,9 @@ export function FormCheckbox({
           {...props}
         />
         {checked && (
-          <span className={`text-sm font-black ${colorClass}`}
+          <span
+            style={{ color: '#ffffff' }}
+            className="text-xs font-black leading-none"
           >
             ✓
           </span>
@@ -157,6 +163,7 @@ export function FormSelect({
   error,
   options,
   className = '',
+  id,
   ...props
 }: FormSelectProps) {
   const [focused, setFocused] = useState(false);
