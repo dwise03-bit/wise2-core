@@ -38,9 +38,26 @@ type BuildIntakeData = z.infer<typeof BuildIntakeSchema>;
 // ============================================================================
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
+    const rawBody = await req.text();
+    console.log('📨 Raw request body:', rawBody);
 
-    console.log('📨 Received form data:', JSON.stringify(data, null, 2));
+    let data: any;
+    try {
+      data = JSON.parse(rawBody);
+    } catch (e) {
+      console.error('❌ Failed to parse JSON:', e);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid JSON in request body',
+          details: String(e),
+        },
+        { status: 400 }
+      );
+    }
+
+    console.log('📨 Parsed form data:', JSON.stringify(data, null, 2));
+    console.log('📨 Data types:', Object.entries(data).map(([k, v]) => `${k}: ${typeof v}`).join(', '));
 
     // Validate data
     const validatedData = BuildIntakeSchema.parse(data);
@@ -66,6 +83,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('❌ Validation Error:', JSON.stringify(error.flatten(), null, 2));
       return NextResponse.json(
         {
           success: false,

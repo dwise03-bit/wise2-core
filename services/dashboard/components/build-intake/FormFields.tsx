@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { motion } from 'framer-motion';
 
 /* ============================================================================
@@ -163,7 +163,6 @@ export function FormSelect({
   error,
   options,
   className = '',
-  id,
   ...props
 }: FormSelectProps) {
   const [focused, setFocused] = useState(false);

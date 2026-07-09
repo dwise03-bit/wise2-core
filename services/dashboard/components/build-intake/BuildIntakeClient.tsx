@@ -14,13 +14,21 @@ export default function BuildIntakeClient() {
 
   const handleFormSubmit = async (formData: Record<string, any>) => {
     setIsSubmitting(true);
+    console.log('📤 Submitting form data:', formData);
+    console.log('📤 Data keys:', Object.keys(formData));
+    console.log('📤 Data stringified:', JSON.stringify(formData));
+
     try {
+      const requestBody = JSON.stringify(formData);
+      console.log('📤 Request body:', requestBody);
+
       const response = await fetch('/api/submit-build-intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: requestBody,
       });
 
+      console.log('📥 Response status:', response.status);
       const result = await response.json();
 
       console.log('🔍 API Response:', result);

@@ -55,6 +55,44 @@ export default function FormLayout({
     }));
   };
 
+  // Validation for Step 1
+  const isStep1Valid = () => {
+    const descLength = formData.projectDescription.trim().length;
+    if (descLength < 10) {
+      return false;
+    }
+    return (
+      formData.fullName.trim().length >= 2 &&
+      formData.email.trim().length > 0 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
+      formData.companyName.trim().length >= 1 &&
+      formData.projectType.trim().length >= 1
+    );
+  };
+
+  const getStep1Error = () => {
+    if (formData.fullName.trim().length < 2) return 'Full Name must be at least 2 characters';
+    if (!formData.email.trim()) return 'Email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return 'Please enter a valid email';
+    if (!formData.companyName.trim()) return 'Company Name is required';
+    if (!formData.projectType.trim()) return 'Please select what you need';
+    if (formData.projectDescription.trim().length < 10) {
+      return `Description must be at least 10 characters (${formData.projectDescription.trim().length}/10)`;
+    }
+    return null;
+  };
+
+  const handleNext = () => {
+    if (currentStep === 1) {
+      const error = getStep1Error();
+      if (error) {
+        alert(error);
+        return;
+      }
+    }
+    onStepChange(Math.min(2, currentStep + 1));
+  };
+
   const projectTypeOptions = [
     { value: 'website', label: 'Website / Redesign' },
     { value: 'ecommerce', label: 'E-Commerce Store' },
@@ -380,7 +418,7 @@ export default function FormLayout({
         currentStep={currentStep}
         totalSteps={2}
         onPrevious={() => onStepChange(Math.max(1, currentStep - 1))}
-        onNext={() => onStepChange(Math.min(2, currentStep + 1))}
+        onNext={handleNext}
         onSubmit={() => onSubmit(formData)}
         isSubmitting={isSubmitting}
       />
