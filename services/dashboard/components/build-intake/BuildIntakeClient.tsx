@@ -8,6 +8,7 @@ import WorkflowProgression from './WorkflowProgression';
 import { BackgroundGrid } from './Background/BackgroundGrid';
 import { FloatingParticles } from './Background/FloatingParticles';
 import { FloatingCharacters } from './FloatingCharacters';
+import { Header } from './Header';
 import { trackFormStep } from '@/lib/services';
 
 export default function BuildIntakeClient() {
@@ -61,6 +62,9 @@ export default function BuildIntakeClient() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
+      {/* Navigation Header */}
+      <Header />
+
       {/* Background Effects */}
       <BackgroundGrid />
       <FloatingParticles />
@@ -73,7 +77,7 @@ export default function BuildIntakeClient() {
         transition={{ duration: 1 }}
         className="relative z-10"
       >
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           {/* Hero Section */}
           <HeroSection />
 
