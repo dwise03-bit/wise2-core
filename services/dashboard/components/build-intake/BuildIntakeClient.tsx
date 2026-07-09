@@ -1,16 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from './HeroSection';
 import FormLayout from './FormLayout';
 import WorkflowProgression from './WorkflowProgression';
 import { BackgroundGrid } from './Background/BackgroundGrid';
 import { FloatingParticles } from './Background/FloatingParticles';
+import { trackFormStep } from '@/lib/services';
 
 export default function BuildIntakeClient() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    trackFormStep(currentStep);
+  }, [currentStep]);
 
   const handleFormSubmit = async (formData: Record<string, any>) => {
     setIsSubmitting(true);

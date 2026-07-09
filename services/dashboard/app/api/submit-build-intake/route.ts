@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { saveFormSubmission, sendConfirmationEmail } from '@/lib/services';
 
 // ============================================================================
 // VALIDATION SCHEMA — OPTIMIZED 2-STEP FORM
@@ -57,7 +58,6 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('📨 Parsed form data:', JSON.stringify(data, null, 2));
-    console.log('📨 Data types:', Object.entries(data).map(([k, v]) => `${k}: ${typeof v}`).join(', '));
 
     // Validate data
     const validatedData = BuildIntakeSchema.parse(data);
@@ -65,21 +65,55 @@ export async function POST(req: NextRequest) {
     // Generate project ID
     const projectId = `WISE-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
 
-    // TODO: Store in database (Supabase)
-    // TODO: Send emails (Resend)
-    // TODO: Track analytics (PostHog)
-
-    console.log('✅ Form submission received:', {
+    console.log('✅ Form submission validated:', {
       projectId,
       email: validatedData.email,
       company: validatedData.companyName,
       projectType: validatedData.projectType,
     });
 
+    // ========================================
+    // 1. Save to Database (Supabase)
+    // ========================================
+    const dbResult = await saveFormSubmission({
+      projectId,
+      fullName: validatedData.fullName,
+      email: validatedData.email,
+      companyName: validatedData.companyName,
+      projectType: validatedData.projectType,
+      projectDescription: validatedData.projectDescription,
+      primaryGoal: validatedData.primaryGoal,
+      preferredTimeline: validatedData.preferredTimeline,
+      budgetRange: validatedData.budgetRange,
+      preferredContactMethod: validatedData.preferredContactMethod,
+      phone: validatedData.phone,
+      website: validatedData.website,
+      additionalInfo: validatedData.additionalInfo,
+    });
+
+    // ========================================
+    // 2. Send Confirmation Email (Resend)
+    // ========================================
+    const emailResult = await sendConfirmationEmail(
+      validatedData.email,
+      projectId,
+      validatedData.fullName
+    );
+
+    // ========================================
+    // 3. Track Analytics (PostHog)
+    // ========================================
+    // Analytics tracked client-side via posthog-js
+    console.log('📊 Ready for client-side analytics tracking');
+
     return NextResponse.json({
       success: true,
       projectId,
       message: 'We\'ll review your project and send you a customized strategy within 24 hours.',
+      metadata: {
+        database: dbResult,
+        email: emailResult,
+      },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -94,7 +128,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error('Form submission error:', error);
+    console.error('❌ Form submission error:', error);
     return NextResponse.json(
       {
         success: false,
