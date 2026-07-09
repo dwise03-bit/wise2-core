@@ -55,17 +55,20 @@ export default function Home() {
 
       {/* ===== HERO SECTION ===== */}
       <section className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image - Optimized WebP with PNG fallback */}
         <div className="absolute inset-0 w-full h-full">
-          <Image
-            src="/wise2-neon-comic.png"
-            alt="WISE² - The Idea Hunter and The System Builder"
-            fill
-            className="object-cover object-center"
-            priority
-            quality={75}
-            sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1920px"
-          />
+          <picture>
+            <source srcSet="/wise2-neon-comic.webp" type="image/webp" />
+            <Image
+              src="/wise2-neon-comic.png"
+              alt="WISE² - The Idea Hunter and The System Builder"
+              fill
+              className="object-cover object-center"
+              priority
+              quality={75}
+              sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1920px"
+            />
+          </picture>
           {/* Strong gradient overlay for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
         </div>
