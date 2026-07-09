@@ -63,7 +63,8 @@ export default function Home() {
             fill
             className="object-cover object-center"
             priority
-            quality={90}
+            quality={75}
+            sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1920px"
           />
           {/* Strong gradient overlay for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
