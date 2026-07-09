@@ -6,9 +6,9 @@ import Link from 'next/link';
 export function Header() {
   return (
     <motion.header
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 1, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.3 }}
       className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-[#00D9FF]/20"
     >
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
