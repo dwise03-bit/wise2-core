@@ -23,13 +23,15 @@ export default function BuildIntakeClient() {
 
       const result = await response.json();
 
+      console.log('🔍 API Response:', result);
+
       if (result.success) {
         // Show success message (you can add a modal/toast here)
         alert(`Success! Your project ID: ${result.projectId}\n\n${result.message}`);
         // Reset form or redirect
         setCurrentStep(1);
       } else {
-        console.log('Validation error details:', result);
+        console.error('❌ Validation Error:', result);
         const errorMsg = result.details
           ? JSON.stringify(result.details, null, 2)
           : result.error || 'Form submission failed';

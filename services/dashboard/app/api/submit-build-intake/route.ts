@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
+    console.log('📨 Received form data:', JSON.stringify(data, null, 2));
+
     // Validate data
     const validatedData = BuildIntakeSchema.parse(data);
 
