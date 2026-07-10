@@ -23,15 +23,6 @@ export default function HeroSection() {
         From concept to production. We transform your vision into reality.
       </p>
 
-      <div className="mt-12 max-w-4xl mx-auto opacity-100">
-        <div className="rounded-lg overflow-hidden border-2 border-[#00D9FF]/30 hover:border-[#00D9FF] transition-colors hover:scale-105">
-          <img
-            src="/wise2-neon-comic.webp"
-            alt="WISE² Brand System"
-            className="w-full h-auto"
-          />
-        </div>
-      </div>
     </motion.div>
   );
 }
