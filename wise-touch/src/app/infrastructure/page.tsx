@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Server, Cpu, HardDrive, Thermometer, Power, RotateCcw, Radio, Plus } from 'lucide-react'
 import { HUDPanel, StatCard, ChartCard } from '@/components/common/Cards'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { subscribeToStats, SystemStats } from '@/services/wiseos'
 
 const servers = [
   {
@@ -62,7 +63,22 @@ const systemMetrics = [
 ]
 
 export default function InfrastructurePage() {
-  const [selectedServer, setSelectedServer] = useState<string | null>(servers[0].id)
+  const [selectedServer, setSelectedServer] = useState<string | null>('rpi-1')
+  const [piStats, setPiStats] = useState<SystemStats>({ cpu: 0, mem: 0, temp: 0 })
+
+  useEffect(() => {
+    const unsubscribe = subscribeToStats((newStats) => {
+      setPiStats(newStats)
+      // Update the Raspberry Pi server object with real data
+      const rpiServer = servers.find(s => s.id === 'rpi-1')
+      if (rpiServer) {
+        rpiServer.cpu = newStats.cpu
+        rpiServer.memoryUsed = newStats.mem * 1024 // Convert GB to MB
+        rpiServer.temperature = newStats.temp
+      }
+    })
+    return () => unsubscribe()
+  }, [])
 
   const selected = servers.find(s => s.id === selectedServer)
 

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Search, Command, Bell, Cloud, Clock, User, Menu,
-  Wifi, Wifi2, WifiOff, Zap, Droplet
+  Signal, WifiOff, Zap, Droplet
 } from 'lucide-react'
 
 interface TopbarProps {
@@ -79,12 +79,12 @@ export function Topbar({ onSidebarToggle, sidebarOpen }: TopbarProps) {
         >
           {networkStatus === 'online' ? (
             <>
-              <Wifi2 size={14} className="text-green-500" />
+              <Signal size={14} className="text-green-500" />
               <span className="text-chrome-dark hidden sm:inline">Online</span>
             </>
           ) : networkStatus === 'degraded' ? (
             <>
-              <Wifi size={14} className="text-yellow-500" />
+              <Signal size={14} className="text-yellow-500" />
               <span className="text-chrome-dark hidden sm:inline">Degraded</span>
             </>
           ) : (

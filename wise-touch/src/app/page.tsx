@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { StatCard, MetricCard, ChartCard, HUDPanel } from '@/components/common/Cards'
 import { TrendingUp, Users, Zap, AlertTriangle, Globe, Shield, Activity, Server } from 'lucide-react'
+import { subscribeToStats, SystemStats } from '@/services/wiseos'
 
 // Mock data
 const revenueData = [
@@ -34,15 +35,17 @@ const deploymentData = [
   { name: '24:00', prod: 72, staging: 58, dev: 52 },
 ]
 
-const systemMetrics = [
-  { label: 'CPU Usage', value: '62%', change: 12, icon: <Activity size={20} /> },
-  { label: 'Memory', value: '8.2GB', change: -5, icon: <Server size={20} /> },
-  { label: 'Active Users', value: '2,847', change: 23, icon: <Users size={20} /> },
+const getSystemMetrics = (stats: SystemStats) => [
+  { label: 'CPU Usage', value: `${Math.round(stats.cpu)}%`, change: 12, icon: <Activity size={20} /> },
+  { label: 'Memory', value: `${stats.mem.toFixed(1)}GB`, change: -5, icon: <Server size={20} /> },
+  { label: 'Temperature', value: `${Math.round(stats.temp)}°C`, change: 2, icon: <Zap size={20} /> },
   { label: 'Deployments', value: '14', change: 2, icon: <Globe size={20} /> },
 ]
 
 export default function Dashboard() {
   const [time, setTime] = useState<string>('')
+  const [stats, setStats] = useState<SystemStats>({ cpu: 0, mem: 0, temp: 0 })
+  const [statsHistory, setStatsHistory] = useState<SystemStats[]>([])
 
   useEffect(() => {
     const updateTime = () => {
@@ -51,6 +54,14 @@ export default function Dashboard() {
     updateTime()
     const interval = setInterval(updateTime, 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = subscribeToStats((newStats) => {
+      setStats(newStats)
+      setStatsHistory((prev) => [...prev.slice(-59), newStats])
+    })
+    return () => unsubscribe()
   }, [])
 
   const containerVariants = {
@@ -103,7 +114,7 @@ export default function Dashboard() {
       {/* Key Metrics Grid */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {systemMetrics.map((metric, idx) => (
+          {getSystemMetrics(stats).map((metric, idx) => (
             <motion.div
               key={metric.label}
               initial={{ opacity: 0, y: 20 }}
