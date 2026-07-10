@@ -1,8 +1,13 @@
-'use client';
+import { motion } from 'framer-motion';
 
 export default function HeroSection() {
   return (
-    <div className="text-center space-y-6 mt-20">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.5 }}
+      className="text-center space-y-6 mt-20"
+    >
       <h1 className="text-5xl sm:text-6xl md:text-7xl font-black leading-tight"
         style={{
           color: '#FFFFFF',
@@ -15,11 +20,6 @@ export default function HeroSection() {
       <p className="text-xl sm:text-2xl text-gray-200 max-w-3xl mx-auto">
         From concept to production. We transform your vision into reality.
       </p>
-
-      <div className="mt-8 flex justify-center gap-12">
-        <div><div className="text-5xl">🤖</div><p className="text-sm text-[#00D9FF] mt-2">Darrin</p></div>
-        <div><div className="text-5xl">⚙️</div><p className="text-sm text-[#FF4D4D] mt-2">Daniel</p></div>
-      </div>
-    </div>
+    </motion.div>
   );
 }
