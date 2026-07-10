@@ -23,6 +23,11 @@ export default function HeroSection() {
         From concept to production. We transform your vision into reality.
       </p>
 
+      <div className="mt-8 flex justify-center gap-12">
+        <div><div className="text-5xl">🤖</div><p className="text-sm text-[#00D9FF] mt-2">Darrin</p></div>
+        <div><div className="text-5xl">⚙️</div><p className="text-sm text-[#FF4D4D] mt-2">Daniel</p></div>
+      </div>
+
     </motion.div>
   );
 }
