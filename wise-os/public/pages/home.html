@@ -1,45 +1,62 @@
 <div class="page">
 
 <header class="topbar">
-
 <h1>W² Wise AI Command Center</h1>
-
 <div id="clock">--:--</div>
-
 </header>
 
-<section class="hero">
+<section class="gauges">
+<div class="gauge-container">
+<div class="gauge">
+<svg viewBox="0 0 120 120" class="gauge-svg">
+<circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
+<circle cx="60" cy="60" r="50" class="gauge-progress" id="cpu-gauge"></circle>
+<text x="60" y="65" class="gauge-value" id="cpu-value">0%</text>
+</svg>
+<h3>CPU</h3>
+</div>
+<canvas id="cpu-chart" class="chart-mini"></canvas>
+</div>
 
-<h2>Hello Daniel 👋</h2>
+<div class="gauge-container">
+<div class="gauge">
+<svg viewBox="0 0 120 120" class="gauge-svg">
+<circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
+<circle cx="60" cy="60" r="50" class="gauge-progress" id="mem-gauge"></circle>
+<text x="60" y="65" class="gauge-value" id="mem-value">0GB</text>
+</svg>
+<h3>RAM</h3>
+</div>
+<canvas id="mem-chart" class="chart-mini"></canvas>
+</div>
 
-<p>How can I help you today?</p>
+<div class="gauge-container">
+<div class="gauge">
+<svg viewBox="0 0 120 120" class="gauge-svg">
+<circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
+<circle cx="60" cy="60" r="50" class="gauge-progress" id="temp-gauge"></circle>
+<text x="60" y="65" class="gauge-value" id="temp-value">0°C</text>
+</svg>
+<h3>TEMP</h3>
+</div>
+<canvas id="temp-chart" class="chart-mini"></canvas>
+</div>
 
-<button id="talk">🎤 Speak</button>
-
+<div class="status-card">
+<h3>Status</h3>
+<div class="status-indicator online">ONLINE</div>
+</div>
 </section>
 
-<section class="cards">
-
-<div class="card">
-<h3>CPU</h3>
-<h1 id="cpu">--%</h1>
+<section class="charts">
+<div class="chart-large">
+<h3>CPU Usage (60s)</h3>
+<canvas id="cpu-trend"></canvas>
 </div>
-
-<div class="card">
-<h3>RAM</h3>
-<h1 id="ram">--</h1>
+<div class="chart-large">
+<h3>Memory Usage (60s)</h3>
+<canvas id="mem-trend"></canvas>
 </div>
-
-<div class="card">
-<h3>TEMP</h3>
-<h1 id="temp">--°C</h1>
-</div>
-
-<div class="card">
-<h3>Status</h3>
-<h1 style="color:#00ff99;">ONLINE</h1>
-</div>
-
 </section>
 
 </div>

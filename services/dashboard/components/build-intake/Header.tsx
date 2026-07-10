@@ -12,7 +12,6 @@ export function Header() {
       className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-[#00D9FF]/20"
     >
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition">
           <div className="text-2xl font-black text-white">W²</div>
           <span className="text-xs uppercase font-bold text-[#00D9FF] tracking-wider hidden sm:block">
@@ -20,7 +19,6 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Navigation */}
         <nav className="flex items-center gap-4 md:gap-8">
           <Link
             href="/"
@@ -35,7 +33,6 @@ export function Header() {
             Build Intake
           </Link>
 
-          {/* Intake Button */}
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

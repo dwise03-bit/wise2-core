@@ -1,254 +1,219 @@
 'use client';
 
-import React, { useState, useId } from 'react';
-import { motion } from 'framer-motion';
+import { useId } from 'react';
 
-/* ============================================================================
-   TEXT INPUT
-   ============================================================================ */
-export interface FormInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-}
-
-export function FormInput({
+function FormInput({
   label,
-  error,
-  className = '',
-  id,
-  ...props
-}: FormInputProps) {
-  const [focused, setFocused] = useState(false);
-
-  return (
-    <div className="space-y-2">
-      {label && (
-        <label className="text-xs uppercase font-bold text-gray-400 tracking-wide">
-          {label}
-        </label>
-      )}
-      <input
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className={`w-full bg-transparent border-b-2 ${
-          error ? 'border-red-500' : focused ? 'border-[#00D9FF]' : 'border-gray-600'
-        } text-white placeholder-gray-600 focus:outline-none transition py-2 ${className}`}
-        style={{
-          textShadow: focused ? '0 0 10px rgba(0, 217, 255, 0.2)' : 'none',
-        }}
-        {...props}
-      />
-      {error && (
-        <p className="text-xs text-red-500"
-        >
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/* ============================================================================
-   TEXTAREA
-   ============================================================================ */
-export interface FormTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label?: string;
-  error?: string;
-}
-
-export function FormTextarea({
-  label,
-  error,
-  className = '',
-  id,
-  ...props
-}: FormTextareaProps) {
-  const [focused, setFocused] = useState(false);
-
-  return (
-    <div className="space-y-2">
-      {label && (
-        <label className="text-xs uppercase font-bold text-gray-400 tracking-wide">
-          {label}
-        </label>
-      )}
-      <textarea
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className={`w-full bg-transparent border-2 ${
-          error ? 'border-red-500' : focused ? 'border-[#00D9FF]' : 'border-gray-600'
-        } text-white placeholder-gray-600 focus:outline-none transition p-3 rounded-sm resize-none ${className}`}
-        style={{
-          textShadow: focused ? '0 0 10px rgba(0, 217, 255, 0.2)' : 'none',
-        }}
-        rows={4}
-        {...props}
-      />
-      {error && (
-        <p className="text-xs text-red-500"
-        >
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/* ============================================================================
-   CHECKBOX (Poster-style with colored square)
-   ============================================================================ */
-export interface FormCheckboxProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+  name,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  required,
+}: {
   label: string;
-  accentColor?: 'blue' | 'red';
-}
-
-export function FormCheckbox({
-  label,
-  accentColor = 'blue',
-  id,
-  ...props
-}: FormCheckboxProps) {
-  const [checked, setChecked] = useState(props.checked as boolean || false);
-  const isBlue = accentColor === 'blue';
-  const borderColor = isBlue ? '#00D9FF' : '#FF4D4D';
-
+  name: string;
+  type?: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+}) {
   return (
-    <label className="flex items-start space-x-3 cursor-pointer group">
-      <div
-        className="flex-shrink-0 w-5 h-5 border-2 rounded-sm mt-0.5 flex items-center justify-center transition"
-        style={{
-          borderColor: borderColor,
-          backgroundColor: checked ? '#22C55E' : 'transparent',
-        }}
-      >
-        <input
-          type="checkbox"
-          id={id}
-          checked={checked}
-          onChange={(e) => setChecked(e.target.checked)}
-          className="sr-only peer"
-          {...props}
-        />
-        {checked && (
-          <span
-            style={{ color: '#ffffff' }}
-            className="text-xs font-black leading-none"
-          >
-            ✓
-          </span>
-        )}
-      </div>
-      <span className="text-sm text-gray-300 group-hover:text-white transition flex-1">
-        {label}
-      </span>
-    </label>
+    <div>
+      <label className="block text-sm font-bold text-[#00D9FF] mb-2">
+        {label} {required && '*'}
+      </label>
+      <input
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full px-4 py-3 rounded bg-black/30 border-2 border-[#00D9FF]/30 text-white placeholder-gray-500 focus:border-[#00D9FF] focus:outline-none transition"
+      />
+    </div>
   );
 }
 
-/* ============================================================================
-   SELECT / DROPDOWN
-   ============================================================================ */
-export interface FormSelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
-  error?: string;
-  options: Array<{ value: string; label: string }>;
+function FormTextarea({
+  label,
+  name,
+  placeholder,
+  value,
+  onChange,
+  required,
+}: {
+  label: string;
+  name: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="block text-sm font-bold text-[#00D9FF] mb-2">
+        {label} {required && '*'}
+      </label>
+      <textarea
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        rows={4}
+        className="w-full px-4 py-3 rounded bg-black/30 border-2 border-[#00D9FF]/30 text-white placeholder-gray-500 focus:border-[#00D9FF] focus:outline-none transition"
+      />
+    </div>
+  );
 }
 
-export function FormSelect({
+function FormSelect({
   label,
-  error,
+  name,
   options,
-  className = '',
-  ...props
-}: FormSelectProps) {
-  const [focused, setFocused] = useState(false);
-
+  value,
+  onChange,
+  required,
+}: {
+  label: string;
+  name: string;
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
+}) {
+  const id = useId();
   return (
-    <div className="space-y-2">
-      {label && (
-        <label className="text-xs uppercase font-bold text-gray-400 tracking-wide">
-          {label}
-        </label>
-      )}
+    <div>
+      <label htmlFor={id} className="block text-sm font-bold text-[#00D9FF] mb-2">
+        {label} {required && '*'}
+      </label>
       <select
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        className={`w-full bg-black/50 border-b-2 ${
-          error ? 'border-red-500' : focused ? 'border-[#00D9FF]' : 'border-gray-600'
-        } text-white placeholder-gray-600 focus:outline-none transition py-2 ${className}`}
-        {...props}
+        id={id}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full px-4 py-3 rounded bg-black/30 border-2 border-[#00D9FF]/30 text-white focus:border-[#00D9FF] focus:outline-none transition"
       >
-        <option value="" className="bg-black text-white">
-          Select an option...
-        </option>
+        <option value="">Select...</option>
         {options.map((opt) => (
-          <option key={opt.value} value={opt.value} className="bg-black text-white">
+          <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </select>
-      {error && (
-        <p className="text-xs text-red-500"
-        >
-          {error}
-        </p>
-      )}
     </div>
   );
 }
 
-/* ============================================================================
-   CHECKBOX GROUP (Multiple options)
-   ============================================================================ */
-export interface CheckboxOption {
-  value: string;
-  label: string;
-}
+const Step1 = ({ formData, onInputChange }: any) => (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-[#00D9FF]">Project Essentials</h2>
+    <FormInput
+      label="Full Name"
+      name="fullName"
+      placeholder="Your name"
+      value={formData.fullName}
+      onChange={onInputChange}
+      required
+    />
+    <FormInput
+      label="Email"
+      name="email"
+      type="email"
+      placeholder="your@email.com"
+      value={formData.email}
+      onChange={onInputChange}
+      required
+    />
+    <FormInput
+      label="Company Name"
+      name="companyName"
+      placeholder="Your company"
+      value={formData.companyName}
+      onChange={onInputChange}
+      required
+    />
+    <FormSelect
+      label="What do you need?"
+      name="projectType"
+      value={formData.projectType}
+      onChange={onInputChange}
+      required
+      options={[
+        { value: 'website', label: 'Website' },
+        { value: 'app', label: 'Mobile App' },
+        { value: 'saas', label: 'SaaS Platform' },
+        { value: 'integration', label: 'API Integration' },
+        { value: 'other', label: 'Other' },
+      ]}
+    />
+    <FormTextarea
+      label="Project Description"
+      name="projectDescription"
+      placeholder="Tell us about your project in detail..."
+      value={formData.projectDescription}
+      onChange={onInputChange}
+      required
+    />
+  </div>
+);
 
-export interface FormCheckboxGroupProps {
-  label?: string;
-  options: CheckboxOption[];
-  selected: string[];
-  onChange: (values: string[]) => void;
-  accentColor?: 'blue' | 'red';
-}
+const Step2 = ({ formData, onInputChange }: any) => (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-bold text-[#FF4D4D]">Additional Details</h2>
+    <FormSelect
+      label="Preferred Timeline"
+      name="preferredTimeline"
+      value={formData.preferredTimeline}
+      onChange={onInputChange}
+      options={[
+        { value: 'urgent', label: 'ASAP (1-2 weeks)' },
+        { value: 'fast', label: 'Fast (1 month)' },
+        { value: 'standard', label: 'Standard (2-3 months)' },
+        { value: 'flexible', label: 'Flexible' },
+      ]}
+    />
+    <FormSelect
+      label="Budget Range"
+      name="budgetRange"
+      value={formData.budgetRange}
+      onChange={onInputChange}
+      options={[
+        { value: 'under-10k', label: 'Under $10k' },
+        { value: '10-50k', label: '$10k - $50k' },
+        { value: '50-100k', label: '$50k - $100k' },
+        { value: 'over-100k', label: 'Over $100k' },
+      ]}
+    />
+    <FormInput
+      label="Phone"
+      name="phone"
+      type="tel"
+      placeholder="+1 (555) 000-0000"
+      value={formData.phone}
+      onChange={onInputChange}
+    />
+    <FormInput
+      label="Website"
+      name="website"
+      type="url"
+      placeholder="https://yoursite.com"
+      value={formData.website}
+      onChange={onInputChange}
+    />
+    <FormTextarea
+      label="Additional Notes"
+      name="additionalInfo"
+      placeholder="Anything else we should know?"
+      value={formData.additionalInfo}
+      onChange={onInputChange}
+    />
+  </div>
+);
 
-export function FormCheckboxGroup({
-  label,
-  options,
-  selected,
-  onChange,
-  accentColor = 'blue',
-}: FormCheckboxGroupProps) {
-  const handleChange = (value: string) => {
-    const newSelected = selected.includes(value)
-      ? selected.filter((v) => v !== value)
-      : [...selected, value];
-    onChange(newSelected);
-  };
-
-  return (
-    <div className="space-y-3">
-      {label && (
-        <label className="text-xs uppercase font-bold text-gray-400 tracking-wide block">
-          {label}
-        </label>
-      )}
-      <div className="space-y-2">
-        {options.map((option) => (
-          <FormCheckbox
-            key={option.value}
-            label={option.label}
-            checked={selected.includes(option.value)}
-            onChange={() => handleChange(option.value)}
-            accentColor={accentColor}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+export default { Step1, Step2 };

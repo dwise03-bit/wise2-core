@@ -14,7 +14,6 @@ export function FloatingCharacters() {
 
   return (
     <>
-      {/* Left Character - Darrin (The Idea Hunter) */}
       <motion.div
         animate={{
           y: [0, -30, 0],
@@ -47,7 +46,6 @@ export function FloatingCharacters() {
         </motion.div>
       </motion.div>
 
-      {/* Right Character - Daniel (The System Builder) */}
       <motion.div
         animate={{
           y: [0, -35, 0],
@@ -80,7 +78,6 @@ export function FloatingCharacters() {
         </motion.div>
       </motion.div>
 
-      {/* Center Top - W² Logo (spinning) */}
       <motion.div
         animate={{
           rotate: 360,
@@ -113,7 +110,6 @@ export function FloatingCharacters() {
         </div>
       </motion.div>
 
-      {/* Bottom Left - Floating spark */}
       <motion.div
         animate={{
           y: [0, -40, 0],
@@ -130,7 +126,6 @@ export function FloatingCharacters() {
         <div className="text-4xl">✨</div>
       </motion.div>
 
-      {/* Bottom Right - Floating spark */}
       <motion.div
         animate={{
           y: [0, -40, 0],

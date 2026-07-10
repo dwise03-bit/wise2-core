@@ -1,14 +1,16 @@
 === Wise² Core Status ===
 
 Docker Stack:
-NAME               IMAGE                    COMMAND                  SERVICE      CREATED              STATUS                        PORTS
-wise2-minio        minio/minio:latest       "/usr/bin/docker-ent…"   minio        About a minute ago   Up About a minute (healthy)   0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
-wise2-postgres     postgres:15-alpine       "docker-entrypoint.s…"   postgres     About a minute ago   Up About a minute (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
-wise2-prometheus   prom/prometheus:latest   "/bin/prometheus --c…"   prometheus   About a minute ago   Up About a minute             0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
-wise2-redis        redis:7-alpine           "docker-entrypoint.s…"   redis        About a minute ago   Up About a minute (healthy)   0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+NAME               IMAGE                    COMMAND                  SERVICE      CREATED         STATUS                            PORTS
+wise2-minio        minio/minio:latest       "/usr/bin/docker-ent…"   minio        6 seconds ago   Up 6 seconds (health: starting)   0.0.0.0:9000-9001->9000-9001/tcp, [::]:9000-9001->9000-9001/tcp
+wise2-postgres     postgres:15-alpine       "docker-entrypoint.s…"   postgres     6 seconds ago   Up 6 seconds (healthy)            0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+wise2-prometheus   prom/prometheus:latest   "/bin/prometheus --c…"   prometheus   6 seconds ago   Up 6 seconds                      0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+wise2-redis        redis:7-alpine           "docker-entrypoint.s…"   redis        6 seconds ago   Up 6 seconds (healthy)            0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
 
 API Server:
-✗ Process stopped
+✓ Running (PID: 2191)
+  Health: <!DOCTYPE html><html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-mo
+  Status: <!DOCTYPE html><html lang="en" class="geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-mo
 
 Useful Commands:
   - Health check:   curl http://localhost:3000/health

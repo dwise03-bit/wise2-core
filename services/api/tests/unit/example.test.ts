@@ -3,6 +3,7 @@
  * Shows testing patterns and best practices
  */
 
+import jwt from 'jsonwebtoken';
 import { generateTestToken, generateAdminToken } from '../helpers/test-utils';
 
 describe('Unit Tests - Example', () => {
@@ -20,14 +21,16 @@ describe('Unit Tests - Example', () => {
       });
 
       expect(token).toBeDefined();
-      // Token contains admin role
-      expect(token).toContain('admin');
+      const payload = jwt.decode(token) as any;
+      expect(payload.role).toBe('admin');
     });
 
     it('should generate admin token with admin role', () => {
       const token = generateAdminToken();
       expect(token).toBeDefined();
-      expect(token).toContain('admin');
+      const payload = jwt.decode(token) as any;
+      expect(payload.role).toBe('admin');
+      expect(payload.permissions).toEqual(['*']);
     });
 
     it('should override default token properties', () => {
@@ -35,7 +38,8 @@ describe('Unit Tests - Example', () => {
       const token = generateTestToken({ email: customEmail });
 
       expect(token).toBeDefined();
-      expect(token).toContain(customEmail);
+      const payload = jwt.decode(token) as any;
+      expect(payload.email).toBe(customEmail);
     });
   });
 

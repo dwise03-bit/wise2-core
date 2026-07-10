@@ -4,6 +4,7 @@
  */
 
 import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
 
 let testPool: Pool;
 
@@ -74,25 +75,32 @@ export async function clearDatabase(): Promise<void> {
  */
 export async function createTestUserInDb(userData?: any) {
   const pool = await initTestDb();
+  const client = await pool.connect();
 
-  const id = 'test-user-' + Math.random().toString(36).substr(2, 9);
-  const email = `test-${Math.random().toString(36).substr(2, 9)}@example.com`;
+  try {
+    const id = uuidv4();
+    const email = `test-${Math.random().toString(36).substr(2, 9)}@example.com`;
 
-  const result = await pool.query(
-    `INSERT INTO users (id, email, password_hash, name, role, is_active)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
-    [
-      id,
-      email,
-      'hashed_password',
-      userData?.name || 'Test User',
-      userData?.role || 'developer',
-      true,
-    ],
-  );
+    await client.query(`SET app.user_id = '${id}'`);
 
-  return result.rows[0];
+    const result = await client.query(
+      `INSERT INTO users (id, email, password_hash, name, role, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        id,
+        email,
+        'hashed_password',
+        userData?.name || 'Test User',
+        userData?.role || 'developer',
+        true,
+      ],
+    );
+
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
 }
 
 /**
@@ -103,24 +111,31 @@ export async function createTestDeploymentInDb(
   deploymentData?: any,
 ) {
   const pool = await initTestDb();
+  const client = await pool.connect();
 
-  const id = 'test-deployment-' + Math.random().toString(36).substr(2, 9);
+  try {
+    const id = uuidv4();
 
-  const result = await pool.query(
-    `INSERT INTO deployments (id, user_id, name, description, configuration, status)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
-    [
-      id,
-      userId,
-      deploymentData?.name || 'Test Deployment',
-      deploymentData?.description || 'Test deployment',
-      deploymentData?.configuration || { environment: 'test' },
-      deploymentData?.status || 'deployed',
-    ],
-  );
+    await client.query(`SET app.user_id = '${userId}'`);
 
-  return result.rows[0];
+    const result = await client.query(
+      `INSERT INTO deployments (id, user_id, name, description, configuration, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        id,
+        userId,
+        deploymentData?.name || 'Test Deployment',
+        deploymentData?.description || 'Test deployment',
+        deploymentData?.configuration || { environment: 'test' },
+        deploymentData?.status || 'deployed',
+      ],
+    );
+
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
 }
 
 /**
@@ -131,24 +146,31 @@ export async function createTestServiceInDb(
   serviceData?: any,
 ) {
   const pool = await initTestDb();
+  const client = await pool.connect();
 
-  const id = 'test-service-' + Math.random().toString(36).substr(2, 9);
+  try {
+    const id = uuidv4();
 
-  const result = await pool.query(
-    `INSERT INTO services (id, deployment_id, name, type, status, is_healthy)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
-    [
-      id,
-      deploymentId,
-      serviceData?.name || 'Test Service',
-      serviceData?.type || 'api',
-      serviceData?.status || 'running',
-      serviceData?.is_healthy !== undefined ? serviceData.is_healthy : true,
-    ],
-  );
+    await client.query("SET app.user_id = ''::uuid");
 
-  return result.rows[0];
+    const result = await client.query(
+      `INSERT INTO services (id, deployment_id, name, type, status, is_healthy)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [
+        id,
+        deploymentId,
+        serviceData?.name || 'Test Service',
+        serviceData?.type || 'api',
+        serviceData?.status || 'running',
+        serviceData?.is_healthy !== undefined ? serviceData.is_healthy : true,
+      ],
+    );
+
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
 }
 
 /**
