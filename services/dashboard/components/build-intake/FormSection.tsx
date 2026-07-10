@@ -1,74 +1,70 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import FormLayout from './FormLayout';
+import { trackFormStep } from '@/lib/services';
 
-interface FormSectionProps {
-  title: string;
-  number: number;
-  side?: 'left' | 'right'; // left = blue, right = red
-  children: React.ReactNode;
-  className?: string;
-}
+export default function FormSection() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-export default function FormSection({
-  title,
-  number,
-  side = 'left',
-  children,
-  className = '',
-}: FormSectionProps) {
-  const isLeft = side === 'left';
-  const borderColor = isLeft ? 'border-[#00D9FF]' : 'border-[#FF4D4D]';
-  const accentColor = isLeft ? 'text-[#00D9FF]' : 'text-[#FF4D4D]';
-  const glowColor = isLeft ? 'rgba(0, 217, 255, 0.1)' : 'rgba(255, 77, 77, 0.1)';
+  useEffect(() => {
+    trackFormStep(currentStep);
+  }, [currentStep]);
+
+  const handleFormSubmit = async (formData: Record<string, any>) => {
+    setIsSubmitting(true);
+    console.log('📤 Submitting form data:', formData);
+    console.log('📤 Data keys:', Object.keys(formData));
+    console.log('📤 Data stringified:', JSON.stringify(formData));
+
+    try {
+      const requestBody = JSON.stringify(formData);
+      console.log('📤 Request body:', requestBody);
+
+      const response = await fetch('/api/submit-build-intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody,
+      });
+
+      console.log('📥 Response status:', response.status);
+      const result = await response.json();
+
+      console.log('🔍 API Response:', result);
+
+      if (result.success) {
+        alert(`Success! Your project ID: ${result.projectId}\n\n${result.message}`);
+        setCurrentStep(1);
+      } else {
+        console.error('❌ Validation Error:', result);
+        const errorMsg = result.details
+          ? JSON.stringify(result.details, null, 2)
+          : result.error || 'Form submission failed';
+        alert(`Validation Error:\n\n${errorMsg}`);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-100px' }}
-      transition={{ duration: 0.5 }}
-      className={`border-2 ${borderColor} p-6 bg-black/40 backdrop-blur-sm rounded-sm ${className}`}
-      style={{
-        boxShadow: `inset 0 0 20px ${glowColor}`,
-      }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 1.2 }}
+      className="mt-24"
     >
-      {/* Section Header */}
-      <div className="mb-6">
-        {/* Section Number - Large and colored */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          className={`text-5xl md:text-6xl font-black ${accentColor} mb-2`}
-          style={{
-            textShadow: isLeft
-              ? '0 0 20px rgba(0, 217, 255, 0.4)'
-              : '0 0 20px rgba(255, 77, 77, 0.4)',
-          }}
-        >
-          {String(number).padStart(2, '0')}
-        </motion.div>
-
-        {/* Section Title */}
-        <h3
-          className={`text-sm md:text-base uppercase font-black ${accentColor} tracking-widest`}
-          style={{
-            textShadow: isLeft
-              ? '0 0 10px rgba(0, 217, 255, 0.2)'
-              : '0 0 10px rgba(255, 77, 77, 0.2)',
-          }}
-        >
-          {title}
-        </h3>
-      </div>
-
-      {/* Content */}
-      <div className="space-y-4">
-        {children}
-      </div>
+      <FormLayout
+        currentStep={currentStep}
+        onStepChange={setCurrentStep}
+        isSubmitting={isSubmitting}
+        onSubmit={(formData) => handleFormSubmit(formData)}
+      />
     </motion.div>
   );
 }
