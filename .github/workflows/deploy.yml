@@ -178,38 +178,3 @@ jobs:
           body: |
             Production deployment version ${{ needs.prepare.outputs.version }}
             Commit: ${{ github.sha }}
-
-  # Health check
-  health-check:
-    name: Health Check
-    runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
-    if: always()
-    steps:
-      - name: Wait for deployment
-        run: sleep 30
-
-      - name: Check API health
-        continue-on-error: true
-        run: |
-          for i in {1..10}; do
-            if curl -f http://localhost:3000/health 2>/dev/null; then
-              echo "✅ API health check passed"
-              exit 0
-            fi
-            echo "Attempt $i: waiting for API..."
-            sleep 5
-          done
-          echo "⚠️ Health check timed out (deployment may still be in progress)"
-
-  # Notify on failure
-  notify-failure:
-    name: Notify Failure
-    runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
-    if: failure()
-    steps:
-      - name: Send failure notification
-        run: |
-          echo "❌ Deployment failed!"
-          echo "Check logs for details"
