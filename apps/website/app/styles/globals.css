@@ -1,36 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Import from shared design system */
-@import url('@wise2/ui-components/src/globals.css');
-
-:root {
-  --color-chrome: #E8E8E8;
-  --color-dark-chrome: #1a1a1a;
-}
-
-@layer utilities {
-  .text-chrome {
-    color: var(--color-chrome);
-  }
-  .border-chrome {
-    border-color: var(--color-chrome);
-  }
-  .bg-chrome {
-    background-color: var(--color-chrome);
-  }
-}
+@import '@wise2/ui-components/src/globals.css';
 
 /* Website-specific styles */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  @apply bg-black;
-  color: var(--color-chrome);
-}
 
 /* Hero gradient background */
 .hero-gradient {
@@ -76,11 +46,6 @@ body {
 /* Gradient text */
 .gradient-text {
   @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Prevent layout shift */

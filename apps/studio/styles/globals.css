@@ -1,29 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@wise2/ui-components/src/globals.css';
 
-:root {
-  --color-chrome: #E8E8E8;
-  --color-dark-chrome: #1a1a1a;
-}
-
-body {
-  @apply bg-black font-sans;
-  color: var(--color-chrome);
-}
-
+/* Studio-specific styles */
 html {
   scroll-behavior: smooth;
-}
-
-@layer utilities {
-  .text-chrome {
-    color: var(--color-chrome);
-  }
-  .border-chrome {
-    border-color: var(--color-chrome);
-  }
-  .bg-chrome {
-    background-color: var(--color-chrome);
-  }
 }
