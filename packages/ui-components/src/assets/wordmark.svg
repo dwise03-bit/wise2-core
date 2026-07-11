@@ -1,0 +1,13 @@
+<svg width="200" height="64" viewBox="0 0 200 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="64" fill="black"/>
+
+  <!-- WISE² text -->
+  <text x="100" y="44" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="700" text-anchor="middle" fill="#E8E8E8">
+    WISE
+    <tspan font-size="32" baseline-shift="super" fill="#00D9FF">²</tspan>
+  </text>
+
+  <!-- Accent line -->
+  <line x1="20" y1="56" x2="180" y2="56" stroke="#00D9FF" stroke-width="2"/>
+</svg>

@@ -27,12 +27,12 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-lg justify-center items-center mb-3xl">
-            <button className="px-2xl py-lg bg-blue-500 hover:bg-blue-400 text-black font-bold rounded-lg transition-all duration-200 hover:scale-105">
+            <Button variant="primary" size="lg">
               Start Free Trial
-            </button>
-            <button className="px-2xl py-lg bg-transparent border-2 border-chrome hover:bg-chrome/10 text-chrome font-bold rounded-lg transition-all duration-200">
+            </Button>
+            <Button variant="secondary" size="lg">
               Watch Demo
-            </button>
+            </Button>
           </div>
 
           <p className="text-sm text-gray-500">
