@@ -21,6 +21,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "pnpm": "^8.15.9",
     "turbo": "^1.10.16"
   },
   "pnpm": {

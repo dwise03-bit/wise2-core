@@ -1,10 +1,20 @@
-# Wise² Core — Official Brand System
+⚠️ **DEPRECATED 2026-07-12**
+
+This document describes an earlier multi-brand positioning strategy that was **not adopted**. 
+
+For the current, active WISE² brand system, see: **`docs/DESIGN_SYSTEM.md` (v10.0, 2026-07-11)** and **`docs/BRAND_BIBLE.md`** for the unified, canonical brand guidelines (Electric Blue + Purple + Chrome, industrial cyberpunk aesthetic).
+
+This file is kept for historical reference only.
+
+---
+
+# Wise² Core — Official Brand System (SUPERSEDED)
 ## Multi-Positioning Strategy for 4 Market Segments
 
 **Document Version:** 2.0 (Multi-Brand System)  
-**Status:** Active  
+**Status:** DEPRECATED  
 **Last Updated:** 2026-07-07  
-**Audience:** Marketing, Sales, Design, Product
+**Audience:** Historical reference only
 
 ---
 

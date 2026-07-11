@@ -1,12 +1,25 @@
 ---
 type: decision
 date: 2026-07-07
-tags: [wise2, brand, visual-identity, critical]
+tags: [wise2, brand, visual-identity, historical]
 ai-first: true
-confidence: high
+confidence: high (historical)
+status: SUPERSEDED
 ---
 
-# Brand Decision: Neon Cyberpunk Aesthetic
+⚠️ **DEPRECATED 2026-07-12**
+
+This decision has been **superseded** by the canonical brand system documented in `docs/DESIGN_SYSTEM.md` v10.0 (2026-07-11).
+
+**Key differences from current spec:**
+- This doc specifies **orange (#FF6B35)** as the secondary accent; current spec uses **purple (#B300FF)**.
+- This doc specifies **dark-mode only**; current spec supports **dual-mode (dark + light)**.
+
+Kept for historical decision-making reference only.
+
+---
+
+# Brand Decision: Neon Cyberpunk Aesthetic (HISTORICAL RECORD)
 
 ## For future Claude
 
