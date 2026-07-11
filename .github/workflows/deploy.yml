@@ -1,32 +1,19 @@
-name: Deploy - Staging & Production
+name: Deploy to Production
 
 on:
   push:
     branches:
       - main
-      - develop
     paths:
       - 'apps/**'
       - 'packages/**'
       - 'services/**'
-      - 'infrastructure/**'
       - 'package.json'
       - 'turbo.json'
-      - 'postcss.config.js'
-      - 'tailwind.config.js'
       - 'docker-compose.yml'
       - '.github/workflows/deploy.yml'
 
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
 
 env:
   REGISTRY: ghcr.io
@@ -34,147 +21,37 @@ env:
   DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
 
 jobs:
-  # Determine deployment environment
-  prepare:
-    name: Prepare Deployment
+  deploy:
+    name: Deploy to Production VPS
     runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.determine.outputs.environment }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - id: determine
-        name: Determine Environment
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            ENVIRONMENT="${{ github.event.inputs.environment }}"
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            ENVIRONMENT="production"
-          else
-            ENVIRONMENT="staging"
-          fi
-          echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
-          echo "Deploying to: $ENVIRONMENT"
-
-      - id: version
-        name: Generate Version
-        run: |
-          VERSION="${{ github.sha }}"
-          echo "version=${VERSION:0:7}" >> $GITHUB_OUTPUT
-
-  # Build and push images
-  build:
-    name: Build Services
-    runs-on: ubuntu-latest
-    needs: prepare
     permissions:
       contents: read
-      packages: write
-    strategy:
-      matrix:
-        service: [api, dashboard, admin-dashboard, bot, worker]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/${{ matrix.service }}
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/wise-${{ matrix.service }}:${{ needs.prepare.outputs.version }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/wise-${{ matrix.service }}:latest-${{ needs.prepare.outputs.environment }}
-          labels: |
-            org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
-            org.opencontainers.image.revision=${{ github.sha }}
-
-  # Deploy to staging
-  deploy-staging:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [prepare, build]
-    if: needs.prepare.outputs.environment == 'staging'
-    environment:
-      name: staging
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update image tags in docker-compose
+      - name: Get commit info
+        id: commit
         run: |
-          sed -i 's|image: wise-|image: ${{ env.REGISTRY }}/${{ github.repository }}/wise-|g' docker-compose.yml
-          sed -i 's|:latest|:latest-staging|g' docker-compose.yml
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
-      - name: Deploy via webhook
+      - name: Send deployment webhook
         run: |
           curl -X POST \
             -H "X-Secret: ${{ env.DEPLOY_SECRET }}" \
             -H "Content-Type: application/json" \
             -d '{
-              "environment": "staging",
-              "version": "${{ needs.prepare.outputs.version }}",
+              "branch": "main",
+              "commit": "${{ github.sha }}",
+              "shortCommit": "${{ steps.commit.outputs.sha_short }}",
+              "message": "'"$(echo '${{ steps.commit.outputs.message }}' | sed 's/"/\\"/g')"'",
               "timestamp": "'$(date -u +%s)'"
             }' \
-            "${{ env.DEPLOY_WEBHOOK }}/deploy" \
-            || echo "⚠️ Webhook deployment initiated (check server logs)"
+            "${{ env.DEPLOY_WEBHOOK }}/deploy" || echo "⚠️ Webhook sent (check server)"
 
-      - name: Notify deployment
+      - name: Deployment info
         run: |
-          echo "✅ Staging deployment initiated for version ${{ needs.prepare.outputs.version }}"
-          echo "Check deployment server for status"
-
-  # Deploy to production
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [prepare, build]
-    if: needs.prepare.outputs.environment == 'production'
-    environment:
-      name: production
-      auto_merge: false
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create production release
-        run: |
-          echo "Production Release: ${{ needs.prepare.outputs.version }}"
-          echo "Branch: ${{ github.ref }}"
+          echo "✅ Production deployment initiated"
+          echo "Branch: main"
           echo "Commit: ${{ github.sha }}"
-
-      - name: Update image tags for production
-        run: |
-          sed -i 's|image: wise-|image: ${{ env.REGISTRY }}/${{ github.repository }}/wise-|g' docker-compose.yml
-          sed -i 's|:latest|:latest-production|g' docker-compose.yml
-
-      - name: Deploy via webhook
-        run: |
-          curl -X POST \
-            -H "X-Secret: ${{ env.DEPLOY_SECRET }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "environment": "production",
-              "version": "${{ needs.prepare.outputs.version }}",
-              "timestamp": "'$(date -u +%s)'",
-              "commit": "${{ github.sha }}"
-            }' \
-            "${{ env.DEPLOY_WEBHOOK }}/deploy" \
-            || echo "⚠️ Webhook deployment initiated (check server logs)"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ needs.prepare.outputs.version }}
-          name: Release ${{ needs.prepare.outputs.version }}
-          body: |
-            Production deployment version ${{ needs.prepare.outputs.version }}
-            Commit: ${{ github.sha }}
+          echo "Check VPS logs for deployment status"
