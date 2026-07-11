@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common'
-import { APIManager } from './api-manager'
+import { APIManager, APIServiceConfig } from './api-manager'
 
 /**
  * API Status & Integration Controller
@@ -15,7 +15,7 @@ export class APIStatusController {
    * Overall health status of all API integrations
    */
   @Get('health')
-  async getHealthStatus() {
+  async getHealthStatus(): Promise<any> {
     return await this.apiManager.healthCheck()
   }
 
@@ -24,7 +24,7 @@ export class APIStatusController {
    * Complete inventory of all registered APIs
    */
   @Get('inventory')
-  getInventory() {
+  getInventory(): any {
     return this.apiManager.getIntegrationMap()
   }
 
@@ -33,7 +33,7 @@ export class APIStatusController {
    * List services by category
    */
   @Get('by-category/:category')
-  getByCategory(@Param('category') category: string) {
+  getByCategory(@Param('category') category: string): any {
     return {
       category,
       services: this.apiManager.getServicesByCategory(category),
@@ -45,7 +45,7 @@ export class APIStatusController {
    * Get details for a specific service (no secrets)
    */
   @Get(':service')
-  getService(@Param('service') service: string) {
+  getService(@Param('service') service: string): any {
     const config = this.apiManager.getService(service)
     if (!config) {
       return { error: `Service '${service}' not found` }
@@ -68,7 +68,7 @@ export class APIStatusController {
    * List all available services
    */
   @Get()
-  getAllServices() {
+  getAllServices(): any {
     return {
       total: this.apiManager.getAllServices().length,
       services: this.apiManager.getAllServices().map((s) => ({

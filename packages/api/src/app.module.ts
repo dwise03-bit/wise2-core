@@ -7,8 +7,10 @@ import { AnalyticsModule } from './analytics/analytics.module'
 import { BillingModule } from './billing/billing.module'
 import { CommunityModule } from './community/community.module'
 import { ModulesModule } from './modules/modules.module'
+import { APIManagerModule } from './config/api-manager.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { APIStatusController } from './config/api-status.controller'
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { AppService } from './app.service'
         logging: configService.get('NODE_ENV') !== 'production',
       }),
     }),
+    APIManagerModule,
     AuthModule,
     ProjectsModule,
     AnalyticsModule,
@@ -38,7 +41,7 @@ import { AppService } from './app.service'
     CommunityModule,
     ModulesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, APIStatusController],
   providers: [AppService],
 })
 export class AppModule {}

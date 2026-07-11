@@ -7,7 +7,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-interface APICredential {
+export interface APICredential {
   name: string
   category: string
   envVariable: string
@@ -18,7 +18,7 @@ interface APICredential {
   error?: string
 }
 
-interface APIServiceConfig {
+export interface APIServiceConfig {
   name: string
   category: string
   description: string
@@ -560,7 +560,9 @@ export class APIManager implements OnModuleInit {
       summary: {
         total_services: this.apiRegistry.size,
         categories: Array.from(
-          new Set(this.apiRegistry.values().map((s) => s.category))
+          new Set(
+            Array.from(this.apiRegistry.values()).map((s) => s.category)
+          )
         ).length,
         last_validated: new Date().toISOString(),
       },
