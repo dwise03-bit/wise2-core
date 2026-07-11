@@ -60,11 +60,16 @@ export async function fetchWiseOSHealth() {
 export function subscribeToStats(callback: (stats: SystemStats) => void) {
   const socket = getWiseOSSocket()
 
+  if (!socket) {
+    console.warn('WiseOS socket not initialized')
+    return () => {}
+  }
+
   socket.on('stats', (stats: SystemStats) => {
     callback(stats)
   })
 
   return () => {
-    socket.off('stats', callback)
+    socket?.off('stats', callback)
   }
 }

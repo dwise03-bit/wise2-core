@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  turbo: false,
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts'],
   },
