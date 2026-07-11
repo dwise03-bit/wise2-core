@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-black text-chrome font-sans;
+}
+
+html {
+  scroll-behavior: smooth;
+}
