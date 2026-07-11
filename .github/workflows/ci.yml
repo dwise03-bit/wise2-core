@@ -26,10 +26,12 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run linting (if configured)
-        run: npm run lint --if-present || echo "No lint script configured"
+        run: npm run lint --if-present 2>&1 || echo "⚠️  Lint warnings (non-blocking)"
+        continue-on-error: true
 
       - name: Check formatting (if configured)
-        run: npm run format:check --if-present || echo "No format:check script configured"
+        run: npm run format:check --if-present 2>&1 || echo "⚠️  Format warnings (non-blocking)"
+        continue-on-error: true
 
   # Test monorepo
   test:
@@ -79,10 +81,11 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: test-output.log
+        continue-on-error: true
 
   # Type checking
   type-check:
@@ -149,7 +152,7 @@ jobs:
 
       - name: Upload Trivy results to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
         continue-on-error: true
