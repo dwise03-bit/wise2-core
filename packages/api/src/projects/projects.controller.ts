@@ -3,7 +3,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard'
 import { ProjectsService } from './projects.service'
 import { CreateProjectDto, UpdateProjectDto, CreateTrackDto } from './dto'
 
-@Controller('api/v1/projects')
+@Controller('v1/projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}

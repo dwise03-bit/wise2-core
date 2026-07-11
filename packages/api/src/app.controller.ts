@@ -10,7 +10,7 @@ export class AppController {
     return { status: 'ok', timestamp: new Date().toISOString() }
   }
 
-  @Get('api/docs')
+  @Get('docs')
   getApiDocs(): any {
     return {
       message: 'WISE² Enterprise API',

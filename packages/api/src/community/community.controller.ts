@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query } from '@nestjs/common'
 import { CommunityService } from './community.service'
 
-@Controller('api/v1/community')
+@Controller('v1/community')
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 

@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core'
+import { ValidationPipe } from '@nestjs/common'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
@@ -12,6 +13,13 @@ async function bootstrap() {
 
   // Global prefix for all routes
   app.setGlobalPrefix('api')
+
+  // Global validation pipe
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }))
 
   // Start listening
   const port = process.env.API_PORT || 3000

@@ -1,11 +1,16 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common'
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { CreateUserDto, LoginDto } from './dto'
+import { User } from './user.entity'
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -17,27 +22,25 @@ export class AuthService {
       throw new BadRequestException('Password must be at least 12 characters')
     }
 
-    // Check if user exists (in production, query database)
-    // const existingUser = await this.usersService.findByEmail(email)
-    // if (existingUser) {
-    //   throw new BadRequestException('Email already registered')
-    // }
+    // Check if user exists
+    const existingUser = await this.usersRepository.findOne({ where: { email } })
+    if (existingUser) {
+      throw new BadRequestException('Email already registered')
+    }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 12)
+    const password_hash = await bcrypt.hash(password, 12)
 
-    // Create user in database (mock response)
-    const user = {
-      id: 'uuid-here',
+    // Create user in database
+    const user = this.usersRepository.create({
       email,
+      password_hash,
       firstName,
       lastName,
       emailVerified: false,
-      createdAt: new Date(),
-    }
+    })
 
-    // Send verification email (mock)
-    // await this.emailService.sendVerificationEmail(email, token)
+    await this.usersRepository.save(user)
 
     return {
       message: 'User registered successfully. Please check your email to verify.',
@@ -53,17 +56,8 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto
 
-    // Find user by email (mock - in production query database)
-    // const user = await this.usersService.findByEmail(email)
-    const user = {
-      id: 'uuid-here',
-      email: 'user@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      password_hash: await bcrypt.hash('password123', 12),
-      emailVerified: true,
-    }
-
+    // Find user by email
+    const user = await this.usersRepository.findOne({ where: { email } })
     if (!user) {
       throw new UnauthorizedException('Invalid email or password')
     }
@@ -72,6 +66,11 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password_hash)
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password')
+    }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      throw new UnauthorizedException('Please verify your email before logging in')
     }
 
     // Generate JWT tokens
