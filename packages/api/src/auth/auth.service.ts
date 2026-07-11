@@ -37,7 +37,7 @@ export class AuthService {
       password_hash,
       firstName,
       lastName,
-      emailVerified: false,
+      emailVerified: process.env.NODE_ENV !== 'production',
     })
 
     await this.usersRepository.save(user)

@@ -254,12 +254,12 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
-      GF_SERVER_ROOT_URL: http://localhost:3001
+      GF_SERVER_ROOT_URL: http://localhost:3003
     volumes:
       - grafana_data:/var/lib/grafana
       - ./infrastructure/config/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
-      - "3001:3000"
+      - "3003:3000"
     depends_on:
       - prometheus
     networks:
@@ -362,7 +362,8 @@ volumes:
 # - Redis: docker-compose exec redis redis-cli ping
 # - API: curl http://localhost:3000/health
 # - Prometheus: curl http://localhost:9090/-/healthy
-# - Grafana: curl http://localhost:3001/api/health
+# - Dashboard: curl http://localhost:3001/health
+# - Grafana: curl http://localhost:3003/api/health
 #
 # Resource Constraints:
 # Adjust deploy.resources for Raspberry Pi performance
