@@ -1,198 +1,63 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: wise2-postgres
-    environment:
-      POSTGRES_DB: ${DB_NAME:-wise2}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-    networks:
-      - wise2-network
-
-  # Redis Cache & Sessions
-  redis:
-    image: redis:7-alpine
-    container_name: wise2-redis
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-    networks:
-      - wise2-network
-
-  # Prometheus Monitoring
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: wise2-prometheus
-    volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=30d'
-    restart: always
-    networks:
-      - wise2-network
-
-  # Grafana Dashboards
-  grafana:
-    image: grafana/grafana:latest
-    container_name: wise2-grafana
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
-      GF_INSTALL_PLUGINS: grafana-piechart-panel
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana/provisioning:/etc/grafana/provisioning
-    ports:
-      - "3001:3000"
-    depends_on:
-      - prometheus
-    restart: always
-    networks:
-      - wise2-network
-
-  # API Service
   api:
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile
-    container_name: wise2-api
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-wise2}
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET}
-      RESEND_API_KEY: ${RESEND_API_KEY}
-    ports:
-      - "3101:3001"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: always
-    networks:
-      - wise2-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Dashboard (Frontend)
-  dashboard:
-    build:
-      context: ./services/dashboard
-      dockerfile: Dockerfile
-    container_name: wise2-dashboard
-    environment:
-      NODE_ENV: production
-      NEXT_PUBLIC_API_URL: https://api.wise2.net
+    image: wise2-api:${VERSION:-latest}
     ports:
       - "3000:3000"
-    depends_on:
-      - api
-    restart: always
-    networks:
-      - wise2-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Admin Dashboard (skipped - static files only, no Dockerfile)
-  # admin:
-  #   build:
-  #     context: ./services/admin-dashboard
-  #     dockerfile: Dockerfile
-  #   container_name: wise2-admin
-  #   environment:
-  #     NODE_ENV: production
-  #     NEXT_PUBLIC_API_URL: https://api.wise2.net
-  #   ports:
-  #     - "3002:3000"
-  #   depends_on:
-  #     - api
-  #   restart: always
-  #   networks:
-  #     - wise2-network
-
-  # Discord Bot
-  bot:
-    build:
-      context: ./services/bot
-      dockerfile: Dockerfile
-    container_name: wise2-bot
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-wise2}
-      REDIS_URL: redis://redis:6379
-      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      STRIPE_KEY: ${STRIPE_KEY}
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: always
+      - postgres
+      - redis
     networks:
-      - wise2-network
+      - wise2
 
-  # Worker Queue
-  worker:
-    build:
-      context: ./services/worker
-      dockerfile: Dockerfile
-    container_name: wise2-worker
+  website:
+    image: wise2-website:${VERSION:-latest}
+    ports:
+      - "3001:3001"
     environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-wise2}
-      REDIS_URL: redis://redis:6379
-      RESEND_API_KEY: ${RESEND_API_KEY}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: always
+      NEXT_PUBLIC_API_URL: https://api.wise2.com
     networks:
-      - wise2-network
+      - wise2
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: wise2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wise2
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - wise2
+
+  traefik:
+    image: traefik:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - wise2
 
 volumes:
   postgres_data:
-    driver: local
   redis_data:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
-    driver: local
 
 networks:
-  wise2-network:
+  wise2:
     driver: bridge
