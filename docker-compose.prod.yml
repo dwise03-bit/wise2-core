@@ -1,63 +1,114 @@
 version: '3.9'
 
 services:
+  # API Service
   api:
-    image: wise2-api:${VERSION:-latest}
-    ports:
-      - "3000:3000"
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    container_name: wise2-api
     environment:
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL}
+      PORT: 3001
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-wise2}
+      REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET}
-      STRIPE_KEY: ${STRIPE_KEY}
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - wise2
-
-  website:
-    image: wise2-website:${VERSION:-latest}
+      RESEND_API_KEY: ${RESEND_API_KEY}
     ports:
-      - "3001:3001"
-    environment:
-      NEXT_PUBLIC_API_URL: https://api.wise2.com
+      - "3101:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: always
     networks:
-      - wise2
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  postgres:
-    image: postgres:15
+  # Website (Public Site with Sound Labs)
+  website:
+    build:
+      context: ./wise-touch
+      dockerfile: Dockerfile
+    container_name: wise2-website
     environment:
+      NODE_ENV: production
+    ports:
+      - "3001:3000"
+    restart: always
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Dashboard (Frontend)
+  dashboard:
+    build:
+      context: ./services/dashboard
+      dockerfile: Dockerfile
+    container_name: wise2-dashboard
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://api.wise2.net
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: always
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: wise2-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wise2}
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: wise2
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - wise2
-
-  redis:
-    image: redis:7
     ports:
-      - "6379:6379"
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - wise2-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: wise2-redis
+    ports:
+      - "6381:6379"
     volumes:
       - redis_data:/data
+    restart: always
     networks:
-      - wise2
-
-  traefik:
-    image: traefik:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - wise2
+      - wise2-network
 
 volumes:
   postgres_data:
   redis_data:
 
 networks:
-  wise2:
+  wise2-network:
+    driver: bridge
     driver: bridge

@@ -7,7 +7,7 @@ import {
   LayoutGrid, Zap, Briefcase, Cloud, GitBranch, Shield,
   MessageSquare, HardDrive, Package, Truck, BookOpen,
   CheckSquare, BarChart3, Workflow, Store, DollarSign,
-  FileText, Users, Settings, ChevronDown, Menu
+  FileText, Users, Settings, ChevronDown, Menu, Music
 } from 'lucide-react'
 import { SIDEBAR } from '@/lib/design-tokens'
 
@@ -23,6 +23,12 @@ const navItems = [
     label: 'AI',
     icon: Zap,
     href: '/ai',
+  },
+  {
+    id: 'sound-labs',
+    label: 'Sound Labs',
+    icon: Music,
+    href: '/sound-labs',
   },
   {
     id: 'business',
