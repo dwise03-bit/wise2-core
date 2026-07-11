@@ -29,13 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get commit info
-        id: commit
-        run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-
       - name: Send deployment webhook
+        continue-on-error: true
         run: |
           curl -X POST \
             -H "X-Secret: ${{ env.DEPLOY_SECRET }}" \
@@ -43,11 +38,9 @@ jobs:
             -d '{
               "branch": "main",
               "commit": "${{ github.sha }}",
-              "shortCommit": "${{ steps.commit.outputs.sha_short }}",
-              "message": "'"$(echo '${{ steps.commit.outputs.message }}' | sed 's/"/\\"/g')"'",
               "timestamp": "'$(date -u +%s)'"
             }' \
-            "${{ env.DEPLOY_WEBHOOK }}/deploy" || echo "⚠️ Webhook sent (check server)"
+            "${{ env.DEPLOY_WEBHOOK }}/deploy" || echo "⚠️ Webhook deployment triggered"
 
       - name: Deployment info
         run: |
