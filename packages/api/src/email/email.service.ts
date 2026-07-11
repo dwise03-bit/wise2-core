@@ -208,8 +208,8 @@ export class EmailService {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(`Resend API error: ${error.message}`)
+        const error = (await response.json()) as any
+        throw new Error(`Resend API error: ${error?.message || 'Unknown error'}`)
       }
 
       this.logger.log(`✉️  Email sent to ${options.to} via Resend`)

@@ -327,8 +327,8 @@ export class StripeService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(`Stripe error: ${error.error?.message || error.message}`)
+      const error = (await response.json()) as any
+      throw new Error(`Stripe error: ${error?.error?.message || error?.message || 'Unknown error'}`)
     }
 
     return response.json()
@@ -345,8 +345,8 @@ export class StripeService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(`Stripe error: ${error.error?.message || error.message}`)
+      const error = (await response.json()) as any
+      throw new Error(`Stripe error: ${error?.error?.message || error?.message || 'Unknown error'}`)
     }
 
     return response.json()
@@ -361,8 +361,8 @@ export class StripeService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(`Stripe error: ${error.error?.message || error.message}`)
+      const error = (await response.json()) as any
+      throw new Error(`Stripe error: ${error?.error?.message || error?.message || 'Unknown error'}`)
     }
 
     return response.json()
