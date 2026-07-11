@@ -6,8 +6,14 @@ on:
       - main
       - develop
     paths:
+      - 'apps/**'
+      - 'packages/**'
       - 'services/**'
       - 'infrastructure/**'
+      - 'package.json'
+      - 'turbo.json'
+      - 'postcss.config.js'
+      - 'tailwind.config.js'
       - 'docker-compose.yml'
       - '.github/workflows/deploy.yml'
 
