@@ -97,3 +97,30 @@ npm-debug.log
 dist/
 build/
 .claude/settings.local.json
+
+# Next.js
+.next/
+out/
+
+# Turbo
+.turbo/
+
+# Audio files (for development only)
+*.wav
+*.mp3
+*.flac
+*.aac
+
+# Video files
+*.mp4
+*.mov
+*.avi
+
+# Large media
+media/
+uploads/
+downloads/
+
+# IDE specific
+.vscode/settings.json
+.idea/codeStyleSettings.xml

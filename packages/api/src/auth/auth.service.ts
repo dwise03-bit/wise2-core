@@ -119,12 +119,12 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id }
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.JWT_EXPIRATION || '86400s', // 24 hours
+      expiresIn: 86400, // 24 hours in seconds
       secret: process.env.JWT_SECRET || 'dev-secret',
     })
 
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION || '604800s', // 7 days
+      expiresIn: 604800, // 7 days in seconds
       secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
     })
 

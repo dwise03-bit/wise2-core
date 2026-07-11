@@ -1,5 +1,5 @@
 export class CreateProjectDto {
-  name: string
+  name!: string
   description?: string
   project_type?: string
 }
@@ -11,7 +11,7 @@ export class UpdateProjectDto {
 }
 
 export class CreateTrackDto {
-  name: string
-  audio_url: string
-  duration: number
+  name!: string
+  audio_url!: string
+  duration!: number
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class FileStorageService {
-  async uploadFile(file: Express.Multer.File, folder: string) {
+  async uploadFile(file: any, folder: string) {
     const key = `${folder}/${file.originalname}`
     return {
       url: `https://s3.example.com/${key}`,
