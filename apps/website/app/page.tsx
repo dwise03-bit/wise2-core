@@ -1,7 +1,6 @@
-'use client'
+'use client';
 
-import { Button } from '@wise2/ui-components'
-import Link from 'next/link'
+import { Button } from '@wise2/ui-components';
 
 export default function Home() {
   return (
@@ -260,5 +259,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  )
+  );
 }

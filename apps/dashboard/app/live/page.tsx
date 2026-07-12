@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 export default function LiveCommandCenter() {
-  const [isLive, setIsLive] = useState(false)
-  const [viewerCount] = useState(1247)
+  const [isLive, setIsLive] = useState(false);
+  const [viewerCount] = useState(1247);
 
   return (
     <div className="min-h-screen bg-black p-lg">
@@ -56,5 +56,5 @@ export default function LiveCommandCenter() {
         </div>
       </div>
     </div>
-  )
+  );
 }

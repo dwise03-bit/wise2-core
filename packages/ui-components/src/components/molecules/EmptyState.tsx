@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { Icon, IconProps } from '../atoms/Icon'
+import * as React from 'react';
+import { Icon } from '../atoms/Icon';
 
 export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: keyof typeof import('lucide-react')
@@ -29,8 +29,8 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         )}
         {action && <div className="mt-6">{action}</div>}
       </div>
-    )
+    );
   }
-)
+);
 
-EmptyState.displayName = 'EmptyState'
+EmptyState.displayName = 'EmptyState';

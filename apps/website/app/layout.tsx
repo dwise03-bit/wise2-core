@@ -1,5 +1,5 @@
-import type { Metadata } from 'next'
-import './styles/globals.css'
+import type { Metadata } from 'next';
+import './styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'WISE² Enterprise | AI-Powered Brand Operating System',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: 'WISE² Enterprise',
     description: 'AI-powered brand operating system',
   },
-}
+};
 
 export default function RootLayout({
   children,
@@ -107,5 +107,5 @@ export default function RootLayout({
         </div>
       </body>
     </html>
-  )
+  );
 }

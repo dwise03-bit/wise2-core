@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { Icon } from '../atoms/Icon'
+import * as React from 'react';
+import { Icon } from '../atoms/Icon';
 
 export type AlertVariant = 'default' | 'success' | 'warning' | 'error' | 'info'
 
@@ -41,7 +41,7 @@ const variantStyles: Record<AlertVariant, { bg: string; border: string; icon: st
     icon: 'text-info',
     text: 'text-info',
   },
-}
+};
 
 const iconMap: Record<AlertVariant, keyof typeof import('lucide-react')> = {
   default: 'Info',
@@ -49,7 +49,7 @@ const iconMap: Record<AlertVariant, keyof typeof import('lucide-react')> = {
   warning: 'AlertCircle',
   error: 'XCircle',
   info: 'Info',
-}
+};
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   (
@@ -63,7 +63,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     },
     ref
   ) => {
-    const styles = variantStyles[variant]
+    const styles = variantStyles[variant];
 
     return (
       <div
@@ -93,8 +93,8 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
           </button>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Alert.displayName = 'Alert'
+Alert.displayName = 'Alert';

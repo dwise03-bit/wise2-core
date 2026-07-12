@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
@@ -20,8 +20,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       >
         {children}
       </div>
-    )
+    );
   }
-)
+);
 
-Card.displayName = 'Card'
+Card.displayName = 'Card';

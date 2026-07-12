@@ -3,4 +3,4 @@
  * Audio encoding, mixing, and synthesis utilities
  */
 
-export const version = '0.1.0'
+export const version = '0.1.0';

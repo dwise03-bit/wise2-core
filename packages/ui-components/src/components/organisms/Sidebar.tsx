@@ -1,9 +1,10 @@
-import * as React from 'react'
-import { Icon } from '../atoms/Icon'
+import * as React from 'react';
+import { Icon } from '../atoms/Icon';
 
+// eslint-disable-next-line no-unused-vars
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  collapsed?: boolean
-  onCollapsedChange?: (collapsed: boolean) => void
+  collapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
@@ -30,11 +31,11 @@ export const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           )}
         </div>
       </aside>
-    )
+    );
   }
-)
+);
 
-Sidebar.displayName = 'Sidebar'
+Sidebar.displayName = 'Sidebar';
 
 export interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -47,9 +48,9 @@ export const SidebarNav = React.forwardRef<HTMLDivElement, SidebarNavProps>(
       {...props}
     />
   )
-)
+);
 
-SidebarNav.displayName = 'SidebarNav'
+SidebarNav.displayName = 'SidebarNav';
 
 export interface SidebarItemProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -86,8 +87,8 @@ export const SidebarItem = React.forwardRef<
         {icon && <Icon name={icon} size={18} className="flex-shrink-0" />}
         {!collapsed && <span>{children}</span>}
       </button>
-    )
+    );
   }
-)
+);
 
-SidebarItem.displayName = 'SidebarItem'
+SidebarItem.displayName = 'SidebarItem';

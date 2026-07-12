@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 export default function CommunityPage() {
-  const [activeTab, setActiveTab] = useState('leaderboard')
+  const [activeTab, setActiveTab] = useState('leaderboard');
 
   return (
     <div className="min-h-screen bg-black p-lg">
@@ -68,5 +68,5 @@ export default function CommunityPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

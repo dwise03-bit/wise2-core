@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 export default function StudioPage() {
-  const [tracks, setTracks] = useState<any[]>([])
-  const [selectedTrack, setSelectedTrack] = useState<string | null>(null)
+  const [tracks] = useState<any[]>([]);
+  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
   return (
     <div className="flex h-full gap-md p-md">
@@ -124,5 +124,5 @@ export default function StudioPage() {
         </div>
       </aside>
     </div>
-  )
+  );
 }

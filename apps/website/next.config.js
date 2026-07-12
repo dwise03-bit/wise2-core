@@ -20,6 +20,6 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

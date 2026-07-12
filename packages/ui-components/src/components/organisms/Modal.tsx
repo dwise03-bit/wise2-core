@@ -1,13 +1,14 @@
-import * as React from 'react'
-import { Icon } from '../atoms/Icon'
+import * as React from 'react';
+import { Icon } from '../atoms/Icon';
 
+// eslint-disable-next-line no-unused-vars
 export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title?: string
-  description?: string
-  children: React.ReactNode
-  footer?: React.ReactNode
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title?: string;
+  description?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
@@ -24,7 +25,7 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
     },
     ref
   ) => {
-    if (!open) return null
+    if (!open) return null;
 
     return (
       <>
@@ -77,8 +78,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
           )}
         </div>
       </>
-    )
+    );
   }
-)
+);
 
-Modal.displayName = 'Modal'
+Modal.displayName = 'Modal';

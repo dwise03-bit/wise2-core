@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 export default function Admin() {
   return (
@@ -8,5 +8,5 @@ export default function Admin() {
         <p className="text-gray-400">Coming soon...</p>
       </div>
     </main>
-  )
+  );
 }

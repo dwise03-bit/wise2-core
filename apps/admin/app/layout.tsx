@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'WISE² Admin',
   description: 'Admin dashboard for WISE² Enterprise',
-}
+};
 
 export default function RootLayout({
   children,
@@ -21,5 +21,5 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-chrome font-sans">{children}</body>
     </html>
-  )
+  );
 }
