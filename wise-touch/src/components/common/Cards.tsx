@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react'
 
-interface StatCardProps {
+export interface StatCardProps {
   label: string
   value: string | number
   change?: number
@@ -15,9 +15,11 @@ interface StatCardProps {
 export function StatCard({ label, value, change, status, icon }: StatCardProps) {
   return (
     <motion.div
-      className="hud-panel-glass p-4 rounded-lg"
+      className="hud-panel-glass p-4 rounded-lg relative"
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
+      role="region"
+      aria-label={`${label}: ${value}`}
     >
       <div className="flex items-start justify-between">
         <div>
@@ -26,34 +28,33 @@ export function StatCard({ label, value, change, status, icon }: StatCardProps) 
             className="text-metric mt-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            aria-live="polite"
           >
             {value}
           </motion.p>
         </div>
-        {icon && <div className="text-blue-electric opacity-50">{icon}</div>}
+        {icon && <div className="text-blue-electric opacity-50" aria-hidden="true">{icon}</div>}
       </div>
 
       {change !== undefined && (
         <div className={`flex items-center gap-1 mt-3 text-xs ${
           change > 0 ? 'text-green-500' : 'text-red-500'
-        }`}>
-          {change > 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+        }`} aria-label={`${change > 0 ? 'increase' : 'decrease'} of ${Math.abs(change)}%`}>
+          {change > 0 ? <TrendingUp size={12} aria-hidden="true" /> : <TrendingDown size={12} aria-hidden="true" />}
           <span>{Math.abs(change)}% {change > 0 ? 'increase' : 'decrease'}</span>
         </div>
       )}
 
-      {status && (
-        <div className="absolute top-3 right-3">
-          {status === 'critical' && (
-            <AlertCircle size={16} className="text-red-500 animate-pulse" />
-          )}
+      {status === 'critical' && (
+        <div className="absolute top-3 right-3" role="status" aria-label="Critical status">
+          <AlertCircle size={16} className="text-red-500 animate-pulse" aria-hidden="true" />
         </div>
       )}
     </motion.div>
   )
 }
 
-interface MetricCardProps {
+export interface MetricCardProps {
   title: string
   value: string | number
   subtitle?: string
@@ -83,7 +84,7 @@ export function MetricCard({ title, value, subtitle, children }: MetricCardProps
   )
 }
 
-interface ChartCardProps {
+export interface ChartCardProps {
   title: string
   children: React.ReactNode
 }
@@ -104,7 +105,7 @@ export function ChartCard({ title, children }: ChartCardProps) {
   )
 }
 
-interface HUDPanelProps {
+export interface HUDPanelProps {
   title?: string
   status?: 'online' | 'offline' | 'warning'
   children: React.ReactNode
