@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { CircleDot, Play, Pause, RotateCcw, Eye, Package, TrendingUp } from 'lucide-react'
-import { PageContainer, SectionContainer } from '@/components/layout/PageContainer'
-import { PageHeader, StatGrid } from '@/components/layout/PageSections'
-import { HUDPanel, StatCard, ChartCard } from '@/components/common/Cards'
-import { Button } from '@/components/common/FormElements'
+import { CircleDot, Play, Pause, RotateCcw, Eye, Package, TrendingUp, Zap } from 'lucide-react'
+import { PageContainer } from '@/components/layout/PageContainer'
+import { PremiumPageHeader, PremiumStatGrid, PremiumSectionContainer, PremiumAlert } from '@/components/layout/PremiumSections'
+import { PremiumHUDPanel, PremiumChartCard, PremiumStatCard } from '@/components/common/PremiumCards'
+import { PremiumButton } from '@/components/common/PremiumButton'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const deployments = [
@@ -78,8 +78,8 @@ export default function DeploymentsPage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.08,
+        delayChildren: 0.15,
       },
     },
   }
@@ -89,31 +89,42 @@ export default function DeploymentsPage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4 },
+      transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
     },
   }
 
   return (
-    <PageContainer title="Deployment Center" subtitle="Manage Docker containers and Kubernetes deployments">
+    <PageContainer>
       <motion.div
+        className="space-y-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="space-y-6"
       >
+        {/* Header */}
+        <motion.div variants={itemVariants}>
+          <PremiumPageHeader
+            title="Deployment Center"
+            subtitle="Manage containerized services"
+            description="Monitor, control, and scale Docker containers and Kubernetes deployments in real-time"
+            icon={Package}
+            badge="12 Services"
+          />
+        </motion.div>
+
         {/* Key Metrics */}
         <motion.div variants={itemVariants}>
-          <StatGrid stats={[
-            { label: 'Services Running', value: running, icon: <Package size={20} /> },
-            { label: 'Avg CPU Load', value: `${avgCpu}%`, icon: <TrendingUp size={20} /> },
-            { label: 'Total Replicas', value: deployments.reduce((a, d) => a + d.replicas, 0), change: 2 },
+          <PremiumStatGrid stats={[
+            { label: 'Services Running', value: running, icon: <Package size={20} />, trend: 'up' },
+            { label: 'Avg CPU Load', value: `${avgCpu}%`, icon: <Zap size={20} />, trend: 'down' },
+            { label: 'Total Replicas', value: deployments.reduce((a, d) => a + d.replicas, 0), trend: 'neutral' },
             { label: 'Uptime SLA', value: '99.99%', change: 0 },
           ]} />
         </motion.div>
 
         {/* Deployments Section */}
         <motion.div variants={itemVariants}>
-          <SectionContainer title="Active Deployments" subtitle="View and manage deployment status">
+          <PremiumSectionContainer title="Active Deployments" subtitle="View and manage deployment status" badge="4 Services">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Deployments List */}
               <div className="lg:col-span-2 space-y-3">
@@ -124,7 +135,8 @@ export default function DeploymentsPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className={`w-full p-4 rounded border transition-all text-left ${
+                    whileHover={{ scale: 1.02, x: 4 }}
+                    className={`w-full p-5 rounded-xl border transition-all text-left ${
                       selectedDeployment === deployment.id
                         ? 'hud-panel-accent border-blue-electric/50'
                         : 'hud-panel border-steel/30 hover:border-blue-electric/30'
@@ -132,27 +144,37 @@ export default function DeploymentsPage() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CircleDot
-                            size={12}
-                            className={deployment.status === 'running' ? 'text-green-500' : 'text-chrome-dark'}
-                            fill={deployment.status === 'running' ? 'currentColor' : 'none'}
-                          />
+                        <div className="flex items-center gap-2 mb-3">
+                          <motion.div
+                            animate={{
+                              scale: deployment.status === 'running' ? [1, 1.2, 1] : 1,
+                            }}
+                            transition={{
+                              repeat: deployment.status === 'running' ? Infinity : 0,
+                              duration: 2,
+                            }}
+                          >
+                            <CircleDot
+                              size={12}
+                              className={deployment.status === 'running' ? 'text-green-500' : 'text-chrome-dark'}
+                              fill={deployment.status === 'running' ? 'currentColor' : 'none'}
+                            />
+                          </motion.div>
                           <h3 className="font-semibold text-chrome-light">{deployment.name}</h3>
-                          <span className="text-xs text-chrome-dark bg-bg-tertiary px-2 py-1 rounded">
+                          <span className="text-xs text-chrome-dark bg-bg-tertiary/50 px-2.5 py-0.5 rounded-full">
                             {deployment.service}
                           </span>
                         </div>
-                        <p className="text-xs text-chrome-dark mb-2">{deployment.image}</p>
-                        <div className="flex gap-4 text-xs">
+                        <p className="text-xs text-chrome-dark/60 mb-3 font-mono">{deployment.image}</p>
+                        <div className="flex gap-4 text-xs text-chrome-dark/70">
                           <span>CPU: {deployment.cpu}%</span>
                           <span>Memory: {deployment.memory}MB</span>
                           <span>Replicas: {deployment.replicas}</span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-chrome-dark">Uptime</p>
-                        <p className="text-sm font-mono text-chrome-light">{deployment.uptime}</p>
+                        <p className="text-xs text-chrome-dark/60">Uptime</p>
+                        <p className="text-sm font-mono text-chrome-light font-semibold">{deployment.uptime}</p>
                       </div>
                     </div>
                   </motion.button>
@@ -162,38 +184,49 @@ export default function DeploymentsPage() {
               {/* Details Panel */}
               {selected && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.4 }}
                 >
-                  <HUDPanel title={selected.name} status={selected.status === 'running' ? 'online' : 'offline'}>
-                    <div className="space-y-3">
-                      <StatCard label="CPU" value={`${selected.cpu}%`} />
-                      <StatCard label="Memory" value={`${selected.memory}MB`} />
-                      <StatCard label="Uptime" value={selected.uptime} />
-                      <StatCard label="Replicas" value={selected.replicas.toString()} />
+                  <PremiumHUDPanel
+                    title={selected.name}
+                    status={selected.status === 'running' ? 'online' : 'offline'}
+                  >
+                    <div className="space-y-4">
+                      <PremiumStatCard label="CPU" value={`${selected.cpu}%`} />
+                      <PremiumStatCard label="Memory" value={`${selected.memory}MB`} />
+                      <PremiumStatCard label="Uptime" value={selected.uptime} />
+                      <PremiumStatCard label="Replicas" value={selected.replicas.toString()} />
 
-                      <div className="pt-3 border-t border-steel/30 space-y-2">
-                        <p className="text-xs text-label">Actions</p>
+                      <div className="pt-4 border-t border-steel/20 space-y-3">
+                        <p className="text-label">Actions</p>
                         <div className="grid grid-cols-2 gap-2">
-                          <Button size="sm" variant="primary" icon={Play}>Start</Button>
-                          <Button size="sm" variant="secondary" icon={Pause}>Stop</Button>
-                          <Button size="sm" variant="secondary" icon={RotateCcw}>Restart</Button>
-                          <Button size="sm" variant="secondary" icon={Eye}>Logs</Button>
+                          <PremiumButton size="sm" variant="primary" icon={Play}>
+                            Start
+                          </PremiumButton>
+                          <PremiumButton size="sm" variant="secondary" icon={Pause}>
+                            Stop
+                          </PremiumButton>
+                          <PremiumButton size="sm" variant="secondary" icon={RotateCcw}>
+                            Restart
+                          </PremiumButton>
+                          <PremiumButton size="sm" variant="secondary" icon={Eye}>
+                            Logs
+                          </PremiumButton>
                         </div>
                       </div>
                     </div>
-                  </HUDPanel>
+                  </PremiumHUDPanel>
                 </motion.div>
               )}
             </div>
-          </SectionContainer>
+          </PremiumSectionContainer>
         </motion.div>
 
         {/* Performance Chart */}
         <motion.div variants={itemVariants}>
-          <SectionContainer title="Performance Metrics" subtitle="CPU utilization across services (24h)">
-            <ChartCard title="CPU Utilization (24h)">
+          <PremiumSectionContainer title="Performance Metrics" subtitle="CPU utilization across services (24h)" badge="Real-time">
+            <PremiumChartCard title="CPU Utilization">
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={cpuData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.1)" />
@@ -203,7 +236,7 @@ export default function DeploymentsPage() {
                     contentStyle={{
                       backgroundColor: '#1A1A1A',
                       border: '1px solid #0094FF',
-                      borderRadius: '8px',
+                      borderRadius: '12px',
                     }}
                   />
                   <Line type="monotone" dataKey="api" stroke="#0094FF" dot={false} strokeWidth={2} name="API" />
@@ -211,8 +244,8 @@ export default function DeploymentsPage() {
                   <Line type="monotone" dataKey="db" stroke="#0056CC" dot={false} strokeWidth={2} name="Database" />
                 </LineChart>
               </ResponsiveContainer>
-            </ChartCard>
-          </SectionContainer>
+            </PremiumChartCard>
+          </PremiumSectionContainer>
         </motion.div>
       </motion.div>
     </PageContainer>
