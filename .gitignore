@@ -124,3 +124,5 @@ downloads/
 # IDE specific
 .vscode/settings.json
 .idea/codeStyleSettings.xml
+.next
+Build/

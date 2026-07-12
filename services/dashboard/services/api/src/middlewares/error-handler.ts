@@ -27,7 +27,7 @@ export function errorHandler(
   error: Error | ApiError,
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ): void {
   let statusCode = 500;
   let code = 'INTERNAL_ERROR';
@@ -74,7 +74,7 @@ export function errorHandler(
 export function notFoundHandler(
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ): void {
   const error = new ApiError(
     `Route ${req.method} ${req.path} not found`,
