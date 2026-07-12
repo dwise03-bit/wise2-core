@@ -173,11 +173,11 @@ button {
    ============================================================================= */
 
 .truncate {
-  @apply overflow-hidden text-overflow-ellipsis whitespace-nowrap;
+  @apply overflow-hidden text-ellipsis whitespace-nowrap;
 }
 
 .line-clamp-1 {
-  @apply overflow-hidden text-overflow-ellipsis whitespace-nowrap;
+  @apply overflow-hidden text-ellipsis whitespace-nowrap;
 }
 
 .line-clamp-2 {
