@@ -11,6 +11,7 @@ on:
       - 'apps/**'
       - 'packages/**'
       - 'services/**'
+      - 'wise-touch/**'
       - 'package.json'
       - 'turbo.json'
       - 'docker-compose.yml'
