@@ -3,7 +3,7 @@
  * Loads and validates environment variables
  */
 
-import { config } from 'dotenv';
+import { config } from "dotenv";
 
 // Load .env file
 config();
@@ -12,7 +12,7 @@ interface Config {
   app: {
     port: number;
     host: string;
-    nodeEnv: 'development' | 'staging' | 'production';
+    nodeEnv: "development" | "staging" | "production";
     logLevel: string;
   };
   database: {
@@ -36,7 +36,7 @@ interface Config {
   };
   jwt: {
     secret: string;
-    algorithm: 'HS256' | 'HS512';
+    algorithm: "HS256" | "HS512";
     expiration: number;
     refreshExpiration: number;
   };
@@ -45,8 +45,8 @@ interface Config {
     credentials: boolean;
   };
   logging: {
-    level: 'debug' | 'info' | 'warn' | 'error';
-    format: 'json' | 'text';
+    level: "debug" | "info" | "warn" | "error";
+    format: "json" | "text";
   };
 }
 
@@ -55,7 +55,7 @@ function getEnvVariable(name: string, defaultValue?: string): string {
   if (!value && !defaultValue) {
     throw new Error(`Environment variable ${name} is not set`);
   }
-  return value || defaultValue || '';
+  return value || defaultValue || "";
 }
 
 function parseIntEnv(name: string, defaultValue?: number): number {
@@ -63,14 +63,14 @@ function parseIntEnv(name: string, defaultValue?: number): number {
   if (!value && defaultValue !== undefined) {
     return defaultValue;
   }
-  const parsed = parseInt(value || '', 10);
+  const parsed = parseInt(value || "", 10);
   if (isNaN(parsed)) {
     throw new Error(`Environment variable ${name} must be a valid number`);
   }
   return parsed;
 }
 
-function parseArrayEnv(value: string, separator = ','): string[] {
+function parseArrayEnv(value: string, separator = ","): string[] {
   return value
     .split(separator)
     .map((item) => item.trim())
@@ -80,45 +80,45 @@ function parseArrayEnv(value: string, separator = ','): string[] {
 export function loadConfig(): Config {
   return {
     app: {
-      port: parseIntEnv('API_PORT', 3000),
-      host: getEnvVariable('API_HOST', '0.0.0.0'),
-      nodeEnv: (getEnvVariable('NODE_ENV', 'development') as any),
-      logLevel: getEnvVariable('API_LOG_LEVEL', 'info'),
+      port: parseIntEnv("API_PORT", 3000),
+      host: getEnvVariable("API_HOST", "0.0.0.0"),
+      nodeEnv: getEnvVariable("NODE_ENV", "development") as any,
+      logLevel: getEnvVariable("API_LOG_LEVEL", "info"),
     },
     database: {
-      url: getEnvVariable('DATABASE_URL'),
-      host: getEnvVariable('POSTGRES_HOST', 'localhost'),
-      port: parseIntEnv('POSTGRES_PORT', 5432),
-      user: getEnvVariable('POSTGRES_USER', 'postgres'),
-      password: getEnvVariable('POSTGRES_PASSWORD', 'postgres'),
-      database: getEnvVariable('POSTGRES_DB', 'wise2_core'),
+      url: getEnvVariable("DATABASE_URL"),
+      host: getEnvVariable("POSTGRES_HOST", "localhost"),
+      port: parseIntEnv("POSTGRES_PORT", 5432),
+      user: getEnvVariable("POSTGRES_USER", "postgres"),
+      password: getEnvVariable("POSTGRES_PASSWORD", "postgres"),
+      database: getEnvVariable("POSTGRES_DB", "wise2_core"),
       pool: {
-        min: parseIntEnv('DB_POOL_MIN', 2),
-        max: parseIntEnv('DB_POOL_MAX', 10),
+        min: parseIntEnv("DB_POOL_MIN", 2),
+        max: parseIntEnv("DB_POOL_MAX", 10),
       },
     },
     redis: {
-      url: getEnvVariable('REDIS_URL', 'redis://localhost:6379'),
-      host: getEnvVariable('REDIS_HOST', 'localhost'),
-      port: parseIntEnv('REDIS_PORT', 6379),
-      password: getEnvVariable('REDIS_PASSWORD', ''),
-      db: parseIntEnv('REDIS_DB', 0),
+      url: getEnvVariable("REDIS_URL", "redis://localhost:6379"),
+      host: getEnvVariable("REDIS_HOST", "localhost"),
+      port: parseIntEnv("REDIS_PORT", 6379),
+      password: getEnvVariable("REDIS_PASSWORD", ""),
+      db: parseIntEnv("REDIS_DB", 0),
     },
     jwt: {
-      secret: getEnvVariable('JWT_SECRET'),
-      algorithm: 'HS256',
-      expiration: parseIntEnv('JWT_EXPIRATION', 86400),
-      refreshExpiration: parseIntEnv('JWT_REFRESH_EXPIRATION', 604800),
+      secret: getEnvVariable("JWT_SECRET"),
+      algorithm: "HS256",
+      expiration: parseIntEnv("JWT_EXPIRATION", 86400),
+      refreshExpiration: parseIntEnv("JWT_REFRESH_EXPIRATION", 604800),
     },
     cors: {
       origin: parseArrayEnv(
-        getEnvVariable('API_CORS_ORIGIN', 'http://localhost:3001'),
+        getEnvVariable("API_CORS_ORIGIN", "http://localhost:3001"),
       ),
       credentials: true,
     },
     logging: {
-      level: (getEnvVariable('LOG_LEVEL', 'info') as any),
-      format: (getEnvVariable('LOG_FORMAT', 'json') as any),
+      level: getEnvVariable("LOG_LEVEL", "info") as any,
+      format: getEnvVariable("LOG_FORMAT", "json") as any,
     },
   };
 }

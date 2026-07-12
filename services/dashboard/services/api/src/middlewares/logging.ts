@@ -3,9 +3,9 @@
  * Logs all incoming requests and outgoing responses
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../logger';
+import { Request, Response, NextFunction } from "express";
+import { v4 as uuidv4 } from "uuid";
+import { logger } from "../logger";
 
 declare global {
   namespace Express {
@@ -26,7 +26,7 @@ export function requestIdMiddleware(
 ): void {
   req.requestId = uuidv4();
   req.startTime = Date.now();
-  res.setHeader('X-Request-ID', req.requestId);
+  res.setHeader("X-Request-ID", req.requestId);
   next();
 }
 
@@ -38,12 +38,12 @@ export function requestLoggingMiddleware(
   _res: Response,
   next: NextFunction,
 ): void {
-  logger.debug('Incoming request', {
+  logger.debug("Incoming request", {
     requestId: req.requestId,
     method: req.method,
     path: req.path,
     ip: req.ip,
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
     timestamp: new Date().toISOString(),
   });
 
@@ -65,14 +65,14 @@ export function responseLoggingMiddleware(
   res.json = function (body: any) {
     const duration = Date.now() - req.startTime;
 
-    logger.info('Request completed', {
+    logger.info("Request completed", {
       requestId: req.requestId,
       method: req.method,
       path: req.path,
       status: res.statusCode,
       duration_ms: duration,
       ip: req.ip,
-      userAgent: req.get('User-Agent'),
+      userAgent: req.get("User-Agent"),
       timestamp: new Date().toISOString(),
     });
 
@@ -93,7 +93,7 @@ export function errorLoggingMiddleware(
 ): void {
   const duration = Date.now() - req.startTime;
 
-  logger.error('Request error', {
+  logger.error("Request error", {
     requestId: req.requestId,
     method: req.method,
     path: req.path,

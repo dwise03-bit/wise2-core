@@ -12,7 +12,7 @@ app.get("/health", (req, res) => {
     status: "ok",
     service: "api",
     uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

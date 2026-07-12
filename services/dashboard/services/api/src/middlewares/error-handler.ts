@@ -2,9 +2,9 @@
  * Global error handling middleware
  */
 
-import { Request, Response, NextFunction } from 'express';
-import { logger } from '../logger';
-import { ApiError } from './auth';
+import { Request, Response, NextFunction } from "express";
+import { logger } from "../logger";
+import { ApiError } from "./auth";
 
 interface ErrorResponse {
   success: boolean;
@@ -30,22 +30,22 @@ export function errorHandler(
   _next: NextFunction,
 ): void {
   let statusCode = 500;
-  let code = 'INTERNAL_ERROR';
-  let message = 'An unexpected error occurred';
+  let code = "INTERNAL_ERROR";
+  let message = "An unexpected error occurred";
   let details: any = undefined;
 
   if (error instanceof ApiError) {
     statusCode = error.statusCode;
     code = error.code;
     message = error.message;
-  } else if (error instanceof SyntaxError && 'body' in error) {
+  } else if (error instanceof SyntaxError && "body" in error) {
     // JSON parsing error
     statusCode = 400;
-    code = 'INVALID_REQUEST';
-    message = 'Invalid JSON in request body';
+    code = "INVALID_REQUEST";
+    message = "Invalid JSON in request body";
   } else {
     // Generic error
-    logger.error('Unexpected error', {
+    logger.error("Unexpected error", {
       error: error.message,
       stack: error.stack,
       requestId: (req as any).requestId,
@@ -79,7 +79,7 @@ export function notFoundHandler(
   const error = new ApiError(
     `Route ${req.method} ${req.path} not found`,
     404,
-    'NOT_FOUND',
+    "NOT_FOUND",
   );
   errorHandler(error, req, res, _next);
 }

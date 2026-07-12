@@ -5,6 +5,7 @@ Background job processing for Wise² Core
 ## Overview
 
 Long-running background worker for:
+
 - Scheduled jobs
 - Asynchronous task processing
 - Batch operations
