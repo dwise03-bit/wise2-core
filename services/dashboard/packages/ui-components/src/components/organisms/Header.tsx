@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   logo?: React.ReactNode
@@ -25,8 +25,8 @@ export const Header = React.forwardRef<HTMLDivElement, HeaderProps>(
           {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       </div>
-    )
+    );
   }
-)
+);
 
-Header.displayName = 'Header'
+Header.displayName = 'Header';

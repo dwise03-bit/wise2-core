@@ -4,8 +4,8 @@
  * No secrets logged. All credentials masked in output.
  */
 
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 export interface APICredential {
   name: string
@@ -30,9 +30,9 @@ export interface APIServiceConfig {
 
 @Injectable()
 export class APIManager implements OnModuleInit {
-  private readonly logger = new Logger('APIManager')
-  private apiRegistry: Map<string, APIServiceConfig> = new Map()
-  private credentials: Map<string, APICredential> = new Map()
+  private readonly logger = new Logger('APIManager');
+  private apiRegistry: Map<string, APIServiceConfig> = new Map();
+  private credentials: Map<string, APICredential> = new Map();
 
   constructor(private configService: ConfigService) {}
 
@@ -40,9 +40,9 @@ export class APIManager implements OnModuleInit {
    * Initialize API manager and register all known services
    */
   async onModuleInit() {
-    this.registerAllServices()
-    await this.validateAllCredentials()
-    this.generateInventory()
+    this.registerAllServices();
+    await this.validateAllCredentials();
+    this.generateInventory();
   }
 
   /**
@@ -66,7 +66,7 @@ export class APIManager implements OnModuleInit {
       ],
       healthCheckUrl: 'https://api.anthropic.com/health',
       documentation: 'https://docs.anthropic.com',
-    })
+    });
 
     this.registerService('openai', {
       name: 'OpenAI API',
@@ -83,7 +83,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://docs.openai.com',
-    })
+    });
 
     this.registerService('ollama', {
       name: 'Ollama Local LLM',
@@ -100,7 +100,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       connectionUrl: 'http://ollama:11434',
-    })
+    });
 
     // Communication Services
     this.registerService('discord', {
@@ -133,7 +133,7 @@ export class APIManager implements OnModuleInit {
           validated: false,
         },
       ],
-    })
+    });
 
     this.registerService('resend', {
       name: 'Resend Email Service',
@@ -150,7 +150,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://resend.com/docs',
-    })
+    });
 
     this.registerService('sendgrid', {
       name: 'SendGrid Email Service',
@@ -167,7 +167,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://sendgrid.com/docs',
-    })
+    });
 
     // Payment Services
     this.registerService('stripe', {
@@ -201,7 +201,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://stripe.com/docs/api',
-    })
+    });
 
     // Developer Services
     this.registerService('github', {
@@ -235,7 +235,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://docs.github.com/rest',
-    })
+    });
 
     // Media & Streaming Services
     this.registerService('youtube', {
@@ -253,7 +253,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://developers.google.com/youtube/v3',
-    })
+    });
 
     this.registerService('twitch', {
       name: 'Twitch API',
@@ -278,7 +278,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://dev.twitch.tv/docs/api',
-    })
+    });
 
     // Analytics Services
     this.registerService('posthog', {
@@ -296,7 +296,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       documentation: 'https://posthog.com/docs',
-    })
+    });
 
     // Database Services
     this.registerService('postgresql', {
@@ -346,7 +346,7 @@ export class APIManager implements OnModuleInit {
         },
       ],
       connectionUrl: 'postgresql://',
-    })
+    });
 
     this.registerService('redis', {
       name: 'Redis Cache',
@@ -378,7 +378,7 @@ export class APIManager implements OnModuleInit {
           validated: false,
         },
       ],
-    })
+    });
 
     // Monitoring & Logging
     this.registerService('prometheus', {
@@ -387,7 +387,7 @@ export class APIManager implements OnModuleInit {
       description: 'Metrics collection and monitoring',
       credentials: [],
       connectionUrl: 'http://prometheus:9090',
-    })
+    });
 
     this.registerService('grafana', {
       name: 'Grafana Dashboards',
@@ -396,17 +396,17 @@ export class APIManager implements OnModuleInit {
       credentials: [],
       connectionUrl: 'http://grafana:3000',
       healthCheckUrl: 'http://localhost:3003/api/health',
-    })
+    });
   }
 
   /**
    * Register a service in the API registry
    */
   private registerService(key: string, config: APIServiceConfig) {
-    this.apiRegistry.set(key, config)
+    this.apiRegistry.set(key, config);
     config.credentials.forEach((cred) => {
-      this.credentials.set(cred.envVariable, cred)
-    })
+      this.credentials.set(cred.envVariable, cred);
+    });
   }
 
   /**
@@ -418,37 +418,37 @@ export class APIManager implements OnModuleInit {
       valid: 0,
       missing: 0,
       errors: [] as string[],
-    }
+    };
 
     for (const [envVar, credential] of this.credentials) {
-      const value = this.configService.get(envVar)
+      const value = this.configService.get(envVar);
 
       if (!value) {
-        credential.status = credential.required ? 'missing' : 'template'
-        results.missing++
+        credential.status = credential.required ? 'missing' : 'template';
+        results.missing++;
 
         if (credential.required) {
           results.errors.push(
             `⚠️  MISSING REQUIRED: ${credential.name} (${envVar})`
-          )
+          );
         }
       } else {
-        credential.status = 'active'
-        credential.validated = true
-        credential.lastChecked = new Date()
-        results.valid++
+        credential.status = 'active';
+        credential.validated = true;
+        credential.lastChecked = new Date();
+        results.valid++;
       }
     }
 
     if (results.errors.length > 0) {
       this.logger.warn(
         `\n📋 CONFIGURATION WARNINGS:\n${results.errors.join('\n')}\n`
-      )
+      );
     }
 
     this.logger.log(
       `✅ API Validation Complete: ${results.valid}/${results.total} credentials configured`
-    )
+    );
   }
 
   /**
@@ -462,38 +462,38 @@ export class APIManager implements OnModuleInit {
       active: [] as string[],
       template: [] as string[],
       missing: [] as string[],
-    }
+    };
 
     for (const [key, service] of this.apiRegistry) {
-      const category = service.category
+      const category = service.category;
 
       if (!inventory.by_category[category]) {
-        inventory.by_category[category] = []
+        inventory.by_category[category] = [];
       }
-      inventory.by_category[category].push(service.name)
+      inventory.by_category[category].push(service.name);
 
       // Determine overall status
-      const statuses = service.credentials.map((c) => c.status)
+      const statuses = service.credentials.map((c) => c.status);
       if (statuses.includes('missing')) {
-        inventory.missing.push(service.name)
+        inventory.missing.push(service.name);
       } else if (statuses.includes('template')) {
-        inventory.template.push(service.name)
+        inventory.template.push(service.name);
       } else {
-        inventory.active.push(service.name)
+        inventory.active.push(service.name);
       }
     }
 
-    this.logger.log('📊 API INVENTORY SUMMARY')
+    this.logger.log('📊 API INVENTORY SUMMARY');
     this.logger.log(
       `  Active: ${inventory.active.length} | Template: ${inventory.template.length} | Missing: ${inventory.missing.length}`
-    )
+    );
   }
 
   /**
    * Get service configuration by key
    */
   getService(key: string): APIServiceConfig | undefined {
-    return this.apiRegistry.get(key)
+    return this.apiRegistry.get(key);
   }
 
   /**
@@ -502,23 +502,23 @@ export class APIManager implements OnModuleInit {
   getServicesByCategory(category: string): APIServiceConfig[] {
     return Array.from(this.apiRegistry.values()).filter(
       (s) => s.category === category
-    )
+    );
   }
 
   /**
    * Get all services
    */
   getAllServices(): APIServiceConfig[] {
-    return Array.from(this.apiRegistry.values())
+    return Array.from(this.apiRegistry.values());
   }
 
   /**
    * Get credential status (masked, never returns actual value)
    */
   getCredentialStatus(envVariable: string) {
-    const cred = this.credentials.get(envVariable)
+    const cred = this.credentials.get(envVariable);
     if (!cred) {
-      return { found: false, required: false }
+      return { found: false, required: false };
     }
 
     return {
@@ -528,7 +528,7 @@ export class APIManager implements OnModuleInit {
       status: cred.status,
       lastChecked: cred.lastChecked,
       error: cred.error,
-    }
+    };
   }
 
   /**
@@ -549,7 +549,7 @@ export class APIManager implements OnModuleInit {
           (c) => c.required
         ).length,
       })),
-    }
+    };
   }
 
   /**
@@ -579,6 +579,6 @@ export class APIManager implements OnModuleInit {
         credentials_count: service.credentials.length,
         documentation: service.documentation,
       })),
-    }
+    };
   }
 }

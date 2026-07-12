@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-chrome: #E8E8E8;
+  --color-dark-chrome: #1a1a1a;
+}
+
+@layer utilities {
+  .text-chrome {
+    color: var(--color-chrome);
+  }
+  .border-chrome {
+    border-color: var(--color-chrome);
+  }
+  .bg-chrome {
+    background-color: var(--color-chrome);
+  }
+}
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
+
+* {
+  @apply box-border;
+}
+
+html {
+  @apply scroll-smooth;
+  color-scheme: dark light;
+}
+
+body {
+  @apply bg-black font-sans;
+  color: var(--color-chrome);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode (primary) */
+:root[data-theme="dark"],
+:root:is(.dark) {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0f0f0f;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #b0b0b0;
+  --color-border: rgba(232, 232, 232, 0.2);
+  --color-accent: #00d9ff;
+}
+
+/* Light mode (secondary) */
+:root[data-theme="light"],
+:root:is(.light) {
+  --color-bg-primary: #f5f5f5;
+  --color-bg-secondary: #ffffff;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #505050;
+  --color-border: rgba(48, 48, 48, 0.2);
+  --color-accent: #0099ff;
+}
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold leading-tight;
+}
+
+h1 {
+  @apply text-4xl md:text-5xl lg:text-6xl;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  @apply text-3xl md:text-4xl;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  @apply text-2xl md:text-3xl;
+  letter-spacing: -0.01em;
+}
+
+h4 {
+  @apply text-xl md:text-2xl;
+}
+
+h5 {
+  @apply text-base md:text-lg font-semibold;
+}
+
+h6 {
+  @apply text-sm md:text-base font-semibold;
+}
+
+p {
+  @apply text-base leading-relaxed;
+}
+
+small {
+  @apply text-sm;
+}
+
+code {
+  @apply font-mono text-sm bg-gray-800 text-blue-400 px-2 py-1 rounded;
+}
+
+pre {
+  @apply font-mono text-sm bg-gray-900 p-6 rounded-lg overflow-x-auto;
+  color: var(--color-chrome);
+}
+
+/* =============================================================================
+   LINKS
+   ============================================================================= */
+
+a {
+  @apply text-blue-500 hover:text-blue-400 transition-colors duration-200 underline;
+
+  &:focus {
+    @apply outline-none ring-2 ring-offset-2 ring-blue-500;
+  }
+}
+
+/* =============================================================================
+   FORM ELEMENTS
+   ============================================================================= */
+
+input,
+textarea,
+select {
+  @apply w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-900 placeholder-gray-500 transition-colors duration-200;
+  color: var(--color-chrome);
+
+  &:focus {
+    @apply outline-none border-blue-500 ring-2 ring-blue-500 ring-opacity-20;
+  }
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+input::placeholder {
+  @apply text-gray-500;
+}
+
+textarea {
+  @apply resize-none;
+}
+
+/* =============================================================================
+   BUTTONS
+   ============================================================================= */
+
+button {
+  @apply font-medium cursor-pointer transition-all duration-200;
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  &:focus {
+    @apply outline-none ring-2 ring-offset-2 ring-blue-500;
+  }
+}
+
+/* =============================================================================
+   UTILITIES
+   ============================================================================= */
+
+.truncate {
+  @apply overflow-hidden text-overflow-ellipsis whitespace-nowrap;
+}
+
+.line-clamp-1 {
+  @apply overflow-hidden text-overflow-ellipsis whitespace-nowrap;
+}
+
+.line-clamp-2 {
+  @apply line-clamp-2;
+}
+
+.line-clamp-3 {
+  @apply line-clamp-3;
+}
+
+.gradient-blue {
+  @apply bg-gradient-to-r from-blue-600 to-blue-400;
+}
+
+.gradient-purple {
+  @apply bg-gradient-to-r from-purple-600 to-purple-400;
+}
+
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+/* =============================================================================
+   ACCESSIBILITY
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  @apply absolute -top-12 left-0 bg-blue-500 text-black px-4 py-2;
+
+  &:focus {
+    @apply top-0;
+  }
+}

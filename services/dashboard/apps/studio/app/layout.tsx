@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import '../styles/globals.css'
+import type { Metadata } from 'next';
+import '../styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'WISE Sound Labs | Professional Audio Studio',
   description: 'Create professional audio and music with AI assistance. Recording, mixing, mastering—all in one studio.',
-}
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -32,5 +32,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
       </body>
     </html>
-  )
+  );
 }

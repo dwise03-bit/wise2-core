@@ -3,9 +3,9 @@
  * Handles PostgreSQL connection lifecycle
  */
 
-import { Pool, PoolClient } from 'pg';
-import { logger } from './logger';
-import { config_ } from './config';
+import { Pool, PoolClient } from "pg";
+import { logger } from "./logger";
+import { config_ } from "./config";
 
 class Database {
   private pool: Pool;
@@ -21,16 +21,16 @@ class Database {
     });
 
     // Handle pool errors
-    this.pool.on('error', (err: Error) => {
-      logger.error('Unexpected error on idle client', { error: err });
+    this.pool.on("error", (err: Error) => {
+      logger.error("Unexpected error on idle client", { error: err });
     });
 
-    this.pool.on('connect', () => {
-      logger.debug('New client connected to pool');
+    this.pool.on("connect", () => {
+      logger.debug("New client connected to pool");
     });
 
-    this.pool.on('remove', () => {
-      logger.debug('Client removed from pool');
+    this.pool.on("remove", () => {
+      logger.debug("Client removed from pool");
     });
   }
 
@@ -40,15 +40,15 @@ class Database {
   async connect(): Promise<void> {
     try {
       const client = await this.pool.connect();
-      const result = await client.query('SELECT NOW()');
+      const result = await client.query("SELECT NOW()");
       client.release();
 
-      logger.info('Database connected successfully', {
+      logger.info("Database connected successfully", {
         timestamp: result.rows[0].now,
       });
       this.isConnected = true;
     } catch (error) {
-      logger.error('Failed to connect to database', { error });
+      logger.error("Failed to connect to database", { error });
       throw error;
     }
   }
@@ -74,7 +74,7 @@ class Database {
         rowCount: result.rowCount || 0,
       };
     } catch (error) {
-      logger.error('Database query error', {
+      logger.error("Database query error", {
         error,
         query: text,
         values,
@@ -99,10 +99,10 @@ class Database {
    */
   async healthCheck(): Promise<boolean> {
     try {
-      await this.pool.query('SELECT 1');
+      await this.pool.query("SELECT 1");
       return true;
     } catch (error) {
-      logger.error('Health check failed', { error });
+      logger.error("Health check failed", { error });
       return false;
     }
   }
@@ -125,9 +125,9 @@ class Database {
     try {
       await this.pool.end();
       this.isConnected = false;
-      logger.info('Database pool closed');
+      logger.info("Database pool closed");
     } catch (error) {
-      logger.error('Error closing database pool', { error });
+      logger.error("Error closing database pool", { error });
       throw error;
     }
   }

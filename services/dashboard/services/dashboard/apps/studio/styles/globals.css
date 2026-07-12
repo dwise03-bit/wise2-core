@@ -1,0 +1,6 @@
+@import '@wise2/ui-components/src/globals.css';
+
+/* Studio-specific styles */
+html {
+  scroll-behavior: smooth;
+}

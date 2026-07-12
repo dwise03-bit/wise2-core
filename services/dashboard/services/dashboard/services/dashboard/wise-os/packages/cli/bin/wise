@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+VERSION="0.1.0"
+
+case "$1" in
+  doctor)
+    bash "$(dirname "$0")/../lib/doctor.sh"
+    ;;
+  repair)
+    bash "$(dirname "$0")/../lib/repair.sh"
+    ;;
+  bluetooth)
+    bash "$(dirname "$0")/../lib/bluetooth.sh"
+    ;;
+  docker)
+    bash "$(dirname "$0")/../lib/docker.sh"
+    ;;
+  ai)
+    bash "$(dirname "$0")/../lib/ai.sh"
+    ;;
+  update)
+    bash "$(dirname "$0")/../lib/update.sh"
+    ;;
+  version)
+    echo "Wise OS $VERSION"
+    ;;
+  *)
+    echo "Wise OS"
+    echo
+    echo "Commands:"
+    echo "  doctor"
+    echo "  repair"
+    echo "  bluetooth"
+    echo "  docker"
+    echo "  ai"
+    echo "  update"
+    echo "  version"
+    ;;
+esac

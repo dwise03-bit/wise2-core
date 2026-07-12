@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 export enum JobType {
   SEND_EMAIL = 'send_email',
@@ -28,13 +28,13 @@ export interface Job {
 
 @Injectable()
 export class QueueService {
-  private readonly logger = new Logger('QueueService')
-  private jobQueue: Map<string, Job> = new Map()
-  private jobId = 0
+  private readonly logger = new Logger('QueueService');
+  private jobQueue: Map<string, Job> = new Map();
+  private jobId = 0;
 
   constructor(private configService: ConfigService) {
-    this.logger.log('📋 Job queue service initialized')
-    this.startWorker()
+    this.logger.log('📋 Job queue service initialized');
+    this.startWorker();
   }
 
   /**
@@ -45,7 +45,7 @@ export class QueueService {
     data: Record<string, any>,
     options?: { priority?: number; maxRetries?: number }
   ): Promise<string> {
-    const id = `job-${++this.jobId}-${Date.now()}`
+    const id = `job-${++this.jobId}-${Date.now()}`;
     const job: Job = {
       id,
       type,
@@ -55,19 +55,19 @@ export class QueueService {
       maxRetries: options?.maxRetries || 3,
       priority: options?.priority || 50,
       createdAt: new Date(),
-    }
+    };
 
-    this.jobQueue.set(id, job)
-    this.logger.log(`📍 Job enqueued: ${type} (ID: ${id})`)
+    this.jobQueue.set(id, job);
+    this.logger.log(`📍 Job enqueued: ${type} (ID: ${id})`);
 
-    return id
+    return id;
   }
 
   /**
    * Get job status
    */
   getJobStatus(jobId: string): Job | null {
-    return this.jobQueue.get(jobId) || null
+    return this.jobQueue.get(jobId) || null;
   }
 
   /**
@@ -76,50 +76,50 @@ export class QueueService {
   private startWorker(): void {
     // Process one job every 5 seconds
     setInterval(() => {
-      this.processNextJob()
-    }, 5000)
+      this.processNextJob();
+    }, 5000);
   }
 
   private async processNextJob(): Promise<void> {
     try {
       // Find pending job with highest priority
-      let nextJob: Job | null = null
-      let nextJobId: string | null = null
+      let nextJob: Job | null = null;
+      let nextJobId: string | null = null;
 
       for (const [id, job] of this.jobQueue.entries()) {
         if (job.status === 'pending') {
           if (!nextJob || job.priority > nextJob.priority) {
-            nextJob = job
-            nextJobId = id
+            nextJob = job;
+            nextJobId = id;
           }
         }
       }
 
       if (!nextJob || !nextJobId) {
-        return
+        return;
       }
 
       // Process the job
-      nextJob.status = 'processing'
-      nextJob.processedAt = new Date()
+      nextJob.status = 'processing';
+      nextJob.processedAt = new Date();
 
       try {
-        await this.executeJob(nextJob)
-        nextJob.status = 'completed'
-        this.logger.log(`✅ Job completed: ${nextJob.id}`)
+        await this.executeJob(nextJob);
+        nextJob.status = 'completed';
+        this.logger.log(`✅ Job completed: ${nextJob.id}`);
       } catch (error) {
-        nextJob.retries++
+        nextJob.retries++;
         if (nextJob.retries >= nextJob.maxRetries) {
-          nextJob.status = 'failed'
-          nextJob.error = error instanceof Error ? error.message : String(error)
-          this.logger.error(`❌ Job failed after ${nextJob.retries} retries: ${nextJob.id}`)
+          nextJob.status = 'failed';
+          nextJob.error = error instanceof Error ? error.message : String(error);
+          this.logger.error(`❌ Job failed after ${nextJob.retries} retries: ${nextJob.id}`);
         } else {
-          nextJob.status = 'pending'
-          this.logger.warn(`⚠️  Job retry ${nextJob.retries}/${nextJob.maxRetries}: ${nextJob.id}`)
+          nextJob.status = 'pending';
+          this.logger.warn(`⚠️  Job retry ${nextJob.retries}/${nextJob.maxRetries}: ${nextJob.id}`);
         }
       }
     } catch (error) {
-      this.logger.error(`Worker error: ${error instanceof Error ? error.message : String(error)}`)
+      this.logger.error(`Worker error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -129,56 +129,56 @@ export class QueueService {
   private async executeJob(job: Job): Promise<void> {
     switch (job.type) {
       case JobType.SEND_EMAIL:
-        await this.executeSendEmail(job)
-        break
+        await this.executeSendEmail(job);
+        break;
       case JobType.SEND_BULK_EMAILS:
-        await this.executeSendBulkEmails(job)
-        break
+        await this.executeSendBulkEmails(job);
+        break;
       case JobType.PROCESS_INVOICE:
-        await this.executeProcessInvoice(job)
-        break
+        await this.executeProcessInvoice(job);
+        break;
       case JobType.HANDLE_STRIPE_EVENT:
-        await this.executeHandleStripeEvent(job)
-        break
+        await this.executeHandleStripeEvent(job);
+        break;
       case JobType.CLEANUP_SESSIONS:
-        await this.executeCleanupSessions(job)
-        break
+        await this.executeCleanupSessions(job);
+        break;
       case JobType.ARCHIVE_EVENTS:
-        await this.executeArchiveEvents(job)
-        break
+        await this.executeArchiveEvents(job);
+        break;
       default:
-        throw new Error(`Unknown job type: ${job.type}`)
+        throw new Error(`Unknown job type: ${job.type}`);
     }
   }
 
   private async executeSendEmail(job: Job): Promise<void> {
     // TODO: Call email service to send email
-    this.logger.log(`📧 Executing send_email job: ${job.data.to}`)
+    this.logger.log(`📧 Executing send_email job: ${job.data.to}`);
   }
 
   private async executeSendBulkEmails(job: Job): Promise<void> {
     // TODO: Send multiple emails
-    this.logger.log(`📧 Executing send_bulk_emails job: ${job.data.count} emails`)
+    this.logger.log(`📧 Executing send_bulk_emails job: ${job.data.count} emails`);
   }
 
   private async executeProcessInvoice(job: Job): Promise<void> {
     // TODO: Process invoice generation
-    this.logger.log(`💳 Executing process_invoice job: ${job.data.invoiceId}`)
+    this.logger.log(`💳 Executing process_invoice job: ${job.data.invoiceId}`);
   }
 
   private async executeHandleStripeEvent(job: Job): Promise<void> {
     // TODO: Handle Stripe webhook event
-    this.logger.log(`🪝 Executing handle_stripe_event job: ${job.data.eventType}`)
+    this.logger.log(`🪝 Executing handle_stripe_event job: ${job.data.eventType}`);
   }
 
   private async executeCleanupSessions(job: Job): Promise<void> {
     // TODO: Clean up old sessions
-    this.logger.log(`🧹 Executing cleanup_sessions job`)
+    this.logger.log(`🧹 Executing cleanup_sessions job`);
   }
 
   private async executeArchiveEvents(job: Job): Promise<void> {
     // TODO: Archive old events
-    this.logger.log(`📦 Executing archive_events job`)
+    this.logger.log(`📦 Executing archive_events job`);
   }
 
   /**
@@ -197,15 +197,15 @@ export class QueueService {
       processing: 0,
       completed: 0,
       failed: 0,
-    }
+    };
 
     for (const job of this.jobQueue.values()) {
-      if (job.status === 'pending') stats.pending++
-      else if (job.status === 'processing') stats.processing++
-      else if (job.status === 'completed') stats.completed++
-      else if (job.status === 'failed') stats.failed++
+      if (job.status === 'pending') stats.pending++;
+      else if (job.status === 'processing') stats.processing++;
+      else if (job.status === 'completed') stats.completed++;
+      else if (job.status === 'failed') stats.failed++;
     }
 
-    return stats
+    return stats;
   }
 }

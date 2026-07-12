@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common'
-import { ModulesService } from './modules.service'
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { ModulesService } from './modules.service';
 
 @Controller('v1/modules')
 export class ModulesController {
@@ -7,16 +7,16 @@ export class ModulesController {
 
   @Get()
   async getModules() {
-    return await this.modulesService.getModules()
+    return await this.modulesService.getModules();
   }
 
   @Get(':id')
   async getModuleStatus(@Param('id') moduleId: string) {
-    return await this.modulesService.getModuleStatus(moduleId)
+    return await this.modulesService.getModuleStatus(moduleId);
   }
 
   @Post(':id/enable')
   async enableModule(@Param('id') moduleId: string, @Body() dto: { user_id: string }) {
-    return await this.modulesService.enableModule(dto.user_id, moduleId)
+    return await this.modulesService.enableModule(dto.user_id, moduleId);
   }
 }

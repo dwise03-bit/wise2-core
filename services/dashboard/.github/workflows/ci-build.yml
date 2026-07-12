@@ -1,4 +1,7 @@
 name: CI - Build
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: false
+
 
 on:
   push:
@@ -64,12 +67,15 @@ jobs:
       - name: Build and push API image
         uses: docker/build-push-action@v4
         with:
+<<<<<<< HEAD
           context: services/api
           push: ${{ github.event_name == 'push' }}
+=======
+          context: services/dashboard/services/api
+          push: false
+>>>>>>> 7ca3905d8a1cd952aeb4bb949ffc9c6d03f65c61
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:buildcache,mode=max
 
   build-dashboard:
     name: Build Dashboard Service
@@ -108,12 +114,15 @@ jobs:
       - name: Build and push Dashboard image
         uses: docker/build-push-action@v4
         with:
+<<<<<<< HEAD
           context: services/dashboard
           push: ${{ github.event_name == 'push' }}
+=======
+          context: services/dashboard/services/dashboard
+          push: false
+>>>>>>> 7ca3905d8a1cd952aeb4bb949ffc9c6d03f65c61
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:buildcache,mode=max
 
   build-worker:
     name: Build Worker Service
@@ -152,12 +161,15 @@ jobs:
       - name: Build and push Worker image
         uses: docker/build-push-action@v4
         with:
+<<<<<<< HEAD
           context: services/worker
           push: ${{ github.event_name == 'push' }}
+=======
+          context: services/dashboard/services/worker
+          push: false
+>>>>>>> 7ca3905d8a1cd952aeb4bb949ffc9c6d03f65c61
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/worker:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/worker:buildcache,mode=max
 
   build-report:
     name: Build Report

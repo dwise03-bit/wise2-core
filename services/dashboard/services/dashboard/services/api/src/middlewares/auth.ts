@@ -3,16 +3,16 @@
  * Validates JWT tokens and extracts user context
  */
 
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { config_ } from '../config';
-import { logger } from '../logger';
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { config_ } from "../config";
+import { logger } from "../logger";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: 'admin' | 'operator' | 'developer' | 'viewer';
+    role: "admin" | "operator" | "developer" | "viewer";
     permissions: string[];
   };
 }
@@ -24,7 +24,7 @@ export class ApiError extends Error {
     public code: string,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -33,7 +33,7 @@ export class ApiError extends Error {
  */
 export function extractToken(req: Request): string | null {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
   return authHeader.substring(7);
@@ -49,10 +49,10 @@ export function verifyToken(token: string): any {
     });
     return decoded;
   } catch (error: any) {
-    if (error.name === 'TokenExpiredError') {
-      throw new ApiError('Token has expired', 401, 'TOKEN_EXPIRED');
+    if (error.name === "TokenExpiredError") {
+      throw new ApiError("Token has expired", 401, "TOKEN_EXPIRED");
     }
-    throw new ApiError('Invalid token', 401, 'INVALID_TOKEN');
+    throw new ApiError("Invalid token", 401, "INVALID_TOKEN");
   }
 }
 
@@ -69,11 +69,7 @@ export function authenticate(
     const token = extractToken(req);
 
     if (!token) {
-      throw new ApiError(
-        'Missing authentication token',
-        401,
-        'UNAUTHORIZED',
-      );
+      throw new ApiError("Missing authentication token", 401, "UNAUTHORIZED");
     }
 
     const decoded = verifyToken(token);
@@ -85,7 +81,7 @@ export function authenticate(
       permissions: decoded.permissions || [],
     };
 
-    logger.debug('User authenticated', {
+    logger.debug("User authenticated", {
       userId: req.user.id,
       role: req.user.role,
     });
@@ -101,12 +97,12 @@ export function authenticate(
         },
       });
     } else {
-      logger.error('Authentication error', { error });
+      logger.error("Authentication error", { error });
       res.status(401).json({
         success: false,
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'Authentication failed',
+          code: "UNAUTHORIZED",
+          message: "Authentication failed",
         },
       });
     }
@@ -123,15 +119,15 @@ export function requirePermission(permission: string) {
       res.status(401).json({
         success: false,
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'User not authenticated',
+          code: "UNAUTHORIZED",
+          message: "User not authenticated",
         },
       });
       return;
     }
 
     if (!req.user.permissions.includes(permission)) {
-      logger.warn('Permission denied', {
+      logger.warn("Permission denied", {
         userId: req.user.id,
         requiredPermission: permission,
       });
@@ -139,8 +135,8 @@ export function requirePermission(permission: string) {
       res.status(403).json({
         success: false,
         error: {
-          code: 'FORBIDDEN',
-          message: 'Insufficient permissions',
+          code: "FORBIDDEN",
+          message: "Insufficient permissions",
           details: {
             required_permission: permission,
             user_role: req.user.role,
@@ -163,15 +159,15 @@ export function requireRole(...roles: string[]) {
       res.status(401).json({
         success: false,
         error: {
-          code: 'UNAUTHORIZED',
-          message: 'User not authenticated',
+          code: "UNAUTHORIZED",
+          message: "User not authenticated",
         },
       });
       return;
     }
 
     if (!roles.includes(req.user.role)) {
-      logger.warn('Role denied', {
+      logger.warn("Role denied", {
         userId: req.user.id,
         userRole: req.user.role,
         requiredRoles: roles,
@@ -180,8 +176,8 @@ export function requireRole(...roles: string[]) {
       res.status(403).json({
         success: false,
         error: {
-          code: 'FORBIDDEN',
-          message: 'Insufficient role',
+          code: "FORBIDDEN",
+          message: "Insufficient role",
           details: {
             required_roles: roles,
             user_role: req.user.role,

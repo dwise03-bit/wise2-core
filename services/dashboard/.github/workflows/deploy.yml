@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 name: Deploy - Staging & Production
+=======
+name: Deploy to Production
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: false
+
+>>>>>>> 7ca3905d8a1cd952aeb4bb949ffc9c6d03f65c61
 
 on:
   push:

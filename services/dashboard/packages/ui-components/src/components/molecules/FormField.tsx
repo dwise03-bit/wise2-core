@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 
 export interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string
@@ -37,8 +37,8 @@ export const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
           <p className="text-xs text-chrome/60">{helperText}</p>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-FormField.displayName = 'FormField'
+FormField.displayName = 'FormField';

@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common'
-import { CommunityService } from './community.service'
-import { CommunityController } from './community.controller'
+import { Module } from '@nestjs/common';
+import { CommunityService } from './community.service';
+import { CommunityController } from './community.controller';
 
 @Module({
   controllers: [CommunityController],

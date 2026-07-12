@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -16,13 +16,13 @@ const variantStyles: Record<ButtonVariant, string> = {
   secondary: 'bg-purple-500 hover:bg-purple-400 active:bg-purple-600 text-black',
   tertiary: 'bg-transparent border border-chrome hover:bg-gray-900 text-chrome',
   danger: 'bg-red-500 hover:bg-red-400 active:bg-red-600 text-black',
-}
+};
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: 'px-sm py-xs text-sm h-8',
   md: 'px-md py-sm text-base h-10',
   lg: 'px-lg py-md text-lg h-12',
-}
+};
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -64,8 +64,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           children
         )}
       </button>
-    )
+    );
   }
-)
+);
 
-Button.displayName = 'Button'
+Button.displayName = 'Button';

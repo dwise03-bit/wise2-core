@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, HUDPanel } from '@/components/enterprise';
+import { Button } from '@/components/enterprise';
 
 export default function HomePage() {
   return (

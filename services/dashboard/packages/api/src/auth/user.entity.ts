@@ -1,37 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id!: string
+  id!: string;
 
   @Column({ unique: true })
-  email!: string
+  email!: string;
 
   @Column()
-  password_hash!: string
+  password_hash!: string;
 
   @Column()
-  firstName!: string
+  firstName!: string;
 
   @Column()
-  lastName!: string
+  lastName!: string;
 
   @Column({ default: false })
-  emailVerified!: boolean
+  emailVerified!: boolean;
 
   @Column({ nullable: true })
-  emailVerificationToken?: string
+  emailVerificationToken?: string;
 
   @Column({ nullable: true })
-  passwordResetToken?: string
+  passwordResetToken?: string;
 
   @Column({ nullable: true })
-  passwordResetExpires?: Date
+  passwordResetExpires?: Date;
 
   @CreateDateColumn()
-  createdAt!: Date
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date
+  updatedAt!: Date;
 }

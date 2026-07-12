@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common'
-import { CreateProjectDto, UpdateProjectDto } from './dto'
+import { Injectable } from '@nestjs/common';
+import { CreateProjectDto, UpdateProjectDto } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -11,9 +11,9 @@ export class ProjectsService {
       status: 'draft',
       created_at: new Date(),
       updated_at: new Date(),
-    }
+    };
     // Database: INSERT into projects
-    return project
+    return project;
   }
 
   async findAll(userId: string, limit = 20, offset = 0) {
@@ -23,51 +23,51 @@ export class ProjectsService {
       total: 0,
       limit,
       offset,
-    }
+    };
   }
 
   async findOne(projectId: string, userId: string) {
     // Database: SELECT * FROM projects WHERE id = projectId AND owner_id = userId
-    return null
+    return null;
   }
 
   async update(projectId: string, userId: string, updateProjectDto: UpdateProjectDto) {
     // Database: UPDATE projects SET ... WHERE id = projectId AND owner_id = userId
-    return { success: true }
+    return { success: true };
   }
 
   async delete(projectId: string, userId: string) {
     // Database: DELETE FROM projects WHERE id = projectId AND owner_id = userId
-    return { success: true }
+    return { success: true };
   }
 
   async addTrack(projectId: string, trackData: any) {
     // Database: INSERT INTO tracks (project_id, ...)
-    return { id: 'track-uuid', ...trackData }
+    return { id: 'track-uuid', ...trackData };
   }
 
   async getTracks(projectId: string) {
     // Database: SELECT * FROM tracks WHERE project_id = projectId ORDER BY position
-    return []
+    return [];
   }
 
   async updateTrack(projectId: string, trackId: string, trackData: any) {
     // Database: UPDATE tracks SET ... WHERE id = trackId AND project_id = projectId
-    return { success: true }
+    return { success: true };
   }
 
   async deleteTrack(projectId: string, trackId: string) {
     // Database: DELETE FROM tracks WHERE id = trackId AND project_id = projectId
-    return { success: true }
+    return { success: true };
   }
 
   async createVersion(projectId: string, versionData: any) {
     // Database: INSERT INTO versions
-    return { id: 'version-uuid', ...versionData }
+    return { id: 'version-uuid', ...versionData };
   }
 
   async getVersions(projectId: string) {
     // Database: SELECT * FROM versions WHERE project_id = projectId ORDER BY created_at DESC
-    return []
+    return [];
   }
 }
