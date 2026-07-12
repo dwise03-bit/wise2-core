@@ -68,11 +68,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: services/dashboard/services/api
-          push: ${{ github.event_name == 'push' }}
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:buildcache,mode=max
 
   build-dashboard:
     name: Build Dashboard Service
@@ -112,11 +110,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: services/dashboard/services/dashboard
-          push: ${{ github.event_name == 'push' }}
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/dashboard:buildcache,mode=max
 
   build-worker:
     name: Build Worker Service
@@ -156,11 +152,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: services/dashboard/services/worker
-          push: ${{ github.event_name == 'push' }}
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/worker:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/worker:buildcache,mode=max
 
   build-report:
     name: Build Report
