@@ -5,6 +5,11 @@ import '@/styles/globals.css'
 export const metadata: Metadata = {
   title: 'WISE TOUCH - Organized Chaos Command Center',
   description: 'Premium SaaS operating system for controlling your entire business',
+  other: {
+    'cache-control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'pragma': 'no-cache',
+    'expires': '0',
+  },
 }
 
 export const viewport: Viewport = {
