@@ -59,7 +59,7 @@ export async function createServer(): Promise<Express> {
   // ============================================================================
   // Health Check Endpoint (No Auth Required)
   // ============================================================================
-  app.get('/health', async (req: Request, res: Response) => {
+  app.get('/health', async (_req: Request, res: Response) => {
     try {
       const isHealthy = await database.healthCheck();
       const status = isHealthy ? 'ok' : 'degraded';
@@ -83,7 +83,7 @@ export async function createServer(): Promise<Express> {
   // ============================================================================
   // Status Endpoint (No Auth Required)
   // ============================================================================
-  app.get('/status', (req: Request, res: Response) => {
+  app.get('/status', (_req: Request, res: Response) => {
     res.json({
       success: true,
       data: {
@@ -101,7 +101,7 @@ export async function createServer(): Promise<Express> {
   // ============================================================================
 
   // Auth routes (to be implemented in separate module)
-  app.post('/api/v1/auth/login', (req: Request, res: Response) => {
+  app.post('/api/v1/auth/login', (_req: Request, res: Response) => {
     res.status(501).json({
       success: false,
       error: {
@@ -112,7 +112,7 @@ export async function createServer(): Promise<Express> {
   });
 
   // Protected routes require authentication
-  app.get('/api/v1/users', authenticate, (req: Request, res: Response) => {
+  app.get('/api/v1/users', authenticate, (_req: Request, res: Response) => {
     res.status(501).json({
       success: false,
       error: {

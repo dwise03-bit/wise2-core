@@ -6,13 +6,6 @@
 import winston, { Logger, transports, format } from 'winston';
 import { config_ } from './config';
 
-const logLevelMap = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3,
-};
-
 const customFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   format.errors({ stack: true }),

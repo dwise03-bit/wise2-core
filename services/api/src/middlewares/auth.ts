@@ -15,7 +15,6 @@ export interface AuthenticatedRequest extends Request {
     role: 'admin' | 'operator' | 'developer' | 'viewer';
     permissions: string[];
   };
-  requestId?: string;
 }
 
 export class ApiError extends Error {
@@ -202,7 +201,7 @@ export function requireRole(...roles: string[]) {
  */
 export function optionalAuth(
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   try {

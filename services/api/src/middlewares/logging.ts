@@ -35,7 +35,7 @@ export function requestIdMiddleware(
  */
 export function requestLoggingMiddleware(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   logger.debug('Incoming request', {
