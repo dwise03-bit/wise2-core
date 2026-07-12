@@ -88,7 +88,7 @@ export function responseLoggingMiddleware(
 export function errorLoggingMiddleware(
   error: Error,
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   const duration = Date.now() - req.startTime;
