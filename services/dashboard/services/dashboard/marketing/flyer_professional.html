@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise² Core - Enterprise Foundation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Print ready: 8.5" x 11" @ 300 DPI */
+        .flyer {
+            width: 8.5in;
+            height: 11in;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            position: relative;
+            overflow: hidden;
+            color: #1F2937;
+        }
+
+        /* HEADER - Bold Visual Impact */
+        .header {
+            background: linear-gradient(135deg, #0066CC 0%, #003D99 50%, #001F4D 100%);
+            position: relative;
+            padding: 0.3in 0.4in;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.3in;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            right: -100px;
+            top: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-section {
+            font-size: 2.4em;
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .logo-section .main {
+            display: block;
+            font-size: 1em;
+        }
+
+        .logo-section .super {
+            font-size: 0.6em;
+            vertical-align: super;
+        }
+
+        .tagline-main {
+            color: white;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 0.08in;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .tagline-sub {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.65em;
+            margin-top: 0.04in;
+            font-weight: 400;
+        }
+
+        /* HERO STATS - Eye Catching Metrics */
+        .hero-stats {
+            background: linear-gradient(to bottom, #f8f9fa 0%, #f0f3ff 100%);
+            padding: 0.25in 0.4in;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.2in;
+            border-bottom: 2px solid #0066CC;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 0.15in;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #0066CC;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: #0066CC;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.65em;
+            color: #6B7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.08in;
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            padding: 0.3in 0.4in;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3in;
+            align-content: start;
+        }
+
+        .content-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15in;
+        }
+
+        .content-right {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15in;
+        }
+
+        .headline {
+            font-size: 1.6em;
+            font-weight: 800;
+            color: #0066CC;
+            line-height: 1.1;
+        }
+
+        .subheadline {
+            font-size: 0.8em;
+            color: #6B7280;
+            line-height: 1.4;
+            margin-bottom: 0.1in;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.08in;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.75em;
+            line-height: 1.3;
+        }
+
+        .feature::before {
+            content: '▸';
+            color: #10B981;
+            font-weight: 900;
+            margin-right: 0.1in;
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .feature strong {
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .badge-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.1in;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #F0F4FF 0%, #F3EDFF 100%);
+            padding: 0.1in 0.12in;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: #0066CC;
+            text-align: center;
+            border-left: 2px solid #0066CC;
+        }
+
+        .badge.alt {
+            border-left-color: #7C3AED;
+            color: #7C3AED;
+        }
+
+        .badge.green {
+            border-left-color: #10B981;
+            color: #10B981;
+        }
+
+        .emphasis-box {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFEED4 100%);
+            border-left: 3px solid #F59E0B;
+            padding: 0.12in;
+            border-radius: 4px;
+            font-size: 0.75em;
+            line-height: 1.3;
+            color: #78350F;
+        }
+
+        .emphasis-box strong {
+            color: #0066CC;
+        }
+
+        /* FOOTER - Strong CTA */
+        .footer {
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+            color: white;
+            padding: 0.2in 0.4in;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.2in;
+            align-items: center;
+            border-top: 3px solid #0066CC;
+        }
+
+        .cta-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.05in;
+        }
+
+        .cta-text {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #10B981;
+        }
+
+        .cta-description {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.3;
+        }
+
+        .cta-link {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer-badges {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.08in;
+            text-align: center;
+        }
+
+        .footer-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.08in;
+            border-radius: 4px;
+            font-size: 0.65em;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-badge .value {
+            color: #10B981;
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 0.02in;
+        }
+
+        /* Print Optimization */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .flyer {
+                width: 8.5in;
+                height: 11in;
+                margin: 0;
+                box-shadow: none;
+                page-break-after: avoid;
+            }
+        }
+
+        @media screen {
+            .flyer {
+                max-width: 8.5in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flyer">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <span class="main">WISE<span class="super">²</span></span>
+                </div>
+                <div class="tagline-main">CORE</div>
+                <div class="tagline-sub">Enterprise Foundation Platform</div>
+            </div>
+        </div>
+
+        <!-- HERO STATS -->
+        <div class="hero-stats">
+            <div class="stat-card">
+                <div class="stat-value">7,250+</div>
+                <div class="stat-label">Lines of Code</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5 min</div>
+                <div class="stat-label">Setup</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">80%+</div>
+                <div class="stat-label">Test Coverage</div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <div class="content-left">
+                <div class="headline">Production-Ready</div>
+                <div class="subheadline">Complete enterprise foundation in 3 weeks. Zero technical debt. Ship with confidence.</div>
+
+                <div class="features-grid">
+                    <div class="feature"><strong>✓ Enterprise Security</strong> RBAC, audit logs, encryption</div>
+                    <div class="feature"><strong>✓ CI/CD Pipeline</strong> 5 automated workflows</div>
+                    <div class="feature"><strong>✓ Full Test Suite</strong> 80%+ coverage enforced</div>
+                    <div class="feature"><strong>✓ Auto Backups</strong> Daily with 30-day retention</div>
+                </div>
+            </div>
+
+            <div class="content-right">
+                <div class="headline" style="color: #10B981;">What's Included</div>
+
+                <div class="badge-group">
+                    <div class="badge">PostgreSQL Schema</div>
+                    <div class="badge alt">Redis Caching</div>
+                    <div class="badge green">Docker Stack</div>
+                    <div class="badge">Prometheus</div>
+                    <div class="badge alt">Grafana Dashboards</div>
+                    <div class="badge green">API Standards</div>
+                </div>
+
+                <div class="emphasis-box">
+                    <strong>99.9%</strong> uptime design • <strong>15 min</strong> RTO • <strong>$300K+</strong> cost avoidance vs traditional build
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="cta-section">
+                <div class="cta-text">Ready to Build?</div>
+                <div class="cta-description">Phase 1 Foundation Complete • Phase 2 Implementation Ready • Ship October 2026</div>
+                <div class="cta-link">github.com/dwise03-bit/wise2-core</div>
+            </div>
+            <div class="footer-badges">
+                <div class="footer-badge">
+                    <div class="value">✓</div>
+                    Phase 1 Complete
+                </div>
+                <div class="footer-badge">
+                    <div class="value">→</div>
+                    Phase 2 Ready
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

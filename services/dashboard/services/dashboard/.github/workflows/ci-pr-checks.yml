@@ -1,0 +1,154 @@
+name: CI - PR Checks
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [ opened, synchronize, reopened ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-checks:
+    name: PR Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR description
+        run: |
+          if [ -z "${{ github.event.pull_request.body }}" ]; then
+            echo "❌ PR description is empty"
+            exit 1
+          fi
+
+      - name: Verify branch naming
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          if [[ ! "$BRANCH" =~ ^(feature|fix|refactor|docs|chore)/ ]]; then
+            echo "⚠ Branch doesn't follow naming convention (feature/fix/refactor/docs/chore/)"
+          fi
+
+      - name: Check for WIP markers
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" =~ (WIP|DRAFT|\[wip\]|\[draft\]) ]]; then
+            echo "⚠ PR is marked as WIP/DRAFT"
+          fi
+
+      - name: Verify file changes
+        run: |
+          # Check if PR modifies too many files (potential too-broad change)
+          FILES_CHANGED=$(git diff --name-only origin/main... | wc -l)
+          if [ "$FILES_CHANGED" -gt 50 ]; then
+            echo "⚠ PR modifies $FILES_CHANGED files (consider breaking into smaller PRs)"
+          fi
+
+  check-labels:
+    name: Validate PR Labels
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for at least one label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels;
+            if (labels.length === 0) {
+              core.warning('PR has no labels - consider adding: bug, feature, documentation, etc');
+            }
+
+  check-reviewers:
+    name: Suggest Reviewers
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+
+    steps:
+      - name: Request reviewers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reviewers = [
+              'dwise03', // Primary reviewer
+            ];
+
+            github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              reviewers: reviewers
+            }).catch(err => {
+              if (err.status !== 422) throw err; // 422 = no eligible reviewers
+            });
+
+  ci-status-check:
+    name: CI Status Check
+    runs-on: ubuntu-latest
+    needs: [ pr-checks, check-labels ]
+    if: always()
+
+    steps:
+      - name: Report CI Status
+        run: |
+          echo "✓ PR checks completed"
+          echo "Please ensure all CI workflows pass before merging"
+
+  comment-checklist:
+    name: Add PR Checklist Comment
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+
+    steps:
+      - name: Comment with checklist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const checklist = `## PR Checklist ✓
+
+            - [ ] Tests pass locally (\`npm test\`)
+            - [ ] Code is linted (\`npm run lint\`)
+            - [ ] No console.log in production code
+            - [ ] Documentation updated
+            - [ ] No breaking changes (or clearly documented)
+            - [ ] Commit messages follow format (\`type(scope): subject\`)
+
+            ## CI Checks
+            All of the following must pass:
+            - [ ] Tests (ci-test.yml)
+            - [ ] Linting (ci-lint.yml)
+            - [ ] Build (ci-build.yml)
+            - [ ] Security (ci-security.yml)
+
+            **Note:** Merge will be blocked until all checks pass.`;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: checklist
+            });
+
+  pr-report:
+    name: PR Summary Report
+    runs-on: ubuntu-latest
+    needs: [ pr-checks, check-labels, check-reviewers ]
+    if: always()
+
+    steps:
+      - name: Summary
+        run: |
+          echo "## PR Quality Report"
+          echo ""
+          echo "✓ PR validation complete"
+          echo "✓ Awaiting CI workflow results"
+          echo ""
+          echo "The following checks must pass before merge:"
+          echo "  1. Tests (ci-test.yml)"
+          echo "  2. Linting (ci-lint.yml)"
+          echo "  3. Build (ci-build.yml)"
+          echo "  4. Security (ci-security.yml)"
