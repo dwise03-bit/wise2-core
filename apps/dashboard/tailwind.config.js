@@ -15,4 +15,5 @@ module.exports = {
       // Dashboard-specific theme extensions (if any)
       // Brand tokens come from the preset
     },
+  },
 }

@@ -15,4 +15,5 @@ module.exports = {
       // Admin-specific theme extensions (if any)
       // Brand tokens come from the preset
     },
+  },
 }
