@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { PageContainer, SectionContainer } from '@/components/layout/PageContainer'
-import { PageHeader, StatGrid, AlertBanner } from '@/components/layout/PageSections'
-import { StatCard, MetricCard, ChartCard, HUDPanel } from '@/components/common/Cards'
-import { TrendingUp, Users, Zap, AlertTriangle, Globe, Shield, Activity, Server, Sparkles } from 'lucide-react'
+import { PremiumPageHeader, PremiumStatGrid, PremiumSectionContainer, PremiumAlert } from '@/components/layout/PremiumSections'
+import { PremiumStatCard, PremiumChartCard, PremiumHUDPanel } from '@/components/common/PremiumCards'
+import { TrendingUp, Users, Zap, AlertTriangle, Globe, Shield, Activity, Server, Sparkles, Bell } from 'lucide-react'
 import { subscribeToStats, SystemStats } from '@/services/wiseos'
 
 // Mock data
@@ -38,16 +38,16 @@ const deploymentData = [
 ]
 
 const getSystemMetrics = (stats: SystemStats) => [
-  { label: 'CPU Usage', value: `${Math.round(stats.cpu)}%`, change: 12, icon: <Activity size={20} /> },
-  { label: 'Memory', value: `${stats.mem.toFixed(1)}GB`, change: -5, icon: <Server size={20} /> },
-  { label: 'Temperature', value: `${Math.round(stats.temp)}°C`, change: 2, icon: <Zap size={20} /> },
-  { label: 'Deployments', value: '14', change: 2, icon: <Globe size={20} /> },
+  { label: 'CPU Usage', value: `${Math.round(stats.cpu)}%`, icon: <Activity size={20} />, trend: 'up' as const },
+  { label: 'Memory', value: `${stats.mem.toFixed(1)}GB`, icon: <Server size={20} />, trend: 'down' as const },
+  { label: 'Temperature', value: `${Math.round(stats.temp)}°C`, icon: <Zap size={20} />, trend: 'neutral' as const },
+  { label: 'Deployments', value: '14', icon: <Globe size={20} />, change: 2 },
 ]
 
 export default function Dashboard() {
   const [time, setTime] = useState<string>('')
   const [stats, setStats] = useState<SystemStats>({ cpu: 0, mem: 0, temp: 0 })
-  const [statsHistory, setStatsHistory] = useState<SystemStats[]>([])
+  const [showAlert, setShowAlert] = useState(true)
 
   useEffect(() => {
     const updateTime = () => {
@@ -61,7 +61,6 @@ export default function Dashboard() {
   useEffect(() => {
     const unsubscribe = subscribeToStats((newStats) => {
       setStats(newStats)
-      setStatsHistory((prev) => [...prev.slice(-59), newStats])
     })
     return () => unsubscribe()
   }, [])
@@ -71,8 +70,8 @@ export default function Dashboard() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.08,
+        delayChildren: 0.15,
       },
     },
   }
@@ -82,235 +81,252 @@ export default function Dashboard() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4 },
+      transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
     },
   }
 
   return (
     <PageContainer>
       <motion.div
-        className="space-y-6"
+        className="space-y-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Welcome + Time */}
-        <motion.div variants={itemVariants} className="space-y-2">
-          <motion.h1
-            className="text-display text-chrome-light"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            Welcome back, Daniel 👋
-          </motion.h1>
-          <motion.p
-            className="text-subheading text-chrome-dark"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            Today's business status — {time}
-          </motion.p>
+        {/* Header */}
+        <motion.div variants={itemVariants}>
+          <PremiumPageHeader
+            title="Dashboard"
+            subtitle="Welcome back, Daniel"
+            description={`System status as of ${time}`}
+            icon={Sparkles}
+            badge="Real-time"
+          />
         </motion.div>
+
+        {/* Alerts */}
+        {showAlert && (
+          <motion.div variants={itemVariants}>
+            <PremiumAlert
+              type="info"
+              title="System Optimization"
+              message="Your infrastructure is running optimally. All services are online and performing within SLA."
+              icon={Shield}
+              action={{
+                label: 'Dismiss',
+                onClick: () => setShowAlert(false),
+              }}
+            />
+          </motion.div>
+        )}
 
         {/* Key Metrics Grid */}
         <motion.div variants={itemVariants}>
-          <StatGrid stats={getSystemMetrics(stats)} />
+          <PremiumStatGrid stats={getSystemMetrics(stats)} />
         </motion.div>
 
-      {/* Primary Charts Grid */}
-      <motion.div variants={itemVariants}>
-        <SectionContainer title="Business Metrics" subtitle="Revenue and customer analysis">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Revenue Chart */}
-          <ChartCard title="Revenue (30 Days)">
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0094FF" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#0094FF" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.1)" />
-                <XAxis dataKey="name" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #0094FF',
-                    borderRadius: '8px',
-                    color: '#E5E7EB',
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#0094FF"
-                  fillOpacity={1}
-                  fill="url(#colorRevenue)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartCard>
-
-          {/* Customer Distribution */}
-          <ChartCard title="Customer Distribution">
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={customerData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {customerData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1A1A1A',
-                    border: '1px solid #0094FF',
-                    borderRadius: '8px',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </ChartCard>
-          </div>
-        </SectionContainer>
-      </motion.div>
-
-      {/* System Status Section */}
-      <motion.div variants={itemVariants}>
-        <SectionContainer title="Infrastructure Status" subtitle="System health and performance">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Deployment Load */}
-          <div className="lg:col-span-2">
-            <ChartCard title="Deployment Load (24h)">
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={deploymentData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.1)" />
-                  <XAxis dataKey="name" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1A1A1A',
-                      border: '1px solid #0094FF',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Bar dataKey="prod" stackId="a" fill="#0094FF" />
-                  <Bar dataKey="staging" stackId="a" fill="#5BC0FF" />
-                  <Bar dataKey="dev" stackId="a" fill="#0056CC" />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartCard>
-          </div>
-
-          {/* System Status */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.4 }}
+        {/* Business Metrics Section */}
+        <motion.div variants={itemVariants}>
+          <PremiumSectionContainer
+            title="Business Metrics"
+            subtitle="Revenue and customer insights"
+            badge="Last 30 days"
           >
-            <HUDPanel title="System Status" status="online" className="h-full">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-chrome-dark">Services</span>
-                  <span className="text-sm text-green-500">14/14 Online</span>
-                </div>
-                <div className="w-full bg-bg-tertiary rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
-                </div>
-
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-sm text-chrome-dark">Network</span>
-                  <span className="text-sm text-blue-electric">1.2Gbps</span>
-                </div>
-
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-sm text-chrome-dark">Uptime</span>
-                  <span className="text-sm text-chrome-light">99.99%</span>
-                </div>
-
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-sm text-chrome-dark">Latency</span>
-                  <span className="text-sm text-chrome-light">23ms</span>
-                </div>
-              </div>
-            </HUDPanel>
-          </motion.div>
-          </div>
-        </SectionContainer>
-      </motion.div>
-
-      {/* Alerts & Suggestions Section */}
-      <motion.div variants={itemVariants}>
-        <SectionContainer title="Operations" subtitle="Alerts and AI recommendations">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Active Alerts */}
-          <HUDPanel title="Active Alerts" status="warning">
-            <div className="space-y-3">
-              {[
-                { title: 'High CPU Usage', severity: 'warning', time: '5 min ago' },
-                { title: 'Disk Space Low', severity: 'critical', time: '12 min ago' },
-                { title: 'Database Connection Slow', severity: 'warning', time: '1 hr ago' },
-              ].map((alert, idx) => (
-                <motion.div
-                  key={idx}
-                  className="p-3 bg-bg-tertiary rounded border-l-2"
-                  style={{
-                    borderLeftColor: alert.severity === 'critical' ? '#EF4444' : '#F59E0B',
-                  }}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <div className="flex items-start gap-2">
-                    <AlertTriangle
-                      size={14}
-                      className={alert.severity === 'critical' ? 'text-red-500' : 'text-yellow-500'}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <PremiumChartCard title="Revenue Trend" subtitle="Monthly recurring">
+                <ResponsiveContainer width="100%" height={280}>
+                  <AreaChart data={revenueData}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0094FF" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#0094FF" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.1)" />
+                    <XAxis dataKey="name" stroke="#9CA3AF" />
+                    <YAxis stroke="#9CA3AF" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1A1A1A',
+                        border: '1px solid #0094FF',
+                        borderRadius: '12px',
+                      }}
                     />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-chrome-light">{alert.title}</p>
-                      <p className="text-xs text-chrome-dark">{alert.time}</p>
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#0094FF"
+                      fillOpacity={1}
+                      fill="url(#colorRevenue)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </PremiumChartCard>
+
+              <PremiumChartCard title="Customer Distribution" subtitle="By subscription tier">
+                <ResponsiveContainer width="100%" height={280}>
+                  <PieChart>
+                    <Pie
+                      data={customerData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {customerData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1A1A1A',
+                        border: '1px solid #0094FF',
+                        borderRadius: '12px',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </PremiumChartCard>
+            </div>
+          </PremiumSectionContainer>
+        </motion.div>
+
+        {/* Infrastructure Status */}
+        <motion.div variants={itemVariants}>
+          <PremiumSectionContainer
+            title="Infrastructure"
+            subtitle="System performance and health"
+            badge="24-hour view"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <PremiumChartCard title="Deployment Load" subtitle="Across all environments">
+                  <ResponsiveContainer width="100%" height={280}>
+                    <BarChart data={deploymentData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.1)" />
+                      <XAxis dataKey="name" stroke="#9CA3AF" />
+                      <YAxis stroke="#9CA3AF" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#1A1A1A',
+                          border: '1px solid #0094FF',
+                          borderRadius: '12px',
+                        }}
+                      />
+                      <Bar dataKey="prod" stackId="a" fill="#0094FF" />
+                      <Bar dataKey="staging" stackId="a" fill="#5BC0FF" />
+                      <Bar dataKey="dev" stackId="a" fill="#0056CC" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </PremiumChartCard>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <PremiumHUDPanel title="System Status" status="online">
+                  <div className="space-y-4">
+                    <motion.div
+                      className="flex justify-between items-center pb-3 border-b border-steel/20"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <span className="text-sm text-chrome-dark/60">Services</span>
+                      <span className="text-sm font-semibold text-green-400">14/14 Online</span>
+                    </motion.div>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-chrome-dark/60">Network</span>
+                        <span className="text-chrome-light font-semibold">1.2Gbps</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-chrome-dark/60">Uptime</span>
+                        <span className="text-green-400 font-semibold">99.99%</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-chrome-dark/60">Latency</span>
+                        <span className="text-chrome-light font-semibold">23ms</span>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
+                </PremiumHUDPanel>
+              </motion.div>
             </div>
-          </HUDPanel>
+          </PremiumSectionContainer>
+        </motion.div>
 
-          {/* AI Suggestions */}
-          <HUDPanel title="AI Suggestions" status="online">
-            <div className="space-y-3">
-              {[
-                'Scale up API servers during peak hours (2-4PM)',
-                'Archive logs from production > 30 days old',
-                'Update dependencies in 3 services',
-              ].map((suggestion, idx) => (
-                <motion.div
-                  key={idx}
-                  className="p-3 bg-blue-electric/5 border border-blue-electric/20 rounded"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <p className="text-sm text-chrome-light">{suggestion}</p>
-                </motion.div>
-              ))}
+        {/* Operations Section */}
+        <motion.div variants={itemVariants}>
+          <PremiumSectionContainer
+            title="Operations"
+            subtitle="Alerts and recommendations"
+            badge="Active items"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <PremiumHUDPanel title="Active Alerts" status="warning">
+                <div className="space-y-3">
+                  {[
+                    { title: 'High CPU Usage', severity: 'warning', time: '5 min ago' },
+                    { title: 'Disk Space Low', severity: 'critical', time: '12 min ago' },
+                    { title: 'Database Connection Slow', severity: 'warning', time: '1 hr ago' },
+                  ].map((alert, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="p-3 bg-bg-tertiary/30 rounded-lg border-l-2"
+                      style={{
+                        borderLeftColor: alert.severity === 'critical' ? '#EF4444' : '#F59E0B',
+                      }}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 + 0.5 }}
+                      whileHover={{ x: 4, backgroundColor: 'rgba(26, 26, 26, 0.5)' }}
+                    >
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle
+                          size={14}
+                          className={`mt-0.5 ${alert.severity === 'critical' ? 'text-red-500' : 'text-yellow-500'}`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-chrome-light">{alert.title}</p>
+                          <p className="text-xs text-chrome-dark/60 mt-0.5">{alert.time}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </PremiumHUDPanel>
+
+              <PremiumHUDPanel title="AI Suggestions" status="online">
+                <div className="space-y-3">
+                  {[
+                    'Scale up API servers during peak hours (2-4PM)',
+                    'Archive logs from production > 30 days old',
+                    'Update dependencies in 3 services',
+                  ].map((suggestion, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="p-3 bg-blue-electric/5 border border-blue-electric/20 rounded-lg"
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 + 0.5 }}
+                      whileHover={{ x: -4, backgroundColor: 'rgb(0, 148, 255 / 0.08)' }}
+                    >
+                      <p className="text-sm text-chrome-light">{suggestion}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </PremiumHUDPanel>
             </div>
-          </HUDPanel>
-          </div>
-        </SectionContainer>
-      </motion.div>
+          </PremiumSectionContainer>
+        </motion.div>
       </motion.div>
     </PageContainer>
   )
