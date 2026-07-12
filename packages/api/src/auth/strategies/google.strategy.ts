@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { PassportStrategy } from '@nestjs/passport'
-import { Strategy, VerifyCallback } from 'passport-google-oauth20'
-import { ConfigService } from '@nestjs/config'
+import { Injectable, Logger } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { ConfigService } from '@nestjs/config';
 
 interface GoogleProfile {
   id: string
@@ -13,7 +13,7 @@ interface GoogleProfile {
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  private readonly logger = new Logger('GoogleStrategy')
+  private readonly logger = new Logger('GoogleStrategy');
 
   constructor(configService: ConfigService) {
     super({
@@ -21,8 +21,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
       callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
-    })
-    this.logger.log('🔐 Google OAuth2 strategy initialized')
+    });
+    this.logger.log('🔐 Google OAuth2 strategy initialized');
   }
 
   async validate(
@@ -32,9 +32,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback
   ): Promise<void> {
     try {
-      const email = profile.emails?.[0]?.value
-      const firstName = profile.name?.givenName || profile.displayName.split(' ')[0]
-      const lastName = profile.name?.familyName || profile.displayName.split(' ').slice(1).join(' ')
+      const email = profile.emails?.[0]?.value;
+      const firstName = profile.name?.givenName || profile.displayName.split(' ')[0];
+      const lastName = profile.name?.familyName || profile.displayName.split(' ').slice(1).join(' ');
 
       const user = {
         id: profile.id,
@@ -45,13 +45,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         provider: 'google',
         accessToken,
         refreshToken,
-      }
+      };
 
-      this.logger.log(`✅ Google OAuth validated: ${email}`)
-      done(null, user)
+      this.logger.log(`✅ Google OAuth validated: ${email}`);
+      done(null, user);
     } catch (error) {
-      this.logger.error(`❌ Google OAuth validation failed: ${error instanceof Error ? error.message : String(error)}`)
-      done(error)
+      this.logger.error(`❌ Google OAuth validation failed: ${error instanceof Error ? error.message : String(error)}`);
+      done(error);
     }
   }
 }

@@ -1,19 +1,19 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { AuthModule } from './auth/auth.module'
-import { ProjectsModule } from './projects/projects.module'
-import { AnalyticsModule } from './analytics/analytics.module'
-import { BillingModule } from './billing/billing.module'
-import { CommunityModule } from './community/community.module'
-import { ModulesModule } from './modules/modules.module'
-import { APIManagerModule } from './config/api-manager.module'
-import { EmailModule } from './email/email.module'
-import { EventsModule } from './analytics/events.module'
-import { QueueModule } from './queue/queue.module'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { APIStatusController } from './config/api-status.controller'
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { ProjectsModule } from './projects/projects.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { BillingModule } from './billing/billing.module';
+import { CommunityModule } from './community/community.module';
+import { ModulesModule } from './modules/modules.module';
+import { APIManagerModule } from './config/api-manager.module';
+import { EmailModule } from './email/email.module';
+import { EventsModule } from './analytics/events.module';
+import { QueueModule } from './queue/queue.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { APIStatusController } from './config/api-status.controller';
 
 @Module({
   imports: [

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Icon } from '../atoms/Icon';
 
-// eslint-disable-next-line no-unused-vars
 export interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   collapsed?: boolean;
+  // eslint-disable-next-line no-unused-vars
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AnalyticsService {
   async trackEvent(userId: string, eventType: string, eventData: any) {
     // Database: INSERT INTO events
-    return { success: true, event_id: 'evt_123' }
+    return { success: true, event_id: 'evt_123' };
   }
 
   async getUserAnalytics(userId: string, startDate: Date, endDate: Date) {
@@ -14,7 +14,7 @@ export class AnalyticsService {
       total_exports: 287,
       active_days: 23,
       average_session_duration: 45,
-    }
+    };
   }
 
   async getProjectAnalytics(projectId: string) {
@@ -24,7 +24,7 @@ export class AnalyticsService {
       collaborators: 3,
       versions: 8,
       exports: 12,
-    }
+    };
   }
 
   async getDashboardMetrics() {
@@ -35,6 +35,6 @@ export class AnalyticsService {
       total_exports: 45123,
       mrr: 125000,
       churn_rate: 0.025,
-    }
+    };
   }
 }

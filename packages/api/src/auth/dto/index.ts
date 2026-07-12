@@ -1,38 +1,38 @@
-import { IsEmail, IsString, MinLength } from 'class-validator'
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
-  email!: string
+  email!: string;
 
   @IsString()
   @MinLength(12)
-  password!: string
+  password!: string;
 
   @IsString()
-  firstName!: string
+  firstName!: string;
 
   @IsString()
-  lastName!: string
+  lastName!: string;
 }
 
 export class LoginDto {
   @IsEmail()
-  email!: string
+  email!: string;
 
   @IsString()
-  password!: string
+  password!: string;
 }
 
 export class RefreshTokenDto {
   @IsString()
-  refreshToken!: string
+  refreshToken!: string;
 }
 
 export class ResetPasswordDto {
   @IsString()
-  token!: string
+  token!: string;
 
   @IsString()
   @MinLength(12)
-  newPassword!: string
+  newPassword!: string;
 }

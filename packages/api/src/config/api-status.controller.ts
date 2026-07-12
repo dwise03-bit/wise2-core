@@ -1,5 +1,5 @@
-import { Controller, Get, Param } from '@nestjs/common'
-import { APIManager, APIServiceConfig } from './api-manager'
+import { Controller, Get, Param } from '@nestjs/common';
+import { APIManager, APIServiceConfig } from './api-manager';
 
 /**
  * API Status & Integration Controller
@@ -16,7 +16,7 @@ export class APIStatusController {
    */
   @Get('health')
   async getHealthStatus(): Promise<any> {
-    return await this.apiManager.healthCheck()
+    return await this.apiManager.healthCheck();
   }
 
   /**
@@ -25,7 +25,7 @@ export class APIStatusController {
    */
   @Get('inventory')
   getInventory(): any {
-    return this.apiManager.getIntegrationMap()
+    return this.apiManager.getIntegrationMap();
   }
 
   /**
@@ -37,7 +37,7 @@ export class APIStatusController {
     return {
       category,
       services: this.apiManager.getServicesByCategory(category),
-    }
+    };
   }
 
   /**
@@ -46,9 +46,9 @@ export class APIStatusController {
    */
   @Get(':service')
   getService(@Param('service') service: string): any {
-    const config = this.apiManager.getService(service)
+    const config = this.apiManager.getService(service);
     if (!config) {
-      return { error: `Service '${service}' not found` }
+      return { error: `Service '${service}' not found` };
     }
 
     return {
@@ -60,7 +60,7 @@ export class APIStatusController {
         required: c.required,
         validated: c.validated,
       })),
-    }
+    };
   }
 
   /**
@@ -76,6 +76,6 @@ export class APIStatusController {
         category: s.category,
         description: s.description,
       })),
-    }
+    };
   }
 }

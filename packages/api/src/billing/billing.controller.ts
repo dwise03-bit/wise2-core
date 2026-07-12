@@ -1,11 +1,11 @@
-import { Controller, Post, Get, Patch, Delete, Body, Param, UseGuards, Request, BadRequestException, Logger } from '@nestjs/common'
-import { StripeService, StripeCustomer, StripeSubscription, StripeInvoice } from './stripe.service'
-import { AuthGuard } from '@nestjs/passport'
+import { Controller, Post, Get, Patch, Delete, Body, Param, UseGuards, Request, BadRequestException, Logger } from '@nestjs/common';
+import { StripeService, StripeCustomer, StripeSubscription, StripeInvoice } from './stripe.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('v1/billing')
 @UseGuards(AuthGuard('jwt'))
 export class BillingController {
-  private readonly logger = new Logger('BillingController')
+  private readonly logger = new Logger('BillingController');
 
   constructor(private stripeService: StripeService) {}
 
@@ -23,11 +23,11 @@ export class BillingController {
         req.user.id,
         req.user.email,
         body.name || req.user.firstName
-      )
-      this.logger.log(`📝 Customer created for user ${req.user.id}`)
-      return { customer }
+      );
+      this.logger.log(`📝 Customer created for user ${req.user.id}`);
+      return { customer };
     } catch (error) {
-      throw new BadRequestException(`Failed to create customer: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to create customer: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -38,10 +38,10 @@ export class BillingController {
   @Get('customer/:customerId')
   async getCustomer(@Param('customerId') customerId: string): Promise<{ customer: StripeCustomer }> {
     try {
-      const customer = await this.stripeService.getCustomer(customerId)
-      return { customer }
+      const customer = await this.stripeService.getCustomer(customerId);
+      return { customer };
     } catch (error) {
-      throw new BadRequestException(`Failed to get customer: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to get customer: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -56,18 +56,18 @@ export class BillingController {
   ): Promise<{ subscription: StripeSubscription }> {
     try {
       if (!body.customerId || !body.priceId) {
-        throw new BadRequestException('customerId and priceId are required')
+        throw new BadRequestException('customerId and priceId are required');
       }
 
       const subscription = await this.stripeService.createSubscription(
         body.customerId,
         body.priceId,
         body.trialDays
-      )
-      this.logger.log(`💳 Subscription created for customer ${body.customerId}`)
-      return { subscription }
+      );
+      this.logger.log(`💳 Subscription created for customer ${body.customerId}`);
+      return { subscription };
     } catch (error) {
-      throw new BadRequestException(`Failed to create subscription: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to create subscription: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -78,10 +78,10 @@ export class BillingController {
   @Get('subscription/:subscriptionId')
   async getSubscription(@Param('subscriptionId') subscriptionId: string): Promise<{ subscription: StripeSubscription }> {
     try {
-      const subscription = await this.stripeService.getSubscription(subscriptionId)
-      return { subscription }
+      const subscription = await this.stripeService.getSubscription(subscriptionId);
+      return { subscription };
     } catch (error) {
-      throw new BadRequestException(`Failed to get subscription: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to get subscription: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -96,14 +96,14 @@ export class BillingController {
   ): Promise<{ subscription: StripeSubscription }> {
     try {
       if (!body.newPriceId) {
-        throw new BadRequestException('newPriceId is required')
+        throw new BadRequestException('newPriceId is required');
       }
 
-      const subscription = await this.stripeService.updateSubscription(subscriptionId, body.newPriceId)
-      this.logger.log(`📝 Subscription updated: ${subscriptionId}`)
-      return { subscription }
+      const subscription = await this.stripeService.updateSubscription(subscriptionId, body.newPriceId);
+      this.logger.log(`📝 Subscription updated: ${subscriptionId}`);
+      return { subscription };
     } catch (error) {
-      throw new BadRequestException(`Failed to update subscription: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to update subscription: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -114,11 +114,11 @@ export class BillingController {
   @Delete('subscription/:subscriptionId')
   async cancelSubscription(@Param('subscriptionId') subscriptionId: string): Promise<{ subscription: StripeSubscription }> {
     try {
-      const subscription = await this.stripeService.cancelSubscription(subscriptionId)
-      this.logger.log(`❌ Subscription cancelled: ${subscriptionId}`)
-      return { subscription }
+      const subscription = await this.stripeService.cancelSubscription(subscriptionId);
+      this.logger.log(`❌ Subscription cancelled: ${subscriptionId}`);
+      return { subscription };
     } catch (error) {
-      throw new BadRequestException(`Failed to cancel subscription: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to cancel subscription: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -131,10 +131,10 @@ export class BillingController {
     @Param('customerId') customerId: string
   ): Promise<{ invoices: StripeInvoice[] }> {
     try {
-      const invoices = await this.stripeService.getInvoices(customerId)
-      return { invoices }
+      const invoices = await this.stripeService.getInvoices(customerId);
+      return { invoices };
     } catch (error) {
-      throw new BadRequestException(`Failed to get invoices: ${error instanceof Error ? error.message : String(error)}`)
+      throw new BadRequestException(`Failed to get invoices: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -144,6 +144,6 @@ export class BillingController {
    */
   @Get('status')
   getStatus(): any {
-    return this.stripeService.getStatus()
+    return this.stripeService.getStatus();
   }
 }

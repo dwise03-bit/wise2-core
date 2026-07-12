@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BillingService {
@@ -8,22 +8,22 @@ export class BillingService {
       subscription_id: 'sub_123',
       plan_id: planId,
       status: 'active',
-    }
+    };
   }
 
   async getSubscription(userId: string) {
-    return { plan_id: 'pro', status: 'active' }
+    return { plan_id: 'pro', status: 'active' };
   }
 
   async updateSubscription(userId: string, planId: string) {
-    return { success: true, plan_id: planId }
+    return { success: true, plan_id: planId };
   }
 
   async cancelSubscription(userId: string) {
-    return { success: true }
+    return { success: true };
   }
 
   async getInvoices(userId: string) {
-    return []
+    return [];
   }
 }

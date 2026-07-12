@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { PassportStrategy } from '@nestjs/passport'
-import { Strategy, VerifyCallback } from 'passport-github2'
-import { ConfigService } from '@nestjs/config'
+import { Injectable, Logger } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, VerifyCallback } from 'passport-github2';
+import { ConfigService } from '@nestjs/config';
 
 interface GitHubProfile {
   id: number
@@ -14,7 +14,7 @@ interface GitHubProfile {
 
 @Injectable()
 export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
-  private readonly logger = new Logger('GitHubStrategy')
+  private readonly logger = new Logger('GitHubStrategy');
 
   constructor(configService: ConfigService) {
     super({
@@ -22,8 +22,8 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       clientSecret: configService.get('GITHUB_CLIENT_SECRET'),
       callbackURL: configService.get('GITHUB_CALLBACK_URL'),
       scope: ['user:email'],
-    })
-    this.logger.log('🔐 GitHub OAuth2 strategy initialized')
+    });
+    this.logger.log('🔐 GitHub OAuth2 strategy initialized');
   }
 
   async validate(
@@ -33,8 +33,8 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
     done: VerifyCallback
   ): Promise<void> {
     try {
-      const email = profile.emails?.[0]?.value
-      const [firstName, ...lastNameParts] = (profile.displayName || profile.username).split(' ')
+      const email = profile.emails?.[0]?.value;
+      const [firstName, ...lastNameParts] = (profile.displayName || profile.username).split(' ');
 
       const user = {
         id: String(profile.id),
@@ -47,13 +47,13 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
         provider: 'github',
         accessToken,
         refreshToken: refreshToken || null,
-      }
+      };
 
-      this.logger.log(`✅ GitHub OAuth validated: ${user.username}`)
-      done(null, user)
+      this.logger.log(`✅ GitHub OAuth validated: ${user.username}`);
+      done(null, user);
     } catch (error) {
-      this.logger.error(`❌ GitHub OAuth validation failed: ${error instanceof Error ? error.message : String(error)}`)
-      done(error)
+      this.logger.error(`❌ GitHub OAuth validation failed: ${error instanceof Error ? error.message : String(error)}`);
+      done(error);
     }
   }
 }

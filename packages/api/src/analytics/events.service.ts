@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 export interface AnalyticsEvent {
   event: string
@@ -11,17 +11,17 @@ export interface AnalyticsEvent {
 
 @Injectable()
 export class EventsService {
-  private readonly logger = new Logger('EventsService')
-  private posthogEnabled: boolean
-  private eventBuffer: AnalyticsEvent[] = []
+  private readonly logger = new Logger('EventsService');
+  private posthogEnabled: boolean;
+  private eventBuffer: AnalyticsEvent[] = [];
 
   constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get('POSTHOG_API_KEY')
-    this.posthogEnabled = !!apiKey
+    const apiKey = this.configService.get('POSTHOG_API_KEY');
+    this.posthogEnabled = !!apiKey;
     if (this.posthogEnabled) {
-      this.logger.log('📊 PostHog analytics enabled')
+      this.logger.log('📊 PostHog analytics enabled');
     } else {
-      this.logger.log('📊 Analytics in mock mode (not sending to PostHog)')
+      this.logger.log('📊 Analytics in mock mode (not sending to PostHog)');
     }
   }
 
@@ -31,17 +31,17 @@ export class EventsService {
   async trackEvent(event: AnalyticsEvent): Promise<void> {
     try {
       // Add to buffer
-      this.eventBuffer.push(event)
+      this.eventBuffer.push(event);
 
       if (this.posthogEnabled) {
         // Send to PostHog in production
-        await this.sendToPostHog(event)
+        await this.sendToPostHog(event);
       } else {
         // Mock: just log it
-        this.logger.debug(`📍 Event: ${event.event} | User: ${event.userId}`)
+        this.logger.debug(`📍 Event: ${event.event} | User: ${event.userId}`);
       }
     } catch (error) {
-      this.logger.error(`Failed to track event: ${error instanceof Error ? error.message : String(error)}`)
+      this.logger.error(`Failed to track event: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -54,7 +54,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { email, firstName },
-    })
+    });
   }
 
   /**
@@ -66,7 +66,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { provider: provider || 'email' },
-    })
+    });
   }
 
   /**
@@ -78,7 +78,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { provider, method: 'oauth' },
-    })
+    });
   }
 
   /**
@@ -90,7 +90,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { plan, price },
-    })
+    });
   }
 
   /**
@@ -102,7 +102,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { oldPlan, newPlan },
-    })
+    });
   }
 
   /**
@@ -114,7 +114,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { plan, reason },
-    })
+    });
   }
 
   /**
@@ -126,7 +126,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { amount, invoiceId },
-    })
+    });
   }
 
   /**
@@ -138,7 +138,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { amount, reason },
-    })
+    });
   }
 
   /**
@@ -150,7 +150,7 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { projectId, projectName },
-    })
+    });
   }
 
   /**
@@ -162,21 +162,21 @@ export class EventsService {
       userId,
       timestamp: new Date(),
       properties: { endpoint, method, statusCode, duration },
-    })
+    });
   }
 
   /**
    * Get event buffer (for batch processing)
    */
   getEventBuffer(): AnalyticsEvent[] {
-    return [...this.eventBuffer]
+    return [...this.eventBuffer];
   }
 
   /**
    * Clear event buffer (after batch upload)
    */
   clearEventBuffer(): void {
-    this.eventBuffer = []
+    this.eventBuffer = [];
   }
 
   /**
@@ -184,11 +184,11 @@ export class EventsService {
    */
   private async sendToPostHog(event: AnalyticsEvent): Promise<void> {
     try {
-      const apiKey = this.configService.get('POSTHOG_API_KEY')
-      const apiUrl = this.configService.get('POSTHOG_API_URL', 'https://app.posthog.com')
+      const apiKey = this.configService.get('POSTHOG_API_KEY');
+      const apiUrl = this.configService.get('POSTHOG_API_URL', 'https://app.posthog.com');
 
       if (!apiKey) {
-        return
+        return;
       }
 
       const response = await fetch(`${apiUrl}/engage`, {
@@ -203,13 +203,13 @@ export class EventsService {
           timestamp: event.timestamp.toISOString(),
           properties: event.properties,
         }),
-      })
+      });
 
       if (!response.ok) {
-        this.logger.warn(`PostHog API error: ${response.statusText}`)
+        this.logger.warn(`PostHog API error: ${response.statusText}`);
       }
     } catch (error) {
-      this.logger.error(`Failed to send to PostHog: ${error instanceof Error ? error.message : String(error)}`)
+      this.logger.error(`Failed to send to PostHog: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Icon } from '../atoms/Icon';
 
-// eslint-disable-next-line no-unused-vars
 export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
   open: boolean;
+  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   title?: string;
   description?: string;

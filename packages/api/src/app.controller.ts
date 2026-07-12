@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common'
-import { AppService } from './app.service'
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
@@ -7,7 +7,7 @@ export class AppController {
 
   @Get('health')
   getHealth(): any {
-    return { status: 'ok', timestamp: new Date().toISOString() }
+    return { status: 'ok', timestamp: new Date().toISOString() };
   }
 
   @Get('docs')
@@ -16,6 +16,6 @@ export class AppController {
       message: 'WISE² Enterprise API',
       version: '1.0.0',
       status: 'running',
-    }
+    };
   }
 }

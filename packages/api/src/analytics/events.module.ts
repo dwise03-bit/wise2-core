@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import { EventsService } from './events.service'
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { EventsService } from './events.service';
 
 @Module({
   imports: [ConfigModule],
