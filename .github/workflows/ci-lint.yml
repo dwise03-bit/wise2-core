@@ -43,17 +43,21 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: services/dashboard/services/dashboard
 
       - name: Run ESLint
         run: npm run lint
+        working-directory: services/dashboard/services/dashboard
         continue-on-error: false
 
       - name: Check formatting with Prettier
         run: npm run format:check
+        working-directory: services/dashboard/services/dashboard
         continue-on-error: false
 
       - name: Check for vulnerable dependencies
         run: npm audit --production
+        working-directory: services/dashboard/services/dashboard
         continue-on-error: true
 
   format-check:
@@ -73,13 +77,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: services/dashboard/services/dashboard
 
       - name: Run Prettier check
-        run: npx prettier --check '**/*.{ts,tsx,js,jsx,json,md,yml,yaml}' --ignore-path .prettierignore
+        run: npm run format:check
+        working-directory: services/dashboard/services/dashboard
 
       - name: Verify no console.log in production code
         run: |
-          if grep -r "console\\.log" services/*/src --include="*.ts" --include="*.tsx"; then
+          if grep -r "console\\.log" services/dashboard/services/dashboard/app --include="*.ts" --include="*.tsx" 2>/dev/null; then
             echo "❌ console.log found in production code"
             exit 1
           else

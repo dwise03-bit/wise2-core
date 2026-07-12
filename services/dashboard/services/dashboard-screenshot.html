@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² Sound Labs Command Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .main { display: flex; height: 100vh; }
+    .sidebar {
+      width: 224px;
+      border-right: 1px solid rgba(0, 174, 239, 0.4);
+      padding: 32px;
+      overflow-y: auto;
+      background: #000;
+    }
+    .sidebar-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #fff; }
+    .sidebar-sub { font-size: 11px; color: #4FC3FF; font-family: monospace; line-height: 1.4; margin-bottom: 32px; }
+    .nav-item {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      border-left: 2px solid rgba(0, 174, 239, 0.3);
+      padding-left: 12px;
+      cursor: pointer;
+    }
+    .nav-icon { color: #4FC3FF; font-size: 12px; }
+    .nav-text { flex: 1; }
+    .nav-name { font-weight: bold; font-size: 11px; color: #4FC3FF; }
+    .nav-desc { font-size: 10px; color: #666; margin-top: 2px; }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+    .topbar {
+      border-bottom: 1px solid rgba(0, 174, 239, 0.3);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .search { font-size: 12px; color: #4FC3FF; }
+    .metrics { display: flex; gap: 48px; }
+    .metric { text-align: center; }
+    .metric-dot { font-size: 16px; color: #ff3333; }
+    .metric-label { font-size: 10px; color: #4FC3FF; margin-top: 4px; }
+    .metric-value { font-weight: bold; font-size: 16px; color: #fff; }
+    .grid {
+      flex: 1;
+      overflow: auto;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+    }
+    .panel {
+      border: 1px solid rgba(0, 174, 239, 0.4);
+      border-radius: 2px;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .panel-title { font-size: 12px; font-weight: bold; color: #4FC3FF; margin-bottom: 16px; }
+    .studio-video {
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(180deg, rgba(0, 174, 239, 0.1) 0%, #000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid rgba(0, 174, 239, 0.4);
+      font-size: 48px;
+      color: #4FC3FF;
+      border-radius: 2px 2px 0 0;
+    }
+    .live-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #ff3333;
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 10px;
+      color: #ff3333;
+      font-weight: bold;
+    }
+    .elapsed { position: absolute; top: 16px; left: 16px; color: #4FC3FF; font-family: monospace; font-size: 12px; }
+    .project-name { font-size: 32px; font-weight: bold; color: #fff; margin: 24px 0; }
+    .stages { display: flex; gap: 8px; overflow-x: auto; margin: 24px 0; border-bottom: 1px solid rgba(0, 174, 239, 0.2); }
+    .stage {
+      padding: 8px 16px;
+      border-bottom: 2px solid;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .stage.done { border-color: #4FC3FF; color: #4FC3FF; }
+    .stage.wait { border-color: #555; color: #888; }
+    .stats { display: flex; gap: 48px; margin: 24px 0; }
+    .stat { text-align: center; }
+    .stat-icon { font-size: 24px; margin-bottom: 8px; }
+    .stat-num { font-weight: bold; font-size: 16px; color: #fff; }
+    .stat-label { font-size: 10px; color: #999; }
+    .actions { display: flex; gap: 12px; }
+    .btn {
+      padding: 8px 12px;
+      border: 1px solid #666;
+      background: transparent;
+      color: #999;
+      font-size: 11px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: linear-gradient(90deg, #007BFF 0%, #00AEEF 100%);
+      color: #fff;
+      border: 1px solid #4FC3FF;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 32px; margin-top: 32px; border-top: 1px solid rgba(0, 174, 239, 0.3); padding-top: 32px; }
+    .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(0, 174, 239, 0.2); font-size: 11px; }
+    .row-label { color: #4FC3FF; font-weight: bold; }
+    .right { display: flex; flex-direction: column; gap: 32px; }
+    .discord { background: linear-gradient(180deg, rgba(0, 174, 239, 0.1) 0%, #000 100%); }
+    .rewards { background: linear-gradient(180deg, rgba(168, 85, 247, 0.1) 0%, #000 100%); text-align: center; }
+    .diamond { font-size: 32px; color: #a855f7; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">WISE²</div>
+      <div class="sidebar-sub">SOUND LABS<br>ORGANIZED CHAOS COMMAND CENTER</div>
+
+      <div class="nav-item">
+        <div class="nav-icon">◯</div>
+        <div class="nav-text">
+          <div class="nav-name">STUDIO</div>
+          <div class="nav-desc">Command Center</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">◆</div>
+        <div class="nav-text">
+          <div class="nav-name">BRAND DNA</div>
+          <div class="nav-desc">Identity Engine</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">♪</div>
+        <div class="nav-text">
+          <div class="nav-name">ANTHEM CREATOR</div>
+          <div class="nav-desc">Song & Lyrics Studio</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">◎</div>
+        <div class="nav-text">
+          <div class="nav-name">RECORDING ROOM</div>
+          <div class="nav-desc">Sessions & Audio</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">〰</div>
+        <div class="nav-text">
+          <div class="nav-name">MIXING CONSOLE</div>
+          <div class="nav-desc">Mix & Produce</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">◈</div>
+        <div class="nav-text">
+          <div class="nav-name">MASTERING</div>
+          <div class="nav-desc">Polish & Perfect</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">◄►</div>
+        <div class="nav-text">
+          <div class="nav-name">LIVE <span style="color: #ff3333; font-size: 9px;">LIVE</span></div>
+          <div class="nav-desc">Watch & Interact</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">●</div>
+        <div class="nav-text">
+          <div class="nav-name">COMMUNITY</div>
+          <div class="nav-desc">Connect & Collaborate</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">★</div>
+        <div class="nav-text">
+          <div class="nav-name">CHALLENGES</div>
+          <div class="nav-desc">Compete & Win</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">⊕</div>
+        <div class="nav-text">
+          <div class="nav-name">ACADEMY</div>
+          <div class="nav-desc">Learn & Level Up</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">▲</div>
+        <div class="nav-text">
+          <div class="nav-name">BRAND VAULT</div>
+          <div class="nav-desc">Assets & Deliverables</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">📊</div>
+        <div class="nav-text">
+          <div class="nav-name">ANALYTICS</div>
+          <div class="nav-desc">Insights & Growth</div>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">⚙</div>
+        <div class="nav-text">
+          <div class="nav-name">SETTINGS</div>
+          <div class="nav-desc">System & Preferences</div>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid rgba(0, 174, 239, 0.3); margin-top: 32px; padding-top: 24px;">
+        <div class="sidebar-title">WISE²</div>
+        <div style="font-size: 10px; color: #4FC3FF; font-family: monospace; margin-bottom: 8px;">SYSTEM STATUS</div>
+        <div style="font-size: 10px; color: #00cc00;">● ALL SYSTEMS OPERATIONAL</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="search">🔍 Search projects, artists, files...</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-dot">●</div>
+            <div class="metric-label">LIVE VIEWERS</div>
+            <div class="metric-value">358</div>
+          </div>
+          <div class="metric">
+            <div style="font-size: 16px; color: #4FC3FF;">📋</div>
+            <div class="metric-label">PROJECTS LIVE</div>
+            <div class="metric-value">4</div>
+          </div>
+          <div class="metric">
+            <div style="font-size: 16px; color: #4FC3FF;">👥</div>
+            <div class="metric-label">COMMUNITY ONLINE</div>
+            <div class="metric-value">1,247</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="grid">
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- LIVE STUDIO -->
+          <div class="panel">
+            <div class="studio-video">
+              ⦿
+              <div class="live-badge">● LIVE</div>
+              <div class="elapsed">00:42:17 ELAPSED</div>
+            </div>
+            <div style="padding: 24px;">
+              <div style="font-size: 10px; color: #4FC3FF; font-family: monospace; font-weight: bold; letter-spacing: 1px;">NOW BUILDING</div>
+              <div class="project-name">Urban Grind Brand Anthem</div>
+              <div class="stages">
+                <div class="stage done">BRAND DNA</div>
+                <div class="stage done">LYRICS</div>
+                <div class="stage done">BEAT PROD.</div>
+                <div class="stage done">RECORDING</div>
+                <div class="stage wait">MIXING</div>
+                <div class="stage wait">MASTERING</div>
+                <div class="stage wait">DELIVERY</div>
+              </div>
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat-icon">👍</div>
+                  <div class="stat-num">358</div>
+                  <div class="stat-label">LIKES</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-icon">💬</div>
+                  <div class="stat-num">219</div>
+                  <div class="stat-label">COMMENTS</div>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn">🔊 UNMUTE</button>
+                <button class="btn primary">▶ WATCH LIVE</button>
+                <button class="btn">📌 ADD REMINDER</button>
+                <button class="btn">↗ SHARE</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SCHEDULE & PROJECTS -->
+          <div class="grid2">
+            <div class="panel">
+              <div class="panel-title">LIVE SCHEDULE</div>
+              <div class="row">
+                <div><strong>MON • Brand DNA Live</strong><br><span style="color: #999; font-size: 10px;">10:00 AM</span></div>
+              </div>
+              <div class="row">
+                <div><strong>TUE • Anthem Creation</strong><br><span style="color: #999; font-size: 10px;">12:00 PM</span></div>
+                <div style="color: #ff3333; font-size: 9px; font-weight: bold;">LIVE</div>
+              </div>
+              <div class="row">
+                <div><strong>WED • WISE² Development</strong><br><span style="color: #999; font-size: 10px;">03:00 PM</span></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">ACTIVE PROJECTS</div>
+              <div style="border: 1px solid rgba(0, 174, 239, 0.3); padding: 12px; border-radius: 2px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px;">
+                  <strong>Urban Grid Anthem</strong>
+                  <span style="color: #ff3333;">LIVE</span>
+                </div>
+                <div style="width: 100%; height: 4px; background: #333; border-radius: 2px; overflow: hidden;">
+                  <div style="width: 62%; height: 100%; background: linear-gradient(90deg, #007BFF, #4FC3FF);"></div>
+                </div>
+                <div style="font-size: 10px; color: #999; margin-top: 8px;">62% • Hip Hop / Trip</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMMUNITY FEED -->
+          <div class="panel" style="margin-top: 32px;">
+            <div class="panel-title">COMMUNITY FEED</div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">@SoundWave</span><br><span style="color: #ccc;">WISE² hits different! 🔥</span></div>
+              <div style="color: #999;">2h ago</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">@BeatMaster88</span><br><span style="color: #ccc;">Just finished brand DNA interview!</span></div>
+              <div style="color: #999;">2h ago</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">@CreativeEye</span><br><span style="color: #ccc;">The transition is 🔥</span></div>
+              <div style="color: #999;">1h ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="right">
+          <!-- LIVE CHAT -->
+          <div class="panel">
+            <div class="panel-title">💬 LIVE CHAT <span style="font-size: 10px;">358</span></div>
+            <div style="margin-bottom: 12px;">
+              <div style="font-size: 10px; color: #999;">Top Chat</div>
+            </div>
+            <div style="max-height: 200px; overflow-y: auto;">
+              <div style="margin-bottom: 12px;">
+                <div style="color: #4FC3FF; font-weight: bold; font-size: 11px;">ProducerMind</div>
+                <div style="font-size: 11px; color: #ccc;">That bass line is 🔥🔥🔥</div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <div style="color: #4FC3FF; font-weight: bold; font-size: 11px;">BeatsbyRay</div>
+                <div style="font-size: 11px; color: #ccc;">This is crazy! Already feel the energy</div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <div style="color: #4FC3FF; font-weight: bold; font-size: 11px;">CreativeEye</div>
+                <div style="font-size: 11px; color: #ccc;">The transition is 🔥</div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <div style="color: #4FC3FF; font-weight: bold; font-size: 11px;">dJ.Phantom</div>
+                <div style="font-size: 11px; color: #ccc;">That hook is gonna slip in the clubs</div>
+              </div>
+              <div style="margin-bottom: 12px;">
+                <div style="color: #4FC3FF; font-weight: bold; font-size: 11px;">AI.MAESTRO</div>
+                <div style="font-size: 11px; color: #ccc;">Remember to drop your feedback!</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <input type="text" placeholder="Say something..." style="flex: 1; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 174, 239, 0.3); padding: 6px; color: #fff; font-size: 11px; border-radius: 2px;" />
+              <button class="btn primary" style="padding: 6px 12px;">SEND</button>
+            </div>
+          </div>
+
+          <!-- DISCORD -->
+          <div class="panel discord">
+            <div class="panel-title">JOIN THE COMMUNITY</div>
+            <p style="font-size: 10px; color: #ccc; margin-bottom: 12px;">ON DISCORD</p>
+            <p style="font-size: 10px; color: #999; margin-bottom: 12px;">The official hub for creators, builders, entrepreneurs and dreamers.</p>
+            <button class="btn primary" style="width: 100%; margin-bottom: 12px;">🎮 JOIN DISCORD</button>
+            <div style="font-size: 10px; color: #999;">1,247 MEMBERS ONLINE</div>
+          </div>
+
+          <!-- LEADERBOARD -->
+          <div class="panel">
+            <div class="panel-title">COMMUNITY LEADERBOARD</div>
+            <div style="font-size: 10px; color: #999; margin-bottom: 12px;">THIS MONTH</div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">#1</span> 🔗 SoundWave</div>
+              <div style="color: #4FC3FF; font-weight: bold;">12,450 XP 👑</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">#2</span> 🔗 BeatMaster88</div>
+              <div style="color: #4FC3FF; font-weight: bold;">9,870 XP</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">#3</span> 🔗 CreativeEye</div>
+              <div style="color: #4FC3FF; font-weight: bold;">8,230 XP</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">#4</span> 🔗 DJ Phantom</div>
+              <div style="color: #4FC3FF; font-weight: bold;">7,110 XP</div>
+            </div>
+            <div class="row">
+              <div><span style="color: #4FC3FF; font-weight: bold;">#5</span> 🔗 BrandKing</div>
+              <div style="color: #4FC3FF; font-weight: bold;">6,540 XP</div>
+            </div>
+          </div>
+
+          <!-- REWARDS -->
+          <div class="panel rewards">
+            <div style="font-size: 11px; font-weight: bold; color: #a855f7; margin-bottom: 8px;">EARN XP. LEVEL UP.</div>
+            <div style="font-size: 11px; font-weight: bold; color: #a855f7; margin-bottom: 12px;">UNLOCK REWARDS.</div>
+            <div class="diamond">◆</div>
+            <div style="font-size: 10px; color: #a855f7;">BECOME A WISE ELITE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM METRICS -->
+      <div class="grid3">
+        <div class="panel">
+          <div class="panel-title">LATEST FROM WISE²</div>
+          <div style="font-weight: bold; color: #fff; margin-bottom: 4px;">V2.4.1 UPDATE</div>
+          <div style="font-size: 11px; color: #999; margin-bottom: 12px;">New features, performance boosts and more.</div>
+          <button class="btn" style="font-size: 10px;">VIEW UPDATE</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">ROADMAP PROGRESS</div>
+          <div style="font-size: 10px; color: #4FC3FF; font-weight: bold; margin-bottom: 8px;">Q3 2025</div>
+          <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+            <span style="color: #00cc00;">✓</span>
+            <span style="color: #00cc00;">✓</span>
+            <span style="color: #4FC3FF;">◇</span>
+            <span style="color: #4FC3FF;">◇</span>
+            <span style="color: #555;">◇</span>
+          </div>
+          <div style="font-size: 10px; color: #999;">4 / 6 COMPLETED</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">PLATFORM METRICS</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 10px;">
+            <div>
+              <div style="color: #fff; font-weight: bold; font-size: 14px;">2,543</div>
+              <div style="color: #999;">PROJECTS</div>
+              <div style="color: #666; font-size: 9px;">COMPLETED</div>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: bold; font-size: 14px;">1,128</div>
+              <div style="color: #999;">HAPPY</div>
+              <div style="color: #666; font-size: 9px;">CLIENTS</div>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: bold; font-size: 14px;">99.8%</div>
+              <div style="color: #999;">CLIENT</div>
+              <div style="color: #666; font-size: 9px;">SATISFACTION</div>
+            </div>
+            <div>
+              <div style="color: #fff; font-weight: bold; font-size: 14px;">23</div>
+              <div style="color: #999;">COUNTRIES</div>
+              <div style="color: #666; font-size: 9px;">SERVED</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">WISE² ENTERPRISE</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="text-align: center; padding: 12px; border: 1px solid rgba(0, 174, 239, 0.4); border-radius: 2px; font-size: 10px;">
+              <div style="font-size: 16px; margin-bottom: 4px;">🚀</div>
+              <div style="color: #ccc; font-weight: bold;">PROJECT GENESIS</div>
+              <div style="color: #999; font-size: 9px;">The Blueprint</div>
+            </div>
+            <div style="text-align: center; padding: 12px; border: 1px solid rgba(0, 174, 239, 0.4); border-radius: 2px; font-size: 10px;">
+              <div style="font-size: 16px; margin-bottom: 4px;">📊</div>
+              <div style="color: #ccc; font-weight: bold;">PROJECT ATLAS</div>
+              <div style="color: #999; font-size: 9px;">The Platform</div>
+            </div>
+            <div style="text-align: center; padding: 12px; border: 1px solid rgba(0, 174, 239, 0.4); border-radius: 2px; font-size: 10px;">
+              <div style="font-size: 16px; margin-bottom: 4px;">⚙️</div>
+              <div style="color: #ccc; font-weight: bold;">PROJECT ORBIT</div>
+              <div style="color: #999; font-size: 9px;">The Operations</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
