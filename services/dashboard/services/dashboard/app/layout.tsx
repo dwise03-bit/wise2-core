@@ -1,12 +1,8 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'W² Command Center™',
-  description: 'Multiply What\'s Possible™',
-  icons: {
-    icon: '/favicon.ico',
-  },
+  title: "WISE² Dashboard",
+  description: "Unified Control Center",
 };
 
 export default function RootLayout({
