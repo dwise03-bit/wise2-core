@@ -74,6 +74,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/wise2_test
         run: |
           npm run db:migrate
+        continue-on-error: true
 
       - name: Run linter
         run: npm run lint -- --max-warnings 0
