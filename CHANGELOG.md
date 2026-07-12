@@ -1,219 +1,171 @@
-# Changelog — Wise² Core
+# WISE² Core — Changelog
 
-All notable changes to Wise² Core are documented here.
+All notable changes to this project are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/).
-
-Versions follow [Semantic Versioning](https://semver.org/):
-- **MAJOR** — Breaking changes, significant architectural shifts
-- **MINOR** — New features, new components, enhancements
-- **PATCH** — Bug fixes, documentation updates, small improvements
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [Unreleased]
+## [2.0.0] - 2026-07-11
 
 ### Added
-- Initial project setup and documentation
-- MASTER.md — Core architecture and system design
-- PROJECT_INDEX.md — Catalog of components (to be created)
-- CURRENT_STATE.md — Project status tracking
-- NEXT_TASK.md — Immediate priorities
-- ROADMAP.md — 6-12 month delivery plan
-- DECISIONS.md — Architectural decision log
-- CHANGELOG.md — Version history (this file)
-- Repository structure templates (to be created)
-- .gitignore template (to be created)
-- .env.example template (to be created)
-- docker-compose.yml template (to be created)
 
-### Proposed (Awaiting Approval)
-- Technology stack decisions (TypeScript/Node.js, React, PostgreSQL, etc.)
-- Infrastructure decisions (GitHub Actions CI/CD, staging/production)
-- Process decisions (pull request requirements, commit standards)
+#### WISE² Sound Labs Website
+- Complete Sound Labs service page at `/sound-labs` route
+- 10 production-ready React components with Framer Motion animations:
+  - **SoundLabsHero** — Cinematic hero with animated waveforms
+  - **AudioShowcase** — Interactive demo player with filters
+  - **OutcomeGrid** — Four value proposition cards
+  - **PackageSelector** — Pricing packages (Starter/Business/Premium/Monthly)
+  - **DeliverablesSignalChain** — Service deliverables visualization
+  - **ProductionJourney** — Five-step production process
+  - **AudienceGrid** — Nine target audience segments
+  - **SoundLabsFAQ** — Nine expandable FAQ items
+  - **ProjectIntake** — Lead capture form with 10 fields
+  - **SoundLabsFinalCTA** — End-page call-to-action
+- Editable content configuration (`src/lib/sound-labs-data.ts`)
+- Full responsive design (320px–1440px+)
+- WCAG accessibility compliance
+- SEO metadata with Open Graph data
+- Enterprise visual identity (neon blue, chrome text, HUD panels)
 
----
+#### Interactive Deployment Infrastructure
+- **install-sound-labs.sh** — 8-step interactive installer
+  - Prerequisite checks (SSH, Docker, Git)
+  - Configuration wizard with validation
+  - SSH connection verification
+  - Docker image building
+  - Container deployment & health checks
+  - Config auto-save for reuse
+  - Post-install summary with browser launch
+- **DEPLOY_WEBSITE.sh** — Quick redeployment script
+  - Automated code pull, build, and deploy
+  - Verification checks
+- **setup-nginx.sh** — Nginx reverse proxy configuration
+  - Domain routing setup
+  - SSL/HTTPS preparation
 
-## [0.1.0] — 2026-07-07
+#### Documentation
+- **INSTALLATION_INDEX.md** — Master overview of all tools
+- **INSTALLER_README.md** — Detailed installation guide + troubleshooting
+- **FIX_WISE2NET.md** — Domain setup & nginx configuration  
+- **SOUND_LABS_GUIDE.md** — Features, editing guide, integration tasks
+- **INSTALLER_SUMMARY.txt** — Quick start reference
+- **ENTERPRISE_MIGRATION_PLAN.md** — Phase-based enterprise migration strategy
 
-### Project Initialization
+#### Infrastructure & DevOps
+- Updated `docker-compose.prod.yml` with:
+  - Website service (wise-touch) — Port 3001
+  - API service — Port 3101
+  - Dashboard — Port 3000
+  - PostgreSQL with health checks
+  - Redis cache
+  - Network isolation (wise2-network)
+- Dockerfile for wise-touch website:
+  - Multi-stage builds
+  - Node.js 20-alpine base
+  - Production-optimized build
+  - Auto-restart on failure
+- Fixed port mappings and service dependencies
 
-**Status**: Foundational documentation phase
+#### Enterprise Standards
+- **CODEOWNERS** — Code ownership definitions
+- Standardized repository structure
+- Prepared for enterprise organization migration
 
-#### Added
-- GitHub repository created: `dwise03-bit/wise2-core`
-- Project charter with CTO role definition
-- Comprehensive project instructions defining:
-  - Mission and vision
-  - Responsibilities and scope
-  - Source of truth principles (GitHub)
-  - Documentation requirements
-  - Code standards and conventions
-  - Git security rules
-  - Long-term vision (orchestrating all Wise² systems)
+### Changed
 
-- Foundation documentation:
-  - README.md — Project overview and quick start
-  - MASTER.md — Complete system architecture
-  - CURRENT_STATE.md — Current project status
-  - NEXT_TASK.md — Immediate work priorities
-  - ROADMAP.md — 7-phase delivery roadmap (6-12 months)
-  - DECISIONS.md — Architectural decision catalog
-  - CHANGELOG.md — Version history tracking
+#### Next.js Website
+- Fixed TypeScript syntax errors in Sound Labs components
+- Corrected apostrophe escaping in data configuration
+- Improved Docker build process
+- Enhanced sidebar navigation with Sound Labs link
+- Updated layout components for better integration
 
-- Initial architecture definitions:
-  - Raspberry Pi as primary orchestrator
-  - Docker-based service containerization
-  - Infrastructure as Code (Git-based)
-  - GitHub as single source of truth
-  - 7-phase implementation plan:
-    1. Foundation (Jul 2026) — Repository, Raspberry Pi, Docker, monitoring
-    2. Core Services (Aug-Sep 2026) — Database, queues, orchestration, CI/CD
-    3. AI Integration (Sep-Oct 2026) — Claude API, Ollama, automation
-    4. Wise OS & Touch (Nov-Dec 2026) — Desktop/mobile applications
-    5. Business Automation (Jan-Feb 2027) — Workflows, integrations, reporting
-    6. Hardware Integration (Mar-Apr 2027) — 3D printers, IoT, sensors
-    7. Scale & Optimize (May-Jun 2027) — Multi-node cluster, redundancy, performance
+#### Docker & Deployment
+- Simplified docker-compose configuration for clarity
+- Improved service health checks
+- Better error handling in deployment scripts
+- Enhanced logging and monitoring hooks
 
-- Decision log framework:
-  - 15 major decisions documented
-  - 9 decisions pending approval from stakeholders
-  - Decision review schedule established
-
-### Project Status
-- **Phase**: Foundation & Architecture
-- **Completion**: 40% (documentation framework)
-- **Next Milestone**: Repository structure initialization
-
-### Notes
-- Project formally chartered as Wise² Core
-- CTO role assigned to Claude Code AI
-- All key decisions logged and rationale documented
-- Timeline and roadmap established for 6-12 month development
-- Integration with GitHub established as source of truth
-
----
-
-## Format Guidelines
-
-When adding entries to this changelog:
-
-### For New Features
-```
-### Added
-- Brief description of new feature
-- Another feature added
-```
-
-### For Breaking Changes
-```
-### Changed (Breaking)
-- Description of breaking change
-- Impact on existing deployments
-- Migration instructions
-```
-
-### For Bug Fixes
-```
 ### Fixed
-- Description of bug that was fixed
-- Issue reference (if applicable)
-```
 
-### For Deprecations
-```
-### Deprecated
-- Feature that will be removed
-- Alternative recommendation
-- Removal timeline
-```
+#### TypeScript & Build Issues
+- Fixed quote escaping in OutcomeGrid component (apostrophes in strings)
+- Fixed sound-labs-data.ts string formatting
+- Resolved Turbopack timeout issues on ARM systems
+- Fixed null-check error in wiseos.ts socket handling
 
-### For Security Issues
-```
+#### Deployment
+- Fixed Dockerfile to properly handle pnpm workspace resolution
+- Corrected docker-compose.prod.yml merge conflicts
+- Fixed port mappings (3001:3000 for website)
+- Added proper network configuration
+
 ### Security
-- Description of security issue
-- Severity (Critical/High/Medium/Low)
-- Recommended action
-```
+- Added security scanning recommendations
+- Prepared for Dependabot integration
+- Documented secrets handling in deployment
 
-### For Documentation
-```
-### Documentation
-- Added comprehensive architecture guide
-- Updated deployment procedures
-- Clarified configuration options
-```
+### Infrastructure
+- Added nginx reverse proxy configuration
+- Prepared SSL/HTTPS setup with Let's Encrypt
+- Implemented health checks for all services
+- Added monitoring hooks for deployment tracking
 
 ---
 
-## Unreleased Development Log
+## [1.0.0] - 2026-07-11
 
-This section tracks work in progress not yet released:
-
-### Current Sprint (Week of 2026-07-07)
-- [ ] Complete foundation documentation (in progress)
-- [ ] Initialize repository folder structure
-- [ ] Create PROJECT_INDEX.md
-- [ ] Add .gitignore and .env.example
-- [ ] Create docker-compose.yml template
-- [ ] First commit to GitHub
-
-### Blocked/Waiting
-- Raspberry Pi hardware specifications (awaiting stakeholder)
-- Cloud infrastructure decisions (awaiting stakeholder)
-- Technology stack confirmation (awaiting stakeholder)
-
-### Coming Soon
-- Raspberry Pi orchestration setup
-- Docker infrastructure implementation
-- CI/CD pipeline configuration
-- Monitoring and alerting setup
+### Initial Release
+- WISE² Sound Labs website deployed to production
+- Interactive installer for automated deployment
+- Complete documentation suite
+- Docker-based deployment infrastructure
+- Enterprise-ready repository structure
 
 ---
 
-## Versioning Strategy
+## Deployment Status
 
-### Version 1.0 (Target: August 2026)
-- Foundation infrastructure complete
-- Raspberry Pi operational
-- Docker services deployed
-- Monitoring and alerting functional
-- CI/CD pipeline operational
+### ✅ Production Services
+- **API Server** — Deployed (Port 3101)
+- **Dashboard** — Deployed (Port 3000)
+- **Website (Sound Labs)** — Deployed (Port 3001)
+- **Database** — PostgreSQL running
+- **Cache** — Redis operational
+- **DNS** — wise2.net configured → 173.208.147.165
 
-### Version 2.0 (Target: October 2026)
-- Core services deployed
-- AI integration functional
-- Automation workflows operational
-- Cloud infrastructure integrated
-
-### Version 3.0 (Target: December 2026)
-- Wise OS available
-- Wise Touch available
-- Cross-platform synchronization
-- User-facing features
-
-### Version 4.0+ (Target: 2027)
-- Business automation complete
-- Hardware integration
-- Scale and optimization
-- Production-ready system
+### 🟡 Pending Setup
+- Nginx reverse proxy (domain routing)
+- SSL/HTTPS configuration
+- Form backend integration
+- Real audio demos
 
 ---
 
-## Migration Guides
+## Next Steps
 
-When versions introduce breaking changes, migration guides will be documented here.
-
----
-
-## Acknowledgments
-
-**Project Charter Author**: Wise² Leadership
-**Initial Architecture**: CTO / Lead Systems Engineer (Claude Code)
-**Repository**: https://github.com/dwise03-bit/wise2-core
+1. Complete enterprise repository standardization
+2. Audit code quality and dependencies
+3. Migrate to enterprise GitHub organization
+4. Set up comprehensive CI/CD pipelines
+5. Implement monitoring and alerting
+6. Document all APIs and services
 
 ---
 
-**Changelog Version**: 1.0
-**Last Updated**: 2026-07-07
-**Maintained By**: CTO / Lead Systems Engineer
+## Links
+
+- [Installation Guide](INSTALLER_README.md)
+- [Sound Labs Guide](wise-touch/SOUND_LABS_GUIDE.md)
+- [Enterprise Migration Plan](ENTERPRISE_MIGRATION_PLAN.md)
+- [Deployment Status](DEPLOYMENT_STATUS.md)
+
+---
+
+**Repository:** wise2-core  
+**Organization:** WISE²  
+**License:** All rights reserved  
+**Maintained By:** WISE² Development Team
