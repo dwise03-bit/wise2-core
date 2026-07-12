@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
+import { PageContainer, SectionContainer } from '@/components/layout/PageContainer'
+import { PageHeader, StatGrid, AlertBanner } from '@/components/layout/PageSections'
 import { StatCard, MetricCard, ChartCard, HUDPanel } from '@/components/common/Cards'
-import { TrendingUp, Users, Zap, AlertTriangle, Globe, Shield, Activity, Server } from 'lucide-react'
+import { TrendingUp, Users, Zap, AlertTriangle, Globe, Shield, Activity, Server, Sparkles } from 'lucide-react'
 import { subscribeToStats, SystemStats } from '@/services/wiseos'
 
 // Mock data
@@ -85,56 +87,42 @@ export default function Dashboard() {
   }
 
   return (
-    <motion.div
-      className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Welcome Section */}
-      <motion.div variants={itemVariants} className="space-y-2">
-        <motion.h1
-          className="text-display text-chrome-light"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Welcome back, Daniel 👋
-        </motion.h1>
-        <motion.p
-          className="text-subheading text-chrome-dark"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          Today's business status — {time}
-        </motion.p>
-      </motion.div>
+    <PageContainer>
+      <motion.div
+        className="space-y-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Welcome + Time */}
+        <motion.div variants={itemVariants} className="space-y-2">
+          <motion.h1
+            className="text-display text-chrome-light"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Welcome back, Daniel 👋
+          </motion.h1>
+          <motion.p
+            className="text-subheading text-chrome-dark"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Today's business status — {time}
+          </motion.p>
+        </motion.div>
 
-      {/* Key Metrics Grid */}
-      <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {getSystemMetrics(stats).map((metric, idx) => (
-            <motion.div
-              key={metric.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: idx * 0.1 }}
-            >
-              <StatCard
-                label={metric.label}
-                value={metric.value}
-                change={metric.change}
-                icon={metric.icon}
-              />
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+        {/* Key Metrics Grid */}
+        <motion.div variants={itemVariants}>
+          <StatGrid stats={getSystemMetrics(stats)} />
+        </motion.div>
 
       {/* Primary Charts Grid */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SectionContainer title="Business Metrics" subtitle="Revenue and customer analysis">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Revenue Chart */}
           <ChartCard title="Revenue (30 Days)">
             <ResponsiveContainer width="100%" height={250}>
@@ -195,12 +183,14 @@ export default function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           </ChartCard>
-        </div>
+          </div>
+        </SectionContainer>
       </motion.div>
 
-      {/* Deployments & Infrastructure */}
+      {/* System Status Section */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <SectionContainer title="Infrastructure Status" subtitle="System health and performance">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Deployment Load */}
           <div className="lg:col-span-2">
             <ChartCard title="Deployment Load (24h)">
@@ -257,12 +247,14 @@ export default function Dashboard() {
               </div>
             </HUDPanel>
           </motion.div>
-        </div>
+          </div>
+        </SectionContainer>
       </motion.div>
 
-      {/* Bottom Row: Alerts & Suggestions */}
+      {/* Alerts & Suggestions Section */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SectionContainer title="Operations" subtitle="Alerts and AI recommendations">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Active Alerts */}
           <HUDPanel title="Active Alerts" status="warning">
             <div className="space-y-3">
@@ -316,8 +308,10 @@ export default function Dashboard() {
               ))}
             </div>
           </HUDPanel>
-        </div>
+          </div>
+        </SectionContainer>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </PageContainer>
   )
 }

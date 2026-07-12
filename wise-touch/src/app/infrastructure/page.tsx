@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Server, Cpu, HardDrive, Thermometer, Power, RotateCcw, Radio, Plus } from 'lucide-react'
+import { Server, Cpu, HardDrive, Thermometer, Power, RotateCcw, Radio, Plus, Activity } from 'lucide-react'
+import { PageContainer, SectionContainer } from '@/components/layout/PageContainer'
+import { PageHeader, StatGrid } from '@/components/layout/PageSections'
 import { HUDPanel, StatCard, ChartCard } from '@/components/common/Cards'
+import { Button } from '@/components/common/FormElements'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { subscribeToStats, SystemStats } from '@/services/wiseos'
 
@@ -82,33 +85,50 @@ export default function InfrastructurePage() {
 
   const selected = servers.find(s => s.id === selectedServer)
 
-  return (
-    <motion.div
-      className="space-y-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-display text-chrome-light">Infrastructure Control</h1>
-          <p className="text-subheading text-chrome-dark mt-2">
-            Monitor and manage servers, Raspberry Pi devices, and system resources
-          </p>
-        </div>
-        <motion.button
-          className="px-4 py-2 bg-blue-electric hover:bg-blue-electric-light text-bg-primary rounded font-medium flex items-center gap-2 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Plus size={18} />
-          Add Server
-        </motion.button>
-      </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  }
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Servers List */}
-        <div className="lg:col-span-2 space-y-3">
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  }
+
+  return (
+    <PageContainer title="Infrastructure Control" subtitle="Monitor servers, devices, and system resources">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-6"
+      >
+        {/* Key Metrics */}
+        <motion.div variants={itemVariants}>
+          <StatGrid stats={[
+            { label: 'Servers Online', value: servers.filter(s => s.status === 'online').length, icon: <Server size={20} /> },
+            { label: 'Avg CPU', value: `${Math.round(servers.reduce((a, s) => a + s.cpu, 0) / servers.length)}%`, icon: <Cpu size={20} /> },
+            { label: 'Storage Used', value: `${servers.reduce((a, s) => a + s.diskUsed, 0)}GB`, icon: <HardDrive size={20} /> },
+            { label: 'Network Status', value: 'Healthy', change: 0 },
+          ]} />
+        </motion.div>
+
+        {/* Servers Section */}
+        <motion.div variants={itemVariants}>
+          <SectionContainer title="Server Fleet" subtitle="All managed infrastructure">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Servers List */}
+              <div className="lg:col-span-2 space-y-3">
           {servers.map((server, idx) => (
             <motion.button
               key={server.id}
@@ -218,11 +238,15 @@ export default function InfrastructurePage() {
             </HUDPanel>
           </motion.div>
         )}
-      </div>
+            </div>
+          </SectionContainer>
+        </motion.div>
 
-      {/* System Metrics */}
-      <ChartCard title="System Metrics (24h)">
-        <ResponsiveContainer width="100%" height={300}>
+        {/* System Metrics */}
+        <motion.div variants={itemVariants}>
+          <SectionContainer title="System Metrics" subtitle="CPU, memory, and disk usage over 24 hours">
+            <ChartCard title="System Metrics (24h)">
+              <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={systemMetrics}>
             <defs>
               <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
@@ -244,11 +268,14 @@ export default function InfrastructurePage() {
                 borderRadius: '8px',
               }}
             />
-            <Area type="monotone" dataKey="cpu" stroke="#0094FF" fillOpacity={1} fill="url(#colorCpu)" />
-            <Area type="monotone" dataKey="memory" stroke="#5BC0FF" fillOpacity={1} fill="url(#colorMemory)" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </ChartCard>
-    </motion.div>
+              <Area type="monotone" dataKey="cpu" stroke="#0094FF" fillOpacity={1} fill="url(#colorCpu)" />
+              <Area type="monotone" dataKey="memory" stroke="#5BC0FF" fillOpacity={1} fill="url(#colorMemory)" />
+            </AreaChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          </SectionContainer>
+        </motion.div>
+      </motion.div>
+    </PageContainer>
   )
 }

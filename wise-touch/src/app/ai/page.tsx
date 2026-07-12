@@ -2,7 +2,9 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, Paperclip, Mic, Square, Copy, MessageSquare, Zap, Brain, Cpu } from 'lucide-react'
+import { Send, Paperclip, Mic, Copy, MessageSquare, Zap, Brain, Cpu, Sparkles, Activity } from 'lucide-react'
+import { PageContainer, SectionContainer } from '@/components/layout/PageContainer'
+import { PageHeader, StatGrid } from '@/components/layout/PageSections'
 import { HUDPanel, MetricCard } from '@/components/common/Cards'
 
 interface Message {
@@ -67,23 +69,50 @@ export default function AIPage() {
     }, 1000)
   }
 
-  return (
-    <motion.div
-      className="space-y-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div>
-        <h1 className="text-display text-chrome-light">AI Intelligence Center</h1>
-        <p className="text-subheading text-chrome-dark mt-2">
-          Multi-model AI system powered by Claude, GPT-4, and local Ollama
-        </p>
-      </div>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  }
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Chat */}
-        <div className="lg:col-span-2">
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  }
+
+  return (
+    <PageContainer title="AI Intelligence Center" subtitle="Multi-model AI system powered by Claude, GPT-4, and Ollama">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-6"
+      >
+        {/* Key Metrics */}
+        <motion.div variants={itemVariants}>
+          <StatGrid stats={[
+            { label: 'Models Online', value: aiModels.length, icon: <Sparkles size={20} /> },
+            { label: 'Tokens This Month', value: '12.4K', icon: <Zap size={20} /> },
+            { label: 'Avg Latency', value: '141ms', icon: <Activity size={20} /> },
+            { label: 'Monthly Cost', value: '$24.50', change: -8 },
+          ]} />
+        </motion.div>
+
+        {/* Chat Section */}
+        <motion.div variants={itemVariants}>
+          <SectionContainer title="AI Chat" subtitle="Multi-model conversation interface">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Main Chat */}
+              <div className="lg:col-span-2">
           <HUDPanel title="AI Chat" status="online" className="h-[600px] flex flex-col">
             {/* Messages */}
             <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
@@ -207,11 +236,14 @@ export default function AIPage() {
             </MetricCard>
           </div>
         </div>
-      </div>
+            </div>
+          </SectionContainer>
+        </motion.div>
 
-      {/* Prompt Library */}
-      <HUDPanel title="Saved Prompts" status="online">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Prompt Library */}
+        <motion.div variants={itemVariants}>
+          <SectionContainer title="Saved Prompts" subtitle="Quick templates and workflows">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             'Business Analysis',
             'Code Review',
@@ -228,8 +260,10 @@ export default function AIPage() {
               <p className="text-sm text-chrome-light">{prompt}</p>
             </motion.button>
           ))}
-        </div>
-      </HUDPanel>
-    </motion.div>
+            </div>
+          </SectionContainer>
+        </motion.div>
+      </motion.div>
+    </PageContainer>
   )
 }
