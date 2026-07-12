@@ -14,10 +14,13 @@
 
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 .pnp
 .pnp.js
+# Keep root package-lock.json for CI; ignore workspace lock files
+apps/*/package-lock.json
+packages/*/package-lock.json
+services/*/package-lock.json
 
 # Build outputs
 dist/
