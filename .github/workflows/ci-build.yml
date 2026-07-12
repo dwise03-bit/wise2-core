@@ -64,7 +64,7 @@ jobs:
       - name: Build and push API image
         uses: docker/build-push-action@v4
         with:
-          context: services/api
+          context: services/dashboard/services/api
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -108,7 +108,7 @@ jobs:
       - name: Build and push Dashboard image
         uses: docker/build-push-action@v4
         with:
-          context: services/dashboard
+          context: services/dashboard/services/dashboard
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -152,7 +152,7 @@ jobs:
       - name: Build and push Worker image
         uses: docker/build-push-action@v4
         with:
-          context: services/worker
+          context: services/dashboard/services/worker
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

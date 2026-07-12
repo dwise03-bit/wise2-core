@@ -81,5 +81,5 @@ export function notFoundHandler(
     404,
     'NOT_FOUND',
   );
-  errorHandler(error, req, res, next);
+  errorHandler(error, req, res, _next);
 }
