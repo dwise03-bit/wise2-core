@@ -27,6 +27,11 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-wise2_core}
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-mock-client-id-mvp}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-mock-secret-mvp}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:3010/auth/google/callback}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-mock-gh-id}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-mock-gh-secret}
       PORT: 3001
     ports:
       - "3010:3001"
