@@ -1,4 +1,5 @@
 @import '@wise2/ui-components/src/globals.css';
+@import './design-tokens.css';
 
 /* Studio-specific styles */
 html {

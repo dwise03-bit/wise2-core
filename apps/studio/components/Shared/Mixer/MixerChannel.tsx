@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
+import { VUMeter } from './VUMeter';
 
 export interface MixerChannelProps {
   name: string;
@@ -27,22 +28,15 @@ export function MixerChannel({
   onSoloToggle,
   index = 0,
 }: MixerChannelProps) {
-  const getColorFromLevel = (level: number) => {
-    if (level > -3) return 'bg-red-500';
-    if (level > -6) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
+  const peakResetRef = useRef<() => void>();
 
   return (
     <div className="flex flex-col items-center gap-3 p-3 bg-gray-900 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors">
       <div className="text-xs font-semibold text-gray-300 uppercase tracking-wider">{name}</div>
 
-      {/* VU Meter */}
-      <div className="w-8 h-24 bg-gray-950 rounded border border-gray-700 flex flex-col-reverse justify-start overflow-hidden">
-        <div
-          className={`w-full transition-all duration-100 ${getColorFromLevel(peakLevel)}`}
-          style={{ height: `${Math.max(0, (peakLevel + 80) / 80) * 100}%` }}
-        />
+      {/* Professional VU Meter */}
+      <div className="w-12">
+        <VUMeter peakLevel={peakLevel} size="small" showPeakHold={true} />
       </div>
 
       {/* Fader */}
