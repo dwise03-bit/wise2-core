@@ -22,16 +22,18 @@ WORKDIR /app
 RUN apk add --no-cache dumb-init curl
 RUN addgroup --gid 1001 --system nodejs && adduser --system nextjs --uid 1001
 
-# Copy built website
+# Copy built website standalone (contains node_modules and server.js)
 COPY --from=builder /app/apps/website/.next/standalone ./
+# Copy static assets
 COPY --from=builder /app/apps/website/.next/static ./.next/static
+# Copy public directory
 COPY --from=builder /app/apps/website/public ./public
 
-USER nextjs
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
-ENTRYPOINT ["dumb-init", "--"]
+USER nextjs
+ENTRYPOINT ["dumb-init"]
 CMD ["node", "server.js"]
