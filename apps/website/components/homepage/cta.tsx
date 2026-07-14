@@ -11,9 +11,8 @@ export function CTASection() {
       <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true, margin: '-100px' }}
         >
           <h1 className="text-6xl font-black leading-tight mb-6">
             <span className="text-white">BUILD.</span>
@@ -32,9 +31,8 @@ export function CTASection() {
         <motion.div
           className="flex items-center justify-center"
           initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true, margin: '-100px' }}
         >
           <div className="text-center">
             <div className="text-6xl font-black text-white mb-4">W2</div>
