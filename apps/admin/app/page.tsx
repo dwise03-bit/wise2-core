@@ -22,7 +22,8 @@ export default function AdminPage() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch('http://localhost:3001/v1/admin/projects');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/v1/admin/projects`);
       if (res.ok) {
         setProjects(await res.json());
       }

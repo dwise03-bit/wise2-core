@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
+import { AdminModule } from './admin/admin.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { BillingModule } from './billing/billing.module';
 import { CommunityModule } from './community/community.module';
@@ -38,6 +39,7 @@ import { APIStatusController } from './config/api-status.controller';
     }),
     APIManagerModule,
     AuthModule,
+    AdminModule,
     EmailModule,
     EventsModule,
     QueueModule,
