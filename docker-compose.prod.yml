@@ -29,7 +29,7 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       PORT: 3001
     ports:
-      - "3001:3001"
+      - "3010:3001"
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,7 +41,7 @@ services:
       dockerfile: apps/dashboard/Dockerfile
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://localhost:3001
+      NEXT_PUBLIC_API_URL: http://localhost:3010
     ports:
       - "3002:3000"
     depends_on:
