@@ -18,10 +18,10 @@ export default function HomePage() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-sm">
+            <a href="/live-studio" className="hover:text-cyan-400 transition">LIVE STUDIO</a>
+            <a href="/live-streaming" className="hover:text-cyan-400 transition">LIVE STREAMING</a>
             <a href="#products" className="hover:text-cyan-400 transition">PRODUCTS</a>
-            <a href="#solutions" className="hover:text-cyan-400 transition">SOLUTIONS</a>
             <a href="#pricing" className="hover:text-cyan-400 transition">PRICING</a>
-            <a href="#resources" className="hover:text-cyan-400 transition">RESOURCES</a>
             <a href="#company" className="hover:text-cyan-400 transition">COMPANY</a>
           </nav>
 

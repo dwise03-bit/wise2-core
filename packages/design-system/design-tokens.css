@@ -1,0 +1,274 @@
+/**
+ * WISE² Design System - CSS Custom Properties
+ *
+ * These variables should be imported in every app's root CSS.
+ * All components should reference these variables, never hardcode colors.
+ */
+
+:root {
+  /* Color Palette - Core */
+  --wise-bg: #050505;
+  --wise-surface: #0D1117;
+  --wise-surface-2: #131922;
+  --wise-card: #10151D;
+
+  /* Text Colors */
+  --wise-text-primary: #FFFFFF;
+  --wise-text-secondary: #C9CED6;
+  --wise-text-muted: #8D98A5;
+
+  /* Primary Brand Colors */
+  --wise-primary: #0094FF;
+  --wise-primary-hover: #32A8FF;
+  --wise-primary-active: #0075CC;
+  --wise-primary-light: #1AA8FF;
+
+  /* Semantic Colors */
+  --wise-success: #22C55E;
+  --wise-warning: #F59E0B;
+  --wise-danger: #E53935;
+  --wise-info: #0094FF;
+
+  /* Accent Red */
+  --wise-accent-red: #E53935;
+  --wise-accent-orange: #F59E0B;
+  --wise-accent-green: #22C55E;
+
+  /* Borders */
+  --wise-border-subtle: rgba(255, 255, 255, 0.08);
+  --wise-border-medium: rgba(255, 255, 255, 0.12);
+  --wise-border-strong: rgba(255, 255, 255, 0.20);
+
+  /* Transparent Variants */
+  --wise-primary-transparent: rgba(0, 148, 255, 0.1);
+  --wise-primary-transparent-hover: rgba(0, 148, 255, 0.2);
+  --wise-danger-transparent: rgba(229, 57, 53, 0.1);
+  --wise-success-transparent: rgba(34, 197, 94, 0.1);
+
+  /* Typography */
+  --wise-font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+  --wise-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+  --wise-font-mono: 'Fira Code', 'SF Mono', Monaco, monospace;
+
+  /* Spacing - 8px base unit */
+  --wise-space-0: 0px;
+  --wise-space-1: 4px;
+  --wise-space-2: 8px;
+  --wise-space-3: 12px;
+  --wise-space-4: 16px;
+  --wise-space-5: 20px;
+  --wise-space-6: 24px;
+  --wise-space-7: 28px;
+  --wise-space-8: 32px;
+  --wise-space-9: 36px;
+  --wise-space-10: 40px;
+  --wise-space-12: 48px;
+  --wise-space-14: 56px;
+  --wise-space-16: 64px;
+  --wise-space-20: 80px;
+  --wise-space-24: 96px;
+  --wise-space-28: 112px;
+  --wise-space-32: 128px;
+  --wise-space-36: 144px;
+  --wise-space-40: 160px;
+  --wise-space-48: 192px;
+  --wise-space-64: 256px;
+
+  /* Border Radius */
+  --wise-radius-none: 0px;
+  --wise-radius-xs: 4px;
+  --wise-radius-sm: 8px;
+  --wise-radius-base: 12px;
+  --wise-radius-md: 16px;
+  --wise-radius-lg: 24px;
+  --wise-radius-xl: 32px;
+  --wise-radius-full: 9999px;
+
+  /* Shadows */
+  --wise-shadow-none: none;
+  --wise-shadow-small: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --wise-shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --wise-shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --wise-shadow-xlarge: 0 16px 64px rgba(0, 0, 0, 0.6);
+
+  /* Glow Effects */
+  --wise-glow-blue-sm: 0 0 8px rgba(0, 148, 255, 0.3);
+  --wise-glow-blue-md: 0 0 16px rgba(0, 148, 255, 0.5);
+  --wise-glow-blue-lg: 0 0 32px rgba(0, 148, 255, 0.7);
+  --wise-glow-blue-xl: 0 0 64px rgba(0, 148, 255, 0.8);
+
+  /* Inner Shadows */
+  --wise-shadow-inner-sm: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+  --wise-shadow-inner-md: inset 0 4px 16px rgba(0, 0, 0, 0.6);
+
+  /* Backdrops */
+  --wise-backdrop-blur-sm: blur(4px);
+  --wise-backdrop-blur-md: blur(8px);
+  --wise-backdrop-blur-lg: blur(12px);
+  --wise-backdrop-blur-xl: blur(16px);
+  --wise-backdrop-blur-2xl: blur(20px);
+
+  /* Animation Timing */
+  --wise-duration-fast: 150ms;
+  --wise-duration-base: 200ms;
+  --wise-duration-slow: 300ms;
+  --wise-duration-slower: 500ms;
+  --wise-duration-slowest: 1000ms;
+
+  /* Easing Functions */
+  --wise-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --wise-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --wise-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --wise-easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* Z-Index Scale */
+  --wise-z-hide: -1;
+  --wise-z-base: 0;
+  --wise-z-dropdown: 1000;
+  --wise-z-sticky: 1020;
+  --wise-z-fixed: 1030;
+  --wise-z-modal-backdrop: 1040;
+  --wise-z-modal: 1050;
+  --wise-z-popover: 1060;
+  --wise-z-tooltip: 1070;
+  --wise-z-notification: 1080;
+
+  /* Typography Scales */
+  --wise-text-xs: 10px;
+  --wise-text-sm: 13px;
+  --wise-text-base: 16px;
+  --wise-text-lg: 20px;
+  --wise-text-xl: 25px;
+  --wise-text-2xl: 31px;
+  --wise-text-3xl: 39px;
+  --wise-text-4xl: 49px;
+  --wise-text-5xl: 61px;
+  --wise-text-6xl: 76px;
+  --wise-text-7xl: 95px;
+
+  /* Line Heights */
+  --wise-leading-none: 1;
+  --wise-leading-tight: 1.25;
+  --wise-leading-snug: 1.375;
+  --wise-leading-normal: 1.5;
+  --wise-leading-relaxed: 1.625;
+  --wise-leading-loose: 2;
+
+  /* Letter Spacing */
+  --wise-tracking-tighter: -0.05em;
+  --wise-tracking-tight: -0.025em;
+  --wise-tracking-normal: 0em;
+  --wise-tracking-wide: 0.025em;
+  --wise-tracking-wider: 0.05em;
+  --wise-tracking-widest: 0.1em;
+
+  /* Breakpoints - for CSS media queries */
+  --wise-breakpoint-xs: 320px;
+  --wise-breakpoint-sm: 480px;
+  --wise-breakpoint-md: 768px;
+  --wise-breakpoint-lg: 1024px;
+  --wise-breakpoint-xl: 1280px;
+  --wise-breakpoint-2xl: 1600px;
+  --wise-breakpoint-3xl: 1920px;
+}
+
+/* Default typography scale */
+html {
+  font-family: var(--wise-font-sans);
+  font-size: var(--wise-text-base);
+  line-height: var(--wise-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--wise-bg);
+  color: var(--wise-text-primary);
+  margin: 0;
+  padding: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utilities for common patterns */
+.wise-surface {
+  background-color: var(--wise-surface);
+  border: 1px solid var(--wise-border-subtle);
+}
+
+.wise-card {
+  background-color: var(--wise-card);
+  border: 1px solid var(--wise-border-subtle);
+  border-radius: var(--wise-radius-base);
+  box-shadow: var(--wise-shadow-small);
+}
+
+.wise-glass {
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--wise-border-subtle);
+  border-radius: var(--wise-radius-base);
+}
+
+.wise-glass-lg {
+  background: rgba(13, 17, 23, 0.9);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--wise-border-medium);
+  border-radius: var(--wise-radius-md);
+}
+
+.wise-blur-bg {
+  backdrop-filter: blur(12px);
+  background: rgba(5, 5, 5, 0.8);
+}
+
+.wise-glow-blue {
+  box-shadow: var(--wise-glow-blue-md);
+}
+
+.wise-glow-blue-lg {
+  box-shadow: var(--wise-glow-blue-lg);
+}
+
+.wise-transition {
+  transition: all var(--wise-duration-base) var(--wise-easing-out);
+}
+
+.wise-transition-fast {
+  transition: all var(--wise-duration-fast) var(--wise-easing-out);
+}
+
+.wise-transition-slow {
+  transition: all var(--wise-duration-slow) var(--wise-easing-out);
+}
+
+/* Text utilities */
+.wise-text-primary {
+  color: var(--wise-text-primary);
+}
+
+.wise-text-secondary {
+  color: var(--wise-text-secondary);
+}
+
+.wise-text-muted {
+  color: var(--wise-text-muted);
+}
+
+/* Focus state for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--wise-primary);
+  outline-offset: 2px;
+}

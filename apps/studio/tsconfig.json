@@ -18,7 +18,7 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@wise2/*": ["../../packages/*/src", "../../packages/*/dist"]
+      "@wise2/*": ["../../packages/*", "../../packages/*/src", "../../packages/*/dist"]
     },
     "plugins": [
       {
