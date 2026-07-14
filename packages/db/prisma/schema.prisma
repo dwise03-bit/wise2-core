@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  role          UserRole  @default(CUSTOMER)
+
+  // Relationships
+  subscription  Subscription?
+  projects      Project[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  FOUNDER
+}
+
+// Subscriptions/Billing
+model Subscription {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeCustomerId String?   @unique
+  stripeSubscriptionId String? @unique
+  status          SubscriptionStatus @default(ACTIVE)
+  plan            PricingPlan @default(STARTER)
+
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  canceledAt         DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+}
+
+enum PricingPlan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+// Projects
+model Project {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String    @db.Text
+  budget          Float?
+  timeline        String?
+
+  status          ProjectStatus @default(IDEA)
+
+  // Project details
+  category        String?
+  tags            String[]
+  fileUrl         String?
+
+  // Pipeline tracking
+  updates         ProjectUpdate[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum ProjectStatus {
+  IDEA
+  DECIPHER
+  EXECUTE
+  HUMAN_REVIEW
+  APPROVED
+  DELIVERED
+  REJECTED
+}
+
+model ProjectUpdate {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  status        ProjectStatus
+  message       String    @db.Text
+  timestamp     DateTime  @default(now())
+}
+
+// Notifications
+model Notification {
+  id            String    @id @default(cuid())
+  userId        String
+
+  type          String    // "project_approved", "project_submitted", etc.
+  title         String
+  message       String    @db.Text
+  read          Boolean   @default(false)
+
+  createdAt     DateTime  @default(now())
+}

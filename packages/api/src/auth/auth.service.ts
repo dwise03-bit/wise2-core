@@ -1,103 +1,92 @@
-import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto, LoginDto } from './dto';
-import { User } from './user.entity';
+import { PrismaClient } from '@wise2/db';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
-    private readonly jwtService: JwtService,
-  ) {}
+  private prisma = new PrismaClient();
 
-  async register(createUserDto: CreateUserDto) {
-    const { email, password, firstName, lastName } = createUserDto;
+  constructor(private readonly jwtService: JwtService) {}
 
-    // Validate password strength
-    if (password.length < 12) {
-      throw new BadRequestException('Password must be at least 12 characters');
-    }
-
+  async signup(email: string, password: string, name?: string) {
     // Check if user exists
-    const existingUser = await this.usersRepository.findOne({ where: { email } });
+    const existingUser = await this.prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('Email already registered');
     }
 
-    // Hash password
-    const password_hash = await bcrypt.hash(password, 12);
+    // Validate password
+    if (password.length < 8) {
+      throw new BadRequestException('Password must be at least 8 characters');
+    }
 
-    // Create user in database
-    const user = this.usersRepository.create({
-      email,
-      password_hash,
-      firstName,
-      lastName,
-      emailVerified: process.env.NODE_ENV !== 'production',
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    // Create user
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        name: name || email.split('@')[0],
+        passwordHash,
+        role: 'CUSTOMER',
+      },
     });
 
-    await this.usersRepository.save(user);
-
-    return {
-      message: 'User registered successfully. Please check your email to verify.',
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+    // Create subscription (30-day free trial)
+    await this.prisma.subscription.create({
+      data: {
+        userId: user.id,
+        status: 'ACTIVE',
+        plan: 'STARTER',
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
-    };
+    });
+
+    return this.generateTokenResponse(user);
   }
 
-  async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
-
-    // Find user by email
-    const user = await this.usersRepository.findOne({ where: { email } });
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Check if email is verified
-    if (!user.emailVerified) {
-      throw new UnauthorizedException('Please verify your email before logging in');
-    }
+    return this.generateTokenResponse(user);
+  }
 
-    // Generate JWT tokens
-    const tokens = this.generateTokens(user);
+  private generateTokenResponse(user: any) {
+    const token = this.jwtService.sign(
+      { sub: user.id, email: user.email, role: user.role },
+      { expiresIn: '24h' },
+    );
 
     return {
-      tokens,
+      access_token: token,
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        name: user.name,
+        role: user.role,
       },
     };
   }
 
-  async refreshToken(token: string) {
+  async validateToken(token: string) {
     try {
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_REFRESH_SECRET || 'refresh-secret',
-      });
-
-      // Verify token is refresh token (mock check)
-      const user = { id: payload.sub, email: payload.email };
-      const newTokens = this.generateTokens(user);
-
-      return { tokens: newTokens };
+      const payload = this.jwtService.verify(token);
+      const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+      return user;
+    } catch {
+      throw new UnauthorizedException('Invalid token');
+    }
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
