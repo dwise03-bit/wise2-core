@@ -16,6 +16,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@wise2/*": ["../../packages/*/src", "../../packages/*/dist"]
+    },
     "plugins": [
       {
         "name": "next"

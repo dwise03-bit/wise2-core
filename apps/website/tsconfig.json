@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "jsx": "preserve",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -17,11 +21,29 @@
     "isolatedModules": true,
     "incremental": true,
     "paths": {
-      "@/*": ["./*"],
-      "@wise2/ui-components": ["../../packages/ui-components/src"],
-      "@wise2/types": ["../../packages/types/src"],
+      "@/*": [
+        "./*"
+      ],
+      "@wise2/ui-components": [
+        "../../packages/ui-components/src"
+      ],
+      "@wise2/types": [
+        "../../packages/types/src"
+      ]
     },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

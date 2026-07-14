@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wise2-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["turbo", "run", "dev", "--parallel"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

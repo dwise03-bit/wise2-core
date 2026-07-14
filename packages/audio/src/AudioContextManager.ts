@@ -143,12 +143,12 @@ export class AudioContextManager {
    * Detect available sample rate
    */
   private detectSampleRate(): number {
-    const offlineContext = new OfflineAudioContext(1, 1, 48000);
-    const sampleRate = offlineContext.sampleRate;
-    offlineContext.close();
-
-    // Prefer 48kHz if available, fallback to 44.1kHz
-    return sampleRate >= 48000 ? 48000 : 44100;
+    try {
+      const offlineContext = new OfflineAudioContext(1, 1, 48000);
+      return 48000;
+    } catch {
+      return 44100;
+    }
   }
 
   /**

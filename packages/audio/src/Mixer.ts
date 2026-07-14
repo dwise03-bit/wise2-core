@@ -135,7 +135,7 @@ export class Mixer {
    * Get meter readings for master bus
    */
   getMeterReading(): MeterReading {
-    this.masterAnalyser.getByteFrequencyData(this.dataArray);
+    this.masterAnalyser.getByteFrequencyData(this.dataArray as any);
 
     // Calculate peak (max frequency)
     let peak = 0;
@@ -165,7 +165,7 @@ export class Mixer {
    */
   private calculateLUFS(): number {
     const timeDomainData = new Uint8Array(this.masterAnalyser.fftSize);
-    this.masterAnalyser.getByteTimeDomainData(timeDomainData);
+    this.masterAnalyser.getByteTimeDomainData(timeDomainData as any);
 
     let sum = 0;
     for (let i = 0; i < timeDomainData.length; i++) {
@@ -195,7 +195,7 @@ export class Mixer {
    */
   getWaveformData(): Uint8Array {
     const dataArray = new Uint8Array(this.masterAnalyser.fftSize);
-    this.masterAnalyser.getByteTimeDomainData(dataArray);
+    this.masterAnalyser.getByteTimeDomainData(dataArray as any);
     return dataArray;
   }
 
