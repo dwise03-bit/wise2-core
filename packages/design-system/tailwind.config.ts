@@ -239,8 +239,8 @@ const config: Config = {
 
   plugins: [],
 
-  // Dark mode is always on for WISE²
-  darkMode: false,
+  // Dark mode handling - using 'class' selector for flexibility
+  darkMode: 'class',
 
   // Disable important variants for cleaner output
   corePlugins: {

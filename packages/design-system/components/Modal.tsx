@@ -88,9 +88,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         <div className="fixed inset-0 flex items-center justify-center p-4 z-modal">
           <div
             ref={(node) => {
-              modalRef.current = node
+              (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node
               if (typeof ref === 'function') ref(node)
-              else if (ref) ref.current = node
+              else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
             }}
             role="dialog"
             aria-modal="true"

@@ -24,6 +24,12 @@
       "@/*": [
         "./*"
       ],
+      "@wise2/design-system": [
+        "../../packages/design-system"
+      ],
+      "@wise2/design-system/components": [
+        "../../packages/design-system/components"
+      ],
       "@wise2/ui-components": [
         "../../packages/ui-components/src"
       ],
