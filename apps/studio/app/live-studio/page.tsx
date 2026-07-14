@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
+import { MasterMixer } from '../../components/Shared/Mixer/MasterMixer';
 
 /**
  * Live Studio Page
  *
  * Professional multi-track recording and streaming interface with:
- * - 8-channel live mixer with individual track control
+ * - 8-channel live mixer with individual track control (wired to audio engine)
  * - Multi-track recording management (24+ track support)
  * - Scene management for different show formats
  * - Stream destinations with connection status
@@ -16,15 +17,24 @@ import { useState } from 'react';
  * - Recent recordings library
  *
  * Design reference: WISE² Live Studio interface
- * Status: To be implemented by agent
+ * Status: Integrated with audio engine & streaming system
  */
 export default function LiveStudioPage() {
-  const [isStreaming, setIsStreaming] = useState(true);
-  const [isRecording, setIsRecording] = useState(true);
-  const [viewerCount, setViewerCount] = useState(1247);
-  const [cpuUsage, setCpuUsage] = useState(28);
-  const [storageUsed, setStorageUsed] = useState(2.34);
-  const [bitrate, setBitrate] = useState(6.2);
+  const {
+    audio,
+    streaming,
+    audioMixerChannels,
+    systemMetrics,
+    handleChannelVolumeChange,
+    getTotalTracks,
+    getRecordingStatus,
+    getPlaybackStatus,
+  } = useStreamingWithAudio();
+
+  const cpuUsage = Math.round(systemMetrics.cpuUsage);
+  const storageUsed = (systemMetrics.diskUsage / (1024 * 1024 * 1024)).toFixed(2);
+  const bitrate = streaming.streamStatus.bitrate / 1000 || 6.2;
+  const viewerCount = streaming.streamStatus.viewerCount;
 
   return (
     <div className="h-screen flex flex-col bg-black text-white overflow-hidden">
@@ -93,18 +103,18 @@ export default function LiveStudioPage() {
         <div className="flex-1 overflow-hidden flex gap-4 p-4">
           {/* Left - Mixer & Controls */}
           <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
-            {/* Mixer */}
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-gray-300">LIVE MIXER</h3>
-                <button className="text-xs text-blue-400 hover:text-blue-300">View All Tracks</button>
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {['MIC 1', 'MIC 2', 'INSTR 1', 'INSTR 2', 'BEAT', 'PLAYBACK', 'MASTER'].map((ch) => (
-                  <div key={ch} className="flex-shrink-0 w-12 h-24 bg-gray-800 rounded border border-gray-700" />
-                ))}
-              </div>
-            </div>
+            {/* Mixer - Wired to Audio Engine */}
+            <MasterMixer
+              channels={audioMixerChannels.slice(0, -1)} // Exclude master from channels array
+              masterVolume={audioMixerChannels[audioMixerChannels.length - 1]?.volume ?? 0}
+              masterPeakLevel={audioMixerChannels[audioMixerChannels.length - 1]?.peakLevel ?? -Infinity}
+              onChannelVolumeChange={handleChannelVolumeChange}
+              onChannelMuteToggle={(id) => console.log('Mute:', id)}
+              onChannelSoloToggle={(id) => console.log('Solo:', id)}
+              onMasterVolumeChange={(vol) => handleChannelVolumeChange('master', vol)}
+              title={`LIVE MIXER (${getTotalTracks()} Tracks)`}
+              showAllTracksLink={getTotalTracks() > 7}
+            />
 
             {/* Scenes & Controls */}
             <div className="grid grid-cols-2 gap-4">
@@ -118,25 +128,25 @@ export default function LiveStudioPage() {
                 </div>
               </div>
 
-              {/* Controls */}
+              {/* Controls - Wired to Audio Engine */}
               <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
                 <h3 className="text-sm font-bold text-gray-300 mb-3">LIVE CONTROLS</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => setIsStreaming(!isStreaming)}
+                    onClick={() => streaming.isStreaming ? streaming.stopStream() : streaming.startStream()}
                     className={`py-2 px-2 rounded text-xs font-semibold transition-colors ${
-                      isStreaming ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
+                      streaming.isStreaming ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
-                    {isStreaming ? 'Stop' : 'Start'} Stream
+                    {streaming.isStreaming ? 'Stop' : 'Start'} Stream
                   </button>
                   <button
-                    onClick={() => setIsRecording(!isRecording)}
+                    onClick={() => audio.state.isRecording ? audio.stopRecording() : audio.startRecording()}
                     className={`py-2 px-2 rounded text-xs font-semibold transition-colors ${
-                      isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
+                      audio.state.isRecording ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
                     }`}
                   >
-                    {isRecording ? 'Stop' : 'Start'} Record
+                    {audio.state.isRecording ? 'Stop' : 'Start'} Record
                   </button>
                 </div>
               </div>

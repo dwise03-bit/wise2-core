@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import { StudioNav } from '../components/Navigation/StudioNav';
 
 export const metadata: Metadata = {
   title: 'WISE Sound Labs | Professional Audio Studio',
@@ -12,23 +13,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body className="bg-black text-chrome">
-        <div className="min-h-screen flex flex-col">
-          {/* Studio Header */}
-          <header className="bg-gray-900 border-b border-chrome/20 px-md sm:px-lg py-md flex items-center justify-between">
-            <h1 className="text-2xl font-bold">WISE Sound Labs</h1>
-            <div className="flex gap-md">
-              <button className="px-lg py-sm bg-blue-500 hover:bg-blue-400 text-black font-semibold rounded-md">
-                Export
-              </button>
-              <button className="px-lg py-sm bg-purple-500 hover:bg-purple-400 text-black font-semibold rounded-md">
-                Share
-              </button>
-            </div>
-          </header>
+      <body className="bg-black text-white">
+        <div className="min-h-screen flex">
+          {/* Left Sidebar Navigation */}
+          <StudioNav />
 
-          {/* Main Studio */}
-          <main className="flex-1">{children}</main>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <header className="bg-gray-900 border-b border-gray-700 px-6 py-4 flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">WISE Sound Labs</h1>
+              </div>
+              <div className="flex items-center gap-4">
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                  Export
+                </button>
+                <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors">
+                  Share
+                </button>
+              </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-1 overflow-hidden">{children}</main>
+          </div>
         </div>
       </body>
     </html>
