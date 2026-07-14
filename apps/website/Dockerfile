@@ -24,6 +24,8 @@ RUN addgroup --gid 1001 --system nodejs && adduser --system nextjs --uid 1001
 
 # Copy built website standalone (contains node_modules and server.js)
 COPY --from=builder /app/apps/website/.next/standalone ./
+# Copy node_modules with workspace symlinks from builder stage
+COPY --from=builder /app/node_modules ./node_modules
 # Copy static assets
 COPY --from=builder /app/apps/website/.next/static ./.next/static
 # Copy public directory
