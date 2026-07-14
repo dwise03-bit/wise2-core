@@ -7,3 +7,5 @@ export { TestimonialsSection } from './testimonials';
 export { PricingSection } from './pricing';
 export { CTASection } from './cta';
 export { Footer } from './footer';
+export { AnimatedCard } from './animated-card';
+export { AnimatedSection } from './animated-section';
