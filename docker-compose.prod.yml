@@ -48,18 +48,18 @@ services:
       - api
     restart: unless-stopped
 
-  admin:
-    build:
-      context: .
-      dockerfile: apps/admin/Dockerfile
-    environment:
-      NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://localhost:3001
-    ports:
-      - "3003:3000"
-    depends_on:
-      - api
-    restart: unless-stopped
+  # admin:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/admin/Dockerfile
+  #   environment:
+  #     NODE_ENV: production
+  #     NEXT_PUBLIC_API_URL: http://localhost:3001
+  #   ports:
+  #     - "3003:3000"
+  #   depends_on:
+  #     - api
+  #   restart: unless-stopped
 
 volumes:
   postgres_data:
