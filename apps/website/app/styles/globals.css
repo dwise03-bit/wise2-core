@@ -1,5 +1,5 @@
-/* Import centralized design system tokens */
-@import '@wise2/design-system/design-tokens.css';
+/* Design system tokens are imported via Tailwind configuration */
+/* See packages/design-system/tailwind.config.ts */
 
 /* Website-specific styles */
 
