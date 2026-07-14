@@ -1,7 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { MasterMixer } from '../../components/Shared/Mixer/MasterMixer';
+import { ChatRoom } from '../../components/Shared/Chat';
+import { RecordingsList } from '../../components/Shared/Recording';
 
 /**
  * Live Studio Page
@@ -35,6 +39,62 @@ export default function LiveStudioPage() {
   const storageUsed = (systemMetrics.diskUsage / (1024 * 1024 * 1024)).toFixed(2);
   const bitrate = streaming.streamStatus.bitrate / 1000 || 6.2;
   const viewerCount = streaming.streamStatus.viewerCount;
+
+  // Set up keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      // R: Start/stop recording
+      if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        if (audio.state.isRecording) {
+          audio.stopRecording();
+        } else {
+          audio.startRecording();
+        }
+      }
+
+      // Space: Play/pause
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (audio.state.isPlaying) {
+          audio.stopPlayback();
+        } else {
+          audio.play();
+        }
+      }
+
+      // Shift+Space: Stop
+      if (e.shiftKey && e.code === 'Space') {
+        e.preventDefault();
+        audio.stopPlayback();
+      }
+
+      // T: Add track
+      if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        audio.addTrack();
+      }
+
+      // Cmd/Ctrl+S: Save project
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        // Save project logic would go here
+        console.log('Save project');
+      }
+
+      // Cmd/Ctrl+E: Export
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'e' || e.key === 'E')) {
+        e.preventDefault();
+        // Export logic would go here
+        console.log('Export');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [audio]);
 
   return (
     <div className="h-screen flex flex-col bg-black text-white overflow-hidden">
@@ -151,6 +211,15 @@ export default function LiveStudioPage() {
                 </div>
               </div>
             </div>
+
+            {/* Recent Recordings */}
+            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+              <RecordingsList
+                title="RECENT RECORDINGS"
+                limit={3}
+                showHeader={true}
+              />
+            </div>
           </div>
 
           {/* Right - Preview & Chat */}
@@ -161,12 +230,7 @@ export default function LiveStudioPage() {
             </div>
 
             {/* Chat */}
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 flex-1 flex flex-col">
-              <h3 className="text-sm font-bold text-gray-300 mb-2">CHAT ROOM</h3>
-              <div className="flex-1 flex items-center justify-center text-gray-500 text-xs">
-                Chat component loading...
-              </div>
-            </div>
+            <ChatRoom title="CHAT ROOM" isEnabled={true} activeUsers={viewerCount} />
 
             {/* Audio Meters */}
             <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
