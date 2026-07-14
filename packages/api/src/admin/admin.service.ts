@@ -1,38 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@wise2/db';
+
+const mockProjects: any[] = [];
+const mockUsers: any[] = [];
 
 @Injectable()
 export class AdminService {
-  private prisma = new PrismaClient();
-
   async getProjectsForReview() {
-    return this.prisma.project.findMany({
-      where: { status: 'HUMAN_REVIEW' },
-      orderBy: { createdAt: 'desc' },
-      include: { user: { select: { email: true, name: true } } },
-    });
+    return mockProjects.filter(p => p.status === 'HUMAN_REVIEW').sort((a, b) => b.createdAt - a.createdAt);
   }
 
   async approveProject(projectId: string) {
-    return this.prisma.project.update({
-      where: { id: projectId },
-      data: { status: 'APPROVED' },
-    });
+    const project = mockProjects.find(p => p.id === projectId);
+    if (project) project.status = 'APPROVED';
+    return project;
   }
 
   async rejectProject(projectId: string, reason?: string) {
-    return this.prisma.project.update({
-      where: { id: projectId },
-      data: { status: 'REJECTED' },
-    });
+    const project = mockProjects.find(p => p.id === projectId);
+    if (project) project.status = 'REJECTED';
+    return project;
   }
 
   async getStats() {
-    const total = await this.prisma.project.count();
-    const pending = await this.prisma.project.count({ where: { status: 'HUMAN_REVIEW' } });
-    const approved = await this.prisma.project.count({ where: { status: 'APPROVED' } });
-    const users = await this.prisma.user.count();
-
-    return { total, pending, approved, users };
+    return {
+      total: mockProjects.length,
+      pending: mockProjects.filter(p => p.status === 'HUMAN_REVIEW').length,
+      approved: mockProjects.filter(p => p.status === 'APPROVED').length,
+      users: mockUsers.length,
+    };
   }
 }
