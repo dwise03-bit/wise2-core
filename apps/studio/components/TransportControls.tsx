@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable no-unused-vars */
+
 /**
  * Transport controls for playback (play, pause, stop, record)
  */

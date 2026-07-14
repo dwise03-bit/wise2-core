@@ -3,6 +3,7 @@
 /**
  * Master mixer panel - shows overall mix levels and master controls
  */
+/* eslint-disable no-unused-vars */
 
 interface MasterMixerProps {
   masterVolume: number;

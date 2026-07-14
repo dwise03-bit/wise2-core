@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable no-unused-vars */
+
 /**
  * Clip Component
  * Individual audio clip on timeline with editing capabilities
@@ -33,7 +35,7 @@ export interface ClipProps {
 }
 
 export function Clip({
-  id,
+  id: _id,
   name,
   audioBuffer,
   startTime,
@@ -49,8 +51,8 @@ export function Clip({
   onTrimEnd,
   onSelect,
   onDelete,
-  onFadeInChange,
-  onFadeOutChange,
+  onFadeInChange: _onFadeInChange,
+  onFadeOutChange: _onFadeOutChange,
 }: ClipProps) {
   const clipRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -134,26 +136,29 @@ export function Clip({
       const deltaSeconds = delta / pxPerSecond;
 
       switch (dragMode) {
-        case 'move':
+        case 'move': {
           // Move entire clip
           const newStartTime = Math.max(0, startTime + deltaSeconds);
           onMove?.(newStartTime);
           setDragStart(e.clientX);
           break;
+        }
 
-        case 'trim-start':
+        case 'trim-start': {
           // Trim from start
           const newTrimStart = Math.max(0, Math.min(displayStart + deltaSeconds, displayEnd - 0.1));
           onTrimStart?.(newTrimStart);
           setDragStart(e.clientX);
           break;
+        }
 
-        case 'trim-end':
+        case 'trim-end': {
           // Trim from end
           const newTrimEnd = Math.min(duration, Math.max(displayStart + 0.1, displayEnd + deltaSeconds));
           onTrimEnd?.(newTrimEnd);
           setDragStart(e.clientX);
           break;
+        }
       }
     },
     [isDragging, dragMode, dragStart, pxPerSecond, startTime, displayStart, displayEnd, duration, onMove, onTrimStart, onTrimEnd]

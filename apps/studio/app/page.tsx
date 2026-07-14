@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 import { useClips } from '../hooks/useClips';
 import { useClipPlayback } from '../hooks/useClipPlayback';
@@ -26,18 +26,6 @@ export default function StudioPage() {
     masterGainNode: audio.mixer?.getMasterBus() || undefined,
   });
 
-  // When recording stops, create a clip from the recorded audio
-  useEffect(() => {
-    const handleRecordingStop = async () => {
-      if (audio.state.isRecording) return; // Only process when recording stops
-
-      // This would be called when recording ends
-      // For now, we'll handle it in the stopRecording callback
-    };
-
-    // Listen for recording state changes
-    return undefined;
-  }, [audio.state.isRecording]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -62,17 +50,7 @@ export default function StudioPage() {
       if (e.code === 'KeyR' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         if (audio.state.isRecording) {
-          const recordedData = audio.stopRecording();
-          // Create clip from recorded audio
-          if (recordedData?.audioBuffer && selectedTrackId) {
-            const clipId = clips.addClip(
-              selectedTrackId,
-              recordedData.audioBuffer,
-              `Recording ${new Date().toLocaleTimeString()}`,
-              audio.state.currentTime
-            );
-            clips.selectClip(clipId);
-          }
+          audio.stopRecording();
         } else {
           audio.startRecording();
         }

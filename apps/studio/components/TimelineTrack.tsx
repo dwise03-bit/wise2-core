@@ -1,12 +1,14 @@
 'use client';
 
+/* eslint-disable no-unused-vars */
+
 /**
  * Timeline Track Component
  * Displays all clips for a single track on the timeline
  */
 
 import React, { useCallback } from 'react';
-import { Clip as ClipData } from '../hooks/useClips';
+import type { ClipData } from '../hooks/useClips';
 import { Clip } from './Clip';
 
 interface TimelineTrackProps {

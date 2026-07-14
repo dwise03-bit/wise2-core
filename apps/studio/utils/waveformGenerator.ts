@@ -218,36 +218,3 @@ function resampleBuffer(audioBuffer: AudioBuffer, step: number): AudioBuffer {
 
   return resampledBuffer;
 }
-
-/**
- * Draw trimmed waveform (showing only the displayed portion)
- */
-export function drawTrimmedWaveform(
-  canvas: HTMLCanvasElement,
-  audioBuffer: AudioBuffer,
-  trimStart: number, // seconds
-  trimEnd: number,   // seconds
-  options: WaveformOptions
-): void {
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const sampleRate = audioBuffer.sampleRate;
-  const startSample = Math.floor(trimStart * sampleRate);
-  const endSample = Math.floor(trimEnd * sampleRate);
-
-  // Create trimmed buffer
-  const trimmedBuffer = audioBuffer.getContext().createBuffer(
-    audioBuffer.numberOfChannels,
-    endSample - startSample,
-    sampleRate
-  );
-
-  for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
-    const source = audioBuffer.getChannelData(channel);
-    const dest = trimmedBuffer.getChannelData(channel);
-    dest.set(source.subarray(startSample, endSample));
-  }
-
-  drawWaveformToCanvas(canvas, trimmedBuffer, options);
-}
