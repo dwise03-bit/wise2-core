@@ -1,12 +1,12 @@
-# Production build for WISE² Website (build from apps/website directory)
+# Production build for WISE² Website (build context: project root)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy everything we need from root level (when building with context=project_root)
-COPY ../../package.json ../../package-lock.json ./
-COPY ../../packages ./packages
-COPY . ./apps/website
+# Copy monorepo files (paths relative to build context root)
+COPY package.json package-lock.json ./
+COPY packages ./packages
+COPY apps/website ./apps/website
 
 # Install all dependencies
 RUN npm ci
