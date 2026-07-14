@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY packages ./packages
-COPY packages/api ./packages/api
 
 RUN npm ci --workspaces
 
@@ -17,9 +16,11 @@ WORKDIR /app
 
 RUN npm install -g @nestjs/cli
 
+# Copy built application
 COPY --from=builder /app/packages/api/dist ./dist
-COPY --from=builder /app/packages/api/node_modules ./node_modules
-COPY --from=builder /app/packages/db ./packages/db
+
+# Copy production dependencies
+RUN npm install --production --silent
 
 EXPOSE 3001
 
