@@ -36,9 +36,8 @@ export function AnimatedSection({
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="visible"
+      animate="visible"
       variants={variants}
-      viewport={{ once: true, margin: '-100px' }}
     >
       {children}
     </motion.div>
