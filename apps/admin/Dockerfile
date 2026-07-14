@@ -4,12 +4,11 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY packages ./packages
-COPY apps/website ./apps/website
-COPY apps/dashboard ./apps/dashboard
+COPY apps/admin ./apps/admin
 
 RUN npm ci --workspaces
 
-WORKDIR /app/apps/dashboard
+WORKDIR /app/apps/admin
 RUN npm run build
 
 FROM node:20-alpine
@@ -18,10 +17,10 @@ WORKDIR /app
 
 RUN apk add --no-cache dumb-init curl
 
-COPY --from=builder /app/apps/dashboard/.next/standalone ./
+COPY --from=builder /app/apps/admin/.next/standalone ./
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/dashboard/.next/static ./.next/static
-COPY --from=builder /app/apps/dashboard/public ./public
+COPY --from=builder /app/apps/admin/.next/static ./.next/static
+COPY --from=builder /app/apps/admin/public ./public
 
 EXPOSE 3000
 
