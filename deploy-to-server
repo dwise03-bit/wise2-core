@@ -4,34 +4,29 @@ set -e
 REMOTE_USER="dwise"
 REMOTE_HOST="wise2.net"
 
-echo "🚀 Deploying WISE² Website to wise2.net"
-echo "========================================"
+echo "🚀 Deploying to wise2.net..."
 
-# Push code
-echo "📤 Pushing to GitHub..."
-git add -A
-git commit -m "Deploy: Website update" || true
-git push origin main
-
-# Deploy on server
-echo "📡 Deploying to wise2.net..."
 ssh "$REMOTE_USER@$REMOTE_HOST" << 'REMOTE'
 cd /home/dwise/wise2-core
-echo "📥 Pulling latest code..."
-git pull origin main
 
-echo "🐳 Building Docker image..."
+# Sync with GitHub (force update, discard any conflicts)
+git fetch origin
+git reset --hard origin/main
+
+# Remove old container/image
+docker-compose -f apps/website/docker-compose.yml down 2>/dev/null || true
+docker rmi wise2-website:latest 2>/dev/null || true
+
+# Build
+echo "Building..."
 docker build -f apps/website/Dockerfile -t wise2-website:latest .
 
-echo "🚀 Starting container..."
+# Deploy
+echo "Deploying..."
 cd apps/website
 docker-compose up -d
 
-sleep 3
-echo ""
-echo "✅ DEPLOYMENT COMPLETE"
-echo "🌐 Website: https://wise2.net"
+sleep 5
+echo "✅ DEPLOYED"
+curl http://localhost:3000 | head -5
 REMOTE
-
-echo ""
-echo "✅ Deployment successful!"
