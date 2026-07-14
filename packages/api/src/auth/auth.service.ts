@@ -60,6 +60,15 @@ export class AuthService {
         name: user.name,
         role: user.role,
       },
+      subscription: {
+        plan: 'STARTER',
+        status: 'ACTIVE',
+        trial_days_remaining: 30,
+      },
+      discord: {
+        invite_url: 'https://discord.gg/wise2',
+        message: 'Join our community for updates and support',
+      },
     };
   }
 
