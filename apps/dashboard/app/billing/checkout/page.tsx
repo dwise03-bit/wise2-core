@@ -20,7 +20,8 @@ export default function CheckoutPage() {
   const handleCheckout = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/v1/billing/checkout', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/v1/billing/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
