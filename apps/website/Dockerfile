@@ -17,19 +17,16 @@ RUN cd apps/website && npm run build
 # Production image
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/apps/website
 
 RUN apk add --no-cache dumb-init curl
-RUN addgroup --gid 1001 --system nodejs && adduser --system nextjs --uid 1001
 
-# Copy built website standalone (contains node_modules and server.js)
-COPY --from=builder /app/apps/website/.next/standalone ./
-# Copy node_modules with workspace symlinks from builder stage
-COPY --from=builder /app/node_modules ./node_modules
-# Copy static assets
-COPY --from=builder /app/apps/website/.next/static ./.next/static
-# Copy public directory
+# Copy built website with full structure
+COPY --from=builder /app/apps/website/.next ./.next
 COPY --from=builder /app/apps/website/public ./public
+COPY --from=builder /app/apps/website/package.json ./
+# Copy node_modules from root for workspace dependencies
+COPY --from=builder /app/node_modules /app/node_modules
 
 EXPOSE 3000
 
