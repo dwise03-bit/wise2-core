@@ -18,9 +18,9 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
 
   constructor(configService: ConfigService) {
     super({
-      clientID: configService.get('GITHUB_CLIENT_ID'),
-      clientSecret: configService.get('GITHUB_CLIENT_SECRET'),
-      callbackURL: configService.get('GITHUB_CALLBACK_URL'),
+      clientID: configService.get('GITHUB_CLIENT_ID') || 'mock-gh-id',
+      clientSecret: configService.get('GITHUB_CLIENT_SECRET') || 'mock-gh-secret',
+      callbackURL: configService.get('GITHUB_CALLBACK_URL') || 'http://localhost:3001/auth/github/callback',
       scope: ['user:email'],
     });
     this.logger.log('🔐 GitHub OAuth2 strategy initialized');
