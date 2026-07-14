@@ -14,13 +14,10 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-RUN npm install -g @nestjs/cli
-
-# Copy built application
+# Copy built app and required files from builder
 COPY --from=builder /app/packages/api/dist ./dist
-
-# Copy production dependencies
-RUN npm install --production --silent
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3001
 
