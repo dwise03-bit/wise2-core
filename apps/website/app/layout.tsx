@@ -1,11 +1,17 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: 'WISE² Enterprise | AI-Powered Brand Operating System',
   description: 'Create, manage, and grow your brand with AI-powered tools. Professional-grade audio, video, and design. One platform. Unlimited possibilities.',
   keywords: 'brand creation, audio branding, AI, music production, design, marketing',
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
   openGraph: {
     type: 'website',
