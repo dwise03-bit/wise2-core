@@ -1,25 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
 
 /**
  * Live Streaming Page
  *
  * Professional streaming interface with:
  * - Live streaming preview/visualization
- * - Stream status monitoring
- * - Audio mixer for guest/music management
+ * - Stream status monitoring (wired to audio engine)
+ * - Audio mixer for guest/music management (wired to audio engine)
  * - Scene switcher for multi-camera setups
  * - Stream destinations (YouTube, Twitch, Facebook, etc.)
  * - Real-time analytics and chat
  *
  * Design reference: WISE² Live Streaming interface
- * Status: To be implemented by agent
+ * Status: Integrated with audio engine & streaming system
  */
 export default function LiveStreamingPage() {
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [viewerCount, setViewerCount] = useState(1256);
-  const [bitrate, setBitrate] = useState(8450);
+  const { audio, streaming } = useStreamingWithAudio();
+
+  const isStreaming = streaming.isStreaming;
+  const viewerCount = streaming.streamStatus.viewerCount;
+  const bitrate = Math.round(streaming.streamStatus.bitrate);
 
   return (
     <div className="h-screen flex flex-col bg-black text-white overflow-hidden">
@@ -82,7 +84,7 @@ export default function LiveStreamingPage() {
                 <div className="text-xl font-bold">60 fps</div>
               </div>
               <button
-                onClick={() => setIsStreaming(!isStreaming)}
+                onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
                 className={`py-2 px-4 rounded font-semibold transition-colors ${
                   isStreaming
                     ? 'bg-red-600 hover:bg-red-700'
