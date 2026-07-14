@@ -40,6 +40,16 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  website:
+    build:
+      context: .
+      dockerfile: apps/website/Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+
   dashboard:
     build:
       context: .
