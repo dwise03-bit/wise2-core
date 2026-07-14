@@ -46,14 +46,14 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
+          username: dwise
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
             echo "📦 Deploying WISE² MLP..."
 
             # Navigate to deployment directory
-            cd /root/wise2-core
+            cd /home/dwise/wise2-core
 
             # Pull latest changes
             echo "📥 Pulling latest code..."
@@ -62,8 +62,8 @@ jobs:
 
             # Deploy with Docker Compose
             echo "🚀 Rebuilding and restarting services..."
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml up -d --build
+            sudo docker-compose -f docker-compose.prod.yml down
+            sudo docker-compose -f docker-compose.prod.yml up -d --build
 
             echo "✅ Deployment complete!"
 
