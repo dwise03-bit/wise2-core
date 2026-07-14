@@ -11,8 +11,8 @@ COPY apps/website ./apps/website
 # Install all dependencies
 RUN npm ci
 
-# Build website only
-RUN npm run build --filter='./apps/website'
+# Build website only (cd into website to avoid turbo loop)
+RUN cd apps/website && npm run build
 
 # Production image
 FROM node:20-alpine
