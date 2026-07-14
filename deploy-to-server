@@ -1,31 +1,25 @@
 #!/bin/bash
-# Deploy from Mac workstation to Linux GPU server
-
 set -e
 
 REMOTE_USER="dwise"
-REMOTE_HOST="gpu-nmls"
-REMOTE_PATH="/home/dwise/wise2-core"
+REMOTE_HOST="wise2.net"
 
-echo "🚀 Deploying WISE² Website to GPU Server"
-echo "=========================================="
+echo "🚀 Deploying WISE² Website to wise2.net"
+echo "========================================"
 
-# Step 1: Commit and push from Mac
-echo "📤 Pushing code to GitHub..."
+# Push code
+echo "📤 Pushing to GitHub..."
 git add -A
-git commit -m "Deploy: WISE² website update" || echo "No changes to commit"
+git commit -m "Deploy: Website update" || true
 git push origin main
 
-# Step 2: SSH into server and deploy
-echo "📡 Connecting to GPU server..."
+# Deploy on server
+echo "📡 Deploying to wise2.net..."
 ssh "$REMOTE_USER@$REMOTE_HOST" << 'REMOTE'
 cd /home/dwise/wise2-core
-
-# Pull latest code
 echo "📥 Pulling latest code..."
 git pull origin main
 
-# Deploy website
 echo "🐳 Building Docker image..."
 docker build -f apps/website/Dockerfile -t wise2-website:latest .
 
@@ -33,11 +27,10 @@ echo "🚀 Starting container..."
 cd apps/website
 docker-compose up -d
 
-# Verify
 sleep 3
 echo ""
 echo "✅ DEPLOYMENT COMPLETE"
-echo "🌐 Website: http://gpu-nmls:3000"
+echo "🌐 Website: https://wise2.net"
 REMOTE
 
 echo ""
