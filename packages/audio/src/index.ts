@@ -1,6 +1,14 @@
 /**
  * WISE² Audio Processing Module
- * Audio encoding, mixing, and synthesis utilities
+ * Production-grade browser DAW audio engine
  */
 
-export const version = '0.1.0';
+export * from './types';
+export * from './AudioContextManager';
+export * from './Track';
+export * from './Mixer';
+export * from './Recorder';
+export * from './Playback';
+export * from './effects';
+
+export const version = '1.0.0';
