@@ -1,147 +1,98 @@
 #!/bin/bash
 
+# WISE² Platform Deployment Script
+# Deploys to Vercel with proper configuration
+
 set -e
 
-echo "🚀 Wise² Core Deployment Script"
-echo "================================"
-echo ""
+echo "🚀 WISE² Platform Deployment"
+echo "===================================="
 
-# Check if running on Linux
-if [[ ! "$OSTYPE" == "linux"* ]]; then
-    echo "❌ This script must run on a Linux server"
-    exit 1
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Step 1: Verify build
+echo -e "\n${BLUE}Step 1: Verifying production build...${NC}"
+npm run build
+echo -e "${GREEN}✓ Build successful${NC}"
+
+# Step 2: Check Vercel CLI
+echo -e "\n${BLUE}Step 2: Checking Vercel CLI...${NC}"
+if ! command -v vercel &> /dev/null; then
+    echo -e "${YELLOW}⚠ Vercel CLI not found. Installing...${NC}"
+    npm install -g vercel
 fi
+echo -e "${GREEN}✓ Vercel CLI ready${NC}"
 
-# Check if root or sudo
-if [[ $EUID -ne 0 ]]; then
-    echo "❌ This script must run as root or with sudo"
-    exit 1
+# Step 3: Environment configuration
+echo -e "\n${BLUE}Step 3: Checking environment configuration...${NC}"
+if [ ! -f "apps/website/.env.production" ]; then
+    echo -e "${YELLOW}⚠ Creating .env.production${NC}"
+    cat > apps/website/.env.production << ENVEOF
+NEXT_PUBLIC_SITE_URL=https://wise2.net
+NEXT_PUBLIC_API_URL=https://api.wise2.net
+NEXT_PUBLIC_ANALYTICS_ID=G-WISE2NET
+NODE_ENV=production
+ENVEOF
 fi
+echo -e "${GREEN}✓ Environment configured${NC}"
 
-echo "✓ Deployment environment verified"
-echo ""
+# Step 4: Git status check
+echo -e "\n${BLUE}Step 4: Checking git status...${NC}"
+if ! git diff --quiet; then
+    echo -e "${YELLOW}⚠ Uncommitted changes detected${NC}"
+    git status
+    read -p "Continue with uncommitted changes? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Deployment cancelled"
+        exit 1
+    fi
+fi
+echo -e "${GREEN}✓ Git status verified${NC}"
 
-# Step 1: Update system
-echo "📦 Updating system packages..."
-apt-get update
-apt-get upgrade -y
-echo "✓ System updated"
-echo ""
+# Step 5: Deploy to Vercel
+echo -e "\n${BLUE}Step 5: Deploying to Vercel...${NC}"
+echo -e "${YELLOW}Note: You'll be prompted to authenticate with Vercel if needed${NC}"
 
-# Step 2: Install Docker & Certbot
-echo "🐳 Installing Docker and dependencies..."
-apt-get install -y docker.io docker-compose certbot git curl
-systemctl enable docker
-systemctl start docker
-echo "✓ Docker installed and enabled"
-echo ""
+cd apps/website
 
-# Step 3: Clone repository
-if [ ! -d "/opt/wise2-core" ]; then
-    echo "📥 Cloning repository to /opt/wise2-core..."
-    cd /opt
-    git clone https://github.com/yourusername/wise2-core.git
-    cd wise2-core
+# Deploy with production settings
+vercel --prod --yes \
+  --name "wise2" \
+  --env NEXT_PUBLIC_SITE_URL=https://wise2.net \
+  --env NEXT_PUBLIC_API_URL=https://api.wise2.net \
+  --env NEXT_PUBLIC_ANALYTICS_ID=G-WISE2NET
+
+echo -e "\n${GREEN}✓ Deployment complete${NC}"
+
+# Step 6: Post-deployment verification
+echo -e "\n${BLUE}Step 6: Verifying deployment...${NC}"
+echo "Waiting 30 seconds for deployment to be live..."
+sleep 30
+
+# Test the deployment
+if curl -s -o /dev/null -w "%{http_code}" https://wise2.vercel.app | grep -q "200"; then
+    echo -e "${GREEN}✓ Deployment verified - Site is live!${NC}"
+    echo -e "\n${GREEN}🎉 Deployment successful!${NC}"
+    echo -e "\n${BLUE}Next steps:${NC}"
+    echo "1. Configure domain: wise2.net → wise2.vercel.app in Vercel dashboard"
+    echo "2. Update DNS records (see Vercel guide)"
+    echo "3. Monitor: https://vercel.com/dashboard"
+    echo "4. Analytics: https://vercel.com/analytics"
 else
-    echo "📥 Repository already exists, pulling latest..."
-    cd /opt/wise2-core
-    git pull origin main
-fi
-echo "✓ Repository ready"
-echo ""
-
-# Step 4: Setup environment
-if [ ! -f ".env.prod" ]; then
-    echo "⚙️  Creating .env.prod file..."
-    cp .env.prod.example .env.prod
-    echo "⚠️  IMPORTANT: Edit .env.prod with your secrets before continuing!"
-    echo "   nano .env.prod"
-    echo ""
-    exit 1
-fi
-echo "✓ .env.prod loaded"
-echo ""
-
-# Step 5: Create directories
-echo "📂 Creating config directories..."
-mkdir -p config/grafana/provisioning/{dashboards,datasources}
-mkdir -p data/{postgres,redis,prometheus,grafana}
-echo "✓ Directories created"
-echo ""
-
-# Step 6: Setup SSL
-if [ ! -f "/etc/letsencrypt/live/wise2.net/fullchain.pem" ]; then
-    echo "🔒 Setting up SSL certificates with Let's Encrypt..."
-    apt-get install -y python3-certbot-standalone
-    certbot certonly --standalone \
-        -d wise2.net \
-        -d www.wise2.net \
-        -d api.wise2.net \
-        -d admin.wise2.net \
-        --email dwise03@gmail.com \
-        --agree-tos \
-        --non-interactive
-    echo "✓ SSL certificates generated"
-else
-    echo "✓ SSL certificates already exist"
-fi
-echo ""
-
-# Step 7: Configure Nginx
-echo "⚙️  Configuring Nginx..."
-cp config/nginx.conf /etc/nginx/sites-available/wise2
-rm -f /etc/nginx/sites-enabled/default
-ln -sf /etc/nginx/sites-available/wise2 /etc/nginx/sites-enabled/wise2
-nginx -t
-systemctl reload nginx
-echo "✓ Nginx configured"
-echo ""
-
-# Step 8: Build and start services
-echo "🔨 Building Docker images..."
-docker-compose -f docker-compose.prod.yml build
-echo "✓ Images built"
-echo ""
-
-echo "🚀 Starting services..."
-docker-compose -f docker-compose.prod.yml up -d
-echo "✓ Services started"
-echo ""
-
-# Step 9: Wait for services to be healthy
-echo "⏳ Waiting for services to become healthy..."
-sleep 10
-echo ""
-
-# Step 10: Verify deployment
-echo "✅ Verifying deployment..."
-echo ""
-
-if curl -s -o /dev/null -w "%{http_code}" https://wise2.net | grep -q "200\|301\|302"; then
-    echo "✓ wise2.net is accessible"
-else
-    echo "⚠️  wise2.net may not be accessible yet (DNS propagation can take time)"
+    echo -e "${YELLOW}⚠ Site may still be deploying${NC}"
+    echo "Check progress at: https://vercel.com/dashboard"
 fi
 
-if docker-compose -f docker-compose.prod.yml ps | grep -q "Up"; then
-    echo "✓ Docker services are running"
-else
-    echo "❌ Some Docker services are not running"
-    docker-compose -f docker-compose.prod.yml ps
-fi
+cd ../..
 
-echo ""
-echo "================================"
-echo "🎉 Deployment Complete!"
-echo ""
-echo "📊 Monitoring:"
-echo "   Prometheus: http://173.208.147.165:9090"
-echo "   Grafana: http://173.208.147.165:3001"
-echo ""
-echo "🌐 Services:"
-echo "   Landing Page: https://wise2.net"
-echo "   API: https://api.wise2.net"
-echo "   Admin: https://admin.wise2.net"
-echo ""
-echo "📝 Logs: docker-compose -f docker-compose.prod.yml logs -f"
-echo "================================"
+echo -e "\n${BLUE}===================================="
+echo "Deployment Guide:"
+echo "===================================${NC}"
+echo "Preview: https://wise2.vercel.app"
+echo "Dashboard: https://vercel.com/dashboard"
+echo "Documentation: See DEPLOYMENT.md"
