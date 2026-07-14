@@ -1,18 +1,26 @@
-FROM node:20-alpine
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY packages ./packages
 COPY packages/api ./packages/api
-COPY packages/db ./packages/db
-COPY packages/types ./packages/types
 
-RUN npm install --legacy-peer-deps
+RUN npm ci --workspaces
 
 WORKDIR /app/packages/api
-
 RUN npm run build
 
-EXPOSE 3000
+FROM node:20-alpine
 
-CMD ["npm", "start"]
+WORKDIR /app
+
+RUN npm install -g @nestjs/cli
+
+COPY --from=builder /app/packages/api/dist ./dist
+COPY --from=builder /app/packages/api/node_modules ./node_modules
+COPY --from=builder /app/packages/db ./packages/db
+
+EXPOSE 3001
+
+CMD ["node", "dist/main"]
