@@ -13,18 +13,11 @@ cd /home/dwise/wise2-core
 git fetch origin
 git reset --hard origin/main
 
-# Remove old container/image
-docker-compose -f apps/website/docker-compose.yml down 2>/dev/null || true
-docker rmi wise2-website:latest 2>/dev/null || true
-
-# Build
-echo "Building..."
-docker build -f apps/website/Dockerfile -t wise2-website:latest .
-
-# Deploy
-echo "Deploying..."
+# Deploy (build and start via docker-compose)
+echo "Building and deploying..."
 cd apps/website
-docker-compose up -d
+docker-compose down 2>/dev/null || true
+docker-compose up -d --build
 
 sleep 5
 echo "✅ DEPLOYED"
