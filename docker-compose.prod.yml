@@ -40,15 +40,17 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  website:
-    build:
-      context: .
-      dockerfile: apps/website/Dockerfile
-    environment:
-      NODE_ENV: production
-    ports:
-      - "3001:3000"
-    restart: unless-stopped
+  # website:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/website/Dockerfile
+  #   environment:
+  #     NODE_ENV: production
+  #   ports:
+  #     - "3001:3000"
+  #   restart: unless-stopped
+  # NOTE: Website disabled for MVP - has internal DNS/connectivity issues trying to reach: 3f3d45e589cc
+  # Fix: Debug website app configuration for external service connections
 
   dashboard:
     build:
