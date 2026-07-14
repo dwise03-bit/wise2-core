@@ -1,5 +1,5 @@
-@import '@wise2/ui-components/src/globals.css';
-@import './design-tokens.css';
+/* Import centralized design system tokens */
+@import '@wise2/design-system/design-tokens.css';
 
 /* Studio-specific styles */
 html {
