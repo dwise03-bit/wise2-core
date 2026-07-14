@@ -1,8 +1,19 @@
-# BRAND BIBLE
+# BRAND BIBLE - CANONICAL REFERENCE
 
-**WISE² Enterprise**  
-**Version**: 10.0  
-**Date**: 2026-07-11
+**WISE² ORGANIZED CHAOS COMMAND CENTER**  
+**Version**: 11.0 (FINAL VISUAL SPEC)  
+**Date**: 2026-07-14  
+**Status**: CANONICAL - All implementations must conform to this
+
+---
+
+## VISUAL REFERENCE (AUTHORITATIVE)
+
+**See**: `WISE2_DESIGN_SYSTEM_MASTER_VISUAL.png` - This is the master visual specification that all implementations must match.
+
+**See**: `BRAND_BIBLE_UPDATED.md` - Extended specification document with detailed implementation guidelines.
+
+All pages, dashboards, and UIs must conform to this visual reference.
 
 ---
 

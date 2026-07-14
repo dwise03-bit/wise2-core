@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
 
 const PLANS = [
@@ -13,7 +12,6 @@ const PLANS = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState('pro');
   const [loading, setLoading] = useState(false);
 
