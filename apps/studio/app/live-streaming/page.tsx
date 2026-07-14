@@ -2,6 +2,7 @@
 
 import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
 import { StreamingIntegration } from '../../components/Shared/Streaming';
+import { StreamDestinationsPanel } from '../../components/Shared/Streaming';
 import { ChatRoom } from '../../components/Shared/Chat';
 
 /**
@@ -67,35 +68,47 @@ export default function LiveStreamingPage() {
           </div>
 
           {/* Status & Controls */}
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-            <div className="grid grid-cols-5 gap-4 text-center">
-              <div>
-                <div className="text-xs text-gray-400 mb-1">VIEWERS</div>
-                <div className="text-xl font-bold text-green-400">{viewerCount.toLocaleString()}</div>
+          <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 space-y-4">
+            {/* Enhanced Status Display */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {/* Viewers */}
+              <div className={`p-3 rounded-lg border ${viewerCount > 100 ? 'bg-green-500/10 border-green-500/30' : 'bg-yellow-500/10 border-yellow-500/30'}`}>
+                <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">VIEWERS</div>
+                <div className="text-lg font-bold text-green-400">{viewerCount.toLocaleString()}</div>
               </div>
-              <div>
-                <div className="text-xs text-gray-400 mb-1">BITRATE</div>
-                <div className="text-xl font-bold text-blue-400">{bitrate} kbps</div>
+
+              {/* Bitrate */}
+              <div className={`p-3 rounded-lg border ${bitrate >= 6000 ? 'bg-green-500/10 border-green-500/30' : 'bg-yellow-500/10 border-yellow-500/30'}`}>
+                <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">BITRATE</div>
+                <div className="text-lg font-bold text-blue-400">{bitrate} kbps</div>
               </div>
-              <div>
-                <div className="text-xs text-gray-400 mb-1">RESOLUTION</div>
-                <div className="text-xl font-bold">1080p60</div>
+
+              {/* Resolution */}
+              <div className="p-3 rounded-lg border bg-green-500/10 border-green-500/30">
+                <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">RESOLUTION</div>
+                <div className="text-lg font-bold">1080p60</div>
               </div>
-              <div>
-                <div className="text-xs text-gray-400 mb-1">FPS</div>
-                <div className="text-xl font-bold">60 fps</div>
+
+              {/* Stream Status */}
+              <div className={`p-3 rounded-lg border ${isStreaming ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-500/10 border-gray-500/30'}`}>
+                <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">STATUS</div>
+                <div className={`text-lg font-bold ${isStreaming ? 'text-red-400' : 'text-gray-400'}`}>
+                  {isStreaming ? '🔴 LIVE' : '⚫ OFFLINE'}
+                </div>
               </div>
-              <button
-                onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
-                className={`py-2 px-4 rounded font-semibold transition-colors ${
-                  isStreaming
-                    ? 'bg-red-600 hover:bg-red-700'
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
-              >
-                {isStreaming ? 'END STREAM' : 'GO LIVE'}
-              </button>
             </div>
+
+            {/* Stream Control Button */}
+            <button
+              onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
+              className={`w-full py-3 px-4 rounded-lg font-bold text-lg transition-colors ${
+                isStreaming
+                  ? 'bg-red-600 hover:bg-red-700'
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {isStreaming ? '🔴 END STREAM' : '🟢 GO LIVE'}
+            </button>
           </div>
         </div>
 

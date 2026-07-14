@@ -49,3 +49,16 @@ export {
   VUMeter,
   type VUMeterProps,
 } from './Mixer/VUMeter';
+
+// Shortcuts Components
+export {
+  ShortcutsPanel,
+  type ShortcutsPanelProps,
+  ShortcutHint,
+  type ShortcutHintProps,
+  ShortcutBadge,
+  type ShortcutBadgeProps,
+  ShortcutButton,
+  type ShortcutButtonProps,
+  useFormattedShortcut,
+} from './Shortcuts';

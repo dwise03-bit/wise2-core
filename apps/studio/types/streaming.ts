@@ -171,5 +171,5 @@ export interface KeyboardShortcut {
   description: string;
   keys: string[];
   action: () => void;
-  category: 'stream' | 'recording' | 'scene' | 'mixer' | 'chat';
+  category: 'stream' | 'recording' | 'scene' | 'mixer' | 'chat' | 'playback' | 'project' | 'other';
 }
