@@ -2,15 +2,33 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
+import { useClips } from '../hooks/useClips';
 import { TransportControls } from '../components/TransportControls';
 import { TrackPanel } from '../components/TrackPanel';
 import { MasterMixer } from '../components/MasterMixer';
+import { TimelineTrack } from '../components/TimelineTrack';
 
 export default function StudioPage() {
   const audio = useAudioEngine();
+  const clips = useClips();
   const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
   const [projectName, setProjectName] = useState('Untitled Project');
   const [bpmInput, setBpmInput] = useState('120');
+  const [pxPerSecond, setPxPerSecond] = useState(100); // 100px per second (zoom level)
+  const [timelineLength, setTimelineLength] = useState(60); // 60 second timeline
+
+  // When recording stops, create a clip from the recorded audio
+  useEffect(() => {
+    const handleRecordingStop = async () => {
+      if (audio.state.isRecording) return; // Only process when recording stops
+
+      // This would be called when recording ends
+      // For now, we'll handle it in the stopRecording callback
+    };
+
+    // Listen for recording state changes
+    return undefined;
+  }, [audio.state.isRecording]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -35,7 +53,17 @@ export default function StudioPage() {
       if (e.code === 'KeyR' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         if (audio.state.isRecording) {
-          audio.stopRecording();
+          const recordedData = audio.stopRecording();
+          // Create clip from recorded audio
+          if (recordedData?.audioBuffer && selectedTrackId) {
+            const clipId = clips.addClip(
+              selectedTrackId,
+              recordedData.audioBuffer,
+              `Recording ${new Date().toLocaleTimeString()}`,
+              audio.state.currentTime
+            );
+            clips.selectClip(clipId);
+          }
         } else {
           audio.startRecording();
         }
@@ -48,16 +76,43 @@ export default function StudioPage() {
         if (track) setSelectedTrackId(track.getId());
       }
 
-      // Delete = Remove track
-      if (e.code === 'Delete' && selectedTrackId) {
-        audio.removeTrack(selectedTrackId);
-        setSelectedTrackId(null);
+      // X = Split clip at playhead
+      if (e.code === 'KeyX' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        const selectedClip = clips.getSelectedClip();
+        if (selectedClip) {
+          clips.splitClip(selectedClip.id, audio.state.currentTime);
+        }
+      }
+
+      // Delete = Remove selected clip or track
+      if (e.code === 'Delete') {
+        e.preventDefault();
+        const selectedClip = clips.getSelectedClip();
+        if (selectedClip) {
+          // Delete clip
+          clips.removeClip(selectedClip.id);
+        } else if (selectedTrackId) {
+          // Delete track
+          audio.removeTrack(selectedTrackId);
+          setSelectedTrackId(null);
+        }
+      }
+
+      // Ctrl/Cmd+D = Duplicate selected clip
+      if ((e.ctrlKey || e.metaKey) && e.code === 'KeyD') {
+        e.preventDefault();
+        const selectedClip = clips.getSelectedClip();
+        if (selectedClip) {
+          const newClipId = clips.duplicateClip(selectedClip.id, 0.5);
+          if (newClipId) clips.selectClip(newClipId);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [audio, selectedTrackId]);
+  }, [audio, selectedTrackId, clips]);
 
   const handleBPMChange = () => {
     const bpm = parseFloat(bpmInput);
@@ -176,35 +231,80 @@ export default function StudioPage() {
           />
 
           {/* Timeline/Clips Area */}
-          <div className="flex-1 bg-gray-950 border border-gray-700 rounded-lg p-4 overflow-auto">
-            {audio.state.tracks.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-500">
-                <div className="text-center">
-                  <p className="text-lg mb-4">No tracks yet</p>
-                  <p className="text-sm text-gray-600">
-                    Add a track to start recording or arranging
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {audio.state.tracks.map((track) => (
-                  <div
-                    key={track.getId()}
-                    className={`h-24 bg-gray-900 border rounded cursor-pointer transition-colors ${
-                      selectedTrackId === track.getId()
-                        ? 'border-blue-500 bg-blue-500/5'
-                        : 'border-gray-700 hover:border-gray-600'
-                    }`}
-                    onClick={() => setSelectedTrackId(track.getId())}
-                  >
-                    <div className="h-full flex items-center px-4 text-sm text-gray-500">
-                      Drop audio clips here
-                    </div>
+          <div className="flex-1 bg-gray-950 border border-gray-700 rounded-lg overflow-auto flex flex-col">
+            {/* Zoom Controls */}
+            <div className="flex items-center gap-4 px-4 py-2 border-b border-gray-700 bg-gray-900/50 flex-shrink-0">
+              <label className="text-xs text-gray-400">Zoom:</label>
+              <input
+                type="range"
+                min="50"
+                max="200"
+                step="10"
+                value={pxPerSecond}
+                onChange={(e) => setPxPerSecond(Number(e.target.value))}
+                className="w-24"
+                title="Zoom level"
+              />
+              <span className="text-xs text-gray-500">{pxPerSecond}px/s</span>
+
+              <div className="flex-1" />
+
+              <label className="text-xs text-gray-400">Length:</label>
+              <input
+                type="number"
+                min="30"
+                max="600"
+                value={timelineLength}
+                onChange={(e) => setTimelineLength(Number(e.target.value))}
+                className="w-16 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs text-center focus:border-blue-500 focus:outline-none"
+              />
+              <span className="text-xs text-gray-500">seconds</span>
+            </div>
+
+            {/* Timeline Tracks */}
+            <div className="flex-1 overflow-auto p-4">
+              {audio.state.tracks.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-gray-500">
+                  <div className="text-center">
+                    <p className="text-lg mb-4">No tracks yet</p>
+                    <p className="text-sm text-gray-600">
+                      Add a track to start recording or arranging
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {audio.state.tracks.map((track) => (
+                    <TimelineTrack
+                      key={track.getId()}
+                      trackId={track.getId()}
+                      trackName={track.getName()}
+                      clips={clips.getClipsForTrack(track.getId())}
+                      pxPerSecond={pxPerSecond}
+                      timelineLength={timelineLength}
+                      playheadPosition={audio.state.currentTime}
+                      isRecording={audio.state.isRecording && selectedTrackId === track.getId()}
+                      onClipMove={(clipId, newStartTime) => clips.moveClip(clipId, newStartTime)}
+                      onClipTrimStart={(clipId, newTrimStart) => clips.trimClipStart(clipId, newTrimStart)}
+                      onClipTrimEnd={(clipId, newTrimEnd) => clips.trimClipEnd(clipId, newTrimEnd)}
+                      onClipSelect={(clipId) => clips.selectClip(clipId)}
+                      onClipDelete={(clipId) => clips.removeClip(clipId)}
+                      onClipFadeInChange={(clipId, duration) => clips.setFadeIn(clipId, duration)}
+                      onClipFadeOutChange={(clipId, duration) => clips.setFadeOut(clipId, duration)}
+                      onSplitAtPlayhead={(trackId, time) => {
+                        const clipsOnTrack = clips.getClipsForTrack(trackId);
+                        for (const clip of clipsOnTrack) {
+                          if (clip.startTime <= time && time < clip.startTime + (clip.displayEnd - clip.displayStart)) {
+                            clips.splitClip(clip.id, time);
+                            break;
+                          }
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
