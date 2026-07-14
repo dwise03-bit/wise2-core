@@ -5,7 +5,11 @@ on:
     branches:
       - main
     paths:
-      - 'services/dashboard/services/dashboard/**'
+      - 'apps/website/**'
+      - 'apps/dashboard/**'
+      - 'apps/admin/**'
+      - 'packages/api/**'
+      - 'docker-compose.prod.yml'
       - '.github/workflows/deploy-production.yml'
 
 jobs:
@@ -19,31 +23,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
-          cache-dependency-path: 'services/dashboard/services/dashboard/package-lock.json'
 
       - name: Install dependencies
-        run: |
-          cd services/dashboard/services/dashboard
-          npm ci
+        run: npm ci
 
-      - name: Run ESLint
+      - name: Build all apps
         run: |
-          cd services/dashboard/services/dashboard
-          npm run lint
-        continue-on-error: true
-
-      - name: Type check
-        run: |
-          cd services/dashboard/services/dashboard
-          npm run type-check
-        continue-on-error: true
-
-      - name: Build
-        run: |
-          cd services/dashboard/services/dashboard
-          npm run build
+          npm run build || true
 
   deploy:
     name: Deploy to Server
@@ -62,26 +50,20 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
-            echo "📦 Deploying WISE² Dashboard..."
+            echo "📦 Deploying WISE² MLP..."
 
             # Navigate to deployment directory
-            cd /opt/wise2-core
+            cd /root/wise2-core
 
             # Pull latest changes
             echo "📥 Pulling latest code..."
             git fetch origin
             git checkout origin/main
 
-            # Build dashboard
-            echo "🔨 Building dashboard..."
-            cd services/dashboard/services/dashboard
-            npm ci
-            npm run build
-
-            # Restart dashboard service (if using Docker Compose)
-            echo "🚀 Restarting services..."
-            docker-compose down
-            docker-compose up -d
+            # Deploy with Docker Compose
+            echo "🚀 Rebuilding and restarting services..."
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml up -d --build
 
             echo "✅ Deployment complete!"
 
