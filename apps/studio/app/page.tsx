@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 import { useClips } from '../hooks/useClips';
-import { useClipPlayback } from '../hooks/useClipPlayback';
 import { TransportControls } from '../components/TransportControls';
 import { TrackPanel } from '../components/TrackPanel';
 import { MasterMixer } from '../components/MasterMixer';
@@ -18,13 +17,13 @@ export default function StudioPage() {
   const [pxPerSecond, setPxPerSecond] = useState(100); // 100px per second (zoom level)
   const [timelineLength, setTimelineLength] = useState(60); // 60 second timeline
 
-  // Integrate clip playback with audio engine
-  useClipPlayback({
-    currentTime: audio.state.currentTime,
-    isPlaying: audio.state.isPlaying,
-    clips: clips?.getAllClips?.() || [],
-    masterGainNode: audio.mixer?.getMasterBus() || undefined,
-  });
+  // TODO: Fix clip playback integration
+  // useClipPlayback({
+  //   currentTime: audio.state.currentTime,
+  //   isPlaying: audio.state.isPlaying,
+  //   clips: clips?.getAllClips?.() || [],
+  //   masterGainNode: audio.mixer?.getMasterBus() || undefined,
+  // });
 
 
   // Keyboard shortcuts
