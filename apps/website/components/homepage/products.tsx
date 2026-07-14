@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Card } from '@wise2/design-system/components';
+import { AnimatedCard } from './animated-card';
+import { AnimatedSection } from './animated-section';
 
 export function ProductsSection() {
   const products = [
@@ -20,21 +22,23 @@ export function ProductsSection() {
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-black mb-12 text-center text-white">ALL-IN-ONE BUSINESS OPERATING SYSTEM</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <AnimatedSection className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, i) => (
-            <div key={i} className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition blur" />
-              <Card className="relative bg-black/50 border border-cyan-500/20 rounded-lg p-6 backdrop-blur hover:border-cyan-500/50 transition h-full">
-                <div className="text-4xl mb-4">{product.icon}</div>
-                <h3 className="font-bold text-sm uppercase tracking-wide mb-2 text-white group-hover:text-cyan-400 transition">{product.title}</h3>
-                <p className="text-sm text-gray-400 mb-4">{product.description}</p>
-                <a href="#" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1">
-                  Learn More →
-                </a>
-              </Card>
-            </div>
+            <AnimatedCard key={i} delay={i * 0.08}>
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition blur" />
+                <Card className="relative bg-black/50 border border-cyan-500/20 rounded-lg p-6 backdrop-blur hover:border-cyan-500/50 transition h-full">
+                  <div className="text-4xl mb-4">{product.icon}</div>
+                  <h3 className="font-bold text-sm uppercase tracking-wide mb-2 text-white group-hover:text-cyan-400 transition">{product.title}</h3>
+                  <p className="text-sm text-gray-400 mb-4">{product.description}</p>
+                  <a href="#" className="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-1">
+                    Learn More →
+                  </a>
+                </Card>
+              </div>
+            </AnimatedCard>
           ))}
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
