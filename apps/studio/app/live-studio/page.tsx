@@ -59,7 +59,7 @@ export default function LiveStudioPage() {
       if (e.code === 'Space') {
         e.preventDefault();
         if (audio.state.isPlaying) {
-          audio.stopPlayback();
+          audio.stop();
         } else {
           audio.play();
         }
@@ -68,7 +68,7 @@ export default function LiveStudioPage() {
       // Shift+Space: Stop
       if (e.shiftKey && e.code === 'Space') {
         e.preventDefault();
-        audio.stopPlayback();
+        audio.stop();
       }
 
       // T: Add track

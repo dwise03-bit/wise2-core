@@ -7,6 +7,7 @@ import { TransportControls } from '../components/TransportControls';
 import { TrackPanel } from '../components/TrackPanel';
 import { MasterMixer } from '../components/MasterMixer';
 import { TimelineTrack } from '../components/TimelineTrack';
+import { RecordingsList } from '../components/Shared/Recording';
 
 export default function StudioPage() {
   const audio = useAudioEngine();
@@ -294,7 +295,7 @@ export default function StudioPage() {
           </div>
         </div>
 
-        {/* Right Sidebar - Master & Metering */}
+        {/* Right Sidebar - Master, Recordings & Metering */}
         <div className="w-72 flex flex-col gap-4 overflow-y-auto">
           {meterReading && (
             <MasterMixer
@@ -305,6 +306,15 @@ export default function StudioPage() {
               onVolumeChange={audio.setMasterVolume}
             />
           )}
+
+          {/* Recent Recordings */}
+          <div className="bg-gray-950 border border-gray-700 rounded-lg p-4">
+            <RecordingsList
+              title="RECENT RECORDINGS"
+              limit={2}
+              showHeader={true}
+            />
+          </div>
 
           {/* Settings Panel */}
           <div className="bg-gray-950 border border-gray-700 rounded-lg p-4">

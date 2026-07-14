@@ -48,8 +48,8 @@ export function MixerChannel({
         onChange={(e) => onVolumeChange(Number(e.target.value))}
         className="h-32 w-8 cursor-pointer appearance-none bg-transparent"
         style={{
-          writingMode: 'bt-lr',
-        }}
+          transform: 'rotate(270deg)',
+        } as React.CSSProperties}
       />
 
       {/* Level Display */}
