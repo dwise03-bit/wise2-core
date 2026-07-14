@@ -2,4 +2,8 @@ export { Header } from './header';
 export { HeroSection } from './hero';
 export { FeaturesSection } from './features';
 export { ProductsSection } from './products';
+export { StatsSection } from './stats';
+export { TestimonialsSection } from './testimonials';
+export { PricingSection } from './pricing';
+export { CTASection } from './cta';
 export { Footer } from './footer';
