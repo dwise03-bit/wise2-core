@@ -277,6 +277,13 @@ export function useClips() {
     return newClipId;
   }, [state.clips, addClip]);
 
+  /**
+   * Get all clips (returns array of all clip data)
+   */
+  const getAllClips = useCallback(() => {
+    return Array.from(state.clips.values());
+  }, [state.clips]);
+
   return {
     clips: state.clips,
     selectedClipId: state.selectedClipId,
@@ -290,6 +297,7 @@ export function useClips() {
     setFadeOut,
     getClipsForTrack,
     getSelectedClip,
+    getAllClips,
     duplicateClip,
     splitClip,
   };

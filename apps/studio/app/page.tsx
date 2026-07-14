@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAudioEngine } from '../hooks/useAudioEngine';
 import { useClips } from '../hooks/useClips';
+import { useClipPlayback } from '../hooks/useClipPlayback';
 import { TransportControls } from '../components/TransportControls';
 import { TrackPanel } from '../components/TrackPanel';
 import { MasterMixer } from '../components/MasterMixer';
@@ -16,6 +17,14 @@ export default function StudioPage() {
   const [bpmInput, setBpmInput] = useState('120');
   const [pxPerSecond, setPxPerSecond] = useState(100); // 100px per second (zoom level)
   const [timelineLength, setTimelineLength] = useState(60); // 60 second timeline
+
+  // Integrate clip playback with audio engine
+  useClipPlayback({
+    currentTime: audio.state.currentTime,
+    isPlaying: audio.state.isPlaying,
+    clips: clips?.getAllClips?.() || [],
+    masterGainNode: audio.mixer?.getMasterBus() || undefined,
+  });
 
   // When recording stops, create a clip from the recorded audio
   useEffect(() => {
