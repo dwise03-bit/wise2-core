@@ -1,6 +1,8 @@
 'use client';
 
 import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
+import { StreamingIntegration } from '../../components/Shared/Streaming';
+import { ChatRoom } from '../../components/Shared/Chat';
 
 /**
  * Live Streaming Page
@@ -100,18 +102,17 @@ export default function LiveStreamingPage() {
         {/* Right Sidebar - Chat & Destinations */}
         <div className="w-80 flex flex-col gap-4 overflow-y-auto">
           {/* Chat */}
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-700 flex-1 flex flex-col">
-            <h3 className="text-sm font-bold text-gray-300 mb-3">LIVE CHAT</h3>
-            <div className="flex-1 flex items-center justify-center text-gray-500">
-              <p className="text-xs">Chat component coming soon...</p>
-            </div>
-          </div>
+          <ChatRoom title="LIVE CHAT" isEnabled={true} activeUsers={viewerCount} />
 
-          {/* Destinations */}
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-            <h3 className="text-sm font-bold text-gray-300 mb-3">STREAM DESTINATIONS</h3>
-            <p className="text-xs text-gray-500">Destination controls being designed...</p>
-          </div>
+          {/* Stream Configuration & Destinations */}
+          <StreamingIntegration
+            destinations={streaming.destinations}
+            config={streaming.config}
+            onConnectDestination={streaming.connectDestination}
+            onDisconnectDestination={streaming.disconnectDestination}
+            onUpdateConfig={streaming.updateConfig}
+            allowScheduling
+          />
         </div>
       </div>
     </div>
