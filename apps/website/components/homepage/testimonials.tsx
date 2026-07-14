@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Card } from '@wise2/design-system/components';
+import { AnimatedCard } from './animated-card';
+import { AnimatedSection } from './animated-section';
 
 export function TestimonialsSection() {
   const testimonials = [
@@ -33,23 +35,24 @@ export function TestimonialsSection() {
         <h2 className="text-4xl font-black text-center mb-4 text-white">TRUSTED BY INNOVATORS</h2>
         <p className="text-center text-gray-400 mb-12">Leading companies and creators trust WISE²</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <AnimatedSection className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {testimonials.map((testimonial, i) => (
-            <Card
-              key={i}
-              className="bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-cyan-500/20 rounded-lg p-6 backdrop-blur hover:border-cyan-500/50 transition"
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, j) => (
-                  <span key={j} className="text-yellow-400">★</span>
-                ))}
-              </div>
-              <p className="text-gray-300 mb-4 italic">{testimonial.quote}</p>
-              <p className="font-bold text-sm text-white">{testimonial.author}</p>
-              <p className="text-xs text-gray-400">{testimonial.title}</p>
-            </Card>
+            <AnimatedCard key={i} delay={i * 0.1}>
+              <Card
+                className="bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-cyan-500/20 rounded-lg p-6 backdrop-blur hover:border-cyan-500/50 transition"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, j) => (
+                    <span key={j} className="text-yellow-400">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-300 mb-4 italic">{testimonial.quote}</p>
+                <p className="font-bold text-sm text-white">{testimonial.author}</p>
+                <p className="text-xs text-gray-400">{testimonial.title}</p>
+              </Card>
+            </AnimatedCard>
           ))}
-        </div>
+        </AnimatedSection>
 
         {/* Company Logos */}
         <div className="border-t border-cyan-500/20 pt-12">
