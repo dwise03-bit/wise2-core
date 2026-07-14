@@ -1,15 +1,12 @@
-# Production build for WISE² Website
+# Production build for WISE² Website (build from apps/website directory)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
-
-# Copy root package files
-COPY package.json package-lock.json ./
-COPY apps/website ./apps/website
-COPY packages ./packages
+# Copy everything we need from root level (when building with context=project_root)
+COPY ../../package.json ../../package-lock.json ./
+COPY ../../packages ./packages
+COPY . ./apps/website
 
 # Install all dependencies
 RUN npm ci
