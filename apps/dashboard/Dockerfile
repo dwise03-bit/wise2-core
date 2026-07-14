@@ -30,6 +30,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
-USER nobody
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "node_modules/.bin/next", "start"]
+CMD ["node", "/app/node_modules/.bin/next", "start"]
