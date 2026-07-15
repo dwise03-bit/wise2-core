@@ -1,3 +1,8 @@
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Design system tokens are imported via Tailwind configuration */
 /* See packages/design-system/tailwind.config.ts */
 
