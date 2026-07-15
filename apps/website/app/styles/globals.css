@@ -3,6 +3,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force dark theme */
+body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.bg-black {
+  background-color: #000000 !important;
+}
+
 /* Design system tokens are imported via Tailwind configuration */
 /* See packages/design-system/tailwind.config.ts */
 
