@@ -40,28 +40,28 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#050505" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="bg-black text-chrome">
+      <body className="bg-wise text-wise-primary">
         <div className="min-h-screen flex flex-col">
           {/* Navigation */}
-          <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-chrome/20">
-            <div className="max-w-6xl mx-auto px-md sm:px-lg lg:px-xl py-md flex items-center justify-between">
+          <nav className="sticky top-0 z-50 bg-wise/80 backdrop-blur-md border-b border-wise-subtle">
+            <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-6 py-4 flex items-center justify-between">
               <div className="text-2xl font-bold">
                 WISE<sup className="text-lg">²</sup>
               </div>
-              <div className="hidden md:flex items-center gap-lg">
-                <a href="#sound-labs" className="hover:text-blue-500 transition-colors">Sound Labs</a>
-                <a href="#features" className="hover:text-blue-500 transition-colors">Features</a>
-                <a href="#pricing" className="hover:text-blue-500 transition-colors">Pricing</a>
-                <a href="/community" className="hover:text-blue-500 transition-colors">Community</a>
+              <div className="hidden md:flex items-center gap-8">
+                <a href="#sound-labs" className="hover:text-wise-primary transition-colors">Sound Labs</a>
+                <a href="#features" className="hover:text-wise-primary transition-colors">Features</a>
+                <a href="#pricing" className="hover:text-wise-primary transition-colors">Pricing</a>
+                <a href="/community" className="hover:text-wise-primary transition-colors">Community</a>
               </div>
-              <button className="px-lg py-sm bg-blue-500 hover:bg-blue-400 text-black font-semibold rounded-md transition-colors">
+              <button className="px-6 py-2 bg-wise-primary hover:bg-wise-primary-hover text-wise font-semibold rounded-md transition-colors shadow-glow-blue-sm hover:shadow-glow-blue-md">
                 Get Started
               </button>
             </div>
@@ -73,39 +73,39 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="bg-gray-900 border-t border-chrome/20 py-3xl">
-            <div className="max-w-6xl mx-auto px-md sm:px-lg lg:px-xl">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2xl mb-2xl">
+          <footer className="bg-wise-surface border-t border-wise-subtle py-12">
+            <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div>
-                  <h3 className="font-bold mb-lg">WISE²</h3>
-                  <p className="text-sm text-gray-500">AI-powered brand operating system</p>
+                  <h3 className="font-bold mb-4">WISE²</h3>
+                  <p className="text-sm text-wise-muted">AI-powered brand operating system</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-lg text-sm">Product</h4>
-                  <ul className="space-y-sm text-sm text-gray-500">
-                    <li><a href="#sound-labs" className="hover:text-chrome transition-colors">Sound Labs</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Pricing</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Roadmap</a></li>
+                  <h4 className="font-semibold mb-4 text-sm">Product</h4>
+                  <ul className="space-y-2 text-sm text-wise-muted">
+                    <li><a href="#sound-labs" className="hover:text-wise-primary transition-colors">Sound Labs</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Pricing</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Roadmap</a></li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-lg text-sm">Company</h4>
-                  <ul className="space-y-sm text-sm text-gray-500">
-                    <li><a href="#" className="hover:text-chrome transition-colors">About</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Blog</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Careers</a></li>
+                  <h4 className="font-semibold mb-4 text-sm">Company</h4>
+                  <ul className="space-y-2 text-sm text-wise-muted">
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">About</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Blog</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Careers</a></li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-lg text-sm">Legal</h4>
-                  <ul className="space-y-sm text-sm text-gray-500">
-                    <li><a href="#" className="hover:text-chrome transition-colors">Privacy</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Terms</a></li>
-                    <li><a href="#" className="hover:text-chrome transition-colors">Security</a></li>
+                  <h4 className="font-semibold mb-4 text-sm">Legal</h4>
+                  <ul className="space-y-2 text-sm text-wise-muted">
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Privacy</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Terms</a></li>
+                    <li><a href="#" className="hover:text-wise-primary transition-colors">Security</a></li>
                   </ul>
                 </div>
               </div>
-              <div className="border-t border-chrome/20 pt-2xl text-center text-sm text-gray-500">
+              <div className="border-t border-wise-subtle pt-8 text-center text-sm text-wise-muted">
                 <p>&copy; 2026 Wise Defense LLC. All rights reserved.</p>
               </div>
             </div>
