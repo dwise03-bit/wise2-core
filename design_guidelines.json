@@ -1,0 +1,112 @@
+{
+  "theme": "dark",
+  "archetype": "ARCHETYPE 7: ELECTRIC & NEON",
+  "typography": {
+    "headings": {
+      "fontFamily": "Orbitron, Rajdhani, Michroma, sans-serif",
+      "scale": {
+        "h1": "text-3xl sm:text-4xl tracking-tight font-bold",
+        "h2": "text-2xl sm:text-3xl tracking-tight font-semibold",
+        "h3": "text-xl sm:text-2xl tracking-tight font-medium"
+      },
+      "instruction": "Use for the WISE² logo, section headers, and important data readouts. Needs to feel technical and precise."
+    },
+    "body": {
+      "fontFamily": "Inter, Manrope, sans-serif",
+      "scale": {
+        "base": "text-sm sm:text-base",
+        "small": "text-xs text-muted-foreground",
+        "tiny": "text-[10px] uppercase tracking-wider"
+      },
+      "instruction": "Clean and legible for all dashboard data, labels, and text."
+    }
+  },
+  "colors": {
+    "background": {
+      "base": "#0a0e1a",
+      "surface": "#0f1729",
+      "surfaceElevated": "#1e293b",
+      "instruction": "Use deep navy/black for maximum contrast with neon elements."
+    },
+    "accent": {
+      "primary": "#00d4ff",
+      "secondary": "#00a8ff",
+      "neon_glow": "rgba(0, 212, 255, 0.5)",
+      "instruction": "Electric cyan-blue for active states, sequencer cells, and primary buttons."
+    },
+    "meters": {
+      "green": "#22c55e",
+      "yellow": "#eab308",
+      "red": "#ef4444",
+      "instruction": "LED-style colors for the 6-channel VU meters. Must look vibrant against dark backgrounds."
+    },
+    "text": {
+      "primary": "#ffffff",
+      "secondary": "#e2e8f0",
+      "muted": "#94a3b8"
+    }
+  },
+  "visual_enhancers": {
+    "glow_effects": "Use custom utility class or inline style for drop-shadows on active sequencer cells. e.g., shadow-[0_0_12px_rgba(0,212,255,0.6)].",
+    "glassmorphism": "Use backdrop-blur-xl with bg-[#0a0e1a]/80 for sticky headers, modals, or chat panel overlays.",
+    "borders": "1px solid border-[#1e293b] or border-[#00d4ff]/30 for active containers to give a technical blueprint feel."
+  },
+  "layouts": {
+    "global": "H-screen flex layout: Sidebar (left, w-64) + Main Content area. Main area contains Header (top) + scrollable Dashboard grid + Bottom Transport Bar (fixed h-20).",
+    "dashboard_grid": "Dense BENTO grid. grid-cols-1 xl:grid-cols-12 gap-4 or gap-6. Panels should have explicitly defined spans (e.g., col-span-12 lg:col-span-8).",
+    "spacing": "Dense padding (p-4 to p-5) for widget cards to maximize data density without feeling cluttered."
+  },
+  "components": {
+    "sidebar": "Fixed left width. 15+ items grouped by category. Highlight active item with cyan text and subtle left border glow.",
+    "header": "Top bar inside main content. Contains global search input, notification bell, Admin Badge (dwise@wise2.net / Glock19!).",
+    "hero_banner": "Full width card spanning top of grid. Use provided studio image with heavy dark gradient overlay (bg-gradient-to-r from-[#0a0e1a] to-transparent). Include quick action buttons: Create, Produce, Master, Distribute.",
+    "studio_status": "Card displaying active audio settings (48 kHz, 24-bit, 128 samples, 2.7ms latency) and a decorative waveform.",
+    "active_projects": "List of projects showing name, status, and mini-waveforms per track.",
+    "studio_overview": "Bento-style stat cards (23 Projects, 157 Tracks, 89 Beats, 42 Plugins) accompanied by simple SVG sparklines (CPU, Memory, Disk, Network).",
+    "recent_activity": "Vertical feed/list of recent studio events with timestamps.",
+    "hermes_ai_chat": "Chat panel UI titled 'Hermes' (AI Assistant). Indicate 'Powered by Claude Sonnet 4.5'. Text bubbles should look futuristic.",
+    "audio_meters": "6 vertical VU bars: IN, DRUMS, BASS, VOCALS, MELODY, MASTER. Segmented LED style. Can use small flex boxes stacked vertically to simulate LEDs.",
+    "beat_maker": "16-step sequencer matrix. Rows: Kick, Snare, HiHat, 808, Clap, Perc. Cells toggle active (cyan glow + cyan bg) / inactive (slate-800 bg). Ready for Tone.js integration.",
+    "plugins_effects": "List of toggles (Switch components) for enabling/disabling studio plugins.",
+    "sound_library": "Grid of category cards (Drum Kits, Loops, One Shots, Vocal Presets, Instruments, Sound FX).",
+    "transport_bar": "Fixed bottom bar spanning full width of main area. Play/Pause/Stop controls, timecode (00:00:00), and a large interactive waveform scrubber."
+  },
+  "motion": {
+    "hover": "Subtle scale-up (hover:scale-105) for Sound Library cards and quick actions. Transition duration 200ms.",
+    "active": "Instant color change with transition-colors for sequencer steps.",
+    "meters": "CSS animations to simulate jumping audio meters (scale-y or animated height) for a live feel."
+  },
+  "accessibility": {
+    "contrast": "Ensure text meets APCA/WCAG contrast ratios against dark surfaces.",
+    "test_ids": "CRITICAL: Use kebab-case data-testid for ALL interactive elements (e.g., data-testid='play-button', data-testid='sequencer-step-kick-1', data-testid='admin-login-button')."
+  },
+  "image_urls": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1518972559570-7cc1309f3229?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTV8MHwxfHNlYXJjaHwxfHxtdXNpYyUyMHN0dWRpbyUyMHJlY29yZGluZyUyMGNvbnNvbGV8ZW58MHx8fHwxNzg0MTE3NTMyfDA&ixlib=rb-4.1.0&q=85",
+      "description": "Close-up of a recording studio console.",
+      "category": "Hero Background"
+    },
+    "waveform_neon": {
+      "url": "https://images.unsplash.com/photo-1724185773486-0b39642e607e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNDR8MHwxfHNlYXJjaHwxfHxuZW9uJTIwYXVkaW8lMjB3YXZlZm9ybXxlbnwwfHx8fDE3ODQxMTc1MzJ8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Colorful neon sound wave on a black background.",
+      "category": "Waveform Decoration"
+    }
+  },
+  "GENERAL_UI_UX_DESIGN_GUIDELINES": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories = main agent will use placeholder text which is FORBIDDEN.",
+    "All interactive and key informational elements MUST include a data-testid attribute to facilitate robust automated testing.",
+    "Use sonner for toasts.",
+    "CRITICAL: DO NOT use complete transparent background in header, overlays, any surface that has content under it."
+  ],
+  "instructions_to_main_agent": "Build a React + Tailwind + Shadcn UI dashboard in JS. Adhere to the provided aesthetic archetype and exact requirements. Implement the 16-step sequencer UI using CSS Grid and standard React state so that Tone.js logic can be easily wired up. Ensure Hermes AI chat is properly built with its specific branding. Implement the custom 6-channel audio VU meters using stacked divs to emulate LED segments."
+}
