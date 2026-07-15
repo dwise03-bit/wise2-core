@@ -3,7 +3,7 @@
 import { FormEvent, useState, useEffect } from 'react';
 import { validateEmail, validatePassword, validatePasswordConfirm, getPasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
-import { createVerificationToken, getVerificationEmail, getSuccessEmail } from '@/lib/email';
+import { createVerificationToken } from '@/lib/email';
 
 interface FormErrors {
   email?: string;
@@ -88,15 +88,7 @@ export default function SignupPage() {
 
     try {
       // Generate verification token
-      const verificationToken = createVerificationToken(email);
-
-      // Simulate sending verification email
-      const verificationEmailHtml = getVerificationEmail(email, verificationToken);
-      const successEmailHtml = getSuccessEmail(email);
-
-      // In production, send emails via backend
-      console.log('Verification email would be sent to:', email);
-      console.log('Success email would be sent to:', email);
+      createVerificationToken(email);
 
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
