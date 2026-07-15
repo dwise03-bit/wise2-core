@@ -46,6 +46,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="stylesheet" href="/tailwind.css" />
       </head>
       <body className="bg-black text-chrome">
         <div className="min-h-screen flex flex-col">
