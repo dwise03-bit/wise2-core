@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { verifyToken } from '@/lib/email';
 import { analytics } from '@/lib/analytics';
 
-export default function VerifyPage() {
+function VerifyContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [verifying, setVerifying] = useState(true);
@@ -76,5 +77,20 @@ export default function VerifyPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-wise flex flex-col items-center justify-center px-4">
+          <div className="text-4xl mb-4 animate-spin">⏳</div>
+          <p className="text-wise-muted">Loading...</p>
+        </div>
+      }
+    >
+      <VerifyContent />
+    </Suspense>
   );
 }

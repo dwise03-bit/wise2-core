@@ -78,7 +78,7 @@ export const getVerificationEmail = (email: string, token: string): string => {
   `;
 };
 
-export const getSuccessEmail = (email: string): string => {
+export const getSuccessEmail = (): string => {
   return `
     <html>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #050505; color: #ffffff;">
