@@ -1,6 +1,37 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
+
 export default function SignupPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    setSubmitted(true);
+    setIsSubmitting(false);
+  };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-wise flex flex-col items-center justify-center px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="text-5xl mb-4">✅</div>
+          <h1 className="text-3xl font-bold text-wise-primary mb-2">Welcome!</h1>
+          <p className="text-wise-muted mb-6">Your account has been created successfully.</p>
+          <a href="/" className="inline-block px-6 py-2 bg-wise-primary hover:bg-wise-primary-hover text-wise font-semibold rounded-md transition-colors">
+            Back to Home
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-wise flex flex-col items-center justify-center px-4">
       <div className="max-w-md w-full">
@@ -9,7 +40,7 @@ export default function SignupPage() {
           <p className="text-wise-muted">Create your account</p>
         </div>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium text-wise-primary mb-2">
               Email
@@ -34,9 +65,10 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            className="w-full py-2 bg-wise-primary hover:bg-wise-primary-hover text-wise font-semibold rounded-md transition-colors shadow-glow-blue-sm hover:shadow-glow-blue-md"
+            disabled={isSubmitting}
+            className="w-full py-2 bg-wise-primary hover:bg-wise-primary-hover disabled:opacity-50 text-wise font-semibold rounded-md transition-colors shadow-glow-blue-sm hover:shadow-glow-blue-md"
           >
-            Sign Up
+            {isSubmitting ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
 
