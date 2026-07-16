@@ -159,7 +159,8 @@ services:
   # Admin Dashboard
   admin-dashboard:
     build:
-      context: ./services/admin-dashboard
+      context: .
+      dockerfile: ./apps/admin/Dockerfile
     container_name: wise2-admin-dashboard
     environment:
       API_URL: http://api:3000
