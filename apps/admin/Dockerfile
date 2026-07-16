@@ -33,4 +33,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "server.js"]
+CMD ["node", "/app/node_modules/.bin/next", "start", "-p", "3000"]
