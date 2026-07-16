@@ -1,5 +1,3 @@
-'use client';
-
 export default function ChatWidget() {
   return (
     <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
