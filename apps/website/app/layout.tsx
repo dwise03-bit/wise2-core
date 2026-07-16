@@ -1,14 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import dynamic from 'next/dynamic';
+import ChatWidgetWrapper from '@/components/ChatWidgetWrapper';
 import './styles/globals.css';
-
-const ChatWidgetWrapper = dynamic(
-  () => import('@/components/ChatWidgetWrapper'),
-  {
-    ssr: false,
-    loading: () => null,
-  }
-);
 
 export const viewport: Viewport = {
   width: 'device-width',
