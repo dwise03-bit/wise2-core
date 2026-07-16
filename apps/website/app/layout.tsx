@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import dynamic from 'next/dynamic';
 import './styles/globals.css';
-
-const ChatWidget = dynamic(() => import('@/components/ChatWidget'), { ssr: false });
+import ChatWidget from '@/components/ChatWidget';
 
 export const viewport: Viewport = {
   width: 'device-width',
