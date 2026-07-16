@@ -1,10 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { analytics } from '@/lib/analytics';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHoveringButton, setIsHoveringButton] = useState(false);
+  const [isHoveringDiscordButton, setIsHoveringDiscordButton] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -15,6 +24,8 @@ export default function ChatWidget() {
     <>
       <button
         onClick={handleClick}
+        onMouseEnter={() => setIsHoveringButton(true)}
+        onMouseLeave={() => setIsHoveringButton(false)}
         style={{
           position: 'fixed',
           bottom: '24px',
@@ -33,10 +44,9 @@ export default function ChatWidget() {
           alignItems: 'center',
           justifyContent: 'center',
           boxShadow: '0 4px 12px rgba(0, 148, 255, 0.4)',
+          transform: isHoveringButton ? 'scale(1.1)' : 'scale(1)',
           transition: 'transform 0.2s',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
         aria-label="Open chat"
       >
         {isOpen ? '✕' : '💬'}
@@ -55,7 +65,7 @@ export default function ChatWidget() {
             borderRadius: '12px',
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'column' as const,
             maxHeight: '600px',
             zIndex: 40,
           }}
@@ -81,7 +91,7 @@ export default function ChatWidget() {
               overflowY: 'auto',
               padding: '16px',
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'column' as const,
               gap: '12px',
             }}
           >
@@ -101,10 +111,12 @@ export default function ChatWidget() {
                 analytics.track('button_click', { button: 'chat_escalate' });
                 window.open('https://discord.gg/', '_blank');
               }}
+              onMouseEnter={() => setIsHoveringDiscordButton(true)}
+              onMouseLeave={() => setIsHoveringDiscordButton(false)}
               style={{
                 width: '100%',
                 padding: '12px',
-                background: '#0094FF',
+                background: isHoveringDiscordButton ? '#0080DD' : '#0094FF',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -113,8 +125,6 @@ export default function ChatWidget() {
                 fontSize: '14px',
                 transition: 'background 0.2s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = '#0080DD')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = '#0094FF')}
             >
               Join Discord Support
             </button>
