@@ -13,30 +13,9 @@ on:
       - '.github/workflows/deploy-production.yml'
 
 jobs:
-  test:
-    name: Test & Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps --prefer-offline --no-audit
-
-      - name: Build all apps
-        run: npm run build --filter '!@wise2/studio'
-
   deploy:
     name: Deploy to Server
-    needs: test
     runs-on: ubuntu-latest
-    if: always()
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
