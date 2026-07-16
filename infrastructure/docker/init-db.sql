@@ -16,9 +16,17 @@ CREATE DATABASE wise2_core_prod WITH
   TEMPLATE = 'template0';
 
 -- Create the application user with a strong password
--- NOTE: In production, use a strong, randomly generated password via environment variable
+-- NOTE: docker-entrypoint-initdb.d runs *.sql files through `psql -f` with NO shell
+-- variable substitution (only *.sh scripts get that). Using `${VAR:-default}` syntax
+-- here is a no-op: the LITERAL string was previously written into the user's password,
+-- which silently broke API->Postgres auth in production (password mismatch vs. the
+-- API's shell-interpolated DB_PASSWORD/DATABASE_URL). The password below MUST be kept
+-- in sync with docker-compose.prod.yml's POSTGRES_APP_PASSWORD default
+-- (and with .env.production's POSTGRES_APP_PASSWORD, if that's set to something else).
+-- To make this truly env-driven, convert this file to a .sh script that runs
+-- `envsubst` (or similar) before piping to psql.
 CREATE USER wise2_prod_user WITH
-  PASSWORD '${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}';
+  PASSWORD 'wise2_prod_secure_2026';
 
 -- Grant connection privileges to the application user
 GRANT CONNECT ON DATABASE wise2_core_prod TO wise2_prod_user;
