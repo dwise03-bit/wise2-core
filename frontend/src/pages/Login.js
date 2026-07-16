@@ -17,7 +17,7 @@ export default function Login() {
     try {
       await login(email, password);
       toast.success("Welcome back to WISE² Sound Labs");
-      navigate("/sound-labs");
+      navigate("/live");
     } catch (err) {
       toast.error(err?.response?.data?.detail || "Login failed");
     } finally {

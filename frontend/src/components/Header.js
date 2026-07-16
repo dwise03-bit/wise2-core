@@ -1,133 +1,133 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Search, Bell, Settings, HelpCircle, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { toast } from "sonner";
+import { ASSETS } from "@/lib/assets";
+import { Search, Bell, Mail, Settings, ChevronDown, Radio, FolderKanban, Users, LogOut, Command, Check } from "lucide-react";
+
+function Counter({ icon: Icon, iconClass, label, value }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className={`w-3.5 h-3.5 ${iconClass}`} />
+      <div className="leading-none">
+        <div className="text-[8px] tracking-[0.18em] text-slate-500 uppercase">{label}</div>
+        <div className="font-display text-sm font-semibold text-white">{value}</div>
+      </div>
+    </div>
+  );
+}
 
 export default function Header() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({ live_viewers: 358, projects_live: 4, community_online: 1247 });
   const [notifs, setNotifs] = useState({ items: [], unread: 0 });
-  const [open, setOpen] = useState(false);
-  const [showUser, setShowUser] = useState(false);
+  const [openN, setOpenN] = useState(false);
+  const [openU, setOpenU] = useState(false);
   const [q, setQ] = useState("");
-  const [results, setResults] = useState(null);
   const ref = useRef(null);
 
-  const loadNotifs = async () => {
-    try {
-      const { data } = await api.get("/notifications");
-      setNotifs(data);
-    } catch {}
-  };
-  useEffect(() => { loadNotifs(); const id = setInterval(loadNotifs, 15000); return () => clearInterval(id); }, []);
+  const loadNotifs = () => api.get("/notifications").then((r) => setNotifs(r.data)).catch(() => {});
 
   useEffect(() => {
-    if (!q) { setResults(null); return; }
-    const t = setTimeout(async () => {
-      try {
-        const { data } = await api.get(`/search?q=${encodeURIComponent(q)}`);
-        setResults(data);
-      } catch {}
-    }, 200);
-    return () => clearTimeout(t);
-  }, [q]);
+    api.get("/dashboard").then((r) => setStats(r.data.stats)).catch(() => {});
+    loadNotifs();
+    const onClick = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpenN(false); setOpenU(false); } };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
 
   const markRead = async () => {
-    try { await api.post("/notifications/read"); await loadNotifs(); toast.success("All notifications marked as read"); } catch {}
+    await api.post("/notifications/read").catch(() => {});
+    loadNotifs();
   };
 
   return (
-    <header className="h-16 shrink-0 flex items-center gap-4 px-6 border-b border-slate-800 bg-bg-surface/60 backdrop-blur-xl relative z-20" data-testid="header">
+    <header ref={ref} className="h-16 shrink-0 flex items-center gap-4 px-5 border-b border-[#12203a] bg-[#070b16]/80 backdrop-blur-md relative z-30" data-testid="header">
       {/* Search */}
-      <div className="relative flex-1 max-w-2xl">
-        <Search className="absolute left-4 top-3 w-4 h-4 text-slate-500" />
+      <div className="relative w-[340px] max-w-[34vw]">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
         <input
-          data-testid="global-search-input"
+          data-testid="global-search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search tracks, projects, artists..."
-          className="w-full bg-bg-base border border-slate-800 rounded-full pl-11 pr-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-neon-cyan/60 focus:outline-none focus:shadow-neon-sm"
+          placeholder="Search projects, artists, files..."
+          className="w-full bg-[#0a1120] border border-[#1a2942] rounded-lg pl-9 pr-14 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-neon-cyan/60"
         />
-        {results && results.projects && results.projects.length > 0 && (
-          <div className="absolute top-12 left-0 right-0 card-panel p-2 z-30 shadow-neon-sm">
-            {results.projects.map((p) => (
-              <div key={p.id} className="px-3 py-2 hover:bg-white/5 rounded-md text-sm text-slate-200 cursor-pointer">
-                {p.name} <span className="text-slate-500 text-xs">· {p.genre}</span>
-              </div>
-            ))}
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 text-[10px] text-slate-500 border border-[#1a2942] rounded px-1.5 py-0.5">
+          <Command className="w-2.5 h-2.5" /> K
+        </span>
+      </div>
+
+      {/* Center monogram */}
+      <div className="flex-1 flex justify-center">
+        <div className="flex items-end gap-0.5 no-drag">
+          <span className="font-tech text-2xl font-bold text-white leading-none neon-text">W</span>
+          <span className="font-tech text-xs font-bold neon-text leading-none mb-0.5">2</span>
+        </div>
+      </div>
+
+      {/* Counters */}
+      <div className="hidden lg:flex items-center gap-5 pr-3 border-r border-[#1a2942]">
+        <Counter icon={Radio} iconClass="text-red-500" label="Live Viewers" value={stats.live_viewers} />
+        <Counter icon={FolderKanban} iconClass="text-neon-cyan" label="Projects Live" value={stats.projects_live} />
+        <Counter icon={Users} iconClass="text-neon-cyan" label="Community Online" value={stats.community_online.toLocaleString()} />
+      </div>
+
+      {/* User */}
+      <div className="relative">
+        <button data-testid="user-menu-btn" onClick={() => { setOpenU((v) => !v); setOpenN(false); }} className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-white/5">
+          <img src={user?.avatar || "https://i.pravatar.cc/100?img=12"} alt="" className="w-8 h-8 rounded-full border border-neon-cyan/40 object-cover" />
+          <div className="text-left leading-none hidden sm:block">
+            <div className="font-display text-xs font-semibold text-white">{user?.name || "D.WISE"}</div>
+            <div className="text-[10px] text-slate-500">{user?.role || "Administrator"}</div>
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+        </button>
+        {openU && (
+          <div className="absolute right-0 top-12 w-52 panel p-2 shadow-2xl" data-testid="user-dropdown">
+            <div className="px-2 py-1.5 text-[11px] text-slate-400 truncate">{user?.email}</div>
+            <button onClick={() => { setOpenU(false); navigate("/settings"); }} className="w-full flex items-center gap-2 px-2 py-2 rounded-md text-sm text-slate-300 hover:bg-white/5">
+              <Settings className="w-4 h-4" /> Settings
+            </button>
+            <button data-testid="logout-btn" onClick={() => { logout(); navigate("/login"); }} className="w-full flex items-center gap-2 px-2 py-2 rounded-md text-sm text-red-400 hover:bg-red-500/10">
+              <LogOut className="w-4 h-4" /> Sign out
+            </button>
           </div>
         )}
       </div>
 
-      {/* System status */}
-      <div className="hidden lg:flex items-center gap-2 text-xs">
-        <span className="text-slate-500 tracking-widest uppercase">System Status</span>
-        <span className="w-2 h-2 rounded-full bg-led-green shadow-[0_0_8px_#22c55e]"></span>
-        <span className="text-neon-cyan">All Systems Operational</span>
-      </div>
-
       {/* Notifications */}
       <div className="relative">
-        <button
-          data-testid="notifications-button"
-          onClick={() => setOpen((o) => !o)}
-          className="relative w-9 h-9 rounded-full bg-bg-base border border-slate-800 hover:border-neon-cyan/40 flex items-center justify-center"
-        >
-          <Bell className="w-4 h-4 text-slate-300" />
+        <button data-testid="notif-btn" onClick={() => { setOpenN((v) => !v); setOpenU(false); if (!openN) markRead(); }} className="relative p-2 rounded-lg hover:bg-white/5 text-slate-400">
+          <Bell className="w-4.5 h-4.5" />
           {notifs.unread > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-neon-cyan text-bg-base text-[10px] font-bold flex items-center justify-center">{notifs.unread}</span>
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-neon-cyan text-[9px] font-bold text-[#04121f] flex items-center justify-center">{notifs.unread}</span>
           )}
         </button>
-        {open && (
-          <div className="absolute right-0 top-11 w-80 card-panel p-3 z-40" data-testid="notifications-panel">
-            <div className="flex items-center justify-between px-2 pb-2 border-b border-slate-800">
-              <div className="font-display text-sm text-white">Notifications</div>
-              <button className="text-xs text-neon-cyan hover:underline" onClick={markRead} data-testid="notifications-mark-read">Mark all read</button>
+        {openN && (
+          <div className="absolute right-0 top-12 w-80 panel p-0 shadow-2xl overflow-hidden" data-testid="notif-dropdown">
+            <div className="px-4 py-3 hair flex items-center justify-between">
+              <span className="font-display text-sm font-semibold text-white tracking-wide">NOTIFICATIONS</span>
+              <Check className="w-4 h-4 text-neon-cyan" />
             </div>
-            <div className="mt-2 space-y-1 max-h-72 overflow-y-auto">
+            <div className="max-h-80 overflow-y-auto">
               {notifs.items.map((n) => (
-                <div key={n.id} className={`px-2 py-2 rounded-md text-sm ${n.read ? "text-slate-500" : "text-slate-200 bg-white/5"}`}>{n.text}</div>
+                <div key={n.id} className="px-4 py-3 hair hover:bg-white/5 text-sm text-slate-300">{n.text}</div>
               ))}
             </div>
           </div>
         )}
       </div>
 
-      <button className="w-9 h-9 rounded-full bg-bg-base border border-slate-800 hover:border-neon-cyan/40 flex items-center justify-center" data-testid="settings-button">
-        <Settings className="w-4 h-4 text-slate-300" />
-      </button>
-      <button className="w-9 h-9 rounded-full bg-bg-base border border-slate-800 hover:border-neon-cyan/40 flex items-center justify-center" data-testid="help-button">
-        <HelpCircle className="w-4 h-4 text-slate-300" />
+      <button className="relative p-2 rounded-lg hover:bg-white/5 text-slate-400" data-testid="mail-btn">
+        <Mail className="w-4.5 h-4.5" />
+        <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-fuchsia-500 text-[9px] font-bold text-white flex items-center justify-center">12</span>
       </button>
 
-      {/* Admin badge */}
-      <div className="relative" ref={ref}>
-        <button
-          data-testid="user-badge"
-          onClick={() => setShowUser((s) => !s)}
-          className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-full hover:bg-white/5"
-        >
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-neon-cyan to-neon-deep flex items-center justify-center font-bold text-bg-base text-sm">
-            {user?.initials || "AD"}
-          </div>
-          <div className="text-left leading-tight">
-            <div className="text-white text-sm font-medium">{user?.name || "Admin"}</div>
-            <div className="text-slate-400 text-[11px]">{user?.role || "Administrator"}</div>
-          </div>
-        </button>
-        {showUser && (
-          <div className="absolute right-0 top-12 w-56 card-panel p-2 z-40">
-            <div className="px-3 py-2 text-xs text-slate-400 border-b border-slate-800">{user?.email}</div>
-            <button
-              data-testid="logout-button"
-              onClick={logout}
-              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-md mt-1"
-            >
-              <LogOut className="w-4 h-4" /> Sign out
-            </button>
-          </div>
-        )}
-      </div>
+      <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-white/5 text-slate-400" data-testid="settings-icon-btn">
+        <Settings className="w-4.5 h-4.5" />
+      </button>
     </header>
   );
 }

@@ -3,16 +3,14 @@ load_dotenv()
 
 import os
 import uuid
-import random
 from datetime import datetime, timezone, timedelta
-from typing import List, Optional
+from typing import Optional
 
 import bcrypt
 import jwt
 from fastapi import FastAPI, HTTPException, Depends, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 
 # ---------- Config ----------
@@ -21,11 +19,11 @@ DB_NAME = os.environ["DB_NAME"]
 JWT_SECRET = os.environ["JWT_SECRET"]
 ADMIN_EMAIL = os.environ["ADMIN_EMAIL"]
 ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
+DISCORD_INVITE = os.environ.get("DISCORD_INVITE", "https://discord.gg/wise2")
 JWT_ALGO = "HS256"
 
 # ---------- App ----------
-app = FastAPI(title="WISE² Sound Labs API")
+app = FastAPI(title="WISE² Sound Labs — Command Center API")
 api = APIRouter(prefix="/api")
 
 app.add_middleware(
@@ -77,78 +75,98 @@ class LoginIn(BaseModel):
     email: EmailStr
     password: str
 
-class ProjectIn(BaseModel):
-    name: str
-    genre: str
-    tracks: int = 0
-    duration: str = "00:00"
+class ChatIn(BaseModel):
+    text: str
 
-class PluginToggle(BaseModel):
-    enabled: bool
+class PostIn(BaseModel):
+    text: str
 
-class HermesIn(BaseModel):
-    session_id: str
-    message: str
-
-# ---------- Startup: seed data ----------
-@app.on_event("startup")
-async def startup():
+# ---------- Seed ----------
+async def seed():
     # Admin user
-    existing = await db.users.find_one({"email": ADMIN_EMAIL})
+    existing = await db.users.find_one({"email": ADMIN_EMAIL.lower()})
     if not existing:
         await db.users.insert_one({
             "id": str(uuid.uuid4()),
-            "email": ADMIN_EMAIL,
+            "email": ADMIN_EMAIL.lower(),
             "password_hash": hash_password(ADMIN_PASSWORD),
-            "name": "Admin",
+            "name": "D.WISE",
             "role": "Administrator",
-            "initials": "AD",
+            "initials": "DW",
+            "avatar": "https://i.pravatar.cc/100?img=12",
             "created_at": datetime.now(timezone.utc).isoformat(),
         })
-    else:
-        # Ensure password matches env
-        if not verify_password(ADMIN_PASSWORD, existing["password_hash"]):
-            await db.users.update_one(
-                {"email": ADMIN_EMAIL},
-                {"$set": {"password_hash": hash_password(ADMIN_PASSWORD)}}
-            )
+    elif not verify_password(ADMIN_PASSWORD, existing["password_hash"]):
+        await db.users.update_one(
+            {"email": ADMIN_EMAIL.lower()},
+            {"$set": {"password_hash": hash_password(ADMIN_PASSWORD)}},
+        )
 
-    # Seed projects if empty
-    if await db.projects.count_documents({}) == 0:
-        seed_projects = [
-            {"id": str(uuid.uuid4()), "name": "Organized Chaos (Final)", "genre": "Hip Hop", "tracks": 12, "duration": "03:42", "artist": "Daniel Wise", "current": True, "color": "from-fuchsia-500 to-purple-700"},
-            {"id": str(uuid.uuid4()), "name": "Midnight Mission", "genre": "Trap", "tracks": 8, "duration": "02:58", "artist": "Daniel Wise", "current": False, "color": "from-blue-500 to-indigo-800"},
-            {"id": str(uuid.uuid4()), "name": "Elevate", "genre": "R&B", "tracks": 10, "duration": "04:15", "artist": "Daniel Wise", "current": False, "color": "from-cyan-500 to-teal-700"},
-            {"id": str(uuid.uuid4()), "name": "System Takeover", "genre": "Drill", "tracks": 7, "duration": "02:31", "artist": "Daniel Wise", "current": False, "color": "from-slate-600 to-slate-900"},
+    if await db.chat.count_documents({}) == 0:
+        msgs = [
+            {"user": "ProducersMind", "color": "#f97316", "role": None, "text": "That bass line is 🔥🔥🔥"},
+            {"user": "BeatsByRay", "color": "#22c55e", "role": None, "text": "This is crazy! Already feel the energy"},
+            {"user": "CreativeKye", "color": "#00d4ff", "role": None, "text": "The transition is 🔥"},
+            {"user": "SoundWave", "color": "#ef4444", "role": None, "text": "WISE² never misses! 💯"},
+            {"user": "DJ Phantom", "color": "#a855f7", "role": None, "text": "That hook is gonna slap in the clubs"},
+            {"user": "BrandKing", "color": "#22c55e", "role": None, "text": "Can't wait to hear the final mix!"},
+            {"user": "AI MAESTRO", "color": "#00d4ff", "role": "BOT", "text": "Remember to drop your feedback and suggestions in the chat!"},
+            {"user": "D.WISE", "color": "#00d4ff", "role": "ADMIN", "text": "Appreciate y'all rocking with us! Let's build! 🙌"},
         ]
-        await db.projects.insert_many(seed_projects)
-
-    if await db.activity.count_documents({}) == 0:
         now = datetime.now(timezone.utc)
-        acts = [
-            {"id": str(uuid.uuid4()), "text": 'Mastered "Organized Chaos (Final)"', "when": "2m ago", "ts": now.isoformat()},
-            {"id": str(uuid.uuid4()), "text": "Imported 12 new samples", "when": "15m ago", "ts": now.isoformat()},
-            {"id": str(uuid.uuid4()), "text": 'Beat "No Mercy" exported', "when": "1h ago", "ts": now.isoformat()},
-            {"id": str(uuid.uuid4()), "text": 'AI Master applied to "Midnight Mission"', "when": "2h ago", "ts": now.isoformat()},
-        ]
-        await db.activity.insert_many(acts)
+        docs = []
+        for i, m in enumerate(msgs):
+            m["id"] = str(uuid.uuid4())
+            m["ts"] = (now + timedelta(seconds=i)).isoformat()
+            docs.append(m)
+        await db.chat.insert_many(docs)
 
-    if await db.plugins.count_documents({}) == 0:
-        plugins = [
-            {"id": "fabfilter", "name": "FabFilter Pro-Q 3", "category": "Equalizer", "enabled": True, "icon": "F"},
-            {"id": "waves-cla76", "name": "Waves CLA-76", "category": "Compressor", "enabled": True, "icon": "W"},
-            {"id": "ozone11", "name": "iZotope Ozone 11", "category": "Mastering Suite", "enabled": True, "icon": "O"},
-            {"id": "valhalla", "name": "Valhalla VintageVerb", "category": "Reverb", "enabled": True, "icon": "V"},
-            {"id": "soundtoys", "name": "Soundtoys Decapitator", "category": "Saturation", "enabled": True, "icon": "S"},
-        ]
-        await db.plugins.insert_many(plugins)
+    if await db.projects.count_documents({}) == 0:
+        await db.projects.insert_many([
+            {"id": str(uuid.uuid4()), "name": "Urban Grind Anthem", "type": "Hip Hop / Trap", "progress": 62, "live": True,
+             "image": "https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?crop=entropy&cs=srgb&fm=jpg&q=85&w=200", "order": 1},
+            {"id": str(uuid.uuid4()), "name": "Royal Cuisine Jingle", "type": "Commercial", "progress": 45, "live": False,
+             "image": "https://images.unsplash.com/photo-1552166539-ade937e98ed7?crop=entropy&cs=srgb&fm=jpg&q=85&w=200", "order": 2},
+            {"id": str(uuid.uuid4()), "name": "Iron Fitness Campaign", "type": "Motivational", "progress": 75, "live": False,
+             "image": "https://images.unsplash.com/photo-1637430308606-86576d8fef3c?crop=entropy&cs=srgb&fm=jpg&q=85&w=200", "order": 3},
+            {"id": str(uuid.uuid4()), "name": "Elevate Realty Theme", "type": "Corporate", "progress": 30, "live": False,
+             "image": "https://images.unsplash.com/photo-1613977257363-707ba9348227?crop=entropy&cs=srgb&fm=jpg&q=85&w=200", "order": 4},
+        ])
+
+    if await db.feed.count_documents({}) == 0:
+        await db.feed.insert_many([
+            {"id": str(uuid.uuid4()), "user": "@BeatMaster88", "avatar": "https://i.pravatar.cc/100?img=15",
+             "text": "Just finished my first track using the WISE workflow!", "likes": 125, "comments": 32, "when": "2h ago", "kind": "audio", "order": 1},
+            {"id": str(uuid.uuid4()), "user": "@VocalQueen", "avatar": "https://i.pravatar.cc/100?img=45",
+             "text": "New vocals recorded for my brand anthem 🔥", "likes": 98, "comments": 18, "when": "3h ago", "kind": "audio", "order": 2},
+            {"id": str(uuid.uuid4()), "user": "@BrandArchitect", "avatar": "https://i.pravatar.cc/100?img=33",
+             "text": "Check out this Brand DNA profile! Thoughts?", "likes": 76, "comments": 24, "when": "5h ago", "kind": "radar", "order": 3},
+        ])
+
+    if await db.leaderboard.count_documents({}) == 0:
+        await db.leaderboard.insert_many([
+            {"id": str(uuid.uuid4()), "rank": 1, "name": "SoundWave", "xp": 12450, "avatar": "https://i.pravatar.cc/100?img=8"},
+            {"id": str(uuid.uuid4()), "rank": 2, "name": "BeatMaster88", "xp": 9870, "avatar": "https://i.pravatar.cc/100?img=15"},
+            {"id": str(uuid.uuid4()), "rank": 3, "name": "CreativeKye", "xp": 8230, "avatar": "https://i.pravatar.cc/100?img=52"},
+            {"id": str(uuid.uuid4()), "rank": 4, "name": "DJ Phantom", "xp": 7110, "avatar": "https://i.pravatar.cc/100?img=13"},
+            {"id": str(uuid.uuid4()), "rank": 5, "name": "BrandKing", "xp": 6540, "avatar": "https://i.pravatar.cc/100?img=68"},
+        ])
 
     if await db.notifications.count_documents({}) == 0:
+        now = datetime.now(timezone.utc).isoformat()
         await db.notifications.insert_many([
-            {"id": str(uuid.uuid4()), "text": "New sample pack available", "read": False, "ts": datetime.now(timezone.utc).isoformat()},
-            {"id": str(uuid.uuid4()), "text": "Master render complete", "read": False, "ts": datetime.now(timezone.utc).isoformat()},
-            {"id": str(uuid.uuid4()), "text": "Hermes suggests EQ tweak on Vocals", "read": False, "ts": datetime.now(timezone.utc).isoformat()},
+            {"id": str(uuid.uuid4()), "text": "New challenge dropped: Trap Anthem Battle", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "SoundWave reached #1 on the leaderboard", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "Your master render for 'Urban Grind' is ready", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "AI Maestro suggested EQ tweaks on your mix", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "7 new members joined the community", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "Live session 'Anthem Creation' is starting", "read": False, "ts": now},
+            {"id": str(uuid.uuid4()), "text": "You earned 250 XP — keep building!", "read": False, "ts": now},
         ])
+
+@app.on_event("startup")
+async def startup():
+    await seed()
 
 # ---------- Auth ----------
 @api.post("/auth/login")
@@ -160,11 +178,8 @@ async def login(body: LoginIn):
     return {
         "token": token,
         "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "initials": user["initials"],
+            "id": user["id"], "email": user["email"], "name": user["name"],
+            "role": user["role"], "initials": user["initials"], "avatar": user.get("avatar"),
         },
     }
 
@@ -172,184 +187,137 @@ async def login(body: LoginIn):
 async def me(user=Depends(get_current_user)):
     return user
 
-# ---------- Projects ----------
-@api.get("/projects")
-async def list_projects():
-    docs = await db.projects.find({}, {"_id": 0}).to_list(200)
-    return docs
+# ---------- Dashboard aggregate ----------
+@api.get("/dashboard")
+async def dashboard():
+    projects = await db.projects.find({}, {"_id": 0}).sort("order", 1).to_list(50)
+    feed = await db.feed.find({}, {"_id": 0}).sort("order", 1).to_list(50)
+    leaderboard = await db.leaderboard.find({}, {"_id": 0}).sort("rank", 1).to_list(50)
+    live_projects = sum(1 for p in projects if p.get("live"))
 
-@api.post("/projects")
-async def create_project(body: ProjectIn, user=Depends(get_current_user)):
+    return {
+        "stats": {
+            "live_viewers": 358,
+            "projects_live": max(live_projects, 4),
+            "community_online": 1247,
+        },
+        "live_studio": {
+            "title": "Urban Grind Brand Anthem",
+            "tagline": "REAL TIME. NO FILTERS. 100% ORGANIZED CHAOS.",
+            "is_live": True,
+            "elapsed": "00:42:17",
+            "viewers": 358, "likes": 219, "comments": 87,
+            "stages": [
+                {"name": "BRAND DNA", "status": "COMPLETED"},
+                {"name": "LYRICS", "status": "COMPLETED"},
+                {"name": "BEAT PROD.", "status": "LIVE"},
+                {"name": "RECORDING", "status": "UP NEXT"},
+                {"name": "MIXING", "status": "WAITING"},
+                {"name": "MASTERING", "status": "WAITING"},
+                {"name": "DELIVERY", "status": "WAITING"},
+            ],
+        },
+        "schedule": [
+            {"day": "MON", "title": "Brand DNA Live", "time": "10:00 AM", "live": False},
+            {"day": "TUE", "title": "Anthem Creation", "time": "12:00 PM", "live": True},
+            {"day": "WED", "title": "WISE² Development", "time": "03:00 PM", "live": False},
+            {"day": "THU", "title": "Community Reviews", "time": "05:00 PM", "live": False},
+            {"day": "FRI", "title": "Client Showcase", "time": "06:00 PM", "live": False},
+            {"day": "SAT", "title": "Q&A + Tutorials", "time": "01:00 PM", "live": False},
+            {"day": "SUN", "title": "Roadmap & Planning", "time": "02:00 PM", "live": False},
+        ],
+        "projects": projects,
+        "feed": feed,
+        "leaderboard": leaderboard,
+        "discord": {
+            "members_online": 1247,
+            "avatars": [f"https://i.pravatar.cc/100?img={i}" for i in [1, 5, 9, 14, 22, 30, 41]],
+            "invite": DISCORD_INVITE,
+            "benefits": ["Connect", "Collaborate", "Get Feedback", "Win Prizes", "Be Part of the Movement"],
+        },
+        "enterprise": [
+            {"code": "GENESIS", "name": "PROJECT", "subtitle": "The Blueprint"},
+            {"code": "ATLAS", "name": "PROJECT", "subtitle": "The Platform"},
+            {"code": "ORBIT", "name": "PROJECT", "subtitle": "The Operations"},
+        ],
+        "update": {
+            "version": "v2.4.1 UPDATE",
+            "desc": "New features, performance boosts and more.",
+        },
+        "roadmap": {"quarter": "Q2 2025", "completed": 4, "total": 6, "steps": [True, True, True, True, False, False]},
+        "metrics": {
+            "projects_completed": 2543,
+            "happy_clients": 1128,
+            "client_satisfaction": "99.8%",
+            "countries_served": 23,
+        },
+    }
+
+# ---------- Chat ----------
+@api.get("/chat")
+async def get_chat():
+    return await db.chat.find({}, {"_id": 0}).sort("ts", 1).to_list(200)
+
+@api.post("/chat")
+async def post_chat(body: ChatIn, user=Depends(get_current_user)):
     doc = {
         "id": str(uuid.uuid4()),
-        "name": body.name,
-        "genre": body.genre,
-        "tracks": body.tracks,
-        "duration": body.duration,
-        "artist": user.get("name", "Admin"),
-        "current": False,
-        "color": random.choice([
-            "from-fuchsia-500 to-purple-700",
-            "from-blue-500 to-indigo-800",
-            "from-cyan-500 to-teal-700",
-            "from-emerald-500 to-green-800",
-            "from-amber-500 to-orange-700",
-        ]),
+        "user": user.get("name", "You"),
+        "color": "#00d4ff",
+        "role": user.get("role") == "Administrator" and "ADMIN" or None,
+        "text": body.text,
+        "ts": datetime.now(timezone.utc).isoformat(),
     }
-    await db.projects.insert_one(doc)
+    await db.chat.insert_one(doc)
     doc.pop("_id", None)
     return doc
 
-@api.post("/projects/{project_id}/select")
-async def select_project(project_id: str, user=Depends(get_current_user)):
-    await db.projects.update_many({}, {"$set": {"current": False}})
-    res = await db.projects.update_one({"id": project_id}, {"$set": {"current": True}})
+# ---------- Feed ----------
+@api.post("/feed/{post_id}/like")
+async def like_post(post_id: str, user=Depends(get_current_user)):
+    res = await db.feed.update_one({"id": post_id}, {"$inc": {"likes": 1}})
     if res.matched_count == 0:
-        raise HTTPException(404, "Project not found")
-    return {"ok": True}
+        raise HTTPException(404, "Post not found")
+    doc = await db.feed.find_one({"id": post_id}, {"_id": 0})
+    return doc
 
-# ---------- Stats ----------
-@api.get("/stats/overview")
-async def stats_overview():
-    projects = await db.projects.count_documents({})
-    plugins = await db.plugins.count_documents({"enabled": True})
-    tracks_agg = await db.projects.aggregate([{"$group": {"_id": None, "t": {"$sum": "$tracks"}}}]).to_list(1)
-    tracks = tracks_agg[0]["t"] if tracks_agg else 0
-    beats = 89
-    return {
-        "projects": projects,
-        "tracks": tracks,
-        "beats": beats,
-        "plugins": plugins,
+@api.post("/feed")
+async def create_post(body: PostIn, user=Depends(get_current_user)):
+    doc = {
+        "id": str(uuid.uuid4()),
+        "user": "@" + user.get("name", "You").replace(" ", ""),
+        "avatar": user.get("avatar") or "https://i.pravatar.cc/100?img=12",
+        "text": body.text, "likes": 0, "comments": 0, "when": "just now", "kind": "text", "order": 0,
     }
+    await db.feed.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
 
-@api.get("/stats/resources")
-async def stats_resources():
-    # Simulated live system metrics for the sparklines
-    def series(base):
-        return [max(5, min(95, base + random.randint(-8, 8))) for _ in range(24)]
-    cpu = random.randint(18, 32)
-    mem = random.randint(52, 65)
-    disk = random.randint(60, 70)
-    net = random.randint(35, 50)
-    return {
-        "cpu": {"value": cpu, "series": series(cpu)},
-        "memory": {"value": mem, "series": series(mem)},
-        "disk": {"value": disk, "series": series(disk)},
-        "network": {"value": net, "series": series(net)},
-    }
-
-@api.get("/stats/studio")
-async def stats_studio():
-    return {
-        "status": "Online",
-        "sample_rate": "48 kHz",
-        "bit_depth": "24-bit",
-        "buffer": "128 samples",
-        "latency": "2.7 ms",
-    }
-
-# ---------- Activity & Notifications ----------
-@api.get("/activity")
-async def activity():
-    docs = await db.activity.find({}, {"_id": 0}).sort("ts", -1).to_list(20)
-    return docs
-
+# ---------- Notifications ----------
 @api.get("/notifications")
 async def notifications():
-    docs = await db.notifications.find({}, {"_id": 0}).to_list(20)
+    docs = await db.notifications.find({}, {"_id": 0}).sort("ts", -1).to_list(50)
     unread = sum(1 for d in docs if not d.get("read"))
     return {"items": docs, "unread": unread}
 
 @api.post("/notifications/read")
-async def read_notifs(user=Depends(get_current_user)):
+async def read_notifications(user=Depends(get_current_user)):
     await db.notifications.update_many({}, {"$set": {"read": True}})
     return {"ok": True}
-
-# ---------- Plugins ----------
-@api.get("/plugins")
-async def plugins():
-    return await db.plugins.find({}, {"_id": 0}).to_list(50)
-
-@api.post("/plugins/{plugin_id}/toggle")
-async def toggle_plugin(plugin_id: str, body: PluginToggle, user=Depends(get_current_user)):
-    res = await db.plugins.update_one({"id": plugin_id}, {"$set": {"enabled": body.enabled}})
-    if res.matched_count == 0:
-        raise HTTPException(404, "Plugin not found")
-    return {"ok": True}
-
-# ---------- Sound Library ----------
-@api.get("/library")
-async def library():
-    return [
-        {"id": "drum-kits", "name": "Drum Kits", "count": 245, "icon": "drum"},
-        {"id": "loops", "name": "Loops", "count": 1432, "icon": "waveform"},
-        {"id": "one-shots", "name": "One Shots", "count": 3982, "icon": "zap"},
-        {"id": "vocal-presets", "name": "Vocal Presets", "count": 426, "icon": "mic"},
-        {"id": "instruments", "name": "Instruments", "count": 158, "icon": "piano"},
-        {"id": "sound-fx", "name": "Sound FX", "count": 892, "icon": "sparkles"},
-    ]
-
-# ---------- Hermes AI ----------
-HERMES_SYSTEM = (
-    "You are Hermes, an expert AI music production assistant embedded in WISE² ENTERPRISE Sound Labs. "
-    "You help producers with mixing, mastering, beat making, sound design, arrangement, EQ, compression, "
-    "reverb, sample selection, and audio engineering workflows. Be concise, practical, and studio-savvy. "
-    "Use short paragraphs. When suggesting settings, give exact values (e.g., 'HPF at 80 Hz, ratio 4:1'). "
-    "Match the vibe of a seasoned mixing engineer who loves Hip Hop, Trap, R&B, and Drill."
-)
-
-@api.post("/hermes/chat")
-async def hermes_chat(body: HermesIn, user=Depends(get_current_user)):
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-    # Load prior turns for this session
-    history_doc = await db.hermes_sessions.find_one({"session_id": body.session_id})
-    history = history_doc.get("messages", []) if history_doc else []
-
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=body.session_id,
-        system_message=HERMES_SYSTEM,
-    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-
-    try:
-        reply = await chat.send_message(UserMessage(text=body.message))
-    except Exception as e:
-        raise HTTPException(500, f"Hermes error: {str(e)}")
-
-    reply_text = reply if isinstance(reply, str) else str(reply)
-
-    now = datetime.now(timezone.utc).isoformat()
-    new_msgs = history + [
-        {"role": "user", "text": body.message, "ts": now},
-        {"role": "assistant", "text": reply_text, "ts": now},
-    ]
-    await db.hermes_sessions.update_one(
-        {"session_id": body.session_id},
-        {"$set": {"session_id": body.session_id, "messages": new_msgs, "updated": now}},
-        upsert=True,
-    )
-    return {"reply": reply_text, "session_id": body.session_id}
-
-@api.get("/hermes/history/{session_id}")
-async def hermes_history(session_id: str, user=Depends(get_current_user)):
-    doc = await db.hermes_sessions.find_one({"session_id": session_id}, {"_id": 0})
-    return doc or {"session_id": session_id, "messages": []}
 
 # ---------- Search ----------
 @api.get("/search")
 async def search(q: str = ""):
     if not q:
-        return {"projects": [], "activity": []}
-    q_lower = q.lower()
+        return {"projects": []}
+    ql = q.lower()
     projects = await db.projects.find({}, {"_id": 0}).to_list(200)
-    projects = [p for p in projects if q_lower in p["name"].lower() or q_lower in p["genre"].lower()]
+    projects = [p for p in projects if ql in p["name"].lower() or ql in p["type"].lower()]
     return {"projects": projects[:8]}
 
 # ---------- Health ----------
 @api.get("/")
 async def root():
-    return {"service": "WISE² Sound Labs", "status": "online"}
+    return {"service": "WISE² Sound Labs — Command Center", "status": "online"}
 
 app.include_router(api)
