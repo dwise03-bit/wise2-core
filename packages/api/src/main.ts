@@ -8,8 +8,8 @@ async function bootstrap() {
   try {
     logger.log('Starting WISE² API initialization...');
 
-    // Validate required environment variables
-    const requiredEnvVars = ['DATABASE_URL'];
+    // Validate required environment variables (DATABASE_URL is optional, falls back to DB_* vars)
+    const requiredEnvVars = ['JWT_SECRET'];
     const missingVars = requiredEnvVars.filter(v => !process.env[v]);
     if (missingVars.length > 0) {
       logger.error(`Missing required environment variables: ${missingVars.join(', ')}`);
