@@ -15,7 +15,8 @@ git reset --hard origin/main
 
 # Deploy using docker without sudo (user must be in docker group)
 echo "Building and deploying..."
-docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
+docker-compose -f docker-compose.prod.yml down -v 2>/dev/null || true
+docker container prune -f 2>/dev/null || true
 docker-compose -f docker-compose.prod.yml up -d --build
 
 sleep 10
