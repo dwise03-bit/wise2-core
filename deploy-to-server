@@ -13,10 +13,10 @@ cd /home/dwise/wise2-core
 git fetch origin
 git reset --hard origin/main
 
-# Deploy (build and start via docker-compose)
+# Deploy using docker without sudo (user must be in docker group)
 echo "Building and deploying..."
-sudo docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
-sudo docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
+docker-compose -f docker-compose.prod.yml up -d --build
 
 sleep 10
 echo "✅ DEPLOYED"
