@@ -3,23 +3,32 @@ set -e
 
 REMOTE_USER="dwise"
 REMOTE_HOST="wise2.net"
+REMOTE_DIR="/opt/wise2-core"
 
 echo "🚀 Deploying to wise2.net..."
 
 ssh "$REMOTE_USER@$REMOTE_HOST" << 'REMOTE'
-cd /home/dwise/wise2-core
+set -e
+cd /opt/wise2-core
 
-# Sync with GitHub (force update, discard any conflicts)
+# /opt/wise2-core is the checkout served by Nginx. Do not deploy from the
+# separate /home/dwise checkout: it is not connected to the live site.
 git fetch origin
 git reset --hard origin/main
 
-# Deploy using docker without sudo (user must be in docker group)
-echo "Building and deploying..."
-docker-compose -f docker-compose.prod.yml down -v 2>/dev/null || true
-docker container prune -f 2>/dev/null || true
-docker-compose -f docker-compose.prod.yml up -d --build
+# Retire only the legacy API container that owns public port 3000. The new
+# website service is the process Nginx proxies for wise2.net. Database,
+# Redis, and unrelated services are deliberately left running.
+if docker ps -a --format '{{.Names}}' | grep -qx 'wise2-api'; then
+  docker stop wise2-api
+  docker rm wise2-api
+fi
 
-sleep 10
-echo "✅ DEPLOYED"
-curl http://localhost:3000 | head -5
+echo "Building and deploying website..."
+docker-compose -f docker-compose.prod.yml up -d --no-deps --build website
+
+sleep 15
+docker-compose -f docker-compose.prod.yml ps website
+curl --fail --silent --show-error http://localhost:3000/ >/dev/null
+echo "✅ WEBSITE DEPLOYED AND HEALTHY"
 REMOTE
