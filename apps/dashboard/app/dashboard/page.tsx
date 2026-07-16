@@ -7,13 +7,13 @@ import Link from 'next/link';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isLoading && !user) {
       router.push('/auth/login');
     }
-  }, [user, loading, router]);
+  }, [user, isLoading, router]);
 
   const modules = [
     { name: 'AI COMMAND CENTER', icon: '🤖', desc: 'Intelligent automation hub' },
@@ -26,7 +26,7 @@ export default function DashboardPage() {
     { name: 'DEVELOPER API', icon: '💻', desc: 'Powerful integrations' },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return <div className="min-h-screen bg-black flex items-center justify-center text-white">Loading...</div>;
   }
 
@@ -63,7 +63,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-8 h-8 rounded-full bg-gray-700"></div>
             <div className="text-sm">
-              <p className="font-bold">{user?.name || 'User'}</p>
+              <p className="font-bold">{user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</p>
               <p className="text-xs text-gray-500">{user?.email || 'user@example.com'}</p>
             </div>
           </div>
