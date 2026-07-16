@@ -27,9 +27,11 @@ export const sendToDiscord = async (
   conversationId: string,
   messageHistory: ChatMessage[]
 ): Promise<boolean> => {
+  // Placeholder: Discord webhook URL will be added later
   if (!process.env.DISCORD_WEBHOOK_URL) {
-    console.error('Discord webhook URL not configured');
-    return false;
+    console.log('[Discord Webhook] Placeholder - not configured yet. Configure in .env.local');
+    // Gracefully continue without Discord for now
+    return true;
   }
 
   try {
