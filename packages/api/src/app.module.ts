@@ -43,7 +43,8 @@ import { APIStatusController } from './config/api-status.controller';
               database: url.pathname.replace('/', ''),
             };
           } catch (error) {
-            console.error('Invalid DATABASE_URL format:', error.message);
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            console.error('Invalid DATABASE_URL format:', errorMsg);
             throw new Error('DATABASE_URL is invalid. Expected format: postgresql://user:password@host:port/database');
           }
         } else {
