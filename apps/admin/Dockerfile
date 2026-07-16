@@ -17,16 +17,20 @@ WORKDIR /app
 
 RUN apk add --no-cache dumb-init curl
 
-COPY --from=builder /app/apps/admin/.next/standalone ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/admin/.next/static ./.next/static
-COPY --from=builder /app/apps/admin/public ./public
+# Copy standalone Next.js build
+COPY --from=builder /app/apps/admin/.next/standalone /app
+
+# Copy static files
+COPY --from=builder /app/apps/admin/.next/static /app/.next/static
+COPY --from=builder /app/apps/admin/public /app/public
+
+# Copy node_modules for dependencies
+COPY --from=builder /app/node_modules /app/node_modules
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
-USER nobody
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "server.js"]
