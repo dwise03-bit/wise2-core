@@ -27,7 +27,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --prefer-offline --no-audit
 
       - name: Build all apps
         run: npm run build --filter '!@wise2/studio'
