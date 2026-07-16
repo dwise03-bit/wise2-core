@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 
@@ -10,7 +8,7 @@ export default function Home() {
       name: 'Dashboard',
       desc: 'Central hub for managing projects and workflows',
       icon: '📊',
-      url: 'https://wise2.net/dashboard',
+      url: 'http://wise2.net:3002',
       devUrl: 'http://localhost:3002',
       status: 'active',
     },
@@ -18,7 +16,7 @@ export default function Home() {
       name: 'Admin Panel',
       desc: 'System administration and user management',
       icon: '⚙️',
-      url: 'https://wise2.net/admin',
+      url: 'http://wise2.net:3003',
       devUrl: 'http://localhost:3003',
       status: 'active',
     },
@@ -26,7 +24,7 @@ export default function Home() {
       name: 'SoundLabs Studio',
       desc: 'Professional audio production and branding',
       icon: '🎵',
-      url: 'https://wise2.net/studio',
+      url: 'http://wise2.net:3005',
       devUrl: 'http://localhost:3005',
       status: 'active',
     },
@@ -34,7 +32,7 @@ export default function Home() {
       name: 'API Documentation',
       desc: 'Developer API reference and integration guides',
       icon: '📚',
-      url: 'https://wise2.net/api/docs',
+      url: 'http://wise2.net:3010/api/docs',
       devUrl: 'http://localhost:3010/api/docs',
       status: 'active',
     },
@@ -42,15 +40,15 @@ export default function Home() {
       name: 'Live Stream Studio',
       desc: 'Real-time streaming production tools',
       icon: '📡',
-      url: 'https://wise2.net/stream',
-      devUrl: 'http://localhost:3006',
+      url: 'http://wise2.net:3005/live-streaming',
+      devUrl: 'http://localhost:3005/live-streaming',
       status: 'active',
     },
     {
       name: 'Grafana Monitoring',
       desc: 'System health and performance metrics',
       icon: '📈',
-      url: 'https://wise2.net/monitoring',
+      url: 'http://wise2.net:3100',
       devUrl: 'http://localhost:3100',
       status: 'active',
     },
