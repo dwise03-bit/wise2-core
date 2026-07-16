@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
+import ChatWidget from '@/components/ChatWidget';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -48,6 +49,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-wise text-wise-primary">
+        <ChatWidget />
         <div className="min-h-screen flex flex-col">
           {/* Navigation */}
           <nav className="sticky top-0 z-50 bg-wise/80 backdrop-blur-md border-b border-wise-subtle">
