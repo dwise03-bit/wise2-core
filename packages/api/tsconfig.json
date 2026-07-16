@@ -16,7 +16,7 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "incremental": true,
+    "incremental": false,
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
