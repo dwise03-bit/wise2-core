@@ -1,6 +1,8 @@
 import { Controller, Post, Body, Get, Request } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { BillingService } from './billing.service';
 
+@ApiTags('billing')
 @Controller('v1/billing')
 export class BillingController {
   constructor(private readonly billingService: BillingService) {}

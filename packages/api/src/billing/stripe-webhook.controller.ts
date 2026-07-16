@@ -1,6 +1,8 @@
 import { Controller, Post, Body, Headers, Logger, RawBodyRequest, Req, BadRequestException } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { StripeService } from './stripe.service';
 
+@ApiTags('billing')
 @Controller('v1/billing/webhook')
 export class StripeWebhookController {
   private readonly logger = new Logger('StripeWebhookController');

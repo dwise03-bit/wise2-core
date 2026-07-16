@@ -1,6 +1,8 @@
 import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CommunityService } from './community.service';
 
+@ApiTags('community')
 @Controller('v1/community')
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}

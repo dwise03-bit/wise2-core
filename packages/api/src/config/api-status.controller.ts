@@ -1,4 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { APIManager, APIServiceConfig } from './api-manager';
 
 /**
@@ -6,6 +7,7 @@ import { APIManager, APIServiceConfig } from './api-manager';
  * Provides visibility into all configured API services and their health
  * No secrets exposed in any endpoint
  */
+@ApiTags('system')
 @Controller('v1/system/apis')
 export class APIStatusController {
   constructor(private apiManager: APIManager) {}

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 const logger = new Logger('Bootstrap');
@@ -34,6 +35,20 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
     }));
+
+    // Swagger / OpenAPI documentation
+    // Note: SwaggerModule.setup() mounts its own Express middleware and is NOT
+    // affected by app.setGlobalPrefix('api') above, so the full path ('api/docs')
+    // must be passed explicitly to land on GET /api/docs (not /docs or /api/api/docs).
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('WISE² Enterprise API')
+      .setDescription('WISE² platform API documentation')
+      .setVersion('1.0.0')
+      .addBearerAuth()
+      .build();
+    const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, swaggerDocument);
+    logger.log('Swagger docs available at /api/docs');
 
     // Use PORT or API_PORT, default to 3001 for Docker
     const port = process.env.PORT || process.env.API_PORT || 3001;
