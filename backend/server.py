@@ -264,7 +264,7 @@ async def post_chat(body: ChatIn, user=Depends(get_current_user)):
         "id": str(uuid.uuid4()),
         "user": user.get("name", "You"),
         "color": "#00d4ff",
-        "role": user.get("role") == "Administrator" and "ADMIN" or None,
+        "role": "ADMIN" if user.get("role") == "Administrator" else None,
         "text": body.text,
         "ts": datetime.now(timezone.utc).isoformat(),
     }

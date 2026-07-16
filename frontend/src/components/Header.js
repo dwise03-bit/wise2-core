@@ -100,7 +100,7 @@ export default function Header() {
       {/* Notifications */}
       <div className="relative">
         <button data-testid="notif-btn" onClick={() => { setOpenN((v) => !v); setOpenU(false); if (!openN) markRead(); }} className="relative p-2 rounded-lg hover:bg-white/5 text-slate-400">
-          <Bell className="w-4.5 h-4.5" />
+          <Bell className="w-[18px] h-[18px]" />
           {notifs.unread > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-neon-cyan text-[9px] font-bold text-[#04121f] flex items-center justify-center">{notifs.unread}</span>
           )}
@@ -121,12 +121,12 @@ export default function Header() {
       </div>
 
       <button className="relative p-2 rounded-lg hover:bg-white/5 text-slate-400" data-testid="mail-btn">
-        <Mail className="w-4.5 h-4.5" />
+        <Mail className="w-[18px] h-[18px]" />
         <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-fuchsia-500 text-[9px] font-bold text-white flex items-center justify-center">12</span>
       </button>
 
       <button onClick={() => navigate("/settings")} className="p-2 rounded-lg hover:bg-white/5 text-slate-400" data-testid="settings-icon-btn">
-        <Settings className="w-4.5 h-4.5" />
+        <Settings className="w-[18px] h-[18px]" />
       </button>
     </header>
   );
