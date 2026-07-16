@@ -1,6 +1,12 @@
 'use client';
 
 export default function ChatWidget() {
+  const handleClick = () => {
+    if (typeof window !== 'undefined') {
+      window.open('https://discord.gg/', '_blank');
+    }
+  };
+
   return (
     <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 40 }}>
       <button
@@ -15,7 +21,7 @@ export default function ChatWidget() {
           fontSize: '24px',
           boxShadow: '0 4px 12px rgba(0, 148, 255, 0.4)',
         }}
-        onClick={() => window.open('https://discord.gg/', '_blank')}
+        onClick={handleClick}
       >
         💬
       </button>

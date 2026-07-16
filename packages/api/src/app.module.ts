@@ -25,17 +25,46 @@ import { APIStatusController } from './config/api-status.controller';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST') || 'localhost',
-        port: configService.get('DB_PORT') || 5432,
-        username: configService.get('DB_USERNAME') || 'wise2',
-        password: configService.get('DB_PASSWORD') || 'wise2dev',
-        database: configService.get('DB_NAME') || 'wise2',
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') !== 'production',
-        logging: configService.get('NODE_ENV') !== 'production',
-      }),
+      useFactory: (configService: ConfigService) => {
+        // Parse DATABASE_URL if provided, otherwise use individual DB_* variables
+        const databaseUrl = configService.get('DATABASE_URL');
+        let dbConfig: any;
+
+        if (databaseUrl) {
+          // Parse DATABASE_URL format: postgresql://user:password@host:port/database
+          try {
+            const url = new URL(databaseUrl);
+            dbConfig = {
+              type: 'postgres',
+              host: url.hostname,
+              port: url.port ? parseInt(url.port, 10) : 5432,
+              username: url.username,
+              password: url.password,
+              database: url.pathname.replace('/', ''),
+            };
+          } catch (error) {
+            console.error('Invalid DATABASE_URL format:', error.message);
+            throw new Error('DATABASE_URL is invalid. Expected format: postgresql://user:password@host:port/database');
+          }
+        } else {
+          // Fallback to individual DB_* environment variables
+          dbConfig = {
+            type: 'postgres',
+            host: configService.get('DB_HOST') || 'localhost',
+            port: configService.get('DB_PORT') || 5432,
+            username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
+            password: configService.get('DB_PASSWORD') || 'wise2dev',
+            database: configService.get('DB_NAME') || 'wise2',
+          };
+        }
+
+        return {
+          ...dbConfig,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: configService.get('NODE_ENV') !== 'production',
+          logging: configService.get('NODE_ENV') !== 'production',
+        };
+      },
     }),
     APIManagerModule,
     AuthModule,
