@@ -1,10 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 export default function LiveStudioPage() {
-  const router = useRouter();
-
   useEffect(() => {
     // Redirect to the Live Studio subdomain
     if (typeof window !== 'undefined') {
