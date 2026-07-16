@@ -1,20 +1,19 @@
-/* Tailwind CSS Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Force dark theme */
-body {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-}
+@layer base {
+  html {
+    background: #050505;
+  }
 
-body.bg-black {
-  background-color: #000000 !important;
+  body {
+    margin: 0;
+    background: #050505;
+    color: #fff;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
 }
-
-/* Design system tokens are imported via Tailwind configuration */
-/* See packages/design-system/tailwind.config.ts */
 
 /* Website-specific styles */
 
