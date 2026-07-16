@@ -73,15 +73,16 @@ jobs:
         run: |
           echo "🏥 Checking deployment health..."
           for i in {1..30}; do
-            if curl -f https://wise2.net/api/health > /dev/null 2>&1 || curl -sf http://wise2.net:3000 > /dev/null 2>&1; then
+            if curl -f http://localhost:3000 > /dev/null 2>&1 && curl -f http://localhost:3010/api/health > /dev/null 2>&1; then
               echo "✅ Services are healthy"
               exit 0
             fi
-            echo "⏳ Waiting... ($i/30)"
+            echo "⏳ Waiting for services to be ready... ($i/30)"
             sleep 2
           done
-          echo "⚠️  Initial health check timeout (services may still be starting)"
-          exit 0
+          echo "❌ Health check failed - services did not become healthy"
+          docker-compose -f docker-compose.prod.yml logs --tail 50
+          exit 1
 
       - name: Notify deployment
         if: success()
