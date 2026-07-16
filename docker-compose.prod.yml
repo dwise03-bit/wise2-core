@@ -219,7 +219,8 @@ services:
       - "9090:9090"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/-/healthy"]
+      # prom/prometheus is busybox-based and has no curl; wget is present.
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -257,3 +258,5 @@ volumes:
     driver: local
   grafana_data:
     driver: local
+
+# DATABASE_URL fix
