@@ -27,11 +27,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Build all apps
-        run: |
-          npm run build || true
+        run: npm run build
 
   deploy:
     name: Deploy to Server
