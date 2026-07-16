@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
+    "@wise2/shared": "0.1.0",
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
     "framer-motion": "^11.0.0",

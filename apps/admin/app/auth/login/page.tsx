@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@wise2/shared/hooks';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const { login, isLoading, error: authError, isAuthenticated, user } = useAuth();
+  const { login, isLoading, error: authError, isAuthenticated, isAdmin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,12 +18,12 @@ export default function LoginPage() {
     setMounted(true);
   }, []);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated as admin
   useEffect(() => {
-    if (mounted && isAuthenticated && user?.role === 'CUSTOMER') {
-      router.push('/dashboard');
+    if (mounted && isAuthenticated && isAdmin) {
+      router.push('/admin/dashboard');
     }
-  }, [mounted, isAuthenticated, user, router]);
+  }, [mounted, isAuthenticated, isAdmin, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +36,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+      // The login hook will handle user info, but we need to verify admin role
+      // This will be done in the middleware redirect
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     }
@@ -51,7 +53,7 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-black mb-2">WISE²</h1>
-          <p className="text-gray-400">Welcome back</p>
+          <p className="text-gray-400">Admin Portal</p>
         </div>
 
         {/* Form */}
@@ -64,12 +66,12 @@ export default function LoginPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-sm font-medium mb-2">Admin Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder="admin@wise2.net"
               className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-cyan-500 focus:outline-none transition text-white placeholder-gray-500"
               required
             />
@@ -98,13 +100,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Signup Link */}
-        <div className="text-center mt-6">
-          <p className="text-gray-400">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-cyan-500 hover:text-cyan-400">
-              Create one
-            </Link>
+        {/* Warning */}
+        <div className="mt-6 p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+          <p className="text-sm text-gray-400">
+            This is a restricted admin portal. Only authorized administrators can access this area.
           </p>
         </div>
       </div>
