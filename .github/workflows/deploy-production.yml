@@ -30,7 +30,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Build all apps
-        run: npm run build
+        run: npm run build --filter '!@wise2/studio'
 
   deploy:
     name: Deploy to Server
