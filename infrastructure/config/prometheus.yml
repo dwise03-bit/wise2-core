@@ -1,24 +1,22 @@
-# Prometheus Configuration
-# Metrics collection for Wise² Core monitoring
+# Prometheus Configuration for WISE² Production
+# Metrics collection and alerting rules
 
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    monitor: 'wise2-core'
-    environment: '${ENVIRONMENT}'
+    monitor: 'wise2-production'
+    environment: 'production'
 
 # Alerting configuration
 alerting:
   alertmanagers:
     - static_configs:
-        - targets:
-          # - 'alertmanager:9093'
+        - targets: []
 
-# Load rules once and periodically evaluate them
+# Load alert rules
 rule_files:
   - "alerts.yml"
-  # - "other.yml"
 
 # Scrape configurations
 scrape_configs:
@@ -30,66 +28,37 @@ scrape_configs:
   # API Service
   - job_name: 'api'
     static_configs:
-      - targets: ['api:3000']
+      - targets: ['api:3001']
     metrics_path: '/metrics'
-    scrape_interval: 10s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Website Frontend
+  - job_name: 'website'
+    static_configs:
+      - targets: ['website:3000']
+    scrape_interval: 30s
+
+  # Admin Dashboard
+  - job_name: 'admin'
+    static_configs:
+      - targets: ['admin:3000']
+    scrape_interval: 30s
 
   # Dashboard Service
   - job_name: 'dashboard'
     static_configs:
       - targets: ['dashboard:3000']
-    metrics_path: '/metrics'
-    scrape_interval: 15s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
+    scrape_interval: 30s
 
-  # PostgreSQL Exporter
+  # Database (PostgreSQL)
   - job_name: 'postgres'
     static_configs:
-      - targets: ['postgres-exporter:9187']
-    scrape_interval: 15s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
+      - targets: ['postgres:5432']
+    scrape_interval: 30s
 
-  # Redis Exporter
+  # Redis Cache
   - job_name: 'redis'
     static_configs:
-      - targets: ['redis-exporter:9121']
-    scrape_interval: 15s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
-
-  # Docker (via cAdvisor)
-  - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['cadvisor:8080']
-    scrape_interval: 15s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
-
-  # Node Exporter (Host metrics)
-  - job_name: 'node'
-    static_configs:
-      - targets: ['node-exporter:9100']
-    scrape_interval: 15s
-    scrape_timeout: 5s
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
-
-# Service discovery (optional, for Kubernetes/Swarm)
-# - job_name: 'kubernetes-pods'
-#   kubernetes_sd_configs:
-#     - role: pod
+      - targets: ['redis:6379']
+    scrape_interval: 30s
