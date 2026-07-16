@@ -11,14 +11,14 @@ export const API_BASE_URL =
 
 // API Endpoints
 export const AUTH_ENDPOINTS = {
-  login: `${API_BASE_URL}/v1/auth/login`,
-  logout: `${API_BASE_URL}/v1/auth/logout`,
-  refresh: `${API_BASE_URL}/v1/auth/refresh`,
-  signup: `${API_BASE_URL}/v1/auth/signup`,
-  verifyEmail: `${API_BASE_URL}/v1/auth/verify-email`,
-  passwordReset: `${API_BASE_URL}/v1/auth/password-reset`,
-  passwordResetConfirm: `${API_BASE_URL}/v1/auth/password-reset/confirm`,
-  changePassword: `${API_BASE_URL}/v1/auth/change-password`,
+  login: `${API_BASE_URL}/api/v1/auth/login`,
+  logout: `${API_BASE_URL}/api/v1/auth/logout`,
+  refresh: `${API_BASE_URL}/api/v1/auth/refresh`,
+  signup: `${API_BASE_URL}/api/v1/auth/signup`,
+  verifyEmail: `${API_BASE_URL}/api/v1/auth/verify-email`,
+  passwordReset: `${API_BASE_URL}/api/v1/auth/password-reset`,
+  passwordResetConfirm: `${API_BASE_URL}/api/v1/auth/password-reset/confirm`,
+  changePassword: `${API_BASE_URL}/api/v1/auth/change-password`,
 } as const;
 
 // Token Configuration
