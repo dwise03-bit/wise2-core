@@ -24,10 +24,15 @@ class Analytics {
 
   constructor() {
     this.sessionId = this.generateSessionId();
-    this.trackPageView();
+    if (typeof window !== 'undefined') {
+      this.trackPageView();
+    }
   }
 
   private generateSessionId(): string {
+    if (typeof window === 'undefined') {
+      return 'server-session';
+    }
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
