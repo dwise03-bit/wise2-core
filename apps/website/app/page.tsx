@@ -4,6 +4,58 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function Home() {
+
+  const services = [
+    {
+      name: 'Dashboard',
+      desc: 'Central hub for managing projects and workflows',
+      icon: '📊',
+      url: 'https://wise2.net/dashboard',
+      devUrl: 'http://localhost:3002',
+      status: 'active',
+    },
+    {
+      name: 'Admin Panel',
+      desc: 'System administration and user management',
+      icon: '⚙️',
+      url: 'https://wise2.net/admin',
+      devUrl: 'http://localhost:3003',
+      status: 'active',
+    },
+    {
+      name: 'SoundLabs Studio',
+      desc: 'Professional audio production and branding',
+      icon: '🎵',
+      url: 'https://wise2.net/studio',
+      devUrl: 'http://localhost:3005',
+      status: 'active',
+    },
+    {
+      name: 'API Documentation',
+      desc: 'Developer API reference and integration guides',
+      icon: '📚',
+      url: 'https://wise2.net/api/docs',
+      devUrl: 'http://localhost:3010/api/docs',
+      status: 'active',
+    },
+    {
+      name: 'Live Stream Studio',
+      desc: 'Real-time streaming production tools',
+      icon: '📡',
+      url: 'https://wise2.net/stream',
+      devUrl: 'http://localhost:3006',
+      status: 'active',
+    },
+    {
+      name: 'Grafana Monitoring',
+      desc: 'System health and performance metrics',
+      icon: '📈',
+      url: 'https://wise2.net/monitoring',
+      devUrl: 'http://localhost:3100',
+      status: 'active',
+    },
+  ];
+
   const modules = [
     {
       name: 'AI COMMAND CENTER',
@@ -150,6 +202,52 @@ export default function Home() {
               <div className="text-3xl font-black text-blue-400">24/7</div>
               <p className="text-sm text-gray-400 mt-2">AI WORKFORCE</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Platform Access Section */}
+      <section className="py-24 px-6 border-t border-gray-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-12">
+            <h2 className="text-3xl font-black text-center mb-4">PLATFORM ACCESS</h2>
+            <p className="text-center text-gray-400 text-sm">Connect to all WISE² services and tools</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <a
+                key={service.name}
+                href={service.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-6 border border-gray-700 rounded hover:border-blue-500 hover:bg-blue-500/5 transition group cursor-pointer"
+                title={`Dev: ${service.devUrl}`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="text-4xl">{service.icon}</div>
+                  {service.status === 'active' && (
+                    <span className="flex items-center gap-1 px-2 py-1 bg-green-500/10 border border-green-500/30 rounded text-xs font-bold text-green-400">
+                      <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                      LIVE
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-bold text-sm mb-2 group-hover:text-blue-400 transition">{service.name}</h3>
+                <p className="text-xs text-gray-500 mb-4">{service.desc}</p>
+                <div className="flex items-center gap-2 text-xs text-blue-400 group-hover:translate-x-1 transition">
+                  <span>Launch Service</span>
+                  <span>→</span>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-12 p-6 bg-blue-950/30 border border-blue-900/50 rounded">
+            <p className="text-xs text-gray-400 text-center">
+              <span className="font-bold text-blue-400">Local Development:</span> Hover over any service card to see the localhost URL (port 3002-3100).
+              Production links point to wise2.net. All services should return to this homepage when accessed locally from localhost:3000.
+            </p>
           </div>
         </div>
       </section>
