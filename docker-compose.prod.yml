@@ -79,8 +79,8 @@ services:
       DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
       DB_NAME: wise2_core_prod
 
-      # Legacy DATABASE_URL (for compatibility with other libraries)
-      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-wise2_prod_user}:${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+      # DATABASE_URL for ORM (simple default password for Docker compatibility)
+      DATABASE_URL: postgresql://wise2_prod_user:wise2_prod_secure_2026@postgres:5432/wise2_core_prod
 
       # Redis Configuration
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
