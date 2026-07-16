@@ -17,6 +17,7 @@ services:
         -c log_disconnections=on
         -c log_min_duration_statement=1000
         -c shared_preload_libraries=pg_stat_statements
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
@@ -38,8 +39,6 @@ services:
       retries: 5
       start_period: 15s
     restart: unless-stopped
-    environment:
-      PGDATA: /var/lib/postgresql/data/pgdata
     # Resource limits
     deploy:
       resources:
@@ -70,34 +69,51 @@ services:
     build:
       context: .
       dockerfile: packages/api/Dockerfile
+    container_name: wise2-api-prod
     environment:
+      # Application Settings
       NODE_ENV: production
       PORT: 3001
       API_PORT: 3001
-      # Database Configuration (supports both DATABASE_URL or individual DB_* vars)
-      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/wise2_core}
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_USERNAME: ${DB_USERNAME:-postgres}
-      DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgres}
-      DB_NAME: ${DB_NAME:-wise2_core}
-      # External Services
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3002,http://localhost:3003}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL}
       LOG_LEVEL: ${LOG_LEVEL:-info}
+
+      # Database Configuration (TypeORM uses individual DB_* variables)
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${POSTGRES_APP_USER:-wise2_prod_user}
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
+      DB_NAME: wise2_core_prod
+
+      # Legacy DATABASE_URL (for compatibility with other libraries)
+      DATABASE_URL: postgresql://${POSTGRES_APP_USER:-wise2_prod_user}:${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+
+      # Redis Configuration
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+
+      # Security
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-to-secure-random-string}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3002,http://localhost:3003}
+
+      # Payment Processing
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+
+      # OAuth - Google
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-}
+
+      # OAuth - GitHub
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GITHUB_CALLBACK_URL: ${GITHUB_CALLBACK_URL:-}
     ports:
       - "3010:3001"
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -106,6 +122,14 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
   website:
     build:
@@ -209,6 +233,12 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  postgres_wal:
+    driver: local
   redis_data:
+    driver: local
   prometheus_data:
+    driver: local
   grafana_data:
+    driver: local

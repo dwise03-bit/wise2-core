@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import './styles/globals.css';
-import ChatWidgetWrapper from '@/components/ChatWidgetWrapper';
+
+const ChatWidgetWrapper = dynamic(
+  () => import('@/components/ChatWidgetWrapper'),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -50,9 +57,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-wise text-wise-primary">
-        <Suspense fallback={null}>
-          <ChatWidgetWrapper />
-        </Suspense>
+        <ChatWidgetWrapper />
         <div className="min-h-screen flex flex-col">
           {/* Navigation */}
           <nav className="sticky top-0 z-50 bg-wise/80 backdrop-blur-md border-b border-wise-subtle">
