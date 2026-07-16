@@ -11,12 +11,7 @@ services:
       # Application database and user (created by init script)
       POSTGRES_DB: postgres  # Connect to default postgres db initially
       POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
-      # Logging and performance
-      POSTGRES_INITDB_ARGS: >-
-        -c log_connections=on
-        -c log_disconnections=on
-        -c log_min_duration_statement=1000
-        -c shared_preload_libraries=pg_stat_statements
+      # Logging and performance is configured via postgresql.conf
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
