@@ -17,8 +17,8 @@ WORKDIR /app
 
 RUN apk add --no-cache dumb-init curl
 
-# Copy standalone Next.js build
-COPY --from=builder /app/apps/studio/.next/standalone /app
+# Copy standalone Next.js build (this includes server.js)
+COPY --from=builder /app/apps/studio/.next/standalone ./
 
 # Copy static files
 COPY --from=builder /app/apps/studio/.next/static /app/.next/static
