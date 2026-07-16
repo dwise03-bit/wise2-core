@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  background: #0a0e1a;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(0,168,255,0.10), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(0,212,255,0.08), transparent 60%),
+    #0a0e1a;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0a0e1a; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+/* Text selection */
+::selection { background: rgba(0,212,255,0.35); color: #fff; }
+
+.font-display { font-family: 'Orbitron', 'Rajdhani', sans-serif; letter-spacing: 0.02em; }
+
+.card-panel {
+  background: linear-gradient(180deg, rgba(17,26,46,0.9) 0%, rgba(15,23,41,0.9) 100%);
+  border: 1px solid rgba(30,41,59,0.9);
+  border-radius: 14px;
+}
+.card-panel:hover { border-color: rgba(0,212,255,0.18); }
+
+.divider-neon {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.5), transparent);
+}
+
+/* Blue glow for buttons */
+.btn-neon {
+  background: linear-gradient(180deg, #00d4ff, #0088cc);
+  color: #001220;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(0,212,255,0.4);
+  transition: transform 150ms ease, box-shadow 200ms ease;
+}
+.btn-neon:hover { transform: translateY(-1px); box-shadow: 0 0 22px rgba(0,212,255,0.7); }
+
+/* Sequencer cell */
+.seq-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background: #0f1a2f;
+  border: 1px solid rgba(30,41,59,0.7);
+  transition: background-color 120ms ease, box-shadow 200ms ease, transform 120ms ease;
+  cursor: pointer;
+}
+.seq-cell:hover { background: #142442; }
+.seq-cell.active {
+  background: linear-gradient(180deg, #00d4ff, #0077b6);
+  border-color: rgba(0,212,255,0.9);
+  box-shadow: 0 0 10px rgba(0,212,255,0.7), inset 0 0 8px rgba(255,255,255,0.15);
+}
+.seq-cell.playing {
+  outline: 2px solid #fff;
+  outline-offset: -1px;
+}
+
+/* LED meter segment */
+.led {
+  width: 100%;
+  height: 6px;
+  border-radius: 2px;
+  background: #0e1a2f;
+  transition: background 60ms linear, box-shadow 60ms linear;
+}
+.led.on-g { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.led.on-y { background: #eab308; box-shadow: 0 0 6px #eab308; }
+.led.on-o { background: #f97316; box-shadow: 0 0 6px #f97316; }
+.led.on-r { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+/* Waveform (SVG) */
+.wave-line { stroke: #00d4ff; stroke-width: 1.5; fill: none; }
+
+/* Sidebar active */
+.side-active {
+  background: linear-gradient(90deg, rgba(0,212,255,0.16), transparent);
+  border-left: 3px solid #00d4ff;
+  color: #fff;
+}
+
+/* Micro utility */
+.no-drag { user-select: none; }
