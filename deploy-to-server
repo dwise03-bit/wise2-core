@@ -25,7 +25,14 @@ if docker ps -a --format '{{.Names}}' | grep -qx 'wise2-api'; then
 fi
 
 echo "Building and deploying website..."
-docker-compose -f docker-compose.prod.yml up -d --no-deps --build website
+# Build first so the existing site remains available during the expensive work.
+docker-compose -f docker-compose.prod.yml build website
+
+# Compose v1 can retain a stale container name after an interrupted deploy.
+# Remove only this service's stale container before creating its replacement.
+docker-compose -f docker-compose.prod.yml rm -sf website 2>/dev/null || true
+docker rm -f wise2-core_website_1 2>/dev/null || true
+docker-compose -f docker-compose.prod.yml up -d --no-deps website
 
 sleep 15
 docker-compose -f docker-compose.prod.yml ps website
