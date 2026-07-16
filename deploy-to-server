@@ -15,11 +15,10 @@ git reset --hard origin/main
 
 # Deploy (build and start via docker-compose)
 echo "Building and deploying..."
-cd apps/website
-docker-compose down 2>/dev/null || true
-docker-compose up -d --build
+sudo docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
+sudo docker-compose -f docker-compose.prod.yml up -d --build
 
-sleep 5
+sleep 10
 echo "✅ DEPLOYED"
 curl http://localhost:3000 | head -5
 REMOTE
