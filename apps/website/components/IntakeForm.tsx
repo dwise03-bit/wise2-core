@@ -111,10 +111,7 @@ export default function IntakeForm({ isOpen, onClose }: IntakeFormProps) {
         fileUrls = uploadData.urls || [];
       }
 
-      const formspreeId = process.env.NEXT_PUBLIC_FORMSPREE_ID || 'xyzabc123';
-      const formspreeEndpoint = `https://formspree.io/f/${formspreeId}`;
-
-      const res = await fetch(formspreeEndpoint, {
+      const res = await fetch('/api/intake/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
