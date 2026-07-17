@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
 import { SiteNav } from './components/SiteNav';
 import { SiteFooter } from './components/SiteFooter';
+import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -61,6 +62,9 @@ export default function RootLayout({
 
           {/* Footer (hidden on pages that render their own, e.g. "/") */}
           <SiteFooter />
+
+          {/* Global support chat */}
+          <ChatWidgetWrapper />
         </div>
       </body>
     </html>

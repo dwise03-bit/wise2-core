@@ -28,46 +28,46 @@ export function ChatMessage({ message }: ChatMessageProps) {
   };
 
   return (
-    <div className="flex gap-3 py-2 px-3 hover:bg-gray-800/50 transition-colors group">
+    <div className="group flex gap-3 border-b border-white/5 px-3 py-3 transition-colors hover:bg-white/[0.03]">
       {/* Avatar */}
-      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getAvatarColor(message.userName)} flex-shrink-0 flex items-center justify-center text-xs font-bold text-white shadow-sm`}>
+      <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${getAvatarColor(message.userName)} text-xs font-bold text-white shadow-[0_0_18px_rgba(0,153,255,0.18)]`}>
         {message.userName[0].toUpperCase()}
       </div>
 
       {/* Message Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-sm text-gray-200">{message.userName}</span>
+          <span className="text-sm font-semibold text-white">{message.userName}</span>
 
           {/* Badges */}
           {message.isModerator && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full border border-red-400/20 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-300">
               🛡️ Mod
             </span>
           )}
           {message.userBadges.includes('verified') && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-2 py-0.5 text-xs font-medium text-cyan-300">
               ✓ Verified
             </span>
           )}
           {message.userBadges.includes('subscriber') && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full border border-fuchsia-400/20 bg-fuchsia-500/10 px-2 py-0.5 text-xs font-medium text-fuchsia-300">
               ⭐ Subscriber
             </span>
           )}
           {message.userBadges.includes('vip') && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded font-medium">
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/20 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-300">
               👑 VIP
             </span>
           )}
 
-          <span className="text-xs text-gray-500 ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="ml-auto flex-shrink-0 text-xs text-slate-500 opacity-0 transition-opacity group-hover:opacity-100">
             {formatTime(message.timestamp)}
           </span>
         </div>
 
         {/* Message Text with emoji and formatting support */}
-        <p className="text-sm text-gray-300 break-words whitespace-pre-wrap">{message.message}</p>
+        <p className="whitespace-pre-wrap break-words text-sm text-slate-300">{message.message}</p>
       </div>
     </div>
   );

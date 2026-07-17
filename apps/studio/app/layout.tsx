@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
 import { StudioNav } from '../components/Navigation/StudioNav';
+import { SupportWidget } from '../components/SupportWidget';
 
 export const metadata: Metadata = {
   title: 'WISE² | Organized Chaos Command Center',
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-black text-white">
         <main className="min-h-screen">{children}</main>
+        <SupportWidget />
       </body>
     </html>
   );
