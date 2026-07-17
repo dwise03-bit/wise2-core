@@ -34,7 +34,20 @@ DISCORD_WEBHOOK_URL=your_webhook_url
 
 ## Commands
 
-See documentation in `docs/guides/discord-setup.md`
+### Infrastructure Commands
+- `!status` — Docker container status
+- `!update` — Pull latest changes
+- `!restart` — Restart all services
+- `!logs [service]` — View service logs
+
+### Hermes Website Builder
+- `!website` — Show help menu
+- `!website status` — Check builder service
+- `!website jobs` — List recent build jobs
+- `!website help` — Full documentation
+- `!website api` — API endpoint info
+
+See documentation in `docs/guides/discord-setup.md` and `../HERMES_INTEGRATION.md`
 
 ---
 

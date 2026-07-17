@@ -368,19 +368,22 @@ const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void })
       {/* CTA Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
         <motion.button
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onBookConsultation}
+          aria-label="Book a consultation with our sales team"
         >
           Book Your Consultation
           <ArrowRight className="w-5 h-5 inline-block ml-2" />
         </motion.button>
 
         <motion.button
-          className="px-8 py-4 border border-gray-500 text-gray-300 rounded-lg font-bold text-lg hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300"
+          className="px-8 py-4 border border-gray-500 text-gray-300 rounded-lg font-bold text-lg hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => window.location.href = '/live-studio'}
+          aria-label="Watch demo of the live studio workspace"
         >
           ▶ Watch Demo
         </motion.button>
@@ -480,8 +483,14 @@ const ProjectShowcase = () => (
               </div>
 
               <div className="mt-6 flex items-center gap-2 text-blue-400 group-hover:gap-3 transition-all">
-                <span className="text-sm font-semibold">Read Case Study</span>
-                <ArrowRight className="w-4 h-4" />
+                <a
+                  href="#"
+                  className="inline-flex items-center gap-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
+                  aria-label={`Read case study: ${project.name}`}
+                >
+                  <span>Read Case Study</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
             </div>
           </motion.div>
@@ -689,7 +698,8 @@ const InsightsSection = () => (
                 <p className="text-gray-400 text-sm mb-4">{insight.description}</p>
                 <a
                   href={insight.link}
-                  className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                  className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
+                  aria-label={`Learn more about: ${insight.title}`}
                 >
                   Learn More <ArrowRight className="w-4 h-4" />
                 </a>
@@ -705,7 +715,7 @@ const InsightsSection = () => (
 /**
  * Pricing Section
  */
-const PricingSection = () => (
+const PricingSection = ({ onGetStarted }: { onGetStarted: (tierId: string) => void }) => (
   <section className="py-24 px-6 border-t border-gray-800/50">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16 text-center">
@@ -759,13 +769,15 @@ const PricingSection = () => (
               </div>
 
               <motion.button
-                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 mb-8 ${
+                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 mb-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                   tier.recommended
                     ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-lg hover:shadow-blue-500/50'
                     : 'border border-gray-600 text-gray-300 hover:border-blue-400 hover:text-blue-400'
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => onGetStarted(tier.id)}
+                aria-label={`Get started with ${tier.name} plan at $${tier.price} per month`}
               >
                 Get Started
               </motion.button>
@@ -847,19 +859,22 @@ const CTASection = ({ onBookConsultation }: { onBookConsultation: () => void }) 
         viewport={{ once: true, amount: 0.3 }}
       >
         <motion.button
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onBookConsultation}
+          aria-label="Book a consultation with our sales team"
         >
           Book Your Consultation
           <ArrowRight className="w-5 h-5 inline-block ml-2" />
         </motion.button>
 
         <motion.button
-          className="px-8 py-4 border border-blue-400 text-blue-300 rounded-lg font-bold text-lg hover:bg-blue-500/10 transition-all duration-300"
+          className="px-8 py-4 border border-blue-400 text-blue-300 rounded-lg font-bold text-lg hover:bg-blue-500/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={onBookConsultation}
+          aria-label="Schedule a demo with our team"
         >
           Schedule a Demo
         </motion.button>
@@ -894,25 +909,25 @@ const Footer = () => (
     <div className="max-w-6xl mx-auto">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Platform</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Platform</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/studio" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/#features" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Features
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/#pricing" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Pricing
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/status" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Status
               </a>
             </li>
@@ -920,25 +935,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Documentation</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Documentation</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Getting Started
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/api" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 API Reference
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/guides" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Guides
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/support" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Support
               </a>
             </li>
@@ -946,25 +961,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Company</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Company</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/about" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 About
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/blog" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Blog
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/careers" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Careers
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/contact" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Contact
               </a>
             </li>
@@ -972,25 +987,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Legal</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Legal</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/privacy" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Privacy
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/terms" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Terms
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/security" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Security
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/compliance" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Compliance
               </a>
             </li>
@@ -1009,13 +1024,13 @@ const Footer = () => (
       <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
         <p>All rights reserved. Built with precision and care.</p>
         <div className="flex gap-6 mt-4 sm:mt-0">
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on Twitter">
             Twitter
           </a>
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on LinkedIn">
             LinkedIn
           </a>
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on GitHub">
             GitHub
           </a>
         </div>
@@ -1030,6 +1045,12 @@ const Footer = () => (
 
 export default function Home() {
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
+
+  const handleGetStarted = (tierId: string) => {
+    setSelectedTier(tierId);
+    setIntakeOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -1038,7 +1059,7 @@ export default function Home() {
       <FeaturesSection />
       <DashboardPreview />
       <InsightsSection />
-      <PricingSection />
+      <PricingSection onGetStarted={handleGetStarted} />
       <CTASection onBookConsultation={() => setIntakeOpen(true)} />
       <IntakeForm isOpen={intakeOpen} onClose={() => setIntakeOpen(false)} />
       <Footer />
