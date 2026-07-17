@@ -3,7 +3,7 @@
  * Production-grade browser DAW audio engine
  */
 
-export * from './types';
+export type * from './types';
 export * from './AudioContextManager';
 export * from './Track';
 export * from './Mixer';
