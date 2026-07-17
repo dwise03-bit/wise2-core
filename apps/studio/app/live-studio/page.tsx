@@ -110,16 +110,20 @@ export default function LiveStudioPage() {
   }, [audio]);
 
   return (
-    <div className="h-screen flex flex-col bg-wise-bg text-wise-text-primary overflow-hidden">
+    <div className="h-screen flex flex-col bg-slate-950 text-slate-50 overflow-hidden font-sans">
       {/* Header - Sticky */}
-      <header className="border-b border-wise-border-subtle bg-wise-surface/80 backdrop-blur-lg px-6 py-4 z-50">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-lg px-6 py-4 z-50">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-wide">LIVE STUDIO</h1>
-            <p className="text-sm text-wise-primary font-semibold">RECORD. STREAM. CREATE. PERFORM.</p>
+            <h1 className="text-3xl font-bold tracking-wide text-slate-50">LIVE STUDIO</h1>
+            <p className="text-sm text-emerald-500 font-semibold">RECORD. STREAM. CREATE. PERFORM.</p>
           </div>
           <div className="flex-1 max-w-xs">
-            <Input type="search" placeholder="Search Live Studio..." />
+            <Input
+              type="search"
+              placeholder="Search Live Studio..."
+              className="focus:ring-2 focus:ring-emerald-500"
+            />
           </div>
         </div>
       </header>
@@ -127,29 +131,29 @@ export default function LiveStudioPage() {
       {/* Main Content */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Status Cards Strip */}
-        <div className="px-6 py-4 border-b border-wise-border-subtle bg-wise-surface/50 overflow-x-auto">
-          <div className="flex gap-4 min-w-max">
+        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/50 overflow-x-auto">
+          <div className="flex gap-3 min-w-max">
             {/* Live Status */}
-            <Card className="flex-shrink-0 min-w-fit">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/50 border-slate-700 hover:bg-slate-800/80 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">LIVE STATUS</div>
+                <div className="text-xs font-semibold text-slate-400 mb-1">LIVE STATUS</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-wise-success text-lg">●</span>
+                  <span className="inline-block w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                   <div>
-                    <div className="text-sm font-bold">ON AIR</div>
-                    <div className="text-xs text-wise-text-muted">01:24:58</div>
+                    <div className="text-sm font-bold text-slate-50">ON AIR</div>
+                    <div className="text-xs text-slate-400">01:24:58</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Recording Status */}
-            <Card className="flex-shrink-0 min-w-fit">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/50 border-slate-700 hover:bg-slate-800/80 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">RECORDING</div>
+                <div className="text-xs font-semibold text-slate-400 mb-1">RECORDING</div>
                 <div className="flex items-center gap-2">
                   {isRecording && <Spinner size="sm" />}
-                  <div className="text-sm font-bold">
+                  <div className="text-sm font-bold text-slate-50">
                     {isRecording ? 'RECORDING' : 'READY'} • {getTotalTracks()} Tracks
                   </div>
                 </div>
@@ -157,10 +161,10 @@ export default function LiveStudioPage() {
             </Card>
 
             {/* CPU Usage */}
-            <Card className="flex-shrink-0 min-w-fit">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/50 border-slate-700 hover:bg-slate-800/80 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">CPU USAGE</div>
-                <div className="text-sm font-bold">
+                <div className="text-xs font-semibold text-slate-400 mb-1">CPU USAGE</div>
+                <div className="text-sm font-bold text-slate-50">
                   {cpuUsage}%
                   <Badge variant={cpuUsage > 80 ? 'danger' : cpuUsage > 60 ? 'warning' : 'success'} size="sm" className="ml-2">
                     {cpuUsage > 80 ? 'High' : cpuUsage > 60 ? 'Medium' : 'Good'}
@@ -170,26 +174,26 @@ export default function LiveStudioPage() {
             </Card>
 
             {/* Storage */}
-            <Card className="flex-shrink-0 min-w-fit">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/50 border-slate-700 hover:bg-slate-800/80 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">STORAGE</div>
-                <div className="text-sm font-bold">{storageUsed} TB / 8 TB</div>
+                <div className="text-xs font-semibold text-slate-400 mb-1">STORAGE</div>
+                <div className="text-sm font-bold text-slate-50">{storageUsed} TB / 8 TB</div>
               </CardContent>
             </Card>
 
             {/* Viewers */}
-            <Card className="flex-shrink-0 min-w-fit">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/50 border-slate-700 hover:bg-slate-800/80 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">VIEWERS</div>
-                <div className="text-sm font-bold">{viewerCount.toLocaleString()} Live</div>
+                <div className="text-xs font-semibold text-slate-400 mb-1">VIEWERS</div>
+                <div className="text-sm font-bold text-slate-50">{viewerCount.toLocaleString()} Live</div>
               </CardContent>
             </Card>
 
             {/* Bitrate */}
-            <Card className="flex-shrink-0 min-w-fit" variant="elevated">
+            <Card className="flex-shrink-0 min-w-fit bg-slate-800/80 border-slate-600 hover:bg-slate-800 transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-3">
-                <div className="text-xs font-semibold text-wise-text-muted mb-1">BITRATE</div>
-                <div className="text-sm font-bold text-wise-primary">{bitrate} Mbps • Excellent</div>
+                <div className="text-xs font-semibold text-slate-400 mb-1">BITRATE</div>
+                <div className="text-sm font-bold text-emerald-400">{bitrate} Mbps • Excellent</div>
               </CardContent>
             </Card>
           </div>
@@ -200,10 +204,10 @@ export default function LiveStudioPage() {
           {/* Left - Mixer & Controls */}
           <div className="flex-1 flex flex-col gap-4 overflow-y-auto min-w-0">
             {/* Mixer - Wired to Audio Engine */}
-            <Card variant="glass">
+            <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
               <CardHeader>
-                <h2 className="text-lg font-bold">LIVE MIXER</h2>
-                <p className="text-xs text-wise-text-muted">{getTotalTracks()} Tracks Ready</p>
+                <h2 className="text-lg font-bold text-slate-50">LIVE MIXER</h2>
+                <p className="text-xs text-slate-400">{getTotalTracks()} Tracks Ready</p>
               </CardHeader>
               <CardContent>
                 <MasterMixer
@@ -223,9 +227,9 @@ export default function LiveStudioPage() {
             {/* Scenes & Controls Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Scenes */}
-              <Card>
+              <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
                 <CardHeader>
-                  <h3 className="text-sm font-bold">SCENES</h3>
+                  <h3 className="text-sm font-bold text-slate-50">SCENES</h3>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -236,6 +240,11 @@ export default function LiveStudioPage() {
                         size="md"
                         fullWidth
                         onClick={() => setSelectedScene(scene)}
+                        className={`transition-colors focus:ring-2 focus:ring-emerald-500 ${
+                          selectedScene === scene
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            : 'bg-slate-700 hover:bg-slate-600 text-slate-50'
+                        }`}
                       >
                         Scene {scene}
                       </Button>
@@ -245,9 +254,9 @@ export default function LiveStudioPage() {
               </Card>
 
               {/* Live Controls */}
-              <Card>
+              <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
                 <CardHeader>
-                  <h3 className="text-sm font-bold">LIVE CONTROLS</h3>
+                  <h3 className="text-sm font-bold text-slate-50">LIVE CONTROLS</h3>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
@@ -256,6 +265,11 @@ export default function LiveStudioPage() {
                       size="md"
                       fullWidth
                       onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
+                      className={`transition-colors focus:ring-2 ${
+                        isStreaming
+                          ? 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500'
+                          : 'bg-emerald-600 hover:bg-emerald-700 text-white focus:ring-emerald-500'
+                      }`}
                     >
                       {isStreaming ? 'Stop Stream' : 'Start Stream'}
                     </Button>
@@ -264,6 +278,11 @@ export default function LiveStudioPage() {
                       size="md"
                       fullWidth
                       onClick={() => isRecording ? audio.stopRecording() : audio.startRecording()}
+                      className={`transition-colors focus:ring-2 ${
+                        isRecording
+                          ? 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500'
+                          : 'bg-emerald-600 hover:bg-emerald-700 text-white focus:ring-emerald-500'
+                      }`}
                     >
                       {isRecording ? 'Stop Recording' : 'Start Recording'}
                     </Button>
@@ -273,9 +292,9 @@ export default function LiveStudioPage() {
             </div>
 
             {/* Recent Recordings */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
               <CardHeader>
-                <h3 className="text-sm font-bold">RECENT RECORDINGS</h3>
+                <h3 className="text-sm font-bold text-slate-50">RECENT RECORDINGS</h3>
               </CardHeader>
               <CardContent>
                 <RecordingsList title="" limit={3} showHeader={false} />
@@ -286,19 +305,19 @@ export default function LiveStudioPage() {
           {/* Right - Preview & Chat (Sidebar on desktop, below on mobile) */}
           <div className="w-full lg:w-80 flex flex-col gap-4 overflow-y-auto">
             {/* Live Preview */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
               <CardContent className="p-4">
-                <div className="w-full aspect-video bg-wise-surface rounded flex items-center justify-center border border-wise-border-subtle">
+                <div className="w-full aspect-video bg-slate-900 rounded flex items-center justify-center border border-slate-700">
                   <Spinner size="md" label="Preview Loading..." />
                 </div>
               </CardContent>
             </Card>
 
             {/* Chat */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
               <CardHeader>
-                <h3 className="text-sm font-bold">CHAT ROOM</h3>
-                <Badge variant="info" size="sm">{viewerCount} Active</Badge>
+                <h3 className="text-sm font-bold text-slate-50">CHAT ROOM</h3>
+                <Badge variant="info" size="sm" className="bg-blue-600 text-white">{viewerCount} Active</Badge>
               </CardHeader>
               <CardContent>
                 <ChatRoom title="" isEnabled={true} activeUsers={viewerCount} />
@@ -306,22 +325,22 @@ export default function LiveStudioPage() {
             </Card>
 
             {/* Audio Meters */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500">
               <CardHeader>
-                <h3 className="text-sm font-bold">AUDIO LEVELS</h3>
+                <h3 className="text-sm font-bold text-slate-50">AUDIO LEVELS</h3>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div>
-                    <div className="text-xs text-wise-text-muted mb-1">Left Channel</div>
-                    <div className="h-2 bg-wise-surface rounded-full overflow-hidden">
-                      <div className="h-full w-1/2 bg-gradient-to-r from-wise-success to-wise-warning rounded-full" />
+                    <div className="text-xs text-slate-400 mb-1">Left Channel</div>
+                    <div className="h-2 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-full w-1/2 bg-gradient-to-r from-emerald-500 to-yellow-500 rounded-full" />
                     </div>
                   </div>
                   <div>
-                    <div className="text-xs text-wise-text-muted mb-1">Right Channel</div>
-                    <div className="h-2 bg-wise-surface rounded-full overflow-hidden">
-                      <div className="h-full w-2/3 bg-gradient-to-r from-wise-success to-wise-warning rounded-full" />
+                    <div className="text-xs text-slate-400 mb-1">Right Channel</div>
+                    <div className="h-2 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-full w-2/3 bg-gradient-to-r from-emerald-500 to-yellow-500 rounded-full" />
                     </div>
                   </div>
                 </div>
@@ -333,8 +352,8 @@ export default function LiveStudioPage() {
 
       {/* Alert - Optional info */}
       {showAlert && (
-        <div className="px-6 py-4 border-t border-wise-border-subtle bg-wise-surface/50">
-          <Alert variant="info" title="Tip" closable onClose={() => setShowAlert(false)}>
+        <div className="px-6 py-4 border-t border-slate-800 bg-slate-900/50">
+          <Alert variant="info" title="Tip" closable onClose={() => setShowAlert(false)} className="bg-blue-900/30 border-blue-700 text-blue-200">
             Use keyboard shortcuts: R (record), Space (play), T (add track), Cmd+S (save)
           </Alert>
         </div>

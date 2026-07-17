@@ -27,22 +27,22 @@ export default function LiveStreamingPage() {
   const bitrate = Math.round(streaming.streamStatus.bitrate);
 
   return (
-    <div className="h-screen flex flex-col bg-black text-white overflow-hidden">
+    <div className="h-screen flex flex-col bg-slate-950 text-slate-50 overflow-hidden font-sans">
       {/* Header */}
-      <header className="border-b border-gray-700 bg-gray-900 px-6 py-4">
+      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-lg px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-blue-400">LIVE STREAMING</h1>
-            <p className="text-sm text-gray-400">BROADCAST. ENGAGE. INSPIRE.</p>
+            <h1 className="text-2xl font-bold text-emerald-500">LIVE STREAMING</h1>
+            <p className="text-sm text-slate-400">BROADCAST. ENGAGE. INSPIRE.</p>
           </div>
           <div className="flex items-center gap-4">
             <input
               type="text"
               placeholder="Search streams, channels, or settings..."
-              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+              className="bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="text-green-400">●</span> All Systems Operational
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="inline-block w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> All Systems Operational
             </div>
           </div>
         </div>
