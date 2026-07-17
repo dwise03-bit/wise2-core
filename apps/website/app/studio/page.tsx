@@ -9,7 +9,7 @@ export default function StudioPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
-  const [rightPanelWidth, setRightPanelWidth] = useState(320);
+  const [activeTab, setActiveTab] = useState<'properties' | 'timeline' | 'prompt'>('properties');
 
   return (
     <AppShell>
@@ -24,15 +24,10 @@ export default function StudioPage() {
             ${rightPanelOpen ? 'w-80' : 'w-0'}
             transition-all duration-200 overflow-hidden
           `}
-          style={{
-            width: rightPanelOpen ? `${rightPanelWidth}px` : 0,
-          }}
         >
           <RightUtilityPanel
-            isOpen={rightPanelOpen}
-            onToggle={() => setRightPanelOpen(!rightPanelOpen)}
-            width={rightPanelWidth}
-            onResize={setRightPanelWidth}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
           />
         </div>
 
@@ -47,7 +42,8 @@ export default function StudioPage() {
             {/* Drawer */}
             <div className="absolute right-0 top-0 bottom-0 w-80 bg-wise-surface-2 border-l border-wise-surface-2 overflow-y-auto">
               <RightUtilityPanel
-                isOpen={rightPanelOpen}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
                 onToggle={() => setRightPanelOpen(!rightPanelOpen)}
                 width={320}
                 onResize={() => {}}
