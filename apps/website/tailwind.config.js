@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
 
 /**
  * This application owns its Tailwind configuration.  Do not add a second
@@ -60,4 +60,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};
