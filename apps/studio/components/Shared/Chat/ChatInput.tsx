@@ -83,12 +83,12 @@ export function ChatInput({
   };
 
   return (
-    <div className="border-t border-gray-700 bg-gray-900 p-3 space-y-2">
+    <div className="space-y-2 border-t border-white/10 bg-black/30 p-3">
       {/* Emoji Picker */}
       {showEmojiPicker && (
         <div
           ref={emojiPickerRef}
-          className="bg-gray-800 border border-gray-700 rounded-lg p-3 max-h-40 overflow-y-auto space-y-2"
+          className="max-h-40 space-y-2 overflow-y-auto rounded-2xl border border-white/10 bg-black/70 p-3 backdrop-blur-2xl"
         >
           {emojiCategories.map((category) => (
             <div key={category.label}>
@@ -98,7 +98,7 @@ export function ChatInput({
                   <button
                     key={emoji}
                     onClick={() => handleEmojiClick(emoji)}
-                    className="text-lg hover:bg-gray-700 rounded p-1 transition-colors"
+                    className="rounded p-1 text-lg transition-colors hover:bg-white/10"
                     title={emoji}
                   >
                     {emoji}
@@ -116,7 +116,7 @@ export function ChatInput({
         <button
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           disabled={isDisabled}
-          className="px-2 py-2 text-xl hover:bg-gray-800 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+          className="flex-shrink-0 rounded-xl px-2 py-2 text-xl transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           title="Add emoji"
         >
           😊
@@ -132,14 +132,14 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={isDisabled}
           maxLength={maxLength}
-          className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-slate-500 backdrop-blur focus:outline-none focus:border-cyan-400/50 disabled:cursor-not-allowed disabled:opacity-50"
         />
 
         {/* Send Button */}
         <button
           onClick={handleSend}
           disabled={isDisabled || !isMessageValid}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white text-sm font-semibold rounded transition-colors disabled:cursor-not-allowed flex-shrink-0"
+          className="flex-shrink-0 rounded-xl bg-[linear-gradient(135deg,#00d9ff,#005eff)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:bg-slate-700"
         >
           Send
         </button>
@@ -147,14 +147,14 @@ export function ChatInput({
 
       {/* Character Count */}
       {message.length > 0 && (
-        <div className={`text-xs ${remainingChars < 50 ? 'text-red-400' : 'text-gray-500'}`}>
+        <div className={`text-xs ${remainingChars < 50 ? 'text-red-300' : 'text-slate-500'}`}>
           {remainingChars} characters remaining
         </div>
       )}
 
       {/* Disabled State Message */}
       {isDisabled && (
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-center text-xs text-slate-500">
           Chat is currently disabled
         </div>
       )}

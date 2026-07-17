@@ -60,16 +60,16 @@ export function ChatRoom({
   });
 
   return (
-    <div className="flex flex-col h-full bg-gray-900 rounded-lg border border-gray-700 shadow-lg">
+    <div className="flex h-full flex-col overflow-hidden rounded-[24px] border border-cyan-400/15 bg-[linear-gradient(180deg,rgba(8,15,28,0.92),rgba(3,7,16,0.98))] shadow-[0_0_40px_rgba(0,153,255,0.12)] backdrop-blur-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700 bg-gray-900/50">
+      <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full" />
-          <h3 className="text-sm font-bold text-gray-300">{title}</h3>
+          <div className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.7)]" />
+          <h3 className="text-sm font-bold tracking-wide text-white">{title}</h3>
         </div>
         <div className="flex items-center gap-3">
           {activeUsers > 0 && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-slate-400">
               👥 {activeUsers.toLocaleString()} {activeUsers === 1 ? 'viewer' : 'viewers'}
             </span>
           )}
@@ -87,7 +87,7 @@ export function ChatRoom({
 
       {/* Filter Tabs (optional) */}
       {showSettings && messages.length > 0 && (
-        <div className="flex gap-2 px-2 py-2 border-b border-gray-700/50 bg-gray-900/30">
+        <div className="flex gap-2 border-b border-white/10 bg-black/20 px-2 py-2">
           <button
             onClick={() => setSelectedFilter('all')}
             className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -132,7 +132,7 @@ export function ChatRoom({
           isDisabled={!isEnabled}
         />
       ) : (
-        <div className="p-3 text-center text-gray-500 text-xs border-t border-gray-700 bg-gray-900/50">
+        <div className="border-t border-white/10 bg-white/5 p-3 text-center text-xs text-slate-400">
           💬 Chat is currently disabled
         </div>
       )}

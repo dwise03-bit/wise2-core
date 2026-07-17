@@ -3,7 +3,7 @@
 export default function ChatWidget() {
   const handleClick = () => {
     if (typeof window !== 'undefined') {
-      window.open('https://discord.gg/', '_blank');
+      window.location.href = '/live-studio#support';
     }
   };
 
