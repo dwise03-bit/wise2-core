@@ -366,12 +366,7 @@ const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void })
       </motion.p>
 
       {/* CTA Buttons */}
-      <motion.div
-        className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-      >
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
         <motion.button
           className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
           whileHover={{ scale: 1.05 }}
@@ -389,7 +384,7 @@ const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void })
         >
           ▶ Watch Demo
         </motion.button>
-      </motion.div>
+      </div>
 
       {/* Social Proof */}
       <motion.div
