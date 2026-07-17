@@ -1,6 +1,15 @@
 /* Import centralized design system tokens */
 @import '@wise2/design-system/design-tokens.css';
 
+/*
+ * Studio is built with Tailwind utility classes.  The design-token import
+ * supplies CSS variables only; these layers generate the actual layout,
+ * color, typography, and responsive utility rules used by the app.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Studio-specific styles */
 html {
   scroll-behavior: smooth;

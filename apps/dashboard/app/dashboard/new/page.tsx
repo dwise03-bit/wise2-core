@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default function NewProjectPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
@@ -16,10 +16,10 @@ export default function NewProjectPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!isLoading && !user) {
       router.push('/auth/login');
     }
-  }, [user, loading, router]);
+  }, [user, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function NewProjectPage() {
     }
   };
 
-  if (loading) return null;
+  if (isLoading) return null;
 
   return (
     <div className="min-h-screen bg-black text-white">

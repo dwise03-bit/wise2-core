@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 // Extend the canonical WISE² design tokens from @wise2/ui-components
-const uiComponentsConfig = require('../../packages/ui-components/tailwind.config.ts');
+const uiComponentsConfig = require('../../packages/ui-components/tailwind.config.js');
 
 module.exports = {
   presets: [uiComponentsConfig],
