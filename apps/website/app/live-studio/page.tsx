@@ -169,6 +169,31 @@ export default function LiveStudioLandingPage() {
                   ))}
                 </ol>
               </div>
+
+              <div
+                id="support"
+                className="rounded-[28px] border border-cyan-400/20 bg-[linear-gradient(180deg,rgba(8,15,28,0.92),rgba(3,7,16,0.98))] p-5 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,153,255,0.08)]"
+              >
+                <div className="text-sm font-semibold text-white">Need help live?</div>
+                <p className="mt-2 text-sm text-slate-400">
+                  Use the floating chat bubble anytime to jump back here and request access, support, or a live walkthrough.
+                </p>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => setIntakeOpen(true)}
+                    className="rounded-2xl bg-[linear-gradient(135deg,#00d9ff,#005eff)] px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110"
+                  >
+                    Open Intake
+                  </button>
+                  <Link
+                    href="/"
+                    className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    Back to Home
+                  </Link>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
