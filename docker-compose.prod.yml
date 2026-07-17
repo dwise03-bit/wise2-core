@@ -14,7 +14,7 @@ services:
       # Logging and performance is configured via postgresql.conf
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       # Mount initialization script
       - ./infrastructure/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql:ro
@@ -48,9 +48,9 @@ services:
     image: redis:7-alpine
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
-    command: redis-server --requirepass ${REDIS_PASSWORD:-password}
+    command: redis-server --bind 127.0.0.1 --requirepass ${REDIS_PASSWORD:-password}
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -215,8 +215,9 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
+      - '--web.listen-address=127.0.0.1:9090'
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     restart: unless-stopped
     healthcheck:
       # prom/prometheus is busybox-based and has no curl; wget is present.

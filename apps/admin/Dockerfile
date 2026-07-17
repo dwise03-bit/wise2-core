@@ -13,19 +13,21 @@ RUN npm run build
 
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/apps/admin
 
 RUN apk add --no-cache dumb-init curl
 
-# Copy standalone Next.js build. Because apps/admin is an npm workspace,
-# Next.js's standalone output preserves the monorepo path, landing the
-# server entrypoint at /app/apps/admin/server.js (NOT /app/server.js).
-COPY --from=builder /app/apps/admin/.next/standalone ./
+# Copy Next.js standalone build. The standalone output for a monorepo app
+# preserves the nested structure (apps/admin/server.js inside the standalone tar).
+# Extract from standalone/apps/admin/ directly to avoid double nesting.
+COPY --from=builder /app/apps/admin/.next/standalone/apps/admin ./
 
-# Static and public assets must be copied into that same nested path,
-# since server.js resolves them relative to its own directory.
-COPY --from=builder /app/apps/admin/.next/static ./apps/admin/.next/static
-COPY --from=builder /app/apps/admin/public ./apps/admin/public
+# Copy monorepo node_modules to parent (needed for dependency resolution).
+COPY --from=builder /app/apps/admin/.next/standalone/node_modules ../../node_modules
+
+# Static and public assets must be in the same app directory structure.
+COPY --from=builder /app/apps/admin/.next/static ./.next/static
+COPY --from=builder /app/apps/admin/public ./public
 
 EXPOSE 3000
 
@@ -41,4 +43,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "apps/admin/server.js"]
+CMD ["node", "server.js"]
