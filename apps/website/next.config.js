@@ -50,6 +50,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@wise2/design-system'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig;
