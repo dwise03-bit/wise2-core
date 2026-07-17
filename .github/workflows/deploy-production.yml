@@ -24,14 +24,14 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          username: dwise
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             set -e
             echo "📦 Deploying WISE² Platform..."
 
             # Navigate to deployment directory
-            cd /opt/wise2-core
+            cd /home/dwise/wise2-core
 
             # Pull latest changes
             echo "📥 Pulling latest code..."
