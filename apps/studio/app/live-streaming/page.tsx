@@ -71,15 +71,15 @@ export default function LiveStreamingPage() {
             <div className="px-3 py-2.5 rounded" style={{ backgroundColor: 'rgba(0, 52, 255, 0.15)', borderLeft: '3px solid #0034FF' }}>
               <p className="text-xs font-semibold text-blue-300">● Live Streaming</p>
             </div>
-            <div className="px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200">
+            <button onClick={() => window.location.href = '#'} className="w-full px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200 text-left">
               <p className="text-xs text-slate-400 hover:text-slate-200">📅 Events</p>
-            </div>
-            <div className="px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200">
+            </button>
+            <button onClick={() => window.location.href = '#'} className="w-full px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200 text-left">
               <p className="text-xs text-slate-400 hover:text-slate-200">🎬 Recordings</p>
-            </div>
-            <div className="px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200">
+            </button>
+            <button onClick={() => window.location.href = '#'} className="w-full px-3 py-2.5 rounded hover:bg-slate-800/30 cursor-pointer transition-all duration-200 text-left">
               <p className="text-xs text-slate-400 hover:text-slate-200">🌍 Destinations</p>
-            </div>
+            </button>
           </nav>
 
           <div className="p-3 border-t" style={{ borderColor: 'rgba(0, 52, 255, 0.15)' }}>
@@ -135,8 +135,18 @@ export default function LiveStreamingPage() {
 
             {/* Stream Control Button */}
             <button
-              onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
-              className="w-full py-3 px-4 rounded font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 text-white shadow-lg hover:shadow-xl"
+              onClick={() => {
+                try {
+                  if (isStreaming && streaming?.stopStream) {
+                    streaming.stopStream();
+                  } else if (!isStreaming && streaming?.startStream) {
+                    streaming.startStream();
+                  }
+                } catch (error) {
+                  console.error('Stream control error:', error);
+                }
+              }}
+              className="w-full py-3 px-4 rounded font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 text-white shadow-lg hover:shadow-xl cursor-pointer active:shadow-md"
               style={{
                 backgroundColor: isStreaming ? '#E53935' : '#0034FF',
                 letterSpacing: '0.1em'
