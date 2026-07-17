@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISE² | The Operating System for Organized Chaos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        html { scroll-behavior: smooth; }
+        .gradient-text { background: linear-gradient(to right, #0094FF, #0094FF, #E53935); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .premium-glow { box-shadow: 0 0 40px rgba(0, 148, 255, 0.6); }
+        .glass-card { background: rgba(20, 24, 41, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0, 148, 255, 0.15); }
+        .glass-card:hover { border-color: rgba(0, 148, 255, 0.4); background: rgba(20, 24, 41, 0.9); }
+        @keyframes float-up { 0%, 100% { transform: translateY(0px); opacity: 0.3; } 50% { transform: translateY(30px); opacity: 0.5; } }
+        @keyframes float-down { 0%, 100% { transform: translateY(0px); opacity: 0.2; } 50% { transform: translateY(-30px); opacity: 0.4; } }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes scroll-indicator { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(12px); } }
+        .float-blue { animation: float-up 8s ease-in-out infinite; }
+        .float-red { animation: float-down 10s ease-in-out infinite 1s; }
+        .pulse { animation: pulse-dot 2s ease-in-out infinite; }
+        .scroll-bounce { animation: scroll-indicator 2s ease-in-out infinite; }
+        .fade-in { opacity: 0; animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .fade-in-1 { animation-delay: 0.1s; }
+        .fade-in-2 { animation-delay: 0.2s; }
+        .fade-in-3 { animation-delay: 0.3s; }
+        .fade-in-4 { animation-delay: 0.4s; }
+        .fade-in-5 { animation-delay: 0.5s; }
+        .fade-in-6 { animation-delay: 0.6s; }
+        button:hover { transform: translateY(-2px); transition: all 0.3s ease; }
+        button:active { transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-black text-white overflow-x-hidden">
+
+<!-- Premium background -->
+<div class="fixed inset-0 pointer-events-none">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0094FF]/5 via-black to-black"></div>
+    <div class="absolute inset-0 opacity-[0.02] bg-[linear-gradient(90deg,rgba(0,148,255,0.1)_1px,transparent_1px),linear-gradient(rgba(0,148,255,0.1)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
+</div>
+
+<!-- Content -->
+<div class="relative z-10">
+
+    <!-- HERO -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 pb-32 overflow-hidden">
+
+        <!-- Animated background elements -->
+        <div class="absolute top-40 left-1/4 w-72 h-72 bg-[#0094FF]/10 rounded-full blur-[80px] float-blue"></div>
+        <div class="absolute bottom-40 right-1/4 w-96 h-96 bg-[#E53935]/5 rounded-full blur-[100px] float-red"></div>
+
+        <!-- Content -->
+        <div class="relative z-20 text-center max-w-5xl mx-auto">
+
+            <!-- Badge -->
+            <div class="mb-8 fade-in fade-in-1">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#0094FF]/30 bg-[#0094FF]/5 backdrop-blur-sm">
+                    <span class="inline-block w-2 h-2 rounded-full bg-[#0094FF] pulse"></span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#0094FF]">Live now. Organized chaos.</span>
+                </div>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 fade-in fade-in-2">
+                <span class="block">The Operating System</span>
+                <span class="block gradient-text">for Organized Chaos</span>
+            </h1>
+
+            <!-- Subheading -->
+            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-12 leading-relaxed fade-in fade-in-3">
+                Where creators, builders, and entrepreneurs command their empire. Real-time collaboration. Zero friction. Maximum impact.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 fade-in fade-in-4">
+                <button class="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:premium-glow transition-all duration-300">
+                    Enter the Studio
+                    <span class="absolute inset-0 rounded-lg bg-[#0094FF] opacity-0 group-hover:opacity-10 transition-opacity"></span>
+                </button>
+                <button class="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#0094FF]/50 text-[#0094FF] rounded-lg hover:border-[#0094FF] hover:bg-[#0094FF]/5 transition-all duration-300">
+                    Watch Demo
+                </button>
+            </div>
+
+            <!-- Trust indicators -->
+            <div class="flex flex-col sm:flex-row gap-8 justify-center text-center text-sm fade-in fade-in-5">
+                <div>
+                    <div class="text-2xl font-bold text-[#0094FF]">10k+</div>
+                    <div class="text-gray-400">Creators & Builders</div>
+                </div>
+                <div class="hidden sm:block w-px bg-gray-700"></div>
+                <div>
+                    <div class="text-2xl font-bold text-[#0094FF]">$2.4B+</div>
+                    <div class="text-gray-400">Value Created</div>
+                </div>
+                <div class="hidden sm:block w-px bg-gray-700"></div>
+                <div>
+                    <div class="text-2xl font-bold text-[#0094FF]">99.9%</div>
+                    <div class="text-gray-400">Uptime SLA</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div class="w-6 h-10 border-2 border-[#0094FF]/30 rounded-full flex justify-center pt-2">
+                <div class="w-1 h-2 bg-[#0094FF] rounded-full pulse scroll-bounce"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOUR PILLARS -->
+    <section class="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20">
+                <h2 class="text-4xl sm:text-5xl font-black mb-4">
+                    Four Pillars of <span class="text-[#0094FF]">Organized Chaos</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl">
+                    Built for the modern entrepreneur who refuses to choose between power and simplicity.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer transform transition-transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-4xl font-black text-gray-700">01</span>
+                        <span class="text-4xl">⚡</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-[#0094FF] transition-colors">Command Central</h3>
+                    <p class="text-gray-400">One dashboard. Infinite possibilities. Control everything from live streaming to financial operations.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer transform transition-transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-4xl font-black text-gray-700">02</span>
+                        <span class="text-4xl">🧠</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-[#0094FF] transition-colors">Intelligent Automation</h3>
+                    <p class="text-gray-400">AI that learns your chaos and turns it into order. Work smarter, not harder.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer transform transition-transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-4xl font-black text-gray-700">03</span>
+                        <span class="text-4xl">🔗</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-[#E53935] transition-colors">Real-Time Collaboration</h3>
+                    <p class="text-gray-400">Your team, anywhere. Build together with zero lag. Live feedback loops that matter.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer transform transition-transform hover:-translate-y-1">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-4xl font-black text-gray-700">04</span>
+                        <span class="text-4xl">🛡️</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-[#0094FF] transition-colors">Enterprise Security</h3>
+                    <p class="text-gray-400">Bank-grade protection. Your empire stays yours. SOC 2. HIPAA. GDPR. Done.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE SHOWCASE -->
+    <section class="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20">
+                <h2 class="text-4xl sm:text-5xl font-black mb-4">
+                    See <span class="text-[#E53935]">Organized Chaos</span> in Action
+                </h2>
+            </div>
+
+            <div class="relative rounded-3xl overflow-hidden border border-[#0094FF]/20 bg-gradient-to-b from-[#0094FF]/10 to-transparent p-1">
+                <div class="bg-black rounded-3xl p-8 sm:p-12">
+                    <div class="aspect-video rounded-2xl bg-gradient-to-br from-[#0094FF]/20 via-black to-[#E53935]/10 flex items-center justify-center border border-[#0094FF]/20">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">🎬</div>
+                            <p class="text-gray-400">Live Studio Command Center</p>
+                            <p class="text-sm text-gray-600 mt-2">Real-time collaboration dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF -->
+    <section class="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-4xl sm:text-5xl font-black mb-4">
+                    Trusted by <span class="text-[#0094FF]">Industry Leaders</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                <div class="glass-card p-8 rounded-2xl group hover:border-[#0094FF]/50 transition-all">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed">"WISE² is how we scaled from zero to unicorn in 18 months."</p>
+                    <div class="flex items-center gap-3 pt-6 border-t border-gray-800">
+                        <span class="text-3xl">👩‍💼</span>
+                        <div>
+                            <p class="font-bold text-white">Sarah Chen</p>
+                            <p class="text-sm text-gray-400">Founder & CEO, Creative Studios Inc.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl group hover:border-[#0094FF]/50 transition-all">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed">"The only platform that actually understands chaos as a feature, not a bug."</p>
+                    <div class="flex items-center gap-3 pt-6 border-t border-gray-800">
+                        <span class="text-3xl">👨‍💻</span>
+                        <div>
+                            <p class="font-bold text-white">Marcus Johnson</p>
+                            <p class="text-sm text-gray-400">CTO, Innovation Labs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-8 rounded-2xl group hover:border-[#0094FF]/50 transition-all">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                        <span class="text-[#0094FF]">★</span>
+                    </div>
+                    <p class="text-gray-300 mb-6 text-lg leading-relaxed">"Our team productivity increased 340%. Your move, competitors."</p>
+                    <div class="flex items-center gap-3 pt-6 border-t border-gray-800">
+                        <span class="text-3xl">👨‍🔬</span>
+                        <div>
+                            <p class="font-bold text-white">Alex Rivera</p>
+                            <p class="text-sm text-gray-400">Head of Operations, TechCorp</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl sm:text-6xl font-black mb-6">
+                Ready to Command <span class="text-[#E53935]">Your</span> <span class="text-[#0094FF]">Chaos?</span>
+            </h2>
+            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                Join 10,000+ creators and builders who've already made the leap. Your empire awaits.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:premium-glow transition-all duration-300">
+                    Start Free Trial
+                    <span class="absolute inset-0 rounded-lg bg-[#0094FF] opacity-0 group-hover:opacity-10 transition-opacity"></span>
+                </button>
+                <button class="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#E53935]/50 text-[#E53935] rounded-lg hover:border-[#E53935] hover:bg-[#E53935]/5 transition-all duration-300">
+                    Schedule Demo
+                </button>
+            </div>
+
+            <p class="text-sm text-gray-500 mt-8">
+                No credit card required. 14 days free. Full access to all features.
+            </p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="relative border-t border-gray-800 py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <h3 class="text-2xl font-black mb-2">WISE²</h3>
+                    <p class="text-gray-500 text-sm">The operating system for organized chaos.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-[#0094FF]">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Studio</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Analytics</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Automation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-[#0094FF]">Company</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#0094FF] transition">About</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-[#0094FF]">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Privacy</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Terms</a></li>
+                        <li><a href="#" class="hover:text-[#0094FF] transition">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2026 WISE² Inc. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-[#0094FF] transition">Twitter</a>
+                    <a href="#" class="hover:text-[#0094FF] transition">LinkedIn</a>
+                    <a href="#" class="hover:text-[#0094FF] transition">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    // Register ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Stagger animations on scroll
+    const sections = document.querySelectorAll('section');
+    sections.forEach((section) => {
+        gsap.to(section, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: section,
+                start: "top 80%",
+                markers: false
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
