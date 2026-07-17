@@ -67,3 +67,212 @@
 html {
   overflow-y: scroll;
 }
+
+/* ============================================================================
+   PREMIUM ANIMATIONS FOR WISE² HOMEPAGE
+   ============================================================================ */
+
+/* Floating animation for background elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Glow pulse for premium feel */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading/premium states */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Gradient animation for text */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Scale up entrance animation */
+@keyframes scale-entrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-entrance {
+  animation: scale-entrance 0.6s ease-out;
+}
+
+/* Slide down animation */
+@keyframes slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-down {
+  animation: slide-down 0.6s ease-out;
+}
+
+/* Slide up animation */
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+/* Stagger animation helper */
+.stagger-delay-1 { animation-delay: 0.1s; }
+.stagger-delay-2 { animation-delay: 0.2s; }
+.stagger-delay-3 { animation-delay: 0.3s; }
+.stagger-delay-4 { animation-delay: 0.4s; }
+.stagger-delay-5 { animation-delay: 0.5s; }
+
+/* Smooth transitions for interactive elements */
+@layer components {
+  .btn-interactive {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .card-interactive {
+    @apply transition-all duration-300 ease-in-out cursor-pointer;
+  }
+
+  .text-interactive {
+    @apply transition-colors duration-300 ease-in-out;
+  }
+
+  /* Premium button style */
+  .btn-premium {
+    @apply px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  }
+
+  .btn-premium:hover {
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-premium:active {
+    transform: translateY(0);
+  }
+
+  /* Premium card style */
+  .card-premium {
+    @apply rounded-xl border border-gray-700 transition-all duration-300;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.5), rgba(0, 0, 0, 0.5));
+  }
+
+  .card-premium:hover {
+    @apply border-blue-500/50;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Section transitions */
+  .section-divider {
+    @apply border-t border-gray-800/50 transition-all duration-500;
+  }
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode optimizations for premium feel */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #050505;
+    color: #ffffff;
+  }
+}
+
+/* Print styles for professional output */
+@media print {
+  .no-print {
+    display: none;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+}
+
+/* High DPI optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Subtle enhancements for high-res displays */
+  .gradient-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
