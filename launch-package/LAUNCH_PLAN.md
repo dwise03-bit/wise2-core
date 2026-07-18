@@ -1,7 +1,7 @@
 # WISE² Podcast Music — Consolidated Launch Plan
 
-**Generated:** 2026-07-18 from a 16-agent launch workflow (11 completed, 5 deferred on session limit).
-**Status:** MVP backend built and verified. Strategy assets ready. Marketing needs one consistency pass.
+**Generated:** 2026-07-18 from a 16-agent launch workflow (16/16 completed after resume).
+**Status:** MVP backend built + verified, AI generation wired (mock provider works with zero keys). Strategy + launch-ops assets ready. Open before launch: real audio provider, S3 storage, marketing name/pitch consistency pass.
 
 ---
 
@@ -82,16 +82,35 @@ The **landing page copy itself** ("Create Podcast Intros in 60 Seconds", save 25
 
 ---
 
-## 6. Deferred — 5 Agents Hit Session Limit (resets 4am ET)
+## 6. Launch Operations (all 5 agents now complete)
 
-Not yet produced; re-run from workflow cache after reset:
-- `beta-campaign` — waitlist page, beta invites, onboarding + feedback survey
-- `onboarding` — welcome sequence, in-app tutorial, success milestones, churn prevention
-- `launch-checklist` — security/perf/testing go-no-go gates
-- `operations-manual` — launch-day timeline, monitoring, support, escalation
-- `metrics-framework` — KPI definitions, dashboards, alert thresholds
+The deferred agents finished on workflow resume (16/16, 0 errors). Full JSON in
+`launch-package/raw/{beta-campaign,onboarding,launch-checklist,operations-manual,metrics-framework}.json`.
+Highlights:
 
-Resume: `Workflow({scriptPath: ".../wise2-podcast-launch-wf_88480856-a86.js", resumeFromRunId: "wf_88480856-a86"})` — the 11 done agents replay from cache; only these 5 re-run.
+### Go / No-Go gates (launch-checklist) — ALL six must be GO
+1. **Code & quality** — CI green on main, zero P0/P1 bugs, ≥80% coverage on billing+auth, no TS errors
+2. **Security** — no high/critical dep or secret findings, auth on all non-public routes, Stripe webhook signature verification live, TLS end-to-end
+3. **Payments** — full Stripe test-mode purchase/upgrade/downgrade/cancel/webhook pass, quota enforcement verified, one real live-mode low-value txn confirmed + refunded
+4. **Reliability** — 100 concurrent users at p95 < 800ms, error rate < 1%, AI provider failover verified, transactional email lands in inbox
+5. **Data safety** — automated prod DB backup running, a restore test-performed in last 7 days, rollback runbook documented
+6. **Compatibility** — Chrome/Safari/Firefox/Edge + iOS Safari + Android Chrome, core flows usable at 375px
+
+**Decision rule:** any single NO-GO blocks launch. Sign-off from @dev, @ops, and owner recorded in `data/decisions/`.
+
+### Success thresholds (metrics-framework)
+North-star + KPIs: signups/day, activation rate, trial→paid, MRR, ARPU, CAC, LTV:CAC, churn, engagement.
+
+| Window | Success | On-track | Failure → action |
+|--------|---------|----------|------------------|
+| **Week 1** | ≥50 signups, ≥40% 24h activation, ≥5 paying, ≥99.5% uptime | 25–49 signups, 30–40% activation, 2–4 paying | <10 signups / <20% activation / 0–1 paying → halt paid spend, run 5 user interviews, fix funnel before scaling |
+| **Month 1** | ≥250 cumulative signups, ≥10% trial→paid | — | — |
+| **Month 3** | unit-economics viability (LTV:CAC) | — | — |
+
+### Also delivered (see raw/ for full copy)
+- **beta-campaign** — waitlist page, beta invite, onboarding sequence, feedback survey, incentive structure (free 3 months for first 20 who give feedback)
+- **onboarding** — welcome sequence, in-app tutorial, success milestones, churn-prevention emails (day 3/7/14/30)
+- **operations-manual** — launch-day hour-by-hour timeline, monitoring setup, support templates, escalation procedures, weekly review template
 
 ---
 
@@ -102,7 +121,7 @@ Resume: `Workflow({scriptPath: ".../wise2-podcast-launch-wf_88480856-a86.js", re
 3. **Implement S3 storage** for `downloadFileFromStorage`.
 4. **Run `next build`** against a real Postgres (`DATABASE_URL`) to confirm end-to-end.
 5. **Rewrite sales materials** around the podcast ICP (discard the enterprise-OS pitch).
-6. **After 4am ET:** resume the workflow to finish the 5 ops/onboarding agents.
-7. **Manually build the real first-customer list** — 20 indie shows in your network, not the mega-show list.
+6. **Manually build the real first-customer list** — 20 indie shows in your network, not the mega-show list.
+7. **Work the 6 Go/No-Go gates** (§6) before any public launch — they are the launch contract.
 
 **Highest-impact milestone before adding any features: 50 paying podcasters.**
