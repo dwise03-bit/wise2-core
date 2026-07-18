@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Brain,
@@ -8,8 +8,11 @@ import {
   TrendingUp,
   Users,
   Code2,
-  ArrowRight,
-  Sparkles,
+  Music,
+  Tv2,
+  Box,
+  BarChart3,
+  Megaphone,
   Play,
   LogIn,
   Menu,
@@ -18,18 +21,18 @@ import {
   Github,
   Linkedin,
   Twitter,
+  ShieldCheck,
+  Zap as ZapIcon,
 } from 'lucide-react';
 
-// Animated background gradient
-const AnimatedBackground = () => {
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      <div className="absolute inset-0 bg-black" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-cyan-600/20 rounded-full mix-blend-screen filter blur-3xl opacity-50" />
-    </div>
-  );
+// Color constants from brand reference
+const colors = {
+  primary: '#0055FF',
+  primaryHover: '#2A7AFF',
+  red: '#FF5535',
+  black: '#000000',
+  chrome: '#C5C5C5',
+  success: '#2CD588',
 };
 
 // Premium Header
@@ -37,29 +40,33 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-black/80 border-b border-[#C5C5C5]/20">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <motion.div
-          className="flex items-center gap-3"
+          className="flex items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
         >
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center font-black text-white text-sm shadow-lg shadow-blue-500/50">
+          <div className="w-10 h-10 bg-[#C5C5C5] rounded flex items-center justify-center font-black text-black text-sm">
             W²
           </div>
-          <span className="text-2xl font-black text-white tracking-tight">WISE²</span>
+          <div>
+            <div className="text-lg font-black text-white">WISE²</div>
+            <div className="text-[10px] text-[#C5C5C5] uppercase tracking-widest">Organized Chaos</div>
+          </div>
         </motion.div>
 
         <nav className="hidden lg:flex items-center gap-8">
-          <a href="#features" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">Features</a>
-          <a href="#pricing" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">Pricing</a>
-          <a href="/studio" className="text-gray-300 hover:text-white transition-colors text-sm font-medium">Studio</a>
+          <a href="#modules" className="text-[#C5C5C5] hover:text-white transition text-sm font-medium">Products</a>
+          <a href="#pricing" className="text-[#C5C5C5] hover:text-white transition text-sm font-medium">Pricing</a>
+          <a href="#" className="text-[#C5C5C5] hover:text-white transition text-sm font-medium">Docs</a>
         </nav>
 
         <div className="flex items-center gap-3">
-          <motion.a href="/auth/login" className="hidden sm:block text-gray-300 hover:text-white text-sm font-medium transition-colors">Sign In</motion.a>
-          <motion.a href="/auth/signup" className="px-5 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-lg font-semibold text-sm transition-all shadow-lg shadow-blue-500/30" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>Get Started</motion.a>
+          <motion.a href="/auth/login" className="hidden sm:block text-[#C5C5C5] hover:text-white text-sm font-medium transition">Login</motion.a>
+          <motion.a href="/auth/signup" className="px-5 py-2 bg-[#0055FF] hover:bg-[#2A7AFF] text-white rounded font-semibold text-sm transition-all" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            START FREE
+          </motion.a>
           <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 text-white">
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -69,103 +76,114 @@ const Header = () => {
   );
 };
 
-// Hero Section with Premium Design
+// Hero Section
 const HeroSection = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   return (
-    <section suppressHydrationWarning className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-20 px-6">
-      <motion.div
-        className="absolute w-96 h-96 bg-blue-500/20 rounded-full filter blur-3xl"
-        animate={{
-          x: mousePosition.x / 10,
-          y: mousePosition.y / 10,
-        }}
-        transition={{ type: 'spring', damping: 30 }}
-      />
+    <section suppressHydrationWarning className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-20 px-6">
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 left-0 w-full h-full bg-black" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-[#0055FF]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#FF5535]/5 rounded-full blur-3xl" />
+      </div>
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <span className="inline-block px-4 py-2 border border-blue-500/30 rounded-full bg-blue-500/10 text-blue-300 text-xs font-semibold uppercase tracking-widest">
-            The Enterprise AI Operating System
+          <span className="inline-block text-[#0055FF] text-sm font-semibold uppercase tracking-widest mb-4">
+            🚀 Welcome to WISE²
           </span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-7xl md:text-8xl lg:text-9xl font-black leading-none mb-6 text-white"
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="text-6xl md:text-7xl lg:text-8xl font-black leading-tight mb-4 text-white"
         >
-          Transform Your
+          ORGANIZED
           <br />
-          <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Business Intelligence
-          </span>
+          <span className="text-[#0055FF]">CHAOS</span>
+          <br />
+          COMMAND CENTER
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed"
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="text-lg md:text-xl text-[#C5C5C5] mb-8 max-w-3xl mx-auto leading-relaxed"
         >
-          Enterprise-grade AI that learns your business. Automate workflows, predict outcomes, and scale operations without breaking a sweat.
+          The AI Operating System for Modern Business
+          <br />
+          Build, automate, and scale your business with AI-powered tools
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
         >
           <motion.a
             href="/auth/signup"
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg font-bold text-lg transition-all shadow-lg shadow-blue-500/50"
-            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.6)' }}
+            className="px-8 py-4 bg-[#0055FF] hover:bg-[#2A7AFF] text-white rounded font-bold text-lg transition-all"
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Start Building Now <ArrowRight className="inline ml-2 w-5 h-5" />
+            START FREE TODAY
           </motion.a>
           <motion.button
-            className="px-8 py-4 border border-gray-600 hover:border-blue-500 text-white rounded-lg font-bold text-lg transition-all"
-            whileHover={{ borderColor: 'rgb(59, 130, 246)', scale: 1.05 }}
+            className="px-8 py-4 border-2 border-[#0055FF] text-[#0055FF] rounded font-bold text-lg transition-all hover:bg-[#0055FF]/10"
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Play className="inline mr-2 w-5 h-5" /> Watch Demo
+            <Play className="inline mr-2 w-5 h-5" /> WATCH DEMO
           </motion.button>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="grid grid-cols-3 gap-8 max-w-2xl mx-auto pt-12 border-t border-gray-700/50"
+          transition={{ duration: 1, delay: 0.4 }}
+          className="flex gap-4 justify-center mb-16"
         >
-          <div>
-            <div className="text-3xl font-black text-blue-400">10M+</div>
-            <div className="text-sm text-gray-400">AI Operations</div>
+          <div className="flex -space-x-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="w-10 h-10 rounded-full bg-[#C5C5C5] border-2 border-black" />
+            ))}
           </div>
-          <div>
-            <div className="text-3xl font-black text-cyan-400">99.99%</div>
-            <div className="text-sm text-gray-400">Uptime SLA</div>
+          <div className="text-[#C5C5C5] text-sm font-medium">
+            Trusted by 10,000+ businesses worldwide
           </div>
-          <div>
-            <div className="text-3xl font-black text-blue-400">500+</div>
-            <div className="text-sm text-gray-400">Enterprise Clients</div>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6"
+        >
+          <div className="p-4 border border-[#C5C5C5]/30 rounded bg-black/50">
+            <div className="text-2xl font-black text-[#0055FF]">99.99%</div>
+            <div className="text-xs text-[#C5C5C5] uppercase tracking-wider">Uptime</div>
+          </div>
+          <div className="p-4 border border-[#C5C5C5]/30 rounded bg-black/50">
+            <div className="text-2xl font-black text-[#2CD588]">10M+</div>
+            <div className="text-xs text-[#C5C5C5] uppercase tracking-wider">AI Tasks</div>
+          </div>
+          <div className="p-4 border border-[#C5C5C5]/30 rounded bg-black/50">
+            <div className="text-2xl font-black text-[#FF5535]">500+</div>
+            <div className="text-xs text-[#C5C5C5] uppercase tracking-wider">Automations</div>
+          </div>
+          <div className="p-4 border border-[#C5C5C5]/30 rounded bg-black/50">
+            <div className="text-2xl font-black text-[#0055FF]">24/7</div>
+            <div className="text-xs text-[#C5C5C5] uppercase tracking-wider">AI Workforce</div>
           </div>
         </motion.div>
       </div>
@@ -173,49 +191,61 @@ const HeroSection = () => {
   );
 };
 
-// Premium Features Section
-const FeaturesSection = () => {
-  const features = [
+// Modules Grid Section
+const ModulesSection = () => {
+  const modules = [
     {
       icon: Brain,
-      title: 'AI That Learns Your Business',
-      description: 'Custom models trained on your data. Understands your workflows, predicts your needs, scales with you.',
-      color: 'from-blue-500 to-cyan-500',
+      name: 'AI Command Center',
+      description: 'Orchestrate AI automation and manage your intelligent workforce',
+      color: '#0055FF',
     },
     {
-      icon: Zap,
-      title: 'Autonomous Automation',
-      description: 'Zero-config workflows that adapt. One-click deployments. Handles edge cases other systems miss.',
-      color: 'from-purple-500 to-pink-500',
+      icon: Music,
+      name: 'SoundLab',
+      description: 'Create, edit, and master professional audio content',
+      color: '#FF5535',
     },
     {
-      icon: TrendingUp,
-      title: 'Real-Time Intelligence',
-      description: 'Live dashboards, predictive analytics, anomaly detection. See business outcomes before they happen.',
-      color: 'from-emerald-500 to-cyan-500',
+      icon: Tv2,
+      name: 'Live Studio',
+      description: 'Stream, collaborate, and engage in real-time production',
+      color: '#0055FF',
+    },
+    {
+      icon: Box,
+      name: 'Drop Shipping AI',
+      description: 'Automate e-commerce operations and inventory management',
+      color: '#FF5535',
     },
     {
       icon: Users,
-      title: 'Team Collaboration',
-      description: 'Built for distributed teams. Real-time sync, version control, audit trails for compliance.',
-      color: 'from-orange-500 to-red-500',
+      name: 'CRM & Clients',
+      description: 'Manage customers, leads, and relationships at scale',
+      color: '#0055FF',
+    },
+    {
+      icon: BarChart3,
+      name: 'Analytics',
+      description: 'Real-time dashboards and predictive insights',
+      color: '#2CD588',
+    },
+    {
+      icon: Megaphone,
+      name: 'Marketing Suite',
+      description: 'Campaign management, scheduling, and performance tracking',
+      color: '#FF5535',
     },
     {
       icon: Code2,
-      title: 'Developer Friendly',
-      description: 'Type-safe APIs, SDKs for every language. OpenAPI spec. Webhook support. Built by engineers for engineers.',
-      color: 'from-indigo-500 to-blue-500',
-    },
-    {
-      icon: Sparkles,
-      title: 'Creative Studio',
-      description: 'Generate content, design assets, video scripts. AI-powered creativity at enterprise scale.',
-      color: 'from-yellow-500 to-orange-500',
+      name: 'Developer API',
+      description: 'Powerful APIs, webhooks, and developer platform',
+      color: '#0055FF',
     },
   ];
 
   return (
-    <section id="features" className="relative py-32 px-6">
+    <section id="modules" className="relative py-32 px-6 bg-black">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -224,30 +254,31 @@ const FeaturesSection = () => {
           viewport={{ once: true }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-6">
-            Capabilities That Scale
+          <h2 className="text-5xl md:text-6xl font-black text-white mb-4">
+            ALL-IN-ONE BUSINESS OPERATING SYSTEM
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Enterprise features without the enterprise complexity. Purpose-built for modern teams.
-          </p>
+          <p className="text-[#C5C5C5] text-lg">8 powerful modules, 1 unified platform</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, idx) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {modules.map((module, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
               viewport={{ once: true }}
-              className="group relative p-8 rounded-2xl border border-gray-800 hover:border-gray-700 bg-gray-900/50 hover:bg-gray-900/80 transition-all backdrop-blur"
+              className="p-6 rounded border-2 border-[#C5C5C5]/30 hover:border-[#0055FF]/50 bg-black hover:bg-black/80 transition-all cursor-pointer"
               whileHover={{ y: -5 }}
             >
-              <div className={`inline-block p-3 rounded-xl bg-gradient-to-br ${feature.color} mb-4 group-hover:scale-110 transition-transform`}>
-                <feature.icon className="w-6 h-6 text-white" />
+              <div className="mb-4 p-3 rounded inline-block" style={{ backgroundColor: `${module.color}20` }}>
+                <module.icon className="w-6 h-6" style={{ color: module.color }} />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+              <h3 className="text-lg font-black text-white mb-2">{module.name}</h3>
+              <p className="text-sm text-[#C5C5C5] mb-4">{module.description}</p>
+              <a href="#" className="text-[#0055FF] hover:text-[#2A7AFF] text-sm font-bold transition">
+                Learn More →
+              </a>
             </motion.div>
           ))}
         </div>
@@ -256,67 +287,45 @@ const FeaturesSection = () => {
   );
 };
 
-// Social Proof Section
-const SocialProofSection = () => {
+// Tagline Section
+const TaglineSection = () => {
   return (
-    <section className="relative py-32 px-6 border-y border-gray-800">
-      <div className="max-w-7xl mx-auto text-center">
+    <section className="relative py-24 px-6 bg-black border-y border-[#C5C5C5]/30">
+      <div className="max-w-5xl mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
         >
-          <p className="text-gray-500 text-sm font-semibold uppercase tracking-widest mb-8">Trusted by leading enterprises</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {['Morgan Stanley', 'Goldman Sachs', 'Stripe', 'Figma'].map((company, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                viewport={{ once: true }}
-                className="text-gray-600 font-bold text-lg hover:text-gray-300 transition-colors"
-              >
-                {company}
-              </motion.div>
-            ))}
-          </div>
+          <h2 className="text-5xl md:text-7xl font-black mb-6">
+            <span style={{ color: '#0055FF' }}>BUILD.</span>
+            {' '}
+            <span style={{ color: '#C5C5C5' }}>AUTOMATE.</span>
+            {' '}
+            <span style={{ color: '#FF5535' }}>DOMINATE.</span>
+          </h2>
+          <p className="text-[#C5C5C5] text-xl mb-8">
+            WISE² is more than software. It's your unfair competitive advantage.
+          </p>
+          <motion.a
+            href="/auth/signup"
+            className="inline-block px-8 py-4 bg-[#0055FF] hover:bg-[#2A7AFF] text-white rounded font-bold text-lg transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            START FREE TODAY
+          </motion.a>
         </motion.div>
       </div>
     </section>
   );
 };
 
-// Premium Pricing Section
+// Pricing Section
 const PricingSection = () => {
-  const plans = [
-    {
-      name: 'Starter',
-      price: 199,
-      description: 'For teams exploring AI automation',
-      features: ['Up to 5 team members', 'Basic AI workflows', '10GB storage', 'Email support', 'Public API access'],
-      cta: 'Get Started',
-    },
-    {
-      name: 'Professional',
-      price: 499,
-      description: 'For growing businesses scaling AI',
-      features: ['Unlimited team members', 'Advanced AI models', 'Unlimited storage', '2-hour priority support', 'Full API + webhooks', 'Custom integrations', 'Advanced analytics'],
-      cta: 'Start Free Trial',
-      recommended: true,
-    },
-    {
-      name: 'Enterprise',
-      price: null,
-      description: 'For large organizations',
-      features: ['Everything in Professional', 'Dedicated account manager', '24/7 priority support', 'SLA guarantee', 'On-premises deployment', 'Custom models', 'Advanced security'],
-      cta: 'Contact Sales',
-    },
-  ];
-
   return (
-    <section id="pricing" className="relative py-32 px-6">
+    <section id="pricing" className="relative py-32 px-6 bg-black">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -325,58 +334,59 @@ const PricingSection = () => {
           viewport={{ once: true }}
           className="text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-6">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="text-xl text-gray-400">Pay for what you use. No hidden fees. Cancel anytime.</p>
+          <h2 className="text-5xl md:text-6xl font-black text-white mb-4">Simple Pricing</h2>
+          <p className="text-[#C5C5C5] text-lg">No credit card required</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan, idx) => (
+          {[
+            { name: 'Starter', price: 199, color: '#0055FF' },
+            { name: 'Professional', price: 499, color: '#2A7AFF', recommended: true },
+            { name: 'Enterprise', price: null, color: '#FF5535' },
+          ].map((plan, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               viewport={{ once: true }}
-              className={`relative p-8 rounded-2xl border transition-all ${
+              className={`p-8 rounded border-2 transition-all ${
                 plan.recommended
-                  ? 'border-blue-500/50 bg-gradient-to-br from-blue-950/50 to-cyan-950/50 ring-2 ring-blue-500/20'
-                  : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                  ? `border-[#0055FF] bg-black`
+                  : 'border-[#C5C5C5]/30 bg-black hover:border-[#0055FF]/50'
               }`}
-              whileHover={{ y: plan.recommended ? -10 : -5 }}
+              whileHover={{ y: -5 }}
             >
               {plan.recommended && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full text-white text-xs font-bold">
-                  RECOMMENDED
+                <div className="text-[#0055FF] text-xs font-black uppercase tracking-widest mb-4">★ Recommended</div>
+              )}
+              <h3 className="text-2xl font-black text-white mb-4">{plan.name}</h3>
+              {plan.price ? (
+                <div className="mb-6">
+                  <div className="text-4xl font-black text-white">${plan.price}</div>
+                  <div className="text-[#C5C5C5] text-sm">/month</div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <div className="text-2xl font-black text-[#FF5535]">Custom</div>
                 </div>
               )}
-              <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-              <p className="text-gray-400 mb-6 text-sm">{plan.description}</p>
-              <div className="mb-6">
-                {plan.price ? (
-                  <>
-                    <div className="text-4xl font-black text-white">${plan.price}</div>
-                    <div className="text-gray-400 text-sm">/month billed annually</div>
-                  </>
-                ) : (
-                  <div className="text-2xl font-bold text-white">Custom Pricing</div>
-                )}
-              </div>
-              <button className={`w-full py-3 rounded-lg font-bold mb-8 transition-all ${
-                plan.recommended
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/50'
-                  : 'border border-gray-700 text-white hover:border-gray-600'
-              }`}>
-                {plan.cta}
+              <button className="w-full py-3 rounded font-bold mb-6" style={{ backgroundColor: plan.color, color: '#000' }}>
+                Get Started
               </button>
               <ul className="space-y-3">
-                {plan.features.map((feature, fidx) => (
-                  <li key={fidx} className="flex items-start gap-3 text-gray-300 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                    {feature}
-                  </li>
-                ))}
+                <li className="flex gap-2 text-[#C5C5C5] text-sm">
+                  <CheckCircle2 className="w-5 h-5 flex-shrink-0" style={{ color: plan.color }} />
+                  Full feature access
+                </li>
+                <li className="flex gap-2 text-[#C5C5C5] text-sm">
+                  <CheckCircle2 className="w-5 h-5 flex-shrink-0" style={{ color: plan.color }} />
+                  Priority support
+                </li>
+                <li className="flex gap-2 text-[#C5C5C5] text-sm">
+                  <CheckCircle2 className="w-5 h-5 flex-shrink-0" style={{ color: plan.color }} />
+                  API access
+                </li>
               </ul>
             </motion.div>
           ))}
@@ -386,30 +396,30 @@ const PricingSection = () => {
   );
 };
 
-// Premium Footer
+// Footer
 const Footer = () => {
   return (
-    <footer className="border-t border-gray-800 bg-black/50 backdrop-blur py-16 px-6">
+    <footer className="border-t border-[#C5C5C5]/30 bg-black px-6 py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-5 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xs">W²</div>
+              <div className="w-8 h-8 bg-[#C5C5C5] rounded flex items-center justify-center text-black font-black text-xs">W²</div>
               <span className="font-black text-white">WISE²</span>
             </div>
-            <p className="text-gray-500 text-sm">Enterprise AI for business transformation.</p>
+            <p className="text-[#C5C5C5] text-sm">The AI Operating System for Modern Business</p>
           </div>
           <div>
-            <h4 className="font-bold text-white mb-4">Product</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-white transition">Features</a></li>
-              <li><a href="#" className="hover:text-white transition">Pricing</a></li>
-              <li><a href="#" className="hover:text-white transition">Studio</a></li>
+            <h4 className="font-bold text-white mb-4">Products</h4>
+            <ul className="space-y-2 text-[#C5C5C5] text-sm">
+              <li><a href="#" className="hover:text-white transition">AI Command Center</a></li>
+              <li><a href="#" className="hover:text-white transition">SoundLab</a></li>
+              <li><a href="#" className="hover:text-white transition">Live Studio</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold text-white mb-4">Company</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
+            <ul className="space-y-2 text-[#C5C5C5] text-sm">
               <li><a href="#" className="hover:text-white transition">About</a></li>
               <li><a href="#" className="hover:text-white transition">Blog</a></li>
               <li><a href="#" className="hover:text-white transition">Careers</a></li>
@@ -417,7 +427,7 @@ const Footer = () => {
           </div>
           <div>
             <h4 className="font-bold text-white mb-4">Legal</h4>
-            <ul className="space-y-2 text-gray-400 text-sm">
+            <ul className="space-y-2 text-[#C5C5C5] text-sm">
               <li><a href="#" className="hover:text-white transition">Privacy</a></li>
               <li><a href="#" className="hover:text-white transition">Terms</a></li>
               <li><a href="#" className="hover:text-white transition">Security</a></li>
@@ -426,14 +436,14 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-white mb-4">Connect</h4>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-white transition"><Github className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-white transition"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="text-gray-400 hover:text-white transition"><Linkedin className="w-5 h-5" /></a>
+              <a href="#" className="text-[#C5C5C5] hover:text-[#0055FF] transition"><Github className="w-5 h-5" /></a>
+              <a href="#" className="text-[#C5C5C5] hover:text-[#0055FF] transition"><Twitter className="w-5 h-5" /></a>
+              <a href="#" className="text-[#C5C5C5] hover:text-[#0055FF] transition"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-          <p>© 2026 WISE² Enterprise. All rights reserved.</p>
+        <div className="border-t border-[#C5C5C5]/20 pt-8 text-center text-[#C5C5C5] text-sm">
+          <p>© 2026 Wise Defense LLC. ORGANIZED CHAOS COMMAND CENTER</p>
         </div>
       </div>
     </footer>
@@ -444,11 +454,10 @@ const Footer = () => {
 export default function Home() {
   return (
     <main className="bg-black text-white overflow-x-hidden">
-      <AnimatedBackground />
       <Header />
       <HeroSection />
-      <FeaturesSection />
-      <SocialProofSection />
+      <ModulesSection />
+      <TaglineSection />
       <PricingSection />
       <Footer />
     </main>
