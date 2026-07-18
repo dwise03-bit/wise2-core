@@ -1186,8 +1186,7 @@ export default function Home() {
     <div suppressHydrationWarning className="min-h-screen bg-black text-white overflow-hidden">
       <Header />
       <HeroSection onBookConsultation={() => mounted && setIntakeOpen(true)} />
-      {/* LiveStudioSection temporarily disabled for debugging */}
-      {/* <LiveStudioSection /> */}
+      {mounted && <LiveStudioSection />}
       <ProjectShowcase />
       <FeaturesSection />
       <DashboardPreview />
