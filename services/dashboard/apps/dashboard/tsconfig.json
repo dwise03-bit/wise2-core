@@ -16,6 +16,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@wise2/dashboard-shell": ["../../../../packages/dashboard-shell/src"]
+    },
     "plugins": [
       {
         "name": "next"

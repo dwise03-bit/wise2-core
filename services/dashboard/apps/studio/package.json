@@ -4,9 +4,9 @@
   "description": "WISE Sound Labs - Audio branding studio",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3003",
+    "dev": "next dev -p 3103",
     "build": "next build",
-    "start": "next start -p 3003",
+    "start": "next start -p 3103",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "test": "jest"

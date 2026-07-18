@@ -20,6 +20,8 @@ module.exports = {
           bg: '#050505',
           surface: '#0D1117',
           'surface-2': '#131922',
+          'surface-3': '#1A2332',
+          'surface-4': '#242D3A',
           card: '#10151D',
           'text-primary': '#FFFFFF',
           'text-secondary': '#C9CED6',
@@ -44,17 +46,48 @@ module.exports = {
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
       },
       boxShadow: {
+        // Blue glows
         'glow-blue-sm': '0 0 12px rgba(0, 85, 255, 0.35)',
         'glow-blue-md': '0 0 24px rgba(0, 85, 255, 0.5)',
         'glow-blue-lg': '0 0 44px rgba(0, 217, 255, 0.38)',
+        'glow-blue-xl': '0 0 60px rgba(0, 85, 255, 0.4)',
+        // Cyan glows
+        'glow-cyan-sm': '0 0 12px rgba(0, 217, 255, 0.25)',
+        'glow-cyan-md': '0 0 24px rgba(0, 217, 255, 0.35)',
+        'glow-cyan-lg': '0 0 44px rgba(0, 217, 255, 0.5)',
+        // Red glows
+        'glow-red-sm': '0 0 12px rgba(255, 0, 64, 0.25)',
+        'glow-red-md': '0 0 24px rgba(255, 0, 64, 0.35)',
+        // Subtle card shadow
+        'card': '0 4px 16px rgba(0, 0, 0, 0.3)',
+        'card-lg': '0 8px 32px rgba(0, 0, 0, 0.4)',
+      },
+      borderColor: {
+        wise: {
+          'border-primary': 'rgba(0, 85, 255, 0.2)',
+          'border-cyan': 'rgba(0, 217, 255, 0.2)',
+          'border-light': 'rgba(255, 255, 255, 0.1)',
+        },
+      },
+      backdropBlur: {
+        xs: '2px',
+        sm: '4px',
+        md: '8px',
+        lg: '16px',
+        xl: '24px',
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
       },
       keyframes: {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 16px rgba(0, 85, 255, 0.35)' },
           '50%': { boxShadow: '0 0 34px rgba(0, 217, 255, 0.55)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
       },
     },

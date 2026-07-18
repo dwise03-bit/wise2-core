@@ -53,14 +53,137 @@
   @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
 }
 
-/* Glass morphism */
+/* ============================================================================
+   GLASSMORPHISM EFFECTS - DESIGN SYSTEM
+   ============================================================================ */
+
+/* Base glassmorphism */
 .glass {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
+  @apply backdrop-blur-md border rounded-xl transition-all duration-300;
+  background: rgba(13, 17, 23, 0.6);
+  border-color: rgba(0, 85, 255, 0.2);
+}
+
+.glass:hover {
+  background: rgba(13, 17, 23, 0.7);
+  border-color: rgba(0, 85, 255, 0.3);
+  box-shadow: 0 0 24px rgba(0, 85, 255, 0.2);
+}
+
+/* Glassmorphism variants */
+.glass-sm {
+  @apply backdrop-blur-sm border rounded-lg;
+  background: rgba(13, 17, 23, 0.5);
+  border-color: rgba(0, 217, 255, 0.15);
+}
+
+.glass-md {
+  @apply backdrop-blur-md border rounded-xl;
+  background: rgba(13, 17, 23, 0.65);
+  border-color: rgba(0, 85, 255, 0.2);
+}
+
+.glass-lg {
+  @apply backdrop-blur-lg border rounded-2xl;
+  background: rgba(13, 17, 23, 0.7);
+  border-color: rgba(0, 85, 255, 0.25);
+}
+
+/* Glassmorphism with colored borders */
+.glass-blue {
+  @apply backdrop-blur-md border rounded-xl;
+  background: rgba(13, 17, 23, 0.6);
+  border-color: rgba(0, 85, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 85, 255, 0.1);
+}
+
+.glass-primary {
+  @apply backdrop-blur-md border rounded-xl;
+  background: rgba(13, 17, 23, 0.65);
+  border-color: rgba(0, 85, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 85, 255, 0.15);
+}
+
+.glass-cyan {
+  @apply backdrop-blur-md border rounded-xl;
+  background: rgba(13, 17, 23, 0.6);
+  border-color: rgba(0, 217, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+}
+
+.glass-red {
+  @apply backdrop-blur-md border rounded-xl;
+  background: rgba(13, 17, 23, 0.6);
+  border-color: rgba(255, 0, 64, 0.2);
+  box-shadow: 0 0 20px rgba(255, 0, 64, 0.1);
 }
 
 /* Gradient text */
 .gradient-text {
   @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
+}
+
+/* ============================================================================
+   BORDER & GLOW EFFECTS
+   ============================================================================ */
+
+/* Glowing borders */
+.border-glow-blue {
+  border-color: rgba(0, 85, 255, 0.3);
+  box-shadow: inset 0 0 12px rgba(0, 85, 255, 0.1);
+}
+
+.border-glow-cyan {
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: inset 0 0 12px rgba(0, 217, 255, 0.1);
+}
+
+.border-glow-red {
+  border-color: rgba(255, 0, 64, 0.3);
+  box-shadow: inset 0 0 12px rgba(255, 0, 64, 0.1);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-wise {
+  background: linear-gradient(135deg, rgba(0, 85, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%);
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.8) 0%, rgba(19, 25, 34, 0.8) 100%);
+}
+
+/* Surface overlays */
+.surface-overlay {
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.95) 0%, rgba(26, 35, 50, 0.95) 100%);
+}
+
+/* Premium shadow effects */
+.shadow-glow-sm {
+  box-shadow: 0 0 12px rgba(0, 85, 255, 0.25);
+}
+
+.shadow-glow-md {
+  box-shadow: 0 0 24px rgba(0, 85, 255, 0.35);
+}
+
+.shadow-glow-lg {
+  box-shadow: 0 0 44px rgba(0, 85, 255, 0.4), 0 0 12px rgba(0, 217, 255, 0.2);
+}
+
+.shadow-glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.shadow-glow-cyan-lg {
+  box-shadow: 0 0 44px rgba(0, 217, 255, 0.5);
+}
+
+.shadow-glow-blue-md {
+  box-shadow: 0 0 24px rgba(0, 85, 255, 0.5);
+}
+
+.shadow-glow-red {
+  box-shadow: 0 0 20px rgba(255, 0, 64, 0.25);
 }
 
 /* Prevent layout shift */

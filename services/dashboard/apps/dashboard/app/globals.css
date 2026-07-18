@@ -1,3 +1,28 @@
 @import '@wise2/ui-components/src/globals.css';
+@import '../../../packages/design-system/design-tokens.css';
 
-/* Dashboard-specific styles here (if any) */
+/* Dashboard-specific styles */
+
+/* Smooth transitions and animations */
+.wise-transition {
+  transition: all var(--wise-duration-base, 200ms) var(--wise-easing-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+.wise-transition-fast {
+  transition: all var(--wise-duration-fast, 150ms) var(--wise-easing-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+.wise-transition-slow {
+  transition: all var(--wise-duration-slow, 300ms) var(--wise-easing-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+/* Ensure body uses design system colors */
+html {
+  background-color: var(--wise-bg, #050505);
+  color: var(--wise-text-primary, #FFFFFF);
+}
+
+body {
+  background-color: var(--wise-bg, #050505);
+  color: var(--wise-text-primary, #FFFFFF);
+}

@@ -36,9 +36,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-wise-text-primary mb-2">
+          <label className="block text-sm font-medium text-wise-text-primary mb-2.5">
             {label}
-            {props.required && <span className="text-wise-accent-red ml-1">*</span>}
+            {props.required && <span className="text-wise-danger ml-1">*</span>}
           </label>
         )}
 
@@ -50,30 +50,33 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           onChange={handleChange}
           animate={{
             borderColor: error
-              ? '#FF0040'
+              ? 'rgba(255, 0, 64, 0.6)'
               : isFocused
-                ? '#0055FF'
-                : 'rgba(13, 17, 23, 1)',
+                ? 'rgba(0, 85, 255, 0.6)'
+                : 'rgba(0, 85, 255, 0.15)',
+            backgroundColor: isFocused
+              ? 'rgba(13, 17, 23, 0.8)'
+              : 'rgba(13, 17, 23, 0.5)',
             boxShadow: error
-              ? '0 0 0 3px rgba(255, 0, 64, 0.1)'
+              ? '0 0 12px rgba(255, 0, 64, 0.2), inset 0 0 8px rgba(255, 0, 64, 0.05)'
               : isFocused
-                ? '0 0 12px rgba(0, 85, 255, 0.3)'
-                : 'none',
+                ? '0 0 24px rgba(0, 85, 255, 0.3), inset 0 0 12px rgba(0, 85, 255, 0.1)'
+                : 'inset 0 0 8px rgba(0, 0, 0, 0.2)',
           }}
           transition={{ duration: 0.2 }}
           className={`
             w-full
-            bg-wise-surface/50
-            border-2
+            backdrop-blur-sm
+            border
             rounded-lg
-            px-3
+            px-4
             py-3
             text-base
             text-wise-text-primary
-            placeholder-wise-text-muted
+            placeholder-wise-text-muted/60
             transition-all
             duration-200
-            min-h-24
+            min-h-28
             resize-vertical
             focus-visible:outline-none
             disabled:opacity-50
@@ -91,9 +94,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-sm text-wise-accent-red"
+                className="text-sm text-wise-danger flex items-center gap-1"
                 role="alert"
               >
+                <span className="text-lg">⚠</span>
                 {error}
               </motion.p>
             )}
@@ -105,9 +109,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           {showCharCount && maxLength && (
             <p
-              className={`text-sm ${
+              className={`text-sm whitespace-nowrap ${
                 charCount > maxLength * 0.9
-                  ? 'text-wise-accent-orange'
+                  ? 'text-wise-warning'
                   : 'text-wise-text-muted'
               }`}
             >

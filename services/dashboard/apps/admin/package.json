@@ -4,9 +4,9 @@
   "description": "WISE² Enterprise admin portal",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3004",
+    "dev": "next dev -p 3104",
     "build": "next build",
-    "start": "next start -p 3004",
+    "start": "next start -p 3104",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "test": "jest"

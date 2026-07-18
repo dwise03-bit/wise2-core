@@ -4,9 +4,9 @@
   "description": "WISE² Enterprise public website & landing page",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3101",
     "build": "next build",
-    "start": "next start -p 3001",
+    "start": "next start -p 3101",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

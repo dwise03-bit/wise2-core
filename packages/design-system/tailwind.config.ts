@@ -23,9 +23,12 @@ const config: Config = {
       colors: {
         // Backgrounds
         wise: {
+          DEFAULT: '#050505',
           bg: '#050505',
           surface: '#0D1117',
           'surface-2': '#131922',
+          'surface-3': '#1A2332',
+          'surface-4': '#242D3A',
           card: '#10151D',
 
           // Text
@@ -33,22 +36,25 @@ const config: Config = {
           'text-secondary': '#C9CED6',
           'text-muted': '#8D98A5',
 
-          // Primary
-          primary: '#0094FF',
-          'primary-hover': '#32A8FF',
-          'primary-active': '#0075CC',
+          // Primary - Blue
+          primary: '#0055FF',
+          'primary-hover': '#2874FF',
+          'primary-active': '#0044CC',
           'primary-light': '#1AA8FF',
 
           // Accents
-          'accent-red': '#E53935',
+          electric: '#00D9FF',
+          cyan: '#00D9FF',
+          purple: '#B300FF',
+          'accent-red': '#FF0040',
           'accent-orange': '#F59E0B',
           'accent-green': '#22C55E',
 
           // Semantic
           success: '#22C55E',
           warning: '#F59E0B',
-          danger: '#E53935',
-          info: '#0094FF',
+          danger: '#FF0040',
+          info: '#0055FF',
         },
       },
 
@@ -143,12 +149,24 @@ const config: Config = {
         medium: '0 4px 16px rgba(0, 0, 0, 0.4)',
         large: '0 8px 32px rgba(0, 0, 0, 0.5)',
         xlarge: '0 16px 64px rgba(0, 0, 0, 0.6)',
+        card: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        'card-lg': '0 8px 32px rgba(0, 0, 0, 0.4)',
 
-        // Glow
-        'glow-blue-sm': '0 0 8px rgba(0, 148, 255, 0.3)',
-        'glow-blue-md': '0 0 16px rgba(0, 148, 255, 0.5)',
-        'glow-blue-lg': '0 0 32px rgba(0, 148, 255, 0.7)',
-        'glow-blue-xl': '0 0 64px rgba(0, 148, 255, 0.8)',
+        // Glow - Blue (Primary)
+        'glow-blue-sm': '0 0 12px rgba(0, 85, 255, 0.35)',
+        'glow-blue-md': '0 0 24px rgba(0, 85, 255, 0.5)',
+        'glow-blue-lg': '0 0 44px rgba(0, 217, 255, 0.38)',
+        'glow-blue-xl': '0 0 60px rgba(0, 85, 255, 0.4)',
+
+        // Glow - Cyan
+        'glow-cyan-sm': '0 0 12px rgba(0, 217, 255, 0.25)',
+        'glow-cyan-md': '0 0 24px rgba(0, 217, 255, 0.35)',
+        'glow-cyan-lg': '0 0 44px rgba(0, 217, 255, 0.5)',
+
+        // Glow - Red
+        'glow-red-sm': '0 0 12px rgba(255, 0, 64, 0.25)',
+        'glow-red-md': '0 0 24px rgba(255, 0, 64, 0.35)',
+        'glow-red-lg': '0 0 44px rgba(255, 0, 64, 0.4)',
 
         // Inner
         'inner-sm': 'inset 0 2px 8px rgba(0, 0, 0, 0.5)',

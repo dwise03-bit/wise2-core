@@ -4,9 +4,9 @@
   "description": "WISE² Enterprise customer dashboard",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3002",
+    "dev": "next dev -p 3102",
     "build": "next build",
-    "start": "next start -p 3002 -H 0.0.0.0",
+    "start": "next start -p 3102 -H 0.0.0.0",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "test": "jest"
@@ -16,6 +16,7 @@
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
     "framer-motion": "^11.0.0",
+    "lucide-react": "^0.292.0",
     "next": "^14.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

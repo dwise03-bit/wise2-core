@@ -1,10 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 export default function ChatWidget() {
+  const router = useRouter();
+
   const handleClick = () => {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/live-studio#support';
-    }
+    router.push('/live-studio?tab=support');
   };
 
   return (

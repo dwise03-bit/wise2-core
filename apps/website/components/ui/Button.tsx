@@ -6,11 +6,12 @@ import { motion, MotionProps } from 'framer-motion'
 interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     MotionProps {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'success'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   isLoading?: boolean
   icon?: React.ReactNode
   iconPosition?: 'left' | 'right'
+  glow?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -21,6 +22,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       isLoading = false,
       icon,
       iconPosition = 'left',
+      glow = variant === 'primary',
       children,
       disabled,
       className = '',
@@ -29,30 +31,68 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-all rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-wise-bg focus-visible:ring-wise-primary disabled:opacity-50 disabled:cursor-not-allowed'
+      'inline-flex items-center justify-center font-bold transition-all rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-wise-bg focus-visible:ring-wise-primary disabled:opacity-50 disabled:cursor-not-allowed'
 
     const sizeStyles = {
-      sm: 'px-3 py-2 text-sm min-h-10 gap-2',
-      md: 'px-4 py-3 text-base min-h-11 gap-2',
-      lg: 'px-6 py-3 text-lg min-h-12 gap-2',
+      sm: 'px-3 py-1.5 text-xs min-h-9 gap-2',
+      md: 'px-4 py-2.5 text-sm min-h-11 gap-2',
+      lg: 'px-6 py-3 text-base min-h-12 gap-2',
+      xl: 'px-8 py-4 text-lg min-h-14 gap-2',
     }
 
     const variantStyles = {
-      primary:
-        'bg-wise-primary text-white hover:bg-wise-primary-hover active:bg-wise-primary-active shadow-glow-blue-sm hover:shadow-glow-blue-md',
-      secondary:
-        'bg-wise-surface-2 text-wise-text-primary border border-wise-surface hover:bg-wise-surface hover:border-wise-primary/50',
-      ghost:
-        'text-wise-text-primary hover:bg-wise-surface/40 active:bg-wise-surface/60',
-      danger:
-        'bg-wise-accent-red text-white hover:bg-red-600 active:bg-red-700 shadow-glow-blue-sm hover:shadow-glow-blue-md',
+      // Primary - Bold gradient with blue glow
+      primary: `
+        bg-gradient-to-r from-wise-primary to-blue-600
+        text-white border border-wise-primary/50
+        hover:border-wise-primary hover:shadow-glow-blue-md
+        active:shadow-glow-blue-sm
+        ${glow ? 'shadow-glow-blue-lg hover:shadow-glow-blue-xl' : ''}
+      `,
+
+      // Secondary - Glassmorphism
+      secondary: `
+        bg-wise-surface-2/60 backdrop-blur-md
+        text-wise-text-primary border border-wise-primary/20
+        hover:border-wise-primary/40 hover:bg-wise-surface-2/80
+        hover:shadow-glow-blue-sm
+      `,
+
+      // Ghost - Minimal
+      ghost: `
+        text-wise-text-secondary
+        hover:text-wise-text-primary hover:bg-wise-surface/40
+        active:bg-wise-surface/60
+      `,
+
+      // Danger - Red gradient with glow
+      danger: `
+        bg-gradient-to-r from-wise-danger to-red-700
+        text-white border border-wise-danger/50
+        hover:border-wise-danger hover:shadow-glow-red-md
+        active:shadow-glow-red-sm
+      `,
+
+      // Outline - Bordered primary
+      outline: `
+        text-wise-primary border border-wise-primary
+        hover:border-wise-primary hover:bg-wise-primary/5
+        hover:shadow-glow-blue-sm
+      `,
+
+      // Success - Green gradient
+      success: `
+        bg-gradient-to-r from-wise-success to-green-600
+        text-white border border-wise-success/50
+        hover:border-wise-success hover:shadow-lg
+      `,
     }
 
     return (
       <motion.button
         ref={ref}
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
-        whileTap={{ scale: disabled ? 1 : 0.95 }}
+        whileHover={{ scale: disabled ? 1 : 1.05, y: disabled ? 0 : -2 }}
+        whileTap={{ scale: disabled ? 1 : 0.95, y: 0 }}
         transition={{ duration: 0.15 }}
         disabled={disabled || isLoading}
         className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
