@@ -10,17 +10,21 @@ import { GmailService } from './services/gmail.service';
 import { GoogleDriveService } from './services/google-drive.service';
 import { DocumentService } from './services/document.service';
 import { KnowledgeGraphService } from './services/knowledge-graph.service';
+import { DashboardService } from './services/dashboard.service';
 import { GoogleOAuthController } from './controllers/google-oauth.controller';
 import { GmailController } from './controllers/gmail.controller';
 import { GoogleDriveController } from './controllers/google-drive.controller';
 import { DocumentController } from './controllers/document.controller';
 import { KnowledgeGraphController } from './controllers/knowledge-graph.controller';
+import { DashboardController } from './controllers/dashboard.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User, UserSchema } from './schemas/user.schema';
 import { Workspace, WorkspaceSchema } from './schemas/workspace.schema';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
 import { DocumentRecord, DocumentSchema } from './schemas/document.schema';
 import { KnowledgeGraphEdge, KnowledgeGraphEdgeSchema } from './schemas/knowledge-graph-edge.schema';
+import { DashboardMetric, DashboardMetricSchema } from './schemas/dashboard-metric.schema';
+import { AICommand, AICommandSchema } from './schemas/ai-command.schema';
 
 @Module({
   imports: [
@@ -30,6 +34,8 @@ import { KnowledgeGraphEdge, KnowledgeGraphEdgeSchema } from './schemas/knowledg
       { name: RefreshToken.name, schema: RefreshTokenSchema },
       { name: DocumentRecord.name, schema: DocumentSchema },
       { name: KnowledgeGraphEdge.name, schema: KnowledgeGraphEdgeSchema },
+      { name: DashboardMetric.name, schema: DashboardMetricSchema },
+      { name: AICommand.name, schema: AICommandSchema },
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -47,6 +53,7 @@ import { KnowledgeGraphEdge, KnowledgeGraphEdgeSchema } from './schemas/knowledg
     GoogleDriveController,
     DocumentController,
     KnowledgeGraphController,
+    DashboardController,
   ],
   providers: [
     BrainAuthService,
@@ -55,6 +62,7 @@ import { KnowledgeGraphEdge, KnowledgeGraphEdgeSchema } from './schemas/knowledg
     GoogleDriveService,
     DocumentService,
     KnowledgeGraphService,
+    DashboardService,
     JwtStrategy,
   ],
   exports: [
@@ -64,6 +72,7 @@ import { KnowledgeGraphEdge, KnowledgeGraphEdgeSchema } from './schemas/knowledg
     GoogleDriveService,
     DocumentService,
     KnowledgeGraphService,
+    DashboardService,
     JwtModule,
     PassportModule,
   ],
