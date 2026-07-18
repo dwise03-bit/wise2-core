@@ -40,6 +40,7 @@ export default function StudioWorkspacePage() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-wise-bg text-wise-text-primary overflow-hidden">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-wise-medium bg-wise-bg/80 backdrop-blur-lg">
@@ -220,5 +221,6 @@ export default function StudioWorkspacePage() {
         💬
       </button>
     </div>
+    </>
   );
 }
