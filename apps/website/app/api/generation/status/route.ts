@@ -12,7 +12,13 @@ export async function GET(request: NextRequest) {
     }
 
     // TODO: Fetch from database/cache
-    const generation = {
+    const generation: {
+      id: string;
+      status: string;
+      progress: number;
+      audioUrl: string | null;
+      error: string | null;
+    } = {
       id: generationId,
       status: 'processing',
       progress: 65,

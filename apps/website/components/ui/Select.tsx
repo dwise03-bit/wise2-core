@@ -9,12 +9,13 @@ interface Option {
 }
 
 interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'children'> {
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'children' | 'value'> {
   options: Option[]
   label?: string
   error?: string
   helpText?: string
   placeholder?: string
+  value?: string | number
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(

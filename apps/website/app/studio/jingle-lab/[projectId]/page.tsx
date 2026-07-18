@@ -12,7 +12,6 @@ import {
   Settings,
   ChevronRight,
   Music,
-  Waveform,
   RotateCcw,
   Sparkles,
 } from 'lucide-react';

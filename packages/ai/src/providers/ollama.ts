@@ -36,7 +36,7 @@ export class OllamaProvider extends BaseAIProvider {
         throw new Error(`Ollama API error: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       return {
         content: data.message?.content || '',
@@ -136,7 +136,7 @@ export class OllamaProvider extends BaseAIProvider {
   async listModels(): Promise<string[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/tags`);
-      const data = await response.json();
+      const data: any = await response.json();
       return data.models?.map((m: any) => m.name) || [];
     } catch {
       return [];

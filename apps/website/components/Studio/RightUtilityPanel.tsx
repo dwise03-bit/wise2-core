@@ -10,6 +10,9 @@ interface RightUtilityPanelProps {
   onTabChange?: (tab: PanelTab) => void;
   selectedElementProperties?: Record<string, unknown>;
   timelineTracks?: TimelineTrack[];
+  onToggle?: () => void;
+  width?: number;
+  onResize?: (width: number) => void;
 }
 
 const MOCK_TIMELINE_TRACKS: TimelineTrack[] = [

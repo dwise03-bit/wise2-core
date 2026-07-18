@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 
-interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    MotionProps {
+interface CardProps extends HTMLMotionProps<'div'> {
   variant?: 'glass' | 'metal'
   hoverable?: boolean
   children?: React.ReactNode

@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 
-interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends HTMLMotionProps<'input'> {
   label?: string
   error?: string
   helpText?: string

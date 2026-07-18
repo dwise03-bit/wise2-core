@@ -52,11 +52,11 @@ export class GeminiProvider extends BaseAIProvider {
       );
 
       if (!response.ok) {
-        const error = await response.json();
+        const error: any = await response.json();
         throw new Error(`Gemini API error: ${error.error?.message}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       return {
         content: data.candidates?.[0]?.content?.parts?.[0]?.text || '',

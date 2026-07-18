@@ -1,17 +1,16 @@
 'use client'
 
 import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 
-interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps>,
-    MotionProps {
+interface ButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'success'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   isLoading?: boolean
   icon?: React.ReactNode
   iconPosition?: 'left' | 'right'
   glow?: boolean
+  children?: React.ReactNode
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

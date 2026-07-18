@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 
 interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
   label?: string
   description?: string
   size?: 'sm' | 'md' | 'lg'

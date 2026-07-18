@@ -1,10 +1,9 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 
-interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends HTMLMotionProps<'textarea'> {
   label?: string
   error?: string
   helpText?: string

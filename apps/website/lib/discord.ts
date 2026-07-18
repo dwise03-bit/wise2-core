@@ -6,7 +6,7 @@ export interface ChatMessage {
 }
 
 export interface DiscordWebhookPayload {
-  username: 'WISE² AI Support';
+  username: string;
   avatar_url?: string;
   embeds: Array<{
     title: string;

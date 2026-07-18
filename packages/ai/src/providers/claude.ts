@@ -41,11 +41,11 @@ export class ClaudeProvider extends BaseAIProvider {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error: any = await response.json();
         throw new Error(`Claude API error: ${error.error?.message}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       return {
         content: data.content?.[0]?.text || '',

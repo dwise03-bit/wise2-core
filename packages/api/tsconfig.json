@@ -20,7 +20,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@shared/prisma": ["src/prisma"]
     }
   },
   "include": ["src/**/*.ts"],

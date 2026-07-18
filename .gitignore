@@ -129,3 +129,6 @@ downloads/
 .idea/codeStyleSettings.xml
 .next
 Build/
+
+# TypeScript incremental build info
+*.tsbuildinfo
