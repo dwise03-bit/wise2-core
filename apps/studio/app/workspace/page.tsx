@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import AnimatedGuide from '../../components/AnimatedGuide';
 
 export default function StudioWorkspacePage() {
   const [masterVolume, setMasterVolume] = useState(0.8);
@@ -10,6 +11,8 @@ export default function StudioWorkspacePage() {
     { id: '1', name: 'Vocal', volume: 0.8, muted: false, solo: false },
     { id: '2', name: 'Drums', volume: 0.7, muted: false, solo: false },
   ]);
+  const [guideVisible, setGuideVisible] = useState(true);
+  const [guideAnimation, setGuideAnimation] = useState<'idle' | 'typing' | 'thinking'>('idle');
 
   const handleAddTrack = useCallback(() => {
     const newTrack = {
@@ -211,6 +214,66 @@ export default function StudioWorkspacePage() {
         </div>
       </div>
     </div>
+    {/* Animated Guide Widget */}
+    {guideVisible && (
+      <div className="fixed bottom-6 left-6 z-40">
+        <div className="flex flex-col gap-3">
+          <AnimatedGuide animation={guideAnimation} width={140} height={140} />
+          <div className="flex gap-2 bg-wise-surface/80 backdrop-blur rounded-lg p-2 border border-wise-medium">
+            <button
+              onClick={() => setGuideAnimation('idle')}
+              className={`px-2 py-1 text-xs rounded transition ${
+                guideAnimation === 'idle'
+                  ? 'bg-wise-primary text-wise-bg'
+                  : 'bg-wise-surface hover:bg-wise-surface-secondary text-wise-text-secondary'
+              }`}
+              title="Idle state"
+            >
+              Idle
+            </button>
+            <button
+              onClick={() => setGuideAnimation('typing')}
+              className={`px-2 py-1 text-xs rounded transition ${
+                guideAnimation === 'typing'
+                  ? 'bg-wise-primary text-wise-bg'
+                  : 'bg-wise-surface hover:bg-wise-surface-secondary text-wise-text-secondary'
+              }`}
+              title="Typing state"
+            >
+              Type
+            </button>
+            <button
+              onClick={() => setGuideAnimation('thinking')}
+              className={`px-2 py-1 text-xs rounded transition ${
+                guideAnimation === 'thinking'
+                  ? 'bg-wise-primary text-wise-bg'
+                  : 'bg-wise-surface hover:bg-wise-surface-secondary text-wise-text-secondary'
+              }`}
+              title="Thinking state"
+            >
+              Think
+            </button>
+            <button
+              onClick={() => setGuideVisible(false)}
+              className="px-2 py-1 text-xs rounded bg-wise-surface hover:bg-wise-surface-secondary text-wise-text-secondary transition"
+              title="Hide guide"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    {/* Show guide button when hidden */}
+    {!guideVisible && (
+      <button
+        onClick={() => setGuideVisible(true)}
+        className="fixed bottom-6 left-6 z-40 px-3 py-2 text-sm bg-wise-primary hover:bg-wise-primary-hover text-wise-bg rounded font-semibold transition"
+        title="Show guide"
+      >
+        Show Guide 🦊
+      </button>
+    )}
     <div className="fixed bottom-6 right-6 z-50">
       <button
         type="button"
