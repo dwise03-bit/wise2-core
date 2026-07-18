@@ -14,6 +14,10 @@ const nextConfig = {
       headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0, must-revalidate' }],
     },
     {
+      source: '/workspace',
+      headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0, must-revalidate' }],
+    },
+    {
       source: '/live-studio',
       headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0, must-revalidate' }],
     },
