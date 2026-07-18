@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { PanelTab } from '@/components/Studio/types';
 import AppShell from '@/components/AppShell';
 import Canvas from '@/components/Studio/Canvas';
 import RightUtilityPanel from '@/components/Studio/RightUtilityPanel';
@@ -9,7 +10,7 @@ export default function StudioPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState<'properties' | 'timeline' | 'prompt'>('properties');
+  const [activeTab, setActiveTab] = useState<PanelTab>('properties');
 
   return (
     <AppShell>

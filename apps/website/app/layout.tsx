@@ -12,28 +12,34 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'WISE² Enterprise | AI-Powered Brand Operating System',
-  description: 'Create, manage, and grow your brand with AI-powered tools. Professional-grade audio, video, and design. One platform. Unlimited possibilities.',
-  keywords: 'brand creation, audio branding, AI, music production, design, marketing',
+  title: 'WISE² | Organized Chaos Command Center',
+  description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs. All-in-one platform for brand creation, audio production, and AI-powered automation.',
+  keywords: 'brand creation, audio branding, AI, music production, design, marketing, AI tools, automation',
   robots: 'index, follow',
+  metadataBase: new URL('https://wise2.net'),
   openGraph: {
     type: 'website',
-    url: 'https://wise2.com',
-    title: 'WISE² Enterprise',
-    description: 'AI-powered brand operating system',
+    url: 'https://wise2.net',
+    title: 'WISE² | Organized Chaos Command Center',
+    description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs.',
+    siteName: 'WISE²',
     images: [
       {
-        url: 'https://wise2.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'WISE² Enterprise',
+        type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WISE² Enterprise',
-    description: 'AI-powered brand operating system',
+    title: 'WISE² | Organized Chaos Command Center',
+    description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs.',
+  },
+  alternates: {
+    canonical: 'https://wise2.net',
   },
 };
 

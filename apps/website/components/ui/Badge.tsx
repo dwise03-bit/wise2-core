@@ -1,9 +1,11 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, MotionProps } from 'framer-motion'
 
-interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface BadgeProps
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, keyof MotionProps>,
+    MotionProps {
   variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
   size?: 'sm' | 'md' | 'lg'
   children?: React.ReactNode

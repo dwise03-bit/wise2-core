@@ -52,7 +52,7 @@ export default function RightUtilityPanel({
   },
   timelineTracks = MOCK_TIMELINE_TRACKS,
 }: RightUtilityPanelProps) {
-  const [width, setWidth] = useState(LAYOUT.RIGHT_PANEL_DEFAULT);
+  const [width, setWidth] = useState<number>(LAYOUT.RIGHT_PANEL_DEFAULT);
   const [internalTab, setInternalTab] = useState<PanelTab>('properties');
   const [isResizing, setIsResizing] = useState(false);
   const resizeRef = useRef<HTMLDivElement>(null);

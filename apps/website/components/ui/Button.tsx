@@ -4,7 +4,7 @@ import React from 'react'
 import { motion, MotionProps } from 'framer-motion'
 
 interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof MotionProps>,
     MotionProps {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'success'
   size?: 'sm' | 'md' | 'lg' | 'xl'
