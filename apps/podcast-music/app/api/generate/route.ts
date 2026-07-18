@@ -7,22 +7,7 @@ import {
   extractUserFromHeaders,
   ApiError,
 } from '@/lib/utils';
-
-async function submitJobToQueue(jobData: any): Promise<string> {
-  // TODO: Integrate with your AI service (OpenAI, Suno, or custom service)
-  // This is a placeholder that simulates job submission
-  const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-  // In production, you would:
-  // 1. Submit to OpenAI API or your AI service
-  // 2. Get back a job ID
-  // 3. Set up a webhook to track completion
-  // 4. Return the job ID
-
-  console.log('Submitted job to queue:', jobId, jobData);
-
-  return jobId;
-}
+import { getAudioProvider } from '@/lib/ai-provider';
 
 export async function POST(request: NextRequest) {
   try {
@@ -105,24 +90,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Submit job to AI queue
-    const jobId = await submitJobToQueue({
-      userId: user.userId,
-      projectId: podcastProjectId,
-      prompt,
-      aiModel,
-      seed,
-    });
+    // Submit job to the configured AI provider (mock by default; suno when keyed)
+    const provider = getAudioProvider();
+    const submission = await provider.submit({ prompt, aiModel, seed });
 
     // Create audio generation record
     const audioGeneration = await prisma.audioGeneration.create({
       data: {
         podcastProjectId,
-        jobId,
+        jobId: submission.jobId,
         prompt,
         aiModel,
         seed: seed || undefined,
-        status: 'QUEUED',
+        status: submission.status,
         progress: 0,
       },
     });
@@ -187,6 +167,42 @@ export async function GET(request: NextRequest) {
         'You do not have access to this job',
         'FORBIDDEN'
       );
+    }
+
+    // If still in flight, poll the provider and persist the latest state so the
+    // record converges to COMPLETED/FAILED without a separate worker process.
+    const inFlight =
+      audioGeneration.status === 'PENDING' ||
+      audioGeneration.status === 'QUEUED' ||
+      audioGeneration.status === 'PROCESSING';
+
+    if (inFlight && audioGeneration.jobId) {
+      const provider = getAudioProvider();
+      const latest = await provider.getStatus(audioGeneration.jobId);
+
+      const isComplete = latest.status === 'COMPLETED';
+      const updated = await prisma.audioGeneration.update({
+        where: { id: audioGeneration.id },
+        data: {
+          status: latest.status,
+          progress: latest.progress,
+          audioUrl: latest.audioUrl ?? audioGeneration.audioUrl,
+          duration: latest.durationSeconds ?? audioGeneration.duration,
+          errorMessage: latest.errorMessage ?? audioGeneration.errorMessage,
+          completedAt: isComplete ? new Date() : audioGeneration.completedAt,
+        },
+        include: { podcastProject: true },
+      });
+
+      // Reflect terminal states onto the parent project.
+      if (isComplete || latest.status === 'FAILED') {
+        await prisma.podcastProject.update({
+          where: { id: audioGeneration.podcastProjectId },
+          data: { status: isComplete ? 'COMPLETED' : 'FAILED' },
+        });
+      }
+
+      return successResponse(updated);
     }
 
     return successResponse(audioGeneration);
