@@ -501,9 +501,9 @@ const LiveStudioSection = () => (
             </h3>
 
             <div className="space-y-3">
-              <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm">
+              <a href="http://wise2.net:3005/workspace" target="_blank" rel="noopener noreferrer" className="block w-full px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm text-center">
                 Enter Studio
-              </button>
+              </a>
               <button className="w-full px-4 py-3 border border-gray-600 hover:border-blue-400 text-gray-300 hover:text-blue-400 rounded-lg font-semibold transition-colors text-sm">
                 Join Chat
               </button>
