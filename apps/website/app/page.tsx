@@ -16,6 +16,7 @@ import {
   Target,
   BookOpen,
   Phone,
+  Clock,
 } from 'lucide-react';
 import IntakeForm from '@/components/IntakeForm';
 
@@ -300,6 +301,25 @@ const dashboardMetrics: DashboardMetric[] = [
 // ============================================================================
 
 /**
+ * Navigation Header - With Admin Panel link
+ */
+const Header = () => (
+  <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-md">
+    <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="text-2xl font-black text-blue-400">WISE²</div>
+      <nav className="flex items-center gap-8">
+        <a href="#features" className="text-gray-300 hover:text-white transition-colors text-sm">Features</a>
+        <a href="#pricing" className="text-gray-300 hover:text-white transition-colors text-sm">Pricing</a>
+        <a href="#live-studio" className="text-gray-300 hover:text-white transition-colors text-sm">Live Studio</a>
+        <a href="https://wise2.net:3004" target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold transition-colors">
+          Admin Panel
+        </a>
+      </nav>
+    </div>
+  </header>
+);
+
+/**
  * Hero Section - Main headline and CTA
  */
 const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void }) => (
@@ -415,6 +435,109 @@ const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void })
         </div>
       </motion.div>
     </motion.div>
+  </section>
+);
+
+/**
+ * Live Studio Section - Embedded viewer and controls
+ */
+const LiveStudioSection = () => (
+  <section id="live-studio" className="relative py-24 px-6 border-t border-gray-800/50 bg-gradient-to-b from-gray-900/50 to-black">
+    <div className="max-w-6xl mx-auto">
+      <motion.div {...fadeInUp} className="mb-16">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+          Live Studio
+        </h2>
+        <p className="text-xl text-gray-400">
+          Stream, collaborate, and create in real-time
+        </p>
+      </motion.div>
+
+      <motion.div
+        {...slideInLeft}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+      >
+        {/* Live Viewer */}
+        <div className="lg:col-span-2">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-xl border border-gray-700 overflow-hidden aspect-video">
+            {/* Video placeholder with gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-black to-purple-900/30 flex items-center justify-center">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-600/20 border border-blue-500/50 mb-4">
+                  <div className="w-6 h-6 rounded-full bg-red-500 animate-pulse" />
+                </div>
+                <p className="text-gray-400 font-semibold">LIVE NOW</p>
+                <p className="text-gray-500 text-sm mt-2">Urban Grind Brand Anthem</p>
+              </div>
+            </div>
+
+            {/* Live indicator badge */}
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-black/60 backdrop-blur px-3 py-2 rounded-full border border-red-500/50">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-xs font-semibold text-red-400">LIVE</span>
+            </div>
+
+            {/* Stream stats overlay */}
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex gap-4 text-xs bg-black/60 backdrop-blur p-3 rounded-lg border border-gray-700/50">
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4 text-blue-400" />
+                <span className="text-gray-300">358 viewers</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4 text-green-400" />
+                <span className="text-gray-300">42:17 elapsed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Studio Controls & Info */}
+        <div className="space-y-6">
+          {/* Control Panel */}
+          <div className="bg-gradient-to-br from-gray-900/50 to-black rounded-xl border border-blue-500/30 p-6">
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Zap className="w-5 h-5 text-blue-400" />
+              Studio Controls
+            </h3>
+
+            <div className="space-y-3">
+              <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors text-sm">
+                Enter Studio
+              </button>
+              <button className="w-full px-4 py-3 border border-gray-600 hover:border-blue-400 text-gray-300 hover:text-blue-400 rounded-lg font-semibold transition-colors text-sm">
+                Join Chat
+              </button>
+              <a href="https://wise2.net:3003" target="_blank" rel="noopener noreferrer" className="block w-full px-4 py-3 border border-gray-600 hover:border-green-400 text-gray-300 hover:text-green-400 rounded-lg font-semibold transition-colors text-sm text-center">
+                Open in New Tab
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="bg-gradient-to-br from-gray-900/50 to-black rounded-xl border border-gray-700 p-6">
+            <h3 className="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Stream Stats</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Viewers</span>
+                <span className="text-white font-bold">358</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Chat Messages</span>
+                <span className="text-white font-bold">1,247</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400 text-sm">Duration</span>
+                <span className="text-white font-bold">42m 17s</span>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-gray-700">
+                <span className="text-gray-400 text-sm">Quality</span>
+                <span className="text-green-400 font-bold text-sm">4K 60fps</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   </section>
 );
 
@@ -1054,7 +1177,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
+      <Header />
       <HeroSection onBookConsultation={() => setIntakeOpen(true)} />
+      <LiveStudioSection />
       <ProjectShowcase />
       <FeaturesSection />
       <DashboardPreview />
