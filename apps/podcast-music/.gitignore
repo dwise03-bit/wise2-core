@@ -51,3 +51,4 @@ logs
 *.ogg
 tmp/
 uploads/
+*.tsbuildinfo
