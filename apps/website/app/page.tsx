@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -1169,24 +1169,31 @@ const Footer = () => (
 export default function Home() {
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering interactive content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleGetStarted = (tierId: string) => {
+    if (!mounted) return;
     setSelectedTier(tierId);
     setIntakeOpen(true);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div suppressHydrationWarning className="min-h-screen bg-black text-white overflow-hidden">
       <Header />
-      <HeroSection onBookConsultation={() => setIntakeOpen(true)} />
+      <HeroSection onBookConsultation={() => mounted && setIntakeOpen(true)} />
       <LiveStudioSection />
       <ProjectShowcase />
       <FeaturesSection />
       <DashboardPreview />
       <InsightsSection />
       <PricingSection onGetStarted={handleGetStarted} />
-      <CTASection onBookConsultation={() => setIntakeOpen(true)} />
-      <IntakeForm isOpen={intakeOpen} onClose={() => setIntakeOpen(false)} />
+      <CTASection onBookConsultation={() => mounted && setIntakeOpen(true)} />
+      {mounted && <IntakeForm isOpen={intakeOpen} onClose={() => setIntakeOpen(false)} />}
       <Footer />
     </div>
   );
