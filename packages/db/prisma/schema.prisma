@@ -19,8 +19,10 @@ model User {
   role          UserRole  @default(CUSTOMER)
 
   // Relationships
-  subscription  Subscription?
-  projects      Project[]
+  subscription      Subscription?
+  projects          Project[]
+  podcastProjects   PodcastProject[] @relation("podcastProjects")
+  usageRecords      UsageRecord[] @relation("usageRecords")
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -40,15 +42,24 @@ model Subscription {
 
   stripeCustomerId String?   @unique
   stripeSubscriptionId String? @unique
+  stripePriceId   String?
   status          SubscriptionStatus @default(ACTIVE)
-  plan            PricingPlan @default(STARTER)
+  plan            PricingPlan @default(FREE)
 
   currentPeriodStart DateTime?
   currentPeriodEnd   DateTime?
   canceledAt         DateTime?
+  trialEndsAt        DateTime?
+
+  // Usage tracking
+  generationsThisMonth Int @default(0)
+  lastResetDate     DateTime @default(now())
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  // Relationship to usage logs
+  usageLogs       UsageLog[]
 }
 
 enum SubscriptionStatus {
@@ -56,12 +67,27 @@ enum SubscriptionStatus {
   CANCELED
   PAST_DUE
   TRIALING
+  INACTIVE
 }
 
 enum PricingPlan {
+  FREE
   STARTER
   PRO
   ENTERPRISE
+}
+
+// Track generation usage for feature gating
+model UsageLog {
+  id              String    @id @default(cuid())
+  subscriptionId  String
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  generationType  String    // "music_generation", "podcast_generation", etc.
+  creditsUsed     Int       @default(1)
+  metadata        Json?
+
+  createdAt       DateTime  @default(now())
 }
 
 // Projects
@@ -120,4 +146,112 @@ model Notification {
   read          Boolean   @default(false)
 
   createdAt     DateTime  @default(now())
+}
+
+// Podcast Music - Podcast Projects
+model PodcastProject {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation("podcastProjects", fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String
+  description     String?   @db.Text
+  thumbnailUrl    String?
+
+  // Podcast details
+  podcastName     String
+  podcastCategory String?
+  episodeNumber   Int?
+  releaseDate     DateTime?
+
+  // Music generation settings
+  mood            String?   // "upbeat", "calm", "dramatic", etc.
+  duration        Int?      // in seconds
+  genre           String?   // "pop", "electronic", "orchestral", etc.
+
+  status          PodcastProjectStatus @default(DRAFT)
+
+  // Generated content
+  musicGenerations AudioGeneration[]
+
+  // Metadata
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum PodcastProjectStatus {
+  DRAFT
+  GENERATING
+  READY
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// AI Audio Generation Jobs
+model AudioGeneration {
+  id              String    @id @default(cuid())
+  podcastProjectId String
+  podcastProject  PodcastProject @relation(fields: [podcastProjectId], references: [id], onDelete: Cascade)
+
+  // Job tracking
+  jobId           String?   @unique  // AI service job ID
+  status          GenerationStatus @default(PENDING)
+  progress        Int       @default(0)  // 0-100
+
+  // Generation parameters
+  prompt          String    @db.Text
+  aiModel         String    @default("default")
+  seed            Int?
+
+  // Output
+  audioUrl        String?   // S3 or similar storage URL
+  audioFileSize   Int?      // bytes
+  duration        Int?      // seconds
+  waveformData    String?   // JSON array of amplitude values
+
+  // Error handling
+  errorMessage    String?   @db.Text
+  retryCount      Int       @default(0)
+  maxRetries      Int       @default(3)
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  completedAt     DateTime?
+}
+
+enum GenerationStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// Usage tracking for billing
+model UsageRecord {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation("usageRecords", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage type
+  type            UsageType
+  amount          Int       // credits or units used
+
+  // Reference
+  podcastProjectId String?
+  audioGenerationId String?
+
+  // Billing
+  costInCents     Int       // cost in cents (USD)
+
+  createdAt       DateTime  @default(now())
+}
+
+enum UsageType {
+  AUDIO_GENERATION
+  STORAGE
+  API_CALL
 }

@@ -238,11 +238,54 @@ export class StripeService {
   }
 
   /**
+   * Create a checkout session for subscription
+   */
+  async createCheckoutSession(
+    customerId: string,
+    priceId: string,
+    successUrl: string,
+    cancelUrl: string
+  ): Promise<{ sessionId: string; url: string }> {
+    if (!this.stripeApiKey) {
+      throw new BadRequestException('Stripe is not configured');
+    }
+
+    try {
+      const response = await this.post('/checkout/sessions', {
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        billing_address_collection: 'auto',
+      });
+
+      this.logger.log(`✅ Created checkout session for customer ${customerId}`);
+      return {
+        sessionId: response.id,
+        url: response.url,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to create checkout session: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
+  }
+
+  /**
    * Handle Stripe webhook event
    */
   async handleWebhookEvent(event: any): Promise<void> {
     try {
       switch (event.type) {
+        case 'payment_intent.succeeded':
+          await this.handlePaymentIntentSucceeded(event.data.object);
+          break;
         case 'customer.subscription.updated':
           await this.handleSubscriptionUpdated(event.data.object);
           break;
@@ -293,27 +336,78 @@ export class StripeService {
   }
 
   /**
+   * Create a payment intent for one-time purchase or setup
+   */
+  async createPaymentIntent(
+    customerId: string,
+    amount: number,
+    currency: string = 'usd',
+    metadata?: Record<string, string>
+  ): Promise<{ clientSecret: string; id: string }> {
+    if (!this.stripeApiKey) {
+      throw new BadRequestException('Stripe is not configured');
+    }
+
+    try {
+      const params: Record<string, any> = {
+        customer: customerId,
+        amount,
+        currency,
+        automatic_payment_methods: { enabled: true },
+      };
+
+      if (metadata) {
+        params.metadata = metadata;
+      }
+
+      const response = await this.post('/payment_intents', params);
+
+      this.logger.log(`✅ Created payment intent for customer ${customerId}`);
+      return {
+        id: response.id,
+        clientSecret: response.client_secret,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to create payment intent: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
+  }
+
+  /**
    * Private helper methods
    */
 
+  private async handlePaymentIntentSucceeded(paymentIntent: any): Promise<void> {
+    this.logger.log(`💳 Payment intent succeeded: ${paymentIntent.id}`);
+    // Extract userId from metadata and update subscription
+    if (paymentIntent.metadata?.userId) {
+      this.logger.log(`✅ Payment successful for user ${paymentIntent.metadata.userId}`);
+      // TODO: Call billing service to update subscription
+    }
+  }
+
   private async handleSubscriptionUpdated(subscription: any): Promise<void> {
     this.logger.log(`📢 Subscription updated: ${subscription.id}`);
-    // TODO: Update database record
+    this.logger.log(`   Status: ${subscription.status}, Plan: ${subscription.items.data[0]?.plan?.id || 'unknown'}`);
+    // TODO: Call billing service to update subscription record
   }
 
   private async handleSubscriptionDeleted(subscription: any): Promise<void> {
     this.logger.log(`📢 Subscription deleted: ${subscription.id}`);
-    // TODO: Update database record
+    this.logger.log(`   Customer: ${subscription.customer}`);
+    // TODO: Call billing service to mark subscription as cancelled
   }
 
   private async handleInvoicePaymentSucceeded(invoice: any): Promise<void> {
     this.logger.log(`💰 Invoice payment succeeded: ${invoice.id}`);
-    // TODO: Update database record, send receipt email
+    this.logger.log(`   Amount: ${invoice.amount_paid / 100} ${invoice.currency.toUpperCase()}`);
+    // TODO: Send receipt email, update subscription record
   }
 
   private async handleInvoicePaymentFailed(invoice: any): Promise<void> {
     this.logger.warn(`❌ Invoice payment failed: ${invoice.id}`);
-    // TODO: Update database record, send retry email
+    this.logger.warn(`   Next retry: ${new Date(invoice.next_payment_attempt * 1000).toISOString()}`);
+    // TODO: Send retry email, mark subscription as PAST_DUE
   }
 
   private async post(path: string, data: Record<string, any>): Promise<any> {
