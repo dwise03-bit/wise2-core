@@ -5,6 +5,12 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { BrainAuthService } from './brain-auth.service';
 import { BrainAuthController } from './brain-auth.controller';
+import { GoogleOAuthService } from './services/google-oauth.service';
+import { GmailService } from './services/gmail.service';
+import { GoogleDriveService } from './services/google-drive.service';
+import { GoogleOAuthController } from './controllers/google-oauth.controller';
+import { GmailController } from './controllers/gmail.controller';
+import { GoogleDriveController } from './controllers/google-drive.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User, UserSchema } from './schemas/user.schema';
 import { Workspace, WorkspaceSchema } from './schemas/workspace.schema';
@@ -26,8 +32,26 @@ import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema
       }),
     }),
   ],
-  controllers: [BrainAuthController],
-  providers: [BrainAuthService, JwtStrategy],
-  exports: [BrainAuthService, JwtModule, PassportModule],
+  controllers: [
+    BrainAuthController,
+    GoogleOAuthController,
+    GmailController,
+    GoogleDriveController,
+  ],
+  providers: [
+    BrainAuthService,
+    GoogleOAuthService,
+    GmailService,
+    GoogleDriveService,
+    JwtStrategy,
+  ],
+  exports: [
+    BrainAuthService,
+    GoogleOAuthService,
+    GmailService,
+    GoogleDriveService,
+    JwtModule,
+    PassportModule,
+  ],
 })
 export class BrainAuthModule {}
