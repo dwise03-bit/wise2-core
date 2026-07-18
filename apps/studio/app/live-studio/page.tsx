@@ -1,439 +1,395 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useStreamingWithAudio } from '../../hooks/useStreamingWithAudio';
-import { MasterMixer } from '../../components/Shared/Mixer/MasterMixer';
-import { ChatRoom } from '../../components/Shared/Chat';
-import { RecordingsList } from '../../components/Shared/Recording';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Button,
-  Badge,
-  Input,
-  Alert,
-  Spinner,
-} from '@wise2/design-system/components';
+import { motion } from 'framer-motion';
 
-/**
- * Live Studio Page - MODERNIZED
- *
- * Professional multi-track recording and streaming interface.
- * Built with WISE² design system for consistency and enterprise quality.
- *
- * Features:
- * - 8-channel live mixer with audio engine integration
- * - Multi-track recording (24+ tracks)
- * - Scene management
- * - Real-time metrics (CPU, storage, bitrate, viewers)
- * - Live preview and chat
- * - Keyboard shortcuts
- * - Recent recordings library
- */
+const MotionDiv = motion.div;
+
 export default function LiveStudioPage() {
-  const {
-    audio,
-    streaming,
-    audioMixerChannels,
-    systemMetrics,
-    handleChannelVolumeChange,
-    getTotalTracks,
-    getRecordingStatus,
-  } = useStreamingWithAudio();
+  const [scrollY, setScrollY] = useState(0);
 
-  const [selectedScene, setSelectedScene] = useState(1);
-  const [showAlert, setShowAlert] = useState(false);
-
-  const cpuUsage = Math.round(systemMetrics.cpuUsage);
-  const storageUsed = (systemMetrics.diskUsage / (1024 * 1024 * 1024)).toFixed(2);
-  const bitrate = streaming.streamStatus.bitrate / 1000 || 6.2;
-  const viewerCount = streaming.streamStatus.viewerCount;
-  const recordingStatus = getRecordingStatus();
-  const isRecording = audio.state.isRecording;
-  const isStreaming = streaming.isStreaming;
-  const studioSections = [
-    ['STUDIO', 'Command Center'],
-    ['BRAND DNA', 'Identity Engine'],
-    ['ANTHEM CREATOR', 'Song & Lyrics Studio'],
-    ['RECORDING ROOM', 'Sessions & Vocals'],
-    ['MIXING CONSOLE', 'Mix & Produce'],
-    ['MASTERING', 'Polish & Perfect'],
-    ['LIVE', 'Watch & Interact'],
-    ['COMMUNITY', 'Connect & Collaborate'],
-    ['CHALLENGES', 'Compete & Win'],
-    ['ACADEMY', 'Learn & Level Up'],
-    ['BRAND VAULT', 'Assets & Deliverables'],
-    ['ANALYTICS', 'Insights & Reports'],
-    ['SETTINGS', 'System & Preferences'],
-  ];
-
-  // Set up keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-      // R: Start/stop recording
-      if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-        if (isRecording) {
-          audio.stopRecording();
-        } else {
-          audio.startRecording();
-        }
-      }
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.1 },
+    },
+  };
 
-      // Space: Play/pause
-      if (e.code === 'Space') {
-        e.preventDefault();
-        if (audio.state.isPlaying) {
-          audio.stop();
-        } else {
-          audio.play();
-        }
-      }
-
-      // Shift+Space: Stop
-      if (e.shiftKey && e.code === 'Space') {
-        e.preventDefault();
-        audio.stop();
-      }
-
-      // T: Add track
-      if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-        audio.addTrack();
-      }
-
-      // Cmd/Ctrl+S: Save project
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        // Save project logic would go here
-        console.log('Save project');
-      }
-
-      // Cmd/Ctrl+E: Export
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'e' || e.key === 'E')) {
-        e.preventDefault();
-        // Export logic would go here
-        console.log('Export');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [audio]);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#03060d] text-white">
+    <div className="min-h-screen overflow-x-hidden bg-black text-white">
+      {/* Premium background grid effect */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(20,120,255,0.22),transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(140,40,255,0.18),transparent_24%),linear-gradient(180deg,#03060d_0%,#050b17_45%,#02050a_100%)]" />
-        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0094FF]/5 via-black to-black" />
+        <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(90deg,rgba(0,148,255,0.1)_1px,transparent_1px),linear-gradient(rgba(0,148,255,0.1)_1px,transparent_1px)] bg-[size:80px_80px]" />
       </div>
 
-      <div className="relative z-10 flex h-screen flex-col">
-        <header className="border-b border-cyan-500/20 bg-black/50 backdrop-blur-xl shadow-[0_0_0_1px_rgba(59,130,246,0.08)]">
-          <div className="flex items-center gap-4 px-4 py-3">
-            <div className="flex items-center gap-3 w-[280px] shrink-0">
-              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 leading-none shadow-[0_0_30px_rgba(0,153,255,0.08)]">
-                <div className="text-3xl font-black tracking-tight text-white">WISE²</div>
-                <div className="text-[11px] tracking-[0.35em] text-cyan-300">SOUND LABS</div>
-              </div>
-              <div className="hidden xl:block text-[11px] uppercase tracking-[0.35em] text-slate-400">
-                Organized chaos command center
-              </div>
-            </div>
+      <div className="relative z-10">
+        {/* HERO - Premium commanding section */}
+        <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 pb-32 overflow-hidden">
+          {/* Animated background elements */}
+          <MotionDiv
+            className="absolute top-40 left-1/4 w-72 h-72 bg-[#0094FF]/10 rounded-full blur-[80px]"
+            animate={{ y: [0, 30, 0], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity }}
+          />
+          <MotionDiv
+            className="absolute bottom-40 right-1/4 w-96 h-96 bg-[#E53935]/5 rounded-full blur-[100px]"
+            animate={{ y: [0, -30, 0], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ duration: 10, repeat: Infinity, delay: 1 }}
+          />
 
-            <div className="flex-1">
-              <Input type="search" placeholder="Search projects, artists, files..." />
-            </div>
+          {/* Content */}
+          <motion.div
+            className="relative z-20 text-center max-w-5xl mx-auto"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Badge */}
+            <motion.div variants={itemVariants} className="mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#0094FF]/30 bg-[#0094FF]/5 backdrop-blur-sm">
+                <span className="inline-block w-2 h-2 rounded-full bg-[#0094FF] animate-pulse" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#0094FF]">Live now. Organized chaos.</span>
+              </div>
+            </motion.div>
 
-            <div className="hidden 2xl:flex items-center gap-6 px-4 py-2 rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
-              <div className="text-center">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Live viewers</div>
-                <div className="text-lg font-bold text-white">{viewerCount}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Projects live</div>
-                <div className="text-lg font-bold text-white">{getTotalTracks() > 0 ? 4 : 0}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Community online</div>
-                <div className="text-lg font-bold text-white">1,247</div>
-              </div>
-            </div>
+            {/* Main headline */}
+            <motion.h1
+              variants={itemVariants}
+              className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6"
+            >
+              <span className="block">The Operating System</span>
+              <span className="block bg-gradient-to-r from-[#0094FF] via-[#0094FF] to-[#E53935] bg-clip-text text-transparent">
+                for Organized Chaos
+              </span>
+            </motion.h1>
 
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 backdrop-blur">
-                <div className="h-10 w-10 rounded-full bg-[radial-gradient(circle_at_30%_30%,#7dd3fc,#1d4ed8_45%,#020617_100%)] ring-1 ring-cyan-400/50" />
-                <div className="hidden md:block">
-                  <div className="text-sm font-semibold">D.WISE</div>
-                  <div className="text-xs text-slate-400">Administrator</div>
-                </div>
-              </div>
-              <Button variant="secondary" size="md">⚙</Button>
-            </div>
-          </div>
-        </header>
+            {/* Subheading */}
+            <motion.p
+              variants={itemVariants}
+              className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-12 leading-relaxed"
+            >
+              Where creators, builders, and entrepreneurs command their empire. Real-time collaboration. Zero friction. Maximum impact.
+            </motion.p>
 
-        <div className="flex min-h-0 flex-1 gap-4 p-4">
-          <aside className="hidden xl:flex w-[250px] flex-col rounded-[28px] border border-cyan-500/15 bg-black/55 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,153,255,0.08)] overflow-hidden">
-            <div className="border-b border-white/10 px-5 py-5">
-              <div className="text-sm font-semibold text-cyan-300">WISE² SOUND LABS</div>
-              <div className="text-xs uppercase tracking-[0.35em] text-slate-500">Brand operating system</div>
+            {/* CTA Buttons */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            >
+              <button className="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:shadow-[0_0_40px_rgba(0,148,255,0.6)] transition-all duration-300 hover:-translate-y-0.5">
+                Enter the Studio
+                <span className="absolute inset-0 rounded-lg bg-[#0094FF] opacity-0 group-hover:opacity-10 transition-opacity" />
+              </button>
+              <button className="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#0094FF]/50 text-[#0094FF] rounded-lg hover:border-[#0094FF] hover:bg-[#0094FF]/5 transition-all duration-300">
+                Watch Demo
+              </button>
+            </motion.div>
+
+            {/* Trust indicators */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row gap-8 justify-center text-center text-sm"
+            >
+              <div>
+                <div className="text-2xl font-bold text-[#0094FF]">10k+</div>
+                <div className="text-gray-400">Creators & Builders</div>
+              </div>
+              <div className="hidden sm:block w-px bg-gray-700" />
+              <div>
+                <div className="text-2xl font-bold text-[#0094FF]">$2.4B+</div>
+                <div className="text-gray-400">Value Created</div>
+              </div>
+              <div className="hidden sm:block w-px bg-gray-700" />
+              <div>
+                <div className="text-2xl font-bold text-[#0094FF]">99.9%</div>
+                <div className="text-gray-400">Uptime SLA</div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            animate={{ y: [0, 12, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <div className="w-6 h-10 border-2 border-[#0094FF]/30 rounded-full flex justify-center pt-2">
+              <div className="w-1 h-2 bg-[#0094FF] rounded-full animate-pulse" />
             </div>
-            <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-              {studioSections.map(([name, desc]) => (
-                <button
-                  key={name}
-                  className={`w-full rounded-2xl border px-4 py-3 text-left transition-all ${
-                    name === 'LIVE'
-                      ? 'border-cyan-400/40 bg-cyan-500/10 text-cyan-100 shadow-[0_0_24px_rgba(0,153,255,0.12)]'
-                      : 'border-transparent bg-transparent text-slate-300 hover:border-white/10 hover:bg-white/5'
-                  }`}
+          </motion.div>
+        </section>
+
+        {/* PILLARS - Core value propositions */}
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="mb-20"
+            >
+              <h2 className="text-4xl sm:text-5xl font-black mb-4">
+                Four Pillars of <span className="text-[#0094FF]">Organized Chaos</span>
+              </h2>
+              <p className="text-gray-400 text-lg max-w-2xl">
+                Built for the modern entrepreneur who refuses to choose between power and simplicity.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {[
+                {
+                  number: '01',
+                  title: 'Command Central',
+                  description: 'One dashboard. Infinite possibilities. Control everything from live streaming to financial operations.',
+                  icon: '⚡',
+                  color: '#0094FF',
+                },
+                {
+                  number: '02',
+                  title: 'Intelligent Automation',
+                  description: 'AI that learns your chaos and turns it into order. Work smarter, not harder.',
+                  icon: '🧠',
+                  color: '#0094FF',
+                },
+                {
+                  number: '03',
+                  title: 'Real-Time Collaboration',
+                  description: 'Your team, anywhere. Build together with zero lag. Live feedback loops that matter.',
+                  icon: '🔗',
+                  color: '#E53935',
+                },
+                {
+                  number: '04',
+                  title: 'Enterprise Security',
+                  description: 'Bank-grade protection. Your empire stays yours. SOC 2. HIPAA. GDPR. Done.',
+                  icon: '🛡️',
+                  color: '#0094FF',
+                },
+              ].map((pillar, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  className="group relative overflow-hidden rounded-2xl border border-gray-800 hover:border-[#0094FF]/50 bg-gray-900/30 backdrop-blur-sm p-8 hover:bg-gray-900/50 transition-all duration-300"
                 >
-                  <div className="text-sm font-semibold">{name}</div>
-                  <div className="text-xs text-slate-500">{desc}</div>
-                </button>
+                  {/* Gradient accent */}
+                  <div
+                    className="absolute -top-1 -left-1 w-40 h-40 rounded-full opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-300"
+                    style={{ backgroundColor: pillar.color }}
+                  />
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                      <span className="text-4xl font-black text-gray-700 group-hover:text-gray-600 transition">{pillar.number}</span>
+                      <span className="text-4xl">{pillar.icon}</span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 group-hover:text-[#0094FF] transition-colors duration-300">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed">{pillar.description}</p>
+                  </div>
+                </motion.div>
               ))}
-            </nav>
-            <div className="border-t border-white/10 p-4">
-              <div className="rounded-2xl border border-emerald-400/25 bg-emerald-400/10 px-4 py-3">
-                <div className="text-xs uppercase tracking-[0.35em] text-emerald-300">System status</div>
-                <div className="mt-1 text-sm font-semibold text-emerald-200">All systems operational</div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* FEATURE SHOWCASE - Visual demonstration */}
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="mb-20"
+            >
+              <h2 className="text-4xl sm:text-5xl font-black mb-4">
+                See <span className="text-[#E53935]">Organized Chaos</span> in Action
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative rounded-3xl overflow-hidden border border-[#0094FF]/20 bg-gradient-to-b from-[#0094FF]/10 to-transparent p-1"
+            >
+              <div className="bg-black rounded-3xl p-8 sm:p-12">
+                <div className="aspect-video rounded-2xl bg-gradient-to-br from-[#0094FF]/20 via-black to-[#E53935]/10 flex items-center justify-center border border-[#0094FF]/20">
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">🎬</div>
+                    <p className="text-gray-400">Live Studio Command Center</p>
+                    <p className="text-sm text-gray-600 mt-2">Real-time collaboration dashboard</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* SOCIAL PROOF */}
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="mb-16"
+            >
+              <h2 className="text-4xl sm:text-5xl font-black mb-4">
+                Trusted by <span className="text-[#0094FF]">Industry Leaders</span>
+              </h2>
+            </motion.div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {[
+                {
+                  quote: 'WISE² is how we scaled from zero to unicorn in 18 months.',
+                  author: 'Sarah Chen',
+                  role: 'Founder & CEO, Creative Studios Inc.',
+                  avatar: '👩‍💼',
+                },
+                {
+                  quote: 'The only platform that actually understands chaos as a feature, not a bug.',
+                  author: 'Marcus Johnson',
+                  role: 'CTO, Innovation Labs',
+                  avatar: '👨‍💻',
+                },
+                {
+                  quote: 'Our team productivity increased 340%. Your move, competitors.',
+                  author: 'Alex Rivera',
+                  role: 'Head of Operations, TechCorp',
+                  avatar: '👨‍🔬',
+                },
+              ].map((testimonial, idx) => (
+                <motion.div
+                  key={idx}
+                  variants={itemVariants}
+                  className="relative group rounded-2xl border border-gray-800 hover:border-[#0094FF]/50 bg-gray-900/30 backdrop-blur-sm p-8 hover:bg-gray-900/50 transition-all duration-300"
+                >
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-[#0094FF]">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-gray-300 mb-6 text-lg leading-relaxed">"{testimonial.quote}"</p>
+                  <div className="flex items-center gap-3 pt-6 border-t border-gray-800">
+                    <span className="text-3xl">{testimonial.avatar}</span>
+                    <div>
+                      <p className="font-bold text-white">{testimonial.author}</p>
+                      <p className="text-sm text-gray-400">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* CTA FINAL */}
+        <section className="relative py-32 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-5xl sm:text-6xl font-black mb-6">
+                Ready to Command <span className="text-[#E53935]">Your</span> <span className="text-[#0094FF]">Chaos?</span>
+              </h2>
+              <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+                Join 10,000+ creators and builders who've already made the leap. Your empire awaits.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button className="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:shadow-[0_0_40px_rgba(0,148,255,0.6)] transition-all duration-300 hover:-translate-y-0.5">
+                  Start Free Trial
+                  <span className="absolute inset-0 rounded-lg bg-[#0094FF] opacity-0 group-hover:opacity-10 transition-opacity" />
+                </button>
+                <button className="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#E53935]/50 text-[#E53935] rounded-lg hover:border-[#E53935] hover:bg-[#E53935]/5 transition-all duration-300">
+                  Schedule Demo
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-500 mt-8">
+                No credit card required. 14 days free. Full access to all features.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="relative border-t border-gray-800 py-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+              <div>
+                <h3 className="text-2xl font-black mb-2">WISE²</h3>
+                <p className="text-gray-500 text-sm">The operating system for organized chaos.</p>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4 text-[#0094FF]">Product</h4>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Studio</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Analytics</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Automation</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4 text-[#0094FF]">Company</h4>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li><a href="#" className="hover:text-[#0094FF] transition">About</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Blog</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Careers</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold mb-4 text-[#0094FF]">Legal</h4>
+                <ul className="space-y-2 text-sm text-gray-400">
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Privacy</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Terms</a></li>
+                  <li><a href="#" className="hover:text-[#0094FF] transition">Security</a></li>
+                </ul>
               </div>
             </div>
-          </aside>
-
-          <main className="grid min-h-0 flex-1 grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1.5fr)_420px_360px]">
-            <section className="min-h-0 overflow-hidden rounded-[30px] border border-cyan-500/20 bg-white/5 backdrop-blur-2xl shadow-[0_0_70px_rgba(0,153,255,0.08)]">
-              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold tracking-wide">LIVE STUDIO</h1>
-                    <Badge variant="danger" size="sm">LIVE</Badge>
-                  </div>
-                  <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Real time. No filters. 100% organized chaos.</p>
-                </div>
-                <div className="hidden md:flex items-center gap-4 text-xs text-slate-400">
-                  <span>CPU {cpuUsage}%</span>
-                  <span>Storage {storageUsed} TB</span>
-                  <span>{bitrate} Mbps</span>
-                </div>
+            <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+              <p>&copy; 2026 WISE² Inc. All rights reserved.</p>
+              <div className="flex gap-4 mt-4 sm:mt-0">
+                <a href="#" className="hover:text-[#0094FF] transition">Twitter</a>
+                <a href="#" className="hover:text-[#0094FF] transition">LinkedIn</a>
+                <a href="#" className="hover:text-[#0094FF] transition">GitHub</a>
               </div>
-
-              <div className="h-full overflow-y-auto p-4">
-                <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(0,119,255,0.22),transparent_38%),linear-gradient(180deg,rgba(3,10,22,0.88),rgba(1,4,12,0.96))] p-4 shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-fuchsia-500" />
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs uppercase tracking-[0.4em] text-slate-400">Now building</div>
-                      <div className="text-2xl font-semibold text-white">Urban Grind Brand Anthem</div>
-                    </div>
-                    <div className="rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-300">
-                      ● LIVE
-                    </div>
-                  </div>
-
-                  <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-black/50">
-                    <div className="aspect-[16/9] bg-[radial-gradient(circle_at_center,_rgba(0,153,255,0.28),transparent_26%),linear-gradient(180deg,#0b1424_0%,#020611_100%)]" />
-                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,transparent_0%,rgba(255,255,255,0.07)_18%,transparent_38%)]" />
-                    <div className="absolute right-4 top-4 rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-300">
-                      LIVE
-                    </div>
-                    <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-                      <div className="max-w-[70%] rounded-2xl border border-white/10 bg-black/55 px-4 py-3 backdrop-blur">
-                        <div className="text-[10px] uppercase tracking-[0.4em] text-slate-400">Now building</div>
-                        <div className="text-xl font-semibold text-white">Urban Grind Brand Anthem</div>
-                      </div>
-                      <div className="rounded-2xl border border-white/10 bg-black/55 px-4 py-3 text-right backdrop-blur">
-                        <div className="text-sm font-bold text-white">00:42:17</div>
-                        <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Elapsed</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-                    <Card variant="glass">
-                      <CardContent className="p-4">
-                        <div className="mb-3 flex items-center justify-between">
-                          <div className="text-sm font-semibold text-white">Live Mixer</div>
-                          <div className="text-xs text-slate-400">{getTotalTracks()} tracks ready</div>
-                        </div>
-                        <MasterMixer
-                          channels={audioMixerChannels.slice(0, -1)}
-                          masterVolume={audioMixerChannels[audioMixerChannels.length - 1]?.volume ?? 0}
-                          masterPeakLevel={audioMixerChannels[audioMixerChannels.length - 1]?.peakLevel ?? -Infinity}
-                          onChannelVolumeChange={handleChannelVolumeChange}
-                          onChannelMuteToggle={(id) => console.log('Mute:', id)}
-                          onChannelSoloToggle={(id) => console.log('Solo:', id)}
-                          onMasterVolumeChange={(vol) => handleChannelVolumeChange('master', vol)}
-                          title="LIVE MIXER"
-                          showAllTracksLink={getTotalTracks() > 7}
-                        />
-                      </CardContent>
-                    </Card>
-
-                    <div className="grid gap-4">
-                      <Card>
-                        <CardHeader>
-                          <h3 className="text-sm font-bold">SCENE PIPELINE</h3>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2">
-                            {[1, 2].map((scene) => (
-                              <Button
-                                key={scene}
-                                variant={selectedScene === scene ? 'primary' : 'secondary'}
-                                size="md"
-                                fullWidth
-                                onClick={() => setSelectedScene(scene)}
-                              >
-                                Scene {scene}
-                              </Button>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardHeader>
-                          <h3 className="text-sm font-bold">LIVE CONTROLS</h3>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2">
-                            <Button
-                              variant={isStreaming ? 'danger' : 'primary'}
-                              size="md"
-                              fullWidth
-                              onClick={() => isStreaming ? streaming.stopStream() : streaming.startStream()}
-                            >
-                              {isStreaming ? 'Stop Stream' : 'Start Stream'}
-                            </Button>
-                            <Button
-                              variant={isRecording ? 'danger' : 'primary'}
-                              size="md"
-                              fullWidth
-                              onClick={() => isRecording ? audio.stopRecording() : audio.startRecording()}
-                            >
-                              {isRecording ? 'Stop Recording' : 'Start Recording'}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_340px]">
-                    <Card>
-                      <CardHeader>
-                        <h3 className="text-sm font-bold">RECENT RECORDINGS</h3>
-                      </CardHeader>
-                      <CardContent>
-                        <RecordingsList title="" limit={3} showHeader={false} />
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <h3 className="text-sm font-bold">AUDIO LEVELS</h3>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div>
-                            <div className="mb-1 text-xs text-wise-text-muted">Left Channel</div>
-                            <div className="h-2 overflow-hidden rounded-full bg-black/50">
-                              <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="mb-1 text-xs text-wise-text-muted">Right Channel</div>
-                            <div className="h-2 overflow-hidden rounded-full bg-black/50">
-                              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500" />
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="min-h-0 overflow-hidden rounded-[30px] border border-cyan-500/20 bg-white/5 backdrop-blur-2xl shadow-[0_0_70px_rgba(0,153,255,0.08)]">
-              <div className="border-b border-white/10 px-5 py-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-semibold text-white">Live Chat</div>
-                    <div className="text-xs text-slate-400">Top Chat</div>
-                  </div>
-                  <Badge variant="info" size="sm">{viewerCount}</Badge>
-                </div>
-              </div>
-              <div className="h-[calc(100%-64px)]">
-                <ChatRoom title="" isEnabled={true} activeUsers={viewerCount} />
-              </div>
-            </section>
-
-            <section className="min-h-0 overflow-hidden rounded-[30px] border border-fuchsia-500/20 bg-white/5 backdrop-blur-2xl shadow-[0_0_70px_rgba(163,70,255,0.08)]">
-              <div className="flex h-full flex-col gap-4 p-4">
-                <Card className="flex-1 overflow-hidden">
-                  <CardHeader>
-                    <h3 className="text-sm font-bold">JOIN THE COMMUNITY ON DISCORD</h3>
-                  </CardHeader>
-                  <CardContent className="flex h-full flex-col items-center justify-center gap-4 text-center">
-                    <div className="rounded-full border border-cyan-400/20 bg-cyan-400/10 p-6 text-6xl shadow-[0_0_50px_rgba(0,153,255,0.15)]">👾</div>
-                    <p className="max-w-xs text-sm text-slate-300">
-                      The official hub for creators, builders, entrepreneurs and dreamers.
-                    </p>
-                    <ul className="space-y-2 text-left text-sm text-slate-400">
-                      <li>• Connect</li>
-                      <li>• Collaborate</li>
-                      <li>• Get feedback</li>
-                      <li>• Win prizes</li>
-                      <li>• Be part of the movement</li>
-                    </ul>
-                    <Button variant="primary" size="md" fullWidth>
-                      JOIN DISCORD
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <h3 className="text-sm font-bold">COMMUNITY LEADERBOARD</h3>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3 text-sm">
-                      {[
-                        ['SoundWave', '12,450 XP'],
-                        ['BeatMaster88', '9,870 XP'],
-                        ['CreativeKye', '8,230 XP'],
-                      ].map(([name, score], index) => (
-                        <div key={name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 px-3 py-2">
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-white/10" />
-                            <div>
-                              <div className="font-semibold text-white">{index + 1}. {name}</div>
-                              <div className="text-xs text-slate-500">Top this month</div>
-                            </div>
-                          </div>
-                          <div className="text-slate-300">{score}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </section>
-          </main>
-        </div>
-
-        {showAlert && (
-          <div className="border-t border-cyan-500/20 bg-black/55 px-4 py-3 backdrop-blur-xl">
-            <Alert variant="info" title="Tip" closable onClose={() => setShowAlert(false)}>
-              Use keyboard shortcuts: R (record), Space (play), T (add track), Cmd+S (save)
-            </Alert>
+            </div>
           </div>
-        )}
+        </footer>
       </div>
     </div>
   );

@@ -35,7 +35,67 @@ client.on("messageCreate", (message) => {
   if (cmd === "!restart") return run(message, "docker compose restart");
   if (cmd === "!logs") return run(message, `docker compose logs --tail=25 ${args[1] || ""}`);
 
-  message.reply("Commands: !status !update !restart !logs");
+  // Hermes website builder command
+  if (cmd === "!website") {
+    const subcommand = args[1];
+    const wsServer = process.env.WISE2_API || "http://localhost:3000";
+
+    if (!subcommand) {
+      return message.reply(
+        "🏗️ **Hermes Website Builder**\n" +
+        "```\n" +
+        "!website status     - Check builder service status\n" +
+        "!website jobs       - List recent website build jobs\n" +
+        "!website help       - Full Hermes documentation\n" +
+        "!website api        - API endpoint info\n" +
+        "```"
+      );
+    }
+
+    if (subcommand === "status") {
+      return run(message, `curl -s ${wsServer}/api/v1/hermes/status | jq . || echo "Hermes service unavailable"`);
+    }
+
+    if (subcommand === "jobs") {
+      return run(message, `curl -s ${wsServer}/api/v1/hermes/jobs | jq . || echo "No jobs found"`);
+    }
+
+    if (subcommand === "help") {
+      return message.reply(
+        "🏗️ **Hermes Website Builder**\n\n" +
+        "Automates website creation from design to deployment.\n\n" +
+        "**Features:**\n" +
+        "• Design → HTML/CSS conversion\n" +
+        "• Full multi-page site generation\n" +
+        "• Component library scaffolding\n" +
+        "• Deployment automation\n" +
+        "• Asset optimization\n\n" +
+        `**Web Interface:** ${wsServer}/hermes\n` +
+        `**API Docs:** ${wsServer}/api/v1/hermes/docs\n\n` +
+        "**Commands:** `!website status` `!website jobs` `!website api`"
+      );
+    }
+
+    if (subcommand === "api") {
+      return message.reply(
+        "🔌 **Hermes API**\n\n" +
+        `Base: \`${wsServer}/api/v1/hermes\`\n\n` +
+        "**Endpoints:**\n" +
+        "```\n" +
+        "POST   /design-to-code    - Convert design to HTML/CSS\n" +
+        "POST   /site-generator    - Build full website from spec\n" +
+        "POST   /component         - Generate single component\n" +
+        "POST   /deploy            - Deploy to hosting\n" +
+        "GET    /jobs              - List build jobs\n" +
+        "GET    /jobs/:id          - Get job details\n" +
+        "GET    /status            - Service status\n" +
+        "```\n" +
+        `Full docs: ${wsServer}/api/v1/hermes/docs`
+      );
+    }
+  }
+
+  message.reply("Commands: !status !update !restart !logs !website");
 });
 
 client.once("ready", () => {

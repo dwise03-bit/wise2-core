@@ -19,6 +19,7 @@ import {
   notFoundHandler,
 } from './middlewares/error-handler';
 import { authenticate } from './middlewares/auth';
+import hermesRouter from './routes/hermes';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -121,6 +122,9 @@ export async function createServer(): Promise<Express> {
       },
     });
   });
+
+  // Hermes Website Builder API
+  app.use('/api/v1/hermes', hermesRouter);
 
   // ============================================================================
   // 404 Handler

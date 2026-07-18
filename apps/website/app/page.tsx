@@ -16,9 +16,6 @@ import {
   Target,
   BookOpen,
   Phone,
-  Play,
-  Music,
-  Shield,
 } from 'lucide-react';
 import IntakeForm from '@/components/IntakeForm';
 
@@ -152,49 +149,6 @@ const projects: Project[] = [
   },
 ];
 
-const commandModules = [
-  {
-    id: 'ai-command',
-    icon: '🤖',
-    title: 'AI Command Center',
-    description: 'Centralized control hub for all AI operations, automations, and intelligent workflows',
-    features: ['AI Agent Management', 'Workflow Automation', 'Real-time Control'],
-    badge: 'Core'
-  },
-  {
-    id: 'soundlab',
-    icon: '🎧',
-    title: 'SoundLab',
-    description: 'Professional audio production studio with recording, mixing, and mastering tools',
-    features: ['Audio Recording', 'Mixing Engine', 'Effects Library'],
-    badge: 'Production'
-  },
-  {
-    id: 'live-studio',
-    icon: '🎬',
-    title: 'Live Studio',
-    description: 'Professional live streaming and broadcast platform for multi-platform distribution',
-    features: ['Multi-Platform Streaming', 'Live Mixing', 'Recording & Archive'],
-    badge: 'Broadcast'
-  },
-  {
-    id: 'analytics',
-    icon: '📊',
-    title: 'Analytics & Insights',
-    description: 'Real-time dashboards with predictive analytics and actionable business intelligence',
-    features: ['Real-time Metrics', 'Predictive AI', 'Custom Reports'],
-    badge: 'Intelligence'
-  },
-  {
-    id: 'crm',
-    icon: '👥',
-    title: 'CRM & Clients',
-    description: 'Customer relationship management with AI-powered insights and team collaboration',
-    features: ['Customer Profiles', 'AI Insights', 'Team Management'],
-    badge: 'Relations'
-  },
-];
-
 const features: Feature[] = [
   {
     id: '1',
@@ -208,35 +162,35 @@ const features: Feature[] = [
     title: 'Advanced Automation',
     description:
       'Eliminate repetitive tasks. Automate workflows with intelligent, context-aware AI agents.',
-    icon: <Zap className="w-8 h-8 text-blue-400" />,
+    icon: <Zap className="w-8 h-8 text-purple-400" />,
   },
   {
     id: '3',
     title: 'Creative Studio',
     description:
       'Design, edit, and publish professional-grade content. From audio to video to graphics.',
-    icon: <Sparkles className="w-8 h-8 text-blue-400" />,
+    icon: <Sparkles className="w-8 h-8 text-pink-400" />,
   },
   {
     id: '4',
     title: 'Real-Time Analytics',
     description:
       'Comprehensive dashboards with live metrics. Get actionable insights at a glance.',
-    icon: <TrendingUp className="w-8 h-8 text-blue-400" />,
+    icon: <TrendingUp className="w-8 h-8 text-emerald-400" />,
   },
   {
     id: '5',
     title: 'Team Collaboration',
     description:
       'Work together seamlessly. Real-time collaboration tools keep your team synchronized.',
-    icon: <Users className="w-8 h-8 text-blue-400" />,
+    icon: <Users className="w-8 h-8 text-cyan-400" />,
   },
   {
     id: '6',
     title: 'Developer Tools',
     description:
       'Powerful APIs and webhooks. Build custom integrations and extend WISE² to your needs.',
-    icon: <Code2 className="w-8 h-8 text-blue-400" />,
+    icon: <Code2 className="w-8 h-8 text-amber-400" />,
   },
 ];
 
@@ -349,7 +303,7 @@ const dashboardMetrics: DashboardMetric[] = [
  * Hero Section - Main headline and CTA
  */
 const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void }) => (
-  <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 px-6" suppressHydrationWarning>
+  <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-12 px-6">
     {/* Animated gradient background */}
     <div className="absolute inset-0 -z-10">
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-3xl" />
@@ -380,62 +334,60 @@ const HeroSection = ({ onBookConsultation }: { onBookConsultation: () => void })
 
       {/* Main Headline */}
       <motion.h1
-        className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 text-white uppercase tracking-widest"
+        className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6 text-white"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
       >
-        Organized Chaos
+        The AI Operating System
         <br />
-        <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-          Command Center
+        <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          for Modern Business
         </span>
       </motion.h1>
 
       {/* Tagline */}
       <motion.p
-        className="text-xl md:text-2xl text-blue-400 mb-4 font-bold"
+        className="text-xl md:text-2xl text-gray-300 mb-4 font-light"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
       >
-        BUILD. AUTOMATE. DOMINATE.
+        Artificial Intelligence. Business Management. Creative Studio.
       </motion.p>
 
       <motion.p
-        className="text-lg text-gray-400 mb-12 max-w-3xl mx-auto"
+        className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
       >
-        The complete AI operating system for enterprises. Control everything from one unified command center: AI automation, live production, analytics, content creation, and team collaboration.
+        One unified platform that combines AI automation, business intelligence, and creative tools. Transform how your team works.
       </motion.p>
 
       {/* CTA Buttons */}
-      <motion.div
-        className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-      >
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
         <motion.button
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onBookConsultation}
+          aria-label="Book a consultation with our sales team"
         >
           Book Your Consultation
           <ArrowRight className="w-5 h-5 inline-block ml-2" />
         </motion.button>
 
         <motion.button
-          className="px-8 py-4 border border-gray-500 text-gray-300 rounded-lg font-bold text-lg hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300"
+          className="px-8 py-4 border border-gray-500 text-gray-300 rounded-lg font-bold text-lg hover:border-blue-400 hover:text-blue-400 hover:bg-blue-500/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => window.location.href = '/live-studio'}
+          aria-label="Watch demo of the live studio workspace"
         >
           ▶ Watch Demo
         </motion.button>
-      </motion.div>
+      </div>
 
       {/* Social Proof */}
       <motion.div
@@ -473,7 +425,7 @@ const ProjectShowcase = () => (
   <section className="py-24 px-6 border-t border-gray-800/50">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           Featured Case Studies
         </h2>
         <p className="text-xl text-gray-400">
@@ -531,87 +483,15 @@ const ProjectShowcase = () => (
               </div>
 
               <div className="mt-6 flex items-center gap-2 text-blue-400 group-hover:gap-3 transition-all">
-                <span className="text-sm font-semibold">Read Case Study</span>
-                <ArrowRight className="w-4 h-4" />
+                <a
+                  href="#"
+                  className="inline-flex items-center gap-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
+                  aria-label={`Read case study: ${project.name}`}
+                >
+                  <span>Read Case Study</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
-  </section>
-);
-
-/**
- * Command Center Modules Grid
- */
-const CommandCenterModules = () => (
-  <section className="py-24 px-6 border-t border-gray-800/50 relative overflow-hidden">
-    {/* Background gradient orbs */}
-    <div className="absolute inset-0 -z-10">
-      <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full mix-blend-screen filter blur-3xl" />
-      <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full mix-blend-screen filter blur-3xl" />
-    </div>
-
-    <div className="max-w-7xl mx-auto">
-      <motion.div {...fadeInUp} className="mb-16 text-center">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
-          Command Center Modules
-        </h2>
-        <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-          Five integrated powerhouses working together to automate, create, broadcast, and analyze
-        </p>
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
-        variants={staggerContainer}
-        initial="initial"
-        whileInView="whileInView"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        {commandModules.map((module, idx) => (
-          <motion.div
-            key={module.id}
-            variants={fadeInUp}
-            className="group relative bg-white/10 backdrop-blur-md border border-blue-500/30 rounded-xl p-6 hover:border-blue-400/60 hover:bg-white/15 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 cursor-pointer h-full"
-          >
-            {/* Module Badge */}
-            <div className="inline-block mb-3">
-              <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-600/30 text-blue-300 border border-blue-500/50">
-                {module.badge}
-              </span>
-            </div>
-
-            {/* Icon */}
-            <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
-              {module.icon}
-            </div>
-
-            {/* Title */}
-            <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
-              {module.title}
-            </h3>
-
-            {/* Description */}
-            <p className="text-sm text-gray-400 mb-4 line-clamp-2">
-              {module.description}
-            </p>
-
-            {/* Features */}
-            <div className="space-y-2 mb-4">
-              {module.features.slice(0, 2).map((feature, i) => (
-                <div key={i} className="text-xs text-gray-500 flex items-center gap-2">
-                  <span className="w-1 h-1 bg-blue-400 rounded-full" />
-                  {feature}
-                </div>
-              ))}
-            </div>
-
-            {/* Learn More Link */}
-            <div className="text-blue-400 text-sm font-semibold group-hover:text-blue-300 flex items-center gap-1 pt-2 border-t border-blue-500/20">
-              Explore
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </motion.div>
         ))}
@@ -627,7 +507,7 @@ const FeaturesSection = () => (
   <section className="py-24 px-6 border-t border-gray-800/50 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           Powerful Features
         </h2>
         <p className="text-xl text-gray-400">
@@ -648,7 +528,7 @@ const FeaturesSection = () => (
             variants={fadeInUp}
             className="group p-8 rounded-xl border border-gray-700 bg-gradient-to-br from-gray-900/50 to-black hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300"
           >
-            <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
+            <div className="mb-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
               {feature.icon}
             </div>
 
@@ -678,7 +558,7 @@ const DashboardPreview = () => (
   <section className="py-24 px-6 border-t border-gray-800/50">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           Intelligent Dashboards
         </h2>
         <p className="text-xl text-gray-400">
@@ -783,10 +663,10 @@ const DashboardPreview = () => (
  * AI Insights Panel
  */
 const InsightsSection = () => (
-  <section className="py-24 px-6 border-t border-gray-800/50 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent">
+  <section className="py-24 px-6 border-t border-gray-800/50 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           AI Insights & Recommendations
         </h2>
         <p className="text-xl text-gray-400">
@@ -805,20 +685,21 @@ const InsightsSection = () => (
           <motion.div
             key={insight.id}
             variants={fadeInUp}
-            className="group p-6 rounded-lg border border-gray-700 bg-gradient-to-br from-gray-900/50 to-black hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300"
+            className="group p-6 rounded-lg border border-gray-700 bg-gradient-to-br from-gray-900/50 to-black hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300"
           >
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1 text-blue-400 group-hover:scale-110 transition-transform">
+              <div className="flex-shrink-0 mt-1 text-purple-400 group-hover:scale-110 transition-transform">
                 {insight.icon}
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
                   {insight.title}
                 </h3>
                 <p className="text-gray-400 text-sm mb-4">{insight.description}</p>
                 <a
                   href={insight.link}
-                  className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  className="inline-flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
+                  aria-label={`Learn more about: ${insight.title}`}
                 >
                   Learn More <ArrowRight className="w-4 h-4" />
                 </a>
@@ -834,11 +715,11 @@ const InsightsSection = () => (
 /**
  * Pricing Section
  */
-const PricingSection = () => (
+const PricingSection = ({ onGetStarted }: { onGetStarted: (tierId: string) => void }) => (
   <section className="py-24 px-6 border-t border-gray-800/50">
     <div className="max-w-6xl mx-auto">
       <motion.div {...fadeInUp} className="mb-16 text-center">
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
+        <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
           Simple, Transparent Pricing
         </h2>
         <p className="text-xl text-gray-400 mb-4">
@@ -888,13 +769,15 @@ const PricingSection = () => (
               </div>
 
               <motion.button
-                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 mb-8 ${
+                className={`w-full py-3 rounded-lg font-bold transition-all duration-300 mb-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                   tier.recommended
                     ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-lg hover:shadow-blue-500/50'
                     : 'border border-gray-600 text-gray-300 hover:border-blue-400 hover:text-blue-400'
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => onGetStarted(tier.id)}
+                aria-label={`Get started with ${tier.name} plan at $${tier.price} per month`}
               >
                 Get Started
               </motion.button>
@@ -931,168 +814,6 @@ const PricingSection = () => (
 );
 
 /**
- * Live Studio Section
- */
-const LiveStudioSection = () => (
-  <section className="py-24 px-6 border-t border-gray-800/50 relative overflow-hidden" suppressHydrationWarning>
-    {/* Animated background */}
-    <div className="absolute inset-0 -z-10">
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-cyan-600/10 rounded-full mix-blend-screen filter blur-3xl" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full mix-blend-screen filter blur-3xl" />
-    </div>
-
-    <div className="max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-16 text-center">
-        <div className="inline-block mb-6">
-          <span className="px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm">
-            <span className="text-sm text-blue-300 font-medium flex items-center gap-2">
-              🎬 LIVE STREAMING & PRODUCTION
-            </span>
-          </span>
-        </div>
-        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-widest">
-          WISE² Live Studio
-        </h2>
-        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-          Professional-grade live streaming, recording, and content production platform built for creators, producers, and enterprises
-        </p>
-      </div>
-
-      {/* Main showcase grid */}
-      <div className="grid md:grid-cols-2 gap-8 mb-16">
-        {/* Left - Features */}
-        <div className="space-y-6">
-          <div className="bg-white/10 backdrop-blur-md rounded-xl border border-blue-500/30 p-8">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Multi-Platform Broadcasting
-            </h3>
-            <p className="text-gray-300 mb-6">
-              Stream simultaneously to YouTube, Twitch, Facebook, LinkedIn, and more with a single click
-            </p>
-            <ul className="space-y-3">
-              {[
-                'Multi-destination streaming',
-                'Real-time chat integration',
-                'Advanced mixer controls',
-                'Live analytics dashboard'
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-300" suppressHydrationWarning>
-                  <span className="text-blue-400">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Right - Showcase */}
-        <div className="space-y-6">
-          <div className="bg-white/10 backdrop-blur-md rounded-xl border border-blue-400/30 shadow-lg shadow-blue-500/20 p-8 min-h-full">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Professional Production Suite
-            </h3>
-            <p className="text-gray-300 mb-6">
-              Everything you need for broadcast-quality streaming
-            </p>
-            <ul className="space-y-3">
-              {[
-                'Multiple camera inputs',
-                'Audio mixing & processing',
-                'Scene management & transitions',
-                'Built-in recording & archival'
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-300" suppressHydrationWarning>
-                  <span className="text-blue-400">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats/Metrics */}
-      <div className="grid md:grid-cols-4 gap-4 mb-16">
-        {[
-          { label: 'Concurrent Viewers', value: '10K+' },
-          { label: 'Video Platforms', value: '8+' },
-          { label: 'Recording Quality', value: '4K@60fps' },
-          { label: 'Uptime SLA', value: '99.99%' }
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-blue-500/20 text-center hover:border-blue-400 transition-all"
-          >
-            <div className="text-2xl font-bold text-blue-400 mb-2">{stat.value}</div>
-            <div className="text-sm text-gray-400">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Features Grid */}
-      <div className="grid md:grid-cols-3 gap-6 mb-16">
-        {[
-          {
-            icon: <Play className="w-6 h-6 text-blue-400" />,
-            title: 'Live Streaming',
-            description: 'Broadcast to multiple platforms simultaneously with adaptive bitrate'
-          },
-          {
-            icon: <Music className="w-6 h-6 text-blue-400" />,
-            title: 'Audio Production',
-            description: 'Professional-grade audio mixing with plugins and effects'
-          },
-          {
-            icon: <BarChart3 className="w-6 h-6 text-blue-400" />,
-            title: 'Real-time Analytics',
-            description: 'Live viewer counts, engagement metrics, and performance data'
-          },
-          {
-            icon: <Shield className="w-6 h-6 text-blue-400" />,
-            title: 'Secure & Reliable',
-            description: 'Enterprise-grade security with automatic failover and backup'
-          },
-          {
-            icon: <Code2 className="w-6 h-6 text-blue-400" />,
-            title: 'API Integration',
-            description: 'Integrate with your existing tools and workflows'
-          },
-          {
-            icon: <Users className="w-6 h-6 text-blue-400" />,
-            title: 'Team Collaboration',
-            description: 'Manage streams with multiple team members in real-time'
-          }
-        ].map((feature, i) => (
-          <div
-            key={i}
-            className="bg-white/10 backdrop-blur-md p-6 rounded-lg border border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer"
-          >
-            <div className="mb-3">{feature.icon}</div>
-            <h4 className="text-lg font-bold text-white mb-2">{feature.title}</h4>
-            <p className="text-gray-400 text-sm">{feature.description}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* CTA */}
-      <div className="text-center">
-        <div className="inline-flex flex-col sm:flex-row gap-4">
-          <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all duration-300">
-            Start Streaming Free
-            <ArrowRight className="w-5 h-5 inline-block ml-2" />
-          </button>
-
-          <button className="px-8 py-4 border border-blue-500/50 text-blue-300 rounded-lg font-bold text-lg hover:border-blue-400 hover:text-blue-200 hover:bg-blue-500/10 hover:scale-105 transition-all duration-300">
-            View Documentation
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-/**
  * CTA Section
  */
 const CTASection = ({ onBookConsultation }: { onBookConsultation: () => void }) => (
@@ -1110,7 +831,7 @@ const CTASection = ({ onBookConsultation }: { onBookConsultation: () => void }) 
       </div>
 
       <motion.h2
-        className="text-5xl md:text-6xl font-black text-white mb-6 uppercase tracking-widest"
+        className="text-5xl md:text-6xl font-black text-white mb-6"
         variants={fadeInUp}
         initial="initial"
         whileInView="whileInView"
@@ -1138,19 +859,22 @@ const CTASection = ({ onBookConsultation }: { onBookConsultation: () => void }) 
         viewport={{ once: true, amount: 0.3 }}
       >
         <motion.button
-          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onBookConsultation}
+          aria-label="Book a consultation with our sales team"
         >
           Book Your Consultation
           <ArrowRight className="w-5 h-5 inline-block ml-2" />
         </motion.button>
 
         <motion.button
-          className="px-8 py-4 border border-blue-400 text-blue-300 rounded-lg font-bold text-lg hover:bg-blue-500/10 transition-all duration-300"
+          className="px-8 py-4 border border-blue-400 text-blue-300 rounded-lg font-bold text-lg hover:bg-blue-500/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={onBookConsultation}
+          aria-label="Schedule a demo with our team"
         >
           Schedule a Demo
         </motion.button>
@@ -1185,25 +909,25 @@ const Footer = () => (
     <div className="max-w-6xl mx-auto">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Platform</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Platform</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/studio" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/#features" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Features
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/#pricing" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Pricing
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/status" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Status
               </a>
             </li>
@@ -1211,25 +935,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Documentation</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Documentation</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Getting Started
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/api" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 API Reference
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/guides" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Guides
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/docs/support" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Support
               </a>
             </li>
@@ -1237,25 +961,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Company</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Company</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/about" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 About
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/blog" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Blog
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/careers" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Careers
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/contact" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Contact
               </a>
             </li>
@@ -1263,25 +987,25 @@ const Footer = () => (
         </div>
 
         <div>
-          <h4 className="font-bold text-white mb-4 text-sm">Legal</h4>
+          <h3 className="font-bold text-white mb-4 text-sm">Legal</h3>
           <ul className="space-y-2 text-xs text-gray-400">
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/privacy" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Privacy
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/terms" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Terms
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/security" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Security
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-400 transition-colors">
+              <a href="/compliance" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400">
                 Compliance
               </a>
             </li>
@@ -1300,13 +1024,13 @@ const Footer = () => (
       <div className="border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500">
         <p>All rights reserved. Built with precision and care.</p>
         <div className="flex gap-6 mt-4 sm:mt-0">
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on Twitter">
             Twitter
           </a>
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on LinkedIn">
             LinkedIn
           </a>
-          <a href="#" className="hover:text-blue-400 transition-colors">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors focus:outline-none focus:text-blue-400" aria-label="Visit WISE² on GitHub">
             GitHub
           </a>
         </div>
@@ -1321,17 +1045,21 @@ const Footer = () => (
 
 export default function Home() {
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
+
+  const handleGetStarted = (tierId: string) => {
+    setSelectedTier(tierId);
+    setIntakeOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       <HeroSection onBookConsultation={() => setIntakeOpen(true)} />
-      <CommandCenterModules />
       <ProjectShowcase />
       <FeaturesSection />
       <DashboardPreview />
       <InsightsSection />
-      <LiveStudioSection />
-      <PricingSection />
+      <PricingSection onGetStarted={handleGetStarted} />
       <CTASection onBookConsultation={() => setIntakeOpen(true)} />
       <IntakeForm isOpen={intakeOpen} onClose={() => setIntakeOpen(false)} />
       <Footer />

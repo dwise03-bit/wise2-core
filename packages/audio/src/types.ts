@@ -2,6 +2,9 @@
  * Core types for the SoundLabs audio engine
  */
 
+// Force emission of this types module for proper declaration file generation
+export {};
+
 export interface AudioDeviceInfo {
   id: string;
   name: string;
