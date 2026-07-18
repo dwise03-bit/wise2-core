@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { BrainAuthModule } from './brain-auth/brain-auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AdminModule } from './admin/admin.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -21,6 +23,16 @@ import { APIStatusController } from './config/api-status.controller';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const mongoUri =
+          configService.get('MONGODB_URI') ||
+          'mongodb://localhost:27017/wise2-brain';
+        return { uri: mongoUri };
+      },
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -71,6 +83,7 @@ import { APIStatusController } from './config/api-status.controller';
     }),
     APIManagerModule,
     AuthModule,
+    BrainAuthModule,
     AdminModule,
     EmailModule,
     EventsModule,
