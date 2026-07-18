@@ -1184,8 +1184,7 @@ export default function Home() {
 
   return (
     <div suppressHydrationWarning className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Header temporarily disabled for debugging hydration issue */}
-      {/* <Header /> */}
+      <Header />
       <HeroSection onBookConsultation={() => mounted && setIntakeOpen(true)} />
       {/* LiveStudioSection temporarily disabled for debugging */}
       {/* <LiveStudioSection /> */}
