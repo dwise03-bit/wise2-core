@@ -16,6 +16,9 @@ export const defaultNavSections: NavSection[] = [
     title: 'Creative',
     items: [
       { id: 'media', label: 'Media', icon: '🎨', href: '/media' },
+      { id: 'jingle-lab', label: 'Jingle Lab', icon: '🎵', href: '/studio/jingle-lab', badge: 1 },
+      { id: 'soundlab', label: 'SoundLab', icon: '🎚️', href: '/soundlab' },
+      { id: 'live-studio', label: 'Live Studio', icon: '📹', href: '/live-studio' },
       { id: 'labs', label: 'Labs', icon: '🧪', href: '/labs' },
       { id: 'ai', label: 'AI', icon: '✨', href: '/ai', badge: 12 },
     ],
