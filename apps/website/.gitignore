@@ -1,0 +1,35 @@
+# Environment Variables
+# Never commit local configuration or secrets
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# Next.js
+.next/
+out/
+build/
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Build artifacts
+*.tsbuildinfo
+dist/

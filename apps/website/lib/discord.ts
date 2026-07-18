@@ -85,3 +85,42 @@ export const sendToDiscord = async (
     return false;
   }
 };
+
+export const notifyFormSubmission = async (
+  formData: Record<string, string | FormDataEntryValue>
+): Promise<boolean> => {
+  if (!process.env.DISCORD_WEBHOOK_URL) {
+    console.log('[Discord Webhook] Form submission - webhook not configured');
+    return true;
+  }
+
+  try {
+    const payload: DiscordWebhookPayload = {
+      username: 'WISE² Form Submission',
+      embeds: [
+        {
+          title: 'New Form Submission',
+          description: 'A new form has been submitted on the website',
+          color: 0x0055ff,
+          fields: Object.entries(formData).map(([key, value]) => ({
+            name: key.charAt(0).toUpperCase() + key.slice(1),
+            value: String(value),
+            inline: false,
+          })),
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    };
+
+    const response = await fetch(process.env.DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Error notifying Discord of form submission:', error);
+    return false;
+  }
+};

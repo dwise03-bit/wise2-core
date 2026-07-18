@@ -1,76 +1,39 @@
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import { NextRequest, NextResponse } from 'next/server';
 
-const UPLOAD_DIR = join(process.cwd(), 'public', 'uploads', 'intake');
-const MAX_FILES = 5;
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-];
-const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif'];
-
+/**
+ * POST /api/intake/upload
+ * Handle file uploads from forms
+ */
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const files = formData.getAll('files') as File[];
+    const file = formData.get('file') as File;
 
-    if (!files || files.length === 0) {
-      return NextResponse.json({ success: false, error: 'No files provided' }, { status: 400 });
-    }
-
-    if (files.length > MAX_FILES) {
+    if (!file) {
       return NextResponse.json(
-        { success: false, error: `Maximum ${MAX_FILES} files allowed` },
+        { error: 'No file provided' },
         { status: 400 }
       );
     }
 
-    // Validate files
-    for (const file of files) {
-      if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { success: false, error: `File "${file.name}" exceeds maximum size of 5MB` },
-          { status: 400 }
-        );
-      }
+    const fileData = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      uploadedAt: new Date().toISOString(),
+    };
 
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-        if (!ALLOWED_EXTENSIONS.includes(ext)) {
-          return NextResponse.json(
-            { success: false, error: `File type not allowed: ${file.type || ext}` },
-            { status: 400 }
-          );
-        }
-      }
-    }
+    console.log('File uploaded:', fileData);
 
-    // Create upload directory if it doesn't exist
-    await mkdir(UPLOAD_DIR, { recursive: true });
-
-    // Upload files
-    const urls: string[] = [];
-    for (const file of files) {
-      const buffer = await file.arrayBuffer();
-      const timestamp = Date.now();
-      const filename = `${timestamp}-${file.name}`;
-      const filepath = join(UPLOAD_DIR, filename);
-
-      await writeFile(filepath, Buffer.from(buffer));
-      urls.push(`/uploads/intake/${filename}`);
-    }
-
-    return NextResponse.json({ success: true, urls }, { status: 200 });
+    return NextResponse.json({
+      success: true,
+      file: fileData,
+    });
   } catch (error) {
-    console.error('File upload error:', error);
+    console.error('Upload error:', error);
+    const message = error instanceof Error ? error.message : 'Failed to upload file';
     return NextResponse.json(
-      { success: false, error: 'File upload failed' },
+      { error: message },
       { status: 500 }
     );
   }

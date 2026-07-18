@@ -102,7 +102,7 @@ const Header = () => {
 
 // Premium Hero
 const HeroSection = () => (
-  <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 px-6">
+  <section suppressHydrationWarning className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 px-6">
     {/* Premium gradient background */}
     <div className="absolute inset-0 -z-10">
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#0055FF]/20 rounded-full mix-blend-screen filter blur-3xl" />
