@@ -8,8 +8,8 @@ COPY package.json package-lock.json ./
 COPY packages ./packages
 COPY apps/website ./apps/website
 
-# Install all dependencies (use npm ci --workspaces to link monorepo workspaces)
-RUN npm ci --workspaces
+# Install all dependencies with workspace support
+RUN npm install --frozen-lockfile
 
 # Build website only (cd into website to avoid turbo loop)
 RUN cd apps/website && npm run build

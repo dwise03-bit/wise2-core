@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 COPY packages ./packages
 COPY apps/studio ./apps/studio
 
-RUN npm ci --workspaces
+RUN npm install --frozen-lockfile
 
 WORKDIR /app/apps/studio
 RUN npm run build

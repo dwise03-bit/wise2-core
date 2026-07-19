@@ -7,7 +7,7 @@ COPY packages ./packages
 COPY apps/website ./apps/website
 COPY apps/dashboard ./apps/dashboard
 
-RUN npm ci --workspaces
+RUN npm install --frozen-lockfile
 
 WORKDIR /app/apps/dashboard
 RUN npm run build

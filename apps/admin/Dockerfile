@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 COPY packages ./packages
 COPY apps/admin ./apps/admin
 
-RUN npm ci --workspaces
+RUN npm install --frozen-lockfile
 
 WORKDIR /app/apps/admin
 RUN npm run build
