@@ -60,33 +60,6 @@ services:
       retries: 5
     restart: unless-stopped
 
-  mongodb:
-    image: mongo:7-alpine
-    container_name: wise2-mongodb-prod
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-secure_mongodb_admin_2026}
-      MONGO_INITDB_DATABASE: wise2-brain
-    ports:
-      - "127.0.0.1:27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-      - mongodb_config:/data/configdb
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
-        reservations:
-          cpus: '0.5'
-          memory: 512M
-
   api:
     build:
       context: .
@@ -139,8 +112,6 @@ services:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      mongodb:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -290,10 +261,6 @@ volumes:
   prometheus_data:
     driver: local
   grafana_data:
-    driver: local
-  mongodb_data:
-    driver: local
-  mongodb_config:
     driver: local
 
 # DATABASE_URL fix
