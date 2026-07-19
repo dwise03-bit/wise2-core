@@ -1,16 +1,9 @@
-name: Deploy to Production
+name: Deploy to Production (DISABLED - use manual SSH deployment)
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'apps/website/**'
-      - 'apps/dashboard/**'
-      - 'apps/admin/**'
-      - 'packages/api/**'
-      - 'docker-compose.prod.yml'
-      - '.github/workflows/deploy-production.yml'
+  # Deployment is now manual only - use scripts/deploy.sh
+  # This workflow is disabled to prevent conflicts with manual deployment
+  workflow_dispatch:  # Can be triggered manually if needed, but not automatic
 
 concurrency:
   group: deploy-production

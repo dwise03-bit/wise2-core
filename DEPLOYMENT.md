@@ -1,52 +1,122 @@
-# SoundLabs Live Studio - Docker Production Deployment Guide
+# WISE² Production Deployment
 
-## ✅ Production Status (2026-07-14)
-- **Studio (Audio Engine)**: 100% Production Ready ✅
-- **Clip Editor & Playback**: Complete ✅
-- **Recording & Metering**: Full Web Audio API support ✅
-- **Docker Stack**: Multi-service ready ✅
-- **All Systems**: Build passing, optimized for deployment ✅
+**Deployment Method:** Manual SSH deployment only (automated GitHub Actions disabled)
 
-## Quick Start - Docker Deployment
-
-### Prerequisites
-- Docker 20.10+
-- Docker Compose 2.0+
-- 4GB+ RAM, 20GB+ disk space
-
-### 1. Clone & Configure
+## Quick Start
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/wise2-core.git
-cd wise2-core
-
-# Copy production environment template
-cp .env.production.example .env.production
-
-# Edit with your production values
-# CRITICAL: Change these values!
-# - DB_PASSWORD
-# - REDIS_PASSWORD  
-# - JWT_SECRET
-# - NEXT_PUBLIC_API_URL
-nano .env.production
+./scripts/deploy.sh
 ```
 
-### 2. Build & Deploy
+This deploys to `dwise@173.208.147.165` with default parameters. For custom server:
 
 ```bash
-# Build Docker image
-docker build -t wise2-soundlabs:latest .
+./scripts/deploy.sh [server-user@server-host]
+```
 
-# Start all services
-docker-compose up -d
+## What the Deployment Script Does
 
-# Verify services are running
-docker-compose ps
+1. **Validates environment**
+   - Checks SSH key exists (~/.ssh/id_ed25519)
+   - Ensures git working directory is clean
+   - Confirms you're on main branch
 
-# Monitor startup logs
-docker-compose logs -f studio
+2. **Pushes code to GitHub**
+   - `git push origin main`
+
+3. **Deploys to production server**
+   - Pulls latest code from GitHub
+   - Stops the website container
+   - Removes old Docker image (forces fresh build)
+   - Rebuilds website image without cache
+   - Starts website container
+   - Waits for health check (localhost:3000)
+   - Logs final status
+
+## Manual Steps (if script fails)
+
+If you need to deploy manually without the script:
+
+```bash
+# 1. SSH to server
+ssh -i ~/.ssh/id_ed25519 dwise@173.208.147.165
+
+# 2. Pull latest code
+cd /home/dwise/wise2-core
+git fetch origin
+git checkout main
+git pull origin main
+
+# 3. Rebuild and deploy
+docker-compose -f docker-compose.prod.yml stop website
+docker rmi wise2-core_website:latest  # Remove old image
+timeout 600 docker-compose -f docker-compose.prod.yml build website --no-cache
+docker-compose -f docker-compose.prod.yml up -d website
+
+# 4. Verify
+curl http://localhost:3000  # Should return 200
+docker-compose -f docker-compose.prod.yml logs website --tail 20
+```
+
+## Production Server Details
+
+- **Host:** 173.208.147.165 (gpu-nmls)
+- **User:** dwise
+- **SSH Key:** ~/.ssh/id_ed25519
+- **Project Path:** /home/dwise/wise2-core
+- **Public URL:** https://wise2.net
+- **Website Port:** 3000 (localhost) → 443 (https via nginx)
+
+## Why Manual Deployment?
+
+GitHub Actions was causing issues:
+- Deployment secrets weren't configured
+- Workflow skipped silently (showed as "success")
+- Manual control gives better visibility and reliability
+- Faster iteration during development
+- Clear error messages and logs
+
+## Troubleshooting
+
+### Website still shows old design after deploy
+
+Browser cache issue:
+```bash
+# Hard refresh in browser
+Cmd+Shift+R (Mac)
+Ctrl+Shift+R (Windows/Linux)
+```
+
+### Build fails with "No such file or directory"
+
+Usually missing data files - ensure committed to git:
+```bash
+git ls-files | grep apps/website/data/
+```
+
+### Cannot connect to server
+
+Verify SSH key:
+```bash
+ssh-keyscan -t rsa 173.208.147.165 | grep -c ssh-rsa  # Should be > 0
+ssh -i ~/.ssh/id_ed25519 dwise@173.208.147.165 echo "✓ Connected"
+```
+
+## Monitoring
+
+Check deployment status:
+```bash
+ssh dwise@173.208.147.165 docker ps | grep website
+```
+
+View logs:
+```bash
+ssh dwise@173.208.147.165 docker-compose -f /home/dwise/wise2-core/docker-compose.prod.yml logs website --tail 50
+```
+
+Test website:
+```bash
+curl https://wise2.net  # Should return 200
 ```
 
 ### 3. Access Application
