@@ -2,35 +2,34 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { branding } from '@/data/wise2-content';
 
 export const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/worlds', label: 'Our Worlds' },
+    { href: '/studio', label: 'Studio' },
+    { href: '/live', label: 'Live' },
     { href: '/services', label: 'Services' },
-    { href: '/about', label: 'About' },
     { href: '/process', label: 'Process' },
     { href: '/work', label: 'Work' },
-    { href: '/pricing', label: 'Pricing' },
+    { href: '/heroes', label: 'Visionaries' },
     { href: '/contact', label: 'Contact' },
   ];
 
   return (
     <nav className="fixed w-full top-0 z-50 group">
-      {/* Background with Glass Effect */}
-      <div className="absolute inset-0 bg-wise-bg-primary/90 backdrop-blur-xl border-b border-wise-accent-green/30 group-hover:border-wise-accent-green/50 transition-colors duration-300" />
+      {/* WISE² Black with Neon Green Border */}
+      <div className="absolute inset-0 bg-black/95 backdrop-blur-xl border-b border-lime-400/30 group-hover:border-lime-400/50 transition-colors duration-300" />
 
-      {/* Subtle Glow */}
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-wise-accent-green/0 via-wise-accent-green/20 to-wise-accent-green/0" />
+      {/* Neon Glow Line */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-lime-400/0 via-lime-400/30 to-lime-400/0" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-wise-accent-green font-display hover:text-white transition-colors duration-300">
-            W²
+          {/* WISE² Logo */}
+          <Link href="/" className="text-2xl font-bold text-lime-400 hover:text-lime-300 transition-colors duration-300" style={{ fontFamily: 'Beyond The Mountains' }}>
+            WISE<sup className="text-xs">²</sup>
           </Link>
 
           {/* Desktop Navigation */}
@@ -39,26 +38,25 @@ export const Navigation: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-wise-text-primary hover:text-wise-accent-green transition-colors duration-300 font-display group/link"
+                className="relative text-gray-300 hover:text-lime-400 transition-colors duration-300 font-mono text-sm tracking-wider group/link"
               >
                 {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-wise-accent-green group-hover/link:w-full transition-all duration-300" />
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover/link:w-full transition-all duration-300" />
               </Link>
             ))}
             <Link
-              href="/start-your-build"
-              className="px-6 py-2 relative group/btn rounded-lg font-bold text-wise-bg-primary hover:scale-105 transition-all duration-300"
+              href="/"
+              className="px-6 py-2 relative group/btn rounded font-bold text-black hover:scale-105 transition-all duration-300 bg-lime-400"
             >
-              <div className="absolute inset-0 bg-wise-accent-green rounded-lg group-hover/btn:bg-white transition-all duration-300" />
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-wise-accent-green to-wise-accent-green rounded-lg opacity-0 group-hover/btn:opacity-100 blur transition-all duration-300" />
-              <span className="relative">✦ Start</span>
+              <div className="absolute -inset-0.5 bg-lime-400/50 rounded blur opacity-0 group-hover/btn:opacity-100 transition-all duration-300" />
+              <span className="relative">START</span>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-wise-accent-green p-2 hover:bg-wise-accent-green/10 rounded-lg transition-all duration-300"
+            className="md:hidden text-lime-400 p-2 hover:bg-lime-400/10 rounded-lg transition-all duration-300"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -68,23 +66,23 @@ export const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden pb-4 border-t border-wise-accent-green/30 bg-wise-bg-primary/50 backdrop-blur-sm -mx-4 px-4 rounded-b-xl">
+          <div className="md:hidden pb-4 border-t border-lime-400/30 bg-black/80 backdrop-blur-sm -mx-4 px-4 rounded-b-xl">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="block py-2 text-wise-text-primary hover:text-wise-accent-green hover:pl-2 transition-all duration-300 font-display"
+                className="block py-2 text-gray-300 hover:text-lime-400 hover:pl-2 transition-all duration-300 font-mono text-sm"
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
             <Link
-              href="/start-your-build"
-              className="block mt-4 px-6 py-2 bg-wise-accent-green/80 hover:bg-wise-accent-green text-wise-bg-primary font-bold rounded-lg text-center transition-all duration-300"
+              href="/"
+              className="block mt-4 px-6 py-2 bg-lime-400 text-black font-bold rounded text-center transition-all duration-300"
               onClick={() => setIsOpen(false)}
             >
-              ✦ Start Build
+              START
             </Link>
           </div>
         )}

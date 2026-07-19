@@ -1,70 +1,47 @@
-import Link from 'next/link';
-import { branding, contact } from '@/data/wise2-content';
+'use client';
 
-export const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-
-  const links = [
-    { href: '/', label: 'Home' },
-    { href: '/worlds', label: 'Our Worlds' },
-    { href: '/services', label: 'Services' },
-    { href: '/about', label: 'About' },
-    { href: '/process', label: 'Process' },
-    { href: '/work', label: 'Work' },
-  ];
-
+export const Footer = () => {
   return (
-    <footer className="bg-wise-bg-secondary border-t border-wise-accent-green-border text-wise-text-muted">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand */}
+    <footer className="bg-black border-t border-gray-800 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div>
-            <h3 className="text-2xl font-bold text-wise-accent-green font-display mb-2">W²</h3>
-            <p className="text-sm">{branding.tagline}</p>
+            <h3 className="text-lime-400 font-black mb-2 text-lg" style={{ fontFamily: '"Beyond The Mountains", sans-serif' }}>
+              WISE<sup className="text-xs">²</sup>
+            </h3>
+            <p className="text-gray-500 text-sm font-mono">Organized Chaos</p>
           </div>
 
-          {/* Links */}
           <div>
-            <h4 className="font-bold text-wise-text-primary mb-4">Navigate</h4>
-            <ul className="space-y-2">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="hover:text-wise-accent-green transition-colors">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="text-white font-bold mb-4 text-sm font-mono tracking-wider">EXPLORE</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><a href="/" className="hover:text-lime-400 transition">Intake Form</a></li>
+              <li><a href="/studio" className="hover:text-lime-400 transition">Studio</a></li>
+              <li><a href="/live" className="hover:text-lime-400 transition">Live</a></li>
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-bold text-wise-text-primary mb-4">Contact</h4>
-            <p className="text-sm mb-2">{contact.email}</p>
-            <p className="text-sm">{contact.phone}</p>
+            <h4 className="text-white font-bold mb-4 text-sm font-mono tracking-wider">COMPANY</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><a href="/work" className="hover:text-lime-400 transition">Work</a></li>
+              <li><a href="/heroes" className="hover:text-lime-400 transition">Visionaries</a></li>
+              <li><a href="/contact" className="hover:text-lime-400 transition">Contact</a></li>
+            </ul>
           </div>
 
-          {/* Social */}
           <div>
-            <h4 className="font-bold text-wise-text-primary mb-4">Social</h4>
-            <div className="flex gap-4">
-              <a href={contact.social.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-wise-accent-green transition-colors">
-                Twitter
-              </a>
-              <a href={contact.social.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-wise-accent-green transition-colors">
-                Instagram
-              </a>
-              <a href={contact.social.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-wise-accent-green transition-colors">
-                LinkedIn
-              </a>
-            </div>
+            <h4 className="text-white font-bold mb-4 text-sm font-mono tracking-wider">LEGAL</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><a href="#" className="hover:text-lime-400 transition">Privacy</a></li>
+              <li><a href="#" className="hover:text-lime-400 transition">Terms</a></li>
+            </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-wise-accent-green-border pt-8">
-          <p className="text-center text-sm">
-            © {currentYear} {branding.name}. All rights reserved.
+        <div className="border-t border-gray-800 pt-8">
+          <p className="text-center text-xs text-gray-600 font-mono tracking-wider">
+            © 2026 WISE² • Wise Defense LLC • All rights reserved
           </p>
         </div>
       </div>

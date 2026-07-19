@@ -81,8 +81,8 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
               }
             }}
             animate={{
-              backgroundColor: isChecked ? '#0055FF' : 'rgba(13, 17, 23, 0.5)',
-              borderColor: isChecked ? '#0055FF' : 'rgb(19, 25, 34)',
+              backgroundColor: isChecked ? '#39FF14' : 'rgba(13, 17, 23, 0.5)',
+              borderColor: isChecked ? '#39FF14' : 'rgb(19, 25, 34)',
             }}
             transition={{ duration: 0.2 }}
           >

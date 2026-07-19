@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
-import { SiteNav } from './components/SiteNav';
-import { SiteFooter } from './components/SiteFooter';
+import { Navigation, Footer } from '@/components/wise';
 import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
 
 export const viewport: Viewport = {
@@ -56,18 +55,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body className="bg-wise text-wise-primary">
+      <body className="bg-wise-bg-primary text-wise-text-primary">
         <div className="min-h-screen flex flex-col">
-          {/* Navigation (hidden on pages that render their own, e.g. "/" and "/community") */}
-          <SiteNav />
-
           {/* Main Content */}
           <main className="flex-1">
             {children}
           </main>
-
-          {/* Footer (hidden on pages that render their own, e.g. "/") */}
-          <SiteFooter />
 
           {/* Global support chat */}
           <ChatWidgetWrapper />

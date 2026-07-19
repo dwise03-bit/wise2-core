@@ -1,7 +1,8 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigation, Footer } from '@/components/wise';
 
 const PLAN_DETAILS = {
@@ -22,7 +23,7 @@ const PLAN_DETAILS = {
   },
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const planId = searchParams.get('plan') || 'PRO';
@@ -74,7 +75,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <>
+    <div>
       <Navigation />
       <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,6 +190,14 @@ export default function CheckoutPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-wise-bg-primary" />}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

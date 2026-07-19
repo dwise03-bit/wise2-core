@@ -399,3 +399,122 @@ html {
     background-clip: text;
   }
 }
+
+/* ============================================================================
+   WISE² NEON GREEN GLOW EFFECTS (#39FF14)
+   ============================================================================ */
+
+/* Lime glow button effects */
+.btn-glow-lime {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.btn-glow-lime:hover {
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.4),
+              0 0 40px rgba(57, 255, 20, 0.2);
+  transform: scale(1.05);
+}
+
+.btn-glow-lime:active {
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.6),
+              0 0 60px rgba(57, 255, 20, 0.3);
+  transform: scale(0.98);
+}
+
+/* Lime glow text effects */
+.text-glow-lime {
+  color: #39FF14;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+
+.text-glow-lime:hover {
+  text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+}
+
+/* Lime glow border effects */
+.border-glow-lime {
+  border-color: rgba(57, 255, 20, 0.5);
+  box-shadow: inset 0 0 12px rgba(57, 255, 20, 0.1),
+              0 0 10px rgba(57, 255, 20, 0.2);
+  transition: all 0.3s ease;
+}
+
+.border-glow-lime:hover {
+  border-color: rgba(57, 255, 20, 0.7);
+  box-shadow: inset 0 0 12px rgba(57, 255, 20, 0.2),
+              0 0 20px rgba(57, 255, 20, 0.4);
+}
+
+/* Scanline effect (subtle) */
+.scanlines::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 9999;
+}
+
+/* Focus ring for accessibility (lime green) */
+*:focus {
+  outline: 2px solid #39FF14;
+  outline-offset: 2px;
+}
+
+input:focus,
+textarea:focus,
+button:focus,
+select:focus {
+  outline: 2px solid #39FF14;
+  outline-offset: 2px;
+}
+
+/* Accessibility: skip to content link */
+a.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+}
+
+a.skip-link:focus {
+  left: 0;
+  top: 0;
+  background: #39FF14;
+  color: #050505;
+  padding: 8px 16px;
+  text-decoration: none;
+  outline: none;
+}
+
+/* Smooth color transitions */
+.text-transition {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.bg-transition {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow-lime,
+  .border-glow-lime,
+  .text-transition,
+  .bg-transition,
+  button,
+  input,
+  textarea {
+    transition: none !important;
+    animation: none !important;
+  }
+}
