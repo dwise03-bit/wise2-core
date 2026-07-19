@@ -4,6 +4,7 @@ import { StudioNav } from '../components/Navigation/StudioNav';
 import { SupportWidget } from '../components/SupportWidget';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ErrorToastContainer } from '../components/ErrorToast';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'WISE² | Organized Chaos Command Center',
@@ -19,9 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-black text-white">
         <ErrorBoundary>
-          <main className="min-h-screen">{children}</main>
-          <SupportWidget />
-          <ErrorToastContainer />
+          <Providers>
+            <main className="min-h-screen">{children}</main>
+            <SupportWidget />
+            <ErrorToastContainer />
+          </Providers>
         </ErrorBoundary>
       </body>
     </html>

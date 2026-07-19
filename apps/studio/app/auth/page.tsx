@@ -1,32 +1,27 @@
 /**
  * Authentication Page
- * Provides login and signup interface for users
+ * Google OAuth sign-in/sign-up
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LoginForm } from '../../components/Auth/LoginForm';
-import { SignupForm } from '../../components/Auth/SignupForm';
-import { useAuth } from '../../hooks/useAuth';
-
-type AuthMode = 'login' | 'signup';
+import { useAuthContext } from '../../context/AuthContext';
+import { GoogleSignIn } from '../../components/Auth/GoogleSignIn';
 
 export default function AuthPage() {
   const router = useRouter();
-  const { login, signup, isAuthenticated, isLoading, error, clearError, isCheckingAuth } =
-    useAuth();
-  const [mode, setMode] = useState<AuthMode>('login');
+  const { isAuthenticated, isLoading } = useAuthContext();
 
   // Redirect to workspace if already authenticated
   useEffect(() => {
-    if (!isCheckingAuth && isAuthenticated) {
-      router.push('/workspace');
+    if (!isLoading && isAuthenticated) {
+      router.push('/');
     }
-  }, [isAuthenticated, isCheckingAuth, router]);
+  }, [isAuthenticated, isLoading, router]);
 
-  if (isCheckingAuth) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -38,29 +33,6 @@ export default function AuthPage() {
       </div>
     );
   }
-
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      await login(email, password);
-      router.push('/workspace');
-    } catch (error) {
-      // Error is handled by the hook and displayed in the form
-    }
-  };
-
-  const handleSignup = async (
-    email: string,
-    password: string,
-    name?: string
-  ) => {
-    try {
-      await signup(email, password, name);
-      // After signup, show message and switch to login
-      setMode('login');
-    } catch (error) {
-      // Error is handled by the hook and displayed in the form
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -91,34 +63,14 @@ export default function AuthPage() {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold mb-2">
-              {mode === 'login' ? 'Welcome Back' : 'Create Your Account'}
-            </h2>
+            <h2 className="text-2xl font-bold mb-2">Welcome to WISE² Studio</h2>
             <p className="text-gray-400 text-sm">
-              {mode === 'login'
-                ? 'Sign in to access your audio studio and projects'
-                : 'Join thousands of creators using WISE² Studio'}
+              Professional audio production, powered by AI
             </p>
           </div>
 
-          {/* Forms */}
-          {mode === 'login' ? (
-            <LoginForm
-              onSubmit={handleLogin}
-              isLoading={isLoading}
-              error={error}
-              onErrorClear={clearError}
-              onSwitchToSignup={() => setMode('signup')}
-            />
-          ) : (
-            <SignupForm
-              onSubmit={handleSignup}
-              isLoading={isLoading}
-              error={error}
-              onErrorClear={clearError}
-              onSwitchToLogin={() => setMode('login')}
-            />
-          )}
+          {/* Google OAuth */}
+          <GoogleSignIn />
 
           {/* Divider */}
           <div className="mt-8 pt-8 border-t border-blue-500/20">
@@ -135,12 +87,12 @@ export default function AuthPage() {
             Back to Home
           </a>
           <span>•</span>
-          <a href="#" className="hover:text-gray-300 transition">
-            Help Center
+          <a href="/pricing" className="hover:text-gray-300 transition">
+            Pricing
           </a>
           <span>•</span>
-          <a href="#" className="hover:text-gray-300 transition">
-            Contact Support
+          <a href="mailto:support@wise2.app" className="hover:text-gray-300 transition">
+            Support
           </a>
         </div>
       </div>

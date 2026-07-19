@@ -108,16 +108,24 @@ export default function Home() {
                         <button
                           key={project.id}
                           onClick={() => setSelectedProject(project.name)}
-                          className={`p-6 rounded-lg border-2 transition-all text-left hover:border-lime-400/50 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2 ${
+                          className={`p-6 rounded-lg border-2 transition-all duration-300 text-left group focus:outline-2 focus:outline-lime-400 focus:outline-offset-2 ${
                             selectedProject === project.name
-                              ? 'border-lime-400 bg-lime-400/5 ring-2 ring-lime-400/20'
-                              : 'border-gray-800 hover:border-gray-700'
+                              ? 'border-lime-400 bg-lime-400/10 ring-2 ring-lime-400/30 shadow-lg shadow-lime-400/20'
+                              : 'border-gray-800 hover:border-lime-400/50 hover:bg-gray-900/50 hover:shadow-md hover:shadow-lime-400/10'
                           }`}
                           aria-pressed={selectedProject === project.name}
                           aria-label={`Select ${project.name}: ${project.desc}`}
                         >
-                          <div className="text-white font-bold mb-1 text-sm">{project.name}</div>
-                          <div className="text-xs text-gray-500">{project.desc}</div>
+                          <div className={`font-bold mb-1 text-sm transition-colors duration-300 ${
+                            selectedProject === project.name ? 'text-lime-400' : 'text-white group-hover:text-lime-400/80'
+                          }`}>
+                            {project.name}
+                          </div>
+                          <div className={`text-xs transition-colors duration-300 ${
+                            selectedProject === project.name ? 'text-lime-400/70' : 'text-gray-500 group-hover:text-gray-400'
+                          }`}>
+                            {project.desc}
+                          </div>
                         </button>
                       ))}
                     </div>
@@ -126,7 +134,7 @@ export default function Home() {
                   <div className="flex gap-4">
                     <button
                       onClick={() => setStep(2)}
-                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold hover:bg-lime-300 hover:scale-105 transition-all duration-200 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
+                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold transition-all duration-300 hover:bg-lime-300 hover:scale-110 hover:shadow-lg hover:shadow-lime-400/50 active:scale-95 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
                     >
                       Continue →
                     </button>
@@ -158,7 +166,7 @@ export default function Home() {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Your name"
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition"
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition-all duration-300 hover:border-gray-700"
                       />
                     </div>
 
@@ -173,7 +181,7 @@ export default function Home() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="you@company.com"
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition"
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition-all duration-300 hover:border-gray-700"
                       />
                     </div>
 
@@ -211,7 +219,7 @@ export default function Home() {
                     <button
                       onClick={() => setStep(1)}
                       disabled={submitting}
-                      className="px-8 py-3 rounded border border-gray-800 text-white hover:border-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
+                      className="px-8 py-3 rounded border border-gray-800 text-white hover:border-lime-400/50 hover:bg-gray-900/50 hover:shadow-md hover:shadow-lime-400/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
                       aria-label="Go back to previous step"
                     >
                       ← Back
@@ -219,7 +227,7 @@ export default function Home() {
                     <button
                       onClick={handleSubmit}
                       disabled={submitting}
-                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold hover:bg-lime-300 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
+                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold hover:bg-lime-300 hover:scale-105 hover:shadow-lg hover:shadow-lime-400/50 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
                       aria-label={submitting ? 'Submitting form' : 'Submit form'}
                     >
                       {submitting ? (

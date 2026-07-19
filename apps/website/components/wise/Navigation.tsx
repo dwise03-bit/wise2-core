@@ -10,6 +10,8 @@ export const Navigation: React.FC = () => {
     { href: '/', label: 'Home' },
     { href: '/studio', label: 'Studio' },
     { href: '/live', label: 'Live' },
+    { href: '/jingle-lab', label: 'Jingle Lab' },
+    { href: '/print-on-demand', label: 'Print' },
     { href: '/services', label: 'Services' },
     { href: '/process', label: 'Process' },
     { href: '/work', label: 'Work' },

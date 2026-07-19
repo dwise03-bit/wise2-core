@@ -33,12 +33,39 @@ export function ProjectManager({
     setProjects(projectList.sort((a, b) => b.updatedAt - a.updatedAt));
   }, [persistence]);
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (!newProjectName.trim()) return;
 
+    setIsCreating(true);
     const projectId = `project-${Date.now()}`;
-    onProjectSelect(projectId, newProjectName.trim());
-    setNewProjectName('');
+    const now = Date.now();
+
+    const newProject = {
+      id: projectId,
+      name: newProjectName.trim(),
+      bpm: 120,
+      masterVolume: 1,
+      tracks: [
+        {
+          id: `track-${now}`,
+          name: 'Track 1',
+          volume: 1,
+          pan: 0,
+          muted: false,
+          solo: false,
+          color: '#0094FF',
+        },
+      ],
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const saved = await persistence.saveProject(newProject);
+    if (saved) {
+      setProjects([newProject, ...projects]);
+      onProjectSelect(projectId, newProjectName.trim());
+      setNewProjectName('');
+    }
     setIsCreating(false);
   };
 

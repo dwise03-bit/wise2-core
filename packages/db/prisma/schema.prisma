@@ -25,6 +25,15 @@ model User {
   soundLabsProjects SoundLabsProject[] @relation("soundLabsProjects")
   usageRecords      UsageRecord[] @relation("usageRecords")
 
+  // Collaboration relationships
+  collaborations    ProjectCollaborator[] @relation("collaborations")
+  sentInvites       ProjectInvite[] @relation("sentInvites")
+  acceptedInvites   ProjectInvite[] @relation("acceptedInvites")
+  comments          ProjectComment[] @relation("comments")
+  activities        ActivityLog[]
+  versions          VersionHistory[]
+  presence          UserPresence[]
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -274,6 +283,14 @@ model SoundLabsProject {
   // Recordings associated with this project
   recordings      SoundLabsRecording[]
 
+  // Collaboration data
+  collaborators   ProjectCollaborator[] @relation("collaborators")
+  invites         ProjectInvite[] @relation("invites")
+  comments        ProjectComment[] @relation("comments")
+  activityLog     ActivityLog[] @relation("activityLog")
+  versions        VersionHistory[] @relation("versions")
+  presence        UserPresence[] @relation("presence")
+
   // Storage info
   projectSize     Int       @default(0)  // bytes
 
@@ -313,4 +330,141 @@ enum UploadStatus {
   UPLOADING
   COMPLETED
   FAILED
+}
+
+// ===== REAL-TIME COLLABORATION SYSTEM =====
+
+// ProjectCollaborator: Track collaborators and their roles
+model ProjectCollaborator {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("collaborators", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User      @relation("collaborations", fields: [userId], references: [id], onDelete: Cascade)
+
+  role            CollaboratorRole @default(EDITOR)
+  permissions     String[]  @default([])
+  joinedAt        DateTime  @default(now())
+  lastActiveAt    DateTime  @default(now())
+  status          String    @default("active")
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+enum CollaboratorRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+// ProjectInvite: Shareable invitations for projects
+model ProjectInvite {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("invites", fields: [projectId], references: [id], onDelete: Cascade)
+
+  invitedBy       String
+  invitedByUser   User      @relation("sentInvites", fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  invitedEmail    String
+  token           String    @unique
+  role            CollaboratorRole @default(EDITOR)
+
+  expiresAt       DateTime?
+  acceptedAt      DateTime?
+  acceptedBy      String?
+  acceptedByUser  User?     @relation("acceptedInvites", fields: [acceptedBy], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime  @default(now())
+
+  @@index([projectId])
+  @@index([token])
+}
+
+// ProjectComment: Comments and annotations on projects
+model ProjectComment {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("comments", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User      @relation("comments", fields: [userId], references: [id], onDelete: Cascade)
+
+  content         String    @db.Text
+  timestamp       Float?    // in seconds, for audio timeline
+  trackId         String?   // which track this comment is on
+  threadId        String?   // for threaded comments
+
+  mentions        String[]  @default([])
+  reactions       Json      @default("{}")
+  resolved        Boolean   @default(false)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([threadId])
+  @@index([userId])
+}
+
+// ActivityLog: Comprehensive audit trail
+model ActivityLog {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("activityLog", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User      @relation("activities", fields: [userId], references: [id], onDelete: Cascade)
+
+  action          String    // "volume_changed", "track_added", "comment_added", etc.
+  entityType      String    // "track", "mixer", "gallery", "comment", etc.
+  entityId        String?
+  details         Json      @default("{}")
+
+  createdAt       DateTime  @default(now())
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// VersionHistory: Track project snapshots for version control
+model VersionHistory {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("versions", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User      @relation("versions", fields: [userId], references: [id], onDelete: Cascade)
+
+  snapshot        Json      // Full project state
+  label           String?   // User-provided label like "Final Mix v2"
+  changeLog       String?   @db.Text // Description of changes
+
+  createdAt       DateTime  @default(now())
+
+  @@index([projectId])
+  @@index([createdAt])
+}
+
+// UserPresence: Track active collaborators (real-time)
+model UserPresence {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation("presence", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User      @relation("presence", fields: [userId], references: [id], onDelete: Cascade)
+
+  status          String    @default("online") // "online", "away", "idle"
+  cursorPosition  Json?     // { x, y, track, time }
+  editingTrackId  String?
+  lastHeartbeat   DateTime  @default(now())
+  socketId        String?
+
+  @@unique([projectId, userId])
+  @@index([projectId])
 }

@@ -1,0 +1,472 @@
+/**
+ * Web Design Service
+ * Handles HTML/CSS generation, export, and design utilities
+ */
+
+import {
+  DesignElement,
+  DesignProject,
+  DesignExport,
+  ElementStyle,
+  AnimationConfig,
+  ExportOptions,
+} from '../types/web-design';
+
+/**
+ * Convert CSS object to string
+ */
+const stylesToCSSString = (styles: ElementStyle): string => {
+  const cssRules: string[] = [];
+
+  Object.entries(styles).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+
+    // Convert camelCase to kebab-case
+    const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    cssRules.push(`${cssKey}: ${value};`);
+  });
+
+  return cssRules.join(' ');
+};
+
+/**
+ * Generate CSS class for animation
+ */
+const generateAnimationCSS = (animation: AnimationConfig, elementId: string): string => {
+  if (!animation) return '';
+
+  const keyframes = getAnimationKeyframes(animation.type);
+  const duration = animation.duration / 1000;
+  const delay = animation.delay / 1000;
+
+  return `
+@keyframes ${animation.type}-${elementId} {
+  ${keyframes}
+}
+
+.${elementId}-animated {
+  animation: ${animation.type}-${elementId} ${duration}s ${animation.easing} ${delay}s ${
+    animation.repeat ? 'infinite' : '1'
+  };
+}`;
+};
+
+/**
+ * Get keyframes for animation type
+ */
+const getAnimationKeyframes = (type: string): string => {
+  const keyframes: Record<string, string> = {
+    fade: `
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  `,
+    slideIn: `
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  `,
+    scaleIn: `
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  `,
+    rotateIn: `
+    0% { transform: rotate(-45deg); opacity: 0; }
+    100% { transform: rotate(0deg); opacity: 1; }
+  `,
+    bounceIn: `
+    0% { transform: scale(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: scale(1); }
+  `,
+    pulse: `
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  `,
+    wiggle: `
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+  `,
+    flip: `
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  `,
+    zoom: `
+    0% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+  `,
+  };
+
+  return keyframes[type] || keyframes.fade;
+};
+
+/**
+ * Convert element type to HTML tag
+ */
+const getHTMLTag = (type: string): string => {
+  const tagMap: Record<string, string> = {
+    heading: 'h1',
+    paragraph: 'p',
+    button: 'button',
+    image: 'img',
+    card: 'div',
+    form: 'form',
+    'form-input': 'input',
+    'form-label': 'label',
+    divider: 'hr',
+    icon: 'span',
+    container: 'div',
+  };
+
+  return tagMap[type] || 'div';
+};
+
+/**
+ * Generate HTML for a single element
+ */
+const generateElementHTML = (
+  element: DesignElement,
+  useClasses: boolean = false
+): string => {
+  const tag = getHTMLTag(element.type);
+  const styleAttr = useClasses ? `class="${element.id}"` : `style="${stylesToCSSString(element.styles)}"`;
+
+  let html = `<${tag} ${styleAttr} id="${element.id}"`;
+
+  // Add specific attributes
+  if (element.type === 'image' && element.src) {
+    html += ` src="${element.src}" alt="${element.label}"`;
+  }
+  if ((element.type === 'button' || element.type === 'form') && element.href) {
+    html += ` href="${element.href}"`;
+  }
+
+  html += '>';
+
+  // Add content
+  if (element.content) {
+    html += element.content;
+  }
+
+  // Add children
+  if (element.children && element.children.length > 0) {
+    element.children.forEach((child) => {
+      html += generateElementHTML(child, useClasses);
+    });
+  }
+
+  html += `</${tag}>`;
+
+  return html;
+};
+
+/**
+ * Generate inline CSS for element
+ */
+const generateElementCSS = (element: DesignElement): string => {
+  let css = `#${element.id} { ${stylesToCSSString(element.styles)} }\n`;
+
+  if (element.animation) {
+    css += generateAnimationCSS(element.animation, element.id);
+  }
+
+  if (element.responsive?.mobile) {
+    css += `@media (max-width: 640px) { #${element.id} { ${stylesToCSSString(element.responsive.mobile)} } }\n`;
+  }
+
+  if (element.responsive?.tablet) {
+    css += `@media (max-width: 1024px) { #${element.id} { ${stylesToCSSString(element.responsive.tablet)} } }\n`;
+  }
+
+  return css;
+};
+
+/**
+ * Generate complete HTML document
+ */
+export const generateHTML = (project: DesignProject): string => {
+  const bodyContent = project.elements.map((el) => generateElementHTML(el)).join('\n  ');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${project.name}</title>
+  <meta name="description" content="${project.description || project.name}">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  ${bodyContent}
+</body>
+</html>`;
+};
+
+/**
+ * Generate complete CSS stylesheet
+ */
+export const generateCSS = (project: DesignProject): string => {
+  let css = `/* Generated by WISE² Web Design Builder
+   * Project: ${project.name}
+   * Created: ${project.createdAt.toISOString()}
+   */
+
+:root {
+  --color-primary: ${project.colors.primary};
+  --color-secondary: ${project.colors.secondary};
+  --color-accent: ${project.colors.accent};
+  --color-background: ${project.colors.background};
+  --color-text: ${project.colors.text};
+  --font-heading: ${project.fonts.heading};
+  --font-body: ${project.fonts.body};
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-secondary);
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s ease;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+input, textarea, select {
+  font-family: var(--font-body);
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: border-color 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Element Styles */
+`;
+
+  // Generate CSS for all elements
+  const traverse = (elements: DesignElement[]) => {
+    elements.forEach((element) => {
+      css += generateElementCSS(element);
+      if (element.children) {
+        traverse(element.children);
+      }
+    });
+  };
+
+  traverse(project.elements);
+
+  return css;
+};
+
+/**
+ * Generate React/JSX component
+ */
+export const generateJSX = (project: DesignProject): string => {
+  const generateElementJSX = (element: DesignElement): string => {
+    const tag = getHTMLTag(element.type);
+    const propsArray: string[] = [`key="${element.id}"`, `id="${element.id}"`];
+
+    if (element.type === 'image' && element.src) {
+      propsArray.push(`src="${element.src}"`);
+      propsArray.push(`alt="${element.label}"`);
+    }
+
+    const propsStr = propsArray.join(' ');
+
+    let jsx = `<${tag} ${propsStr}>`;
+
+    if (element.content) {
+      jsx += element.content;
+    }
+
+    if (element.children && element.children.length > 0) {
+      element.children.forEach((child) => {
+        jsx += generateElementJSX(child);
+      });
+    }
+
+    jsx += `</${tag}>`;
+
+    return jsx;
+  };
+
+  return `import React from 'react';
+import './styles.css';
+
+export default function ${project.name.replace(/\s+/g, '')}() {
+  return (
+    <>
+      ${project.elements.map((el) => generateElementJSX(el)).join('\n      ')}
+    </>
+  );
+}`;
+};
+
+/**
+ * Export design to HTML/CSS
+ */
+export const exportDesign = (project: DesignProject, options: ExportOptions): DesignExport => {
+  const html = generateHTML(project);
+  const css = generateCSS(project);
+
+  return {
+    html: options.minify ? minifyHTML(html) : html,
+    css: options.minify ? minifyCSS(css) : css,
+    metadata: {
+      name: project.name,
+      createdAt: project.createdAt.toISOString(),
+      template: project.template,
+    },
+  };
+};
+
+/**
+ * Minify HTML
+ */
+const minifyHTML = (html: string): string => {
+  return html
+    .replace(/\n\s+/g, ' ')
+    .replace(/\s+</g, '<')
+    .replace(/>\s+/g, '>')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+};
+
+/**
+ * Minify CSS
+ */
+const minifyCSS = (css: string): string => {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\n\s+/g, ' ')
+    .replace(/\s+{/g, '{')
+    .replace(/{\s+/g, '{')
+    .replace(/;\s+/g, ';')
+    .replace(/;\s*}/g, '}')
+    .replace(/,\s+/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+/**
+ * Download file to user's device
+ */
+export const downloadFile = (content: string, filename: string, type: string = 'text/plain') => {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Generate preview URL (data URL)
+ */
+export const generatePreviewDataURL = (project: DesignProject): string => {
+  const html = generateHTML(project);
+  const css = generateCSS(project);
+
+  const fullHTML = html.replace('</head>', `<style>${css}</style></head>`);
+
+  return `data:text/html;base64,${Buffer.from(fullHTML).toString('base64')}`;
+};
+
+/**
+ * Validate element
+ */
+export const validateElement = (element: DesignElement): string[] => {
+  const errors: string[] = [];
+
+  if (!element.id) errors.push('Element must have an ID');
+  if (!element.type) errors.push('Element must have a type');
+  if (!element.label) errors.push('Element must have a label');
+  if (!element.styles) errors.push('Element must have styles');
+
+  return errors;
+};
+
+/**
+ * Validate project
+ */
+export const validateProject = (project: DesignProject): string[] => {
+  const errors: string[] = [];
+
+  if (!project.id) errors.push('Project must have an ID');
+  if (!project.name) errors.push('Project must have a name');
+  if (!project.colors) errors.push('Project must have colors defined');
+  if (!project.fonts) errors.push('Project must have fonts defined');
+
+  return errors;
+};
+
+/**
+ * Clone element deeply
+ */
+export const cloneElement = (element: DesignElement, newId?: string): DesignElement => {
+  return {
+    ...JSON.parse(JSON.stringify(element)),
+    id: newId || `${element.id}-copy`,
+  };
+};
+
+/**
+ * Get element dimensions
+ */
+export const getElementDimensions = (element: DesignElement): { width: string; height: string } => {
+  return {
+    width: element.styles.width || 'auto',
+    height: element.styles.height || 'auto',
+  };
+};
+
+/**
+ * Calculate z-index for layering
+ */
+export const calculateZIndex = (index: number, maxIndex: number): number => {
+  return 100 + index;
+};

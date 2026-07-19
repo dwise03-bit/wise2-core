@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 import { wise2Content } from '@/data/wise2-content';
 
@@ -37,11 +38,17 @@ const FormField: React.FC<{
   onBlur?: () => void;
 }> = ({ label, name, type = 'text', value, onChange, placeholder, required, rows, options, index, isFocused, onFocus, onBlur }) => {
   return (
-    <div
-      className="group transition-all duration-500 ease-out"
-      style={{
-        animation: `slideInUp 0.6s ease-out ${index * 0.08}s backwards`,
+    <motion.div
+      className="group"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+        delay: index * 0.06,
       }}
+      whileHover={{ scale: 1.02 }}
     >
       <label className="block text-sm font-bold text-wise-text-primary mb-2 transition-colors duration-300 group-focus-within:text-wise-accent-green">
         {label} {required && <span className="text-wise-accent-green">*</span>}
@@ -101,7 +108,7 @@ const FormField: React.FC<{
           }`}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 
@@ -183,48 +190,63 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
 
   if (isSuccess) {
     return (
-      <div
+      <motion.div
         className="w-full max-w-2xl mx-auto p-8 rounded-2xl border-2 border-wise-accent-green bg-gradient-to-br from-wise-accent-green/10 via-wise-bg-secondary to-wise-bg-primary text-center backdrop-blur-xl"
-        style={{
-          animation: 'slideInUp 0.6s ease-out',
-        }}
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       >
-        <div className="relative mb-6">
-          <div
+        <motion.div
+          className="relative mb-6"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{
+            type: 'spring',
+            stiffness: 200,
+            damping: 15,
+            delay: 0.2,
+          }}
+        >
+          <motion.div
             className="text-6xl inline-block"
-            style={{
-              animation: 'bounce 0.8s ease-out, popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            animate={{ y: [0, -10, 0] }}
+            transition={{
+              duration: 0.8,
+              delay: 0.3,
+              repeat: 2,
+              ease: 'easeInOut',
             }}
           >
             ✓
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <h3 className="text-3xl font-bold font-display text-wise-accent-green mb-2">
+        <motion.h3
+          className="text-3xl font-bold font-display text-wise-accent-green mb-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
           Project Received! 🎉
-        </h3>
-        <p className="text-wise-text-secondary mb-4">
+        </motion.h3>
+        <motion.p
+          className="text-wise-text-secondary mb-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
           Your project brief has been successfully submitted.
-        </p>
-        <p className="text-wise-text-muted text-sm">
+        </motion.p>
+        <motion.p
+          className="text-wise-text-muted text-sm"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
           Our team will review your details and be in touch within 24-48 hours. Get ready to bring your vision to life!
-        </p>
-
-        <style>{`
-          @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-          }
-          @keyframes slideInUp {
-            0% { transform: translateY(20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-          }
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-          }
-        `}</style>
-      </div>
+        </motion.p>
+      </motion.div>
     );
   }
 
@@ -241,14 +263,11 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto space-y-8">
-      <style>{`
-        @keyframes slideInUp {
-          0% { transform: translateY(20px); opacity: 0; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
         {fields.slice(0, 6).map((field, index) => (
           <FormField
             key={field.name}
@@ -266,9 +285,14 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
             onBlur={() => setFocusedField(null)}
           />
         ))}
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
         {fields.slice(6).map((field, index) => (
           <FormField
             key={field.name}
@@ -286,14 +310,20 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
             onBlur={() => setFocusedField(null)}
           />
         ))}
-      </div>
+      </motion.div>
 
       {/* File Upload */}
-      <div
-        className="group transition-all duration-500 ease-out"
-        style={{
-          animation: 'slideInUp 0.6s ease-out 0.64s backwards',
+      <motion.div
+        className="group"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          type: 'spring',
+          stiffness: 100,
+          damping: 15,
+          delay: 0.5,
         }}
+        whileHover={{ scale: 1.02 }}
       >
         <label className="block text-sm font-bold text-wise-text-primary mb-2 transition-colors duration-300 group-focus-within:text-wise-accent-green">
           Upload Reference Materials (optional)
@@ -311,10 +341,20 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
             </div>
           </div>
         </label>
-      </div>
+      </motion.div>
 
       {/* Description */}
-      <FormField
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          type: 'spring',
+          stiffness: 100,
+          damping: 15,
+          delay: 0.56,
+        }}
+      >
+        <FormField
         label="Tell Us About Your Vision"
         name="description"
         type="textarea"
@@ -328,25 +368,41 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
         onFocus={() => setFocusedField('description')}
         onBlur={() => setFocusedField(null)}
       />
+      </motion.div>
 
       {/* Progress Bar */}
-      {isLoading && (
-        <div className="w-full h-1 bg-wise-bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-wise-accent-green to-white/50 transition-all duration-300"
-            style={{ width: `${submitProgress}%` }}
-          />
-        </div>
-      )}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            className="w-full h-1 bg-wise-bg-secondary rounded-full overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="h-full bg-gradient-to-r from-wise-accent-green to-white/50"
+              style={{ width: `${submitProgress}%` }}
+              transition={{ type: 'tween', duration: 0.3 }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Submit Button */}
-      <button
+      <motion.button
         type="submit"
         disabled={isLoading}
-        className="w-full py-3 px-6 bg-wise-accent-green hover:bg-white text-wise-bg-primary font-bold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-wise-accent-green/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 group relative overflow-hidden"
-        style={{
-          animation: 'slideInUp 0.6s ease-out 0.72s backwards',
+        className="w-full py-3 px-6 bg-wise-accent-green hover:bg-white text-wise-bg-primary font-bold rounded-lg transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          type: 'spring',
+          stiffness: 100,
+          damping: 15,
+          delay: 0.62,
         }}
+        whileHover={{ scale: isLoading ? 1 : 1.05, boxShadow: isLoading ? 'none' : '0 0 25px rgba(57, 255, 20, 0.5)' }}
+        whileTap={{ scale: 0.95 }}
       >
         <div className="relative z-10 flex items-center justify-center gap-2">
           {isLoading ? (
@@ -360,18 +416,16 @@ export const IntakeForm: React.FC<IntakeFormProps> = ({ onSubmit }) => {
             </>
           )}
         </div>
-      </button>
+      </motion.button>
 
-      <p className="text-xs text-wise-text-muted text-center">
+      <motion.p
+        className="text-xs text-wise-text-muted text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.68 }}
+      >
         * Required fields
-      </p>
-
-      <style>{`
-        @keyframes slideInUp {
-          0% { transform: translateY(20px); opacity: 0; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
+      </motion.p>
     </form>
   );
 };

@@ -1,10 +1,12 @@
 /**
  * useAuth Hook
- * Manages user authentication state and provides auth functions
+ * Convenience hook that wraps useAuthContext
+ * Provides backwards compatibility and cleaner API
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { apiClient, LoginResponse } from '../lib/api-client';
+import { useAuthContext } from '../context/AuthContext';
+import { StoredUser } from '../lib/storage-service';
+import { SubscriptionTier, UserSubscription } from '../types/subscription';
 
 export interface User {
   id: string;
@@ -20,172 +22,64 @@ export interface AuthState {
   error: string | null;
 }
 
-export interface UseAuthReturn extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name?: string) => Promise<void>;
+export interface UseAuthReturn {
+  user: StoredUser | null;
+  subscription: UserSubscription | null;
+  tier: SubscriptionTier;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
   logout: () => Promise<void>;
   clearError: () => void;
   isCheckingAuth: boolean;
+  canUseFeature: (feature: string) => boolean;
 }
 
 /**
  * Custom hook for authentication
- * Manages login/logout state and provides auth utilities
+ * Wraps useAuthContext for convenient access
  */
 export function useAuth(): UseAuthReturn {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    error: null,
-  });
-
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  /**
-   * Check if user is already authenticated (on mount)
-   */
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = apiClient.getAccessToken();
-        if (token) {
-          // Token exists, assume user is authenticated
-          // In a real app, you'd verify the token with the backend
-          setState((prev) => ({
-            ...prev,
-            isAuthenticated: true,
-          }));
-        }
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  /**
-   * Login with email and password
-   */
-  const login = useCallback(
-    async (email: string, password: string) => {
-      setState((prev) => ({
-        ...prev,
-        isLoading: true,
-        error: null,
-      }));
-
-      try {
-        const response = await apiClient.login(email, password);
-
-        setState({
-          user: response.user,
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-        });
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Login failed';
-
-        setState({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: errorMessage,
-        });
-
-        throw error;
-      }
-    },
-    []
-  );
-
-  /**
-   * Sign up a new user
-   */
-  const signup = useCallback(
-    async (email: string, password: string, name?: string) => {
-      setState((prev) => ({
-        ...prev,
-        isLoading: true,
-        error: null,
-      }));
-
-      try {
-        const response = await apiClient.signup(email, password, name);
-
-        // Note: After signup, user still needs to verify email
-        // They can log in once email is verified
-        setState({
-          user: response.user as User,
-          isAuthenticated: false,
-          isLoading: false,
-          error: null,
-        });
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Signup failed';
-
-        setState({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: errorMessage,
-        });
-
-        throw error;
-      }
-    },
-    []
-  );
-
-  /**
-   * Log out the current user
-   */
-  const logout = useCallback(async () => {
-    setState((prev) => ({
-      ...prev,
-      isLoading: true,
-    }));
-
-    try {
-      await apiClient.logout();
-
-      setState({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null,
-      });
-    } catch (error) {
-      // Clear auth state even if logout fails
-      setState({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: null,
-      });
-    }
-  }, []);
-
-  /**
-   * Clear error messages
-   */
-  const clearError = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      error: null,
-    }));
-  }, []);
-
-  return {
-    ...state,
-    login,
-    signup,
+  const {
+    user,
+    subscription,
+    tier,
+    isAuthenticated,
+    isLoading,
+    error,
     logout,
     clearError,
-    isCheckingAuth,
+    canUseFeature,
+  } = useAuthContext();
+
+  return {
+    user,
+    subscription,
+    tier,
+    isAuthenticated,
+    isLoading,
+    error,
+    logout,
+    clearError,
+    isCheckingAuth: isLoading,
+    canUseFeature: (feature: string) => {
+      // Map feature names to tier limits keys
+      const featureMap: Record<string, keyof typeof TIER_LIMITS.free> = {
+        export_stems: 'canExportStems',
+        live_stream: 'canLiveStream',
+        advanced_effects: 'canUseAdvancedEffects',
+        ai_music: 'canUseAIMusicGeneration',
+      };
+      const mappedFeature = featureMap[feature];
+      if (mappedFeature) {
+        return canUseFeature(mappedFeature);
+      }
+      return false;
+    },
   };
 }
+
+/**
+ * Import TIER_LIMITS for feature checking
+ */
+import { TIER_LIMITS } from '../lib/subscription-config';

@@ -331,13 +331,13 @@ export default function LiveStudioPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:shadow-[0_0_40px_rgba(0,148,255,0.6)] transition-all duration-300 hover:-translate-y-0.5">
+                <a href="/workspace" className="group relative px-8 py-4 font-bold uppercase tracking-wider text-sm text-black bg-[#0094FF] rounded-lg hover:shadow-[0_0_40px_rgba(0,148,255,0.6)] transition-all duration-300 hover:-translate-y-0.5 text-center">
                   Start Free Trial
                   <span className="absolute inset-0 rounded-lg bg-[#0094FF] opacity-0 group-hover:opacity-10 transition-opacity" />
-                </button>
-                <button className="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#E53935]/50 text-[#E53935] rounded-lg hover:border-[#E53935] hover:bg-[#E53935]/5 transition-all duration-300">
+                </a>
+                <a href="mailto:demo@wise2.com" className="px-8 py-4 font-bold uppercase tracking-wider text-sm border border-[#E53935]/50 text-[#E53935] rounded-lg hover:border-[#E53935] hover:bg-[#E53935]/5 transition-all duration-300 text-center">
                   Schedule Demo
-                </button>
+                </a>
               </div>
 
               <p className="text-sm text-gray-500 mt-8">

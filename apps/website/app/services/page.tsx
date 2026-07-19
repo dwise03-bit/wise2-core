@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Navigation, Footer } from '@/components/wise';
 
 export default function ServicesPage() {
@@ -38,6 +39,20 @@ export default function ServicesPage() {
       icon: '🚀',
       features: ['Launch Planning', 'PR & Marketing', 'Growth Hacking', 'Analytics'],
     },
+    {
+      title: 'Jingle Lab',
+      description: 'AI-powered audio branding. Create professional jingles, sonic logos, and brand audio instantly.',
+      icon: '🎼',
+      features: ['AI Jingle Generation', 'Template Library', 'Custom Instruments', 'Multi-Format Export'],
+      link: '/jingle-lab',
+    },
+    {
+      title: 'Print On Demand',
+      description: 'Professional printing for business materials, apparel, merchandise, and marketing collateral.',
+      icon: '🖨️',
+      features: ['Business Cards', 'Apparel & Merch', 'Marketing Materials', 'Bulk Orders'],
+      link: '/print-on-demand',
+    },
   ];
 
   return (
@@ -55,24 +70,28 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <div
-                key={service.title}
-                className="bg-wise-bg-secondary border-2 border-wise-accent-green/20 rounded-3xl p-8 hover:border-wise-accent-green/60 hover:bg-wise-accent-green/5 transition-all"
-              >
-                <div className="text-5xl mb-4">{service.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2">{service.title}</h3>
-                <p className="text-wise-text-secondary text-sm mb-6">{service.description}</p>
-                <div className="space-y-2">
-                  {service.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2">
-                      <span className="text-wise-accent-green text-xs">●</span>
-                      <span className="text-wise-text-secondary text-xs">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+            {services.map((service: any) => {
+              const CardComponent = service.link ? Link : 'div';
+              return (
+                <CardComponent
+                  key={service.title}
+                  href={service.link}
+                  className="bg-wise-bg-secondary border-2 border-wise-accent-green/20 rounded-3xl p-8 hover:border-wise-accent-green/60 hover:bg-wise-accent-green/5 transition-all cursor-pointer"
+                >
+                  <div className="text-5xl mb-4">{service.icon}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">{service.title}</h3>
+                  <p className="text-wise-text-secondary text-sm mb-6">{service.description}</p>
+                  <div className="space-y-2">
+                    {service.features.map((feature: string) => (
+                      <div key={feature} className="flex items-center gap-2">
+                        <span className="text-wise-accent-green text-xs">●</span>
+                        <span className="text-wise-text-secondary text-xs">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardComponent>
+              );
+            })}
           </div>
 
           <div className="mt-20 text-center bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-12">
