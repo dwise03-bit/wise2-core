@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 
 // Pages that render their own <nav> and must not get the shared site nav on top of it.
-const PAGES_WITH_OWN_NAV = ['/', '/community'];
+const PAGES_WITH_OWN_NAV = ['/', '/community', '/intake'];
 
 export function SiteNav() {
   const pathname = usePathname();

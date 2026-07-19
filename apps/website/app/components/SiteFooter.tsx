@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 
 // Pages that render their own <footer> and must not get the shared site footer on top of it.
-const PAGES_WITH_OWN_FOOTER = ['/'];
+const PAGES_WITH_OWN_FOOTER = ['/', '/intake'];
 
 export function SiteFooter() {
   const pathname = usePathname();

@@ -16,8 +16,24 @@ module.exports = {
     extend: {
       colors: {
         wise: {
+          // WISE² Brand Colors
+          bg: {
+            primary: '#030504',
+            secondary: '#090D0A',
+            card: 'rgba(6, 12, 8, 0.88)',
+            forest: '#102219',
+          },
+          accent: {
+            green: '#8CFF00',
+            'green-secondary': '#45B900',
+            'green-border': 'rgba(140, 255, 0, 0.45)',
+          },
+          text: {
+            primary: '#F3F5F3',
+            muted: '#A7AEA9',
+          },
+          // Legacy colors (kept for compatibility)
           DEFAULT: '#050505',
-          bg: '#050505',
           surface: '#0D1117',
           'surface-2': '#131922',
           'surface-3': '#1A2332',
