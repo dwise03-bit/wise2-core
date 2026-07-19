@@ -36,8 +36,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install runtime dependencies (curl for health checks)
-RUN apk add --no-cache curl
+# Install runtime dependencies (curl for health checks, openssl for Prisma)
+RUN apk add --no-cache curl openssl
 
 # Copy built app and required files from builder
 COPY --from=builder /app/packages/api/dist ./dist
