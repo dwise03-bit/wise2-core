@@ -101,7 +101,7 @@ export function LiveChat({
             <p className="text-xs text-gray-400 mt-1">Active viewers</p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-blue-400">{viewerCount.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-wise-accent-green">{viewerCount.toLocaleString()}</div>
             <p className="text-xs text-gray-400">watching now</p>
           </div>
         </div>
@@ -142,11 +142,11 @@ export function LiveChat({
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Send a message..."
-            className="flex-1 px-md py-sm bg-gray-800 border border-gray-700 rounded-md text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="flex-1 px-md py-sm bg-gray-800 border border-gray-700 rounded-md text-sm text-white placeholder-gray-500 focus:outline-none focus:border-wise-accent-green"
           />
           <button
             onClick={handleSendMessage}
-            className="px-md py-sm bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors text-sm"
+            className="px-md py-sm bg-wise-accent-green hover:brightness-110 text-wise-bg-primary font-semibold rounded-md transition-all text-sm"
           >
             Send
           </button>

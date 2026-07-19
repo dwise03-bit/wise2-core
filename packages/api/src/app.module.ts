@@ -13,6 +13,8 @@ import { APIManagerModule } from './config/api-manager.module';
 import { EmailModule } from './email/email.module';
 import { EventsModule } from './analytics/events.module';
 import { QueueModule } from './queue/queue.module';
+import { ChatModule } from './chat/chat.module';
+import { StreamingModule } from './streaming/streaming.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -91,6 +93,8 @@ import { APIStatusController } from './config/api-status.controller';
     BillingModule,
     CommunityModule,
     ModulesModule,
+    ChatModule,
+    StreamingModule,
   ],
   controllers: [AppController, APIStatusController],
   providers: [AppService],

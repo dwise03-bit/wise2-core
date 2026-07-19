@@ -13,7 +13,8 @@
   "rules": {
     "prefer-const": "warn",
     "semi": ["error", "always"],
-    "no-undef": "off"
+    "no-undef": "off",
+    "no-unused-vars": "off"
   },
   "ignorePatterns": ["dist", "build", ".next"]
 }

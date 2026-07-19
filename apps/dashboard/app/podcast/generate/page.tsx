@@ -104,7 +104,7 @@ export default function PodcastGeneratePage() {
 
       // Call generation API
       const newProjectId = projectId || formData.projectName;
-      const response = await podcastApi.generateAudio(newProjectId);
+      await podcastApi.generateAudio(newProjectId);
 
       clearInterval(progressInterval);
       setGenerationProgress(100);

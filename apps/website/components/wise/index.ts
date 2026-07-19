@@ -10,3 +10,4 @@ export { IntakeForm } from './IntakeForm';
 export { ServiceCard } from './ServiceCard';
 export { WorldCard } from './WorldCard';
 export { ProjectGallery } from './ProjectGallery';
+export { StartYourBuildClient } from './StartYourBuildClient';

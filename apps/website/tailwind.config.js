@@ -16,44 +16,41 @@ module.exports = {
     extend: {
       colors: {
         wise: {
-          // WISE² Brand Colors
-          bg: {
-            primary: '#030504',
-            secondary: '#090D0A',
-            card: 'rgba(6, 12, 8, 0.88)',
-            forest: '#102219',
-          },
-          accent: {
-            green: '#8CFF00',
-            'green-secondary': '#45B900',
-            'green-border': 'rgba(140, 255, 0, 0.45)',
-          },
-          text: {
-            primary: '#F3F5F3',
-            muted: '#A7AEA9',
-          },
-          // Legacy colors (kept for compatibility)
-          DEFAULT: '#050505',
-          surface: '#0D1117',
-          'surface-2': '#131922',
-          'surface-3': '#1A2332',
-          'surface-4': '#242D3A',
-          card: '#10151D',
+          // WISE² Brand Colors - PRIMARY (All references)
+          'bg-primary': '#050505',
+          'bg-secondary': '#0D1117',
+          'bg-card': '#10151D',
+
+          // Text Colors
           'text-primary': '#FFFFFF',
           'text-secondary': '#C9CED6',
           'text-muted': '#8D98A5',
-          primary: '#0055FF',
-          'primary-hover': '#2874FF',
-          'primary-active': '#0044CC',
-          electric: '#00D9FF',
-          purple: '#B300FF',
+
+          // Accent Green - PRIMARY (Only correct green)
+          'accent-green': '#22C55E',
+          'accent-green-border': 'rgba(34, 197, 94, 0.3)',
+
+          // Legacy surfaces (compatibility)
+          'surface': '#0D1117',
+          'surface-2': '#131922',
+          'surface-3': '#1A2332',
+          'surface-4': '#242D3A',
+          'card': '#10151D',
+
+          // Semantic colors
+          'success': '#22C55E',
+          'warning': '#F59E0B',
+          'danger': '#FF0040',
+
+          // DO NOT USE - Deprecated blues
+          'primary': '#22C55E',
+          'primary-hover': '#1ea853',
+          'primary-active': '#16a34a',
+          'electric': '#22C55E',
+          'purple': '#B300FF',
           'accent-red': '#FF0040',
           'accent-orange': '#F59E0B',
-          'accent-green': '#22C55E',
-          success: '#22C55E',
-          warning: '#F59E0B',
-          danger: '#FF0040',
-          info: '#0055FF',
+          'info': '#22C55E',
         },
       },
       fontFamily: {

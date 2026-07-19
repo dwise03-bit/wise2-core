@@ -6,7 +6,6 @@ import {
   PodcastProject,
   SubscriptionPlan,
   handleApiError,
-  type ApiError,
 } from './api-client';
 
 interface UseProjectsReturn {
