@@ -12,14 +12,14 @@ COPY packages ./packages
 # Install dependencies with legacy-peer-deps for compatibility
 RUN npm install --legacy-peer-deps
 
+# Generate Prisma client before building API
+RUN cd /app/packages/db && npx prisma generate || true
+
 WORKDIR /app/packages/api
 
 # CRITICAL: Clean stale build cache to ensure JS files are emitted
 # Without this, incremental TypeScript builds skip .js emission on Alpine
 RUN rm -f tsconfig.tsbuildinfo
-
-# Generate Prisma client before building
-RUN npx prisma generate
 
 # Build the application
 RUN npm run build
