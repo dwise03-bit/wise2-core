@@ -1,0 +1,39 @@
+# Build stage
+FROM node:20-alpine as builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Build API
+RUN pnpm --filter @wise2/api build
+
+# Runtime stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install production dependencies only
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
+
+# Copy built app from builder
+COPY --from=builder /app/packages/api/dist ./dist
+COPY --from=builder /app/packages/api/package.json ./
+
+# Expose port
+EXPOSE 3333
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3333/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Start application
+CMD ["node", "dist/main.js"]
