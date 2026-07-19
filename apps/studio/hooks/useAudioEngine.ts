@@ -19,7 +19,7 @@ import {
 import { useErrorHandler } from './useErrorHandler';
 import { useProjectPersistence } from './useProjectPersistence';
 import type { SerializedProject } from '../utils/projectSerializer';
-import { deserializeProjectState } from '../utils/projectSerializer';
+import { deserializeProjectState, serializeProjectState } from '../utils/projectSerializer';
 
 interface AudioEngineState {
   isInitialized: boolean;
@@ -656,132 +656,51 @@ export function useAudioEngine() {
   }, []);
 
   /**
-   * Auto-save project on state changes
+   * Save project to localStorage
    */
-  useEffect(() => {
-    if (!state.isInitialized || !engineRef.current.mixer) return;
-
-    persistence.debouncedSaveProject(
-      state.projectId,
-      state.projectName,
-      state.tracks,
-      engineRef.current.mixer,
-      engineRef.current.playback,
-      state.masterVolume,
-      state.bpm
-    );
-  }, [
-    state.projectId,
-    state.projectName,
-    state.tracks,
-    state.masterVolume,
-    state.bpm,
-    state.isInitialized,
-    persistence,
-  ]);
-
-  /**
-   * Save project manually
-   */
-  const saveProject = useCallback(() => {
+  const saveProject = useCallback(async () => {
     if (!engineRef.current.mixer) {
-      addError('track-add-failed', 'Mixer not initialized. Cannot save project.');
+      addError('track-add-failed', 'Mixer not initialized');
       return false;
     }
 
-    const success = persistence.saveProject(
+    const project = serializeProjectState(
       state.projectId,
       state.projectName,
       state.tracks,
-      engineRef.current.mixer,
-      engineRef.current.playback,
-      state.masterVolume,
-      state.bpm
+      state.bpm,
+      state.masterVolume
     );
 
+    const success = await persistence.saveProject(project);
     if (success) {
-      addSuccess('Project Saved', `"${state.projectName}" has been saved successfully.`);
+      addSuccess('Project Saved', `"${state.projectName}" saved`);
     } else {
-      addError('file-invalid-format', 'Failed to save project. Please check your storage.');
+      addError('file-invalid-format', persistence.saveError || 'Failed to save');
     }
-
     return success;
-  }, [
-    state.projectId,
-    state.projectName,
-    state.tracks,
-    state.masterVolume,
-    state.bpm,
-    persistence,
-    addError,
-    addSuccess,
-  ]);
+  }, [state.projectId, state.projectName, state.tracks, state.bpm, state.masterVolume, persistence, addError, addSuccess]);
 
   /**
    * Load project from localStorage
    */
   const loadProject = useCallback((projectId: string) => {
-    try {
-      const serialized = persistence.loadProject(projectId);
-
-      if (!serialized) {
-        addError('file-invalid-format', 'Project not found in storage.');
-        return false;
-      }
-
-      const data = deserializeProjectState(serialized);
-
-      // Update project info
-      setState((prev) => ({
-        ...prev,
-        projectId: data.projectId,
-        projectName: data.projectName,
-        bpm: data.bpm,
-        masterVolume: data.masterVolume,
-      }));
-
-      // Recreate tracks
-      if (engineRef.current.mixer) {
-        // Clear existing tracks
-        const currentTracks = engineRef.current.mixer.getTracks();
-        currentTracks.forEach((track) => {
-          engineRef.current.mixer?.removeTrack(track.getId());
-        });
-
-        // Recreate tracks from saved config
-        data.trackConfigs.forEach((config) => {
-          const track = new Track({
-            id: config.id,
-            name: config.name,
-            color: config.color,
-            isMuted: config.isMuted,
-            isSolo: config.isSolo,
-            volume: config.volume,
-            pan: config.pan,
-          });
-
-          engineRef.current.mixer?.addTrack(track);
-          engineRef.current.playback?.registerTrack(track);
-        });
-
-        // Update state
-        const tracks = engineRef.current.mixer.getTracks();
-        setState((prev) => ({ ...prev, tracks }));
-      }
-
-      // Set BPM on playback
-      if (engineRef.current.playback) {
-        engineRef.current.playback.setBPM(data.bpm);
-      }
-
-      addSuccess('Project Loaded', `"${data.projectName}" has been loaded.`);
-      return true;
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      addError('file-invalid-format', `Failed to load project: ${errorMsg}`);
-      console.error('Error loading project:', error);
+    const serialized = persistence.loadProject(projectId);
+    if (!serialized) {
+      addError('file-invalid-format', 'Project not found');
       return false;
     }
+
+    setState((prev) => ({
+      ...prev,
+      projectId: serialized.id,
+      projectName: serialized.name,
+      bpm: serialized.bpm,
+      masterVolume: serialized.masterVolume,
+    }));
+
+    addSuccess('Project Loaded', `"${serialized.name}" loaded`);
+    return true;
   }, [persistence, addError, addSuccess]);
 
   /**
