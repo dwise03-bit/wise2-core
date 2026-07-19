@@ -30,7 +30,7 @@ export function ProjectManager({
   // Load project list on mount
   useEffect(() => {
     const projectList = persistence.getProjectList();
-    setProjects(projectList.sort((a, b) => b.timestamp - a.timestamp));
+    setProjects(projectList.sort((a, b) => b.updatedAt - a.updatedAt));
   }, [persistence]);
 
   const handleCreateProject = () => {
@@ -152,10 +152,7 @@ export function ProjectManager({
                         {project.name}
                       </h4>
                       <div className="flex items-center gap-3 mt-1 text-xs text-wise-text-secondary">
-                        <span>{formatDate(project.timestamp)}</span>
-                        <span className="text-wise-text-muted">
-                          {formatFileSize(project.fileSize)}
-                        </span>
+                        <span>{formatDate(project.updatedAt)}</span>
                       </div>
                     </div>
 
@@ -204,9 +201,9 @@ export function ProjectManager({
         </div>
 
         {/* Footer */}
-        {persistence.saveState.error && (
+        {persistence.saveError && (
           <div className="border-t border-wise-medium bg-wise-accent-red/10 border-wise-accent-red px-6 py-3">
-            <p className="text-sm text-wise-accent-red">{persistence.saveState.error}</p>
+            <p className="text-sm text-wise-accent-red">{persistence.saveError}</p>
           </div>
         )}
       </div>

@@ -9,13 +9,13 @@ import React, { useState, useEffect } from 'react';
 import { useErrorHandler, type ErrorInfo } from '../hooks/useErrorHandler';
 
 export function ErrorToastContainer() {
-  const { errors, removeError } = useErrorHandler();
+  const { notifications, dismissNotification } = useErrorHandler();
   const [visibleErrors, setVisibleErrors] = useState<ErrorInfo[]>([]);
 
-  // Update visible errors when errors change
+  // Update visible errors when notifications change
   useEffect(() => {
-    setVisibleErrors(errors);
-  }, [errors]);
+    setVisibleErrors(notifications);
+  }, [notifications]);
 
   if (visibleErrors.length === 0) {
     return null;
@@ -27,7 +27,7 @@ export function ErrorToastContainer() {
         <ErrorToast
           key={error.id}
           error={error}
-          onClose={() => removeError(error.id)}
+          onClose={() => dismissNotification(error.id)}
         />
       ))}
     </div>
@@ -106,10 +106,10 @@ function ErrorToast({ error, onClose }: ErrorToastProps) {
         <p className="text-sm opacity-90 leading-snug">{error.message}</p>
 
         {/* Retry Button */}
-        {error.retryFn && (
+        {error.retry && (
           <button
             onClick={() => {
-              error.retryFn?.();
+              error.retry?.();
               handleClose();
             }}
             className="mt-2 text-xs font-semibold opacity-75 hover:opacity-100 transition-opacity underline"

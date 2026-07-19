@@ -2,7 +2,6 @@
 
 /**
  * Error handling hook for SoundLabs Studio
- * Provides centralized error, warning, and success notifications
  */
 
 import { useCallback, useState } from 'react';
@@ -18,6 +17,8 @@ export interface ErrorNotification {
   dismissible?: boolean;
   retry?: () => void;
 }
+
+export type ErrorInfo = ErrorNotification;
 
 const ERROR_MESSAGES: Record<string, { title: string; message: string }> = {
   'audio-context-not-supported': {

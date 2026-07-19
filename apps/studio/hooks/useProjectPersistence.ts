@@ -24,6 +24,8 @@ export interface SerializedProject {
   updatedAt: number;
 }
 
+export type ProjectMetadata = SerializedProject;
+
 const STORAGE_KEY_PREFIX = 'soundlabs_project_';
 const PROJECT_LIST_KEY = 'soundlabs_projects_list';
 
@@ -40,6 +42,21 @@ export function useProjectPersistence() {
       console.error('Failed to get project list:', error);
       return [];
     }
+  }, []);
+
+  const getTotalStorageUsed = useCallback((): number => {
+    let total = 0;
+    try {
+      for (let key in localStorage) {
+        if (key.startsWith(STORAGE_KEY_PREFIX)) {
+          const item = localStorage[key];
+          if (item) total += item.length;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to calculate storage:', error);
+    }
+    return total;
   }, []);
 
   const saveProject = useCallback(
@@ -112,6 +129,7 @@ export function useProjectPersistence() {
     loadProject,
     deleteProject,
     getProjectList,
+    getTotalStorageUsed,
     saveStatus,
     saveError,
   };
