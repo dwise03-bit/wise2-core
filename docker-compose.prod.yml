@@ -149,9 +149,11 @@ services:
       start_period: 40s
 
   dashboard:
-    build:
-      context: .
-      dockerfile: apps/dashboard/Dockerfile
+    image: wise2-dashboard-disabled:latest
+    # Temporarily disabled due to build errors
+    # build:
+    #   context: .
+    #   dockerfile: apps/dashboard/Dockerfile
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:3010
@@ -168,9 +170,11 @@ services:
       start_period: 40s
 
   admin:
-    build:
-      context: .
-      dockerfile: apps/admin/Dockerfile
+    image: wise2-admin-disabled:latest
+    # Temporarily disabled due to build errors
+    # build:
+    #   context: .
+    #   dockerfile: apps/admin/Dockerfile
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
