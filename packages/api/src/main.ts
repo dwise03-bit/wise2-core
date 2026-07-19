@@ -20,6 +20,9 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     logger.log('NestJS application created successfully');
 
+    // Enable WebSocket support for real-time collaboration
+    logger.log('Enabling WebSocket support for collaboration features');
+
     // Enable CORS
     app.enableCors({
       origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'],

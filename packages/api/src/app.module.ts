@@ -15,6 +15,8 @@ import { EventsModule } from './analytics/events.module';
 import { QueueModule } from './queue/queue.module';
 import { ChatModule } from './chat/chat.module';
 import { StreamingModule } from './streaming/streaming.module';
+import { CollaborationModule } from './collaboration/collaboration.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -95,6 +97,8 @@ import { APIStatusController } from './config/api-status.controller';
     ModulesModule,
     ChatModule,
     StreamingModule,
+    PrismaModule,
+    CollaborationModule,
   ],
   controllers: [AppController, APIStatusController],
   providers: [AppService],
