@@ -22,6 +22,7 @@ model User {
   subscription      Subscription?
   projects          Project[]
   podcastProjects   PodcastProject[] @relation("podcastProjects")
+  soundLabsProjects SoundLabsProject[] @relation("soundLabsProjects")
   usageRecords      UsageRecord[] @relation("usageRecords")
 
   createdAt     DateTime  @default(now())
@@ -254,4 +255,62 @@ enum UsageType {
   AUDIO_GENERATION
   STORAGE
   API_CALL
+}
+
+// SoundLabs Studio Projects
+model SoundLabsProject {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation("soundLabsProjects", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Project metadata
+  name            String
+  description     String?   @db.Text
+
+  // Mixer state (saved as JSON)
+  // Contains: tracks array, track settings, master volume, BPM, playback position
+  mixerState      Json      @default("{}")
+
+  // Recordings associated with this project
+  recordings      SoundLabsRecording[]
+
+  // Storage info
+  projectSize     Int       @default(0)  // bytes
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Audio Recordings for SoundLabs Projects
+model SoundLabsRecording {
+  id              String    @id @default(cuid())
+  projectId       String
+  project         SoundLabsProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Recording metadata
+  name            String
+  description     String?   @db.Text
+
+  // S3 storage
+  s3Url           String    @db.Text  // Full S3 URL for the recording
+  s3Key           String    @db.Text  // S3 object key
+  fileSize        Int                 // bytes
+  duration        Int?                // seconds
+
+  // Upload status
+  uploadStatus    UploadStatus @default(PENDING)
+  uploadProgress  Int        @default(0)  // 0-100
+  uploadError     String?
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum UploadStatus {
+  PENDING
+  UPLOADING
+  COMPLETED
+  FAILED
 }

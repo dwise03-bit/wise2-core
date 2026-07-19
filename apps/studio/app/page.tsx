@@ -27,12 +27,12 @@ export default function HomePage() {
 
           {/* CTA Buttons */}
           <div className="flex items-center gap-4">
-            <button className="px-6 py-2 text-sm font-semibold border border-blue-500/50 hover:bg-blue-600/10 transition rounded">
+            <a href="/auth" className="px-6 py-2 text-sm font-semibold border border-blue-500/50 hover:bg-blue-600/10 transition rounded">
               LOGIN
-            </button>
-            <button className="px-6 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-black transition rounded">
+            </a>
+            <a href="/auth" className="px-6 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-black transition rounded">
               START FREE
-            </button>
+            </a>
           </div>
         </div>
       </header>
@@ -85,10 +85,10 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <button className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-black font-bold rounded transition transform hover:scale-105 flex items-center justify-center gap-2">
+              <a href="/auth" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-black font-bold rounded transition transform hover:scale-105 flex items-center justify-center gap-2">
                 START FREE TODAY
                 <span>→</span>
-              </button>
+              </a>
               <button className="px-8 py-4 border-2 border-blue-500/50 hover:bg-blue-600/10 font-bold rounded transition flex items-center justify-center gap-2">
                 <span>▶</span>
                 WATCH DEMO

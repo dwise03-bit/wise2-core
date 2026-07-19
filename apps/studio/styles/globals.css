@@ -15,18 +15,28 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Range slider styling */
+/* Range slider styling - Mobile friendly */
 input[type='range'].slider {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
+  width: 100%;
+  padding: 8px 0;
 }
 
+/* Larger touch targets for mobile */
+@media (max-width: 640px) {
+  input[type='range'].slider {
+    padding: 12px 0;
+  }
+}
+
+/* Webkit slider thumb - mobile optimized */
 input[type='range'].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: linear-gradient(135deg, #00d9ff, #0096ff);
   cursor: pointer;
@@ -34,15 +44,24 @@ input[type='range'].slider::-webkit-slider-thumb {
   transition: all 0.2s ease;
 }
 
-input[type='range'].slider::-webkit-slider-thumb:hover {
-  width: 16px;
-  height: 16px;
+@media (max-width: 640px) {
+  input[type='range'].slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+input[type='range'].slider::-webkit-slider-thumb:hover,
+input[type='range'].slider::-webkit-slider-thumb:active {
+  width: 20px;
+  height: 20px;
   box-shadow: 0 2px 12px rgba(0, 217, 255, 0.6);
 }
 
+/* Firefox slider thumb */
 input[type='range'].slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: linear-gradient(135deg, #00d9ff, #0096ff);
   cursor: pointer;
@@ -51,24 +70,38 @@ input[type='range'].slider::-moz-range-thumb {
   transition: all 0.2s ease;
 }
 
-input[type='range'].slider::-moz-range-thumb:hover {
-  width: 16px;
-  height: 16px;
+@media (max-width: 640px) {
+  input[type='range'].slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+input[type='range'].slider::-moz-range-thumb:hover,
+input[type='range'].slider::-moz-range-thumb:active {
+  width: 20px;
+  height: 20px;
   box-shadow: 0 2px 12px rgba(0, 217, 255, 0.6);
 }
 
-/* Track styling */
+/* Track styling - responsive height */
 input[type='range'].slider::-webkit-slider-runnable-track {
   background: linear-gradient(to right, #1f2937, #374151);
-  height: 6px;
-  border-radius: 3px;
+  height: 8px;
+  border-radius: 4px;
   border: 1px solid #4b5563;
+}
+
+@media (max-width: 640px) {
+  input[type='range'].slider::-webkit-slider-runnable-track {
+    height: 10px;
+  }
 }
 
 input[type='range'].slider::-moz-range-track {
   background: linear-gradient(to right, #1f2937, #374151);
-  height: 6px;
-  border-radius: 3px;
+  height: 8px;
+  border-radius: 4px;
   border: 1px solid #4b5563;
 }
 
@@ -78,4 +111,32 @@ input[type='range'].slider::-moz-range-track {
   height: 8px;
   border-radius: 4px;
   border: 1px solid #4b5563;
+}
+
+@media (max-width: 640px) {
+  .timeline-scrubber {
+    height: 10px;
+  }
+}
+
+/* Mobile-specific touch improvements */
+@media (max-width: 768px) {
+  /* Disable hover effects on touch devices */
+  @media (hover: none) {
+    input[type='range'].slider::-webkit-slider-thumb:hover {
+      width: 18px;
+      height: 18px;
+    }
+
+    input[type='range'].slider::-moz-range-thumb:hover {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  /* Ensure sufficient tap target areas */
+  button, input[type='button'], input[type='submit'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

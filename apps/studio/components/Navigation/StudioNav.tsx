@@ -1,10 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
 
 export function StudioNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout, isLoading } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      router.push('/auth');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setIsLoggingOut(false);
+    }
+  };
 
   const navItems = [
     {
@@ -63,12 +79,30 @@ export function StudioNav() {
 
       {/* Footer */}
       <div className="border-t border-gray-700 px-3 py-4 space-y-2">
+        {/* User Info */}
+        {user && (
+          <div className="px-3 py-2 bg-gray-900 rounded text-xs">
+            <div className="text-gray-400">Logged in as</div>
+            <div className="text-white font-semibold truncate">{user.email}</div>
+          </div>
+        )}
+
         <button className="w-full px-3 py-2 text-xs text-gray-400 hover:text-gray-300 bg-gray-900 rounded hover:bg-gray-800 transition-colors text-left">
           ⚙️ Settings
         </button>
         <button className="w-full px-3 py-2 text-xs text-gray-400 hover:text-gray-300 bg-gray-900 rounded hover:bg-gray-800 transition-colors text-left">
           ❓ Help
         </button>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut || isLoading}
+          className="w-full px-3 py-2 text-xs text-red-400 hover:text-red-300 disabled:text-red-600 bg-gray-900 rounded hover:bg-gray-800 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoggingOut ? '🔄 Signing out...' : '👋 Sign out'}
+        </button>
+
         <div className="text-xs text-gray-600 px-3 py-2">
           <div>WISE² v2.0.0</div>
           <div>© 2025 WISE Defense LLC</div>

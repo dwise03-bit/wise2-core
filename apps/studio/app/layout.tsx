@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import '../styles/globals.css';
 import { StudioNav } from '../components/Navigation/StudioNav';
 import { SupportWidget } from '../components/SupportWidget';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ErrorToastContainer } from '../components/ErrorToast';
+import { ErrorProvider } from '../contexts/ErrorContext';
 
 export const metadata: Metadata = {
   title: 'WISE² | Organized Chaos Command Center',
@@ -13,10 +16,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       </head>
       <body className="bg-black text-white">
-        <main className="min-h-screen">{children}</main>
-        <SupportWidget />
+        <ErrorProvider>
+          <ErrorBoundary>
+            <main className="min-h-screen">{children}</main>
+            <SupportWidget />
+            <ErrorToastContainer />
+          </ErrorBoundary>
+        </ErrorProvider>
       </body>
     </html>
   );

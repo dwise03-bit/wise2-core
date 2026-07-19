@@ -90,18 +90,19 @@ export function TrackPanel({
         </div>
       </div>
 
-      {/* Mute/Solo Buttons */}
+      {/* Mute/Solo Buttons - Touch friendly */}
       <div className="flex gap-2">
         <button
           onClick={(e) => {
             e.stopPropagation();
             handleMuteToggle();
           }}
-          className={`flex-1 py-1 px-2 text-xs font-semibold rounded transition-all ${
+          className={`flex-1 py-2 px-2 text-xs font-semibold rounded transition-all min-h-[44px] flex items-center justify-center ${
             isMuted
               ? 'bg-gray-600 text-white'
               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
+          title="Mute/Unmute track"
         >
           M
         </button>
@@ -110,11 +111,12 @@ export function TrackPanel({
             e.stopPropagation();
             handleSoloToggle();
           }}
-          className={`flex-1 py-1 px-2 text-xs font-semibold rounded transition-all ${
+          className={`flex-1 py-2 px-2 text-xs font-semibold rounded transition-all min-h-[44px] flex items-center justify-center ${
             isSoloed
               ? 'bg-yellow-600 text-white'
               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
+          title="Solo this track"
         >
           S
         </button>
@@ -123,15 +125,16 @@ export function TrackPanel({
             e.stopPropagation();
             onRemove();
           }}
-          className="flex-1 py-1 px-2 text-xs font-semibold rounded bg-gray-700 text-gray-400 hover:bg-red-600 hover:text-white transition-all"
+          className="flex-1 py-2 px-2 text-xs font-semibold rounded bg-gray-700 text-gray-400 hover:bg-red-600 hover:text-white transition-all min-h-[44px] flex items-center justify-center"
+          title="Delete track"
         >
           ✕
         </button>
       </div>
 
-      {/* Volume Fader */}
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">Volume</label>
+      {/* Volume Fader - Touch friendly with larger height */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs text-gray-400 font-medium">Volume</label>
         <input
           type="range"
           min="0"
@@ -139,16 +142,18 @@ export function TrackPanel({
           value={volume}
           onChange={handleVolumeChange}
           onClick={(e) => e.stopPropagation()}
-          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+          className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+          title="Adjust track volume"
+          aria-label="Volume slider"
         />
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-xs text-gray-500 text-center font-mono">
           {(volume).toFixed(0)}%
         </div>
       </div>
 
-      {/* Pan Control */}
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">Pan</label>
+      {/* Pan Control - Touch friendly */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs text-gray-400 font-medium">Pan</label>
         <input
           type="range"
           min="0"
@@ -156,9 +161,11 @@ export function TrackPanel({
           value={pan}
           onChange={handlePanChange}
           onClick={(e) => e.stopPropagation()}
-          className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+          className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+          title="Adjust track pan"
+          aria-label="Pan slider"
         />
-        <div className="text-xs text-gray-500 text-center">
+        <div className="text-xs text-gray-500 text-center font-mono">
           {pan < 45 ? 'L' : pan > 55 ? 'R' : 'C'}
         </div>
       </div>
