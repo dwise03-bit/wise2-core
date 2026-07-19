@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 COPY packages ./packages
 
 # Install dependencies with legacy-peer-deps for compatibility
-RUN npm ci --workspaces --legacy-peer-deps
+RUN npm install --legacy-peer-deps
 
 WORKDIR /app/packages/api
 

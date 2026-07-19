@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
-import { BrainAuthModule } from './brain-auth/brain-auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AdminModule } from './admin/admin.module';
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -83,7 +82,6 @@ import { APIStatusController } from './config/api-status.controller';
     }),
     APIManagerModule,
     AuthModule,
-    BrainAuthModule,
     AdminModule,
     EmailModule,
     EventsModule,
