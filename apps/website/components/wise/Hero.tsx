@@ -29,9 +29,12 @@ export const Hero: React.FC = () => {
             {branding.description}
           </p>
 
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-4 pt-4 flex-wrap">
             <Button href="/start-your-build" variant="primary" size="lg">
               ✦ Start Your Build
+            </Button>
+            <Button href="/pricing" variant="secondary" size="lg">
+              View Pricing →
             </Button>
             <Button href="/services" variant="secondary" size="lg">
               Explore Services →

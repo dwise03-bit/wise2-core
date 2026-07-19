@@ -1,53 +1,77 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Navigation, Footer } from '@/components/wise';
 
 export default function CheckoutCancelPage() {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-6 py-20">
-      <motion.div
-        className="max-w-md w-full text-center"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          className="mb-6 flex justify-center"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <AlertCircle className="w-20 h-20 text-[#FF5535]" />
-        </motion.div>
+    <>
+      <Navigation />
+      <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20 flex items-center justify-center">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            {/* Canceled Icon */}
+            <div className="text-7xl mb-8">
+              ⏸️
+            </div>
 
-        <h1 className="text-4xl font-bold text-white mb-4">Payment Cancelled</h1>
-        <p className="text-[#C5C5C5] mb-8 text-lg">
-          Your payment was cancelled. No charges have been made to your account.
-        </p>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+              Checkout <span className="text-yellow-400">Canceled</span>
+            </h1>
 
-        <div className="bg-[#FF5535]/10 border border-[#FF5535]/30 rounded-lg p-6 mb-8">
-          <p className="text-sm text-[#C5C5C5]">
-            If you'd like to try again or have questions, our support team is here to help.
-          </p>
+            <p className="text-xl text-wise-text-secondary mb-8">
+              No problem! Your payment was not processed. You can try again anytime.
+            </p>
+
+            {/* Details Card */}
+            <div className="bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-8 md:p-12 mb-8">
+              <div className="space-y-6 text-left">
+                <div>
+                  <p className="text-wise-text-secondary text-sm mb-1">What Happened</p>
+                  <p className="text-white">You left the checkout page before completing your purchase.</p>
+                </div>
+
+                <div className="border-t border-wise-accent-green/20 pt-6">
+                  <p className="text-wise-text-secondary text-sm mb-2">Why cancel?</p>
+                  <ul className="space-y-2 text-wise-text-secondary text-sm">
+                    <li>• Need more time to decide? No rush!</li>
+                    <li>• Questions about the plan? Contact our team</li>
+                    <li>• Want to explore more features? Check out the pricing page</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Link
+                href="/pricing"
+                className="px-8 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 inline-block"
+              >
+                Back to Pricing
+              </Link>
+              <Link
+                href="/"
+                className="px-8 py-4 bg-wise-bg-secondary border-2 border-wise-accent-green/40 text-wise-accent-green rounded-lg font-bold text-lg hover:border-wise-accent-green/60 transition-all duration-300 inline-block"
+              >
+                Back to Home
+              </Link>
+            </div>
+
+            {/* Support */}
+            <div className="mt-12 pt-8 border-t border-wise-accent-green/20">
+              <p className="text-wise-text-secondary mb-4">
+                Have questions? We're here to help!
+              </p>
+              <a
+                href="mailto:sales@wise2.net"
+                className="text-wise-accent-green hover:brightness-110 font-semibold"
+              >
+                Contact Our Sales Team →
+              </a>
+            </div>
+          </div>
         </div>
-
-        <div className="flex flex-col gap-3">
-          <Link
-            href="/#pricing"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-[#0055FF] hover:bg-[#2A7AFF] text-white rounded-lg font-semibold transition-all duration-300"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Pricing
-          </Link>
-          <Link
-            href="/"
-            className="text-[#C5C5C5] hover:text-white transition-colors"
-          >
-            Return to Home
-          </Link>
-        </div>
-      </motion.div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }

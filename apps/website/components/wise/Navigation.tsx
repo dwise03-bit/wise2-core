@@ -14,6 +14,7 @@ export const Navigation: React.FC = () => {
     { href: '/about', label: 'About' },
     { href: '/process', label: 'Process' },
     { href: '/work', label: 'Work' },
+    { href: '/pricing', label: 'Pricing' },
     { href: '/contact', label: 'Contact' },
   ];
 
