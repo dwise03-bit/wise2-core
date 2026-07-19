@@ -18,6 +18,9 @@ WORKDIR /app/packages/api
 # Without this, incremental TypeScript builds skip .js emission on Alpine
 RUN rm -f tsconfig.tsbuildinfo
 
+# Generate Prisma client before building
+RUN npx prisma generate
+
 # Build the application
 RUN npm run build
 
