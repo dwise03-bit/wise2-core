@@ -45,13 +45,13 @@ export class ObsidianSyncService {
   }
 
   /**
-   * Get vault by ID
+   * Get vault by ID with workspace validation
    */
-  async getVault(vaultId: string): Promise<ObsidianVaultDocument> {
-    const vault = await this.vaultModel.findById(vaultId);
-    if (!vault) {
-      throw new NotFoundException('Vault not found');
-    }
+  async getVault(vaultId: string, workspaceId: string): Promise<ObsidianVaultDocument | null> {
+    const vault = await this.vaultModel.findOne({
+      _id: new Types.ObjectId(vaultId),
+      workspaceId: new Types.ObjectId(workspaceId),
+    });
     return vault;
   }
 
@@ -247,7 +247,7 @@ export class ObsidianSyncService {
   }
 
   /**
-   * Extract backlinks and forward links
+   * Extract backlinks and forward links (optimized with bulk operations)
    */
   async updateLinks(entryId: string, workspaceId: string): Promise<void> {
     const entry = await this.entryModel.findById(entryId);
@@ -266,24 +266,24 @@ export class ObsidianSyncService {
     }
 
     entry.backlinks = backlinks;
+    await entry.save();
 
-    // Update forward links in referenced entries
-    const allEntries = await this.entryModel.find({
-      workspaceId: new Types.ObjectId(workspaceId),
-      slug: { $in: backlinks },
-    });
-
-    for (const linkedEntry of allEntries) {
-      if (!linkedEntry.forwardlinks) {
-        linkedEntry.forwardlinks = [];
-      }
-      if (!linkedEntry.forwardlinks.includes(entry.slug!)) {
-        linkedEntry.forwardlinks.push(entry.slug!);
-      }
-      await linkedEntry.save();
+    // Bulk update all referenced entries at once (O(1) query instead of O(n))
+    if (backlinks.length > 0) {
+      await this.entryModel.updateMany(
+        {
+          workspaceId: new Types.ObjectId(workspaceId),
+          slug: { $in: backlinks },
+        },
+        {
+          $addToSet: { forwardlinks: entry.slug },
+        },
+      );
     }
 
-    await entry.save();
+    // Clean up: remove from entries no longer referenced
+    // Note: Previous backlinks would need to be stored separately since previousVersions only stores content/version/author
+    // For now, we only add new forward links, not remove old ones (can be enhanced later)
   }
 
   /**

@@ -1,14 +1,18 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { WorkflowTemplate, WorkflowTemplateDocument } from '../schemas/workflow-template.schema';
 import { WorkflowExecution, WorkflowExecutionDocument, ActionExecution } from '../schemas/workflow-execution.schema';
+import { ActionHandlerService } from './action-handler.service';
 
 @Injectable()
 export class WorkflowService {
+  private readonly logger = new Logger(WorkflowService.name);
+
   constructor(
     @InjectModel(WorkflowTemplate.name) private readonly templateModel: Model<WorkflowTemplateDocument>,
     @InjectModel(WorkflowExecution.name) private readonly executionModel: Model<WorkflowExecutionDocument>,
+    private readonly actionHandlerService: ActionHandlerService,
   ) {}
 
   /**
@@ -47,10 +51,13 @@ export class WorkflowService {
   }
 
   /**
-   * Get template by ID
+   * Get template by ID with workspace validation
    */
-  async getTemplate(templateId: string): Promise<WorkflowTemplateDocument> {
-    const template = await this.templateModel.findById(templateId);
+  async getTemplate(templateId: string, workspaceId: string): Promise<WorkflowTemplateDocument> {
+    const template = await this.templateModel.findOne({
+      _id: new Types.ObjectId(templateId),
+      workspaceId: new Types.ObjectId(workspaceId),
+    });
     if (!template) {
       throw new NotFoundException('Workflow template not found');
     }
@@ -76,6 +83,7 @@ export class WorkflowService {
    */
   async updateTemplate(
     templateId: string,
+    workspaceId: string,
     data: {
       name?: string;
       description?: string;
@@ -86,7 +94,7 @@ export class WorkflowService {
       timeout?: number;
     },
   ): Promise<WorkflowTemplateDocument> {
-    const template = await this.getTemplate(templateId);
+    const template = await this.getTemplate(templateId, workspaceId);
 
     if (data.name) template.name = data.name;
     if (data.description) template.description = data.description;
@@ -103,8 +111,14 @@ export class WorkflowService {
   /**
    * Delete template
    */
-  async deleteTemplate(templateId: string): Promise<void> {
-    const result = await this.templateModel.findByIdAndUpdate(templateId, { status: 'archived' });
+  async deleteTemplate(templateId: string, workspaceId: string): Promise<void> {
+    const result = await this.templateModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(templateId),
+        workspaceId: new Types.ObjectId(workspaceId),
+      },
+      { status: 'archived' },
+    );
     if (!result) {
       throw new NotFoundException('Workflow template not found');
     }
@@ -118,7 +132,7 @@ export class WorkflowService {
     workspaceId: string,
     data?: { triggerData?: Record<string, any>; initiatedByUserId?: string; isManualRun?: boolean },
   ): Promise<WorkflowExecutionDocument> {
-    const template = await this.getTemplate(templateId);
+    const template = await this.getTemplate(templateId, workspaceId);
 
     if (template.status !== 'active') {
       throw new BadRequestException('Workflow template must be active to execute');
@@ -143,9 +157,35 @@ export class WorkflowService {
       })),
     });
 
-    // Execute asynchronously
-    this.executeWorkflowAsync(execution._id.toString(), template).catch((err) => {
-      console.error(`Workflow execution failed: ${err.message}`);
+    // Execute asynchronously with proper error handling
+    this.executeWorkflowAsync(execution._id.toString(), template).catch(async (err) => {
+      try {
+        this.logger.error(
+          `Workflow execution failed: ${err.message}`,
+          err instanceof Error ? err.stack : String(err),
+          {
+            executionId: execution._id.toString(),
+            templateId: template._id.toString(),
+            workspaceId: template.workspaceId.toString(),
+          },
+        );
+
+        await this.executionModel.findByIdAndUpdate(execution._id, {
+          status: 'failed',
+          error: {
+            message: err instanceof Error ? err.message : String(err),
+            code: 'EXECUTION_ERROR',
+            details: err instanceof Error ? { stack: err.stack } : undefined,
+          },
+          completedAt: new Date(),
+          durationMs: Date.now() - execution.startedAt.getTime(),
+        });
+      } catch (saveError) {
+        this.logger.error(
+          'Failed to update execution with error state',
+          saveError instanceof Error ? saveError.stack : String(saveError),
+        );
+      }
     });
 
     return execution;
@@ -242,191 +282,31 @@ export class WorkflowService {
   }
 
   /**
-   * Execute single action
+   * Execute single action using handler registry (public for testability)
    */
-  private async executeAction(
+  async executeAction(
     action: any,
     triggerData: Record<string, any>,
     previousResults: Map<string, any>,
   ): Promise<Record<string, any>> {
-    const context = { triggerData, results: Object.fromEntries(previousResults) };
-
-    switch (action.type) {
-      case 'send_email':
-        return this.actionSendEmail(action.config, context);
-      case 'create_entry':
-        return this.actionCreateEntry(action.config, context);
-      case 'update_metrics':
-        return this.actionUpdateMetrics(action.config, context);
-      case 'notify_user':
-        return this.actionNotifyUser(action.config, context);
-      case 'log_event':
-        return this.actionLogEvent(action.config, context);
-      case 'webhook':
-        return this.actionWebhook(action.config, context);
-      case 'conditional':
-        return this.actionConditional(action.config, context);
-      case 'delay':
-        return this.actionDelay(action.config);
-      default:
-        throw new BadRequestException(`Unknown action type: ${action.type}`);
-    }
-  }
-
-  /**
-   * Action: Send email
-   */
-  private async actionSendEmail(config: any, context: any): Promise<Record<string, any>> {
-    // Placeholder - would integrate with mail service
-    return {
-      type: 'email_sent',
-      to: config.to,
-      subject: config.subject,
-      timestamp: new Date(),
+    const context = {
+      triggerData,
+      results: Object.fromEntries(previousResults),
+      variables: {},
     };
+
+    const handler = this.actionHandlerService.getHandler(action.type);
+    return handler.execute(action.config, context);
   }
 
   /**
-   * Action: Create entry
+   * Get execution with workspace validation
    */
-  private async actionCreateEntry(config: any, context: any): Promise<Record<string, any>> {
-    // Placeholder - would integrate with document service
-    return {
-      type: 'entry_created',
-      title: config.title,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Update metrics
-   */
-  private async actionUpdateMetrics(config: any, context: any): Promise<Record<string, any>> {
-    // Placeholder - would integrate with dashboard service
-    return {
-      type: 'metrics_updated',
-      metricType: config.metricType,
-      value: config.value,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Notify user
-   */
-  private async actionNotifyUser(config: any, context: any): Promise<Record<string, any>> {
-    // Placeholder - would integrate with notification service
-    return {
-      type: 'user_notified',
-      userId: config.userId,
-      message: config.message,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Log event
-   */
-  private async actionLogEvent(config: any, context: any): Promise<Record<string, any>> {
-    return {
-      type: 'event_logged',
-      event: config.event,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Webhook
-   */
-  private async actionWebhook(config: any, context: any): Promise<Record<string, any>> {
-    // Placeholder - would make HTTP request
-    return {
-      type: 'webhook_called',
-      url: config.url,
-      method: config.method || 'POST',
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Conditional
-   */
-  private async actionConditional(config: any, context: any): Promise<Record<string, any>> {
-    // Evaluate condition
-    const condition = config.condition;
-    const conditionMet = this.evaluateCondition(condition, context);
-    return {
-      type: 'condition_evaluated',
-      condition,
-      result: conditionMet,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Action: Delay
-   */
-  private async actionDelay(config: any): Promise<Record<string, any>> {
-    const delayMs = config.delayMs || 1000;
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
-    return {
-      type: 'delay_completed',
-      delayMs,
-      timestamp: new Date(),
-    };
-  }
-
-  /**
-   * Evaluate condition
-   */
-  private evaluateCondition(condition: any, context: any): boolean {
-    // Simple condition evaluation - can be extended
-    if (!condition) return true;
-    if (condition.field && condition.operator && condition.value) {
-      const fieldValue = this.getNestedValue(context, condition.field);
-      return this.compareValues(fieldValue, condition.operator, condition.value);
-    }
-    return true;
-  }
-
-  /**
-   * Get nested value from object
-   */
-  private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, prop) => current?.[prop], obj);
-  }
-
-  /**
-   * Compare values
-   */
-  private compareValues(a: any, op: string, b: any): boolean {
-    switch (op) {
-      case 'eq':
-        return a === b;
-      case 'neq':
-        return a !== b;
-      case 'gt':
-        return a > b;
-      case 'gte':
-        return a >= b;
-      case 'lt':
-        return a < b;
-      case 'lte':
-        return a <= b;
-      case 'contains':
-        return String(a).includes(String(b));
-      case 'in':
-        return Array.isArray(b) && b.includes(a);
-      default:
-        return true;
-    }
-  }
-
-  /**
-   * Get execution
-   */
-  async getExecution(executionId: string): Promise<WorkflowExecutionDocument> {
-    const execution = await this.executionModel.findById(executionId);
+  async getExecution(executionId: string, workspaceId: string): Promise<WorkflowExecutionDocument> {
+    const execution = await this.executionModel.findOne({
+      _id: new Types.ObjectId(executionId),
+      workspaceId: new Types.ObjectId(workspaceId),
+    });
     if (!execution) {
       throw new NotFoundException('Workflow execution not found');
     }
@@ -451,8 +331,8 @@ export class WorkflowService {
   /**
    * Cancel execution
    */
-  async cancelExecution(executionId: string): Promise<WorkflowExecutionDocument> {
-    const execution = await this.getExecution(executionId);
+  async cancelExecution(executionId: string, workspaceId: string): Promise<WorkflowExecutionDocument> {
+    const execution = await this.getExecution(executionId, workspaceId);
 
     if (['success', 'failed'].includes(execution.status)) {
       throw new BadRequestException('Cannot cancel completed workflow');
@@ -466,35 +346,78 @@ export class WorkflowService {
   }
 
   /**
-   * Get execution stats
+   * Get execution stats using MongoDB aggregation (optimized for large datasets)
    */
   async getExecutionStats(
     workspaceId: string,
     templateId?: string,
   ): Promise<Record<string, any>> {
-    const query: any = { workspaceId: new Types.ObjectId(workspaceId) };
-    if (templateId) query.workflowTemplateId = new Types.ObjectId(templateId);
+    const pipeline: any[] = [
+      {
+        $match: {
+          workspaceId: new Types.ObjectId(workspaceId),
+          ...(templateId && { workflowTemplateId: new Types.ObjectId(templateId) }),
+        },
+      },
+      {
+        $facet: {
+          stats: [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: 1 },
+                successful: {
+                  $sum: { $cond: [{ $eq: ['$status', 'success'] }, 1, 0] },
+                },
+                failed: {
+                  $sum: { $cond: [{ $eq: ['$status', 'failed'] }, 1, 0] },
+                },
+                partial: {
+                  $sum: { $cond: [{ $eq: ['$status', 'partial'] }, 1, 0] },
+                },
+                avgDurationMs: {
+                  $avg: { $ifNull: ['$durationMs', 0] },
+                },
+              },
+            },
+          ],
+          lastExecution: [
+            { $sort: { createdAt: -1 } },
+            { $limit: 1 },
+            { $project: { createdAt: 1, startedAt: 1 } },
+          ],
+        },
+      },
+    ];
 
-    const executions = await this.executionModel.find(query).exec();
+    const result = await this.executionModel.aggregate(pipeline).exec();
 
-    const total = executions.length;
-    const successful = executions.filter((e) => e.status === 'success').length;
-    const failed = executions.filter((e) => e.status === 'failed').length;
-    const partial = executions.filter((e) => e.status === 'partial').length;
+    if (!result || result.length === 0) {
+      return {
+        total: 0,
+        successful: 0,
+        failed: 0,
+        partial: 0,
+        successRate: 0,
+        failureRate: 0,
+        avgDurationMs: 0,
+        lastExecution: undefined,
+      };
+    }
 
-    const avgDuration = executions.reduce((sum, e) => sum + (e.durationMs || 0), 0) / (total || 1);
-    const lastExecutionDoc = executions[0];
-    const lastExecution = lastExecutionDoc ? (lastExecutionDoc as any).createdAt || lastExecutionDoc.startedAt : undefined;
+    const { stats, lastExecution } = result[0];
+    const statsData = stats[0] || {};
+    const total = statsData.total || 0;
 
     return {
       total,
-      successful,
-      failed,
-      partial,
-      successRate: total > 0 ? (successful / total) * 100 : 0,
-      failureRate: total > 0 ? (failed / total) * 100 : 0,
-      avgDurationMs: avgDuration,
-      lastExecution,
+      successful: statsData.successful || 0,
+      failed: statsData.failed || 0,
+      partial: statsData.partial || 0,
+      successRate: total > 0 ? ((statsData.successful || 0) / total) * 100 : 0,
+      failureRate: total > 0 ? ((statsData.failed || 0) / total) * 100 : 0,
+      avgDurationMs: statsData.avgDurationMs || 0,
+      lastExecution: lastExecution[0]?.createdAt || lastExecution[0]?.startedAt,
     };
   }
 }

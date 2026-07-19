@@ -13,6 +13,7 @@ import { KnowledgeGraphService } from './services/knowledge-graph.service';
 import { DashboardService } from './services/dashboard.service';
 import { ObsidianSyncService } from './services/obsidian-sync.service';
 import { WorkflowService } from './services/workflow.service';
+import { ActionHandlerService } from './services/action-handler.service';
 import { GoogleOAuthController } from './controllers/google-oauth.controller';
 import { GmailController } from './controllers/gmail.controller';
 import { GoogleDriveController } from './controllers/google-drive.controller';
@@ -79,6 +80,7 @@ import { WorkflowExecution, WorkflowExecutionSchema } from './schemas/workflow-e
     DashboardService,
     ObsidianSyncService,
     WorkflowService,
+    ActionHandlerService,
     JwtStrategy,
   ],
   exports: [
@@ -91,6 +93,7 @@ import { WorkflowExecution, WorkflowExecutionSchema } from './schemas/workflow-e
     DashboardService,
     ObsidianSyncService,
     WorkflowService,
+    ActionHandlerService,
     JwtModule,
     PassportModule,
   ],

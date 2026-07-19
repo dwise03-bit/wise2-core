@@ -84,8 +84,12 @@ export class WorkflowController {
    */
   @Get('templates/:templateId')
   @RequirePermission('read_documents')
-  async getTemplate(@Param('templateId') templateId: string) {
-    const template = await this.workflowService.getTemplate(templateId);
+  async getTemplate(
+    @Request() req,
+    @Param('templateId') templateId: string,
+  ) {
+    const workspaceId = req.user.workspaceId;
+    const template = await this.workflowService.getTemplate(templateId, workspaceId);
 
     return template;
   }
@@ -97,6 +101,7 @@ export class WorkflowController {
   @RequirePermission('write_documents')
   @HttpCode(HttpStatus.OK)
   async updateTemplate(
+    @Request() req,
     @Param('templateId') templateId: string,
     @Body()
     body: {
@@ -109,7 +114,8 @@ export class WorkflowController {
       timeout?: number;
     },
   ) {
-    const template = await this.workflowService.updateTemplate(templateId, body);
+    const workspaceId = req.user.workspaceId;
+    const template = await this.workflowService.updateTemplate(templateId, workspaceId, body);
 
     return {
       success: true,
@@ -123,8 +129,12 @@ export class WorkflowController {
   @Delete('templates/:templateId')
   @RequirePermission('write_documents')
   @HttpCode(HttpStatus.OK)
-  async deleteTemplate(@Param('templateId') templateId: string) {
-    await this.workflowService.deleteTemplate(templateId);
+  async deleteTemplate(
+    @Request() req,
+    @Param('templateId') templateId: string,
+  ) {
+    const workspaceId = req.user.workspaceId;
+    await this.workflowService.deleteTemplate(templateId, workspaceId);
 
     return {
       success: true,
@@ -167,8 +177,12 @@ export class WorkflowController {
    */
   @Get('executions/:executionId')
   @RequirePermission('read_documents')
-  async getExecution(@Param('executionId') executionId: string) {
-    const execution = await this.workflowService.getExecution(executionId);
+  async getExecution(
+    @Request() req,
+    @Param('executionId') executionId: string,
+  ) {
+    const workspaceId = req.user.workspaceId;
+    const execution = await this.workflowService.getExecution(executionId, workspaceId);
 
     return execution;
   }
@@ -204,8 +218,12 @@ export class WorkflowController {
   @Post('executions/:executionId/cancel')
   @RequirePermission('write_documents')
   @HttpCode(HttpStatus.OK)
-  async cancelExecution(@Param('executionId') executionId: string) {
-    const execution = await this.workflowService.cancelExecution(executionId);
+  async cancelExecution(
+    @Request() req,
+    @Param('executionId') executionId: string,
+  ) {
+    const workspaceId = req.user.workspaceId;
+    const execution = await this.workflowService.cancelExecution(executionId, workspaceId);
 
     return {
       success: true,

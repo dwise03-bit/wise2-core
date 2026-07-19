@@ -80,7 +80,12 @@ export class KnowledgeController {
     @Request() req,
     @Param('vaultId') vaultId: string,
   ) {
-    const vault = await this.syncService.getVault(vaultId);
+    const workspaceId = req.user.workspaceId;
+    const vault = await this.syncService.getVault(vaultId, workspaceId);
+
+    if (!vault) {
+      throw new BadRequestException('Vault not found');
+    }
 
     return vault;
   }
