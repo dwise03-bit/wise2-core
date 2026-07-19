@@ -68,6 +68,15 @@ export function useAudioEngine() {
   });
 
   /**
+   * Update tracks from mixer (defined before effects so they can reference it)
+   */
+  const updateTracks = useCallback(() => {
+    if (!engineRef.current.mixer) return;
+    const tracks = engineRef.current.mixer.getTracks();
+    setState(prev => ({ ...prev, tracks }));
+  }, []);
+
+  /**
    * Initialize audio engine on first mount
    */
   useEffect(() => {
@@ -87,13 +96,7 @@ export function useAudioEngine() {
         engineRef.current.playback = playback;
         engineRef.current.recorder = recorder;
 
-        // Setup event listeners
-        mixer.on('trackAdded', () => updateTracks());
-        mixer.on('trackRemoved', () => updateTracks());
-        mixer.on('masterVolumeChanged', (volume: number) => {
-          setState(prev => ({ ...prev, masterVolume: volume }));
-        });
-
+        // Setup playback event listeners
         playback.on('started', () => {
           setState(prev => ({ ...prev, isPlaying: true }));
         });
@@ -108,6 +111,10 @@ export function useAudioEngine() {
 
         playback.on('timeUpdated', (time: number) => {
           setState(prev => ({ ...prev, currentTime: time }));
+        });
+
+        playback.on('masterVolumeChanged', (volume: number) => {
+          setState(prev => ({ ...prev, masterVolume: volume }));
         });
 
         // Start metering loop
@@ -141,6 +148,29 @@ export function useAudioEngine() {
   }, [state.isInitialized]);
 
   /**
+   * Setup mixer event listeners (separate effect to capture updateTracks correctly)
+   */
+  useEffect(() => {
+    if (!engineRef.current.mixer) return;
+
+    const mixer = engineRef.current.mixer;
+
+    // Create properly-scoped event handlers
+    const handleTrackAdded = () => updateTracks();
+    const handleTrackRemoved = () => updateTracks();
+
+    // Attach listeners
+    mixer.on('trackAdded', handleTrackAdded);
+    mixer.on('trackRemoved', handleTrackRemoved);
+
+    // Cleanup listeners on unmount or when updateTracks changes
+    return () => {
+      mixer.off('trackAdded', handleTrackAdded);
+      mixer.off('trackRemoved', handleTrackRemoved);
+    };
+  }, [updateTracks]);
+
+  /**
    * Cleanup on unmount
    */
   useEffect(() => {
@@ -155,15 +185,6 @@ export function useAudioEngine() {
         engineRef.current.playback.cleanup();
       }
     };
-  }, []);
-
-  /**
-   * Update tracks from mixer
-   */
-  const updateTracks = useCallback(() => {
-    if (!engineRef.current.mixer) return;
-    const tracks = engineRef.current.mixer.getTracks();
-    setState(prev => ({ ...prev, tracks }));
   }, []);
 
   /**
