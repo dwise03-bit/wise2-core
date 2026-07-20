@@ -1,38 +1,21 @@
-# Production build for WISE² Website (build context: project root)
-FROM node:20-alpine AS builder
+# Production runtime for WISE² Creative Studio Website
+# Copy pre-built Next.js standalone artifacts
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps
-
-# Copy website only - no need to copy packages for frontend build
-COPY apps/website ./apps/website
-
-# Build the website (disable Turbopack to avoid monorepo root detection issues)
-WORKDIR /app/apps/website
-ENV NEXT_SKIP_ENV_VALIDATION=true
-ENV NEXT_BUILD_TURBOPACK=false
-RUN npm exec next -- build
-
-# Runtime stage
-FROM node:20-alpine
-
-WORKDIR /app/apps/website
-
 RUN apk add --no-cache dumb-init curl
 
-# Copy built artifacts from builder
-COPY --from=builder /app/apps/website/.next/standalone/apps/website/server.js ./server.js
-COPY --from=builder /app/apps/website/.next/standalone/node_modules ./node_modules
-COPY --from=builder /app/apps/website/public ./public
-COPY --from=builder /app/apps/website/package.json ./
+# Copy only the necessary artifacts from the pre-built .next/standalone
+COPY .next/standalone/apps/website/server.js ./
+COPY .next/standalone/node_modules ./node_modules
+COPY public ./public
+COPY package.json ./
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
-ENTRYPOINT ["dumb-init"]
-CMD ["node", "server.js"]
+ENTRYPOINT ["dumb-init", "node"]
+CMD ["server.js"]
