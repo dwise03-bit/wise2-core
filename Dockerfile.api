@@ -12,6 +12,9 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
+# Generate Prisma client
+RUN pnpm exec prisma generate
+
 # Build API
 RUN pnpm --filter @wise2/api build
 
@@ -23,6 +26,10 @@ WORKDIR /app
 # Install production dependencies only
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
+
+# Copy Prisma schema and generated client
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
 # Copy built app from builder
 COPY --from=builder /app/packages/api/dist ./dist

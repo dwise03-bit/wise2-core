@@ -6,11 +6,11 @@ WORKDIR /app
 # Copy monorepo files
 COPY . .
 
-# Install dependencies
-RUN npm install --frozen-lockfile
+# Install pnpm and dependencies
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Build all apps
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:20-alpine
