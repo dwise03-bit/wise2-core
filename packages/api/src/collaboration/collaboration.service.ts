@@ -556,7 +556,7 @@ export class CollaborationService {
           cursorPosition: presence.cursorPosition
             ? JSON.stringify(presence.cursorPosition)
             : null,
-          editingTrackId: presence.editingTrackId,
+          editingTrackId: presence.editingTrackId ?? undefined,
         },
       });
 
@@ -587,7 +587,7 @@ export class CollaborationService {
         cursorPosition: u.cursorPosition
           ? JSON.parse(u.cursorPosition as string)
           : undefined,
-        editingTrackId: u.editingTrackId,
+        editingTrackId: u.editingTrackId || undefined,
         lastHeartbeat: u.lastHeartbeat,
       }));
     } catch (error) {
