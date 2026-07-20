@@ -22,6 +22,9 @@ import {
 import { authenticate } from './middlewares/auth';
 import hermesRouter from './routes/hermes';
 import metricsRouter from './routes/metrics';
+import authRouter from './routes/auth';
+import paymentsRouter from './routes/payments';
+import filesRouter from './routes/files';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -103,27 +106,14 @@ export async function createServer(): Promise<Express> {
   // API Routes
   // ============================================================================
 
-  // Auth routes (to be implemented in separate module)
-  app.post('/api/v1/auth/login', (_req: Request, res: Response) => {
-    res.status(501).json({
-      success: false,
-      error: {
-        code: 'NOT_IMPLEMENTED',
-        message: 'Login endpoint not yet implemented',
-      },
-    });
-  });
+  // Authentication routes
+  app.use('/api/v1/auth', authRouter);
 
-  // Protected routes require authentication
-  app.get('/api/v1/users', authenticate, (_req: Request, res: Response) => {
-    res.status(501).json({
-      success: false,
-      error: {
-        code: 'NOT_IMPLEMENTED',
-        message: 'Users endpoint not yet implemented',
-      },
-    });
-  });
+  // Payment routes
+  app.use('/api/v1/payments', paymentsRouter);
+
+  // File storage routes
+  app.use('/api/v1/files', filesRouter);
 
   // Hermes Website Builder API
   app.use('/api/v1/hermes', hermesRouter);

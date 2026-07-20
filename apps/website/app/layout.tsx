@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
 import { Navigation, Footer } from '@/components/wise';
 import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
+import { ToastProvider } from '@/components/ui/Toast';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -56,16 +57,18 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
-        <Navigation />
-        <div className="min-h-screen flex flex-col">
-          {/* Main Content */}
-          <main className="flex-1">
-            {children}
-          </main>
+        <ToastProvider>
+          <Navigation />
+          <div className="min-h-screen flex flex-col">
+            {/* Main Content */}
+            <main className="flex-1">
+              {children}
+            </main>
 
-          {/* Global support chat */}
-          <ChatWidgetWrapper />
-        </div>
+            {/* Global support chat */}
+            <ChatWidgetWrapper />
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );
