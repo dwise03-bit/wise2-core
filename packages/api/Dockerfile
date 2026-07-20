@@ -12,10 +12,9 @@ COPY packages ./packages
 # Install dependencies with legacy-peer-deps for compatibility
 RUN npm install --legacy-peer-deps
 
-# Generate Prisma client before building API
-# Ensure prisma CLI is available
-RUN npx prisma --version || npm install -g prisma
-RUN cd /app/packages/db && npx prisma generate
+# Install Prisma CLI globally and generate client
+RUN npm install -g prisma @prisma/cli
+RUN cd /app/packages/db && prisma generate
 
 WORKDIR /app/packages/api
 
