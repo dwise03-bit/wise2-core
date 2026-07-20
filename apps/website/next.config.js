@@ -49,9 +49,6 @@ const nextConfig = {
   ],
   experimental: {
     optimizePackageImports: ['@wise2/design-system'],
-    turbopack: {
-      root: '../../',
-    },
   },
   typescript: {
     ignoreBuildErrors: true,
