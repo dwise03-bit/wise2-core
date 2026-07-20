@@ -11,8 +11,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build the website using monorepo next from root
-RUN SKIP_ENV_VALIDATION=true /app/node_modules/.bin/next build --dir /app/apps/website
+# Build the website using pnpm exec
+RUN SKIP_ENV_VALIDATION=true pnpm exec -C apps/website next build
 
 # Runtime stage
 FROM node:20-alpine
