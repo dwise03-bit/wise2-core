@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build the website
-RUN pnpm --filter @wise2/website build
+RUN cd apps/website && npm run build
 
 # Runtime stage
 FROM node:20-alpine
