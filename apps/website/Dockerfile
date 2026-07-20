@@ -10,9 +10,10 @@ RUN npm install --legacy-peer-deps
 # Copy website only - no need to copy packages for frontend build
 COPY apps/website ./apps/website
 
-# Build the website
+# Build the website (disable Turbopack to avoid monorepo root detection issues)
 WORKDIR /app/apps/website
 ENV NEXT_SKIP_ENV_VALIDATION=true
+ENV NEXT_BUILD_TURBOPACK=false
 RUN npm exec next -- build
 
 # Runtime stage
