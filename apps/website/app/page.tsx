@@ -530,6 +530,90 @@ const JingleLab = () => (
   </div>
 );
 
+// ============ CLIENT SHOWCASE ============
+const ClientShowcase = () => (
+  <div className="p-7 space-y-5">
+    <div>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Client Showcase</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">COMPLETED PROJECTS. REAL RESULTS.</p>
+    </div>
+
+    <div className="grid grid-cols-3 gap-4">
+      {[
+        { brand: 'Velocity Media', project: 'Audio Branding Suite', result: '+340% Engagement', color: 'from-purple-600 to-purple-900' },
+        { brand: 'Luna Creatives', project: 'Live Stream Production', result: '2.3M Views', color: 'from-pink-600 to-pink-900' },
+        { brand: 'Quantum Studios', project: 'Sonic Identity', result: 'Award Winning', color: 'from-blue-600 to-blue-900' },
+      ].map((client, i) => (
+        <div key={i} className="rounded-xl overflow-hidden border border-[#333]" style={{ background: `linear-gradient(135deg, rgba(21,21,21,0.9) 0%, rgba(15,15,15,0.7) 100%)` }}>
+          <div className={`h-32 bg-gradient-to-br ${client.color} flex items-center justify-center text-3xl font-bold`}>{client.brand[0]}</div>
+          <div className="p-4 space-y-2">
+            <div className="text-sm font-bold text-[#e6e6e6]">{client.brand}</div>
+            <div className="text-xs text-[#999]">{client.project}</div>
+            <div className="text-[#39FF14] font-bold text-sm mt-2">{client.result}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Featured Case Study</h3>
+      <div className="rounded-2xl p-6 border border-[#333]" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)' }}>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <div className="text-xs text-[#999] uppercase tracking-widest font-bold">Client</div>
+            <div className="text-lg font-bold text-white mt-1">Velocity Media</div>
+          </div>
+          <div>
+            <div className="text-xs text-[#999] uppercase tracking-widest font-bold">Deliverables</div>
+            <div className="text-sm text-[#39FF14] font-bold mt-1">Audio Suite + Branding</div>
+          </div>
+          <div>
+            <div className="text-xs text-[#999] uppercase tracking-widest font-bold">Timeline</div>
+            <div className="text-sm text-[#39FF14] font-bold mt-1">6 Weeks</div>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-[#444]">
+          <p className="text-sm text-[#ccc]">"WISE² transformed our audio identity. The integrated branding suite increased engagement by 340% and set us apart in a crowded market. Professional, innovative, and delivered ahead of schedule."</p>
+          <div className="text-xs text-[#999] mt-3">— Sarah Chen, Creative Director</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Recent Projects</h3>
+      <div className="space-y-2">
+        {[
+          { title: 'Luna Creatives Live Stream', status: 'Completed', date: '2 weeks ago', metrics: '2.3M views' },
+          { title: 'Quantum Studios Sonic ID', status: 'Completed', date: '1 month ago', metrics: 'Award winning' },
+          { title: 'Echo Labs Podcast Suite', status: 'Completed', date: '6 weeks ago', metrics: '#1 ranked' },
+        ].map((proj, i) => (
+          <div key={i} className="rounded-lg p-3 flex justify-between items-center border border-[#333]" style={{ background: 'rgba(20,20,20,0.6)' }}>
+            <div>
+              <div className="font-bold text-sm text-[#e6e6e6]">{proj.title}</div>
+              <div className="text-xs text-[#999] mt-1">{proj.date} • {proj.metrics}</div>
+            </div>
+            <span className="text-xs font-bold px-2 py-1 rounded bg-[#39FF14] text-[#050505]">{proj.status}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="rounded-2xl p-4 border border-[#39FF14] border-opacity-30" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.05) 0%, rgba(57,255,20,0.02) 100%)' }}>
+      <div className="flex justify-between items-start">
+        <div>
+          <div className="text-xs tracking-widest text-[#39FF14] uppercase font-bold">Portfolio Stats</div>
+          <div className="text-2xl font-bold text-white mt-2">47+ Projects</div>
+          <div className="text-sm text-[#999] mt-1">Successfully delivered</div>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-bold text-[#39FF14]">98%</div>
+          <div className="text-xs text-[#999] mt-1">Client satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 // ============ PLACEHOLDER PAGES ============
 const PagePlaceholder = ({ title, subtitle }: any) => (
   <div className="p-7 space-y-5">
@@ -687,7 +771,7 @@ export default function CreativeStudioPage() {
             )}
             {currentPage === 'showcase' && (
               <motion.div key="showcase" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Client Showcase" subtitle="COMPLETED PROJECTS. REAL RESULTS." />
+                <ClientShowcase />
               </motion.div>
             )}
           </AnimatePresence>
