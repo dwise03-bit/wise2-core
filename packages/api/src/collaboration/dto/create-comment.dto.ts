@@ -13,7 +13,7 @@ export class CreateCommentDto {
   })
   @IsString()
   @MaxLength(2000)
-  content: string;
+  content!: string;
 
   @ApiProperty({
     description: 'Optional timestamp in seconds for audio timeline comments',

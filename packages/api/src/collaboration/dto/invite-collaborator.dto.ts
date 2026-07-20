@@ -12,7 +12,7 @@ export class InviteCollaboratorDto {
     example: 'collaborator@example.com',
   })
   @IsEmail()
-  invitedEmail: string;
+  invitedEmail!: string;
 
   @ApiProperty({
     description: 'Role to assign to the collaborator',
@@ -20,7 +20,7 @@ export class InviteCollaboratorDto {
     example: 'EDITOR',
   })
   @IsEnum(['EDITOR', 'VIEWER'])
-  role: 'EDITOR' | 'VIEWER';
+  role!: 'EDITOR' | 'VIEWER';
 
   @ApiProperty({
     description: 'Optional expiration date for the invite',

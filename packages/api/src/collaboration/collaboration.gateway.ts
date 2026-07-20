@@ -54,12 +54,12 @@ import { TrackEditDto } from './dto';
 export class CollaborationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() server!: Server;
 
   private readonly logger = new Logger('CollaborationGateway');
   private readonly heartbeatInterval = 30000; // 30 seconds
   private readonly reconnectionTimeout = 60000; // 60 seconds
-  private heartbeatHandle: NodeJS.Timer;
+  private heartbeatHandle?: NodeJS.Timeout;
   private connectionMap = new Map<string, { projectId: string; userId: string }>();
   private reconnectionCache = new Map<string, { projectId: string; userId: string; timestamp: number }>();
 
