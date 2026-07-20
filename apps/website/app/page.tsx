@@ -1,317 +1,344 @@
 'use client';
 
-import { Navigation, Footer } from '@/components/wise';
-import { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Search, Bell, User, ChevronDown, MoreVertical, Play, Pause, Plus } from 'lucide-react';
 
-export default function Home() {
-  const [selectedProject, setSelectedProject] = useState('Brand Creation');
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({ name: '', email: '', idea: '', goal: '' });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+// ============ THEME & COLORS ============
+const COLORS = {
+  accent: '#39FF14',
+  accentDim: 'rgba(57, 255, 20, 0.1)',
+  accentDarkBg: 'rgba(57, 255, 20, 0.08)',
+  accentLowAlpha: 'rgba(57, 255, 20, 0.35)',
+  black: '#050505',
+  darkBg: '#0a0a0a',
+  cardBg: '#0d0d0d',
+  borderColor: '#262626',
+  borderDim: '#222222',
+  textPrimary: '#e6e6e6',
+  textSecondary: '#999999',
+  textTertiary: '#555555',
+  red: '#ff5c5c',
+  yellow: '#e0a83c',
+};
 
-  const projects = [
-    { id: 1, name: 'Brand Creation', desc: 'Logo, identity, visual language' },
-    { id: 2, name: 'Website Build', desc: 'Marketing, ecommerce, informational site' },
-    { id: 3, name: 'App or Platform', desc: 'Web, mobile, or SaaS application' },
-    { id: 4, name: 'Product Development', desc: 'Physical or digital product' },
-    { id: 5, name: 'Marketing Campaign', desc: 'Strategy, creative, and execution' },
-    { id: 6, name: 'Music and Entertainment', desc: 'Album, music video, or media project' },
-    { id: 7, name: 'AI and Automation', desc: 'Custom AI tools or workflow automation' },
-    { id: 8, name: 'Business System', desc: 'Internal tools, workflows, or infrastructure' },
-    { id: 9, name: 'Full A-to-Z Build', desc: 'Complete project from concept to launch' },
-    { id: 10, name: 'Something New', desc: 'The idea does not fit inside a box' },
-  ];
+// ============ UTILITY FUNCTIONS ============
+const formatTime = (seconds: number) => {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
 
-  const handleSubmit = async () => {
-    if (!formData.name || !formData.email || !formData.idea) {
-      setSubmitError('Please fill in all required fields');
-      return;
+// ============ TOP BAR ============
+const TopBar = ({ currentPage, onPageChange }: any) => (
+  <div className="flex items-center gap-5 h-14 px-5 bg-gradient-to-b from-[#111] to-[#0a0a0a] border-b border-[#262626] flex-none">
+    {/* Logo */}
+    <div className="flex items-baseline gap-1">
+      <span className="font-orbitron font-black text-xl bg-gradient-to-b from-white to-[#777] bg-clip-text text-transparent">WISE</span>
+      <span className="font-orbitron font-black text-xs" style={{ color: COLORS.accent, textShadow: `0 0 8px rgba(57,255,20,.6)` }}>2</span>
+    </div>
+    <div className="text-xs tracking-widest text-[#666] uppercase border-l border-[#2a2a2a] pl-3">Creative Studio</div>
+    <div className="flex items-center gap-2 text-xs text-[#777]">
+      <span>Workspace</span>
+      <span className="text-[#333]">/</span>
+      <button className="flex gap-1 items-center bg-[#161616] border border-[#2c2c2c] text-[#ccc] rounded px-2 py-1 font-semibold text-xs hover:border-[#39FF14] transition">
+        <span className="w-1.5 h-1.5 rounded-xs bg-[#39FF14]"></span>Wise Defense HQ<span className="text-[#555] text-[0.625rem]">▾</span>
+      </button>
+      <span className="text-[#333]">/</span>
+      <span className="text-[#aaa] font-semibold">command</span>
+    </div>
+    <div className="flex-1"></div>
+    <button className="flex items-center gap-2 w-80 bg-[#0d0d0d] border border-[#2c2c2c] rounded px-3 py-1.5 text-[#666] text-xs hover:border-[#39FF14] transition group">
+      <span className="text-[#444]">⌕</span>
+      <span>Search or run a command…</span>
+      <span className="ml-auto text-[0.625rem] bg-[#1a1a1a] border border-[#333] rounded px-1 text-[#888]">⌘K</span>
+    </button>
+    <button className="relative flex items-center justify-center w-8 h-8 bg-[#141414] border border-[#2c2c2c] rounded hover:border-[#39FF14] transition text-[#bbb]">
+      ◔
+      <span className="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-[#39FF14]" style={{ animation: 'pulse 2s infinite' }}></span>
+    </button>
+    <button className="flex items-center gap-2 bg-[#141414] border border-[#2c2c2c] rounded px-2 py-1 hover:border-[#39FF14] transition cursor-pointer text-[#ddd]">
+      <div className="w-7 h-7 rounded border border-[#333] bg-[#1a1a1a]"></div>
+      <span className="text-xs font-semibold">Darrin W.</span>
+      <span className="text-[0.625rem] text-[#555]">▾</span>
+    </button>
+  </div>
+);
+
+// ============ SIDEBAR ============
+const Sidebar = ({ currentPage, onPageChange, credits }: any) => (
+  <div className="w-56 flex-none bg-[#0a0a0a] border-r border-[#1f1f1f] flex flex-col p-3 gap-1 max-h-screen overflow-y-auto">
+    <div className="text-xs tracking-widest text-[#555] uppercase p-2">Studio Modules</div>
+    {[
+      { id: 'command', label: 'Command Center', abbr: 'CC' },
+      { id: 'sound', label: 'Sound Lab', abbr: 'SL' },
+      { id: 'live', label: 'Live Studio', abbr: 'LV' },
+      { id: 'jingle', label: 'Jingle Lab', abbr: 'JL' },
+      { id: 'voice', label: 'Voice Lab', abbr: 'VL' },
+      { id: 'factory', label: 'Content Factory', abbr: 'CF' },
+      { id: 'showcase', label: 'Client Showcase', abbr: 'SH' },
+    ].map((mod) => (
+      <button
+        key={mod.id}
+        onClick={() => onPageChange(mod.id)}
+        className={`flex items-center gap-2 px-3 py-2 rounded border font-bold text-sm tracking-widest text-left w-full transition ${
+          currentPage === mod.id ? 'bg-[rgba(57,255,20,.1)] border-[rgba(57,255,20,.4)] text-white' : 'border-transparent text-[#909090] hover:text-white'
+        }`}
+      >
+        <span className={`font-orbitron text-xs w-5 ${currentPage === mod.id ? 'text-[#39FF14]' : 'text-[#555]'}`}>{mod.abbr}</span>
+        <span className="flex-1">{mod.label}</span>
+        <span className="text-xs text-transparent">●</span>
+      </button>
+    ))}
+    <div className="flex-1"></div>
+    <div className="bg-[#0f0f0f] border border-[#222] rounded-lg p-3 space-y-3">
+      <div className="flex justify-between text-xs tracking-widest text-[#666] uppercase"><span>AI Credits</span><span className="text-[#ccc]">{credits}</span></div>
+      <div className="h-1 bg-[#1c1c1c] rounded-full overflow-hidden"><div className="w-2/3 h-full bg-[#39FF14]" style={{ boxShadow: '0 0 8px rgba(57,255,20,.6)' }}></div></div>
+      <div className="flex justify-between text-xs tracking-widest text-[#666] uppercase"><span>Storage</span><span className="text-[#ccc]">61.8 GB</span></div>
+      <div className="h-1 bg-[#1c1c1c] rounded-full overflow-hidden"><div className="w-2/5 h-full bg-[#8a8a8a]"></div></div>
+      <div className="flex justify-between text-xs text-[#666]"><span>Render queue</span><span className="text-[#39FF14] font-bold">2 jobs</span></div>
+      <button className="w-full bg-[rgba(57,255,20,.1)] border border-[rgba(57,255,20,.35)] text-[#39FF14] rounded px-3 py-2 font-bold text-xs tracking-widest uppercase hover:bg-[rgba(57,255,20,.2)] transition">+ Top Up Credits</button>
+    </div>
+    <div className="flex gap-2 items-center p-2 text-xs text-[#666] uppercase tracking-widest"><span className="w-2 h-2 rounded-full bg-[#39FF14]" style={{ animation: 'pulse 2.4s infinite' }}></span>All systems operational</div>
+  </div>
+);
+
+// ============ COMMAND CENTER DASHBOARD ============
+const CommandCenter = () => (
+  <div className="p-7 space-y-5">
+    <div className="flex items-end gap-4">
+      <div>
+        <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white to-[#6f6f6f] bg-clip-text text-transparent uppercase">Command Center</h1>
+        <p className="text-[#777] font-semibold tracking-widest">Welcome back, Darrin. 3 renders finished overnight.</p>
+      </div>
+      <div className="flex-1"></div>
+      <button className="bg-[#39FF14] text-[#050505] border-none rounded px-4 py-2.5 font-bold text-sm tracking-widest uppercase hover:brightness-110 transition" style={{ animation: 'pulse 3s infinite' }}>+ New Session</button>
+    </div>
+
+    {/* KPI Cards */}
+    <div className="grid grid-cols-4 gap-3.5">
+      {[
+        { title: 'Assets Produced', value: '312', change: '+24%', desc: 'this month · all modules' },
+        { title: 'AI Generations', value: '1,486', change: '+38%', desc: '7,214 credits remaining' },
+        { title: 'Stream Watch Time', value: '412h', change: '+18%', desc: 'across 6 platforms' },
+        { title: 'Revenue Attributed', value: '$18.9K', change: '+31%', desc: 'from studio content' },
+      ].map((kpi, i) => (
+        <div key={i} className="bg-gradient-to-b from-[#121212] to-[#0c0c0c] border border-[#262626] rounded-xl p-4 hover:border-[#39FF14] hover:shadow-lg transition group">
+          <div className="text-xs tracking-widest text-[#777] uppercase">{kpi.title}</div>
+          <div className="flex items-baseline gap-2.5 mt-1.5">
+            <span className="font-orbitron font-bold text-2xl text-[#f2f2f2]">{kpi.value}</span>
+            <span className="text-xs font-bold text-[#39FF14] bg-[rgba(57,255,20,.08)] border border-[rgba(57,255,20,.25)] rounded px-1.5 py-0.5">{kpi.change}</span>
+          </div>
+          <div className="text-xs text-[#666] mt-1">{kpi.desc}</div>
+        </div>
+      ))}
+    </div>
+
+    {/* Charts & Feeds */}
+    <div className="grid grid-cols-[1.7fr_1fr] gap-3.5">
+      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-5">
+        <div className="flex items-center gap-2.5 mb-4">
+          <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold">Production Output</h3>
+          <div className="flex-1"></div>
+          <span className="text-xs text-[#666] border border-[#2a2a2a] rounded px-2 py-1">Last 14 days ▾</span>
+        </div>
+        <svg viewBox="0 0 620 190" className="w-full h-40">
+          <polyline points="0,150 620,150" fill="none" stroke="#1c1c1c" strokeWidth="1"></polyline>
+          <polygon points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15" fill="rgba(57,255,20,.07)"></polygon>
+          <polyline points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15" fill="none" stroke="#39FF14" strokeWidth="2.5" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(57,255,20,.6))' }}></polyline>
+        </svg>
+        <div className="flex justify-between text-xs text-[#555] tracking-widest"><span>JUL 05</span><span>JUL 08</span><span>JUL 11</span><span>JUL 14</span><span>JUL 17</span><span>TODAY</span></div>
+      </div>
+
+      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
+        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-2">AI Activity Feed</h3>
+        <div className="space-y-1 overflow-y-auto max-h-48">
+          {[
+            { label: 'MASTER', text: 'AI mastered "Midnight Anthem" — LUFS -9.4', time: '2m' },
+            { label: 'CLIP', text: '6 highlights detected in Friday broadcast', time: '18m' },
+            { label: 'VOICE', text: '"Coach K" clone finished training', time: '54m' },
+            { label: 'RENDER', text: 'Summer Promo vertical cut exported', time: '1h' },
+            { label: 'PUBLISH', text: 'Blog "Recovery Guide" pushed to site', time: '3h' },
+          ].map((item, i) => (
+            <div key={i} className="flex gap-2 p-2 rounded hover:bg-[#141414]">
+              <span className="font-orbitron text-xs text-[#39FF14] border border-[rgba(57,255,20,.3)] rounded px-1.5 py-0.5 flex-none">{item.label}</span>
+              <div className="flex-1"><div className="font-semibold text-xs text-[#ddd]">{item.text}</div></div>
+              <span className="text-xs text-[#555] flex-none">{item.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Quick Actions & Recommendations */}
+    <div className="grid grid-cols-3 gap-3.5">
+      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
+        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-3">Quick Actions</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['▸ New Mix Session', '▸ Go Live Now', '▸ Generate Jingle', '▸ Batch Content Run'].map((action, i) => (
+            <button key={i} className="bg-[#141414] border border-[#2a2a2a] rounded px-2.5 py-2.5 text-[#ccc] font-bold text-xs text-left hover:border-[#39FF14] hover:text-white transition">{action}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-[#0f150c] to-[#0b0b0b] border border-[rgba(57,255,20,.25)] rounded-2xl p-4">
+        <h3 className="text-xs tracking-widest text-[#39FF14] uppercase font-bold mb-3">WISE² AI Recommends</h3>
+        <div className="space-y-2">
+          {[
+            'Your Friday streams out-perform weekdays 3.1× — schedule launch Friday 7PM.',
+            '"Ironclad Anthem" ready for 15s ad cut. One click to Content Factory.',
+            'Vocal bus clips at 2:14 — apply De-Noise AI preset "Stage Mic".',
+          ].map((rec, i) => (
+            <div key={i} className="flex gap-2 text-xs text-[#cfcfcf] font-semibold"><span className="text-[#39FF14]">▸</span><span>{rec}</span></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
+        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-3">Team Online</h3>
+        <div className="space-y-2">
+          {[
+            { name: 'Darrin Wise', status: 'Mixing · Sound Lab', online: true },
+            { name: 'Daniel Wise', status: 'Prepping · Live Studio', online: true },
+            { name: 'Maya Reyes', status: 'Away · Content Factory', online: false },
+          ].map((member, i) => (
+            <div key={i} className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded bg-[#1a1a1a] border border-[#333]"></div>
+              <div className="flex-1"><div className="font-bold text-xs">{member.name}</div><div className="text-xs text-[#666]">{member.status}</div></div>
+              <span className={`w-2 h-2 rounded-full flex-none ${member.online ? 'bg-[#39FF14]' : 'bg-[#e0a83c]'}`}></span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ============ PLACEHOLDER PAGES ============
+const PagePlaceholder = ({ title, subtitle }: any) => (
+  <div className="p-7 space-y-5">
+    <div>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white to-[#6f6f6f] bg-clip-text text-transparent uppercase">{title}</h1>
+      <p className="text-[#777] font-semibold tracking-widest">{subtitle}</p>
+    </div>
+    <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-12 text-center">
+      <p className="text-[#666] text-sm">Full {title} interface coming soon...</p>
+    </div>
+  </div>
+);
+
+// ============ MAIN PAGE ============
+export default function CreativeStudioPage() {
+  const [currentPage, setCurrentPage] = useState('command');
+  const [credits, setCredits] = useState(7214);
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to top on page change
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
     }
+  }, [currentPage]);
 
-    setSubmitting(true);
-    setSubmitError(null);
+  // Add Orbitron and Rajdhani fonts
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
 
-    try {
-      const response = await fetch('/api/intake', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectType: selectedProject,
-          ...formData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Submission failed');
+    // Add custom CSS for keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 6px rgba(57,255,20,.35); }
+        50% { box-shadow: 0 0 18px rgba(57,255,20,.7); }
       }
 
-      setStep(3);
-    } catch (error) {
-      setSubmitError('Failed to submit. Please try again or contact support.');
-      console.error('Submission error:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+      .font-orbitron {
+        font-family: 'Orbitron', sans-serif;
+      }
+
+      .font-rajdhani {
+        font-family: 'Rajdhani', sans-serif;
+      }
+    `;
+    document.head.appendChild(style);
+  }, []);
 
   return (
-    <>
-      <Navigation />
+    <div className="flex flex-col h-screen" style={{ background: COLORS.black }}>
+      {/* Top Bar */}
+      <TopBar currentPage={currentPage} onPageChange={setCurrentPage} />
 
-      <main className="bg-black min-h-screen pt-20">
-        {/* WISE² Command Center Intake Form */}
-        <div className="max-w-6xl mx-auto px-4 py-20">
-          {/* Header with Process Steps */}
-          <div className="mb-20">
-            <div className="flex justify-between items-center mb-12 gap-4">
-              {['IDEA', 'STRATEGY', 'BUILD', 'LAUNCH', 'MULTIPLY'].map((label, idx) => (
-                <div key={label} className="flex flex-col items-center flex-1 min-w-0">
-                  <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-sm flex-shrink-0 ${
-                    idx === 0
-                      ? 'border-lime-400 bg-lime-400/10 text-lime-400'
-                      : 'border-gray-700 text-gray-600'
-                  }`}>
-                    {idx + 1}
-                  </div>
-                  <div className={`text-xs mt-2 font-mono tracking-widest ${
-                    idx === 0 ? 'text-lime-400' : 'text-gray-600'
-                  }`}>
-                    {label}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
-          </div>
+      {/* Body */}
+      <div className="flex flex-1 min-h-0">
+        {/* Sidebar */}
+        <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} credits={credits} />
 
-          <h1 className="text-5xl md:text-6xl font-black mb-2 text-lime-400" style={{ fontFamily: '"Beyond The Mountains", sans-serif' }}>
-            Capture Your Vision
-          </h1>
-          <p className="text-gray-400 mb-16 font-mono text-sm tracking-wider">Step {step} of 5</p>
-
-          {/* Form Section */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="md:col-span-2">
-              {step === 1 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Rajdhani' }}>
-                    What do you need?
-                  </h2>
-                  <p className="text-gray-400 mb-12 font-mono text-sm">Select your project type to get started.</p>
-
-                  <fieldset className="mb-8">
-                    <legend className="sr-only">Project Type Selection</legend>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {projects.map((project) => (
-                        <button
-                          key={project.id}
-                          onClick={() => setSelectedProject(project.name)}
-                          className={`p-6 rounded-lg border-2 transition-all duration-300 text-left group focus:outline-2 focus:outline-lime-400 focus:outline-offset-2 ${
-                            selectedProject === project.name
-                              ? 'border-lime-400 bg-lime-400/10 ring-2 ring-lime-400/30 shadow-lg shadow-lime-400/20'
-                              : 'border-gray-800 hover:border-lime-400/50 hover:bg-gray-900/50 hover:shadow-md hover:shadow-lime-400/10'
-                          }`}
-                          aria-pressed={selectedProject === project.name}
-                          aria-label={`Select ${project.name}: ${project.desc}`}
-                        >
-                          <div className={`font-bold mb-1 text-sm transition-colors duration-300 ${
-                            selectedProject === project.name ? 'text-lime-400' : 'text-white group-hover:text-lime-400/80'
-                          }`}>
-                            {project.name}
-                          </div>
-                          <div className={`text-xs transition-colors duration-300 ${
-                            selectedProject === project.name ? 'text-lime-400/70' : 'text-gray-500 group-hover:text-gray-400'
-                          }`}>
-                            {project.desc}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </fieldset>
-
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => setStep(2)}
-                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold transition-all duration-300 hover:bg-lime-300 hover:scale-110 hover:shadow-lg hover:shadow-lime-400/50 active:scale-95 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
-                    >
-                      Continue →
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-8" style={{ fontFamily: 'Rajdhani' }}>
-                    Tell us about yourself
-                  </h2>
-
-                  {submitError && (
-                    <div className="mb-6 p-4 bg-red-900/20 border border-red-500/50 rounded text-red-300 text-sm">
-                      {submitError}
-                    </div>
-                  )}
-
-                  <div className="space-y-6">
-                    <div>
-                      <label htmlFor="fullname" className="block text-white font-bold mb-2 text-sm">
-                        Full Name <span className="text-red-400" aria-label="required">*</span>
-                      </label>
-                      <input
-                        id="fullname"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Your name"
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition-all duration-300 hover:border-gray-700"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="email" className="block text-white font-bold mb-2 text-sm">
-                        Email <span className="text-red-400" aria-label="required">*</span>
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="you@company.com"
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition-all duration-300 hover:border-gray-700"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="idea" className="block text-white font-bold mb-2 text-sm">
-                        Describe Your Idea <span className="text-red-400" aria-label="required">*</span>
-                      </label>
-                      <textarea
-                        id="idea"
-                        required
-                        value={formData.idea}
-                        onChange={(e) => setFormData({ ...formData, idea: e.target.value })}
-                        placeholder="Tell us about your project in detail..."
-                        rows={6}
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition resize-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="goal" className="block text-white font-bold mb-2 text-sm">
-                        Main Goal <span className="text-gray-500 text-xs">(Optional)</span>
-                      </label>
-                      <textarea
-                        id="goal"
-                        value={formData.goal}
-                        onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                        placeholder="What's the primary goal of this project?"
-                        rows={4}
-                        className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-600 focus:border-lime-400 focus:ring-2 focus:ring-lime-400/30 focus:outline-none transition resize-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-12 flex gap-4">
-                    <button
-                      onClick={() => setStep(1)}
-                      disabled={submitting}
-                      className="px-8 py-3 rounded border border-gray-800 text-white hover:border-lime-400/50 hover:bg-gray-900/50 hover:shadow-md hover:shadow-lime-400/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
-                      aria-label="Go back to previous step"
-                    >
-                      ← Back
-                    </button>
-                    <button
-                      onClick={handleSubmit}
-                      disabled={submitting}
-                      className="px-8 py-3 rounded bg-lime-400 text-black font-bold hover:bg-lime-300 hover:scale-105 hover:shadow-lg hover:shadow-lime-400/50 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
-                      aria-label={submitting ? 'Submitting form' : 'Submit form'}
-                    >
-                      {submitting ? (
-                        <>
-                          <span className="inline-block animate-spin">⏳</span>
-                          Submitting...
-                        </>
-                      ) : (
-                        <>Submit →</>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="text-center py-20">
-                  <div className="text-7xl mb-6 text-lime-400 animate-bounce">✓</div>
-                  <h2 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'Rajdhani' }}>
-                    Submission Complete
-                  </h2>
-                  <p className="text-gray-400 mb-2 font-mono text-sm">
-                    Thank you for submitting your project details!
-                  </p>
-                  <p className="text-gray-500 mb-8 font-mono text-xs">
-                    We've received your intake form. Our team will review and reach out within 24 hours.
-                  </p>
-                  <div className="bg-gray-900/30 border border-lime-400/30 rounded-lg p-6 mb-8 max-w-md mx-auto">
-                    <div className="text-left space-y-3">
-                      <div>
-                        <p className="text-gray-500 text-xs tracking-wider font-mono mb-1">PROJECT TYPE</p>
-                        <p className="text-lime-400 font-bold">{selectedProject}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500 text-xs tracking-wider font-mono mb-1">CONTACT EMAIL</p>
-                        <p className="text-white">{formData.email}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setStep(1);
-                      setFormData({ name: '', email: '', idea: '', goal: '' });
-                      setSubmitError(null);
-                    }}
-                    className="px-8 py-3 rounded bg-lime-400 text-black font-bold hover:bg-lime-300 transition focus:outline-2 focus:outline-lime-400 focus:outline-offset-2"
-                  >
-                    Start New Project
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Sidebar */}
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-8" style={{ backdropFilter: 'blur(10px)' }}>
-              <h3 className="text-white font-bold mb-4 text-sm tracking-wider font-mono">CURRENT SELECTION</h3>
-              <div className="text-lime-400 font-bold mb-6 text-lg">{selectedProject}</div>
-
-              <div className="space-y-4 text-sm text-gray-400">
-                <div>
-                  <div className="text-gray-500 mb-1 font-mono text-xs tracking-wider">PROJECT TYPE</div>
-                  <div className="text-white">{selectedProject}</div>
-                </div>
-                <div className="pt-4 border-t border-gray-800">
-                  <div className="text-gray-500 mb-1 font-mono text-xs tracking-wider">TIMELINE</div>
-                  <div className="text-white">To be determined</div>
-                </div>
-                <div className="pt-4 border-t border-gray-800">
-                  <div className="text-gray-500 mb-1 font-mono text-xs tracking-wider">BUDGET</div>
-                  <div className="text-white">To be determined</div>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-8 border-t border-gray-800">
-                <p className="text-gray-500 text-xs font-mono tracking-wider">
-                  Organized Chaos
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Main Content */}
+        <div
+          ref={mainRef}
+          className="flex-1 min-w-0 overflow-y-auto"
+          style={{
+            background: `radial-gradient(1200px 500px at 70% -10%, rgba(57,255,20,.05), transparent 60%), ${COLORS.black}`,
+          }}
+        >
+          <AnimatePresence mode="wait">
+            {currentPage === 'command' && (
+              <motion.div key="command" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <CommandCenter />
+              </motion.div>
+            )}
+            {currentPage === 'sound' && (
+              <motion.div key="sound" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Sound Lab" subtitle="CREATE. PRODUCE. MASTER." />
+              </motion.div>
+            )}
+            {currentPage === 'live' && (
+              <motion.div key="live" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Live Studio" subtitle="BROADCAST. ENGAGE. DOMINATE." />
+              </motion.div>
+            )}
+            {currentPage === 'jingle' && (
+              <motion.div key="jingle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Jingle Lab" subtitle="CREATE. BRAND. IMPACT." />
+              </motion.div>
+            )}
+            {currentPage === 'voice' && (
+              <motion.div key="voice" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Voice Lab" subtitle="GENERATE. CLONE. DOMINATE." />
+              </motion.div>
+            )}
+            {currentPage === 'factory' && (
+              <motion.div key="factory" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Content Factory" subtitle="ONE PROMPT. EVERY CHANNEL." />
+              </motion.div>
+            )}
+            {currentPage === 'showcase' && (
+              <motion.div key="showcase" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
+                <PagePlaceholder title="Client Showcase" subtitle="COMPLETED PROJECTS. REAL RESULTS." />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </main>
+      </div>
 
-      <Footer />
-    </>
+      {/* Custom Scrollbar */}
+      <style>{`
+        div::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        div::-webkit-scrollbar-thumb {
+          background: #2a2a2a;
+          border-radius: 4px;
+        }
+        div::-webkit-scrollbar-track {
+          background: #0a0a0a;
+        }
+      `}</style>
+    </div>
   );
 }
