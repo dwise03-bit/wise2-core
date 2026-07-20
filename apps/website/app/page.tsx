@@ -396,6 +396,250 @@ const CommandCenter = () => {
   );
 };
 
+// ============ LIVE STUDIO ============
+const LiveStudio = () => (
+  <div className="p-7 space-y-5">
+    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Live Studio</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">BROADCAST. ENGAGE. DOMINATE.</p>
+    </motion.div>
+
+    {/* Live Status Banner */}
+    <motion.div
+      className="rounded-2xl p-6 relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.1) 100%)',
+        border: '2px solid rgba(239,68,68,0.5)',
+        boxShadow: '0 0 24px rgba(239,68,68,0.3)',
+      }}
+      animate={{ boxShadow: ['0 0 24px rgba(239,68,68,0.3)', '0 0 40px rgba(239,68,68,0.5)', '0 0 24px rgba(239,68,68,0.3)'] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <motion.div
+            className="w-4 h-4 rounded-full bg-red-500"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          />
+          <div>
+            <div className="font-bold text-lg text-red-400">LIVE NOW</div>
+            <div className="text-sm text-[#999]">Friday Night Beats Stream</div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-[#39FF14]">2,847</div>
+          <div className="text-xs text-[#999]">viewers</div>
+        </div>
+      </div>
+    </motion.div>
+
+    {/* Stream Controls */}
+    <motion.div
+      className="grid grid-cols-2 gap-4"
+      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.button
+        className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase"
+        style={{
+          background: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)',
+          border: '1px solid rgba(239,68,68,0.4)',
+        }}
+        whileHover={{ scale: 1.02, boxShadow: '0 0 16px rgba(239,68,68,0.4)' }}
+      >
+        ⏹ Stop Stream
+      </motion.button>
+      <motion.button
+        className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase"
+        style={{
+          background: 'linear-gradient(135deg, rgba(57,255,20,0.15) 0%, rgba(57,255,20,0.05) 100%)',
+          border: '1px solid rgba(57,255,20,0.3)',
+        }}
+        whileHover={{ scale: 1.02, boxShadow: '0 0 16px rgba(57,255,20,0.4)' }}
+      >
+        ⚙️ Settings
+      </motion.button>
+    </motion.div>
+
+    {/* Stream Metrics */}
+    <motion.div
+      className="grid grid-cols-4 gap-3"
+      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
+      initial="hidden"
+      animate="visible"
+    >
+      {[
+        { label: 'Bitrate', value: '6 Mbps', color: '#39FF14' },
+        { label: 'FPS', value: '60', color: '#0369A1' },
+        { label: 'Uptime', value: '23m', color: '#39FF14' },
+        { label: 'CPU', value: '45%', color: '#e0a83c' },
+      ].map((metric, i) => (
+        <motion.div
+          key={i}
+          className="rounded-lg p-3"
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
+            border: '1px solid rgba(39,39,39,0.6)',
+          }}
+          whileHover={{ scale: 1.05 }}
+        >
+          <div className="text-xs text-[#999] uppercase tracking-widest">{metric.label}</div>
+          <div className="text-lg font-bold mt-1" style={{ color: metric.color }}>{metric.value}</div>
+        </motion.div>
+      ))}
+    </motion.div>
+
+    {/* Chat & Engagement */}
+    <motion.div
+      className="grid grid-cols-2 gap-4"
+      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div
+        className="rounded-2xl p-4"
+        style={{
+          background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
+          border: '1px solid rgba(39,39,39,0.6)',
+        }}
+      >
+        <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Live Chat</h3>
+        <div className="space-y-2 text-xs">
+          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+DarrinW:</span><span className="text-[#999]">Fire mix right now! 🔥</span></div>
+          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+CreativeAI:</span><span className="text-[#999]">Love the energy</span></div>
+          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+SoundGuy:</span><span className="text-[#999]">What's the track?</span></div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="rounded-2xl p-4"
+        style={{
+          background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
+          border: '1px solid rgba(39,39,39,0.6)',
+        }}
+      >
+        <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Engagement</h3>
+        <div className="space-y-2 text-xs">
+          <div className="flex justify-between"><span className="text-[#999]">👍 Reactions</span><span className="text-[#39FF14] font-bold">342</span></div>
+          <div className="flex justify-between"><span className="text-[#999]">💬 Comments</span><span className="text-[#39FF14] font-bold">127</span></div>
+          <div className="flex justify-between"><span className="text-[#999]">🔗 Shares</span><span className="text-[#39FF14] font-bold">84</span></div>
+        </div>
+      </motion.div>
+    </motion.div>
+  </div>
+);
+
+// ============ JINGLE LAB ============
+const JingleLab = () => (
+  <div className="p-7 space-y-5">
+    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Jingle Lab</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">CREATE. BRAND. IMPACT.</p>
+    </motion.div>
+
+    {/* Quick Generate */}
+    <motion.button
+      className="w-full rounded-xl p-6 font-bold text-lg tracking-widest uppercase"
+      style={{
+        background: 'linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(57,255,20,0.1) 100%)',
+        border: '2px solid rgba(57,255,20,0.4)',
+      }}
+      whileHover={{ scale: 1.02, boxShadow: '0 0 24px rgba(57,255,20,0.4)' }}
+      animate={{ boxShadow: ['0 0 12px rgba(57,255,20,0.2)', '0 0 20px rgba(57,255,20,0.3)', '0 0 12px rgba(57,255,20,0.2)'] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      ✨ Generate New Jingle
+    </motion.button>
+
+    {/* Template Gallery */}
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-4">Featured Templates</h3>
+      <motion.div
+        className="grid grid-cols-4 gap-4"
+        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
+        initial="hidden"
+        animate="visible"
+      >
+        {[
+          { name: 'Bright & Bold', duration: '15s', bpm: '120' },
+          { name: 'Corporate Pro', duration: '30s', bpm: '100' },
+          { name: 'Upbeat Energy', duration: '10s', bpm: '140' },
+          { name: 'Smooth Jazz', duration: '20s', bpm: '95' },
+          { name: 'Tech Vibe', duration: '15s', bpm: '130' },
+          { name: 'Minimal Clean', duration: '25s', bpm: '110' },
+          { name: 'Epic Intro', duration: '5s', bpm: '160' },
+          { name: 'Calm Focus', duration: '30s', bpm: '80' },
+        ].map((template, i) => (
+          <motion.div
+            key={i}
+            className="rounded-lg p-4 cursor-pointer group"
+            style={{
+              background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
+              border: '1px solid rgba(39,39,39,0.6)',
+            }}
+            whileHover={{ y: -4, borderColor: '#39FF14', boxShadow: '0 8px 20px rgba(57,255,20,0.2)' }}
+          >
+            <div className="w-full h-16 bg-[#0a0a0a] rounded mb-3 flex items-center justify-center border border-[#333]">
+              <span className="text-[#39FF14] text-xl">♪</span>
+            </div>
+            <div className="text-xs font-bold text-[#e6e6e6]">{template.name}</div>
+            <div className="flex justify-between text-xs text-[#999] mt-2 font-medium">
+              <span>{template.duration}</span>
+              <span>{template.bpm} BPM</span>
+            </div>
+            <motion.button
+              className="w-full mt-3 bg-[#39FF14] text-[#050505] rounded px-2 py-1 font-bold text-xs tracking-widest uppercase opacity-0 group-hover:opacity-100"
+              whileHover={{ scale: 1.05 }}
+            >
+              Use Template
+            </motion.button>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+
+    {/* Recent Projects */}
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-4">Your Projects</h3>
+      <motion.div
+        className="space-y-2"
+        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
+        initial="hidden"
+        animate="visible"
+      >
+        {[
+          { name: 'Brand Jingle v3', status: 'Ready', date: '2 hours ago' },
+          { name: 'Product Launch SFX', status: 'Rendering', date: '5 min ago' },
+          { name: 'Podcast Intro Mix', status: 'Ready', date: '1 day ago' },
+        ].map((proj, i) => (
+          <motion.div
+            key={i}
+            className="rounded-lg p-4 flex justify-between items-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
+              border: '1px solid rgba(39,39,39,0.6)',
+            }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="flex-1">
+              <div className="font-bold text-sm text-[#e6e6e6]">{proj.name}</div>
+              <div className="text-xs text-[#999]">{proj.date}</div>
+            </div>
+            <div className="flex gap-2 items-center">
+              <span className={`text-xs font-bold px-2 py-1 rounded ${proj.status === 'Ready' ? 'bg-[#39FF14] text-[#050505]' : 'bg-[#e0a83c] text-[#050505]'}`}>
+                {proj.status}
+              </span>
+              <button className="text-[#39FF14] hover:text-white transition">▶</button>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  </div>
+);
+
 // ============ PLACEHOLDER PAGES ============
 const PagePlaceholder = ({ title, subtitle }: any) => (
   <div className="p-7 space-y-5">
@@ -533,12 +777,12 @@ export default function CreativeStudioPage() {
             )}
             {currentPage === 'live' && (
               <motion.div key="live" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Live Studio" subtitle="BROADCAST. ENGAGE. DOMINATE." />
+                <LiveStudio />
               </motion.div>
             )}
             {currentPage === 'jingle' && (
               <motion.div key="jingle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Jingle Lab" subtitle="CREATE. BRAND. IMPACT." />
+                <JingleLab />
               </motion.div>
             )}
             {currentPage === 'voice' && (
