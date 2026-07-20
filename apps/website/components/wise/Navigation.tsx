@@ -8,15 +8,14 @@ export const Navigation: React.FC = () => {
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/studio', label: 'Studio' },
-    { href: '/live', label: 'Live' },
-    { href: '/jingle-lab', label: 'Jingle Lab' },
-    { href: '/print-on-demand', label: 'Print' },
-    { href: '/services', label: 'Services' },
-    { href: '/process', label: 'Process' },
-    { href: '/work', label: 'Work' },
-    { href: '/heroes', label: 'Visionaries' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/landing', label: 'Landing' },
+    { href: '/gallery', label: 'Gallery' },
+    { href: 'http://localhost:3005', label: 'Studio', external: true },
+    { href: 'http://localhost:3002', label: 'Dashboard', external: true },
+    { href: '/apps', label: 'Apps' },
+    { href: '/webstore', label: 'Webstore' },
+    { href: '/shop', label: 'Shop' },
+    { href: '/maintenance', label: 'Maintenance' },
   ];
 
   return (
@@ -36,15 +35,27 @@ export const Navigation: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="relative text-gray-300 hover:text-lime-400 transition-colors duration-300 font-mono text-sm tracking-wider group/link"
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover/link:w-full transition-all duration-300" />
-              </Link>
+            {links.map((link: any) => (
+              link.external ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_self"
+                  className="relative text-gray-300 hover:text-lime-400 transition-colors duration-300 font-mono text-sm tracking-wider group/link"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover/link:w-full transition-all duration-300" />
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="relative text-gray-300 hover:text-lime-400 transition-colors duration-300 font-mono text-sm tracking-wider group/link"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-lime-400 group-hover/link:w-full transition-all duration-300" />
+                </Link>
+              )
             ))}
             <Link
               href="/"
@@ -69,15 +80,27 @@ export const Navigation: React.FC = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden pb-4 border-t border-lime-400/30 bg-black/80 backdrop-blur-sm -mx-4 px-4 rounded-b-xl">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block py-2 text-gray-300 hover:text-lime-400 hover:pl-2 transition-all duration-300 font-mono text-sm"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
+            {links.map((link: any) => (
+              link.external ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_self"
+                  className="block py-2 text-gray-300 hover:text-lime-400 hover:pl-2 transition-all duration-300 font-mono text-sm"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block py-2 text-gray-300 hover:text-lime-400 hover:pl-2 transition-all duration-300 font-mono text-sm"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              )
             ))}
             <Link
               href="/"

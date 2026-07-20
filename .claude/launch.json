@@ -5,8 +5,9 @@
       "name": "wise2-dev",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["turbo", "run", "dev", "--parallel"],
-      "port": 3000,
-      "autoPort": true
+      "port": 3001,
+      "autoPort": false,
+      "description": "WISE² Dev: API(3000) Website(3001) Dashboard(3002) Admin(3004) Studio(3005) Podcast(3006)"
     }
   ]
 }

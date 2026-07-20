@@ -4,9 +4,9 @@
   "description": "WISE² Podcast Music - AI-powered podcast music generation backend",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3003",
+    "dev": "next dev -p 3006",
     "build": "next build",
-    "start": "next start -p 3003 -H 0.0.0.0",
+    "start": "next start -p 3006 -H 0.0.0.0",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "test": "jest",

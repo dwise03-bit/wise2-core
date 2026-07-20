@@ -56,6 +56,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
+        <Navigation />
         <div className="min-h-screen flex flex-col">
           {/* Main Content */}
           <main className="flex-1">
