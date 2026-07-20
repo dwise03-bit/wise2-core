@@ -7,8 +7,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy all workspace packages and website
-COPY packages ./packages
+# Copy website only - no need to copy packages for frontend build
 COPY apps/website ./apps/website
 
 # Build the website
