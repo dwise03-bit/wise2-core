@@ -13,7 +13,9 @@ COPY packages ./packages
 RUN npm install --legacy-peer-deps
 
 # Generate Prisma client before building API
-RUN cd /app/packages/db && npx prisma generate || true
+# Ensure prisma CLI is available
+RUN npx prisma --version || npm install -g prisma
+RUN cd /app/packages/db && npx prisma generate
 
 WORKDIR /app/packages/api
 
@@ -43,6 +45,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf 
 COPY --from=builder /app/packages/api/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+# Copy Prisma client that was generated during build
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
 EXPOSE 3001
 
