@@ -1,18 +1,10 @@
-# Builder stage - build the website
+# Builder stage
 FROM node:20-alpine as builder
 
 WORKDIR /app
 
-# Install dependencies
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-# Copy source
+# Copy everything for reference (not used in runtime)
 COPY . .
-
-# Build the website using pnpm exec
-RUN SKIP_ENV_VALIDATION=true pnpm exec -C apps/website next build
 
 # Runtime stage
 FROM node:20-alpine
@@ -28,11 +20,8 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 
-# Copy all necessary files from builder
-COPY --from=builder /app/apps/website/.next ./apps/website/.next
-COPY --from=builder /app/apps/website/public ./apps/website/public
-COPY --from=builder /app/apps/website/package.json ./apps/website/
-COPY --from=builder /app/apps/website/next.config.js ./apps/website/
+# Copy website files (these come from rsync on production)
+COPY apps/website ./apps/website
 
 # Expose port
 EXPOSE 3000
@@ -41,5 +30,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 
-# Start website from monorepo root with proper next binary path
+# Start website - use node directly with next binary from monorepo
 CMD ["node", "./node_modules/next/dist/bin/next", "start", "--dir", "./apps/website", "-p", "3000"]
