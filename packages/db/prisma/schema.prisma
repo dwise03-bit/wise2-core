@@ -12,30 +12,30 @@ datasource db {
 
 // Users
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  passwordHash  String
-  role          UserRole  @default(CUSTOMER)
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         UserRole @default(CUSTOMER)
 
   // Relationships
   subscription      Subscription?
   projects          Project[]
-  podcastProjects   PodcastProject[] @relation("podcastProjects")
+  podcastProjects   PodcastProject[]   @relation("podcastProjects")
   soundLabsProjects SoundLabsProject[] @relation("soundLabsProjects")
-  usageRecords      UsageRecord[] @relation("usageRecords")
+  usageRecords      UsageRecord[]      @relation("usageRecords")
 
   // Collaboration relationships
-  collaborations    ProjectCollaborator[] @relation("collaborations")
-  sentInvites       ProjectInvite[] @relation("sentInvites")
-  acceptedInvites   ProjectInvite[] @relation("acceptedInvites")
-  comments          ProjectComment[] @relation("comments")
-  activities        ActivityLog[]
-  versions          VersionHistory[]
-  presence          UserPresence[]
+  collaborations  ProjectCollaborator[] @relation("collaborations")
+  sentInvites     ProjectInvite[]       @relation("sentInvites")
+  acceptedInvites ProjectInvite[]       @relation("acceptedInvites")
+  comments        ProjectComment[]      @relation("comments")
+  activities      ActivityLog[]         @relation("activities")
+  versions        VersionHistory[]      @relation("versions")
+  presence        UserPresence[]        @relation("presence")
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum UserRole {
@@ -46,15 +46,15 @@ enum UserRole {
 
 // Subscriptions/Billing
 model Subscription {
-  id              String    @id @default(cuid())
-  userId          String    @unique
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  stripeCustomerId String?   @unique
-  stripeSubscriptionId String? @unique
-  stripePriceId   String?
-  status          SubscriptionStatus @default(ACTIVE)
-  plan            PricingPlan @default(FREE)
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  status               SubscriptionStatus @default(ACTIVE)
+  plan                 PricingPlan        @default(FREE)
 
   currentPeriodStart DateTime?
   currentPeriodEnd   DateTime?
@@ -62,14 +62,14 @@ model Subscription {
   trialEndsAt        DateTime?
 
   // Usage tracking
-  generationsThisMonth Int @default(0)
-  lastResetDate     DateTime @default(now())
+  generationsThisMonth Int      @default(0)
+  lastResetDate        DateTime @default(now())
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationship to usage logs
-  usageLogs       UsageLog[]
+  usageLogs UsageLog[]
 }
 
 enum SubscriptionStatus {
@@ -89,40 +89,40 @@ enum PricingPlan {
 
 // Track generation usage for feature gating
 model UsageLog {
-  id              String    @id @default(cuid())
-  subscriptionId  String
-  subscription    Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
-  generationType  String    // "music_generation", "podcast_generation", etc.
-  creditsUsed     Int       @default(1)
-  metadata        Json?
+  generationType String // "music_generation", "podcast_generation", etc.
+  creditsUsed    Int    @default(1)
+  metadata       Json?
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 // Projects
 model Project {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  title           String
-  description     String    @db.Text
-  budget          Float?
-  timeline        String?
+  title       String
+  description String  @db.Text
+  budget      Float?
+  timeline    String?
 
-  status          ProjectStatus @default(IDEA)
+  status ProjectStatus @default(IDEA)
 
   // Project details
-  category        String?
-  tags            String[]
-  fileUrl         String?
+  category String?
+  tags     String[]
+  fileUrl  String?
 
   // Pipeline tracking
-  updates         ProjectUpdate[]
+  updates ProjectUpdate[]
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ProjectStatus {
@@ -136,37 +136,37 @@ enum ProjectStatus {
 }
 
 model ProjectUpdate {
-  id            String    @id @default(cuid())
-  projectId     String
-  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  status        ProjectStatus
-  message       String    @db.Text
-  timestamp     DateTime  @default(now())
+  status    ProjectStatus
+  message   String        @db.Text
+  timestamp DateTime      @default(now())
 }
 
 // Notifications
 model Notification {
-  id            String    @id @default(cuid())
-  userId        String
+  id     String @id @default(cuid())
+  userId String
 
-  type          String    // "project_approved", "project_submitted", etc.
-  title         String
-  message       String    @db.Text
-  read          Boolean   @default(false)
+  type    String // "project_approved", "project_submitted", etc.
+  title   String
+  message String  @db.Text
+  read    Boolean @default(false)
 
-  createdAt     DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 // Podcast Music - Podcast Projects
 model PodcastProject {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation("podcastProjects", fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("podcastProjects", fields: [userId], references: [id], onDelete: Cascade)
 
-  title           String
-  description     String?   @db.Text
-  thumbnailUrl    String?
+  title        String
+  description  String? @db.Text
+  thumbnailUrl String?
 
   // Podcast details
   podcastName     String
@@ -175,18 +175,18 @@ model PodcastProject {
   releaseDate     DateTime?
 
   // Music generation settings
-  mood            String?   // "upbeat", "calm", "dramatic", etc.
-  duration        Int?      // in seconds
-  genre           String?   // "pop", "electronic", "orchestral", etc.
+  mood     String? // "upbeat", "calm", "dramatic", etc.
+  duration Int? // in seconds
+  genre    String? // "pop", "electronic", "orchestral", etc.
 
-  status          PodcastProjectStatus @default(DRAFT)
+  status PodcastProjectStatus @default(DRAFT)
 
   // Generated content
   musicGenerations AudioGeneration[]
 
   // Metadata
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum PodcastProjectStatus {
@@ -200,35 +200,35 @@ enum PodcastProjectStatus {
 
 // AI Audio Generation Jobs
 model AudioGeneration {
-  id              String    @id @default(cuid())
+  id               String         @id @default(cuid())
   podcastProjectId String
-  podcastProject  PodcastProject @relation(fields: [podcastProjectId], references: [id], onDelete: Cascade)
+  podcastProject   PodcastProject @relation(fields: [podcastProjectId], references: [id], onDelete: Cascade)
 
   // Job tracking
-  jobId           String?   @unique  // AI service job ID
-  status          GenerationStatus @default(PENDING)
-  progress        Int       @default(0)  // 0-100
+  jobId    String?          @unique // AI service job ID
+  status   GenerationStatus @default(PENDING)
+  progress Int              @default(0) // 0-100
 
   // Generation parameters
-  prompt          String    @db.Text
-  aiModel         String    @default("default")
-  seed            Int?
+  prompt  String @db.Text
+  aiModel String @default("default")
+  seed    Int?
 
   // Output
-  audioUrl        String?   // S3 or similar storage URL
-  audioFileSize   Int?      // bytes
-  duration        Int?      // seconds
-  waveformData    String?   // JSON array of amplitude values
+  audioUrl      String? // S3 or similar storage URL
+  audioFileSize Int? // bytes
+  duration      Int? // seconds
+  waveformData  String? // JSON array of amplitude values
 
   // Error handling
-  errorMessage    String?   @db.Text
-  retryCount      Int       @default(0)
-  maxRetries      Int       @default(3)
+  errorMessage String? @db.Text
+  retryCount   Int     @default(0)
+  maxRetries   Int     @default(3)
 
   // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  completedAt     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
 }
 
 enum GenerationStatus {
@@ -242,22 +242,22 @@ enum GenerationStatus {
 
 // Usage tracking for billing
 model UsageRecord {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation("usageRecords", fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("usageRecords", fields: [userId], references: [id], onDelete: Cascade)
 
   // Usage type
-  type            UsageType
-  amount          Int       // credits or units used
+  type   UsageType
+  amount Int // credits or units used
 
   // Reference
-  podcastProjectId String?
+  podcastProjectId  String?
   audioGenerationId String?
 
   // Billing
-  costInCents     Int       // cost in cents (USD)
+  costInCents Int // cost in cents (USD)
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 enum UsageType {
@@ -268,61 +268,61 @@ enum UsageType {
 
 // SoundLabs Studio Projects
 model SoundLabsProject {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation("soundLabsProjects", fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("soundLabsProjects", fields: [userId], references: [id], onDelete: Cascade)
 
   // Project metadata
-  name            String
-  description     String?   @db.Text
+  name        String
+  description String? @db.Text
 
   // Mixer state (saved as JSON)
   // Contains: tracks array, track settings, master volume, BPM, playback position
-  mixerState      Json      @default("{}")
+  mixerState Json @default("{}")
 
   // Recordings associated with this project
-  recordings      SoundLabsRecording[]
+  recordings SoundLabsRecording[]
 
   // Collaboration data
-  collaborators   ProjectCollaborator[] @relation("collaborators")
-  invites         ProjectInvite[] @relation("invites")
-  comments        ProjectComment[] @relation("comments")
-  activityLog     ActivityLog[] @relation("activityLog")
-  versions        VersionHistory[] @relation("versions")
-  presence        UserPresence[] @relation("presence")
+  collaborators ProjectCollaborator[] @relation("collaborators")
+  invites       ProjectInvite[]       @relation("invites")
+  comments      ProjectComment[]      @relation("comments")
+  activityLog   ActivityLog[]         @relation("activityLog")
+  versions      VersionHistory[]      @relation("versions")
+  presence      UserPresence[]        @relation("presence")
 
   // Storage info
-  projectSize     Int       @default(0)  // bytes
+  projectSize Int @default(0) // bytes
 
   // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Audio Recordings for SoundLabs Projects
 model SoundLabsRecording {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   // Recording metadata
-  name            String
-  description     String?   @db.Text
+  name        String
+  description String? @db.Text
 
   // S3 storage
-  s3Url           String    @db.Text  // Full S3 URL for the recording
-  s3Key           String    @db.Text  // S3 object key
-  fileSize        Int                 // bytes
-  duration        Int?                // seconds
+  s3Url    String @db.Text // Full S3 URL for the recording
+  s3Key    String @db.Text // S3 object key
+  fileSize Int // bytes
+  duration Int? // seconds
 
   // Upload status
-  uploadStatus    UploadStatus @default(PENDING)
-  uploadProgress  Int        @default(0)  // 0-100
-  uploadError     String?
+  uploadStatus   UploadStatus @default(PENDING)
+  uploadProgress Int          @default(0) // 0-100
+  uploadError    String?
 
   // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum UploadStatus {
@@ -336,18 +336,18 @@ enum UploadStatus {
 
 // ProjectCollaborator: Track collaborators and their roles
 model ProjectCollaborator {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("collaborators", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("collaborators", fields: [projectId], references: [id], onDelete: Cascade)
 
-  userId          String
-  user            User      @relation("collaborations", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("collaborations", fields: [userId], references: [id], onDelete: Cascade)
 
-  role            CollaboratorRole @default(EDITOR)
-  permissions     String[]  @default([])
-  joinedAt        DateTime  @default(now())
-  lastActiveAt    DateTime  @default(now())
-  status          String    @default("active")
+  role         CollaboratorRole @default(EDITOR)
+  permissions  String[]         @default([])
+  joinedAt     DateTime         @default(now())
+  lastActiveAt DateTime         @default(now())
+  status       String           @default("active")
 
   @@unique([projectId, userId])
   @@index([projectId])
@@ -362,23 +362,23 @@ enum CollaboratorRole {
 
 // ProjectInvite: Shareable invitations for projects
 model ProjectInvite {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("invites", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("invites", fields: [projectId], references: [id], onDelete: Cascade)
 
-  invitedBy       String
-  invitedByUser   User      @relation("sentInvites", fields: [invitedBy], references: [id], onDelete: Cascade)
+  invitedBy     String
+  invitedByUser User   @relation("sentInvites", fields: [invitedBy], references: [id], onDelete: Cascade)
 
-  invitedEmail    String
-  token           String    @unique
-  role            CollaboratorRole @default(EDITOR)
+  invitedEmail String
+  token        String           @unique
+  role         CollaboratorRole @default(EDITOR)
 
-  expiresAt       DateTime?
-  acceptedAt      DateTime?
-  acceptedBy      String?
-  acceptedByUser  User?     @relation("acceptedInvites", fields: [acceptedBy], references: [id], onDelete: SetNull)
+  expiresAt      DateTime?
+  acceptedAt     DateTime?
+  acceptedBy     String?
+  acceptedByUser User?     @relation("acceptedInvites", fields: [acceptedBy], references: [id], onDelete: SetNull)
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([token])
@@ -386,24 +386,24 @@ model ProjectInvite {
 
 // ProjectComment: Comments and annotations on projects
 model ProjectComment {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("comments", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("comments", fields: [projectId], references: [id], onDelete: Cascade)
 
-  userId          String
-  user            User      @relation("comments", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("comments", fields: [userId], references: [id], onDelete: Cascade)
 
-  content         String    @db.Text
-  timestamp       Float?    // in seconds, for audio timeline
-  trackId         String?   // which track this comment is on
-  threadId        String?   // for threaded comments
+  content   String  @db.Text
+  timestamp Float? // in seconds, for audio timeline
+  trackId   String? // which track this comment is on
+  threadId  String? // for threaded comments
 
-  mentions        String[]  @default([])
-  reactions       Json      @default("{}")
-  resolved        Boolean   @default(false)
+  mentions  String[] @default([])
+  reactions Json     @default("{}")
+  resolved  Boolean  @default(false)
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([projectId])
   @@index([threadId])
@@ -412,19 +412,19 @@ model ProjectComment {
 
 // ActivityLog: Comprehensive audit trail
 model ActivityLog {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("activityLog", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("activityLog", fields: [projectId], references: [id], onDelete: Cascade)
 
-  userId          String
-  user            User      @relation("activities", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("activities", fields: [userId], references: [id], onDelete: Cascade)
 
-  action          String    // "volume_changed", "track_added", "comment_added", etc.
-  entityType      String    // "track", "mixer", "gallery", "comment", etc.
-  entityId        String?
-  details         Json      @default("{}")
+  action     String // "volume_changed", "track_added", "comment_added", etc.
+  entityType String // "track", "mixer", "gallery", "comment", etc.
+  entityId   String?
+  details    Json    @default("{}")
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([userId])
@@ -433,18 +433,18 @@ model ActivityLog {
 
 // VersionHistory: Track project snapshots for version control
 model VersionHistory {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("versions", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("versions", fields: [projectId], references: [id], onDelete: Cascade)
 
-  userId          String
-  user            User      @relation("versions", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("versions", fields: [userId], references: [id], onDelete: Cascade)
 
-  snapshot        Json      // Full project state
-  label           String?   // User-provided label like "Final Mix v2"
-  changeLog       String?   @db.Text // Description of changes
+  snapshot  Json // Full project state
+  label     String? // User-provided label like "Final Mix v2"
+  changeLog String? @db.Text // Description of changes
 
-  createdAt       DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([createdAt])
@@ -452,18 +452,18 @@ model VersionHistory {
 
 // UserPresence: Track active collaborators (real-time)
 model UserPresence {
-  id              String    @id @default(cuid())
-  projectId       String
-  project         SoundLabsProject @relation("presence", fields: [projectId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("presence", fields: [projectId], references: [id], onDelete: Cascade)
 
-  userId          String
-  user            User      @relation("presence", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation("presence", fields: [userId], references: [id], onDelete: Cascade)
 
-  status          String    @default("online") // "online", "away", "idle"
-  cursorPosition  Json?     // { x, y, track, time }
-  editingTrackId  String?
-  lastHeartbeat   DateTime  @default(now())
-  socketId        String?
+  status         String   @default("online") // "online", "away", "idle"
+  cursorPosition Json? // { x, y, track, time }
+  editingTrackId String?
+  lastHeartbeat  DateTime @default(now())
+  socketId       String?
 
   @@unique([projectId, userId])
   @@index([projectId])
