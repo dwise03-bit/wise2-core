@@ -1,13 +1,18 @@
 # Production runtime for WISE² Creative Studio Website
-# Use the pre-built Next.js standalone output directly
+# Use the pre-built Next.js standalone output with static files
 FROM node:20-alpine
 
 WORKDIR /app
 
 RUN apk add --no-cache dumb-init curl
 
-# Copy the entire standalone directory which includes server.js and node_modules
+# Copy the standalone server runtime
 COPY apps/website/.next/standalone ./
+
+# Copy static files that the server needs to serve
+COPY apps/website/.next/static ./.next/static
+
+# Copy public assets
 COPY apps/website/public ./public
 
 EXPOSE 3000
