@@ -5,10 +5,8 @@ WORKDIR /app
 
 RUN apk add --no-cache dumb-init curl
 
-# Copy the entire standalone directory structure as-is
-COPY apps/website/.next/standalone ./
-COPY apps/website/.next/static ./apps/website/.next/static
-COPY apps/website/public ./apps/website/public
+# Copy standalone build - it contains the full app structure
+COPY apps/website/.next/standalone/ ./
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
