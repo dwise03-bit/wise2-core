@@ -7,10 +7,11 @@ WORKDIR /app
 RUN apk add --no-cache dumb-init curl
 
 # Copy only the necessary artifacts from the pre-built .next/standalone
-COPY .next/standalone/apps/website/server.js ./
-COPY .next/standalone/node_modules ./node_modules
-COPY public ./public
-COPY package.json ./
+# (paths relative to project root build context)
+COPY apps/website/.next/standalone/apps/website/server.js ./
+COPY apps/website/.next/standalone/node_modules ./node_modules
+COPY apps/website/public ./public
+COPY apps/website/package.json ./
 
 EXPOSE 3000
 
