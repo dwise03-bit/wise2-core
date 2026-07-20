@@ -48,6 +48,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
+# Create startup script to regenerate Prisma if needed
+RUN echo '#!/bin/sh\nset -e\necho "Initializing Prisma client..."\ncd /app && npx -y prisma@latest generate --schema=packages/db/prisma/schema.prisma 2>/dev/null || true\necho "Starting API..."\nexec node dist/main' > /app/start.sh && chmod +x /app/start.sh
+
 EXPOSE 3001
 
-CMD ["node", "dist/main"]
+ENTRYPOINT ["/app/start.sh"]
