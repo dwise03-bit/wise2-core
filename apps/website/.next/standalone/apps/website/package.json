@@ -1,0 +1,40 @@
+{
+  "name": "@wise2/website",
+  "version": "0.1.0",
+  "description": "WISE² Enterprise public website & landing page",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "SKIP_ENV_VALIDATION=true next build",
+    "start": "next start -p ${PORT:-3000}",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.3.0",
+    "@wise2/ui-components": "0.1.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.408.0",
+    "next": "^14.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.48.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.54.0",
+    "eslint-config-next": "^14.0.0",
+    "postcss": "^8.4.0",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.0"
+  }
+}
