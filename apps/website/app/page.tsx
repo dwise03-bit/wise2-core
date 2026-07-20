@@ -10,16 +10,22 @@ const COLORS = {
   accentDim: 'rgba(57, 255, 20, 0.1)',
   accentDarkBg: 'rgba(57, 255, 20, 0.08)',
   accentLowAlpha: 'rgba(57, 255, 20, 0.35)',
+  accentGlow: 'rgba(57, 255, 20, 0.25)',
   black: '#050505',
+  deepBlack: '#020203',
   darkBg: '#0a0a0a',
   cardBg: '#0d0d0d',
+  cardBgElevated: '#141414',
   borderColor: '#262626',
   borderDim: '#222222',
+  borderSoft: 'rgba(255, 255, 255, 0.08)',
   textPrimary: '#e6e6e6',
   textSecondary: '#999999',
   textTertiary: '#555555',
   red: '#ff5c5c',
   yellow: '#e0a83c',
+  blue: '#0369A1',
+  blueSoft: 'rgba(3, 105, 161, 0.15)',
 };
 
 // ============ UTILITY FUNCTIONS ============
@@ -105,115 +111,290 @@ const Sidebar = ({ currentPage, onPageChange, credits }: any) => (
 );
 
 // ============ COMMAND CENTER DASHBOARD ============
-const CommandCenter = () => (
-  <div className="p-7 space-y-5">
-    <div className="flex items-end gap-4">
-      <div>
-        <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white to-[#6f6f6f] bg-clip-text text-transparent uppercase">Command Center</h1>
-        <p className="text-[#777] font-semibold tracking-widest">Welcome back, Darrin. 3 renders finished overnight.</p>
-      </div>
-      <div className="flex-1"></div>
-      <button className="bg-[#39FF14] text-[#050505] border-none rounded px-4 py-2.5 font-bold text-sm tracking-widest uppercase hover:brightness-110 transition" style={{ animation: 'pulse 3s infinite' }}>+ New Session</button>
-    </div>
+const CommandCenter = () => {
+  const cardVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.06, duration: 0.4, ease: 'easeOut' },
+    }),
+  };
 
-    {/* KPI Cards */}
-    <div className="grid grid-cols-4 gap-3.5">
-      {[
-        { title: 'Assets Produced', value: '312', change: '+24%', desc: 'this month · all modules' },
-        { title: 'AI Generations', value: '1,486', change: '+38%', desc: '7,214 credits remaining' },
-        { title: 'Stream Watch Time', value: '412h', change: '+18%', desc: 'across 6 platforms' },
-        { title: 'Revenue Attributed', value: '$18.9K', change: '+31%', desc: 'from studio content' },
-      ].map((kpi, i) => (
-        <div key={i} className="bg-gradient-to-b from-[#121212] to-[#0c0c0c] border border-[#262626] rounded-xl p-4 hover:border-[#39FF14] hover:shadow-lg transition group">
-          <div className="text-xs tracking-widest text-[#777] uppercase">{kpi.title}</div>
-          <div className="flex items-baseline gap-2.5 mt-1.5">
-            <span className="font-orbitron font-bold text-2xl text-[#f2f2f2]">{kpi.value}</span>
-            <span className="text-xs font-bold text-[#39FF14] bg-[rgba(57,255,20,.08)] border border-[rgba(57,255,20,.25)] rounded px-1.5 py-0.5">{kpi.change}</span>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    },
+  };
+
+  return (
+    <div className="p-7 space-y-5">
+      <motion.div className="flex items-end gap-4" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
+        <div>
+          <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>Command Center</h1>
+          <p className="text-[#999] font-medium tracking-widest mt-1">Welcome back, Darrin. 3 renders finished overnight.</p>
+        </div>
+        <div className="flex-1"></div>
+        <motion.button
+          className="bg-[#39FF14] text-[#050505] border-none rounded px-4 py-2.5 font-bold text-sm tracking-widest uppercase hover:brightness-125 transition-all"
+          whileHover={{ scale: 1.05, boxShadow: '0 0 24px rgba(57,255,20,0.6)' }}
+          whileTap={{ scale: 0.98 }}
+          style={{ animation: 'pulse 3s infinite' }}
+        >
+          + New Session
+        </motion.button>
+      </motion.div>
+
+      {/* KPI Cards */}
+      <motion.div
+        className="grid grid-cols-4 gap-3.5"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {[
+          { title: 'Assets Produced', value: '312', change: '+24%', desc: 'this month · all modules' },
+          { title: 'AI Generations', value: '1,486', change: '+38%', desc: '7,214 credits remaining' },
+          { title: 'Stream Watch Time', value: '412h', change: '+18%', desc: 'across 6 platforms' },
+          { title: 'Revenue Attributed', value: '$18.9K', change: '+31%', desc: 'from studio content' },
+        ].map((kpi, i) => (
+          <motion.div
+            key={i}
+            custom={i}
+            variants={cardVariants}
+            whileHover={{ y: -4, borderColor: '#39FF14', boxShadow: '0 12px 32px rgba(57,255,20,0.2)' }}
+            className="bg-gradient-to-br from-[#151515] via-[#0f0f0f] to-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-4 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
+            style={{
+              background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+            }}
+          >
+            <div className="text-xs tracking-widest text-[#888] uppercase font-semibold">{kpi.title}</div>
+            <div className="flex items-baseline gap-2.5 mt-2">
+              <span className="font-orbitron font-black text-2xl text-[#f5f5f5]">{kpi.value}</span>
+              <motion.span
+                className="text-xs font-bold text-[#39FF14] bg-[rgba(57,255,20,.12)] border border-[rgba(57,255,20,.35)] rounded px-2 py-1 font-semibold"
+                whileHover={{ backgroundColor: 'rgba(57,255,20,0.2)' }}
+              >
+                {kpi.change}
+              </motion.span>
+            </div>
+            <div className="text-xs text-[#777] mt-2 font-medium">{kpi.desc}</div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Charts & Feeds */}
+      <motion.div
+        className="grid grid-cols-[1.7fr_1fr] gap-3.5"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div
+          custom={4}
+          variants={cardVariants}
+          className="rounded-2xl p-5 transition-all duration-300"
+          whileHover={{ y: -4, boxShadow: '0 16px 40px rgba(57,255,20,0.15)' }}
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(39,39,39,0.6)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          }}
+        >
+          <div className="flex items-center gap-2.5 mb-5">
+            <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold">Production Output</h3>
+            <div className="flex-1"></div>
+            <motion.span
+              className="text-xs text-[#999] border border-[#333] rounded px-2 py-1 font-medium cursor-pointer"
+              whileHover={{ borderColor: '#39FF14', color: '#39FF14' }}
+            >
+              Last 14 days ▾
+            </motion.span>
           </div>
-          <div className="text-xs text-[#666] mt-1">{kpi.desc}</div>
-        </div>
-      ))}
+          <svg viewBox="0 0 620 190" className="w-full h-40">
+            <defs>
+              <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style={{ stopColor: 'rgba(57,255,20,0.2)', stopOpacity: 0.3 }} />
+                <stop offset="100%" style={{ stopColor: 'rgba(57,255,20,0.05)', stopOpacity: 0.1 }} />
+              </linearGradient>
+            </defs>
+            <polyline points="0,150 620,150" fill="none" stroke="#1a1a1a" strokeWidth="1"></polyline>
+            <polygon points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15" fill="url(#chartGradient)"></polygon>
+            <polyline
+              points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15"
+              fill="none"
+              stroke="#39FF14"
+              strokeWidth="3"
+              strokeLinejoin="round"
+              style={{ filter: 'drop-shadow(0 0 8px rgba(57,255,20,0.8))' }}
+            ></polyline>
+          </svg>
+          <div className="flex justify-between text-xs text-[#777] tracking-widest mt-3 font-medium">
+            <span>JUL 05</span><span>JUL 08</span><span>JUL 11</span><span>JUL 14</span><span>JUL 17</span><span>TODAY</span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          custom={5}
+          variants={cardVariants}
+          className="rounded-2xl p-4 transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(39,39,39,0.6)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          }}
+        >
+          <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">AI Activity Feed</h3>
+          <div className="space-y-2 overflow-y-auto max-h-48">
+            {[
+              { label: 'MASTER', text: 'AI mastered "Midnight Anthem" — LUFS -9.4', time: '2m' },
+              { label: 'CLIP', text: '6 highlights detected in Friday broadcast', time: '18m' },
+              { label: 'VOICE', text: '"Coach K" clone finished training', time: '54m' },
+              { label: 'RENDER', text: 'Summer Promo vertical cut exported', time: '1h' },
+              { label: 'PUBLISH', text: 'Blog "Recovery Guide" pushed to site', time: '3h' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                className="flex gap-2 p-2.5 rounded transition-all"
+                whileHover={{ backgroundColor: 'rgba(57,255,20,0.08)', paddingLeft: 14 }}
+              >
+                <span className="font-orbitron text-xs text-[#39FF14] border border-[rgba(57,255,20,.35)] rounded px-1.5 py-0.5 flex-none font-semibold">{item.label}</span>
+                <div className="flex-1">
+                  <div className="font-semibold text-xs text-[#e6e6e6]">{item.text}</div>
+                </div>
+                <span className="text-xs text-[#777] flex-none">{item.time}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Quick Actions & Recommendations */}
+      <motion.div
+        className="grid grid-cols-3 gap-3.5"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div
+          custom={6}
+          variants={cardVariants}
+          className="rounded-2xl p-4 transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(39,39,39,0.6)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          }}
+        >
+          <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Quick Actions</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {['▸ New Mix Session', '▸ Go Live Now', '▸ Generate Jingle', '▸ Batch Content Run'].map((action, i) => (
+              <motion.button
+                key={i}
+                className="rounded px-2.5 py-2.5 text-[#e6e6e6] font-bold text-xs text-left transition-all"
+                style={{
+                  background: 'rgba(20,20,20,0.6)',
+                  border: '1px solid rgba(42,42,42,0.8)',
+                  backdropFilter: 'blur(4px)',
+                }}
+                whileHover={{
+                  backgroundColor: 'rgba(57,255,20,0.1)',
+                  borderColor: '#39FF14',
+                  color: '#39FF14',
+                  boxShadow: '0 4px 12px rgba(57,255,20,0.15)',
+                }}
+              >
+                {action}
+              </motion.button>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          custom={7}
+          variants={cardVariants}
+          className="rounded-2xl p-4 transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, rgba(15,21,12,0.8) 0%, rgba(11,11,11,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(57,255,20,0.2)',
+            boxShadow: '0 8px 24px rgba(57,255,20,0.1), inset 0 1px 0 rgba(255,255,255,0.02)',
+          }}
+        >
+          <h3 className="text-xs tracking-widest text-[#39FF14] uppercase font-bold mb-3">WISE² AI Recommends</h3>
+          <motion.div className="space-y-2.5">
+            {[
+              'Your Friday streams out-perform weekdays 3.1× — schedule launch Friday 7PM.',
+              '"Ironclad Anthem" ready for 15s ad cut. One click to Content Factory.',
+              'Vocal bus clips at 2:14 — apply De-Noise AI preset "Stage Mic".',
+            ].map((rec, i) => (
+              <motion.div
+                key={i}
+                className="flex gap-2 text-xs text-[#e6e6e6] font-medium"
+                whileHover={{ paddingLeft: 4, color: '#39FF14' }}
+              >
+                <span className="text-[#39FF14] flex-shrink-0">▸</span>
+                <span>{rec}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          custom={8}
+          variants={cardVariants}
+          className="rounded-2xl p-4 transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(39,39,39,0.6)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)',
+          }}
+        >
+          <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Team Online</h3>
+          <motion.div className="space-y-2.5">
+            {[
+              { name: 'Darrin Wise', status: 'Mixing · Sound Lab', online: true },
+              { name: 'Daniel Wise', status: 'Prepping · Live Studio', online: true },
+              { name: 'Maya Reyes', status: 'Away · Content Factory', online: false },
+            ].map((member, i) => (
+              <motion.div
+                key={i}
+                className="flex items-center gap-2.5 p-2 rounded transition-all"
+                whileHover={{ backgroundColor: 'rgba(57,255,20,0.05)' }}
+              >
+                <motion.div
+                  className="w-8 h-8 rounded flex-shrink-0"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(57,255,20,0.15), rgba(3,105,161,0.15))',
+                    border: '1px solid rgba(57,255,20,0.2)',
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-xs text-[#e6e6e6]">{member.name}</div>
+                  <div className="text-xs text-[#999]">{member.status}</div>
+                </div>
+                <motion.span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: member.online ? '#39FF14' : '#e0a83c' }}
+                  animate={member.online ? { opacity: [0.6, 1] } : {}}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
-
-    {/* Charts & Feeds */}
-    <div className="grid grid-cols-[1.7fr_1fr] gap-3.5">
-      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-5">
-        <div className="flex items-center gap-2.5 mb-4">
-          <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold">Production Output</h3>
-          <div className="flex-1"></div>
-          <span className="text-xs text-[#666] border border-[#2a2a2a] rounded px-2 py-1">Last 14 days ▾</span>
-        </div>
-        <svg viewBox="0 0 620 190" className="w-full h-40">
-          <polyline points="0,150 620,150" fill="none" stroke="#1c1c1c" strokeWidth="1"></polyline>
-          <polygon points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15" fill="rgba(57,255,20,.07)"></polygon>
-          <polyline points="0,180 20,130 40,140 60,110 80,120 100,80 120,90 140,60 160,70 180,40 200,50 220,30 240,20 260,15" fill="none" stroke="#39FF14" strokeWidth="2.5" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 4px rgba(57,255,20,.6))' }}></polyline>
-        </svg>
-        <div className="flex justify-between text-xs text-[#555] tracking-widest"><span>JUL 05</span><span>JUL 08</span><span>JUL 11</span><span>JUL 14</span><span>JUL 17</span><span>TODAY</span></div>
-      </div>
-
-      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
-        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-2">AI Activity Feed</h3>
-        <div className="space-y-1 overflow-y-auto max-h-48">
-          {[
-            { label: 'MASTER', text: 'AI mastered "Midnight Anthem" — LUFS -9.4', time: '2m' },
-            { label: 'CLIP', text: '6 highlights detected in Friday broadcast', time: '18m' },
-            { label: 'VOICE', text: '"Coach K" clone finished training', time: '54m' },
-            { label: 'RENDER', text: 'Summer Promo vertical cut exported', time: '1h' },
-            { label: 'PUBLISH', text: 'Blog "Recovery Guide" pushed to site', time: '3h' },
-          ].map((item, i) => (
-            <div key={i} className="flex gap-2 p-2 rounded hover:bg-[#141414]">
-              <span className="font-orbitron text-xs text-[#39FF14] border border-[rgba(57,255,20,.3)] rounded px-1.5 py-0.5 flex-none">{item.label}</span>
-              <div className="flex-1"><div className="font-semibold text-xs text-[#ddd]">{item.text}</div></div>
-              <span className="text-xs text-[#555] flex-none">{item.time}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* Quick Actions & Recommendations */}
-    <div className="grid grid-cols-3 gap-3.5">
-      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
-        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-3">Quick Actions</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {['▸ New Mix Session', '▸ Go Live Now', '▸ Generate Jingle', '▸ Batch Content Run'].map((action, i) => (
-            <button key={i} className="bg-[#141414] border border-[#2a2a2a] rounded px-2.5 py-2.5 text-[#ccc] font-bold text-xs text-left hover:border-[#39FF14] hover:text-white transition">{action}</button>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-br from-[#0f150c] to-[#0b0b0b] border border-[rgba(57,255,20,.25)] rounded-2xl p-4">
-        <h3 className="text-xs tracking-widest text-[#39FF14] uppercase font-bold mb-3">WISE² AI Recommends</h3>
-        <div className="space-y-2">
-          {[
-            'Your Friday streams out-perform weekdays 3.1× — schedule launch Friday 7PM.',
-            '"Ironclad Anthem" ready for 15s ad cut. One click to Content Factory.',
-            'Vocal bus clips at 2:14 — apply De-Noise AI preset "Stage Mic".',
-          ].map((rec, i) => (
-            <div key={i} className="flex gap-2 text-xs text-[#cfcfcf] font-semibold"><span className="text-[#39FF14]">▸</span><span>{rec}</span></div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-4">
-        <h3 className="text-xs tracking-widest text-[#ccc] uppercase font-bold mb-3">Team Online</h3>
-        <div className="space-y-2">
-          {[
-            { name: 'Darrin Wise', status: 'Mixing · Sound Lab', online: true },
-            { name: 'Daniel Wise', status: 'Prepping · Live Studio', online: true },
-            { name: 'Maya Reyes', status: 'Away · Content Factory', online: false },
-          ].map((member, i) => (
-            <div key={i} className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded bg-[#1a1a1a] border border-[#333]"></div>
-              <div className="flex-1"><div className="font-bold text-xs">{member.name}</div><div className="text-xs text-[#666]">{member.status}</div></div>
-              <span className={`w-2 h-2 rounded-full flex-none ${member.online ? 'bg-[#39FF14]' : 'bg-[#e0a83c]'}`}></span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 // ============ PLACEHOLDER PAGES ============
 const PagePlaceholder = ({ title, subtitle }: any) => (
@@ -248,32 +429,86 @@ export default function CreativeStudioPage() {
     link.rel = 'stylesheet';
     document.head.appendChild(link);
 
-    // Add custom CSS for keyframes
+    // Add custom CSS for keyframes and cinematic effects
     const style = document.createElement('style');
     style.textContent = `
       @keyframes pulse {
-        0%, 100% { box-shadow: 0 0 6px rgba(57,255,20,.35); }
-        50% { box-shadow: 0 0 18px rgba(57,255,20,.7); }
+        0%, 100% { box-shadow: 0 0 12px rgba(57,255,20,.4), 0 0 24px rgba(57,255,20,0); }
+        50% { box-shadow: 0 0 20px rgba(57,255,20,.8), 0 0 40px rgba(57,255,20,.4); }
+      }
+
+      @keyframes glow {
+        0%, 100% { text-shadow: 0 0 10px rgba(57,255,20,.5); }
+        50% { text-shadow: 0 0 20px rgba(57,255,20,.8); }
+      }
+
+      @keyframes shimmer {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
       }
 
       .font-orbitron {
         font-family: 'Orbitron', sans-serif;
+        letter-spacing: -0.02em;
       }
 
       .font-rajdhani {
         font-family: 'Rajdhani', sans-serif;
+      }
+
+      /* Glassmorphism support */
+      .glass {
+        background: linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 50%, rgba(10,10,10,0.4) 100%) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(39,39,39,0.6);
+      }
+
+      /* Smooth transitions */
+      * {
+        transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
       }
     `;
     document.head.appendChild(style);
   }, []);
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: COLORS.black }}>
+    <div className="flex flex-col h-screen" style={{ background: `linear-gradient(180deg, ${COLORS.deepBlack} 0%, ${COLORS.black} 50%, ${COLORS.deepBlack} 100%)` }}>
+      {/* Ambient Background Effects */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(57,255,20,0.08) 0%, transparent 70%)',
+            top: '-100px',
+            right: '200px',
+            filter: 'blur(60px)',
+          }}
+          animate={{ y: [0, -30, 0], x: [0, 15, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            width: '300px',
+            height: '300px',
+            background: 'radial-gradient(circle, rgba(3,105,161,0.06) 0%, transparent 70%)',
+            bottom: '100px',
+            left: '50px',
+            filter: 'blur(50px)',
+          }}
+          animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      </div>
+
       {/* Top Bar */}
       <TopBar currentPage={currentPage} onPageChange={setCurrentPage} />
 
       {/* Body */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-0 relative z-10">
         {/* Sidebar */}
         <Sidebar currentPage={currentPage} onPageChange={setCurrentPage} credits={credits} />
 
@@ -282,7 +517,7 @@ export default function CreativeStudioPage() {
           ref={mainRef}
           className="flex-1 min-w-0 overflow-y-auto"
           style={{
-            background: `radial-gradient(1200px 500px at 70% -10%, rgba(57,255,20,.05), transparent 60%), ${COLORS.black}`,
+            background: `radial-gradient(1400px 600px at 70% -10%, rgba(57,255,20,.06), transparent 65%), ${COLORS.black}`,
           }}
         >
           <AnimatePresence mode="wait">
