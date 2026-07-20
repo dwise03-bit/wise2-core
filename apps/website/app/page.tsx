@@ -614,6 +614,165 @@ const ClientShowcase = () => (
   </div>
 );
 
+// ============ VOICE LAB ============
+const VoiceLab = () => (
+  <div className="p-7 space-y-5">
+    <div>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Voice Lab</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">GENERATE. CLONE. DOMINATE.</p>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <button className="rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#39FF14]" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(57,255,20,0.1) 100%)' }}>
+        🎤 Clone Your Voice
+      </button>
+      <button className="rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#0369A1]" style={{ background: 'linear-gradient(135deg, rgba(3,105,161,0.2) 0%, rgba(3,105,161,0.1) 100%)' }}>
+        ✨ Generate New Voice
+      </button>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Your Voice Library</h3>
+      <div className="space-y-2">
+        {[
+          { name: 'Professional Narrator', lang: 'English (US)', quality: 'Premium', accent: 'from-amber-600 to-amber-900' },
+          { name: 'Brand Ambassador', lang: 'English (UK)', quality: 'Studio', accent: 'from-indigo-600 to-indigo-900' },
+          { name: 'Energetic Host', lang: 'Spanish', quality: 'Premium', accent: 'from-red-600 to-red-900' },
+        ].map((voice, i) => (
+          <div key={i} className="rounded-lg p-4 flex justify-between items-center border border-[#333]" style={{ background: 'rgba(20,20,20,0.6)' }}>
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded bg-gradient-to-br ${voice.accent}`} />
+              <div>
+                <div className="font-bold text-sm text-[#e6e6e6]">{voice.name}</div>
+                <div className="text-xs text-[#999]">{voice.lang} • {voice.quality}</div>
+              </div>
+            </div>
+            <button className="text-[#39FF14] hover:text-white transition font-bold">Use</button>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Voice Customization</h3>
+      <div className="space-y-3 rounded-lg p-4" style={{ background: 'rgba(20,20,20,0.6)', border: '1px solid rgba(51,51,51,1)' }}>
+        <div>
+          <div className="text-xs text-[#999] mb-2">Pitch</div>
+          <div className="h-2 bg-[#1a1a1a] rounded flex-1 overflow-hidden">
+            <div className="w-1/2 h-full bg-[#39FF14]" />
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-[#999] mb-2">Speed</div>
+          <div className="h-2 bg-[#1a1a1a] rounded flex-1 overflow-hidden">
+            <div className="w-2/3 h-full bg-[#39FF14]" />
+          </div>
+        </div>
+        <div>
+          <div className="text-xs text-[#999] mb-2">Emotion</div>
+          <div className="h-2 bg-[#1a1a1a] rounded flex-1 overflow-hidden">
+            <div className="w-3/5 h-full bg-[#39FF14]" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-2xl p-4 border border-[#333]" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)' }}>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Recent Generations</h3>
+      <div className="space-y-2">
+        {[
+          { text: 'Product announcement intro', voice: 'Professional Narrator', date: '2 hours ago' },
+          { text: 'Podcast episode outro', voice: 'Brand Ambassador', date: '1 day ago' },
+          { text: 'Ad copy voiceover', voice: 'Energetic Host', date: '3 days ago' },
+        ].map((gen, i) => (
+          <div key={i} className="flex justify-between items-start text-xs p-2 rounded hover:bg-[rgba(57,255,20,0.05)] transition">
+            <div>
+              <div className="text-[#e6e6e6] font-bold">{gen.text}</div>
+              <div className="text-[#999] text-xs">{gen.voice} • {gen.date}</div>
+            </div>
+            <button className="text-[#39FF14] hover:text-white">▶</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// ============ CONTENT FACTORY ============
+const ContentFactory = () => (
+  <div className="p-7 space-y-5">
+    <div>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Content Factory</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">ONE PROMPT. EVERY CHANNEL.</p>
+    </div>
+
+    <button className="w-full rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#39FF14]" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(57,255,20,0.1) 100%)' }}>
+      ⚡ Start Batch Generation
+    </button>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Channel Distribution</h3>
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { icon: '▶', name: 'YouTube', enabled: true },
+          { icon: '𝕏', name: 'Twitter', enabled: true },
+          { icon: '📘', name: 'Instagram', enabled: true },
+          { icon: '🎵', name: 'TikTok', enabled: true },
+          { icon: '📧', name: 'Email', enabled: true },
+          { icon: '🔊', name: 'Podcast', enabled: false },
+          { icon: '💼', name: 'LinkedIn', enabled: true },
+          { icon: '📡', name: 'Website', enabled: true },
+        ].map((channel, i) => (
+          <button key={i} className={`rounded-lg p-3 text-center transition ${channel.enabled ? 'bg-[#39FF14] text-[#050505] font-bold' : 'bg-[#1a1a1a] border border-[#333] text-[#666]'}`}>
+            <div className="text-xl">{channel.icon}</div>
+            <div className="text-xs mt-1 font-bold">{channel.name}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Template Library</h3>
+      <div className="space-y-2">
+        {[
+          { template: 'Product Launch', formats: 'Long, Short, Shorts', status: 'Ready' },
+          { template: 'Weekly Newsletter', formats: 'Email, Social', status: 'Ready' },
+          { template: 'Tutorial Series', formats: 'YouTube, TikTok', status: 'Ready' },
+        ].map((tmpl, i) => (
+          <div key={i} className="rounded-lg p-3 flex justify-between items-center border border-[#333]" style={{ background: 'rgba(20,20,20,0.6)' }}>
+            <div>
+              <div className="font-bold text-sm text-[#e6e6e6]">{tmpl.template}</div>
+              <div className="text-xs text-[#999]">{tmpl.formats}</div>
+            </div>
+            <span className="text-xs font-bold px-2 py-1 rounded bg-[#39FF14] text-[#050505]">{tmpl.status}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div className="rounded-2xl p-4 border border-[#333]" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)' }}>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Batch Queue</h3>
+      <div className="space-y-2">
+        {[
+          { batch: 'Q3 Product Campaign', items: 24, progress: 18, eta: '2 hours' },
+          { batch: 'Weekly Content Pack', items: 12, progress: 8, eta: '45 min' },
+          { batch: 'Social Media Series', items: 36, progress: 12, eta: '4 hours' },
+        ].map((batch, i) => (
+          <div key={i} className="space-y-1">
+            <div className="flex justify-between text-xs">
+              <span className="text-[#e6e6e6] font-bold">{batch.batch}</span>
+              <span className="text-[#999]">{batch.progress}/{batch.items} • ETA {batch.eta}</span>
+            </div>
+            <div className="h-2 bg-[#1a1a1a] rounded overflow-hidden">
+              <div className="h-full bg-[#39FF14]" style={{ width: `${(batch.progress / batch.items) * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 // ============ PLACEHOLDER PAGES ============
 const PagePlaceholder = ({ title, subtitle }: any) => (
   <div className="p-7 space-y-5">
@@ -761,12 +920,12 @@ export default function CreativeStudioPage() {
             )}
             {currentPage === 'voice' && (
               <motion.div key="voice" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Voice Lab" subtitle="GENERATE. CLONE. DOMINATE." />
+                <VoiceLab />
               </motion.div>
             )}
             {currentPage === 'factory' && (
               <motion.div key="factory" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Content Factory" subtitle="ONE PROMPT. EVERY CHANNEL." />
+                <ContentFactory />
               </motion.div>
             )}
             {currentPage === 'showcase' && (
