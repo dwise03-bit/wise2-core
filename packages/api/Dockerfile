@@ -12,10 +12,6 @@ COPY packages ./packages
 # Install dependencies with legacy-peer-deps for compatibility
 RUN npm install --legacy-peer-deps
 
-# Install Prisma CLI globally and generate client
-RUN npm install -g prisma @prisma/cli
-RUN cd /app/packages/db && prisma generate
-
 WORKDIR /app/packages/api
 
 # CRITICAL: Clean stale build cache to ensure JS files are emitted
@@ -40,7 +36,7 @@ WORKDIR /app
 # Install runtime dependencies (curl for health checks)
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
-# Copy entire app and node_modules from builder (includes generated Prisma client)
+# Copy entire app and node_modules from builder
 COPY --from=builder /app/packages/api/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
