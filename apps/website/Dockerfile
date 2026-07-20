@@ -10,9 +10,9 @@ RUN npm install --legacy-peer-deps
 # Copy website only - no need to copy packages for frontend build
 COPY apps/website ./apps/website
 
-# Build the website (use npx to find next binary in workspace)
-WORKDIR /app/apps/website
-RUN npx next build
+# Build the website from monorepo root to avoid path resolution issues
+WORKDIR /app
+RUN npx next build apps/website --turbopack=false
 
 # Runtime stage
 FROM node:20-alpine
