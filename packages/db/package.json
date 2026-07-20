@@ -8,7 +8,8 @@
     "migrate:revert": "typeorm migration:revert",
     "migrate:generate": "typeorm migration:generate",
     "seed": "node dist/seeds/seed.js",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
