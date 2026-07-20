@@ -12,19 +12,25 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=https://api.wise2.net
 
+# Install pnpm and dependencies
+RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile
 
+# Copy all necessary files from builder
 COPY --from=builder /app/apps/website/.next ./apps/website/.next
 COPY --from=builder /app/apps/website/public ./apps/website/public
 COPY --from=builder /app/apps/website/package.json ./apps/website/
+COPY --from=builder /app/apps/website/next.config.js ./apps/website/
 
+# Expose port
 EXPOSE 3000
 
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 
-WORKDIR /app/apps/website
-
-CMD ["node_modules/.bin/next", "start", "-p", "3000"]
+# Start website from monorepo root with proper next binary path
+CMD ["node", "./node_modules/next/dist/bin/next", "start", "--dir", "./apps/website", "-p", "3000"]
