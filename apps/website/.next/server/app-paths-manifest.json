@@ -1,16 +1,7 @@
 {
-  "/gallery/page": "app/gallery/page.js",
-  "/landing/page": "app/landing/page.js",
   "/apps/page": "app/apps/page.js",
-  "/maintenance/page": "app/maintenance/page.js",
   "/studio/page": "app/studio/page.js",
-  "/webstore/page": "app/webstore/page.js",
-  "/shop/page": "app/shop/page.js",
-  "/api/v1/metrics/production/route": "app/api/v1/metrics/production/route.js",
   "/page": "app/page.js",
-  "/api/v1/metrics/dashboard/route": "app/api/v1/metrics/dashboard/route.js",
-  "/api/v1/metrics/system/route": "app/api/v1/metrics/system/route.js",
-  "/api/v1/events/track/route": "app/api/v1/events/track/route.js",
-  "/api/v1/metrics/revenue/route": "app/api/v1/metrics/revenue/route.js",
-  "/api/v1/metrics/users/route": "app/api/v1/metrics/users/route.js"
+  "/gallery/page": "app/gallery/page.js",
+  "/maintenance/page": "app/maintenance/page.js"
 }

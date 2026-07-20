@@ -9,6 +9,7 @@ import compression from 'compression';
 import { config_ } from './config';
 import { logger } from './logger';
 import { database } from './database';
+import { migrationRunner } from './migrations/runner';
 import {
   requestIdMiddleware,
   requestLoggingMiddleware,
@@ -151,6 +152,11 @@ export async function startServer(app: Express): Promise<void> {
     // Connect to database
     await database.connect();
     logger.info('Database connection established');
+
+    // Run database migrations
+    logger.info('Running database migrations...');
+    await migrationRunner.run();
+    logger.info('Database migrations completed');
 
     // Start HTTP server
     app.listen(port, host, () => {
