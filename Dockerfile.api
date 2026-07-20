@@ -12,8 +12,8 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build monorepo (API is built as part of this)
-RUN pnpm run build
+# Build just the API package
+RUN cd packages/api && npm run build
 
 # Runtime stage
 FROM node:20-alpine
