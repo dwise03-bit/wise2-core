@@ -1,7 +1,9 @@
 {
-  "/apps/page": "app/apps/page.js",
-  "/studio/page": "app/studio/page.js",
   "/page": "app/page.js",
-  "/gallery/page": "app/gallery/page.js",
+  "/auth/signup/page": "app/auth/signup/page.js",
+  "/landing/page": "app/landing/page.js",
+  "/shop/page": "app/shop/page.js",
+  "/webstore/page": "app/webstore/page.js",
+  "/apps/page": "app/apps/page.js",
   "/maintenance/page": "app/maintenance/page.js"
 }

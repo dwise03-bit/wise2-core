@@ -1,13 +1,16 @@
 /**
- * Authentication Routes
- * Handles user signup, login, logout, token refresh, and profile management
+ * Authentication Routes - Using raw PostgreSQL (no Prisma ORM)
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
-import { authService } from '../services/auth.service';
+import { Pool } from 'pg';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 import { authenticate } from '../middlewares/auth';
 
 const router = Router();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret';
 
 /**
  * POST /api/v1/auth/signup
@@ -21,36 +24,44 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Email and password are required',
-        },
+        error: { code: 'VALIDATION_ERROR', message: 'Email and password are required' },
       });
     }
 
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Password must be at least 8 characters',
-        },
+        error: { code: 'VALIDATION_ERROR', message: 'Password must be at least 8 characters' },
       });
     }
 
-    // Sign up user
-    const { user, tokens } = await authService.signup({
-      email,
-      password,
-      first_name,
-      last_name,
-    });
+    // Check if user exists
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        error: { code: 'USER_EXISTS', message: 'User with this email already exists' },
+      });
+    }
+
+    // Hash password and create user
+    const passwordHash = await bcrypt.hash(password, 12);
+    const userId = `user_${Date.now()}`;
+
+    const result = await pool.query(
+      'INSERT INTO users (id, email, password_hash, first_name, last_name, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id, email, first_name, last_name',
+      [userId, email, passwordHash, first_name || null, last_name || null]
+    );
+
+    const user = result.rows[0];
+    const accessToken = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
+    const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
     return res.status(201).json({
       success: true,
       data: {
         user,
-        tokens,
+        tokens: { accessToken, refreshToken },
       },
     });
   } catch (error) {
@@ -66,37 +77,43 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Email and password are required',
-        },
+        error: { code: 'VALIDATION_ERROR', message: 'Email and password are required' },
       });
     }
 
-    // Login user
-    const { user, tokens } = await authService.login({ email, password });
+    // Find user
+    const result = await pool.query('SELECT id, email, password_hash, first_name, last_name FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Invalid email or password' },
+      });
+    }
+
+    const user = result.rows[0];
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Invalid email or password' },
+      });
+    }
+
+    const accessToken = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
+    const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
     return res.status(200).json({
       success: true,
       data: {
-        user,
-        tokens,
+        user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name },
+        tokens: { accessToken, refreshToken },
       },
     });
   } catch (error) {
-    if ((error as Error).message.includes('Invalid email or password')) {
-      return res.status(401).json({
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Invalid email or password',
-        },
-      });
-    }
     return next(error);
   }
 });
