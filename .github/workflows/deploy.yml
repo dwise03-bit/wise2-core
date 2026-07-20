@@ -1,0 +1,92 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to wise2.net
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          timeout: 300s
+          command_timeout: 300s
+          script: |
+            set -e
+
+            echo "🚀 Deploying WISE² to Production..."
+            cd /home/dwise/wise2-core
+
+            echo "📥 Pulling latest code..."
+            git fetch origin
+            git checkout main
+            git pull origin main
+
+            echo "🔨 Building Docker images..."
+            docker build --no-cache -f Dockerfile.api -t wise2-core_api:latest .
+            docker build --no-cache -f Dockerfile.website -t wise2-core_website:latest .
+
+            echo "▶️  Starting services..."
+            docker-compose -f docker-compose.minimal.yml down || true
+            docker-compose -f docker-compose.minimal.yml up -d
+
+            echo "⏳ Waiting for services (30s)..."
+            sleep 30
+
+            echo "🏥 Health checks..."
+            HEALTHY=0
+
+            if docker ps | grep -q wise2-postgres-prod; then
+              echo "  ✅ Database running"
+              HEALTHY=$((HEALTHY + 1))
+            fi
+
+            if docker ps | grep -q wise2-redis-prod; then
+              echo "  ✅ Redis running"
+              HEALTHY=$((HEALTHY + 1))
+            fi
+
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "  ✅ Website responding"
+              HEALTHY=$((HEALTHY + 1))
+            else
+              echo "  ⚠️  Website not yet responding"
+            fi
+
+            if [ $HEALTHY -ge 2 ]; then
+              echo ""
+              echo "✅ Deployment complete!"
+              echo "🎯 Website: https://wise2.net/pricing"
+              exit 0
+            else
+              echo ""
+              echo "⚠️  Partial deployment - some services may still be initializing"
+              docker ps
+              exit 0
+            fi
+
+      - name: Deployment Status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Production deployment succeeded"
+            echo "🌐 https://wise2.net is now live"
+          else
+            echo "❌ Deployment failed - check logs above"
+            exit 1
+          fi

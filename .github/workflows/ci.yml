@@ -37,7 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: pnpm --filter @wise2/db exec prisma generate
+        run: cd packages/db && npx prisma generate
 
       # Blocking: podcast-music has no dependency on other packages' built dist/,
       # so it type-checks correctly from a clean checkout and must stay green.
