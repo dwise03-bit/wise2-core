@@ -10,9 +10,9 @@ RUN npm install --legacy-peer-deps
 # Copy website only - no need to copy packages for frontend build
 COPY apps/website ./apps/website
 
-# Build the website
+# Build the website (use npx to find next binary in workspace)
 WORKDIR /app/apps/website
-RUN npm run build
+RUN npx next build
 
 # Runtime stage
 FROM node:20-alpine
