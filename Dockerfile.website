@@ -1,9 +1,18 @@
-# Builder stage (for pre-built website)
+# Builder stage - build the website
 FROM node:20-alpine as builder
 
 WORKDIR /app
 
+# Install dependencies
+RUN npm install -g pnpm
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Copy source
 COPY . .
+
+# Build the website
+RUN pnpm --filter @wise2/website build
 
 # Runtime stage
 FROM node:20-alpine
