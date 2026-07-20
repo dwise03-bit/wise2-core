@@ -12,9 +12,6 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build just the API package using root node_modules
-RUN cd packages/api && ../../../node_modules/.bin/nest build
-
 # Runtime stage
 FROM node:20-alpine
 
