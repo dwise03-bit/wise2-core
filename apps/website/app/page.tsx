@@ -399,63 +399,24 @@ const CommandCenter = () => {
 // ============ LIVE STUDIO ============
 const LiveStudio = () => (
   <div className="p-7 space-y-5">
-    <div>
-      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Live Studio</h1>
-      <p className="text-[#999] font-medium tracking-widest mt-1">BROADCAST. ENGAGE. DOMINATE.</p>
+    <div><h1 className="font-orbitron font-black text-3xl text-[#39FF14]">🔴 LIVE STREAM ACTIVE</h1></div>
+    <div className="rounded-2xl p-6 bg-red-950 border-2 border-red-600">
+      <div className="text-xl font-bold text-white">LIVE NOW - Friday Night Beats</div>
+      <div className="text-2xl font-bold text-[#39FF14] mt-2">2,847 viewers</div>
     </div>
-
-    <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.1) 100%)', border: '2px solid rgba(239,68,68,0.5)', boxShadow: '0 0 24px rgba(239,68,68,0.3)' }}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-4 h-4 rounded-full bg-red-500" style={{ animation: 'pulse 1.5s infinite' }} />
-          <div>
-            <div className="font-bold text-lg text-red-400">LIVE NOW</div>
-            <div className="text-sm text-[#999]">Friday Night Beats Stream</div>
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-[#39FF14]">2,847</div>
-          <div className="text-xs text-[#999]">viewers</div>
-        </div>
-      </div>
-    </div>
-
     <div className="grid grid-cols-2 gap-4">
-      <button className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)', border: '1px solid rgba(239,68,68,0.4)' }}>⏹ Stop Stream</button>
-      <button className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.15) 0%, rgba(57,255,20,0.05) 100%)', border: '1px solid rgba(57,255,20,0.3)' }}>⚙️ Settings</button>
+      <div className="bg-red-900 border border-red-600 rounded p-4 text-white font-bold">⏹ Stop Stream</div>
+      <div className="bg-green-900 border border-green-600 rounded p-4 text-white font-bold">⚙️ Settings</div>
     </div>
-
     <div className="grid grid-cols-4 gap-3">
-      {[
-        { label: 'Bitrate', value: '6 Mbps', color: '#39FF14' },
-        { label: 'FPS', value: '60', color: '#0369A1' },
-        { label: 'Uptime', value: '23m', color: '#39FF14' },
-        { label: 'CPU', value: '45%', color: '#e0a83c' },
-      ].map((metric, i) => (
-        <div key={i} className="rounded-lg p-3" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
-          <div className="text-xs text-[#999] uppercase tracking-widest">{metric.label}</div>
-          <div className="text-lg font-bold mt-1" style={{ color: metric.color }}>{metric.value}</div>
-        </div>
-      ))}
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-3"><div className="text-[#39FF14] font-bold">6 Mbps</div><div className="text-xs text-[#999]">Bitrate</div></div>
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-3"><div className="text-[#39FF14] font-bold">60</div><div className="text-xs text-[#999]">FPS</div></div>
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-3"><div className="text-[#39FF14] font-bold">23m</div><div className="text-xs text-[#999]">Uptime</div></div>
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-3"><div className="text-yellow-500 font-bold">45%</div><div className="text-xs text-[#999]">CPU</div></div>
     </div>
-
     <div className="grid grid-cols-2 gap-4">
-      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
-        <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Live Chat</h3>
-        <div className="space-y-2 text-xs">
-          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+DarrinW:</span><span className="text-[#999]">Fire mix right now! 🔥</span></div>
-          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+CreativeAI:</span><span className="text-[#999]">Love the energy</span></div>
-          <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+SoundGuy:</span><span className="text-[#999]">What's the track?</span></div>
-        </div>
-      </div>
-      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
-        <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Engagement</h3>
-        <div className="space-y-2 text-xs">
-          <div className="flex justify-between"><span className="text-[#999]">👍 Reactions</span><span className="text-[#39FF14] font-bold">342</span></div>
-          <div className="flex justify-between"><span className="text-[#999]">💬 Comments</span><span className="text-[#39FF14] font-bold">127</span></div>
-          <div className="flex justify-between"><span className="text-[#999]">🔗 Shares</span><span className="text-[#39FF14] font-bold">84</span></div>
-        </div>
-      </div>
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-4"><div className="text-[#39FF14] font-bold mb-2">💬 Live Chat</div><div className="text-xs text-[#999]">+DarrinW: Fire! 🔥</div></div>
+      <div className="bg-[#1a1a1a] border border-[#333] rounded p-4"><div className="text-[#39FF14] font-bold mb-2">👍 Engagement</div><div className="text-xs text-[#999]">342 reactions</div></div>
     </div>
   </div>
 );
