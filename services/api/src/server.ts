@@ -20,6 +20,7 @@ import {
 } from './middlewares/error-handler';
 import { authenticate } from './middlewares/auth';
 import hermesRouter from './routes/hermes';
+import metricsRouter from './routes/metrics';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -125,6 +126,9 @@ export async function createServer(): Promise<Express> {
 
   // Hermes Website Builder API
   app.use('/api/v1/hermes', hermesRouter);
+
+  // Metrics API
+  app.use('/api/v1/metrics', metricsRouter);
 
   // ============================================================================
   // 404 Handler
