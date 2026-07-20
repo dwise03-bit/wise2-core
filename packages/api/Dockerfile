@@ -40,17 +40,12 @@ WORKDIR /app
 # Install runtime dependencies (curl for health checks)
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
-# Copy built app and required files from builder
+# Copy entire app and node_modules from builder (includes generated Prisma client)
 COPY --from=builder /app/packages/api/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-# Copy Prisma client that was generated during build
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
-
-# Create startup script to regenerate Prisma if needed
-RUN echo '#!/bin/sh\nset -e\necho "Initializing Prisma client..."\ncd /app && npx -y prisma@latest generate --schema=packages/db/prisma/schema.prisma 2>/dev/null || true\necho "Starting API..."\nexec node dist/main' > /app/start.sh && chmod +x /app/start.sh
+COPY --from=builder /app/packages ./packages
 
 EXPOSE 3001
 
-ENTRYPOINT ["/app/start.sh"]
+CMD ["node", "dist/main"]
