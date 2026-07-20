@@ -402,7 +402,7 @@ class StorageService {
    * Note: In production, this would use AWS SDK to generate actual signed URLs
    * For now, this is a placeholder for the API structure
    */
-  generateSignedUploadUrl(fileKey: string, fileType: string): string {
+  generateSignedUploadUrl(fileKey: string, _fileType: string): string {
     // TODO: Implement AWS SDK integration to generate actual signed URLs
     // This would return a URL like:
     // https://wise2-files.s3.amazonaws.com/...?X-Amz-Signature=...

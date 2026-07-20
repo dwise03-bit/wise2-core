@@ -1,9 +1,12 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { validateEmail, validatePassword, validatePasswordConfirm, getPasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
 import { createVerificationToken } from '@/lib/email';
+import { apiClient } from '@/lib/api-client';
+import { useStore } from '@/lib/useStore';
 
 interface FormErrors {
   email?: string;
@@ -12,6 +15,8 @@ interface FormErrors {
 }
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { setAuth } = useStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -21,6 +26,7 @@ export default function SignupPage() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Track page view
   useEffect(() => {
@@ -78,6 +84,7 @@ export default function SignupPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     analytics.track('form_submit', { form: 'signup' });
+    setSubmitError(null);
 
     if (!validateForm()) {
       analytics.track('form_error', { form: 'signup', reason: 'validation_failed' });
@@ -87,21 +94,36 @@ export default function SignupPage() {
     setIsSubmitting(true);
 
     try {
-      // Generate verification token
-      createVerificationToken(email);
+      // Call signup API
+      const result = await apiClient.post('/api/v1/auth/signup', {
+        email,
+        password,
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!result.success) {
+        const errorMessage = result.error || 'Signup failed. Please try again.';
+        setSubmitError(errorMessage);
+        analytics.track('form_error', { form: 'signup', reason: errorMessage });
+        setIsSubmitting(false);
+        return;
+      }
 
-      analytics.track('email_verification_sent', { email });
+      // Store auth data
+      if (result.data?.user && result.data?.tokens?.accessToken) {
+        setAuth(result.data.user, result.data.tokens.accessToken);
+        localStorage.setItem('auth_token', result.data.tokens.accessToken);
+      }
+
       analytics.track('signup_complete', { email });
       analytics.flush();
 
-      setSubmitted(true);
+      // Navigate to dashboard
+      router.push('/dashboard');
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Signup failed. Please try again.';
+      setSubmitError(errorMessage);
       console.error('Signup error:', error);
       analytics.track('form_error', { form: 'signup', reason: 'submission_failed' });
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -137,6 +159,13 @@ export default function SignupPage() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Error Alert */}
+          {submitError && (
+            <div className="p-3 bg-red-500/10 border border-red-500 rounded-md text-red-500 text-sm">
+              {submitError}
+            </div>
+          )}
+
           {/* Email Field */}
           <div>
             <label className="block text-sm font-medium text-wise-primary mb-2">

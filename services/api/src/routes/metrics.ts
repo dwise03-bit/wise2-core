@@ -61,7 +61,6 @@ router.post('/system', async (req: Request, res: Response) => {
     // Store docker metrics
     if (docker && docker.available) {
       try {
-        const stats = docker.stats && docker.stats.length > 0 ? docker.stats[0] : {};
         await database.query(
           `INSERT INTO system_metrics (metric_type, docker_running_containers, docker_total_containers, raw_data, collected_at)
            VALUES ($1, $2, $3, $4, $5)`,
@@ -126,7 +125,7 @@ router.post('/system', async (req: Request, res: Response) => {
       types: [git ? 'git' : null, docker ? 'docker' : null, nginx ? 'nginx' : null, dbMetrics ? 'database' : null].filter(Boolean),
     });
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         timestamp: new Date().toISOString(),
@@ -135,7 +134,7 @@ router.post('/system', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Failed to store system metrics', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'METRICS_STORAGE_ERROR',
@@ -255,7 +254,7 @@ router.post('/users/events', async (req: Request, res: Response) => {
       action,
     });
 
-    res.json({
+    return res.json({
       success: true,
       data: {
         eventId,
@@ -264,7 +263,7 @@ router.post('/users/events', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Failed to track user event', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'EVENT_TRACKING_ERROR',
@@ -375,7 +374,7 @@ router.get('/production', async (req: Request, res: Response) => {
  * GET /api/v1/metrics/dashboard
  * Get all aggregated metrics for dashboard display
  */
-router.get('/dashboard', async (req: Request, res: Response) => {
+router.get('/dashboard', async (_req: Request, res: Response) => {
   try {
     // Get today's active users
     const activeUsersResult = await database.query(

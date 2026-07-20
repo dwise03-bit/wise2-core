@@ -95,7 +95,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const stripe = getStripeClient();
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        { error: 'Stripe configuration missing' },
+        { status: 500 }
+      );
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     return NextResponse.json({

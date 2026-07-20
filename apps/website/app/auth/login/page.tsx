@@ -1,8 +1,11 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { validateEmail, validatePassword } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
+import { apiClient } from '@/lib/api-client';
+import { useStore } from '@/lib/useStore';
 import DiscordSignInButton from '@/app/components/DiscordSignInButton';
 
 interface FormErrors {
@@ -11,6 +14,8 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { setAuth } = useStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,6 +24,7 @@ export default function LoginPage() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Track page view
   useEffect(() => {
@@ -66,6 +72,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     analytics.track('form_submit', { form: 'login', rememberMe });
+    setSubmitError(null);
 
     if (!validateForm()) {
       analytics.track('form_error', { form: 'login', reason: 'validation_failed' });
@@ -75,17 +82,41 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call login API
+      const result = await apiClient.post('/api/v1/auth/login', {
+        email,
+        password,
+      });
+
+      if (!result.success) {
+        const errorMessage = result.error || 'Invalid email or password';
+        setSubmitError(errorMessage);
+        analytics.track('form_error', { form: 'login', reason: errorMessage });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Store auth data
+      if (result.data?.user && result.data?.tokens?.accessToken) {
+        setAuth(result.data.user, result.data.tokens.accessToken);
+        localStorage.setItem('auth_token', result.data.tokens.accessToken);
+
+        // Store rememberMe preference
+        if (rememberMe) {
+          localStorage.setItem('rememberMe', 'true');
+        }
+      }
 
       analytics.track('login_complete', { email });
       analytics.flush();
 
-      setSubmitted(true);
+      // Navigate to dashboard
+      router.push('/dashboard');
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
+      setSubmitError(errorMessage);
       console.error('Login error:', error);
       analytics.track('form_error', { form: 'login', reason: 'submission_failed' });
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -117,6 +148,13 @@ export default function LoginPage() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Error Alert */}
+          {submitError && (
+            <div className="p-3 bg-red-500/10 border border-red-500 rounded-md text-red-500 text-sm">
+              {submitError}
+            </div>
+          )}
+
           {/* Email Field */}
           <div>
             <label className="block text-sm font-medium text-wise-primary mb-2">

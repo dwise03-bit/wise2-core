@@ -126,7 +126,7 @@ class PaymentService {
   async createOrder(
     userId: string,
     items: Array<{ productId: string; quantity: number }>,
-    metadata?: any
+    _metadata?: any
   ): Promise<{ order: Order; orderItems: OrderItem[] }> {
     try {
       // Validate items and calculate total
@@ -255,7 +255,7 @@ class PaymentService {
   /**
    * Update order status
    */
-  async updateOrderStatus(orderId: string, status: string, metadata?: any): Promise<Order> {
+  async updateOrderStatus(orderId: string, status: string, _metadata?: any): Promise<Order> {
     try {
       const order = await database.queryOne<Order>(
         `

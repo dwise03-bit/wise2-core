@@ -5,6 +5,10 @@
  * Accepts user event data and stores it for analytics
  */
 
+declare global {
+  var eventLog: any[];
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

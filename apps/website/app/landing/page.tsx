@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const COLORS = {
   accent: '#39FF14',
@@ -14,6 +15,7 @@ const COLORS = {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
   const [stats, setStats] = useState({
     activeUsers: '12.4K',
     totalCreations: '1.2M+',
@@ -95,6 +97,7 @@ export default function LandingPage() {
         {/* Auth Buttons */}
         <div style={{ display: 'flex', gap: '12px' }}>
           <button
+            onClick={() => router.push('/auth/login')}
             style={{
               background: 'transparent',
               border: `1px solid #333`,
@@ -118,6 +121,7 @@ export default function LandingPage() {
             Sign In
           </button>
           <button
+            onClick={() => router.push('/auth/signup')}
             style={{
               background: COLORS.accent,
               color: COLORS.black,
@@ -212,6 +216,7 @@ export default function LandingPage() {
             }}
           >
             <button
+              onClick={() => router.push('/auth/signup')}
               style={{
                 background: COLORS.accent,
                 color: COLORS.black,
@@ -772,6 +777,7 @@ export default function LandingPage() {
                 </ul>
 
                 <button
+                  onClick={() => router.push('/auth/signup')}
                   style={{
                     background: COLORS.accent,
                     color: COLORS.black,

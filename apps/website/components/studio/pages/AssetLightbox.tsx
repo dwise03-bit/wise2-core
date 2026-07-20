@@ -76,8 +76,10 @@ export default function AssetLightbox({ asset, onClose }: AssetLightboxProps) {
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '24px',
-          hover: { background: 'rgba(0, 0, 0, 0.7)' },
+          transition: 'background 0.2s ease',
         }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0, 0, 0, 0.5)')}
       >
         ✕
       </button>

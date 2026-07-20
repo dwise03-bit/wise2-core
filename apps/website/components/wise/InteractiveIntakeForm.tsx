@@ -313,7 +313,7 @@ export const InteractiveIntakeForm: React.FC<InteractiveIntakeFormProps> = ({ on
                   name={fieldName}
                   value={formData[fieldName as keyof FormData] as string}
                   onChange={handleChange}
-                  required={fieldName !== 'website' && fieldName !== 'file'}
+                  required={true}
                   rows={5}
                   className={`w-full px-4 py-3 rounded bg-wise-bg-secondary border transition-all resize-none placeholder-wise-text-muted text-wise-text-primary focus:outline-none ${
                     hasError

@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useStore } from '@/lib/useStore';
 
 export default function WebstorePage() {
-  const [cart, setCart] = useState<string[]>([]);
+  const { cart, addToCart } = useStore();
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
 
   const products = [
     {
@@ -45,8 +47,21 @@ export default function WebstorePage() {
     },
   ];
 
-  const addToCart = (productId: string) => {
-    setCart([...cart, productId]);
+  const showToast = (message: string) => {
+    setToast({ message, visible: true });
+    setTimeout(() => setToast({ message: '', visible: false }), 3000);
+  };
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addToCart(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+      },
+      1
+    );
+    showToast(`${product.name} added to cart!`);
   };
 
   return (
@@ -70,7 +85,7 @@ export default function WebstorePage() {
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-lime-400">${product.price}</span>
                 <button
-                  onClick={() => addToCart(product.id)}
+                  onClick={() => handleAddToCart(product)}
                   className="px-4 py-2 bg-lime-400 text-black font-bold rounded hover:bg-lime-300 transition-colors"
                 >
                   Add to Cart
@@ -80,27 +95,19 @@ export default function WebstorePage() {
           ))}
         </div>
 
-        {cart.length > 0 && (
+        {cart.items.length > 0 && (
           <div className="mt-12 bg-wise-bg-secondary border border-wise-border rounded-lg p-8">
-            <h2 className="text-2xl font-bold text-wise-text-primary mb-4">Cart ({cart.length})</h2>
+            <h2 className="text-2xl font-bold text-wise-text-primary mb-4">Cart ({cart.items.length})</h2>
             <div className="mb-6">
-              {cart.map((itemId, idx) => {
-                const product = products.find((p) => p.id === itemId);
-                return (
-                  <div key={idx} className="text-wise-text-secondary mb-2">
-                    {product?.name} - ${product?.price}
-                  </div>
-                );
-              })}
+              {cart.items.map((item) => (
+                <div key={item.id} className="text-wise-text-secondary mb-2 flex justify-between">
+                  <span>{item.name} x {item.quantity}</span>
+                  <span className="text-lime-400 font-bold">${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
             </div>
             <div className="text-xl font-bold text-lime-400 mb-4">
-              Total: $
-              {cart
-                .reduce((sum, itemId) => {
-                  const product = products.find((p) => p.id === itemId);
-                  return sum + (product?.price || 0);
-                }, 0)
-                .toFixed(2)}
+              Total: ${cart.total.toFixed(2)}
             </div>
             <Link
               href="/checkout"
@@ -108,6 +115,13 @@ export default function WebstorePage() {
             >
               Checkout →
             </Link>
+          </div>
+        )}
+
+        {/* Toast Notification */}
+        {toast.visible && (
+          <div className="fixed bottom-4 right-4 bg-lime-400 text-black px-6 py-3 rounded-lg font-semibold shadow-lg animate-in slide-in-from-bottom-4 duration-300">
+            {toast.message}
           </div>
         )}
       </div>

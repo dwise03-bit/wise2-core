@@ -6,7 +6,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service';
 import { authenticate } from '../middlewares/auth';
-import { logger } from '../logger';
 
 const router = Router();
 
@@ -47,7 +46,7 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
       last_name,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: {
         user,
@@ -55,7 +54,7 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
       },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -81,7 +80,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     // Login user
     const { user, tokens } = await authService.login({ email, password });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         user,
@@ -98,7 +97,7 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
         },
       });
     }
-    next(error);
+    return next(error);
   }
 });
 
@@ -122,7 +121,7 @@ router.post('/refresh', async (req: Request, res: Response, next: NextFunction) 
 
     const tokens = await authService.refreshToken(refreshToken);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: { tokens },
     });
@@ -136,7 +135,7 @@ router.post('/refresh', async (req: Request, res: Response, next: NextFunction) 
         },
       });
     }
-    next(error);
+    return next(error);
   }
 });
 

@@ -194,17 +194,13 @@ export default function Header() {
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         style={{
           display: 'flex',
-          '@media (min-width: 768px)': {
-            display: 'none',
-          },
-        } as any}
-        style={{
           background: 'none',
           border: 'none',
           color: '#e6e6e6',
           cursor: 'pointer',
           padding: '4px 8px',
         }}
+        className="md:hidden"
       >
         {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>

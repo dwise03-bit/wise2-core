@@ -8,7 +8,7 @@ import { apiClient } from './api-client';
 
 export interface FormField {
   value: any;
-  error?: string;
+  error?: string | null;
   touched?: boolean;
 }
 

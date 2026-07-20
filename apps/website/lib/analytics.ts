@@ -9,7 +9,8 @@ export type EventType =
   | 'email_verified'
   | 'signup_complete'
   | 'login_complete'
-  | 'button_click';
+  | 'button_click'
+  | 'discord_signin_click';
 
 export interface AnalyticsEvent {
   type: EventType;

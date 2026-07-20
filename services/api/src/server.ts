@@ -19,7 +19,6 @@ import {
   errorHandler,
   notFoundHandler,
 } from './middlewares/error-handler';
-import { authenticate } from './middlewares/auth';
 import hermesRouter from './routes/hermes';
 import metricsRouter from './routes/metrics';
 import authRouter from './routes/auth';

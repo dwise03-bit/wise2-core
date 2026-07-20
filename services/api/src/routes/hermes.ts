@@ -3,7 +3,7 @@
  * Integrates the Hermes website-building agent into wise2
  */
 
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Request, Response } from 'express';
 import { authenticate } from '../middlewares/auth';
 import { logger } from '../logger';
 
@@ -28,7 +28,7 @@ export const hermesRouter = Router();
  * Check Hermes service status
  */
 hermesRouter.get('/status', (_req: Request, res: Response) => {
-  res.json({
+  return res.json({
     success: true,
     data: {
       service: 'hermes-website-builder',
@@ -56,7 +56,7 @@ hermesRouter.get('/jobs', authenticate, (_req: Request, res: Response) => {
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 50);
 
-  res.json({
+  return res.json({
     success: true,
     data: {
       total: jobs.size,
@@ -88,7 +88,7 @@ hermesRouter.get('/jobs/:id', authenticate, (req: Request, res: Response) => {
     });
   }
 
-  res.json({
+  return res.json({
     success: true,
     data: {
       id: job.id,
@@ -143,7 +143,7 @@ hermesRouter.post('/design-to-code', authenticate, async (req: Request, res: Res
       }
     }, 100);
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       data: {
         jobId,
@@ -154,7 +154,7 @@ hermesRouter.post('/design-to-code', authenticate, async (req: Request, res: Res
     });
   } catch (error) {
     logger.error('design-to-code error', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'CONVERSION_ERROR',
@@ -195,7 +195,7 @@ hermesRouter.post('/site-generator', authenticate, async (req: Request, res: Res
     jobs.set(jobId, job);
     logger.info('Hermes site-generator job created', { jobId, name: name || 'my-website' });
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       data: {
         jobId,
@@ -206,7 +206,7 @@ hermesRouter.post('/site-generator', authenticate, async (req: Request, res: Res
     });
   } catch (error) {
     logger.error('site-generator error', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'GENERATION_ERROR',
@@ -247,7 +247,7 @@ hermesRouter.post('/component', authenticate, async (req: Request, res: Response
     jobs.set(jobId, job);
     logger.info('Hermes component job created', { jobId, type: type || 'generic' });
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       data: {
         jobId,
@@ -258,7 +258,7 @@ hermesRouter.post('/component', authenticate, async (req: Request, res: Response
     });
   } catch (error) {
     logger.error('component error', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'COMPONENT_ERROR',
@@ -299,7 +299,7 @@ hermesRouter.post('/deploy', authenticate, async (req: Request, res: Response) =
     jobs.set(jobId, job);
     logger.info('Hermes deploy job created', { jobId, target, domain });
 
-    res.status(202).json({
+    return res.status(202).json({
       success: true,
       data: {
         jobId,
@@ -310,7 +310,7 @@ hermesRouter.post('/deploy', authenticate, async (req: Request, res: Response) =
     });
   } catch (error) {
     logger.error('deploy error', { error });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: {
         code: 'DEPLOY_ERROR',

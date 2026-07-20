@@ -6,7 +6,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middlewares/auth';
 import { storageService } from '../services/storage.service';
-import { logger } from '../logger';
 
 const router = Router();
 
@@ -44,7 +43,7 @@ router.post('/upload-url', async (req: Request, res: Response, next: NextFunctio
       },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -85,7 +84,7 @@ router.post('/confirm', async (req: Request, res: Response, next: NextFunction) 
       data: { file },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -126,7 +125,7 @@ router.get('/:fileId', async (req: Request, res: Response, next: NextFunction) =
       data: { file },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -146,7 +145,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       data: { files },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -186,7 +185,7 @@ router.delete('/:fileId', async (req: Request, res: Response, next: NextFunction
         },
       });
     }
-    next(error);
+    return next(error);
   }
 });
 
@@ -221,7 +220,7 @@ router.post('/showcase', async (req: Request, res: Response, next: NextFunction)
       data: { asset },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -250,7 +249,7 @@ router.get('/showcase/:assetId', async (req: Request, res: Response, next: NextF
       data: { asset },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -270,7 +269,7 @@ router.get('/showcase', async (req: Request, res: Response, next: NextFunction) 
       data: { assets },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -289,7 +288,7 @@ router.get('/showcase/featured', async (req: Request, res: Response, next: NextF
       data: { assets },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -319,7 +318,7 @@ router.put('/showcase/:assetId', async (req: Request, res: Response, next: NextF
         },
       });
     }
-    next(error);
+    return next(error);
   }
 });
 
@@ -344,7 +343,7 @@ router.delete('/showcase/:assetId', async (req: Request, res: Response, next: Ne
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Asset deleted successfully',
       data: { asset },
@@ -359,7 +358,7 @@ router.delete('/showcase/:assetId', async (req: Request, res: Response, next: Ne
         },
       });
     }
-    next(error);
+    return next(error);
   }
 });
 

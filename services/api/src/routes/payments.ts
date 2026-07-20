@@ -6,7 +6,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middlewares/auth';
 import { paymentService } from '../services/payment.service';
-import { logger } from '../logger';
 
 const router = Router();
 
@@ -42,7 +41,7 @@ router.post('/create-order', async (req: Request, res: Response, next: NextFunct
       },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -62,7 +61,7 @@ router.get('/orders', async (req: Request, res: Response, next: NextFunction) =>
       data: { orders },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -105,7 +104,7 @@ router.get('/orders/:orderId', async (req: Request, res: Response, next: NextFun
       data: { order, items },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -159,7 +158,7 @@ router.post('/confirm', async (req: Request, res: Response, next: NextFunction) 
       data: { order: confirmedOrder },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -212,7 +211,7 @@ router.post('/cancel/:orderId', async (req: Request, res: Response, next: NextFu
       data: { order: cancelledOrder },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -232,7 +231,7 @@ router.get('/products', async (req: Request, res: Response, next: NextFunction) 
       data: { products },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
@@ -261,7 +260,7 @@ router.get('/products/:productId', async (req: Request, res: Response, next: Nex
       data: { product },
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 });
 
