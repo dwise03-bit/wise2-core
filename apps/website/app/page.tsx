@@ -421,6 +421,124 @@ const LiveStudio = () => (
   </div>
 );
 
+// ============ SOUND LAB ============
+const SoundLab = () => (
+  <div className="p-7 space-y-5">
+    <div>
+      <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Sound Lab</h1>
+      <p className="text-[#999] font-medium tracking-widest mt-1">RECORD. MIX. MASTER.</p>
+    </div>
+
+    <div className="grid grid-cols-3 gap-4">
+      <button className="rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#39FF14]" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.2) 0%, rgba(57,255,20,0.1) 100%)' }}>
+        🎙️ New Recording
+      </button>
+      <button className="rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#0369A1]" style={{ background: 'linear-gradient(135deg, rgba(3,105,161,0.2) 0%, rgba(3,105,161,0.1) 100%)' }}>
+        🎛️ Open Mixer
+      </button>
+      <button className="rounded-xl p-6 font-bold text-lg tracking-widest uppercase border-2 border-[#e0a83c]" style={{ background: 'linear-gradient(135deg, rgba(224,168,60,0.2) 0%, rgba(224,168,60,0.1) 100%)' }}>
+        ✨ AI Mastering
+      </button>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Audio Tracks</h3>
+      <div className="space-y-2">
+        {[
+          { name: 'Vocal Track', duration: '3:42', waveColor: 'from-red-600 to-red-900' },
+          { name: 'Guitar Loop', duration: '4:15', waveColor: 'from-orange-600 to-orange-900' },
+          { name: 'Drums', duration: '3:42', waveColor: 'from-yellow-600 to-yellow-900' },
+          { name: 'Bass', duration: '3:42', waveColor: 'from-green-600 to-green-900' },
+        ].map((track, i) => (
+          <div key={i} className="rounded-lg p-4 border border-[#333]" style={{ background: 'rgba(20,20,20,0.6)' }}>
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-3">
+                <button className="text-[#39FF14] hover:text-white transition">▶</button>
+                <div>
+                  <div className="font-bold text-sm text-[#e6e6e6]">{track.name}</div>
+                  <div className="text-xs text-[#999]">{track.duration}</div>
+                </div>
+              </div>
+              <button className="text-[#999] hover:text-white transition">⋮</button>
+            </div>
+            <div className="h-12 bg-[#0a0a0a] rounded flex items-end gap-1 p-2">
+              {[...Array(20)].map((_, i) => (
+                <div key={i} className={`flex-1 bg-gradient-to-t ${track.waveColor}`} style={{ height: `${Math.random() * 100}%` }} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Mixer Controls</h3>
+      <div className="rounded-lg p-4 border border-[#333]" style={{ background: 'rgba(20,20,20,0.6)' }}>
+        <div className="grid grid-cols-4 gap-4">
+          {[
+            { label: 'Volume', value: 75 },
+            { label: 'Bass', value: 45 },
+            { label: 'Treble', value: 65 },
+            { label: 'Pan', value: 50 },
+          ].map((control, i) => (
+            <div key={i}>
+              <div className="text-xs text-[#999] mb-2">{control.label}</div>
+              <div className="h-20 bg-[#0a0a0a] rounded flex flex-col-reverse items-center">
+                <div className="w-8 h-2 bg-[#39FF14] rounded" style={{ height: `${control.value}%` }} />
+              </div>
+              <div className="text-xs text-[#39FF14] text-center mt-2">{control.value}%</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-2xl p-4 border border-[#333]" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)' }}>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Effect Rack</h3>
+      <div className="space-y-2">
+        {[
+          { name: 'Reverb', value: 30 },
+          { name: 'Delay', value: 20 },
+          { name: 'Compression', value: 50 },
+          { name: 'EQ', value: 40 },
+        ].map((effect, i) => (
+          <div key={i} className="flex justify-between items-center p-3 rounded bg-[rgba(10,10,10,0.5)] border border-[#222]">
+            <div className="flex items-center gap-3">
+              <input type="checkbox" defaultChecked className="w-4 h-4 accent-[#39FF14]" />
+              <span className="text-sm font-bold text-[#e6e6e6]">{effect.name}</span>
+            </div>
+            <div className="w-24 h-2 bg-[#1a1a1a] rounded overflow-hidden">
+              <div className="w-full h-full bg-[#39FF14]" style={{ width: `${effect.value}%` }} />
+            </div>
+            <span className="text-xs text-[#999]">{effect.value}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Recent Projects</h3>
+      <div className="space-y-2">
+        {[
+          { name: 'Summer Anthem Mix', date: '2 hours ago', status: 'Saved' },
+          { name: 'Podcast Episode #42', date: '1 day ago', status: 'Exported' },
+          { name: 'Commercial Jingle v2', date: '3 days ago', status: 'Saved' },
+        ].map((proj, i) => (
+          <div key={i} className="flex justify-between items-start p-3 rounded hover:bg-[rgba(57,255,20,0.05)] transition border border-transparent hover:border-[#333]">
+            <div>
+              <div className="text-sm font-bold text-[#e6e6e6]">{proj.name}</div>
+              <div className="text-xs text-[#999]">{proj.date}</div>
+            </div>
+            <div className="text-xs px-2 py-1 rounded" style={{ background: proj.status === 'Saved' ? 'rgba(57,255,20,0.2)' : 'rgba(3,105,161,0.2)', color: proj.status === 'Saved' ? '#39FF14' : '#0369A1' }}>
+              {proj.status}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 // ============ JINGLE LAB ============
 const JingleLab = () => (
   <div className="p-7 space-y-5">
@@ -905,7 +1023,7 @@ export default function CreativeStudioPage() {
             )}
             {currentPage === 'sound' && (
               <motion.div key="sound" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <PagePlaceholder title="Sound Lab" subtitle="CREATE. PRODUCE. MASTER." />
+                <SoundLab />
               </motion.div>
             )}
             {currentPage === 'live' && (
