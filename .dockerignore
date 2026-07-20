@@ -6,7 +6,6 @@ README.md
 .env
 .env.local
 .env.*.local
-.next
 .turbo
 dist
 build
