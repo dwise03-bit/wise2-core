@@ -399,29 +399,15 @@ const CommandCenter = () => {
 // ============ LIVE STUDIO ============
 const LiveStudio = () => (
   <div className="p-7 space-y-5">
-    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
+    <div>
       <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase">Live Studio</h1>
       <p className="text-[#999] font-medium tracking-widest mt-1">BROADCAST. ENGAGE. DOMINATE.</p>
-    </motion.div>
+    </div>
 
-    {/* Live Status Banner */}
-    <motion.div
-      className="rounded-2xl p-6 relative overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.1) 100%)',
-        border: '2px solid rgba(239,68,68,0.5)',
-        boxShadow: '0 0 24px rgba(239,68,68,0.3)',
-      }}
-      animate={{ boxShadow: ['0 0 24px rgba(239,68,68,0.3)', '0 0 40px rgba(239,68,68,0.5)', '0 0 24px rgba(239,68,68,0.3)'] }}
-      transition={{ duration: 2, repeat: Infinity }}
-    >
+    <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.1) 100%)', border: '2px solid rgba(239,68,68,0.5)', boxShadow: '0 0 24px rgba(239,68,68,0.3)' }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <motion.div
-            className="w-4 h-4 rounded-full bg-red-500"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
+          <div className="w-4 h-4 rounded-full bg-red-500" style={{ animation: 'pulse 1.5s infinite' }} />
           <div>
             <div className="font-bold text-lg text-red-400">LIVE NOW</div>
             <div className="text-sm text-[#999]">Friday Night Beats Stream</div>
@@ -432,102 +418,45 @@ const LiveStudio = () => (
           <div className="text-xs text-[#999]">viewers</div>
         </div>
       </div>
-    </motion.div>
+    </div>
 
-    {/* Stream Controls */}
-    <motion.div
-      className="grid grid-cols-2 gap-4"
-      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.button
-        className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase"
-        style={{
-          background: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)',
-          border: '1px solid rgba(239,68,68,0.4)',
-        }}
-        whileHover={{ scale: 1.02, boxShadow: '0 0 16px rgba(239,68,68,0.4)' }}
-      >
-        ⏹ Stop Stream
-      </motion.button>
-      <motion.button
-        className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase"
-        style={{
-          background: 'linear-gradient(135deg, rgba(57,255,20,0.15) 0%, rgba(57,255,20,0.05) 100%)',
-          border: '1px solid rgba(57,255,20,0.3)',
-        }}
-        whileHover={{ scale: 1.02, boxShadow: '0 0 16px rgba(57,255,20,0.4)' }}
-      >
-        ⚙️ Settings
-      </motion.button>
-    </motion.div>
+    <div className="grid grid-cols-2 gap-4">
+      <button className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(220,38,38,0.1) 100%)', border: '1px solid rgba(239,68,68,0.4)' }}>⏹ Stop Stream</button>
+      <button className="rounded-xl p-4 font-bold text-sm tracking-widest uppercase" style={{ background: 'linear-gradient(135deg, rgba(57,255,20,0.15) 0%, rgba(57,255,20,0.05) 100%)', border: '1px solid rgba(57,255,20,0.3)' }}>⚙️ Settings</button>
+    </div>
 
-    {/* Stream Metrics */}
-    <motion.div
-      className="grid grid-cols-4 gap-3"
-      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } }}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="grid grid-cols-4 gap-3">
       {[
         { label: 'Bitrate', value: '6 Mbps', color: '#39FF14' },
         { label: 'FPS', value: '60', color: '#0369A1' },
         { label: 'Uptime', value: '23m', color: '#39FF14' },
         { label: 'CPU', value: '45%', color: '#e0a83c' },
       ].map((metric, i) => (
-        <motion.div
-          key={i}
-          className="rounded-lg p-3"
-          style={{
-            background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
-            border: '1px solid rgba(39,39,39,0.6)',
-          }}
-          whileHover={{ scale: 1.05 }}
-        >
+        <div key={i} className="rounded-lg p-3" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
           <div className="text-xs text-[#999] uppercase tracking-widest">{metric.label}</div>
           <div className="text-lg font-bold mt-1" style={{ color: metric.color }}>{metric.value}</div>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
 
-    {/* Chat & Engagement */}
-    <motion.div
-      className="grid grid-cols-2 gap-4"
-      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.div
-        className="rounded-2xl p-4"
-        style={{
-          background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
-          border: '1px solid rgba(39,39,39,0.6)',
-        }}
-      >
+    <div className="grid grid-cols-2 gap-4">
+      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
         <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Live Chat</h3>
         <div className="space-y-2 text-xs">
           <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+DarrinW:</span><span className="text-[#999]">Fire mix right now! 🔥</span></div>
           <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+CreativeAI:</span><span className="text-[#999]">Love the energy</span></div>
           <div className="flex gap-2"><span className="text-[#39FF14] font-bold">+SoundGuy:</span><span className="text-[#999]">What's the track?</span></div>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="rounded-2xl p-4"
-        style={{
-          background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)',
-          border: '1px solid rgba(39,39,39,0.6)',
-        }}
-      >
+      </div>
+      <div className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgba(21,21,21,0.8) 0%, rgba(15,15,15,0.6) 100%)', border: '1px solid rgba(39,39,39,0.6)' }}>
         <h3 className="text-xs tracking-widest text-[#e6e6e6] uppercase font-bold mb-3">Engagement</h3>
         <div className="space-y-2 text-xs">
           <div className="flex justify-between"><span className="text-[#999]">👍 Reactions</span><span className="text-[#39FF14] font-bold">342</span></div>
           <div className="flex justify-between"><span className="text-[#999]">💬 Comments</span><span className="text-[#39FF14] font-bold">127</span></div>
           <div className="flex justify-between"><span className="text-[#999]">🔗 Shares</span><span className="text-[#39FF14] font-bold">84</span></div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   </div>
 );
 
