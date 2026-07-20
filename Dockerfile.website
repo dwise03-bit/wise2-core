@@ -1,34 +1,23 @@
-# Builder stage
-FROM node:20-alpine as builder
-
-WORKDIR /app
-
-# Copy everything for reference (not used in runtime)
-COPY . .
-
-# Runtime stage
+# Production runtime for WISE² Creative Studio Website
 FROM node:20-alpine
 
 WORKDIR /app
 
-ENV NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache dumb-init curl
+
+# Copy the entire standalone directory structure as-is
+COPY apps/website/.next/standalone ./
+COPY apps/website/.next/static ./apps/website/.next/static
+COPY apps/website/public ./apps/website/public
+
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_API_URL=https://api.wise2.net
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod --frozen-lockfile
-
-# Copy website files (these come from rsync on production)
-COPY apps/website ./apps/website
-
-# Expose port
 EXPOSE 3000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+  CMD curl -f http://localhost:3000/ || exit 1
 
-# Start website - use node directly with next binary from monorepo
-CMD ["node", "./node_modules/next/dist/bin/next", "start", "--dir", "./apps/website", "-p", "3000"]
+ENTRYPOINT ["dumb-init", "node"]
+CMD ["apps/website/server.js"]
