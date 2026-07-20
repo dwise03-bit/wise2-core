@@ -1,8 +1,11 @@
-/** @type {import('next').NextConfig} */
+/** @type {import('next).NextConfig} */
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
+  generateBuildId: async () => {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  },
   images: {
     unoptimized: false,
     formats: ['image/avif', 'image/webp'],
@@ -42,7 +45,15 @@ const nextConfig = {
         },
         {
           key: 'Cache-Control',
-          value: 'public, max-age=0, must-revalidate',
+          value: 'no-cache, no-store, must-revalidate, max-age=0',
+        },
+        {
+          key: 'Pragma',
+          value: 'no-cache',
+        },
+        {
+          key: 'Expires',
+          value: '0',
         },
       ],
     },
@@ -52,6 +63,15 @@ const nextConfig = {
         {
           key: 'Cache-Control',
           value: 'public, max-age=31536000, immutable',
+        },
+      ],
+    },
+    {
+      source: '/api/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'no-cache, no-store, must-revalidate, max-age=0',
         },
       ],
     },
