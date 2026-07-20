@@ -2,7 +2,6 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  swcMinify: true,
   productionBrowserSourceMaps: false,
   images: {
     unoptimized: false,
@@ -50,9 +49,9 @@ const nextConfig = {
   ],
   experimental: {
     optimizePackageImports: ['@wise2/design-system'],
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
+    turbopack: {
+      root: '../../',
+    },
   },
   typescript: {
     ignoreBuildErrors: true,
