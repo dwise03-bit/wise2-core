@@ -12,8 +12,8 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Generate Prisma client
-RUN npm install -g prisma && prisma generate --schema packages/db/prisma/schema.prisma
+# Generate Prisma client from already-installed dependencies
+RUN cd packages/db && ../../node_modules/.bin/prisma generate
 
 # Build API
 RUN pnpm --filter @wise2/api build
