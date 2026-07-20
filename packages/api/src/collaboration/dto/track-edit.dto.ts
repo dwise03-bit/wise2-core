@@ -11,7 +11,7 @@ export class TrackEditDto {
     example: 'track-123',
   })
   @IsString()
-  trackId: string;
+  trackId!: string;
 
   @ApiProperty({
     description: 'Field name being edited',
@@ -19,7 +19,7 @@ export class TrackEditDto {
     example: 'volume',
   })
   @IsString()
-  field: 'volume' | 'pan' | 'name' | 'muted';
+  field!: 'volume' | 'pan' | 'name' | 'muted';
 
   @ApiProperty({
     description: 'New value for the field',
@@ -32,7 +32,7 @@ export class TrackEditDto {
     example: 1689000000000,
   })
   @IsNumber()
-  timestamp: number;
+  timestamp!: number;
 
   @ApiProperty({
     description: 'Optional conflict resolution strategy',

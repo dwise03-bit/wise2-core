@@ -12,7 +12,7 @@ export class UpdatePermissionsDto {
     example: 'collab-123',
   })
   @IsString()
-  collaboratorId: string;
+  collaboratorId!: string;
 
   @ApiProperty({
     description: 'New role for the collaborator',
