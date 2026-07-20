@@ -40,11 +40,6 @@ const nextConfig = {
           key: 'Permissions-Policy',
           value: 'geolocation=(), microphone=(), camera=()',
         },
-      ],
-    },
-    {
-      source: '/(.*).(html|htm)$',
-      headers: [
         {
           key: 'Cache-Control',
           value: 'public, max-age=0, must-revalidate',
@@ -57,15 +52,6 @@ const nextConfig = {
         {
           key: 'Cache-Control',
           value: 'public, max-age=31536000, immutable',
-        },
-      ],
-    },
-    {
-      source: '/:path*',
-      headers: [
-        {
-          key: 'Cache-Control',
-          value: 'public, max-age=3600, stale-while-revalidate=86400',
         },
       ],
     },
