@@ -8,9 +8,8 @@ COPY package.json pnpm-lock.yaml* npm-shrinkwrap.json* ./
 COPY apps/website/package.json ./apps/website/
 COPY packages/ ./packages/
 
-# Install dependencies
-RUN npm install -g pnpm 2>/dev/null || true
-RUN npm ci || npm install
+# Install dependencies with legacy-peer-deps for React 19/Next.js 14 compatibility
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY apps/website ./apps/website
