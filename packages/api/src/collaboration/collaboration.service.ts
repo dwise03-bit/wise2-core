@@ -555,8 +555,8 @@ export class CollaborationService {
           status: presence.status || 'online',
           cursorPosition: presence.cursorPosition
             ? JSON.stringify(presence.cursorPosition)
-            : null,
-          editingTrackId: presence.editingTrackId ?? undefined,
+            : undefined,
+          editingTrackId: presence.editingTrackId || undefined,
         },
       });
 
