@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 COPY packages ./packages
 COPY apps/studio ./apps/studio
 
-RUN npm install --frozen-lockfile
+RUN npm install --frozen-lockfile --legacy-peer-deps
 
 WORKDIR /app/apps/studio
 RUN npm run build
