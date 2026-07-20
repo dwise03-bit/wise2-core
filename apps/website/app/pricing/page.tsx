@@ -1,6 +1,15 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { Navigation, Footer } from '@/components/wise';
 
 export default function PricingPage() {
+  const router = useRouter();
+
+  const handleCheckout = (plan: string) => {
+    router.push(`/checkout?plan=${plan}`);
+  };
+
   return (
     <>
       <Navigation />
@@ -20,30 +29,30 @@ export default function PricingPage() {
               <h3 className="text-2xl font-bold text-white mb-2">Starter</h3>
               <p className="text-wise-text-secondary text-sm mb-6">Perfect for getting started</p>
               <p className="text-4xl font-bold text-white mb-8">$29<span className="text-lg">/mo</span></p>
-              <button className="w-full py-3 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold mb-8">
+              <button onClick={() => handleCheckout('STARTER')} className="w-full py-3 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold mb-8 hover:brightness-110 transition-all">
                 Get Started
               </button>
               <ul className="space-y-3 text-sm text-wise-text-secondary">
-                <li>check 5 projects</li>
-                <li>check Basic support</li>
-                <li>check Community access</li>
+                <li>✓ 5 projects</li>
+                <li>✓ Basic support</li>
+                <li>✓ Community access</li>
               </ul>
             </div>
 
-            <div className="bg-gradient-to-br from-wise-accent-green/20 to-wise-accent-green/5 border-2 border-wise-accent-green rounded-3xl p-8 scale-105">
+            <div className="bg-gradient-to-br from-wise-accent-green/20 to-wise-accent-green/5 border-2 border-wise-accent-green rounded-3xl p-8 relative scale-105">
               <div className="absolute top-0 right-0 bg-wise-accent-green text-wise-bg-primary px-4 py-1 rounded-bl-2xl font-bold">
                 POPULAR
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Professional</h3>
               <p className="text-wise-text-secondary text-sm mb-6">For growing businesses</p>
               <p className="text-4xl font-bold text-white mb-8">$99<span className="text-lg">/mo</span></p>
-              <button className="w-full py-3 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold mb-8">
+              <button onClick={() => handleCheckout('PRO')} className="w-full py-3 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold mb-8 hover:brightness-110 transition-all">
                 Start Trial
               </button>
               <ul className="space-y-3 text-sm text-wise-text-secondary">
-                <li>check Unlimited projects</li>
-                <li>check Priority support</li>
-                <li>check Advanced features</li>
+                <li>✓ Unlimited projects</li>
+                <li>✓ Priority support</li>
+                <li>✓ Advanced features</li>
               </ul>
             </div>
 
@@ -51,13 +60,13 @@ export default function PricingPage() {
               <h3 className="text-2xl font-bold text-white mb-2">Enterprise</h3>
               <p className="text-wise-text-secondary text-sm mb-6">Custom solutions</p>
               <p className="text-4xl font-bold text-wise-accent-green mb-8">Custom</p>
-              <button className="w-full py-3 bg-wise-accent-green/20 text-wise-accent-green border-2 border-wise-accent-green/40 rounded-lg font-bold mb-8">
+              <button onClick={() => router.push('/contact')} className="w-full py-3 bg-wise-accent-green/20 text-wise-accent-green border-2 border-wise-accent-green/40 rounded-lg font-bold mb-8 hover:border-wise-accent-green/60 transition-all">
                 Contact Us
               </button>
               <ul className="space-y-3 text-sm text-wise-text-secondary">
-                <li>check Everything in Pro</li>
-                <li>check Dedicated support</li>
-                <li>check Custom features</li>
+                <li>✓ Everything in Pro</li>
+                <li>✓ Dedicated support</li>
+                <li>✓ Custom features</li>
               </ul>
             </div>
           </div>
