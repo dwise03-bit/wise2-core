@@ -89,11 +89,22 @@ docker run -d --name wise2-api --network wise2-core_default --restart unless-sto
 - `POST /api/v1/auth/signup` → HTTP 201, user row created (`role=CUSTOMER, status=ACTIVE`)
 - `POST /api/v1/auth/login` → correctly enforces email verification
 
-### ⚠️ Follow-ups to harden (non-blocking)
-1. **Stack runs via ad-hoc `docker run`, not compose** — container names are inconsistent with `docker-compose.prod.yml`. A `docker compose up` could collide. Standardize on one compose file.
-2. **`docker-compose.prod.yml` bugs:** redis `--bind 127.0.0.1` should be `--bind 0.0.0.0`; `mongo:6-alpine` is not a real tag → use `mongo:6`.
-3. **Migration provisioning** — no standalone TypeORM DataSource file exists, so `migration:run` can't work in prod. Add a data-source file (or set `migrationsRun:true` once the schema is trusted). Auth migration is currently applied & recorded manually.
-4. **Rotate `JWT_SECRET`** — currently `dev-secret-key`; set a real secret before public traffic.
+### ✅ Hardening follow-ups — ALL RESOLVED (2026-07-21)
+1. ~~Stack runs via ad-hoc `docker run`~~ → **Fixed.** The API is now compose-managed (`docker compose -f docker-compose.prod.yml up -d --no-deps --no-build api`); container labels confirm project `wise2-core`. `container_name`s in the compose file were aligned to the running stack (`wise2-postgres`/`wise2-redis`/`wise2-api`).
+2. ~~compose bugs (redis bind, mongo tag)~~ → **Fixed.** redis is `--bind 0.0.0.0`, `REDIS_URL` includes the password, mongo image is `mongo:6`, and mongodb was added to the API's `depends_on`.
+3. ~~No TypeORM DataSource / migrations can't run~~ → **Fixed.** Added `packages/api/src/data-source.ts`; `npm run migration:run` (root passthrough → `dist/data-source.js`) now works and was proven against prod ("No migrations are pending").
+4. ~~`JWT_SECRET` is a dev value~~ → **Fixed.** A strong 96-char hex secret (`openssl rand -hex 48`) is set in the server's gitignored `.env`; compose now REQUIRES `JWT_SECRET` via `${JWT_SECRET:?...}` (no insecure default).
+5. **Image-tag drift (bonus fix)** — the compose `api` service now pins `image: wise2-core_api:latest`, eliminating the hyphen/underscore name drift that had caused a brief stale-image outage. The redundant `wise2-core-api` tag was removed.
+
+### Running the migration on future deploys
+```bash
+# from the repo root on the server (image WORKDIR /app has the same passthrough)
+cd /home/dwise/wise2-core && npm run migration:run
+# or inside a throwaway container against the live DB:
+docker run --rm --network wise2-core_default \
+  -e DATABASE_URL='postgresql://wise2_prod_user:...@postgres:5432/wise2_core_prod' \
+  wise2-core_api:latest npm run migration:run
+```
 
 ---
 
