@@ -1,11 +1,12 @@
 import { NavSection, Command } from '@/types/navigation';
+import { DASHBOARD_URL } from '@/lib/urls';
 
 export const defaultNavSections: NavSection[] = [
   {
     id: 'main',
     title: 'Main',
     items: [
-      { id: 'dashboard', label: 'Dashboard', icon: '📊', href: '/dashboard', active: true },
+      { id: 'dashboard', label: 'Dashboard', icon: '📊', href: DASHBOARD_URL, active: true },
       { id: 'studio', label: 'Studio', icon: '🎬', href: '/studio' },
       { id: 'automation', label: 'Automation', icon: '⚡', href: '/automation', badge: 3 },
       { id: 'projects', label: 'Projects', icon: '📁', href: '/projects' },

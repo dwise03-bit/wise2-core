@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/wise';
+import { DASHBOARD_URL } from '@/lib/urls';
 
 export default function CheckoutSuccessPage() {
   return (
@@ -51,12 +52,12 @@ export default function CheckoutSuccessPage() {
 
             {/* CTA Buttons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                href="/dashboard"
+              <a
+                href={DASHBOARD_URL}
                 className="px-8 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 inline-block"
               >
                 Go to Dashboard
-              </Link>
+              </a>
               <Link
                 href="/"
                 className="px-8 py-4 bg-wise-bg-secondary border-2 border-wise-accent-green/40 text-wise-accent-green rounded-lg font-bold text-lg hover:border-wise-accent-green/60 transition-all duration-300 inline-block"

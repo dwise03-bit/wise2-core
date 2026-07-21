@@ -1,11 +1,11 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { validateEmail, validatePassword } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
 import { apiClient } from '@/lib/api-client';
 import { useStore } from '@/lib/useStore';
+import { DASHBOARD_URL } from '@/lib/urls';
 import DiscordSignInButton from '@/app/components/DiscordSignInButton';
 
 interface FormErrors {
@@ -14,7 +14,6 @@ interface FormErrors {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const { setAuth } = useStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -115,8 +114,9 @@ export default function LoginPage() {
       analytics.track('login_complete', { email });
       analytics.flush();
 
-      // Navigate to dashboard
-      router.push('/dashboard');
+      // The dashboard is a separate app on another subdomain — use a full-page
+      // navigation, not the Next router (which only handles in-app routes).
+      window.location.href = DASHBOARD_URL;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
       setSubmitError(errorMessage);

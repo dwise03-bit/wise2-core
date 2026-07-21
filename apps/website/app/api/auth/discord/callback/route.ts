@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DASHBOARD_URL } from '@/lib/urls';
 
 /**
  * OAuth callback route for Discord authentication
@@ -112,9 +113,8 @@ export async function GET(request: NextRequest) {
       })),
     };
 
-    // Step 5: Create response and set session
-    const dashboardUrl = new URL('/dashboard', request.url);
-    const response = NextResponse.redirect(dashboardUrl);
+    // Step 5: Create response and set session (dashboard is a separate app)
+    const response = NextResponse.redirect(DASHBOARD_URL);
 
     // Store user data in secure cookie
     response.cookies.set('discord_user', JSON.stringify(userData), {

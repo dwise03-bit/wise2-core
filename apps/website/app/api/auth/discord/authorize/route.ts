@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DASHBOARD_URL } from '@/lib/urls';
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
@@ -66,8 +67,8 @@ export async function GET(request: NextRequest) {
       accessToken: access_token,
     };
 
-    // Create response with user data
-    const response = NextResponse.redirect(new URL('/dashboard', request.url));
+    // Create response with user data (dashboard is a separate-subdomain app)
+    const response = NextResponse.redirect(DASHBOARD_URL);
 
     // Store user data in cookie for client-side access
     response.cookies.set('discord_user', JSON.stringify(userData), {
