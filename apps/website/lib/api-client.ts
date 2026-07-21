@@ -21,7 +21,10 @@ class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+    // baseUrl is an ORIGIN (e.g. https://api.wise2.net) — endpoints already carry
+    // their own '/api/...' prefix, so the default must be '' (same origin), NOT
+    // '/api' (which would produce '/api/api/v1/...').
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
   }
 
   private async getAuthToken(): Promise<string | null> {
@@ -68,9 +71,15 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
+        // NestJS error shape is { message, error, statusCode } where `message`
+        // is the human-readable text and `error` is the status name
+        // ("Bad Request"). Prefer `message`; message can be a string or array.
+        const rawMessage = Array.isArray(data?.message)
+          ? data.message.join(', ')
+          : data?.message;
         return {
           success: false,
-          error: data.error || 'Request failed',
+          error: rawMessage || data?.error || 'Request failed',
           status: response.status,
         };
       }

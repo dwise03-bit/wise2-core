@@ -17,6 +17,11 @@ COPY packages ./packages
 
 # Build Next.js app
 WORKDIR /app/apps/website
+# NEXT_PUBLIC_* vars are inlined into the client bundle at BUILD time, so the
+# API origin must be present here (not just at runtime). Pass with:
+#   docker build --build-arg NEXT_PUBLIC_API_URL=https://api.wise2.net ...
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
 # Runtime stage

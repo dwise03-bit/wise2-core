@@ -96,10 +96,15 @@ export default function LoginPage() {
         return;
       }
 
-      // Store auth data
-      if (result.data?.user && result.data?.tokens?.accessToken) {
-        setAuth(result.data.user, result.data.tokens.accessToken);
-        localStorage.setItem('auth_token', result.data.tokens.accessToken);
+      // The login API returns the access token at the TOP LEVEL
+      // ({ accessToken, refreshToken, user, expiresIn }), not nested under
+      // `tokens`. Persist it so authenticated requests work.
+      if (result.data?.user && result.data?.accessToken) {
+        setAuth(result.data.user, result.data.accessToken);
+        localStorage.setItem('auth_token', result.data.accessToken);
+        if (result.data.refreshToken) {
+          localStorage.setItem('refresh_token', result.data.refreshToken);
+        }
 
         // Store rememberMe preference
         if (rememberMe) {

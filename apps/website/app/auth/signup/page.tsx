@@ -1,12 +1,9 @@
 'use client';
 
 import { FormEvent, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { validateEmail, validatePassword, validatePasswordConfirm, getPasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
-import { createVerificationToken } from '@/lib/email';
 import { apiClient } from '@/lib/api-client';
-import { useStore } from '@/lib/useStore';
 
 interface FormErrors {
   email?: string;
@@ -15,8 +12,6 @@ interface FormErrors {
 }
 
 export default function SignupPage() {
-  const router = useRouter();
-  const { setAuth } = useStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -108,17 +103,13 @@ export default function SignupPage() {
         return;
       }
 
-      // Store auth data
-      if (result.data?.user && result.data?.tokens?.accessToken) {
-        setAuth(result.data.user, result.data.tokens.accessToken);
-        localStorage.setItem('auth_token', result.data.tokens.accessToken);
-      }
-
+      // Signup does NOT return auth tokens — the account requires email
+      // verification before login. Show the "check your email" confirmation
+      // screen rather than routing to a dashboard the user can't access yet.
       analytics.track('signup_complete', { email });
       analytics.flush();
-
-      // Navigate to dashboard
-      router.push('/dashboard');
+      setIsSubmitting(false);
+      setSubmitted(true);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Signup failed. Please try again.';
       setSubmitError(errorMessage);

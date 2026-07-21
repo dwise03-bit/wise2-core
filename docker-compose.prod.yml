@@ -99,7 +99,7 @@ services:
       # Security — JWT_SECRET MUST be provided via .env (no insecure default)
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3002,http://localhost:3003}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://dashboard.wise2.net,https://studio.wise2.net,http://localhost:3000,http://localhost:3002,http://localhost:3003}
 
       # Payment Processing - PRIORITY 1
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
