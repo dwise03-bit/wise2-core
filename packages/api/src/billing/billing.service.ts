@@ -65,7 +65,7 @@ export class BillingService {
   };
 
   constructor(
-    private prisma: PrismaService,
+    
     private stripeService: StripeService,
     private configService: ConfigService
   ) {}

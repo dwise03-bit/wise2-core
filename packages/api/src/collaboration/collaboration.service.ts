@@ -50,7 +50,7 @@ export class CollaborationService {
   private readonly PRESENCE_TIMEOUT = 30000; // 30 seconds
 
   constructor(
-    private prisma: PrismaService,
+    
     private configService: ConfigService,
   ) {
     // Cleanup stale presence data periodically
