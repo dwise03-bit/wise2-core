@@ -1,0 +1,41 @@
+{
+  "name": "@wise2/command-center",
+  "version": "1.0.0",
+  "description": "WISE² Command Center Dashboard - Real-time monitoring and control",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3002",
+    "build": "next build",
+    "start": "next start -p 3002",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0",
+    "typescript": "^5.0.0",
+    "@types/react": "^18.2.0",
+    "@types/node": "^20.0.0",
+    "recharts": "^2.10.0",
+    "pino": "^8.16.0",
+    "ws": "^8.14.0",
+    "zustand": "^4.4.0",
+    "classnames": "^2.3.2",
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.0",
+    "tailwindcss": "^3.3.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.1.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  }
+}
