@@ -10,6 +10,9 @@ COPY apps/dashboard ./apps/dashboard
 RUN npm install --frozen-lockfile
 
 WORKDIR /app/apps/dashboard
+# NEXT_PUBLIC_* vars inline into the client bundle at build time.
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
 FROM node:20-alpine
