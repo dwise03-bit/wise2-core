@@ -1,0 +1,14 @@
+[Unit]
+Description=WISE² Edge Appliance Health Check
+After=wise2-edge.service
+Requires=wise2-edge.service
+
+[Service]
+Type=oneshot
+User={{ wise2_user }}
+EnvironmentFile={{ wise2_home }}/.env
+ExecStart=/usr/bin/curl -s http://localhost:3000/health/report
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-health-check

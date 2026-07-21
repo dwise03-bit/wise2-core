@@ -1,0 +1,20 @@
+# Rsyslog configuration for WISE² Edge Appliance
+# Logs are written to /var/log/wise2-edge-appliance/
+
+# Create directory
+$FileCreateMode 0644
+$DirCreateMode 0755
+$Umask 0022
+$PrivDropToUser syslog
+$PrivDropToGroup adm
+
+# WISE² Edge Appliance logs
+:programname, isequal, "wise2-edge" {{ wise2_home }}/logs/edge-runtime.log
+:programname, isequal, "wise2-health-check" {{ wise2_home }}/logs/health-check.log
+
+# Stop processing after matching WISE² logs to avoid duplication
+:programname, isequal, "wise2-edge" stop
+:programname, isequal, "wise2-health-check" stop
+
+# Include drop-in configuration files
+$IncludeConfig /etc/rsyslog.d/*.conf

@@ -1,0 +1,144 @@
+version: '3.9'
+
+services:
+  # Local LLM inference via Ollama
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wise2-ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./models:/models:ro
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wise2-edge
+
+  # SQLite offline database
+  db-init:
+    image: busybox
+    container_name: wise2-db-init
+    volumes:
+      - ./data:/data
+    command: mkdir -p /data
+    networks:
+      - wise2-edge
+
+  # Edge Runtime Service
+  edge-runtime:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: wise2-edge-runtime
+    depends_on:
+      - ollama
+      - db-init
+    ports:
+      - '3000:3000'
+      - '3002:3002'
+    volumes:
+      - ./data:/data
+      - ./models:/models:ro
+      - /var/log/wise2-edge-appliance:/var/log/wise2-edge-appliance
+      - /dev:/dev
+      - /sys:/sys:ro
+      - /proc:/proc:ro
+    environment:
+      NODE_ENV: production
+      NODE_ID: ${NODE_ID:-edge-node-1}
+      PORT: 3000
+      LOCAL_DB_PATH: /data/wise2-edge.db
+      MODEL_PATH: /models
+      VOICE_MODEL: mistral
+      CLOUD_URL: ${CLOUD_URL:-https://api.wise2.cloud}
+      API_KEY: ${API_KEY:-}
+      WIREGUARD_CONFIG_PATH: /etc/wireguard/wise2.conf
+      OLLAMA_URL: http://ollama:11434
+      OFFLINE_MODE: ${OFFLINE_MODE:-false}
+      LOG_LEVEL: info
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wise2-edge
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_RAWIO
+    devices:
+      - /dev/mem:/dev/mem
+      - /dev/gpiomem:/dev/gpiomem
+
+  # Prometheus metrics (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wise2-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    environment:
+      - PROMETHEUS_HOST=0.0.0.0
+      - PROMETHEUS_PORT=9090
+    restart: unless-stopped
+    networks:
+      - wise2-edge
+    profiles:
+      - monitoring
+
+  # Grafana dashboards (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wise2-grafana
+    ports:
+      - '3001:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    networks:
+      - wise2-edge
+    profiles:
+      - monitoring
+
+  # Syslog server for centralized logging (optional)
+  syslog:
+    image: linuxserver/syslog-ng:latest
+    container_name: wise2-syslog
+    ports:
+      - '514:514/udp'
+    volumes:
+      - ./logs:/var/log/syslog-ng
+    restart: unless-stopped
+    networks:
+      - wise2-edge
+    profiles:
+      - logging
+
+volumes:
+  ollama-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  wise2-edge:
+    driver: bridge
