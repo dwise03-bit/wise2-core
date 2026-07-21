@@ -14,14 +14,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "migration:generate": "typeorm migration:generate",
-    "migration:run": "typeorm migration:run",
-    "migration:revert": "typeorm migration:revert"
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
+    "migration:run": "typeorm migration:run -d dist/data-source.js",
+    "migration:run:dev": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
+    "migration:revert": "typeorm migration:revert -d dist/data-source.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.2.0",
     "@nestjs/config": "^3.0.0",
-    "@prisma/client": "^5.7.0",
     "@nestjs/core": "^10.2.0",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mongoose": "^10.0.0",

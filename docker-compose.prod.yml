@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: wise2-postgres-prod
+    container_name: wise2-postgres
     environment:
       # Root/admin user credentials (for initialization)
       POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
@@ -46,9 +46,11 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: wise2-redis
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
-    command: redis-server --bind 127.0.0.1 --requirepass ${REDIS_PASSWORD:-password}
+    # bind 0.0.0.0 so other containers on the network can reach Redis
+    command: redis-server --bind 0.0.0.0 --requirepass ${REDIS_PASSWORD:-password}
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
@@ -64,7 +66,7 @@ services:
     build:
       context: .
       dockerfile: packages/api/Dockerfile
-    container_name: wise2-api-prod
+    container_name: wise2-api
     environment:
       # Application Settings
       NODE_ENV: production
@@ -82,16 +84,16 @@ services:
       # DATABASE_URL - required by API bootstrap, uses DB_* vars fallback
       DATABASE_URL: postgresql://wise2_prod_user:wise2_prod_secure_2026@postgres:5432/wise2_core_prod
 
-      # Redis Configuration
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      # Redis Configuration (URL must include the password)
+      REDIS_URL: ${REDIS_URL:-redis://:password@redis:6379}
       REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
 
       # MongoDB Configuration (Brain features) - PRIORITY 3
       MONGODB_URI: ${MONGODB_URI:-mongodb://admin:secure_mongodb_admin_2026@mongodb:27017/wise2-brain?authSource=admin}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD:-secure_mongodb_admin_2026}
 
-      # Security
-      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-to-secure-random-string}
+      # Security — JWT_SECRET MUST be provided via .env (no insecure default)
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3002,http://localhost:3003}
 
@@ -120,6 +122,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -160,7 +164,7 @@ services:
   # MongoDB - PRIORITY 3 (Knowledge Graph / Brain Features)
   # ============================================================================
   mongodb:
-    image: mongo:6-alpine
+    image: mongo:6
     container_name: wise2-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
