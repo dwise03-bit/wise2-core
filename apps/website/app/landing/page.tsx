@@ -1,868 +1,221 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-const COLORS = {
-  accent: '#39FF14',
-  accentDim: 'rgba(57, 255, 20, 0.1)',
-  accentDarkBg: 'rgba(57, 255, 20, 0.08)',
-  black: '#050505',
-  darkBg: '#0a0a0a',
-  borderColor: '#262626',
-  textPrimary: '#e6e6e6',
-  textSecondary: '#999999',
-};
+import { useState } from 'react';
+import Link from 'next/link';
+import { DanielAvatar, DarrenAvatar } from '@/components/Characters';
 
 export default function LandingPage() {
-  const router = useRouter();
-  const [stats, setStats] = useState({
-    activeUsers: '12.4K',
-    totalCreations: '1.2M+',
-    systemUptime: '99.9%',
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    project: '',
+    timeline: '',
   });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    setTimeout(() => {
+      window.location.href = '/auth/signup';
+    }, 2000);
+  };
 
   return (
-    <div style={{ background: COLORS.black, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '60px',
-          padding: '0 40px',
-          background: 'linear-gradient(180deg, #111, #0a0a0a)',
-          borderBottom: `1px solid ${COLORS.borderColor}`,
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-          <span
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontWeight: 900,
-              fontSize: '22px',
-              letterSpacing: '1px',
-              background: 'linear-gradient(180deg, #fff 20%, #777 80%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            WISE
-          </span>
-          <span
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontWeight: 900,
-              fontSize: '13px',
-              color: COLORS.accent,
-              textShadow: `0 0 8px rgba(57,255,20,.6)`,
-            }}
-          >
-            2
-          </span>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-black via-[#050505] to-black text-white overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#39FF14]/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#00D9FF]/20 rounded-full blur-3xl opacity-30 animate-pulse" style={{animationDelay: '1s'}}></div>
+      </div>
 
+      <div className="relative z-10">
         {/* Navigation */}
-        <nav
-          style={{
-            display: 'flex',
-            gap: '32px',
-            alignItems: 'center',
-            fontSize: '14px',
-            fontWeight: 600,
-            letterSpacing: '.5px',
-            fontFamily: 'Rajdhani, sans-serif',
-          }}
-        >
-          <a href="#features" style={{ color: '#ccc', textDecoration: 'none' }}>
-            Features
-          </a>
-          <a href="#pricing" style={{ color: '#ccc', textDecoration: 'none' }}>
-            Pricing
-          </a>
-          <a href="#" style={{ color: '#ccc', textDecoration: 'none' }}>
-            Docs
-          </a>
-          <a href="#" style={{ color: '#ccc', textDecoration: 'none' }}>
-            Contact
-          </a>
+        <nav className="flex items-center justify-between p-6 border-b border-[#333]">
+          <Link href="/" className="flex items-baseline gap-1">
+            <span className="font-black text-2xl bg-gradient-to-b from-white to-[#777] bg-clip-text text-transparent">WISE</span>
+            <span className="font-black text-sm text-[#39FF14]">2</span>
+          </Link>
+          <Link href="/auth/login" className="px-6 py-2 bg-[#39FF14] text-black font-bold rounded hover:shadow-lg hover:shadow-[#39FF14]/50 transition">
+            Sign In
+          </Link>
         </nav>
 
-        {/* Auth Buttons */}
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button
-            onClick={() => router.push('/auth/login')}
-            style={{
-              background: 'transparent',
-              border: `1px solid #333`,
-              color: '#ccc',
-              borderRadius: '6px',
-              padding: '9px 18px',
-              fontFamily: 'Rajdhani, sans-serif',
-              fontWeight: 700,
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.borderColor = COLORS.accent;
-              (e.target as HTMLButtonElement).style.color = '#fff';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.borderColor = '#333';
-              (e.target as HTMLButtonElement).style.color = '#ccc';
-            }}
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => router.push('/auth/signup')}
-            style={{
-              background: COLORS.accent,
-              color: COLORS.black,
-              border: 'none',
-              borderRadius: '6px',
-              padding: '9px 20px',
-              fontFamily: 'Rajdhani, sans-serif',
-              fontWeight: 700,
-              fontSize: '13px',
-              cursor: 'pointer',
-              animation: 'pulse 3s infinite',
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.filter = 'brightness(1.15)';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.filter = 'brightness(1)';
-            }}
-          >
-            Get Started
-          </button>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section
-        style={{
-          padding: '100px 40px',
-          textAlign: 'center',
-          background: `radial-gradient(1200px 600px at 50% 0%, rgba(57,255,20,.08), transparent 70%), ${COLORS.black}`,
-        }}
-      >
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontSize: '14px',
-              letterSpacing: '2px',
-              color: COLORS.accent,
-              marginBottom: '16px',
-              textTransform: 'uppercase',
-              animation: 'fadeInUp 0.4s ease',
-            }}
-          >
-            The future of creative AI
-          </div>
-
-          <h1
-            style={{
-              fontFamily: 'Orbitron, sans-serif',
-              fontWeight: 900,
-              fontSize: '56px',
-              letterSpacing: '1px',
-              lineHeight: 1.15,
-              margin: '0 0 20px',
-              background: 'linear-gradient(180deg, #fff 25%, #999 80%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              animation: 'fadeInUp 0.5s ease 0.1s backwards',
-            }}
-          >
-            AI Creative Studio
-            <br />
-            For Modern Creators
-          </h1>
-
-          <p
-            style={{
-              fontSize: '16px',
-              color: '#bbb',
-              lineHeight: 1.6,
-              margin: '0 0 32px',
-              maxWidth: '700px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              fontFamily: 'Rajdhani, sans-serif',
-              animation: 'fadeInUp 0.5s ease 0.2s backwards',
-            }}
-          >
-            Generate music, videos, images, and audio with production-grade AI. WISE² gives you studio-quality tools powered by the best
-            models on the market.
-          </p>
-
-          {/* CTA Buttons */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '16px',
-              justifyContent: 'center',
-              animation: 'fadeInUp 0.5s ease 0.3s backwards',
-            }}
-          >
-            <button
-              onClick={() => router.push('/auth/signup')}
-              style={{
-                background: COLORS.accent,
-                color: COLORS.black,
-                border: 'none',
-                borderRadius: '8px',
-                padding: '15px 32px',
-                fontFamily: 'Rajdhani, sans-serif',
-                fontWeight: 700,
-                fontSize: '15px',
-                cursor: 'pointer',
-                letterSpacing: '.5px',
-                animation: 'pulse 3s infinite',
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.filter = 'brightness(1.15)';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.filter = 'brightness(1)';
-              }}
-            >
-              START FREE TRIAL
-            </button>
-            <button
-              style={{
-                background: 'transparent',
-                border: `1px solid ${COLORS.accent}`,
-                color: COLORS.accent,
-                borderRadius: '8px',
-                padding: '15px 32px',
-                fontFamily: 'Rajdhani, sans-serif',
-                fontWeight: 700,
-                fontSize: '15px',
-                cursor: 'pointer',
-                letterSpacing: '.5px',
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'rgba(57, 255, 20, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.background = 'transparent';
-              }}
-            >
-              WATCH DEMO
-            </button>
-          </div>
-
-          {/* Stats */}
-          <div
-            style={{
-              marginTop: '48px',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '40px',
-              maxWidth: '500px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-            }}
-          >
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontFamily: 'Orbitron, sans-serif',
-                  fontWeight: 900,
-                  fontSize: '20px',
-                  color: COLORS.accent,
-                }}
-              >
-                {stats.activeUsers}
-              </div>
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#888',
-                  marginTop: '4px',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  fontFamily: 'Rajdhani, sans-serif',
-                }}
-              >
-                Active Users
-              </div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontFamily: 'Orbitron, sans-serif',
-                  fontWeight: 900,
-                  fontSize: '20px',
-                  color: COLORS.accent,
-                }}
-              >
-                {stats.totalCreations}
-              </div>
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#888',
-                  marginTop: '4px',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  fontFamily: 'Rajdhani, sans-serif',
-                }}
-              >
-                Assets Created
-              </div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontFamily: 'Orbitron, sans-serif',
-                  fontWeight: 900,
-                  fontSize: '20px',
-                  color: COLORS.accent,
-                }}
-              >
-                {stats.systemUptime}
-              </div>
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: '#888',
-                  marginTop: '4px',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  fontFamily: 'Rajdhani, sans-serif',
-                }}
-              >
-                Uptime
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section
-        id="features"
-        style={{
-          padding: '80px 40px',
-          background: COLORS.darkBg,
-          borderTop: `1px solid #1f1f1f`,
-        }}
-      >
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2
-              style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontWeight: 900,
-                fontSize: '40px',
-                letterSpacing: '1px',
-                margin: '0 0 12px',
-                color: '#fff',
-              }}
-            >
-              Studio-Grade Features
-            </h2>
-            <p
-              style={{
-                fontSize: '15px',
-                color: '#999',
-                fontFamily: 'Rajdhani, sans-serif',
-              }}
-            >
-              Everything you need to create professional content at scale
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="text-center mb-20 animate-fade-in">
+            <h1 className="text-8xl font-black mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-[#39FF14] via-white to-[#00D9FF] bg-clip-text text-transparent">
+                Transform Your Creative Vision
+              </span>
+            </h1>
+            <p className="text-2xl text-[#aaa] mb-8">
+              AI-powered studio. Human-guided expertise. Professional-grade results.
             </p>
           </div>
 
-          {/* Features Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '24px',
-            }}
-          >
-            {[
-              { emoji: '🎵', title: 'AI Music Generation', desc: 'Generate original music, from EDM to orchestral. Style, mood, and instrumentation control.' },
-              { emoji: '🎬', title: 'Video Creation', desc: 'Text-to-video synthesis. Scene composition, effects, and voiceover generation included.' },
-              { emoji: '🎨', title: 'Image & Design', desc: 'Generate, edit, and upscale images. Consistent styles across batches with AI brand memory.' },
-              { emoji: '🎙️', title: 'Voice Synthesis', desc: 'Clone voices, generate narration, or use pre-trained professional voices. Multi-language support.' },
-              { emoji: '🚀', title: 'Batch Processing', desc: 'Generate 100+ assets in one command. Automated workflows for studios and agencies.' },
-              { emoji: '⚡', title: 'Fast Rendering', desc: 'Sub-second generation for music. 30–60s for video. Optimized infrastructure worldwide.' },
-            ].map((feature, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: 'linear-gradient(180deg, #121212, #0c0c0c)',
-                  border: `1px solid ${COLORS.borderColor}`,
-                  borderRadius: '12px',
-                  padding: '28px',
-                  animation: `fadeInUp 0.5s ease ${0.1 * idx}s backwards`,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'Orbitron, sans-serif',
-                    fontSize: '28px',
-                    marginBottom: '12px',
-                  }}
-                >
-                  {feature.emoji}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            {/* Intake Form */}
+            <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#39FF14]/40 rounded-3xl p-12 shadow-2xl shadow-[#39FF14]/10 hover:shadow-[#39FF14]/20 transition">
+              <h2 className="text-4xl font-black mb-3 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] bg-clip-text text-transparent">
+                Begin Your Journey
+              </h2>
+              <p className="text-[#999] mb-10 text-lg">Tell us about your creative vision</p>
+
+              {submitted ? (
+                <div className="text-center py-16">
+                  <div className="text-7xl mb-6">✨</div>
+                  <h3 className="text-3xl font-bold mb-3">Welcome aboard!</h3>
+                  <p className="text-[#999] text-lg">Redirecting to studio setup...</p>
                 </div>
-                <h3
-                  style={{
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    color: '#fff',
-                    margin: '0 0 10px',
-                    fontFamily: 'Rajdhani, sans-serif',
-                  }}
-                >
-                  {feature.title}
-                </h3>
-                <p
-                  style={{
-                    fontSize: '13px',
-                    color: '#888',
-                    lineHeight: 1.5,
-                    margin: 0,
-                    fontFamily: 'Rajdhani, sans-serif',
-                  }}
-                >
-                  {feature.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Hermes Section */}
-      <section
-        style={{
-          padding: '80px 40px',
-          background: 'linear-gradient(135deg, #0f150c, #0b0b0b)',
-          borderTop: `1px solid #1e1e1e`,
-          borderBottom: `1px solid #1e1e1e`,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '60px',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontWeight: 900,
-                fontSize: '36px',
-                letterSpacing: '1px',
-                margin: '0 0 16px',
-                color: '#fff',
-              }}
-            >
-              Powered by Hermes
-            </h2>
-            <p
-              style={{
-                fontSize: '14px',
-                color: '#bbb',
-                lineHeight: 1.6,
-                margin: '0 0 28px',
-                fontFamily: 'Rajdhani, sans-serif',
-              }}
-            >
-              WISE² is built on Hermes, our proprietary AI model trained on 500M+ creative assets. It understands context, style, and nuance
-              in ways standard models can't.
-            </p>
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                fontFamily: 'Rajdhani, sans-serif',
-              }}
-            >
-              {[
-                '50% faster than competitors',
-                '99.9% uptime SLA',
-                'Enterprise-grade security',
-                'Fine-tuning & custom models',
-              ].map((item, idx) => (
-                <li
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    gap: '10px',
-                    alignItems: 'center',
-                    fontSize: '14px',
-                  }}
-                >
-                  <span style={{ color: COLORS.accent, fontWeight: 900 }}>✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Benchmarks */}
-          <div
-            style={{
-              background: COLORS.darkBg,
-              border: `1px solid rgba(57, 255, 20, 0.2)`,
-              borderRadius: '12px',
-              padding: '32px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '16px',
-            }}
-          >
-            <div
-              style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontSize: '11px',
-                color: COLORS.accent,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Hermes Benchmarks
-            </div>
-
-            {[
-              { label: 'Music Quality Score', value: '9.4/10', percent: 94 },
-              { label: 'Generation Speed', value: '8.8/10', percent: 88 },
-              { label: 'Style Accuracy', value: '9.6/10', percent: 96 },
-              { label: 'Reliability (uptime)', value: '99.9%', percent: 99 },
-            ].map((metric, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 0',
-                  borderBottom: idx < 3 ? '1px solid #2a2a2a' : 'none',
-                  fontFamily: 'Rajdhani, sans-serif',
-                }}
-              >
-                <span style={{ fontSize: '13px', color: '#bbb' }}>{metric.label}</span>
-                <div
-                  style={{
-                    width: '120px',
-                    height: '4px',
-                    background: '#1a1a1a',
-                    borderRadius: '2px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${metric.percent}%`,
-                      height: '100%',
-                      background: COLORS.accent,
-                    }}
-                  />
-                </div>
-                <span
-                  style={{
-                    fontSize: '13px',
-                    color: COLORS.accent,
-                    fontWeight: 700,
-                  }}
-                >
-                  {metric.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section
-        id="pricing"
-        style={{
-          padding: '80px 40px',
-          background: COLORS.black,
-        }}
-      >
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2
-              style={{
-                fontFamily: 'Orbitron, sans-serif',
-                fontWeight: 900,
-                fontSize: '40px',
-                letterSpacing: '1px',
-                margin: '0 0 12px',
-                color: '#fff',
-              }}
-            >
-              Simple, Transparent Pricing
-            </h2>
-            <p
-              style={{
-                fontSize: '15px',
-                color: '#999',
-                fontFamily: 'Rajdhani, sans-serif',
-              }}
-            >
-              No hidden fees. Cancel anytime. All plans include API access.
-            </p>
-          </div>
-
-          {/* Pricing Cards */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '24px',
-            }}
-          >
-            {[
-              {
-                name: 'Starter',
-                subtitle: 'Perfect for experiments',
-                price: '$29',
-                features: [
-                  '5,000 credits/month',
-                  'All generation models',
-                  'Community support',
-                  { text: 'Priority queue', disabled: true },
-                ],
-              },
-              {
-                name: 'Professional',
-                subtitle: 'For active creators',
-                price: '$99',
-                featured: true,
-                features: [
-                  '25,000 credits/month',
-                  'All generation models',
-                  'Priority queue',
-                  'Email support (24h)',
-                ],
-              },
-              {
-                name: 'Enterprise',
-                subtitle: 'For studios & agencies',
-                price: 'Custom',
-                features: [
-                  'Unlimited credits',
-                  'Dedicated support',
-                  'Custom models',
-                  'SLA guarantee',
-                ],
-              },
-            ].map((plan, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: plan.featured ? 'linear-gradient(180deg, #1a1f15, #0f140a)' : 'linear-gradient(180deg, #121212, #0c0c0c)',
-                  border: plan.featured ? '1.5px solid #39FF14' : `1px solid ${COLORS.borderColor}`,
-                  borderRadius: '12px',
-                  padding: '32px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '20px',
-                  position: 'relative',
-                  fontFamily: 'Rajdhani, sans-serif',
-                }}
-              >
-                {plan.featured && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '-12px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      background: 'linear-gradient(90deg, #39FF14, #b6ff00)',
-                      color: COLORS.black,
-                      padding: '4px 14px',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      letterSpacing: '1px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    MOST POPULAR
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Name</label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
+                      placeholder="Your name"
+                      required
+                    />
                   </div>
-                )}
 
-                <div>
-                  <h3
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: 700,
-                      color: '#fff',
-                      margin: 0,
-                    }}
-                  >
-                    {plan.name}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: '13px',
-                      color: '#999',
-                      margin: '6px 0 0',
-                    }}
-                  >
-                    {plan.subtitle}
-                  </p>
-                </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Email</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
 
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                  <span
-                    style={{
-                      fontFamily: 'Orbitron, sans-serif',
-                      fontSize: '32px',
-                      fontWeight: 700,
-                      color: '#fff',
-                    }}
-                  >
-                    {plan.price}
-                  </span>
-                  {plan.price !== 'Custom' && (
-                    <span style={{ color: '#999', fontSize: '13px' }}>/month</span>
-                  )}
-                </div>
-
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                  }}
-                >
-                  {plan.features.map((feature, fidx) => (
-                    <li
-                      key={fidx}
-                      style={{
-                        display: 'flex',
-                        gap: '8px',
-                        alignItems: 'center',
-                        fontSize: '13px',
-                        color: typeof feature === 'string' ? '#fff' : feature.disabled ? '#666' : '#fff',
-                      }}
+                  <div>
+                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Project Type</label>
+                    <select
+                      value={formData.project}
+                      onChange={(e) => setFormData({ ...formData, project: e.target.value })}
+                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
+                      required
                     >
-                      <span style={{ color: typeof feature === 'string' ? COLORS.accent : '#888' }}>✓</span>
-                      <span>{typeof feature === 'string' ? feature : feature.text}</span>
-                    </li>
-                  ))}
-                </ul>
+                      <option value="">Select a project</option>
+                      <option value="music">Music Production</option>
+                      <option value="podcast">Podcast</option>
+                      <option value="video">Video Content</option>
+                      <option value="branding">Audio Branding</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
 
-                <button
-                  onClick={() => router.push('/auth/signup')}
-                  style={{
-                    background: COLORS.accent,
-                    color: COLORS.black,
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontFamily: 'Rajdhani, sans-serif',
-                    fontWeight: 700,
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    marginTop: 'auto',
-                    animation: plan.featured ? 'pulse 3s infinite' : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as HTMLButtonElement).style.filter = 'brightness(1.15)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as HTMLButtonElement).style.filter = 'brightness(1)';
-                  }}
-                >
-                  {plan.featured ? 'START FREE TRIAL' : 'GET STARTED'}
-                </button>
+                  <div>
+                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Timeline</label>
+                    <select
+                      value={formData.timeline}
+                      onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
+                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
+                      required
+                    >
+                      <option value="">Select timeline</option>
+                      <option value="urgent">This week</option>
+                      <option value="soon">Next 2 weeks</option>
+                      <option value="flexible">1-2 months</option>
+                      <option value="planning">Just exploring</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-4 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] text-black font-black text-lg rounded-lg hover:shadow-lg hover:shadow-[#39FF14]/50 transition uppercase tracking-wider"
+                  >
+                    Begin Studio Setup
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Characters Section */}
+            <div className="space-y-16">
+              <div>
+                <h2 className="text-4xl font-black mb-3 bg-gradient-to-r from-white to-[#999] bg-clip-text text-transparent">Your Guides</h2>
+                <p className="text-[#666] text-lg">Meet Daniel & Darren — your personal creative directors</p>
               </div>
-            ))}
+
+              {/* Daniel */}
+              <div className="group bg-gradient-to-br from-[#39FF14]/20 to-transparent border-2 border-[#39FF14]/50 rounded-3xl p-8 hover:border-[#39FF14] hover:shadow-xl hover:shadow-[#39FF14]/20 transition">
+                <div className="flex items-start gap-6">
+                  <div className="w-28 h-28 flex-shrink-0 bg-[#39FF14]/10 rounded-full border-2 border-[#39FF14]/50 flex items-center justify-center group-hover:bg-[#39FF14]/20 transition">
+                    <div className="w-20 h-20">
+                      <DanielAvatar />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black text-[#39FF14] mb-2">Daniel</h3>
+                    <p className="text-[#39FF14] font-bold text-lg mb-4">Audio Architect</p>
+                    <p className="text-[#ccc] text-base leading-relaxed">
+                      Master of sonic branding. Creates audio signatures that define your creative identity. Expert in sound design, mixing, and mastering.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Darren */}
+              <div className="group bg-gradient-to-br from-[#00D9FF]/20 to-transparent border-2 border-[#00D9FF]/50 rounded-3xl p-8 hover:border-[#00D9FF] hover:shadow-xl hover:shadow-[#00D9FF]/20 transition">
+                <div className="flex items-start gap-6">
+                  <div className="w-28 h-28 flex-shrink-0 bg-[#00D9FF]/10 rounded-full border-2 border-[#00D9FF]/50 flex items-center justify-center group-hover:bg-[#00D9FF]/20 transition">
+                    <div className="w-20 h-20">
+                      <DarrenAvatar />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black text-[#00D9FF] mb-2">Darren</h3>
+                    <p className="text-[#00D9FF] font-bold text-lg mb-4">Creative Director</p>
+                    <p className="text-[#ccc] text-base leading-relaxed">
+                      Visionary storyteller. Crafts compelling narratives and lyrics that resonate with audiences. Expert in creative direction and content strategy.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Journey */}
+              <div className="bg-gradient-to-r from-[#39FF14]/15 to-[#00D9FF]/15 border-2 border-[#39FF14]/40 rounded-2xl p-8">
+                <div className="text-center">
+                  <p className="text-[#ccc] mb-6 text-lg font-semibold">
+                    5-Step Journey to Creative Mastery
+                  </p>
+                  <div className="flex justify-center items-center gap-3 text-sm flex-wrap">
+                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Beginning</span>
+                    <span className="text-[#39FF14]">→</span>
+                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Composition</span>
+                    <span className="text-[#39FF14]">→</span>
+                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Mastery</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer
-        style={{
-          padding: '60px 40px 40px',
-          background: COLORS.darkBg,
-          borderTop: `1px solid #1f1f1f`,
-          color: '#888',
-          textAlign: 'center',
-          fontFamily: 'Rajdhani, sans-serif',
-        }}
-      >
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <p style={{ margin: '0 0 20px', fontSize: '13px' }}>WISE² - AI Creative Studio for Modern Creators</p>
-          <p style={{ margin: 0, fontSize: '12px' }}>© 2024 WISE². All rights reserved.</p>
-        </div>
-      </footer>
+      </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
-
-        @keyframes fadeInUp {
+        @keyframes fade-in {
           from {
             opacity: 0;
-            transform: translateY(6px);
+            transform: translateY(20px);
           }
           to {
             opacity: 1;
-            transform: none;
+            transform: translateY(0);
           }
         }
-
-        @keyframes pulse {
-          0%, 100% {
-            box-shadow: 0 0 6px rgba(57, 255, 20, 0.35);
-          }
-          50% {
-            box-shadow: 0 0 18px rgba(57, 255, 20, 0.7);
-          }
-        }
-
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: 'Rajdhani', sans-serif;
-          color: #e6e6e6;
-          background: #050505;
-        }
-
-        a {
-          color: #39FF14;
-          text-decoration: none;
-        }
-
-        a:hover {
-          color: #b6ff9e;
+        .animate-fade-in {
+          animation: fade-in 1s ease-out;
         }
       `}</style>
     </div>
   );
 }
+
