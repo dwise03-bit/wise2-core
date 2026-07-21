@@ -5,6 +5,7 @@ import CommandCenter from './pages/CommandCenter';
 import SoundLab from './pages/SoundLab';
 import LiveStudio from './pages/LiveStudio';
 import JingleLab from './pages/JingleLab';
+import LyricsLab from './pages/LyricsLab';
 import VoiceLab from './pages/VoiceLab';
 import ContentFactory from './pages/ContentFactory';
 import ClientShowcase from './pages/ClientShowcase';
@@ -19,6 +20,7 @@ export default function CreativeStudio() {
     { id: 'sound', label: 'Sound Lab', glyph: 'SL' },
     { id: 'live', label: 'Live Studio', glyph: 'LV' },
     { id: 'jingle', label: 'Jingle Lab', glyph: 'JL' },
+    { id: 'lyrics', label: 'Lyrics Lab', glyph: 'LL' },
     { id: 'voice', label: 'Voice Lab', glyph: 'VL' },
     { id: 'factory', label: 'Content Factory', glyph: 'CF' },
     { id: 'showcase', label: 'Client Showcase', glyph: 'SH' },
@@ -75,12 +77,26 @@ export default function CreativeStudio() {
         {/* SIDEBAR */}
         <div style={{ width: '216px', flex: 'none', background: '#0a0a0a', borderRight: '1px solid #1f1f1f', display: 'flex', flexDirection: 'column', padding: '14px 10px', gap: '3px' }}>
           <div style={{ fontSize: '10px', letterSpacing: '2.5px', color: '#555', textTransform: 'uppercase', padding: '0 10px 8px' }}>Studio Modules</div>
-          {pages.map((p) => (
-            <button key={p.id} onClick={() => setPage(p.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 11px', borderRadius: '7px', border: page === p.id ? '1px solid rgba(57,255,20,.4)' : '1px solid transparent', background: page === p.id ? 'rgba(57,255,20,.1)' : 'transparent', color: page === p.id ? '#fff' : '#909090', fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, fontSize: '14px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
-              <span style={{ fontFamily: '"Orbitron", sans-serif', fontSize: '10px', width: '18px', color: page === p.id ? '#39FF14' : '#555' }}>{p.glyph}</span>
-              {p.label}
-            </button>
-          ))}
+          {pages.map((p) => {
+            const iconMap: Record<string, string> = {
+              'command': '#icon-command',
+              'sound': '#icon-sound',
+              'live': '#icon-live',
+              'jingle': '#icon-jingle',
+              'lyrics': '#icon-lyrics',
+              'voice': '#icon-voice',
+              'factory': '#icon-factory',
+              'showcase': '#icon-showcase',
+            };
+            return (
+              <button key={p.id} onClick={() => setPage(p.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 11px', borderRadius: '7px', border: page === p.id ? '1px solid rgba(57,255,20,.4)' : '1px solid transparent', background: page === p.id ? 'rgba(57,255,20,.1)' : 'transparent', color: page === p.id ? '#fff' : '#909090', fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, fontSize: '14px', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
+                <svg width="18" height="18" viewBox="0 0 64 64" style={{ opacity: page === p.id ? 1 : 0.5 }}>
+                  <use href={`/icons.svg${iconMap[p.id]}`} />
+                </svg>
+                {p.label}
+              </button>
+            );
+          })}
           <div style={{ flex: 1 }}></div>
           <div style={{ background: '#0f0f0f', border: '1px solid #222', borderRadius: '9px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', letterSpacing: '1.5px', color: '#666', textTransform: 'uppercase' }}>
@@ -104,6 +120,7 @@ export default function CreativeStudio() {
               {page === 'sound' && 'CREATE. PRODUCE. MASTER.'}
               {page === 'live' && 'BROADCAST. ENGAGE. DOMINATE.'}
               {page === 'jingle' && 'CREATE. BRAND. IMPACT.'}
+              {page === 'lyrics' && 'WRITE. GENERATE. INSPIRE.'}
               {page === 'voice' && 'GENERATE. CLONE. DOMINATE.'}
               {page === 'factory' && 'ONE PROMPT. EVERY CHANNEL.'}
               {page === 'showcase' && 'COMPLETED PROJECTS. REAL RESULTS.'}
@@ -115,6 +132,7 @@ export default function CreativeStudio() {
             {page === 'sound' && <SoundLab />}
             {page === 'live' && <LiveStudio />}
             {page === 'jingle' && <JingleLab />}
+            {page === 'lyrics' && <LyricsLab />}
             {page === 'voice' && <VoiceLab />}
             {page === 'factory' && <ContentFactory />}
             {page === 'showcase' && <ClientShowcase />}

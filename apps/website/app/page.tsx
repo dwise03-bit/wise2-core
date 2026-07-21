@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Search, Bell, User, ChevronDown, MoreVertical, Play, Pause, Plus } from 'lucide-react';
+import { useStore } from '@/lib/useStore';
 
 // ============ THEME & COLORS ============
 const COLORS = {
@@ -37,7 +38,7 @@ const formatTime = (seconds: number) => {
 };
 
 // ============ TOP BAR ============
-const TopBar = ({ currentPage, onPageChange }: any) => (
+const TopBar = ({ currentPage, onPageChange, userName }: any) => (
   <div className="flex items-center gap-5 h-14 px-5 bg-gradient-to-b from-[#111] to-[#0a0a0a] border-b border-[#262626] flex-none">
     {/* Logo */}
     <div className="flex items-baseline gap-1">
@@ -66,7 +67,7 @@ const TopBar = ({ currentPage, onPageChange }: any) => (
     </button>
     <button className="flex items-center gap-2 bg-[#141414] border border-[#2c2c2c] rounded px-2 py-1 hover:border-[#39FF14] transition cursor-pointer text-[#ddd]">
       <div className="w-7 h-7 rounded border border-[#333] bg-[#1a1a1a]"></div>
-      <span className="text-xs font-semibold">Darrin W.</span>
+      <span className="text-xs font-semibold">{userName || 'Darrin W.'}</span>
       <span className="text-[0.625rem] text-[#555]">▾</span>
     </button>
   </div>
@@ -111,7 +112,7 @@ const Sidebar = ({ currentPage, onPageChange, credits }: any) => (
 );
 
 // ============ COMMAND CENTER DASHBOARD ============
-const CommandCenter = () => {
+const CommandCenter = ({ userName }: any) => {
   const cardVariants = {
     hidden: { opacity: 0, y: 16 },
     visible: (i: number) => ({
@@ -134,7 +135,7 @@ const CommandCenter = () => {
       <motion.div className="flex items-end gap-4" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: 'easeOut' }}>
         <div>
           <h1 className="font-orbitron font-black text-3xl bg-gradient-to-b from-white via-[#e6e6e6] to-[#6f6f6f] bg-clip-text text-transparent uppercase" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>Command Center</h1>
-          <p className="text-[#999] font-medium tracking-widest mt-1">Welcome back, Darrin. 3 renders finished overnight.</p>
+          <p className="text-[#999] font-medium tracking-widest mt-1">Welcome back, {userName || 'Darrin'}. 3 renders finished overnight.</p>
         </div>
         <div className="flex-1"></div>
         <motion.button
@@ -906,6 +907,8 @@ const PagePlaceholder = ({ title, subtitle }: any) => (
 
 // ============ MAIN PAGE ============
 export default function CreativeStudioPage() {
+  const { auth } = useStore();
+  const userName = auth?.firstName || auth?.email?.split('@')[0] || 'there';
   const [currentPage, setCurrentPage] = useState('command');
   const [credits, setCredits] = useState(7214);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -1000,7 +1003,7 @@ export default function CreativeStudioPage() {
       </div>
 
       {/* Top Bar */}
-      <TopBar currentPage={currentPage} onPageChange={setCurrentPage} />
+      <TopBar currentPage={currentPage} onPageChange={setCurrentPage} userName={userName} />
 
       {/* Body */}
       <div className="flex flex-1 min-h-0 relative z-10">
@@ -1018,7 +1021,7 @@ export default function CreativeStudioPage() {
           <AnimatePresence mode="wait">
             {currentPage === 'command' && (
               <motion.div key="command" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-                <CommandCenter />
+                <CommandCenter userName={userName} />
               </motion.div>
             )}
             {currentPage === 'sound' && (
