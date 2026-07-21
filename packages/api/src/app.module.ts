@@ -73,7 +73,7 @@ import { APIStatusController } from './config/api-status.controller';
           ...dbConfig,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-          migrationsRun: configService.get('NODE_ENV') === 'production',
+          migrationsRun: false,
           synchronize: configService.get('NODE_ENV') !== 'production',
           logging: configService.get('NODE_ENV') !== 'production',
         };
