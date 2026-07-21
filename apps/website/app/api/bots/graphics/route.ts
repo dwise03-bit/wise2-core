@@ -12,6 +12,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prompt required' }, { status: 400 });
     }
 
+    // Check if API key is configured
+    if (!GRAPHICS_API_KEY) {
+      return NextResponse.json({
+        success: false,
+        error: 'Graphics API not configured',
+        message: 'Set GRAPHICS_API_KEY environment variable',
+        status: 'unconfigured',
+      }, { status: 503 });
+    }
+
     // Call Graphics API
     const response = await fetch(`${GRAPHICS_API_BASE}/generate`, {
       method: 'POST',
@@ -28,7 +38,13 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error('Graphics API generation failed');
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json({
+        success: false,
+        error: 'Graphics API generation failed',
+        status: response.status,
+        details: errorData,
+      }, { status: response.status });
     }
 
     const data = await response.json();
@@ -45,7 +61,11 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Graphics API error:', error);
-    return NextResponse.json({ error: 'Graphics generation failed' }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: 'Graphics generation failed',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    }, { status: 500 });
   }
 }
 
