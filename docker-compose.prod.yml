@@ -66,6 +66,10 @@ services:
     build:
       context: .
       dockerfile: packages/api/Dockerfile
+    # Explicit tag so `compose build` and `compose up --no-build` always agree.
+    # Without this, compose derives a default name (wise2-core-api) that can
+    # diverge from a hand-built wise2-core_api:latest tag and run a stale image.
+    image: wise2-core_api:latest
     container_name: wise2-api
     environment:
       # Application Settings

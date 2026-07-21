@@ -58,6 +58,6 @@ function buildOptions(): DataSourceOptions {
   };
 }
 
+// NOTE: exactly ONE export of a DataSource instance — the TypeORM CLI rejects a
+// file that exports the same DataSource twice ("must contain only one export").
 export const AppDataSource = new DataSource(buildOptions());
-
-export default AppDataSource;
