@@ -6,7 +6,6 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import {
   ActivityActionType,
   PermissionType,

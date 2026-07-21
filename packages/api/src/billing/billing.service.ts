@@ -4,7 +4,6 @@ import {
   NotFoundException,
   Logger,
 } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma';
 import { StripeService } from './stripe.service';
 import { ConfigService } from '@nestjs/config';
 

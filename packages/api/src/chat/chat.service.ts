@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 
 export interface ChatMessage {
   id: string;
@@ -14,7 +13,7 @@ export interface ChatMessage {
 export class ChatService {
   private messages: Map<string, ChatMessage[]> = new Map();
 
-  constructor(private prisma: PrismaService) {}
+  constructor() {}
 
   async sendMessage(
     roomId: string,

@@ -1,9 +1,8 @@
 {
-  "/page": "app/page.js",
-  "/auth/signup/page": "app/auth/signup/page.js",
+  "/gallery/page": "app/gallery/page.js",
+  "/maintenance/page": "app/maintenance/page.js",
   "/landing/page": "app/landing/page.js",
   "/shop/page": "app/shop/page.js",
-  "/webstore/page": "app/webstore/page.js",
-  "/apps/page": "app/apps/page.js",
-  "/maintenance/page": "app/maintenance/page.js"
+  "/auth/signup/page": "app/auth/signup/page.js",
+  "/apps/page": "app/apps/page.js"
 }

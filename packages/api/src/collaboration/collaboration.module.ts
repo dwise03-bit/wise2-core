@@ -5,7 +5,6 @@ import { CollaborationGateway } from './collaboration.gateway';
 import { CollaborationService } from './collaboration.service';
 import { CollaborationController } from './collaboration.controller';
 import { PermissionGuard } from './guards/permission.guard';
-import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 
 /**
@@ -22,7 +21,6 @@ import { AuthModule } from '../auth/auth.module';
  */
 @Module({
   imports: [
-    PrismaModule,
     AuthModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

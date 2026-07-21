@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 
 export interface StreamSession {
   id: string;
@@ -17,7 +16,7 @@ export class StreamingService {
   private sessions: Map<string, StreamSession> = new Map();
   private viewerCounts: Map<string, number> = new Map();
 
-  constructor(private prisma: PrismaService) {}
+  constructor() {}
 
   async startStream(
     sessionId: string,
