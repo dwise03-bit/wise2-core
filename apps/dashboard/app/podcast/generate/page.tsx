@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
@@ -9,7 +9,7 @@ import { podcastApi, type GenerationRequest } from '@/lib/podcast/api-client';
 import { PodcastLayout } from '../components/PodcastLayout';
 import { TemplateCard, MoodCard, type Template, type Mood } from '../components/TemplateCard';
 
-export default function PodcastGeneratePage() {
+function PodcastGenerateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
@@ -375,5 +375,13 @@ export default function PodcastGeneratePage() {
         </motion.div>
       )}
     </PodcastLayout>
+  );
+}
+
+export default function PodcastGeneratePage() {
+  return (
+    <Suspense fallback={null}>
+      <PodcastGenerateContent />
+    </Suspense>
   );
 }
