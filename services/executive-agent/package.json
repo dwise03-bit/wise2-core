@@ -1,0 +1,16 @@
+{
+  "name": "@wise2/executive-agent",
+  "version": "1.0.0",
+  "description": "WISE² Executive Agent - strategic reasoning and cross-agent orchestration",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@wise2/agent-framework": "workspace:*"
+  }
+}

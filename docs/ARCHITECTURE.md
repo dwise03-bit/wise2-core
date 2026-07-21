@@ -1,520 +1,227 @@
-# SYSTEM ARCHITECTURE
+# WISE² Core v1.0 - System Architecture
 
-**WISE² Enterprise**  
-**Version**: 10.0  
-**Date**: 2026-07-11
+Complete technical architecture and design documentation for WISE² Core.
 
----
+## System Overview
 
-## ARCHITECTURE OVERVIEW
+WISE² Core v1.0 is a unified agentic operating system with:
 
-WISE² Enterprise is a cloud-native, AI-powered business operating system built as a distributed monorepo with clear separation between frontend, backend, and infrastructure layers.
+- **API Gateway** (port 3000): Central routing, auth, rate limiting, caching
+- **Voice Assistant** (port 3002): Speech processing, multi-language support  
+- **Command Center** (port 3001): React dashboard for system control
+- **Microservices**: Executive, Developer, Infrastructure, Deployment agents
 
-### High-Level Architecture
+## Core Components
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   CDN & Static Assets                   │
-│              (CloudFront / Cloudflare)                  │
-└────────────────────────┬────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────┐
-│              Load Balancer & Reverse Proxy              │
-│                  (Traefik / Nginx)                      │
-│          SSL/TLS, Rate Limiting, Routing                │
-└────────────────────────┬────────────────────────────────┘
-                         │
-      ┌──────────────────┼──────────────────┐
-      │                  │                  │
-┌─────▼──────┐   ┌──────▼───────┐   ┌─────▼──────┐
-│  Website   │   │  Dashboard   │   │   Studio   │
-│ (Next.js)  │   │  (Next.js)   │   │ (Next.js)  │
-│ Port 3001  │   │  Port 3002   │   │ Port 3003  │
-└─────┬──────┘   └──────┬───────┘   └─────┬──────┘
-      │                  │                  │
-      └──────────────────┼──────────────────┘
-                         │
-                    API Gateway
-                   (Express/NestJS)
-                     Port 3000
-                    ┌────┬────┐
-              ┌─────▼─┐ ┌─▼────────┐
-              │ Auth  │ │ Business │
-              │ Logic │ │ Services │
-              └─────┬─┘ └─┬────────┘
-                    │    │
-      ┌─────────────┼────┼──────────────┐
-      │             │    │              │
-┌─────▼──┐   ┌──────▼──┐ │  ┌───────────▼──┐
-│PostgreSQL│ │  Redis  │ │  │  S3/Object   │
-│ Database │ │  Cache  │ │  │  Storage     │
-└──────────┘ └─────────┘ │  └──────────────┘
-                         │
-                    ┌────▼────┐
-                    │    AI    │
-                    │ Services │
-                    │ (Hermes) │
-                    └─────────┘
-```
+### 1. API Gateway (3000)
 
----
+**Responsibilities:**
+- Request routing to appropriate services
+- Authentication & authorization (JWT, API keys, OAuth)
+- Rate limiting (per-user, per-agent, per-endpoint)
+- Response caching with Redis
+- Request logging & structured metrics
+- Unified error handling
+- CORS & security headers
 
-## CORE COMPONENTS
+### 2. Voice Assistant Service (3002)
 
-### 1. Frontend Applications (Next.js 14+)
+**Responsibilities:**
+- Audio stream processing
+- Speech-to-text (Whisper or local model)
+- Text-to-speech (Google, Azure, ElevenLabs)
+- Wake word detection (Porcupine)
+- Automatic language detection
+- Multi-language support (20+ languages)
+- WebSocket + REST API
 
-**Website** (`apps/website`)
-- Public landing page
-- Marketing content
-- SEO optimized
-- Static Generation (SSG) where possible
-- Dynamic routes for CMS content
+### 3. Dashboard (Command Center)
 
-**Dashboard** (`apps/dashboard`)
-- Customer portal
-- Project management
-- User settings
-- Analytics dashboard
-- Real-time updates via WebSocket
+**Technology:** React 18, TypeScript, Tailwind CSS
 
-**Studio** (`apps/studio`)
-- WISE Sound Labs interface
-- Audio editing & mixing
-- Real-time collaboration
-- WebRTC for recording
-- Tone.js for Web Audio API
+**Sections:**
+1. Agent Control Panel - Real-time agent status, start/stop
+2. Knowledge Graph Explorer - Visual entity relationships
+3. Voice Assistant Interface - Listen, transcribe, respond
+4. Device Sync Status - Cross-device synchronization
+5. System Metrics - Performance, uptime, error rates
 
-**Admin** (`apps/admin`)
-- Admin operations console
-- User management
-- Analytics
-- System health
-- Billing management
-
-**Shared Components** (`packages/ui-components`)
-- Reusable React components
-- Design system implementation
-- Accessibility built-in
-- Dark mode support
-
-### 2. Backend API (NestJS or Express)
-
-**Location**: `packages/api`
-
-**Modules**:
-- **Authentication** — JWT, OAuth2, MFA
-- **Users** — User management, profiles
-- **Projects** — Project CRUD, versioning
-- **Audio** — Audio processing, storage
-- **Billing** — Stripe integration, subscriptions
-- **Analytics** — Event tracking, reporting
-- **Community** — Discord integration, social features
-- **AI** — Hermes orchestration, agent routing
-
-**API Style**: REST with JSON  
-**Real-time**: Socket.IO for live updates  
-**Performance**: Response < 200ms (p95)  
-
-### 3. Database Layer (PostgreSQL)
-
-**Location**: `packages/db`
-
-**Purpose**:
-- Relational data modeling
-- ACID transactions
-- Complex queries
-- Audit trails
-- Backup & recovery
-
-**Key Tables**:
-- users, sessions, oauth_accounts
-- projects, tracks, versions
-- subscriptions, invoices, credit_transactions
-- events, audit_logs
-- community_events, achievements
-
-**Indexing Strategy**:
-- User lookups (email, ID)
-- Project queries (owner_id, status)
-- Time-series queries (created_at, updated_at)
-- Full-text search (name, description)
-
-### 4. Caching Layer (Redis)
-
-**Purpose**:
-- Session storage
-- Real-time data
-- Rate limiting
-- Message queue
-- Cache invalidation
-
-**Usage**:
-- User sessions (TTL: 7 days)
-- Project cache (TTL: 1 hour)
-- Rate limit counters (TTL: 1 minute)
-- WebSocket state
-- Job queues
-
-### 5. Object Storage (S3/GCS/MinIO)
-
-**Purpose**:
-- Audio file storage
-- Video file storage
-- Backup storage
-- Deliverables
-- Asset library
-
-**Structure**:
-```
-s3://wise2-enterprise/
-├── projects/
-│   ├── {project_id}/
-│   │   ├── tracks/
-│   │   ├── versions/
-│   │   └── exports/
-├── users/
-│   ├── {user_id}/
-│   │   └── avatars/
-├── assets/
-│   ├── samples/
-│   ├── presets/
-│   └── effects/
-└── backups/
-    └── {date}/
-```
-
-### 6. AI Orchestration Layer (Hermes)
-
-**Location**: `packages/ai`
-
-**Components**:
-- **Hermes Core** — Request routing & coordination
-- **Creative Director** — Audio brand guidance
-- **Brand Strategist** — Strategic direction
-- **Marketing Assistant** — Content & campaign
-- **Project Coordinator** — Workflow management
-- **Customer Success** — Support & onboarding
-- **Quality Reviewer** — Quality assurance
-
-**Architecture**:
-- Tool-calling pattern (Anthropic SDK)
-- Function definitions for each agent capability
-- Context persistence across turns
-- Human review gates for client work
-
-### 7. Message Queue & Job Processing
-
-**Technology**: Redis Streams or RabbitMQ
-
-**Jobs**:
-- Email sending
-- Audio processing (FFmpeg)
-- Report generation
-- Webhook dispatching
-- Backup operations
-- Analytics aggregation
-
-**Worker Service**: `packages/worker` (Node.js)
-
----
-
-## DATA FLOW
-
-### Authentication Flow
+## Service Architecture
 
 ```
-User Input
-    ↓
-[Next.js Auth Page]
-    ↓
-[POST /api/auth/login]
-    ↓
-[NestJS Auth Service] ← PostgreSQL (user lookup)
-    ↓
-[Generate JWT Token]
-    ↓
-[Set HttpOnly Cookie]
-    ↓
-[Redirect to Dashboard]
-    ↓
-[Dashboard uses JWT for API calls]
+┌────────────────────────────────────────┐
+│         API Gateway (3000)             │
+│  ├─ Authentication                     │
+│  ├─ Rate Limiting                      │
+│  ├─ Response Caching                   │
+│  └─ Request Logging & Metrics          │
+└──┬─────────────────────────────────────┘
+   │
+   ├─→ Executive Agent
+   ├─→ Developer Agent
+   ├─→ Infrastructure Agent
+   ├─→ Deployment Agent
+   ├─→ Voice Assistant (3002)
+   ├─→ Knowledge Graph
+   ├─→ Automations
+   ├─→ Discord Bots
+   ├─→ Sync Engine
+   └─→ Health Service
 ```
 
-### Project Creation Flow
+## Authentication & Authorization
 
-```
-User Clicks "New Project"
-    ↓
-[Studio UI Form]
-    ↓
-[POST /api/projects]
-    ↓
-[NestJS Projects Service]
-    ↓
-[Insert into PostgreSQL]
-    ↓
-[Cache in Redis]
-    ↓
-[Emit WebSocket event]
-    ↓
-[Update Studio UI in real-time]
-```
+### Supported Methods
 
-### Audio Processing Flow
+1. **JWT Bearer Tokens** - User sessions
+2. **API Keys** - Service-to-service
+3. **OAuth 2.0** - Third-party integrations
 
-```
-User Uploads Audio File
-    ↓
-[S3 Presigned URL Upload]
-    ↓
-[File stored in S3]
-    ↓
-[Queue processing job]
-    ↓
-[Worker: FFmpeg analysis]
-    ↓
-[Extract metadata (duration, bitrate, etc.)]
-    ↓
-[Store in PostgreSQL]
-    ↓
-[Update Redis cache]
-    ↓
-[WebSocket notification to client]
-    ↓
-[Display in Studio UI]
-```
+### Role-Based Access Control (RBAC)
 
----
+- `admin`: Full system access
+- `agent_owner`: Own agent + metrics access
+- `user`: Own data + own automation execution
+- `service`: Service-to-service communication
 
-## DEPLOYMENT ARCHITECTURE
+## Rate Limiting
 
-### Development Environment
+**Per-User Tiers:**
+- Premium: 5,000 req/min
+- Regular: 1,000 req/min
+- Free: 100 req/min
 
-```
-Local Machine:
-├── Docker Compose (all services)
-├── PostgreSQL + Redis (containerized)
-├── pnpm dev (monorepo)
-└── http://localhost:3000-3004
-```
+**Per-Endpoint:**
+- GET: 1,000 req/min
+- POST: 500 req/min
+- DELETE: 100 req/min
 
-### Staging Environment
+## Caching Strategy
 
-```
-Cloud Deployment (DigitalOcean / AWS):
-├── Docker containers (each service)
-├── Managed PostgreSQL
-├── Managed Redis
-├── Traefik (reverse proxy)
-├── GitHub Actions CI/CD
-└── https://staging.wise2.dev
-```
+**Cacheable:** GET requests only
 
-### Production Environment
+**TTL Defaults:**
+- Health endpoints: 60 seconds
+- Knowledge graph: 300 seconds
+- Sync endpoints: 300 seconds
+- Default: 300 seconds (5 minutes)
 
-```
-Cloud Deployment (Kubernetes or Docker Swarm):
-├── API Pods (3+ replicas)
-├── Frontend Services (CDN + origin)
-├── PostgreSQL (managed, backups)
-├── Redis (managed cluster)
-├── S3 Storage (multi-region)
-├── Load Balancer (AWS ALB / Traefik)
-├── Monitoring (Prometheus + Grafana)
-├── Logging (ELK / Loki)
-└── https://wise2.com
-```
+## Security Model
 
----
+### Data Protection
+- **In Transit:** HTTPS/TLS 1.3
+- **At Rest:** AES-256 encryption
+- **Secrets:** Vault storage
 
-## SCALABILITY CONSIDERATIONS
+### Rate Limiting
+- Prevents brute force attacks
+- Per-user & per-IP limiting
+- Exponential backoff on 429 responses
+
+## Scalability
 
 ### Horizontal Scaling
+- API Gateway is stateless
+- Services scale independently
+- Database read replicas
+- Redis cluster for cache
 
-**Stateless Services**:
-- API can scale to N replicas
-- Load balancer distributes traffic
-- Database connections pooled
-
-**Database Scaling**:
-- Read replicas for analytics queries
-- Connection pooling (PgBouncer)
-- Query optimization & indexing
-
-**Cache Scaling**:
-- Redis cluster for high throughput
-- Consistent hashing for distribution
-- TTL strategy for memory efficiency
-
-### Performance Optimization
-
-**Frontend**:
-- Code splitting (dynamic imports)
-- Image optimization
-- CSS-in-JS minimization
-- Lazy loading
-
-**Backend**:
-- Database query optimization
-- Caching strategies
-- Async/await patterns
+### Performance
+- Response caching (Redis)
+- Database query caching
+- gzip compression
 - Connection pooling
+- Async/non-blocking I/O
 
-**Infrastructure**:
-- CDN caching
-- Gzip compression
-- HTTP/2
-- Autoscaling policies
+## Monitoring & Observability
 
----
+### Metrics (Prometheus)
+- `gateway_requests_total`: Total requests
+- `gateway_responses_total`: Total responses
+- `gateway_errors_total`: Total errors
+- `gateway_response_time_seconds`: Response latency
+- `gateway_cache_hits_total`: Cache hits
+- `gateway_ratelimit_hits_total`: Rate limit hits
 
-## RELIABILITY & REDUNDANCY
+### Logging
+- Structured JSON logging
+- Request ID tracing
+- User ID tracking
+- Error stack traces
+- Duration metrics
 
-### High Availability
+## Deployment
 
-- Multi-region deployment
-- Automated failover
-- Health checks (HTTP, TCP)
-- Circuit breakers for external APIs
+### Kubernetes Deployment
 
-### Disaster Recovery
+```
+wise2-core namespace:
+  ├─ API Gateway (3 replicas)
+  ├─ Services (2-3 replicas each)
+  │  ├─ Executive Agent
+  │  ├─ Developer Agent
+  │  ├─ Infrastructure Agent
+  │  ├─ Deployment Agent
+  │  └─ Voice Assistant (3 replicas)
+  └─ Data Tier
+     ├─ PostgreSQL (primary + replica)
+     ├─ Redis (cache cluster)
+     └─ Prometheus (metrics)
+```
 
-- Database point-in-time recovery
-- S3 cross-region replication
-- Backup retention (30 days)
-- Restore procedures documented
+### Requirements
+- PostgreSQL 14+
+- Redis 6.0+
+- Docker/Kubernetes
+- Prometheus + Grafana
 
-### Monitoring & Alerting
+## Voice Processing
 
-- Prometheus metrics
-- Grafana dashboards
-- Alert rules (CPU, memory, latency)
-- Incident response procedures
+### Supported Languages (20+)
+en, es, fr, de, it, pt, nl, ru, zh, ja, ko, ar, hi, th, vi, pl, tr, sv, da, no, fi
 
----
+### Speech-to-Text Providers
+1. Local Whisper (fastest)
+2. OpenAI Whisper API
+3. Google Speech-to-Text
+4. Azure Speech Services
 
-## SECURITY ARCHITECTURE
+### Text-to-Speech Providers
+1. Google Cloud TTS
+2. Azure Speech Services
+3. ElevenLabs
+4. AWS Polly
 
-See [SECURITY.md](./SECURITY.md) for detailed security guidelines.
+### Wake Word Detection
+- Default: "hey wise", "okay wise"
+- Customizable per deployment
+- Porcupine engine
 
-### Key Security Features
+## Error Handling
 
-- End-to-end encryption (TLS)
-- Database encryption at rest
-- Secrets management (Vault / AWS Secrets Manager)
-- Audit logging
-- Role-based access control (RBAC)
-- API rate limiting
-- DDoS protection
+### Error Response Format
+```json
+{
+  "error": "ErrorType",
+  "message": "Human-readable message",
+  "requestId": "req_xyz",
+  "statusCode": 400,
+  "timestamp": "2026-07-20T10:30:00Z"
+}
+```
 
----
-
-## INTEGRATION POINTS
-
-### External Services
-
-- **Claude API** (AI models)
-- **Stripe** (payments)
-- **Resend / SendGrid** (email)
-- **Discord API** (community)
-- **YouTube API** (LIVE)
-- **Twitch API** (LIVE)
-
-### Communication Patterns
-
-- REST for CRUD operations
-- WebSocket for real-time
-- Webhooks for event delivery
-- Message queues for async jobs
-
----
-
-## TECHNOLOGY DECISIONS
-
-### Why Next.js?
-- Full-stack React framework
-- Built-in optimization
-- API routes
-- Deployment-ready
-- Excellent DX
-
-### Why NestJS/Express?
-- TypeScript-first
-- Modular architecture
-- Excellent middleware ecosystem
-- Strong typing (NestJS)
-- Battle-tested (Express)
-
-### Why PostgreSQL?
-- ACID compliance
-- Complex queries
-- Full-text search
-- Proven scalability
-- Rich data types
-
-### Why Redis?
-- In-memory speed
-- Session management
-- Message queuing
-- Atomic operations
-- Cluster support
-
-### Why S3/Object Storage?
-- Unlimited scalability
-- Multi-region replication
-- Cost-effective
-- Standard format
-- Easy integration
+### Status Codes
+- 400: Validation error
+- 401: Authentication required
+- 403: Insufficient permissions
+- 404: Not found
+- 429: Rate limit exceeded
+- 500: Server error
+- 503: Service unavailable
+- 504: Timeout
 
 ---
 
-## TRADE-OFFS & DECISIONS
-
-### Monorepo vs. Microservices
-**Decision**: Monorepo (Turborepo)  
-**Rationale**: Single team, shared code, simpler deployment initially  
-**Trade-off**: Eventually may migrate to microservices if team grows
-
-### REST vs. GraphQL
-**Decision**: REST  
-**Rationale**: Simpler to implement, cache-friendly, standard practice  
-**Trade-off**: Over-fetching some data, but acceptable
-
-### SQL vs. NoSQL
-**Decision**: PostgreSQL (SQL)  
-**Rationale**: Complex relational data, ACID compliance needed  
-**Trade-off**: Less flexible schema, but better for data integrity
-
-### Real-time via WebSocket vs. Polling
-**Decision**: WebSocket (Socket.IO)  
-**Rationale**: Lower latency, better UX, efficient  
-**Trade-off**: Stateful connections, harder to scale
-
----
-
-## FUTURE ARCHITECTURE EVOLUTION
-
-### Year 1
-- Monolithic backend
-- Single region
-- PostgreSQL + Redis
-- Basic monitoring
-
-### Year 2
-- Service decomposition
-- Multi-region consideration
-- Read replicas
-- Advanced monitoring
-
-### Year 3+
-- Microservices architecture
-- Global distribution
-- Advanced caching
-- AI/ML infrastructure
-
----
-
-**Owner**: Wise Defense LLC (PROJECT GENESIS)  
-**Maintained By**: CTO + Architecture Team  
-**Last Updated**: 2026-07-11  
-**Next Review**: 2026-10-11 (quarterly)
+**Last Updated:** 2026-07-20  
+**Version:** 1.0.0  
+**Status:** Production-ready

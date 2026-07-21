@@ -1,191 +1,140 @@
-import pino from 'pino';
-import { v4 as uuid } from 'uuid';
-import {
-  AgentConfig,
-  AgentRequest,
-  AgentResponse,
-  AgentMemory,
-  ComposedPrompt,
-  IntegratedContext,
-  Tool,
-} from './types';
-
-const logger = pino();
-
 /**
- * BaseAgent - Abstract base class for all WISE² agents
- *
- * All specialized agents (Developer, Infrastructure, Marketing, etc.)
- * inherit from this class and customize via PromptOS prompts.
+ * BaseAgent - Abstract base class for all agents
  */
+
+import { AgentConfig, AgentMessage, AgentResponse, AgentState, ToolCall } from './types.js';
+import { AgentMemory } from './AgentMemory.js';
+import { AgentTools } from './AgentTools.js';
+
 export abstract class BaseAgent {
   protected config: AgentConfig;
-  protected memory: Map<string, AgentMemory> = new Map();
-  protected tools: Map<string, Tool> = new Map();
+  protected memory: AgentMemory;
+  protected tools: AgentTools;
+  protected conversationHistory: AgentMessage[] = [];
+  protected state: AgentState = {};
 
   constructor(config: AgentConfig) {
     this.config = config;
-    logger.info({ agent: config.name }, 'Agent initialized');
+    this.memory = new AgentMemory(config.id);
+    this.tools = new AgentTools(config.tools);
   }
 
   /**
-   * Main entry point for agent execution
+   * Initialize agent (load prompt, set up tools)
    */
-  async execute(request: AgentRequest): Promise<AgentResponse> {
-    const startTime = Date.now();
-
+  async initialize(): Promise<void> {
     try {
-      logger.info({ agentName: this.config.name, requestId: request.id }, 'Executing agent request');
-
-      // Load or create memory for this user
-      const memory = this.loadMemory(request.userId, request.sessionId);
-
-      // Get integrated context (knowledge graph, vault, sync state)
-      const context = await this.getIntegratedContext(request.userId);
-
-      // Compose prompt with memory + context
-      const prompt = this.composePrompt(request, memory, context);
-
-      // Execute the agent logic
-      const response = await this.executePrompt(prompt, request);
-
-      // Update memory with this interaction
-      this.updateMemory(request.userId, request.sessionId, request, response);
-
-      const executionTime = Date.now() - startTime;
-
-      logger.info(
-        { agentName: this.config.name, requestId: request.id, executionTime },
-        'Agent execution complete',
-      );
-
-      return {
-        id: uuid(),
-        agentName: this.config.name,
-        response,
-        reasoning: 'See metadata.prompt for full reasoning',
-        executionTime,
-        toolsUsed: [],
-      };
+      await this.memory.load();
+      await this.tools.initialize();
+      console.log(`Agent ${this.config.id} initialized`);
     } catch (error) {
-      logger.error(
-        { agentName: this.config.name, requestId: request.id, error },
-        'Agent execution failed',
-      );
+      console.error(`Failed to initialize agent ${this.config.id}:`, error);
       throw error;
     }
   }
 
   /**
-   * Load or create agent memory for a user
+   * Process a user message and generate response
    */
-  protected loadMemory(userId: string, sessionId: string): AgentMemory {
-    const key = `${userId}:${sessionId}`;
-
-    if (!this.memory.has(key)) {
-      this.memory.set(key, {
-        userId,
-        sessionId,
-        shortTerm: [],
-        longTerm: {},
-        preferences: {},
+  async process(userMessage: string): Promise<AgentResponse> {
+    try {
+      // Add to conversation history
+      this.conversationHistory.push({
+        role: 'user',
+        content: userMessage,
+        timestamp: new Date()
       });
-    }
 
-    return this.memory.get(key)!;
-  }
+      // Get response (implement in subclass)
+      const response = await this.generateResponse(userMessage);
 
-  /**
-   * Update memory with new interaction
-   */
-  protected updateMemory(
-    userId: string,
-    sessionId: string,
-    request: AgentRequest,
-    response: string,
-  ): void {
-    const memory = this.loadMemory(userId, sessionId);
+      // Add to history
+      this.conversationHistory.push({
+        role: 'assistant',
+        content: response.content,
+        timestamp: new Date()
+      });
 
-    // Add to short-term conversation history
-    memory.shortTerm.push({
-      role: 'user',
-      content: request.query,
-      timestamp: Date.now(),
-    });
+      // Save memory
+      await this.memory.save();
 
-    memory.shortTerm.push({
-      role: 'assistant',
-      content: response,
-      timestamp: Date.now(),
-    });
-
-    // Keep only last 10 interactions in short-term
-    if (memory.shortTerm.length > 20) {
-      memory.shortTerm = memory.shortTerm.slice(-20);
+      return response;
+    } catch (error) {
+      console.error(`Error processing message in ${this.config.id}:`, error);
+      throw error;
     }
   }
 
   /**
-   * Get integrated context from WISE² services
+   * Generate response (implement in subclass)
    */
-  protected async getIntegratedContext(userId: string): Promise<IntegratedContext> {
-    // TODO: Integrate with Knowledge Graph, Second Brain, Memory Engine, Device Sync
-    return {
-      memory: this.loadMemory(userId, 'default'),
-      knowledgeGraph: {},
-      secondBrain: {},
-      deviceSync: {},
-    };
-  }
+  protected abstract generateResponse(message: string): Promise<AgentResponse>;
 
   /**
-   * Compose final prompt from modules, context, and conversation
+   * Execute a tool call
    */
-  protected composePrompt(
-    request: AgentRequest,
-    memory: AgentMemory,
-    context: IntegratedContext,
-  ): ComposedPrompt {
-    // TODO: Load PromptOS modules and compose
-    return {
-      system: `You are the ${this.config.name} agent for WISE².`,
-      messages: memory.shortTerm,
-      context: {
-        userPreferences: memory.preferences,
-        knowledgeGraph: context.knowledgeGraph,
-      },
-    };
-  }
+  protected async executeTool(toolName: string, args: Record<string, unknown>): Promise<ToolCall> {
+    try {
+      const result = await this.tools.execute(toolName, args);
+      
+      const toolCall: ToolCall = {
+        tool: toolName,
+        args,
+        result
+      };
 
-  /**
-   * Abstract method - implement in specialized agents
-   */
-  protected abstract executePrompt(prompt: ComposedPrompt, request: AgentRequest): Promise<string>;
+      // Track in memory
+      this.memory.addToolCall(toolCall);
 
-  /**
-   * Register a tool for this agent
-   */
-  protected registerTool(name: string, tool: Tool): void {
-    this.tools.set(name, tool);
-  }
-
-  /**
-   * Execute a tool
-   */
-  protected async useTool(name: string, params: Record<string, any>): Promise<any> {
-    const tool = this.tools.get(name);
-    if (!tool) {
-      throw new Error(`Tool not found: ${name}`);
+      return toolCall;
+    } catch (error) {
+      console.error(`Tool execution failed: ${toolName}`, error);
+      throw error;
     }
-
-    return tool(params);
   }
 
   /**
-   * Clean up agent resources
+   * Get agent configuration
    */
-  async shutdown(): Promise<void> {
-    logger.info({ agent: this.config.name }, 'Agent shutting down');
-    this.memory.clear();
+  getConfig(): AgentConfig {
+    return this.config;
+  }
+
+  /**
+   * Get conversation history
+   */
+  getHistory(): AgentMessage[] {
+    return this.conversationHistory;
+  }
+
+  /**
+   * Get current state
+   */
+  getState(): AgentState {
+    return this.state;
+  }
+
+  /**
+   * Update state
+   */
+  setState(updates: Partial<AgentState>): void {
+    this.state = { ...this.state, ...updates };
+  }
+
+  /**
+   * Clear conversation history
+   */
+  clearHistory(): void {
+    this.conversationHistory = [];
+  }
+
+  /**
+   * Reset agent to initial state
+   */
+  async reset(): Promise<void> {
+    this.conversationHistory = [];
+    this.state = {};
+    await this.memory.clear();
   }
 }
+

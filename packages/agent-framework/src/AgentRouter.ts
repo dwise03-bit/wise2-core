@@ -1,135 +1,152 @@
-import pino from 'pino';
-import { AgentRequest, AgentRouterResult } from './types';
-
-const logger = pino();
-
 /**
- * AgentRouter - Routes requests to appropriate agents based on intent
+ * AgentRouter - Route requests to appropriate agents
  */
+
+import { AgentRegistry } from './AgentRegistry.js';
+
+interface RoutingScore {
+  agent: string;
+  score: number;
+  keywords: string[];
+}
+
 export class AgentRouter {
-  private agentKeywords: Map<string, { agent: string; weight: number }> = new Map();
+  private registry: AgentRegistry;
+  private keywordMap: Map<string, string[]> = new Map();
 
-  constructor() {
-    this.initializeRouting();
-  }
-
-  private initializeRouting(): void {
-    // Developer agent keywords
-    const devKeywords = [
-      'build', 'code', 'implement', 'fix', 'debug', 'refactor', 'test',
-      'architecture', 'design', 'api', 'database', 'optimization',
-    ];
-    devKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'developer', weight: 3 }));
-
-    // Infrastructure agent keywords
-    const infraKeywords = [
-      'deploy', 'server', 'infrastructure', 'ops', 'docker', 'kubernetes',
-      'ci', 'cd', 'monitoring', 'scaling', 'performance',
-    ];
-    infraKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'infrastructure', weight: 3 }));
-
-    // Raspberry Pi agent keywords
-    const piKeywords = [
-      'edge', 'device', 'automation', 'pi', 'raspberry', 'iot', 'offline',
-      'sync', 'hardware', 'gpio', 'sensor',
-    ];
-    piKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'raspberry-pi', weight: 3 }));
-
-    // Discord agent keywords
-    const discordKeywords = [
-      'discord', 'notification', 'message', 'announcement', 'alert', 'channel',
-    ];
-    discordKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'discord', weight: 3 }));
-
-    // Marketing agent keywords
-    const marketingKeywords = [
-      'marketing', 'campaign', 'content', 'brand', 'social', 'email', 'promotion',
-    ];
-    marketingKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'marketing', weight: 3 }));
-
-    // Sales agent keywords
-    const salesKeywords = [
-      'sales', 'deal', 'customer', 'pipeline', 'forecast', 'revenue', 'pricing',
-    ];
-    salesKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'sales', weight: 3 }));
-
-    // Finance agent keywords
-    const financeKeywords = [
-      'finance', 'budget', 'cost', 'expense', 'revenue', 'forecast', 'contract',
-    ];
-    financeKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'finance', weight: 3 }));
-
-    // Research agent keywords
-    const researchKeywords = [
-      'research', 'analyze', 'data', 'analysis', 'competitive', 'market', 'insight',
-    ];
-    researchKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'research', weight: 3 }));
-
-    // Security agent keywords
-    const securityKeywords = [
-      'security', 'compliance', 'access', 'permission', 'audit', 'vulnerability',
-    ];
-    securityKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'security', weight: 3 }));
-
-    // QA agent keywords
-    const qaKeywords = [
-      'test', 'qa', 'quality', 'verification', 'validation', 'regression',
-    ];
-    qaKeywords.forEach(k => this.agentKeywords.set(k, { agent: 'qa', weight: 3 }));
-
-    logger.info('Agent routing initialized');
+  constructor(registry: AgentRegistry) {
+    this.registry = registry;
+    this.initializeKeywordMap();
   }
 
   /**
-   * Route a request to the appropriate agent(s)
+   * Route a request to the best agent
    */
-  route(request: AgentRequest): AgentRouterResult {
-    const scores: Map<string, number> = new Map();
+  route(request: string): string {
+    const scores = this.scoreAgents(request);
+    
+    if (scores.length === 0) {
+      return 'executive'; // Default fallback
+    }
 
-    // Score each agent based on keywords
-    const query = request.query.toLowerCase();
-    const tokens = query.split(/\s+/);
+    // Sort by score descending
+    scores.sort((a, b) => b.score - a.score);
 
-    for (const token of tokens) {
-      const match = this.agentKeywords.get(token);
-      if (match) {
-        const current = scores.get(match.agent) || 0;
-        scores.set(match.agent, current + match.weight);
+    return scores[0].agent;
+  }
+
+  /**
+   * Get top N agents for a request
+   */
+  routeTop(request: string, n: number = 3): RoutingScore[] {
+    const scores = this.scoreAgents(request);
+    scores.sort((a, b) => b.score - a.score);
+    return scores.slice(0, n);
+  }
+
+  /**
+   * Score all agents against a request
+   */
+  private scoreAgents(request: string): RoutingScore[] {
+    const scores: RoutingScore[] = [];
+    const requestLower = request.toLowerCase();
+
+    for (const agent of this.registry.list()) {
+      const keywords = this.keywordMap.get(agent.id) || [];
+      let score = 0;
+      const matchedKeywords: string[] = [];
+
+      for (const keyword of keywords) {
+        if (requestLower.includes(keyword)) {
+          score += 1;
+          matchedKeywords.push(keyword);
+        }
+      }
+
+      if (score > 0) {
+        scores.push({
+          agent: agent.id,
+          score,
+          keywords: matchedKeywords
+        });
       }
     }
 
-    // If no match found, default to Executive
-    if (scores.size === 0) {
-      logger.info({ query }, 'No agent keyword match, routing to Executive');
-      return {
-        agent: 'executive',
-        confidence: 0.5,
-        reasoning: 'No specific agent keywords found, routing to Executive for decision',
-      };
-    }
+    return scores;
+  }
 
-    // Find best match
-    let bestAgent = 'executive';
-    let bestScore = 0;
+  /**
+   * Initialize keyword map for routing
+   */
+  private initializeKeywordMap(): void {
+    // Agent routing keywords
+    this.keywordMap.set('developer', [
+      'build', 'code', 'fix', 'debug', 'refactor', 'test', 'write', 'implement'
+    ]);
 
-    for (const [agent, score] of scores.entries()) {
-      if (score > bestScore) {
-        bestAgent = agent;
-        bestScore = score;
-      }
-    }
+    this.keywordMap.set('infrastructure', [
+      'deploy', 'server', 'infrastructure', 'docker', 'kubernetes', 'database', 'scale'
+    ]);
 
-    const confidence = Math.min(bestScore / 10, 1);
+    this.keywordMap.set('deployment', [
+      'release', 'ci', 'cd', 'pipeline', 'rollout', 'rollback', 'version'
+    ]);
 
-    logger.info(
-      { query, selectedAgent: bestAgent, confidence },
-      'Request routed to agent',
-    );
+    this.keywordMap.set('executive', [
+      'decide', 'strategy', 'plan', 'prioritize', 'coordinate', 'orchestrate'
+    ]);
 
-    return {
-      agent: bestAgent,
-      confidence,
-      reasoning: `Matched keywords indicate ${bestAgent} is appropriate for this request`,
-    };
+    this.keywordMap.set('qa', [
+      'test', 'quality', 'verify', 'validate', 'check', 'gate', 'coverage'
+    ]);
+
+    this.keywordMap.set('research', [
+      'research', 'analyze', 'compare', 'competitive', 'market', 'data', 'fact'
+    ]);
+
+    this.keywordMap.set('marketing', [
+      'campaign', 'content', 'marketing', 'brand', 'message', 'audience', 'promotion'
+    ]);
+
+    this.keywordMap.set('sales', [
+      'deal', 'customer', 'pipeline', 'proposal', 'sales', 'negotiate', 'close'
+    ]);
+
+    this.keywordMap.set('security', [
+      'security', 'compliance', 'vulnerability', 'access', 'permission', 'audit'
+    ]);
+
+    this.keywordMap.set('voice', [
+      'voice', 'speech', 'language', 'conversation', 'dialog', 'nlp'
+    ]);
+
+    this.keywordMap.set('vision', [
+      'image', 'visual', 'design', 'screenshot', 'diagram', 'vision'
+    ]);
+
+    this.keywordMap.set('documentation', [
+      'document', 'guide', 'wiki', 'knowledge', 'reference', 'tutorial'
+    ]);
+
+    this.keywordMap.set('automation', [
+      'automate', 'workflow', 'trigger', 'schedule', 'job', 'automation'
+    ]);
+
+    this.keywordMap.set('discord', [
+      'notify', 'message', 'communication', 'announce', 'alert', 'discord'
+    ]);
+
+    this.keywordMap.set('raspberry-pi', [
+      'edge', 'device', 'iot', 'offline', 'inference', 'local', 'raspberry'
+    ]);
+
+    this.keywordMap.set('finance', [
+      'budget', 'finance', 'forecast', 'roi', 'cost', 'payment', 'money'
+    ]);
+
+    this.keywordMap.set('crm', [
+      'customer', 'account', 'relationship', 'crm', 'contact', 'opportunity'
+    ]);
   }
 }
+

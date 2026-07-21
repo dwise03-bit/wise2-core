@@ -1,78 +1,103 @@
-import pino from 'pino';
-import { BaseAgent } from './BaseAgent';
-import { AgentConfig } from './types';
-
-const logger = pino();
-
 /**
  * AgentRegistry - Manages agent lifecycle and registration
  */
+
+import { AgentConfig } from './types.js';
+
 export class AgentRegistry {
-  private agents: Map<string, BaseAgent> = new Map();
-  private configs: Map<string, AgentConfig> = new Map();
+  private agents: Map<string, AgentConfig> = new Map();
+  private active: Map<string, unknown> = new Map();
 
   /**
    * Register an agent
    */
-  register(name: string, agent: BaseAgent, config: AgentConfig): void {
-    this.agents.set(name, agent);
-    this.configs.set(name, config);
-    logger.info({ agent: name }, 'Agent registered');
+  register(config: AgentConfig): void {
+    if (this.agents.has(config.id)) {
+      console.warn(`Agent ${config.id} already registered, overwriting`);
+    }
+    this.agents.set(config.id, config);
   }
 
   /**
-   * Get an agent by name
+   * Get agent configuration
    */
-  getAgent(name: string): BaseAgent | undefined {
-    return this.agents.get(name);
-  }
-
-  /**
-   * Get agent config
-   */
-  getConfig(name: string): AgentConfig | undefined {
-    return this.configs.get(name);
+  get(agentId: string): AgentConfig | undefined {
+    return this.agents.get(agentId);
   }
 
   /**
    * List all registered agents
    */
-  listAgents(): string[] {
-    return Array.from(this.agents.keys());
-  }
-
-  /**
-   * Unregister an agent
-   */
-  unregister(name: string): boolean {
-    const removed = this.agents.delete(name);
-    this.configs.delete(name);
-    if (removed) {
-      logger.info({ agent: name }, 'Agent unregistered');
-    }
-    return removed;
+  list(): AgentConfig[] {
+    return Array.from(this.agents.values());
   }
 
   /**
    * Check if agent is registered
    */
-  has(name: string): boolean {
-    return this.agents.has(name);
+  has(agentId: string): boolean {
+    return this.agents.has(agentId);
   }
 
   /**
-   * Shutdown all agents
+   * Mark agent as active
    */
-  async shutdownAll(): Promise<void> {
-    const shutdownPromises = Array.from(this.agents.values()).map(agent =>
-      agent.shutdown().catch(error => {
-        logger.error({ error }, 'Error shutting down agent');
-      }),
-    );
+  setActive(agentId: string, instance: unknown): void {
+    this.active.set(agentId, instance);
+  }
 
-    await Promise.all(shutdownPromises);
+  /**
+   * Get active agent instance
+   */
+  getActive(agentId: string): unknown | undefined {
+    return this.active.get(agentId);
+  }
+
+  /**
+   * Check if agent is active
+   */
+  isActive(agentId: string): boolean {
+    return this.active.has(agentId);
+  }
+
+  /**
+   * Deactivate agent
+   */
+  deactivate(agentId: string): void {
+    this.active.delete(agentId);
+  }
+
+  /**
+   * Get all active agents
+   */
+  getActiveAgents(): string[] {
+    return Array.from(this.active.keys());
+  }
+
+  /**
+   * Unregister an agent
+   */
+  unregister(agentId: string): boolean {
+    this.deactivate(agentId);
+    return this.agents.delete(agentId);
+  }
+
+  /**
+   * Clear all registrations
+   */
+  clear(): void {
     this.agents.clear();
-    this.configs.clear();
-    logger.info('All agents shut down');
+    this.active.clear();
+  }
+
+  /**
+   * Get registry statistics
+   */
+  getStats(): { total: number; active: number } {
+    return {
+      total: this.agents.size,
+      active: this.active.size
+    };
   }
 }
+
