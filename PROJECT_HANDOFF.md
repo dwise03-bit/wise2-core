@@ -1,6 +1,6 @@
 # WISE² Platform - Project Handoff
 **Date:** July 20-21, 2026  
-**Status:** Frontend Production-Ready | Backend 95% Complete | Minor Compilation Issue Blocking API  
+**Status:** Frontend Production-Ready | Backend LIVE ✅ | Full stack deployed  
 **Owner:** dwise03@gmail.com  
 **Server:** 173.208.147.165 (gpu-nmls)
 
@@ -62,44 +62,38 @@
 
 ---
 
-## 🔴 BLOCKING ISSUE
+## ✅ API DEPLOYED & HEALTHY (2026-07-21)
 
-### API Build Compilation Error
-**Problem:** TypeScript build fails during Docker image creation  
-**Root Cause:** Remaining Prisma module references in codebase  
-**Symptoms:** 
-```
-npm error command sh -c nest build exited (1)
-```
+The blocking build/deploy issues are **RESOLVED**. The API is live at `http://localhost:3010` on the server.
 
-**Files Affected:**
-- Some modules still import/reference Prisma indirectly
-- Likely in: AdminModule, ProjectsModule, or other unused modules
+### What was fixed
+1. **Prisma fully removed** — deleted unused modules (billing, chat, collaboration, streaming) that still referenced PrismaService, and removed them from `app.module.ts`. TypeScript now compiles clean.
+2. **Auto-migrations disabled** — set `migrationsRun: false` in `app.module.ts` TypeORM config to stop migration conflicts against the existing schema.
+3. **DB permissions & ownership** — granted `wise2_prod_user` privileges on schema `public` and transferred table ownership from `postgres`.
+4. **Full dependency env** — the API needs Postgres, Mongo, AND Redis. Missing `MONGODB_URI`/`REDIS_URL` were blocking bootstrap.
+5. **Auth schema reconciled** — recreated `users`/`sessions`/token tables to match the TypeORM entities (`firstName`/`lastName`/`status`/enum roles) and recorded the migration row.
 
-**Quick Fix (Choose One):**
-
-**Option A:** Find and remove remaining Prisma references
+### How the container is run (working command)
 ```bash
-grep -r "PrismaService\|PrismaModule\|from.*prisma" packages/api/src/
-# Remove imports from any found files
-npm run build
-docker build -f packages/api/Dockerfile -t wise2-core_api:latest .
+docker rm -f wise2-api
+docker run -d --name wise2-api --network wise2-core_default --restart unless-stopped \
+  -e DATABASE_URL='postgresql://wise2_prod_user:wise2_prod_secure_2026@postgres:5432/wise2_core_prod' \
+  -e MONGODB_URI='mongodb://admin:secure_mongodb_admin_2026@mongodb:27017/wise2-brain?authSource=admin' \
+  -e REDIS_URL='redis://:password@redis:6379' \
+  -e NODE_ENV=production -e JWT_SECRET='dev-secret-key' \
+  -p 127.0.0.1:3010:3001 wise2-core_api:latest
 ```
 
-**Option B:** Disable unused modules from build
-```bash
-# Comment out unused module imports in packages/api/src/app.module.ts
-# Keep only: AuthModule, (APIManagerModule if needed)
-# This creates a minimal API for MVP
-```
+### Verified working
+- `GET /api/health` → `{"status":"ok",...}` (HTTP 200)
+- `POST /api/v1/auth/signup` → HTTP 201, user row created (`role=CUSTOMER, status=ACTIVE`)
+- `POST /api/v1/auth/login` → correctly enforces email verification
 
-**Option C:** Use pre-built API container
-```bash
-docker run -d --name wise2-api \
-  --network wise2-core_default \
-  -e DATABASE_URL='postgresql://...' \
-  wise2-core_api:latest
-```
+### ⚠️ Follow-ups to harden (non-blocking)
+1. **Stack runs via ad-hoc `docker run`, not compose** — container names are inconsistent with `docker-compose.prod.yml`. A `docker compose up` could collide. Standardize on one compose file.
+2. **`docker-compose.prod.yml` bugs:** redis `--bind 127.0.0.1` should be `--bind 0.0.0.0`; `mongo:6-alpine` is not a real tag → use `mongo:6`.
+3. **Migration provisioning** — no standalone TypeORM DataSource file exists, so `migration:run` can't work in prod. Add a data-source file (or set `migrationsRun:true` once the schema is trusted). Auth migration is currently applied & recorded manually.
+4. **Rotate `JWT_SECRET`** — currently `dev-secret-key`; set a real secret before public traffic.
 
 ---
 
@@ -109,7 +103,8 @@ docker run -d --name wise2-api \
 ```
 ✅ PostgreSQL:  Running (port 5432, healthy)
 ✅ Redis:       Running (port 6379, healthy)
-⏳ API:         Container built, blocked by build issue
+✅ MongoDB:     Running (port 27017)
+✅ API:         Running (port 3010, /api/health → 200)
 ✅ Website:     Running (port 3000, healthy)
 ```
 
