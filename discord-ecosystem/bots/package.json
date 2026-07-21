@@ -1,0 +1,37 @@
+{
+  "name": "@wise2/discord-bots",
+  "version": "1.0.0",
+  "description": "WISE² Discord Bot Suite - 10 specialized bots for server management",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "bot:welcome": "tsx src/bots/WelcomeBot.ts",
+    "bot:moderation": "tsx src/bots/ModerationBot.ts",
+    "bot:analytics": "tsx src/bots/AnalyticsBot.ts",
+    "bot:github": "tsx src/bots/GitHubBot.ts",
+    "bot:knowledge": "tsx src/bots/KnowledgeBot.ts",
+    "bot:deployment": "tsx src/bots/DeploymentBot.ts",
+    "bot:task": "tsx src/bots/TaskBot.ts",
+    "bot:daily": "tsx src/bots/DailyReportBot.ts",
+    "bot:music": "tsx src/bots/MusicBot.ts",
+    "bot:ai": "tsx src/bots/AIAssistantBot.ts"
+  },
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
+    "pino": "^8.16.0",
+    "axios": "^1.5.0",
+    "uuid": "^9.0.0",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "tsx": "^3.13.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
+  }
+}
