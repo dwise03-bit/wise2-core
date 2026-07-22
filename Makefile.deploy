@@ -1,0 +1,176 @@
+.PHONY: help deploy-prepare deploy-plan deploy-apply deploy-destroy logs-api logs-db logs-nginx health-check backup restore status cleanup
+
+help:
+	@echo "WISE² Core v1.0 - Deployment Commands"
+	@echo ""
+	@echo "Setup:"
+	@echo "  make setup-aws          Setup AWS credentials and tools"
+	@echo "  make setup-terraform    Initialize Terraform"
+	@echo ""
+	@echo "Deployment:"
+	@echo "  make deploy-plan        Preview what will be deployed"
+	@echo "  make deploy-apply       Deploy to AWS EC2 (⚠️ creates resources)"
+	@echo "  make deploy-destroy     Destroy all AWS resources (⚠️ deletes everything)"
+	@echo ""
+	@echo "Monitoring:"
+	@echo "  make status             Check service status"
+	@echo "  make health-check       Run health checks"
+	@echo "  make logs-api           View API logs"
+	@echo "  make logs-db            View database logs"
+	@echo "  make logs-nginx         View Nginx logs"
+	@echo ""
+	@echo "Maintenance:"
+	@echo "  make backup             Create database backup"
+	@echo "  make restore            Restore database from backup"
+	@echo "  make update             Pull latest code and restart"
+	@echo ""
+
+setup-aws:
+	@echo "Setting up AWS CLI..."
+	@command -v aws >/dev/null || (echo "Installing AWS CLI..." && brew install awscli)
+	@echo "Configuring AWS credentials..."
+	@aws configure
+	@echo "Creating SSH key pair..."
+	@aws ec2 create-key-pair --key-name wise2-prod --query 'KeyMaterial' --output text > wise2-prod.pem
+	@chmod 600 wise2-prod.pem
+	@echo "✅ AWS setup complete"
+	@echo "SSH key saved to: wise2-prod.pem"
+
+setup-terraform:
+	@echo "Setting up Terraform..."
+	@command -v terraform >/dev/null || (echo "Installing Terraform..." && brew install terraform)
+	@cd terraform && terraform init
+	@echo "✅ Terraform initialized"
+
+deploy-plan:
+	@echo "Planning AWS deployment..."
+	@echo ""
+	@echo "Enter database password (or press Enter for random):"
+	@read DB_PASS; if [ -z "$$DB_PASS" ]; then DB_PASS=$$(openssl rand -base64 32); fi; \
+	echo "Enter JWT secret (or press Enter for random):";\
+	read JWT_SEC; if [ -z "$$JWT_SEC" ]; then JWT_SEC=$$(openssl rand -base64 32); fi; \
+	cd terraform && terraform plan \
+		-var="key_pair_name=wise2-prod" \
+		-var="database_password=$$DB_PASS" \
+		-var="jwt_secret=$$JWT_SEC"
+
+deploy-apply:
+	@echo "⚠️  This will create AWS resources and incur costs (~$125/month)"
+	@echo ""
+	@echo -n "Are you sure? (type 'yes' to confirm): " && read ans && [ $$ans = yes ] || exit 1
+	@echo ""
+	@echo "Deploying to AWS EC2..."
+	@echo "Enter database password (or press Enter for random):"
+	@read DB_PASS; if [ -z "$$DB_PASS" ]; then DB_PASS=$$(openssl rand -base64 32); fi; \
+	echo "Enter JWT secret (or press Enter for random):";\
+	read JWT_SEC; if [ -z "$$JWT_SEC" ]; then JWT_SEC=$$(openssl rand -base64 32); fi; \
+	cd terraform && terraform apply -auto-approve \
+		-var="key_pair_name=wise2-prod" \
+		-var="database_password=$$DB_PASS" \
+		-var="jwt_secret=$$JWT_SEC"
+	@echo ""
+	@echo "✅ Infrastructure deployed!"
+	@echo ""
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip); \
+	echo "Public IP: $$PUBLIC_IP"; \
+	echo ""; \
+	echo "Next steps:"; \
+	echo "  1. SSH: ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP"; \
+	echo "  2. Monitor bootstrap: sudo tail -f /var/log/wise2-bootstrap.log"; \
+	echo "  3. Check services: docker-compose -f /opt/wise2/docker-compose.prod.yml ps"; \
+	echo "  4. Update DNS: Point wise2.net and api.wise2.net to $$PUBLIC_IP"; \
+	echo ""
+
+deploy-destroy:
+	@echo "⚠️  This will DELETE all AWS resources, databases, and backups!"
+	@echo ""
+	@echo -n "Are you sure? Type 'destroy-wise2' to confirm: " && read ans && [ $$ans = destroy-wise2 ] || exit 1
+	@cd terraform && terraform destroy -auto-approve \
+		-var="key_pair_name=wise2-prod" \
+		-var="database_password=dummy" \
+		-var="jwt_secret=dummy"
+	@echo "✅ Resources destroyed"
+
+status:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	echo "Getting status from $$PUBLIC_IP..."; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "docker-compose -f /opt/wise2/docker-compose.prod.yml ps && echo '' && /opt/wise2/scripts/health-check.sh" || echo "Failed to connect"
+
+health-check:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP /opt/wise2/scripts/health-check.sh
+
+logs-api:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "docker logs wise2-api-prod -f"
+
+logs-db:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "docker logs wise2-postgres-prod -f"
+
+logs-nginx:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "sudo tail -f /var/log/nginx/error.log"
+
+backup:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	echo "Creating backup..."; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP /opt/wise2/scripts/backup-database.sh
+
+restore:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	echo "Listing available backups:"; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "ls -lh /backups/wise2/"; \
+	echo ""; \
+	echo "Enter backup filename to restore (e.g., wise2_backup_20260722_020000.sql.gz):"; \
+	read BACKUP_FILE; \
+	if [ -z "$$BACKUP_FILE" ]; then \
+		echo "No backup selected"; \
+		exit 1; \
+	fi; \
+	echo "Restoring from $$BACKUP_FILE..."; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "gunzip < /backups/wise2/$$BACKUP_FILE | docker exec -i wise2-postgres-prod psql -U wise2_prod -d wise2_prod"
+
+update:
+	@PUBLIC_IP=$$(cd terraform && terraform output -raw public_ip 2>/dev/null); \
+	if [ -z "$$PUBLIC_IP" ]; then \
+		echo "No deployed instance found"; \
+		exit 1; \
+	fi; \
+	echo "Updating application..."; \
+	ssh -i wise2-prod.pem ubuntu@$$PUBLIC_IP "cd /opt/wise2 && git pull origin main && docker-compose -f docker-compose.prod.yml build && docker-compose -f docker-compose.prod.yml up -d"
+
+cleanup:
+	@echo "Cleaning up local files..."
+	@rm -f wise2-prod.pem
+	@rm -rf terraform/.terraform
+	@rm -f terraform/terraform.tfstate*
+	@echo "✅ Cleanup complete"
