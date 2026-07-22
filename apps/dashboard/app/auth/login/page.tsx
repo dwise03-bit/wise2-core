@@ -1,111 +1,104 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@wise2/shared/hooks';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading, error: authError, isAuthenticated, user } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@wise2.net');
+  const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (mounted && isAuthenticated && user?.role === 'CUSTOMER') {
-      router.push('/dashboard');
-    }
-  }, [mounted, isAuthenticated, user, router]);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
+    setLoading(true);
 
     try {
-      await login(email, password);
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      router.push('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError('Connection error. Please try again.');
+      setLoading(false);
     }
   };
 
-  if (!mounted) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#050505] to-[#1a1a2e] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black mb-2">WISE²</h1>
-          <p className="text-gray-400">Welcome back</p>
+          <h1 className="text-4xl font-bold text-[#2cd588] mb-2">WISE²</h1>
+          <p className="text-gray-400">Enterprise AI Operating System</p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          {(error || authError) && (
-            <div className="p-4 bg-red-900/30 border border-red-500 rounded-lg text-red-300">
-              {error || authError}
+        <div className="bg-[#0f0f1e] border border-[#2cd588]/30 rounded-lg p-8 shadow-2xl">
+          <h2 className="text-2xl font-bold text-white mb-6">Login</h2>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+              {error}
             </div>
           )}
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-cyan-500 focus:outline-none transition text-white placeholder-gray-500"
-              required
-            />
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 bg-[#050505] border border-[#2cd588]/30 rounded-lg text-white focus:outline-none focus:border-[#2cd588]"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">Demo: demo@wise2.net</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 bg-[#050505] border border-[#2cd588]/30 rounded-lg text-white focus:outline-none focus:border-[#2cd588]"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">Demo: password123</p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-4 py-2 bg-[#2cd588] text-black font-bold rounded-lg hover:bg-green-600 disabled:opacity-50 mt-6"
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="bg-[#2cd588]/10 border border-[#2cd588]/30 rounded-lg p-4 text-sm mt-6">
+            <p className="text-gray-300 mb-2"><strong>Demo Account:</strong></p>
+            <p className="text-gray-400 text-xs font-mono mb-1">Email: demo@wise2.net</p>
+            <p className="text-gray-400 text-xs font-mono">Password: password123</p>
           </div>
+        </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-cyan-500 focus:outline-none transition text-white placeholder-gray-500"
-              required
-            />
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-lg transition disabled:opacity-50"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        {/* Signup Link */}
-        <div className="text-center mt-6">
-          <p className="text-gray-400">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-cyan-500 hover:text-cyan-400">
-              Create one
-            </Link>
-          </p>
+        <div className="text-center mt-6 text-gray-500 text-xs">
+          <p>© 2026 WISE² Enterprise. All rights reserved.</p>
         </div>
       </div>
     </div>
