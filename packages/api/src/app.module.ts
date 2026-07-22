@@ -12,6 +12,7 @@ import { APIManagerModule } from './config/api-manager.module';
 import { EmailModule } from './email/email.module';
 import { EventsModule } from './analytics/events.module';
 import { QueueModule } from './queue/queue.module';
+import { DiscordModule } from './discord/discord.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -89,6 +90,7 @@ import { APIStatusController } from './config/api-status.controller';
     AnalyticsModule,
     CommunityModule,
     ModulesModule,
+    DiscordModule,
   ],
   controllers: [AppController, APIStatusController],
   providers: [AppService],
