@@ -1,25 +1,14 @@
-'use client';
+import Dashboard from './components/Dashboard';
 
-
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
-import { DashboardHome } from '@wise2/dashboard-shell';
+export const metadata = {
+  title: 'WISE² Command Center',
+  description: 'Enterprise AI Operating System Dashboard',
+};
 
 export default function Home() {
-  const router = useRouter();
-  const { user, logout, isLoading } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/auth/login');
-  };
-
   return (
-    <DashboardHome
-      showAuthStatus
-      userEmail={user?.email ?? null}
-      onLogout={handleLogout}
-      isLoggingOut={isLoading}
-    />
+    <main className="w-full h-screen">
+      <Dashboard />
+    </main>
   );
 }

@@ -1,0 +1,302 @@
+version: '3.9'
+
+# WISE² Edge Docker Compose for Raspberry Pi 3B
+# Optimized for 1GB RAM with resource limits and lightweight components
+#
+# Usage: docker-compose -f docker-compose.pi3b.yml up -d
+#
+# Prerequisites:
+# - Raspberry Pi OS Lite (32-bit recommended)
+# - 2GB swap configured
+# - Docker & Docker Compose installed
+# - Node.js 20+ installed
+#
+
+services:
+  # Local LLM inference via Ollama
+  # Lightweight models only: tinyllama (1.1GB), mistral:7b-q4 (3.8GB)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wise2-ollama
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./models:/models:ro
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_MAX_LOADED_MODELS: 1  # Load only one model at a time
+    restart: unless-stopped
+
+    # Resource limits for Pi 3B (1GB total RAM)
+    # Ollama uses ~300-400MB with tinyllama loaded
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'      # Use up to 1.5 CPU cores
+          memory: 512M     # Max 512MB RAM
+        reservations:
+          cpus: '0.5'      # Reserve at least 0.5 cores
+          memory: 256M     # Reserve at least 256MB RAM
+
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:11434/api/tags']
+      interval: 60s        # Longer interval to reduce load on Pi 3B
+      timeout: 10s
+      retries: 3
+      start_period: 60s    # Give Ollama time to start (slow on Pi 3B)
+
+    networks:
+      - wise2-edge
+
+  # SQLite database initialization
+  # Creates data directories on first run
+  db-init:
+    image: busybox
+    container_name: wise2-db-init
+    volumes:
+      - ./data:/data
+    command: mkdir -p /data
+    networks:
+      - wise2-edge
+
+  # WISE² Edge Runtime Service
+  # Core service: local inference, voice control, GPIO automation
+  edge-runtime:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        NODE_ENV: production
+    container_name: wise2-edge-runtime
+    depends_on:
+      - ollama
+      - db-init
+    ports:
+      - '3000:3000'    # API endpoint
+      - '3002:3002'    # Webhook receiver port
+    volumes:
+      # Data persistence
+      - ./data:/data
+      - ./models:/models:ro
+
+      # Logging
+      - /var/log/wise2-edge-appliance:/var/log/wise2-edge-appliance
+
+      # Hardware access (for GPIO, camera, etc)
+      - /dev:/dev
+      - /sys:/sys:ro
+      - /proc:/proc:ro
+
+    environment:
+      # Node.js runtime
+      NODE_ENV: production
+      NODE_ID: edge-pi3b-1
+      PORT: 3000
+      LOG_LEVEL: info
+
+      # Database & storage paths
+      LOCAL_DB_PATH: /data/wise2-edge.db
+      MODEL_PATH: /models
+
+      # AI model configuration (lightweight for Pi 3B)
+      VOICE_MODEL: tinyllama    # Recommended: tinyllama (1.1GB)
+      # Alternative: mistral:7b-q4 (3.8GB, slower but higher quality)
+      OLLAMA_URL: http://ollama:11434
+
+      # Cloud configuration
+      CLOUD_URL: https://api.wise2.cloud
+      API_KEY: ${API_KEY:-}
+      WIREGUARD_CONFIG_PATH: /etc/wireguard/wise2.conf
+
+      # Runtime flags
+      OFFLINE_MODE: 'false'     # Enable cloud sync when available
+
+      # Performance tuning for Pi 3B
+      MAX_CONNECTIONS: 20       # Limit concurrent connections
+      REQUEST_TIMEOUT: 30000    # 30 second timeout
+      SYNC_INTERVAL: 60000      # Sync every 60 seconds (adjust as needed)
+      HEALTH_CHECK_INTERVAL: 45000  # Health check every 45 seconds
+
+      # Database optimization
+      SQLITE_CACHE_MB: 16       # Limit SQLite cache to 16MB
+
+      # Memory management
+      MAX_RETRY_ATTEMPTS: 3
+      RETRY_DELAY_MS: 1000
+      QUEUE_MAX_SIZE: 100
+
+    restart: unless-stopped
+
+    # Resource limits for Pi 3B
+    # Total Pi 3B: 1GB RAM + 2GB swap
+    # Ollama: ~400MB
+    # Edge Runtime: ~300MB
+    # System: ~200MB
+    deploy:
+      resources:
+        limits:
+          cpus: '1.8'      # Use most CPU cores (but leave 0.2 for system)
+          memory: 512M     # Max 512MB RAM (+ can use swap)
+        reservations:
+          cpus: '0.5'      # Guarantee at least 0.5 cores
+          memory: 256M     # Guarantee at least 256MB RAM
+
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      interval: 60s        # Longer interval to reduce load
+      timeout: 10s
+      retries: 3
+      start_period: 30s    # Wait 30s before first health check
+
+    networks:
+      - wise2-edge
+
+    # Required capabilities for GPIO and hardware control
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_RAWIO
+
+    # Device access for GPIO, camera, audio
+    devices:
+      - /dev/mem:/dev/mem
+      - /dev/gpiomem:/dev/gpiomem
+
+# Named volumes for data persistence
+volumes:
+  ollama-data:
+    driver: local
+
+# Network for inter-service communication
+networks:
+  wise2-edge:
+    driver: bridge
+    # Optional: increase MTU for Pi 3B Ethernet
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+
+# Optional profiles for additional services
+# Enable with: docker-compose --profile monitoring up -d
+# Services below are disabled by default to conserve Pi 3B resources
+
+  # Prometheus metrics collection (optional)
+  # Enable only if you need detailed monitoring
+  # WARNING: Adds ~50MB memory overhead
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wise2-prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    environment:
+      - PROMETHEUS_HOST=0.0.0.0
+      - PROMETHEUS_PORT=9090
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 64M
+        reservations:
+          memory: 32M
+    networks:
+      - wise2-edge
+    profiles:
+      - monitoring
+
+  # Grafana dashboards (optional)
+  # Enable only if you need visual monitoring
+  # WARNING: Adds ~100MB memory overhead
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wise2-grafana
+    ports:
+      - '3001:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100M
+        reservations:
+          memory: 50M
+    networks:
+      - wise2-edge
+    profiles:
+      - monitoring
+
+# NOTES FOR RASPBERRY PI 3B:
+#
+# 1. RESOURCE LIMITS:
+#    - Total system RAM: 1GB (Pi 3B) + 2GB swap
+#    - CPU cores: 4 (1.2GHz ARMv7)
+#    - All services must fit within these constraints
+#
+# 2. MEMORY MANAGEMENT:
+#    - Ollama (tinyllama): ~400MB when loaded
+#    - Edge Runtime: ~300MB typical
+#    - System/Docker overhead: ~200MB
+#    - Total: ~900MB, leaving ~100MB buffer
+#    - When memory runs out, swap is used (slower)
+#
+# 3. PERFORMANCE EXPECTATIONS:
+#    - Startup time: 30-45 seconds
+#    - API response time: 50-200ms (depends on Ollama availability)
+#    - AI inference: 2-5 seconds per request (tinyllama)
+#    - CPU usage: 30-60% under load
+#
+# 4. THERMAL MANAGEMENT:
+#    - Monitor temp: vcgencmd measure_temp
+#    - Throttles above 80°C (auto-recovery)
+#    - Critical: 85°C
+#    - Solution: Add heatsink, improve ventilation
+#
+# 5. STORAGE OPTIMIZATION:
+#    - Docker images: ~1.2GB (ollama + edge)
+#    - Models: ~1.1GB (tinyllama)
+#    - Database: grows with usage
+#    - OS: ~1.8GB
+#    - Recommended: 16GB+ microSD card
+#
+# 6. DISABLE IF SHORT ON RAM:
+#    - Prometheus (add ~50MB, optional)
+#    - Grafana (add ~100MB, optional)
+#    - Use profiles: docker-compose --profile monitoring up -d
+#
+# 7. MODEL SELECTION:
+#    - tinyllama: 1.1GB, ~2-3s inference, recommended
+#    - mistral:7b-q4: 3.8GB, ~4-5s inference, if you have space
+#    - dolphin-mixtral: 26GB, NOT recommended for Pi 3B
+#    - orca-mini: 1.7GB, good alternative to tinyllama
+#
+# 8. TROUBLESHOOTING:
+#    - High memory: check docker stats, reduce max_connections
+#    - Slow inference: check if model is fully loaded (curl ollama:11434/api/tags)
+#    - OOM kills: increase swap, reduce Ollama memory limit
+#    - Network issues: check DNS (nslookup 8.8.8.8)
+#
+# 9. MONITORING:
+#    - Health check: curl http://localhost:3000/health
+#    - Resources: docker stats
+#    - Logs: docker-compose logs edge-runtime
+#    - Disk usage: df -h
+#    - Memory: free -h
+#
+# 10. PRODUCTION DEPLOYMENT:
+#    - Set NODE_ENV=production (already set)
+#    - Configure API_KEY for cloud sync
+#    - Set up WireGuard VPN for secure connectivity
+#    - Enable automated backups
+#    - Monitor temperature and resource usage
+#    - Configure systemd service for autostart
+#
+# For full documentation, see: PI3B_EDGE_INSTALLATION_GUIDE.md
