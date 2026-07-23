@@ -1,0 +1,103 @@
+================================================================================
+                    WISE² - CANCELLATION CONFIRMATION
+================================================================================
+
+Hi {{firstName}},
+
+We've processed your cancellation request. Below are the details of your
+cancelled booking and refund information.
+
+================================================================================
+BOOKING DETAILS
+================================================================================
+
+Original Date & Time:  {{bookingDate}} at {{bookingTime}}
+Consultant:            {{consultantName}}
+Booking ID:            {{bookingId}}
+Cancellation Date:     {{cancellationDate}}
+
+================================================================================
+REFUND DETAILS
+================================================================================
+
+{{#if showRefund}}
+Booking Amount:        {{bookingAmount}}
+{{#if cancellationFee}}Cancellation Fee:      -{{cancellationFee}}{{/if}}
+Refund Amount:         {{refundAmount}}
+
+Status:                Refund processed to {{refundMethod}}
+
+{{refundTimeline}}
+{{else}}
+No refund was issued for this cancellation.
+{{/if}}
+
+================================================================================
+REFUND TIMELINE
+================================================================================
+
+Immediately
+  → Cancellation processed and confirmed
+
+1-2 Business Days
+  → Refund initiated to your account
+
+3-5 Business Days
+  → Refund appears in your {{refundMethod}}
+
+================================================================================
+WANT TO RESCHEDULE?
+================================================================================
+
+We'd love to help! {{consultantName}} is still available for consultations.
+You can book a new session anytime.
+
+Schedule New Consultation: {{rebookLink}}
+
+================================================================================
+FREQUENTLY ASKED QUESTIONS
+================================================================================
+
+Q: When will I receive my refund?
+A: Refunds are typically processed within 1-2 business days. Your bank may
+   take 3-5 additional business days to reflect the amount.
+
+Q: Can I book with a different consultant?
+A: Absolutely! You can browse our full list of consultants and book with
+   anyone who fits your needs and availability.
+
+{{#if cancellationFee}}
+Q: Is there a cancellation fee?
+A: Our cancellation policy includes a fee of {{cancellationFee}} if
+   cancelled within {{cancellationWindowDays}} days of the scheduled call.
+{{else}}
+Q: Is there a cancellation fee?
+A: No cancellation fees apply to your booking.
+{{/if}}
+
+================================================================================
+HAVING ISSUES?
+================================================================================
+
+If you don't see your refund or have any questions about this cancellation,
+our support team is here to help.
+
+Contact Support: support@wise2.io
+
+================================================================================
+
+Thank you for your interest in WISE² Consulting. We hope to work with you
+in the future!
+
+Questions? Contact us at support@wise2.io
+
+================================================================================
+PREFERENCES & LEGAL
+================================================================================
+
+Unsubscribe:      {{unsubscribeLink}}
+Email Preferences: {{preferencesLink}}
+Privacy Policy:   {{privacyLink}}
+
+© 2026 WISE² - Organized Chaos Command Center
+All rights reserved.
