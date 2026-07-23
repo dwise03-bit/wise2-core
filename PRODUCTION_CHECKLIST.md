@@ -1,145 +1,243 @@
-# WISE² ENTERPRISE - PRODUCTION READINESS CHECKLIST
+# WISE² Production Deployment Checklist
 
-## PHASE 5: PRODUCTION RELEASE
+Complete checklist before going live.
 
-### SECURITY ✅
-- [x] JWT authentication implemented
-- [x] Bcrypt password hashing (12 rounds)
-- [x] CORS configured
-- [x] Rate limiting framework
-- [x] SQL injection protection
-- [x] HTTPS/TLS ready
-- [x] Secrets management ready
-- [ ] Security audit completed
-- [ ] Penetration testing scheduled
-- [ ] SSL certificates issued
-- [ ] API keys rotated
+## Pre-Deployment
 
-### INFRASTRUCTURE ✅
-- [x] Docker images configured
-- [x] docker-compose.prod.yml ready
-- [x] Kubernetes manifests drafted
-- [x] Traefik reverse proxy setup
-- [x] Database backups configured
-- [ ] Load balancer tested
-- [ ] Failover procedures documented
-- [ ] Monitoring stack deployed
-- [ ] Logging aggregation active
-- [ ] CDN configured
+- [ ] Stripe account created and verified
+- [ ] SendGrid account created and verified
+- [ ] Production database configured
+- [ ] SSL certificates obtained
+- [ ] Domain DNS configured
+- [ ] Environment variables set in .env.local
+- [ ] Docker & Docker Compose installed
+- [ ] Git repository cloned and updated
 
-### TESTING ✅
-- [x] Unit test framework (Jest)
-- [x] Integration test patterns
-- [x] Component test setup
-- [ ] E2E test suite written
-- [ ] Performance tests run
-- [ ] Load testing completed
-- [ ] Browser compatibility verified
-- [ ] Accessibility audit passed
-- [ ] Security scanning complete
+## Configuration
 
-### PERFORMANCE ✅
-- [x] API response targets (< 200ms p95)
-- [x] Database query optimization
-- [x] Caching strategy (Redis)
-- [x] Image optimization
-- [x] Code splitting ready
-- [ ] Core Web Vitals > 90
-- [ ] TTI < 3 seconds
-- [ ] FCP < 1 second
-- [ ] CLS < 0.1
+- [ ] STRIPE_PUBLIC_KEY set
+- [ ] STRIPE_SECRET_KEY set
+- [ ] STRIPE_STARTER_PRICE_ID set
+- [ ] STRIPE_PRO_PRICE_ID set
+- [ ] STRIPE_WEBHOOK_SECRET set
+- [ ] SENDGRID_API_KEY set
+- [ ] SENDGRID_FROM_EMAIL verified
+- [ ] DATABASE_URL set (production)
+- [ ] APP_URL set (production domain)
+- [ ] API_BASE_URL set (production domain)
 
-### COMPLIANCE ✅
-- [x] GDPR data handling
-- [x] Terms of Service drafted
-- [x] Privacy Policy written
-- [x] Data retention policies
-- [ ] Compliance audit completed
-- [ ] GDPR consent flow implemented
-- [ ] Data deletion mechanisms tested
-- [ ] Audit log retention verified
+## Deployment
 
-### OPERATIONS ✅
-- [x] Health check endpoints
-- [x] Monitoring dashboards (Grafana template)
-- [x] Alert rules framework
-- [x] Incident response plan drafted
-- [x] Runbooks documented
-- [ ] On-call rotation setup
-- [ ] Escalation procedures tested
-- [ ] Team training completed
-- [ ] Deployment playbook tested
-- [ ] Rollback procedures verified
+- [ ] Run `./deploy.sh production`
+- [ ] All 5 services are running (postgres, api, website, studio, nginx)
+- [ ] No errors in Docker logs
+- [ ] All health checks passing
 
-### FEATURES ✅
-- [x] Authentication system
-- [x] User management
-- [x] Project management
-- [x] Audio recording interface
-- [x] Mixing console
-- [x] LIVE streaming
-- [x] Community features
-- [x] Billing system
-- [x] Analytics dashboard
-- [x] Multi-module support
+## Database
 
-### DOCUMENTATION ✅
-- [x] Architecture documentation
-- [x] API documentation (OpenAPI-ready)
-- [x] Database schema
-- [x] Security guidelines
-- [x] Deployment procedures
-- [x] Operations guide
-- [x] Runbooks (basic)
-- [ ] Developer onboarding guide
-- [ ] API reference (full)
-- [ ] Architecture diagrams (detailed)
+- [ ] Schema migrations completed
+- [ ] Tables created: subscriptions, workspaces, workspace_members, invoices, analytics_events
+- [ ] Indexes created for performance
+- [ ] Database backups configured (daily)
+- [ ] Connection pooling configured
 
-### MARKETING ✅
-- [x] Landing page built
-- [x] Feature pages designed
-- [x] Pricing clearly displayed
-- [ ] CRM setup
-- [ ] Email templates configured
-- [ ] Social media accounts ready
-- [ ] Press kit prepared
-- [ ] Early access list seeded
+## API
 
-### CUSTOMER SUCCESS ✅
-- [x] Support email setup
-- [x] Help documentation started
-- [ ] Support ticketing system
-- [ ] Onboarding flow
-- [ ] Tutorial videos recorded
-- [ ] FAQ compiled
-- [ ] Knowledge base populated
+- [ ] Health check endpoint responds: `curl https://api.wise2.io/health`
+- [ ] Swagger docs accessible: `https://api.wise2.io/api/docs`
+- [ ] Billing endpoints working
+- [ ] Webhook endpoint accessible: `https://api.wise2.io/v1/billing/webhook`
+- [ ] CORS configured correctly
+- [ ] Rate limiting enabled
+- [ ] Error logging configured (Sentry)
 
-## GO/NO-GO DECISION
+## Frontend
 
-**READINESS**: 75% (Essential items complete, operational polish in progress)
+- [ ] Website loads: `https://wise2.io`
+- [ ] Pricing page displays: `https://wise2.io/pricing`
+- [ ] Checkout form loads: `https://wise2.io/checkout`
+- [ ] Onboarding wizard works: `https://wise2.io/onboarding`
+- [ ] Subscription dashboard loads: `https://wise2.io/dashboard/subscription`
+- [ ] All static assets load (no 404s)
+- [ ] Mobile responsive design tested
+- [ ] Dark theme renders correctly
 
-**BLOCKERS FOR LAUNCH**:
-- [ ] Security audit must pass
-- [ ] Performance targets verified
-- [ ] Compliance audit completed
-- [ ] Team training done
-- [ ] Deployment tested in staging
+## Stripe Integration
 
-**RECOMMENDED ACTIONS**:
-1. Complete security audit
-2. Run full load test
-3. Verify all monitoring
-4. Train support team
-5. Test deployment procedure
-6. Soft launch to beta group
-7. Monitor for 48 hours
-8. Public launch
+- [ ] Webhook endpoint registered in Stripe Dashboard
+- [ ] All webhook events subscribed:
+  - [ ] customer.subscription.created
+  - [ ] customer.subscription.updated
+  - [ ] customer.subscription.deleted
+  - [ ] invoice.payment_succeeded
+  - [ ] invoice.payment_failed
+  - [ ] charge.refunded
+- [ ] Test payment succeeds (4242 4242 4242 4242)
+- [ ] Test payment failure handled (4000 0000 0000 0002)
+- [ ] Refund process tested
+- [ ] Upgrade/downgrade tested
+- [ ] Cancellation with `cancel_at_period_end` tested
 
-**LAUNCH DATE ESTIMATE**: 2026-07-18 (1 week)
+## Email
 
-**POST-LAUNCH TASKS**:
-- Monitor error rates (target: < 0.1%)
-- Track uptime (target: > 99.9%)
-- Gather user feedback
-- Address critical bugs (< 4h SLA)
-- Optimize performance based on metrics
+- [ ] SendGrid API key working
+- [ ] From email verified
+- [ ] Welcome email template works
+- [ ] Onboarding tip emails scheduled
+- [ ] Invoice email template works
+- [ ] Payment failure emails escalate
+- [ ] Cancellation email sends
+- [ ] Unsubscribe links work
+- [ ] SMTP relay configured (backup)
+
+## Customer Journey
+
+- [ ] **Step 1: Pricing Page**
+  - [ ] Visit pricing page
+  - [ ] Monthly/annual toggle works
+  - [ ] All tiers display
+  - [ ] CTA button navigates to checkout
+
+- [ ] **Step 2: Checkout**
+  - [ ] Stripe Checkout loads
+  - [ ] Test card (4242...) succeeds
+  - [ ] Invalid card fails appropriately
+  - [ ] Redirect to success page works
+
+- [ ] **Step 3: Workspace Creation**
+  - [ ] Workspace created in database
+  - [ ] Subscription record created
+  - [ ] Workspace members added
+  - [ ] Workspace invite link generated
+
+- [ ] **Step 4: Welcome Email**
+  - [ ] Welcome email sent immediately
+  - [ ] Email contains workspace link
+  - [ ] Email shows trial end date
+
+- [ ] **Step 5: Onboarding**
+  - [ ] Onboarding wizard appears
+  - [ ] Step 1: Workspace setup
+  - [ ] Step 2: Team setup
+  - [ ] Step 3: Integrations (optional)
+  - [ ] Step 4: Preferences
+  - [ ] Step 5: Completion
+  - [ ] Success redirect to subscription dashboard
+
+- [ ] **Step 6: Subscription Dashboard**
+  - [ ] Current plan displays
+  - [ ] Pricing shows correctly
+  - [ ] Billing date shows correctly
+  - [ ] Invoice history visible
+  - [ ] Upgrade button works
+  - [ ] Cancel button works
+
+- [ ] **Step 7: Upgrade Flow**
+  - [ ] Upgrade to higher plan
+  - [ ] Stripe handles proration
+  - [ ] Confirmation email sent
+  - [ ] Subscription updated in database
+
+- [ ] **Step 8: Cancellation**
+  - [ ] Cancel subscription
+  - [ ] Cancellation email sent
+  - [ ] `cancel_at_period_end` set
+  - [ ] Access continues until period end
+  - [ ] Reactivation option works
+
+## Monitoring & Alerting
+
+- [ ] Error tracking configured (Sentry/DataDog)
+- [ ] Error alerts to Slack/PagerDuty
+- [ ] Uptime monitoring configured
+- [ ] Performance monitoring enabled
+- [ ] Database monitoring enabled
+- [ ] Backup verification automated
+- [ ] Log aggregation configured
+
+## Security
+
+- [ ] HTTPS enforced on all domains
+- [ ] SSL certificate valid and not expired
+- [ ] Security headers configured
+- [ ] CORS whitelist set correctly
+- [ ] Rate limiting enabled
+- [ ] SQL injection protection (ORM used)
+- [ ] XSS protection enabled
+- [ ] CSRF tokens configured
+- [ ] API keys stored securely (not in code)
+- [ ] Database password strong & unique
+- [ ] Regular security updates planned
+
+## Performance
+
+- [ ] API response time < 200ms
+- [ ] Website load time < 2 seconds
+- [ ] Images optimized (WebP format)
+- [ ] Database queries optimized
+- [ ] Caching enabled (Redis/CDN)
+- [ ] Database connection pooling configured
+- [ ] Memory usage monitored
+- [ ] CPU usage monitored
+
+## Backup & Disaster Recovery
+
+- [ ] Daily database backups configured
+- [ ] Backups stored off-site
+- [ ] Backup restoration tested
+- [ ] Disaster recovery plan documented
+- [ ] RTO/RPO defined
+- [ ] Runbook created for failover
+
+## Documentation
+
+- [ ] CUSTOMER_JOURNEY.md reviewed
+- [ ] DEPLOYMENT_GUIDE.md reviewed
+- [ ] QUICKSTART.md tested
+- [ ] API documentation up-to-date
+- [ ] Runbooks created
+- [ ] Incident response plan documented
+- [ ] Team trained on deployment process
+
+## Legal & Compliance
+
+- [ ] Terms of Service updated
+- [ ] Privacy Policy updated
+- [ ] Billing info clearly displayed
+- [ ] Trial terms clear (14 days free)
+- [ ] Cancellation policy documented
+- [ ] Refund policy documented
+- [ ] GDPR compliance (if EU users)
+- [ ] SOC 2 compliance (if needed)
+
+## Post-Launch Monitoring (First 24 Hours)
+
+- [ ] Monitor error rate (target: <0.1%)
+- [ ] Monitor API latency
+- [ ] Monitor database performance
+- [ ] Monitor email delivery rate (target: >99%)
+- [ ] Monitor Stripe webhook delivery (target: 100%)
+- [ ] Monitor checkout conversion
+- [ ] Monitor customer support tickets
+- [ ] Be on call for incidents
+
+## Success Criteria
+
+✅ **Go-Live Ready When:**
+- All items checked
+- No P0 bugs outstanding
+- Team trained on operations
+- Monitoring & alerting working
+- 1-2 team members on standby first 24 hours
+
+---
+
+## Sign-Off
+
+- [ ] Engineering Lead Approval: _________________ Date: _______
+- [ ] Product Lead Approval: _________________ Date: _______
+- [ ] Operations Lead Approval: _________________ Date: _______
+
+---
+
+**Status**: Ready to launch on [DATE]

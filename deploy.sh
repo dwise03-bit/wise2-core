@@ -1,98 +1,136 @@
 #!/bin/bash
 
-# WISE² Platform Deployment Script
-# Deploys to Vercel with proper configuration
+# WISE² Complete Deployment Script
+# Usage: ./deploy.sh [production|staging]
 
 set -e
 
-echo "🚀 WISE² Platform Deployment"
-echo "===================================="
+ENVIRONMENT=${1:-production}
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Colors for output
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+echo "🚀 WISE² Customer Journey Deployment"
+echo "Environment: $ENVIRONMENT"
+echo ""
 
-# Step 1: Verify build
-echo -e "\n${BLUE}Step 1: Verifying production build...${NC}"
-npm run build
-echo -e "${GREEN}✓ Build successful${NC}"
+# ============================================================================
+# Step 1: Validate Environment Variables
+# ============================================================================
+echo "📋 Validating environment variables..."
 
-# Step 2: Check Vercel CLI
-echo -e "\n${BLUE}Step 2: Checking Vercel CLI...${NC}"
-if ! command -v vercel &> /dev/null; then
-    echo -e "${YELLOW}⚠ Vercel CLI not found. Installing...${NC}"
-    npm install -g vercel
+required_vars=(
+  "STRIPE_PUBLIC_KEY"
+  "STRIPE_SECRET_KEY"
+  "STRIPE_STARTER_PRICE_ID"
+  "STRIPE_PRO_PRICE_ID"
+  "STRIPE_WEBHOOK_SECRET"
+  "SENDGRID_API_KEY"
+  "SENDGRID_FROM_EMAIL"
+  "DATABASE_URL"
+  "APP_URL"
+  "API_BASE_URL"
+)
+
+missing_vars=()
+for var in "${required_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    missing_vars+=("$var")
+  fi
+done
+
+if [ ${#missing_vars[@]} -gt 0 ]; then
+  echo "❌ Missing environment variables:"
+  for var in "${missing_vars[@]}"; do
+    echo "   - $var"
+  done
+  exit 1
 fi
-echo -e "${GREEN}✓ Vercel CLI ready${NC}"
 
-# Step 3: Environment configuration
-echo -e "\n${BLUE}Step 3: Checking environment configuration...${NC}"
-if [ ! -f "apps/website/.env.production" ]; then
-    echo -e "${YELLOW}⚠ Creating .env.production${NC}"
-    cat > apps/website/.env.production << ENVEOF
-NEXT_PUBLIC_SITE_URL=https://wise2.net
-NEXT_PUBLIC_API_URL=https://api.wise2.net
-NEXT_PUBLIC_ANALYTICS_ID=G-WISE2NET
-NODE_ENV=production
-ENVEOF
-fi
-echo -e "${GREEN}✓ Environment configured${NC}"
+echo "✅ All environment variables present"
+echo ""
 
-# Step 4: Git status check
-echo -e "\n${BLUE}Step 4: Checking git status...${NC}"
-if ! git diff --quiet; then
-    echo -e "${YELLOW}⚠ Uncommitted changes detected${NC}"
-    git status
-    read -p "Continue with uncommitted changes? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Deployment cancelled"
-        exit 1
-    fi
-fi
-echo -e "${GREEN}✓ Git status verified${NC}"
+# ============================================================================
+# Step 2: Build Docker Images
+# ============================================================================
+echo "🔨 Building Docker images..."
 
-# Step 5: Deploy to Vercel
-echo -e "\n${BLUE}Step 5: Deploying to Vercel...${NC}"
-echo -e "${YELLOW}Note: You'll be prompted to authenticate with Vercel if needed${NC}"
+docker-compose -f docker-compose.prod.yml build
 
-cd apps/website
+echo "✅ Docker images built"
+echo ""
 
-# Deploy with production settings
-vercel --prod --yes \
-  --name "wise2" \
-  --env NEXT_PUBLIC_SITE_URL=https://wise2.net \
-  --env NEXT_PUBLIC_API_URL=https://api.wise2.net \
-  --env NEXT_PUBLIC_ANALYTICS_ID=G-WISE2NET
+# ============================================================================
+# Step 3: Start Services
+# ============================================================================
+echo "🚀 Starting services..."
 
-echo -e "\n${GREEN}✓ Deployment complete${NC}"
+docker-compose -f docker-compose.prod.yml up -d
 
-# Step 6: Post-deployment verification
-echo -e "\n${BLUE}Step 6: Verifying deployment...${NC}"
-echo "Waiting 30 seconds for deployment to be live..."
+echo "⏳ Waiting for services to be healthy..."
 sleep 30
 
-# Test the deployment
-if curl -s -o /dev/null -w "%{http_code}" https://wise2.vercel.app | grep -q "200"; then
-    echo -e "${GREEN}✓ Deployment verified - Site is live!${NC}"
-    echo -e "\n${GREEN}🎉 Deployment successful!${NC}"
-    echo -e "\n${BLUE}Next steps:${NC}"
-    echo "1. Configure domain: wise2.net → wise2.vercel.app in Vercel dashboard"
-    echo "2. Update DNS records (see Vercel guide)"
-    echo "3. Monitor: https://vercel.com/dashboard"
-    echo "4. Analytics: https://vercel.com/analytics"
-else
-    echo -e "${YELLOW}⚠ Site may still be deploying${NC}"
-    echo "Check progress at: https://vercel.com/dashboard"
+echo "✅ Services started"
+echo ""
+
+# ============================================================================
+# Step 4: Run Database Migrations
+# ============================================================================
+echo "🗄️  Running database migrations..."
+
+docker-compose -f docker-compose.prod.yml exec -T postgres psql \
+  -U wise2 \
+  -d wise2_prod \
+  -f /docker-entrypoint-initdb.d/01-schema.sql
+
+echo "✅ Database migrations complete"
+echo ""
+
+# ============================================================================
+# Step 5: Health Checks
+# ============================================================================
+echo "🏥 Running health checks..."
+
+services=("api" "website" "studio" "postgres")
+all_healthy=true
+
+for service in "${services[@]}"; do
+  if docker-compose -f docker-compose.prod.yml ps | grep -q "$service.*Up"; then
+    echo "✅ $service is running"
+  else
+    echo "❌ $service is not running"
+    all_healthy=false
+  fi
+done
+
+if [ "$all_healthy" = false ]; then
+  echo "⚠️  Some services are not running. Check logs:"
+  echo "   docker-compose -f docker-compose.prod.yml logs -f"
+  exit 1
 fi
 
-cd ../..
+echo ""
 
-echo -e "\n${BLUE}===================================="
-echo "Deployment Guide:"
-echo "===================================${NC}"
-echo "Preview: https://wise2.vercel.app"
-echo "Dashboard: https://vercel.com/dashboard"
-echo "Documentation: See DEPLOYMENT.md"
+# ============================================================================
+# Step 6: Display Service URLs
+# ============================================================================
+echo "✨ Deployment Complete!"
+echo ""
+echo "Services are now running:"
+echo "  📱 Website:        http://localhost:3001"
+echo "  🎨 Studio:         http://localhost:3005"
+echo "  🔧 API:            http://localhost:3000"
+echo "  💾 Database:       localhost:5432"
+echo "  🌐 Nginx:          http://localhost"
+echo ""
+
+echo "Next Steps:"
+echo "  1. Visit http://localhost/pricing to see pricing page"
+echo "  2. Complete checkout flow to test payment"
+echo "  3. Check emails: SENDGRID_API_KEY must be valid"
+echo "  4. Configure Stripe webhook at: ${API_BASE_URL}/v1/billing/webhook"
+echo ""
+
+echo "Useful Commands:"
+echo "  View logs:        docker-compose -f docker-compose.prod.yml logs -f"
+echo "  Stop services:    docker-compose -f docker-compose.prod.yml down"
+echo "  Restart service:  docker-compose -f docker-compose.prod.yml restart api"
+echo ""

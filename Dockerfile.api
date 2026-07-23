@@ -1,36 +1,30 @@
-# Build stage
-FROM node:20-alpine as builder
+# NestJS API Dockerfile
+FROM node:18-alpine AS builder
 
 WORKDIR /app
-
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+COPY package*.json ./
+COPY packages/api/package.json ./packages/api/
+RUN npm install
 
-# Copy source
-COPY . .
+# Build
+COPY packages/api ./packages/api
+RUN npm run build
 
-# Runtime stage
-FROM node:20-alpine
+# Production image
+FROM node:18-alpine
 
 WORKDIR /app
 
-# Install production dependencies only
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --prod --frozen-lockfile
+# Install production dependencies
+COPY package*.json ./
+COPY packages/api/package.json ./packages/api/
+RUN npm install --production
 
-# Copy built app from builder
-COPY --from=builder /app/packages/api/dist ./dist
-COPY --from=builder /app/packages/api/package.json ./
+# Copy built app
+COPY --from=builder /app/dist ./dist
 
-# Expose port
-EXPOSE 3333
+EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3333/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Start application
 CMD ["node", "dist/main.js"]

@@ -34,6 +34,9 @@ model User {
   versions        VersionHistory[]      @relation("versions")
   presence        UserPresence[]        @relation("presence")
 
+  // Consulting relationships
+  consultingBookings Booking[] @relation("consultingBookings")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -467,4 +470,148 @@ model UserPresence {
 
   @@unique([projectId, userId])
   @@index([projectId])
+}
+
+// ===== AI CONSULTING SERVICES SYSTEM =====
+
+// ConsultingService: Available consulting service types
+model ConsultingService {
+  id          String   @id @default(cuid())
+  name        String   // "AI Strategy Consulting", "Implementation", etc.
+  description String   @db.Text
+  hourlyRate  Float
+  minHours    Int      @default(1)
+  maxHours    Int?
+  tags        String[] // ["strategy", "implementation", "training", "audit"]
+  icon        String? // Icon name for UI
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  consultants ConsultantService[]
+  bookings    Booking[]
+}
+
+// Consultant: WISE² AI consultants
+model Consultant {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  bio       String?  @db.Text
+  expertise String[] // ["AI Strategy", "Prompt Engineering", etc.]
+  hourlyRate Float
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availability CalendarAvailability[]
+  services     ConsultantService[]
+  bookings     Booking[]
+}
+
+// ConsultantService: Junction model between Consultant and ConsultingService
+model ConsultantService {
+  id                String            @id @default(cuid())
+  consultantId      String
+  consultant        Consultant        @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  serviceId         String
+  service           ConsultingService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  customHourlyRate  Float? // Override hourly rate for this service/consultant combo
+  capacity          Int               @default(10) // Max concurrent bookings
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([consultantId, serviceId])
+  @@index([consultantId])
+  @@index([serviceId])
+}
+
+// CalendarAvailability: Recurring/one-time availability slots
+model CalendarAvailability {
+  id          String  @id @default(cuid())
+  consultantId String
+  consultant   Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int     // 0-6 (Monday-Sunday), or -1 for one-time
+  startTime   String  // "09:00" (24-hour format)
+  endTime     String  // "17:00"
+  timezone    String  @default("UTC")
+  isRecurring Boolean @default(true)
+  validFrom   DateTime? // Start date for recurring availability
+  validTo     DateTime? // End date for recurring availability
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([consultantId])
+}
+
+// Booking: Consulting session bookings
+model Booking {
+  id                    String            @id @default(cuid())
+  userId                String
+  user                  User              @relation("consultingBookings", fields: [userId], references: [id], onDelete: Cascade)
+  serviceId             String
+  service               ConsultingService @relation(fields: [serviceId], references: [id])
+  consultantId          String
+  consultant            Consultant        @relation(fields: [consultantId], references: [id])
+
+  startTime             DateTime
+  endTime               DateTime
+  durationHours         Float
+  status                String            @default("scheduled") // scheduled, in_progress, completed, cancelled, no_show
+  totalPrice            Float
+  stripePaymentIntentId String?
+  paymentStatus         String            @default("pending") // pending, succeeded, failed, refunded
+  meetingLink           String?
+  notes                 String?           @db.Text
+  consultantNotes       String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postCallSummary PostCallSummary?
+
+  @@index([userId])
+  @@index([consultantId])
+  @@index([serviceId])
+  @@index([startTime])
+}
+
+// PostCallSummary: AI-generated post-call summaries and action items
+model PostCallSummary {
+  id            String   @id @default(cuid())
+  bookingId     String   @unique
+  booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  recordingUrl  String?  @db.Text
+  transcript    String?  @db.Text
+  summary       String   @db.Text
+  followUpDate  DateTime?
+  followUpNotes String?  @db.Text
+  sentAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actionItems ActionItem[]
+
+  @@index([bookingId])
+}
+
+// ActionItem: Individual action items from post-call summary
+model ActionItem {
+  id          String          @id @default(cuid())
+  summaryId   String
+  summary     PostCallSummary @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+  title       String
+  description String?         @db.Text
+  owner       String? // "user" or "consultant"
+  dueDate     DateTime?
+  completed   Boolean         @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([summaryId])
 }

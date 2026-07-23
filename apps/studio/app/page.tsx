@@ -85,14 +85,14 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <a href="/auth" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-black font-bold rounded transition transform hover:scale-105 flex items-center justify-center gap-2">
-                START FREE TODAY
+              <a href="/dashboard" className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-black font-bold rounded transition transform hover:scale-105 flex items-center justify-center gap-2">
+                LAUNCH DASHBOARD
                 <span>→</span>
               </a>
-              <button className="px-8 py-4 border-2 border-blue-500/50 hover:bg-blue-600/10 font-bold rounded transition flex items-center justify-center gap-2">
+              <a href="/auth" className="px-8 py-4 border-2 border-blue-500/50 hover:bg-blue-600/10 font-bold rounded transition flex items-center justify-center gap-2">
                 <span>▶</span>
-                WATCH DEMO
-              </button>
+                SIGN IN
+              </a>
             </div>
 
             {/* Social Proof */}

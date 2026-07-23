@@ -11,6 +11,8 @@ export enum JobType {
   SEND_NOTIFICATION = 'send_notification',
   SEND_DIGEST = 'send_digest',
   PROCESS_EXPORT = 'process_export',
+  PROCESS_POST_CALL_SUMMARY = 'process_post_call_summary',
+  CHECK_PENDING_POST_CALLS = 'check_pending_post_calls',
 }
 
 export interface Job {

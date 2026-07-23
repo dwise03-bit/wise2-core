@@ -1,23 +1,26 @@
-# Production runtime for WISE² Creative Studio Website
-FROM node:20-alpine
+# Next.js Website Dockerfile
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-RUN apk add --no-cache dumb-init curl
+COPY package*.json ./
+COPY apps/website/package.json ./apps/website/
+RUN npm install
 
-# Copy standalone build - it contains the full app structure (but NOT static assets)
-COPY apps/website/.next/standalone ./
-# Copy static assets from the main build
-COPY apps/website/.next/static ./apps/website/.next/static
+COPY apps/website ./apps/website
+RUN npm run build
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NEXT_PUBLIC_API_URL=https://api.wise2.net
+# Production image
+FROM node:18-alpine
 
-EXPOSE 3000
+WORKDIR /app
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3000/ || exit 1
+COPY --from=builder /app/apps/website/.next ./apps/website/.next
+COPY --from=builder /app/apps/website/package.json ./apps/website/
+COPY package*.json ./
 
-ENTRYPOINT ["dumb-init", "node"]
-CMD ["apps/website/server.js"]
+RUN cd apps/website && npm install --production
+
+EXPOSE 3001
+
+CMD ["npm", "--prefix", "apps/website", "start", "--", "-p", "3001"]

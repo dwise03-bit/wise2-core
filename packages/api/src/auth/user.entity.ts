@@ -10,6 +10,7 @@ import {
 import { Session } from './session.entity';
 import { PasswordResetToken } from './password-reset-token.entity';
 import { EmailVerificationToken } from './email-verification-token.entity';
+import { OAuthCredentials } from '../db/oauth-credentials.entity';
 
 export enum UserRole {
   CUSTOMER = 'CUSTOMER',
@@ -79,4 +80,7 @@ export class User {
 
   @OneToMany(() => EmailVerificationToken, (token) => token.user, { cascade: true })
   emailVerificationTokens?: EmailVerificationToken[];
+
+  @OneToMany(() => OAuthCredentials, (credential) => credential.user, { cascade: true })
+  oauthCredentials?: OAuthCredentials[];
 }
