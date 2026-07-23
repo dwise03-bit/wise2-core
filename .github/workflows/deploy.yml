@@ -92,7 +92,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/production'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
 
     steps:
       - uses: actions/checkout@v3
@@ -105,7 +105,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd wise2-core
-            git pull origin production
+            git pull origin ${{ github.ref_name }}
             
             export STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}
             export STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
