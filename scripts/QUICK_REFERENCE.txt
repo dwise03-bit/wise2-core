@@ -1,0 +1,329 @@
+================================================================================
+                    WISE² RASPBERRY PI - QUICK REFERENCE
+                        Disaster Recovery & Rollback
+================================================================================
+
+KEEP THIS CARD HANDY! Print and post in your workspace.
+
+================================================================================
+1. SYSTEM IS DOWN - EMERGENCY PROCEDURE (5 MINUTES)
+================================================================================
+
+Step 1: Confirm it's really down
+  $ curl http://pi.local:3000/health
+  $ ssh pi@pi.local "echo ok"
+
+Step 2: Rollback to previous version
+  $ cd /path/to/wise2-core
+  $ ./scripts/rollback-pi.sh pi.local prod
+  → Select option 1 (previous version)
+  → Confirm: yes
+  → Wait for completion
+
+Step 3: Verify services are back
+  $ ./scripts/health-check.sh
+  OR
+  $ curl http://pi.local:3000/health
+  $ curl http://pi.local:3001/
+
+Step 4: Notify team
+  "WISE² system recovered. Rollback to previous version completed."
+
+================================================================================
+2. COMMON ISSUES & QUICK FIXES
+================================================================================
+
+ISSUE: API returns 500 errors
+  → Rollback: ./scripts/rollback-pi.sh pi.local prod
+  → Time: 10-15 minutes
+
+ISSUE: Database won't connect
+  → Rollback: ./scripts/rollback-pi.sh pi.local prod
+  → Time: 15-30 minutes
+
+ISSUE: Website not loading
+  → Rollback: ./scripts/rollback-pi.sh pi.local prod
+  → Time: 10-15 minutes
+
+ISSUE: Services won't start
+  → Check logs: docker-compose logs -f
+  → Restart: docker-compose restart
+  → Rollback if restart fails: ./scripts/rollback-pi.sh pi.local prod
+
+ISSUE: Out of memory
+  → Restart services: docker-compose restart
+  → Monitor: docker stats
+
+ISSUE: SSH connection refused
+  → Check: ping pi.local
+  → Try: ssh -v pi@pi.local (shows detailed error)
+  → Contact: DevOps team
+
+================================================================================
+3. PRE-DEPLOYMENT CHECKLIST (ALWAYS DO THIS!)
+================================================================================
+
+Before deploying to Pi:
+
+  ☐ Verify current health:     ./scripts/health-check.sh
+  ☐ Create backup:             ./scripts/backup-manager.sh pi.local create
+  ☐ List available backups:    ./scripts/backup-manager.sh pi.local list
+  ☐ Check git status:          git log --oneline -n 5
+  ☐ Deploy:                    ./scripts/deploy-to-pi.sh pi.local prod
+  ☐ Wait 30 seconds
+  ☐ Verify:                    ./scripts/health-check.sh
+
+================================================================================
+4. BACKUP OPERATIONS
+================================================================================
+
+Create backup now:
+  $ ./scripts/backup-manager.sh pi.local create
+  → Backs up database + volumes
+  → Time: 2-5 minutes
+
+List available backups:
+  $ ./scripts/backup-manager.sh pi.local list
+  → Shows all backups on Pi and local
+
+Restore from backup:
+  $ ./scripts/backup-manager.sh pi.local restore backup-20260723-120000
+  → Restores database and volumes
+  → Requires confirmation
+  → Time: 5-10 minutes
+
+Cleanup old backups:
+  $ ./scripts/backup-manager.sh pi.local cleanup
+  → Removes backups older than 7 days
+  → Keeps minimum of 10 backups
+
+================================================================================
+5. MONITORING & LOGS
+================================================================================
+
+Check service health:
+  $ ./scripts/health-check.sh
+
+View recent logs (real-time):
+  $ ssh pi@pi.local
+  $ cd /opt/wise2-edge
+  $ docker-compose logs -f
+
+View logs for specific service:
+  $ docker-compose logs -f api
+  $ docker-compose logs -f postgres
+  $ docker-compose logs -f website
+
+Check resource usage:
+  $ docker stats
+
+Check disk space on Pi:
+  $ ssh pi@pi.local "df -h"
+
+Check memory on Pi:
+  $ ssh pi@pi.local "free -h"
+
+================================================================================
+6. ROLLBACK PROCESS (DETAILED)
+================================================================================
+
+Run rollback script:
+  $ ./scripts/rollback-pi.sh pi.local prod
+
+Script will:
+  1. Display deployment history (git commits)
+  2. Ask you to select version:
+     [1] Previous version (default)
+     [2] Specific commit hash
+     [3] Restore from backup
+     [4] Cancel
+  3. Show detailed rollback plan
+  4. Ask for final confirmation
+  5. Execute rollback with verification
+  6. Generate detailed report
+
+After rollback:
+  - Check: logs/rollbacks/rollback-report-*.md
+  - Verify: ./scripts/health-check.sh
+  - Notify team
+
+================================================================================
+7. IMPORTANT PATHS & FILES
+================================================================================
+
+Project root:              /path/to/wise2-core/
+Scripts:                   /path/to/wise2-core/scripts/
+Rollback logs:             /path/to/wise2-core/logs/rollbacks/
+Backups:                   /path/to/wise2-core/logs/backups/
+Rollback guide:            ./scripts/ROLLBACK_GUIDE.md
+Disaster recovery manual:  ./scripts/DISASTER_RECOVERY_OPERATIONS.md
+
+On Pi:
+  Deployment:              /opt/wise2-edge/
+  Backups:                 /opt/wise2-edge-backups/
+  Logs:                    /var/log/wise2-edge-appliance/
+
+================================================================================
+8. EMERGENCY CONTACTS & ESCALATION
+================================================================================
+
+Tier 1: On-Call Engineer
+  → Try this Quick Reference first
+  → Try rollback: ./scripts/rollback-pi.sh pi.local prod
+
+Tier 2: DevOps Lead
+  → Contact if rollback doesn't work
+  → Contact if database corruption suspected
+
+Tier 3: Platform Architect
+  → Contact for 30+ minute outage
+  → Contact for multiple failed rollbacks
+
+Tier 4: CEO
+  → Only if 1+ hour outage and customers affected
+
+================================================================================
+9. GIT OPERATIONS FOR ROLLBACK
+================================================================================
+
+View last 10 commits:
+  $ git log --oneline -n 10
+
+View what changed in a commit:
+  $ git show <commit-hash>
+
+Compare two versions:
+  $ git diff <old-commit>..<new-commit>
+
+Go back to specific commit (git-based rollback):
+  $ git reset --hard <commit-hash>
+  $ git push origin main -f  (only if necessary!)
+
+================================================================================
+10. DOCKER OPERATIONS
+================================================================================
+
+View running containers:
+  $ docker-compose ps
+
+View all images:
+  $ docker images
+
+Restart a service:
+  $ docker-compose restart api
+
+Stop all services:
+  $ docker-compose stop
+
+Start all services:
+  $ docker-compose up -d
+
+View container logs:
+  $ docker logs wise2-api
+
+Remove unused images (cleanup):
+  $ docker image prune -a
+
+================================================================================
+11. SSH ACCESS TROUBLESHOOTING
+================================================================================
+
+Test SSH connection:
+  $ ssh pi@pi.local "echo test"
+
+Verbose mode (shows detailed error):
+  $ ssh -vvv pi@pi.local
+
+Using specific port:
+  $ ssh -p 2222 pi@pi.local
+
+Using specific SSH key:
+  $ ssh -i ~/.ssh/id_rsa pi@pi.local
+
+Clear cached key:
+  $ ssh-keygen -R pi.local
+
+================================================================================
+12. DATABASE OPERATIONS
+================================================================================
+
+Check if database is accessible:
+  $ docker-compose exec postgres psql -U wise2 -d wise2_prod -c "SELECT 1;"
+
+View all tables:
+  $ docker-compose exec postgres psql -U wise2 -d wise2_prod -c "\dt"
+
+Count records in table:
+  $ docker-compose exec postgres psql -U wise2 -d wise2_prod -c "SELECT COUNT(*) FROM users;"
+
+Backup database manually:
+  $ docker-compose exec -T postgres pg_dump -U wise2 wise2_prod > backup.sql
+
+Restore database manually:
+  $ docker-compose exec -T postgres psql -U wise2 -d wise2_prod < backup.sql
+
+================================================================================
+13. WHAT TO DO AFTER ROLLBACK
+================================================================================
+
+☐ Verify services: ./scripts/health-check.sh
+☐ Check logs for errors: docker-compose logs | grep -i error
+☐ Test critical paths (login, payment, etc.)
+☐ Notify team
+☐ Create incident postmortem
+☐ Identify root cause
+☐ Plan fix for the issue
+☐ Re-deploy with fix
+☐ Update runbooks/docs
+
+================================================================================
+14. PREVENTION - WHAT NOT TO DO
+================================================================================
+
+❌ Deploy directly to production without testing
+❌ Skip backup creation before deployment
+❌ Make big changes without understanding impact
+❌ Rollback without creating pre-rollback snapshot
+❌ Ignore health check failures
+❌ Deploy during peak traffic without monitoring
+❌ Rollback without confirming with team
+❌ Change configuration without backup
+
+✓ Always test in staging first
+✓ Always create backup before deploy
+✓ Always run health checks
+✓ Always get confirmation before rollback
+✓ Always monitor after deployment
+✓ Always document postmortems
+
+================================================================================
+15. QUICK DECISION TREE
+================================================================================
+
+System is down → SSH connection works?
+  YES → Run: ./scripts/rollback-pi.sh pi.local prod
+  NO → Network issue: check Pi connectivity, restart network
+
+After rollback → Services healthy?
+  YES → Problem solved, investigate root cause
+  NO → Check logs: docker-compose logs -f
+       → Try specific service restart: docker-compose restart api
+       → Try restore from backup: ./scripts/backup-manager.sh pi.local restore <backup>
+       → Escalate to Tier 2 support if still failing
+
+Unsure whether to rollback?
+  Recent deployment? → YES: Rollback
+  Recent code changes? → YES: Rollback
+  Recent config changes? → NO: Update config, don't rollback
+  No recent changes? → NO: Investigate root cause differently
+
+================================================================================
+REMEMBER: When in doubt, ROLLBACK. It's faster than debugging.
+          You can always re-deploy once the issue is identified and fixed.
+================================================================================
+
+Card Version: 1.0
+Last Updated: 2026-07-23
+Print Date: _______________
+
+Keep this card visible on your desk!
