@@ -154,7 +154,7 @@ export default function RootPage() {
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(57, 255, 20, 0.2), inset 0 0 40px rgba(57, 255, 20, 0.05)',
           }}>
-            <img src="/daniel-wise2.jpg" alt="Daniel - WISE² Founder" style={{
+            <img src="/daniel-wise2.png" alt="Daniel - WISE² Founder" style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
