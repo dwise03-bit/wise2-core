@@ -1,26 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function RootPage() {
-  const router = useRouter();
-  const [countdown, setCountdown] = useState(8);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(c => {
-        if (c <= 1) {
-          router.push('/studio');
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [router]);
 
   return (
     <div style={{
@@ -140,6 +122,7 @@ export default function RootPage() {
               border: 'none',
               cursor: 'pointer',
               transition: 'all 0.3s',
+              display: 'inline-block',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.5)';
@@ -151,18 +134,6 @@ export default function RootPage() {
             }}>
               Enter Studio
             </Link>
-            <div style={{
-              padding: '12px 32px',
-              background: 'transparent',
-              border: '1px solid rgba(57, 255, 20, 0.4)',
-              color: '#39FF14',
-              borderRadius: '8px',
-              fontWeight: 600,
-              fontSize: '13px',
-              textAlign: 'center',
-            }}>
-              Auto-redirect in {countdown}s
-            </div>
           </div>
         </div>
 
