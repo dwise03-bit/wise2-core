@@ -1,0 +1,23 @@
+# Override: Start only essential services (skip MongoDB)
+version: '3.8'
+
+services:
+  mongodb:
+    deploy:
+      replicas: 0  # Disable MongoDB
+
+  studio:
+    deploy:
+      replicas: 0  # Disable studio (depends on MongoDB)
+  
+  bot:
+    deploy:
+      replicas: 0  # Disable bot
+
+  grafana:
+    deploy:
+      replicas: 0  # Disable monitoring
+
+  prometheus:
+    deploy:
+      replicas: 0  # Disable monitoring
