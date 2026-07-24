@@ -6,6 +6,7 @@ import { useAudioMeter } from '@/hooks/audio/useAudioMeter';
 import { SegmentedMeter } from '@/components/Shared/Meters/SegmentedMeter';
 import { ClipTrack } from '@/components/Shared';
 import { Icons } from '@/components/Icons';
+import type { ClipData } from '@/hooks/useClips';
 
 interface Track {
   id: string;
@@ -14,19 +15,6 @@ interface Track {
   muted: boolean;
   solo: boolean;
   peak: number;
-}
-
-interface ClipData {
-  id: string;
-  trackId: string;
-  name: string;
-  startTime: number;
-  duration: number;
-  displayStart: number;
-  displayEnd: number;
-  fadeIn: number;
-  fadeOut: number;
-  buffer?: AudioBuffer;
 }
 
 export default function SoundLabPage() {
@@ -44,23 +32,27 @@ export default function SoundLabPage() {
       id: 'clip-1',
       trackId: '1',
       name: 'Intro',
+      audioBuffer: null as any,
       startTime: 0,
       duration: 3,
       displayStart: 0,
       displayEnd: 3,
       fadeIn: 0.5,
       fadeOut: 0.5,
+      isSelected: false,
     },
     {
       id: 'clip-2',
       trackId: '1',
       name: 'Verse',
+      audioBuffer: null as any,
       startTime: 3,
       duration: 4,
       displayStart: 3,
       displayEnd: 7,
       fadeIn: 0.1,
       fadeOut: 0.1,
+      isSelected: false,
     },
   ]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -161,7 +153,9 @@ export default function SoundLabPage() {
       >
         <div>
           <h1 style={{ margin: 0, fontSize: '24px', color: '#39FF14', fontWeight: 900 }}>
-            <Icons.Activity size={28} style={{ display: 'inline-block', marginRight: '10px' }} />
+            <span style={{ display: 'inline-block', marginRight: '10px' }}>
+              <Icons.Activity size={28} />
+            </span>
             SOUND LAB
           </h1>
           <p style={{ color: '#888', margin: '5px 0 0 0', fontSize: '12px' }}>Professional audio production</p>

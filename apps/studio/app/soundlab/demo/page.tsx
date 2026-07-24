@@ -3,18 +3,7 @@
 import React, { useState } from 'react';
 import { ClipTrack } from '@/components/Shared';
 import { Icons } from '@/components/Icons';
-
-interface ClipData {
-  id: string;
-  trackId: string;
-  name: string;
-  startTime: number;
-  duration: number;
-  displayStart: number;
-  displayEnd: number;
-  fadeIn: number;
-  fadeOut: number;
-}
+import type { ClipData } from '@/hooks/useClips';
 
 export default function SoundLabDemoPage() {
   const [zoom, setZoom] = useState(50);
@@ -27,34 +16,40 @@ export default function SoundLabDemoPage() {
       id: 'clip-intro',
       trackId: '1',
       name: 'Intro',
+      audioBuffer: null as any,
       startTime: 0,
       duration: 3,
       displayStart: 0,
       displayEnd: 3,
       fadeIn: 0.5,
       fadeOut: 0.2,
+      isSelected: false,
     },
     {
       id: 'clip-verse',
       trackId: '1',
       name: 'Verse 1',
+      audioBuffer: null as any,
       startTime: 3,
       duration: 8,
       displayStart: 3.2,
       displayEnd: 10.8,
       fadeIn: 0.1,
       fadeOut: 0.1,
+      isSelected: false,
     },
     {
       id: 'clip-chorus',
       trackId: '1',
       name: 'Chorus',
+      audioBuffer: null as any,
       startTime: 11,
       duration: 6,
       displayStart: 11,
       displayEnd: 17,
       fadeIn: 0.2,
       fadeOut: 0.3,
+      isSelected: false,
     },
   ];
 
@@ -69,7 +64,9 @@ export default function SoundLabDemoPage() {
         }}
       >
         <h1 style={{ margin: 0, fontSize: '28px', color: '#39FF14', fontWeight: 900 }}>
-          <Icons.Activity size={32} style={{ display: 'inline-block', marginRight: '12px', verticalAlign: 'middle' }} />
+          <span style={{ display: 'inline-block', marginRight: '12px', verticalAlign: 'middle' }}>
+            <Icons.Activity size={32} />
+          </span>
           PHASE 2.1 INTEGRATION DEMO
         </h1>
         <p style={{ color: '#888', margin: '8px 0 0 0', fontSize: '13px' }}>
@@ -268,7 +265,9 @@ export default function SoundLabDemoPage() {
             color: '#39FF14',
           }}
         >
-          <Icons.Check size={16} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
+          <span style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }}>
+            <Icons.Check size={16} />
+          </span>
           <strong>Phase 2.1 Complete</strong> — All three components integrated and working:
           <ul style={{ margin: '8px 0 0 24px', fontSize: '11px', lineHeight: '1.6' }}>
             <li>✅ ClipTrack component (visualization)</li>

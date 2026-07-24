@@ -40,7 +40,7 @@ export function ClipPlaybackExample() {
     },
   });
 
-  const { clips, addClip, removeClip, getClip } = useClips();
+  const { clips, addClip, removeClip } = useClips();
 
   // Local UI state
   const [uiState, setUiState] = useState<PlaybackUIState>({
@@ -80,7 +80,7 @@ export function ClipPlaybackExample() {
   const handlePlayAll = useCallback(async () => {
     try {
       // Get all clip IDs
-      const clipIds = clips.map((clip) => clip.id);
+      const clipIds = Array.from(clips.values()).map((clip) => clip.id);
 
       // Start playback of all clips simultaneously
       await Promise.all(clipIds.map((clipId) => playback.playClip(clipId)));
