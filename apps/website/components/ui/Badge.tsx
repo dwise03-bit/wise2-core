@@ -1,71 +1,34 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import React from 'react';
 
-interface BadgeProps
-  extends Omit<React.HTMLAttributes<HTMLSpanElement>, keyof MotionProps>,
-    MotionProps {
-  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
-  size?: 'sm' | 'md' | 'lg'
-  children?: React.ReactNode
+type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'default';
+
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: BadgeVariant;
+  children: React.ReactNode;
 }
 
-const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'sm',
-      children,
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    const sizeStyles = {
-      sm: 'px-2 py-1 text-xs',
-      md: 'px-3 py-1.5 text-sm',
-      lg: 'px-4 py-2 text-base',
-    }
-
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ variant = 'default', className = '', children, ...props }, ref) => {
     const variantStyles = {
-      primary:
-        'bg-wise-primary/20 text-wise-primary border border-wise-primary/30',
-      success:
-        'bg-wise-success/20 text-wise-success border border-wise-success/30',
-      warning:
-        'bg-wise-warning/20 text-wise-warning border border-wise-warning/30',
-      danger:
-        'bg-wise-danger/20 text-wise-danger border border-wise-danger/30',
-      info: 'bg-wise-info/20 text-wise-info border border-wise-info/30',
-    }
+      success: 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30',
+      warning: 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30',
+      danger: 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30',
+      info: 'bg-[#3B82F6]/20 text-[#3B82F6] border border-[#3B82F6]/30',
+      default: 'bg-[#1A1A1A] text-[#A0A0A0] border border-[#1A1A1A]',
+    };
 
     return (
-      <motion.span
+      <span
         ref={ref}
-        whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.15 }}
-        className={`
-          inline-flex
-          items-center
-          justify-center
-          font-medium
-          rounded-full
-          whitespace-nowrap
-          transition-all
-          duration-200
-          ${sizeStyles[size]}
-          ${variantStyles[variant]}
-          ${className}
-        `}
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${variantStyles[variant]} ${className}`}
         {...props}
       >
         {children}
-      </motion.span>
-    )
+      </span>
+    );
   }
-)
+);
 
-Badge.displayName = 'Badge'
-
-export default Badge
+Badge.displayName = 'Badge';

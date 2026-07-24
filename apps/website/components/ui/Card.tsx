@@ -1,51 +1,33 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import React from 'react';
 
-interface CardProps extends HTMLMotionProps<'div'> {
-  variant?: 'glass' | 'metal'
-  hoverable?: boolean
-  children?: React.ReactNode
+type CardVariant = 'default' | 'elevated' | 'metric' | 'action';
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant;
+  children: React.ReactNode;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      variant = 'glass',
-      hoverable = false,
-      children,
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    const baseStyles =
-      'rounded-lg overflow-hidden transition-all duration-300 backdrop-blur-md'
-
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ variant = 'default', className = '', children, ...props }, ref) => {
     const variantStyles = {
-      glass:
-        'bg-wise-card/40 border border-wise-surface/50 shadow-lg hover:shadow-xl hover:border-wise-primary/30',
-      metal:
-        'bg-gradient-to-br from-wise-surface-2 to-wise-card border border-wise-surface/40 shadow-lg hover:shadow-xl hover:from-wise-surface hover:to-wise-surface-2',
-    }
+      default: 'bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg p-4 sm:p-6',
+      elevated: 'bg-[#101114] border border-[#1A1A1A] rounded-xl p-6 shadow-card',
+      metric: 'bg-[#050505] border border-[#1A1A1A] rounded-lg p-4 text-center',
+      action: 'bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg p-6 hover:bg-[#101114] hover:border-[#2CD588] transition-all duration-150 cursor-pointer',
+    };
 
     return (
-      <motion.div
+      <div
         ref={ref}
-        whileHover={
-          hoverable ? { y: -4, boxShadow: '0 20px 25px rgba(0, 85, 255, 0.1)' } : {}
-        }
-        transition={{ duration: 0.2 }}
-        className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+        className={`${variantStyles[variant]} ${className}`}
         {...props}
       >
         {children}
-      </motion.div>
-    )
+      </div>
+    );
   }
-)
+);
 
-Card.displayName = 'Card'
-
-export default Card
+Card.displayName = 'Card';

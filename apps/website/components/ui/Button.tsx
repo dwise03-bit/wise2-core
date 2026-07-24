@@ -1,125 +1,51 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import React from 'react';
 
-interface ButtonProps extends HTMLMotionProps<'button'> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'success'
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-  isLoading?: boolean
-  icon?: React.ReactNode
-  iconPosition?: 'left' | 'right'
-  glow?: boolean
-  children?: React.ReactNode
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  isLoading?: boolean;
+  children: React.ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'primary',
-      size = 'md',
-      isLoading = false,
-      icon,
-      iconPosition = 'left',
-      glow = variant === 'primary',
-      children,
-      disabled,
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    const baseStyles =
-      'inline-flex items-center justify-center font-bold transition-all rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-wise-bg focus-visible:ring-wise-primary disabled:opacity-50 disabled:cursor-not-allowed'
-
-    const sizeStyles = {
-      sm: 'px-3 py-1.5 text-xs min-h-9 gap-2',
-      md: 'px-4 py-2.5 text-sm min-h-11 gap-2',
-      lg: 'px-6 py-3 text-base min-h-12 gap-2',
-      xl: 'px-8 py-4 text-lg min-h-14 gap-2',
-    }
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = 'primary', size = 'md', isLoading = false, className = '', children, disabled, ...props }, ref) => {
+    const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed';
 
     const variantStyles = {
-      // Primary - Bold gradient with blue glow
-      primary: `
-        bg-gradient-to-r from-wise-primary to-blue-600
-        text-white border border-wise-primary/50
-        hover:border-wise-primary hover:shadow-glow-blue-md
-        active:shadow-glow-blue-sm
-        ${glow ? 'shadow-glow-blue-lg hover:shadow-glow-blue-xl' : ''}
-      `,
+      primary: 'bg-[#2CD588] text-[#050505] hover:brightness-110 focus:ring-offset-[#050505] focus:ring-[#2CD588]',
+      secondary: 'bg-[#101114] text-[#F5F5F5] border border-[#1A1A1A] hover:bg-[#151619] hover:border-[#9CA3AF] focus:ring-[#2CD588]',
+      danger: 'bg-[#EF4444] text-white hover:bg-[#DC2626] focus:ring-[#EF4444]',
+      ghost: 'bg-transparent text-[#F5F5F5] hover:bg-[#101114] focus:ring-[#2CD588]',
+    };
 
-      // Secondary - Glassmorphism
-      secondary: `
-        bg-wise-surface-2/60 backdrop-blur-md
-        text-wise-text-primary border border-wise-primary/20
-        hover:border-wise-primary/40 hover:bg-wise-surface-2/80
-        hover:shadow-glow-blue-sm
-      `,
-
-      // Ghost - Minimal
-      ghost: `
-        text-wise-text-secondary
-        hover:text-wise-text-primary hover:bg-wise-surface/40
-        active:bg-wise-surface/60
-      `,
-
-      // Danger - Red gradient with glow
-      danger: `
-        bg-gradient-to-r from-wise-danger to-red-700
-        text-white border border-wise-danger/50
-        hover:border-wise-danger hover:shadow-glow-red-md
-        active:shadow-glow-red-sm
-      `,
-
-      // Outline - Bordered primary
-      outline: `
-        text-wise-primary border border-wise-primary
-        hover:border-wise-primary hover:bg-wise-primary/5
-        hover:shadow-glow-blue-sm
-      `,
-
-      // Success - Green gradient
-      success: `
-        bg-gradient-to-r from-wise-success to-green-600
-        text-white border border-wise-success/50
-        hover:border-wise-success hover:shadow-lg
-      `,
-    }
+    const sizeStyles = {
+      sm: 'px-3 py-2 text-sm min-h-10',
+      md: 'px-6 py-3 text-base min-h-12',
+      lg: 'px-8 py-4 text-lg min-h-14',
+    };
 
     return (
-      <motion.button
+      <button
         ref={ref}
-        whileHover={{ scale: disabled ? 1 : 1.05, y: disabled ? 0 : -2 }}
-        whileTap={{ scale: disabled ? 1 : 0.95, y: 0 }}
-        transition={{ duration: 0.15 }}
         disabled={disabled || isLoading}
-        className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
-        aria-busy={isLoading}
-        aria-disabled={disabled}
+        className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
         {...props}
       >
-        {isLoading ? (
-          <>
-            <motion.div
-              className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-            />
-            {children && <span>{children}</span>}
-          </>
-        ) : (
-          <>
-            {icon && iconPosition === 'left' && <span>{icon}</span>}
-            {children && <span>{children}</span>}
-            {icon && iconPosition === 'right' && <span>{icon}</span>}
-          </>
+        {isLoading && (
+          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
         )}
-      </motion.button>
-    )
+        {children}
+      </button>
+    );
   }
-)
+);
 
-Button.displayName = 'Button'
-
-export default Button
+Button.displayName = 'Button';
