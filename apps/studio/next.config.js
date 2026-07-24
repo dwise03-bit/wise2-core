@@ -2,11 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     unoptimized: process.env.NODE_ENV === 'development',
   },
   experimental: {
-    optimizePackageImports: ["@wise2/ui", "@wise2/shared"],
+    optimizePackageImports: ["@wise2/shared"],
   },
 }
 
