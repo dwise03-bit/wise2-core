@@ -5,7 +5,7 @@ import { handleReady, handleInteraction, handleMessage, handleGuildCreate, handl
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
-  private discordClient: DiscordClient;
+  private discordClient!: DiscordClient;
   private token = process.env.DISCORD_BOT_TOKEN;
   private guildId = process.env.DISCORD_GUILD_ID;
   private webhookUrl = process.env.DISCORD_WEBHOOK_URL;

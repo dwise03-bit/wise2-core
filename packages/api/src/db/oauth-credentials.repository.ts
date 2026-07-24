@@ -45,7 +45,7 @@ export class OAuthCredentialsRepository extends Repository<OAuthCredentials> {
       existing.provider_account_id = data.providerAccountId || existing.provider_account_id;
       existing.account_name = data.accountName || existing.account_name;
       existing.is_active = true;
-      existing.error_message = null;
+      existing.error_message = undefined;
 
       return this.save(existing);
     }

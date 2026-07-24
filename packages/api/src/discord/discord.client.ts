@@ -69,7 +69,7 @@ export class DiscordClient {
     }
   }
 
-  async createChannels(guildId: string, channels: { name: string; type: ChannelType }[]) {
+  async createChannels(guildId: string, channels: { name: string; type: any }[]) {
     try {
       const guild = await this.client.guilds.fetch(guildId);
       for (const channelConfig of channels) {
@@ -77,7 +77,7 @@ export class DiscordClient {
         if (!existing) {
           await guild.channels.create({
             name: channelConfig.name,
-            type: channelConfig.type,
+            type: channelConfig.type as any,
           });
           console.log(`✅ Created channel: ${channelConfig.name}`);
         }

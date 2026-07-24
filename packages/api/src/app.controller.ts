@@ -1,7 +1,7 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @ApiTags('health')
 @Controller()
@@ -37,10 +37,11 @@ export class AppController {
         },
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         status: 'not-ready',
         timestamp: new Date().toISOString(),
-        error: error.message,
+        error: errorMessage,
       };
     }
   }
