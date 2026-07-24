@@ -6,9 +6,6 @@
       "@/*": [
         "./*"
       ],
-      "@wise2/ui": [
-        "../../packages/ui/src"
-      ],
       "@wise2/shared": [
         "../../packages/shared/src"
       ]
