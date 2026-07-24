@@ -422,3 +422,57 @@ export function ClientShowcasePage() {
     </div>
   );
 }
+
+// Music Generation
+export function MusicGenerationPage() {
+  return (
+    <div className="space-y-4">
+      <h1 className="text-4xl font-display font-black">Music Generation</h1>
+
+      <div className="grid grid-cols-2 gap-4">
+        {/* Prompt Builder */}
+        <div className="bg-studio-input border border-studio-line rounded p-4 space-y-3">
+          <h2 className="text-sm font-semibold text-white">Generate Music</h2>
+          <textarea
+            placeholder="Describe the music you want to create..."
+            className="w-full h-20 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white placeholder-gray-600 focus:outline-none resize-none"
+          />
+          <div className="flex gap-2">
+            <select className="flex-1 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white focus:outline-none">
+              <option>Genre: Electronic</option>
+              <option>Pop</option>
+              <option>Hip-Hop</option>
+              <option>Classical</option>
+            </select>
+            <select className="flex-1 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white focus:outline-none">
+              <option>Mood: Happy</option>
+              <option>Sad</option>
+              <option>Energetic</option>
+              <option>Calm</option>
+            </select>
+          </div>
+          <button className="w-full px-3 py-2 bg-wise-accent text-black text-xs font-semibold rounded hover:bg-wise-accent-bright transition">
+            ⚡ Generate
+          </button>
+        </div>
+
+        {/* Library */}
+        <div className="bg-studio-input border border-studio-line rounded p-4 space-y-3">
+          <h2 className="text-sm font-semibold text-white">My Generations (0)</h2>
+          <div className="h-32 bg-studio-raised rounded border border-studio-line flex items-center justify-center text-xs text-gray-600">
+            No generations yet. Create your first track to get started!
+          </div>
+        </div>
+      </div>
+
+      {/* Voice Cloning */}
+      <div className="bg-studio-input border border-studio-line rounded p-4 space-y-3">
+        <h2 className="text-sm font-semibold text-white">Voice Cloning</h2>
+        <p className="text-xs text-gray-400">Record or upload a voice sample (5-30s) to create a unique singing voice.</p>
+        <button className="px-3 py-2 bg-wise-accent text-black text-xs font-semibold rounded hover:bg-wise-accent-bright transition">
+          🎤 Record Voice Sample
+        </button>
+      </div>
+    </div>
+  );
+}

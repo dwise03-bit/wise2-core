@@ -10,6 +10,7 @@ import {
   VoiceLabPage,
   ContentFactoryPage,
   ClientShowcasePage,
+  MusicGenerationPage,
 } from './StudioPages';
 
 /**
@@ -62,6 +63,7 @@ export default function CreativeStudioLayout() {
     { id: 'voice' as const, label: 'Voice Lab', glyph: 'VL' },
     { id: 'factory' as const, label: 'Content Factory', glyph: 'CF' },
     { id: 'showcase' as const, label: 'Client Showcase', glyph: 'SH' },
+    { id: 'generation' as const, label: 'Music Generation', glyph: 'MG' },
   ];
 
   const currentPageLabel = pages.find((p) => p.id === page)?.label || 'Creative Studio';
@@ -181,6 +183,7 @@ export default function CreativeStudioLayout() {
               {page === 'voice' && <VoiceLabPage />}
               {page === 'factory' && <ContentFactoryPage />}
               {page === 'showcase' && <ClientShowcasePage />}
+              {page === 'generation' && <MusicGenerationPage />}
             </div>
           </div>
         </div>
