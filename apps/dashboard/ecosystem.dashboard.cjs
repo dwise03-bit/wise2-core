@@ -1,8 +1,7 @@
 module.exports = {
   apps: [{
     name: 'wise2-dashboard',
-    script: 'bash',
-    args: '-c "PORT=3004 npm start"',
+    script: './start-dashboard.sh',
     cwd: '/home/dwise/wise2-core/apps/dashboard',
     env: {
       NODE_ENV: 'production'
