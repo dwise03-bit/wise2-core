@@ -1,36 +1,28 @@
 {
   "name": "@wise2/studio",
-  "version": "0.1.0",
-  "description": "WISE Sound Labs - Audio branding studio",
+  "version": "1.0.0",
   "private": true,
+  "description": "WISE² Creative Studio - SoundLabs, Live Studio, and Content Creation Suite",
   "scripts": {
     "dev": "next dev -p 3005",
     "build": "next build",
     "start": "next start -p 3005",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "type-check": "tsc --noEmit",
-    "test": "jest"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-oauth/google": "^0.12.1",
-    "@stripe/react-stripe-js": "^2.7.0",
-    "@stripe/stripe-js": "^4.0.0",
-    "@wise2/audio": "0.1.0",
-    "@wise2/design-system": "1.0.0",
-    "@wise2/ui-components": "0.1.0",
-    "framer-motion": "^11.0.0",
-    "next": "^14.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "socket.io-client": "^4.7.0",
-    "tailwindcss": "^3.4.0",
-    "tone": "^14.8.0",
-    "wavesurfer.js": "^6.6.0",
-    "zustand": "^4.5.7"
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@wise2/ui": "workspace:*",
+    "@wise2/shared": "workspace:*",
+    "framer-motion": "^11.0.3",
+    "lucide-react": "^0.312.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
-    "@types/react": "^18.2.0",
-    "typescript": "^5.3.0"
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.3.3"
   }
 }

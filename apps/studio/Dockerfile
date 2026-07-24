@@ -1,34 +1,28 @@
-FROM node:20-alpine AS builder
-
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
+COPY pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm fetch
 
-COPY package.json package-lock.json ./
-COPY packages ./packages
-COPY apps/studio ./apps/studio
+FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY pnpm-lock.yaml ./
+COPY . .
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN cd apps/studio && pnpm run build
 
-RUN npm install --frozen-lockfile --legacy-peer-deps
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV production
+ENV PORT 3005
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
 
-WORKDIR /app/apps/studio
-RUN npm run build
-
-FROM node:20-alpine
-
-WORKDIR /app/apps/studio
-
-RUN apk add --no-cache dumb-init curl
-
-# Copy built studio with full structure
-COPY --from=builder /app/apps/studio/.next ./.next
 COPY --from=builder /app/apps/studio/public ./public
-COPY --from=builder /app/apps/studio/package.json ./
+COPY --from=builder /app/apps/studio/.next/standalone ./
+COPY --from=builder /app/apps/studio/.next/static ./.next/static
 
-# Copy node_modules from root for workspace dependencies
-COPY --from=builder /app/node_modules /app/node_modules
-
-EXPOSE 3003
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:3003/ || exit 1
-
-ENTRYPOINT ["dumb-init"]
-CMD ["node", "/app/node_modules/.bin/next", "start", "-p", "3003"]
+USER nextjs
+EXPOSE 3005
+CMD ["node", "server.js"]
