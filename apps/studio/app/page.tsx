@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 export default function RootPage() {
-
   return (
     <div style={{
       minHeight: '100vh',
