@@ -12,37 +12,37 @@ export default function WebstorePage() {
     {
       id: 'template-1',
       name: 'Brand Identity Template',
-      price: 29.99,
+      price: 25.49,
       description: 'Complete brand identity package including logo, color palette, and guidelines',
     },
     {
       id: 'template-2',
       name: 'Audio Branding Kit',
-      price: 39.99,
+      price: 33.99,
       description: 'Professional audio branding assets for your business',
     },
     {
       id: 'template-3',
       name: 'Social Media Pack',
-      price: 24.99,
+      price: 21.24,
       description: 'Ready-to-use social media templates and graphics',
     },
     {
       id: 'template-4',
       name: 'Video Production Bundle',
-      price: 79.99,
+      price: 67.99,
       description: 'Everything you need for professional video production',
     },
     {
       id: 'template-5',
       name: 'Email Marketing Suite',
-      price: 34.99,
+      price: 29.74,
       description: 'Complete email marketing templates and automation setup',
     },
     {
       id: 'template-6',
       name: 'Content Calendar',
-      price: 19.99,
+      price: 16.99,
       description: '12-month content calendar with planning tools',
     },
   ];

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const COLORS = {
   accent: '#39FF14',
@@ -20,6 +20,7 @@ interface GalleryItem {
   duration: string;
   prompt: string;
   tags: string[];
+  isUploaded?: boolean;
 }
 
 const GALLERY_ITEMS: GalleryItem[] = [
@@ -73,9 +74,13 @@ export default function GalleryPage() {
   const [selectedId, setSelectedId] = useState<string>('item-1');
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoPlayTimer, setAutoPlayTimer] = useState<NodeJS.Timeout | null>(null);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(GALLERY_ITEMS);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const currentItem = GALLERY_ITEMS.find((item) => item.id === selectedId);
-  const currentIndex = GALLERY_ITEMS.findIndex((item) => item.id === selectedId);
+  const currentItem = galleryItems.find((item) => item.id === selectedId);
+  const currentIndex = galleryItems.findIndex((item) => item.id === selectedId);
 
   useEffect(() => {
     return () => {
@@ -83,14 +88,66 @@ export default function GalleryPage() {
     };
   }, [autoPlayTimer]);
 
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    setUploadMessage('Uploading...');
+
+    try {
+      const file = files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setUploadMessage(`Error: ${error.error}`);
+        setIsUploading(false);
+        setTimeout(() => setUploadMessage(''), 3000);
+        return;
+      }
+
+      const data = await response.json();
+      const newItem: GalleryItem = {
+        id: `uploaded-${Date.now()}`,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        category: data.type === 'video' ? 'Video' : 'Image',
+        description: 'Uploaded from gallery',
+        image: data.url,
+        resolution: data.type === 'video' ? '1080p' : '4K',
+        duration: data.type === 'video' ? 'Video' : 'Image',
+        prompt: 'User uploaded content',
+        tags: ['Custom', 'Uploaded'],
+        isUploaded: true,
+      };
+
+      setGalleryItems([newItem, ...galleryItems]);
+      setSelectedId(newItem.id);
+      setUploadMessage('✓ File uploaded successfully!');
+      setTimeout(() => setUploadMessage(''), 2000);
+    } catch (error) {
+      setUploadMessage(`Error: ${String(error)}`);
+      setTimeout(() => setUploadMessage(''), 3000);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const nextItem = () => {
-    const nextIdx = (currentIndex + 1) % GALLERY_ITEMS.length;
-    setSelectedId(GALLERY_ITEMS[nextIdx].id);
+    const nextIdx = (currentIndex + 1) % galleryItems.length;
+    setSelectedId(galleryItems[nextIdx].id);
   };
 
   const previousItem = () => {
-    const prevIdx = (currentIndex - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
-    setSelectedId(GALLERY_ITEMS[prevIdx].id);
+    const prevIdx = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+    setSelectedId(galleryItems[prevIdx].id);
   };
 
   const togglePlay = () => {
@@ -101,8 +158,8 @@ export default function GalleryPage() {
     } else {
       const timer = setInterval(() => {
         setSelectedId((prevId) => {
-          const idx = GALLERY_ITEMS.findIndex((i) => i.id === prevId);
-          return GALLERY_ITEMS[(idx + 1) % GALLERY_ITEMS.length].id;
+          const idx = galleryItems.findIndex((i) => i.id === prevId);
+          return galleryItems[(idx + 1) % galleryItems.length].id;
         });
       }, 4000);
       setAutoPlayTimer(timer);
@@ -415,7 +472,7 @@ export default function GalleryPage() {
             Gallery
           </div>
           <div style={{ fontSize: '13px', color: '#bbb' }}>
-            {currentIndex + 1}/{GALLERY_ITEMS.length}
+            {currentIndex + 1}/{galleryItems.length}
           </div>
         </div>
 
@@ -430,7 +487,63 @@ export default function GalleryPage() {
             gap: '10px',
           }}
         >
-          {GALLERY_ITEMS.map((item) => (
+          {/* Upload Button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: isUploading ? 'rgba(57, 255, 20, 0.1)' : 'rgba(57, 255, 20, 0.2)',
+              border: `1px solid ${COLORS.accent}`,
+              borderRadius: '8px',
+              color: COLORS.accent,
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: isUploading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              opacity: isUploading ? 0.6 : 1,
+            }}
+            onMouseEnter={(e) => {
+              if (!isUploading) {
+                (e.target as HTMLButtonElement).style.background = 'rgba(57, 255, 20, 0.35)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isUploading) {
+                (e.target as HTMLButtonElement).style.background = 'rgba(57, 255, 20, 0.2)';
+              }
+            }}
+          >
+            {isUploading ? '⏳ Uploading...' : '+ Upload'}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            style={{ display: 'none' }}
+            onChange={handleUpload}
+            disabled={isUploading}
+          />
+          {uploadMessage && (
+            <div
+              style={{
+                padding: '8px',
+                fontSize: '11px',
+                color: uploadMessage.includes('Error') ? '#ff6b6b' : COLORS.accent,
+                background: uploadMessage.includes('Error') ? 'rgba(255, 107, 107, 0.1)' : 'rgba(57, 255, 20, 0.1)',
+                borderRadius: '6px',
+                marginBottom: '8px',
+                textAlign: 'center',
+              }}
+            >
+              {uploadMessage}
+            </div>
+          )}
+
+          {galleryItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setSelectedId(item.id)}

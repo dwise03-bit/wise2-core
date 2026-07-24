@@ -45,7 +45,7 @@ export default function ConsultingPage() {
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch services');
       const data = await response.json();
-      setServices(Array.isArray(data) ? data : []);
+      setServices(data.services || []);
     } catch (error) {
       console.error('Error fetching services:', error);
       setServices([]);
@@ -59,7 +59,7 @@ export default function ConsultingPage() {
       const response = await fetch('/api/consulting/services/tags');
       if (!response.ok) throw new Error('Failed to fetch tags');
       const data = await response.json();
-      setTags(Array.isArray(data) ? data : []);
+      setTags(data.tags?.map((t: { name: string }) => t.name) || []);
     } catch (error) {
       console.error('Error fetching tags:', error);
       setTags([]);

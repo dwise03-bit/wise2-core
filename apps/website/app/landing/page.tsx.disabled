@@ -31,7 +31,7 @@ export default function LandingPage() {
                   <span className="text-[#2CD588]">Transform</span> Your Creative Vision
                 </h1>
                 <p className="text-lg text-[#A0A0A0] leading-relaxed max-w-2xl">
-                  WISE² is an all-in-one AI operating system for creators, businesses, and entrepreneurs.
+                  WISE² is an all-in-one AI operating system for creators, businesses, and entrepreneurs. 
                   Create, automate, and scale with the power of AI.
                 </p>
               </div>
@@ -120,7 +120,7 @@ export default function LandingPage() {
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
                 <p className="text-[#A0A0A0] text-sm">{feature.description}</p>
-              </Card>
+              </div>
             ))}
           </div>
         </div>

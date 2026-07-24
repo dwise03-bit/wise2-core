@@ -22,8 +22,8 @@ interface Invoice {
 }
 
 const PLAN_FEATURES = {
-  STARTER: { name: 'Starter', price: 29, workspaces: 1, users: 5 },
-  PRO: { name: 'Professional', price: 99, workspaces: 5, users: 'Unlimited' },
+  STARTER: { name: 'Starter', price: 26, workspaces: 1, users: 5 },
+  PRO: { name: 'Professional', price: 87, workspaces: 5, users: 'Unlimited' },
   ENTERPRISE: { name: 'Enterprise', price: 'Custom', workspaces: 'Unlimited', users: 'Unlimited' },
 };
 
@@ -43,20 +43,20 @@ export default function SubscriptionPage() {
       currentPeriodStart: '2024-06-22',
       currentPeriodEnd: '2024-07-22',
       cancelAtPeriodEnd: false,
-      priceMonthly: 99,
+      priceMonthly: 87,
     };
 
     const mockInvoices: Invoice[] = [
       {
         id: 'inv_1',
-        amount: 99,
+        amount: 87,
         status: 'paid',
         date: '2024-06-22',
         pdfUrl: '#',
       },
       {
         id: 'inv_2',
-        amount: 99,
+        amount: 87,
         status: 'paid',
         date: '2024-05-22',
         pdfUrl: '#',

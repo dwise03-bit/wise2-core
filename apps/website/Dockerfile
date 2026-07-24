@@ -3,17 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* npm-shrinkwrap.json* ./
-COPY apps/website/package.json ./apps/website/
-COPY packages/ ./packages/
+# Install pnpm
+RUN npm install -g pnpm
 
-# Install dependencies with legacy-peer-deps for React 19/Next.js 14 compatibility
-RUN npm install --legacy-peer-deps
+# Copy all files for workspace build
+COPY . .
 
-# Copy source code
-COPY apps/website ./apps/website
-COPY packages ./packages
+# Install dependencies with pnpm for workspace support
+RUN pnpm install --frozen-lockfile
 
 # Build Next.js app
 WORKDIR /app/apps/website
@@ -24,7 +21,7 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_DASHBOARD_URL
 ENV NEXT_PUBLIC_DASHBOARD_URL=$NEXT_PUBLIC_DASHBOARD_URL
-RUN npm run build
+RUN pnpm run build
 
 # Runtime stage
 FROM node:20-alpine
