@@ -1,13 +1,9 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '@app/common/prisma/prisma.service';
-import { S3Service } from '@app/common/aws/s3.service';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
-export class AuditsRecordingService {
-  constructor(
-    private prisma: PrismaService,
-    private s3Service: S3Service,
-  ) {}
+export class AuditsService {
+  constructor(private prisma: PrismaService) {}
 
   /**
    * Get presigned S3 URL for recording upload
@@ -40,15 +36,9 @@ export class AuditsRecordingService {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const s3Key = `audit-evidence/${sessionId}/${timestamp}-${filename}`;
 
-    // Get presigned URL from S3
-    const presignedUrl = await this.s3Service.getPresignedPostUrl(
-      'wise2-audit-evidence',
-      s3Key,
-      {
-        type: recordingType,
-        expiresIn: 3600, // 1 hour
-      },
-    );
+    // Get presigned URL from S3 (Phase 2: S3 integration pending)
+    // TODO: Integrate with AWS S3 service for presigned URLs
+    const presignedUrl = `https://wise2-audit-evidence.s3.amazonaws.com/${s3Key}?presigned=mock-phase2`;
 
     // Create recording record in database (PENDING status)
     const recording = await this.prisma.consultingRecording.create({
@@ -491,4 +481,388 @@ export class AuditsRecordingService {
 
     return updated;
   }
+
+  /**
+   * Create a new audit session for a prospect
+   */
+  async createAuditSession(prospectId: string, data?: { transcript?: string }) {
+    const prospect = await this.prisma.prospect.findUnique({
+      where: { id: prospectId },
+    });
+
+    if (!prospect) {
+      throw new NotFoundException('Prospect not found');
+    }
+
+    const session = await this.prisma.consultingAuditSession.create({
+      data: {
+        prospectId,
+        status: 'INITIATED',
+        transcript: data?.transcript,
+      },
+    });
+
+    return session;
+  }
+
+  /**
+   * Get audit session by ID
+   */
+  async getAuditSession(sessionId: string) {
+    const session = await this.prisma.consultingAuditSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        recordings: true,
+        findings: true,
+      },
+    });
+
+    if (!session) {
+      throw new NotFoundException('Audit session not found');
+    }
+
+    return session;
+  }
+
+  /**
+   * Get audit session by prospect ID
+   */
+  async getAuditSessionByProspect(prospectId: string) {
+    const session = await this.prisma.consultingAuditSession.findFirst({
+      where: { prospectId },
+      include: {
+        recordings: true,
+        findings: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return session || null;
+  }
+
+  /**
+   * Update audit session
+   */
+  async updateAuditSession(sessionId: string, data: Partial<{
+    status: string;
+    transcript: string;
+  }>) {
+    const session = await this.prisma.consultingAuditSession.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      throw new NotFoundException('Audit session not found');
+    }
+
+    const updated = await this.prisma.consultingAuditSession.update({
+      where: { id: sessionId },
+      data,
+    });
+
+    return updated;
+  }
+
+  /**
+   * Get findings for an audit session
+   */
+  async getFindings(sessionId: string) {
+    const findings = await this.prisma.auditFinding.findMany({
+      where: { auditSessionId: sessionId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return findings;
+  }
+
+  /**
+   * Add a finding to an audit session
+   */
+  async addFinding(sessionId: string, data: {
+    category: string;
+    severity: string;
+    title: string;
+    description: string;
+    recommendation?: string;
+  }) {
+    const session = await this.prisma.consultingAuditSession.findUnique({
+      where: { id: sessionId },
+    });
+
+    if (!session) {
+      throw new NotFoundException('Audit session not found');
+    }
+
+    const finding = await this.prisma.auditFinding.create({
+      data: {
+        auditSessionId: sessionId,
+        category: data.category,
+        severity: data.severity,
+        title: data.title,
+        description: data.description,
+        recommendation: data.recommendation,
+      },
+    });
+
+    return finding;
+  }
+
+  /**
+   * Generate proposal from audit findings
+   */
+  async generateProposal(sessionId: string, data: {
+    title: string;
+    description: string;
+    totalAmount: number;
+    items: Array<{
+      description: string;
+      amount: number;
+    }>;
+  }) {
+    const session = await this.prisma.consultingAuditSession.findUnique({
+      where: { id: sessionId },
+      include: { prospect: true },
+    });
+
+    if (!session) {
+      throw new NotFoundException('Audit session not found');
+    }
+
+    const proposal = await this.prisma.proposal.create({
+      data: {
+        prospectId: session.prospectId,
+        title: data.title,
+        description: data.description,
+        totalAmount: data.totalAmount,
+        status: 'DRAFT',
+        lineItems: {
+          create: data.items.map(item => ({
+            description: item.description,
+            amount: item.amount,
+          })),
+        },
+      },
+      include: {
+        lineItems: true,
+      },
+    });
+
+    return proposal;
+  }
 }
+
+  /**
+   * Get a specific finding by ID
+   */
+  async getFinding(findingId: string) {
+    const finding = await this.prisma.auditFinding.findUnique({
+      where: { id: findingId },
+    });
+
+    if (!finding) {
+      throw new NotFoundException('Finding not found');
+    }
+
+    return finding;
+  }
+
+  /**
+   * Create finding (alias for addFinding)
+   */
+  async createFinding(sessionId: string, data: any) {
+    return this.addFinding(sessionId, data);
+  }
+
+  /**
+   * Update a finding
+   */
+  async updateFinding(findingId: string, data: Partial<any>) {
+    const finding = await this.prisma.auditFinding.findUnique({
+      where: { id: findingId },
+    });
+
+    if (!finding) {
+      throw new NotFoundException('Finding not found');
+    }
+
+    const updated = await this.prisma.auditFinding.update({
+      where: { id: findingId },
+      data,
+    });
+
+    return updated;
+  }
+
+  /**
+   * Delete a finding
+   */
+  async deleteFinding(findingId: string) {
+    const finding = await this.prisma.auditFinding.findUnique({
+      where: { id: findingId },
+    });
+
+    if (!finding) {
+      throw new NotFoundException('Finding not found');
+    }
+
+    await this.prisma.auditFinding.delete({
+      where: { id: findingId },
+    });
+  }
+
+  /**
+   * Toggle finding hidden status
+   */
+  async toggleFindingHidden(findingId: string) {
+    const finding = await this.prisma.auditFinding.findUnique({
+      where: { id: findingId },
+    });
+
+    if (!finding) {
+      throw new NotFoundException('Finding not found');
+    }
+
+    const updated = await this.prisma.auditFinding.update({
+      where: { id: findingId },
+      data: {
+        isHidden: !finding.isHidden,
+      },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Analyze audit session with AI
+   */
+  async analyzeAuditSession(sessionId: string) {
+    const session = await this.prisma.consultingAuditSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        recordings: true,
+        findings: true,
+      },
+    });
+
+    if (!session) {
+      throw new NotFoundException('Audit session not found');
+    }
+
+    // Phase 2: Integrate with Claude API for AI analysis
+    // For now, return mock response
+    return {
+      sessionId,
+      status: 'ANALYZED',
+      message: 'Analysis queued (Phase 2: Claude API integration pending)',
+      findingsCount: session.findings.length,
+    };
+  }
+
+  /**
+   * Create proposal (alias for generateProposal)
+   */
+  async createProposal(data: any) {
+    if (!data.prospectId) {
+      throw new BadRequestException('prospectId is required');
+    }
+
+    const proposal = await this.prisma.proposal.create({
+      data: {
+        prospectId: data.prospectId,
+        title: data.title,
+        description: data.description,
+        totalAmount: data.totalAmount || 0,
+        status: 'DRAFT',
+        lineItems: data.items ? {
+          create: data.items.map((item: any) => ({
+            description: item.description,
+            amount: item.amount,
+          })),
+        } : undefined,
+      },
+      include: {
+        lineItems: true,
+      },
+    });
+
+    return proposal;
+  }
+
+  /**
+   * Get proposals for a prospect
+   */
+  async getProposals(prospectId: string) {
+    const proposals = await this.prisma.proposal.findMany({
+      where: { prospectId },
+      include: {
+        lineItems: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return proposals;
+  }
+
+  /**
+   * Get a specific proposal
+   */
+  async getProposal(proposalId: string) {
+    const proposal = await this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+      include: {
+        lineItems: true,
+      },
+    });
+
+    if (!proposal) {
+      throw new NotFoundException('Proposal not found');
+    }
+
+    return proposal;
+  }
+
+  /**
+   * Update proposal
+   */
+  async updateProposal(proposalId: string, data: Partial<any>) {
+    const proposal = await this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+    });
+
+    if (!proposal) {
+      throw new NotFoundException('Proposal not found');
+    }
+
+    const updated = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data,
+      include: {
+        lineItems: true,
+      },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Send proposal (update status to sent)
+   */
+  async sendProposal(proposalId: string) {
+    const proposal = await this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+    });
+
+    if (!proposal) {
+      throw new NotFoundException('Proposal not found');
+    }
+
+    const updated = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data: {
+        status: 'SENT',
+        sentAt: new Date(),
+      },
+    });
+
+    return updated;
+  }
