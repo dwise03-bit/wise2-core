@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 // import helmet from 'helmet'; // Phase 2: Helmet integration pending
-import morgan from 'morgan';
+// import morgan from 'morgan'; // Phase 2: Morgan logging middleware
 import dotenv from 'dotenv';
 import { healthCheck } from './db/connection';
 import { extractToken, verifyToken, DecodedToken } from './services/auth.service';
@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 // app.use(helmet()); // Phase 2: Helmet security headers
 app.use(cors()); // CORS
-app.use(morgan('combined')); // Logging
+// app.use(morgan('combined')); // Phase 2: Logging middleware
 app.use(express.json()); // JSON parsing
 app.use(express.urlencoded({ extended: true })); // Form parsing
 

@@ -144,7 +144,7 @@ export class OAuthCredentialsRepository extends Repository<OAuthCredentials> {
       credential.scopes = data.scopes;
     }
     credential.last_used_at = new Date();
-    credential.error_message = null;
+    credential.error_message = undefined;
 
     return this.save(credential);
   }

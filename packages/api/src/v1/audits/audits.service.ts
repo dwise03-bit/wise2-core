@@ -649,7 +649,6 @@ export class AuditsService {
 
     return proposal;
   }
-}
 
   /**
    * Get a specific finding by ID
@@ -866,3 +865,149 @@ export class AuditsService {
 
     return updated;
   }
+
+  /**
+   * Update proposal status
+   */
+  async updateProposalStatus(proposalId: string, status: string) {
+    const proposal = await this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+    });
+
+    if (!proposal) {
+      throw new NotFoundException('Proposal not found');
+    }
+
+    const updated = await this.prisma.proposal.update({
+      where: { id: proposalId },
+      data: {
+        status,
+      },
+      include: {
+        lineItems: true,
+      },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Add line item to proposal
+   */
+  async addProposalLineItem(proposalId: string, data: { description: string; amount: number }) {
+    const proposal = await this.prisma.proposal.findUnique({
+      where: { id: proposalId },
+    });
+
+    if (!proposal) {
+      throw new NotFoundException('Proposal not found');
+    }
+
+    const lineItem = await this.prisma.proposalLineItem.create({
+      data: {
+        proposalId,
+        description: data.description,
+        amount: data.amount,
+      },
+    });
+
+    return lineItem;
+  }
+
+  /**
+   * Remove line item from proposal
+   */
+  async removeProposalLineItem(lineItemId: string) {
+    const lineItem = await this.prisma.proposalLineItem.findUnique({
+      where: { id: lineItemId },
+    });
+
+    if (!lineItem) {
+      throw new NotFoundException('Line item not found');
+    }
+
+    await this.prisma.proposalLineItem.delete({
+      where: { id: lineItemId },
+    });
+
+    return { success: true };
+  }
+
+  /**
+   * Update proposal line item
+   */
+  async updateProposalLineItem(lineItemId: string, data: Partial<{ description: string; amount: number }>) {
+    const lineItem = await this.prisma.proposalLineItem.findUnique({
+      where: { id: lineItemId },
+    });
+
+    if (!lineItem) {
+      throw new NotFoundException('Line item not found');
+    }
+
+    const updated = await this.prisma.proposalLineItem.update({
+      where: { id: lineItemId },
+      data,
+    });
+
+    return updated;
+  }
+
+  /**
+   * Get service catalog
+   */
+  async getServiceCatalog() {
+    const services = (await (this.prisma as any).$queryRaw`
+      SELECT id, name, description, basePrice, category, status FROM services ORDER BY category, name
+    `) || [];
+
+    return services;
+  }
+
+  /**
+   * Get service catalog item
+   */
+  async getServiceCatalogItem(serviceId: string) {
+    const service = (await (this.prisma as any).$queryRaw`
+      SELECT * FROM services WHERE id = ${serviceId}
+    `) || null;
+
+    if (!service) {
+      throw new NotFoundException('Service not found');
+    }
+
+    return service;
+  }
+
+  /**
+   * Create service catalog item
+   */
+  async createServiceCatalogItem(data: { name: string; description: string; basePrice: number; category: string }) {
+    const result = (await (this.prisma as any).$queryRaw`
+      INSERT INTO services (name, description, base_price, category, status)
+      VALUES (${data.name}, ${data.description}, ${data.basePrice}, ${data.category}, 'ACTIVE')
+      RETURNING *
+    `)[0] || null;
+
+    return result;
+  }
+
+  /**
+   * Update service catalog item
+   */
+  async updateServiceCatalogItem(serviceId: string, data: Partial<{ name: string; description: string; basePrice: number; category: string }>) {
+    const updates = Object.entries(data)
+      .map(([key, value]) => `${key.replace(/([A-Z])/g, '_$1').toLowerCase()} = '${value}'`)
+      .join(', ');
+
+    const updated = (await (this.prisma as any).$queryRaw`
+      UPDATE services SET ${updates} WHERE id = ${serviceId} RETURNING *
+    `)[0] || null;
+
+    if (!updated) {
+      throw new NotFoundException('Service not found');
+    }
+
+    return updated;
+  }
+}

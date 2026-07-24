@@ -26,7 +26,7 @@ export class AppController {
   async getReady(): Promise<any> {
     try {
       // Check database connectivity
-      await this.prisma.$queryRaw`SELECT 1`;
+      await (this.prisma as any).$queryRaw`SELECT 1`;
 
       return {
         status: 'ready',

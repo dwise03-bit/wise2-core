@@ -1,11 +1,9 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@app/common/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '../email/email.service';
-import { QueueService, JobType } from '@app/queue/queue.service';
 import Anthropic from '@anthropic-ai/sdk';
 import { google } from 'googleapis';
-import { differenceInHours, addHours, formatDistanceToNow } from 'date-fns';
 
 /**
  * Post-Call Summary Service

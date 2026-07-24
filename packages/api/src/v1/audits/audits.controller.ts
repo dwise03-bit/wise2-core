@@ -107,7 +107,7 @@ export class AuditsController {
       proposedSolution: string;
     },
   ) {
-    return this.auditsService.createProposal(body.prospectId, body);
+    return this.auditsService.createProposal(body);
   }
 
   @Get('prospects/:prospectId/proposals')

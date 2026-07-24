@@ -1,10 +1,11 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { DiscordClient } from './discord.client';
 import { commands } from './commands';
 import { handleReady, handleInteraction, handleMessage, handleGuildCreate, handleError } from './events';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
+  private logger = new Logger('DiscordService');
   private discordClient!: DiscordClient;
   private token = process.env.DISCORD_BOT_TOKEN;
   private guildId = process.env.DISCORD_GUILD_ID;
@@ -25,6 +26,10 @@ export class DiscordService implements OnModuleInit {
   }
 
   private async initializeBot() {
+    if (!this.token || !this.guildId) {
+      this.logger.warn('Discord token or guild ID not configured');
+      return;
+    }
     this.discordClient = new DiscordClient(this.token, this.guildId);
 
     // Register event handlers

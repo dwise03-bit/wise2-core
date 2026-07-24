@@ -209,7 +209,7 @@ export class EmailService {
 
     return await this._send({
       to: data.email,
-      subject: attempt === 3 ? '⚠️ Final Notice: Update Your Payment Method' : 'Payment Failed - Action Required',
+      subject: data.attempt === 3 ? '⚠️ Final Notice: Update Your Payment Method' : 'Payment Failed - Action Required',
       template,
     });
   }
