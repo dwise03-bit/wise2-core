@@ -615,3 +615,282 @@ model ActionItem {
 
   @@index([summaryId])
 }
+
+// ===== PROSPECT INTAKE & CRM SYSTEM =====
+
+// Prospect: Sales prospect/lead management
+model Prospect {
+  id                String   @id @default(cuid())
+
+  // Contact information
+  businessName      String
+  contactName       String
+  email             String   @unique
+  phone             String?
+  website           String?
+
+  // Business details
+  industry          String?
+  primaryProblem    String   @db.Text
+  leadSource        String   @default("DIRECT") // DIRECT, REFERRAL, WEBSITE, CONTENT, PARTNERSHIP, OTHER
+
+  // Sales tracking
+  estimatedOpportunity Float  @default(0) // in dollars
+  status            ProspectStatus @default(NEW) // NEW, CONTACTED, QUALIFIED, AUDIT_SCHEDULED, AUDIT_COMPLETE, PROPOSAL_SENT, WON, LOST
+
+  // Additional fields
+  notes             String?  @db.Text
+  tags              String[] @default([])
+
+  // Conversion tracking
+  auditScheduledAt  DateTime?
+  auditCompletedAt  DateTime?
+  proposalSentAt    DateTime?
+  wonAt             DateTime?
+  lostAt            DateTime?
+  lostReason        String?  @db.Text
+
+  // Relationships
+  auditSession      AuditSession?
+  proposals         Proposal[]
+
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+  @@index([estimatedOpportunity])
+}
+
+enum ProspectStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  AUDIT_SCHEDULED
+  AUDIT_COMPLETE
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+// ===== AI AUDIT & FINDINGS SYSTEM =====
+
+// AuditSession: AI-powered sales audit of a prospect
+model AuditSession {
+  id          String   @id @default(cuid())
+  prospectId  String   @unique
+  prospect    Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+
+  // Audit metadata
+  status      AuditStatus @default(SCHEDULED)
+
+  // Audit data
+  transcriptUrl      String? @db.Text
+  transcript         String? @db.Text
+  auditNotes         String? @db.Text
+  auditedAt          DateTime?
+
+  // AI Analysis
+  analysisStatus     AnalysisStatus @default(PENDING)
+  analysisErrorMsg   String?
+  analyzedAt         DateTime?
+
+  // Readiness score (0-100)
+  aiReadinessScore   Int?
+  scoreDetails       Json? // { "techStack": 45, "processAutomation": 62, ... }
+
+  // Financial summary
+  totalMoneyLeaks    Float @default(0)
+  estimatedROI       Float @default(0)
+
+  // Findings
+  findings           Finding[]
+
+  // Proposals
+  proposals          Proposal[]
+
+  // Metadata
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([prospectId])
+  @@index([status])
+  @@index([analysisStatus])
+}
+
+enum AuditStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  ANALYZED
+}
+
+enum AnalysisStatus {
+  PENDING
+  ANALYZING
+  COMPLETED
+  FAILED
+}
+
+// Finding: Individual finding from audit analysis
+model Finding {
+  id              String         @id @default(cuid())
+  auditSessionId  String
+  auditSession    AuditSession   @relation(fields: [auditSessionId], references: [id], onDelete: Cascade)
+
+  // Details
+  title           String
+  description     String         @db.Text
+  category        FindingCategory
+  severity        FindingSeverity
+
+  // Evidence
+  evidenceSnippet String?        @db.Text
+  evidenceUrl     String?
+
+  // Impact
+  estimatedAnnualImpact Float?
+  implementationDays Int?
+
+  // Recommendation
+  recommendedAction String @db.Text
+
+  // Metadata
+  isCustom        Boolean @default(false)
+  isHidden        Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([auditSessionId])
+  @@index([category])
+  @@index([severity])
+}
+
+enum FindingCategory {
+  COST_LEAK
+  PROCESS_GAP
+  AUTOMATION_OPPORTUNITY
+  SECURITY_RISK
+  COMPLIANCE_ISSUE
+  DATA_QUALITY_ISSUE
+  OTHER
+}
+
+enum FindingSeverity {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ServiceCatalogItem: Available consulting services for proposals
+model ServiceCatalogItem {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  description         String   @db.Text
+  category            String   // "audit", "automation", "strategy", "training"
+
+  // Pricing
+  setupPrice          Float @default(0)
+  monthlyPrice        Float @default(0)
+  annualPrice         Float?
+
+  // Implementation
+  implementationDays  Int?
+
+  // Expected outcomes
+  expectedOutcomes    String[] @default([])
+
+  // Configuration
+  isActive            Boolean @default(true)
+  displayOrder        Int @default(0)
+
+  // Metadata
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+// Proposal: Sales proposal generated from audit findings
+model Proposal {
+  id                  String   @id @default(cuid())
+  prospectId          String
+  prospect            Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  auditSessionId      String?
+  auditSession        AuditSession? @relation(fields: [auditSessionId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  title               String
+  status              ProposalStatus @default(DRAFT)
+
+  // Content
+  summary             String   @db.Text
+  problemStatement    String   @db.Text
+  proposedSolution    String   @db.Text
+  expectedOutcomes    String[] @default([])
+
+  // Financial
+  totalSetupPrice     Float @default(0)
+  totalMonthlyPrice   Float @default(0)
+  setupPriceDiscount  Float @default(0)
+  monthlyPriceDiscount Float @default(0)
+  estimatedROI        Float?
+  paybackPeriodMonths Float?
+
+  // Line items
+  lineItems           ProposalLineItem[]
+
+  // Tracking
+  sentAt              DateTime?
+  viewedAt            DateTime?
+  acceptedAt          DateTime?
+  declinedAt          DateTime?
+  declineReason       String? @db.Text
+
+  // Metadata
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([prospectId])
+  @@index([auditSessionId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  DECLINED
+}
+
+// ProposalLineItem: Individual service in a proposal
+model ProposalLineItem {
+  id                  String   @id @default(cuid())
+  proposalId          String
+  proposal            Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  serviceId           String?
+  serviceName         String   // Copy of service name
+
+  // Pricing
+  setupPrice          Float @default(0)
+  monthlyPrice        Float @default(0)
+  quantity            Int @default(1)
+
+  // Customization
+  description         String? @db.Text
+  implementationDays  Int?
+
+  // Metadata
+  displayOrder        Int @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([proposalId])
+  @@index([serviceId])
+}
