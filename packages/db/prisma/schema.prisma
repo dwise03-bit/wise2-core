@@ -927,12 +927,6 @@ model ConsultingAuditSession {
   @@index([startedAt])
 }
 
-enum ConsultingAuditSessionStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  ARCHIVED
-}
 
 // ConsultingRecording: Individual audio/video recordings for evidence
 model ConsultingRecording {
@@ -984,10 +978,6 @@ model ConsultingRecording {
   @@index([expiresAt])
 }
 
-enum ConsultingRecordingType {
-  AUDIO
-  VIDEO
-}
 
 // ConsultingAuditMoment: Marked moments in a recording
 model ConsultingAuditMoment {
@@ -1010,4 +1000,25 @@ model ConsultingAuditMoment {
   @@index([recordingId])
   @@index([category])
   @@index([severity])
+}
+
+// Enums for consulting audit system (defined in migrations)
+enum ConsultingAuditSessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum TranscriptionStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ConsultingRecordingType {
+  AUDIO
+  VIDEO
 }

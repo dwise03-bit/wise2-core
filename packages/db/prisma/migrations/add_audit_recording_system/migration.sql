@@ -4,6 +4,9 @@ CREATE TYPE "AuditSessionStatus" AS ENUM ('SCHEDULED', 'IN_PROGRESS', 'COMPLETED
 -- CreateEnum for RecordingType
 CREATE TYPE "RecordingType" AS ENUM ('AUDIO', 'VIDEO');
 
+-- CreateEnum for UploadStatus
+CREATE TYPE "UploadStatus" AS ENUM ('PENDING', 'UPLOADING', 'COMPLETED', 'FAILED');
+
 -- CreateEnum for TranscriptionStatus
 CREATE TYPE "TranscriptionStatus" AS ENUM ('PENDING', 'QUEUED', 'PROCESSING', 'COMPLETED', 'FAILED');
 
