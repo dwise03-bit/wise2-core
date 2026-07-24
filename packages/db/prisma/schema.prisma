@@ -572,6 +572,7 @@ model Booking {
   updatedAt DateTime @updatedAt
 
   postCallSummary PostCallSummary?
+  consultingAuditSession ConsultingAuditSession?
 
   @@index([userId])
   @@index([consultantId])
@@ -893,4 +894,120 @@ model ProposalLineItem {
 
   @@index([proposalId])
   @@index([serviceId])
+}
+
+// ===== CONSULTING AUDIT RECORDING & EVIDENCE SYSTEM =====
+
+// ConsultingAuditSession: Container for recording evidence during consulting engagements
+model ConsultingAuditSession {
+  id                String            @id @default(cuid())
+  bookingId         String            @unique
+  booking           Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  // Audit details
+  clientName        String
+  auditTopic        String            @db.Text
+  status            ConsultingAuditSessionStatus @default(SCHEDULED)
+
+  // Timing
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  // Recordings
+  recordings        ConsultingRecording[]
+
+  // Metadata
+  notes             String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookingId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum ConsultingAuditSessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+// ConsultingRecording: Individual audio/video recordings for evidence
+model ConsultingRecording {
+  id                    String           @id @default(cuid())
+  sessionId             String
+  session               ConsultingAuditSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Recording metadata
+  filename              String
+  type                  ConsultingRecordingType @default(AUDIO)
+  duration              Int?
+  fileSize              Int?
+
+  // S3 Storage
+  s3Url                 String?          @db.Text
+  s3Key                 String?          @db.Text
+
+  // Upload tracking
+  uploadStatus          UploadStatus     @default(PENDING)
+  uploadProgress        Int              @default(0)
+  uploadError           String?
+
+  // Transcription
+  transcriptionStatus   TranscriptionStatus @default(PENDING)
+  transcriptionJobId    String?
+  transcript            String?          @db.Text
+  transcriptionError    String?
+
+  // Moments
+  moments               ConsultingAuditMoment[]
+
+  // User notes
+  userNotes             String?          @db.Text
+
+  // Timestamps
+  recordedAt            DateTime         @default(now())
+  uploadedAt            DateTime?
+  transcribedAt         DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  // Retention
+  expiresAt             DateTime?
+  archivedAt            DateTime?
+
+  @@index([sessionId])
+  @@index([uploadStatus])
+  @@index([transcriptionStatus])
+  @@index([expiresAt])
+}
+
+enum ConsultingRecordingType {
+  AUDIO
+  VIDEO
+}
+
+// ConsultingAuditMoment: Marked moments in a recording
+model ConsultingAuditMoment {
+  id              String             @id @default(cuid())
+  recordingId     String
+  recording       ConsultingRecording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
+
+  // Moment details
+  label           String
+  description     String?            @db.Text
+  timestampMs     Int
+
+  // Categorization
+  category        String?
+  severity        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recordingId])
+  @@index([category])
+  @@index([severity])
 }
