@@ -3,11 +3,37 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@wise2/ui": ["../../packages/ui/src"],
-      "@wise2/shared": ["../../packages/shared/src"]
-    }
+      "@/*": [
+        "./*"
+      ],
+      "@wise2/ui": [
+        "../../packages/ui/src"
+      ],
+      "@wise2/shared": [
+        "../../packages/shared/src"
+      ]
+    },
+    "allowJs": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

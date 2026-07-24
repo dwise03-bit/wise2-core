@@ -33,3 +33,4 @@ Thumbs.db
 # Build artifacts
 *.tsbuildinfo
 dist/
+.next/

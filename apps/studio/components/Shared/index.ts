@@ -62,3 +62,16 @@ export {
   type ShortcutButtonProps,
   useFormattedShortcut,
 } from './Shortcuts';
+
+// Meter Components
+export {
+  SegmentedMeter,
+  type SegmentedMeterProps,
+  SegmentedMeterDemo,
+} from './Meters';
+
+// Timeline Components
+export {
+  ClipTrack,
+  type ClipTrackProps,
+} from './ClipTrack';
