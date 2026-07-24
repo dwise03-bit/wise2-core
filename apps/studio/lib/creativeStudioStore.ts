@@ -157,6 +157,7 @@ export interface CreativeStudioState {
   factoryPrompt: string;
   factoryItems: FactoryItem[];
   setFactoryPrompt: (text: string) => void;
+  setFactorySel: (index: number) => void;
   submitFactoryJob: () => void;
 
   // Client Showcase
@@ -370,6 +371,7 @@ export const useCreativeStudioStore = create<CreativeStudioState>((set) => ({
   factoryPrompt: '',
   factoryItems: INITIAL_FACTORY_ITEMS,
   setFactoryPrompt: (text) => set({ factoryPrompt: text }),
+  setFactorySel: (index) => set({ factorySel: index }),
   submitFactoryJob: () =>
     set((s) => {
       if (!s.factoryPrompt.trim()) return {};

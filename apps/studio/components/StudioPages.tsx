@@ -293,7 +293,7 @@ export function VoiceLabPage() {
 
 // Content Factory
 export function ContentFactoryPage() {
-  const { factorySel, factoryPrompt, factoryItems, setFactoryPrompt, submitFactoryJob } = useCreativeStudioStore();
+  const { factorySel, factoryPrompt, factoryItems, setFactoryPrompt, submitFactoryJob, setFactorySel } = useCreativeStudioStore();
 
   const types = ['Images', 'Videos', 'Shorts', 'Ads', 'Voiceovers', 'Emails', 'Blogs', 'Landing Pages'];
 
@@ -306,6 +306,7 @@ export function ContentFactoryPage() {
         {types.map((type, i) => (
           <button
             key={i}
+            onClick={() => setFactorySel(i)}
             className={`px-3 py-1 rounded text-xs font-semibold whitespace-nowrap transition-colors ${
               factorySel === i ? 'bg-wise-accent text-black' : 'bg-studio-input border border-studio-line text-gray-400'
             }`}
