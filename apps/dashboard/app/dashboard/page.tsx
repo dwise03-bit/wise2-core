@@ -63,7 +63,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-8 h-8 rounded-full bg-gray-700"></div>
             <div className="text-sm">
-              <p className="font-bold">{user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}</p>
+              <p className="font-bold">{user?.name || 'User'}</p>
               <p className="text-xs text-gray-500">{user?.email || 'user@example.com'}</p>
             </div>
           </div>
