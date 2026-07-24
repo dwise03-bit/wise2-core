@@ -22,7 +22,12 @@ export default function ChatWidget() {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 50 }}>
+    <div style={{
+      position: 'fixed',
+      bottom: 'max(24px, calc(24px + env(safe-area-inset-bottom)))',
+      right: 'max(24px, calc(24px + env(safe-area-inset-right)))',
+      zIndex: 50
+    }}>
       {/* Chat Button */}
       <button
         className="group relative transition-all duration-300"
@@ -30,14 +35,14 @@ export default function ChatWidget() {
           width: '56px',
           height: '56px',
           borderRadius: '50%',
-          background: isHovered ? '#22C55E' : '#22C55E',
+          background: isHovered ? '#2CD588' : '#2CD588',
           color: 'white',
           border: 'none',
           cursor: 'pointer',
           fontSize: '24px',
           boxShadow: isHovered
-            ? '0 8px 24px rgba(34, 197, 94, 0.6)'
-            : '0 4px 12px rgba(34, 197, 94, 0.4)',
+            ? '0 8px 24px rgba(44, 213, 136, 0.6)'
+            : '0 4px 12px rgba(44, 213, 136, 0.4)',
           transform: isHovered ? 'scale(1.1)' : 'scale(1)',
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -53,13 +58,14 @@ export default function ChatWidget() {
           className="absolute bottom-20 right-0 w-80 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95"
           style={{
             background: 'linear-gradient(135deg, #0D1117 0%, #181818 100%)',
-            border: '2px solid rgba(34, 197, 94, 0.3)',
+            border: '2px solid rgba(44, 213, 136, 0.3)',
             backdropFilter: 'blur(10px)',
             animation: 'slideUp 0.3s ease-out',
           }}
         >
           {/* Header */}
-          <div className="bg-wise-accent-green/10 border-b border-wise-accent-green/30 p-4 flex justify-between items-center">
+          <div className="bg-wise-accent-green/10 border-b border-wise-accent-green/30 p-4 flex justify-between items-center"
+            style={{ borderColor: 'rgba(44, 213, 136, 0.3)' }}>
             <h3 className="text-white font-bold flex items-center gap-2">
               <span>💬</span> WISE² Support
             </h3>
@@ -79,14 +85,17 @@ export default function ChatWidget() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-wise-accent-green/30 p-3 bg-wise-bg-secondary/50">
+          <div className="border-t border-wise-accent-green/30 p-3 bg-wise-bg-secondary/50"
+            style={{ borderColor: 'rgba(44, 213, 136, 0.3)' }}>
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Type a message..."
                 className="flex-1 px-3 py-2 rounded-lg bg-wise-bg-primary border border-wise-accent-green-border text-wise-text-primary placeholder-wise-text-muted focus:outline-none focus:border-wise-accent-green text-sm"
+                style={{ borderColor: 'rgba(44, 213, 136, 0.3)', '--border-wise-accent-green-border': 'rgba(44, 213, 136, 0.3)' } as any}
               />
-              <button className="px-3 py-2 bg-wise-accent-green text-wise-bg-primary rounded-lg hover:brightness-110 transition-all text-sm font-bold">
+              <button className="px-3 py-2 bg-wise-accent-green text-wise-bg-primary rounded-lg hover:brightness-110 transition-all text-sm font-bold"
+                style={{ background: '#2CD588' }}>
                 Send
               </button>
             </div>

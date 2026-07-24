@@ -1,8 +1,80 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================================
+   WISE² DESIGN SYSTEM - CSS VARIABLES
+   ============================================================================ */
+
+:root {
+  /* Color System - Core Palette */
+  --wise-black: #050505;
+  --wise-surface-0: #0A0A0A;
+  --wise-surface-1: #101114;
+  --wise-surface-2: #151619;
+  --wise-border: #1A1A1A;
+  --wise-chrome: #9CA3AF;
+  --wise-text: #F5F5F5;
+  --wise-text-muted: #A0A0A0;
+  --wise-text-dim: #727272;
+
+  /* Accent Colors */
+  --wise-green: #2CD588;
+  --wise-green-soft: #1A4D3A;
+  --wise-success: #10B981;
+  --wise-warning: #F59E0B;
+  --wise-danger: #EF4444;
+  --wise-info: #3B82F6;
+
+  /* Typography Scale */
+  --font-display: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --text-display-xl: 48px;
+  --text-display-l: 36px;
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 20px;
+  --text-h4: 16px;
+  --text-body: 16px;
+  --text-body-sm: 14px;
+  --text-label: 12px;
+  --text-caption: 12px;
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Breakpoints */
+  --bp-xs: 320px;
+  --bp-sm: 375px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1440px;
+
+  /* Animation Timing */
+  --motion-micro: 150ms;
+  --motion-standard: 250ms;
+  --motion-complex: 450ms;
+
+  /* Easing Functions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-linear: linear;
+}
 
 @layer base {
   html {

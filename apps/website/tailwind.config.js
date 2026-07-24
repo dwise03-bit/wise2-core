@@ -13,6 +13,14 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
+    screens: {
+      xs: '320px',
+      sm: '375px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1440px',
+    },
     extend: {
       colors: {
         wise: {
@@ -26,9 +34,9 @@ module.exports = {
           'text-secondary': '#C9CED6',
           'text-muted': '#8D98A5',
 
-          // Accent Green - PRIMARY (Only correct green)
-          'accent-green': '#22C55E',
-          'accent-green-border': 'rgba(34, 197, 94, 0.3)',
+          // Accent Green - PRIMARY (WISE² Acid Green)
+          'accent-green': '#2CD588',
+          'accent-green-border': 'rgba(44, 213, 136, 0.3)',
 
           // Legacy surfaces (compatibility)
           'surface': '#0D1117',
@@ -38,15 +46,15 @@ module.exports = {
           'card': '#10151D',
 
           // Semantic colors
-          'success': '#22C55E',
+          'success': '#2CD588',
           'warning': '#F59E0B',
           'danger': '#FF0040',
 
           // DO NOT USE - Deprecated blues
-          'primary': '#22C55E',
-          'primary-hover': '#1ea853',
-          'primary-active': '#16a34a',
-          'electric': '#22C55E',
+          'primary': '#2CD588',
+          'primary-hover': '#20b870',
+          'primary-active': '#1fa070',
+          'electric': '#2CD588',
           'purple': '#B300FF',
           'accent-red': '#FF0040',
           'accent-orange': '#F59E0B',

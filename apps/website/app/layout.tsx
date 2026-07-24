@@ -7,8 +7,8 @@ import { ToastProvider } from '@/components/ui/Toast';
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export const metadata: Metadata = {
@@ -60,8 +60,8 @@ export default function RootLayout({
         <ToastProvider>
           <Navigation />
           <div className="min-h-screen flex flex-col">
-            {/* Main Content */}
-            <main className="flex-1">
+            {/* Main Content - pt-20 accounts for fixed navigation (~80px) */}
+            <main className="flex-1 pt-20">
               {children}
             </main>
 
