@@ -1,8 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/login/page": "app/login/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/live-studio/page": "app/live-studio/page.js",
-  "/gallery/page": "app/gallery/page.js",
-  "/studio/page": "app/studio/page.js"
-}
