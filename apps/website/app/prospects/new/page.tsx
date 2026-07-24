@@ -1,23 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-const LEAD_SOURCES = [
-  { value: 'DIRECT', label: 'Direct' },
-  { value: 'REFERRAL', label: 'Referral' },
-  { value: 'WEBSITE', label: 'Website' },
-  { value: 'CONTENT', label: 'Content/Blog' },
-  { value: 'PARTNERSHIP', label: 'Partnership' },
-  { value: 'OTHER', label: 'Other' },
-];
+import { Container } from '@/components/ui/Container';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Badge } from '@/components/ui/Badge';
 
 export default function ProspectIntakePage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     businessName: '',
     contactName: '',
@@ -31,308 +24,267 @@ export default function ProspectIntakePage() {
     notes: '',
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.businessName.trim()) newErrors.businessName = 'Business name is required';
+    if (!formData.contactName.trim()) newErrors.contactName = 'Contact name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Valid email is required';
+    if (!formData.primaryProblem.trim()) newErrors.primaryProblem = 'Problem statement is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setLoading(true);
-    setError(null);
-
     try {
-      const payload = {
-        ...formData,
-        estimatedOpportunity: formData.estimatedOpportunity
-          ? parseFloat(formData.estimatedOpportunity)
-          : 0,
-      };
-
       const response = await fetch('/api/v1/prospects', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          estimatedOpportunity: formData.estimatedOpportunity ? parseInt(formData.estimatedOpportunity) : 0,
+        }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || 'Failed to create prospect'
-        );
-      }
+      if (!response.ok) throw new Error('Failed to submit');
 
-      setSuccess(true);
-      setFormData({
-        businessName: '',
-        contactName: '',
-        email: '',
-        phone: '',
-        website: '',
-        industry: '',
-        primaryProblem: '',
-        leadSource: 'DIRECT',
-        estimatedOpportunity: '',
-        notes: '',
-      });
-
-      // Redirect to CRM dashboard after 2 seconds
+      setSubmitted(true);
       setTimeout(() => {
-        router.push('/crm/prospects');
+        window.location.href = '/crm/prospects';
       }, 2000);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An error occurred'
-      );
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setErrors({ submit: 'Failed to submit form. Please try again.' });
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-green-500/20 bg-gradient-to-r from-black via-black to-green-950/10">
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">
-            New Prospect Intake
-          </h1>
-          <p className="mt-2 text-gray-400">
-            Capture prospect information to feed the sales pipeline
-          </p>
-        </div>
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-[#F5F5F5] flex items-center justify-center py-12">
+        <Container maxWidth="md">
+          <Card variant="elevated" className="text-center space-y-6">
+            <div className="text-6xl">✓</div>
+            <h1 className="text-3xl font-bold text-[#2CD588]">Submission Received!</h1>
+            <p className="text-[#A0A0A0]">Thank you for your interest. We'll be in touch soon.</p>
+            <p className="text-sm text-[#727272]">Redirecting to dashboard...</p>
+          </Card>
+        </Container>
       </div>
+    );
+  }
 
-      {/* Form Container */}
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        {success && (
-          <div className="mb-6 rounded-lg border border-green-500 bg-green-500/10 p-4">
-            <p className="text-sm text-green-200">
-              ✓ Prospect created successfully. Redirecting to dashboard...
+  return (
+    <div className="min-h-screen bg-[#050505] text-[#F5F5F5] py-12 sm:py-16 lg:py-24">
+      <Container maxWidth="md">
+        <div className="space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <Badge variant="info">Consulting Inquiry</Badge>
+            <h1 className="text-4xl sm:text-5xl font-bold">
+              Tell Us About Your <span className="text-[#2CD588]">Project</span>
+            </h1>
+            <p className="text-[#A0A0A0] text-lg">
+              Help us understand your needs so we can provide the best solution for your business.
             </p>
           </div>
-        )}
 
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-500 bg-red-500/10 p-4">
-            <p className="text-sm text-red-200">{error}</p>
-          </div>
-        )}
+          {/* Form */}
+          <Card variant="elevated">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {errors.submit && (
+                <div className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-lg p-4 text-[#EF4444] text-sm">
+                  {errors.submit}
+                </div>
+              )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6 rounded-lg border border-green-500/20 bg-gradient-to-br from-green-950/5 to-black p-6 sm:p-8"
-        >
-          {/* Business Information Section */}
-          <div>
-            <h2 className="mb-4 text-xl font-semibold text-green-400">
-              Business Information
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Business Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Business Name *
-                </label>
-                <input
-                  type="text"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="Acme Corporation"
-                />
+              {/* Business Information */}
+              <div className="space-y-4">
+                <h2 className="text-lg font-bold text-[#2CD588]">Business Information</h2>
+                
+                <div>
+                  <Label htmlFor="businessName" required>Business Name</Label>
+                  <Input
+                    id="businessName"
+                    name="businessName"
+                    placeholder="Your company name"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    error={errors.businessName}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contactName" required>Contact Name</Label>
+                    <Input
+                      id="contactName"
+                      name="contactName"
+                      placeholder="Your name"
+                      value={formData.contactName}
+                      onChange={handleChange}
+                      error={errors.contactName}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="(555) 000-0000"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="email" required>Email Address</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="you@company.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="url"
+                      placeholder="https://example.com"
+                      value={formData.website}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="industry">Industry</Label>
+                    <Input
+                      id="industry"
+                      name="industry"
+                      placeholder="e.g., Technology, Marketing, etc."
+                      value={formData.industry}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="leadSource">How did you hear about us?</Label>
+                    <select
+                      id="leadSource"
+                      name="leadSource"
+                      value={formData.leadSource}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-[#101114] text-[#F5F5F5] border border-[#1A1A1A] focus:outline-none focus:border-[#2CD588] focus:ring-2 focus:ring-[#2CD588]/20 transition-all duration-150"
+                    >
+                      <option value="DIRECT">Direct</option>
+                      <option value="REFERRAL">Referral</option>
+                      <option value="SEARCH">Search Engine</option>
+                      <option value="SOCIAL">Social Media</option>
+                      <option value="OTHER">Other</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              {/* Industry */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Industry
-                </label>
-                <input
-                  type="text"
-                  name="industry"
-                  value={formData.industry}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="SaaS, Healthcare, etc."
-                />
+              {/* Project Details */}
+              <div className="space-y-4 border-t border-[#1A1A1A] pt-6">
+                <h2 className="text-lg font-bold text-[#2CD588]">Project Details</h2>
+
+                <div>
+                  <Label htmlFor="primaryProblem" required>What's your main challenge?</Label>
+                  <textarea
+                    id="primaryProblem"
+                    name="primaryProblem"
+                    placeholder="Describe the problem you're trying to solve..."
+                    value={formData.primaryProblem}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-lg bg-[#101114] text-[#F5F5F5] border border-[#1A1A1A] placeholder-[#727272] focus:outline-none focus:border-[#2CD588] focus:ring-2 focus:ring-[#2CD588]/20 transition-all duration-150 resize-none"
+                  />
+                  {errors.primaryProblem && (
+                    <p className="mt-2 text-sm text-[#EF4444]">{errors.primaryProblem}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="estimatedOpportunity">Estimated Project Value ($)</Label>
+                  <Input
+                    id="estimatedOpportunity"
+                    name="estimatedOpportunity"
+                    type="number"
+                    placeholder="0"
+                    value={formData.estimatedOpportunity}
+                    onChange={handleChange}
+                    min="0"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="notes">Additional Notes</Label>
+                  <textarea
+                    id="notes"
+                    name="notes"
+                    placeholder="Any other details we should know..."
+                    value={formData.notes}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-lg bg-[#101114] text-[#F5F5F5] border border-[#1A1A1A] placeholder-[#727272] focus:outline-none focus:border-[#2CD588] focus:ring-2 focus:ring-[#2CD588]/20 transition-all duration-150 resize-none"
+                  />
+                </div>
               </div>
 
-              {/* Website */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Website
-                </label>
-                <input
-                  type="url"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="https://example.com"
-                />
-              </div>
-
-              {/* Lead Source */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Lead Source
-                </label>
-                <select
-                  name="leadSource"
-                  value={formData.leadSource}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white focus:border-green-400 focus:outline-none"
+              {/* Submit */}
+              <div className="flex gap-4 pt-4 border-t border-[#1A1A1A]">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  type="submit"
+                  className="flex-1"
+                  isLoading={loading}
+                  disabled={loading}
                 >
-                  {LEAD_SOURCES.map((source) => (
-                    <option key={source.value} value={source.value}>
-                      {source.label}
-                    </option>
-                  ))}
-                </select>
+                  Submit Inquiry
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  type="button"
+                  className="flex-1"
+                  disabled={loading}
+                  onClick={() => window.history.back()}
+                >
+                  Cancel
+                </Button>
               </div>
-            </div>
-          </div>
-
-          {/* Contact Information Section */}
-          <div>
-            <h2 className="mb-4 text-xl font-semibold text-green-400">
-              Contact Information
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Contact Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Contact Name *
-                </label>
-                <input
-                  type="text"
-                  name="contactName"
-                  value={formData.contactName}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-300">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="+1 (555) 000-0000"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Opportunity Section */}
-          <div>
-            <h2 className="mb-4 text-xl font-semibold text-green-400">
-              Opportunity Details
-            </h2>
-            <div className="grid gap-6">
-              {/* Estimated Opportunity */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Estimated Opportunity ($)
-                </label>
-                <input
-                  type="number"
-                  name="estimatedOpportunity"
-                  value={formData.estimatedOpportunity}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="50000"
-                  step="1000"
-                  min="0"
-                />
-              </div>
-
-              {/* Primary Problem */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Primary Problem *
-                </label>
-                <textarea
-                  name="primaryProblem"
-                  value={formData.primaryProblem}
-                  onChange={handleChange}
-                  required
-                  rows={4}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="What business problem are they trying to solve?"
-                />
-              </div>
-
-              {/* Notes */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300">
-                  Additional Notes
-                </label>
-                <textarea
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleChange}
-                  rows={4}
-                  className="mt-1 block w-full rounded border border-green-500/30 bg-black px-4 py-2 text-white placeholder-gray-600 focus:border-green-400 focus:outline-none"
-                  placeholder="Any additional context about this prospect..."
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-between">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="rounded border border-gray-600 px-6 py-2 text-white hover:bg-gray-900"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded bg-green-600 px-6 py-2 text-white hover:bg-green-700 disabled:opacity-50"
-            >
-              {loading ? 'Creating...' : 'Create Prospect'}
-            </button>
-          </div>
-        </form>
-      </div>
+            </form>
+          </Card>
+        </div>
+      </Container>
     </div>
   );
 }

@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ServiceCard } from '@/components/consulting/ServiceCard';
-import { Loader2 } from 'lucide-react';
+import { Container } from '@/components/ui/Container';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 
 interface Service {
   id: string;
@@ -27,9 +29,11 @@ export default function ConsultingPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     fetchServices();
+    fetchTags();
   }, [selectedTag]);
 
   const fetchServices = async () => {
@@ -41,203 +45,161 @@ export default function ConsultingPage() {
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch services');
       const data = await response.json();
-      setServices(data);
+      setServices(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching services:', error);
+      setServices([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const allTags = Array.from(
-    new Set(services.flatMap((s) => s.tags || []))
-  ) as string[];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
+  const fetchTags = async () => {
+    try {
+      const response = await fetch('/api/consulting/services/tags');
+      if (!response.ok) throw new Error('Failed to fetch tags');
+      const data = await response.json();
+      setTags(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      setTags([]);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-[#050505] text-[#F5F5F5]">
       {/* Hero Section */}
-      <motion.section
-        className="pt-20 pb-16 px-4 sm:px-6 lg:px-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            className="mb-6"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-          >
-            <div className="inline-block px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/30 mb-4">
-              <span className="text-sm font-semibold text-blue-300">Expert AI Consulting</span>
-            </div>
-          </motion.div>
+      <section className="py-16 sm:py-24 border-b border-[#1A1A1A]">
+        <Container>
+          <div className="space-y-6 text-center">
+            <Badge variant="success">Professional Services</Badge>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
+              Expert <span className="text-[#2CD588]">Consulting</span> Services
+            </h1>
+            <p className="text-[#A0A0A0] text-lg max-w-2xl mx-auto">
+              Get expert guidance from our team of experienced consultants. From strategy to implementation, we help you succeed.
+            </p>
+            <Button variant="primary" size="lg" asChild>
+              <Link href="/prospects/new">Start Your Project</Link>
+            </Button>
+          </div>
+        </Container>
+      </section>
 
-          <motion.h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            Transform Your Business with <span className="text-blue-400">AI Consulting</span>
-          </motion.h1>
-
-          <motion.p
-            className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            Book expert AI consultants for strategy, implementation, training, and custom solutions.
-            Get answers in hours, not weeks.
-          </motion.p>
-
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-              Schedule a Consultation
-            </button>
-            <button className="px-8 py-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors">
-              Learn More
-            </button>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Tag Filter */}
-      {allTags.length > 0 && (
-        <motion.section
-          className="px-4 sm:px-6 lg:px-8 mb-12"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="max-w-6xl mx-auto">
-            <p className="text-sm text-slate-400 mb-4">Filter by service type:</p>
-            <div className="flex flex-wrap gap-3">
-              <motion.button
+      {/* Filter Section */}
+      {tags.length > 0 && (
+        <section className="py-8 bg-[#0A0A0A] border-b border-[#1A1A1A]">
+          <Container>
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+              <Button
+                variant={selectedTag === null ? 'primary' : 'secondary'}
+                size="sm"
                 onClick={() => setSelectedTag(null)}
-                className={`px-4 py-2 rounded-full border transition-colors text-sm font-medium ${
-                  selectedTag === null
-                    ? 'bg-blue-600 border-blue-600 text-white'
-                    : 'border-slate-600 text-slate-300 hover:border-slate-500'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
                 All Services
-              </motion.button>
-              {allTags.map((tag) => (
-                <motion.button
+              </Button>
+              {tags.map((tag) => (
+                <Button
                   key={tag}
+                  variant={selectedTag === tag ? 'primary' : 'secondary'}
+                  size="sm"
                   onClick={() => setSelectedTag(tag)}
-                  className={`px-4 py-2 rounded-full border transition-colors text-sm font-medium capitalize ${
-                    selectedTag === tag
-                      ? 'bg-blue-600 border-blue-600 text-white'
-                      : 'border-slate-600 text-slate-300 hover:border-slate-500'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   {tag}
-                </motion.button>
+                </Button>
               ))}
             </div>
-          </div>
-        </motion.section>
+          </Container>
+        </section>
       )}
 
       {/* Services Grid */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-16 sm:py-24">
+        <Container>
           {loading ? (
-            <motion.div
-              className="flex items-center justify-center py-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-            </motion.div>
+            <div className="text-center py-12">
+              <div className="inline-flex animate-spin">
+                <svg className="w-8 h-8 text-[#2CD588]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              </div>
+              <p className="mt-4 text-[#A0A0A0]">Loading services...</p>
+            </div>
           ) : services.length > 0 ? (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((service) => (
-                <motion.div key={service.id} variants={itemVariants}>
-                  <ServiceCard
-                    id={service.id}
-                    name={service.name}
-                    description={service.description}
-                    hourlyRate={service.hourlyRate}
-                    icon={service.icon}
-                    tags={service.tags}
-                    consultantCount={service.consultants?.length || 0}
-                  />
-                </motion.div>
+                <Card key={service.id} variant="action" className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold">{service.name}</h3>
+                    <p className="text-[#A0A0A0] text-sm mt-2">{service.description}</p>
+                  </div>
+
+                  {service.tags && service.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {service.tags.map((tag) => (
+                        <Badge key={tag} variant="info" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="border-t border-[#1A1A1A] pt-4 space-y-4">
+                    <div>
+                      <p className="text-sm text-[#A0A0A0] mb-1">Hourly Rate</p>
+                      <p className="text-2xl font-bold text-[#2CD588]">
+                        ${service.hourlyRate}
+                        <span className="text-sm text-[#A0A0A0]">/hr</span>
+                      </p>
+                    </div>
+
+                    {service.consultants && service.consultants.length > 0 && (
+                      <div>
+                        <p className="text-sm text-[#A0A0A0] mb-2">Available Consultants</p>
+                        <div className="space-y-2">
+                          {service.consultants.map(({ consultant }) => (
+                            <div key={consultant.id} className="bg-[#0A0A0A] p-2 rounded text-sm">
+                              <p className="font-medium">{consultant.name}</p>
+                              <p className="text-xs text-[#A0A0A0]">{consultant.expertise.join(', ')}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <Button variant="primary" size="md" className="w-full" asChild>
+                      <Link href={`/consulting/${service.id}`}>Book Now</Link>
+                    </Button>
+                  </div>
+                </Card>
               ))}
-            </motion.div>
+            </div>
           ) : (
-            <motion.div
-              className="text-center py-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <p className="text-slate-400 text-lg">No services found. Please try different filters.</p>
-            </motion.div>
+            <div className="text-center py-12">
+              <p className="text-[#A0A0A0] text-lg">No services available at the moment.</p>
+              <Button variant="secondary" size="md" className="mt-4" asChild>
+                <Link href="/contact">Contact Us</Link>
+              </Button>
+            </div>
           )}
-        </div>
+        </Container>
       </section>
 
       {/* CTA Section */}
-      <motion.section
-        className="px-4 sm:px-6 lg:px-8 py-16 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-t border-slate-700"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to get started?</h2>
-          <p className="text-slate-300 mb-8">
-            Select a service above and book your first consulting session today.
-          </p>
-          <motion.button
-            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Browse Services
-          </motion.button>
-        </div>
-      </motion.section>
+      <section className="py-16 sm:py-24 bg-[#0A0A0A] border-t border-[#1A1A1A]">
+        <Container>
+          <Card variant="elevated" className="text-center space-y-6">
+            <h2 className="text-3xl font-bold">Ready to Get Expert Help?</h2>
+            <p className="text-[#A0A0A0] max-w-2xl mx-auto">
+              Book a consultation with one of our experts today. We're here to help you achieve your goals.
+            </p>
+            <Button variant="primary" size="lg" asChild>
+              <Link href="/prospects/new">Book a Consultation</Link>
+            </Button>
+          </Card>
+        </Container>
+      </section>
     </div>
   );
 }

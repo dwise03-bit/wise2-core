@@ -9,11 +9,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
+  asChild?: boolean;
   children: React.ReactNode;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', isLoading = false, className = '', children, disabled, ...props }, ref) => {
+  ({ variant = 'primary', size = 'md', isLoading = false, asChild = false, className = '', children, disabled, ...props }, ref) => {
     const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed';
 
     const variantStyles = {
@@ -28,6 +29,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       md: 'px-6 py-3 text-base min-h-12',
       lg: 'px-8 py-4 text-lg min-h-14',
     };
+
+    if (asChild) {
+      return React.cloneElement(children as React.ReactElement, {
+        className: `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`,
+        ...props,
+      });
+    }
 
     return (
       <button

@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { DanielAvatar, DarrenAvatar } from '@/components/Characters';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Badge } from '@/components/ui/Badge';
+import { Container } from '@/components/ui/Container';
 
 export default function LandingPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    project: '',
-    timeline: '',
-  });
+  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,200 +22,201 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#050505] to-black text-white overflow-hidden">
-      {/* Animated background orbs */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#39FF14]/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#00D9FF]/20 rounded-full blur-3xl opacity-30 animate-pulse" style={{animationDelay: '1s'}}></div>
-      </div>
+    <div className="min-h-screen bg-[#050505] text-[#F5F5F5]">
+      {/* Hero Section */}
+      <section className="py-16 sm:py-24 lg:py-32">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <Badge variant="info">✨ AI-Native Platform</Badge>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                  <span className="text-[#2CD588]">Transform</span> Your Creative Vision
+                </h1>
+                <p className="text-lg text-[#A0A0A0] leading-relaxed max-w-2xl">
+                  WISE² is an all-in-one AI operating system for creators, businesses, and entrepreneurs. 
+                  Create, automate, and scale with the power of AI.
+                </p>
+              </div>
 
-      <div className="relative z-10">
-        {/* Navigation */}
-        <nav className="flex items-center justify-between p-6 border-b border-[#333]">
-          <Link href="/" className="flex items-baseline gap-1">
-            <span className="font-black text-2xl bg-gradient-to-b from-white to-[#777] bg-clip-text text-transparent">WISE</span>
-            <span className="font-black text-sm text-[#39FF14]">2</span>
-          </Link>
-          <Link href="/auth/login" className="px-6 py-2 bg-[#39FF14] text-black font-bold rounded hover:shadow-lg hover:shadow-[#39FF14]/50 transition">
-            Sign In
-          </Link>
-        </nav>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button variant="primary" size="lg" asChild>
+                  <Link href="/auth/signup">Get Started Free</Link>
+                </Button>
+                <Button variant="secondary" size="lg" asChild>
+                  <Link href="/services">Explore Services</Link>
+                </Button>
+              </div>
 
-        {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="text-center mb-20 animate-fade-in">
-            <h1 className="text-8xl font-black mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-[#39FF14] via-white to-[#00D9FF] bg-clip-text text-transparent">
-                Transform Your Creative Vision
-              </span>
-            </h1>
-            <p className="text-2xl text-[#aaa] mb-8">
-              AI-powered studio. Human-guided expertise. Professional-grade results.
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-[#1A1A1A]">
+                <div>
+                  <p className="text-2xl font-bold text-[#2CD588]">500+</p>
+                  <p className="text-sm text-[#A0A0A0]">Active Users</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-[#2CD588]">10K+</p>
+                  <p className="text-sm text-[#A0A0A0]">Projects</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-[#2CD588]">99.9%</p>
+                  <p className="text-sm text-[#A0A0A0]">Uptime</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Image Placeholder */}
+            <div className="relative h-96 rounded-2xl bg-gradient-to-br from-[#0A0A0A] to-[#1A1A1A] border border-[#2CD588]/20 flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#2CD588]/10 via-transparent to-transparent"></div>
+              <div className="relative text-center">
+                <p className="text-[#2CD588] font-bold text-lg">Creative Studio Preview</p>
+                <p className="text-[#A0A0A0] text-sm mt-2">Advanced AI-powered creation tools</p>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 sm:py-24 bg-[#0A0A0A] border-y border-[#1A1A1A]">
+        <Container>
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powered by WISE² AI</h2>
+            <p className="text-[#A0A0A0] text-lg max-w-2xl mx-auto">
+              Everything you need to create, automate, and scale your business
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Intake Form */}
-            <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#39FF14]/40 rounded-3xl p-12 shadow-2xl shadow-[#39FF14]/10 hover:shadow-[#39FF14]/20 transition">
-              <h2 className="text-4xl font-black mb-3 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] bg-clip-text text-transparent">
-                Begin Your Journey
-              </h2>
-              <p className="text-[#999] mb-10 text-lg">Tell us about your creative vision</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Creative Studio',
+                description: 'Professional-grade audio and video production tools powered by AI',
+                icon: '🎬'
+              },
+              {
+                title: 'Consulting OS',
+                description: 'End-to-end consulting platform for audits, proposals, and client management',
+                icon: '📊'
+              },
+              {
+                title: 'Automation Engine',
+                description: 'Intelligent workflows to streamline repetitive tasks and save time',
+                icon: '⚙️'
+              },
+              {
+                title: 'Intelligence Hub',
+                description: 'AI-powered analytics and insights for data-driven decisions',
+                icon: '🧠'
+              },
+              {
+                title: 'App Integrations',
+                description: 'Connect with 50+ popular tools and services seamlessly',
+                icon: '🔗'
+              },
+              {
+                title: 'Business Tools',
+                description: 'Invoicing, payments, billing, and financial management built-in',
+                icon: '💰'
+              }
+            ].map((feature, idx) => (
+              <Card key={idx} variant="default" className="hover:border-[#2CD588] transition-colors">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-[#A0A0A0] text-sm">{feature.description}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </section>
 
-              {submitted ? (
-                <div className="text-center py-16">
-                  <div className="text-7xl mb-6">✨</div>
-                  <h3 className="text-3xl font-bold mb-3">Welcome aboard!</h3>
-                  <p className="text-[#999] text-lg">Redirecting to studio setup...</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Name</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
-                      placeholder="Your name"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Email</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
-                      placeholder="your@email.com"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Project Type</label>
-                    <select
-                      value={formData.project}
-                      onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
-                      required
-                    >
-                      <option value="">Select a project</option>
-                      <option value="music">Music Production</option>
-                      <option value="podcast">Podcast</option>
-                      <option value="video">Video Content</option>
-                      <option value="branding">Audio Branding</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-[#39FF14] mb-3 uppercase tracking-wider">Timeline</label>
-                    <select
-                      value={formData.timeline}
-                      onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] focus:ring-2 focus:ring-[#39FF14]/20 outline-none transition"
-                      required
-                    >
-                      <option value="">Select timeline</option>
-                      <option value="urgent">This week</option>
-                      <option value="soon">Next 2 weeks</option>
-                      <option value="flexible">1-2 months</option>
-                      <option value="planning">Just exploring</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-4 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] text-black font-black text-lg rounded-lg hover:shadow-lg hover:shadow-[#39FF14]/50 transition uppercase tracking-wider"
-                  >
-                    Begin Studio Setup
-                  </button>
-                </form>
-              )}
+      {/* CTA Section */}
+      <section className="py-16 sm:py-24">
+        <Container>
+          <Card variant="elevated" className="text-center space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-bold">Ready to Transform Your Creative Vision?</h2>
+              <p className="text-[#A0A0A0] text-lg max-w-2xl mx-auto">
+                Join 500+ creators and businesses already using WISE² to create amazing content and scale their operations.
+              </p>
             </div>
 
-            {/* Characters Section */}
-            <div className="space-y-16">
+            <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto w-full">
               <div>
-                <h2 className="text-4xl font-black mb-3 bg-gradient-to-r from-white to-[#999] bg-clip-text text-transparent">Your Guides</h2>
-                <p className="text-[#666] text-lg">Meet Daniel & Darren — your personal creative directors</p>
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={submitted}
+                />
               </div>
+              <Button
+                variant="primary"
+                size="lg"
+                type="submit"
+                className="w-full"
+                isLoading={submitted}
+                disabled={submitted}
+              >
+                {submitted ? 'Redirecting...' : 'Start Free Trial'}
+              </Button>
+            </form>
 
-              {/* Daniel */}
-              <div className="group bg-gradient-to-br from-[#39FF14]/20 to-transparent border-2 border-[#39FF14]/50 rounded-3xl p-8 hover:border-[#39FF14] hover:shadow-xl hover:shadow-[#39FF14]/20 transition">
-                <div className="flex items-start gap-6">
-                  <div className="w-28 h-28 flex-shrink-0 bg-[#39FF14]/10 rounded-full border-2 border-[#39FF14]/50 flex items-center justify-center group-hover:bg-[#39FF14]/20 transition">
-                    <div className="w-20 h-20">
-                      <DanielAvatar />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-black text-[#39FF14] mb-2">Daniel</h3>
-                    <p className="text-[#39FF14] font-bold text-lg mb-4">Audio Architect</p>
-                    <p className="text-[#ccc] text-base leading-relaxed">
-                      Master of sonic branding. Creates audio signatures that define your creative identity. Expert in sound design, mixing, and mastering.
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {submitted && (
+              <p className="text-[#2CD588] text-sm font-medium">
+                ✓ Great! Redirecting to sign up...
+              </p>
+            )}
+          </Card>
+        </Container>
+      </section>
 
-              {/* Darren */}
-              <div className="group bg-gradient-to-br from-[#00D9FF]/20 to-transparent border-2 border-[#00D9FF]/50 rounded-3xl p-8 hover:border-[#00D9FF] hover:shadow-xl hover:shadow-[#00D9FF]/20 transition">
-                <div className="flex items-start gap-6">
-                  <div className="w-28 h-28 flex-shrink-0 bg-[#00D9FF]/10 rounded-full border-2 border-[#00D9FF]/50 flex items-center justify-center group-hover:bg-[#00D9FF]/20 transition">
-                    <div className="w-20 h-20">
-                      <DarrenAvatar />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-black text-[#00D9FF] mb-2">Darren</h3>
-                    <p className="text-[#00D9FF] font-bold text-lg mb-4">Creative Director</p>
-                    <p className="text-[#ccc] text-base leading-relaxed">
-                      Visionary storyteller. Crafts compelling narratives and lyrics that resonate with audiences. Expert in creative direction and content strategy.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Journey */}
-              <div className="bg-gradient-to-r from-[#39FF14]/15 to-[#00D9FF]/15 border-2 border-[#39FF14]/40 rounded-2xl p-8">
-                <div className="text-center">
-                  <p className="text-[#ccc] mb-6 text-lg font-semibold">
-                    5-Step Journey to Creative Mastery
-                  </p>
-                  <div className="flex justify-center items-center gap-3 text-sm flex-wrap">
-                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Beginning</span>
-                    <span className="text-[#39FF14]">→</span>
-                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Composition</span>
-                    <span className="text-[#39FF14]">→</span>
-                    <span className="px-4 py-2 bg-[#39FF14]/20 text-[#39FF14] rounded-full font-bold">Mastery</span>
-                  </div>
-                </div>
-              </div>
+      {/* Footer */}
+      <footer className="border-t border-[#1A1A1A] py-12 bg-[#0A0A0A]">
+        <Container>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <p className="font-bold mb-4 text-[#2CD588]">Product</p>
+              <ul className="space-y-2 text-sm text-[#A0A0A0]">
+                <li><Link href="/services" className="hover:text-[#2CD588] transition">Services</Link></li>
+                <li><Link href="/pricing" className="hover:text-[#2CD588] transition">Pricing</Link></li>
+                <li><Link href="/about" className="hover:text-[#2CD588] transition">About</Link></li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold mb-4 text-[#2CD588]">Company</p>
+              <ul className="space-y-2 text-sm text-[#A0A0A0]">
+                <li><Link href="/contact" className="hover:text-[#2CD588] transition">Contact</Link></li>
+                <li><Link href="/community" className="hover:text-[#2CD588] transition">Community</Link></li>
+                <li><a href="#" className="hover:text-[#2CD588] transition">Blog</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold mb-4 text-[#2CD588]">Legal</p>
+              <ul className="space-y-2 text-sm text-[#A0A0A0]">
+                <li><a href="#" className="hover:text-[#2CD588] transition">Privacy</a></li>
+                <li><a href="#" className="hover:text-[#2CD588] transition">Terms</a></li>
+                <li><a href="#" className="hover:text-[#2CD588] transition">Security</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold mb-4 text-[#2CD588]">Connect</p>
+              <ul className="space-y-2 text-sm text-[#A0A0A0]">
+                <li><a href="#" className="hover:text-[#2CD588] transition">Twitter</a></li>
+                <li><a href="#" className="hover:text-[#2CD588] transition">Discord</a></li>
+                <li><a href="#" className="hover:text-[#2CD588] transition">GitHub</a></li>
+              </ul>
             </div>
           </div>
-        </div>
-      </div>
 
-      <style>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out;
-        }
-      `}</style>
+          <div className="border-t border-[#1A1A1A] pt-8 text-center text-sm text-[#A0A0A0]">
+            <p>&copy; 2026 WISE² AI. All rights reserved. Built with passion and AI.</p>
+          </div>
+        </Container>
+      </footer>
     </div>
   );
 }
-
