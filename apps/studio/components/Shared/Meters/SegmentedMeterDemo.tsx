@@ -133,7 +133,7 @@ export function SegmentedMeterDemo() {
                   <button
                     onClick={() => controls.toggleChannelMute(channel.id)}
                     className={`p-2 rounded text-xs transition ${
-                      channel.isMuted
+                      channel.muted
                         ? 'bg-red-600 text-white'
                         : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                     }`}
@@ -143,7 +143,7 @@ export function SegmentedMeterDemo() {
                   <button
                     onClick={() => controls.toggleChannelSolo(channel.id)}
                     className={`p-2 rounded text-xs transition ${
-                      channel.isSolo
+                      channel.solo
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                     }`}
