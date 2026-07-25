@@ -6,6 +6,7 @@ import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { PiffCityRabbit } from './PiffCityRabbit';
 import styles from './Hero.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -271,13 +272,18 @@ export const Hero: React.FC = () => {
         <div className={styles.poweredGrid}>
           {/* PIFF CITY - Purple */}
           <div className="business-card" style={{ borderColor: 'rgba(166, 60, 255, 0.3)', backgroundImage: 'linear-gradient(to bottom right, rgba(166, 60, 255, 0.1), transparent)' }}>
-            <div className={styles.businessCardContent}>
-              <p className={styles.businessName} style={{ color: '#A63CFF' }}>PIFF CITY</p>
-              <p className={styles.businessTagline}>CULTURE. CREATIVITY. CONSCIOUSNESS.</p>
-              <p className={styles.businessDescription}>WE SET TRENDS.</p>
-              <div className={styles.businessItems}>
-                <div>👕 APPAREL • 📸 MEDIA • 🎭 EVENTS</div>
-                <div>🎵 MUSIC • 🏷️ BRAND</div>
+            <div className={styles.piffCityCard}>
+              <div className={styles.piffCityRabbitContainer}>
+                <PiffCityRabbit />
+              </div>
+              <div className={styles.businessCardContent}>
+                <p className={styles.businessName} style={{ color: '#A63CFF' }}>PIFF CITY</p>
+                <p className={styles.businessTagline}>CULTURE. CREATIVITY. COMMUNITY.</p>
+                <p className={styles.businessDescription}>WE SET TRENDS.</p>
+                <div className={styles.businessItems}>
+                  <div>👕 APPAREL • 📸 MEDIA • 🎭 EVENTS</div>
+                  <div>🎵 MUSIC • 🏷️ BRAND</div>
+                </div>
               </div>
             </div>
           </div>

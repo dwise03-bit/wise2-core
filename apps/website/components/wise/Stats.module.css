@@ -1,0 +1,196 @@
+/* ============================================================================
+   STATS SECTION - Key Metrics & Key Performance Indicators
+   ============================================================================ */
+
+.statsSection {
+  position: relative;
+  z-index: 10;
+  padding: 80px 20px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(166, 60, 255, 0.03));
+  border-top: 1px solid rgba(166, 60, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 148, 255, 0.1);
+}
+
+.statsContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.statsHeader {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.statsTitle {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 0 30px rgba(166, 60, 255, 0.2);
+}
+
+.statsSubtitle {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-family: 'Rajdhani', monospace;
+  color: #a0a0a0;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 0;
+}
+
+/* Stat Card */
+.statsGrid > div {
+  position: relative;
+  padding: 40px 24px;
+  background: linear-gradient(135deg, rgba(0, 148, 255, 0.05) 0%, rgba(166, 60, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 148, 255, 0.2);
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow, border-color;
+  overflow: hidden;
+}
+
+.statsGrid > div:hover {
+  transform: translateY(-8px);
+  border-color: rgba(0, 148, 255, 0.5);
+  box-shadow: 0 20px 40px rgba(0, 148, 255, 0.15), inset 0 0 30px rgba(0, 148, 255, 0.08);
+}
+
+/* Stat Value - Big Bold Number/Symbol */
+.statValue {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 900;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #0094FF, #A63CFF, #00D96C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  text-shadow: 0 0 40px rgba(0, 148, 255, 0.3);
+  letter-spacing: -2px;
+}
+
+/* Stat Label */
+.statLabel {
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.75px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Stat Description */
+.statDescription {
+  font-size: clamp(0.75rem, 1.4vw, 0.875rem);
+  color: #a0a0a0;
+  line-height: 1.5;
+  margin: 0;
+  font-family: 'Rajdhani', monospace;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .statsSection {
+    padding: 60px 16px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .statsGrid > div {
+    padding: 32px 20px;
+  }
+
+  .statValue {
+    margin-bottom: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .statsGrid > div {
+    padding: 36px 24px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .statsSection {
+    padding: 100px 40px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  .statsGrid > div {
+    padding: 44px 28px;
+  }
+}
+
+/* ============================================================================
+   ACCENT COLOR VARIANTS
+   ============================================================================ */
+
+.statsGrid > div:nth-child(1) {
+  --accent-color: #0094FF;
+}
+
+.statsGrid > div:nth-child(2) {
+  --accent-color: #A63CFF;
+}
+
+.statsGrid > div:nth-child(3) {
+  --accent-color: #00D96C;
+}
+
+.statsGrid > div:nth-child(4) {
+  --accent-color: #F2B632;
+}
+
+/* ============================================================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .statsGrid > div {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .statsGrid > div {
+    border-width: 2px;
+    box-shadow: 0 0 30px rgba(0, 148, 255, 0.3);
+  }
+
+  .statLabel {
+    text-shadow: 0 0 20px rgba(0, 148, 255, 0.4);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .statsGrid > div:active {
+    transform: translateY(-4px);
+  }
+}
