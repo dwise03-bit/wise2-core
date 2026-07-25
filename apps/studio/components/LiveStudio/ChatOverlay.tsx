@@ -63,6 +63,10 @@ export function ChatOverlay({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const platformConfig = channelId
+    ? { [platform]: { platform, channelId } }
+    : undefined;
+
   const {
     messages,
     alerts,
@@ -72,7 +76,7 @@ export function ChatOverlay({
     disconnect,
     sendMockMessage,
     playSound,
-  } = useChatOverlay(platform, channelId);
+  } = useChatOverlay(platform as any, platformConfig as any);
 
   // Auto-connect on mount
   useEffect(() => {

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Shield, Star } from 'lucide-react';
-import { ChatMessage as ChatMessageType, ChatOverlayConfig } from './types/chat';
+import { ChatMessage as ChatMessageType, ChatOverlayConfig, USER_TYPE_STYLES } from './types/chat';
 import { formatRelativeTime, parseMessageWithEmotes } from '../../utils/chatUtils';
 
 interface ChatMessageProps {
@@ -24,7 +24,7 @@ export function ChatMessageComponent({
   const [imageError, setImageError] = useState(false);
 
   // User color based on type
-  const getUserColor = (userType: string, customColor?: string): string => {
+  const getUserColor = (userType?: string, customColor?: string): string => {
     if (customColor) return customColor;
 
     switch (userType) {
@@ -41,20 +41,24 @@ export function ChatMessageComponent({
     }
   };
 
-  const userColor = getUserColor(message.userType, message.color);
+  const userColor = getUserColor(message.userType, message.userColor);
 
-  const getBadgeIcon = (badgeType: string) => {
-    switch (badgeType) {
+  const getBadgeIcon = (userType?: string) => {
+    switch (userType) {
       case 'moderator':
         return <Shield className="w-3 h-3" />;
       case 'subscriber':
         return <Star className="w-3 h-3" />;
       case 'vip':
         return <Crown className="w-3 h-3" />;
+      case 'broadcaster':
+        return <Crown className="w-3 h-3 text-yellow-400" />;
       default:
         return null;
     }
   };
+
+  const showBadge = message.userType && ['moderator', 'subscriber', 'vip', 'broadcaster'].includes(message.userType);
 
   return (
     <motion.div
@@ -71,7 +75,7 @@ export function ChatMessageComponent({
       onMouseLeave={onHoverEnd}
     >
       {/* Message header with username and badges */}
-      <div className="flex items-center gap-1 mb-0.5">
+      <div className="flex items-center gap-1 mb-0.5 flex-wrap">
         {/* Avatar */}
         {config.showUsernames && message.userAvatar && !imageError && (
           <img
@@ -90,24 +94,16 @@ export function ChatMessageComponent({
           {message.userName}
         </span>
 
-        {/* Badges */}
-        {config.showUsernames && message.badges.length > 0 && (
-          <div className="flex gap-0.5">
-            {message.badges.map((badge) => (
-              <div
-                key={badge.type}
-                className="flex items-center justify-center bg-white/10 rounded px-1 py-0.5 text-xs"
-                title={badge.label}
-              >
-                {getBadgeIcon(badge.type)}
-              </div>
-            ))}
+        {/* Badge */}
+        {config.showUsernames && showBadge && (
+          <div className="flex items-center justify-center bg-white/10 rounded px-1 py-0.5">
+            {getBadgeIcon(message.userType)}
           </div>
         )}
 
         {/* Timestamp */}
         {config.showTimestamps && (
-          <span className="text-xs text-slate-500 leading-none">
+          <span className="text-xs text-slate-500 leading-none ml-auto">
             {formatRelativeTime(message.timestamp)}
           </span>
         )}
@@ -115,7 +111,7 @@ export function ChatMessageComponent({
 
       {/* Message text with emotes */}
       <div className="text-xs text-slate-100 leading-snug break-words">
-        {config.showEmotes && message.emotes.length > 0 ? (
+        {config.showEmotes && message.emotes && message.emotes.length > 0 ? (
           parseMessageWithEmotes(message.message, message.emotes, {
             renderEmote: (emote) => (
               <img
@@ -133,9 +129,9 @@ export function ChatMessageComponent({
       </div>
 
       {/* Reply indicator */}
-      {message.isReply && message.replyTo && (
+      {message.replyToId && (
         <div className="text-xs text-slate-400 mt-0.5 pl-2 border-l border-slate-600">
-          Replying to thread
+          Replying to previous message
         </div>
       )}
     </motion.div>

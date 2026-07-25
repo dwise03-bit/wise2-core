@@ -25,10 +25,6 @@ export type {
   ChatMessage as ChatMessageType,
   ChatAlert as ChatAlertType,
   ChatOverlayConfig as ChatOverlayConfigType,
-  PlatformCredentials,
-  ChatEventHandlers,
-  ChatStatistics,
-  PlatformConnectionStatus,
 } from './types/chat';
 
 // OBS Components
@@ -56,8 +52,7 @@ export type { Source as SourceManagerSource, SourceManagerProps } from './Source
 
 export { PreviewCanvas } from './PreviewCanvas';
 export { StreamControl } from './StreamControl';
-export { StreamStats } from './StreamStats';
-export type { StreamStatsSnapshot, StreamSession } from './StreamStats';
+export { default as StreamStats } from './StreamStats';
 
 // Unified OBS Interface
 export { PreviewUI } from './PreviewUI';
@@ -72,7 +67,6 @@ export { LiveStudioIntegration } from './LiveStudioIntegration';
 // Streaming Control System
 export { default as StreamingControl } from './StreamingControl';
 export { default as PlatformSettings } from './PlatformSettings';
-export { default as StreamStatsComponent } from './StreamStats';
 export { default as StreamTransport } from './StreamTransport';
 export { useStreamingState } from './useStreamingState';
 
@@ -89,7 +83,6 @@ export type {
   EncoderSettings,
   StreamSettings,
   PlatformCredentials,
-  StreamStats,
   StreamState,
   PlatformConfig,
   EncoderCapability,

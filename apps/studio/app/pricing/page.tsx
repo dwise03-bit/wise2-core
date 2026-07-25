@@ -1,13 +1,11 @@
 /**
  * Pricing Page Route
  */
+'use client';
 
-import { PricingPage } from '../../components/Billing/PricingPage';
+export const dynamic = 'force-dynamic';
 
-export const metadata = {
-  title: 'Pricing - WISE² Studio',
-  description: 'Flexible pricing plans for audio creators',
-};
+import { PricingPage } from '@/components/Billing/PricingPage';
 
 export default function Page() {
   return <PricingPage />;

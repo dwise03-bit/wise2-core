@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '../globals.css'
+import { RootLayoutClient } from './layout-client'
 
 export const metadata: Metadata = {
   title: 'WISE² Studio - Creative Suite',
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <RootLayoutClient>
+          {children}
+        </RootLayoutClient>
       </body>
     </html>
   )

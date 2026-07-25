@@ -55,3 +55,8 @@ export { SunoPromptBuilder } from './SunoPromptBuilder';
 export { SunoGenerationQueue } from './SunoGenerationQueue';
 export { SunoLibrary } from './SunoLibrary';
 export { SunoTrackPreview } from './SunoTrackPreview';
+export { SunoIntegrationExample } from './SunoIntegrationExample';
+
+// Enhanced Sound Lab with Generation Integration
+export { SoundLabWithSuno } from './SoundLabWithSuno';
+export { SoundLabEnhanced } from './SoundLabEnhanced';

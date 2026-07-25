@@ -8,7 +8,6 @@ import {
   withMiddleware,
   requireAuth,
   successResponse,
-  notFoundResponse,
   validateRequest,
   ApiException,
   ValidationSchema,

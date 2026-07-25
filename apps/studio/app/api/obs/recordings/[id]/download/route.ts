@@ -58,7 +58,7 @@ async function downloadRecording(
     }
 
     // Return file as download
-    const response = new NextResponse(fileBuffer, {
+    const response = new NextResponse(fileBuffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'video/mp4',

@@ -6,19 +6,15 @@ import { useState } from 'react';
 export const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const studioUrl = process.env.NEXT_PUBLIC_STUDIO_URL || 'http://localhost:3005';
-  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost:3002';
+  const studioUrl = process.env.NEXT_PUBLIC_STUDIO_URL || '/studio';
+  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/landing', label: 'Landing' },
     { href: '/gallery', label: 'Gallery' },
     { href: studioUrl, label: 'Studio', external: true },
-    { href: dashboardUrl, label: 'Dashboard', external: true },
     { href: '/apps', label: 'Apps' },
-    { href: '/webstore', label: 'Webstore' },
     { href: '/shop', label: 'Shop' },
-    { href: '/maintenance', label: 'Maintenance' },
   ];
 
   return (

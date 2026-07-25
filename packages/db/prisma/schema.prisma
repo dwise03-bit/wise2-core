@@ -1088,3 +1088,76 @@ enum RecordingStatus {
   PROCESSING
   FAILED
 }
+
+// Multistream configuration
+model MultistreamConfig {
+  id        String   @id @default(cuid())
+  userId    String?
+
+  name      String
+  description String? @db.Text
+
+  // Platform configurations (stored as JSON array)
+  // Structure: PlatformConfig[]
+  platforms Json     @default("[]")
+
+  // Global encoding settings
+  encodingPreset String @default("fast") // ultrafast, fast, medium, slow
+  videoBitrate   Int    @default(4500)   // kbps
+  audioBitrate   Int    @default(128)    // kbps
+  resolution     String @default("1080p") // 720p, 1080p, 1440p, 2160p
+  fps            Int    @default(30)      // 30 or 60
+
+  // Failover and recovery settings
+  enableFailover Boolean @default(true)
+  failoverDelay  Int     @default(5000)   // milliseconds
+
+  // Monitoring settings
+  enableMetrics  Boolean @default(true)
+  metricsInterval Int    @default(1000)   // milliseconds
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  sessions MultistreamSession[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Multistream session (historical record of a broadcast)
+model MultistreamSession {
+  id       String @id @default(cuid())
+  configId String
+  config   MultistreamConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  // Session timing
+  startedAt DateTime
+  stoppedAt DateTime?
+  duration  Int?     // seconds
+
+  // Platforms used in this session
+  platforms String[] // Array of platform names: ["twitch", "youtube", ...]
+
+  // Aggregate stats
+  totalViewers Int @default(0)
+  totalChatMessages Int? @default(0)
+
+  // Per-platform stats (stored as JSON)
+  // Structure: PlatformStats[]
+  platformStats Json @default("[]")
+
+  // Metadata
+  title     String?
+  category  String?
+  tags      String[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([configId])
+  @@index([startedAt])
+  @@index([createdAt])
+}

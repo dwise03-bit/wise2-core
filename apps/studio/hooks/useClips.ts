@@ -295,6 +295,62 @@ export function useClips() {
     return Array.from(state.clips.values());
   }, [state.clips]);
 
+  /**
+   * Get all clips as Map (same as state.clips)
+   */
+  const getClips = useCallback((): Map<string, ClipData> => {
+    return new Map(state.clips);
+  }, [state.clips]);
+
+  /**
+   * Update a clip with partial data
+   */
+  const updateClip = useCallback((clipId: string, updates: Partial<ClipData>) => {
+    setState(prev => {
+      const newClips = new Map(prev.clips);
+      const clip = newClips.get(clipId);
+      if (clip) {
+        newClips.set(clipId, { ...clip, ...updates });
+      }
+      return { ...prev, clips: newClips };
+    });
+  }, []);
+
+  /**
+   * Add generated clip with metadata
+   */
+  const addGeneratedClip = useCallback(
+    (
+      trackId: string,
+      audioBuffer: AudioBuffer,
+      sunoGeneration: any, // SunoGeneration
+      name: string = 'Generated',
+      startTime: number = 0
+    ): string => {
+      const clipId = addClip(trackId, audioBuffer, name, startTime);
+
+      // Update with generation metadata
+      setState(prev => {
+        const newClips = new Map(prev.clips);
+        const clip = newClips.get(clipId);
+        if (clip) {
+          clip.source = 'generated';
+          clip.sunoGenerationId = sunoGeneration.id;
+          clip.sunoMetadata = {
+            sunoGenerationId: sunoGeneration.id,
+            sunoParams: sunoGeneration.params,
+            audioUrl: sunoGeneration.audioUrl,
+            waveformData: sunoGeneration.waveformData,
+          };
+        }
+        return { ...prev, clips: newClips };
+      });
+
+      return clipId;
+    },
+    [addClip]
+  );
+
   return {
     clips: state.clips,
     selectedClipId: state.selectedClipId,
@@ -309,6 +365,9 @@ export function useClips() {
     getClipsForTrack,
     getSelectedClip,
     getAllClips,
+    getClips,
+    updateClip,
+    addGeneratedClip,
     duplicateClip,
     splitClip,
   };

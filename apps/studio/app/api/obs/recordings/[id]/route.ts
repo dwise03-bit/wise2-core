@@ -127,7 +127,7 @@ async function deleteRecording(
     //   where: { id: recordingId },
     // });
 
-    return successResponse();
+    return successResponse({ message: 'Recording deleted successfully' });
   } catch (error: any) {
     console.error('Error deleting recording:', error);
     throw new ApiException(500, 'INTERNAL_ERROR', 'Failed to delete recording');
