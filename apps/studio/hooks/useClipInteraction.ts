@@ -57,9 +57,13 @@ export interface UseClipInteractionOptions {
 interface HistoryAction {
   timestamp: number;
   clipId: string;
-  type: 'move' | 'trim-start' | 'trim-end' | 'select' | 'delete' | 'create';
+  type: 'move' | 'trim-start' | 'trim-end' | 'select' | 'delete' | 'create' | 'regenerate';
   before: Partial<ClipData>;
   after: Partial<ClipData>;
+  metadata?: {
+    source?: 'recorded' | 'generated'; // Track clip source in history
+    sunoGenerationId?: string; // For tracking regenerations
+  };
 }
 
 /**
@@ -571,6 +575,51 @@ export function useClipInteraction(
   );
 
   /**
+   * Record clip creation (useful for generated clips)
+   */
+  const recordClipCreation = useCallback(
+    (clipId: string, clipData: Partial<ClipData>) => {
+      recordHistory(
+        clipId,
+        'create',
+        {}, // Before: empty (clip didn't exist)
+        clipData // After: the created clip data
+      );
+    },
+    []
+  );
+
+  /**
+   * Record clip deletion
+   */
+  const recordClipDeletion = useCallback(
+    (clipId: string, clipData: Partial<ClipData>) => {
+      recordHistory(
+        clipId,
+        'delete',
+        clipData, // Before: the deleted clip data
+        {} // After: empty (clip no longer exists)
+      );
+    },
+    []
+  );
+
+  /**
+   * Record regeneration of a clip (for Suno regenerations)
+   */
+  const recordRegeneration = useCallback(
+    (clipId: string, oldParams: Partial<ClipData>, newParams: Partial<ClipData>) => {
+      recordHistory(
+        clipId,
+        'regenerate',
+        oldParams,
+        newParams
+      );
+    },
+    []
+  );
+
+  /**
    * Get history info for debugging/UI
    */
   const getHistoryInfo = useCallback(
@@ -612,6 +661,9 @@ export function useClipInteraction(
     undo,
     redo,
     clearHistory,
+    recordClipCreation,
+    recordClipDeletion,
+    recordRegeneration,
     getHistoryInfo,
 
     // Configuration

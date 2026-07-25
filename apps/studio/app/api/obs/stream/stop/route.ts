@@ -42,7 +42,13 @@ async function stopStream(
   return successResponse(response);
 }
 
-export const POST = withMiddleware(stopStream);
+export async function POST(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(stopStream)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

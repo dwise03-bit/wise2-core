@@ -279,7 +279,7 @@ export function createdResponse<T>(data: T) {
 // REQUEST WRAPPER
 // ============================================================================
 
-export async function withMiddleware(
+export function withMiddleware(
   handler: (
     request: NextRequest,
     user: UserContext | null,

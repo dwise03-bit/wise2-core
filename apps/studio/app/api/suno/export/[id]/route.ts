@@ -19,8 +19,9 @@ import {
   successResponse,
   validateRequest,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
-import { SunoExportResponse, ValidationSchema } from '@/types/api';
+import { SunoExportResponse } from '@/types/api';
 import { UserContext } from '@/types/api';
 
 // Validation schema for export request
@@ -107,7 +108,13 @@ async function exportMusic(
   return successResponse(response);
 }
 
-export const GET = withMiddleware(exportMusic);
+export async function GET(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(exportMusic)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

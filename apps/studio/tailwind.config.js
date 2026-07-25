@@ -71,12 +71,37 @@ module.exports = {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
+        slideIn: {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideInLeft: {
+          from: { opacity: '0', transform: 'translateX(-8px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        slideInRight: {
+          from: { opacity: '0', transform: 'translateX(8px)' },
+          to: { opacity: '1', transform: 'translateX(0)' },
+        },
+        accentPulse: {
+          '0%,100%': { boxShadow: '0 0 8px rgba(57,255,20,0.3)' },
+          '50%': { boxShadow: '0 0 16px rgba(57,255,20,0.6)' },
+        },
+        shimmer: {
+          '-100%': { backgroundPosition: '200% center' },
+          '100%': { backgroundPosition: '-200% center' },
+        },
       },
       animation: {
         w2pulse: 'w2pulse 2s ease-in-out infinite',
         w2blink: 'w2blink 1.2s ease-in-out infinite',
         w2rise: 'w2rise .22s ease-out both',
         w2ticker: 'w2ticker 30s linear infinite',
+        slideIn: 'slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        slideInLeft: 'slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        slideInRight: 'slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        accentPulse: 'accentPulse 2s ease-in-out infinite',
+        shimmer: 'shimmer 2s infinite',
       },
     },
   },

@@ -27,8 +27,9 @@ import {
   successResponse,
   validateRequest,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
-import { ObsScene, ObsSceneUpdateRequest, ValidationSchema } from '@/types/api';
+import { ObsScene, ObsSceneUpdateRequest } from '@/types/api';
 import { UserContext } from '@/types/api';
 
 // Validation schema for scene update
@@ -68,7 +69,7 @@ async function updateScene(
   }
 
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
   // Validate request (all fields optional for update)
   const { valid, errors } = validateRequest(body, sceneUpdateSchema);
@@ -79,8 +80,8 @@ async function updateScene(
   }
 
   const payload: ObsSceneUpdateRequest = {
-    name: body.name,
-    order: body.order,
+    name: body.name as any,
+    order: body.order as any,
   };
 
   // TODO: Update scene in database or OBS
@@ -133,8 +134,19 @@ async function deleteScene(
   return successResponse({ id, deleted: true });
 }
 
-export const PUT = withMiddleware(updateScene);
-export const DELETE = withMiddleware(deleteScene);
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
+  return withMiddleware(updateScene)(request, { params });
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
+  return withMiddleware(deleteScene)(request, { params });
+}
 
 /**
  * Handle preflight requests

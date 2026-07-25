@@ -62,7 +62,13 @@ async function getStatus(
   return successResponse(response);
 }
 
-export const GET = withMiddleware(getStatus);
+export async function GET(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(getStatus)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

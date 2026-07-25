@@ -20,12 +20,13 @@ import {
   createdResponse,
   ApiException,
   successResponse,
+  ValidationSchema,
 } from '@/lib/api-middleware';
 import {
   SunoGenerationRequest,
   SunoGenerationResponse,
 } from '@/types/api';
-import { UserContext, ValidationSchema } from '@/types/api';
+import { UserContext } from '@/types/api';
 
 // Validation schema for generation request
 const generationSchema: ValidationSchema = {
@@ -72,7 +73,7 @@ async function generateMusic(
   }
 
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
   // Validate request
   const { valid, errors } = validateRequest(body, generationSchema);
@@ -83,11 +84,11 @@ async function generateMusic(
   }
 
   const payload: SunoGenerationRequest = {
-    prompt: body.prompt,
-    style: body.style,
-    duration: body.duration,
-    temperature: body.temperature,
-    tags: body.tags,
+    prompt: body.prompt as any,
+    style: body.style as any,
+    duration: body.duration as any,
+    temperature: body.temperature as any,
+    tags: body.tags as any,
   };
 
   // TODO: Call Suno API
@@ -106,7 +107,8 @@ async function generateMusic(
   return createdResponse(response);
 }
 
-export const POST = withMiddleware(generateMusic);
+export async function POST(request: NextRequest, context: any = {}) { const { params = {} } = context; return withMiddleware(generateMusic)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

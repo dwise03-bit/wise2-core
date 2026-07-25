@@ -29,8 +29,9 @@ import {
   validateRequest,
   createdResponse,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
-import { ObsSource, ObsSourceCreateRequest, ValidationSchema } from '@/types/api';
+import { ObsSource, ObsSourceCreateRequest } from '@/types/api';
 import { UserContext } from '@/types/api';
 
 // Validation schema for source creation
@@ -141,7 +142,7 @@ async function addSource(
   }
 
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
   // Validate request
   const { valid, errors } = validateRequest(body, sourceCreateSchema);
@@ -153,9 +154,9 @@ async function addSource(
 
   const payload: ObsSourceCreateRequest = {
     sceneId,
-    name: body.name,
-    type: body.type,
-    settings: body.settings || {},
+    name: body.name as any,
+    type: body.type as any,
+    settings: body.settings as any || {},
   };
 
   // TODO: Create source in database or OBS
@@ -202,8 +203,19 @@ async function handler(
   throw new ApiException(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
 }
 
-export const GET = withMiddleware(listSources);
-export const POST = withMiddleware(addSource);
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
+  return withMiddleware(listSources)(request, { params });
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Record<string, string> }
+) {
+  return withMiddleware(addSource)(request, { params });
+}
 
 /**
  * Handle preflight requests

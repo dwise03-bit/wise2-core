@@ -207,3 +207,120 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   hasMore: boolean;
 }
+
+// ============================================================================
+// MUSIC GENERATION TYPES
+// ============================================================================
+
+export interface GenerationRequest {
+  prompt: string;
+  genre?: string;
+  mood?: string;
+  tempo?: number; // BPM
+  duration?: number; // seconds
+  key?: string; // musical key
+  intensity?: number; // 0-100
+  num_variants?: number; // number of variants to generate
+}
+
+export interface GenerationMetadata {
+  id: string;
+  userId: string;
+  prompt: string;
+  genre?: string;
+  mood?: string;
+  tempo?: number;
+  duration?: number;
+  key?: string;
+  intensity?: number;
+  status: 'queued' | 'generating' | 'completed' | 'failed';
+  progress?: number; // 0-100
+  audioUrl?: string;
+  metadata?: {
+    generationTime?: number; // milliseconds
+    modelVersion?: string;
+    qualityScore?: number; // 0-100
+  };
+  createdAt: string;
+  completedAt?: string;
+  error?: string;
+  favorite?: boolean;
+}
+
+export interface GenerationResponse {
+  jobId: string;
+  status: 'queued' | 'generating';
+  estimatedTime: number; // seconds
+}
+
+export interface GenerationStatusResponse {
+  jobId: string;
+  status: 'queued' | 'generating' | 'completed' | 'failed';
+  progress?: number; // 0-100
+  eta?: number; // seconds
+  error?: string;
+}
+
+export interface GenerationResultResponse {
+  jobId: string;
+  status: 'completed';
+  audioUrl: string;
+  metadata: {
+    prompt: string;
+    genre?: string;
+    mood?: string;
+    tempo?: number;
+    duration?: number;
+    key?: string;
+    intensity?: number;
+    generationTime: number;
+    modelVersion: string;
+    qualityScore: number;
+  };
+  createdAt: string;
+  completedAt: string;
+}
+
+export interface GenerationHistoryItem {
+  id: string;
+  prompt: string;
+  genre?: string;
+  mood?: string;
+  status: 'queued' | 'generating' | 'completed' | 'failed';
+  audioUrl?: string;
+  duration?: number;
+  createdAt: string;
+  favorite?: boolean;
+  qualityScore?: number;
+}
+
+export interface GenerationHistoryResponse extends PaginatedResponse<GenerationHistoryItem> {
+  filters?: {
+    dateRange?: { start: string; end: string };
+    style?: string;
+    mood?: string;
+    status?: string;
+  };
+}
+
+export interface ExportRequest {
+  format: 'mp3' | 'wav' | 'flac' | 'opus' | 'ogg';
+  sampleRate?: number; // 44100, 48000, 96000
+  bitDepth?: number; // 16, 24, 32
+}
+
+export interface ExportResponse {
+  jobId: string;
+  format: string;
+  downloadUrl: string;
+  expiresIn: number; // seconds
+}
+
+export interface FavoriteToggleRequest {
+  favorite: boolean;
+}
+
+export interface FavoriteToggleResponse {
+  jobId: string;
+  favorite: boolean;
+}

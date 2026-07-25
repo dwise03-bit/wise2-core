@@ -50,7 +50,13 @@ async function getStreamStats(
   return successResponse(response);
 }
 
-export const GET = withMiddleware(getStreamStats);
+export async function GET(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(getStreamStats)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

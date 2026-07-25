@@ -1022,3 +1022,69 @@ enum ConsultingRecordingType {
   AUDIO
   VIDEO
 }
+
+// ===== LOCAL STREAM RECORDING SYSTEM =====
+
+// LocalStreamRecording: Metadata for locally recorded streams
+model LocalStreamRecording {
+  id        String   @id @default(cuid())
+
+  // Recording metadata
+  title     String
+  description String? @db.Text
+
+  // File information
+  filePath  String   @db.Text       // Local path: /recordings/{timestamp}-{uuid}
+  fileSize  Int                      // bytes
+  duration  Int?                     // seconds
+  format    RecordingFormat @default(MP4) // MP4, MKV
+
+  // Platform tracking
+  platform  String?                  // "youtube", "twitch", "facebook", "linkedin", "rtmp", "custom"
+  streamTitle String?
+
+  // Audio tracks
+  videoTrackPath   String? @db.Text // Path to video-only file
+  audioTrackPath   String? @db.Text // Path to audio-only file (for post-editing)
+  audioTracks      Json @default("[]") // Array of separate audio tracks with metadata
+
+  // File splitting (for >1GB auto-split)
+  isSplit          Boolean @default(false)
+  splitParts       Int @default(1)  // Total number of split files
+  parentRecordingId String?          // If this is a split part, reference parent
+
+  // Status tracking
+  status   RecordingStatus @default(IDLE)
+  quality  String @default("high") // "high", "medium", "low"
+  bitrate  Int @default(5000)      // kbps
+
+  // User association (optional, for multi-user systems)
+  userId   String?
+
+  // Timestamps
+  startedAt DateTime
+  stoppedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([platform])
+  @@index([status])
+  @@index([createdAt])
+  @@index([startedAt])
+}
+
+enum RecordingFormat {
+  MP4
+  MKV
+  WEBM
+}
+
+enum RecordingStatus {
+  IDLE
+  RECORDING
+  PAUSED
+  STOPPED
+  PROCESSING
+  FAILED
+}

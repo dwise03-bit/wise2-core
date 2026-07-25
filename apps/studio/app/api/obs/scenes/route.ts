@@ -21,11 +21,11 @@ import {
   validateRequest,
   createdResponse,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
 import {
   ObsScene,
   ObsSceneCreateRequest,
-  ValidationSchema,
 } from '@/types/api';
 import { UserContext } from '@/types/api';
 
@@ -100,7 +100,7 @@ async function createScene(
   }
 
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
   // Validate request
   const { valid, errors } = validateRequest(body, sceneCreateSchema);
@@ -111,7 +111,7 @@ async function createScene(
   }
 
   const payload: ObsSceneCreateRequest = {
-    name: body.name,
+    name: body.name as any,
   };
 
   // TODO: Create scene in database or OBS
@@ -151,8 +151,11 @@ async function handler(
   throw new ApiException(405, 'METHOD_NOT_ALLOWED', 'Method not allowed');
 }
 
-export const GET = withMiddleware(listScenes);
-export const POST = withMiddleware(createScene);
+export async function GET(request: NextRequest, context: any = {}) { const { params = {} } = context; return withMiddleware(listScenes)(request, { params: params as Record<string, string> });
+}
+
+export async function POST(request: NextRequest, context: any = {}) { const { params = {} } = context; return withMiddleware(createScene)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

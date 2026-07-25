@@ -8,6 +8,13 @@
 import { useCallback, useRef, useState } from 'react';
 import { Track } from '@wise2/audio';
 
+export interface GeneratedClipMetadata {
+  sunoGenerationId: string;
+  sunoParams: any; // SunoGenerationParams
+  audioUrl: string;
+  waveformData?: number[];
+}
+
 export interface ClipData {
   id: string;
   trackId: string;
@@ -20,6 +27,10 @@ export interface ClipData {
   fadeIn: number; // seconds
   fadeOut: number; // seconds
   isSelected: boolean;
+  source?: 'recorded' | 'generated'; // Track clip source
+  sunoGenerationId?: string; // Optional link to Suno generation
+  sunoMetadata?: GeneratedClipMetadata; // Full generation metadata
+  isLocked?: boolean; // Prevent editing while pending
 }
 
 interface UseClipsState {

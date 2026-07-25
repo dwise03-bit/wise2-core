@@ -17,6 +17,7 @@
     "@wise2/shared": "workspace:*",
     "framer-motion": "^11.0.3",
     "lucide-react": "^0.312.0",
+    "socket.io-client": "^4.7.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

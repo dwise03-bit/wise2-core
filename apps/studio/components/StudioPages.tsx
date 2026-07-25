@@ -3,6 +3,7 @@
 import React from 'react';
 import { useCreativeStudioStore } from '@/lib/creativeStudioStore';
 import { WaveformEditor, MeterLED, SpectrumBars, HorizontalMeter, SmoothWave } from './CanvasPrimitives';
+import { SoundLabWithSuno } from './SoundLab/SoundLabWithSuno';
 
 // Command Center
 export function CommandCenterPage() {
@@ -51,72 +52,14 @@ export function CommandCenterPage() {
 // Sound Lab
 export function SoundLabPage() {
   const { tracks, fx, toggleTrackMute, setFXAmount } = useCreativeStudioStore();
-  const editorRef = React.useRef<HTMLCanvasElement>(null);
-  const meterRef = React.useRef<HTMLCanvasElement>(null);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-4xl font-display font-black">Sound Lab</h1>
-
-      <div className="flex gap-4">
-        {/* Waveform Editor */}
-        <div className="flex-1 bg-studio-input border border-studio-line rounded p-4">
-          <div className="text-xs text-gray-500 mb-2">Waveform Editor</div>
-          <WaveformEditor ref={editorRef} width={600} height={120} className="w-full" />
-        </div>
-
-        {/* Master Meter */}
-        <div className="bg-studio-input border border-studio-line rounded p-4">
-          <div className="text-xs text-gray-500 mb-2">Master</div>
-          <MeterLED ref={meterRef} width={60} height={120} level={0.62} />
-        </div>
-      </div>
-
-      {/* Tracks Mixer */}
-      <div className="bg-studio-input border border-studio-line rounded p-4">
-        <h2 className="text-sm font-semibold text-white mb-3">7-Track Mixer</h2>
-        <div className="space-y-2">
-          {tracks.map((track, i) => (
-            <div key={i} className="flex items-center gap-3 p-2 bg-studio-raised rounded">
-              <div className="min-w-20">
-                <div className="text-xs font-semibold text-white">{track.name}</div>
-                <div className="text-xs text-gray-600">{Math.round(track.vol * 100)}%</div>
-              </div>
-              <div className="flex-1 h-8 bg-studio-input rounded" />
-              <button
-                onClick={() => toggleTrackMute(i)}
-                className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
-                  track.mute ? 'bg-red-500/30 text-red-400' : 'bg-studio-line text-gray-400'
-                }`}
-              >
-                {track.mute ? 'MUTE' : 'VOL'}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* FX Chain */}
-      <div className="bg-studio-input border border-studio-line rounded p-4">
-        <h2 className="text-sm font-semibold text-white mb-3">FX Chain (4 Units)</h2>
-        <div className="grid grid-cols-4 gap-2">
-          {fx.map((effect, i) => (
-            <div key={i} className="bg-studio-raised p-2 rounded text-xs">
-              <div className="font-semibold text-white truncate">{effect.name}</div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={effect.amt}
-                onChange={(e) => setFXAmount(i, Number(e.target.value))}
-                className="w-full mt-1"
-              />
-              <div className="text-gray-600 text-[10px] mt-1">{effect.amt}%</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <SoundLabWithSuno
+      tracks={tracks}
+      fx={fx}
+      onToggleTrackMute={toggleTrackMute}
+      onSetFXAmount={setFXAmount}
+    />
   );
 }
 

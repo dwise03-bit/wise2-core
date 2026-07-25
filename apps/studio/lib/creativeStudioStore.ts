@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type PageId = 'command' | 'sound' | 'live' | 'jingle' | 'voice' | 'factory' | 'showcase';
+export type PageId = 'command' | 'sound' | 'live' | 'jingle' | 'voice' | 'factory' | 'showcase' | 'generation';
 export type CommandTag = 'GO TO' | 'AI' | 'RUN' | 'EXPORT' | 'PAY';
 
 export interface Track {

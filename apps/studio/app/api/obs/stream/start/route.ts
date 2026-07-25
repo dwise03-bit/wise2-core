@@ -17,8 +17,9 @@ import {
   createdResponse,
   validateRequest,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
-import { ObsStreamStartRequest, ObsStreamStartResponse, ValidationSchema } from '@/types/api';
+import { ObsStreamStartRequest, ObsStreamStartResponse } from '@/types/api';
 import { UserContext } from '@/types/api';
 
 // Validation schema for stream start
@@ -54,7 +55,7 @@ async function startStream(
   }
 
   // Parse request body
-  const body = await request.json();
+  const body = (await request.json()) as Record<string, unknown>;
 
   // Validate request
   const { valid, errors } = validateRequest(body, streamStartSchema);
@@ -65,9 +66,9 @@ async function startStream(
   }
 
   const payload: ObsStreamStartRequest = {
-    sceneId: body.sceneId,
-    serviceUrl: body.serviceUrl,
-    streamKey: body.streamKey,
+    sceneId: body.sceneId as any,
+    serviceUrl: body.serviceUrl as any,
+    streamKey: body.streamKey as any,
   };
 
   // TODO: Connect to OBS and start streaming
@@ -88,7 +89,13 @@ async function startStream(
   return createdResponse(response);
 }
 
-export const POST = withMiddleware(startStream);
+export async function POST(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(startStream)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests

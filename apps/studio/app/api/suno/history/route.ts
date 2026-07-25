@@ -18,11 +18,11 @@ import {
   successResponse,
   validateRequest,
   ApiException,
+  ValidationSchema,
 } from '@/lib/api-middleware';
 import {
   SunoHistoryResponse,
-  SunoHistoryItem,
-  ValidationSchema,
+  SunoHistoryItem
 } from '@/types/api';
 import { UserContext } from '@/types/api';
 
@@ -144,7 +144,13 @@ async function getHistory(
   return successResponse(response);
 }
 
-export const GET = withMiddleware(getHistory);
+export async function GET(
+  request: NextRequest,
+  context: any = {}
+) {
+  const { params = {} } = context;
+  return withMiddleware(getHistory)(request, { params: params as Record<string, string> });
+}
 
 /**
  * Handle preflight requests
