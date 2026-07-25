@@ -301,66 +301,39 @@ export function VoiceLabPage() {
 
 // Content Factory
 export function ContentFactoryPage() {
-  const { factorySel, factoryPrompt, factoryItems, setFactoryPrompt, submitFactoryJob, setFactorySel } = useCreativeStudioStore();
-
-  const types = ['Images', 'Videos', 'Shorts', 'Ads', 'Voiceovers', 'Emails', 'Blogs', 'Landing Pages'];
-
+  // Use exact same structure as CommandCenterPage to debug rendering issue
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h1 className="text-4xl font-display font-black">Content Factory</h1>
 
-      {/* Type Selector */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {types.map((type, i) => (
-          <button
-            key={i}
-            onClick={() => setFactorySel(i)}
-            className={`px-3 py-1 rounded text-xs font-semibold whitespace-nowrap transition-colors ${
-              factorySel === i ? 'bg-wise-accent text-black' : 'bg-studio-input border border-studio-line text-gray-400'
-            }`}
-          >
-            {type}
-          </button>
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { label: 'Images Created', value: '42', delta: '+12%', sub: 'this month' },
+          { label: 'Videos Generated', value: '128', delta: '+31%', sub: 'this month' },
+          { label: 'Audio Assets', value: '347', delta: '+8%', sub: 'total library' },
+          { label: 'Content Queue', value: '12', delta: '+3', sub: 'pending render' },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-studio-input border border-studio-line rounded p-4">
+            <div className="text-xs text-gray-500 uppercase mb-2">{stat.label}</div>
+            <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
+            <div className="text-xs text-wise-accent mb-2">{stat.delta}</div>
+            <div className="text-xs text-gray-600">{stat.sub}</div>
+          </div>
         ))}
       </div>
 
-      {/* Prompt Input */}
       <div className="bg-studio-input border border-studio-line rounded p-4">
-        <textarea
-          placeholder="Describe what you want to create..."
-          value={factoryPrompt}
-          onChange={(e) => setFactoryPrompt(e.target.value)}
-          className="w-full h-20 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white placeholder-gray-600 focus:outline-none resize-none"
-        />
-        <button
-          onClick={submitFactoryJob}
-          className="mt-2 w-full px-3 py-2 bg-wise-accent text-black text-xs font-semibold rounded hover:bg-wise-accent-bright transition"
-        >
-          ⚡ Generate
-        </button>
-      </div>
-
-      {/* Render Queue */}
-      <div className="bg-studio-input border border-studio-line rounded p-4">
-        <h2 className="text-sm font-semibold text-white mb-3">Render Queue ({factoryItems.length})</h2>
-        <div className="space-y-2 max-h-64 overflow-y-auto">
-          {factoryItems.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 p-2 bg-studio-raised rounded border border-studio-line">
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-semibold text-white truncate">{item.name}</div>
-                <div className="text-xs text-gray-600">{item.meta}</div>
-              </div>
-              <div
-                className={`px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap ${
-                  item.status === 'RENDERING'
-                    ? 'bg-yellow-500/30 text-yellow-400'
-                    : item.status === 'LIVE'
-                      ? 'bg-red-500/30 text-red-400'
-                      : 'bg-green-500/30 text-green-400'
-                }`}
-              >
-                {item.status}
-              </div>
+        <h2 className="text-sm font-semibold text-white mb-3">Recent Generations</h2>
+        <div className="space-y-2 text-xs">
+          {[
+            { tag: 'IMAGE', t: '4K Product photo — Train Smart Campaign', when: '12m' },
+            { tag: 'VIDEO', t: '30-sec Instagram Reel — Lowrider Sessions', when: '35m' },
+            { tag: 'AUDIO', t: 'Voice clone training — Coach K voice', when: '1h' },
+          ].map((item) => (
+            <div key={item.when} className="flex gap-2 border-b border-studio-line pb-2 last:border-0">
+              <span className="text-wise-accent font-semibold min-w-12">{item.tag}</span>
+              <span className="text-gray-300 flex-1">{item.t}</span>
+              <span className="text-gray-600">{item.when}</span>
             </div>
           ))}
         </div>
