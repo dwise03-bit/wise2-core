@@ -2,7 +2,7 @@
  * Emote parsing utilities for Twitch, BTTV, and 7TV emotes
  */
 
-import { ChatEmote } from '../components/LiveStudio/types/chat';
+import { EmoteData } from '../components/LiveStudio/types/chat';
 
 /**
  * Twitch emote configuration
@@ -40,10 +40,10 @@ export interface SevenTVEmote {
 export function parseTwitchEmotes(
   message: string,
   emoteData?: string
-): ChatEmote[] {
+): EmoteData[] {
   if (!emoteData) return [];
 
-  const emotes: ChatEmote[] = [];
+  const emotes: EmoteData[] = [];
   const emotePairs = emoteData.split('/');
 
   emotePairs.forEach((pair) => {
@@ -74,8 +74,8 @@ export function parseTwitchEmotes(
 export function detectBttvEmotes(
   message: string,
   bttvEmotes: BttvEmote[]
-): ChatEmote[] {
-  const emotes: ChatEmote[] = [];
+): EmoteData[] {
+  const emotes: EmoteData[] = [];
   const words = message.split(' ');
 
   let charIndex = 0;
@@ -107,8 +107,8 @@ export function detectBttvEmotes(
 export function detect7TVEmotes(
   message: string,
   sevenTVEmotes: SevenTVEmote[]
-): ChatEmote[] {
-  const emotes: ChatEmote[] = [];
+): EmoteData[] {
+  const emotes: EmoteData[] = [];
   const words = message.split(' ');
 
   let charIndex = 0;
@@ -144,8 +144,8 @@ export function parseAllEmotes(
     bttvEmotes?: BttvEmote[];
     sevenTVEmotes?: SevenTVEmote[];
   }
-): ChatEmote[] {
-  const allEmotes: ChatEmote[] = [];
+): EmoteData[] {
+  const allEmotes: EmoteData[] = [];
 
   if (options?.twitchEmoteData) {
     allEmotes.push(...parseTwitchEmotes(message, options.twitchEmoteData));
@@ -221,14 +221,14 @@ export async function fetchSevenTVChannelEmotes(channelId: string): Promise<Seve
 /**
  * Check if an emote URL is animated
  */
-export function isAnimatedEmote(emote: ChatEmote): boolean {
+export function isAnimatedEmote(emote: EmoteData): boolean {
   return emote.url.includes('.gif') || emote.url.includes('animated');
 }
 
 /**
  * Get emote URL with size parameter
  */
-export function getEmoteUrl(emote: ChatEmote, size: 'small' | 'medium' | 'large' = 'medium'): string {
+export function getEmoteUrl(emote: EmoteData, size: 'small' | 'medium' | 'large' = 'medium'): string {
   const sizeMap = { small: '1x', medium: '2x', large: '3x' };
 
   if (emote.type === 'twitch') {

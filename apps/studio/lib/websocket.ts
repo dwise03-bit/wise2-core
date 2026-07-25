@@ -207,7 +207,7 @@ export class StudioWebSocketServer extends EventEmitter {
   private userSessions = new Map<string, UserSession>();
   private generationTrackers = new Map<string, GenerationTracker>();
   private streamMetrics = new Map<string, StreamMetrics>();
-  private statsIntervals = new Map<string, NodeJS.Timer>();
+  private statsIntervals = new Map<string, NodeJS.Timeout>();
 
   constructor() {
     super();

@@ -1,17 +1,27 @@
 /**
  * Chat Overlay Type Definitions
- * Centralized types for the OBSChatOverlay component system
+ * Centralized types for multi-platform chat integration
  */
 
 /**
  * Supported streaming platforms
  */
-export type ChatPlatform = 'twitch' | 'youtube' | 'facebook' | 'custom';
+export type ChatPlatform = 'twitch' | 'youtube' | 'facebook' | 'mock';
+
+/**
+ * Connection status states
+ */
+export type ChatConnectionStatus = 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error' | 'reconnecting';
+
+/**
+ * User role/badge types
+ */
+export type UserType = 'regular' | 'moderator' | 'broadcaster' | 'subscriber' | 'vip';
 
 /**
  * Alert event types
  */
-export type AlertType = 'follow' | 'subscribe' | 'donate' | 'raid';
+export type AlertType = 'follow' | 'subscribe' | 'giftsub' | 'raid' | 'tip' | 'milestone';
 
 /**
  * Chat message corner positions
@@ -19,29 +29,57 @@ export type AlertType = 'follow' | 'subscribe' | 'donate' | 'raid';
 export type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 /**
- * Chat message structure
+ * Chat message size presets
+ */
+export type MessageSizePreset = 'small' | 'medium' | 'large';
+
+/**
+ * Chat message structure (unified across platforms)
  */
 export interface ChatMessage {
   /** Unique message ID */
   id: string;
   /** Username of the sender */
-  username: string;
+  userName: string;
   /** Message content text */
   message: string;
   /** When the message was sent */
   timestamp: Date;
   /** Which platform the message came from */
   platform: ChatPlatform;
+  /** User type/badges */
+  userType?: UserType;
   /** Whether sender is a moderator */
   isModerator?: boolean;
-  /** Whether sender is the stream host */
-  isHost?: boolean;
+  /** Whether sender is the broadcaster */
+  isBroadcaster?: boolean;
   /** Whether sender is a subscriber */
   isSubscriber?: boolean;
-  /** Custom color for username */
-  color?: string;
+  /** Subscriber tier (1, 2, 3) */
+  subscriberTier?: number;
+  /** Custom color for username (Twitch: hex color) */
+  userColor?: string;
   /** Avatar image URL */
-  avatarUrl?: string;
+  userAvatar?: string;
+  /** Emotes in the message (platform-specific IDs) */
+  emotes?: EmoteData[];
+  /** Whether message is deleted */
+  isDeleted?: boolean;
+  /** Reply/thread parent message ID */
+  replyToId?: string;
+}
+
+/**
+ * Emote data for rendering
+ */
+export interface EmoteData {
+  id: string;
+  name: string;
+  url: string;
+  platform: ChatPlatform;
+  type?: 'twitch' | 'bttv' | '7tv';
+  startIndex: number;
+  endIndex: number;
 }
 
 /**
@@ -53,12 +91,28 @@ export interface ChatAlert {
   /** Type of alert event */
   type: AlertType;
   /** Username triggering the alert */
-  username: string;
+  userName: string;
   /** Alert message/description */
-  message: string;
+  message?: string;
+  /** User avatar URL */
+  userAvatar?: string;
   /** When the alert occurred */
   timestamp: Date;
-  /** Additional data specific to alert type */
+  /** Which platform the alert came from */
+  platform: ChatPlatform;
+  /** Duration to display alert (ms) */
+  duration: number;
+  /** Amount for tips/donations */
+  amount?: number;
+  /** Currency code (USD, EUR, etc) */
+  currency?: string;
+  /** Viewer count for raids */
+  viewerCount?: number;
+  /** Number of gifts (for gift subscriptions) */
+  giftCount?: number;
+  /** Subscriber tier */
+  subscriberTier?: number;
+  /** Additional alert-specific data */
   metadata?: Record<string, any>;
 }
 
@@ -66,12 +120,18 @@ export interface ChatAlert {
  * Platform-specific credentials
  */
 export interface PlatformCredentials {
-  /** API key for the platform */
-  apiKey?: string;
+  /** Platform type */
+  platform: ChatPlatform;
+  /** API key/access token for the platform */
+  accessToken?: string;
   /** Channel or page ID */
   channelId?: string;
+  /** Channel name (Twitch) */
+  channelName?: string;
   /** OAuth token for authentication */
   oauthToken?: string;
+  /** Webhook URL for webhooks */
+  webhookUrl?: string;
   /** Additional platform-specific config */
   [key: string]: any;
 }
@@ -80,53 +140,64 @@ export interface PlatformCredentials {
  * Complete chat overlay configuration
  */
 export interface ChatOverlayConfig {
-  /** Which platforms to connect to */
-  platforms: ChatPlatform[];
-  /** Platform credentials for each service */
-  credentials: Record<ChatPlatform, PlatformCredentials>;
-  /** Overlay corner position */
+  /** Position on screen */
   position: CornerPosition;
-  /** Font size in pixels (10-18) */
+  /** Width in pixels */
+  width: number;
+  /** Height in pixels */
+  height: number;
+  /** Background opacity (0-1) */
+  opacity: number;
+  /** Font size in pixels */
   fontSize: number;
-  /** Background opacity percentage (0-100) */
-  backgroundOpacity: number;
-  /** Maximum messages to display (5-50) */
-  maxMessages: number;
-  /** Show follower/subscriber/raid alerts */
-  showAlerts: boolean;
-  /** How long alerts display in seconds */
-  alertDuration: number;
-  /** Support emoji in messages */
-  enableEmojis: boolean;
-  /** Highlight @mentions */
-  enableMentions: boolean;
-  /** Filter spam and promotional content */
-  filterSpam: boolean;
+  /** Show usernames */
+  showUsernames: boolean;
+  /** Show timestamps */
+  showTimestamps: boolean;
+  /** Show emotes */
+  showEmotes: boolean;
+  /** Maximum messages to display */
+  messageLimit: number;
+  /** Auto-scroll to latest message */
+  autoScroll: boolean;
+  /** Sound effects enabled */
+  soundEnabled: boolean;
+  /** Alert animations enabled */
+  alertAnimations: boolean;
+}
+
+/**
+ * Multi-platform chat state
+ */
+export interface MultichatState {
+  /** Messages from all platforms */
+  messages: ChatMessage[];
+  /** Alerts from all platforms */
+  alerts: ChatAlert[];
+  /** Connection status per platform */
+  connectionStatus: Record<ChatPlatform, ChatConnectionStatus>;
+  /** Active platforms */
+  activePlatforms: ChatPlatform[];
+  /** Last update timestamp */
+  lastUpdate: Date;
 }
 
 /**
  * Default configuration factory
  */
-export const createDefaultChatConfig = (
-  overrides?: Partial<ChatOverlayConfig>
-): ChatOverlayConfig => ({
-  platforms: ['twitch'],
-  credentials: {
-    twitch: { apiKey: '', channelId: '' },
-    youtube: { apiKey: '', channelId: '' },
-    facebook: { apiKey: '', channelId: '' },
-    custom: { webhookUrl: '' },
-  },
+export const createDefaultChatConfig = (): ChatOverlayConfig => ({
   position: 'bottom-right',
+  width: 350,
+  height: 400,
+  opacity: 0.9,
   fontSize: 14,
-  backgroundOpacity: 85,
-  maxMessages: 30,
-  showAlerts: true,
-  alertDuration: 3,
-  enableEmojis: true,
-  enableMentions: true,
-  filterSpam: true,
-  ...overrides,
+  showUsernames: true,
+  showTimestamps: true,
+  showEmotes: true,
+  messageLimit: 50,
+  autoScroll: true,
+  soundEnabled: false,
+  alertAnimations: true,
 });
 
 /**
@@ -146,15 +217,37 @@ export const PLATFORM_LABELS: Record<ChatPlatform, string> = {
   twitch: 'Twitch',
   youtube: 'YouTube',
   facebook: 'Facebook',
-  custom: 'Custom',
+  mock: 'Mock',
 };
 
 /**
  * Alert type label mapping
  */
 export const ALERT_TYPE_LABELS: Record<AlertType, string> = {
-  follow: 'Follow',
-  subscribe: 'Subscribe',
-  donate: 'Donate',
+  follow: 'New Follower',
+  subscribe: 'New Subscriber',
+  giftsub: 'Gift Subscription',
   raid: 'Raid',
+  tip: 'Tip/Donation',
+  milestone: 'Milestone',
+};
+
+/**
+ * User type styling
+ */
+export const USER_TYPE_STYLES: Record<UserType, { badge: string; color: string }> = {
+  regular: { badge: '●', color: 'text-white' },
+  moderator: { badge: '⚡', color: 'text-green-400' },
+  broadcaster: { badge: '🎙', color: 'text-gold-400' },
+  subscriber: { badge: '⭐', color: 'text-purple-400' },
+  vip: { badge: '♦', color: 'text-pink-400' },
+};
+
+/**
+ * Size preset dimensions
+ */
+export const SIZE_PRESETS: Record<MessageSizePreset, { width: number; height: number }> = {
+  small: { width: 280, height: 300 },
+  medium: { width: 350, height: 400 },
+  large: { width: 450, height: 550 },
 };

@@ -2,7 +2,14 @@
  * Chat utility functions
  */
 
-import { ChatEmote } from '../components/LiveStudio/types/chat';
+import { EmoteData, ChatMessage, ChatAlert, UserType, AlertType } from '../components/LiveStudio/types/chat';
+
+/**
+ * Generate a unique ID
+ */
+export function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
 
 /**
  * Format timestamp as relative time (e.g., "2m ago")
@@ -29,9 +36,9 @@ export function formatRelativeTime(date: Date): string {
  */
 export function parseMessageWithEmotes(
   message: string,
-  emotes: ChatEmote[],
+  emotes: EmoteData[],
   options?: {
-    renderEmote?: (emote: ChatEmote) => React.ReactNode;
+    renderEmote?: (emote: EmoteData) => React.ReactNode;
   }
 ): React.ReactNode[] {
   if (emotes.length === 0) return [message];
@@ -63,9 +70,10 @@ export function parseMessageWithEmotes(
  */
 export function detectEmotes(
   message: string,
-  emotePatterns?: Array<{ pattern: RegExp; type: ChatEmote['type']; url: (match: string) => string }>
-): ChatEmote[] {
-  const emotes: ChatEmote[] = [];
+  platform: 'twitch' | 'youtube' | 'facebook' | 'mock' = 'mock',
+  emotePatterns?: Array<{ pattern: RegExp; url: (match: string) => string }>
+): EmoteData[] {
+  const emotes: EmoteData[] = [];
 
   if (!emotePatterns) {
     return emotes;
@@ -78,13 +86,13 @@ export function detectEmotes(
     const startIndex = charIndex;
     const endIndex = charIndex + word.length - 1;
 
-    emotePatterns.forEach(({ pattern, type, url }) => {
+    emotePatterns.forEach(({ pattern, url }) => {
       if (pattern.test(word)) {
         emotes.push({
           id: `${word}-${startIndex}`,
           name: word,
           url: url(word),
-          type,
+          platform,
           startIndex,
           endIndex,
         });
@@ -161,7 +169,7 @@ export function isMessageVisible(
 /**
  * Generate mock chat message for testing
  */
-export function generateMockMessage(overrides?: Partial<any>): any {
+export function generateMockMessage(overrides?: Partial<ChatMessage>): ChatMessage {
   const names = [
     'StreamLover',
     'CoolCat99',
@@ -181,16 +189,18 @@ export function generateMockMessage(overrides?: Partial<any>): any {
     'More content like this please!',
   ];
 
+  const userTypes: UserType[] = ['regular', 'subscriber', 'moderator'];
+
   return {
-    id: Math.random().toString(36).substr(2, 9),
-    userId: Math.random().toString(36).substr(2, 9),
+    id: generateId(),
     userName: names[Math.floor(Math.random() * names.length)],
-    userType: ['regular', 'subscriber', 'moderator'][Math.floor(Math.random() * 3)],
-    userAvatar: `https://i.pravatar.cc/40?u=${Math.random()}`,
-    badges: [],
     message: messages[Math.floor(Math.random() * messages.length)],
-    emotes: [],
     timestamp: new Date(),
+    platform: 'mock',
+    userType: userTypes[Math.floor(Math.random() * userTypes.length)],
+    userAvatar: `https://i.pravatar.cc/40?u=${Math.random()}`,
+    isModerator: false,
+    isSubscriber: false,
     ...overrides,
   };
 }
@@ -198,22 +208,22 @@ export function generateMockMessage(overrides?: Partial<any>): any {
 /**
  * Generate mock alert for testing
  */
-export function generateMockAlert(overrides?: Partial<any>): any {
+export function generateMockAlert(overrides?: Partial<ChatAlert>): ChatAlert {
   const names = ['StreamViewer123', 'CoolUser', 'HappyFan'];
-  const types = ['subscribe', 'follow', 'tip'];
+  const alertTypes: AlertType[] = ['subscribe', 'follow', 'tip'];
 
-  const type = types[Math.floor(Math.random() * types.length)];
+  const type = alertTypes[Math.floor(Math.random() * alertTypes.length)];
 
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: generateId(),
     type,
-    userId: Math.random().toString(36).substr(2, 9),
     userName: names[Math.floor(Math.random() * names.length)],
     userAvatar: `https://i.pravatar.cc/80?u=${Math.random()}`,
     message: 'Great stream!',
-    amount: Math.floor(Math.random() * 50) + 5,
-    currency: '$',
+    amount: type === 'tip' ? Math.floor(Math.random() * 50) + 5 : undefined,
+    currency: type === 'tip' ? 'USD' : undefined,
     timestamp: new Date(),
+    platform: 'mock',
     duration: 5000,
     ...overrides,
   };
