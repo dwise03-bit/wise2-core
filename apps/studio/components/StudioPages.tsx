@@ -3,7 +3,8 @@
 import React from 'react';
 import { useCreativeStudioStore } from '@/lib/creativeStudioStore';
 import { WaveformEditor, MeterLED, SpectrumBars, HorizontalMeter, SmoothWave } from './CanvasPrimitives';
-import { SoundLabWithSuno } from './SoundLab/SoundLabWithSuno';
+import { SoundLabEnhanced } from './SoundLab/SoundLabEnhanced';
+import { useState } from 'react';
 
 // Command Center
 export function CommandCenterPage() {
@@ -51,15 +52,20 @@ export function CommandCenterPage() {
 
 // Sound Lab
 export function SoundLabPage() {
-  const { tracks, fx, toggleTrackMute, setFXAmount } = useCreativeStudioStore();
+  const [status, setStatus] = useState('Ready');
 
   return (
-    <SoundLabWithSuno
-      tracks={tracks}
-      fx={fx}
-      onToggleTrackMute={toggleTrackMute}
-      onSetFXAmount={setFXAmount}
-    />
+    <div className="h-full flex flex-col">
+      {/* Status Bar */}
+      <div className="h-8 flex items-center px-6 bg-studio-raised border-b border-studio-line text-xs text-gray-500">
+        <span>{status}</span>
+      </div>
+
+      {/* Main Editor */}
+      <div className="flex-1 overflow-hidden">
+        <SoundLabEnhanced onStatusUpdate={setStatus} />
+      </div>
+    </div>
   );
 }
 
@@ -67,6 +73,14 @@ export function SoundLabPage() {
 export function LiveStudioPage() {
   const { isLive, viewers, chat, chatDraft, setChatDraft, sendChat } = useCreativeStudioStore();
   const vizRef = React.useRef<HTMLCanvasElement>(null);
+  const [chatTab, setChatTab] = React.useState<'platform' | 'discord'>('platform');
+
+  const discordMessages = [
+    { user: 'StreamViewer#1234', color: '#7289DA', text: '🔥 This is fire!' },
+    { user: 'Creator_Fan#5678', color: '#43B581', text: 'Just subscribed on Twitch!' },
+    { user: 'Moderator#9999', color: '#FAA61A', text: 'Welcome to everyone joining from Discord!' },
+    { user: 'Community#2024', color: '#7289DA', text: 'When is the next stream?' },
+  ];
 
   return (
     <div className="space-y-4">
@@ -104,28 +118,79 @@ export function LiveStudioPage() {
         </div>
       </div>
 
-      {/* Chat */}
-      <div className="bg-studio-input border border-studio-line rounded p-4">
-        <h2 className="text-sm font-semibold text-white mb-2">Live Chat</h2>
-        <div className="space-y-1 mb-3 max-h-32 overflow-y-auto text-xs">
-          {chat.slice(-4).map((msg, i) => (
-            <div key={i} style={{ color: msg.color }}>
-              <span className="font-semibold">{msg.user}:</span> {msg.text}
-            </div>
-          ))}
+      {/* Chat Tabs */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Platform Chat */}
+        <div className="bg-studio-input border border-studio-line rounded p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-semibold text-white">Live Chat</h2>
+            <button
+              onClick={() => setChatTab('platform')}
+              className={`text-xs px-2 py-1 rounded transition-colors ${
+                chatTab === 'platform'
+                  ? 'bg-wise-accent text-black font-semibold'
+                  : 'bg-studio-line text-gray-400'
+              }`}
+            >
+              Platform
+            </button>
+          </div>
+          <div className="space-y-1 mb-3 max-h-40 overflow-y-auto text-xs">
+            {chat.slice(-5).map((msg, i) => (
+              <div key={i} style={{ color: msg.color }}>
+                <span className="font-semibold">{msg.user}:</span> {msg.text}
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Say something..."
+              value={chatDraft}
+              onChange={(e) => setChatDraft(e.target.value)}
+              className="flex-1 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white placeholder-gray-600 focus:outline-none"
+              onKeyDown={(e) => e.key === 'Enter' && sendChat()}
+            />
+            <button onClick={sendChat} className="px-3 py-1 bg-wise-accent text-black text-xs font-semibold rounded hover:bg-wise-accent-bright transition">
+              Send
+            </button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Say something..."
-            value={chatDraft}
-            onChange={(e) => setChatDraft(e.target.value)}
-            className="flex-1 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white placeholder-gray-600 focus:outline-none"
-            onKeyDown={(e) => e.key === 'Enter' && sendChat()}
-          />
-          <button onClick={sendChat} className="px-3 py-1 bg-wise-accent text-black text-xs font-semibold rounded hover:bg-wise-accent-bright transition">
-            Send
-          </button>
+
+        {/* Discord Chat */}
+        <div className="bg-studio-input border border-studio-line rounded p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-sm font-semibold text-white">Discord</h2>
+            <button
+              onClick={() => setChatTab('discord')}
+              className={`text-xs px-2 py-1 rounded transition-colors ${
+                chatTab === 'discord'
+                  ? 'bg-wise-accent text-black font-semibold'
+                  : 'bg-studio-line text-gray-400'
+              }`}
+            >
+              #general
+            </button>
+            <span className="text-xs text-wise-accent ml-auto">● 342 online</span>
+          </div>
+          <div className="space-y-1 mb-3 max-h-40 overflow-y-auto text-xs bg-studio-raised rounded p-2">
+            {discordMessages.map((msg, i) => (
+              <div key={i} className="py-1 border-b border-studio-line/30 last:border-0">
+                <span style={{ color: msg.color }} className="font-semibold">{msg.user}</span>
+                <div className="text-gray-300">{msg.text}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Send message to Discord..."
+              className="flex-1 bg-studio-raised border border-studio-line rounded px-2 py-1 text-xs text-white placeholder-gray-600 focus:outline-none"
+            />
+            <button className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded hover:bg-blue-700 transition">
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </div>
