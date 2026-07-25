@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 const COLORS = {
-  accent: '#39FF14',
+  accent: '#0094FF',
   accentDim: 'rgba(57, 255, 20, 0.1)',
   black: '#000',
   darkBg: '#0a0a0a',

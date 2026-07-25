@@ -83,7 +83,7 @@ function CheckoutContent() {
             {/* Form Section */}
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">Complete Your Purchase</h1>
-              <p className="text-wise-text-secondary mb-8">Enter your details to proceed</p>
+              <p className="text-gray-300 mb-8">Enter your details to proceed</p>
 
               <form onSubmit={handleCheckout} className="space-y-6">
                 {error && (
@@ -99,7 +99,7 @@ function CheckoutContent() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-wise-accent-green"
+                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#0094FF]"
                     disabled={loading}
                   />
                 </div>
@@ -111,7 +111,7 @@ function CheckoutContent() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-wise-accent-green"
+                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#0094FF]"
                     disabled={loading}
                   />
                 </div>
@@ -120,7 +120,7 @@ function CheckoutContent() {
                   <label className="block text-white font-semibold">
                     By proceeding, you agree to our Terms of Service
                   </label>
-                  <p className="text-sm text-wise-text-secondary">
+                  <p className="text-sm text-gray-300">
                     You'll be taken to our secure payment processor to complete your purchase.
                   </p>
                 </div>
@@ -128,7 +128,7 @@ function CheckoutContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Processing...' : 'Continue to Payment'}
                 </button>
@@ -136,7 +136,7 @@ function CheckoutContent() {
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="w-full py-3 bg-wise-bg-secondary border-2 border-wise-accent-green/30 text-wise-accent-green rounded-lg font-semibold hover:border-wise-accent-green/60 transition-all"
+                  className="w-full py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 text-[#0094FF] rounded-lg font-semibold hover:border-[#0094FF]/60 transition-all"
                   disabled={loading}
                 >
                   Back to Pricing
@@ -146,40 +146,40 @@ function CheckoutContent() {
 
             {/* Order Summary */}
             <div>
-              <div className="sticky top-32 bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-8">
+              <div className="sticky top-32 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-8">
                 <h2 className="text-2xl font-bold text-white mb-8">Order Summary</h2>
 
-                <div className="border-b border-wise-accent-green/20 pb-8 mb-8">
+                <div className="border-b border-[#0094FF]/20 pb-8 mb-8">
                   <h3 className="text-xl font-bold text-white mb-2">{plan.name} Plan</h3>
-                  <p className="text-wise-text-secondary text-sm mb-4">{plan.description}</p>
+                  <p className="text-gray-300 text-sm mb-4">{plan.description}</p>
 
                   <div className="flex justify-between items-baseline mb-4">
-                    <span className="text-wise-text-secondary">Plan Price:</span>
+                    <span className="text-gray-300">Plan Price:</span>
                     {typeof plan.price === 'number' ? (
-                      <span className="text-2xl font-bold text-wise-accent-green">
+                      <span className="text-2xl font-bold text-[#0094FF]">
                         ${plan.price}
-                        <span className="text-lg text-wise-text-secondary">/mo</span>
+                        <span className="text-lg text-gray-300">/mo</span>
                       </span>
                     ) : (
-                      <span className="text-2xl font-bold text-wise-accent-green">Custom</span>
+                      <span className="text-2xl font-bold text-[#0094FF]">Custom</span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between">
-                    <span className="text-wise-text-secondary">Billing Cycle:</span>
+                    <span className="text-gray-300">Billing Cycle:</span>
                     <span className="text-white font-semibold">Monthly</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-wise-text-secondary">First Charge:</span>
+                    <span className="text-gray-300">First Charge:</span>
                     <span className="text-white font-semibold">
                       {typeof plan.price === 'number' ? `$${plan.price}` : 'Contact us'}
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-lg p-4 text-sm text-wise-text-secondary">
+                <div className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-lg p-4 text-sm text-gray-300">
                   ✓ 14-day free trial included
                   <br />✓ Cancel anytime
                   <br />✓ No hidden fees

@@ -1,0 +1,695 @@
+/* ============================================================================
+   WISE² HERO - LUXURY CYBERPUNK REDESIGN
+   Full-screen cinematic layout with neon glow effects
+   ============================================================================ */
+
+/* CSS Variables defined in globals.css - Reference colors:
+   --hero-blue: #0094FF
+   --hero-purple: #A63CFF
+   --hero-green: #00D96C
+   --hero-gold: #F2B632
+*/
+
+/* ============================================================================
+   HERO CONTAINER - Full Screen
+   ============================================================================ */
+
+.heroContainer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #050505;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Layers */
+.bgLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.bgGradient1 {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 148, 255, 0.15) 0%, transparent 50%);
+}
+
+.bgGradient2 {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(166, 60, 255, 0.1) 0%,
+    transparent 70%
+  );
+}
+
+.bgSkyline {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://d8j0ntlcm91z4.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/hf_20260725_154235_77db1f2d-9a7c-480c-8bae-37c48614647a.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.25;
+}
+
+/* ============================================================================
+   HERO CONTENT - Main Layout Grid
+   ============================================================================ */
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  padding: 80px 24px 20px;
+  gap: 32px;
+  will-change: opacity;
+}
+
+/* ============================================================================
+   PORTRAIT CONTAINERS - Left & Right Edges
+   ============================================================================ */
+
+.portraitContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 0 0 auto;
+  perspective: 1000px;
+}
+
+.portraitContainer[data-position="left"] {
+  width: clamp(100px, 32vw, 380px);
+}
+
+.portraitContainer[data-position="right"] {
+  width: clamp(100px, 32vw, 380px);
+}
+
+/* Portrait Frame with Neon Border */
+.portraitFrame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid rgba(0, 148, 255, 0.4);
+  box-shadow: 0 0 50px rgba(0, 148, 255, 0.4), 0 0 80px rgba(0, 148, 255, 0.2), inset 0 0 30px rgba(0, 148, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: box-shadow, transform;
+  transform-style: preserve-3d;
+}
+
+.portraitContainer[data-position="left"]:hover .portraitFrame,
+.portraitContainer[data-position="right"]:hover .portraitFrame {
+  box-shadow: 0 0 80px rgba(166, 60, 255, 0.6), 0 0 50px rgba(0, 217, 108, 0.4), inset 0 0 30px rgba(0, 148, 255, 0.2);
+}
+
+/* Portrait Gloss Overlay */
+.portraitGloss {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Portrait Image */
+.portraitImage {
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(1.05) contrast(1.1);
+}
+
+/* Portrait Info */
+.portraitInfo {
+  text-align: center;
+  width: 100%;
+}
+
+.portraitName {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.portraitTitle {
+  font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+  font-family: 'Rajdhani', monospace;
+  color: #0094FF;
+  margin: 2px 0 0 0;
+}
+
+.portraitRole {
+  font-size: clamp(0.625rem, 1.2vw, 0.7rem);
+  color: #a0a0a0;
+  font-family: 'Rajdhani', monospace;
+  margin: 4px 0 0 0;
+  font-weight: 600;
+}
+
+.portraitBadges {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 8px;
+  font-size: clamp(0.5rem, 1vw, 0.625rem);
+  color: #727272;
+  font-family: 'Rajdhani', monospace;
+}
+
+/* ============================================================================
+   CENTER CONTENT - Logo, Tagline, Capabilities
+   ============================================================================ */
+
+.centerContent {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 32px;
+  min-width: 0;
+}
+
+/* Logo Container */
+.logoContainer {
+  position: relative;
+  width: clamp(140px, 45vw, 520px);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: filter, transform;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 60px rgba(0, 148, 255, 0.8));
+  animation: logoPulse 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 60px rgba(0, 148, 255, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 100px rgba(166, 60, 255, 0.7)) drop-shadow(0 0 40px rgba(0, 217, 108, 0.4));
+  }
+}
+
+/* Tagline Container */
+.taglineContainer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.taglineMain {
+  font-size: clamp(2.5rem, 7.5vw, 7rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -2px;
+  line-height: 1.05;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 40px rgba(0, 148, 255, 0.3), 0 0 80px rgba(166, 60, 255, 0.2);
+}
+
+.taglineSubtitle {
+  font-size: clamp(1rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: #0094FF;
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 1px;
+  text-shadow: 0 0 30px rgba(0, 148, 255, 0.4), 0 0 60px rgba(0, 148, 255, 0.2);
+}
+
+/* Brand Info */
+.brandInfo {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.brandName {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 3px;
+  text-shadow: 0 0 30px rgba(0, 148, 255, 0.3);
+}
+
+.brandTagline {
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  font-family: 'Rajdhani', monospace;
+  color: #0094FF;
+  margin: 0;
+  font-weight: 600;
+}
+
+.brandSubtext {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-family: 'Rajdhani', monospace;
+  color: #727272;
+  margin: 0;
+}
+
+/* Capabilities Grid */
+.capabilitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  text-align: center;
+  margin-top: 12px;
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+}
+
+.capIcon {
+  display: block;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: 4px;
+}
+
+.capLabel {
+  color: #a0a0a0;
+  font-family: 'Rajdhani', monospace;
+  font-weight: 700;
+  letter-spacing: 0.75px;
+}
+
+/* ============================================================================
+   POWERED BUSINESSES SECTION
+   ============================================================================ */
+
+.poweredSection {
+  position: relative;
+  z-index: 10;
+  padding: 60px 20px;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5));
+  border-top: 1px solid rgba(0, 148, 255, 0.1);
+}
+
+.poweredHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.poweredTitle {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+.poweredSubtitle {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-family: 'Rajdhani', monospace;
+  color: #727272;
+  margin: 0;
+}
+
+/* Powered Businesses Grid */
+.poweredGrid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  padding: 0 20px;
+}
+
+.businessCardContent {
+  text-align: center;
+}
+
+.businessName {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  font-weight: 900;
+  margin: 0 0 8px 0;
+}
+
+.businessTagline {
+  font-size: clamp(0.625rem, 1.2vw, 0.75rem);
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  opacity: 0.8;
+}
+
+.businessDescription {
+  font-size: clamp(0.625rem, 1.2vw, 0.75rem);
+  color: #a0a0a0;
+  margin: 0 0 12px 0;
+  font-family: 'Rajdhani', monospace;
+}
+
+.businessItems {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: clamp(0.625rem, 1.2vw, 0.75rem);
+  color: #727272;
+  font-family: 'Rajdhani', monospace;
+}
+
+/* CTA Section */
+.ctaSection {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 40px 20px;
+  border-top: 1px solid rgba(0, 148, 255, 0.1);
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 12px 32px;
+  background: #0094FF;
+  color: #ffffff;
+  font-weight: 900;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 20px rgba(0, 148, 255, 0.4);
+  letter-spacing: 1px;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  will-change: transform, box-shadow;
+}
+
+.ctaButton:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 40px rgba(0, 148, 255, 0.6), 0 0 20px rgba(166, 60, 255, 0.3);
+  background: #0080d0;
+}
+
+.ctaButton:active {
+  transform: translateY(-2px);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - Mobile, Tablet, Desktop
+   ============================================================================ */
+
+/* Mobile - Stack vertically */
+@media (max-width: 768px) {
+  .heroContent {
+    flex-direction: column;
+    padding: 60px 16px 20px;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .portraitContainer {
+    width: 80px;
+  }
+
+  .portraitContainer[data-position="left"],
+  .portraitContainer[data-position="right"] {
+    position: absolute;
+    top: 80px;
+    width: 70px;
+  }
+
+  .portraitContainer[data-position="left"] {
+    left: 16px;
+  }
+
+  .portraitContainer[data-position="right"] {
+    right: 16px;
+  }
+
+  .portraitInfo {
+    display: none;
+  }
+
+  .centerContent {
+    gap: 16px;
+    width: 100%;
+  }
+
+  .capabilitiesGrid {
+    gap: 8px;
+  }
+
+  .poweredGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet - Side-by-side with smaller portraits */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .heroContent {
+    padding: 80px 32px 20px;
+  }
+
+  .portraitContainer {
+    flex: 0 0 auto;
+  }
+
+  .portraitContainer[data-position="left"],
+  .portraitContainer[data-position="right"] {
+    width: 140px;
+  }
+
+  .centerContent {
+    gap: 24px;
+    flex: 1;
+  }
+
+  .poweredGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop - Full layout */
+@media (min-width: 1025px) {
+  .heroContent {
+    padding: 100px 48px 20px;
+  }
+
+  .portraitContainer {
+    flex: 0 0 auto;
+  }
+
+  .portraitContainer[data-position="left"],
+  .portraitContainer[data-position="right"] {
+    width: 280px;
+  }
+
+  .centerContent {
+    gap: 32px;
+    flex: 1;
+  }
+
+  .poweredGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Ultra-wide displays */
+@media (min-width: 1600px) {
+  .heroContent {
+    padding: 120px 80px 20px;
+  }
+
+  .portraitContainer[data-position="left"],
+  .portraitContainer[data-position="right"] {
+    width: 360px;
+  }
+}
+
+/* ============================================================================
+   ANIMATION KEYFRAMES
+   ============================================================================ */
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleInCenter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================================================ */
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .heroContainer {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .portraitContainer {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .centerContent {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .logo {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ctaButton {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .bgLayer {
+    will-change: auto;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  .portraitFrame {
+    border-width: 3px;
+    box-shadow: 0 0 40px rgba(0, 148, 255, 0.6), inset 0 0 20px rgba(0, 148, 255, 0.2);
+  }
+
+  .taglineSubtitle {
+    text-shadow: 0 0 30px rgba(0, 148, 255, 0.5);
+  }
+}
+
+/* GPU acceleration for smooth animations */
+.heroContent {
+  transform: translateZ(0);
+}
+
+.portraitContainer {
+  transform: translateZ(0);
+}
+
+.centerContent {
+  transform: translateZ(0);
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .portraitContainer:hover .portraitFrame {
+    box-shadow: 0 0 30px rgba(0, 148, 255, 0.2), inset 0 0 20px rgba(0, 148, 255, 0.1);
+  }
+
+  .ctaButton:hover {
+    transform: translateY(0);
+  }
+
+  .ctaButton:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Dark mode optimization (already in dark mode by default) */
+@media (prefers-color-scheme: dark) {
+  .heroContainer {
+    background: #050505;
+    color: #ffffff;
+  }
+}
+
+/* Print styles */
+@media print {
+  .heroContainer {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   VIGNETTE & SCANLINE EFFECTS
+   ============================================================================ */
+
+/* Vignette effect (edges darker) */
+.heroContainer::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 999;
+  will-change: opacity;
+}
+
+/* Scanline effect (subtle) */
+.heroContainer::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.01),
+    rgba(255, 255, 255, 0.01) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 1000;
+}

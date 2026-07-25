@@ -17,9 +17,9 @@ export default function StartYourBuildPage() {
           {/* Header */}
           <div className="text-center mb-20">
             <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              START YOUR <span className="text-wise-accent-green">BUILD</span>
+              START YOUR <span className="text-[#0094FF]">BUILD</span>
             </h1>
-            <p className="text-xl text-wise-text-secondary max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Transform your vision through five strategic phases: Idea, Strategy, Build, Launch, and Multiply
             </p>
           </div>
@@ -29,23 +29,23 @@ export default function StartYourBuildPage() {
             {stages.map((stage) => (
               <div
                 key={stage.phase}
-                className="p-6 rounded-2xl bg-wise-bg-secondary border-2 border-wise-accent-green/40 hover:border-wise-accent-green/60 transition-all duration-300 hover:scale-105 cursor-pointer"
+                className="p-6 rounded-2xl bg-wise-bg-secondary border-2 border-[#0094FF]/40 hover:border-[#0094FF]/60 transition-all duration-300 hover:scale-105 cursor-pointer"
               >
                 <div className="text-5xl mb-3">{stage.icon}</div>
                 <h3 className="font-bold text-white text-lg mb-2">{stage.name}</h3>
-                <p className="text-xs text-wise-text-muted">Phase {stage.phase} of 5</p>
-                <p className="text-sm text-wise-text-secondary mt-3">{stage.description}</p>
+                <p className="text-xs text-gray-400">Phase {stage.phase} of 5</p>
+                <p className="text-sm text-gray-300 mt-3">{stage.description}</p>
               </div>
             ))}
           </div>
 
           {/* CTA Section */}
-          <div className="text-center py-16 px-8 bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl">
+          <div className="text-center py-16 px-8 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl">
             <h3 className="text-3xl font-bold text-white mb-4">Ready to transform your vision?</h3>
-            <p className="text-wise-text-secondary mb-8 max-w-2xl mx-auto">
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
               Each phase builds on the last. Start with your idea and watch it grow into something extraordinary.
             </p>
-            <button className="px-12 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 shadow-lg">
+            <button className="px-12 py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 shadow-lg">
               ✦ Begin Your Build Journey
             </button>
           </div>

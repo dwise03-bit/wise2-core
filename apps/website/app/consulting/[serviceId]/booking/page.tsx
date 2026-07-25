@@ -85,7 +85,7 @@ const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; total
             <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: i < currentStep ? 1 : 0 }}
-              className="w-8 h-1 bg-wise-accent-green rounded-full"
+              className="w-8 h-1 bg-[#0094FF] rounded-full"
               style={{ transformOrigin: 'left' }}
             />
           )}
@@ -110,7 +110,7 @@ const ConsultantSelectionStep = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader className="animate-spin text-wise-accent-green" size={32} />
+        <Loader className="animate-spin text-[#0094FF]" size={32} />
       </div>
     );
   }
@@ -137,15 +137,15 @@ const ConsultantSelectionStep = ({
             onClick={() => onSelect(consultant)}
             className={`relative p-6 rounded-xl border-2 transition-all text-left ${
               selectedConsultant?.id === consultant.id
-                ? 'border-wise-accent-green bg-wise-accent-green/10'
-                : 'border-wise-surface-3 hover:border-wise-accent-green/50 bg-wise-bg-secondary'
+                ? 'border-[#0094FF] bg-[#0094FF]/10'
+                : 'border-wise-surface-3 hover:border-[#0094FF]/50 bg-wise-bg-secondary'
             }`}
           >
             {/* Selected Checkmark */}
             {selectedConsultant?.id === consultant.id && (
               <motion.div
                 layoutId="consultantCheck"
-                className="absolute top-3 right-3 w-6 h-6 rounded-full bg-wise-accent-green flex items-center justify-center"
+                className="absolute top-3 right-3 w-6 h-6 rounded-full bg-[#0094FF] flex items-center justify-center"
               >
                 <Check size={16} className="text-wise-bg-primary" />
               </motion.div>
@@ -153,8 +153,8 @@ const ConsultantSelectionStep = ({
 
             {/* Consultant Info */}
             <div className="flex gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-wise-accent-green/30 to-blue-500/30 flex items-center justify-center flex-shrink-0 border border-wise-accent-green/50">
-                <span className="text-xl font-bold text-wise-accent-green">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0094FF]/30 to-blue-500/30 flex items-center justify-center flex-shrink-0 border border-[#0094FF]/50">
+                <span className="text-xl font-bold text-[#0094FF]">
                   {consultant.name.charAt(0)}
                 </span>
               </div>
@@ -176,7 +176,7 @@ const ConsultantSelectionStep = ({
               </div>
               <div className="bg-wise-bg-primary/50 rounded p-2">
                 <div className="text-gray-400 text-xs mb-1">Rate</div>
-                <div className="font-bold text-wise-accent-green">${consultant.hourlyRate}/hr</div>
+                <div className="font-bold text-[#0094FF]">${consultant.hourlyRate}/hr</div>
               </div>
             </div>
 
@@ -185,7 +185,7 @@ const ConsultantSelectionStep = ({
               {consultant.expertise.slice(0, 2).map((skill, i) => (
                 <span
                   key={i}
-                  className="text-xs px-2 py-1 rounded-full bg-wise-accent-green/10 text-wise-accent-green border border-wise-accent-green/30"
+                  className="text-xs px-2 py-1 rounded-full bg-[#0094FF]/10 text-[#0094FF] border border-[#0094FF]/30"
                 >
                   {skill}
                 </span>
@@ -238,7 +238,7 @@ const CalendarStep = ({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader className="animate-spin text-wise-accent-green" size={32} />
+        <Loader className="animate-spin text-[#0094FF]" size={32} />
       </div>
     );
   }
@@ -261,7 +261,7 @@ const CalendarStep = ({
         <select
           value={timezone}
           onChange={(e) => onTimezoneChange(e.target.value)}
-          className="w-full md:w-64 px-4 py-2 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white focus:outline-none focus:border-wise-accent-green transition-colors"
+          className="w-full md:w-64 px-4 py-2 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white focus:outline-none focus:border-[#0094FF] transition-colors"
         >
           <option value="America/New_York">Eastern Time (ET)</option>
           <option value="America/Chicago">Central Time (CT)</option>
@@ -298,8 +298,8 @@ const CalendarStep = ({
                 disabled={!hasAvailability}
                 className={`p-3 rounded-lg border-2 transition-all ${
                   isSelected
-                    ? 'border-wise-accent-green bg-wise-accent-green/10'
-                    : 'border-wise-surface-3 hover:border-wise-accent-green/50'
+                    ? 'border-[#0094FF] bg-[#0094FF]/10'
+                    : 'border-wise-surface-3 hover:border-[#0094FF]/50'
                 } ${!hasAvailability ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="text-xs font-medium text-gray-400 mb-1">{dayName}</div>
@@ -326,8 +326,8 @@ const CalendarStep = ({
                   onClick={() => onTimeSelect(slot.time)}
                   className={`p-3 rounded-lg border-2 transition-all font-medium ${
                     selectedTime === slot.time
-                      ? 'border-wise-accent-green bg-wise-accent-green/10 text-white'
-                      : 'border-wise-surface-3 text-gray-400 hover:border-wise-accent-green/50 hover:text-white'
+                      ? 'border-[#0094FF] bg-[#0094FF]/10 text-white'
+                      : 'border-wise-surface-3 text-gray-400 hover:border-[#0094FF]/50 hover:text-white'
                   }`}
                 >
                   <Clock size={16} className="inline mr-1" />
@@ -396,8 +396,8 @@ const DurationStep = ({
                 disabled={!isValid}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   duration === d
-                    ? 'border-wise-accent-green bg-wise-accent-green/10'
-                    : 'border-wise-surface-3 hover:border-wise-accent-green/50'
+                    ? 'border-[#0094FF] bg-[#0094FF]/10'
+                    : 'border-wise-surface-3 hover:border-[#0094FF]/50'
                 } ${!isValid ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="text-lg font-bold text-white mb-1">{d}h</div>
@@ -420,7 +420,7 @@ const DurationStep = ({
               step={30}
               value={durationMinutes}
               onChange={(e) => onDurationChange(Math.round(parseInt(e.target.value) / 30) * 0.5)}
-              className="w-full h-2 bg-wise-surface-3 rounded-lg appearance-none cursor-pointer accent-wise-accent-green"
+              className="w-full h-2 bg-wise-surface-3 rounded-lg appearance-none cursor-pointer accent-[#0094FF]"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-2">
               <span>{minDuration} min</span>
@@ -435,10 +435,10 @@ const DurationStep = ({
       </div>
 
       {/* Price Summary */}
-      <div className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl p-6">
+      <div className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="text-wise-accent-green" size={20} />
+            <DollarSign className="text-[#0094FF]" size={20} />
             <span className="text-gray-400">Hourly Rate</span>
           </div>
           <div className="text-xl font-bold text-white">${hourlyRate}/hour</div>
@@ -446,7 +446,7 @@ const DurationStep = ({
         <div className="h-px bg-wise-surface-3 mb-4" />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className="text-wise-accent-green" size={20} />
+            <Clock className="text-[#0094FF]" size={20} />
             <span className="text-gray-400">Total Duration</span>
           </div>
           <div className="text-xl font-bold text-white">{duration} hours</div>
@@ -517,7 +517,7 @@ const SummaryStep = ({
           className="bg-wise-bg-secondary border border-wise-surface-3 rounded-xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <MessageSquare className="text-wise-accent-green" size={20} />
+            <MessageSquare className="text-[#0094FF]" size={20} />
             <h3 className="font-bold text-white">Service</h3>
           </div>
           <p className="text-2xl font-bold text-white mb-2">{service.name}</p>
@@ -531,7 +531,7 @@ const SummaryStep = ({
           className="bg-wise-bg-secondary border border-wise-surface-3 rounded-xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <Clock className="text-wise-accent-green" size={20} />
+            <Clock className="text-[#0094FF]" size={20} />
             <h3 className="font-bold text-white">Consultant</h3>
           </div>
           <p className="text-2xl font-bold text-white mb-2">{consultant?.name}</p>
@@ -539,7 +539,7 @@ const SummaryStep = ({
             {consultant?.expertise.slice(0, 2).map((skill, i) => (
               <span
                 key={i}
-                className="text-xs px-2 py-1 rounded-full bg-wise-accent-green/10 text-wise-accent-green"
+                className="text-xs px-2 py-1 rounded-full bg-[#0094FF]/10 text-[#0094FF]"
               >
                 {skill}
               </span>
@@ -555,11 +555,11 @@ const SummaryStep = ({
           className="bg-wise-bg-secondary border border-wise-surface-3 rounded-xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <Calendar className="text-wise-accent-green" size={20} />
+            <Calendar className="text-[#0094FF]" size={20} />
             <h3 className="font-bold text-white">Date & Time</h3>
           </div>
           <p className="text-lg font-bold text-white mb-1">{formattedDate}</p>
-          <p className="text-2xl font-bold text-wise-accent-green mb-2">{selectedTime}</p>
+          <p className="text-2xl font-bold text-[#0094FF] mb-2">{selectedTime}</p>
           <p className="text-sm text-gray-400">{timezone}</p>
         </motion.div>
 
@@ -568,14 +568,14 @@ const SummaryStep = ({
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl p-6"
+          className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <DollarSign className="text-wise-accent-green" size={20} />
+            <DollarSign className="text-[#0094FF]" size={20} />
             <h3 className="font-bold text-white">Duration & Price</h3>
           </div>
           <p className="text-sm text-gray-400 mb-2">{duration} hours consultation</p>
-          <p className="text-3xl font-black text-wise-accent-green">${totalPrice.toFixed(2)}</p>
+          <p className="text-3xl font-black text-[#0094FF]">${totalPrice.toFixed(2)}</p>
         </motion.div>
       </div>
 
@@ -588,7 +588,7 @@ const SummaryStep = ({
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
           placeholder="Tell your consultant about your goals or any specific topics you'd like to discuss..."
-          className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-wise-accent-green transition-colors resize-none"
+          className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors resize-none"
           rows={4}
         />
       </div>
@@ -668,7 +668,7 @@ const PaymentStep = ({
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl p-6 mb-8"
+        className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-xl p-6 mb-8"
       >
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -681,7 +681,7 @@ const PaymentStep = ({
             className="text-right"
           >
             <p className="text-gray-400 text-sm mb-1">Total Amount</p>
-            <p className="text-4xl font-black text-wise-accent-green">
+            <p className="text-4xl font-black text-[#0094FF]">
               ${totalPrice.toFixed(2)}
             </p>
           </motion.div>
@@ -698,7 +698,7 @@ const PaymentStep = ({
             value={paymentData.cardholderName}
             onChange={(e) => setPaymentData({ ...paymentData, cardholderName: e.target.value })}
             placeholder="John Doe"
-            className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-wise-accent-green transition-colors"
+            className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors"
           />
         </motion.div>
 
@@ -711,7 +711,7 @@ const PaymentStep = ({
             onChange={handleCardNumberChange}
             placeholder="1234 5678 9012 3456"
             maxLength="19"
-            className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-wise-accent-green transition-colors font-mono"
+            className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
           />
         </motion.div>
 
@@ -725,7 +725,7 @@ const PaymentStep = ({
               onChange={handleExpiryChange}
               placeholder="MM/YY"
               maxLength="5"
-              className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-wise-accent-green transition-colors font-mono"
+              className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
             />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
@@ -736,7 +736,7 @@ const PaymentStep = ({
               onChange={handleCvcChange}
               placeholder="123"
               maxLength="4"
-              className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-wise-accent-green transition-colors font-mono"
+              className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
             />
           </motion.div>
         </div>
@@ -762,7 +762,7 @@ const PaymentStep = ({
           disabled={loading}
           whileHover={{ scale: loading ? 1 : 1.02 }}
           whileTap={{ scale: loading ? 1 : 0.98 }}
-          className="w-full bg-wise-accent-green hover:bg-green-600 disabled:bg-gray-600 text-wise-bg-primary font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
+          className="w-full bg-[#0094FF] hover:bg-green-600 disabled:bg-gray-600 text-wise-bg-primary font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -883,7 +883,7 @@ export default function BookingPage() {
         <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-3xl mx-auto px-6 flex items-center justify-center h-96">
-            <Loader className="animate-spin text-wise-accent-green" size={40} />
+            <Loader className="animate-spin text-[#0094FF]" size={40} />
           </div>
         </main>
         <Footer />
@@ -910,7 +910,7 @@ export default function BookingPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.back()}
-                  className="px-4 py-2 bg-wise-accent-green text-wise-bg-primary font-bold rounded-lg hover:bg-green-600"
+                  className="px-4 py-2 bg-[#0094FF] text-wise-bg-primary font-bold rounded-lg hover:bg-green-600"
                 >
                   Go Back
                 </motion.button>
@@ -962,7 +962,7 @@ export default function BookingPage() {
                   router.back();
                 }
               }}
-              className="mb-6 flex items-center gap-2 text-gray-400 hover:text-wise-accent-green transition-colors font-medium text-sm"
+              className="mb-6 flex items-center gap-2 text-gray-400 hover:text-[#0094FF] transition-colors font-medium text-sm"
             >
               <ChevronLeft size={16} />
               {currentStep > 1 ? 'Previous' : 'Back'}
@@ -1050,7 +1050,7 @@ export default function BookingPage() {
             <motion.button
               onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
               disabled={currentStep === 1}
-              className="px-6 py-3 rounded-lg border border-wise-surface-3 text-white font-bold hover:border-wise-accent-green/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-lg border border-wise-surface-3 text-white font-bold hover:border-[#0094FF]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
             >
               <ChevronLeft size={18} />
               Previous
@@ -1062,7 +1062,7 @@ export default function BookingPage() {
                 disabled={!canProceed}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 rounded-lg bg-wise-accent-green hover:bg-green-600 disabled:bg-gray-600 text-wise-bg-primary font-bold transition-all flex items-center gap-2 disabled:cursor-not-allowed"
+                className="px-8 py-3 rounded-lg bg-[#0094FF] hover:bg-green-600 disabled:bg-gray-600 text-wise-bg-primary font-bold transition-all flex items-center gap-2 disabled:cursor-not-allowed"
               >
                 Next
                 <ChevronRight size={18} />

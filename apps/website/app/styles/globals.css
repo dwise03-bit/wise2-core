@@ -475,7 +475,7 @@ html {
 }
 
 /* ============================================================================
-   WISE² NEON GREEN GLOW EFFECTS (#39FF14)
+   WISE² NEON GREEN GLOW EFFECTS (#0094FF)
    ============================================================================ */
 
 /* Lime glow button effects */
@@ -498,7 +498,7 @@ html {
 
 /* Lime glow text effects */
 .text-glow-lime {
-  color: #39FF14;
+  color: #0094FF;
   text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
 }
 
@@ -541,7 +541,7 @@ html {
 
 /* Focus ring for accessibility (lime green) */
 *:focus {
-  outline: 2px solid #39FF14;
+  outline: 2px solid #0094FF;
   outline-offset: 2px;
 }
 
@@ -549,7 +549,7 @@ input:focus,
 textarea:focus,
 button:focus,
 select:focus {
-  outline: 2px solid #39FF14;
+  outline: 2px solid #0094FF;
   outline-offset: 2px;
 }
 
@@ -563,7 +563,7 @@ a.skip-link {
 a.skip-link:focus {
   left: 0;
   top: 0;
-  background: #39FF14;
+  background: #0094FF;
   color: #050505;
   padding: 8px 16px;
   text-decoration: none;

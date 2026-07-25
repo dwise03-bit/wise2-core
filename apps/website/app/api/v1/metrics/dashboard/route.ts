@@ -20,7 +20,7 @@ export async function GET(request: Request) {
           value: 234,
           trend: '+18%',
           icon: '👥',
-          color: '#39FF14',
+          color: '#0094FF',
         },
         {
           title: 'AI Productions Week',

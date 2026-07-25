@@ -56,9 +56,9 @@ export default function WorkPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              Our <span className="text-wise-accent-green">Work</span>
+              Our <span className="text-[#0094FF]">Work</span>
             </h1>
-            <p className="text-xl text-wise-text-secondary max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Projects we're proud of. Problems we've solved. Results we've delivered.
             </p>
           </div>
@@ -70,12 +70,12 @@ export default function WorkPage() {
                 {featured.map((project) => (
                   <div
                     key={project.title}
-                    className="bg-gradient-to-br from-wise-accent-green/20 to-wise-accent-green/5 border-2 border-wise-accent-green/40 rounded-3xl p-12 hover:border-wise-accent-green/60 transition-all"
+                    className="bg-gradient-to-br from-[#0094FF]/20 to-[#0094FF]/5 border-2 border-[#0094FF]/40 rounded-3xl p-12 hover:border-[#0094FF]/60 transition-all"
                   >
                     <div className="text-6xl mb-6">{project.icon}</div>
-                    <p className="text-wise-accent-green font-bold text-sm mb-2">{project.category}</p>
+                    <p className="text-[#0094FF] font-bold text-sm mb-2">{project.category}</p>
                     <h3 className="text-2xl font-bold text-white mb-3">{project.title}</h3>
-                    <p className="text-wise-text-secondary">{project.description}</p>
+                    <p className="text-gray-300">{project.description}</p>
                   </div>
                 ))}
               </div>
@@ -89,26 +89,26 @@ export default function WorkPage() {
                 {others.map((project) => (
                   <div
                     key={project.title}
-                    className="bg-wise-bg-secondary border-2 border-wise-accent-green/20 rounded-2xl p-8 hover:border-wise-accent-green/40 transition-all"
+                    className="bg-wise-bg-secondary border-2 border-[#0094FF]/20 rounded-2xl p-8 hover:border-[#0094FF]/40 transition-all"
                   >
                     <div className="text-4xl mb-4">{project.icon}</div>
-                    <p className="text-wise-accent-green text-xs font-bold mb-2">{project.category}</p>
+                    <p className="text-[#0094FF] text-xs font-bold mb-2">{project.category}</p>
                     <h3 className="text-lg font-bold text-white mb-2">{project.title}</h3>
-                    <p className="text-sm text-wise-text-secondary">{project.description}</p>
+                    <p className="text-sm text-gray-300">{project.description}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <div className="mt-20 text-center bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-12">
+          <div className="mt-20 text-center bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-12">
             <h2 className="text-3xl font-bold text-white mb-4">Interested in working together?</h2>
-            <p className="text-wise-text-secondary mb-8 max-w-2xl mx-auto">
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
               Let's discuss your project and create something amazing.
             </p>
             <a
               href="/contact"
-              className="inline-block px-12 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
+              className="inline-block px-12 py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
             >
               Get In Touch →
             </a>

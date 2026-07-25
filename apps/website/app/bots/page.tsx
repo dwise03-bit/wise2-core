@@ -29,7 +29,7 @@ const BOTS: Bot[] = [
     name: 'Graphics API',
     description: 'Generate and edit graphics with AI',
     status: 'online',
-    color: '#39FF14',
+    color: '#0094FF',
     icon: '🎨',
     features: ['Image generation', 'Style control', 'Batch processing'],
     endpoint: '/api/bots/graphics',
@@ -118,7 +118,7 @@ export default function BotsPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-16">
-          <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-[#39FF14] via-white to-[#00D9FF] bg-clip-text text-transparent">
+          <h1 className="text-6xl font-black mb-4 bg-gradient-to-r from-[#0094FF] via-white to-[#00D9FF] bg-clip-text text-transparent">
             WISE² Bot Suite
           </h1>
           <p className="text-xl text-[#aaa]">
@@ -132,7 +132,7 @@ export default function BotsPage() {
             <div
               key={bot.id}
               onClick={() => setSelectedBot(bot)}
-              className="group bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#333] rounded-lg p-6 cursor-pointer hover:border-opacity-100 transition hover:shadow-lg hover:shadow-[#39FF14]/20"
+              className="group bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#333] rounded-lg p-6 cursor-pointer hover:border-opacity-100 transition hover:shadow-lg hover:shadow-[#0094FF]/20"
               style={{
                 borderColor: botStatuses[bot.id] === 'online' ? bot.color + '40' : '#333',
               }}
@@ -186,21 +186,21 @@ export default function BotsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Test Interface */}
               <div>
-                <h3 className="text-lg font-bold mb-4 text-[#39FF14]">Test Bot</h3>
+                <h3 className="text-lg font-bold mb-4 text-[#0094FF]">Test Bot</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-bold text-[#39FF14] mb-2">Message</label>
+                    <label className="block text-sm font-bold text-[#0094FF] mb-2">Message</label>
                     <input
                       type="text"
                       value={testMessage}
                       onChange={(e) => setTestMessage(e.target.value)}
                       placeholder="Enter test message..."
-                      className="w-full bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg px-4 py-3 text-white focus:border-[#39FF14] outline-none transition"
+                      className="w-full bg-[#0a0a0a] border border-[#0094FF]/40 rounded-lg px-4 py-3 text-white focus:border-[#0094FF] outline-none transition"
                     />
                   </div>
                   <button
                     onClick={() => handleTestBot(selectedBot)}
-                    className="w-full py-3 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] text-black font-bold rounded-lg hover:shadow-lg transition"
+                    className="w-full py-3 bg-gradient-to-r from-[#0094FF] to-[#00D9FF] text-black font-bold rounded-lg hover:shadow-lg transition"
                   >
                     Test {selectedBot.name}
                   </button>
@@ -209,10 +209,10 @@ export default function BotsPage() {
 
               {/* Response */}
               <div>
-                <h3 className="text-lg font-bold mb-4 text-[#39FF14]">Response</h3>
-                <div className="bg-[#0a0a0a] border border-[#39FF14]/40 rounded-lg p-4 min-h-[200px] overflow-auto">
+                <h3 className="text-lg font-bold mb-4 text-[#0094FF]">Response</h3>
+                <div className="bg-[#0a0a0a] border border-[#0094FF]/40 rounded-lg p-4 min-h-[200px] overflow-auto">
                   {testResponse ? (
-                    <pre className="text-xs text-[#39FF14] font-mono whitespace-pre-wrap break-words">
+                    <pre className="text-xs text-[#0094FF] font-mono whitespace-pre-wrap break-words">
                       {testResponse}
                     </pre>
                   ) : (
@@ -224,13 +224,13 @@ export default function BotsPage() {
 
             {/* API Documentation */}
             <div className="mt-8 pt-8 border-t border-[#333]">
-              <h3 className="text-lg font-bold mb-4 text-[#39FF14]">API Documentation</h3>
+              <h3 className="text-lg font-bold mb-4 text-[#0094FF]">API Documentation</h3>
               <div className="bg-[#0a0a0a] border border-[#333] rounded-lg p-4">
                 <div className="font-mono text-sm text-[#666] space-y-2">
                   <div>
                     <span className="text-[#00D9FF]">POST</span> {selectedBot.endpoint}
                   </div>
-                  <div className="text-[#39FF14]">Request body example:</div>
+                  <div className="text-[#0094FF]">Request body example:</div>
                   <pre className="text-xs text-[#999] overflow-auto">
                     {JSON.stringify(
                       selectedBot.id === 'hermes'

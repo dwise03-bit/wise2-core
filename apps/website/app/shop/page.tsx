@@ -90,7 +90,7 @@ export default function ShopPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-wise-text-primary mb-4">Shop</h1>
-          <p className="text-wise-text-secondary text-lg">
+          <p className="text-gray-300 text-lg">
             Premium digital products and resources for creators
           </p>
         </div>
@@ -108,14 +108,14 @@ export default function ShopPage() {
                 <button
                   onClick={() => toggleWishlist(product.id)}
                   className={`text-2xl transition-colors ${
-                    wishlist.includes(product.id) ? 'text-lime-400' : 'text-wise-text-secondary hover:text-lime-400'
+                    wishlist.includes(product.id) ? 'text-lime-400' : 'text-gray-300 hover:text-lime-400'
                   }`}
                 >
                   ♥
                 </button>
               </div>
               <h3 className="text-xl font-bold text-wise-text-primary mb-2">{product.name}</h3>
-              <p className="text-wise-text-secondary mb-4">{product.description}</p>
+              <p className="text-gray-300 mb-4">{product.description}</p>
               <div className="flex justify-between items-center gap-2">
                 <span className="text-2xl font-bold text-lime-400">${product.price}</span>
                 <div className="flex gap-2">
@@ -145,7 +145,7 @@ export default function ShopPage() {
                 const product = products.find((p) => p.id === itemId);
                 return (
                   <div key={itemId} className="flex justify-between items-center p-3 bg-wise-bg-primary rounded">
-                    <span className="text-wise-text-secondary">{product?.name}</span>
+                    <span className="text-gray-300">{product?.name}</span>
                     <span className="text-lime-400 font-bold">${product?.price}</span>
                   </div>
                 );

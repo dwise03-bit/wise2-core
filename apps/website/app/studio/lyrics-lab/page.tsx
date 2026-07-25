@@ -49,10 +49,10 @@ export default function LyricsLabPage() {
       {/* Header */}
       <div className="p-8 border-b border-[#333]">
         <div className="max-w-7xl mx-auto">
-          <Link href="/studio" className="text-[#39FF14] hover:text-white text-sm mb-4 inline-block">
+          <Link href="/studio" className="text-[#0094FF] hover:text-white text-sm mb-4 inline-block">
             ← Back to Studio
           </Link>
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#39FF14] to-[#00D9FF] bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-[#0094FF] to-[#00D9FF] bg-clip-text text-transparent">
             Lyrics Lab
           </h1>
           <p className="text-[#999]">AI-powered lyric generation for your projects</p>
@@ -65,11 +65,11 @@ export default function LyricsLabPage() {
           {/* Left: Controls */}
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-[#39FF14] mb-2">Genre</label>
+              <label className="block text-sm font-semibold text-[#0094FF] mb-2">Genre</label>
               <select
                 value={genre}
                 onChange={(e) => setGenre(e.target.value)}
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white focus:border-[#39FF14] outline-none"
+                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white focus:border-[#0094FF] outline-none"
               >
                 <option>pop</option>
                 <option>hip-hop</option>
@@ -82,11 +82,11 @@ export default function LyricsLabPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#39FF14] mb-2">Mood</label>
+              <label className="block text-sm font-semibold text-[#0094FF] mb-2">Mood</label>
               <select
                 value={mood}
                 onChange={(e) => setMood(e.target.value)}
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white focus:border-[#39FF14] outline-none"
+                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white focus:border-[#0094FF] outline-none"
               >
                 <option>upbeat</option>
                 <option>melancholic</option>
@@ -98,12 +98,12 @@ export default function LyricsLabPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-[#39FF14] mb-2">Theme / Topic</label>
+              <label className="block text-sm font-semibold text-[#0094FF] mb-2">Theme / Topic</label>
               <textarea
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
                 placeholder="e.g., lost love, summer nights, city life..."
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white placeholder-[#666] focus:border-[#39FF14] outline-none resize-none"
+                className="w-full bg-[#1a1a1a] border border-[#333] rounded px-3 py-2 text-white placeholder-[#666] focus:border-[#0094FF] outline-none resize-none"
                 rows={4}
               />
             </div>
@@ -117,14 +117,14 @@ export default function LyricsLabPage() {
             <button
               onClick={generateLyrics}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#39FF14] to-[#00D9FF] text-black font-bold py-3 rounded hover:shadow-lg hover:shadow-[#39FF14]/50 disabled:opacity-50 transition"
+              className="w-full bg-gradient-to-r from-[#0094FF] to-[#00D9FF] text-black font-bold py-3 rounded hover:shadow-lg hover:shadow-[#0094FF]/50 disabled:opacity-50 transition"
             >
               {loading ? '✨ Generating...' : '✨ Generate Lyrics'}
             </button>
 
             <Link
               href="/studio/jingle-lab/new"
-              className="block w-full bg-[#1a1a1a] border border-[#39FF14]/50 text-[#39FF14] font-bold py-2 rounded hover:bg-[#222] text-center transition"
+              className="block w-full bg-[#1a1a1a] border border-[#0094FF]/50 text-[#0094FF] font-bold py-2 rounded hover:bg-[#222] text-center transition"
             >
               → Create Jingle with These Lyrics
             </Link>

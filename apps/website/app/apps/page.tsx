@@ -8,7 +8,7 @@ export default function AppsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-wise-text-primary mb-4">Integrated Apps</h1>
-          <p className="text-wise-text-secondary text-lg">
+          <p className="text-gray-300 text-lg">
             Connect your favorite tools and services to WISE²
           </p>
         </div>
@@ -17,7 +17,7 @@ export default function AppsPage() {
           {/* Google Workspace */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors">
             <h3 className="text-xl font-bold text-wise-text-primary mb-2">Google Workspace</h3>
-            <p className="text-wise-text-secondary mb-4">
+            <p className="text-gray-300 mb-4">
               Connect Gmail, Google Drive, and Google Calendar to WISE²
             </p>
             <Link href="#" className="text-lime-400 hover:text-lime-300 font-mono text-sm">
@@ -28,7 +28,7 @@ export default function AppsPage() {
           {/* Slack */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors">
             <h3 className="text-xl font-bold text-wise-text-primary mb-2">Slack</h3>
-            <p className="text-wise-text-secondary mb-4">
+            <p className="text-gray-300 mb-4">
               Send notifications and collaborate with your team
             </p>
             <Link href="#" className="text-lime-400 hover:text-lime-300 font-mono text-sm">
@@ -39,7 +39,7 @@ export default function AppsPage() {
           {/* Stripe */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors">
             <h3 className="text-xl font-bold text-wise-text-primary mb-2">Stripe</h3>
-            <p className="text-wise-text-secondary mb-4">
+            <p className="text-gray-300 mb-4">
               Manage payments and subscriptions
             </p>
             <Link href="#" className="text-lime-400 hover:text-lime-300 font-mono text-sm">
@@ -50,7 +50,7 @@ export default function AppsPage() {
           {/* Zapier */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors">
             <h3 className="text-xl font-bold text-wise-text-primary mb-2">Zapier</h3>
-            <p className="text-wise-text-secondary mb-4">
+            <p className="text-gray-300 mb-4">
               Automate workflows between apps
             </p>
             <Link href="#" className="text-lime-400 hover:text-lime-300 font-mono text-sm">
@@ -61,7 +61,7 @@ export default function AppsPage() {
           {/* HubSpot */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors">
             <h3 className="text-xl font-bold text-wise-text-primary mb-2">HubSpot</h3>
-            <p className="text-wise-text-secondary mb-4">
+            <p className="text-gray-300 mb-4">
               Sync contacts and manage CRM data
             </p>
             <Link href="#" className="text-lime-400 hover:text-lime-300 font-mono text-sm">
@@ -72,7 +72,7 @@ export default function AppsPage() {
           {/* More Coming */}
           <div className="bg-wise-bg-secondary rounded-lg p-6 border border-dashed border-wise-border hover:border-lime-400/50 transition-colors flex items-center justify-center">
             <div className="text-center">
-              <p className="text-wise-text-secondary">More integrations coming soon</p>
+              <p className="text-gray-300">More integrations coming soon</p>
             </div>
           </div>
         </div>

@@ -39,16 +39,16 @@ export default function IntakePage() {
           <Container>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-wise-accent-green font-display mb-2">8+</div>
-                <p className="text-wise-text-muted">Creative Worlds</p>
+                <div className="text-4xl font-bold text-[#0094FF] font-display mb-2">8+</div>
+                <p className="text-gray-400">Creative Worlds</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-wise-accent-green font-display mb-2">50+</div>
-                <p className="text-wise-text-muted">Successful Projects</p>
+                <div className="text-4xl font-bold text-[#0094FF] font-display mb-2">50+</div>
+                <p className="text-gray-400">Successful Projects</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-wise-accent-green font-display mb-2">100%</div>
-                <p className="text-wise-text-muted">Vision-Driven</p>
+                <div className="text-4xl font-bold text-[#0094FF] font-display mb-2">100%</div>
+                <p className="text-gray-400">Vision-Driven</p>
               </div>
             </div>
           </Container>

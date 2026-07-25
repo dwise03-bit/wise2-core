@@ -139,7 +139,7 @@ export default function LoginPage() {
               fontWeight: 900,
               letterSpacing: '2px',
               marginBottom: '12px',
-              background: 'linear-gradient(135deg, #39FF14, #00D9FF)',
+              background: 'linear-gradient(135deg, #0094FF, #00D9FF)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -169,7 +169,7 @@ export default function LoginPage() {
                 style={{
                   display: 'block',
                   fontSize: '12px',
-                  color: '#39FF14',
+                  color: '#0094FF',
                   textTransform: 'uppercase',
                   letterSpacing: '1px',
                   marginBottom: '8px',
@@ -212,7 +212,7 @@ export default function LoginPage() {
                 style={{
                   display: 'block',
                   fontSize: '12px',
-                  color: '#39FF14',
+                  color: '#0094FF',
                   textTransform: 'uppercase',
                   letterSpacing: '1px',
                   marginBottom: '8px',
@@ -274,7 +274,7 @@ export default function LoginPage() {
                   background: 'rgba(57, 255, 20, 0.1)',
                   border: '1px solid rgba(57, 255, 20, 0.3)',
                   borderRadius: '8px',
-                  color: '#39FF14',
+                  color: '#0094FF',
                   fontSize: '13px',
                   textAlign: 'center',
                 }}
@@ -289,7 +289,7 @@ export default function LoginPage() {
               disabled={loading}
               style={{
                 padding: '14px 28px',
-                background: loading ? 'rgba(57, 255, 20, 0.3)' : 'linear-gradient(135deg, #39FF14, #00D9FF)',
+                background: loading ? 'rgba(57, 255, 20, 0.3)' : 'linear-gradient(135deg, #0094FF, #00D9FF)',
                 border: 'none',
                 borderRadius: '8px',
                 color: loading ? 'rgba(255, 255, 255, 0.5)' : '#000',
@@ -343,7 +343,7 @@ export default function LoginPage() {
                 textDecoration: 'none',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#39FF14')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#0094FF')}
               onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
             >
               ← Back Home
@@ -355,7 +355,7 @@ export default function LoginPage() {
                 textDecoration: 'none',
                 transition: 'color 0.3s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#39FF14')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#0094FF')}
               onMouseLeave={(e) => (e.currentTarget.style.color = '#888')}
             >
               Create Account →

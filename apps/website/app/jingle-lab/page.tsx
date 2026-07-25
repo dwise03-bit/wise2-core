@@ -188,7 +188,7 @@ export default function JingleLabPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="#create"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#39FF14,#00ff88)] px-6 py-4 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(57,255,20,0.25)] transition hover:brightness-110"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#0094FF,#00ff88)] px-6 py-4 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(57,255,20,0.25)] transition hover:brightness-110"
                 >
                   Start Creating
                   <ArrowRight className="h-4 w-4" />
@@ -479,7 +479,7 @@ export default function JingleLabPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/studio"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#39FF14,#00ff88)] px-8 py-4 text-sm font-semibold text-black hover:brightness-110 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(135deg,#0094FF,#00ff88)] px-8 py-4 text-sm font-semibold text-black hover:brightness-110 transition-all duration-300"
               >
                 Start Free
                 <ArrowRight className="h-4 w-4" />

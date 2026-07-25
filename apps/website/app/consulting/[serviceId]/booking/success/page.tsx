@@ -115,7 +115,7 @@ END:VCALENDAR`;
         <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-3xl mx-auto px-6 flex items-center justify-center h-96">
-            <Loader className="animate-spin text-wise-accent-green" size={40} />
+            <Loader className="animate-spin text-[#0094FF]" size={40} />
           </div>
         </main>
         <Footer />
@@ -142,7 +142,7 @@ END:VCALENDAR`;
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push(`/consulting/${serviceId}`)}
-                  className="px-4 py-2 bg-wise-accent-green text-wise-bg-primary font-bold rounded-lg hover:bg-green-600"
+                  className="px-4 py-2 bg-[#0094FF] text-wise-bg-primary font-bold rounded-lg hover:bg-green-600"
                 >
                   Back to Service
                 </motion.button>
@@ -201,13 +201,13 @@ END:VCALENDAR`;
             transition={{ delay: 0.2, type: 'spring', stiffness: 100 }}
             className="flex justify-center mb-8"
           >
-            <div className="w-20 h-20 rounded-full bg-wise-accent-green/20 border-2 border-wise-accent-green flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-[#0094FF]/20 border-2 border-[#0094FF] flex items-center justify-center">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
               >
-                <Check className="text-wise-accent-green" size={48} />
+                <Check className="text-[#0094FF]" size={48} />
               </motion.div>
             </div>
           </motion.div>
@@ -235,7 +235,7 @@ END:VCALENDAR`;
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl p-8 mb-8"
+            className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-xl p-8 mb-8"
           >
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -246,7 +246,7 @@ END:VCALENDAR`;
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={copyConfirmationNumber}
-                className="px-4 py-2 bg-wise-accent-green/20 hover:bg-wise-accent-green/30 border border-wise-accent-green/50 rounded-lg text-wise-accent-green font-bold flex items-center gap-2 transition-all"
+                className="px-4 py-2 bg-[#0094FF]/20 hover:bg-[#0094FF]/30 border border-[#0094FF]/50 rounded-lg text-[#0094FF] font-bold flex items-center gap-2 transition-all"
               >
                 <Copy size={16} />
                 {copied ? 'Copied!' : 'Copy'}
@@ -287,14 +287,14 @@ END:VCALENDAR`;
               <h3 className="text-sm font-semibold text-gray-400 mb-4">Scheduled Date & Time</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <Calendar className="text-wise-accent-green" size={20} />
+                  <Calendar className="text-[#0094FF]" size={20} />
                   <div>
                     <p className="text-gray-500 text-sm">Date</p>
                     <p className="font-bold text-white">{formattedDate}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Clock className="text-wise-accent-green" size={20} />
+                  <Clock className="text-[#0094FF]" size={20} />
                   <div>
                     <p className="text-gray-500 text-sm">Time</p>
                     <p className="font-bold text-white">
@@ -308,22 +308,22 @@ END:VCALENDAR`;
             {/* Duration & Price */}
             <motion.div
               variants={itemVariants}
-              className="bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl p-6"
+              className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-xl p-6"
             >
               <h3 className="text-sm font-semibold text-gray-400 mb-4">Duration & Price</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <Clock className="text-wise-accent-green" size={20} />
+                  <Clock className="text-[#0094FF]" size={20} />
                   <div>
                     <p className="text-gray-500 text-sm">Duration</p>
                     <p className="font-bold text-white">{booking.duration} hour{booking.duration > 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <DollarSign className="text-wise-accent-green" size={20} />
+                  <DollarSign className="text-[#0094FF]" size={20} />
                   <div>
                     <p className="text-gray-500 text-sm">Total Amount</p>
-                    <p className="font-bold text-wise-accent-green text-lg">${booking.totalPrice.toFixed(2)}</p>
+                    <p className="font-bold text-[#0094FF] text-lg">${booking.totalPrice.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -337,7 +337,7 @@ END:VCALENDAR`;
               <h3 className="text-sm font-semibold text-gray-400 mb-4">Consultant Contact</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <Mail className="text-wise-accent-green" size={20} />
+                  <Mail className="text-[#0094FF]" size={20} />
                   <div>
                     <p className="text-gray-500 text-sm">Email</p>
                     <p className="font-bold text-white break-all">{booking.consultantEmail}</p>
@@ -391,7 +391,7 @@ END:VCALENDAR`;
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={downloadCalendarFile}
-              className="flex-1 px-6 py-3 bg-wise-bg-secondary border border-wise-surface-3 hover:border-wise-accent-green/50 rounded-lg text-white font-bold transition-all flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-wise-bg-secondary border border-wise-surface-3 hover:border-[#0094FF]/50 rounded-lg text-white font-bold transition-all flex items-center justify-center gap-2"
             >
               <Download size={18} />
               Add to Calendar (.ics)
@@ -401,7 +401,7 @@ END:VCALENDAR`;
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => router.push('/consulting')}
-              className="flex-1 px-6 py-3 bg-wise-accent-green hover:bg-green-600 rounded-lg text-wise-bg-primary font-bold transition-all flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-[#0094FF] hover:bg-green-600 rounded-lg text-wise-bg-primary font-bold transition-all flex items-center justify-center gap-2"
             >
               Book Another Consultation
               <ArrowRight size={18} />
@@ -418,19 +418,19 @@ END:VCALENDAR`;
             <h3 className="text-lg font-bold text-white mb-4">What Happens Next?</h3>
             <ol className="space-y-3 text-gray-400">
               <li className="flex gap-3">
-                <span className="text-wise-accent-green font-bold flex-shrink-0">1.</span>
+                <span className="text-[#0094FF] font-bold flex-shrink-0">1.</span>
                 <span>You'll receive a confirmation email with meeting details within the next 5 minutes</span>
               </li>
               <li className="flex gap-3">
-                <span className="text-wise-accent-green font-bold flex-shrink-0">2.</span>
+                <span className="text-[#0094FF] font-bold flex-shrink-0">2.</span>
                 <span>Your consultant will send you a meeting link 24 hours before your scheduled consultation</span>
               </li>
               <li className="flex gap-3">
-                <span className="text-wise-accent-green font-bold flex-shrink-0">3.</span>
+                <span className="text-[#0094FF] font-bold flex-shrink-0">3.</span>
                 <span>Join the meeting at the scheduled time using the provided link</span>
               </li>
               <li className="flex gap-3">
-                <span className="text-wise-accent-green font-bold flex-shrink-0">4.</span>
+                <span className="text-[#0094FF] font-bold flex-shrink-0">4.</span>
                 <span>You'll receive a summary and action items via email after the consultation</span>
               </li>
             </ol>

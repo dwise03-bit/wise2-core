@@ -72,7 +72,7 @@ services:
     networks:
       - wise2
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      test: ["CMD", "sh", "-c", "wget -q -O /dev/null http://127.0.0.1:3001/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -1,38 +1,37 @@
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 export default function AboutPage() {
   return (
     <>
-      <Navigation />
-      <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20">
+      <main className="bg-black min-h-screen pt-32 pb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              About <span className="text-wise-accent-green">WISE²</span>
+              About <span className="text-blue-500">WISE²</span>
             </h1>
-            <p className="text-xl text-wise-text-secondary">
+            <p className="text-xl text-gray-300">
               Organized Chaos Command Center for creative entrepreneurs.
             </p>
           </div>
 
           <div className="space-y-16">
-            <section className="bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-12">
+            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
               <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
-              <p className="text-wise-text-secondary leading-relaxed">
+              <p className="text-gray-300 leading-relaxed">
                 WISE² is built for creators, builders, and entrepreneurs who want to turn their ideas into reality. We provide the tools, guidance, and support needed to navigate the journey from concept to successful launch and beyond.
               </p>
             </section>
 
-            <section className="bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-12">
+            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
               <h2 className="text-3xl font-bold text-white mb-4">What We Do</h2>
-              <p className="text-wise-text-secondary leading-relaxed mb-6">
+              <p className="text-gray-300 leading-relaxed mb-6">
                 We combine technology, design, and strategy to help you build, launch, and scale. Whether you need a complete branding package, a custom web platform, or expert guidance on growth—we've got you covered.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {['Design', 'Development', 'Strategy'].map((item) => (
                   <div
                     key={item}
-                    className="p-4 bg-wise-accent-green/10 border border-wise-accent-green/30 rounded-xl text-center"
+                    className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-center"
                   >
                     <p className="text-white font-bold">{item}</p>
                   </div>
@@ -40,7 +39,7 @@ export default function AboutPage() {
               </div>
             </section>
 
-            <section className="bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-12">
+            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
               <h2 className="text-3xl font-bold text-white mb-6">Our Process</h2>
               <div className="space-y-4">
                 {[
@@ -51,18 +50,18 @@ export default function AboutPage() {
                   { phase: 'Multiply', desc: 'Scale and optimize for growth.' },
                 ].map((item) => (
                   <div key={item.phase} className="flex gap-4">
-                    <div className="text-wise-accent-green font-bold min-w-24">{item.phase}</div>
-                    <div className="text-wise-text-secondary">{item.desc}</div>
+                    <div className="text-blue-500 font-bold min-w-24">{item.phase}</div>
+                    <div className="text-gray-300">{item.desc}</div>
                   </div>
                 ))}
               </div>
             </section>
 
             <section className="text-center">
-              <p className="text-wise-text-secondary mb-8">Ready to start your journey?</p>
+              <p className="text-gray-300 mb-8">Ready to start your journey?</p>
               <a
                 href="/start-your-build"
-                className="inline-block px-12 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
+                className="inline-block px-12 py-4 bg-blue-500 text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
               >
                 ✦ Start Your Build
               </a>

@@ -63,7 +63,7 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
       initial="hidden"
       animate="visible"
       whileHover={{ y: -8, boxShadow: '0 24px 48px rgba(34, 197, 94, 0.15)' }}
-      className="rounded-2xl border border-wise-surface-3 bg-gradient-to-br from-wise-card via-wise-bg-secondary to-wise-bg-primary overflow-hidden transition-all duration-300 hover:border-wise-accent-green"
+      className="rounded-2xl border border-wise-surface-3 bg-gradient-to-br from-wise-card via-wise-bg-secondary to-wise-bg-primary overflow-hidden transition-all duration-300 hover:border-[#0094FF]"
       style={{
         background: 'linear-gradient(135deg, rgba(16, 21, 29, 0.8) 0%, rgba(13, 17, 23, 0.6) 100%)',
         backdropFilter: 'blur(10px)',
@@ -75,9 +75,9 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
           {/* Avatar Placeholder */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="w-16 h-16 rounded-full bg-gradient-to-br from-wise-accent-green/30 to-blue-500/30 flex items-center justify-center flex-shrink-0 border border-wise-accent-green/50"
+            className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0094FF]/30 to-blue-500/30 flex items-center justify-center flex-shrink-0 border border-[#0094FF]/50"
           >
-            <span className="text-2xl font-bold text-wise-accent-green">{consultant.name.charAt(0)}</span>
+            <span className="text-2xl font-bold text-[#0094FF]">{consultant.name.charAt(0)}</span>
           </motion.div>
 
           {/* Name & Title */}
@@ -97,7 +97,7 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
           {consultant.expertise.slice(0, 3).map((skill, i) => (
             <span
               key={i}
-              className="text-xs px-3 py-1 rounded-full bg-wise-accent-green/10 text-wise-accent-green border border-wise-accent-green/30 font-medium"
+              className="text-xs px-3 py-1 rounded-full bg-[#0094FF]/10 text-[#0094FF] border border-[#0094FF]/30 font-medium"
             >
               {skill}
             </span>
@@ -116,7 +116,7 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
           {/* Years Experience */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Clock size={14} className="text-wise-accent-green" />
+              <Clock size={14} className="text-[#0094FF]" />
             </div>
             <div className="text-lg font-bold text-white">{consultant.yearsExperience}</div>
             <div className="text-xs text-gray-500">Years Exp.</div>
@@ -125,7 +125,7 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
           {/* Bookings Completed */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Users size={14} className="text-wise-accent-green" />
+              <Users size={14} className="text-[#0094FF]" />
             </div>
             <div className="text-lg font-bold text-white">{consultant.bookingsCompleted}</div>
             <div className="text-xs text-gray-500">Bookings</div>
@@ -134,9 +134,9 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
           {/* Hourly Rate */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Award size={14} className="text-wise-accent-green" />
+              <Award size={14} className="text-[#0094FF]" />
             </div>
-            <div className="text-lg font-bold text-wise-accent-green">${consultant.hourlyRate}</div>
+            <div className="text-lg font-bold text-[#0094FF]">${consultant.hourlyRate}</div>
             <div className="text-xs text-gray-500">/hour</div>
           </div>
         </div>
@@ -152,7 +152,7 @@ const ConsultantCard = ({ consultant, index }: { consultant: Consultant; index: 
         <motion.button
           whileHover={{ scale: 1.02, boxShadow: '0 8px 24px rgba(34, 197, 94, 0.3)' }}
           whileTap={{ scale: 0.98 }}
-          className="w-full bg-wise-accent-green hover:bg-green-600 text-wise-bg-primary font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
+          className="w-full bg-[#0094FF] hover:bg-green-600 text-wise-bg-primary font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
         >
           Book Consultation <ArrowRight size={16} />
         </motion.button>
@@ -261,7 +261,7 @@ export default function ServiceDetailPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push('/consulting')}
-                  className="px-4 py-2 bg-wise-accent-green text-wise-bg-primary font-bold rounded-lg hover:bg-green-600 transition-all"
+                  className="px-4 py-2 bg-[#0094FF] text-wise-bg-primary font-bold rounded-lg hover:bg-green-600 transition-all"
                 >
                   Back to Services
                 </motion.button>
@@ -320,7 +320,7 @@ export default function ServiceDetailPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => router.back()}
-            className="mb-8 flex items-center gap-2 text-gray-400 hover:text-wise-accent-green transition-colors font-medium text-sm"
+            className="mb-8 flex items-center gap-2 text-gray-400 hover:text-[#0094FF] transition-colors font-medium text-sm"
           >
             <span>←</span> Back to Services
           </motion.button>
@@ -345,7 +345,7 @@ export default function ServiceDetailPage() {
                 </div>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="flex-shrink-0 px-6 py-3 bg-wise-accent-green text-wise-bg-primary font-bold rounded-xl text-center"
+                  className="flex-shrink-0 px-6 py-3 bg-[#0094FF] text-wise-bg-primary font-bold rounded-xl text-center"
                 >
                   <div className="text-sm text-wise-bg-primary/80 mb-1">Starting at</div>
                   <div className="text-3xl font-black">${service.hourlyRate}</div>
@@ -361,7 +361,7 @@ export default function ServiceDetailPage() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.05 }}
-                    className="px-4 py-2 rounded-full bg-wise-accent-green/10 text-wise-accent-green border border-wise-accent-green/30 font-medium text-sm"
+                    className="px-4 py-2 rounded-full bg-[#0094FF]/10 text-[#0094FF] border border-[#0094FF]/30 font-medium text-sm"
                   >
                     {tag}
                   </motion.span>
@@ -379,7 +379,7 @@ export default function ServiceDetailPage() {
                 <motion.div
                   key={i}
                   variants={itemVariants}
-                  className="rounded-xl p-4 bg-gradient-to-br from-wise-card to-wise-bg-secondary border border-wise-surface-3 hover:border-wise-accent-green/50 transition-all"
+                  className="rounded-xl p-4 bg-gradient-to-br from-wise-card to-wise-bg-secondary border border-wise-surface-3 hover:border-[#0094FF]/50 transition-all"
                   style={{
                     background: 'linear-gradient(135deg, rgba(16, 21, 29, 0.6) 0%, rgba(13, 17, 23, 0.4) 100%)',
                   }}
@@ -423,7 +423,7 @@ export default function ServiceDetailPage() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="mt-20 rounded-2xl bg-gradient-to-r from-wise-accent-green/20 to-blue-500/10 border border-wise-accent-green/30 p-12 text-center"
+            className="mt-20 rounded-2xl bg-gradient-to-r from-[#0094FF]/20 to-blue-500/10 border border-[#0094FF]/30 p-12 text-center"
           >
             <h3 className="text-3xl font-bold text-white mb-4">Ready to Get Started?</h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
@@ -433,7 +433,7 @@ export default function ServiceDetailPage() {
               whileHover={{ scale: 1.05, boxShadow: '0 24px 48px rgba(34, 197, 94, 0.4)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push(`/consulting/book?serviceId=${serviceId}`)}
-              className="px-8 py-4 bg-wise-accent-green hover:bg-green-600 text-wise-bg-primary font-bold rounded-xl transition-all inline-flex items-center gap-2 text-lg"
+              className="px-8 py-4 bg-[#0094FF] hover:bg-green-600 text-wise-bg-primary font-bold rounded-xl transition-all inline-flex items-center gap-2 text-lg"
             >
               Book a Consultation <ArrowRight size={20} />
             </motion.button>
@@ -504,7 +504,7 @@ const FAQItem = ({ question, answer, index }: { question: string; answer: string
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronDown className="text-wise-accent-green" size={20} />
+          <ChevronDown className="text-[#0094FF]" size={20} />
         </motion.div>
       </motion.button>
 

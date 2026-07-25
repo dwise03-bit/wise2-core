@@ -69,7 +69,7 @@ export default function WebstorePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-wise-text-primary mb-4">Webstore</h1>
-          <p className="text-wise-text-secondary text-lg">
+          <p className="text-gray-300 text-lg">
             Templates, tools, and resources for your creative business
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function WebstorePage() {
               className="bg-wise-bg-secondary rounded-lg p-6 border border-wise-border hover:border-lime-400/50 transition-colors"
             >
               <h3 className="text-xl font-bold text-wise-text-primary mb-2">{product.name}</h3>
-              <p className="text-wise-text-secondary mb-4">{product.description}</p>
+              <p className="text-gray-300 mb-4">{product.description}</p>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold text-lime-400">${product.price}</span>
                 <button
@@ -100,7 +100,7 @@ export default function WebstorePage() {
             <h2 className="text-2xl font-bold text-wise-text-primary mb-4">Cart ({cart.items.length})</h2>
             <div className="mb-6">
               {cart.items.map((item) => (
-                <div key={item.id} className="text-wise-text-secondary mb-2 flex justify-between">
+                <div key={item.id} className="text-gray-300 mb-2 flex justify-between">
                   <span>{item.name} x {item.quantity}</span>
                   <span className="text-lime-400 font-bold">${(item.price * item.quantity).toFixed(2)}</span>
                 </div>

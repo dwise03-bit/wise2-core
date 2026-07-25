@@ -51,9 +51,9 @@ export default function ProcessPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              Our <span className="text-wise-accent-green">Process</span>
+              Our <span className="text-[#0094FF]">Process</span>
             </h1>
-            <p className="text-xl text-wise-text-secondary max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Five strategic phases to turn your idea into a thriving business.
             </p>
           </div>
@@ -62,29 +62,29 @@ export default function ProcessPage() {
             {phases.map((p) => (
               <div
                 key={p.phase}
-                className="bg-wise-bg-secondary border-2 border-wise-accent-green/30 rounded-3xl p-8 md:p-12 hover:border-wise-accent-green/60 transition-all"
+                className="bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-8 md:p-12 hover:border-[#0094FF]/60 transition-all"
               >
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="flex-shrink-0">
                     <div className="text-6xl mb-4">{p.icon}</div>
-                    <div className="text-wise-accent-green font-bold text-lg">Phase {p.phase}</div>
+                    <div className="text-[#0094FF] font-bold text-lg">Phase {p.phase}</div>
                   </div>
 
                   <div className="flex-grow">
                     <h3 className="text-3xl font-bold text-white mb-2">{p.name}</h3>
-                    <p className="text-wise-text-secondary mb-6">{p.description}</p>
+                    <p className="text-gray-300 mb-6">{p.description}</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <p className="text-sm text-wise-text-muted mb-2">TIMELINE</p>
+                        <p className="text-sm text-gray-400 mb-2">TIMELINE</p>
                         <p className="text-white font-semibold">{p.duration}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-wise-text-muted mb-2">DELIVERABLES</p>
+                        <p className="text-sm text-gray-400 mb-2">DELIVERABLES</p>
                         <ul className="space-y-1">
                           {p.deliverables.map((d) => (
-                            <li key={d} className="text-wise-text-secondary text-sm flex items-center gap-2">
-                              <span className="text-wise-accent-green">✓</span> {d}
+                            <li key={d} className="text-gray-300 text-sm flex items-center gap-2">
+                              <span className="text-[#0094FF]">✓</span> {d}
                             </li>
                           ))}
                         </ul>
@@ -97,10 +97,10 @@ export default function ProcessPage() {
           </div>
 
           <div className="mt-20 text-center">
-            <p className="text-wise-text-secondary mb-8">Ready to start?</p>
+            <p className="text-gray-300 mb-8">Ready to start?</p>
             <a
               href="/pricing"
-              className="inline-block px-12 py-4 bg-wise-accent-green text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
+              className="inline-block px-12 py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
             >
               View Pricing →
             </a>

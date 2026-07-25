@@ -31,7 +31,7 @@ export default function DashboardPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: '20px', color: '#39FF14' }}>Loading...</div>;
+    return <div style={{ padding: '20px', color: '#0094FF' }}>Loading...</div>;
   }
 
   return (
@@ -46,7 +46,7 @@ export default function DashboardPage() {
     >
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#39FF14', margin: 0 }}>Dashboard</h1>
+          <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0094FF', margin: 0 }}>Dashboard</h1>
           <button
             onClick={handleLogout}
             style={{
@@ -73,13 +73,13 @@ export default function DashboardPage() {
             marginBottom: '20px',
           }}
         >
-          <h2 style={{ color: '#39FF14', marginTop: 0 }}>Welcome, {user?.email}!</h2>
+          <h2 style={{ color: '#0094FF', marginTop: 0 }}>Welcome, {user?.email}!</h2>
           <p style={{ color: '#888' }}>User ID: {user?.userId}</p>
           <p style={{ color: '#888' }}>You are now logged in to WISE² Genesis.</p>
         </div>
 
         <div style={{ marginTop: '30px' }}>
-          <h3 style={{ color: '#39FF14' }}>Quick Links</h3>
+          <h3 style={{ color: '#0094FF' }}>Quick Links</h3>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             <li style={{ marginBottom: '10px' }}>
               <Link href="/" style={{ color: '#00D9FF', textDecoration: 'none' }}>
