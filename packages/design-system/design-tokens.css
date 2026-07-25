@@ -17,11 +17,19 @@
   --wise-text-secondary: #C9CED6;
   --wise-text-muted: #8D98A5;
 
-  /* Primary Brand Colors - Neon Green */
-  --wise-primary: #39FF14;
-  --wise-primary-hover: #4CFF3D;
-  --wise-primary-active: #2FD910;
-  --wise-primary-light: #50FF33;
+  /* Primary Brand Colors - Electric Blue (WISE²) */
+  --wise-primary: #0094FF;
+  --wise-primary-hover: #00A8FF;
+  --wise-primary-active: #0078D4;
+  --wise-primary-light: #33B1FF;
+
+  /* Powered Business Brand Colors */
+  --wise-piff-city: #A63CFF;
+  --wise-piff-city-hover: #B850FF;
+  --wise-piff-city-active: #8A28D4;
+  --wise-wise-shine: #F2B632;
+  --wise-wise-shine-hover: #FFB84D;
+  --wise-wise-shine-active: #D49A1A;
 
   /* Semantic Colors */
   --wise-success: #22C55E;
@@ -29,10 +37,11 @@
   --wise-danger: #E53935;
   --wise-info: #0094FF;
 
-  /* Accent Red */
+  /* Accent Colors */
   --wise-accent-red: #E53935;
   --wise-accent-orange: #F59E0B;
   --wise-accent-green: #22C55E;
+  --wise-accent: #0094FF;
 
   /* Borders */
   --wise-border-subtle: rgba(255, 255, 255, 0.08);
@@ -40,10 +49,12 @@
   --wise-border-strong: rgba(255, 255, 255, 0.20);
 
   /* Transparent Variants */
-  --wise-primary-transparent: rgba(57, 255, 20, 0.1);
-  --wise-primary-transparent-hover: rgba(57, 255, 20, 0.2);
+  --wise-primary-transparent: rgba(0, 148, 255, 0.1);
+  --wise-primary-transparent-hover: rgba(0, 148, 255, 0.2);
   --wise-danger-transparent: rgba(229, 57, 53, 0.1);
   --wise-success-transparent: rgba(34, 197, 94, 0.1);
+  --wise-piff-city-transparent: rgba(166, 60, 255, 0.1);
+  --wise-wise-shine-transparent: rgba(242, 182, 50, 0.1);
 
   /* Typography */
   --wise-font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
@@ -91,11 +102,19 @@
   --wise-shadow-large: 0 8px 32px rgba(0, 0, 0, 0.5);
   --wise-shadow-xlarge: 0 16px 64px rgba(0, 0, 0, 0.6);
 
-  /* Glow Effects - Neon Green Primary */
-  --wise-glow-primary-sm: 0 0 8px rgba(57, 255, 20, 0.3);
-  --wise-glow-primary-md: 0 0 16px rgba(57, 255, 20, 0.5);
-  --wise-glow-primary-lg: 0 0 32px rgba(57, 255, 20, 0.7);
-  --wise-glow-primary-xl: 0 0 64px rgba(57, 255, 20, 0.8);
+  /* Glow Effects - Electric Blue Primary */
+  --wise-glow-primary-sm: 0 0 8px rgba(0, 148, 255, 0.3);
+  --wise-glow-primary-md: 0 0 16px rgba(0, 148, 255, 0.5);
+  --wise-glow-primary-lg: 0 0 32px rgba(0, 148, 255, 0.7);
+  --wise-glow-primary-xl: 0 0 64px rgba(0, 148, 255, 0.8);
+
+  /* Glow Effects - Powered Businesses */
+  --wise-glow-piff-sm: 0 0 8px rgba(166, 60, 255, 0.3);
+  --wise-glow-piff-md: 0 0 16px rgba(166, 60, 255, 0.5);
+  --wise-glow-piff-lg: 0 0 32px rgba(166, 60, 255, 0.7);
+  --wise-glow-shine-sm: 0 0 8px rgba(242, 182, 50, 0.3);
+  --wise-glow-shine-md: 0 0 16px rgba(242, 182, 50, 0.5);
+  --wise-glow-shine-lg: 0 0 32px rgba(242, 182, 50, 0.7);
 
   /* Legacy Blue Glow (for backward compatibility) */
   --wise-glow-blue-sm: 0 0 8px rgba(0, 148, 255, 0.3);

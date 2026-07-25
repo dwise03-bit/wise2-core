@@ -24,7 +24,7 @@ module.exports = {
     extend: {
       colors: {
         wise: {
-          // WISE² Brand Colors - PRIMARY (All references)
+          // WISE² Brand Colors - Core
           'bg-primary': '#050505',
           'bg-secondary': '#0D1117',
           'bg-card': '#10151D',
@@ -34,9 +34,20 @@ module.exports = {
           'text-secondary': '#C9CED6',
           'text-muted': '#8D98A5',
 
-          // Accent Green - PRIMARY (WISE² Acid Green)
-          'accent-green': '#2CD588',
-          'accent-green-border': 'rgba(44, 213, 136, 0.3)',
+          // Primary Brand - Electric Blue (WISE²)
+          'primary': '#0094FF',
+          'primary-hover': '#00A8FF',
+          'primary-active': '#0078D4',
+          'primary-light': '#33B1FF',
+          'primary-border': 'rgba(0, 148, 255, 0.3)',
+
+          // Powered Business Colors
+          'piff-city': '#A63CFF',
+          'piff-city-hover': '#B850FF',
+          'piff-city-active': '#8A28D4',
+          'wise-shine': '#F2B632',
+          'wise-shine-hover': '#FFB84D',
+          'wise-shine-active': '#D49A1A',
 
           // Legacy surfaces (compatibility)
           'surface': '#0D1117',
@@ -46,16 +57,12 @@ module.exports = {
           'card': '#10151D',
 
           // Semantic colors
-          'success': '#2CD588',
+          'success': '#22C55E',
           'warning': '#F59E0B',
-          'danger': '#FF0040',
+          'danger': '#E53935',
 
-          // DO NOT USE - Deprecated blues
-          'primary': '#2CD588',
-          'primary-hover': '#20b870',
-          'primary-active': '#1fa070',
-          'electric': '#2CD588',
-          'purple': '#B300FF',
+          // Legacy/deprecated (backward compat)
+          'accent-green': '#2CD588',
           'accent-red': '#FF0040',
           'accent-orange': '#F59E0B',
           'info': '#22C55E',
@@ -67,15 +74,19 @@ module.exports = {
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
       },
       boxShadow: {
-        // Blue glows
-        'glow-blue-sm': '0 0 12px rgba(0, 85, 255, 0.35)',
-        'glow-blue-md': '0 0 24px rgba(0, 85, 255, 0.5)',
-        'glow-blue-lg': '0 0 44px rgba(0, 217, 255, 0.38)',
-        'glow-blue-xl': '0 0 60px rgba(0, 85, 255, 0.4)',
-        // Cyan glows
-        'glow-cyan-sm': '0 0 12px rgba(0, 217, 255, 0.25)',
-        'glow-cyan-md': '0 0 24px rgba(0, 217, 255, 0.35)',
-        'glow-cyan-lg': '0 0 44px rgba(0, 217, 255, 0.5)',
+        // Electric Blue glows (WISE²)
+        'glow-blue-sm': '0 0 8px rgba(0, 148, 255, 0.3)',
+        'glow-blue-md': '0 0 16px rgba(0, 148, 255, 0.5)',
+        'glow-blue-lg': '0 0 32px rgba(0, 148, 255, 0.7)',
+        'glow-blue-xl': '0 0 64px rgba(0, 148, 255, 0.8)',
+        // Purple glows (PIFF CITY)
+        'glow-purple-sm': '0 0 8px rgba(166, 60, 255, 0.3)',
+        'glow-purple-md': '0 0 16px rgba(166, 60, 255, 0.5)',
+        'glow-purple-lg': '0 0 32px rgba(166, 60, 255, 0.7)',
+        // Gold glows (WISE SHINE)
+        'glow-gold-sm': '0 0 8px rgba(242, 182, 50, 0.3)',
+        'glow-gold-md': '0 0 16px rgba(242, 182, 50, 0.5)',
+        'glow-gold-lg': '0 0 32px rgba(242, 182, 50, 0.7)',
         // Red glows
         'glow-red-sm': '0 0 12px rgba(255, 0, 64, 0.25)',
         'glow-red-md': '0 0 24px rgba(255, 0, 64, 0.35)',
@@ -103,8 +114,8 @@ module.exports = {
       },
       keyframes: {
         pulseGlow: {
-          '0%, 100%': { boxShadow: '0 0 16px rgba(0, 85, 255, 0.35)' },
-          '50%': { boxShadow: '0 0 34px rgba(0, 217, 255, 0.55)' },
+          '0%, 100%': { boxShadow: '0 0 16px rgba(0, 148, 255, 0.3)' },
+          '50%': { boxShadow: '0 0 32px rgba(0, 148, 255, 0.7)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },

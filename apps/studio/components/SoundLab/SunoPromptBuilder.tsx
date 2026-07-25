@@ -80,7 +80,7 @@ export function SunoPromptBuilder({ onGenerate, isLoading = false }: SunoPromptB
             <Music className="w-5 h-5 text-wise-accent" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-wise-text-primary">Suno Prompt Builder</h2>
+            <h2 className="text-xl font-bold text-wise-text-primary">WISE² Prompt Builder</h2>
             <p className="text-sm text-wise-text-muted">AI-powered music generation</p>
           </div>
         </div>
