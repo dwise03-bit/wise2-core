@@ -10,11 +10,10 @@ export const Navigation: React.FC = () => {
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
     { href: '/platform', label: 'Platform' },
-    { href: '/solutions', label: 'Solutions' },
-    { href: '/powered-businesses', label: 'Powered Businesses' },
+    { href: '/consulting', label: 'Consulting' },
     { href: '/pricing', label: 'Pricing' },
+    { href: '/powered-businesses', label: 'Businesses' },
     { href: '/contact', label: 'Contact' },
   ];
 
@@ -47,12 +46,19 @@ export const Navigation: React.FC = () => {
               </Link>
             ))}
             <Link
+              href="/audit"
+              className="px-5 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:scale-105"
+              style={{ background: 'rgba(0,148,255,0.12)', border: '1px solid rgba(0,148,255,0.4)', color: '#0094FF' }}
+            >
+              FREE AI AUDIT
+            </Link>
+            <Link
               href={dashboardUrl}
               className="px-6 py-2 relative group/btn rounded-lg font-bold text-white hover:scale-105 transition-all duration-300"
               style={{ backgroundColor: '#0094FF', boxShadow: '0 0 12px rgba(0, 148, 255, 0.3)' }}
             >
               <div className="absolute -inset-0.5 rounded-lg blur opacity-0 group-hover/btn:opacity-100 transition-all duration-300" style={{ backgroundColor: 'rgba(0, 148, 255, 0.3)' }} />
-              <span className="relative">COMMAND CENTER</span>
+              <span className="relative">LOGIN &rarr;</span>
             </Link>
           </div>
 
@@ -83,12 +89,20 @@ export const Navigation: React.FC = () => {
               </Link>
             ))}
             <Link
+              href="/audit"
+              className="block mt-3 px-6 py-2 font-bold rounded-lg text-center transition-all duration-300 w-full"
+              style={{ background: 'rgba(0,148,255,0.12)', border: '1px solid rgba(0,148,255,0.4)', color: '#0094FF' }}
+              onClick={() => setIsOpen(false)}
+            >
+              FREE AI AUDIT
+            </Link>
+            <Link
               href={dashboardUrl}
-              className="block mt-4 px-6 py-2 text-white font-bold rounded-lg text-center transition-all duration-300 w-full"
+              className="block mt-2 px-6 py-2 text-white font-bold rounded-lg text-center transition-all duration-300 w-full"
               style={{ backgroundColor: '#0094FF' }}
               onClick={() => setIsOpen(false)}
             >
-              COMMAND CENTER
+              LOGIN →
             </Link>
           </div>
         )}
