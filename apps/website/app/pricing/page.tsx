@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 const PRICING_TIERS = [
   {
@@ -53,7 +53,6 @@ export default function PricingPage() {
 
   return (
     <>
-      <Navigation />
       <main className="bg-[#050505] min-h-screen text-white">
         {/* Hero */}
         <section className="pt-32 pb-16 px-6">

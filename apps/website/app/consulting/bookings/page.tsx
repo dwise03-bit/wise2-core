@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, DollarSign, MapPin, Phone, Video, ChevronRight, AlertCircle, Loader } from 'lucide-react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 interface Booking {
   id: string;
@@ -282,7 +282,6 @@ export default function BookingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <Navigation />
 
       <main className="pt-20 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

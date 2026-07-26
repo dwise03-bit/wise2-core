@@ -1,11 +1,10 @@
 import Link from 'next/link';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 import { DASHBOARD_URL } from '@/lib/urls';
 
 export default function CheckoutSuccessPage() {
   return (
     <>
-      <Navigation />
       <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20 flex items-center justify-center">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">

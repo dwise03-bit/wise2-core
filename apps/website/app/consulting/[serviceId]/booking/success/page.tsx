@@ -15,7 +15,7 @@ import {
   AlertCircle,
   Loader,
 } from 'lucide-react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 interface BookingConfirmation {
   id: string;
@@ -112,7 +112,6 @@ END:VCALENDAR`;
   if (loading) {
     return (
       <>
-        <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-3xl mx-auto px-6 flex items-center justify-center h-96">
             <Loader className="animate-spin text-[#0094FF]" size={40} />
@@ -126,7 +125,6 @@ END:VCALENDAR`;
   if (error || !booking) {
     return (
       <>
-        <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-3xl mx-auto px-6">
             <motion.div
@@ -178,7 +176,6 @@ END:VCALENDAR`;
 
   return (
     <>
-      <Navigation />
       <main className="bg-wise-bg-primary min-h-screen pt-12 pb-20">
         {/* Background Gradient Orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">

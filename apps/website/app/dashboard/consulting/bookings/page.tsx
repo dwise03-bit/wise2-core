@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 import {
   Calendar,
   ChevronLeft,
@@ -236,7 +236,6 @@ export default function BookingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <div className="text-gray-400">Loading bookings...</div>
         </div>
@@ -247,7 +246,6 @@ export default function BookingsPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <Navigation />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">

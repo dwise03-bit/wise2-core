@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 interface SystemMetrics {
   cpu: number;
@@ -246,7 +246,6 @@ export default function PiStatusPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <div className="text-gray-400">Loading Pi status...</div>
         </div>
@@ -258,7 +257,6 @@ export default function PiStatusPage() {
   if (error || !data) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <div className="text-red-400">{error || 'Failed to load Pi status'}</div>
         </div>
@@ -275,7 +273,6 @@ export default function PiStatusPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <Navigation />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">

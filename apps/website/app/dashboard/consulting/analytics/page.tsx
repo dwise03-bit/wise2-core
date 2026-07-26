@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 import { Download, TrendingUp, Users, DollarSign, Clock, Activity, Loader2 } from 'lucide-react';
 
 interface Booking {
@@ -199,7 +199,6 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
         </div>
@@ -210,7 +209,6 @@ export default function AnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <Navigation />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Star, Users, Award, Clock, ArrowRight, AlertCircle } from 'lucide-react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 // ============ TYPES ============
 interface Consultant {
@@ -229,7 +229,6 @@ export default function ServiceDetailPage() {
   if (loading) {
     return (
       <>
-        <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-7xl mx-auto px-6">
             <LoadingSkeleton />
@@ -243,7 +242,6 @@ export default function ServiceDetailPage() {
   if (error || !service) {
     return (
       <>
-        <Navigation />
         <main className="bg-wise-bg-primary min-h-screen pt-20 pb-20">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
@@ -290,7 +288,6 @@ export default function ServiceDetailPage() {
 
   return (
     <>
-      <Navigation />
       <main className="bg-wise-bg-primary min-h-screen pt-12 pb-20">
         {/* Background Gradient Orbs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">

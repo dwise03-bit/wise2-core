@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 const ONBOARDING_STEPS = [
   { number: 1, title: 'Welcome to WISE²', description: 'Let\'s set up your workspace' },
@@ -58,7 +58,6 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <Navigation />
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-2xl mx-auto">
           {/* Progress */}

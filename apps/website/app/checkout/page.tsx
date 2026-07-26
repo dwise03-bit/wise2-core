@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 const PLAN_DETAILS = {
   STARTER: {
@@ -44,8 +44,7 @@ function CheckoutContent() {
         throw new Error('Please fill in all fields');
       }
 
-      // Call your backend to create a Stripe checkout session
-      const response = await fetch('/api/checkout', {
+      const response = await fetch('/api/v1/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -76,8 +75,7 @@ function CheckoutContent() {
 
   return (
     <div>
-      <Navigation />
-      <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20">
+      <main className="bg-wise-bg-primary min-h-screen pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Form Section */}

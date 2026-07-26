@@ -10,7 +10,6 @@ import { branding } from '@/data/wise2-content';
 export default function IntakePage() {
   return (
     <>
-      <Navigation />
 
       <main className="bg-wise-bg-primary">
         {/* Page Header */}

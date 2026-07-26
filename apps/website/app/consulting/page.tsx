@@ -1,205 +1,290 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Container } from '@/components/ui/Container';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Footer } from '@/components/wise';
 
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  hourlyRate: number;
-  icon?: string;
-  tags?: string[];
-  consultants?: Array<{
-    consultant: {
-      id: string;
-      name: string;
-      expertise: string[];
-      hourlyRate: number;
-      isActive: boolean;
-    };
-  }>;
-}
+const SERVICES = [
+  {
+    icon: '🎯',
+    title: 'AI Strategy Session',
+    price: '$497',
+    duration: '90 minutes',
+    description: 'Deep-dive consultation with a WISE² expert. We analyze your current tools, workflows, and revenue gaps — then map an AI implementation roadmap with clear ROI.',
+    deliverables: ['Business AI score + audit report', 'Custom automation roadmap', 'Tool stack recommendations', 'Quick-win action plan (90 days)'],
+    cta: 'Book Strategy Session',
+    href: '/contact',
+    color: '#0094FF',
+  },
+  {
+    icon: '🔧',
+    title: 'WISE² Implementation',
+    price: 'From $2,500',
+    duration: '2–4 weeks',
+    description: 'Full WISE² deployment tailored to your business. We build, configure, and launch your command center — then train your team to use it like operators.',
+    deliverables: ['Complete WISE² setup', 'Custom workflow automation', 'Team training sessions', '30-day support included'],
+    cta: 'Start Implementation',
+    href: '/contact',
+    color: '#A63CFF',
+    highlight: true,
+  },
+  {
+    icon: '📈',
+    title: 'Growth Advisory',
+    price: '$1,200/mo',
+    duration: 'Monthly retainer',
+    description: 'Ongoing strategic advisory from Daniel and Darrin Wise. Monthly sessions, performance reviews, system optimization, and growth strategy as you scale.',
+    deliverables: ['Monthly strategy call', 'KPI review & optimization', 'New automation identification', 'Priority support access'],
+    cta: 'Apply for Advisory',
+    href: '/contact',
+    color: '#F2B632',
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: 'WISE² automated 80% of our manual processes in under 3 weeks. Our team can now focus on growth instead of admin.',
+    name: 'Marcus T.',
+    role: 'CEO, Retail Operations',
+  },
+  {
+    quote: 'The strategy session alone paid for itself. We found $18K in annual savings we were leaving on the table.',
+    name: 'Janelle R.',
+    role: 'Operations Director, Services Firm',
+  },
+  {
+    quote: 'Daniel and Darrin don\'t just consult — they build. Our system was live and running before the call was over.',
+    name: 'Kevin O.',
+    role: 'Founder, E-Commerce Brand',
+  },
+];
 
 export default function ConsultingPage() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetchServices();
-    fetchTags();
-  }, [selectedTag]);
-
-  const fetchServices = async () => {
-    try {
-      setLoading(true);
-      const url = selectedTag
-        ? `/api/consulting/services?tags=${selectedTag}`
-        : '/api/consulting/services';
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch services');
-      const data = await response.json();
-      setServices(data.services || []);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-      setServices([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchTags = async () => {
-    try {
-      const response = await fetch('/api/consulting/services/tags');
-      if (!response.ok) throw new Error('Failed to fetch tags');
-      const data = await response.json();
-      setTags(data.tags?.map((t: { name: string }) => t.name) || []);
-    } catch (error) {
-      console.error('Error fetching tags:', error);
-      setTags([]);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F5F5F5]">
-      {/* Hero Section */}
-      <section className="py-16 sm:py-24 border-b border-[#1A1A1A]">
-        <Container>
-          <div className="space-y-6 text-center">
-            <Badge variant="success">Professional Services</Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              Expert <span className="text-[#2CD588]">Consulting</span> Services
+    <>
+      <main className="min-h-screen bg-[#050505] text-white">
+        {/* Hero */}
+        <section className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at center top, rgba(166,60,255,0.12) 0%, transparent 70%)',
+            }}
+          />
+          <div className="relative max-w-4xl mx-auto">
+            <div
+              className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
+              style={{ background: 'rgba(166,60,255,0.12)', border: '1px solid rgba(166,60,255,0.35)', color: '#A63CFF' }}
+            >
+              WISE² CONSULTING
+            </div>
+            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+              We Don&apos;t Just<br />
+              <span style={{ color: '#A63CFF' }}>Advise. We Build.</span>
             </h1>
-            <p className="text-[#A0A0A0] text-lg max-w-2xl mx-auto">
-              Get expert guidance from our team of experienced consultants. From strategy to implementation, we help you succeed.
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+              WISE² consulting goes beyond strategy decks. We work alongside you to implement the systems, automate the workflows, and build the infrastructure your business needs to scale.
             </p>
-            <Button variant="primary" size="lg" asChild>
-              <Link href="/prospects/new">Start Your Project</Link>
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* Filter Section */}
-      {tags.length > 0 && (
-        <section className="py-8 bg-[#0A0A0A] border-b border-[#1A1A1A]">
-          <Container>
-            <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-              <Button
-                variant={selectedTag === null ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setSelectedTag(null)}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="px-10 py-5 rounded-xl font-black text-lg transition"
+                style={{ background: '#A63CFF', color: '#fff', boxShadow: '0 0 25px rgba(166,60,255,0.4)' }}
               >
-                All Services
-              </Button>
-              {tags.map((tag) => (
-                <Button
-                  key={tag}
-                  variant={selectedTag === tag ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setSelectedTag(tag)}
-                >
-                  {tag}
-                </Button>
-              ))}
+                Book a Consultation →
+              </Link>
+              <Link
+                href="/audit"
+                className="px-10 py-5 rounded-xl font-bold text-lg transition"
+                style={{ background: 'rgba(166,60,255,0.1)', border: '1px solid rgba(166,60,255,0.35)', color: '#A63CFF' }}
+              >
+                Free AI Audit First
+              </Link>
             </div>
-          </Container>
+          </div>
         </section>
-      )}
 
-      {/* Services Grid */}
-      <section className="py-16 sm:py-24">
-        <Container>
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-flex animate-spin">
-                <svg className="w-8 h-8 text-[#2CD588]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              </div>
-              <p className="mt-4 text-[#A0A0A0]">Loading services...</p>
+        {/* Founders */}
+        <section className="py-20 px-6 border-t border-white/5">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-3">Meet Your Consultants</h2>
+              <p className="text-gray-400">WISE² is led by two operators who&apos;ve built the systems — not just talked about them.</p>
             </div>
-          ) : services.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service) => (
-                <Card key={service.id} variant="action" className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-bold">{service.name}</h3>
-                    <p className="text-[#A0A0A0] text-sm mt-2">{service.description}</p>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div
+                className="p-8 rounded-2xl flex gap-6 items-start"
+                style={{ background: 'rgba(0,148,255,0.06)', border: '1px solid rgba(0,148,255,0.2)' }}
+              >
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '2px solid rgba(0,148,255,0.4)' }}>
+                  <Image src="/uploads/daniel-real.jpg" alt="Daniel Wise" fill className="object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Daniel Wise</h3>
+                  <p className="text-sm font-semibold mb-3" style={{ color: '#0094FF' }}>Founder & System Architect</p>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    AI automation expert and systems architect who built WISE² from the ground up. Daniel specializes in business intelligence, infrastructure, and AI-first operations.
+                  </p>
+                  <div className="flex gap-2 mt-4 flex-wrap">
+                    {['AI Automation', 'Systems Design', 'Infrastructure'].map((t) => (
+                      <span key={t} className="px-2 py-1 rounded text-xs" style={{ background: 'rgba(0,148,255,0.15)', color: '#0094FF' }}>{t}</span>
+                    ))}
                   </div>
+                </div>
+              </div>
 
-                  {service.tags && service.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {service.tags.map((tag) => (
-                        <Badge key={tag} variant="info" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
+              <div
+                className="p-8 rounded-2xl flex gap-6 items-start"
+                style={{ background: 'rgba(242,182,50,0.06)', border: '1px solid rgba(242,182,50,0.2)' }}
+              >
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0" style={{ border: '2px solid rgba(242,182,50,0.4)' }}>
+                  <Image src="/uploads/darrin-real.jpg" alt="Darrin Wise" fill className="object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Darrin Wise</h3>
+                  <p className="text-sm font-semibold mb-3" style={{ color: '#F2B632' }}>Operations & Growth Leader</p>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Operations master and growth strategist who drives execution across WISE²&apos;s portfolio. Darrin specializes in team systems, brand building, and community-driven growth.
+                  </p>
+                  <div className="flex gap-2 mt-4 flex-wrap">
+                    {['Operations', 'Growth Strategy', 'Brand Building'].map((t) => (
+                      <span key={t} className="px-2 py-1 rounded text-xs" style={{ background: 'rgba(242,182,50,0.15)', color: '#F2B632' }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services */}
+        <section className="py-20 px-6 border-t border-white/5">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <div
+                className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
+                style={{ background: 'rgba(166,60,255,0.1)', border: '1px solid rgba(166,60,255,0.3)', color: '#A63CFF' }}
+              >
+                OUR SERVICES
+              </div>
+              <h2 className="text-4xl font-bold mb-4">Choose Your Engagement</h2>
+              <p className="text-gray-400 max-w-xl mx-auto">Start where you are. Scale to where you want to be.</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {SERVICES.map((service, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl p-8 flex flex-col"
+                  style={service.highlight ? {
+                    background: `linear-gradient(to bottom, rgba(166,60,255,0.12), rgba(166,60,255,0.04))`,
+                    border: `2px solid ${service.color}`,
+                  } : {
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                  }}
+                >
+                  {service.highlight && (
+                    <div className="mb-4 inline-block px-3 py-1 rounded-full text-xs font-bold text-white w-fit" style={{ background: service.color }}>
+                      MOST POPULAR
                     </div>
                   )}
-
-                  <div className="border-t border-[#1A1A1A] pt-4 space-y-4">
-                    <div>
-                      <p className="text-sm text-[#A0A0A0] mb-1">Hourly Rate</p>
-                      <p className="text-2xl font-bold text-[#2CD588]">
-                        ${service.hourlyRate}
-                        <span className="text-sm text-[#A0A0A0]">/hr</span>
-                      </p>
-                    </div>
-
-                    {service.consultants && service.consultants.length > 0 && (
-                      <div>
-                        <p className="text-sm text-[#A0A0A0] mb-2">Available Consultants</p>
-                        <div className="space-y-2">
-                          {service.consultants.map(({ consultant }) => (
-                            <div key={consultant.id} className="bg-[#0A0A0A] p-2 rounded text-sm">
-                              <p className="font-medium">{consultant.name}</p>
-                              <p className="text-xs text-[#A0A0A0]">{consultant.expertise.join(', ')}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <Button variant="primary" size="md" className="w-full" asChild>
-                      <Link href={`/consulting/${service.id}`}>Book Now</Link>
-                    </Button>
+                  <div className="text-3xl mb-4">{service.icon}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">{service.title}</h3>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-2xl font-black" style={{ color: service.color }}>{service.price}</span>
+                    <span className="text-gray-500 text-sm">· {service.duration}</span>
                   </div>
-                </Card>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-6">{service.description}</p>
+
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-gray-500 tracking-widest mb-3">WHAT YOU GET</p>
+                    <ul className="space-y-2 mb-8">
+                      {service.deliverables.map((d, di) => (
+                        <li key={di} className="flex items-start gap-2 text-sm text-gray-300">
+                          <span style={{ color: service.color }} className="flex-shrink-0 mt-0.5">✓</span>
+                          {d}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Link
+                    href={service.href}
+                    className="block text-center py-4 rounded-xl font-bold transition"
+                    style={service.highlight
+                      ? { background: service.color, color: '#fff', boxShadow: `0 0 20px rgba(166,60,255,0.4)` }
+                      : { background: `rgba(0,0,0,0.3)`, border: `1px solid ${service.color}40`, color: service.color }}
+                  >
+                    {service.cta} →
+                  </Link>
+                </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-[#A0A0A0] text-lg">No services available at the moment.</p>
-              <Button variant="secondary" size="md" className="mt-4" asChild>
-                <Link href="/contact">Contact Us</Link>
-              </Button>
-            </div>
-          )}
-        </Container>
-      </section>
+          </div>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-16 sm:py-24 bg-[#0A0A0A] border-t border-[#1A1A1A]">
-        <Container>
-          <Card variant="elevated" className="text-center space-y-6">
-            <h2 className="text-3xl font-bold">Ready to Get Expert Help?</h2>
-            <p className="text-[#A0A0A0] max-w-2xl mx-auto">
-              Book a consultation with one of our experts today. We're here to help you achieve your goals.
+        {/* Testimonials */}
+        <section
+          className="py-20 px-6 border-t border-white/5"
+          style={{ background: 'rgba(255,255,255,0.01)' }}
+        >
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-12">What Clients Say</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {TESTIMONIALS.map((t, i) => (
+                <div
+                  key={i}
+                  className="p-6 rounded-2xl"
+                  style={{ background: 'rgba(0,148,255,0.05)', border: '1px solid rgba(0,148,255,0.15)' }}
+                >
+                  <p className="text-gray-300 text-sm leading-relaxed mb-6 italic">&ldquo;{t.quote}&rdquo;</p>
+                  <div>
+                    <p className="font-bold text-white text-sm">{t.name}</p>
+                    <p className="text-gray-500 text-xs">{t.role}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section
+          className="py-24 px-6 text-center"
+          style={{
+            background: 'radial-gradient(ellipse at center, rgba(166,60,255,0.1) 0%, transparent 70%)',
+            borderTop: '1px solid rgba(166,60,255,0.12)',
+          }}
+        >
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-black mb-6">
+              Ready to Build Something<br />
+              <span style={{ color: '#A63CFF' }}>That Lasts?</span>
+            </h2>
+            <p className="text-xl text-gray-400 mb-10">
+              Start with a free AI Audit or go straight to booking — either way, we&apos;re ready to build with you.
             </p>
-            <Button variant="primary" size="lg" asChild>
-              <Link href="/prospects/new">Book a Consultation</Link>
-            </Button>
-          </Card>
-        </Container>
-      </section>
-    </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="px-10 py-5 rounded-xl font-black text-lg transition"
+                style={{ background: '#A63CFF', color: '#fff', boxShadow: '0 0 25px rgba(166,60,255,0.4)' }}
+              >
+                Book a Consultation →
+              </Link>
+              <Link
+                href="/audit"
+                className="px-10 py-5 rounded-xl font-bold text-lg transition"
+                style={{ background: 'rgba(166,60,255,0.1)', border: '1px solid rgba(166,60,255,0.35)', color: '#A63CFF' }}
+              >
+                Free AI Audit First
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 }

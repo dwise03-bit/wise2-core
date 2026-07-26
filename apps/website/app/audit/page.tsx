@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -260,10 +260,20 @@ export default function AuditPage() {
   const handleSubmit = async () => {
     setSubmitting(true);
     // Persist lead asynchronously — non-blocking, best-effort
-    fetch('/api/intake', {
+    fetch('/api/v1/prospects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, source: 'business-ai-audit' }),
+      body: JSON.stringify({
+        businessName: data.businessType,
+        contactName: data.name,
+        email: data.email,
+        phone: data.phone || undefined,
+        industry: data.businessType,
+        primaryProblem: data.primaryChallenge,
+        leadSource: 'business-ai-audit',
+        notes: `Size: ${data.businessSize} | Revenue: ${data.monthlyRevenue} | AI: ${data.aiExperience} | Bottleneck: ${data.biggestBottleneck}`,
+        tags: ['audit', 'website'],
+      }),
     }).catch(() => {});
     await new Promise((r) => setTimeout(r, 800));
     setResult(generateResult(data));
@@ -282,8 +292,7 @@ export default function AuditPage() {
 
   return (
     <>
-      <Navigation />
-      <main className="min-h-screen bg-[#050505] text-white pt-24 pb-20">
+      <main className="min-h-screen bg-[#050505] text-white pb-20">
         {/* Header */}
         <div className="text-center px-6 mb-12">
           <div className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-4"

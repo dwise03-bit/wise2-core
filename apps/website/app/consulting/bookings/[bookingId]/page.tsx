@@ -25,7 +25,7 @@ import {
   ArrowRight,
   Download,
 } from 'lucide-react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 // ============ TYPES ============
 interface BookingDetail {
@@ -698,7 +698,6 @@ export default function BookingDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-        <Navigation />
         <main className="pt-20 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto flex items-center justify-center py-32">
             <div className="text-center">
@@ -715,7 +714,6 @@ export default function BookingDetailPage() {
   if (error || !booking) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-        <Navigation />
         <main className="pt-20 pb-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <motion.button
@@ -756,7 +754,6 @@ export default function BookingDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <Navigation />
 
       <main className="pt-20 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

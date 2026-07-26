@@ -1,10 +1,9 @@
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 import Link from 'next/link';
 
 export default function LivePage() {
   return (
     <>
-      <Navigation />
       <main className="bg-black min-h-screen pt-32 pb-20">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-6xl font-black mb-6 text-lime-400" style={{ fontFamily: '"Beyond The Mountains", sans-serif' }}>

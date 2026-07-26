@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
-import { Navigation, Footer } from '@/components/wise';
+import { Navigation } from '@/components/wise';
 import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
 import { ToastProvider } from '@/components/ui/Toast';
 

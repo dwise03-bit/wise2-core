@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 interface Subscription {
   id: string;
@@ -81,7 +81,6 @@ export default function SubscriptionPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <div className="text-gray-400">Loading...</div>
         </div>
@@ -93,7 +92,6 @@ export default function SubscriptionPage() {
   if (!subscription) {
     return (
       <div className="min-h-screen bg-[#050505] text-white">
-        <Navigation />
         <div className="pt-32 pb-20 px-6 flex items-center justify-center">
           <div className="text-gray-400">No subscription found</div>
         </div>
@@ -109,7 +107,6 @@ export default function SubscriptionPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
-      <Navigation />
 
       <main className="pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto">

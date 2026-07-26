@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Navigation, Footer } from '@/components/wise';
+import { Footer } from '@/components/wise';
 
 export default function HeroesPage() {
   const heroes = [
@@ -27,7 +27,6 @@ export default function HeroesPage() {
 
   return (
     <>
-      <Navigation />
       <main className="bg-black min-h-screen pt-20">
         {/* Header Section */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
