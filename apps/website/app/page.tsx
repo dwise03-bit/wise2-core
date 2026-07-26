@@ -203,6 +203,7 @@ function PricingTeaserSection() {
   const plans = [
     {
       name: 'Starter',
+      planId: 'STARTER',
       price: 29,
       tagline: 'Get the foundation right',
       features: ['1 workspace', 'Core dashboard', 'Basic analytics', 'Email support'],
@@ -212,6 +213,7 @@ function PricingTeaserSection() {
     },
     {
       name: 'Professional',
+      planId: 'PRO',
       price: 99,
       tagline: 'For growing operations',
       features: ['5 workspaces', 'Advanced analytics', 'API access', 'Priority support', 'Custom integrations', 'RBAC'],
@@ -221,6 +223,7 @@ function PricingTeaserSection() {
     },
     {
       name: 'Enterprise',
+      planId: 'ENTERPRISE',
       price: null,
       tagline: 'Custom for your organization',
       features: ['Unlimited workspaces', 'Dedicated API', '24/7 support', 'SSO & compliance', 'Custom onboarding'],
@@ -290,7 +293,7 @@ function PricingTeaserSection() {
               </ul>
 
               <Link
-                href={plan.price === null ? '/contact' : `/checkout?plan=${plan.name.toUpperCase().replace(' ', '_')}`}
+                href={plan.price === null ? '/contact' : `/checkout?plan=${plan.planId}`}
                 className="block text-center py-3 rounded-lg font-bold text-sm transition"
                 style={plan.highlight
                   ? { background: '#0094FF', color: '#050505', boxShadow: '0 0 16px rgba(0,148,255,0.4)' }

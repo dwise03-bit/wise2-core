@@ -47,55 +47,55 @@
 }
 
 /* Stat Card */
-.statsGrid > div {
+.statCard {
   position: relative;
   padding: 40px 24px;
-  background: linear-gradient(135deg, rgba(0, 148, 255, 0.05) 0%, rgba(166, 60, 255, 0.05) 100%);
-  border: 1px solid rgba(0, 148, 255, 0.2);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, transparent 100%);
+  border-top: 4px solid var(--accent-color);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-top-width: 4px;
   border-radius: 12px;
   text-align: center;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 300ms ease-out;
   will-change: transform, box-shadow, border-color;
   overflow: hidden;
 }
 
-.statsGrid > div:hover {
+.statCard:hover {
   transform: translateY(-8px);
-  border-color: rgba(0, 148, 255, 0.5);
-  box-shadow: 0 20px 40px rgba(0, 148, 255, 0.15), inset 0 0 30px rgba(0, 148, 255, 0.08);
+  border-color: rgba(var(--accent-rgb), 0.5);
+  box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.4), inset 0 0 30px rgba(var(--accent-rgb), 0.08);
 }
 
 /* Stat Value - Big Bold Number/Symbol */
 .statValue {
-  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-size: 72px;
   font-weight: 900;
-  font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(135deg, #0094FF, #A63CFF, #00D96C);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+  color: var(--accent-color);
   margin-bottom: 16px;
-  text-shadow: 0 0 40px rgba(0, 148, 255, 0.3);
   letter-spacing: -2px;
+  text-shadow: 0 0 40px rgba(var(--accent-rgb), 0.3);
 }
 
 /* Stat Label */
 .statLabel {
-  font-size: clamp(0.85rem, 1.8vw, 1rem);
-  font-weight: 900;
+  font-size: 18px;
+  font-weight: 700;
   color: #ffffff;
   margin: 0 0 8px 0;
-  letter-spacing: 0.75px;
-  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Rajdhani', monospace;
+  text-transform: uppercase;
 }
 
 /* Stat Description */
 .statDescription {
-  font-size: clamp(0.75rem, 1.4vw, 0.875rem);
+  font-size: 13px;
   color: #a0a0a0;
   line-height: 1.5;
   margin: 0;
-  font-family: 'Rajdhani', monospace;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Rajdhani', monospace;
 }
 
 /* ============================================================================
@@ -112,12 +112,21 @@
     gap: 16px;
   }
 
-  .statsGrid > div {
+  .statCard {
     padding: 32px 20px;
   }
 
   .statValue {
+    font-size: 56px;
     margin-bottom: 12px;
+  }
+
+  .statLabel {
+    font-size: 14px;
+  }
+
+  .statDescription {
+    font-size: 12px;
   }
 }
 
@@ -127,8 +136,16 @@
     gap: 20px;
   }
 
-  .statsGrid > div {
+  .statCard {
     padding: 36px 24px;
+  }
+
+  .statValue {
+    font-size: 64px;
+  }
+
+  .statLabel {
+    font-size: 16px;
   }
 }
 
@@ -142,55 +159,43 @@
     gap: 28px;
   }
 
-  .statsGrid > div {
+  .statCard {
     padding: 44px 28px;
   }
 }
 
 /* ============================================================================
-   ACCENT COLOR VARIANTS
+   ACCENT COLOR VARIANTS (handled via CSS variables set in component)
    ============================================================================ */
-
-.statsGrid > div:nth-child(1) {
-  --accent-color: #0094FF;
-}
-
-.statsGrid > div:nth-child(2) {
-  --accent-color: #A63CFF;
-}
-
-.statsGrid > div:nth-child(3) {
-  --accent-color: #00D96C;
-}
-
-.statsGrid > div:nth-child(4) {
-  --accent-color: #F2B632;
-}
 
 /* ============================================================================
    ACCESSIBILITY & PERFORMANCE
    ============================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .statsGrid > div {
+  .statCard {
     transition: none;
   }
 }
 
 @media (prefers-contrast: more) {
-  .statsGrid > div {
+  .statCard {
     border-width: 2px;
-    box-shadow: 0 0 30px rgba(0, 148, 255, 0.3);
+    box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.4);
   }
 
   .statLabel {
-    text-shadow: 0 0 20px rgba(0, 148, 255, 0.4);
+    text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.4);
+  }
+
+  .statValue {
+    text-shadow: 0 0 50px rgba(var(--accent-rgb), 0.5);
   }
 }
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-  .statsGrid > div:active {
+  .statCard:active {
     transform: translateY(-4px);
   }
 }

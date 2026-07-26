@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
@@ -12,6 +12,7 @@ interface Stat {
   value: string;
   label: string;
   description: string;
+  colorHex: string;
 }
 
 const stats: Stat[] = [
@@ -19,21 +20,25 @@ const stats: Stat[] = [
     value: '100%',
     label: 'ALL-IN-ONE PLATFORM',
     description: 'Everything you need integrated into one unified system',
+    colorHex: '#0066FF',
   },
   {
     value: '24/7',
     label: 'AUTOMATION & MONITORING',
     description: 'Never stop. Your business runs around the clock',
+    colorHex: '#00CCFF',
   },
   {
     value: '∞',
     label: 'GROWTH POTENTIAL',
     description: 'Scale infinitely with intelligent automation',
+    colorHex: '#B020FF',
   },
   {
     value: '1',
     label: 'SYSTEM TO RUN YOUR EMPIRE',
     description: 'Eliminate complexity with unified operations',
+    colorHex: '#FFB800',
   },
 ];
 
@@ -41,23 +46,19 @@ export const Stats: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
-  const prefersReducedMotion = () => {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  };
-
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       // Stat cards fade in and scale
-      const statCards = statsRef.current?.querySelectorAll('.stat-card');
+      const statCards = statsRef.current?.querySelectorAll(`.${styles.statCard}`);
       if (statCards) {
         gsap.from(statCards, {
           opacity: 0,
-          scale: 0.8,
+          scale: 0.85,
           y: 40,
           duration: 0.7,
-          stagger: 0.15,
+          stagger: 0.12,
           ease: 'back.out(1.5)',
           scrollTrigger: {
             trigger: statsRef.current,
@@ -67,33 +68,60 @@ export const Stats: React.FC = () => {
         });
       }
 
-      // Stat values count up
-      const statValues = statsRef.current?.querySelectorAll('.stat-value');
+      // Animate stat values
+      const statValues = statsRef.current?.querySelectorAll(`.${styles.statValue}`);
       if (statValues) {
-        statValues.forEach((element) => {
-          const finalValue = element.textContent?.replace(/[^0-9]/g, '') || '0';
-          const startValue = 0;
+        statValues.forEach((element, index) => {
+          const originalText = element.textContent || '';
 
-          gsap.to(
-            { value: startValue },
-            {
-              value: parseInt(finalValue),
-              duration: 2,
-              ease: 'power2.out',
-              onUpdate: function () {
-                if (element.textContent?.includes('%')) {
-                  element.textContent = Math.round(this.targets()[0].value) + '%';
-                } else if (element.textContent?.includes('24')) {
-                  element.textContent = '24/7';
-                }
-              },
+          if (originalText === '100%') {
+            gsap.to(
+              { val: 0 },
+              {
+                val: 100,
+                duration: 2,
+                ease: 'power2.out',
+                onUpdate: function () {
+                  element.textContent = Math.round(this.targets()[0].val) + '%';
+                },
+                scrollTrigger: {
+                  trigger: statsRef.current,
+                  start: 'top 80%',
+                  toggleActions: 'play none none reverse',
+                },
+              }
+            );
+          } else if (originalText === '1') {
+            gsap.to(
+              { val: 0 },
+              {
+                val: 1,
+                duration: 1.5,
+                ease: 'power2.out',
+                onUpdate: function () {
+                  element.textContent = Math.round(this.targets()[0].val).toString();
+                },
+                scrollTrigger: {
+                  trigger: statsRef.current,
+                  start: 'top 80%',
+                  toggleActions: 'play none none reverse',
+                },
+              }
+            );
+          } else {
+            // For special values like 24/7 and ∞, just animate opacity/scale
+            gsap.from(element, {
+              opacity: 0,
+              scale: 0.5,
+              duration: 0.8,
+              ease: 'back.out(1.5)',
               scrollTrigger: {
                 trigger: statsRef.current,
                 start: 'top 80%',
                 toggleActions: 'play none none reverse',
               },
-            }
-          );
+            });
+          }
         });
       }
     },
@@ -110,7 +138,14 @@ export const Stats: React.FC = () => {
 
         <div className={styles.statsGrid} ref={statsRef}>
           {stats.map((stat, index) => (
-            <div key={index} className="stat-card" style={getCardStyle(index)}>
+            <div
+              key={index}
+              className={styles.statCard}
+              style={{
+                '--accent-color': stat.colorHex,
+                '--accent-rgb': hexToRgb(stat.colorHex),
+              } as React.CSSProperties & { '--accent-color': string; '--accent-rgb': string }}
+            >
               <div className={styles.statValue}>{stat.value}</div>
               <h3 className={styles.statLabel}>{stat.label}</h3>
               <p className={styles.statDescription}>{stat.description}</p>
@@ -122,19 +157,7 @@ export const Stats: React.FC = () => {
   );
 };
 
-// Helper function to apply alternating accent colors
-function getCardStyle(index: number) {
-  const colors = ['#0094FF', '#A63CFF', '#00D96C', '#F2B632'];
-  const color = colors[index % colors.length];
-  const rgba = `rgba(${hexToRgb(color)}, 0.15)`;
-
-  return {
-    borderColor: `rgba(${hexToRgb(color)}, 0.3)`,
-    backgroundImage: `linear-gradient(to bottom right, ${rgba}, transparent)`,
-  };
-}
-
 function hexToRgb(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 148, 255';
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 102, 255';
 }
