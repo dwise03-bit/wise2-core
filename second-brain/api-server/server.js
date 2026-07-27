@@ -13,6 +13,9 @@ const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'mistral:latest';
 const DB_NAME = 'wise2-brain';
 const COLLECTION = 'knowledge_entries';
+// Hermes integration
+const COMMAND_CENTER_URL = process.env.COMMAND_CENTER_URL || 'http://127.0.0.1:3004';
+const EVENTS_SECRET = process.env.EVENTS_SECRET || '';
 
 // ── App ──────────────────────────────────────────────────────────────────────
 const app = express();
@@ -282,6 +285,173 @@ Be concise, direct, and business-focused.`;
   } catch (err) {
     res.status(500).json({ error: 'AI request failed', detail: err.message });
   }
+});
+
+// ── Hermes helpers ────────────────────────────────────────────────────────────
+
+async function publishHermesEvent(type, title, message, meta = {}) {
+  if (!EVENTS_SECRET && !COMMAND_CENTER_URL) return;
+  try {
+    await fetch(`${COMMAND_CENTER_URL}/api/events/ingest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-events-key': EVENTS_SECRET },
+      body: JSON.stringify({ type, severity: 'info', source: 'hermes', title, message, meta }),
+      signal: AbortSignal.timeout(2000),
+    });
+  } catch { /* non-fatal */ }
+}
+
+async function fetchLiveContext() {
+  const results = { ccOnline: false, edgeDevices: [], brainStats: {}, ollamaModels: [] };
+
+  await Promise.allSettled([
+    // Command Center health
+    fetch(`${COMMAND_CENTER_URL}/api/health`, { signal: AbortSignal.timeout(3000) })
+      .then(r => r.ok && (results.ccOnline = true)),
+
+    // Edge devices
+    fetch(`${COMMAND_CENTER_URL}/api/edge/heartbeat`, { signal: AbortSignal.timeout(3000) })
+      .then(r => r.json()).then(d => { results.edgeDevices = d.devices || []; }),
+
+    // Second Brain stats
+    (mongoConnected
+      ? db.collection(COLLECTION).countDocuments().then(n => { results.brainStats.knowledgeCount = n; })
+      : Promise.resolve()),
+
+    // Ollama models
+    fetch(`${OLLAMA_HOST}/api/tags`, { signal: AbortSignal.timeout(3000) })
+      .then(r => r.json()).then(d => { results.ollamaModels = (d.models || []).map(m => m.name); }),
+  ]);
+
+  return results;
+}
+
+function buildHermesSystemPrompt(live, brainContext, ts) {
+  const devices = live.edgeDevices.length
+    ? live.edgeDevices.map(d => `  ${d.deviceId}: ${d.status.toUpperCase()} (last seen ${Math.round(d.lastSeenMs / 1000)}s ago)`).join('\n')
+    : '  No edge devices reporting';
+
+  const models = live.ollamaModels.slice(0, 5).join(', ') || OLLAMA_MODEL;
+
+  return `You are HERMES, the WISE² master intelligence agent.
+Your role: conversational operator layer over all WISE² systems — Command Center, Second Brain, Live Ops, Edge Network, Discord.
+You are concise, direct, and factual. You never fabricate system status — you report what the live data shows.
+
+[LIVE SYSTEM DATA as of ${ts}]
+Command Center: ${live.ccOnline ? 'ONLINE' : 'OFFLINE'} (${COMMAND_CENTER_URL})
+Second Brain: ${mongoConnected ? 'ONLINE' : 'OFFLINE'} — Knowledge items: ${live.brainStats.knowledgeCount ?? '?'}
+Ollama: ${ollamaAvailable ? 'ONLINE' : 'OFFLINE'} — Active model: ${OLLAMA_MODEL}
+Available models: ${models}
+Edge Network:
+${devices}
+[END LIVE SYSTEM DATA]
+
+${brainContext
+    ? `[SECOND BRAIN CONTEXT]\n${brainContext}\n[END SECOND BRAIN CONTEXT]\n\nUse the knowledge above to ground your answer.`
+    : 'No matching Second Brain context found for this query. Answer from the live data and general knowledge.'}
+
+Answer in plain text. Reference live data explicitly when relevant (e.g. "wisepi is currently ONLINE"). Be brief.`;
+}
+
+// ── Hermes Master Agent ────────────────────────────────────────────────────────
+app.post('/api/hermes/chat', requireAuth, async (req, res) => {
+  const { message, messages = [], business } = req.body;
+  if (!message) return res.status(400).json({ error: 'message required' });
+
+  const startMs = Date.now();
+  const toolsUsed = [];
+
+  // Publish start event (no private content)
+  publishHermesEvent('hermes.query.started', 'Hermes Query Started',
+    'Processing intelligence request', { model: OLLAMA_MODEL });
+
+  if (!ollamaAvailable) {
+    return res.status(503).json({ error: 'Ollama unavailable', provider: 'ollama', model: OLLAMA_MODEL });
+  }
+
+  // Fetch live context and RAG in parallel
+  const [live, ragResult] = await Promise.allSettled([
+    fetchLiveContext(),
+    (async () => {
+      if (!mongoConnected) return { context: '', sources: [] };
+      const filter = business ? { business } : {};
+      let results = [];
+      try {
+        results = await db.collection(COLLECTION)
+          .find({ $text: { $search: message }, ...filter },
+            { projection: { score: { $meta: 'textScore' }, title: 1, content: 1, business: 1 } })
+          .sort({ score: { $meta: 'textScore' } }).limit(4).toArray();
+        if (results.length === 0) {
+          const word = message.split(/\s+/).find(w => w.length > 3) || message.slice(0, 20);
+          const re = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+          results = await db.collection(COLLECTION)
+            .find({ $or: [{ title: re }, { content: re }], ...filter }).limit(4).toArray();
+        }
+      } catch { /* proceed without context */ }
+      return {
+        context: results.length ? results.map(r => `[${r.title}]\n${r.content}`).join('\n\n---\n\n') : '',
+        sources: results.map(r => ({ id: r._id, title: r.title, business: r.business })),
+      };
+    })(),
+  ]);
+
+  const liveData = live.status === 'fulfilled' ? live.value : {};
+  const { context: brainContext = '', sources = [] } = ragResult.status === 'fulfilled' ? ragResult.value : {};
+
+  if (Object.keys(liveData).length) toolsUsed.push('system.health', 'edge.status');
+  if (sources.length) toolsUsed.push('brain.retrieval');
+
+  const ts = new Date().toISOString();
+  const systemPrompt = buildHermesSystemPrompt(liveData, brainContext, ts);
+
+  // Build messages for Ollama — include conversation history (last 6 exchanges)
+  const history = messages
+    .slice(-12)
+    .filter(m => m.role && m.content)
+    .map(m => ({ role: m.role, content: String(m.content) }));
+
+  const ollamaMessages = [
+    { role: 'system', content: systemPrompt },
+    ...history,
+    { role: 'user', content: message },
+  ];
+
+  try {
+    const r = await fetch(`${OLLAMA_HOST}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: OLLAMA_MODEL, messages: ollamaMessages, stream: false }),
+      signal: AbortSignal.timeout(90000),
+    });
+    if (!r.ok) throw new Error(`Ollama ${r.status}`);
+    const data = await r.json();
+    const response = data.message?.content || '';
+    const duration = Date.now() - startMs;
+
+    publishHermesEvent('hermes.query.completed', 'Hermes Query Completed',
+      `Response delivered — context: ${sources.length > 0}, tools: ${toolsUsed.join(', ')}`,
+      { model: OLLAMA_MODEL, durationMs: duration, sourceCount: sources.length, toolCount: toolsUsed.length });
+
+    return res.json({ response, model: OLLAMA_MODEL, toolsUsed, sources, contextUsed: sources.length > 0, durationMs: duration });
+  } catch (err) {
+    publishHermesEvent('hermes.error', 'Hermes Query Failed', err.message, { model: OLLAMA_MODEL });
+    return res.status(500).json({ error: 'AI request failed', detail: err.message });
+  }
+});
+
+// ── Hermes status ──────────────────────────────────────────────────────────────
+app.get('/api/hermes/status', requireAuth, async (req, res) => {
+  await checkOllama();
+  const live = await fetchLiveContext();
+  res.json({
+    online: ollamaAvailable,
+    model: OLLAMA_MODEL,
+    secondBrain: mongoConnected,
+    liveOps: live.ccOnline,
+    edgeDevices: live.edgeDevices,
+    ollamaModels: live.ollamaModels.slice(0, 8),
+    knowledgeCount: live.brainStats.knowledgeCount ?? 0,
+  });
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
