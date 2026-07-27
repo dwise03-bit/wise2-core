@@ -9,101 +9,61 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64" />
-        </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-32" />
+        <div className="wise-skeleton h-3 w-56" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Settings</h1>
-        <p className="text-text-secondary">System configuration and account preferences</p>
+        <h1 className="wise-page-title">Settings</h1>
+        <p className="wise-page-subtitle">System configuration and account preferences</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/dashboard/account" className="bg-wise-surface border border-wise-border rounded-lg p-6 hover:border-wise-electric/50 transition-all block">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">👤</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Profile & Account</h3>
-              <p className="text-text-muted text-sm">Manage your profile, email, and account details.</p>
-              {user && <p className="text-xs text-wise-electric mt-2">{user.email}</p>}
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Link href="/dashboard/account" className="wise-card-interactive p-5 group">
+          <h3 className="text-sm font-semibold text-text-primary group-hover:text-wise-electric transition-colors mb-0.5">Profile & Account</h3>
+          <p className="text-xs text-text-muted">Manage your profile, email, and account details.</p>
+          {user && <p className="text-xs text-wise-electric mt-2">{user.email}</p>}
         </Link>
 
-        <Link href="/dashboard/billing" className="bg-wise-surface border border-wise-border rounded-lg p-6 hover:border-wise-electric/50 transition-all block">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">💳</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Billing & Subscription</h3>
-              <p className="text-text-muted text-sm">Manage your plan, payment methods, and invoices.</p>
-            </div>
-          </div>
+        <Link href="/dashboard/billing" className="wise-card-interactive p-5 group">
+          <h3 className="text-sm font-semibold text-text-primary group-hover:text-wise-electric transition-colors mb-0.5">Billing & Subscription</h3>
+          <p className="text-xs text-text-muted">Manage your plan, payment methods, and invoices.</p>
         </Link>
 
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">🔔</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Notifications</h3>
-              <p className="text-text-muted text-sm">Configure email and push notification preferences.</p>
-              <span className="text-xs text-amber-400 mt-2 inline-block">Setup Required</span>
+        {[
+          { title: 'Notifications', desc: 'Configure email and push notification preferences.' },
+          { title: 'Integrations', desc: 'Connect external services: Stripe, Discord, PostHog, Google.' },
+          { title: 'Security', desc: 'Password, two-factor authentication, and session management.' },
+          { title: 'API Keys', desc: 'Manage API access tokens for external integrations.' },
+        ].map(item => (
+          <div key={item.title} className="wise-card p-5">
+            <div className="flex items-start justify-between mb-0.5">
+              <h3 className="text-sm font-semibold text-text-primary">{item.title}</h3>
+              <span className="wise-badge-warning">Setup Required</span>
             </div>
+            <p className="text-xs text-text-muted">{item.desc}</p>
           </div>
-        </div>
-
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">🔗</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Integrations</h3>
-              <p className="text-text-muted text-sm">Connect external services: Stripe, Discord, PostHog, Google.</p>
-              <span className="text-xs text-amber-400 mt-2 inline-block">Setup Required</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">🔒</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Security</h3>
-              <p className="text-text-muted text-sm">Password, two-factor authentication, and session management.</p>
-              <span className="text-xs text-amber-400 mt-2 inline-block">Setup Required</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">🌐</span>
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">API Keys</h3>
-              <p className="text-text-muted text-sm">Manage API access tokens for external integrations.</p>
-              <span className="text-xs text-amber-400 mt-2 inline-block">Setup Required</span>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">System Information</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+      {/* System Info */}
+      <div className="wise-card p-5">
+        <h2 className="text-sm font-semibold text-text-primary mb-3">System Information</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: 'Platform', value: 'WISE² v2.0' },
             { label: 'Environment', value: process.env.NODE_ENV || 'development' },
-            { label: 'API Endpoint', value: 'localhost:3010' },
+            { label: 'API Endpoint', value: process.env.NEXT_PUBLIC_API_URL?.replace('http://', '').replace('/api', '') || 'localhost:3011' },
             { label: 'Build', value: 'Command Center' },
           ].map(info => (
             <div key={info.label}>
-              <p className="text-xs text-text-muted">{info.label}</p>
-              <p className="text-sm font-medium text-text-primary">{info.value}</p>
+              <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">{info.label}</p>
+              <p className="text-xs font-medium text-text-secondary mt-0.5">{info.value}</p>
             </div>
           ))}
         </div>

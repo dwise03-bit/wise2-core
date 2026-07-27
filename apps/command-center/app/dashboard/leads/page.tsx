@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+
 interface Prospect {
   id: string;
   businessName: string;
@@ -33,16 +35,16 @@ const STATUSES = ['NEW', 'CONTACTED', 'QUALIFIED', 'AUDIT_SCHEDULED', 'AUDIT_COM
 
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
-    NEW: 'bg-wise-electric/20 text-wise-electric',
-    CONTACTED: 'bg-wise-electric/10 text-wise-electric/80',
-    QUALIFIED: 'bg-wise-electric/30 text-wise-electric',
-    AUDIT_SCHEDULED: 'bg-amber-500/20 text-amber-400',
-    AUDIT_COMPLETE: 'bg-amber-500/10 text-amber-300',
-    PROPOSAL_SENT: 'bg-wise-electric/20 text-wise-electric',
-    WON: 'bg-green-500/20 text-green-400',
-    LOST: 'bg-red-500/20 text-red-400',
+    NEW: 'wise-badge-info',
+    CONTACTED: 'wise-badge-info',
+    QUALIFIED: 'wise-badge-info',
+    AUDIT_SCHEDULED: 'wise-badge-warning',
+    AUDIT_COMPLETE: 'wise-badge-warning',
+    PROPOSAL_SENT: 'wise-badge-info',
+    WON: 'wise-badge-success',
+    LOST: 'wise-badge-danger',
   };
-  return map[status] || 'bg-gray-500/20 text-gray-400';
+  return map[status] || 'wise-badge-neutral';
 };
 
 export default function ProspectsPage() {
@@ -75,7 +77,7 @@ export default function ProspectsPage() {
       params.append('sortBy', sortBy);
       params.append('sortOrder', 'desc');
       params.append('limit', '100');
-      const res = await fetch(`/api/v1/prospects?${params}`, { headers: { Authorization: `Bearer ${getToken()}` } });
+      const res = await fetch(`${API_URL}/v1/prospects?${params}`, { headers: { Authorization: `Bearer ${getToken()}` } });
       if (res.ok) {
         const data = await res.json();
         setProspects(data.prospects || []);
@@ -92,9 +94,9 @@ export default function ProspectsPage() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/v1/prospects/stats/pipeline', { headers: { Authorization: `Bearer ${getToken()}` } });
+      const res = await fetch(`${API_URL}/v1/prospects/stats/pipeline`, { headers: { Authorization: `Bearer ${getToken()}` } });
       if (res.ok) setStats(await res.json());
-    } catch { /* stats are optional */ }
+    } catch { /* optional */ }
   }, []);
 
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function ProspectsPage() {
     setCreating(true);
     setError(null);
     try {
-      const res = await fetch('/api/v1/prospects', {
+      const res = await fetch(`${API_URL}/v1/prospects`, {
         method: 'POST', headers: headers(),
         body: JSON.stringify({ ...form, estimatedOpportunity: Number(form.estimatedOpportunity) || 0, status: 'NEW', tags: [] }),
       });
@@ -127,7 +129,7 @@ export default function ProspectsPage() {
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
-      const res = await fetch(`/api/v1/prospects/${id}/status`, {
+      const res = await fetch(`${API_URL}/v1/prospects/${id}/status`, {
         method: 'PATCH', headers: headers(),
         body: JSON.stringify({ status: newStatus }),
       });
@@ -141,7 +143,7 @@ export default function ProspectsPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/v1/prospects/${id}`, { method: 'DELETE', headers: headers() });
+      const res = await fetch(`${API_URL}/v1/prospects/${id}`, { method: 'DELETE', headers: headers() });
       if (res.ok) {
         setProspects(prev => prev.filter(p => p.id !== id));
         fetchStats();
@@ -151,153 +153,156 @@ export default function ProspectsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-48 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64 mb-8" />
-          <div className="grid grid-cols-5 gap-4">
-            {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-20 bg-wise-surface rounded-lg" />)}
-          </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-36" />
+        <div className="wise-skeleton h-3 w-56" />
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-4">
+          {Array.from({ length: 5 }).map((_, i) => <div key={i} className="wise-skeleton h-16 rounded-lg" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Prospects</h1>
-          <p className="text-text-secondary">Sales pipeline and lead management</p>
+          <h1 className="wise-page-title">Prospects</h1>
+          <p className="wise-page-subtitle">Sales pipeline and lead management</p>
         </div>
-        <button onClick={() => setShowCreate(true)} className="px-4 py-2 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors flex items-center gap-2">
-          <span>+</span> New Prospect
+        <button onClick={() => setShowCreate(true)} className="wise-btn-primary">
+          + New Prospect
         </button>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          <span className="font-semibold">Error: </span>{error}
+        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">
+          {error}
         </div>
       )}
 
+      {/* Pipeline Stats */}
       {stats && stats.totalProspects > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[
-            { label: 'Total Prospects', value: stats.totalProspects },
-            { label: 'Pipeline Value', value: fmt(stats.totalOpportunity) },
-            { label: 'Closed Value', value: fmt(stats.closedOpportunity) },
-            { label: 'Won Value', value: fmt(stats.wonOpportunity) },
-            { label: 'Conversion', value: `${stats.conversionRate.toFixed(1)}%` },
-          ].map(s => (
-            <div key={s.label} className="bg-wise-surface border border-wise-border rounded-lg p-4">
-              <p className="text-xs text-text-muted mb-1">{s.label}</p>
-              <p className="text-xl font-bold text-wise-electric">{s.value}</p>
-            </div>
-          ))}
+        <div className="wise-card p-1">
+          <div className="grid grid-cols-2 md:grid-cols-5">
+            {[
+              { label: 'Total', value: stats.totalProspects },
+              { label: 'Pipeline', value: fmt(stats.totalOpportunity) },
+              { label: 'Closed', value: fmt(stats.closedOpportunity) },
+              { label: 'Won', value: fmt(stats.wonOpportunity) },
+              { label: 'Conversion', value: `${stats.conversionRate.toFixed(1)}%` },
+            ].map(s => (
+              <div key={s.label} className="px-4 py-3">
+                <div className="text-xl font-bold text-text-primary tabular-nums">{s.value}</div>
+                <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
+      {/* Create Form */}
       {showCreate && (
-        <div className="bg-wise-surface border border-wise-electric/50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">New Prospect</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="wise-card p-5 border-wise-electric/30">
+          <h3 className="text-sm font-semibold text-text-primary mb-4">New Prospect</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm text-text-muted mb-1">Business Name *</label>
+              <label className="block text-xs font-medium text-text-muted mb-1">Business Name *</label>
               <input type="text" value={form.businessName} onChange={e => setForm({ ...form, businessName: e.target.value })}
-                className="w-full px-3 py-2 bg-wise-black border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none" autoFocus />
+                className="wise-input" autoFocus />
             </div>
             <div>
-              <label className="block text-sm text-text-muted mb-1">Contact Name *</label>
+              <label className="block text-xs font-medium text-text-muted mb-1">Contact Name *</label>
               <input type="text" value={form.contactName} onChange={e => setForm({ ...form, contactName: e.target.value })}
-                className="w-full px-3 py-2 bg-wise-black border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none" />
+                className="wise-input" />
             </div>
             <div>
-              <label className="block text-sm text-text-muted mb-1">Email *</label>
+              <label className="block text-xs font-medium text-text-muted mb-1">Email *</label>
               <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 bg-wise-black border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none" />
+                className="wise-input" />
             </div>
             <div>
-              <label className="block text-sm text-text-muted mb-1">Estimated Value</label>
+              <label className="block text-xs font-medium text-text-muted mb-1">Estimated Value</label>
               <input type="number" value={form.estimatedOpportunity} onChange={e => setForm({ ...form, estimatedOpportunity: e.target.value })}
-                className="w-full px-3 py-2 bg-wise-black border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none" placeholder="0" />
+                className="wise-input" placeholder="0" />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm text-text-muted mb-1">Primary Problem</label>
+              <label className="block text-xs font-medium text-text-muted mb-1">Primary Problem</label>
               <input type="text" value={form.primaryProblem} onChange={e => setForm({ ...form, primaryProblem: e.target.value })}
-                className="w-full px-3 py-2 bg-wise-black border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none" />
+                className="wise-input" />
             </div>
           </div>
-          <div className="flex gap-3 mt-4">
+          <div className="flex gap-2 mt-4">
             <button onClick={handleCreate} disabled={creating || !form.businessName.trim() || !form.contactName.trim() || !form.email.trim()}
-              className="px-4 py-2 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors disabled:opacity-50">
-              {creating ? 'Creating...' : 'Create Prospect'}
+              className="wise-btn-primary disabled:opacity-50">
+              {creating ? 'Creating...' : 'Create'}
             </button>
-            <button onClick={() => setShowCreate(false)} className="px-4 py-2 border border-wise-border text-text-secondary rounded-lg hover:text-text-primary transition-colors">Cancel</button>
+            <button onClick={() => setShowCreate(false)} className="wise-btn-secondary">Cancel</button>
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input type="text" placeholder="Search prospects..." value={search} onChange={e => setSearch(e.target.value)}
-          className="px-3 py-2 bg-wise-surface border border-wise-border rounded-lg text-text-primary placeholder-text-muted focus:border-wise-electric focus:outline-none" />
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        <input type="text" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)}
+          className="wise-input max-w-xs" />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-2 bg-wise-surface border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none">
+          className="wise-input w-auto">
           <option value="">All Statuses</option>
           {STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
         </select>
         <select value={sortBy} onChange={e => setSortBy(e.target.value)}
-          className="px-3 py-2 bg-wise-surface border border-wise-border rounded-lg text-text-primary focus:border-wise-electric focus:outline-none">
-          <option value="createdAt">Newest First</option>
+          className="wise-input w-auto">
+          <option value="createdAt">Newest</option>
           <option value="estimatedOpportunity">Highest Value</option>
-          <option value="contactName">Name (A-Z)</option>
+          <option value="contactName">Name A-Z</option>
         </select>
       </div>
 
+      {/* Table */}
       {prospects.length > 0 ? (
-        <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
+        <div className="wise-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="wise-table">
               <thead>
-                <tr className="border-b border-wise-border">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Business</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Contact</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Value</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Actions</th>
+                <tr>
+                  <th>Business</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>Value</th>
+                  <th className="w-16"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-wise-border">
+              <tbody>
                 {prospects.map(p => (
-                  <tr key={p.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="px-4 py-3">
+                  <tr key={p.id} className="group">
+                    <td>
                       <p className="font-medium text-text-primary">{p.businessName}</p>
-                      {p.industry && <p className="text-xs text-text-muted">{p.industry}</p>}
+                      {p.industry && <p className="text-xs text-text-muted mt-0.5">{p.industry}</p>}
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <p className="text-text-primary text-sm">{p.contactName}</p>
                       <p className="text-xs text-text-muted">{p.email}</p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       {editingId === p.id ? (
                         <select defaultValue={p.status} onChange={e => handleStatusChange(p.id, e.target.value)}
                           onBlur={() => setEditingId(null)} autoFocus
-                          className="px-2 py-1 bg-wise-black border border-wise-border rounded text-sm text-text-primary">
+                          className="wise-input py-1 px-2 text-xs w-auto">
                           {STATUSES.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
                         </select>
                       ) : (
-                        <button onClick={() => setEditingId(p.id)}
-                          className={`px-2 py-1 rounded text-xs font-medium ${statusBadge(p.status)}`}>
+                        <button onClick={() => setEditingId(p.id)} className={statusBadge(p.status)}>
                           {p.status.replace(/_/g, ' ')}
                         </button>
                       )}
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm font-medium text-wise-electric">{fmt(p.estimatedOpportunity)}</span>
+                    <td>
+                      <span className="text-sm font-medium text-wise-electric tabular-nums">{fmt(p.estimatedOpportunity)}</span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td>
                       <button onClick={() => handleDelete(p.id)}
-                        className="text-sm text-red-400/60 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
+                        className="text-xs text-text-muted hover:text-danger transition-colors opacity-0 group-hover:opacity-100">
                         Delete
                       </button>
                     </td>
@@ -308,14 +313,11 @@ export default function ProspectsPage() {
           </div>
         </div>
       ) : !showCreate ? (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-12 text-center">
-          <span className="text-5xl block mb-4 opacity-30">📋</span>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">No Prospects Yet</h3>
-          <p className="text-text-muted mb-6">Start building your sales pipeline.</p>
-          <button onClick={() => setShowCreate(true)}
-            className="px-6 py-3 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors">
-            + Add First Prospect
-          </button>
+        <div className="wise-empty wise-card">
+          <div className="wise-empty-icon">&#128203;</div>
+          <h3 className="wise-empty-title">No Prospects Yet</h3>
+          <p className="wise-empty-desc">Start building your sales pipeline by adding your first prospect.</p>
+          <button onClick={() => setShowCreate(true)} className="wise-btn-primary">+ Add First Prospect</button>
         </div>
       ) : null}
     </div>

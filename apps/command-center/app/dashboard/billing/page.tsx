@@ -1,15 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
 
-interface BillingProfile {
-  id: string;
-  email: string;
-  stripeCustomerId?: string;
-  plan: string;
-  status: string;
-}
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
 interface Subscription {
   id: string;
@@ -21,16 +16,15 @@ interface Subscription {
   amount?: number;
   currency?: string;
   interval?: string;
+  stripeCustomerId?: string;
 }
 
 export default function BillingPage() {
   const { user, isLoading: authLoading } = useAuth();
-  const [profile, setProfile] = useState<BillingProfile | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [profileError, setProfileError] = useState(false);
-  const [subError, setSubError] = useState(false);
+  const [serviceAvailable, setServiceAvailable] = useState(false);
 
   const getToken = () => localStorage.getItem('auth_token') || localStorage.getItem('authToken') || '';
 
@@ -43,17 +37,13 @@ export default function BillingPage() {
       const token = getToken();
       if (!token) { setLoading(false); return; }
 
-      const subRes = await fetch('/api/v1/billing/subscription', {
+      const subRes = await fetch(`${API_URL}/v1/billing/subscription`, {
         headers: { Authorization: `Bearer ${token}` },
       }).catch(() => null);
 
       if (subRes?.ok) {
-        const data = await subRes.json();
-        setSubscription(data);
-        setProfile({ id: user!.id, email: user!.email || '', plan: data.plan || '', status: data.status || '', stripeCustomerId: data.stripeCustomerId });
-      } else {
-        setProfileError(true);
-        setSubError(true);
+        setSubscription(await subRes.json());
+        setServiceAvailable(true);
       }
 
       setLoading(false);
@@ -65,7 +55,7 @@ export default function BillingPage() {
   const handleCheckout = async (priceId: string) => {
     try {
       const token = getToken();
-      const res = await fetch('/api/v1/billing/checkout', {
+      const res = await fetch(`${API_URL}/v1/billing/checkout`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId, successUrl: window.location.href, cancelUrl: window.location.href }),
@@ -81,148 +71,136 @@ export default function BillingPage() {
     }
   };
 
-  const fmt = (v: number, currency = 'usd') =>
+  const fmtCents = (v: number, currency = 'usd') =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(v / 100);
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64 mb-8" />
-          <div className="grid grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => <div key={i} className="h-40 bg-wise-surface rounded-lg" />)}
-          </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-32" />
+        <div className="wise-skeleton h-3 w-56" />
+        <div className="grid grid-cols-3 gap-3 mt-4">
+          {[1, 2, 3].map(i => <div key={i} className="wise-skeleton h-24 rounded-lg" />)}
         </div>
       </div>
     );
   }
 
-  const planName = subscription?.plan || profile?.plan || 'Free';
+  const planName = subscription?.plan || 'Free';
   const isActive = subscription?.status === 'active' || subscription?.status === 'trialing';
-  const hasStripe = !!profile?.stripeCustomerId;
+  const hasStripe = !!subscription?.stripeCustomerId;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Billing</h1>
-        <p className="text-text-secondary">Subscription, plan details, and payment management</p>
+        <div className="wise-breadcrumb mb-2">
+          <Link href="/dashboard/business-os">Business</Link>
+          <span className="opacity-30">/</span>
+          <span className="text-text-secondary">Billing</span>
+        </div>
+        <h1 className="wise-page-title">Billing</h1>
+        <p className="wise-page-subtitle">Subscription, plan details, and payment management</p>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          <span className="font-semibold">Error: </span>{error}
-        </div>
+        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <p className="text-xs text-text-muted mb-1 uppercase tracking-wider">Current Plan</p>
-          <p className="text-2xl font-bold text-wise-electric mb-2">{planName}</p>
-          <span className={`text-xs font-medium px-2 py-1 rounded ${
-            isActive ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'
-          }`}>
-            {isActive ? 'ACTIVE' : subscription?.status?.toUpperCase() || 'NOT CONFIGURED'}
-          </span>
-        </div>
-
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <p className="text-xs text-text-muted mb-1 uppercase tracking-wider">Billing Period</p>
-          {subscription?.currentPeriodEnd ? (
-            <>
-              <p className="text-lg font-semibold text-text-primary">
-                {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-              </p>
-              <p className="text-sm text-text-muted mt-1">
-                {subscription.cancelAtPeriodEnd ? 'Cancels at period end' : 'Auto-renews'}
-              </p>
-            </>
-          ) : (
-            <p className="text-lg text-text-muted">No active period</p>
-          )}
-        </div>
-
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <p className="text-xs text-text-muted mb-1 uppercase tracking-wider">Amount</p>
-          {subscription?.amount ? (
-            <>
-              <p className="text-2xl font-bold text-wise-electric">
-                {fmt(subscription.amount, subscription.currency || 'usd')}
-              </p>
-              <p className="text-sm text-text-muted">per {subscription.interval || 'month'}</p>
-            </>
-          ) : (
-            <p className="text-lg text-text-muted">$0 / month</p>
-          )}
+      {/* Current Subscription */}
+      <div className="wise-card p-1">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          <div className="px-5 py-4">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mb-1">Current Plan</div>
+            <div className="text-2xl font-bold text-wise-electric">{planName}</div>
+            <span className={`mt-1.5 inline-block ${isActive ? 'wise-badge-success' : 'wise-badge-warning'}`}>
+              {isActive ? 'ACTIVE' : subscription?.status?.toUpperCase() || 'NOT CONFIGURED'}
+            </span>
+          </div>
+          <div className="px-5 py-4 border-t md:border-t-0 md:border-l border-border-subtle">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mb-1">Period</div>
+            {subscription?.currentPeriodEnd ? (
+              <>
+                <div className="text-lg font-semibold text-text-primary">
+                  {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </div>
+                <div className="text-xs text-text-muted mt-1">{subscription.cancelAtPeriodEnd ? 'Cancels at period end' : 'Auto-renews'}</div>
+              </>
+            ) : (
+              <div className="text-text-muted">No active period</div>
+            )}
+          </div>
+          <div className="px-5 py-4 border-t md:border-t-0 md:border-l border-border-subtle">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mb-1">Amount</div>
+            {subscription?.amount ? (
+              <>
+                <div className="text-2xl font-bold text-wise-electric tabular-nums">{fmtCents(subscription.amount, subscription.currency || 'usd')}</div>
+                <div className="text-xs text-text-muted mt-1">per {subscription.interval || 'month'}</div>
+              </>
+            ) : (
+              <div className="text-text-muted">$0 / month</div>
+            )}
+          </div>
         </div>
       </div>
 
       {!hasStripe && (
-        <div className="bg-wise-surface border border-amber-500/30 rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">⚠️</span>
+        <div className="wise-card p-4 border-warning/20">
+          <div className="flex items-start gap-3">
+            <span className="wise-badge-warning">Setup Required</span>
             <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Stripe Not Connected</h3>
-              <p className="text-text-muted text-sm mb-4">
-                No Stripe customer ID found for your account. Payment processing requires Stripe configuration on the server.
+              <p className="text-sm font-medium text-text-primary">Stripe Not Connected</p>
+              <p className="text-xs text-text-muted mt-0.5">
+                No Stripe customer ID found. Payment processing requires Stripe server configuration.
               </p>
-              <p className="text-xs text-text-muted">Contact your administrator to connect Stripe billing.</p>
             </div>
           </div>
         </div>
       )}
 
+      {/* Plans */}
       <div>
-        <h2 className="text-xl font-bold text-text-primary mb-4">Available Plans</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h2 className="text-sm font-semibold text-text-primary mb-3">Available Plans</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
             { name: 'Starter', price: '$29/mo', features: ['5 projects', 'Basic analytics', 'Email support'], priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID },
             { name: 'Professional', price: '$79/mo', features: ['Unlimited projects', 'Advanced analytics', 'Priority support', 'API access'], priceId: process.env.NEXT_PUBLIC_STRIPE_PROFESSIONAL_PRICE_ID },
             { name: 'Enterprise', price: 'Custom', features: ['Everything in Pro', 'Dedicated support', 'Custom integrations', 'SLA guarantee'], priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID },
           ].map(plan => (
-            <div key={plan.name} className={`bg-wise-surface border rounded-lg p-6 ${
-              planName === plan.name ? 'border-wise-electric' : 'border-wise-border'
-            }`}>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">{plan.name}</h3>
-              <p className="text-2xl font-bold text-wise-electric mb-4">{plan.price}</p>
-              <ul className="space-y-2 mb-6">
+            <div key={plan.name} className={`wise-card p-5 ${planName === plan.name ? '!border-wise-electric/40' : ''}`}>
+              <h3 className="text-base font-semibold text-text-primary mb-0.5">{plan.name}</h3>
+              <p className="text-xl font-bold text-wise-electric mb-4">{plan.price}</p>
+              <ul className="space-y-1.5 mb-5">
                 {plan.features.map(f => (
                   <li key={f} className="text-sm text-text-muted flex items-center gap-2">
-                    <span className="text-wise-electric">✓</span> {f}
+                    <span className="text-wise-electric text-xs">&#10003;</span> {f}
                   </li>
                 ))}
               </ul>
               {planName === plan.name ? (
-                <span className="block text-center text-sm text-text-muted py-2">Current Plan</span>
+                <span className="block text-center text-xs text-text-muted py-2">Current Plan</span>
               ) : plan.priceId ? (
-                <button onClick={() => handleCheckout(plan.priceId!)}
-                  className="w-full px-4 py-2 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors">
-                  Upgrade
-                </button>
+                <button onClick={() => handleCheckout(plan.priceId!)} className="wise-btn-primary w-full">Upgrade</button>
               ) : (
-                <button className="w-full px-4 py-2 border border-wise-border text-text-secondary rounded-lg hover:text-text-primary transition-colors">
-                  Contact Sales
-                </button>
+                <button className="wise-btn-secondary w-full">Contact Sales</button>
               )}
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">Invoices</h3>
-        <p className="text-text-muted text-sm">
-          Invoice history is managed through Stripe. {hasStripe
-            ? 'Access your invoices through the Stripe customer portal.'
-            : 'Connect Stripe to view invoice history.'}
+      {/* Invoices */}
+      <div className="wise-card p-5">
+        <h2 className="text-sm font-semibold text-text-primary mb-2">Invoices</h2>
+        <p className="text-sm text-text-muted">
+          {hasStripe ? 'Invoice history is managed through Stripe. Access your invoices through the customer portal.' : 'Connect Stripe to view invoice history.'}
         </p>
       </div>
 
-      {profileError && subError && (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6 text-center">
-          <span className="text-4xl block mb-3 opacity-30">💳</span>
-          <h3 className="text-lg font-semibold text-text-primary mb-2">Billing Service Unavailable</h3>
-          <p className="text-text-muted text-sm">Could not connect to the billing API. The service may need to be configured or restarted.</p>
+      {!serviceAvailable && (
+        <div className="wise-card p-5 text-center">
+          <div className="wise-empty-icon">&#128179;</div>
+          <h3 className="wise-empty-title">Billing Service Unavailable</h3>
+          <p className="wise-empty-desc">Could not connect to the billing API. The service may need to be configured.</p>
         </div>
       )}
     </div>

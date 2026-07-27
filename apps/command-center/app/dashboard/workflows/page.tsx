@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+
 interface WorkflowTemplate {
   _id: string;
   name: string;
@@ -43,172 +45,124 @@ export default function WorkflowsPage() {
   const [executing, setExecuting] = useState<string | null>(null);
 
   const getToken = () => localStorage.getItem('auth_token') || localStorage.getItem('authToken') || '';
-  const headers = () => ({ Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' });
+  const hdrs = () => ({ Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     const token = getToken();
-
     try {
-      const [templatesRes, executionsRes, statsRes] = await Promise.allSettled([
-        fetch('/api/v1/brain-auth/workflows/templates', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/v1/brain-auth/workflows/executions?limit=10', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/v1/brain-auth/workflows/stats', { headers: { Authorization: `Bearer ${token}` } }),
+      const [tRes, eRes, sRes] = await Promise.allSettled([
+        fetch(`${API_URL}/v1/brain-auth/workflows/templates`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/v1/brain-auth/workflows/executions?limit=10`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/v1/brain-auth/workflows/stats`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
-
-      if (templatesRes.status === 'fulfilled' && templatesRes.value.ok) {
-        const data = await templatesRes.value.json();
-        setTemplates(data.templates || data || []);
-        setApiAvailable(true);
-      }
-
-      if (executionsRes.status === 'fulfilled' && executionsRes.value.ok) {
-        const data = await executionsRes.value.json();
-        setExecutions(data.executions || data || []);
-      }
-
-      if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
-        setStats(await statsRes.value.json());
-      }
-    } catch {
-      setApiAvailable(false);
-    }
-
+      if (tRes.status === 'fulfilled' && tRes.value.ok) { setTemplates((await tRes.value.json()).templates || []); setApiAvailable(true); }
+      if (eRes.status === 'fulfilled' && eRes.value.ok) { setExecutions((await eRes.value.json()).executions || []); }
+      if (sRes.status === 'fulfilled' && sRes.value.ok) { setStats(await sRes.value.json()); }
+    } catch { setApiAvailable(false); }
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (!user?.id) { setLoading(false); return; }
-    fetchData();
-  }, [user?.id, fetchData]);
+  useEffect(() => { if (!user?.id) { setLoading(false); return; } fetchData(); }, [user?.id, fetchData]);
 
   const handleExecute = async (templateId: string) => {
-    setExecuting(templateId);
-    setError(null);
+    setExecuting(templateId); setError(null);
     try {
-      const res = await fetch(`/api/v1/brain-auth/workflows/templates/${templateId}/execute`, {
-        method: 'POST', headers: headers(),
-        body: JSON.stringify({}),
-      });
-      if (res.ok) {
-        fetchData();
-      } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.message || `Execution failed (${res.status})`);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Execution failed');
-    } finally {
-      setExecuting(null);
-    }
+      const res = await fetch(`${API_URL}/v1/brain-auth/workflows/templates/${templateId}/execute`, { method: 'POST', headers: hdrs(), body: '{}' });
+      if (res.ok) { fetchData(); } else { const d = await res.json().catch(() => ({})); setError(d.message || `Failed (${res.status})`); }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Failed'); }
+    finally { setExecuting(null); }
   };
 
-  const handleToggle = async (templateId: string, isActive: boolean) => {
+  const handleToggle = async (id: string, isActive: boolean) => {
     try {
-      const res = await fetch(`/api/v1/brain-auth/workflows/templates/${templateId}`, {
-        method: 'PATCH', headers: headers(),
-        body: JSON.stringify({ isActive: !isActive }),
-      });
-      if (res.ok) {
-        setTemplates(prev => prev.map(t => t._id === templateId ? { ...t, isActive: !isActive } : t));
-      }
+      const res = await fetch(`${API_URL}/v1/brain-auth/workflows/templates/${id}`, { method: 'PATCH', headers: hdrs(), body: JSON.stringify({ isActive: !isActive }) });
+      if (res.ok) setTemplates(prev => prev.map(t => t._id === id ? { ...t, isActive: !isActive } : t));
     } catch { /* silent */ }
   };
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64" />
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-32" />
+        <div className="wise-skeleton h-3 w-56" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="wise-skeleton h-16 rounded-lg" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Workflows</h1>
-        <p className="text-text-secondary">Automation templates, triggers, and execution history</p>
+        <h1 className="wise-page-title">Workflows</h1>
+        <p className="wise-page-subtitle">Automation templates, triggers, and execution history</p>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          <span className="font-semibold">Error: </span>{error}
-        </div>
+        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
       )}
 
       {!apiAvailable && (
-        <div className="bg-wise-surface border border-amber-500/30 rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">⚠️</span>
+        <div className="wise-card p-4 border-warning/20">
+          <div className="flex items-start gap-3">
+            <span className="wise-badge-warning">Not Connected</span>
             <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Workflow Engine Not Connected</h3>
-              <p className="text-text-muted text-sm mb-2">
-                The workflow engine requires the Brain Auth service (MongoDB-backed) to be running. Templates and executions are stored in MongoDB.
-              </p>
-              <p className="text-xs text-text-muted">
-                Backend: Fully functional workflow service with templates, async execution, and retry policies.
-              </p>
+              <p className="text-sm font-medium text-text-primary">Workflow Engine Not Connected</p>
+              <p className="text-xs text-text-muted mt-0.5">Requires the Brain Auth service (MongoDB-backed). Templates and executions are stored in MongoDB.</p>
             </div>
           </div>
         </div>
       )}
 
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats Strip */}
+      <div className="wise-card p-1">
+        <div className="grid grid-cols-2 md:grid-cols-4">
           {[
-            { label: 'Templates', value: stats.totalTemplates, icon: '📋' },
-            { label: 'Active', value: stats.activeTemplates, icon: '✅' },
-            { label: 'Executions', value: stats.totalExecutions, icon: '⚡' },
-            { label: 'Success Rate', value: `${stats.successRate.toFixed(0)}%`, icon: '📊' },
+            { label: 'Templates', value: stats?.totalTemplates ?? '--' },
+            { label: 'Active', value: stats?.activeTemplates ?? '--' },
+            { label: 'Executions', value: stats?.totalExecutions ?? '--' },
+            { label: 'Success Rate', value: stats ? `${stats.successRate.toFixed(0)}%` : '--' },
           ].map(s => (
-            <div key={s.label} className="bg-wise-surface border border-wise-border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <span>{s.icon}</span>
-                <p className="text-xs text-text-muted">{s.label}</p>
-              </div>
-              <p className="text-2xl font-bold text-wise-electric">{s.value}</p>
+            <div key={s.label} className="px-4 py-3">
+              <div className="text-2xl font-bold text-text-primary tabular-nums">{s.value}</div>
+              <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
-      )}
+      </div>
 
+      {/* Templates */}
       {templates.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-text-primary mb-4">Workflow Templates</h2>
-          <div className="space-y-3">
+          <h2 className="wise-section-title mb-3">Workflow Templates</h2>
+          <div className="wise-card overflow-hidden divide-y divide-border-subtle">
             {templates.map(t => (
-              <div key={t._id} className="bg-wise-surface border border-wise-border rounded-lg p-4">
+              <div key={t._id} className="px-5 py-4 hover:bg-white/[0.02] transition-colors">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-semibold text-text-primary">{t.name}</h3>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                        t.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-                      }`}>
-                        {t.isActive ? 'ACTIVE' : 'INACTIVE'}
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h3 className="text-sm font-medium text-text-primary">{t.name}</h3>
+                      <span className={t.isActive ? 'wise-badge-success' : 'wise-badge-neutral'}>
+                        {t.isActive ? 'Active' : 'Inactive'}
                       </span>
-                      {t.category && (
-                        <span className="text-xs px-2 py-0.5 bg-wise-electric/10 text-wise-electric rounded">{t.category}</span>
-                      )}
+                      {t.category && <span className="wise-badge-info">{t.category}</span>}
                     </div>
-                    {t.description && <p className="text-sm text-text-muted">{t.description}</p>}
-                    <div className="flex items-center gap-4 mt-2 text-xs text-text-muted">
+                    {t.description && <p className="text-xs text-text-muted">{t.description}</p>}
+                    <div className="flex items-center gap-4 mt-1.5 text-[10px] text-text-muted">
                       <span>{t.steps.length} step{t.steps.length !== 1 ? 's' : ''}</span>
                       {t.trigger && <span>Trigger: {t.trigger.type}</span>}
                       {t.retryPolicy && <span>Retries: {t.retryPolicy.maxRetries}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => handleToggle(t._id, t.isActive)}
-                      className="px-3 py-1.5 text-xs border border-wise-border text-text-secondary rounded hover:text-text-primary transition-colors">
+                    <button onClick={() => handleToggle(t._id, t.isActive)} className="wise-btn-secondary text-xs py-1 px-2.5">
                       {t.isActive ? 'Disable' : 'Enable'}
                     </button>
                     <button onClick={() => handleExecute(t._id)} disabled={executing === t._id}
-                      className="px-3 py-1.5 text-xs bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded transition-colors disabled:opacity-50">
+                      className="wise-btn-primary text-xs py-1 px-2.5 disabled:opacity-50">
                       {executing === t._id ? 'Running...' : 'Run'}
                     </button>
                   </div>
@@ -219,39 +173,36 @@ export default function WorkflowsPage() {
         </div>
       )}
 
+      {/* Recent Executions */}
       {executions.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-text-primary mb-4">Recent Executions</h2>
-          <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
+          <h2 className="wise-section-title mb-3">Recent Executions</h2>
+          <div className="wise-card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="wise-table">
                 <thead>
-                  <tr className="border-b border-wise-border">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Execution</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Started</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Duration</th>
+                  <tr>
+                    <th>Execution</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>Duration</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-wise-border">
+                <tbody>
                   {executions.map(e => (
-                    <tr key={e._id} className="hover:bg-white/5 transition-colors">
-                      <td className="px-4 py-3 text-sm font-mono text-text-primary">{e._id.slice(-8)}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs font-medium px-2 py-1 rounded ${
-                          e.status === 'completed' ? 'bg-green-500/20 text-green-400'
-                            : e.status === 'failed' ? 'bg-red-500/20 text-red-400'
-                              : e.status === 'running' ? 'bg-wise-electric/20 text-wise-electric'
-                                : 'bg-gray-500/20 text-gray-400'
-                        }`}>{e.status.toUpperCase()}</span>
+                    <tr key={e._id}>
+                      <td className="font-mono text-text-primary">{e._id.slice(-8)}</td>
+                      <td>
+                        <span className={
+                          e.status === 'completed' ? 'wise-badge-success'
+                            : e.status === 'failed' ? 'wise-badge-danger'
+                              : e.status === 'running' ? 'wise-badge-info'
+                                : 'wise-badge-neutral'
+                        }>{e.status.toUpperCase()}</span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-text-muted">
-                        {new Date(e.startedAt).toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-text-muted">
-                        {e.completedAt
-                          ? `${((new Date(e.completedAt).getTime() - new Date(e.startedAt).getTime()) / 1000).toFixed(1)}s`
-                          : '—'}
+                      <td className="text-text-muted">{new Date(e.startedAt).toLocaleString()}</td>
+                      <td className="text-text-muted tabular-nums">
+                        {e.completedAt ? `${((new Date(e.completedAt).getTime() - new Date(e.startedAt).getTime()) / 1000).toFixed(1)}s` : '--'}
                       </td>
                     </tr>
                   ))}
@@ -263,68 +214,45 @@ export default function WorkflowsPage() {
       )}
 
       {apiAvailable && templates.length === 0 && (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-12 text-center">
-          <span className="text-5xl block mb-4 opacity-30">⚡</span>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">No Workflow Templates</h3>
-          <p className="text-text-muted">Create workflow templates to automate tasks across your business.</p>
+        <div className="wise-empty wise-card">
+          <div className="wise-empty-icon">&#9889;</div>
+          <h3 className="wise-empty-title">No Workflow Templates</h3>
+          <p className="wise-empty-desc">Create workflow templates to automate tasks across your business.</p>
         </div>
       )}
 
+      {/* Capabilities + Examples when offline */}
       {!apiAvailable && (
-        <>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'Templates', value: '—', icon: '📋' },
-              { label: 'Active', value: '—', icon: '✅' },
-              { label: 'Executions', value: '—', icon: '⚡' },
-              { label: 'Success Rate', value: '—', icon: '📊' },
-            ].map(s => (
-              <div key={s.label} className="bg-wise-surface border border-wise-border rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <span>{s.icon}</span>
-                  <p className="text-xs text-text-muted">{s.label}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="wise-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-3">Automation Capabilities</h2>
+            <div className="space-y-2">
+              {['Template Engine', 'Async Execution', 'Retry Policies', 'Scheduled Triggers'].map(cap => (
+                <div key={cap} className="flex items-center justify-between py-1">
+                  <span className="text-xs text-text-secondary">{cap}</span>
+                  <span className="text-xs text-amber-400">Requires Brain API</span>
                 </div>
-                <p className="text-2xl font-bold text-wise-electric">{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Automation Capabilities</h3>
-              <div className="space-y-3">
-                {[
-                  { name: 'Template Engine', status: 'Requires Brain API', color: 'amber' },
-                  { name: 'Async Execution', status: 'Requires Brain API', color: 'amber' },
-                  { name: 'Retry Policies', status: 'Requires Brain API', color: 'amber' },
-                  { name: 'Scheduled Triggers', status: 'Requires Brain API', color: 'amber' },
-                ].map(c => (
-                  <div key={c.name} className="flex items-center justify-between">
-                    <span className="text-sm text-text-primary">{c.name}</span>
-                    <span className="text-xs text-amber-400">{c.status}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-4">Example Workflows</h3>
-              <div className="space-y-3">
-                {[
-                  { name: 'Prospect Follow-Up', desc: 'Auto-email new leads after 24h' },
-                  { name: 'Invoice Generator', desc: 'Create invoices on subscription renewal' },
-                  { name: 'Content Pipeline', desc: 'Route gallery uploads through review' },
-                  { name: 'System Health Check', desc: 'Monitor API and database status' },
-                ].map(w => (
-                  <div key={w.name} className="p-3 bg-wise-black/30 rounded-lg">
-                    <p className="text-sm font-semibold text-text-primary">{w.name}</p>
-                    <p className="text-xs text-text-muted">{w.desc}</p>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
-        </>
+
+          <div className="wise-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-3">Example Workflows</h2>
+            <div className="space-y-2">
+              {[
+                { name: 'Prospect Follow-Up', desc: 'Auto-email new leads after 24h' },
+                { name: 'Invoice Generator', desc: 'Create invoices on subscription renewal' },
+                { name: 'Content Pipeline', desc: 'Route gallery uploads through review' },
+                { name: 'System Health Check', desc: 'Monitor API and database status' },
+              ].map(w => (
+                <div key={w.name} className="p-2.5 rounded-lg bg-wise-black/30">
+                  <p className="text-xs font-medium text-text-secondary">{w.name}</p>
+                  <p className="text-[10px] text-text-muted">{w.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

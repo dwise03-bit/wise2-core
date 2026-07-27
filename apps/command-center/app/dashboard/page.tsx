@@ -1,276 +1,311 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../src/contexts/AuthContext';
 
-interface DashboardMetrics {
-  revenue: number;
-  subscriptions: number;
-  prospects: number;
-  projects: number;
-  usage: {
-    current: number;
-    limit: number;
-  };
-  health: {
-    api: 'online' | 'offline' | 'loading';
-    database: 'online' | 'offline' | 'loading';
-  };
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+
+interface SystemService {
+  name: string;
+  status: 'online' | 'offline' | 'partial';
+  label: string;
 }
 
-const MetricCard = ({
-  label,
-  value,
-  unit,
-  icon,
-  status,
-}: {
-  label: string;
-  value: string | number;
-  unit?: string;
-  icon: string;
-  status?: 'success' | 'warning' | 'error' | 'neutral';
-}) => {
-  const statusColors = {
-    success: 'text-green-400 border-green-500/30',
-    warning: 'text-yellow-400 border-yellow-500/30',
-    error: 'text-red-400 border-red-500/30',
-    neutral: 'text-text-secondary border-wise-border',
-  };
+interface DashboardData {
+  prospects: number;
+  customers: number;
+  projects: number;
+  assets: number;
+  recordings: number;
+  services: SystemService[];
+}
 
+function StatCell({ label, value, href }: { label: string; value: string | number; href: string }) {
   return (
-    <div
-      className={`
-        bg-wise-surface border rounded-lg p-6
-        ${statusColors[status || 'neutral']}
-        hover:border-wise-electric/50 transition-all
-      `}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <span className="text-2xl">{icon}</span>
-        <div className="text-right">
-          <div className="text-3xl font-bold text-text-primary">{value}</div>
-          {unit && <div className="text-xs text-text-muted mt-1">{unit}</div>}
-        </div>
-      </div>
-      <div className="text-sm text-text-muted">{label}</div>
-    </div>
+    <Link href={href} className="group flex flex-col gap-1 px-4 py-3 rounded-lg hover:bg-white/[0.03] transition-colors">
+      <span className="text-2xl font-bold text-text-primary tabular-nums group-hover:text-wise-electric transition-colors">{value}</span>
+      <span className="text-[11px] font-medium uppercase tracking-wider text-text-muted">{label}</span>
+    </Link>
   );
+}
+
+function StatusDot({ status }: { status: 'online' | 'offline' | 'partial' }) {
+  const color = status === 'online' ? 'bg-green-400' : status === 'partial' ? 'bg-amber-400' : 'bg-red-400';
+  return <span className={`wise-status-dot ${color}`} />;
+}
+
+const QA_ICONS: Record<string, string> = {
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  record: '<circle cx="12" cy="12" r="6"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
 };
+
+function QuickAction({ label, href, icon }: { label: string; href: string; icon: string }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-border-subtle hover:border-wise-electric/30 hover:bg-wise-electric/[0.04] transition-all text-sm text-text-secondary hover:text-text-primary"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 shrink-0" dangerouslySetInnerHTML={{ __html: QA_ICONS[icon] || QA_ICONS.plus }} />
+      <span className="font-medium">{label}</span>
+    </Link>
+  );
+}
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
-  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user?.id) {
+  const fetchData = useCallback(async () => {
+    const token = localStorage.getItem('auth_token');
+    if (!token || !user?.id) {
+      setData({ prospects: 0, customers: 0, projects: 0, assets: 0, recordings: 0, services: [] });
       setLoading(false);
       return;
     }
 
-    fetchMetrics();
+    const headers = { Authorization: `Bearer ${token}` };
+    const services: SystemService[] = [];
+
+    let prospects = 0, customers = 0, projects = 0, assets = 0, recordings = 0;
+
+    try {
+      const res = await fetch(`${API_URL}/v1/prospects`, { headers });
+      if (res.ok) {
+        const d = await res.json();
+        prospects = Array.isArray(d) ? d.length : d.prospects?.length || 0;
+        services.push({ name: 'prospects', status: 'online', label: 'Prospects API' });
+      } else {
+        services.push({ name: 'prospects', status: 'offline', label: 'Prospects API' });
+      }
+    } catch {
+      services.push({ name: 'prospects', status: 'offline', label: 'Prospects API' });
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/v1/customers`, { headers });
+      if (res.ok) {
+        const d = await res.json();
+        customers = Array.isArray(d) ? d.length : d.customers?.length || d.total || 0;
+        services.push({ name: 'customers', status: 'online', label: 'CRM' });
+      } else {
+        services.push({ name: 'customers', status: 'offline', label: 'CRM' });
+      }
+    } catch {
+      services.push({ name: 'customers', status: 'offline', label: 'CRM' });
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/v1/gallery?userId=${user.id}&limit=1`, { headers });
+      if (res.ok) {
+        const d = await res.json();
+        assets = d.total || d.assets?.length || 0;
+        services.push({ name: 'gallery', status: 'online', label: 'Gallery' });
+      } else {
+        services.push({ name: 'gallery', status: 'offline', label: 'Gallery' });
+      }
+    } catch {
+      services.push({ name: 'gallery', status: 'offline', label: 'Gallery' });
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/v1/gallery?sourceModule=live-studio&userId=${user.id}&limit=1`, { headers });
+      if (res.ok) {
+        const d = await res.json();
+        recordings = d.total || d.assets?.length || 0;
+      }
+    } catch { /* silent */ }
+
+    setData({ prospects, customers, projects, assets, recordings, services });
+    setLoading(false);
   }, [user?.id]);
 
-  const fetchMetrics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setMetrics({
-          revenue: 0,
-          subscriptions: 0,
-          prospects: 0,
-          projects: 0,
-          usage: { current: 0, limit: 0 },
-          health: { api: 'offline', database: 'offline' },
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Fetch subscription data
-      const subscriptionRes = await fetch('/api/v1/billing/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const subscription = subscriptionRes.ok ? await subscriptionRes.json() : null;
-
-      // Fetch prospects data
-      const prospectsRes = await fetch('/api/v1/prospects', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const prospects = prospectsRes.ok ? await prospectsRes.json() : null;
-
-      // Set metrics with actual data or fallback states
-      setMetrics({
-        revenue: subscription?.totalRevenue || 0,
-        subscriptions: subscription?.activeSubscriptions || 0,
-        prospects: Array.isArray(prospects) ? prospects.length : 0,
-        projects: 0,
-        usage: {
-          current: subscription?.usage?.current || 0,
-          limit: subscription?.usage?.limit || 0,
-        },
-        health: {
-          api: subscriptionRes.ok ? 'online' : 'offline',
-          database: prospectsRes.ok ? 'online' : 'offline',
-        },
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load metrics';
-      setError(message);
-      setMetrics({
-        revenue: 0,
-        subscriptions: 0,
-        prospects: 0,
-        projects: 0,
-        usage: { current: 0, limit: 0 },
-        health: { api: 'offline', database: 'offline' },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!user?.id) { setLoading(false); return; }
+    fetchData();
+  }, [user?.id, fetchData]);
 
   if (isLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4"></div>
-          <div className="h-4 bg-wise-surface rounded w-64"></div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-40" />
+        <div className="wise-skeleton h-3 w-64" />
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-6">
+          {Array.from({ length: 5 }).map((_, i) => <div key={i} className="wise-skeleton h-20 rounded-lg" />)}
         </div>
       </div>
     );
   }
 
+  const allServices = data?.services || [];
+  const onlineCount = allServices.filter(s => s.status === 'online').length;
+  const systemStatus = allServices.length === 0 ? 'offline'
+    : onlineCount === allServices.length ? 'online'
+    : onlineCount > 0 ? 'partial' : 'offline';
+
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Dashboard</h1>
-        <p className="text-text-secondary">
-          Monitor, control, and automate your business operations.
-        </p>
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="wise-page-title">Command Center</h1>
+          <p className="wise-page-subtitle">Platform overview and operations</p>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle">
+          <StatusDot status={systemStatus} />
+          <span className="text-xs font-medium text-text-muted uppercase tracking-wider">
+            {systemStatus === 'online' ? 'All Systems' : systemStatus === 'partial' ? 'Partial' : 'Offline'}
+          </span>
+        </div>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          ⚠️ {error}
+      {/* Command Strip */}
+      <div className="wise-card p-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+          <StatCell label="Prospects" value={data?.prospects || 0} href="/dashboard/leads" />
+          <StatCell label="Customers" value={data?.customers || 0} href="/dashboard/customers" />
+          <StatCell label="Projects" value={data?.projects || 0} href="/dashboard/sound-labs/projects" />
+          <StatCell label="Assets" value={data?.assets || 0} href="/dashboard/gallery" />
+          <StatCell label="Recordings" value={data?.recordings || 0} href="/dashboard/live-studio/recordings" />
         </div>
-      )}
-
-      {/* Primary Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          label="Monthly Revenue"
-          value={`$${metrics?.revenue.toLocaleString() || 0}`}
-          icon="💰"
-          status={metrics?.revenue ? 'success' : 'neutral'}
-        />
-        <MetricCard
-          label="Active Subscriptions"
-          value={metrics?.subscriptions || 'SETUP REQUIRED'}
-          unit="subscribers"
-          icon="👥"
-          status={metrics?.subscriptions ? 'success' : 'warning'}
-        />
-        <MetricCard
-          label="Prospects"
-          value={metrics?.prospects || 'NOT CONNECTED'}
-          unit="leads"
-          icon="🎯"
-          status={metrics?.prospects ? 'success' : 'warning'}
-        />
-        <MetricCard
-          label="Projects"
-          value={metrics?.projects || 'EMPTY'}
-          unit="active"
-          icon="📁"
-          status={metrics?.projects ? 'success' : 'neutral'}
-        />
       </div>
 
-      {/* Secondary Metrics Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Usage */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-text-primary">Usage This Month</h3>
-            <span className="text-2xl">⚡</span>
-          </div>
-          <div className="mb-4">
-            <div className="w-full bg-wise-black rounded-full h-2">
-              <div
-                className="bg-gradient-to-r from-wise-electric to-wise-electric_hover h-2 rounded-full"
-                style={{
-                  width: `${metrics?.usage ? (metrics.usage.current / Math.max(metrics.usage.limit, 1)) * 100 : 0}%`,
-                }}
-              />
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Operations — 2 cols */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Business Activity */}
+          <div className="wise-card p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-text-primary">Business</h2>
+              <Link href="/dashboard/business-os" className="text-xs text-text-muted hover:text-wise-electric transition-colors">View all</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Link href="/dashboard/leads" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Pipeline</span>
+                  <span className="wise-badge-info">Active</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">{data?.prospects || 0} Prospects</div>
+                <div className="text-xs text-text-muted mt-1">{data?.customers || 0} customers converted</div>
+              </Link>
+              <Link href="/dashboard/billing" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Revenue</span>
+                  <span className="wise-badge-success">Tracking</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">Billing</div>
+                <div className="text-xs text-text-muted mt-1">Subscription management</div>
+              </Link>
+              <Link href="/dashboard/analytics" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Analytics</span>
+                  <span className="wise-badge-neutral">Available</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">Reports</div>
+                <div className="text-xs text-text-muted mt-1">Business intelligence</div>
+              </Link>
             </div>
           </div>
-          <div className="flex justify-between text-sm text-text-secondary">
-            <span>{metrics?.usage?.current || 0} used</span>
-            <span>/ {metrics?.usage?.limit || 0} available</span>
+
+          {/* Creator Activity */}
+          <div className="wise-card p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-text-primary">Creator</h2>
+              <Link href="/dashboard/sound-labs" className="text-xs text-text-muted hover:text-wise-electric transition-colors">Sound Labs</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <Link href="/dashboard/sound-labs" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Sound Labs</span>
+                  <span className="wise-badge-success">Ready</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">{data?.projects || 0} Projects</div>
+                <div className="text-xs text-text-muted mt-1">Audio production workspace</div>
+              </Link>
+              <Link href="/dashboard/live-studio" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Live Studio</span>
+                  <span className="wise-badge-success">Ready</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">{data?.recordings || 0} Recordings</div>
+                <div className="text-xs text-text-muted mt-1">Camera + screen capture</div>
+              </Link>
+              <Link href="/dashboard/gallery" className="group p-3 rounded-lg bg-wise-black/40 hover:bg-wise-electric/[0.04] border border-transparent hover:border-wise-electric/20 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-text-muted">Gallery</span>
+                  <span className="wise-badge-info">Hub</span>
+                </div>
+                <div className="text-lg font-bold text-text-primary">{data?.assets || 0} Assets</div>
+                <div className="text-xs text-text-muted mt-1">Shared asset backbone</div>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* System Health */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">System Health</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-text-secondary">API Status</span>
-              <span
-                className={`inline-block w-2 h-2 rounded-full ${
-                  metrics?.health?.api === 'online' ? 'bg-green-400' : 'bg-red-400'
-                }`}
-              />
-              <span className="text-xs text-text-muted capitalize">
-                {metrics?.health?.api || 'OFFLINE'}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-text-secondary">Database Status</span>
-              <span
-                className={`inline-block w-2 h-2 rounded-full ${
-                  metrics?.health?.database === 'online' ? 'bg-green-400' : 'bg-red-400'
-                }`}
-              />
-              <span className="text-xs text-text-muted capitalize">
-                {metrics?.health?.database || 'OFFLINE'}
-              </span>
+        {/* Right Column */}
+        <div className="space-y-4">
+          {/* System Status */}
+          <div className="wise-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-3">System Status</h2>
+            <div className="space-y-2.5">
+              {allServices.map((svc) => (
+                <div key={svc.name} className="flex items-center justify-between">
+                  <span className="text-sm text-text-secondary">{svc.label}</span>
+                  <div className="flex items-center gap-2">
+                    <StatusDot status={svc.status} />
+                    <span className="text-xs text-text-muted uppercase">{svc.status}</span>
+                  </div>
+                </div>
+              ))}
+              {[
+                { label: 'Sound Labs', status: 'online' as const },
+                { label: 'Live Studio', status: 'online' as const },
+                { label: 'Authentication', status: user ? 'online' as const : 'offline' as const },
+              ].map((svc) => (
+                <div key={svc.label} className="flex items-center justify-between">
+                  <span className="text-sm text-text-secondary">{svc.label}</span>
+                  <div className="flex items-center gap-2">
+                    <StatusDot status={svc.status} />
+                    <span className="text-xs text-text-muted uppercase">{svc.status}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Quick Actions */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Access</h3>
-          <div className="space-y-2">
-            <Link
-              href="/dashboard/sound-labs"
-              className="block px-4 py-2 bg-wise-electric/10 hover:bg-wise-electric/20 border border-wise-border rounded-lg text-wise-electric text-sm font-semibold transition-colors text-center"
-            >
-              Sound Labs
-            </Link>
-            <Link
-              href="/dashboard/workflows"
-              className="block px-4 py-2 bg-wise-electric/10 hover:bg-wise-electric/20 border border-wise-border rounded-lg text-wise-electric text-sm font-semibold transition-colors text-center"
-            >
-              Workflows
-            </Link>
-            <Link
-              href="/dashboard/analytics"
-              className="block px-4 py-2 bg-wise-electric/10 hover:bg-wise-electric/20 border border-wise-border rounded-lg text-wise-electric text-sm font-semibold transition-colors text-center"
-            >
-              Analytics
-            </Link>
+          {/* Quick Actions */}
+          <div className="wise-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-3">Quick Actions</h2>
+            <div className="space-y-1.5">
+              <QuickAction label="New Prospect" href="/dashboard/leads" icon="plus" />
+              <QuickAction label="Start Recording" href="/dashboard/live-studio" icon="record" />
+              <QuickAction label="Open Gallery" href="/dashboard/gallery" icon="grid" />
+              <QuickAction label="Create Jingle" href="/dashboard/sound-labs/jingle-lab" icon="music" />
+              <QuickAction label="New Project" href="/dashboard/sound-labs/projects" icon="plus" />
+            </div>
+          </div>
+
+          {/* Workspace */}
+          <div className="wise-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-3">Workspace</h2>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-text-muted">User</span>
+                <span className="text-text-secondary font-medium">{user?.email}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-text-muted">Role</span>
+                <span className="wise-badge-info">{user?.role || 'USER'}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-text-muted">Branch</span>
+                <span className="text-text-secondary font-mono text-xs">ui/unified-command-center</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

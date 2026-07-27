@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
 interface Customer {
   id: string;
@@ -34,7 +37,7 @@ export default function CustomersPage() {
       if (search) params.append('search', search);
       params.append('limit', '100');
 
-      const res = await fetch(`/api/v1/customers?${params}`, {
+      const res = await fetch(`${API_URL}/v1/customers?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -65,41 +68,39 @@ export default function CustomersPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-48 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64" />
-        </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-48" />
+        <div className="wise-skeleton h-3 w-64" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">CRM / Customers</h1>
-          <p className="text-text-secondary">Customer relationship management</p>
+          <div className="wise-breadcrumb mb-2">
+            <Link href="/dashboard/business-os">Business</Link>
+            <span className="opacity-30">/</span>
+            <span className="text-text-secondary">CRM / Customers</span>
+          </div>
+          <h1 className="wise-page-title">CRM / Customers</h1>
+          <p className="wise-page-subtitle">Customer relationship management</p>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          <span className="font-semibold">Error: </span>{error}
-        </div>
+        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
       )}
 
       {!apiAvailable && (
-        <div className="bg-wise-surface border border-amber-500/30 rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl">⚠️</span>
+        <div className="wise-card p-4 border-warning/20">
+          <div className="flex items-start gap-3">
+            <span className="wise-badge-warning">Awaiting Deploy</span>
             <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Customer API Not Deployed</h3>
-              <p className="text-text-muted text-sm mb-2">
-                The customer REST API is built and tested but not yet running in the current Docker container. A container rebuild will activate this module.
-              </p>
-              <p className="text-xs text-text-muted">
-                Backend status: CustomersModule with full CRUD + Prospect→Customer conversion ready. Awaiting Docker image rebuild.
+              <p className="text-sm font-medium text-text-primary">Customer API Not Active</p>
+              <p className="text-xs text-text-muted mt-0.5">
+                The Customer REST API is built and tested. A container rebuild will activate this module.
               </p>
             </div>
           </div>
@@ -107,33 +108,33 @@ export default function CustomersPage() {
       )}
 
       <input type="text" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)}
-        className="w-full max-w-md px-3 py-2 bg-wise-surface border border-wise-border rounded-lg text-text-primary placeholder-text-muted focus:border-wise-electric focus:outline-none" />
+        className="wise-input max-w-sm" />
 
       {apiAvailable && customers.length > 0 ? (
-        <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
+        <div className="wise-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="wise-table">
               <thead>
-                <tr className="border-b border-wise-border">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Company</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Revenue</th>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Company</th>
+                  <th>Status</th>
+                  <th>Revenue</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-wise-border">
+              <tbody>
                 {customers.map(c => (
-                  <tr key={c.id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3 font-medium text-text-primary">{c.name}</td>
-                    <td className="px-4 py-3 text-sm text-text-muted">{c.email}</td>
-                    <td className="px-4 py-3 text-sm text-text-primary">{c.company || '—'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`text-xs font-medium px-2 py-1 rounded ${
-                        c.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
-                      }`}>{c.status}</span>
+                  <tr key={c.id}>
+                    <td className="font-medium text-text-primary">{c.name}</td>
+                    <td className="text-text-muted">{c.email}</td>
+                    <td>{c.company || <span className="text-text-muted">--</span>}</td>
+                    <td>
+                      <span className={c.status === 'ACTIVE' ? 'wise-badge-success' : 'wise-badge-neutral'}>
+                        {c.status}
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-wise-electric">{c.totalRevenue ? fmt(c.totalRevenue) : '—'}</td>
+                    <td className="font-medium text-wise-electric tabular-nums">{c.totalRevenue ? fmt(c.totalRevenue) : '--'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -141,25 +142,26 @@ export default function CustomersPage() {
           </div>
         </div>
       ) : apiAvailable ? (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-12 text-center">
-          <span className="text-5xl block mb-4 opacity-30">👥</span>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">No Customers Found</h3>
-          <p className="text-text-muted">Customers will appear here once added through the CRM or billing system.</p>
+        <div className="wise-empty wise-card">
+          <div className="wise-empty-icon">&#128101;</div>
+          <h3 className="wise-empty-title">No Customers Found</h3>
+          <p className="wise-empty-desc">Customers appear here once converted from prospects or added through billing.</p>
         </div>
       ) : null}
 
-      <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">CRM Capabilities</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+      {/* CRM Status */}
+      <div className="wise-card p-5">
+        <h2 className="text-sm font-semibold text-text-primary mb-3">CRM Capabilities</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { label: 'Prospect Pipeline', status: 'Active', href: '/dashboard/leads', ok: true },
+            { label: 'Prospect Pipeline', status: 'Active', ok: true, href: '/dashboard/leads' },
             { label: 'Customer List', status: apiAvailable ? 'Active' : 'Awaiting Deploy', ok: apiAvailable },
             { label: 'Customer Timeline', status: 'Awaiting Deploy', ok: false },
           ].map(cap => (
-            <div key={cap.label} className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${cap.ok ? 'bg-green-400' : 'bg-amber-400'}`} />
+            <div key={cap.label} className="flex items-center gap-3 p-3 rounded-lg bg-wise-black/30">
+              <span className={`wise-status-dot ${cap.ok ? 'bg-green-400' : 'bg-amber-400'}`} />
               <div>
-                <p className="text-sm font-medium text-text-primary">{cap.label}</p>
+                <p className="text-sm font-medium text-text-secondary">{cap.label}</p>
                 <p className={`text-xs ${cap.ok ? 'text-green-400' : 'text-amber-400'}`}>{cap.status}</p>
               </div>
             </div>

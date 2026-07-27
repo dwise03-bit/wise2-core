@@ -38,25 +38,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const storedToken = localStorage.getItem('auth_token');
       const storedUser = localStorage.getItem('user');
+      const storedSub = localStorage.getItem('subscription');
 
-      if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-        setToken(storedToken);
+      if (!storedToken || !storedUser) return;
+
+      setUser(JSON.parse(storedUser));
+      setToken(storedToken);
+      if (storedSub) {
+        try { setSubscription(JSON.parse(storedSub)); } catch { /* ignore */ }
       }
 
-      const res = await fetch('/api/auth/session');
+      const res = await fetch('/api/v1/billing/subscription', {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      });
       if (res.ok) {
         const data = await res.json();
-        if (data.authenticated && data.user) {
-          setUser(data.user);
-          setToken(data.token);
-          setSubscription(data.subscription);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          if (data.token) localStorage.setItem('auth_token', data.token);
-        }
+        setSubscription(data);
+        localStorage.setItem('subscription', JSON.stringify(data));
       }
     } catch {
-      // Session check failed — use localStorage fallback
+      // Validation failed — keep localStorage state
     }
   };
 
@@ -65,12 +66,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = async () => {
-    try {
-      await fetch('/api/auth/session', { method: 'DELETE' });
-    } catch { /* cookie clear may fail */ }
+    const storedToken = localStorage.getItem('auth_token');
+    if (storedToken) {
+      try {
+        await fetch('/api/v1/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${storedToken}` },
+        });
+      } catch { /* server logout may fail */ }
+    }
     localStorage.removeItem('user');
     localStorage.removeItem('auth_token');
     localStorage.removeItem('authToken');
+    localStorage.removeItem('subscription');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userId');
     setUser(null);

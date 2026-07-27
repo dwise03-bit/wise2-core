@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -26,16 +26,20 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Login failed');
+        setError(data.message || data.error || 'Login failed');
         setLoading(false);
         return;
       }
 
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token);
+      const token = data.accessToken || data.access_token || data.token;
+      if (token) {
+        localStorage.setItem('auth_token', token);
       }
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      if (data.subscription) {
+        localStorage.setItem('subscription', JSON.stringify(data.subscription));
       }
 
       const redirect = searchParams.get('redirect') || '/dashboard';
@@ -92,5 +96,13 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -4,120 +4,96 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+
 export default function AccountPage() {
   const { user, isLoading: authLoading } = useAuth();
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
+    if (!user?.id) { setLoading(false); return; }
     fetchSubscription();
   }, [user?.id]);
 
   const fetchSubscription = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch('/api/v1/billing/subscription', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        setSubscription(await res.json());
-      }
-    } catch {
-      // API not available
-    } finally {
-      setLoading(false);
-    }
+      const token = localStorage.getItem('auth_token') || localStorage.getItem('authToken');
+      if (!token) { setLoading(false); return; }
+      const res = await fetch(`${API_URL}/v1/billing/subscription`, { headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) setSubscription(await res.json());
+    } catch { /* API not available */ }
+    finally { setLoading(false); }
   };
-
-  const settings = [
-    { icon: '👤', title: 'Profile', description: 'Update your personal information' },
-    { icon: '💳', title: 'Billing', description: 'Manage payment methods and invoices' },
-    { icon: '🔔', title: 'Notifications', description: 'Customize notification preferences' },
-    { icon: '🔒', title: 'Security', description: 'Manage passwords and two-factor auth' },
-    { icon: '🔌', title: 'Integrations', description: 'Connect external services and tools' },
-    { icon: '⚙️', title: 'Preferences', description: 'Customize your workspace' },
-  ];
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4"></div>
-          <div className="h-4 bg-wise-surface rounded w-64"></div>
-        </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-36" />
+        <div className="wise-skeleton h-3 w-56" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Account Settings</h1>
-        <p className="text-text-secondary">
-          Manage your profile, subscriptions, and preferences
-        </p>
+        <h1 className="wise-page-title">Account</h1>
+        <p className="wise-page-subtitle">Manage your profile, subscriptions, and preferences</p>
       </div>
 
       {/* Settings Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {settings.map((setting) => (
-          <div
-            key={setting.title}
-            className="bg-wise-surface border border-wise-border rounded-lg p-6 hover:border-wise-electric/50 transition-all cursor-pointer group"
-          >
-            <span className="text-3xl block mb-4">{setting.icon}</span>
-            <h3 className="text-lg font-bold text-text-primary mb-1 group-hover:text-wise-electric transition-colors">
-              {setting.title}
-            </h3>
-            <p className="text-sm text-text-muted">{setting.description}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {[
+          { title: 'Profile', desc: 'Update your personal information', href: null },
+          { title: 'Billing', desc: 'Manage payment methods and invoices', href: '/dashboard/billing' },
+          { title: 'Notifications', desc: 'Customize notification preferences', href: null, status: 'Setup Required' },
+          { title: 'Security', desc: 'Manage passwords and two-factor auth', href: null, status: 'Setup Required' },
+          { title: 'Integrations', desc: 'Connect external services and tools', href: null, status: 'Setup Required' },
+          { title: 'Preferences', desc: 'Customize your workspace', href: null, status: 'Setup Required' },
+        ].map(item => {
+          const inner = (
+            <>
+              <div className="flex items-start justify-between mb-1">
+                <h3 className="text-sm font-semibold text-text-primary group-hover:text-wise-electric transition-colors">{item.title}</h3>
+                {item.status && <span className="wise-badge-warning">{item.status}</span>}
+              </div>
+              <p className="text-xs text-text-muted">{item.desc}</p>
+            </>
+          );
+          return item.href ? (
+            <Link key={item.title} href={item.href} className="wise-card-interactive p-5 group">{inner}</Link>
+          ) : (
+            <div key={item.title} className="wise-card p-5 group">{inner}</div>
+          );
+        })}
       </div>
 
-      {/* Workspace Info */}
-      <div className="bg-wise-surface border border-wise-border rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-text-primary mb-6">Workspace</h2>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-wise-black/30 rounded-lg">
+      {/* Workspace */}
+      <div className="wise-card p-5">
+        <h2 className="text-sm font-semibold text-text-primary mb-3">Workspace</h2>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-wise-black/30">
             <div>
-              <p className="font-semibold text-text-primary">Active Plan</p>
-              <p className="text-sm text-text-muted">
-                {subscription?.plan || 'Not configured'}
-              </p>
+              <p className="text-xs font-medium text-text-secondary">Active Plan</p>
+              <p className="text-xs text-text-muted">{subscription?.plan || 'Not configured'}</p>
             </div>
-            <span className={`px-3 py-1 text-xs font-semibold rounded ${
-              subscription?.status === 'active' ? 'bg-green-500/10 text-green-400'
-                : subscription?.plan ? 'bg-amber-500/10 text-amber-400'
-                  : 'bg-gray-500/10 text-gray-400'
-            }`}>
-              {subscription?.status === 'active' ? 'ACTIVE' : subscription?.plan ? subscription.status?.toUpperCase() || 'INACTIVE' : 'NOT CONFIGURED'}
+            <span className={subscription?.status === 'active' ? 'wise-badge-success' : subscription?.plan ? 'wise-badge-warning' : 'wise-badge-neutral'}>
+              {subscription?.status === 'active' ? 'Active' : subscription?.plan ? (subscription.status?.toUpperCase() || 'Inactive') : 'Not Configured'}
             </span>
           </div>
-          <div className="flex items-center justify-between p-4 bg-wise-black/30 rounded-lg">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-wise-black/30">
             <div>
-              <p className="font-semibold text-text-primary">Renewal Date</p>
-              <p className="text-sm text-text-muted">
-                {subscription?.currentPeriodEnd
-                  ? new Date(subscription.currentPeriodEnd).toLocaleDateString()
-                  : 'Not configured'}
+              <p className="text-xs font-medium text-text-secondary">Renewal Date</p>
+              <p className="text-xs text-text-muted">
+                {subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : 'Not configured'}
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-between p-4 bg-wise-black/30 rounded-lg">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-wise-black/30">
             <div>
-              <p className="font-semibold text-text-primary">Usage This Month</p>
-              <p className="text-sm text-text-muted">
+              <p className="text-xs font-medium text-text-secondary">Usage This Month</p>
+              <p className="text-xs text-text-muted">
                 {subscription?.usage
                   ? `${Math.round((subscription.usage.current / Math.max(subscription.usage.limit, 1)) * 100)}% of allocation used`
                   : 'No usage data available'}
@@ -128,12 +104,7 @@ export default function AccountPage() {
       </div>
 
       <div>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors"
-        >
-          Back to Dashboard
-        </Link>
+        <Link href="/dashboard" className="wise-btn-secondary">Back to Dashboard</Link>
       </div>
     </div>
   );

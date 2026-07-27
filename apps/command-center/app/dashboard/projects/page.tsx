@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+
 interface Project {
   id: string;
   name: string;
@@ -27,23 +29,14 @@ export default function ProjectsPage() {
     const load = async () => {
       setLoading(true);
       const token = getToken();
-
       try {
-        const res = await fetch('/api/v1/sound-labs/me/projects', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(`${API_URL}/v1/sound-labs/me/projects`, { headers: { Authorization: `Bearer ${token}` } });
         if (res.ok) {
           const data = await res.json();
-          const projects = (data.projects || []).map((p: Record<string, unknown>) => ({
-            ...p,
-            type: 'Sound Labs',
-            status: 'Active',
-          }));
-          setSoundLabsProjects(projects);
+          setSoundLabsProjects((data.projects || []).map((p: Record<string, unknown>) => ({ ...p, type: 'Sound Labs', status: 'Active' })));
           setSoundLabsAvailable(true);
         }
       } catch { /* Sound Labs API may not be available */ }
-
       setLoading(false);
     };
 
@@ -54,69 +47,60 @@ export default function ProjectsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4" />
-          <div className="h-4 bg-wise-surface rounded w-64" />
-        </div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-32" />
+        <div className="wise-skeleton h-3 w-56" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Projects</h1>
-          <p className="text-text-secondary">Unified view of all your projects across modules</p>
+    <div className="space-y-5 animate-fade-in">
+      <div>
+        <h1 className="wise-page-title">Projects</h1>
+        <p className="wise-page-subtitle">Unified view of all your projects across modules</p>
+      </div>
+
+      {/* Stats Strip */}
+      <div className="wise-card p-1">
+        <div className="grid grid-cols-2 md:grid-cols-4">
+          {[
+            { label: 'Total', value: allProjects.length },
+            { label: 'Sound Labs', value: soundLabsProjects.length },
+            { label: 'Live Studio', value: 0 },
+            { label: 'DTF Print', value: 0 },
+          ].map(s => (
+            <div key={s.label} className="px-4 py-3">
+              <div className="text-2xl font-bold text-text-primary tabular-nums">{s.value}</div>
+              <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mt-0.5">{s.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Projects', value: allProjects.length, icon: '📁' },
-          { label: 'Sound Labs', value: soundLabsProjects.length, icon: '🎵' },
-          { label: 'Live Studio', value: 0, icon: '📻' },
-          { label: 'DTF Print', value: 0, icon: '🖨' },
-        ].map(s => (
-          <div key={s.label} className="bg-wise-surface border border-wise-border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span>{s.icon}</span>
-              <p className="text-xs text-text-muted">{s.label}</p>
-            </div>
-            <p className="text-2xl font-bold text-wise-electric">{s.value}</p>
-          </div>
-        ))}
-      </div>
-
+      {/* Projects Table */}
       {allProjects.length > 0 ? (
-        <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
+        <div className="wise-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="wise-table">
               <thead>
-                <tr className="border-b border-wise-border">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-text-muted uppercase">Updated</th>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Updated</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-wise-border">
+              <tbody>
                 {allProjects.map(p => (
-                  <tr key={p.id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={p.id}>
+                    <td>
                       <p className="font-medium text-text-primary">{p.name}</p>
-                      {p.description && <p className="text-xs text-text-muted">{p.description}</p>}
+                      {p.description && <p className="text-xs text-text-muted mt-0.5">{p.description}</p>}
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs font-medium px-2 py-1 bg-wise-electric/10 text-wise-electric rounded">{p.type}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-xs font-medium px-2 py-1 bg-green-500/20 text-green-400 rounded">{p.status}</span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-text-muted">
-                      {new Date(p.updatedAt).toLocaleDateString()}
-                    </td>
+                    <td><span className="wise-badge-info">{p.type}</span></td>
+                    <td><span className="wise-badge-success">{p.status}</span></td>
+                    <td className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -124,31 +108,29 @@ export default function ProjectsPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-12 text-center">
-          <span className="text-5xl block mb-4 opacity-30">📁</span>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">No Projects Yet</h3>
-          <p className="text-text-muted mb-6">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
-          <Link href="/dashboard/sound-labs"
-            className="px-6 py-3 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors inline-block">
-            Go to Sound Labs
-          </Link>
+        <div className="wise-empty wise-card">
+          <div className="wise-empty-icon">&#128193;</div>
+          <h3 className="wise-empty-title">No Projects Yet</h3>
+          <p className="wise-empty-desc">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
+          <Link href="/dashboard/sound-labs" className="wise-btn-primary">Go to Sound Labs</Link>
         </div>
       )}
 
-      <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-text-primary mb-2">Project Sources</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+      {/* Project Sources */}
+      <div className="wise-card p-5">
+        <h2 className="text-sm font-semibold text-text-primary mb-3">Project Sources</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { name: 'Sound Labs', status: soundLabsAvailable ? 'Connected' : 'API Not Available', ok: soundLabsAvailable },
             { name: 'Live Studio', status: 'No Project Storage', ok: false },
             { name: 'DTF Print Studio', status: 'No Project Storage', ok: false },
             { name: 'Gallery', status: 'Assets Only', ok: false },
           ].map(src => (
-            <div key={src.name} className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${src.ok ? 'bg-green-400' : 'bg-gray-500'}`} />
+            <div key={src.name} className="flex items-center gap-2 p-2.5 rounded-lg bg-wise-black/30">
+              <span className={`wise-status-dot ${src.ok ? 'bg-green-400' : 'bg-text-muted'}`} />
               <div>
-                <p className="text-sm font-medium text-text-primary">{src.name}</p>
-                <p className={`text-xs ${src.ok ? 'text-green-400' : 'text-text-muted'}`}>{src.status}</p>
+                <p className="text-xs font-medium text-text-secondary">{src.name}</p>
+                <p className={`text-[10px] ${src.ok ? 'text-green-400' : 'text-text-muted'}`}>{src.status}</p>
               </div>
             </div>
           ))}

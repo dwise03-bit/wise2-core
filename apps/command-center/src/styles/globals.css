@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* WISE² Global Styles */
 :root {
-  /* Brand Colors */
   --wise-black: #050505;
   --wise-steel: #1A1A1A;
   --wise-surface: #0D1117;
@@ -12,85 +10,352 @@
   --wise-card: #10151D;
   --wise-chrome: #9CA3AF;
   --wise-electric: #0094FF;
+  --wise-electric-hover: #32A8FF;
+  --wise-electric-active: #0075CC;
 
-  /* Text */
   --text-primary: #FFFFFF;
   --text-secondary: #C9CED6;
-  --text-muted: #8D98A5;
+  --text-muted: #6B7280;
 
-  /* Semantic */
   --success: #22C55E;
   --warning: #F59E0B;
-  --danger: #E53935;
+  --danger: #EF4444;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 64px;
+  --topbar-height: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base Typography */
-body {
-  @apply font-sans;
-  background-color: var(--wise-black);
-  color: var(--text-primary);
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply font-sans;
+    background-color: var(--wise-black);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    background-color: var(--wise-electric);
+    color: var(--wise-black);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--wise-electric);
+    outline-offset: 2px;
+  }
+
+  .wise-skip-link {
+    @apply fixed top-0 left-0 z-50 px-4 py-2 text-sm font-semibold;
+    background: var(--wise-electric);
+    color: var(--wise-black);
+    transform: translateY(-100%);
+    transition: transform 0.15s ease;
+  }
+
+  .wise-skip-link:focus {
+    transform: translateY(0);
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  @apply font-display font-bold;
-  color: var(--text-primary);
+@layer components {
+  .wise-card {
+    @apply rounded-lg border transition-colors;
+    background: var(--wise-surface);
+    border-color: var(--border-subtle);
+  }
+
+  .wise-card:hover {
+    border-color: var(--border-medium);
+  }
+
+  .wise-card-interactive {
+    @apply wise-card cursor-pointer;
+  }
+
+  .wise-card-interactive:hover {
+    border-color: rgba(0, 148, 255, 0.25);
+  }
+
+  .wise-card-interactive:focus-visible {
+    outline: 2px solid var(--wise-electric);
+    outline-offset: 2px;
+  }
+
+  .wise-stat {
+    @apply wise-card px-4 py-3;
+  }
+
+  .wise-stat-value {
+    @apply text-2xl font-bold text-text-primary tabular-nums;
+  }
+
+  .wise-stat-label {
+    @apply text-xs font-medium uppercase tracking-wider text-text-muted mt-1;
+  }
+
+  .wise-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors cursor-pointer;
+    background: var(--wise-electric);
+    color: var(--wise-black);
+  }
+
+  .wise-btn-primary:hover {
+    background: var(--wise-electric-hover);
+  }
+
+  .wise-btn-primary:active {
+    background: var(--wise-electric-active);
+  }
+
+  .wise-btn-primary:focus-visible {
+    outline: 2px solid var(--wise-electric);
+    outline-offset: 2px;
+  }
+
+  .wise-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors border cursor-pointer;
+    border-color: var(--border-medium);
+    color: var(--text-secondary);
+  }
+
+  .wise-btn-secondary:hover {
+    border-color: rgba(0, 148, 255, 0.3);
+    color: var(--text-primary);
+    background: rgba(0, 148, 255, 0.06);
+  }
+
+  .wise-btn-secondary:focus-visible {
+    outline: 2px solid var(--wise-electric);
+    outline-offset: 2px;
+  }
+
+  .wise-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer;
+    color: var(--text-muted);
+  }
+
+  .wise-btn-ghost:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .wise-btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors cursor-pointer;
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .wise-btn-danger:hover {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  .wise-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider;
+  }
+
+  .wise-badge-success {
+    @apply wise-badge;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22C55E;
+  }
+
+  .wise-badge-warning {
+    @apply wise-badge;
+    background: rgba(245, 158, 11, 0.12);
+    color: #F59E0B;
+  }
+
+  .wise-badge-danger {
+    @apply wise-badge;
+    background: rgba(239, 68, 68, 0.12);
+    color: #EF4444;
+  }
+
+  .wise-badge-info {
+    @apply wise-badge;
+    background: rgba(0, 148, 255, 0.12);
+    color: #0094FF;
+  }
+
+  .wise-badge-neutral {
+    @apply wise-badge;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+  }
+
+  .wise-input {
+    @apply w-full rounded-lg px-3 py-2 text-sm transition-colors outline-none;
+    background: var(--wise-black);
+    border: 1px solid var(--border-medium);
+    color: var(--text-primary);
+  }
+
+  .wise-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .wise-input:focus {
+    border-color: var(--wise-electric);
+    box-shadow: 0 0 0 1px var(--wise-electric);
+  }
+
+  .wise-table {
+    @apply w-full text-sm;
+  }
+
+  .wise-table thead {
+    @apply border-b;
+    border-color: var(--border-subtle);
+  }
+
+  .wise-table th {
+    @apply px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider;
+    color: var(--text-muted);
+  }
+
+  .wise-table td {
+    @apply px-4 py-3;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .wise-table tbody tr {
+    @apply transition-colors;
+  }
+
+  .wise-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .wise-section-title {
+    @apply text-xs font-semibold uppercase tracking-wider;
+    color: var(--text-muted);
+  }
+
+  .wise-page-title {
+    @apply text-2xl font-bold text-text-primary;
+  }
+
+  .wise-page-subtitle {
+    @apply text-sm text-text-muted mt-0.5;
+  }
+
+  .wise-breadcrumb {
+    @apply flex items-center gap-1.5 text-xs;
+    color: var(--text-muted);
+  }
+
+  .wise-breadcrumb a {
+    @apply transition-colors;
+    color: var(--text-muted);
+  }
+
+  .wise-breadcrumb a:hover {
+    color: var(--wise-electric);
+  }
+
+  .wise-empty {
+    @apply flex flex-col items-center justify-center py-16 px-4 text-center;
+  }
+
+  .wise-empty-icon {
+    @apply text-4xl mb-3 opacity-20;
+  }
+
+  .wise-empty-title {
+    @apply text-base font-semibold text-text-secondary mb-1;
+  }
+
+  .wise-empty-desc {
+    @apply text-sm text-text-muted max-w-sm mb-4;
+  }
+
+  .wise-skeleton {
+    @apply rounded animate-pulse;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .wise-divider {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .wise-status-dot {
+    @apply inline-block w-1.5 h-1.5 rounded-full;
+  }
+
+  .wise-pulse-live {
+    @apply relative;
+  }
+
+  .wise-pulse-live::before {
+    content: '';
+    @apply absolute inset-0 rounded-full animate-ping;
+    background: inherit;
+    opacity: 0.4;
+  }
 }
 
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Selection */
-::selection {
-  background-color: var(--wise-electric);
-  color: var(--wise-black);
-}
-
-/* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--wise-surface);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--wise-steel);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--wise-chrome);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(-10px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.animate-slide-in {
-  animation: slideIn 0.3s ease-in-out;
+.animate-slide-up {
+  animation: slideUp 0.25s ease-out;
 }

@@ -18,7 +18,6 @@ module.exports = {
     },
     extend: {
       colors: {
-        // WISE² Brand Identity - ORGANIZED CHAOS
         wise: {
           black: '#050505',
           steel: '#1A1A1A',
@@ -30,40 +29,60 @@ module.exports = {
           electric_hover: '#32A8FF',
           electric_active: '#0075CC',
           electric_light: '#1AA8FF',
+          electric_muted: 'rgba(0, 148, 255, 0.08)',
+          electric_dim: 'rgba(0, 148, 255, 0.15)',
         },
-        // Text
         text: {
           primary: '#FFFFFF',
           secondary: '#C9CED6',
-          muted: '#8D98A5',
+          muted: '#6B7280',
         },
-        // Semantic
-        success: '#22C55E',
-        warning: '#F59E0B',
-        danger: '#E53935',
-        // Borders (transparencies)
+        success: { DEFAULT: '#22C55E', muted: 'rgba(34, 197, 94, 0.12)' },
+        warning: { DEFAULT: '#F59E0B', muted: 'rgba(245, 158, 11, 0.12)' },
+        danger: { DEFAULT: '#EF4444', muted: 'rgba(239, 68, 68, 0.12)' },
         border: {
-          subtle: 'rgba(255, 255, 255, 0.08)',
-          medium: 'rgba(255, 255, 255, 0.12)',
-          strong: 'rgba(255, 255, 255, 0.20)',
+          subtle: 'rgba(255, 255, 255, 0.06)',
+          medium: 'rgba(255, 255, 255, 0.10)',
+          strong: 'rgba(255, 255, 255, 0.18)',
         },
       },
       fontFamily: {
         display: ['Inter', ...defaultTheme.fontFamily.sans],
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
-        mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
+        mono: ['JetBrains Mono', 'Fira Code', ...defaultTheme.fontFamily.mono],
+      },
+      fontSize: {
+        '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
+      },
+      spacing: {
+        'sidebar': '260px',
+        'sidebar-collapsed': '64px',
+        'topbar': '48px',
+      },
+      borderRadius: {
+        'wise': '8px',
       },
       boxShadow: {
-        'glow-electric-sm': '0 0 8px rgba(0, 148, 255, 0.3)',
-        'glow-electric-md': '0 0 16px rgba(0, 148, 255, 0.5)',
-        'glow-electric-lg': '0 0 32px rgba(0, 148, 255, 0.7)',
+        'glow-sm': '0 0 8px rgba(0, 148, 255, 0.2)',
+        'glow-md': '0 0 16px rgba(0, 148, 255, 0.3)',
+        'glow-lg': '0 0 32px rgba(0, 148, 255, 0.4)',
+        'surface': '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
+        'elevated': '0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3)',
+        'overlay': '0 8px 32px rgba(0, 0, 0, 0.5)',
       },
-      backgroundColor: {
-        base: '#050505',
-        surface: '#0D1117',
+      keyframes: {
+        'slide-up': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
-      textColor: {
-        base: '#FFFFFF',
+      animation: {
+        'slide-up': 'slide-up 0.25s ease-out',
+        'fade-in': 'fade-in 0.2s ease-out',
       },
     },
   },

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
 interface GalleryAsset {
   id: string;
@@ -39,29 +40,17 @@ function formatBytes(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-const typeIcons: Record<GalleryAsset['type'], string> = {
-  image: '🖼️',
-  audio: '🎵',
-  video: '🎬',
-  document: '📄',
-};
-
 export default function GalleryPage() {
   const { user, isLoading: authLoading } = useAuth();
   const [assets, setAssets] = useState<GalleryAsset[]>([]);
-  const [stats, setStats] = useState<GalleryStats>({
-    total: 0, images: 0, audio: 0, video: 0, storageUsed: 0,
-  });
+  const [stats, setStats] = useState<GalleryStats>({ total: 0, images: 0, audio: 0, video: 0, storageUsed: 0 });
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<typeof CATEGORIES[number]>('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
+    if (!user?.id) { setLoading(false); return; }
     fetchAssets();
   }, [user?.id]);
 
@@ -69,125 +58,99 @@ export default function GalleryPage() {
     try {
       setLoading(true);
       setError(null);
+      const token = localStorage.getItem('auth_token') || localStorage.getItem('authToken');
+      if (!token) { setLoading(false); return; }
 
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch('/api/v1/gallery/assets', {
+      const res = await fetch(`${API_URL}/v1/gallery/assets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.ok) {
         const data = await res.json();
         const assetList: GalleryAsset[] = (data.assets || []).map((a: any) => ({
-          ...a,
-          type: a.type || classifyType(a.name || ''),
+          ...a, type: a.type || classifyType(a.name || ''),
         }));
         setAssets(assetList);
-
         setStats({
           total: assetList.length,
-          images: assetList.filter((a) => a.type === 'image').length,
-          audio: assetList.filter((a) => a.type === 'audio').length,
-          video: assetList.filter((a) => a.type === 'video').length,
+          images: assetList.filter(a => a.type === 'image').length,
+          audio: assetList.filter(a => a.type === 'audio').length,
+          video: assetList.filter(a => a.type === 'video').length,
           storageUsed: assetList.reduce((sum, a) => sum + (a.size || 0), 0),
         });
       } else {
         setAssets([]);
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load gallery';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Failed to load gallery');
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredAssets = assets.filter((asset) => {
+  const filteredAssets = assets.filter(asset => {
     const matchesSearch = !search || asset.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      category === 'All' ||
-      (category === 'Images' && asset.type === 'image') ||
-      (category === 'Audio' && asset.type === 'audio') ||
-      (category === 'Video' && asset.type === 'video') ||
-      (category === 'Documents' && asset.type === 'document');
+    const matchesCategory = category === 'All'
+      || (category === 'Images' && asset.type === 'image')
+      || (category === 'Audio' && asset.type === 'audio')
+      || (category === 'Video' && asset.type === 'video')
+      || (category === 'Documents' && asset.type === 'document');
     return matchesSearch && matchesCategory;
   });
 
   if (authLoading || loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-wise-surface rounded w-32 mb-4"></div>
-          <div className="h-4 bg-wise-surface rounded w-64"></div>
+      <div className="space-y-4">
+        <div className="wise-skeleton h-6 w-32" />
+        <div className="wise-skeleton h-3 w-56" />
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4">
+          {Array.from({ length: 5 }).map((_, i) => <div key={i} className="wise-skeleton h-16 rounded-lg" />)}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">Gallery</h1>
-        <p className="text-text-secondary">
-          Unified asset browser for all your media files
-        </p>
+        <h1 className="wise-page-title">Gallery</h1>
+        <p className="wise-page-subtitle">Unified asset browser for all your media files</p>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm flex items-start gap-3">
-          <span className="text-lg flex-shrink-0">⚠️</span>
-          <div>
-            <p className="font-semibold">Error loading Gallery</p>
-            <p className="text-red-300/70 text-sm">{error}</p>
-          </div>
-        </div>
+        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[
-          { label: 'Total Assets', value: stats.total, icon: '📦' },
-          { label: 'Images', value: stats.images, icon: '🖼️' },
-          { label: 'Audio', value: stats.audio, icon: '🎵' },
-          { label: 'Video', value: stats.video, icon: '🎬' },
-          { label: 'Storage', value: formatBytes(stats.storageUsed), icon: '💾' },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-wise-surface border border-wise-border rounded-lg p-4 hover:border-wise-electric/50 transition-all"
-          >
-            <span className="text-2xl block mb-2">{stat.icon}</span>
-            <div className="text-2xl font-bold text-wise-electric">{stat.value}</div>
-            <div className="text-xs text-text-muted">{stat.label}</div>
-          </div>
-        ))}
+      {/* Stats Strip */}
+      <div className="wise-card p-1">
+        <div className="grid grid-cols-2 md:grid-cols-5">
+          {[
+            { label: 'Total Assets', value: stats.total },
+            { label: 'Images', value: stats.images },
+            { label: 'Audio', value: stats.audio },
+            { label: 'Video', value: stats.video },
+            { label: 'Storage', value: formatBytes(stats.storageUsed) },
+          ].map(s => (
+            <div key={s.label} className="px-4 py-3">
+              <div className="text-2xl font-bold text-text-primary tabular-nums">{s.value}</div>
+              <div className="text-[11px] font-medium uppercase tracking-wider text-text-muted mt-0.5">{s.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Search assets..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 bg-wise-surface border border-wise-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-wise-electric transition-colors"
-        />
+      {/* Search & Filter */}
+      <div className="flex flex-col md:flex-row gap-3">
+        <input type="text" placeholder="Search assets..." value={search} onChange={e => setSearch(e.target.value)}
+          className="wise-input flex-1" />
         <div className="flex gap-2 flex-wrap">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+          {CATEGORIES.map(cat => (
+            <button key={cat} onClick={() => setCategory(cat)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                 category === cat
-                  ? 'bg-wise-electric text-wise-black'
-                  : 'bg-wise-surface border border-wise-border text-text-secondary hover:border-wise-electric/50'
-              }`}
-            >
+                  ? 'bg-wise-electric/15 text-wise-electric border border-wise-electric/30'
+                  : 'bg-wise-black/40 border border-border-subtle text-text-muted hover:text-text-secondary'
+              }`}>
               {cat}
             </button>
           ))}
@@ -196,21 +159,16 @@ export default function GalleryPage() {
 
       {/* Assets Grid */}
       {filteredAssets.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {filteredAssets.map((asset) => (
-            <div
-              key={asset.id}
-              className="bg-wise-surface border border-wise-border rounded-lg p-4 hover:border-wise-electric/50 transition-all group cursor-pointer"
-            >
-              <div className="aspect-square bg-wise-black/50 rounded-lg flex items-center justify-center mb-3">
-                <span className="text-4xl opacity-50 group-hover:opacity-80 transition-opacity">
-                  {typeIcons[asset.type]}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filteredAssets.map(asset => (
+            <div key={asset.id} className="wise-card p-4 group cursor-pointer">
+              <div className="aspect-square bg-wise-black/40 rounded-lg flex items-center justify-center mb-3">
+                <span className="text-3xl opacity-40 group-hover:opacity-70 transition-opacity">
+                  {asset.type === 'image' ? '\u{1F5BC}' : asset.type === 'audio' ? '\u{1F3B5}' : asset.type === 'video' ? '\u{1F3AC}' : '\u{1F4C4}'}
                 </span>
               </div>
-              <h3 className="font-semibold text-text-primary text-sm truncate group-hover:text-wise-electric transition-colors">
-                {asset.name}
-              </h3>
-              <div className="flex items-center justify-between mt-2 text-xs text-text-muted">
+              <h3 className="text-xs font-medium text-text-primary truncate group-hover:text-wise-electric transition-colors">{asset.name}</h3>
+              <div className="flex items-center justify-between mt-1 text-[10px] text-text-muted">
                 <span>{formatBytes(asset.size)}</span>
                 <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
               </div>
@@ -218,10 +176,10 @@ export default function GalleryPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-12 text-center">
-          <span className="text-6xl block mb-4 opacity-30">🖼️</span>
-          <h3 className="text-xl font-semibold text-text-primary mb-2">No Assets Found</h3>
-          <p className="text-text-muted mb-6">
+        <div className="wise-empty wise-card">
+          <div className="wise-empty-icon">{'\u{1F5BC}'}</div>
+          <h3 className="wise-empty-title">No Assets Found</h3>
+          <p className="wise-empty-desc">
             {search || category !== 'All'
               ? 'No assets match your current filters.'
               : 'Upload media files to get started with your asset library.'}
