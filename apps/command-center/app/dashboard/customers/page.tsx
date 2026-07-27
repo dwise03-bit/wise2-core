@@ -94,12 +94,12 @@ export default function CustomersPage() {
           <div className="flex items-start gap-4">
             <span className="text-2xl">⚠️</span>
             <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-1">Customer API Not Available</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-1">Customer API Not Deployed</h3>
               <p className="text-text-muted text-sm mb-2">
-                The customer REST endpoint is not yet deployed. Customer data exists at the database layer but needs a REST controller to be exposed.
+                The customer REST API is built and tested but not yet running in the current Docker container. A container rebuild will activate this module.
               </p>
               <p className="text-xs text-text-muted">
-                Backend status: Repository queries functional (findAllCustomers, searchCustomers, getCustomerTimeline). REST controller: not registered.
+                Backend status: CustomersModule with full CRUD + Prospect→Customer conversion ready. Awaiting Docker image rebuild.
               </p>
             </div>
           </div>
@@ -153,8 +153,8 @@ export default function CustomersPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {[
             { label: 'Prospect Pipeline', status: 'Active', href: '/dashboard/leads', ok: true },
-            { label: 'Customer List', status: apiAvailable ? 'Active' : 'Needs REST Controller', ok: apiAvailable },
-            { label: 'Customer Timeline', status: 'Database Ready', ok: false },
+            { label: 'Customer List', status: apiAvailable ? 'Active' : 'Awaiting Deploy', ok: apiAvailable },
+            { label: 'Customer Timeline', status: 'Awaiting Deploy', ok: false },
           ].map(cap => (
             <div key={cap.label} className="flex items-center gap-3">
               <div className={`w-2 h-2 rounded-full ${cap.ok ? 'bg-green-400' : 'bg-amber-400'}`} />
