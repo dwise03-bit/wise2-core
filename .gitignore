@@ -3,7 +3,11 @@
 .env.local
 .env.*.local
 .env.production
+.env.production.save
+.env.production.save.*
 .env.prod
+.env.prod.local
+.env.backups/
 # (keep the *.example / *.prod.example templates tracked)
 
 # IDE & Editor

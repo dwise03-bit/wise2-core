@@ -89,6 +89,20 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/wise2-studio:latest
             ${{ secrets.DOCKER_USERNAME }}/wise2-studio:${{ github.sha }}
 
+      - name: Build and push Command Center
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/command-center/Dockerfile
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
+            NEXT_PUBLIC_LOGIN_URL=${{ secrets.NEXT_PUBLIC_LOGIN_URL }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:latest
+            ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:${{ github.sha }}
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

@@ -1,3 +1,6 @@
+# WISE² Platform Production Compose (AUTHORITATIVE for platform API architecture)
+# This file defines the Prisma-based platform API and all frontend apps.
+# See also: docker-compose.prod.yml (LEGACY — customer journey stack)
 version: '3.8'
 
 services:
@@ -166,6 +169,31 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3003/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  command-center:
+    build:
+      context: .
+      dockerfile: apps/command-center/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-wss://api.wise2.net}
+        NEXT_PUBLIC_LOGIN_URL: ${NEXT_PUBLIC_LOGIN_URL:-https://wise2.net/command-center/login}
+    container_name: wise2-command-center-prod
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:3004:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

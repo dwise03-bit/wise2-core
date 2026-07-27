@@ -1,3 +1,5 @@
+# WISE² Customer Journey Compose (LEGACY — referenced by deploy.sh, deploy-prod, deploy-to-server)
+# The platform API architecture is defined in docker-compose.production.yml.
 version: '3.8'
 
 services:
