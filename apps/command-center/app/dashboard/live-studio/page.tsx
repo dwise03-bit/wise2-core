@@ -1,109 +1,250 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import {
+  CaptureType,
+  RecordingStatus,
+  requestCapture,
+  createRecorder,
+  stopAllTracks,
+  assembleBlob,
+  uploadToGallery,
+  GalleryUploadResult,
+} from '../../../src/lib/recording';
 
-interface StreamStatus {
-  isLive: boolean;
-  viewers: number;
-  bitrate: number;
-  fps: number;
-  uptime: number;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010/api';
+const API_BASE = API_URL.replace(/\/api\/?$/, '');
+
+interface GalleryAsset {
+  id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  assetType: string;
+  url: string;
+  metadata: {
+    captureType?: string;
+    duration?: number;
+    startedAt?: string;
+    stoppedAt?: string;
+  } | null;
+  createdAt: string;
 }
 
-interface StreamSettings {
-  rtmpUrl: string;
-  streamKey: string;
-  resolution: string;
-  bitrate: number;
-  fps: number;
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+}
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 export default function LiveStudioPage() {
   const { user, isLoading: authLoading } = useAuth();
-  const [streamStatus, setStreamStatus] = useState<StreamStatus>({
-    isLive: false,
-    viewers: 0,
-    bitrate: 0,
-    fps: 0,
-    uptime: 0,
-  });
-  const [streamSettings, setStreamSettings] = useState<StreamSettings>({
-    rtmpUrl: '',
-    streamKey: '',
-    resolution: '1920x1080',
-    bitrate: 6000,
-    fps: 60,
-  });
-  const [loading, setLoading] = useState(true);
+
+  const [status, setStatus] = useState<RecordingStatus>('READY');
   const [error, setError] = useState<string | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [recordings, setRecordings] = useState<GalleryAsset[]>([]);
+  const [loadingRecordings, setLoadingRecordings] = useState(true);
+  const [playingId, setPlayingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-    loadStreamStatus();
-  }, [user?.id]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const startTimeRef = useRef<string>('');
+  const captureTypeRef = useRef<CaptureType>('camera');
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
 
-  const loadStreamStatus = async () => {
+  const getToken = useCallback((): string | null => {
+    return localStorage.getItem('auth_token');
+  }, []);
+
+  const loadRecordings = useCallback(async () => {
+    const token = getToken();
+    if (!token || !user?.id) return;
+
     try {
-      setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch('/api/v1/live-studio/status', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      setLoadingRecordings(true);
+      const res = await fetch(
+        `${API_URL}/v1/gallery?sourceModule=live-studio&userId=${user.id}&limit=50`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
       if (res.ok) {
         const data = await res.json();
-        setStreamStatus(data.status || streamStatus);
-        setStreamSettings(data.settings || streamSettings);
+        setRecordings(data.assets || []);
       }
     } catch {
-      // API not available — show setup state
+      // Gallery may not be running
     } finally {
-      setLoading(false);
+      setLoadingRecordings(false);
+    }
+  }, [getToken, user?.id]);
+
+  useEffect(() => {
+    if (user?.id) loadRecordings();
+  }, [user?.id, loadRecordings]);
+
+  useEffect(() => {
+    return () => {
+      stopAllTracks(streamRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  const startRecording = async (captureType: CaptureType) => {
+    setError(null);
+    setStatus('REQUESTING_PERMISSION');
+    captureTypeRef.current = captureType;
+
+    try {
+      const stream = await requestCapture(captureType);
+      streamRef.current = stream;
+
+      if (videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = stream;
+        videoPreviewRef.current.play().catch(() => {});
+      }
+
+      chunksRef.current = [];
+      const recorder = createRecorder(stream, (chunk) => {
+        chunksRef.current.push(chunk);
+      });
+      recorderRef.current = recorder;
+
+      startTimeRef.current = new Date().toISOString();
+      setDuration(0);
+      recorder.start(1000);
+      setStatus('RECORDING');
+
+      timerRef.current = setInterval(() => {
+        setDuration((d) => d + 1);
+      }, 1000);
+
+      stream.getTracks().forEach((track) => {
+        track.onended = () => {
+          if (recorderRef.current?.state === 'recording') {
+            stopRecording();
+          }
+        };
+      });
+    } catch (err) {
+      stopAllTracks(streamRef.current);
+      streamRef.current = null;
+      const msg = err instanceof Error ? err.message : 'Capture failed';
+      if (msg.includes('Permission denied') || msg.includes('NotAllowed')) {
+        setError('Permission denied. Please allow camera/screen access.');
+      } else if (msg.includes('AbortError') || msg.includes('cancelled')) {
+        setError(null);
+        setStatus('READY');
+        return;
+      } else {
+        setError(msg);
+      }
+      setStatus('ERROR');
     }
   };
 
-  const toggleStream = async () => {
-    if (!streamSettings.rtmpUrl || !streamSettings.streamKey) {
-      setError('Please configure RTMP settings first');
+  const stopRecording = async () => {
+    if (!recorderRef.current || recorderRef.current.state === 'inactive') return;
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    setStatus('SAVING');
+
+    const recorder = recorderRef.current;
+    const stoppedAt = new Date().toISOString();
+
+    await new Promise<void>((resolve) => {
+      recorder.onstop = () => resolve();
+      recorder.stop();
+    });
+
+    stopAllTracks(streamRef.current);
+    streamRef.current = null;
+    if (videoPreviewRef.current) {
+      videoPreviewRef.current.srcObject = null;
+    }
+
+    const mimeType = recorder.mimeType || 'video/webm';
+    const blob = assembleBlob(chunksRef.current, mimeType);
+    chunksRef.current = [];
+
+    if (blob.size === 0) {
+      setError('Recording produced no data');
+      setStatus('ERROR');
+      return;
+    }
+
+    const token = getToken();
+    if (!token) {
+      setError('Not authenticated');
+      setStatus('ERROR');
       return;
     }
 
     try {
-      const action = streamStatus.isLive ? 'stop' : 'start';
-      const token = localStorage.getItem('auth_token');
-      const res = await fetch(`/api/v1/live-studio/stream/${action}`, {
-        method: 'POST',
+      await uploadToGallery(blob, token, API_URL, {
+        captureType: captureTypeRef.current,
+        duration,
+        startedAt: startTimeRef.current,
+        stoppedAt,
+      });
+      setStatus('SAVED');
+      await loadRecordings();
+      setTimeout(() => setStatus('READY'), 2000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      setError(msg);
+      setStatus('ERROR');
+    }
+  };
+
+  const deleteRecording = async (id: string) => {
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_URL}/v1/gallery/${id}`, {
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          rtmpUrl: streamSettings.rtmpUrl,
-          streamKey: streamSettings.streamKey,
-        }),
       });
-
       if (res.ok) {
-        setStreamStatus({ ...streamStatus, isLive: !streamStatus.isLive });
+        setRecordings((prev) => prev.filter((r) => r.id !== id));
+        if (playingId === id) setPlayingId(null);
       }
-    } catch (err) {
-      console.error('Failed to toggle stream:', err);
+    } catch {
+      // silent
     }
   };
 
-  if (authLoading || loading) {
+  const features = [
+    { icon: '🎬', label: 'Scene Manager', status: 'UI ONLY' },
+    { icon: '📡', label: 'Multistreaming', status: 'UI ONLY' },
+    { icon: '💬', label: 'Chat Overlay', status: 'UI ONLY' },
+    { icon: '📊', label: 'Stream Analytics', status: 'UI ONLY' },
+    { icon: '🖥️', label: 'Screen Capture', status: 'WORKING' },
+    { icon: '🎤', label: 'Audio Recording', status: 'WORKING' },
+    { icon: '📻', label: 'Auto Captions', status: 'PLANNED' },
+    { icon: '⚡', label: 'AI Scene Detection', status: 'PLANNED' },
+  ];
+
+  if (authLoading) {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
@@ -114,16 +255,8 @@ export default function LiveStudioPage() {
     );
   }
 
-  const features = [
-    { icon: '🎬', label: 'Scene Manager', status: 'UI ONLY' },
-    { icon: '📡', label: 'Multistreaming', status: 'UI ONLY' },
-    { icon: '💬', label: 'Chat Overlay', status: 'UI ONLY' },
-    { icon: '📊', label: 'Stream Analytics', status: 'UI ONLY' },
-    { icon: '🖥️', label: 'Screen Capture', status: 'PARTIAL' },
-    { icon: '🎤', label: 'Audio Recording', status: 'PARTIAL' },
-    { icon: '📻', label: 'Auto Captions', status: 'PLANNED' },
-    { icon: '⚡', label: 'AI Scene Detection', status: 'PLANNED' },
-  ];
+  const isRecording = status === 'RECORDING';
+  const isBusy = status === 'REQUESTING_PERMISSION' || status === 'SAVING';
 
   return (
     <div className="space-y-6">
@@ -132,179 +265,212 @@ export default function LiveStudioPage() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className={`p-3 rounded-lg border ${
-              streamStatus.isLive
+              isRecording
                 ? 'bg-red-500/10 border-red-500/30'
                 : 'bg-wise-electric/10 border-wise-electric/30'
             }`}>
-              <span className="text-2xl">{streamStatus.isLive ? '🔴' : '📻'}</span>
+              <span className="text-2xl">{isRecording ? '🔴' : '📻'}</span>
             </div>
             <div>
               <h1 className="text-3xl font-bold text-text-primary">Live Studio</h1>
               <p className="text-text-secondary">
-                {streamStatus.isLive ? '🔴 LIVE' : '⚪ OFFLINE'} — Professional streaming control center
+                {status === 'RECORDING' && `🔴 RECORDING — ${formatDuration(duration)}`}
+                {status === 'REQUESTING_PERMISSION' && '⏳ Requesting permission…'}
+                {status === 'SAVING' && '💾 Saving to Gallery…'}
+                {status === 'SAVED' && '✅ Saved to Gallery'}
+                {status === 'ERROR' && '❌ Error'}
+                {status === 'READY' && '⚪ READY — Record camera or screen'}
               </p>
             </div>
           </div>
         </div>
-        <button
-          onClick={toggleStream}
-          disabled={!streamSettings.rtmpUrl}
-          className={`px-6 py-3 font-semibold rounded-lg transition-colors inline-flex items-center gap-2 ${
-            streamStatus.isLive
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : streamSettings.rtmpUrl
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-gray-600 cursor-not-allowed text-gray-300'
-          }`}
-        >
-          <span>{streamStatus.isLive ? '⏹' : '⚡'}</span>
-          {streamStatus.isLive ? 'Stop Stream' : 'Go Live'}
-        </button>
       </div>
 
       {error && (
         <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm flex items-start gap-3">
           <span className="text-lg flex-shrink-0">⚠️</span>
           <div>
-            <p className="font-semibold">Configuration Required</p>
+            <p className="font-semibold">Error</p>
             <p className="text-red-300/70 text-sm">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Stream Preview */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4 text-text-primary">Stream Preview</h2>
-        <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
-          <div className="aspect-video bg-black/50 flex items-center justify-center">
-            {streamStatus.isLive ? (
-              <div className="text-center">
-                <span className="text-6xl block mb-4 animate-pulse">📻</span>
-                <p className="text-text-secondary">Stream Active</p>
-                <p className="text-sm text-text-muted mt-2">{streamStatus.viewers} viewers</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <span className="text-6xl block mb-4 opacity-30">👁️</span>
-                <p className="text-text-secondary">Preview Unavailable</p>
-                <p className="text-sm text-text-muted mt-2">Start streaming to see live preview</p>
-              </div>
-            )}
+      {/* Recording Controls */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Record Camera */}
+        <button
+          onClick={() => isRecording ? stopRecording() : startRecording('camera')}
+          disabled={isBusy || (status === 'RECORDING' && captureTypeRef.current !== 'camera')}
+          className={`p-6 rounded-lg border transition-all text-left ${
+            isRecording && captureTypeRef.current === 'camera'
+              ? 'bg-red-500/10 border-red-500/50 hover:bg-red-500/20'
+              : 'bg-wise-surface border-wise-border hover:border-wise-electric/50'
+          } ${isBusy ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">📷</span>
+            <span className="text-lg font-semibold text-text-primary">
+              {isRecording && captureTypeRef.current === 'camera' ? 'Stop Recording' : 'Record Camera'}
+            </span>
           </div>
+          <p className="text-sm text-text-muted">
+            {isRecording && captureTypeRef.current === 'camera'
+              ? `Recording… ${formatDuration(duration)}`
+              : 'Capture webcam video with audio'}
+          </p>
+        </button>
+
+        {/* Record Screen */}
+        <button
+          onClick={() => isRecording ? stopRecording() : startRecording('screen')}
+          disabled={isBusy || (status === 'RECORDING' && captureTypeRef.current !== 'screen')}
+          className={`p-6 rounded-lg border transition-all text-left ${
+            isRecording && captureTypeRef.current === 'screen'
+              ? 'bg-red-500/10 border-red-500/50 hover:bg-red-500/20'
+              : 'bg-wise-surface border-wise-border hover:border-wise-electric/50'
+          } ${isBusy ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">🖥️</span>
+            <span className="text-lg font-semibold text-text-primary">
+              {isRecording && captureTypeRef.current === 'screen' ? 'Stop Recording' : 'Record Screen'}
+            </span>
+          </div>
+          <p className="text-sm text-text-muted">
+            {isRecording && captureTypeRef.current === 'screen'
+              ? `Recording… ${formatDuration(duration)}`
+              : 'Capture screen or window with audio'}
+          </p>
+        </button>
+      </div>
+
+      {/* Live Preview */}
+      {isRecording && (
+        <div className="bg-wise-surface border border-wise-border rounded-lg overflow-hidden">
+          <video
+            ref={videoPreviewRef}
+            autoPlay
+            muted
+            playsInline
+            className="w-full aspect-video bg-black"
+          />
+        </div>
+      )}
+
+      {/* Go Live — unavailable */}
+      <div className="bg-wise-surface border border-wise-border rounded-lg p-6 opacity-60">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-2xl">📡</span>
+          <div className="flex-1">
+            <h3 className="font-semibold text-text-primary">Go Live</h3>
+            <p className="text-sm text-text-muted">
+              Live streaming requires RTMP backend — not yet available
+            </p>
+          </div>
+          <span className="text-xs font-semibold px-2 py-1 rounded bg-gray-500/10 text-gray-400">
+            SETUP REQUIRED
+          </span>
         </div>
       </div>
 
-      {/* Control Panels Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Stream Stats */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
-              <span className="text-lg">📊</span>
-            </div>
-            <h3 className="font-semibold text-text-primary">Stream Stats</h3>
+      {/* Recordings from Gallery */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-text-primary">Recordings</h2>
+        {loadingRecordings ? (
+          <div className="bg-wise-surface border border-wise-border rounded-lg p-8 text-center">
+            <p className="text-text-muted">Loading recordings…</p>
           </div>
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-text-muted mb-1">Viewers</p>
-              <p className="text-2xl font-bold text-wise-electric">{streamStatus.viewers}</p>
-            </div>
-            <div>
-              <p className="text-sm text-text-muted mb-1">Bitrate</p>
-              <p className="text-lg font-semibold text-text-primary">{streamStatus.bitrate} kbps</p>
-            </div>
-            <div>
-              <p className="text-sm text-text-muted mb-1">FPS</p>
-              <p className="text-lg font-semibold text-text-primary">{streamStatus.fps} fps</p>
-            </div>
-            <div>
-              <p className="text-sm text-text-muted mb-1">Uptime</p>
-              <p className="text-lg font-semibold text-text-primary">
-                {Math.floor(streamStatus.uptime / 60)}:{String(streamStatus.uptime % 60).padStart(2, '0')}
-              </p>
-            </div>
+        ) : recordings.length === 0 ? (
+          <div className="bg-wise-surface border border-wise-border rounded-lg p-8 text-center">
+            <span className="text-4xl block mb-3 opacity-30">🎬</span>
+            <p className="text-text-secondary">No recordings yet</p>
+            <p className="text-sm text-text-muted mt-1">
+              Use the camera or screen buttons above to create your first recording
+            </p>
           </div>
-        </div>
-
-        {/* Audio Mixer */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
-              <span className="text-lg">🔊</span>
-            </div>
-            <h3 className="font-semibold text-text-primary">Audio Mixer</h3>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm text-text-muted">Microphone</label>
-                <span className="text-sm text-wise-electric">-12dB</span>
-              </div>
-              <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '50%' }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm text-text-muted">System Audio</label>
-                <span className="text-sm text-wise-electric">-6dB</span>
-              </div>
-              <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '65%' }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm text-text-muted">Master</label>
-                <span className="text-sm text-wise-electric">-3dB</span>
-              </div>
-              <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '75%' }} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
-              <span className="text-lg">⚡</span>
-            </div>
-            <h3 className="font-semibold text-text-primary">Quick Actions</h3>
-          </div>
-          <div className="space-y-2">
-            {[
-              { icon: '📷', label: 'Camera Settings' },
-              { icon: '🎤', label: 'Microphone Test' },
-              { icon: '💬', label: 'Chat Settings' },
-              { icon: '⚙️', label: 'Advanced Settings' },
-            ].map((action) => (
-              <button
-                key={action.label}
-                className="w-full px-4 py-2 bg-wise-electric/10 hover:bg-wise-electric/20 border border-wise-border rounded-lg text-wise-electric text-sm font-semibold transition-colors flex items-center gap-2"
+        ) : (
+          <div className="space-y-3">
+            {recordings.map((rec) => (
+              <div
+                key={rec.id}
+                className="bg-wise-surface border border-wise-border rounded-lg p-4"
               >
-                <span>{action.icon}</span>
-                {action.label}
-              </button>
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg flex-shrink-0">
+                    <span className="text-lg">
+                      {rec.metadata?.captureType === 'screen' ? '🖥️' : '📷'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-text-primary truncate">
+                      {rec.originalName}
+                    </p>
+                    <div className="flex items-center gap-3 text-xs text-text-muted mt-1">
+                      <span>{formatBytes(rec.size)}</span>
+                      {rec.metadata?.duration != null && (
+                        <span>{formatDuration(rec.metadata.duration)}</span>
+                      )}
+                      <span>
+                        {new Date(rec.createdAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => setPlayingId(playingId === rec.id ? null : rec.id)}
+                      className="px-3 py-1.5 text-xs font-semibold bg-wise-electric/10 hover:bg-wise-electric/20 text-wise-electric border border-wise-electric/30 rounded transition-colors"
+                    >
+                      {playingId === rec.id ? '⏹ Close' : '▶ Play'}
+                    </button>
+                    <a
+                      href={`${API_BASE}${rec.url}`}
+                      download={rec.originalName}
+                      className="px-3 py-1.5 text-xs font-semibold bg-wise-surface hover:bg-wise-electric/10 text-text-secondary border border-wise-border rounded transition-colors"
+                    >
+                      ↓
+                    </a>
+                    <button
+                      onClick={() => deleteRecording(rec.id)}
+                      className="px-3 py-1.5 text-xs font-semibold bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+                {playingId === rec.id && (
+                  <div className="mt-3">
+                    <video
+                      src={`${API_BASE}${rec.url}`}
+                      controls
+                      autoPlay
+                      className="w-full rounded bg-black"
+                      style={{ maxHeight: '400px' }}
+                    />
+                  </div>
+                )}
+              </div>
             ))}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Features Grid */}
       <div>
-        <h2 className="text-2xl font-bold mb-4 text-text-primary">Available Features</h2>
+        <h2 className="text-2xl font-bold mb-4 text-text-primary">Feature Status</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {features.map((feature) => {
             const statusColor =
-              feature.status === 'READY'
+              feature.status === 'WORKING'
                 ? 'bg-green-500/10 text-green-400'
-                : feature.status === 'PARTIAL'
-                  ? 'bg-yellow-500/10 text-yellow-400'
-                  : feature.status === 'UI ONLY'
-                    ? 'bg-amber-500/10 text-amber-400'
-                    : 'bg-gray-500/10 text-gray-400';
+                : feature.status === 'UI ONLY'
+                  ? 'bg-amber-500/10 text-amber-400'
+                  : 'bg-gray-500/10 text-gray-400';
 
             return (
               <div
@@ -323,27 +489,6 @@ export default function LiveStudioPage() {
           })}
         </div>
       </div>
-
-      {/* Setup Guide */}
-      {!streamSettings.rtmpUrl && (
-        <div className="bg-wise-surface border border-wise-border rounded-lg p-8">
-          <div className="flex items-start gap-4">
-            <span className="text-2xl flex-shrink-0">⚠️</span>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-text-primary mb-2">Setup Required</h3>
-              <p className="text-text-muted mb-4">
-                To start streaming, configure your RTMP settings. Contact your administrator or configure in Advanced Settings.
-              </p>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-wise-electric hover:bg-wise-electric_hover text-wise-black font-semibold rounded-lg transition-colors"
-              >
-                Back to Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

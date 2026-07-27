@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { AssetType } from '@prisma/client';
+import { AssetType, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -51,6 +51,7 @@ export class GalleryService {
     userId: string,
     sourceModule?: string,
     sourceId?: string,
+    metadata?: Record<string, unknown>,
   ) {
     const ext = path.extname(file.originalname);
     const uniqueName = `${randomBytes(16).toString('hex')}${ext}`;
@@ -72,6 +73,7 @@ export class GalleryService {
         userId,
         sourceModule,
         sourceId,
+        metadata: metadata ? (metadata as Prisma.InputJsonValue) : undefined,
       },
     });
   }
