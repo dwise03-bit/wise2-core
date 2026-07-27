@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import CommandCenterTopBar from './CommandCenterTopBar';
 import CommandCenterSidebar from './CommandCenterSidebar';
@@ -20,6 +21,7 @@ interface AppShellProps {
  * - Design system compliance (Electric Blue primary, dark theme)
  */
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
+  const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -27,6 +29,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const isAuthPage = pathname === '/login';
+
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
 
   if (!mounted) {
     return (

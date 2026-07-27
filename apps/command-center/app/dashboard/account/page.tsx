@@ -25,7 +25,7 @@ export default function AccountPage() {
         return;
       }
 
-      const res = await fetch('/api/v1/billing/me', {
+      const res = await fetch('/api/v1/billing/subscription', {
         headers: { Authorization: `Bearer ${token}` },
       });
 

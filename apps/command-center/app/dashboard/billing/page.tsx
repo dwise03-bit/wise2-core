@@ -43,20 +43,16 @@ export default function BillingPage() {
       const token = getToken();
       if (!token) { setLoading(false); return; }
 
-      const [profileRes, subRes] = await Promise.allSettled([
-        fetch('/api/v1/billing/me', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/v1/billing/subscription', { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
+      const subRes = await fetch('/api/v1/billing/subscription', {
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(() => null);
 
-      if (profileRes.status === 'fulfilled' && profileRes.value.ok) {
-        setProfile(await profileRes.value.json());
+      if (subRes?.ok) {
+        const data = await subRes.json();
+        setSubscription(data);
+        setProfile({ id: user!.id, email: user!.email || '', plan: data.plan || '', status: data.status || '', stripeCustomerId: data.stripeCustomerId });
       } else {
         setProfileError(true);
-      }
-
-      if (subRes.status === 'fulfilled' && subRes.value.ok) {
-        setSubscription(await subRes.value.json());
-      } else {
         setSubError(true);
       }
 
