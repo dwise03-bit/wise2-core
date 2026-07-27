@@ -18,24 +18,34 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Electric Blue Primary (WISE²)
-        blue: {
-          400: '#0094FF',
-          500: '#0078D4',
-          600: '#005FBF',
+        // WISE² Brand Identity - ORGANIZED CHAOS
+        wise: {
+          black: '#050505',
+          steel: '#1A1A1A',
+          surface: '#0D1117',
+          surface_secondary: '#131922',
+          card: '#10151D',
+          chrome: '#9CA3AF',
+          electric: '#0094FF',
+          electric_hover: '#32A8FF',
+          electric_active: '#0075CC',
+          electric_light: '#1AA8FF',
         },
-        slate: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+        // Text
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#C9CED6',
+          muted: '#8D98A5',
+        },
+        // Semantic
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger: '#E53935',
+        // Borders (transparencies)
+        border: {
+          subtle: 'rgba(255, 255, 255, 0.08)',
+          medium: 'rgba(255, 255, 255, 0.12)',
+          strong: 'rgba(255, 255, 255, 0.20)',
         },
       },
       fontFamily: {
@@ -44,9 +54,16 @@ module.exports = {
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
       },
       boxShadow: {
-        'glow-blue-sm': '0 0 8px rgba(0, 148, 255, 0.3)',
-        'glow-blue-md': '0 0 16px rgba(0, 148, 255, 0.5)',
-        'glow-blue-lg': '0 0 32px rgba(0, 148, 255, 0.7)',
+        'glow-electric-sm': '0 0 8px rgba(0, 148, 255, 0.3)',
+        'glow-electric-md': '0 0 16px rgba(0, 148, 255, 0.5)',
+        'glow-electric-lg': '0 0 32px rgba(0, 148, 255, 0.7)',
+      },
+      backgroundColor: {
+        base: '#050505',
+        surface: '#0D1117',
+      },
+      textColor: {
+        base: '#FFFFFF',
       },
     },
   },

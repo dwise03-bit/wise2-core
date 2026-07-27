@@ -30,11 +30,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-wise-black flex items-center justify-center">
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-blue-400 text-2xl font-bold"
+          className="text-wise-electric text-2xl font-bold"
         >
           WISE²
         </motion.div>
@@ -43,7 +43,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-wise-black text-text-primary">
       {/* Top Bar */}
       <CommandCenterTopBar
         onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}

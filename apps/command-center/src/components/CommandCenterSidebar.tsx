@@ -211,7 +211,7 @@ const CommandCenterSidebar: React.FC<CommandCenterSidebarProps> = ({
 
   return (
     <motion.aside
-      className={`fixed left-0 top-16 bottom-0 z-40 border-r border-white/10 bg-gradient-to-b from-slate-900/50 to-slate-900/30 backdrop-blur-md flex flex-col lg:relative lg:top-0 ${
+      className={`fixed left-0 top-16 bottom-0 z-40 border-r border-border-subtle bg-gradient-to-b from-wise-surface/50 to-wise-surface_secondary/30 backdrop-blur-md flex flex-col lg:relative lg:top-0 ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
@@ -223,7 +223,7 @@ const CommandCenterSidebar: React.FC<CommandCenterSidebarProps> = ({
             {!collapsed && (
               <button
                 onClick={() => toggleSection(section.title.toLowerCase())}
-                className="flex w-full items-center justify-between px-2 py-2 text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-300 transition-colors"
+                className="flex w-full items-center justify-between px-2 py-2 text-xs font-semibold uppercase tracking-wider text-text-muted hover:text-text-secondary transition-colors"
               >
                 <span>{section.title}</span>
                 <motion.span
@@ -258,14 +258,14 @@ const CommandCenterSidebar: React.FC<CommandCenterSidebarProps> = ({
                     href={item.href}
                     className={`relative w-full rounded-lg px-3 py-2 transition-all flex items-center gap-3 text-sm font-medium ${
                       isActive(item.href)
-                        ? 'bg-blue-600/30 text-blue-400'
-                        : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                        ? 'bg-wise-electric/30 text-wise-electric'
+                        : 'text-text-secondary hover:bg-white/10 hover:text-text-primary'
                     }`}
                   >
                     <div className="flex-shrink-0">{item.icon}</div>
                     {!collapsed && <span>{item.label}</span>}
                     {!collapsed && isActive(item.href) && (
-                      <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-blue-400" />
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-wise-electric" />
                     )}
                   </Link>
                 ))}

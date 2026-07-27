@@ -25,7 +25,7 @@ const CommandCenterTopBar: React.FC<CommandCenterTopBarProps> = ({
       initial={{ y: -80 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
-      className="fixed top-0 left-0 right-0 z-30 h-16 border-b border-white/10 bg-gradient-to-r from-slate-900/80 to-slate-900/60 backdrop-blur-md"
+      className="fixed top-0 left-0 right-0 z-30 h-16 border-b border-border-subtle bg-gradient-to-r from-wise-surface/80 to-wise-surface_secondary/60 backdrop-blur-md"
     >
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left: Menu & Logo */}
@@ -42,16 +42,16 @@ const CommandCenterTopBar: React.FC<CommandCenterTopBarProps> = ({
           </button>
 
           <div className="hidden lg:flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center font-bold text-white">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-wise-electric to-wise-electric_active flex items-center justify-center font-bold text-wise-black">
               W2
             </div>
-            <span className="font-semibold text-white">WISE²</span>
+            <span className="font-semibold text-text-primary">WISE²</span>
           </div>
         </div>
 
         {/* Center: Page Title */}
         <div className="hidden md:block">
-          <h1 className="text-lg font-semibold text-white">Command Center</h1>
+          <h1 className="text-lg font-semibold text-text-primary">Command Center</h1>
         </div>
 
         {/* Right: User Menu */}
@@ -62,10 +62,10 @@ const CommandCenterTopBar: React.FC<CommandCenterTopBarProps> = ({
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               className="flex items-center gap-2 rounded-lg hover:bg-white/10 transition-colors p-1"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-wise-electric to-wise-electric_active flex items-center justify-center text-xs font-bold text-wise-black">
                 DW
               </div>
-              <span className="hidden lg:inline text-sm font-medium text-white">Profile</span>
+              <span className="hidden lg:inline text-sm font-medium text-text-primary">Profile</span>
             </motion.button>
 
             <AnimatePresence>
@@ -75,21 +75,21 @@ const CommandCenterTopBar: React.FC<CommandCenterTopBarProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-gradient-to-b from-slate-900/95 to-slate-900/85 shadow-2xl backdrop-blur-xl overflow-hidden"
+                  className="absolute right-0 mt-2 w-48 rounded-xl border border-border-subtle bg-gradient-to-b from-wise-surface/95 to-wise-surface_secondary/85 shadow-2xl backdrop-blur-xl overflow-hidden"
                   onClick={() => setUserMenuOpen(false)}
                 >
-                  <div className="px-4 py-3 border-b border-white/10">
-                    <p className="text-sm font-medium text-white">Profile</p>
-                    <p className="text-xs text-slate-400">user@wise2.net</p>
+                  <div className="px-4 py-3 border-b border-border-subtle">
+                    <p className="text-sm font-medium text-text-primary">Profile</p>
+                    <p className="text-xs text-text-muted">user@wise2.net</p>
                   </div>
-                  <button className="w-full px-4 py-2 text-left text-sm text-slate-300 hover:bg-white/10 transition-colors">
+                  <button className="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-white/10 transition-colors">
                     Account Settings
                   </button>
-                  <button className="w-full px-4 py-2 text-left text-sm text-slate-300 hover:bg-white/10 transition-colors">
+                  <button className="w-full px-4 py-2 text-left text-sm text-text-secondary hover:bg-white/10 transition-colors">
                     Preferences
                   </button>
-                  <div className="border-t border-white/10" />
-                  <button className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-600/10 transition-colors">
+                  <div className="border-t border-border-subtle" />
+                  <button className="w-full px-4 py-2 text-left text-sm text-danger hover:bg-danger/10 transition-colors">
                     Sign Out
                   </button>
                 </motion.div>
