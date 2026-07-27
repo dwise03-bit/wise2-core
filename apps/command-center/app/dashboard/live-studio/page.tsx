@@ -199,7 +199,7 @@ export default function LiveStudioPage() {
         {/* Stream Stats */}
         <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
               <span className="text-lg">📊</span>
             </div>
             <h3 className="font-semibold text-text-primary">Stream Stats</h3>
@@ -229,7 +229,7 @@ export default function LiveStudioPage() {
         {/* Audio Mixer */}
         <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
               <span className="text-lg">🔊</span>
             </div>
             <h3 className="font-semibold text-text-primary">Audio Mixer</h3>
@@ -241,7 +241,7 @@ export default function LiveStudioPage() {
                 <span className="text-sm text-wise-electric">-12dB</span>
               </div>
               <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{ width: '50%' }} />
+                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '50%' }} />
               </div>
             </div>
             <div>
@@ -250,7 +250,7 @@ export default function LiveStudioPage() {
                 <span className="text-sm text-wise-electric">-6dB</span>
               </div>
               <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '65%' }} />
+                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '65%' }} />
               </div>
             </div>
             <div>
@@ -259,7 +259,7 @@ export default function LiveStudioPage() {
                 <span className="text-sm text-wise-electric">-3dB</span>
               </div>
               <div className="w-full bg-wise-black rounded-full h-2">
-                <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '75%' }} />
+                <div className="bg-wise-electric h-2 rounded-full" style={{ width: '75%' }} />
               </div>
             </div>
           </div>
@@ -268,7 +268,7 @@ export default function LiveStudioPage() {
         {/* Quick Actions */}
         <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-green-500/10 border border-green-500/30 rounded-lg">
+            <div className="p-2 bg-wise-electric/10 border border-wise-electric/30 rounded-lg">
               <span className="text-lg">⚡</span>
             </div>
             <h3 className="font-semibold text-text-primary">Quick Actions</h3>
