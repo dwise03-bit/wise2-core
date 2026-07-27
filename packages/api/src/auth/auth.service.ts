@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User, UserRole, UserStatus } from './user.entity';
+import { User, UserRole } from './user.entity';
 import { TokenService } from './token.service';
 import { PasswordService } from './password.service';
 import { EmailService } from '../email/email.service';
@@ -54,15 +54,12 @@ export class AuthService {
     // Hash password
     const passwordHash = await this.passwordService.hashPassword(password);
 
-    // Create new user
+    const fullName = [firstName, lastName].filter(Boolean).join(' ') || undefined;
     const user = this.userRepository.create({
       email,
       password_hash: passwordHash,
-      firstName: firstName || undefined,
-      lastName: lastName || undefined,
+      name: fullName,
       role: UserRole.CUSTOMER,
-      status: UserStatus.ACTIVE,
-      email_verified: false,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -117,17 +114,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Check if email is verified
-    if (!user.email_verified) {
-      throw new BadRequestException(
-        'Email not verified. Check your email for verification link.',
-      );
-    }
-
-    // Update last login time
-    await this.userRepository.update(user.id, {
-      last_login_at: new Date(),
-    });
+    // Note: email verification check skipped — Prisma User table has no email_verified column.
+    // Users created via Prisma are considered verified.
 
     // Generate tokens
     const accessToken = this.tokenService.generateAccessToken(

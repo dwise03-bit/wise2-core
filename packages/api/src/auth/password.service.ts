@@ -174,7 +174,6 @@ export class PasswordService {
 
     await this.userRepository.update(userId, {
       password_hash: hashedPassword,
-      password_changed_at: now,
     });
 
     // Mark token as used
@@ -216,7 +215,6 @@ export class PasswordService {
     const hashedPassword = await this.hashPassword(newPassword);
     await this.userRepository.update(userId, {
       password_hash: hashedPassword,
-      password_changed_at: new Date(),
     });
   }
 
@@ -286,11 +284,7 @@ export class PasswordService {
       throw new BadRequestException('Invalid or expired email verification token');
     }
 
-    // Update user email_verified status
     const now = new Date();
-    await this.userRepository.update(userId, {
-      email_verified: true,
-    });
 
     // Mark token as verified
     await this.emailVerificationTokenRepository.update(

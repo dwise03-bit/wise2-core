@@ -113,7 +113,7 @@ export class OAuthCredentials {
   updated_at!: Date;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.oauthCredentials, {
+  @ManyToOne(() => User, {
     onDelete: 'CASCADE',
     lazy: true,
   })
