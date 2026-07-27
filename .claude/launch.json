@@ -9,6 +9,12 @@
       "autoPort": true,
       "description": "WISE² Development Environment - All Services",
       "details": "Starts all apps in parallel:\n- Website: localhost:3001\n- Dashboard: localhost:3002\n- Admin: localhost:3003\n- Studio: localhost:3005\n- API: localhost:3010"
+    },
+    {
+      "name": "command-center",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace=apps/command-center"],
+      "port": 3002
     }
   ]
 }

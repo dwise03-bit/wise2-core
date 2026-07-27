@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL || 'http://localhost:3001/login';
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protected routes that require authentication
   const protectedRoutes = ['/dashboard'];
-
-  // Check if this is a protected route
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   if (isProtectedRoute) {
-    // Check for auth token in cookies
     const authToken = request.cookies.get('authToken')?.value;
 
     if (!authToken) {
-      // Redirect to login on the website app
-      const loginUrl = new URL('http://localhost:3000/login');
+      const loginUrl = new URL(LOGIN_URL);
+      loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
       return NextResponse.redirect(loginUrl);
     }
   }
