@@ -77,62 +77,62 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-slate-700 rounded w-32 mb-4"></div>
-          <div className="h-4 bg-slate-700 rounded w-64"></div>
+          <div className="h-8 bg-wise-surface rounded w-32 mb-4"></div>
+          <div className="h-4 bg-wise-surface rounded w-64"></div>
         </div>
       </div>
     );
   }
 
   const planColor = {
-    FREE: 'text-gray-400',
-    STARTER: 'text-blue-400',
-    PRO: 'text-purple-400',
-    ENTERPRISE: 'text-yellow-400',
+    FREE: 'text-text-muted',
+    STARTER: 'text-wise-electric',
+    PRO: 'text-wise-electric_hover',
+    ENTERPRISE: 'text-warning',
   };
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-slate-400">
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Dashboard</h1>
+        <p className="text-text-secondary">
           Welcome to your WISE² Command Center. Monitor, control, and automate your business operations.
         </p>
         {user && (
-          <p className="text-slate-500 text-sm mt-2">
-            Logged in as <span className="text-slate-300 font-semibold">{user.email}</span>
+          <p className="text-text-muted text-sm mt-2">
+            Logged in as <span className="text-text-secondary font-semibold">{user.email}</span>
           </p>
         )}
       </div>
 
       {/* Plan Status Card */}
       {customerData && (
-        <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-6">
+        <div className="rounded-lg border border-wise-electric/30 bg-wise-electric/5 p-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className="text-slate-400 text-sm mb-2">Current Plan</p>
+              <p className="text-text-muted text-sm mb-2">Current Plan</p>
               <p className={`text-2xl font-bold ${planColor[customerData.subscription.plan]}`}>
                 WISE² {customerData.subscription.plan}
               </p>
-              <p className="text-slate-500 text-sm mt-1">
-                Status: <span className="text-slate-300 capitalize">{customerData.subscription.status}</span>
+              <p className="text-text-muted text-sm mt-1">
+                Status: <span className="text-text-secondary capitalize">{customerData.subscription.status}</span>
               </p>
               {customerData.subscription.currentPeriodEnd && (
-                <p className="text-slate-500 text-sm mt-1">
+                <p className="text-text-muted text-sm mt-1">
                   Renews {new Date(customerData.subscription.currentPeriodEnd).toLocaleDateString()}
                 </p>
               )}
               {customerData.subscription.trialEndsAt && (
-                <p className="text-orange-400 text-sm mt-1">
+                <p className="text-warning text-sm mt-1">
                   Trial ends {new Date(customerData.subscription.trialEndsAt).toLocaleDateString()}
                 </p>
               )}
               {error && (
-                <p className="text-yellow-400 text-xs mt-2">{error}</p>
+                <p className="text-warning text-xs mt-2">{error}</p>
               )}
             </div>
-            <button className="px-6 py-2 rounded-lg bg-blue-500/20 border border-blue-500/50 text-blue-300 text-sm font-semibold hover:bg-blue-500/30 transition">
+            <button className="px-6 py-2 rounded-lg bg-wise-electric/20 border border-wise-electric/50 text-wise-electric text-sm font-semibold hover:bg-wise-electric/30 transition">
               Manage Plan →
             </button>
           </div>
@@ -141,23 +141,23 @@ export default function DashboardPage() {
 
       {/* Feature Access Card */}
       {customerData && (
-        <div className="rounded-lg border border-white/10 bg-slate-900/30 p-6 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold text-white mb-4">Your Access</h3>
+        <div className="rounded-lg border border-border-subtle bg-wise-surface/30 p-6 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-text-primary mb-4">Your Access</h3>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${customerData.entitlements.canAccessSoundLabs ? 'bg-green-400' : 'bg-red-400'}`}></div>
-              <span className={customerData.entitlements.canAccessSoundLabs ? 'text-slate-300' : 'text-slate-500'}>
+              <div className={`w-2 h-2 rounded-full ${customerData.entitlements.canAccessSoundLabs ? 'bg-success' : 'bg-danger'}`}></div>
+              <span className={customerData.entitlements.canAccessSoundLabs ? 'text-text-secondary' : 'text-text-muted'}>
                 Sound Labs {customerData.entitlements.canAccessSoundLabs ? '✓' : '(Upgrade to Starter)'}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${customerData.entitlements.canGenerateMusic ? 'bg-green-400' : 'bg-red-400'}`}></div>
-              <span className={customerData.entitlements.canGenerateMusic ? 'text-slate-300' : 'text-slate-500'}>
+              <div className={`w-2 h-2 rounded-full ${customerData.entitlements.canGenerateMusic ? 'bg-success' : 'bg-danger'}`}></div>
+              <span className={customerData.entitlements.canGenerateMusic ? 'text-text-secondary' : 'text-text-muted'}>
                 Music Generation {customerData.entitlements.canGenerateMusic ? '✓' : '(Upgrade to Starter)'}
               </span>
             </div>
             {customerData.entitlements.monthlyGenerations !== null && (
-              <p className="text-slate-500 text-sm mt-4">
+              <p className="text-text-muted text-sm mt-4">
                 Monthly generations: {customerData.entitlements.monthlyGenerations}
               </p>
             )}
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           {customerData.subscription.plan === 'FREE' && (
             <a
               href={customerData.upgradeUrl}
-              className="inline-block mt-4 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/50 text-purple-300 text-sm font-semibold hover:bg-purple-500/30 transition"
+              className="inline-block mt-4 px-4 py-2 rounded-lg bg-wise-electric/20 border border-wise-electric/50 text-wise-electric text-sm font-semibold hover:bg-wise-electric/30 transition"
             >
               Upgrade Plan →
             </a>
@@ -176,9 +176,9 @@ export default function DashboardPage() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Overview Card */}
-        <div className="rounded-lg border border-white/10 bg-slate-900/30 p-6 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold text-white mb-2">Overview</h3>
-          <p className="text-slate-400 text-sm">
+        <div className="rounded-lg border border-border-subtle bg-wise-surface/30 p-6 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-text-primary mb-2">Overview</h3>
+          <p className="text-text-secondary text-sm">
             Dashboard overview and key metrics coming soon.
           </p>
         </div>
@@ -186,24 +186,24 @@ export default function DashboardPage() {
         {/* Sound Labs Card */}
         <div className={`rounded-lg border p-6 backdrop-blur-sm ${
           customerData?.entitlements.canAccessSoundLabs
-            ? 'border-white/10 bg-slate-900/30'
-            : 'border-slate-700/50 bg-slate-900/20'
+            ? 'border-border-subtle bg-wise-surface/30'
+            : 'border-border-subtle/50 bg-wise-surface/20'
         }`}>
-          <h3 className="text-lg font-semibold text-white mb-2">Sound Labs</h3>
-          <p className="text-slate-400 text-sm mb-4">
+          <h3 className="text-lg font-semibold text-text-primary mb-2">Sound Labs</h3>
+          <p className="text-text-secondary text-sm mb-4">
             Create music and audio content with AI.
           </p>
           {customerData?.entitlements.canAccessSoundLabs ? (
             <a
               href="/dashboard/sound-labs"
-              className="inline-block px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/50 text-blue-300 text-sm font-semibold hover:bg-blue-500/30 transition"
+              className="inline-block px-4 py-2 rounded-lg bg-wise-electric/20 border border-wise-electric/50 text-wise-electric text-sm font-semibold hover:bg-wise-electric/30 transition"
             >
               Open Sound Labs →
             </a>
           ) : (
             <a
               href={customerData?.upgradeUrl || '/pricing'}
-              className="inline-block px-4 py-2 rounded-lg bg-slate-700/30 border border-slate-600/50 text-slate-400 text-sm font-semibold hover:bg-slate-700/50 transition"
+              className="inline-block px-4 py-2 rounded-lg bg-wise-surface/30 border border-wise-surface/50 text-text-muted text-sm font-semibold hover:bg-wise-surface/50 transition"
             >
               Upgrade to unlock →
             </a>
@@ -211,21 +211,21 @@ export default function DashboardPage() {
         </div>
 
         {/* Settings Card */}
-        <div className="rounded-lg border border-white/10 bg-slate-900/30 p-6 backdrop-blur-sm">
-          <h3 className="text-lg font-semibold text-white mb-2">Settings</h3>
-          <p className="text-slate-400 text-sm mb-4">
+        <div className="rounded-lg border border-border-subtle bg-wise-surface/30 p-6 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-text-primary mb-2">Settings</h3>
+          <p className="text-text-secondary text-sm mb-4">
             Manage account and billing settings.
           </p>
-          <button className="inline-block px-4 py-2 rounded-lg bg-slate-700/30 border border-slate-600/50 text-slate-300 text-sm font-semibold hover:bg-slate-700/50 transition">
+          <button className="inline-block px-4 py-2 rounded-lg bg-wise-surface/30 border border-wise-surface/50 text-text-secondary text-sm font-semibold hover:bg-wise-surface/50 transition">
             Account Settings →
           </button>
         </div>
       </div>
 
-      {/* Phase 10D Note */}
-      <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4">
-        <p className="text-blue-300 text-sm">
-          💡 Phase 10D: Auth integration and customer journey complete. Sound Labs integration and entitlements in progress.
+      {/* UI Status Note */}
+      <div className="rounded-lg border border-wise-electric/30 bg-wise-electric/5 p-4">
+        <p className="text-wise-electric text-sm">
+          💡 UI Phase 2: Global Command Center shell with design system compliance. Navigation and module integration in progress.
         </p>
       </div>
     </div>

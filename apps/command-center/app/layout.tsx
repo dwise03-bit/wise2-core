@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { AppShellProvider } from '../src/components/AppShellProvider';
+import '../src/styles/globals.css';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -23,10 +24,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#020617" />
+        <meta name="theme-color" content="#050505" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body className="bg-slate-950 text-white">
+      <body className="bg-wise-black text-text-primary antialiased">
         <AppShellProvider>
           {children}
         </AppShellProvider>

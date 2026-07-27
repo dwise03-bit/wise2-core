@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* WISE² Global Styles */
+:root {
+  /* Brand Colors */
+  --wise-black: #050505;
+  --wise-steel: #1A1A1A;
+  --wise-surface: #0D1117;
+  --wise-surface-secondary: #131922;
+  --wise-card: #10151D;
+  --wise-chrome: #9CA3AF;
+  --wise-electric: #0094FF;
+
+  /* Text */
+  --text-primary: #FFFFFF;
+  --text-secondary: #C9CED6;
+  --text-muted: #8D98A5;
+
+  /* Semantic */
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #E53935;
+}
+
+/* Base Typography */
+body {
+  @apply font-sans;
+  background-color: var(--wise-black);
+  color: var(--text-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display font-bold;
+  color: var(--text-primary);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--wise-electric);
+  color: var(--wise-black);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--wise-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--wise-steel);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--wise-chrome);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-in-out;
+}
