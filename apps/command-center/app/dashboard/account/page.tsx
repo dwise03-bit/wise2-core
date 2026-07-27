@@ -93,11 +93,15 @@ export default function AccountPage() {
             <div>
               <p className="font-semibold text-text-primary">Active Plan</p>
               <p className="text-sm text-text-muted">
-                {subscription?.plan?.name || 'Professional'}
+                {subscription?.plan || 'Not configured'}
               </p>
             </div>
-            <span className="px-3 py-1 bg-green-500/10 text-green-400 text-xs font-semibold rounded">
-              {subscription?.status === 'active' ? 'ACTIVE' : subscription ? 'INACTIVE' : 'SETUP REQUIRED'}
+            <span className={`px-3 py-1 text-xs font-semibold rounded ${
+              subscription?.status === 'active' ? 'bg-green-500/10 text-green-400'
+                : subscription?.plan ? 'bg-amber-500/10 text-amber-400'
+                  : 'bg-gray-500/10 text-gray-400'
+            }`}>
+              {subscription?.status === 'active' ? 'ACTIVE' : subscription?.plan ? subscription.status?.toUpperCase() || 'INACTIVE' : 'NOT CONFIGURED'}
             </span>
           </div>
           <div className="flex items-center justify-between p-4 bg-wise-black/30 rounded-lg">
