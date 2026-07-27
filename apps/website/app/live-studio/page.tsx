@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import IntakeForm from '@/components/IntakeForm';
-import { ArrowRight, Sparkles, Radio, MessageCircle, PlayCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Sparkles, Radio, MessageCircle, PlayCircle, CheckCircle2, Loader } from 'lucide-react';
 
 const stats = [
   { label: 'Live viewers', value: '358' },
@@ -38,7 +39,29 @@ const featuredSteps = [
 ];
 
 export default function LiveStudioLandingPage() {
+  const router = useRouter();
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-wise-bg-primary flex items-center justify-center">
+        <Loader className="w-8 h-8 text-wise-primary animate-spin" />
+      </div>
+    );
+  }
+
+  // Redirect authenticated users to dashboard
+  if (isAuthenticated && typeof window !== 'undefined') {
+    setTimeout(() => router.push('/live-studio/dashboard'), 0);
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#03060d] text-white">
