@@ -6,15 +6,15 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
 // ── Config ──────────────────────────────────────────────────────────────────
-const PORT = parseInt(process.env.PORT || '3011', 10);
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/wise2-brain';
+const PORT = parseInt(process.env.PORT || '3012', 10);
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:admin-dev-password@127.0.0.1:27017/wise2-brain?authSource=admin';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'mistral:latest';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen2.5-coder:7b';
 const DB_NAME = 'wise2-brain';
 const COLLECTION = 'knowledge_entries';
 // Hermes integration
-const COMMAND_CENTER_URL = process.env.COMMAND_CENTER_URL || 'http://127.0.0.1:3004';
+const COMMAND_CENTER_URL = process.env.COMMAND_CENTER_URL || 'http://127.0.0.1:3002';
 const EVENTS_SECRET = process.env.EVENTS_SECRET || '';
 
 // ── App ──────────────────────────────────────────────────────────────────────

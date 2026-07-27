@@ -65,7 +65,7 @@ services:
         max-file: "3"
 
   mongodb:
-    image: mongo:7-alpine
+    image: mongo:7
     container_name: wise2-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
