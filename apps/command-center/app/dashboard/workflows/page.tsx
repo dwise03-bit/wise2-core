@@ -269,6 +269,63 @@ export default function WorkflowsPage() {
           <p className="text-text-muted">Create workflow templates to automate tasks across your business.</p>
         </div>
       )}
+
+      {!apiAvailable && (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Templates', value: '—', icon: '📋' },
+              { label: 'Active', value: '—', icon: '✅' },
+              { label: 'Executions', value: '—', icon: '⚡' },
+              { label: 'Success Rate', value: '—', icon: '📊' },
+            ].map(s => (
+              <div key={s.label} className="bg-wise-surface border border-wise-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span>{s.icon}</span>
+                  <p className="text-xs text-text-muted">{s.label}</p>
+                </div>
+                <p className="text-2xl font-bold text-wise-electric">{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Automation Capabilities</h3>
+              <div className="space-y-3">
+                {[
+                  { name: 'Template Engine', status: 'Requires Brain API', color: 'amber' },
+                  { name: 'Async Execution', status: 'Requires Brain API', color: 'amber' },
+                  { name: 'Retry Policies', status: 'Requires Brain API', color: 'amber' },
+                  { name: 'Scheduled Triggers', status: 'Requires Brain API', color: 'amber' },
+                ].map(c => (
+                  <div key={c.name} className="flex items-center justify-between">
+                    <span className="text-sm text-text-primary">{c.name}</span>
+                    <span className="text-xs text-amber-400">{c.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-wise-surface border border-wise-border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Example Workflows</h3>
+              <div className="space-y-3">
+                {[
+                  { name: 'Prospect Follow-Up', desc: 'Auto-email new leads after 24h' },
+                  { name: 'Invoice Generator', desc: 'Create invoices on subscription renewal' },
+                  { name: 'Content Pipeline', desc: 'Route gallery uploads through review' },
+                  { name: 'System Health Check', desc: 'Monitor API and database status' },
+                ].map(w => (
+                  <div key={w.name} className="p-3 bg-wise-black/30 rounded-lg">
+                    <p className="text-sm font-semibold text-text-primary">{w.name}</p>
+                    <p className="text-xs text-text-muted">{w.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
