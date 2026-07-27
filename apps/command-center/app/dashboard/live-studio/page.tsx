@@ -115,13 +115,13 @@ export default function LiveStudioPage() {
   }
 
   const features = [
-    { icon: '🎬', label: 'Scene Manager', status: 'READY' },
-    { icon: '📡', label: 'Multistreaming', status: 'READY' },
-    { icon: '💬', label: 'Chat Overlay', status: 'READY' },
-    { icon: '📊', label: 'Stream Analytics', status: 'READY' },
-    { icon: '🖥️', label: 'Screen Share', status: 'SETUP REQUIRED' },
-    { icon: '🎤', label: 'Noise Gate', status: 'BETA' },
-    { icon: '📻', label: 'Auto Captions', status: 'COMING SOON' },
+    { icon: '🎬', label: 'Scene Manager', status: 'UI ONLY' },
+    { icon: '📡', label: 'Multistreaming', status: 'UI ONLY' },
+    { icon: '💬', label: 'Chat Overlay', status: 'UI ONLY' },
+    { icon: '📊', label: 'Stream Analytics', status: 'UI ONLY' },
+    { icon: '🖥️', label: 'Screen Capture', status: 'PARTIAL' },
+    { icon: '🎤', label: 'Audio Recording', status: 'PARTIAL' },
+    { icon: '📻', label: 'Auto Captions', status: 'PLANNED' },
     { icon: '⚡', label: 'AI Scene Detection', status: 'PLANNED' },
   ];
 
@@ -300,9 +300,9 @@ export default function LiveStudioPage() {
             const statusColor =
               feature.status === 'READY'
                 ? 'bg-green-500/10 text-green-400'
-                : feature.status === 'BETA'
+                : feature.status === 'PARTIAL'
                   ? 'bg-yellow-500/10 text-yellow-400'
-                  : feature.status === 'SETUP REQUIRED'
+                  : feature.status === 'UI ONLY'
                     ? 'bg-amber-500/10 text-amber-400'
                     : 'bg-gray-500/10 text-gray-400';
 
