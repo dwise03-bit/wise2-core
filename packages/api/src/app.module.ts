@@ -18,6 +18,8 @@ import { BillingModule } from './v1/billing/billing.module';
 import { ProspectsModule } from './v1/prospects/prospects.module';
 // import { AuditsModule } from './v1/audits/audits.module'; // DEFERRED
 import { SoundLabsModule } from './v1/sound-labs/sound-labs.module';
+import { CustomersModule } from './v1/customers/customers.module';
+import { GalleryModule } from './v1/gallery/gallery.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -102,6 +104,8 @@ import { APIStatusController } from './config/api-status.controller';
     BillingModule,
     SoundLabsModule,
     ProspectsModule,
+    CustomersModule,
+    GalleryModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

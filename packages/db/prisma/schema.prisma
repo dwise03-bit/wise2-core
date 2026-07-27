@@ -676,6 +676,66 @@ enum ProspectStatus {
   LOST
 }
 
+// ===== CUSTOMER MANAGEMENT =====
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  CHURNED
+}
+
+model Customer {
+  id              String         @id @default(cuid())
+  businessName    String
+  contactName     String
+  email           String         @unique
+  phone           String?
+  website         String?
+  industry        String?
+  notes           String?        @db.Text
+  tags            String[]       @default([])
+  status          CustomerStatus @default(ACTIVE)
+  mrr             Float          @default(0)
+  prospectId      String?        @unique
+  userId          String?
+  convertedAt     DateTime       @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+// ===== GALLERY / ASSET MANAGEMENT =====
+
+enum AssetType {
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
+}
+
+model GalleryAsset {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  assetType   AssetType
+  storagePath String
+  url         String?
+  userId      String
+  sourceModule String?
+  sourceId    String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([assetType])
+  @@index([sourceModule, sourceId])
+}
+
 // ===== AI AUDIT & FINDINGS SYSTEM =====
 
 // AuditSession: AI-powered sales audit of a prospect
