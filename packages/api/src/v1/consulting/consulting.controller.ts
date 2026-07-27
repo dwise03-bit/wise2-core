@@ -10,7 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { ConsultingService } from './consulting.service';
 
 @Controller('v1/consulting')

@@ -11,7 +11,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { PostCallSummaryService } from './postcall.service';
-import { JwtAuthGuard } from '@app/common/guards/jwt.guard';
+import { JwtAuthGuard } from '../../auth/jwt.guard';
 
 @Controller('v1/consulting/post-call')
 @UseGuards(JwtAuthGuard)

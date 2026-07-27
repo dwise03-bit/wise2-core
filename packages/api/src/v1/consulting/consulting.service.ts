@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@app/common/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import Stripe from 'stripe';
 import { addDays, startOfDay, endOfDay, parseISO, format, isBefore, isAfter } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 @Injectable()
 export class ConsultingService {
@@ -142,11 +142,11 @@ export class ConsultingService {
       const [endHour, endMin] = dayAvailability.endTime.split(':').map(Number);
 
       const tz = dayAvailability.timezone || 'UTC';
-      const dayStart = zonedTimeToUtc(
+      const dayStart = fromZonedTime(
         new Date(date.getFullYear(), date.getMonth(), date.getDate(), startHour, startMin),
         tz,
       );
-      const dayEnd = zonedTimeToUtc(
+      const dayEnd = fromZonedTime(
         new Date(date.getFullYear(), date.getMonth(), date.getDate(), endHour, endMin),
         tz,
       );

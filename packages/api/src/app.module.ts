@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
+// import { MongooseModule } from '@nestjs/mongoose'; // DEFERRED for Phase B
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AdminModule } from './admin/admin.module';
@@ -16,7 +16,9 @@ import { DiscordModule } from './discord/discord.module';
 // import { ConsultingModule } from './v1/consulting/consulting.module';
 import { BillingModule } from './v1/billing/billing.module';
 import { ProspectsModule } from './v1/prospects/prospects.module';
-import { AuditsModule } from './v1/audits/audits.module';
+// import { AuditsModule } from './v1/audits/audits.module'; // DEFERRED
+import { SoundLabsModule } from './v1/sound-labs/sound-labs.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -27,16 +29,16 @@ import { APIStatusController } from './config/api-status.controller';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const mongoUri =
-          configService.get('MONGODB_URI') ||
-          'mongodb://localhost:27017/wise2-brain';
-        return { uri: mongoUri };
-      },
-    }),
+    // MongooseModule.forRootAsync({ // DEFERRED for Phase B
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => {
+    //     const mongoUri =
+    //       configService.get('MONGODB_URI') ||
+    //       'mongodb://localhost:27017/wise2-brain';
+    //     return { uri: mongoUri };
+    //   },
+    // }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -79,8 +81,8 @@ import { APIStatusController } from './config/api-status.controller';
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
           migrationsRun: false,
-          synchronize: configService.get('NODE_ENV') !== 'production',
-          logging: configService.get('NODE_ENV') !== 'production',
+          synchronize: false,
+          logging: false,
         };
       },
     }),
@@ -95,10 +97,12 @@ import { APIStatusController } from './config/api-status.controller';
     CommunityModule,
     ModulesModule,
     DiscordModule,
-    // ConsultingModule,
+    PrismaModule,
+    // ConsultingModule, // DEFERRED
     BillingModule,
+    SoundLabsModule,
     ProspectsModule,
-    AuditsModule,
+    // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],
   providers: [AppService],

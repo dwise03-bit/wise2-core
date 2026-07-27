@@ -44,7 +44,7 @@ function CheckoutContent() {
         throw new Error('Please fill in all fields');
       }
 
-      const response = await fetch('/api/v1/billing/checkout', {
+      const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

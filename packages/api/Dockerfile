@@ -6,11 +6,11 @@ WORKDIR /app
 # (bcrypt, sqlite3, etc.)
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 
-COPY package.json package-lock.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages ./packages
 
-# Install dependencies with legacy-peer-deps for compatibility
-RUN npm install --legacy-peer-deps
+# Install pnpm and dependencies for entire monorepo
+RUN npm install -g pnpm && pnpm install --frozen-lockfile --recursive
 
 WORKDIR /app/packages/api
 
@@ -19,7 +19,7 @@ WORKDIR /app/packages/api
 RUN rm -f tsconfig.tsbuildinfo
 
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Verify that JavaScript files were generated (not just .d.ts files)
 RUN if [ ! -f dist/main.js ]; then \

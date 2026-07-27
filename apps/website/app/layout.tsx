@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
-import { Navigation } from '@/components/wise';
+import { PublicNav, PublicFooter } from '@/components/navigation';
 import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
 import { ToastProvider } from '@/components/ui/Toast';
 
@@ -58,15 +58,18 @@ export default function RootLayout({
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <ToastProvider>
-          <Navigation />
+          <PublicNav />
           <div className="min-h-screen flex flex-col">
-            {/* Main Content - pt-20 accounts for fixed navigation (~80px) */}
-            <main className="flex-1 pt-20">
+            {/* Main Content - pt-16 accounts for fixed navigation (64px) */}
+            <main className="flex-1 pt-16">
               {children}
             </main>
 
             {/* Global support chat */}
             <ChatWidgetWrapper />
+
+            {/* Footer */}
+            <PublicFooter />
           </div>
         </ToastProvider>
       </body>

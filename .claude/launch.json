@@ -6,7 +6,7 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["turbo", "run", "dev", "--parallel"],
       "port": 3001,
-      "autoPort": false,
+      "autoPort": true,
       "description": "WISE² Development Environment - All Services",
       "details": "Starts all apps in parallel:\n- Website: localhost:3001\n- Dashboard: localhost:3002\n- Admin: localhost:3003\n- Studio: localhost:3005\n- API: localhost:3010"
     }

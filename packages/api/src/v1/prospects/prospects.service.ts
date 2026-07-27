@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ProspectStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -95,21 +96,29 @@ export class ProspectsService {
   /**
    * Update prospect details
    */
-  async updateProspect(id: string, data: Partial<{
-    status: string;
-    notes: string;
-    estimatedOpportunity: number;
-    tags: string[];
-    auditScheduledAt: Date;
-    auditCompletedAt: Date;
-    proposalSentAt: Date;
-    wonAt: Date;
-    lostAt: Date;
-    lostReason: string;
-  }>) {
+  async updateProspect(
+    id: string,
+    data: Partial<{
+      status: ProspectStatus | string;
+      notes: string;
+      estimatedOpportunity: number;
+      tags: string[];
+      auditScheduledAt: Date;
+      auditCompletedAt: Date;
+      proposalSentAt: Date;
+      wonAt: Date;
+      lostAt: Date;
+      lostReason: string;
+    }>,
+  ) {
+    const { status, ...rest } = data;
+    const updateData: Parameters<typeof this.prisma.prospect.update>[0]['data'] = rest;
+    if (status && Object.values(ProspectStatus).includes(status as ProspectStatus)) {
+      updateData.status = status as ProspectStatus;
+    }
     return this.prisma.prospect.update({
       where: { id },
-      data,
+      data: updateData,
     });
   }
 

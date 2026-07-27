@@ -1,10 +1,11 @@
-import { Controller, Post, Get, Put, Body, Param, Headers, RawBodyRequest, Req } from '@nestjs/common';
+import { Controller, Post, Get, Put, Body, Param, Headers, RawBodyRequest, Req, HttpCode, BadRequestException, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { BillingService } from './billing.service';
 import { EmailService } from '../email/email.service';
 import { WorkspacesService } from '../workspaces/workspaces.service';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { StripeWebhookHandler } from './stripe.webhook';
+import { JwtAuthGuard } from '../../auth/jwt.guard';
 
 @Controller('v1/billing')
 export class BillingController {
@@ -46,7 +47,9 @@ export class BillingController {
 
       return { url, sessionId };
     } catch (error) {
-      throw new Error(`Checkout failed: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Checkout failed: ${message}`);
     }
   }
 
@@ -62,8 +65,9 @@ export class BillingController {
       // Fulfill subscription
       const subscriptionData = await this.billingService.fulfillSubscription(body.sessionId);
 
-      // Get user email (from Stripe session)
-      const userEmail = subscriptionData.email; // Would come from Stripe
+      if (!subscriptionData.userId) {
+        throw new Error('User ID not found in subscription metadata');
+      }
 
       // Create workspace
       const workspace = await this.workspacesService.createWorkspace(
@@ -71,18 +75,9 @@ export class BillingController {
         {
           name: 'My Workspace',
           urlSlug: `workspace-${Date.now()}`,
-          subscriptionId: subscriptionData.id,
+          subscriptionId: subscriptionData.stripeSubscriptionId,
         },
       );
-
-      // Send welcome email
-      await this.emailService.sendWelcomeEmail({
-        email: userEmail,
-        name: subscriptionData.fullName || 'User',
-        workspaceName: workspace.name,
-        workspaceUrl: workspace.urlSlug,
-        trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-      });
 
       // Track event
       await this.analyticsService.trackEvent({
@@ -94,18 +89,98 @@ export class BillingController {
 
       return {
         success: true,
-        subscriptionId: subscriptionData.id,
+        subscriptionId: subscriptionData.stripeSubscriptionId,
         workspaceId: workspace.id,
         inviteLink: workspace.inviteLink,
       };
     } catch (error) {
-      throw new Error(`Checkout success handling failed: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Checkout success handling failed: ${message}`);
+    }
+  }
+
+  /**
+   * GET /v1/billing/me
+   * Get authenticated user's complete customer profile (subscription + entitlements)
+   * SECURE: Uses JWT authentication, only returns current user's data
+   */
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMyCustomerProfile(@Req() req: Request & { user: any }) {
+    try {
+      if (!req.user || !req.user.id) {
+        throw new UnauthorizedException('User not authenticated');
+      }
+
+      const profile = await this.billingService.getCustomerProfile(req.user.id);
+      return profile;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch customer profile: ${message}`);
+    }
+  }
+
+  /**
+   * GET /v1/billing/subscription
+   * Get authenticated user's subscription details
+   * SECURE: Uses JWT authentication, only returns current user's subscription
+   */
+  @Get('subscription')
+  @UseGuards(JwtAuthGuard)
+  async getMySubscription(@Req() req: Request & { user: any }) {
+    try {
+      if (!req.user || !req.user.id) {
+        throw new UnauthorizedException('User not authenticated');
+      }
+
+      const subscription = await this.billingService.getSubscription(req.user.id);
+      return subscription;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch subscription: ${message}`);
+    }
+  }
+
+  /**
+   * DEPRECATED: GET /v1/billing/customer/:userId
+   * SECURITY WARNING: Allows cross-user data access
+   * Use /v1/billing/me instead
+   */
+  @Get('customer/:userId')
+  async getCustomerProfile(@Param('userId') userId: string) {
+    try {
+      const profile = await this.billingService.getCustomerProfile(userId);
+      return profile;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch customer profile: ${message}`);
+    }
+  }
+
+  /**
+   * DEPRECATED: GET /v1/billing/subscription/user/:userId
+   * SECURITY WARNING: Allows cross-user data access
+   * Use /v1/billing/subscription instead
+   */
+  @Get('subscription/user/:userId')
+  async getUserSubscription(@Param('userId') userId: string) {
+    try {
+      const subscription = await this.billingService.getSubscription(userId);
+      return subscription;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch subscription: ${message}`);
     }
   }
 
   /**
    * GET /v1/billing/subscription/:subscriptionId
-   * Get subscription details
+   * Get subscription details (legacy, by subscriptionId)
    */
   @Get('subscription/:subscriptionId')
   async getSubscription(@Param('subscriptionId') subscriptionId: string) {
@@ -113,7 +188,9 @@ export class BillingController {
       const subscription = await this.billingService.getSubscription(subscriptionId);
       return subscription;
     } catch (error) {
-      throw new Error(`Failed to fetch subscription: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch subscription: ${message}`);
     }
   }
 
@@ -147,7 +224,9 @@ export class BillingController {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to update subscription: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to update subscription: ${message}`);
     }
   }
 
@@ -183,7 +262,9 @@ export class BillingController {
 
       return result;
     } catch (error) {
-      throw new Error(`Failed to cancel subscription: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to cancel subscription: ${message}`);
     }
   }
 
@@ -199,7 +280,9 @@ export class BillingController {
       const invoices = await this.billingService.getInvoices(subscriptionId);
       return { invoices };
     } catch (error) {
-      throw new Error(`Failed to fetch invoices: ${error.message}`);
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch invoices: ${message}`);
     }
   }
 
@@ -215,17 +298,22 @@ export class BillingController {
    * Security: Webhook signature is verified against STRIPE_WEBHOOK_SECRET
    */
   @Post('webhook')
+  @HttpCode(400)
   async handleStripeWebhook(
     @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {
     try {
       if (!signature) {
-        return { error: 'Missing stripe-signature header', received: false };
+        throw new BadRequestException('Missing stripe-signature header');
       }
 
       // Verify webhook signature for security
       const rawBody = req.rawBody;
+      if (!rawBody) {
+        throw new BadRequestException('Missing request body');
+      }
+
       const event = this.stripeWebhookHandler.verifyWebhookSignature(rawBody, signature);
 
       // Process the verified event
@@ -233,10 +321,10 @@ export class BillingController {
 
       return { received: true, eventType: event.type };
     } catch (error) {
-      console.error('❌ Webhook handling error:', error.message);
-      // Return 200 OK even on error to prevent webhook retries
-      // Errors are logged for debugging
-      return { received: true, error: error.message };
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Webhook handling error:', message);
+      throw new BadRequestException(message);
     }
   }
 }

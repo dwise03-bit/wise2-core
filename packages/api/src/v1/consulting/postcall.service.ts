@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import { EmailService } from '../email/email.service';
 import Anthropic from '@anthropic-ai/sdk';
 import { google } from 'googleapis';
+import { addHours } from 'date-fns';
+import { QueueService, JobType } from '../../queue/queue.service';
 
 /**
  * Post-Call Summary Service

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression, Interval } from '@nestjs/schedule';
 import { PostCallSummaryService } from './postcall.service';
-import { QueueService, JobType } from '@app/queue/queue.service';
+import { QueueService, JobType } from '../../queue/queue.service';
 
 /**
  * Post-Call Scheduler

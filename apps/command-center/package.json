@@ -21,6 +21,7 @@
     "@types/react": "^18.2.0",
     "@types/node": "^20.0.0",
     "recharts": "^2.10.0",
+    "framer-motion": "^11.0.0",
     "pino": "^8.16.0",
     "ws": "^8.14.0",
     "zustand": "^4.4.0",

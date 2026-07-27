@@ -1,10 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
-import { Music, Plus, Play, Download, Share2, Trash2 } from 'lucide-react';
+import { Music, Plus, Play, Download, Share2, Trash2, AlertCircle, Loader } from 'lucide-react';
+
+interface SoundLabsProject {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string;
+  mixerState?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  recordings?: Array<any>;
+}
 
 interface JingleProject {
   id: string;
@@ -20,51 +31,66 @@ interface JingleProject {
   status: 'draft' | 'processing' | 'ready' | 'archived';
 }
 
-const sampleProjects: JingleProject[] = [
-  {
-    id: '1',
-    title: 'Brand Jingle - WISE² Enterprise',
-    type: 'jingle',
-    duration: 15,
-    genre: 'Electronic',
-    mood: 'Professional',
-    createdAt: new Date(Date.now() - 86400000 * 2),
-    updatedAt: new Date(Date.now() - 86400000 * 1),
-    isFavorite: true,
-    status: 'ready',
+const soundLabsApiClient = {
+  async getProjects(): Promise<SoundLabsProject[]> {
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch('/api/v1/sound-labs/me/projects', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      if (res.status === 401) throw new Error('Unauthorized');
+      throw new Error(`Failed to fetch projects: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.projects || [];
   },
-  {
-    id: '2',
-    title: 'Podcast Intro - Tech Talk Daily',
-    type: 'podcast',
-    duration: 30,
-    genre: 'Electronic',
-    mood: 'Energetic',
-    createdAt: new Date(Date.now() - 86400000 * 5),
-    updatedAt: new Date(Date.now() - 86400000 * 3),
-    isFavorite: false,
-    status: 'ready',
-  },
-  {
-    id: '3',
-    title: 'Commercial - Product Launch',
-    type: 'commercial',
-    duration: 60,
-    genre: 'Pop',
-    mood: 'Uplifting',
-    createdAt: new Date(Date.now() - 86400000 * 7),
-    updatedAt: new Date(Date.now() - 86400000 * 4),
-    isFavorite: false,
-    status: 'processing',
-  },
-];
 
-const typeColors: Record<string, string> = {
-  song: 'bg-blue-500/20 text-blue-400',
-  jingle: 'bg-purple-500/20 text-purple-400',
-  commercial: 'bg-orange-500/20 text-orange-400',
-  podcast: 'bg-pink-500/20 text-pink-400',
-  logo: 'bg-green-500/20 text-green-400',
+  async createProject(name: string, description?: string): Promise<SoundLabsProject> {
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch('/api/v1/sound-labs/me/projects', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!res.ok) throw new Error(`Failed to create project: ${res.status}`);
+    const data = await res.json();
+    return data.project;
+  },
+
+  async deleteProject(projectId: string): Promise<void> {
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch(`/api/v1/sound-labs/me/projects/${projectId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error(`Failed to delete project: ${res.status}`);
+  },
+
+  async updateProject(
+    projectId: string,
+    name?: string,
+    description?: string
+  ): Promise<SoundLabsProject> {
+    const token = localStorage.getItem('auth_token');
+    const res = await fetch(`/api/v1/sound-labs/me/projects/${projectId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!res.ok) throw new Error(`Failed to update project: ${res.status}`);
+    const data = await res.json();
+    return data.project;
+  },
 };
 
 const statusColors: Record<string, string> = {
@@ -75,10 +101,30 @@ const statusColors: Record<string, string> = {
 };
 
 export default function JingleLabPage() {
-  const [projects, setProjects] = useState<JingleProject[]>(sampleProjects);
-  const [favorites, setFavorites] = useState(
-    sampleProjects.filter(p => p.isFavorite).map(p => p.id)
-  );
+  const [projects, setProjects] = useState<SoundLabsProject[]>([]);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await soundLabsApiClient.getProjects();
+      setProjects(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load projects';
+      setError(message);
+      console.error('Failed to load projects:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleFavorite = (projectId: string) => {
     if (favorites.includes(projectId)) {
@@ -88,8 +134,18 @@ export default function JingleLabPage() {
     }
   };
 
-  const deleteProject = (projectId: string) => {
-    setProjects(projects.filter(p => p.id !== projectId));
+  const deleteProject = async (projectId: string) => {
+    try {
+      setDeleting(projectId);
+      await soundLabsApiClient.deleteProject(projectId);
+      setProjects(projects.filter(p => p.id !== projectId));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete project';
+      setError(message);
+      console.error('Failed to delete project:', err);
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const containerVariants = {
@@ -139,17 +195,30 @@ export default function JingleLabPage() {
           </div>
         </motion.div>
 
+        {/* Error State */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-400 font-semibold">Error loading projects</p>
+              <p className="text-red-300/70 text-sm">{error}</p>
+            </div>
+          </motion.div>
+        )}
+
         {/* Stats */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-4 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {[
             { label: 'Total Projects', value: projects.length },
-            { label: 'Completed', value: projects.filter(p => p.status === 'ready').length },
-            { label: 'Processing', value: projects.filter(p => p.status === 'processing').length },
             { label: 'Favorites', value: favorites.length },
           ].map((stat, idx) => (
             <motion.div
@@ -172,7 +241,15 @@ export default function JingleLabPage() {
         >
           <h2 className="text-xl font-bold">Your Projects</h2>
 
-          {projects.length === 0 ? (
+          {loading ? (
+            <motion.div
+              variants={itemVariants}
+              className="bg-slate-900/30 backdrop-blur-md border border-slate-700/50 rounded-lg p-12 text-center"
+            >
+              <Loader className="w-12 h-12 text-blue-400 mx-auto mb-4 animate-spin" />
+              <p className="text-gray-400">Loading projects...</p>
+            </motion.div>
+          ) : projects.length === 0 ? (
             <motion.div
               variants={itemVariants}
               className="bg-slate-900/30 backdrop-blur-md border-2 border-dashed border-slate-700/50 rounded-lg p-12 text-center"
@@ -190,7 +267,7 @@ export default function JingleLabPage() {
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project, idx) => (
+              {projects.map((project) => (
                 <motion.div
                   key={project.id}
                   variants={itemVariants}
@@ -218,11 +295,6 @@ export default function JingleLabPage() {
                         <Download className="w-6 h-6" />
                       </motion.button>
                     </motion.div>
-
-                    {/* Status Badge */}
-                    <div className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold ${statusColors[project.status]}`}>
-                      {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                    </div>
                   </div>
 
                   {/* Content */}
@@ -230,7 +302,7 @@ export default function JingleLabPage() {
                     <div className="flex items-start justify-between mb-3">
                       <Link href={`/studio/jingle-lab/${project.id}`}>
                         <h3 className="text-lg font-semibold text-white hover:text-blue-400 transition-colors cursor-pointer">
-                          {project.title}
+                          {project.name}
                         </h3>
                       </Link>
                       <motion.button
@@ -246,18 +318,10 @@ export default function JingleLabPage() {
                       </motion.button>
                     </div>
 
-                    {/* Type & Genre */}
-                    <div className="flex gap-2 mb-3 flex-wrap">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${typeColors[project.type]}`}>
-                        {project.type}
-                      </span>
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-slate-700/50 text-gray-300">
-                        {project.genre}
-                      </span>
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-slate-700/50 text-gray-300">
-                        {project.duration}s
-                      </span>
-                    </div>
+                    {/* Description */}
+                    {project.description && (
+                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">{project.description}</p>
+                    )}
 
                     {/* Meta */}
                     <p className="text-xs text-gray-500 mb-4">
@@ -276,10 +340,15 @@ export default function JingleLabPage() {
                       </Link>
                       <motion.button
                         whileHover={{ scale: 1.02 }}
+                        disabled={deleting === project.id}
                         onClick={() => deleteProject(project.id)}
-                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold rounded text-sm transition-colors"
+                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold rounded text-sm transition-colors disabled:opacity-50"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {deleting === project.id ? (
+                          <Loader className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </motion.button>
                     </div>
                   </div>

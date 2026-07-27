@@ -2,23 +2,23 @@ import { Module } from '@nestjs/common';
 import { BillingService } from './billing.service';
 import { BillingController } from './billing.controller';
 import { StripeWebhookHandler } from './stripe.webhook';
+import { EntitlementsService } from './entitlements.service';
 import { EmailService } from '../email/email.service';
 import { AnalyticsService } from '../analytics/analytics.service';
-import { ConsultingService } from '../consulting/consulting.service';
-import { PrismaService } from '@app/common/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { WorkspacesService } from '../workspaces/workspaces.service';
 
 @Module({
   controllers: [BillingController],
   providers: [
     BillingService,
+    EntitlementsService,
     StripeWebhookHandler,
     EmailService,
     AnalyticsService,
-    ConsultingService,
     PrismaService,
     WorkspacesService,
   ],
-  exports: [BillingService, StripeWebhookHandler],
+  exports: [BillingService, EntitlementsService, StripeWebhookHandler],
 })
 export class BillingModule {}

@@ -2,8 +2,7 @@ import Stripe from 'stripe';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { AnalyticsService } from '../analytics/analytics.service';
-import { ConsultingService } from '../consulting/consulting.service';
-import { PrismaService } from '@app/common/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 /**
  * Stripe Webhook Handler for Customer Journey & Consulting Bookings
@@ -17,7 +16,6 @@ export class StripeWebhookHandler {
   constructor(
     private emailService: EmailService,
     private analyticsService: AnalyticsService,
-    private consultingService: ConsultingService,
     private prisma: PrismaService,
   ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
@@ -41,7 +39,8 @@ export class StripeWebhookHandler {
       );
       return event;
     } catch (error) {
-      throw new BadRequestException(`Webhook signature verification failed: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      throw new BadRequestException(`Webhook signature verification failed: ${message}`);
     }
   }
 
@@ -95,7 +94,7 @@ export class StripeWebhookHandler {
 
     try {
       // Find booking by payment intent ID
-      const booking = await this.prisma.booking.findUnique({
+      const booking = await this.prisma.booking.findFirst({
         where: { stripePaymentIntentId: paymentIntent.id },
         include: {
           consultant: true,
@@ -109,8 +108,8 @@ export class StripeWebhookHandler {
         return;
       }
 
-      // Confirm booking (updates payment status)
-      const confirmedBooking = await this.consultingService.confirmBooking(paymentIntent.id);
+      // TODO: Confirm booking (updates payment status) - consulting feature deferred
+      // In P0 revenue candidate, consulting booking confirmation is not included
 
       // Send booking confirmation email to user
       if (booking.user?.email) {
@@ -178,7 +177,7 @@ export class StripeWebhookHandler {
 
     try {
       // Find booking by payment intent ID
-      const booking = await this.prisma.booking.findUnique({
+      const booking = await this.prisma.booking.findFirst({
         where: { stripePaymentIntentId: paymentIntent.id },
         include: {
           user: true,
@@ -233,28 +232,101 @@ export class StripeWebhookHandler {
 
   /**
    * New subscription created (trial started)
+   * Maps Stripe subscription back to internal User/Subscription record
    */
   private async onSubscriptionCreated(subscription: Stripe.Subscription) {
     console.log('✅ Subscription created:', subscription.id);
 
-    const customerId = subscription.customer as string;
-    const customer = await this.stripe.customers.retrieve(customerId);
-    const email = (customer as Stripe.Customer).email;
+    try {
+      const customerId = subscription.customer as string;
+      const customer = await this.stripe.customers.retrieve(customerId);
+      const email = (customer as Stripe.Customer).email;
+      const userId = subscription.metadata?.userId;
+      const planId = subscription.metadata?.planId as string;
 
-    // TODO: Update database subscription status to 'trialing'
+      if (!email || !userId) {
+        console.warn('⚠️  Missing email or userId in subscription metadata:', {
+          subscriptionId: subscription.id,
+          email,
+          userId,
+        });
+        return;
+      }
 
-    // Track event
-    await this.analyticsService.trackEvent({
-      eventType: 'subscription_created',
-      journeyStep: 'trial_started',
-      metadata: {
-        subscriptionId: subscription.id,
-        trialEndsAt: new Date(subscription.trial_end ? subscription.trial_end * 1000 : Date.now()),
-      },
-    });
+      // Map Stripe price to internal plan
+      const priceId = subscription.items.data[0]?.price?.id;
+      const plan = this.mapPriceIdToPlan(priceId, planId);
 
-    // Send confirmation (welcome email was sent in checkout success handler)
-    console.log('✉️  Welcome email would be sent to', email);
+      // Create or update subscription record
+      await this.prisma.subscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscription.id,
+          stripePriceId: priceId,
+          status: 'TRIALING',
+          plan,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          trialEndsAt: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000)
+            : undefined,
+        },
+        update: {
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscription.id,
+          stripePriceId: priceId,
+          status: 'TRIALING',
+          plan,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          trialEndsAt: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000)
+            : undefined,
+        },
+      });
+
+      console.log('✅ Subscription persisted:', { userId, subscriptionId: subscription.id });
+
+      // Track event
+      await this.analyticsService.trackEvent({
+        eventType: 'subscription_created',
+        journeyStep: 'trial_started',
+        userId,
+        metadata: {
+          subscriptionId: subscription.id,
+          plan,
+          trialEndsAt: new Date(subscription.trial_end ? subscription.trial_end * 1000 : Date.now()),
+        },
+      });
+    } catch (error) {
+      console.error('❌ Error processing subscription.created:', error);
+      // Don't throw - webhook must return 200 OK
+    }
+  }
+
+  /**
+   * Map Stripe price ID to internal PricingPlan enum
+   */
+  private mapPriceIdToPlan(priceId: string | undefined, fallbackPlanId?: string): 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE' {
+    // Map Stripe price IDs to plans
+    const PRICE_TO_PLAN: Record<string, 'STARTER' | 'PRO' | 'ENTERPRISE'> = {
+      [process.env.STRIPE_STARTER_PRICE_ID || '']: 'STARTER',
+      [process.env.STRIPE_PRO_PRICE_ID || '']: 'PRO',
+      [process.env.STRIPE_ENTERPRISE_PRICE_ID || '']: 'ENTERPRISE',
+    };
+
+    if (priceId && PRICE_TO_PLAN[priceId]) {
+      return PRICE_TO_PLAN[priceId];
+    }
+
+    // Fallback to metadata plan ID
+    if (fallbackPlanId === 'STARTER' || fallbackPlanId === 'PRO' || fallbackPlanId === 'ENTERPRISE') {
+      return fallbackPlanId;
+    }
+
+    return 'STARTER'; // Safe default
   }
 
   /**
@@ -263,38 +335,81 @@ export class StripeWebhookHandler {
   private async onSubscriptionUpdated(subscription: Stripe.Subscription) {
     console.log('🔄 Subscription updated:', subscription.id);
 
-    // TODO: Update database with new plan, status, billing dates
+    try {
+      const customerId = subscription.customer as string;
+      const customer = await this.stripe.customers.retrieve(customerId);
+      const email = (customer as Stripe.Customer).email;
 
-    const customerId = subscription.customer as string;
-    const customer = await this.stripe.customers.retrieve(customerId);
-    const email = (customer as Stripe.Customer).email;
+      // Find subscription by Stripe ID
+      const existingSubscription = await this.prisma.subscription.findUnique({
+        where: { stripeSubscriptionId: subscription.id },
+        include: { user: true },
+      });
 
-    // Check if plan changed (upgrade/downgrade)
-    // TODO: Compare with previous subscription data
-    if (subscription.items.data.length > 0) {
-      const planId = (subscription.items.data[0].price.product as string);
-      console.log('📊 Plan updated to:', planId);
+      if (!existingSubscription) {
+        console.warn('⚠️  No subscription found for Stripe ID:', subscription.id);
+        return;
+      }
 
-      // Send upgrade/downgrade confirmation
-      if (email) {
+      // Map new plan
+      const priceId = subscription.items.data[0]?.price?.id;
+      const plan = this.mapPriceIdToPlan(priceId, undefined);
+
+      // Update subscription status (may have transitioned from trialing to active, etc.)
+      const statusMap: Record<string, any> = {
+        trialing: 'TRIALING',
+        active: 'ACTIVE',
+        past_due: 'PAST_DUE',
+        canceled: 'CANCELED',
+        incomplete: 'INACTIVE',
+        incomplete_expired: 'INACTIVE',
+        paused: 'INACTIVE',
+      };
+
+      const newStatus = statusMap[subscription.status] || 'ACTIVE';
+
+      await this.prisma.subscription.update({
+        where: { stripeSubscriptionId: subscription.id },
+        data: {
+          plan,
+          stripePriceId: priceId,
+          status: newStatus,
+          currentPeriodStart: new Date(subscription.current_period_start * 1000),
+          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          trialEndsAt: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000)
+            : null,
+        },
+      });
+
+      console.log('✅ Subscription updated:', { subscriptionId: subscription.id, plan: plan, status: newStatus });
+
+      // Send confirmation email if plan changed
+      if (email && existingSubscription.plan !== plan) {
         await this.emailService.sendUpgradeConfirmation({
           email,
           name: (customer as Stripe.Customer).name || 'User',
-          oldPlan: 'PRO',
-          newPlan: 'ENTERPRISE',
-          newPrice: (subscription.items.data[0].price.unit_amount || 0) / 100,
+          oldPlan: existingSubscription.plan,
+          newPlan: plan,
+          newPrice: (subscription.items.data[0]?.price?.unit_amount || 0) / 100,
         });
       }
-    }
 
-    // Track event
-    await this.analyticsService.trackEvent({
-      eventType: 'subscription_updated',
-      metadata: {
-        subscriptionId: subscription.id,
-        status: subscription.status,
-      },
-    });
+      // Track event
+      await this.analyticsService.trackEvent({
+        eventType: 'subscription_updated',
+        userId: existingSubscription.userId,
+        journeyStep: 'plan_changed',
+        metadata: {
+          subscriptionId: subscription.id,
+          status: newStatus,
+          plan,
+        },
+      });
+    } catch (error) {
+      console.error('❌ Error processing subscription.updated:', error);
+      // Don't throw - webhook must return 200 OK
+    }
   }
 
   /**
@@ -303,35 +418,63 @@ export class StripeWebhookHandler {
   private async onSubscriptionCanceled(subscription: Stripe.Subscription) {
     console.log('❌ Subscription canceled:', subscription.id);
 
-    const customerId = subscription.customer as string;
-    const customer = await this.stripe.customers.retrieve(customerId);
-    const email = (customer as Stripe.Customer).email;
+    try {
+      const customerId = subscription.customer as string;
+      const customer = await this.stripe.customers.retrieve(customerId);
+      const email = (customer as Stripe.Customer).email;
 
-    // TODO: Update database subscription status to 'canceled'
-    // TODO: Schedule workspace deletion if needed
-
-    if (email) {
-      // Send cancellation confirmation
-      await this.emailService.sendCancellationConfirmation({
-        email,
-        name: (customer as Stripe.Customer).name || 'User',
-        workspaceName: 'Your Workspace',
-        cancelDate: new Date(),
+      // Find subscription by Stripe ID
+      const existingSubscription = await this.prisma.subscription.findUnique({
+        where: { stripeSubscriptionId: subscription.id },
+        include: { user: true },
       });
 
-      // Schedule win-back email for 30 days later
-      // TODO: Add to email queue with delay
-    }
+      if (!existingSubscription) {
+        console.warn('⚠️  No subscription found for Stripe ID:', subscription.id);
+        return;
+      }
 
-    // Track event
-    await this.analyticsService.trackEvent({
-      eventType: 'subscription_canceled',
-      journeyStep: 'churn',
-      metadata: {
-        subscriptionId: subscription.id,
-        canceledAt: new Date(subscription.canceled_at ? subscription.canceled_at * 1000 : Date.now()),
-      },
-    });
+      // Update subscription status to canceled
+      await this.prisma.subscription.update({
+        where: { stripeSubscriptionId: subscription.id },
+        data: {
+          status: 'CANCELED',
+          canceledAt: subscription.canceled_at
+            ? new Date(subscription.canceled_at * 1000)
+            : new Date(),
+        },
+      });
+
+      console.log('✅ Subscription canceled:', { subscriptionId: subscription.id, userId: existingSubscription.userId });
+
+      if (email) {
+        // Send cancellation confirmation
+        await this.emailService.sendCancellationConfirmation({
+          email,
+          name: (customer as Stripe.Customer).name || 'User',
+          workspaceName: 'Your Workspace',
+          cancelDate: new Date(subscription.canceled_at ? subscription.canceled_at * 1000 : Date.now()),
+        });
+
+        // TODO: Schedule win-back email for 30 days later
+        // This would require an email queue with delay support
+      }
+
+      // Track event
+      await this.analyticsService.trackEvent({
+        eventType: 'subscription_canceled',
+        userId: existingSubscription.userId,
+        journeyStep: 'churn',
+        metadata: {
+          subscriptionId: subscription.id,
+          canceledAt: new Date(subscription.canceled_at ? subscription.canceled_at * 1000 : Date.now()),
+          plan: existingSubscription.plan,
+        },
+      });
+    } catch (error) {
+      console.error('❌ Error processing subscription.canceled:', error);
+      // Don't throw - webhook must return 200 OK
+    }
   }
 
   /**
@@ -354,14 +497,14 @@ export class StripeWebhookHandler {
 
     // TODO: Update invoice status to 'paid' in database
 
-    if (email && invoice.pdf) {
+    if (email && invoice.hosted_invoice_url) {
       // Send invoice to customer
       await this.emailService.sendInvoice({
         email,
         invoiceId: invoice.number || invoice.id,
         amount: invoice.amount_paid || 0,
         plan: 'PRO',
-        invoicePdfUrl: invoice.pdf,
+        invoicePdfUrl: invoice.hosted_invoice_url,
         dueDate: new Date(invoice.due_date ? invoice.due_date * 1000 : Date.now()),
       });
     }
@@ -428,7 +571,7 @@ export class StripeWebhookHandler {
       const paymentIntentId = charge.payment_intent as string;
 
       if (paymentIntentId) {
-        const booking = await this.prisma.booking.findUnique({
+        const booking = await this.prisma.booking.findFirst({
           where: { stripePaymentIntentId: paymentIntentId },
           include: {
             user: true,

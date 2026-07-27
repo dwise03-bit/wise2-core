@@ -19,8 +19,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'PUT',
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
@@ -33,10 +33,9 @@ export default function LoginPage() {
         return;
       }
 
-      // Store session token
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('userId', data.user.id);
+      // Store user data (token is in httpOnly cookie)
       localStorage.setItem('userEmail', data.user.email);
+      localStorage.setItem('userId', data.user.id);
 
       setSuccess('✓ Login successful! Redirecting...');
       setTimeout(() => router.push('/dashboard'), 1500);
