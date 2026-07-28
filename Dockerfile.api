@@ -10,7 +10,7 @@ RUN npm install
 
 # Copy and build API
 COPY packages/api ./packages/api
-RUN cd packages/api && npm run build
+RUN cd packages/api && npm install && npm run build
 
 # Production image
 FROM node:18-alpine
