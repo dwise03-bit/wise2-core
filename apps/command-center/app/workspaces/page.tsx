@@ -5,23 +5,44 @@
 
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWorkspace } from '@/src/context/WorkspaceContext';
+import type { Workspace } from '@/src/types/workspace';
 
 export default function WorkspacesPage() {
   const router = useRouter();
-  const { workspace, workspaces, isLoading, error, switchWorkspace } = useWorkspace();
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  // If a workspace is selected, redirect to its dashboard
+  // Fetch workspaces on mount
   useEffect(() => {
-    if (workspace) {
-      router.push(`/workspaces/${workspace.slug}/dashboard`);
-    }
-  }, [workspace, router]);
+    const fetchWorkspaces = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/workspaces');
+        if (!response.ok) throw new Error('Failed to fetch workspaces');
+        const data = await response.json();
+        setWorkspaces(data.workspaces || []);
+        setError(null);
 
-  const handleSelectWorkspace = async (workspaceId: number) => {
-    await switchWorkspace(workspaceId);
+        // If only one workspace, redirect to it
+        if (data.workspaces?.length === 1) {
+          const workspace = data.workspaces[0];
+          router.push(`/workspaces/${workspace.slug}/dashboard`);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to fetch workspaces'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWorkspaces();
+  }, [router]);
+
+  const handleSelectWorkspace = (workspaceSlug: string) => {
+    router.push(`/workspaces/${workspaceSlug}/dashboard`);
   };
 
   if (isLoading) {
@@ -78,7 +99,7 @@ export default function WorkspacesPage() {
           {workspaces.map((ws) => (
             <button
               key={ws.id}
-              onClick={() => handleSelectWorkspace(ws.id)}
+              onClick={() => handleSelectWorkspace(ws.slug)}
               className="group text-left"
             >
               <div className="
