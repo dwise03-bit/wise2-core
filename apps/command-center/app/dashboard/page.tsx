@@ -21,18 +21,21 @@ interface DashboardData {
   services: SystemService[];
 }
 
-function StatCell({ label, value, href }: { label: string; value: string | number; href: string }) {
+function MetricCard({ label, value, href, change, status }: { label: string; value: string | number; href: string; change?: string; status?: 'positive' | 'warning' | 'neutral' }) {
+  const statusColor = status === 'positive' ? 'text-[var(--organized-chaos-green)]' : status === 'warning' ? 'text-[var(--warning)]' : 'text-[var(--text-secondary)]';
+
   return (
-    <Link href={href} className="group flex flex-col gap-1 px-4 py-3 rounded-lg hover:bg-white/[0.03] transition-colors">
-      <span className="text-2xl font-bold text-text-primary tabular-nums group-hover:text-wise-electric transition-colors">{value}</span>
-      <span className="text-[11px] font-medium uppercase tracking-wider text-text-muted">{label}</span>
+    <Link href={href} className="group flex flex-col gap-2 p-4 bg-[var(--wise-steel)] border border-[var(--border-medium)] rounded-[var(--radius-wise)] hover:border-[var(--border-strong)] hover:shadow-md transition-all duration-200">
+      <span className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">{label}</span>
+      <span className="text-2xl font-bold text-[var(--text-primary)] tabular-nums group-hover:text-[var(--organized-chaos-green)] transition-colors">{value}</span>
+      {change && <span className={`text-xs font-medium ${statusColor}`}>{change}</span>}
     </Link>
   );
 }
 
 function StatusDot({ status }: { status: 'online' | 'offline' | 'partial' }) {
-  const color = status === 'online' ? 'bg-green-400' : status === 'partial' ? 'bg-amber-400' : 'bg-red-400';
-  return <span className={`wise-status-dot ${color}`} />;
+  const color = status === 'online' ? 'bg-[var(--organized-chaos-green)]' : status === 'partial' ? 'bg-[var(--warning)]' : 'bg-[var(--danger)]';
+  return <span className={`inline-block w-2 h-2 rounded-full ${color} animate-pulse`} />;
 }
 
 const QA_ICONS: Record<string, string> = {
@@ -46,9 +49,9 @@ function QuickAction({ label, href, icon }: { label: string; href: string; icon:
   return (
     <Link
       href={href}
-      className="flex items-center gap-2.5 px-3 py-2 rounded-lg border border-border-subtle hover:border-wise-electric/30 hover:bg-wise-electric/[0.04] transition-all text-sm text-text-secondary hover:text-text-primary"
+      className="flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius-wise)] border border-[var(--border-medium)] hover:border-[var(--border-green)] hover:bg-[var(--green-dim)] transition-all text-sm text-[var(--text-secondary)] hover:text-[var(--organized-chaos-green)]"
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 shrink-0" dangerouslySetInnerHTML={{ __html: QA_ICONS[icon] || QA_ICONS.plus }} />
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 shrink-0" dangerouslySetInnerHTML={{ __html: QA_ICONS[icon] || QA_ICONS.plus }} />
       <span className="font-medium">{label}</span>
     </Link>
   );
@@ -148,29 +151,29 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-start justify-between">
+      {/* Greeting Header — Time-aware */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="wise-page-title">Command Center</h1>
-          <p className="wise-page-subtitle">Platform overview and operations</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-1">
+            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user?.firstName || 'Operator'}
+          </h1>
+          <p className="text-sm text-[var(--text-muted)]">Here's what requires your attention today.</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle">
+        <div className="flex items-center gap-3 px-4 py-2 bg-[var(--wise-steel)] border border-[var(--border-medium)] rounded-[var(--radius-wise)]">
           <StatusDot status={systemStatus} />
-          <span className="text-xs font-medium text-text-muted uppercase tracking-wider">
-            {systemStatus === 'online' ? 'All Systems' : systemStatus === 'partial' ? 'Partial' : 'Offline'}
+          <span className="text-xs font-semibold uppercase tracking-widest text-[var(--text-secondary)]">
+            {systemStatus === 'online' ? 'All Systems Online' : systemStatus === 'partial' ? 'Partial Service' : 'System Offline'}
           </span>
         </div>
       </div>
 
-      {/* Command Strip */}
-      <div className="wise-card p-1">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-          <StatCell label="Prospects" value={data?.prospects || 0} href="/dashboard/leads" />
-          <StatCell label="Customers" value={data?.customers || 0} href="/dashboard/customers" />
-          <StatCell label="Projects" value={data?.projects || 0} href="/dashboard/sound-labs/projects" />
-          <StatCell label="Assets" value={data?.assets || 0} href="/dashboard/gallery" />
-          <StatCell label="Recordings" value={data?.recordings || 0} href="/dashboard/live-studio/recordings" />
-        </div>
+      {/* Executive Metrics — 5-column grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <MetricCard label="Revenue" value="$0" href="/dashboard/billing" status="neutral" />
+        <MetricCard label="Leads" value={data?.prospects || 0} href="/dashboard/leads" status="positive" />
+        <MetricCard label="Active Customers" value={data?.customers || 0} href="/dashboard/customers" status="positive" />
+        <MetricCard label="Open Tasks" value={data?.projects || 0} href="/dashboard/sound-labs/projects" status="neutral" />
+        <MetricCard label="Automations" value="0" href="/dashboard/business-os" status="positive" />
       </div>
 
       {/* Main Grid */}
