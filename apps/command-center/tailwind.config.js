@@ -29,9 +29,11 @@ module.exports = {
           'chrome': '#BFC4C9',         // Chrome - premium accents
 
           // Action Colors (Master Reference)
+          'electric': '#27C7FF',       // Electric blue (SECONDARY) - wise-electric class
+          'blue-electric': '#27C7FF',  // Backwards compatibility alias
           'green-neon': '#72FF3B',     // WISE² Neon Green (PRIMARY)
-          'green-lime': '#8AFF52',     // Bright lime
-          'blue-electric': '#27C7FF',  // Electric blue (SECONDARY)
+          'neon': '#72FF3B',           // Alias for green-neon
+          'lime': '#8AFF52',           // Bright lime
           'purple-ai': '#9d4edd',      // AI accent
           'red-alert': '#ff006e',      // Error
           'orange-warning': '#ffa500', // Warning
@@ -40,7 +42,10 @@ module.exports = {
           'bg-darkest': '#030504',
           'surface-1': '#101A15',
           'surface-2': '#16211B',
+          'surface': '#101A15',        // Card/panel backgrounds
           'border': '#3d3d3d',
+          'text-primary': '#FFFFFF',
+          'text-secondary': '#BFC4C9',
         },
         text: {
           primary: '#FFFFFF',
