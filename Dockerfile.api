@@ -6,8 +6,8 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@8.15.9
 
-# Copy package lock first for caching
-COPY pnpm-lock.yaml package.json ./
+# Copy package files and workspace config
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 
 # Copy monorepo workspace packages
 COPY packages/api/package.json ./packages/api/
@@ -18,7 +18,7 @@ COPY packages/db/prisma ./packages/db/prisma
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Generate Prisma client for current environment (linux-musl on Alpine)
-RUN pnpm exec prisma generate --schema=packages/db/prisma/schema.prisma || true
+RUN cd packages/db && npx prisma generate || true
 
 # Copy pre-built API
 COPY packages/api/dist ./dist
