@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ChevronRight, Plus, Mic, BarChart3, CheckCircle2 } from 'lucide-react';
 
 interface ConsultingClient {
   id: string;
@@ -28,7 +29,7 @@ export default function AuditsPage() {
     primaryContactEmail: '',
   });
 
-  const workspaceId = 'default-workspace'; // TODO: Get from context
+  const workspaceId = 'default-workspace';
 
   useEffect(() => {
     fetchClients();
@@ -79,166 +80,213 @@ export default function AuditsPage() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      'INTAKE': 'bg-blue-900 text-blue-100',
-      'PRE_MEETING_RESEARCH': 'bg-purple-900 text-purple-100',
-      'MEETING_SCHEDULED': 'bg-orange-900 text-orange-100',
-      'IN_MEETING': 'bg-red-900 text-red-100',
-      'POST_MEETING_ANALYSIS': 'bg-yellow-900 text-yellow-100',
-      'RECOMMENDATIONS_REVIEW': 'bg-green-900 text-green-100',
-      'PLAN_GENERATION': 'bg-cyan-900 text-cyan-100',
-      'PLAN_APPROVED': 'bg-emerald-900 text-emerald-100',
-      'IMPLEMENTATION_STARTED': 'bg-teal-900 text-teal-100',
-      'COMPLETED': 'bg-gray-800 text-gray-100',
+      'INTAKE': 'bg-[#1A3A52]/40 text-[#32A8FF] border border-[#0094FF]/30',
+      'PRE_MEETING_RESEARCH': 'bg-[#2A2A3E]/40 text-[#7CFF00] border border-[#39FF14]/20',
+      'MEETING_SCHEDULED': 'bg-[#3A2A2A]/40 text-[#FF9500] border border-[#FF9500]/20',
+      'IN_MEETING': 'bg-[#3A2A2A]/40 text-[#FF4444] border border-[#FF4444]/20',
+      'POST_MEETING_ANALYSIS': 'bg-[#3A3A2A]/40 text-[#FFD700] border border-[#FFD700]/20',
+      'RECOMMENDATIONS_REVIEW': 'bg-[#2A3A2A]/40 text-[#39FF14] border border-[#39FF14]/30',
+      'PLAN_GENERATION': 'bg-[#2A3A3A]/40 text-[#32A8FF] border border-[#0094FF]/30',
+      'PLAN_APPROVED': 'bg-[#2A3A2A]/40 text-[#22C55E] border border-[#22C55E]/30',
+      'IMPLEMENTATION_STARTED': 'bg-[#2A3A2A]/40 text-[#39FF14] border border-[#39FF14]/30',
+      'COMPLETED': 'bg-[#1A1A1A]/40 text-[#8D98A5] border border-[#8D98A5]/20',
     };
-    return colors[status] || 'bg-gray-800 text-gray-100';
+    return colors[status] || 'bg-[#1A1A1A]/40 text-[#8D98A5] border border-[#8D98A5]/20';
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      {/* Header */}
-      <div className="mb-12">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-2xl">
-            🎤
-          </div>
+    <div className="min-h-screen bg-[#050505] text-white">
+      {/* Top Navigation */}
+      <div className="border-b border-[#1A1A1A] bg-gradient-to-b from-[#0B0B0B] to-[#050505] px-8 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <h1 className="text-4xl font-black">CONSULTANT AUDIT OS</h1>
-            <p className="text-gray-400 mt-1">Record. Research. Audit. Plan. Transform.</p>
+            <h1 className="text-3xl font-black tracking-wider" style={{ fontFamily: 'Orbitron' }}>
+              CONSULTANT AUDIT OS
+            </h1>
+            <p className="text-[#8D98A5] text-sm mt-1">Record. Research. Audit. Plan. Transform.</p>
           </div>
+          <button
+            onClick={() => setShowNewClientForm(!showNewClientForm)}
+            className="flex items-center gap-2 px-6 py-3 bg-[#39FF14] hover:bg-[#7CFF00] text-[#050505] font-bold rounded-lg transition duration-200 shadow-lg shadow-[#39FF14]/20"
+          >
+            <Plus size={20} />
+            New Audit
+          </button>
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="mb-8 flex gap-4">
-        <button
-          onClick={() => setShowNewClientForm(!showNewClientForm)}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition"
-        >
-          + New Client Audit
-        </button>
+      <div className="px-8 py-12">
+        <div className="max-w-7xl mx-auto">
+          {/* New Client Form */}
+          {showNewClientForm && (
+            <div className="mb-12 p-8 border border-[#39FF14]/30 rounded-lg bg-gradient-to-br from-[#0B0B0B] to-[#1A1A1A] shadow-lg shadow-[#39FF14]/10">
+              <h2 className="text-2xl font-bold text-[#39FF14] mb-6" style={{ fontFamily: 'Orbitron' }}>
+                NEW AUDIT ENGAGEMENT
+              </h2>
+              <form onSubmit={handleCreateClient}>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Company Name</label>
+                    <input
+                      type="text"
+                      placeholder="Acme Corp"
+                      value={formData.companyName}
+                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Industry</label>
+                    <input
+                      type="text"
+                      placeholder="Manufacturing"
+                      value={formData.industry}
+                      onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Employees</label>
+                    <input
+                      type="number"
+                      placeholder="150"
+                      value={formData.employees}
+                      onChange={(e) => setFormData({ ...formData, employees: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Revenue</label>
+                    <input
+                      type="text"
+                      placeholder="$50M ARR"
+                      value={formData.revenue}
+                      onChange={(e) => setFormData({ ...formData, revenue: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Primary Contact</label>
+                    <input
+                      type="text"
+                      placeholder="John Smith"
+                      value={formData.primaryContact}
+                      onChange={(e) => setFormData({ ...formData, primaryContact: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8D98A5] text-sm font-semibold mb-2">Email</label>
+                    <input
+                      type="email"
+                      placeholder="john@acme.com"
+                      value={formData.primaryContactEmail}
+                      onChange={(e) => setFormData({ ...formData, primaryContactEmail: e.target.value })}
+                      className="w-full px-4 py-3 bg-[#1A1A1A] border border-[#39FF14]/20 rounded-lg text-white placeholder-[#8D98A5]/50 focus:border-[#39FF14] focus:outline-none transition"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-[#39FF14] hover:bg-[#7CFF00] text-[#050505] font-bold rounded-lg transition shadow-lg shadow-[#39FF14]/20"
+                  >
+                    Create Engagement
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewClientForm(false)}
+                    className="px-6 py-2 bg-[#1A1A1A] hover:bg-[#2A2A2A] text-[#8D98A5] border border-[#39FF14]/20 font-semibold rounded-lg transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Clients Grid */}
+          {loading ? (
+            <div className="flex items-center justify-center py-24">
+              <div className="text-center">
+                <div className="inline-block w-12 h-12 border-2 border-[#39FF14]/20 border-t-[#39FF14] rounded-full animate-spin mb-4"></div>
+                <p className="text-[#8D98A5]">Loading audit engagements...</p>
+              </div>
+            </div>
+          ) : clients.length === 0 ? (
+            <div className="flex items-center justify-center py-24 border-2 border-dashed border-[#39FF14]/20 rounded-lg bg-[#0B0B0B]/50">
+              <div className="text-center">
+                <Mic size={48} className="mx-auto text-[#8D98A5] mb-4 opacity-50" />
+                <p className="text-[#8D98A5] text-lg font-semibold">No audit engagements yet</p>
+                <p className="text-[#8D98A5]/60 text-sm mt-2">Create your first consulting audit to begin</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clients.map((client) => (
+                <Link
+                  key={client.id}
+                  href={`/audits/${client.id}`}
+                  className="group relative h-full"
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#39FF14]/20 to-[#0094FF]/20 rounded-lg opacity-0 group-hover:opacity-100 transition duration-300 blur"></div>
+                  <div className="relative p-6 border border-[#39FF14]/20 rounded-lg bg-gradient-to-br from-[#0B0B0B] to-[#1A1A1A] hover:border-[#39FF14]/50 transition duration-300 h-full flex flex-col">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-black text-white group-hover:text-[#39FF14] transition" style={{ fontFamily: 'Orbitron' }}>
+                          {client.companyName}
+                        </h3>
+                        {client.industry && (
+                          <p className="text-[#8D98A5] text-sm mt-1">{client.industry}</p>
+                        )}
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-3xl font-black text-[#0094FF]">
+                          {client.auditScore}
+                        </div>
+                        <p className="text-[#8D98A5] text-xs font-semibold tracking-wide">SCORE</p>
+                      </div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className="mb-6">
+                      <span className={`inline-block px-3 py-1.5 rounded text-xs font-bold tracking-wider ${getStatusColor(client.status)}`}>
+                        {client.status.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+
+                    {/* Metrics */}
+                    <div className="space-y-3 flex-1 mb-6">
+                      <div className="flex items-center gap-3 text-[#8D98A5]">
+                        <Mic size={16} className="text-[#39FF14]" />
+                        <span className="text-sm">{client.sessions?.length || 0} meetings recorded</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[#8D98A5]">
+                        <BarChart3 size={16} className="text-[#0094FF]" />
+                        <span className="text-sm">{client.consultingFindings?.length || 0} findings</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[#8D98A5]">
+                        <CheckCircle2 size={16} className="text-[#39FF14]" />
+                        <span className="text-sm">{client.tasks?.length || 0} action items</span>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="pt-6 border-t border-[#39FF14]/10 flex items-center justify-between">
+                      <p className="text-[#8D98A5] text-xs">
+                        {new Date(client.createdAt).toLocaleDateString()}
+                      </p>
+                      <ChevronRight size={16} className="text-[#39FF14] group-hover:translate-x-1 transition" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-
-      {/* New Client Form */}
-      {showNewClientForm && (
-        <form
-          onSubmit={handleCreateClient}
-          className="mb-8 p-6 border border-gray-700 rounded-lg bg-gray-950"
-        >
-          <h3 className="text-xl font-bold mb-4">Create New Audit Client</h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="Company Name"
-              value={formData.companyName}
-              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Industry"
-              value={formData.industry}
-              onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-            />
-            <input
-              type="number"
-              placeholder="Employees"
-              value={formData.employees}
-              onChange={(e) => setFormData({ ...formData, employees: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-            />
-            <input
-              type="text"
-              placeholder="Revenue"
-              value={formData.revenue}
-              onChange={(e) => setFormData({ ...formData, revenue: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-            />
-            <input
-              type="text"
-              placeholder="Primary Contact Name"
-              value={formData.primaryContact}
-              onChange={(e) => setFormData({ ...formData, primaryContact: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-            />
-            <input
-              type="email"
-              placeholder="Primary Contact Email"
-              value={formData.primaryContactEmail}
-              onChange={(e) => setFormData({ ...formData, primaryContactEmail: e.target.value })}
-              className="p-3 bg-gray-900 border border-gray-700 rounded text-white"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 rounded font-semibold"
-            >
-              Create Audit
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowNewClientForm(false)}
-              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded font-semibold"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* Clients Grid */}
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-gray-400 text-lg">Loading audits...</p>
-        </div>
-      ) : clients.length === 0 ? (
-        <div className="flex items-center justify-center py-20 border-2 border-dashed border-gray-700 rounded-lg">
-          <div className="text-center">
-            <p className="text-2xl mb-4">📋</p>
-            <p className="text-gray-400 text-lg">No audit clients yet</p>
-            <p className="text-gray-500 text-sm mt-2">Create your first consulting audit to get started</p>
-          </div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clients.map((client) => (
-            <Link
-              key={client.id}
-              href={`/audits/${client.id}`}
-              className="p-6 border border-gray-700 rounded-lg bg-gray-950 hover:border-blue-500 hover:bg-gray-900 transition group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold group-hover:text-blue-400 transition">{client.companyName}</h3>
-                  {client.industry && <p className="text-sm text-gray-400">{client.industry}</p>}
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-black text-blue-500">{client.auditScore}</div>
-                  <p className="text-xs text-gray-500">Audit Score</p>
-                </div>
-              </div>
-
-              <div className={`inline-block px-3 py-1 rounded text-xs font-semibold mb-4 ${getStatusColor(client.status)}`}>
-                {client.status.replace(/_/g, ' ')}
-              </div>
-
-              <div className="space-y-2 text-sm text-gray-400">
-                <p>📅 Meetings: {client.sessions?.length || 0}</p>
-                <p>📌 Findings: {client.consultingFindings?.length || 0}</p>
-                <p>✓ Tasks: {client.tasks?.length || 0}</p>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-800">
-                <p className="text-xs text-gray-500">
-                  Created: {new Date(client.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
