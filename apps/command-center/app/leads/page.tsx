@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Card, Badge, Button } from '../../src/components/ui';
 
 interface Lead {
   id: string;
@@ -14,11 +15,18 @@ interface Lead {
   daysWaiting: number;
 }
 
-const statusColor = {
-  hot: 'bg-[var(--danger)] text-white',
-  warm: 'bg-[var(--warning)] text-[var(--wise-black)]',
-  cold: 'bg-[var(--border-medium)] text-[var(--text-secondary)]',
-  closed: 'bg-[var(--organized-chaos-green)] bg-opacity-20 text-[var(--organized-chaos-green)]',
+const statusBadges: Record<Lead['status'], 'danger' | 'warning' | 'neutral' | 'success'> = {
+  hot: 'danger',
+  warm: 'warning',
+  cold: 'neutral',
+  closed: 'success',
+};
+
+const statusLabels: Record<Lead['status'], string> = {
+  hot: '🔥 Hot',
+  warm: '⚠️ Warm',
+  cold: '❄️ Cold',
+  closed: '✓ Closed',
 };
 
 export default function LeadsPage() {
@@ -56,45 +64,45 @@ export default function LeadsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--wise-black)] text-[var(--text-primary)]">
-      <nav className="border-b border-[var(--border-medium)] bg-[var(--wise-black)]">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-wise-black text-text-primary">
+      {/* Header */}
+      <div className="sticky top-[var(--topbar-height)] z-20 border-b border-border-subtle bg-wise-black/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between gap-4">
           <div>
-            <Link href="/dashboard" className="text-[var(--organized-chaos-green)] font-bold">
+            <Link href="/dashboard" className="text-wise-electric hover:text-wise-electric/80 font-bold transition-colors">
               ← Back to Dashboard
             </Link>
-            <h1 className="text-2xl font-bold mt-2">🔥 Sales Leads</h1>
+            <h1 className="text-2xl font-bold text-wise-neon mt-2">🔥 Sales Prospects</h1>
           </div>
-          <button className="px-4 py-2 bg-[var(--organized-chaos-green)] text-[var(--wise-black)] rounded-lg font-semibold hover:shadow-lg transition-all">
+          <Button variant="primary" size="md">
             + New Lead
-          </button>
+          </Button>
         </div>
-      </nav>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="space-y-4">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+        <div className="space-y-3">
           {leads.map((lead) => (
-            <Link
-              key={lead.id}
-              href={`/leads/${lead.id}`}
-              className="flex items-start justify-between p-4 bg-[var(--wise-steel)] border border-[var(--border-medium)] rounded-lg hover:border-[var(--organized-chaos-green)] hover:shadow-md transition-all"
-            >
-              <div>
-                <h3 className="font-semibold text-[var(--text-primary)]">{lead.name}</h3>
-                <p className="text-sm text-[var(--text-secondary)]">{lead.company}</p>
-                <p className="text-xs text-[var(--text-muted)] mt-1">{lead.email}</p>
-              </div>
-              <div className="text-right">
-                <div className={`inline-block px-3 py-1 rounded text-sm font-semibold mb-2 ${statusColor[lead.status]}`}>
-                  {lead.status.toUpperCase()}
+            <Link key={lead.id} href={`/dashboard/leads/${lead.id}`}>
+              <Card interactive className="p-4 flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0 space-y-1">
+                  <h3 className="font-semibold text-text-primary truncate">{lead.name}</h3>
+                  <p className="text-sm text-text-secondary">{lead.company}</p>
+                  <p className="text-xs text-text-muted">{lead.email}</p>
                 </div>
-                <div className="text-lg font-bold text-[var(--organized-chaos-green)]">
-                  ${lead.value.toLocaleString()}
+                <div className="flex flex-col items-end gap-2 shrink-0 text-right">
+                  <Badge variant={statusBadges[lead.status]}>
+                    {statusLabels[lead.status]}
+                  </Badge>
+                  <div className="text-lg font-bold text-wise-neon">
+                    ${lead.value.toLocaleString()}
+                  </div>
+                  <p className="text-xs text-text-muted whitespace-nowrap">
+                    {lead.daysWaiting} days waiting
+                  </p>
                 </div>
-                <p className="text-xs text-[var(--text-muted)] mt-1">
-                  {lead.daysWaiting} days waiting for follow-up
-                </p>
-              </div>
+              </Card>
             </Link>
           ))}
         </div>
