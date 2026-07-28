@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Plan {
   id: string;
@@ -21,8 +22,68 @@ interface Invoice {
 }
 
 export default function BillingPage() {
+  const router = useRouter();
   const currentPlan = 'Pro';
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if returning from successful payment
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('session_id')) {
+      checkSessionStatus(params.get('session_id') || '');
+    }
+  }, [router]);
+
+  const checkSessionStatus = async (sessionId: string) => {
+    try {
+      const res = await fetch(`/api/billing/session-status?session_id=${sessionId}`);
+      const data = await res.json();
+
+      if (data.status === 'paid') {
+        // Redirect to dashboard with success message
+        router.push('/dashboard?billing=success');
+      }
+    } catch (err) {
+      console.error('Failed to check session status:', err);
+    }
+  };
+
+  const handleCheckout = async (plan: string) => {
+    setLoading(plan);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/billing/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan,
+          billingCycle,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setError(data.error);
+        setLoading(null);
+        return;
+      }
+
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else if (data.sessionId) {
+        // Create checkout session URL manually if needed
+        window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
+      }
+    } catch (err) {
+      setError('Failed to start checkout. Please try again.');
+      setLoading(null);
+    }
+  };
 
   const plans: Plan[] = [
     {
@@ -110,6 +171,12 @@ export default function BillingPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-12">
+        {error && (
+          <div className="p-4 bg-[var(--danger)] bg-opacity-20 border border-[var(--danger)] text-[var(--danger)] rounded-lg">
+            {error}
+          </div>
+        )}
+
         {/* Current Plan */}
         <section className="bg-gradient-to-br from-[var(--wise-steel)] to-[var(--wise-black)] border border-[var(--organized-chaos-green)] rounded-lg p-6">
           <h2 className="text-lg font-bold text-[var(--organized-chaos-green)] mb-4">Current Plan</h2>
@@ -177,14 +244,15 @@ export default function BillingPage() {
                 </div>
                 <div className="text-xs text-[var(--text-muted)] mb-6">/month (billed {billingCycle})</div>
                 <button
+                  onClick={() => handleCheckout(plan.id)}
+                  disabled={(plan.cta as string).includes('Current') || loading !== null}
                   className={`w-full py-2 rounded-lg font-semibold mb-6 transition-all ${
                     (plan.cta as string).includes('Current')
                       ? 'bg-[var(--border-medium)] text-[var(--text-secondary)] cursor-default'
-                      : 'bg-[var(--organized-chaos-green)] text-[var(--wise-black)] hover:shadow-lg'
+                      : 'bg-[var(--organized-chaos-green)] text-[var(--wise-black)] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
                   }`}
-                  disabled={(plan.cta as string).includes('Current')}
                 >
-                  {plan.cta}
+                  {loading === plan.id ? 'Redirecting to Stripe...' : plan.cta}
                 </button>
                 <div className="space-y-3">
                   {plan.features.map((feature, i) => (
