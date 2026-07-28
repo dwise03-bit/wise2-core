@@ -1,37 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Raleway:wght@300;400;500;600;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================================
-   WISE² DESIGN SYSTEM - CSS VARIABLES
+   WISE² MASTER DESIGN SYSTEM - ORGANIZED CHAOS™
    ============================================================================ */
 
 :root {
-  /* Color System - Core Palette */
+  /* ===== COLOR SYSTEM - MASTER PALETTE ===== */
+  /* Foundation - Black & Steel */
   --wise-black: #050505;
-  --wise-surface-0: #0A0A0A;
-  --wise-surface-1: #101114;
-  --wise-surface-2: #151619;
-  --wise-border: #1A1A1A;
-  --wise-chrome: #9CA3AF;
-  --wise-text: #F5F5F5;
-  --wise-text-muted: #A0A0A0;
-  --wise-text-dim: #727272;
+  --wise-dark-steel: #0B0B0B;
+  --wise-steel-panel: #1A1A1A;
+  --wise-chrome: #BFC4C9;
+  --wise-muted-gray: #8D98A5;
+  --wise-white: #FFFFFF;
 
-  /* Accent Colors */
-  --wise-green: #2CD588;
-  --wise-green-soft: #1A4D3A;
-  --wise-success: #10B981;
-  --wise-warning: #F59E0B;
-  --wise-danger: #EF4444;
-  --wise-info: #3B82F6;
+  /* Primary Accent - Neon Green */
+  --wise-neon-green: #39FF14;
+  --wise-green-secondary: #7CFF00;
+  --wise-dark-green: #0B8F00;
 
+  /* Secondary Accent - Electric Blue */
+  --wise-electric-blue: #0094FF;
+  --wise-hover-blue: #32A8FF;
+
+  /* Status Colors */
+  --wise-success: #22C55E;
+  --wise-warning: #F2B632;
+  --wise-danger: #E53935;
+  --wise-info: #0094FF;
+
+  /* ===== TYPOGRAPHY SYSTEM ===== */
+  --font-headers: 'Orbitron', sans-serif;
+  --font-body: 'Raleway', sans-serif;
   /* Typography Scale */
-  --font-display: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
   --text-display-xl: 48px;
   --text-display-l: 36px;
   --text-h1: 32px;
@@ -42,6 +47,14 @@
   --text-body-sm: 14px;
   --text-label: 12px;
   --text-caption: 12px;
+
+  /* Font Weights */
+  --weight-thin: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 900;
 
   /* Spacing Scale */
   --space-1: 4px;
@@ -475,49 +488,108 @@ html {
 }
 
 /* ============================================================================
-   WISE² NEON GREEN GLOW EFFECTS (#0094FF)
+   WISE² NEON GREEN GLOW EFFECTS (#39FF14) & ELECTRIC BLUE (#0094FF)
    ============================================================================ */
 
-/* Lime glow button effects */
-.btn-glow-lime {
+/* Neon Green glow button effects (primary action) */
+.btn-glow-neon {
   position: relative;
-  transition: all 0.3s ease;
+  background: #39FF14;
+  color: #050505;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
 }
 
-.btn-glow-lime:hover {
-  box-shadow: 0 0 20px rgba(57, 255, 20, 0.4),
-              0 0 40px rgba(57, 255, 20, 0.2);
-  transform: scale(1.05);
+.btn-glow-neon:hover {
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.4),
+              0 0 50px rgba(57, 255, 20, 0.2);
+  transform: translateY(-2px);
 }
 
-.btn-glow-lime:active {
-  box-shadow: 0 0 30px rgba(57, 255, 20, 0.6),
-              0 0 60px rgba(57, 255, 20, 0.3);
-  transform: scale(0.98);
+.btn-glow-neon:active {
+  box-shadow: 0 0 40px rgba(57, 255, 20, 0.6),
+              0 0 70px rgba(57, 255, 20, 0.3);
+  transform: translateY(0);
 }
 
-/* Lime glow text effects */
-.text-glow-lime {
-  color: #0094FF;
+/* Electric Blue glow button effects (secondary action) */
+.btn-glow-blue {
+  position: relative;
+  background: #0094FF;
+  color: #FFFFFF;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(0, 148, 255, 0.2);
+}
+
+.btn-glow-blue:hover {
+  box-shadow: 0 0 30px rgba(0, 148, 255, 0.4),
+              0 0 50px rgba(0, 148, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Neon glow text effects */
+.text-glow-neon {
+  color: #39FF14;
   text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
 }
 
-.text-glow-lime:hover {
+.text-glow-neon:hover {
   text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
 }
 
-/* Lime glow border effects */
-.border-glow-lime {
+/* Blue glow text effects */
+.text-glow-blue {
+  color: #0094FF;
+  text-shadow: 0 0 10px rgba(0, 148, 255, 0.5);
+}
+
+.text-glow-blue:hover {
+  text-shadow: 0 0 20px rgba(0, 148, 255, 0.8);
+}
+
+/* Neon glow border effects */
+.border-glow-neon {
   border-color: rgba(57, 255, 20, 0.5);
   box-shadow: inset 0 0 12px rgba(57, 255, 20, 0.1),
-              0 0 10px rgba(57, 255, 20, 0.2);
+              0 0 15px rgba(57, 255, 20, 0.2);
   transition: all 0.3s ease;
 }
 
-.border-glow-lime:hover {
-  border-color: rgba(57, 255, 20, 0.7);
+.border-glow-neon:hover {
+  border-color: rgba(57, 255, 20, 0.8);
   box-shadow: inset 0 0 12px rgba(57, 255, 20, 0.2),
-              0 0 20px rgba(57, 255, 20, 0.4);
+              0 0 25px rgba(57, 255, 20, 0.4);
+}
+
+/* Blue glow border effects */
+.border-glow-blue {
+  border-color: rgba(0, 148, 255, 0.5);
+  box-shadow: inset 0 0 12px rgba(0, 148, 255, 0.1),
+              0 0 15px rgba(0, 148, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.border-glow-blue:hover {
+  border-color: rgba(0, 148, 255, 0.8);
+  box-shadow: inset 0 0 12px rgba(0, 148, 255, 0.2),
+              0 0 25px rgba(0, 148, 255, 0.4);
+}
+
+/* Enterprise gradient backgrounds */
+.bg-enterprise-gradient {
+  background: linear-gradient(135deg, rgba(11, 11, 11, 0.8) 0%, rgba(26, 26, 26, 0.8) 100%);
+}
+
+.bg-enterprise-dark {
+  background: linear-gradient(135deg, #050505 0%, #0B0B0B 100%);
+}
+
+/* Chrome/Metal effects */
+.chrome-text {
+  color: #BFC4C9;
+  font-weight: 600;
 }
 
 /* Scanline effect (subtle) */
@@ -531,17 +603,17 @@ html {
   pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.02) 1px,
+    rgba(255, 255, 255, 0.01),
+    rgba(255, 255, 255, 0.01) 1px,
     transparent 1px,
     transparent 2px
   );
   z-index: 9999;
 }
 
-/* Focus ring for accessibility (lime green) */
+/* Focus ring for accessibility (Neon Green) */
 *:focus {
-  outline: 2px solid #0094FF;
+  outline: 2px solid #39FF14;
   outline-offset: 2px;
 }
 
@@ -549,7 +621,7 @@ input:focus,
 textarea:focus,
 button:focus,
 select:focus {
-  outline: 2px solid #0094FF;
+  outline: 2px solid #39FF14;
   outline-offset: 2px;
 }
 
