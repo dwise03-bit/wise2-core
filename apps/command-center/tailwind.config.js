@@ -18,45 +18,46 @@ module.exports = {
     },
     extend: {
       colors: {
-        // WISE² Enterprise Design System v2.0
+        // WISE² Master Design System v2.1 (Master Reference Aligned)
         wise: {
-          // Dark Enterprise Foundation
-          'bg-darkest': '#050505',
-          'surface-1': '#1a1a1a',
-          'surface-2': '#2d2d2d',
+          // Foundation Colors (Color Hierarchy)
+          'black': '#030504',          // Deep black - page backgrounds
+          'carbon': '#070B09',         // Carbon black - alternative darkest
+          'gunmetal': '#111815',       // Gunmetal - cards
+          'surface-elevated': '#101A15', // Elevated panel
+          'surface-secondary': '#16211B', // Secondary panel
+          'chrome': '#BFC4C9',         // Chrome - premium accents
+
+          // Action Colors (Master Reference)
+          'green-neon': '#72FF3B',     // WISE² Neon Green (PRIMARY)
+          'green-lime': '#8AFF52',     // Bright lime
+          'blue-electric': '#27C7FF',  // Electric blue (SECONDARY)
+          'purple-ai': '#9d4edd',      // AI accent
+          'red-alert': '#ff006e',      // Error
+          'orange-warning': '#ffa500', // Warning
+
+          // Semantic Aliases (backwards compatibility)
+          'bg-darkest': '#030504',
+          'surface-1': '#101A15',
+          'surface-2': '#16211B',
           'border': '#3d3d3d',
-          'text-primary': '#e8e8e8',
-          'text-secondary': '#999999',
-
-          // Action Colors
-          'blue-electric': '#00d4ff',
-          'green-neon': '#39ff14',
-          'purple-ai': '#9d4edd',
-          'red-alert': '#ff006e',
-          'orange-warning': '#ffa500',
-
-          // Semantic Aliases (for backwards compatibility)
-          black: '#050505',
-          steel: '#1a1a1a',
-          'dark-steel': '#2d2d2d',
-          chrome: '#999999',
         },
         text: {
-          primary: '#e8e8e8',
-          secondary: '#999999',
-          muted: '#666666',
+          primary: '#FFFFFF',
+          secondary: '#BFC4C9',
+          muted: '#8D98A5',
         },
         border: {
-          subtle: 'rgba(61, 61, 61, 0.5)',
-          medium: 'rgba(61, 61, 61, 0.8)',
-          strong: 'rgba(61, 61, 61, 1)',
-          electric: 'rgba(0, 212, 255, 0.3)',
-          neon: 'rgba(57, 255, 20, 0.3)',
+          subtle: 'rgba(191, 196, 201, 0.15)',
+          medium: 'rgba(191, 196, 201, 0.25)',
+          strong: 'rgba(191, 196, 201, 0.4)',
+          electric: 'rgba(39, 199, 255, 0.3)',
+          neon: 'rgba(114, 255, 59, 0.3)',
         },
-        success: { DEFAULT: '#39ff14', muted: 'rgba(57, 255, 20, 0.15)' },
-        warning: { DEFAULT: '#ffa500', muted: 'rgba(255, 165, 0, 0.15)' },
-        danger: { DEFAULT: '#ff006e', muted: 'rgba(255, 0, 110, 0.15)' },
-        info: { DEFAULT: '#00d4ff', muted: 'rgba(0, 212, 255, 0.15)' },
+        success: { DEFAULT: '#22C55E', muted: 'rgba(34, 197, 94, 0.15)' },
+        warning: { DEFAULT: '#F2B632', muted: 'rgba(242, 182, 50, 0.15)' },
+        danger: { DEFAULT: '#E53935', muted: 'rgba(229, 57, 53, 0.15)' },
+        info: { DEFAULT: '#27C7FF', muted: 'rgba(39, 199, 255, 0.15)' },
       },
       fontFamily: {
         display: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -88,13 +89,13 @@ module.exports = {
         'md': '0 4px 16px rgba(0, 0, 0, 0.32)',
         'lg': '0 8px 24px rgba(0, 0, 0, 0.40)',
 
-        // Electric Blue accents
-        'blue-glow': '0 0 12px rgba(0, 212, 255, 0.2)',
-        'blue-glow-md': '0 0 24px rgba(0, 212, 255, 0.4)',
+        // Electric Blue accents (Master Reference: #27C7FF)
+        'blue-glow': '0 0 12px rgba(39, 199, 255, 0.2)',
+        'blue-glow-md': '0 0 24px rgba(39, 199, 255, 0.4)',
 
-        // Neon Green accents
-        'green-glow': '0 0 12px rgba(57, 255, 20, 0.2)',
-        'green-glow-md': '0 0 24px rgba(57, 255, 20, 0.4)',
+        // Neon Green accents (Master Reference: #72FF3B)
+        'green-glow': '0 0 12px rgba(114, 255, 59, 0.2)',
+        'green-glow-md': '0 0 24px rgba(114, 255, 59, 0.4)',
 
         // Surface shadows
         'surface': '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
@@ -111,12 +112,12 @@ module.exports = {
           '100%': { opacity: '1' },
         },
         'green-pulse': {
-          '0%, 100%': { boxShadow: '0 0 12px rgba(57, 255, 20, 0.2)' },
-          '50%': { boxShadow: '0 0 24px rgba(57, 255, 20, 0.4)' },
+          '0%, 100%': { boxShadow: '0 0 12px rgba(114, 255, 59, 0.2)' },
+          '50%': { boxShadow: '0 0 24px rgba(114, 255, 59, 0.4)' },
         },
         'blue-pulse': {
-          '0%, 100%': { boxShadow: '0 0 12px rgba(0, 212, 255, 0.2)' },
-          '50%': { boxShadow: '0 0 24px rgba(0, 212, 255, 0.4)' },
+          '0%, 100%': { boxShadow: '0 0 12px rgba(39, 199, 255, 0.2)' },
+          '50%': { boxShadow: '0 0 24px rgba(39, 199, 255, 0.4)' },
         },
       },
       animation: {
