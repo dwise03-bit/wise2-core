@@ -10,10 +10,6 @@ RUN npm install --production
 
 # Copy pre-built API
 COPY packages/api/dist ./dist
-COPY packages/api/prisma ./prisma
-
-# Generate Prisma client
-RUN npx prisma generate --schema=./prisma/schema.prisma || true
 
 EXPOSE 3000
 
