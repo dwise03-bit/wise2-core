@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -11,6 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
+    const API_URL = process.env.API_URL || 'http://localhost:3011/api';
     const res = await fetch(`${API_URL}/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

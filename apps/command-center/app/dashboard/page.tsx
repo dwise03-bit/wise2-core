@@ -491,5 +491,6 @@ export default function DashboardPage() {
         </div>
       </nav>
     </div>
+    </div>
   );
 }
