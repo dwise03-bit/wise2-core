@@ -1,18 +1,4 @@
 # NestJS API Dockerfile
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Install dependencies
-COPY package*.json ./
-COPY packages/api/package.json ./packages/api/
-RUN npm install
-
-# Copy and build API
-COPY packages/api ./packages/api
-RUN cd packages/api && npm install && npm run build
-
-# Production image
 FROM node:18-alpine
 
 WORKDIR /app
@@ -22,8 +8,8 @@ COPY package*.json ./
 COPY packages/api/package.json ./packages/api/
 RUN npm install --production
 
-# Copy built app from builder
-COPY --from=builder /app/packages/api/dist ./dist
+# Copy pre-built API
+COPY packages/api/dist ./dist
 
 EXPOSE 3000
 
