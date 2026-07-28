@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY package*.json ./
 
 # Install Node dependencies
-RUN npm ci --production
+RUN npm install --production
 
 # Copy worker files
 COPY . .
