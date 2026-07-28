@@ -8,6 +8,10 @@ COPY package*.json ./
 COPY packages/api/package.json ./packages/api/
 RUN npm install --production
 
+# Copy Prisma schema and generate client
+COPY packages/db/prisma ./prisma
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 # Copy pre-built API
 COPY packages/api/dist ./dist
 
