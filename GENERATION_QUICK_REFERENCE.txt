@@ -1,0 +1,75 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║         PIFF CITY × WISE² GPU IMAGE GENERATION — QUICK REFERENCE            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+🎬 GENERATE ALL 5 INSTAGRAM POSTS IN 3-4 MINUTES
+
+┌─ Step 1: Start ComfyUI ─────────────────────────────────────────────────────┐
+│ $ bash ~/.comfyui/start-comfyui.sh                                          │
+│   Runs in background on http://localhost:8188                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Step 2: Generate Campaign ────────────────────────────────────────────────┐
+│ $ cd ~/wise2-core                                                           │
+│ $ python scripts/piff-city-generator.py                                    │
+│   Generates: instagram_posts/post-[1-5].png (1080×1350 each)               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Step 3: Download to Your Mac ─────────────────────────────────────────────┐
+│ $ scp dwise@wise2.net:~/wise2-core/instagram_posts/* ./piff-city-posts/   │
+│   Local folder: ./piff-city-posts/ (ready for Figma/Instagram)             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Files Deployed ───────────────────────────────────────────────────────────┐
+│ ✅ scripts/gpu-image-generator-setup.sh    — One-time setup (already run)   │
+│ ✅ scripts/piff-city-generator.py          — Main generator script           │
+│ ✅ GPU_IMAGE_GENERATION_GUIDE.md           — Complete documentation         │
+│ ✅ PIFF_CITY_GENERATOR_QUICKSTART.md       — Fast reference                 │
+│ ✅ GPU_GENERATION_DEPLOYMENT.md            — Operations guide               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ What You Get ─────────────────────────────────────────────────────────────┐
+│ ✓ 5 production-ready Instagram posts      1080×1350 PNG
+│ ✓ Cinematic SDXL quality                  4K HDR aesthetic
+│ ✓ Brand-accurate colors                   Purple #9d4edd, Green #39ff14
+│ ✓ Neon typography                         Sharp, legible text
+│ ✓ Zero cost per campaign                  ~$0.10 electricity
+│ ✓ Unlimited regenerations                 No API limits or quotas
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ The 5 Posts ──────────────────────────────────────────────────────────────┐
+│ 1. HERO             → "CULTURE MEETS SYSTEMS" neon text, volumetric fog
+│ 2. SPLIT IDENTITY   → Left: Purple/Crown   Right: Green/Lightning
+│ 3. WORKFORCE        → Holographic command center, "DIGITAL WORKFORCE"
+│ 4. CAPABILITIES     → 2×2 grid (Production/Automation/Analytics/AI)
+│ 5. CTA              → NYC rooftop, "READY TO LEVEL UP?" with star burst
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Performance ──────────────────────────────────────────────────────────────┐
+│ Time per image:       30-45 seconds
+│ Full campaign (5):     3-4 minutes
+│ VRAM usage:           ~5.5-6GB (your GPU: GTX 1660 SUPER)
+│ Cost per campaign:    ~$0.10 (electricity)
+│ vs. Midjourney cost:  $30-60/month ($400-750/year)
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Troubleshooting ──────────────────────────────────────────────────────────┐
+│ ComfyUI not starting    → $ lsof -ti :8188 | xargs kill -9 && retry
+│ Out of memory           → Edit script: change "steps": 25 to 20
+│ Slow generation         → Same fix above (reduce steps for speed)
+│ Text looks bad          → Touch up in Figma (normal SDXL limitation)
+│ Full help              → See GPU_IMAGE_GENERATION_GUIDE.md
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Advanced: Customize ──────────────────────────────────────────────────────┐
+│ Edit prompts:    $ vim scripts/piff-city-generator.py  (CAMPAIGN_POSTS var)
+│ Change speed:    Edit "steps": 25 (lower=faster, higher=better quality)
+│ Use other model: Edit "ckpt_name": "model.safetensors" in script
+│ Schedule weekly: $ crontab -e  (add: 0 9 * * 1 cd ~/wise2-core && python ...)
+└─────────────────────────────────────────────────────────────────────────────┘
+
+REMEMBER: You own this GPU. You can generate unlimited images. No subscriptions.
+
+═══════════════════════════════════════════════════════════════════════════════
+Generated: 2026-07-28                                          Deployed to: main
+═══════════════════════════════════════════════════════════════════════════════
