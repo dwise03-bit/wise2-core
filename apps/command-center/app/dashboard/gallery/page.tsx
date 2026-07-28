@@ -149,8 +149,8 @@ export default function GalleryPage() {
             <Button
               key={cat}
               onClick={() => setCategory(cat)}
-              variant={category === cat ? 'default' : 'outline'}
-              className="text-xs"
+              variant={category === cat ? 'primary' : 'ghost'}
+              size="sm"
             >
               {cat}
             </Button>
