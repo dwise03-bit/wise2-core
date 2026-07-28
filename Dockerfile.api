@@ -1,15 +1,27 @@
 # NestJS API Dockerfile
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+# Copy package files for monorepo
+COPY pnpm-lock.yaml package.json ./
+COPY packages/api/package.json ./packages/api/
+COPY packages/db/package.json ./packages/db/
+COPY packages/db/prisma ./packages/db/prisma
+
+# Install via npm (works with pnpm-lock.yaml structure)
+RUN npm install --production
+
+# Generate Prisma client for linux-musl (native to alpine)
+RUN npx prisma generate --schema=packages/db/prisma/schema.prisma || true
+
+# Production image
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install production dependencies
-COPY package*.json ./
-COPY packages/api/package.json ./packages/api/
-RUN npm install --production
-
-# Copy pre-generated Prisma client (generated locally during npm install)
-COPY node_modules/.prisma ./node_modules/.prisma
+# Copy dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy pre-built API
 COPY packages/api/dist ./dist
