@@ -1,29 +1,15 @@
-# NestJS API Dockerfile - Multi-stage build
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Install all dependencies (including dev, needed for prisma generate)
-COPY package*.json ./
-COPY packages/api/package.json ./packages/api/
-RUN npm install
-
-# Copy Prisma schema and generate client
-COPY packages/db/prisma ./prisma
-RUN npx prisma generate --schema=./prisma/schema.prisma
-
-# Production image
+# NestJS API Dockerfile
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install only production dependencies
+# Install production dependencies
 COPY package*.json ./
 COPY packages/api/package.json ./packages/api/
 RUN npm install --production
 
-# Copy generated Prisma client from builder
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Copy pre-generated Prisma client (generated locally during npm install)
+COPY node_modules/.prisma ./node_modules/.prisma
 
 # Copy pre-built API
 COPY packages/api/dist ./dist
