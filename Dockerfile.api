@@ -1,10 +1,10 @@
 # NestJS API Dockerfile
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
-# Install runtime dependencies (openssl1 required by Prisma on Alpine)
-RUN apk add --no-cache openssl1
+# Install runtime dependencies for Prisma (openssl 1.1 for linux-musl binary)
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 RUN npm install -g pnpm@8.15.9
