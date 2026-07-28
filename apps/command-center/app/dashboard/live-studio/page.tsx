@@ -199,12 +199,11 @@ export default function LiveStudioPage() {
 
       {/* Recording Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Card
-          as="button"
+        <button
           onClick={() => isRecording ? stopRecording() : startRecording('camera')}
           disabled={isBusy || (isRecording && captureTypeRef.current !== 'camera')}
-          className={`p-5 text-left transition-all ${
-            isRecording && captureTypeRef.current === 'camera' ? 'border-danger/40 bg-danger/5' : ''
+          className={`p-5 text-left rounded-lg border transition-all ${
+            isRecording && captureTypeRef.current === 'camera' ? 'border-danger/40 bg-danger/5' : 'border-border-subtle'
           } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
@@ -214,14 +213,13 @@ export default function LiveStudioPage() {
             {isRecording && captureTypeRef.current === 'camera'
               ? `Recording... ${formatDuration(duration)}` : 'Capture webcam video with audio'}
           </p>
-        </Card>
+        </button>
 
-        <Card
-          as="button"
+        <button
           onClick={() => isRecording ? stopRecording() : startRecording('screen')}
           disabled={isBusy || (isRecording && captureTypeRef.current !== 'screen')}
-          className={`p-5 text-left transition-all ${
-            isRecording && captureTypeRef.current === 'screen' ? 'border-danger/40 bg-danger/5' : ''
+          className={`p-5 text-left rounded-lg border transition-all ${
+            isRecording && captureTypeRef.current === 'screen' ? 'border-danger/40 bg-danger/5' : 'border-border-subtle'
           } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
@@ -231,7 +229,7 @@ export default function LiveStudioPage() {
             {isRecording && captureTypeRef.current === 'screen'
               ? `Recording... ${formatDuration(duration)}` : 'Capture screen or window with audio'}
           </p>
-        </Card>
+        </button>
       </div>
 
       {/* Live Preview */}
