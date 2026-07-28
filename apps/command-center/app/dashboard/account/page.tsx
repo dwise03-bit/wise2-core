@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -29,8 +30,8 @@ export default function AccountPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-36" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-36 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
@@ -56,21 +57,21 @@ export default function AccountPage() {
             <>
               <div className="flex items-start justify-between mb-1">
                 <h3 className="text-sm font-semibold text-text-primary group-hover:text-wise-electric transition-colors">{item.title}</h3>
-                {item.status && <span className="wise-badge-warning">{item.status}</span>}
+                {item.status && <Badge variant="warning">{item.status}</Badge>}
               </div>
               <p className="text-xs text-text-muted">{item.desc}</p>
             </>
           );
           return item.href ? (
-            <Link key={item.title} href={item.href} className="wise-card-interactive p-5 group">{inner}</Link>
+            <Link key={item.title} href={item.href}><Card className="p-5 group hover:bg-wise-black/40 transition-colors cursor-pointer">{inner}</Card></Link>
           ) : (
-            <div key={item.title} className="wise-card p-5 group">{inner}</div>
+            <Card key={item.title} className="p-5 group">{inner}</Card>
           );
         })}
       </div>
 
       {/* Workspace */}
-      <div className="wise-card p-5">
+      <Card className="p-5">
         <h2 className="text-sm font-semibold text-text-primary mb-3">Workspace</h2>
         <div className="space-y-2">
           <div className="flex items-center justify-between p-3 rounded-lg bg-wise-black/30">
@@ -78,9 +79,9 @@ export default function AccountPage() {
               <p className="text-xs font-medium text-text-secondary">Active Plan</p>
               <p className="text-xs text-text-muted">{subscription?.plan || 'Not configured'}</p>
             </div>
-            <span className={subscription?.status === 'active' ? 'wise-badge-success' : subscription?.plan ? 'wise-badge-warning' : 'wise-badge-neutral'}>
+            <Badge variant={subscription?.status === 'active' ? 'success' : subscription?.plan ? 'warning' : 'neutral'}>
               {subscription?.status === 'active' ? 'Active' : subscription?.plan ? (subscription.status?.toUpperCase() || 'Inactive') : 'Not Configured'}
-            </span>
+            </Badge>
           </div>
           <div className="flex items-center justify-between p-3 rounded-lg bg-wise-black/30">
             <div>
@@ -101,10 +102,10 @@ export default function AccountPage() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div>
-        <Link href="/dashboard" className="wise-btn-secondary">Back to Dashboard</Link>
+        <Link href="/dashboard"><Button variant="secondary">Back to Dashboard</Button></Link>
       </div>
     </div>
   );
