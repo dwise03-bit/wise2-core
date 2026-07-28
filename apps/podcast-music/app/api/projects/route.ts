@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { PodcastProjectStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   createPodcastProjectSchema,
@@ -82,12 +83,12 @@ export async function GET(request: NextRequest) {
     const { limit, offset, status } = queryValidation.data;
 
     // Build query filter
-    const where: any = {
+    const where: { userId: string; status?: PodcastProjectStatus } = {
       userId: user.userId,
     };
 
     if (status) {
-      where.status = status;
+      where.status = status as PodcastProjectStatus;
     }
 
     // Get total count

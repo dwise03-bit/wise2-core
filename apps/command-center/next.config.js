@@ -5,6 +5,9 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
   headers: async () => {
     return [

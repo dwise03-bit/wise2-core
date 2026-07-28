@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { downloadAudioSchema } from '@/lib/validations';
@@ -12,9 +13,10 @@ import {
 // 2. Stream it to the client
 // 3. Track the download in usage
 
-async function downloadFileFromStorage(_fileUrl: string): Promise<Buffer> {
+async function downloadFileFromStorage(fileUrl: string): Promise<Buffer> {
   // TODO: Implement actual file download from S3 or your storage service
   // Placeholder for now
+  console.debug('Downloading file:', fileUrl);
   throw new Error('File storage download not implemented');
 }
 

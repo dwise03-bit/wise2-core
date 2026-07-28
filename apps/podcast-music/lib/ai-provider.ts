@@ -57,6 +57,7 @@ class MockProvider implements AudioProvider {
     'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   private static readonly COMPLETE_AFTER_MS = 8000;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async submit(_params: GenerationParams): Promise<SubmitResult> {
     // Encode submit time in the jobId so getStatus is stateless.
     const jobId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
