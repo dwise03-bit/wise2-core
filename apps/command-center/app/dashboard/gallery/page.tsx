@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button, Input } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -101,10 +102,10 @@ export default function GalleryPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-32" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-32 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-4">
-          {Array.from({ length: 5 }).map((_, i) => <div key={i} className="wise-skeleton h-16 rounded-lg" />)}
+          {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-16 w-full animate-pulse bg-border-medium rounded-lg" />)}
         </div>
       </div>
     );
@@ -113,16 +114,16 @@ export default function GalleryPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="wise-page-title">Gallery</h1>
-        <p className="wise-page-subtitle">Unified asset browser for all your media files</p>
+        <h1 className="text-3xl font-bold text-wise-neon">Gallery</h1>
+        <p className="text-sm text-text-muted mt-1">Unified asset browser for all your media files</p>
       </div>
 
       {error && (
-        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
+        <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}</div>
       )}
 
       {/* Stats Strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-5">
           {[
             { label: 'Total Assets', value: stats.total },
@@ -137,22 +138,22 @@ export default function GalleryPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Search & Filter */}
       <div className="flex flex-col md:flex-row gap-3">
-        <input type="text" placeholder="Search assets..." value={search} onChange={e => setSearch(e.target.value)}
-          className="wise-input flex-1" />
+        <Input type="text" placeholder="Search assets..." value={search} onChange={e => setSearch(e.target.value)}
+          className="flex-1" />
         <div className="flex gap-2 flex-wrap">
           {CATEGORIES.map(cat => (
-            <button key={cat} onClick={() => setCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                category === cat
-                  ? 'bg-wise-electric/15 text-wise-electric border border-wise-electric/30'
-                  : 'bg-wise-black/40 border border-border-subtle text-text-muted hover:text-text-secondary'
-              }`}>
+            <Button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              variant={category === cat ? 'default' : 'outline'}
+              className="text-xs"
+            >
               {cat}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -161,7 +162,7 @@ export default function GalleryPage() {
       {filteredAssets.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {filteredAssets.map(asset => (
-            <div key={asset.id} className="wise-card p-4 group cursor-pointer">
+            <Card key={asset.id} className="p-4 group cursor-pointer">
               <div className="aspect-square bg-wise-black/40 rounded-lg flex items-center justify-center mb-3">
                 <span className="text-3xl opacity-40 group-hover:opacity-70 transition-opacity">
                   {asset.type === 'image' ? '\u{1F5BC}' : asset.type === 'audio' ? '\u{1F3B5}' : asset.type === 'video' ? '\u{1F3AC}' : '\u{1F4C4}'}
@@ -172,19 +173,19 @@ export default function GalleryPage() {
                 <span>{formatBytes(asset.size)}</span>
                 <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">{'\u{1F5BC}'}</div>
-          <h3 className="wise-empty-title">No Assets Found</h3>
-          <p className="wise-empty-desc">
+        <Card className="py-12 flex flex-col items-center justify-center text-center">
+          <div className="text-5xl mb-4">{'\u{1F5BC}'}</div>
+          <h3 className="text-lg font-semibold text-text-primary mb-2">No Assets Found</h3>
+          <p className="text-sm text-text-muted max-w-sm">
             {search || category !== 'All'
               ? 'No assets match your current filters.'
               : 'Upload media files to get started with your asset library.'}
           </p>
-        </div>
+        </Card>
       )}
     </div>
   );
