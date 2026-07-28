@@ -1,4 +1,4 @@
-import { Change, ChangeType, ConflictInfo, EntityId, VectorClock } from './types';
+import { Change, ChangeType, ConflictInfo, EntityId } from './types';
 import { VectorClockManager } from './VectorClock';
 
 export enum ConflictResolutionStrategy {
