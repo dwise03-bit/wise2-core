@@ -16,6 +16,9 @@
   --wise-neon-green: #72FF3B;           /* WISE² Neon Green - PRIMARY actions */
   --wise-green-lime: #8AFF52;           /* Bright lime - accent */
   --wise-electric: #27C7FF;             /* Electric blue - SECONDARY actions */
+
+  /* Backward Compatibility Aliases */
+  --organized-chaos-green: #72FF3B;    /* Legacy name for wise-neon-green */
   --wise-electric-hover: #3DD4FF;       /* Electric blue hover (lightened) */
   --wise-electric-active: #1BB8FF;      /* Electric blue active (darkened) */
   --wise-purple-ai: #9d4edd;            /* AI accent */
