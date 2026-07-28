@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button, Table, TableHead, TableBody, TableRow, TableCell, TableHeaderCell, StatusDot } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -48,8 +49,8 @@ export default function ProjectsPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-32" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-32 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
@@ -57,12 +58,12 @@ export default function ProjectsPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="wise-page-title">Projects</h1>
-        <p className="wise-page-subtitle">Unified view of all your projects across modules</p>
+        <h1 className="text-3xl font-bold text-text-primary">Projects</h1>
+        <p className="text-sm text-text-muted mt-1">Unified view of all your projects across modules</p>
       </div>
 
       {/* Stats Strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {[
             { label: 'Total', value: allProjects.length },
@@ -76,32 +77,32 @@ export default function ProjectsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Projects Table */}
       {allProjects.length > 0 ? (
-        <div className="wise-card overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="wise-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Updated</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Type</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
+                  <TableHeaderCell>Updated</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {allProjects.map(p => (
-                  <tr key={p.id}>
-                    <td>
+                  <TableRow key={p.id}>
+                    <TableCell>
                       <p className="font-medium text-text-primary">{p.name}</p>
                       {p.description && <p className="text-xs text-text-muted mt-0.5">{p.description}</p>}
-                    </td>
-                    <td><span className="wise-badge-info">{p.type}</span></td>
-                    <td><span className="wise-badge-success">{p.status}</span></td>
-                    <td className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</td>
-                  </tr>
+                    </TableCell>
+                    <TableCell><Badge variant="info">{p.type}</Badge></TableCell>
+                    <TableCell><Badge variant="success">{p.status}</Badge></TableCell>
+                    <TableCell className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</TableCell>
+                  </TableRow>
                 ))}
               </tbody>
             </table>

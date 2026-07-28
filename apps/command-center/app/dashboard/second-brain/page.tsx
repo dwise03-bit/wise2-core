@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_BRAIN_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -77,7 +78,7 @@ export default function SecondBrainPage() {
       </div>
 
       {/* Stats */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {[
             { label: 'Knowledge Items', value: loading ? '…' : (stats?.knowledgeCount ?? '--') },
@@ -93,10 +94,10 @@ export default function SecondBrainPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Search */}
-      <div className="wise-card p-4">
+      <Card className="p-4">
         <h2 className="text-sm font-semibold text-text-primary mb-3">Knowledge Search</h2>
         <div className="flex gap-2">
           <input
@@ -106,25 +107,25 @@ export default function SecondBrainPage() {
             placeholder="Search knowledge base…"
             className="flex-1 bg-wise-black/60 border border-border-subtle rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-wise-electric/50 transition-colors"
           />
-          <button onClick={doSearch} disabled={searching} className="wise-btn-secondary text-sm px-4">
+          <Button onClick={doSearch} disabled={searching} variant="secondary" className="text-sm px-4">
             {searching ? '…' : 'Search'}
-          </button>
+          </Button>
           {searchResults !== null && (
-            <button onClick={() => { setSearchResults(null); setSearch(''); }} className="wise-btn-secondary text-sm px-3">
+            <Button onClick={() => { setSearchResults(null); setSearch(''); }} variant="secondary" className="text-sm px-3">
               Clear
-            </button>
+            </Button>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Knowledge entries */}
-      <div className="wise-card p-5">
+      <Card className="p-5">
         <h2 className="text-sm font-semibold text-text-primary mb-3">
           {searchResults !== null ? `Search Results (${searchResults.length})` : `All Knowledge (${entries.length})`}
         </h2>
         {loading ? (
           <div className="space-y-2">
-            {Array.from({ length: 3 }).map((_, i) => <div key={i} className="wise-skeleton h-12 rounded-lg" />)}
+            {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-12 w-full animate-pulse bg-border-medium rounded-lg" />)}
           </div>
         ) : displayed.length === 0 ? (
           <p className="text-xs text-text-muted">
@@ -136,7 +137,7 @@ export default function SecondBrainPage() {
               <div key={entry._id} className="p-3 rounded-lg bg-wise-black/30 border border-border-subtle">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-medium text-text-secondary leading-snug">{entry.title}</p>
-                  <span className="wise-badge-neutral shrink-0 text-[9px]">{entry.business}</span>
+                  <Badge variant="neutral" className="shrink-0 text-[9px]">{entry.business}</Badge>
                 </div>
                 <p className="text-xs text-text-muted mt-1 line-clamp-2">{entry.content}</p>
                 {entry.tags.length > 0 && (
@@ -153,15 +154,15 @@ export default function SecondBrainPage() {
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Link to Hermes */}
-      <div className="wise-card p-4">
+      <Card className="p-4">
         <p className="text-xs text-text-muted">
           Second Brain provides memory and retrieval context for <a href="/dashboard/ai" className="text-wise-electric hover:underline">Hermes</a>.
           Ask Hermes a question — it automatically retrieves relevant knowledge to ground its answers.
         </p>
-      </div>
+      </Card>
     </div>
   );
 }

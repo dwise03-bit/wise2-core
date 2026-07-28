@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button } from '../../../src/components/ui';
 import {
   CaptureType,
   RecordingStatus,
@@ -161,8 +162,8 @@ export default function LiveStudioPage() {
   if (authLoading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-36" />
-        <div className="wise-skeleton h-3 w-64" />
+        <div className="h-6 w-36 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-64 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
@@ -185,9 +186,9 @@ export default function LiveStudioPage() {
     <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="wise-page-title">Live Studio</h1>
+        <h1 className="text-3xl font-bold text-text-primary">Live Studio</h1>
         <div className="flex items-center gap-2 mt-1">
-          {isRecording && <span className="wise-pulse-live" />}
+          {isRecording && <span className="h-2.5 w-2.5 bg-danger rounded-full animate-pulse" />}
           <p className={`text-sm ${isRecording ? 'text-danger font-medium' : 'text-text-muted'}`}>{statusLine}</p>
         </div>
       </div>
@@ -198,11 +199,12 @@ export default function LiveStudioPage() {
 
       {/* Recording Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <button
+        <Card
+          as="button"
           onClick={() => isRecording ? stopRecording() : startRecording('camera')}
           disabled={isBusy || (isRecording && captureTypeRef.current !== 'camera')}
-          className={`wise-card p-5 text-left transition-all ${
-            isRecording && captureTypeRef.current === 'camera' ? '!border-danger/40 bg-danger/5' : ''
+          className={`p-5 text-left transition-all ${
+            isRecording && captureTypeRef.current === 'camera' ? 'border-danger/40 bg-danger/5' : ''
           } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
@@ -212,13 +214,14 @@ export default function LiveStudioPage() {
             {isRecording && captureTypeRef.current === 'camera'
               ? `Recording... ${formatDuration(duration)}` : 'Capture webcam video with audio'}
           </p>
-        </button>
+        </Card>
 
-        <button
+        <Card
+          as="button"
           onClick={() => isRecording ? stopRecording() : startRecording('screen')}
           disabled={isBusy || (isRecording && captureTypeRef.current !== 'screen')}
-          className={`wise-card p-5 text-left transition-all ${
-            isRecording && captureTypeRef.current === 'screen' ? '!border-danger/40 bg-danger/5' : ''
+          className={`p-5 text-left transition-all ${
+            isRecording && captureTypeRef.current === 'screen' ? 'border-danger/40 bg-danger/5' : ''
           } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
@@ -228,39 +231,39 @@ export default function LiveStudioPage() {
             {isRecording && captureTypeRef.current === 'screen'
               ? `Recording... ${formatDuration(duration)}` : 'Capture screen or window with audio'}
           </p>
-        </button>
+        </Card>
       </div>
 
       {/* Live Preview */}
       {isRecording && (
-        <div className="wise-card overflow-hidden p-0">
-          <video ref={videoPreviewRef} autoPlay muted playsInline className="w-full aspect-video bg-black" />
-        </div>
+        <Card className="overflow-hidden p-0">
+          <video ref={videoPreviewRef} autoPlay muted playsInline className="w-full aspect-video bg-wise-black" />
+        </Card>
       )}
 
       {/* Go Live */}
-      <div className="wise-card p-4 opacity-60">
+      <Card className="p-4 opacity-60">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold text-text-primary">Go Live</h3>
             <p className="text-xs text-text-muted">Live streaming requires RTMP backend - not yet available</p>
           </div>
-          <span className="wise-badge-warning">Setup Required</span>
+          <Badge variant="warning">Setup Required</Badge>
         </div>
-      </div>
+      </Card>
 
       {/* Recordings */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="wise-section-title">Recordings</h2>
+          <h2 className="text-xl font-semibold text-text-primary">Recordings</h2>
           <Link href="/dashboard/live-studio/recordings" className="text-xs text-wise-electric hover:underline">View All &rarr;</Link>
         </div>
         {loadingRecordings ? (
-          <div className="wise-card p-8 text-center">
+          <Card className="p-8 text-center">
             <p className="text-sm text-text-muted">Loading recordings...</p>
-          </div>
+          </Card>
         ) : recordings.length > 0 ? (
-          <div className="wise-card overflow-hidden divide-y divide-border-subtle">
+          <Card className="overflow-hidden divide-y divide-border-subtle">
             {recordings.slice(0, 5).map(rec => (
               <div key={rec.id} className="px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
                 <div className="flex items-center gap-4">
@@ -269,37 +272,37 @@ export default function LiveStudioPage() {
                     <div className="flex items-center gap-3 text-xs text-text-muted mt-0.5">
                       <span>{formatBytes(rec.size)}</span>
                       {rec.metadata?.duration != null && <span>{formatDuration(rec.metadata.duration)}</span>}
-                      <span className="wise-badge-info">{rec.metadata?.captureType || 'recording'}</span>
+                      <Badge variant="info">{rec.metadata?.captureType || 'recording'}</Badge>
                       <span>{new Date(rec.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <button onClick={() => setPlayingId(playingId === rec.id ? null : rec.id)} className="wise-btn-secondary text-xs py-1 px-2.5">
+                    <Button onClick={() => setPlayingId(playingId === rec.id ? null : rec.id)} variant="secondary" size="sm">
                       {playingId === rec.id ? 'Close' : 'Play'}
-                    </button>
-                    <a href={`${API_BASE}${rec.url}`} download={rec.originalName} className="wise-btn-secondary text-xs py-1 px-2.5">DL</a>
+                    </Button>
+                    <a href={`${API_BASE}${rec.url}`} download={rec.originalName}><Button variant="secondary" size="sm">DL</Button></a>
                     <button onClick={() => deleteRecording(rec.id)} className="text-xs text-text-muted hover:text-danger transition-colors px-1">Del</button>
                   </div>
                 </div>
                 {playingId === rec.id && (
                   <div className="mt-3">
-                    <video src={`${API_BASE}${rec.url}`} controls autoPlay className="w-full rounded bg-black" style={{ maxHeight: '400px' }} />
+                    <video src={`${API_BASE}${rec.url}`} controls autoPlay className="w-full rounded bg-wise-black" style={{ maxHeight: '400px' }} />
                   </div>
                 )}
               </div>
             ))}
-          </div>
+          </Card>
         ) : (
-          <div className="wise-empty wise-card">
-            <div className="wise-empty-icon">&#127916;</div>
-            <h3 className="wise-empty-title">No Recordings Yet</h3>
-            <p className="wise-empty-desc">Use the camera or screen buttons above to create your first recording.</p>
-          </div>
+          <Card className="p-8 text-center">
+            <div className="text-4xl mb-3">&#127916;</div>
+            <h3 className="text-lg font-semibold text-text-primary mb-1">No Recordings Yet</h3>
+            <p className="text-sm text-text-muted">Use the camera or screen buttons above to create your first recording.</p>
+          </Card>
         )}
       </div>
 
       {/* Feature Status */}
-      <div className="wise-card p-5">
+      <Card className="p-5">
         <h2 className="text-sm font-semibold text-text-primary mb-3">Feature Status</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -313,7 +316,7 @@ export default function LiveStudioPage() {
             { label: 'AI Scene Detection', status: 'COMING SOON' },
           ].map(f => (
             <div key={f.label} className="flex items-center gap-2 p-2.5 rounded-lg bg-wise-black/30">
-              <span className={`wise-status-dot ${
+              <span className={`h-2.5 w-2.5 rounded-full ${
                 f.status === 'WORKING' ? 'bg-green-400' : f.status === 'UI ONLY' ? 'bg-amber-400' : 'bg-text-muted'
               }`} />
               <div>
@@ -325,7 +328,7 @@ export default function LiveStudioPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
