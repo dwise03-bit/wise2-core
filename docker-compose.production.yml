@@ -131,7 +131,7 @@ services:
       start_period: 40s
 
   open-webui:
-    image: ghcr.io/open-webui/open-webui:v0.11.0
+    image: ghcr.io/open-webui/open-webui:v0.10.2
     container_name: wise2-open-webui-prod
     environment:
       OLLAMA_BASE_URL: http://host.docker.internal:11434
