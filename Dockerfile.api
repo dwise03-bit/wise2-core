@@ -8,9 +8,9 @@ COPY package*.json ./
 COPY packages/api/package.json ./packages/api/
 RUN npm install
 
-# Build
+# Copy and build API
 COPY packages/api ./packages/api
-RUN npm run build
+RUN cd packages/api && npm run build
 
 # Production image
 FROM node:18-alpine
@@ -22,8 +22,8 @@ COPY package*.json ./
 COPY packages/api/package.json ./packages/api/
 RUN npm install --production
 
-# Copy built app
-COPY --from=builder /app/dist ./dist
+# Copy built app from builder
+COPY --from=builder /app/packages/api/dist ./dist
 
 EXPOSE 3000
 
