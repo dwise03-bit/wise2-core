@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -80,10 +81,10 @@ export default function SoundLabsPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-36" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="animate-pulse h-6 w-36 bg-border-medium rounded" />
+        <div className="animate-pulse h-3 w-56 bg-border-medium rounded" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="wise-skeleton h-20 rounded-lg" />)}
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="animate-pulse h-20 bg-border-medium rounded-lg" />)}
         </div>
       </div>
     );
@@ -113,19 +114,19 @@ export default function SoundLabsPage() {
       )}
 
       {!apiAvailable && !error && (
-        <div className="wise-card p-4 border-warning/20">
+        <Card className="p-4 border-warning/20">
           <div className="flex items-start gap-3">
-            <span className="wise-badge-warning">Not Connected</span>
+            <Badge variant="warning">Not Connected</Badge>
             <div>
               <p className="text-sm font-medium text-text-primary">Sound Labs API Not Connected</p>
               <p className="text-xs text-text-muted mt-0.5">The Sound Labs API runs on port 3011. Start the platform container to connect.</p>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Stats Strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {[
             { label: 'Plan', value: plan },
@@ -139,11 +140,11 @@ export default function SoundLabsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Upgrade CTA */}
       {plan === 'FREE' && (
-        <div className="wise-card p-5 border-wise-electric/20">
+        <Card className="p-5 border-wise-electric/20">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold text-text-primary mb-0.5">Unlock Sound Labs</h3>
@@ -153,7 +154,7 @@ export default function SoundLabsPage() {
               Upgrade
             </Link>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Workspace Modules */}
@@ -161,17 +162,19 @@ export default function SoundLabsPage() {
         <h2 className="wise-section-title mb-3">Workspace</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { title: 'Jingle Lab', desc: 'Create professional jingles and sonic logos with AI-powered composition.', href: '/dashboard/sound-labs/jingle-lab', badge: entitlements?.canGenerateMusic ? 'READY' : 'LOCKED', badgeClass: entitlements?.canGenerateMusic ? 'wise-badge-success' : 'wise-badge-warning' },
-            { title: 'Projects', desc: 'Manage your audio production projects. Create, organize, and collaborate.', href: '/dashboard/sound-labs/projects', badge: apiAvailable ? 'WORKING' : 'NOT CONNECTED', badgeClass: apiAvailable ? 'wise-badge-success' : 'wise-badge-danger' },
-            { title: 'Audio Library', desc: 'Browse, organize, and manage all your audio assets in one location.', href: '/dashboard/sound-labs/library', badge: 'READY', badgeClass: 'wise-badge-success' },
+            { title: 'Jingle Lab', desc: 'Create professional jingles and sonic logos with AI-powered composition.', href: '/dashboard/sound-labs/jingle-lab', badge: entitlements?.canGenerateMusic ? 'READY' : 'LOCKED', badgeVariant: entitlements?.canGenerateMusic ? 'success' : 'warning' },
+            { title: 'Projects', desc: 'Manage your audio production projects. Create, organize, and collaborate.', href: '/dashboard/sound-labs/projects', badge: apiAvailable ? 'WORKING' : 'NOT CONNECTED', badgeVariant: apiAvailable ? 'success' : 'danger' },
+            { title: 'Audio Library', desc: 'Browse, organize, and manage all your audio assets in one location.', href: '/dashboard/sound-labs/library', badge: 'READY', badgeVariant: 'success' },
           ].map(mod => (
-            <Link key={mod.title} href={mod.href} className="wise-card-interactive p-5 group">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="text-base font-semibold text-text-primary group-hover:text-wise-electric transition-colors">{mod.title}</h3>
-                <span className={mod.badgeClass}>{mod.badge}</span>
-              </div>
-              <p className="text-sm text-text-muted mb-3">{mod.desc}</p>
-              <span className="text-xs text-wise-electric">Open &rarr;</span>
+            <Link key={mod.title} href={mod.href} className="group">
+              <Card className="p-5 h-full hover:bg-white/[0.02] transition-colors cursor-pointer">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-base font-semibold text-text-primary group-hover:text-wise-electric transition-colors">{mod.title}</h3>
+                  <Badge variant={mod.badgeVariant as 'success' | 'warning' | 'danger'}>{mod.badge}</Badge>
+                </div>
+                <p className="text-sm text-text-muted mb-3">{mod.desc}</p>
+                <span className="text-xs text-wise-electric">Open &rarr;</span>
+              </Card>
             </Link>
           ))}
         </div>
@@ -184,7 +187,7 @@ export default function SoundLabsPage() {
             <h2 className="wise-section-title">Recent Projects</h2>
             <Link href="/dashboard/sound-labs/projects" className="text-xs text-wise-electric hover:underline">View All &rarr;</Link>
           </div>
-          <div className="wise-card overflow-hidden">
+          <Card className="overflow-hidden">
             <div className="divide-y divide-border-subtle">
               {projects.slice(0, 5).map(project => (
                 <div key={project.id} className="px-5 py-3.5 hover:bg-white/[0.02] transition-colors flex items-center justify-between">
@@ -199,15 +202,15 @@ export default function SoundLabsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       ) : !error && apiAvailable ? (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">&#127925;</div>
-          <h3 className="wise-empty-title">No Projects Yet</h3>
-          <p className="wise-empty-desc">Start creating professional audio content with Sound Labs.</p>
+        <Card className="p-8 text-center">
+          <div className="text-5xl mb-3">&#127925;</div>
+          <h3 className="text-base font-semibold text-text-primary mb-1.5">No Projects Yet</h3>
+          <p className="text-sm text-text-muted mb-4">Start creating professional audio content with Sound Labs.</p>
           <Link href="/dashboard/sound-labs/projects" className="wise-btn-primary">+ Create Your First Project</Link>
-        </div>
+        </Card>
       ) : null}
     </div>
   );
