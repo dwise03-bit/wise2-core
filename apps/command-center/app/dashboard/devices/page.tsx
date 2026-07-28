@@ -46,12 +46,12 @@ export default function DevicesPage() {
     );
   }
 
-  const modules = [
-    { title: 'Overview', desc: 'View all connected devices and their status', status: 'Available', variant: 'success' as const },
-    { title: 'WISE OS (Raspberry Pi)', desc: 'Manage your Pi edge node - kiosk mode, services, updates', status: devices.length > 0 ? 'Connected' : 'Not Connected', variant: (devices.length > 0 ? 'success' : 'danger') as const },
-    { title: 'Services', desc: 'Monitor and control running services across devices', status: 'Available', variant: 'success' as const },
-    { title: 'Telemetry', desc: 'CPU, memory, disk, and network metrics', status: 'Coming Soon', variant: 'neutral' as const },
-    { title: 'Automations', desc: 'Device-triggered workflows and scheduled tasks', status: 'Coming Soon', variant: 'neutral' as const },
+  const modules: Array<{ title: string; desc: string; status: string; variant: 'success' | 'warning' | 'danger' | 'info' | 'neutral' }> = [
+    { title: 'Overview', desc: 'View all connected devices and their status', status: 'Available', variant: 'success' },
+    { title: 'WISE OS (Raspberry Pi)', desc: 'Manage your Pi edge node - kiosk mode, services, updates', status: devices.length > 0 ? 'Connected' : 'Not Connected', variant: devices.length > 0 ? 'success' : 'danger' },
+    { title: 'Services', desc: 'Monitor and control running services across devices', status: 'Available', variant: 'success' },
+    { title: 'Telemetry', desc: 'CPU, memory, disk, and network metrics', status: 'Coming Soon', variant: 'neutral' },
+    { title: 'Automations', desc: 'Device-triggered workflows and scheduled tasks', status: 'Coming Soon', variant: 'neutral' },
   ];
 
   return (
