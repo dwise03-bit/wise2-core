@@ -329,6 +329,35 @@ services:
 # Networks
 # ============================================================================
 
+  # ============================================================================
+  # Digital Workforce Services
+  # ============================================================================
+
+  # WISE² Worker (Automation Engine)
+  worker:
+    build:
+      context: ./services/worker
+    container_name: wise2-worker
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
 networks:
   wise2-network:
     driver: bridge
