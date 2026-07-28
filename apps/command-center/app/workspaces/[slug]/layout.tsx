@@ -6,6 +6,7 @@
 import React from 'react';
 import { WorkspaceProvider } from '@/src/context/WorkspaceContext';
 import { WorkspaceSwitcher } from '@/src/components/WorkspaceSwitcher';
+import { WorkspaceNavigation } from '@/src/components/WorkspaceNavigation';
 
 interface WorkspaceLayoutProps {
   children: React.ReactNode;
@@ -23,16 +24,8 @@ export default function WorkspaceLayout({ children, params }: WorkspaceLayoutPro
           {/* Workspace Switcher */}
           <WorkspaceSwitcher />
 
-          {/* Navigation Menu (Placeholder) */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-            {/* Navigation items will go here in Phase 4C */}
-            <div className="text-xs uppercase font-medium text-wise-text-secondary px-3 py-2">
-              Navigation
-            </div>
-            <div className="text-xs text-wise-text-secondary px-3 py-2">
-              (To be implemented in Phase 4C)
-            </div>
-          </nav>
+          {/* Navigation Menu */}
+          <WorkspaceNavigation />
 
           {/* Footer/Settings (Placeholder) */}
           <div className="border-t border-wise-border p-4 space-y-2">
