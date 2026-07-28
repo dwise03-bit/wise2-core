@@ -59,7 +59,7 @@ export default function SecondBrainPage() {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
-      setSearchResults(data.results || data.entries || []);
+      setSearchResults(Array.isArray(data.entries) ? data.entries : Array.isArray(data.results) ? data.results : []);
     } finally {
       setSearching(false);
     }
