@@ -18,31 +18,45 @@ module.exports = {
     },
     extend: {
       colors: {
-        // WISE² Organized Chaos Green Foundation
+        // WISE² Enterprise Design System v2.0
         wise: {
+          // Dark Enterprise Foundation
+          'bg-darkest': '#050505',
+          'surface-1': '#1a1a1a',
+          'surface-2': '#2d2d2d',
+          'border': '#3d3d3d',
+          'text-primary': '#e8e8e8',
+          'text-secondary': '#999999',
+
+          // Action Colors
+          'blue-electric': '#00d4ff',
+          'green-neon': '#39ff14',
+          'purple-ai': '#9d4edd',
+          'red-alert': '#ff006e',
+          'orange-warning': '#ffa500',
+
+          // Semantic Aliases (for backwards compatibility)
           black: '#050505',
-          steel: '#1A1A1A',
-          'dark-steel': '#0F1419',
-          chrome: '#9CA3AF',
-          'chaos-green': '#00FF66',
-          'green-dim': 'rgba(0, 255, 102, 0.15)',
-          'green-glow': 'rgba(0, 255, 102, 0.4)',
+          steel: '#1a1a1a',
+          'dark-steel': '#2d2d2d',
+          chrome: '#999999',
         },
         text: {
-          primary: '#FFFFFF',
-          secondary: '#C9CED6',
-          muted: '#6B7280',
+          primary: '#e8e8e8',
+          secondary: '#999999',
+          muted: '#666666',
         },
         border: {
-          subtle: 'rgba(255, 255, 255, 0.06)',
-          medium: 'rgba(255, 255, 255, 0.10)',
-          strong: 'rgba(255, 255, 255, 0.18)',
-          green: 'rgba(0, 255, 102, 0.30)',
+          subtle: 'rgba(61, 61, 61, 0.5)',
+          medium: 'rgba(61, 61, 61, 0.8)',
+          strong: 'rgba(61, 61, 61, 1)',
+          electric: 'rgba(0, 212, 255, 0.3)',
+          neon: 'rgba(57, 255, 20, 0.3)',
         },
-        success: { DEFAULT: '#22C55E', muted: 'rgba(34, 197, 94, 0.12)' },
-        warning: { DEFAULT: '#F59E0B', muted: 'rgba(245, 158, 11, 0.12)' },
-        danger: { DEFAULT: '#EF4444', muted: 'rgba(239, 68, 68, 0.12)' },
-        info: { DEFAULT: '#3B82F6', muted: 'rgba(59, 130, 246, 0.12)' },
+        success: { DEFAULT: '#39ff14', muted: 'rgba(57, 255, 20, 0.15)' },
+        warning: { DEFAULT: '#ffa500', muted: 'rgba(255, 165, 0, 0.15)' },
+        danger: { DEFAULT: '#ff006e', muted: 'rgba(255, 0, 110, 0.15)' },
+        info: { DEFAULT: '#00d4ff', muted: 'rgba(0, 212, 255, 0.15)' },
       },
       fontFamily: {
         display: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -69,8 +83,20 @@ module.exports = {
         'wise': '8px',
       },
       boxShadow: {
-        'green-glow': '0 0 12px rgba(0, 255, 102, 0.2)',
-        'green-glow-md': '0 0 24px rgba(0, 255, 102, 0.4)',
+        // Glassmorphic shadows
+        'sm': '0 2px 8px rgba(0, 0, 0, 0.24)',
+        'md': '0 4px 16px rgba(0, 0, 0, 0.32)',
+        'lg': '0 8px 24px rgba(0, 0, 0, 0.40)',
+
+        // Electric Blue accents
+        'blue-glow': '0 0 12px rgba(0, 212, 255, 0.2)',
+        'blue-glow-md': '0 0 24px rgba(0, 212, 255, 0.4)',
+
+        // Neon Green accents
+        'green-glow': '0 0 12px rgba(57, 255, 20, 0.2)',
+        'green-glow-md': '0 0 24px rgba(57, 255, 20, 0.4)',
+
+        // Surface shadows
         'surface': '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
         'elevated': '0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3)',
         'overlay': '0 8px 32px rgba(0, 0, 0, 0.5)',
@@ -85,14 +111,19 @@ module.exports = {
           '100%': { opacity: '1' },
         },
         'green-pulse': {
-          '0%, 100%': { boxShadow: '0 0 12px rgba(0, 255, 102, 0.2)' },
-          '50%': { boxShadow: '0 0 24px rgba(0, 255, 102, 0.4)' },
+          '0%, 100%': { boxShadow: '0 0 12px rgba(57, 255, 20, 0.2)' },
+          '50%': { boxShadow: '0 0 24px rgba(57, 255, 20, 0.4)' },
+        },
+        'blue-pulse': {
+          '0%, 100%': { boxShadow: '0 0 12px rgba(0, 212, 255, 0.2)' },
+          '50%': { boxShadow: '0 0 24px rgba(0, 212, 255, 0.4)' },
         },
       },
       animation: {
         'slide-up': 'slide-up 0.25s ease-out',
         'fade-in': 'fade-in 0.2s ease-out',
-        'green-pulse': 'green-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'green-pulse': 'green-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'blue-pulse': 'blue-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
