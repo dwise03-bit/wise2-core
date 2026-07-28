@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 interface BotStatus {
   online: boolean;
@@ -87,12 +88,12 @@ export default function DiscordPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="wise-page-title">Discord</h1>
-        <p className="wise-page-subtitle">WISE² operations interface — secondary control plane</p>
+        <h1 className="text-2xl font-bold text-wise-neon">Discord</h1>
+        <p className="text-sm text-text-muted mt-1">WISE² operations interface — secondary control plane</p>
       </div>
 
       {/* Status strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {STATUS_ROWS.map((row) => (
             <div key={row.label} className="px-4 py-3 border-r border-border-subtle last:border-0">
@@ -108,11 +109,11 @@ export default function DiscordPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Commands reference */}
-      <div className="wise-card p-5">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">Command Reference</h2>
+      <Card className="p-5">
+        <h2 className="text-sm font-semibold text-wise-neon mb-3">Command Reference</h2>
         <div className="space-y-1">
           {COMMANDS.map(({ cmd, desc }) => (
             <div key={cmd} className="flex items-start gap-3 py-2 border-b border-border-subtle last:border-0">
@@ -123,11 +124,11 @@ export default function DiscordPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Architecture */}
-      <div className="wise-card p-5">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">Architecture</h2>
+      <Card className="p-5">
+        <h2 className="text-sm font-semibold text-wise-neon mb-3">Architecture</h2>
         <div className="space-y-2 text-xs text-text-muted font-mono">
           {[
             'Discord User → /wise <command>',
@@ -143,27 +144,28 @@ export default function DiscordPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Test event */}
-      <div className="wise-card p-5">
-        <h2 className="text-sm font-semibold text-text-primary mb-1">Live Ops Test</h2>
+      <Card className="p-5">
+        <h2 className="text-sm font-semibold text-wise-neon mb-1">Live Ops Test</h2>
         <p className="text-xs text-text-muted mb-3">
           Send a test event to the Live Ops stream to verify real-time delivery.
         </p>
-        <button
+        <Button
           onClick={sendTestEvent}
           disabled={testLoading}
-          className="wise-btn-secondary text-sm"
+          variant="secondary"
+          size="sm"
         >
           {testLoading ? 'Sending…' : testSent ? '✓ Sent — check Live Ops' : 'Send Test Event'}
-        </button>
-      </div>
+        </Button>
+      </Card>
 
       {/* Security note */}
-      <div className="wise-card p-4 border-warning/20">
+      <Card className="p-4 border-warning/20">
         <div className="flex items-start gap-3">
-          <span className="wise-badge-warning shrink-0">Security</span>
+          <Badge variant="warning" className="shrink-0">Security</Badge>
           <div>
             <p className="text-sm font-medium text-text-primary">Bot credentials are server-side only</p>
             <p className="text-xs text-text-muted mt-0.5">
@@ -172,7 +174,7 @@ export default function DiscordPage() {
             </p>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

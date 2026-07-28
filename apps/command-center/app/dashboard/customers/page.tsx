@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Input, Table, TableHead, TableBody, TableRow, TableHeaderCell, TableCell } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -69,34 +70,34 @@ export default function CustomersPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-48" />
-        <div className="wise-skeleton h-3 w-64" />
+        <div className="h-6 w-48 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-64 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-5 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="wise-breadcrumb mb-2">
-            <Link href="/dashboard/business-os">Business</Link>
-            <span className="opacity-30">/</span>
-            <span className="text-text-secondary">CRM / Customers</span>
-          </div>
-          <h1 className="wise-page-title">CRM / Customers</h1>
-          <p className="wise-page-subtitle">Customer relationship management</p>
+    <div className="space-y-6 animate-fade-in">
+      <div>
+        <div className="flex items-center gap-1 text-xs text-text-muted mb-2">
+          <Link href="/dashboard/business-os" className="hover:text-wise-electric">Business</Link>
+          <span className="opacity-30">/</span>
+          <span>CRM / Customers</span>
         </div>
+        <h1 className="text-2xl font-bold text-text-primary">👥 CRM / Customers</h1>
+        <p className="text-sm text-text-muted mt-1">Customer relationship management</p>
       </div>
 
       {error && (
-        <div className="p-3 bg-danger-muted border border-danger/20 rounded-lg text-danger text-sm">{error}</div>
+        <Card className="p-4 border-danger/20 bg-danger/5">
+          <p className="text-sm text-danger">{error}</p>
+        </Card>
       )}
 
       {!apiAvailable && (
-        <div className="wise-card p-4 border-warning/20">
+        <Card className="p-4 border-warning/20 space-y-2">
           <div className="flex items-start gap-3">
-            <span className="wise-badge-warning">Awaiting Deploy</span>
+            <Badge variant="warning">Awaiting Deploy</Badge>
             <div>
               <p className="text-sm font-medium text-text-primary">Customer API Not Active</p>
               <p className="text-xs text-text-muted mt-0.5">
@@ -104,70 +105,79 @@ export default function CustomersPage() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
-      <input type="text" placeholder="Search customers..." value={search} onChange={e => setSearch(e.target.value)}
-        className="wise-input max-w-sm" />
+      <Input
+        type="text"
+        placeholder="Search customers..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        className="max-w-sm"
+      />
 
       {apiAvailable && customers.length > 0 ? (
-        <div className="wise-card overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="wise-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Company</th>
-                  <th>Status</th>
-                  <th>Revenue</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Email</TableHeaderCell>
+                  <TableHeaderCell>Company</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
+                  <TableHeaderCell>Revenue</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {customers.map(c => (
-                  <tr key={c.id}>
-                    <td className="font-medium text-text-primary">{c.name}</td>
-                    <td className="text-text-muted">{c.email}</td>
-                    <td>{c.company || <span className="text-text-muted">--</span>}</td>
-                    <td>
-                      <span className={c.status === 'ACTIVE' ? 'wise-badge-success' : 'wise-badge-neutral'}>
+                  <TableRow key={c.id}>
+                    <TableCell className="font-medium text-text-primary">{c.name}</TableCell>
+                    <TableCell className="text-text-muted">{c.email}</TableCell>
+                    <TableCell>{c.company || <span className="text-text-muted">--</span>}</TableCell>
+                    <TableCell>
+                      <Badge variant={c.status === 'ACTIVE' ? 'success' : 'neutral'}>
                         {c.status}
-                      </span>
-                    </td>
-                    <td className="font-medium text-wise-electric tabular-nums">{c.totalRevenue ? fmt(c.totalRevenue) : '--'}</td>
-                  </tr>
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium text-wise-electric tabular-nums">
+                      {c.totalRevenue ? fmt(c.totalRevenue) : '--'}
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
-        </div>
+        </Card>
       ) : apiAvailable ? (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">&#128101;</div>
-          <h3 className="wise-empty-title">No Customers Found</h3>
-          <p className="wise-empty-desc">Customers appear here once converted from prospects or added through billing.</p>
-        </div>
+        <Card className="p-16 text-center space-y-3">
+          <div className="text-4xl opacity-20">👥</div>
+          <h3 className="text-base font-semibold text-text-secondary">No Customers Found</h3>
+          <p className="text-sm text-text-muted max-w-sm mx-auto">
+            Customers appear here once converted from prospects or added through billing.
+          </p>
+        </Card>
       ) : null}
 
       {/* CRM Status */}
-      <div className="wise-card p-5">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">CRM Capabilities</h2>
+      <Card className="p-6 space-y-4">
+        <h2 className="text-sm font-semibold text-text-primary">CRM Capabilities</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
-            { label: 'Prospect Pipeline', status: 'Active', ok: true, href: '/dashboard/leads' },
+            { label: 'Prospect Pipeline', status: 'Active', ok: true },
             { label: 'Customer List', status: apiAvailable ? 'Active' : 'Awaiting Deploy', ok: apiAvailable },
             { label: 'Customer Timeline', status: 'Awaiting Deploy', ok: false },
           ].map(cap => (
-            <div key={cap.label} className="flex items-center gap-3 p-3 rounded-lg bg-wise-black/30">
-              <span className={`wise-status-dot ${cap.ok ? 'bg-green-400' : 'bg-amber-400'}`} />
-              <div>
+            <div key={cap.label} className="flex items-center gap-3 p-3 rounded-lg bg-wise-black/30 border border-border-subtle">
+              <span className={`w-2 h-2 rounded-full ${cap.ok ? 'bg-success' : 'bg-warning'}`} />
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-text-secondary">{cap.label}</p>
-                <p className={`text-xs ${cap.ok ? 'text-green-400' : 'text-amber-400'}`}>{cap.status}</p>
+                <p className={`text-xs ${cap.ok ? 'text-success' : 'text-warning'}`}>{cap.status}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_BRAIN_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -127,72 +128,70 @@ export default function HermesPage() {
       <div className="shrink-0 space-y-3 pb-3">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h1 className="wise-page-title">Hermes</h1>
-            <p className="wise-page-subtitle">WISE² Master Intelligence Agent</p>
+            <h1 className="text-2xl font-bold text-text-primary">⚡ Hermes</h1>
+            <p className="text-sm text-text-muted mt-1">WISE² Master Intelligence Agent</p>
           </div>
-          <button onClick={loadStatus} className="wise-btn-secondary text-xs px-2 py-1 shrink-0">
-            Refresh
-          </button>
+          <Button variant="secondary" size="sm" onClick={loadStatus}>Refresh</Button>
         </div>
 
         {/* Status strip */}
-        <div className="wise-card p-1">
-          <div className="grid grid-cols-2 md:grid-cols-4">
+        <Card className="p-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {statusLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="px-4 py-3"><div className="wise-skeleton h-4 w-20" /></div>
+                <div key={i} className="space-y-2"><div className="h-4 w-20 animate-pulse bg-border-medium rounded" /></div>
               ))
             ) : status ? (
               <>
-                <div className="px-4 py-3 border-r border-border-subtle">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.online ? 'bg-green-400' : 'bg-red-400'}`} />
-                    <span className={`text-sm font-semibold ${status.online ? 'text-green-400' : 'text-red-400'}`}>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`w-2 h-2 rounded-full ${status.online ? 'bg-success' : 'bg-danger'}`} />
+                    <span className={`text-sm font-semibold ${status.online ? 'text-success' : 'text-danger'}`}>
                       {status.online ? 'Online' : 'Offline'}
                     </span>
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-0.5">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
                     Hermes · {status.model}
-                  </div>
+                  </p>
                 </div>
-                <div className="px-4 py-3 border-r border-border-subtle">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.secondBrain ? 'bg-green-400' : 'bg-red-400'}`} />
-                    <span className={`text-sm font-semibold ${status.secondBrain ? 'text-green-400' : 'text-red-400'}`}>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`w-2 h-2 rounded-full ${status.secondBrain ? 'bg-success' : 'bg-danger'}`} />
+                    <span className={`text-sm font-semibold ${status.secondBrain ? 'text-success' : 'text-danger'}`}>
                       {status.secondBrain ? 'Connected' : 'Offline'}
                     </span>
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-0.5">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
                     Second Brain · {status.knowledgeCount} items
-                  </div>
+                  </p>
                 </div>
-                <div className="px-4 py-3 border-r border-border-subtle">
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-1.5 h-1.5 rounded-full ${status.liveOps ? 'bg-green-400' : 'bg-amber-400'}`} />
-                    <span className={`text-sm font-semibold ${status.liveOps ? 'text-green-400' : 'text-amber-400'}`}>
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`w-2 h-2 rounded-full ${status.liveOps ? 'bg-success' : 'bg-warning'}`} />
+                    <span className={`text-sm font-semibold ${status.liveOps ? 'text-success' : 'text-warning'}`}>
                       {status.liveOps ? 'Connected' : 'Degraded'}
                     </span>
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-0.5">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
                     Live Ops Stream
-                  </div>
+                  </p>
                 </div>
-                <div className="px-4 py-3">
-                  <div className="flex flex-col gap-0.5">
+                <div>
+                  <div className="flex flex-col gap-1 mb-2">
                     {status.edgeDevices.length > 0
                       ? status.edgeDevices.map(deviceBadge)
                       : <span className="text-[10px] text-text-muted">No devices</span>}
                   </div>
-                  <div className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-0.5">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
                     Edge Network
-                  </div>
+                  </p>
                 </div>
               </>
             ) : (
-              <div className="col-span-4 px-4 py-3 text-xs text-text-muted">Hermes offline — check Second Brain service</div>
+              <div className="col-span-2 md:col-span-4 text-xs text-text-muted">Hermes offline — check Second Brain service</div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Chat area — grows to fill available space, natural scroll */}
@@ -288,19 +287,15 @@ export default function HermesPage() {
                 t.style.height = Math.min(t.scrollHeight, 120) + 'px';
               }}
             />
-            <button
+            <Button
+              variant="primary"
+              size="md"
               onClick={send}
               disabled={thinking || !input.trim() || !status?.online}
-              className="shrink-0 wise-btn-primary px-4 py-3 rounded-xl disabled:opacity-40 transition-opacity"
+              className="shrink-0"
             >
-              {thinking ? (
-                <span className="text-xs">…</span>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
-              )}
-            </button>
+              {thinking ? '…' : '↗'}
+            </Button>
           </div>
           {messages.length > 0 && (
             <button

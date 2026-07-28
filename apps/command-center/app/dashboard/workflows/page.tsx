@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -85,10 +86,10 @@ export default function WorkflowsPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-32" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-32 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="wise-skeleton h-16 rounded-lg" />)}
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-16 rounded-lg animate-pulse bg-border-medium" />)}
         </div>
       </div>
     );
@@ -106,19 +107,19 @@ export default function WorkflowsPage() {
       )}
 
       {!apiAvailable && (
-        <div className="wise-card p-4 border-warning/20">
+        <Card className="p-4 border-warning/20">
           <div className="flex items-start gap-3">
-            <span className="wise-badge-warning">Not Connected</span>
+            <Badge variant="warning">Not Connected</Badge>
             <div>
               <p className="text-sm font-medium text-text-primary">Workflow Engine Not Connected</p>
               <p className="text-xs text-text-muted mt-0.5">Requires the Brain Auth service (MongoDB-backed). Templates and executions are stored in MongoDB.</p>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Stats Strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {[
             { label: 'Templates', value: stats?.totalTemplates ?? '--' },
@@ -132,23 +133,23 @@ export default function WorkflowsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Templates */}
       {templates.length > 0 && (
         <div>
           <h2 className="wise-section-title mb-3">Workflow Templates</h2>
-          <div className="wise-card overflow-hidden divide-y divide-border-subtle">
+          <Card className="overflow-hidden divide-y divide-border-subtle">
             {templates.map(t => (
               <div key={t._id} className="px-5 py-4 hover:bg-white/[0.02] transition-colors">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
                       <h3 className="text-sm font-medium text-text-primary">{t.name}</h3>
-                      <span className={t.isActive ? 'wise-badge-success' : 'wise-badge-neutral'}>
+                      <Badge variant={t.isActive ? 'success' : 'neutral'}>
                         {t.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                      {t.category && <span className="wise-badge-info">{t.category}</span>}
+                      </Badge>
+                      {t.category && <Badge variant="info">{t.category}</Badge>}
                     </div>
                     {t.description && <p className="text-xs text-text-muted">{t.description}</p>}
                     <div className="flex items-center gap-4 mt-1.5 text-[10px] text-text-muted">
@@ -158,18 +159,18 @@ export default function WorkflowsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => handleToggle(t._id, t.isActive)} className="wise-btn-secondary text-xs py-1 px-2.5">
+                    <Button onClick={() => handleToggle(t._id, t.isActive)} variant="secondary" size="sm">
                       {t.isActive ? 'Disable' : 'Enable'}
-                    </button>
-                    <button onClick={() => handleExecute(t._id)} disabled={executing === t._id}
-                      className="wise-btn-primary text-xs py-1 px-2.5 disabled:opacity-50">
+                    </Button>
+                    <Button onClick={() => handleExecute(t._id)} disabled={executing === t._id}
+                      variant="primary" size="sm">
                       {executing === t._id ? 'Running...' : 'Run'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
       )}
 
@@ -177,7 +178,7 @@ export default function WorkflowsPage() {
       {executions.length > 0 && (
         <div>
           <h2 className="wise-section-title mb-3">Recent Executions</h2>
-          <div className="wise-card overflow-hidden">
+          <Card className="overflow-hidden">
             <div className="overflow-x-auto">
               <table className="wise-table">
                 <thead>
@@ -193,12 +194,12 @@ export default function WorkflowsPage() {
                     <tr key={e._id}>
                       <td className="font-mono text-text-primary">{e._id.slice(-8)}</td>
                       <td>
-                        <span className={
-                          e.status === 'completed' ? 'wise-badge-success'
-                            : e.status === 'failed' ? 'wise-badge-danger'
-                              : e.status === 'running' ? 'wise-badge-info'
-                                : 'wise-badge-neutral'
-                        }>{e.status.toUpperCase()}</span>
+                        <Badge variant={
+                          e.status === 'completed' ? 'success'
+                            : e.status === 'failed' ? 'danger'
+                              : e.status === 'running' ? 'info'
+                                : 'neutral'
+                        }>{e.status.toUpperCase()}</Badge>
                       </td>
                       <td className="text-text-muted">{new Date(e.startedAt).toLocaleString()}</td>
                       <td className="text-text-muted tabular-nums">
@@ -209,22 +210,22 @@ export default function WorkflowsPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 
       {apiAvailable && templates.length === 0 && (
-        <div className="wise-empty wise-card">
+        <Card className="wise-empty">
           <div className="wise-empty-icon">&#9889;</div>
           <h3 className="wise-empty-title">No Workflow Templates</h3>
           <p className="wise-empty-desc">Create workflow templates to automate tasks across your business.</p>
-        </div>
+        </Card>
       )}
 
       {/* Capabilities + Examples when offline */}
       {!apiAvailable && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="wise-card p-5">
+          <Card className="p-5">
             <h2 className="text-sm font-semibold text-text-primary mb-3">Automation Capabilities</h2>
             <div className="space-y-2">
               {['Template Engine', 'Async Execution', 'Retry Policies', 'Scheduled Triggers'].map(cap => (
@@ -234,9 +235,9 @@ export default function WorkflowsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
-          <div className="wise-card p-5">
+          <Card className="p-5">
             <h2 className="text-sm font-semibold text-text-primary mb-3">Example Workflows</h2>
             <div className="space-y-2">
               {[
@@ -251,7 +252,7 @@ export default function WorkflowsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

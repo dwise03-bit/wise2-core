@@ -253,13 +253,13 @@ export const Hero: React.FC = () => {
 
         <div className={styles.poweredGrid}>
           {/* PIFF CITY - Purple */}
-          <div className="business-card" style={{ borderColor: 'rgba(166, 60, 255, 0.3)', backgroundImage: 'linear-gradient(to bottom right, rgba(166, 60, 255, 0.1), transparent)' }}>
+          <div className="business-card" style={{ borderColor: 'rgba(57, 255, 20, 0.4)', backgroundImage: 'linear-gradient(to bottom right, rgba(57, 255, 20, 0.1), transparent)' }}>
             <div className={styles.piffCityCard}>
               <div className={styles.piffCityRabbitContainer}>
                 <PiffCityRabbit />
               </div>
               <div className={styles.businessCardContent}>
-                <p className={styles.businessName} style={{ color: '#A63CFF' }}>PIFF CITY</p>
+                <p className={styles.businessName} style={{ color: '#39FF14' }}>PIFF CITY</p>
                 <p className={styles.businessTagline}>CULTURE. CREATIVITY. COMMUNITY.</p>
                 <p className={styles.businessDescription}>WE SET TRENDS.</p>
                 <div className={styles.businessItems}>
@@ -271,9 +271,9 @@ export const Hero: React.FC = () => {
           </div>
 
           {/* WISE² CENTER */}
-          <div className="business-card" style={{ borderColor: 'rgba(0, 148, 255, 0.5)', backgroundImage: 'linear-gradient(to bottom right, rgba(0, 148, 255, 0.15), transparent)' }}>
+          <div className="business-card" style={{ borderColor: 'rgba(57, 255, 20, 0.5)', backgroundImage: 'linear-gradient(to bottom right, rgba(57, 255, 20, 0.15), transparent)' }}>
             <div className={styles.businessCardContent}>
-              <p className={styles.businessName} style={{ color: '#0094FF', fontSize: '1.5rem' }}>WISE²</p>
+              <p className={styles.businessName} style={{ color: '#39FF14', fontSize: '1.5rem' }}>WISE²</p>
               <p className={styles.businessTagline}>THE PARENT PLATFORM</p>
               <p className={styles.businessDescription}>COMMAND CENTER FOR EVERYTHING</p>
               <div className={styles.businessItems}>
@@ -285,10 +285,10 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* WISE SHINE - Gold */}
-          <div className="business-card" style={{ borderColor: 'rgba(242, 182, 50, 0.3)', backgroundImage: 'linear-gradient(to bottom right, rgba(242, 182, 50, 0.1), transparent)' }}>
+          {/* WISE SHINE - Neon Green */}
+          <div className="business-card" style={{ borderColor: 'rgba(57, 255, 20, 0.35)', backgroundImage: 'linear-gradient(to bottom right, rgba(57, 255, 20, 0.08), transparent)' }}>
             <div className={styles.businessCardContent}>
-              <p className={styles.businessName} style={{ color: '#F2B632' }}>WISE SHINE</p>
+              <p className={styles.businessName} style={{ color: '#39FF14' }}>WISE SHINE</p>
               <p className={styles.businessTagline}>ATLANTA DETAILING</p>
               <p className={styles.businessDescription}>PREMIUM RESULTS.</p>
               <div className={styles.businessItems}>

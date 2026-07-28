@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -39,65 +40,65 @@ export default function DevicesPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-36" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-36 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
 
   const modules = [
-    { title: 'Overview', desc: 'View all connected devices and their status', status: 'Available', badgeClass: 'wise-badge-success' },
-    { title: 'WISE OS (Raspberry Pi)', desc: 'Manage your Pi edge node - kiosk mode, services, updates', status: devices.length > 0 ? 'Connected' : 'Not Connected', badgeClass: devices.length > 0 ? 'wise-badge-success' : 'wise-badge-danger' },
-    { title: 'Services', desc: 'Monitor and control running services across devices', status: 'Available', badgeClass: 'wise-badge-success' },
-    { title: 'Telemetry', desc: 'CPU, memory, disk, and network metrics', status: 'Coming Soon', badgeClass: 'wise-badge-neutral' },
-    { title: 'Automations', desc: 'Device-triggered workflows and scheduled tasks', status: 'Coming Soon', badgeClass: 'wise-badge-neutral' },
+    { title: 'Overview', desc: 'View all connected devices and their status', status: 'Available', variant: 'success' as const },
+    { title: 'WISE OS (Raspberry Pi)', desc: 'Manage your Pi edge node - kiosk mode, services, updates', status: devices.length > 0 ? 'Connected' : 'Not Connected', variant: (devices.length > 0 ? 'success' : 'danger') as const },
+    { title: 'Services', desc: 'Monitor and control running services across devices', status: 'Available', variant: 'success' as const },
+    { title: 'Telemetry', desc: 'CPU, memory, disk, and network metrics', status: 'Coming Soon', variant: 'neutral' as const },
+    { title: 'Automations', desc: 'Device-triggered workflows and scheduled tasks', status: 'Coming Soon', variant: 'neutral' as const },
   ];
 
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="wise-page-title">Devices & WISE OS</h1>
-        <p className="wise-page-subtitle">Manage connected devices, edge nodes, and services</p>
+        <h1 className="text-2xl font-bold text-text-primary">💾 Devices & WISE OS</h1>
+        <p className="text-sm text-text-muted mt-1">Manage connected devices, edge nodes, and services</p>
       </div>
 
       {/* Modules */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {modules.map(mod => (
-          <div key={mod.title} className={`wise-card p-5 ${mod.status === 'Coming Soon' ? 'opacity-60' : ''}`}>
-            <div className="flex items-start justify-between mb-2">
+          <Card key={mod.title} className={`p-5 space-y-3 ${mod.status === 'Coming Soon' ? 'opacity-60' : ''}`}>
+            <div className="flex items-start justify-between">
               <h3 className="text-sm font-semibold text-text-primary">{mod.title}</h3>
-              <span className={mod.badgeClass}>{mod.status}</span>
+              <Badge variant={mod.variant}>{mod.status}</Badge>
             </div>
             <p className="text-xs text-text-muted">{mod.desc}</p>
-          </div>
+          </Card>
         ))}
       </div>
 
       {/* Connected Devices */}
       {devices.length > 0 ? (
-        <div>
-          <h2 className="wise-section-title mb-3">Connected Devices</h2>
-          <div className="wise-card overflow-hidden divide-y divide-border-subtle">
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-text-primary">Connected Devices</h2>
+          <Card className="overflow-hidden divide-y divide-border-subtle">
             {devices.map(device => (
-              <div key={device.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
-                <div>
+              <div key={device.id} className="px-6 py-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                <div className="min-w-0">
                   <h3 className="text-sm font-medium text-text-primary">{device.name}</h3>
                   <p className="text-xs text-text-muted">{device.os || device.type}{device.ip ? ` - ${device.ip}` : ''}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className={`wise-status-dot ${device.status === 'online' ? 'bg-green-400' : device.status === 'offline' ? 'bg-danger' : 'bg-text-muted'}`} />
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className={`w-2 h-2 rounded-full ${device.status === 'online' ? 'bg-success' : device.status === 'offline' ? 'bg-danger' : 'bg-text-muted'}`} />
                   <span className="text-xs text-text-muted capitalize">{device.status}</span>
                 </div>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
       ) : (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">&#128225;</div>
-          <h3 className="wise-empty-title">No Devices Connected</h3>
-          <p className="wise-empty-desc">Connect a Raspberry Pi or other device to get started with WISE OS edge computing.</p>
-        </div>
+        <Card className="p-16 text-center space-y-3">
+          <div className="text-4xl opacity-20">💾</div>
+          <h3 className="text-base font-semibold text-text-secondary">No Devices Connected</h3>
+          <p className="text-sm text-text-muted max-w-sm mx-auto">Connect a Raspberry Pi or other device to get started with WISE OS edge computing.</p>
+        </Card>
       )}
     </div>
   );

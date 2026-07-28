@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { Card, Badge, Button, Table, TableHead, TableBody, TableRow, TableCell, TableHeaderCell, StatusDot } from '../../../src/components/ui';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
@@ -48,8 +49,8 @@ export default function ProjectsPage() {
   if (authLoading || loading) {
     return (
       <div className="space-y-4">
-        <div className="wise-skeleton h-6 w-32" />
-        <div className="wise-skeleton h-3 w-56" />
+        <div className="h-6 w-32 animate-pulse bg-border-medium rounded" />
+        <div className="h-3 w-56 animate-pulse bg-border-medium rounded" />
       </div>
     );
   }
@@ -57,12 +58,12 @@ export default function ProjectsPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <div>
-        <h1 className="wise-page-title">Projects</h1>
-        <p className="wise-page-subtitle">Unified view of all your projects across modules</p>
+        <h1 className="text-3xl font-bold text-text-primary">Projects</h1>
+        <p className="text-sm text-text-muted mt-1">Unified view of all your projects across modules</p>
       </div>
 
       {/* Stats Strip */}
-      <div className="wise-card p-1">
+      <Card className="p-1">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {[
             { label: 'Total', value: allProjects.length },
@@ -76,48 +77,50 @@ export default function ProjectsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Projects Table */}
       {allProjects.length > 0 ? (
-        <div className="wise-card overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="wise-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Updated</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Type</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
+                  <TableHeaderCell>Updated</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {allProjects.map(p => (
-                  <tr key={p.id}>
-                    <td>
+                  <TableRow key={p.id}>
+                    <TableCell>
                       <p className="font-medium text-text-primary">{p.name}</p>
                       {p.description && <p className="text-xs text-text-muted mt-0.5">{p.description}</p>}
-                    </td>
-                    <td><span className="wise-badge-info">{p.type}</span></td>
-                    <td><span className="wise-badge-success">{p.status}</span></td>
-                    <td className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</td>
-                  </tr>
+                    </TableCell>
+                    <TableCell><Badge variant="info">{p.type}</Badge></TableCell>
+                    <TableCell><Badge variant="success">{p.status}</Badge></TableCell>
+                    <TableCell className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">&#128193;</div>
-          <h3 className="wise-empty-title">No Projects Yet</h3>
-          <p className="wise-empty-desc">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
-          <Link href="/dashboard/sound-labs" className="wise-btn-primary">Go to Sound Labs</Link>
-        </div>
+        <Card className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="text-4xl mb-4">&#128193;</div>
+          <h3 className="text-lg font-semibold text-text-primary mb-2">No Projects Yet</h3>
+          <p className="text-sm text-text-muted mb-6">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
+          <Link href="/dashboard/sound-labs">
+            <Button variant="primary">Go to Sound Labs</Button>
+          </Link>
+        </Card>
       )}
 
       {/* Project Sources */}
-      <div className="wise-card p-5">
+      <Card className="p-5">
         <h2 className="text-sm font-semibold text-text-primary mb-3">Project Sources</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -127,15 +130,15 @@ export default function ProjectsPage() {
             { name: 'Gallery', status: 'Assets Only', ok: false },
           ].map(src => (
             <div key={src.name} className="flex items-center gap-2 p-2.5 rounded-lg bg-wise-black/30">
-              <span className={`wise-status-dot ${src.ok ? 'bg-green-400' : 'bg-text-muted'}`} />
+              <StatusDot status={src.ok ? 'success' : 'neutral'} />
               <div>
                 <p className="text-xs font-medium text-text-secondary">{src.name}</p>
-                <p className={`text-[10px] ${src.ok ? 'text-green-400' : 'text-text-muted'}`}>{src.status}</p>
+                <p className={`text-[10px] ${src.ok ? 'text-success' : 'text-text-muted'}`}>{src.status}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

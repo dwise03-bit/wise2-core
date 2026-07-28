@@ -66,7 +66,12 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-white/10 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 backdrop-blur-md"
+      className="fixed top-0 left-0 right-0 z-50 h-16 border-b"
+      style={{
+        borderColor: 'rgba(57, 255, 20, 0.2)',
+        background: 'linear-gradient(to right, #0B0B0B, #050505, #0B0B0B)',
+        backdropFilter: 'blur(10px)',
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
@@ -75,10 +80,10 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             href="/"
             className="flex items-center gap-2 flex-shrink-0"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ background: 'linear-gradient(135deg, #39FF14, #7CFF00)' }}>
               W2
             </div>
-            <span className="hidden sm:inline font-bold text-white text-lg tracking-tight">
+            <span className="hidden sm:inline font-bold text-white text-lg tracking-widest" style={{ fontFamily: 'Orbitron' }}>
               WISE²
             </span>
           </Link>
@@ -89,7 +94,18 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200"
+                className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                style={{
+                  color: '#8D98A5',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#39FF14';
+                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#8D98A5';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 {link.label}
               </Link>
@@ -99,7 +115,18 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             <div className="relative ml-1">
               <button
                 onClick={() => setMoreOpen(!moreOpen)}
-                className="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 flex items-center gap-1"
+                className="px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition-all duration-200"
+                style={{
+                  color: '#8D98A5',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#39FF14';
+                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#8D98A5';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 More
                 <svg
@@ -122,13 +149,31 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-white/10 bg-slate-900/95 shadow-xl backdrop-blur-sm overflow-hidden"
+                    className="absolute top-full left-0 mt-1 w-48 rounded-lg overflow-hidden"
+                    style={{
+                      border: '1px solid rgba(57, 255, 20, 0.2)',
+                      backgroundColor: 'rgba(11, 11, 11, 0.95)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: '0 0 20px rgba(57, 255, 20, 0.1)',
+                    }}
                   >
                     {MORE_LINKS.map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="block px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 border-b border-white/5 last:border-b-0"
+                        className="block px-4 py-2.5 text-sm transition-all duration-200"
+                        style={{
+                          color: '#8D98A5',
+                          borderBottom: '1px solid rgba(57, 255, 20, 0.1)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = '#39FF14';
+                          e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = '#8D98A5';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
                         onClick={() => setMoreOpen(false)}
                       >
                         {link.label}
@@ -142,26 +187,67 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Free AI Audit CTA */}
+            {/* Free AI Audit CTA - Secondary (Electric Blue) */}
             <Link
               href="/audit"
-              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/30 hover:border-blue-500/50 hover:bg-blue-500/15 transition-all duration-200"
+              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+              style={{
+                color: '#0094FF',
+                backgroundColor: 'rgba(0, 148, 255, 0.1)',
+                border: '1px solid rgba(0, 148, 255, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 148, 255, 0.2)';
+                e.currentTarget.style.borderColor = 'rgba(0, 148, 255, 0.5)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 148, 255, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 148, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(0, 148, 255, 0.3)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             >
               Get Free AI Audit
             </Link>
 
-            {/* Login / Command Center */}
+            {/* Login / Command Center - Primary (Neon Green) */}
             {isAuthenticated ? (
               <Link
                 href={dashboardUrl}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                style={{
+                  backgroundColor: '#39FF14',
+                  color: '#050505',
+                  boxShadow: '0 0 15px rgba(57, 255, 20, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.5)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
               >
                 Command Center →
               </Link>
             ) : (
               <Link
                 href={dashboardUrl}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                style={{
+                  backgroundColor: '#39FF14',
+                  color: '#050505',
+                  boxShadow: '0 0 15px rgba(57, 255, 20, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.5)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
               >
                 Login →
               </Link>
@@ -190,7 +276,13 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 left-0 right-0 border-b border-white/10 bg-slate-900/95 backdrop-blur-md shadow-lg lg:hidden"
+            className="absolute top-16 left-0 right-0 lg:hidden"
+            style={{
+              borderBottom: '1px solid rgba(57, 255, 20, 0.2)',
+              backgroundColor: 'rgba(11, 11, 11, 0.95)',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            }}
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-2">
               {/* Primary Links */}
