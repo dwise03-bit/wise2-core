@@ -225,7 +225,7 @@ export default function WorkflowsPage() {
       {/* Capabilities + Examples when offline */}
       {!apiAvailable && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="wise-card p-5">
+          <Card className="p-5">
             <h2 className="text-sm font-semibold text-text-primary mb-3">Automation Capabilities</h2>
             <div className="space-y-2">
               {['Template Engine', 'Async Execution', 'Retry Policies', 'Scheduled Triggers'].map(cap => (
@@ -235,9 +235,9 @@ export default function WorkflowsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
-          <div className="wise-card p-5">
+          <Card className="p-5">
             <h2 className="text-sm font-semibold text-text-primary mb-3">Example Workflows</h2>
             <div className="space-y-2">
               {[
@@ -252,7 +252,7 @@ export default function WorkflowsPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

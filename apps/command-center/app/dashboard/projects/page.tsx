@@ -104,21 +104,23 @@ export default function ProjectsPage() {
                     <TableCell className="text-text-muted">{new Date(p.updatedAt).toLocaleDateString()}</TableCell>
                   </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
-        </div>
+        </Card>
       ) : (
-        <div className="wise-empty wise-card">
-          <div className="wise-empty-icon">&#128193;</div>
-          <h3 className="wise-empty-title">No Projects Yet</h3>
-          <p className="wise-empty-desc">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
-          <Link href="/dashboard/sound-labs" className="wise-btn-primary">Go to Sound Labs</Link>
-        </div>
+        <Card className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="text-4xl mb-4">&#128193;</div>
+          <h3 className="text-lg font-semibold text-text-primary mb-2">No Projects Yet</h3>
+          <p className="text-sm text-text-muted mb-6">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
+          <Link href="/dashboard/sound-labs">
+            <Button variant="primary">Go to Sound Labs</Button>
+          </Link>
+        </Card>
       )}
 
       {/* Project Sources */}
-      <div className="wise-card p-5">
+      <Card className="p-5">
         <h2 className="text-sm font-semibold text-text-primary mb-3">Project Sources</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -128,15 +130,15 @@ export default function ProjectsPage() {
             { name: 'Gallery', status: 'Assets Only', ok: false },
           ].map(src => (
             <div key={src.name} className="flex items-center gap-2 p-2.5 rounded-lg bg-wise-black/30">
-              <span className={`wise-status-dot ${src.ok ? 'bg-green-400' : 'bg-text-muted'}`} />
+              <StatusDot status={src.ok ? 'success' : 'neutral'} />
               <div>
                 <p className="text-xs font-medium text-text-secondary">{src.name}</p>
-                <p className={`text-[10px] ${src.ok ? 'text-green-400' : 'text-text-muted'}`}>{src.status}</p>
+                <p className={`text-[10px] ${src.ok ? 'text-success' : 'text-text-muted'}`}>{src.status}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
