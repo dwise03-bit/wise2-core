@@ -14,20 +14,21 @@ export default function WorkspacesPage() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const hasNavigatedRef = React.useRef(false);
 
   // Fetch workspaces on mount
   useEffect(() => {
     const fetchWorkspaces = async () => {
       try {
-        setIsLoading(true);
         const response = await fetch('/api/workspaces');
         if (!response.ok) throw new Error('Failed to fetch workspaces');
         const data = await response.json();
         setWorkspaces(data.workspaces || []);
         setError(null);
 
-        // If only one workspace, redirect to it
-        if (data.workspaces?.length === 1) {
+        // If only one workspace, redirect to it (only once)
+        if (data.workspaces?.length === 1 && !hasNavigatedRef.current) {
+          hasNavigatedRef.current = true;
           const workspace = data.workspaces[0];
           router.push(`/workspaces/${workspace.slug}/dashboard`);
         }
@@ -39,7 +40,7 @@ export default function WorkspacesPage() {
     };
 
     fetchWorkspaces();
-  }, [router]);
+  }, []);
 
   const handleSelectWorkspace = (workspaceSlug: string) => {
     router.push(`/workspaces/${workspaceSlug}/dashboard`);
