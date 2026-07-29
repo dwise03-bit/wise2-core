@@ -16,7 +16,7 @@ import struct, sys, os
 
 # --- print assumptions (keep in sync with the slicer profile) ---------------
 WALLS       = 3
-NOZZLE      = 0.6
+NOZZLE      = 0.4
 LINE_WIDTH  = NOZZLE * 1.05
 INFILL      = 0.12      # 12%
 PLA_DENSITY = 1.24      # g/cm^3

@@ -19,7 +19,7 @@ RES = "/Applications/UltiMaker Cura.app/Contents/Resources/share/cura/resources"
 ENG = "/Applications/UltiMaker Cura.app/Contents/Resources/CuraEngine"
 DEF = f"{RES}/definitions/fdmprinter.def.json"
 
-NOZZLE, LAYER = 0.6, 0.30
+NOZZLE, LAYER = 0.4, 0.20
 LW = round(NOZZLE * 1.05, 2)
 PLA = 1.24                      # g/cm^3
 

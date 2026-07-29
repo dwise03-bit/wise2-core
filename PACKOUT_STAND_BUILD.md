@@ -15,28 +15,31 @@ CK Designs' *Packout Feet Easy Alignment* already solves it (4.9 / 127 ratings,
 reviewers specifically confirming fitment). Those feet mount anything via
 through-holes, so our job shrinks to a small monitor bracket that bolts to them.
 
-**Material: PLA-CF, 0.6 mm nozzle.**
+**Material: PLA-CF, 0.4 mm hardened steel nozzle.**
 
 | Print | Qty | Time | PLA-CF |
 |---|---|---|---|
-| `hole_template` | 1 | **6 min** | 2.3 g |
-| `mount` | 2 | 55 m ea | 25 g ea |
+| `hole_template` | 1 | **11 min** | 2.2 g |
+| `mount` | 2 | 1h 32m ea | 19 g ea |
 
-**Total: 1h 51m / 50 g** at 0.6 mm · 0.30 mm. Plus CK's feet (their own profile:
+**Total: 3h 04m / 39 g** at 0.4 mm · 0.20 mm. Plus CK's feet (their own profile:
 0.2 mm layer, 2 walls, 15 % infill).
+
+Swapping to a 0.6 mm nozzle would cut this to 1h 51m for 50 g — faster but
+heavier, since wider lines lay thicker shells. Worth it if you own both and the
+quick-change kit makes it painless.
 
 Also needed: **2 × M4 heat-set brass inserts**, 2 × M4 × 20 bolts, 4 adhesive
 pads for the slot.
 
-### PLA-CF changes three things
+### PLA-CF changes two things
 
-1. **Hardened nozzle required.** Carbon fibre is abrasive and will wear out
-   brass. If the Kobra X still has its stock brass nozzle, replace it first.
-2. **0.6 mm, not 0.4.** CF blends clog 0.4 mm readily; 0.6 is the practical
-   minimum. The model is retargeted (`nozzle = 0.6`), which also happens to be
-   the faster option — those two decisions align. Every wall and clearance
-   derives from `nozzle`, so this was a one-line change plus re-export.
-3. **Heat-set inserts, not self-tapped threads.** Self-tapping M4 into plain PLA
+1. **Hardened nozzle required — this is the real constraint.** Carbon fibre is
+   abrasive and will wear out brass. Nozzle *diameter* is not the issue: chopped
+   fibres are ~50–100 µm, so a 0.4 mm hardened nozzle handles PLA-CF fine and is
+   the mainstream setup. Keep the filament dry, though — wet CF plus a small
+   nozzle is where clogs actually come from.
+2. **Heat-set inserts, not self-tapped threads.** Self-tapping M4 into plain PLA
    was already the weakest joint in this design; PLA-CF is more brittle and holds
    a cut thread worse, which takes it from weak to unreliable. Each mount now has
    two bosses on its top face for M4 brass inserts. Pennies each, and it turns
@@ -45,6 +48,10 @@ pads for the slot.
    `insert_d = 5.7` (pilot) and `insert_l = 8.0` are typical but **vary by
    brand** — check your vendor's spec sheet. `hole_template` includes a test boss
    so you can melt one insert in before committing to a mount.
+
+Everything dimensional derives from `nozzle` at the top of the `.scad`, so
+retargeting between 0.4 and 0.6 is one line plus a re-export. Update `NOZZLE` in
+both tools to match.
 
 Print the feet themselves in the same PLA-CF: it is their shrinkage that decides
 whether the bolt pattern lines up, which is why `hole_template` should be printed
@@ -111,14 +118,14 @@ dimensions (`rib_pitch`, `rib_width`, `rib_height`) that were never measured off
 an organizer — and both engage with a plain groove, which is not how Packout
 attaches. They are slower and less likely to fit. Superseded by the mount above.
 
-| Variant | Parts | 0.4/0.20 | 0.6/0.36 |
+| Variant | Parts | 0.4/0.20 | 0.6/0.30 |
 |---|---|---|---|
-| `mount` ×2 (recommended) | 2 printed | 2h 59m · 38 g | 1h 39m · 52 g |
+| `mount` ×2 (recommended) | 2 printed | 3h 04m · 39 g | 1h 51m · 50 g |
 | `bracket` ×2 + clips | 4 printed | 5h 11m · 66 g | 2h 45m · 88 g |
 | `foot`/`saddle_cap`/`cradle` ×2 + tube | 6 printed + tube + 6 screws | 8h 24m · 103 g | 4h 22m · 139 g |
 
-Those legacy figures were measured before the 0.6 mm retarget and still use
-self-tapped threads; only `mount` has been updated for PLA-CF and inserts.
+Legacy figures still use self-tapped threads; only `mount` has been updated for
+PLA-CF and heat-set inserts.
 
 The tubed one is the only variant with a rigid crossbar, so it is the stiffest
 if you ever need that. `fit_coupon` sweeps rib slot widths for either.

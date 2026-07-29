@@ -13,7 +13,9 @@ $fn = 48;
 // ---- Nozzle ----------------------------------------------------------------
 // Wall thicknesses and every fit clearance below are derived from this, so the
 // model retargets to another nozzle by changing this one number.
-nozzle = 0.6;   // PLA-CF: 0.4 clogs with carbon fill; 0.6 is the practical min
+nozzle = 0.4;   // PLA-CF is fine through a HARDENED 0.4: chopped fibres are
+                // ~50-100 um. Abrasion is the real issue, so hardened steel is
+                // the hard requirement -- not a bigger nozzle.
 line_w = nozzle * 1.05;              // slicer line width (~105% of nozzle)
 
 // ============================================================================
