@@ -17,17 +17,23 @@ through-holes, so our job shrinks to a small monitor bracket that bolts to them.
 
 **Material: PLA-CF, 0.4 mm hardened steel nozzle.**
 
-| Print | Qty | Time | PLA-CF |
-|---|---|---|---|
-| `hole_template` | 1 | **11 min** | 2.2 g |
-| `mount` | 2 | 1h 32m ea | 19 g ea |
+Ready-to-print plates are in **`print_ready/`** — see its README.
 
-**Total: 3h 04m / 39 g** at 0.4 mm · 0.20 mm. Plus CK's feet (their own profile:
-0.2 mm layer, 2 walls, 15 % infill).
+| Plate | Time | PLA-CF |
+|---|---|---|
+| `PLATE1_HoleTemplate.3mf` | **8 min** | 1.7 g |
+| `PLATE2_Mount_x2.3mf` | **1h 16m** | 35.1 g |
 
-Swapping to a 0.6 mm nozzle would cut this to 1h 51m for 50 g — faster but
-heavier, since wider lines lay thicker shells. Worth it if you own both and the
-quick-change kit makes it painless.
+**Total 1h 24m / 37 g**, measured by the Anycubic slicer itself. Plus CK's feet
+(their own profile: 0.2 mm layer, 2 walls, 15 % infill).
+
+`print_ready/WISE2_PLA-CF_KobraX_0.4.json` is a PLA-CF filament profile for this
+machine — Anycubic ships none (their CF profiles are PA6/PC/PET-CF, S1 Max only).
+
+Note `tools/slice_report.py` predicted 3h 04m for the same parts. It runs
+conservative settings (60 mm/s vs Anycubic stock) and **over-estimates time by
+roughly 2×**. It is useful for comparing geometry options against each other, not
+for planning a print — the vendor slicer figures above are the real ones.
 
 Also needed: **2 × M4 heat-set brass inserts**, 2 × M4 × 20 bolts, 4 adhesive
 pads for the slot.

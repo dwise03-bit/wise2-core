@@ -7,9 +7,10 @@ that Cura's GUI rewrites after slicing; in CLI mode it is never patched. The
 authoritative figures come from the engine's own log lines, which is what this
 parses.
 
-Settings below approximate the Anycubic Kobra X 0.4 mm profile. They are NOT
-the vendor profile -- treat the output as a close estimate, and confirm in the
-slicer GUI before a long print.
+Settings below approximate the Anycubic Kobra X profile but are CONSERVATIVE:
+measured against the vendor slicer they over-estimate time by roughly 2x (60 mm/s
+here vs Anycubic stock). Use this for relative comparisons between geometry
+options; use the Anycubic slicer for the number you actually plan around.
 
 usage: python3 tools/slice_report.py [part ...]
 """
