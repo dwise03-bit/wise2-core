@@ -1,19 +1,20 @@
 version: '3.9'
 
 services:
-  api:
-    image: node:18-alpine
-    container_name: wise2-api
-    ports:
-      - "3010:3001"
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-    volumes:
-      - ./dist:/app/dist
-    working_dir: /app
-    command: node dist/server.js
-    restart: always
+  # api: (needs separate build setup - see DEPLOYMENT.md)
+  # image: node:18-alpine
+  # container_name: wise2-api
+  # ports:
+  #   - "3010:3001"
+  # environment:
+  #   NODE_ENV: production
+  #   PORT: 3001
+  # restart: always
+  # depends_on:
+  #   - db
+  #   - redis
+  # networks:
+  #   - wise2-network
 
   db:
     image: postgres:15-alpine
@@ -66,16 +67,20 @@ services:
     image: mongo:7
     container_name: wise2-mongodb
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: wise2-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    restart: always
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: wise2-ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   restart: always
 
 volumes:
   db_data:
   redis_data:
   ollama_data:
+
+networks:
+  wise2-network:
+    driver: bridge
