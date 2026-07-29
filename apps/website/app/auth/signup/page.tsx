@@ -4,6 +4,7 @@ import { FormEvent, useState, useEffect } from 'react';
 import { validateEmail, validatePassword, validatePasswordConfirm, getPasswordStrength, getPasswordStrengthLabel, getPasswordStrengthColor } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
 import { apiClient } from '@/lib/api-client';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 interface FormErrors {
   email?: string;
@@ -301,9 +302,7 @@ export default function SignupPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-wise-subtle">
-          <button className="w-full py-2 border border-wise-subtle hover:border-wise-primary text-wise-primary rounded-md transition-colors">
-            Continue with Google
-          </button>
+          <GoogleSignInButton text="signup" />
         </div>
 
         <div className="mt-4 text-center text-xs text-wise-muted">
