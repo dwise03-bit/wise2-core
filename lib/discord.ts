@@ -1,13 +1,27 @@
 /**
  * Discord Integration Utilities
- * Handles Discord webhook notifications and community links
+ * Handles Discord webhook notifications, community links, and bot interactions
+ * Used by: wise2.net website, Command Center, Discord bot
  */
 
 export const DISCORD_CONFIG = {
   serverInvite: process.env.NEXT_PUBLIC_DISCORD_SERVER_INVITE || 'https://discord.gg/wise2',
   webhookUrl: process.env.DISCORD_WEBHOOK_URL,
   communityLink: process.env.NEXT_PUBLIC_DISCORD_COMMUNITY_LINK || 'https://discord.gg/wise2',
+  botToken: process.env.DISCORD_BOT_TOKEN,
+  guildId: process.env.DISCORD_GUILD_ID,
 };
+
+/**
+ * Check if Discord bot is fully configured
+ */
+export function isDiscordBotConfigured(): boolean {
+  return !!(
+    DISCORD_CONFIG.botToken &&
+    DISCORD_CONFIG.guildId &&
+    DISCORD_CONFIG.webhookUrl
+  );
+}
 
 /**
  * Send message to Discord webhook
@@ -198,5 +212,82 @@ export async function notifySubscriptionEvent(data: {
     title: `Subscription ${data.event}`,
     color: colorMap[data.event],
     fields,
+  });
+}
+
+/**
+ * Send authentication event to Discord
+ */
+export async function notifyAuthEvent(data: {
+  type: 'login' | 'logout' | 'oauth';
+  email: string;
+  provider?: string;
+  success: boolean;
+}) {
+  const typeEmoji = {
+    login: '🔓',
+    logout: '🔒',
+    oauth: '🔐',
+  }[data.type];
+
+  const color = data.success ? 0x00ff00 : 0xff6600; // Green or Orange
+
+  return sendDiscordNotification(`Auth ${data.type} for ${data.email}`, {
+    title: `${typeEmoji} ${data.type.toUpperCase()} - ${data.email}`,
+    description: `Provider: ${data.provider || 'Email'}${
+      data.success ? ' ✓' : ' ✗'
+    }`,
+    color,
+  });
+}
+
+/**
+ * Send system status/info message
+ */
+export async function notifySystemStatus(data: {
+  status: 'online' | 'offline' | 'error';
+  message: string;
+  details?: Record<string, string>;
+}) {
+  const colorMap = {
+    online: 0x00ff00,
+    offline: 0xff0000,
+    error: 0xff6600,
+  };
+
+  const fields = data.details
+    ? Object.entries(data.details).map(([name, value]) => ({
+        name,
+        value,
+        inline: true,
+      }))
+    : [];
+
+  return sendDiscordNotification(data.message, {
+    title: `System Status: ${data.status.toUpperCase()}`,
+    color: colorMap[data.status],
+    fields,
+  });
+}
+
+/**
+ * Send command execution notification
+ */
+export async function notifyCommandExecution(data: {
+  command: string;
+  executor: string;
+  status: 'success' | 'failed';
+  details?: string;
+}) {
+  const color = data.status === 'success' ? 0x00ff00 : 0xff0000;
+  const emoji = data.status === 'success' ? '✓' : '✗';
+
+  return sendDiscordNotification(`Command: ${data.command}`, {
+    title: `${emoji} ${data.command.toUpperCase()} - ${data.status}`,
+    description: `Executor: ${data.executor}`,
+    color,
+    fields: data.details
+      ? [{ name: 'Details', value: data.details, inline: false }]
+      : [],
   });
 }

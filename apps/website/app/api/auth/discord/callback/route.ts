@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DASHBOARD_URL } from '@/lib/urls';
+import { notifyNewSignup, notifyAuthEvent } from '@/lib/discord';
 
 /**
  * OAuth callback route for Discord authentication
@@ -146,9 +147,33 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('Discord OAuth successful for user:', user.id);
+
+    // Notify Discord of new signup and auth event (don't wait for responses)
+    Promise.all([
+      notifyNewSignup({
+        email: user.email,
+        name: user.username,
+      }),
+      notifyAuthEvent({
+        type: 'oauth',
+        email: user.email,
+        provider: 'Discord',
+        success: true,
+      }),
+    ]).catch((err) => console.error('Failed to notify Discord:', err));
+
     return response;
   } catch (error) {
     console.error('Discord OAuth callback error:', error);
+
+    // Notify Discord of auth failure
+    notifyAuthEvent({
+      type: 'oauth',
+      email: 'unknown',
+      provider: 'Discord',
+      success: false,
+    }).catch((err) => console.error('Failed to notify Discord:', err));
+
     return NextResponse.redirect(
       new URL('/auth/login?error=oauth_failed', request.url)
     );

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { notifyNewSignup } from '@/lib/discord';
 
 // Simple in-memory user store (in production, use a database)
 // Note: This is a demo. In production, use Prisma with proper database
@@ -57,6 +58,12 @@ export async function POST(request: NextRequest) {
     };
 
     users.set(userId, user);
+
+    // Notify Discord of new signup (don't wait for response)
+    notifyNewSignup({
+      email: user.email,
+      name: name || 'User',
+    }).catch((err) => console.error('Failed to notify Discord:', err));
 
     return NextResponse.json(
       {

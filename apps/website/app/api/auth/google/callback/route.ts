@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DASHBOARD_URL } from '@/lib/urls';
+import { notifyNewSignup, notifyAuthEvent } from '@/lib/discord';
 
 /**
  * Google OAuth callback route
@@ -143,6 +144,21 @@ export async function GET(request: NextRequest) {
     response.cookies.delete('google_oauth_state');
 
     console.log('Google OAuth successful for user:', user.id);
+
+    // Notify Discord of new signup and auth event (don't wait for responses)
+    Promise.all([
+      notifyNewSignup({
+        email: user.email,
+        name: user.name,
+      }),
+      notifyAuthEvent({
+        type: 'oauth',
+        email: user.email,
+        provider: 'Google',
+        success: true,
+      }),
+    ]).catch((err) => console.error('Failed to notify Discord:', err));
+
     return response;
   } catch (error) {
     console.error('Google OAuth callback error:', error);
