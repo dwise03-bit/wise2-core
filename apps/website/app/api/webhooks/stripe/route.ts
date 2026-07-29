@@ -72,16 +72,79 @@ export async function POST(request: NextRequest) {
  * Handle successful checkout session
  */
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-  console.log('Checkout session completed:', {
-    sessionId: session.id,
-    customerId: session.customer,
-    subscriptionId: session.subscription,
-    metadata: session.metadata,
-  });
+  try {
+    const { customer_email, subscription, customer, metadata } = session;
+    const email = customer_email || (metadata?.email as string);
+    const planId = (metadata?.planId as string) || 'STARTER';
 
-  // TODO: Update user subscription status in database
-  // TODO: Send confirmation email
-  // TODO: Grant subscription access
+    console.log('Checkout session completed:', {
+      sessionId: session.id,
+      email,
+      customerId: customer,
+      subscriptionId: subscription,
+      planId,
+    });
+
+    if (!email) {
+      console.error('No email found in checkout session');
+      return;
+    }
+
+    // Update user subscription status in database
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/users/activate-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          stripeCustomerId: customer,
+          stripeSubscriptionId: subscription,
+          planId,
+          sessionId: session.id,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('Failed to activate subscription:', error);
+      } else {
+        console.log('Subscription activated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating subscription status:', error);
+    }
+
+    // Send Discord notification
+    try {
+      const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+      if (webhookUrl) {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            embeds: [{
+              title: '💰 Payment Successful',
+              description: `New subscription activated`,
+              fields: [
+                { name: 'Email', value: email, inline: true },
+                { name: 'Plan', value: planId, inline: true },
+                { name: 'Stripe Customer ID', value: String(customer), inline: false },
+                { name: 'Session ID', value: session.id, inline: false },
+              ],
+              color: 0x00ff00,
+              timestamp: new Date().toISOString(),
+            }],
+            username: 'WISE² Payments',
+          }),
+        }).catch(err => console.error('Discord notification failed:', err));
+      }
+    } catch (error) {
+      console.error('Error sending Discord notification:', error);
+    }
+  } catch (error) {
+    console.error('Error handling checkout session:', error);
+  }
 }
 
 /**
