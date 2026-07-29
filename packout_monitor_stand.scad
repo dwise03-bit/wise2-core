@@ -234,6 +234,62 @@ module cradle() {
 }
 
 // ============================================================================
+// PART: bracket   -- TUBELESS VARIANT. Packout foot and monitor slot in one.
+// ============================================================================
+// Printed twice, it replaces foot x2 + saddle_cap x2 + cradle x2 + the aluminium
+// tube: 6 printed parts and 6 screws down to 1 part and none.
+//
+// The tradeoff is real: with no crossbar tying the two brackets together, the
+// Packout lid and the monitor itself carry the racking load. Fine on a desk,
+// unproven in a moving vehicle. Spacing is set by which ribs you seat them on,
+// so it is coarser than sliding cradles along a tube.
+col_x  = 30;         // column width (lateral support for the monitor)
+col_y  = 26;
+col_h  = 44;         // plate top -> bottom of the monitor slot
+br_slot_depth = 18;  // shallower than the cradle: less arm to print
+
+module bracket() {
+    cx = base_x/2;
+    arm_h = br_slot_depth + 8;
+    difference() {
+        union() {
+            foot_base();
+
+            // column, embedded 2 mm into the base
+            translate([cx - col_x/2, base_y/2 - col_y/2, plate_t - 2])
+                slab(col_x, col_y, col_h + 2, 3);
+
+            // leaning slot arm, overlapping the column by 4 mm
+            translate([cx, base_y/2, plate_t + col_h - 4])
+                rotate([-lean_deg, 0, 0])
+                    translate([-(slot_w/2 + wall), -col_y/2, 0])
+                        slab(slot_w + 2*wall, col_y, arm_h + 4, 2);
+
+            // gussets, symmetric, tying the column to both base bars
+            for (s = [0, 1])
+                translate([cx + (s ? col_x/2 - 3 : -col_x/2 + 3),
+                           base_y/2 - col_y/2, plate_t - 3])
+                    mirror([s ? 0 : 1, 0, 0])
+                        gusset(18, col_h * 0.55, col_y);
+        }
+
+        // rib slots in the underside
+        for (s = [-1, 1])
+            translate([-1, base_y/2 + s*rib_pitch/2 - (rib_width+rib_clear)/2, -0.5])
+                cube([base_x + 2, rib_width + rib_clear, rib_height + 0.5]);
+
+        // monitor slot, following the lean, open at the top
+        translate([cx, base_y/2, plate_t + col_h - 4])
+            rotate([-lean_deg, 0, 0])
+                translate([-slot_w/2, -col_y/2 - 1, 6])
+                    cube([slot_w, col_y + 2, arm_h + 8]);
+
+        // cable-clip mount
+        translate([10, 9, plate_t - 4]) cylinder(d=m3_free, h=8);
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -285,6 +341,7 @@ module assembly() {
 part = "assembly";
 
 if      (part == "fit_coupon") fit_coupon();
+else if (part == "bracket")    bracket();
 else if (part == "foot")       foot();
 else if (part == "saddle_cap") saddle_cap();
 else if (part == "cradle")     cradle();

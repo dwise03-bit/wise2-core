@@ -14,10 +14,11 @@ tidiness fixes them:
    `rib_width = 8`, `rib_height = 3` at the top of the `.scad` were not measured
    from a real organizer. Until you measure yours, the feet will probably not
    engage. This is what `fit_coupon` exists for — print it first.
-2. **This does not meet the original "under 3 hours" target.** Measured, it is
-   **8h 24m** for a full set on a 0.4 mm nozzle. See *Print time* below for why
-   that is a material-throughput limit rather than a settings problem. Any
-   earlier "3h 12m" figure from me was invented, not measured.
+2. **There are two variants.** The **tubeless** one (`bracket` ×2) is the
+   default recommendation: 5h 11m and 66 g, or **2h 45m on a 0.6 mm nozzle**,
+   which is the only configuration that meets the original "under 3 hours"
+   target. The **tubed** one is stiffer but 8h 24m and 103 g. Any earlier
+   "3h 12m" figure from me was invented, not measured.
 
 Print time and mass below are **measured** — CuraEngine slicing the actual
 STLs (`tools/slice_report.py`). Load capacity is still uncalculated.
@@ -108,26 +109,32 @@ Then set:
 
 Measured with `tools/slice_report.py` (CuraEngine on the real STLs):
 
-| Nozzle / layer | Full set | Mass | `foot` each |
-|---|---|---|---|
-| 0.4 mm, 0.20 mm | **8h 24m** | 103 g | 2h 14m |
-| 0.4 mm, 0.28 mm | 6h 27m | 107 g | 1h 43m |
-| 0.6 mm, 0.30 mm | 5h 03m | 133 g | 1h 23m |
-| 0.6 mm, 0.36 mm | 4h 22m | 139 g | 1h 12m |
+| Nozzle / layer | Tubeless | Tubed |
+|---|---|---|
+| 0.4 mm, 0.20 mm | 5h 11m · 66 g | 8h 24m · 103 g |
+| 0.4 mm, 0.28 mm | 4h 15m · 73 g | 6h 27m · 107 g |
+| 0.6 mm, 0.30 mm | 3h 08m · 84 g | 5h 03m · 133 g |
+| 0.6 mm, 0.36 mm | **2h 45m · 88 g** | 4h 22m · 139 g |
 
-**The original "under 3 hours" target is not reachable with this part set.** It
-is ~100 g of plastic; 3 hours would need ~34 g/hr, well beyond a Kobra X with a
-0.4 mm nozzle at three walls. Coarser layers *raise* mass (thicker solid top and
-bottom layers) while lowering time, so the two do not trade cleanly.
+Only **tubeless on a 0.6 mm nozzle** meets the original "under 3 hours". On a
+0.4 mm nozzle it is not reachable at either variant: 66 g in 3 hours needs
+~22 g/hr, beyond a Kobra X at three walls.
 
-If time matters more than surface finish, the 0.6 mm nozzle at 0.36 mm is the
-single biggest lever — 4h 22m, roughly half. Otherwise plan on printing this
-across two sessions; the parts are independent, so there is no penalty for it.
+Note coarser layers *raise* mass while cutting time — the solid top and bottom
+layers get thicker — so the two do not trade cleanly. Optimise for whichever you
+actually care about.
 
-Geometry changes already applied and measured: making the foot base an H instead
-of a solid slab saved 11 min and 2.5 g per foot. Dropping `post_h` from 34 to 20
-saves a further 20 min and 5 g per foot, at the cost of sitting the monitor
-14 mm lower — that is an ergonomics call, so it is left at 34.
+What was tried, measured, and kept:
+
+- **Tubeless variant** — collapsing foot + cap + cradle into one part cut 3h 12m
+  (38 %) and 37 g, and removed the tube and all six M4 screws. Biggest single win.
+- **H-profile foot base** — the base only needs material over the ribs and under
+  the post, not a solid 76 × 76 slab. Saved 11 min and 2.5 g per foot, no
+  functional change. Applied to both variants.
+- **`post_h` 34 → 20** — a further 20 min and 5 g per foot, but sits the monitor
+  14 mm lower. Left at 34; change it if you want the time.
+- **Slicer settings alone** cannot do it: the fastest 0.4 mm config still lands at
+  6h 27m tubed. Geometry was the lever, not settings.
 
 ### Orientation
 
@@ -146,6 +153,19 @@ z = 0. Do not rotate them. The overhangs that matter:
 ---
 
 ## Assembly
+
+### Tubeless (variant A)
+
+1. Print and fit `fit_coupon` (see step 1 below), then print two `bracket`s.
+2. Seat both brackets on the lid, on ribs spaced to suit your monitor —
+   ~250–300 mm apart for a 15.6".
+3. Line both slots with the adhesive pads. **The pads are structural** — see
+   step 6 below.
+4. Lower the monitor into both slots together. Support it until it is seated in
+   both; with no crossbar, a bracket can tip on its own.
+5. Screw the clips to a bracket base and route the cables.
+
+### Tubed (variant B)
 
 1. **Print `fit_coupon` and fit it to your Packout.** It has three trial slots
    at nominal −0.5 / nominal / +0.5 mm. Find the one that seats without rock,
@@ -172,11 +192,12 @@ z = 0. Do not rotate them. The overhangs that matter:
 - **Rib engagement is a plain groove, not a positive lock.** It resists sliding
   but nothing holds the foot down. A real latch needs the measured lid geometry
   first. Treat the current feet as a fit prototype.
-- **The feet dominate the build** — 2h 14m and 28 g each, over half the total.
-  The base is already an H rather than a slab; the remaining bulk is the 34 mm
-  post, which is a height/ergonomics tradeoff rather than waste. Note the foot
-  footprint is driven by `rib_pitch`, which is still a guess — if the real
-  Packout pitch is tighter, the foot shrinks and so does the print time.
+- **Tubeless has no crossbar.** The lid and the monitor take the racking load,
+  and each bracket can tip until the monitor is seated in both. If that matters,
+  use the tubed variant and accept the extra 3h 12m.
+- **Print time is dominated by the Packout footprint**, which is driven by
+  `rib_pitch` — still a guess. If the real pitch is tighter, both variants shrink
+  and get faster. Another reason to measure before printing anything large.
 - **Load capacity is uncalculated.** No FEA has been run. The 20 × 20 aluminium
   tube carries the bending load and will be far stiffer than the printed parts;
   the likely failure points are the self-tapped M4 bosses and the cradle arms.
