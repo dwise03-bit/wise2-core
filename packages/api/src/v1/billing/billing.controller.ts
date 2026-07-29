@@ -101,6 +101,45 @@ export class BillingController {
   }
 
   /**
+   * POST /v1/billing/users/activate-subscription
+   * Activate subscription after successful Stripe payment
+   * Called by: Stripe webhook handler on checkout.session.completed
+   */
+  @Post('users/activate-subscription')
+  async activateSubscription(
+    @Body() body: {
+      email: string;
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
+      planId: string;
+      sessionId?: string;
+      timestamp?: string;
+    },
+  ) {
+    try {
+      if (!body.email || !body.stripeCustomerId || !body.planId) {
+        throw new BadRequestException('Missing required fields: email, stripeCustomerId, planId');
+      }
+
+      const subscription = await this.billingService.activateSubscription({
+        email: body.email,
+        stripeCustomerId: body.stripeCustomerId,
+        stripeSubscriptionId: body.stripeSubscriptionId,
+        planId: body.planId,
+      });
+
+      return {
+        success: true,
+        message: 'Subscription activated',
+        data: subscription,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to activate subscription';
+      throw new BadRequestException(message);
+    }
+  }
+
+  /**
    * GET /v1/billing/me
    * Get authenticated user's complete customer profile (subscription + entitlements)
    * SECURE: Uses JWT authentication, only returns current user's data

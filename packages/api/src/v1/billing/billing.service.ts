@@ -283,6 +283,67 @@ export class BillingService {
     }
   }
 
+  /**
+   * Activate subscription after successful Stripe payment
+   * Creates or updates user and subscription records
+   */
+  async activateSubscription(data: {
+    email: string;
+    stripeCustomerId: string | null;
+    stripeSubscriptionId: string | null;
+    planId: string;
+  }) {
+    const { email, stripeCustomerId, stripeSubscriptionId, planId } = data;
+
+    // Map plan name to PricingPlan enum
+    const planMap: Record<string, string> = {
+      STARTER: 'STARTER',
+      PRO: 'PRO',
+      ENTERPRISE: 'ENTERPRISE',
+    };
+
+    const plan = planMap[planId] || 'STARTER';
+
+    // Find or create user
+    let user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (!user) {
+      // Create new user with temporary password
+      const tempPassword = crypto.randomBytes(16).toString('hex');
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          name: email.split('@')[0],
+          passwordHash: tempPassword,
+        },
+      });
+    }
+
+    // Create or update subscription
+    const subscription = await this.prisma.subscription.upsert({
+      where: { userId: user.id },
+      update: {
+        stripeCustomerId,
+        stripeSubscriptionId,
+        plan,
+        status: 'ACTIVE',
+        updatedAt: new Date(),
+      },
+      create: {
+        userId: user.id,
+        stripeCustomerId,
+        stripeSubscriptionId,
+        plan,
+        status: 'ACTIVE',
+      },
+    });
+
+    return subscription;
+  }
+
   private async onSubscriptionCreated(subscription: Stripe.Subscription) {
     // Log subscription creation
     // Send welcome email

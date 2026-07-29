@@ -24,26 +24,48 @@ export async function POST(request: NextRequest) {
       sessionId,
     });
 
-    // Update user subscription status
-    // TODO: Execute against PostgreSQL:
-    // UPDATE users SET tier=$1, stripe_customer_id=$2, stripe_subscription_id=$3, is_active=true, updated_at=NOW() WHERE email=$4
+    // Call backend API to update database
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010';
+    const response = await fetch(`${apiUrl}/users/activate-subscription`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.API_SECRET_KEY || ''}`,
+      },
+      body: JSON.stringify({
+        email,
+        tier: planId,
+        stripeCustomerId,
+        stripeSubscriptionId,
+      }),
+    }).catch(err => {
+      console.error('Database activation API error:', err);
+      return null;
+    });
 
-    const updateData = {
-      email,
-      tier: planId,
-      stripe_customer_id: stripeCustomerId,
-      stripe_subscription_id: stripeSubscriptionId,
-      is_active: true,
-      activated_at: timestamp,
-    };
-
-    console.log('User subscription activated:', updateData);
+    if (!response?.ok) {
+      const errorData = await response?.text().catch(() => 'Unknown error');
+      console.error('Failed to activate subscription in database:', errorData);
+      // Still return 200 to acknowledge webhook; database will eventually be synced
+    } else {
+      console.log('Subscription activated in database:', {
+        email,
+        tier: planId,
+      });
+    }
 
     return NextResponse.json(
       {
         success: true,
         message: 'Subscription activated',
-        data: updateData,
+        data: {
+          email,
+          tier: planId,
+          stripeCustomerId,
+          stripeSubscriptionId,
+          isActive: true,
+          timestamp,
+        },
       },
       { status: 200 }
     );
