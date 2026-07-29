@@ -149,7 +149,7 @@ export default function DashboardPage() {
 
   const allServices = data?.services || [];
   const onlineCount = allServices.filter(s => s.status === 'online').length;
-  let systemStatus = 'offline';
+  let systemStatus: 'online' | 'offline' | 'partial' = 'offline';
   if (allServices.length > 0 && onlineCount === allServices.length) {
     systemStatus = 'online';
   } else if (allServices.length > 0 && onlineCount > 0) {
@@ -444,6 +444,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Phase 5: Mobile Bottom Navigation - 5 max items with touch targets (44px+) */}

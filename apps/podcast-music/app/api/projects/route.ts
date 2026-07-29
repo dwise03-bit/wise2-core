@@ -82,6 +82,7 @@ export async function GET(request: NextRequest) {
     const { limit, offset, status } = queryValidation.data;
 
     // Build query filter
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {
       userId: user.userId,
     };
