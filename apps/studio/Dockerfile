@@ -7,9 +7,11 @@ RUN npm install -g pnpm && pnpm fetch
 FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 COPY pnpm-lock.yaml ./
 COPY . .
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
 RUN cd apps/studio && pnpm run build
 
 FROM node:20-alpine AS runner

@@ -85,7 +85,7 @@ export default function AuthPage() {
 
         {/* Footer Links */}
         <div className="mt-12 flex gap-6 text-xs text-gray-500">
-          <a href="/" className="hover:text-gray-300 transition">
+          <a href="/studio/" className="hover:text-gray-300 transition">
             Back to Home
           </a>
           <span>•</span>

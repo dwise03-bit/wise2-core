@@ -130,7 +130,7 @@ export function GoogleSignIn() {
           </div>
 
           <button
-            onClick={() => push('/studio/demo')}
+            onClick={() => push('/')}
             className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded hover:bg-gray-800 transition-colors text-white font-medium"
           >
             Try Demo Mode

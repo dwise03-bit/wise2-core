@@ -125,7 +125,7 @@ z = 0. Do not rotate them. The overhangs that matter:
    at nominal −0.5 / nominal / +0.5 mm. Find the one that seats without rock,
    then edit `rib_width` (and `rib_pitch`/`rib_height` if the coupon shows they
    are wrong) at the top of the `.scad` and re-export. **Do not print the feet
-   until the coupon fits** — they are 52 g each.
+   until the coupon fits** — they are 38 g each.
 2. Cut the tube. Foot spacing = tube length − ~40 mm of engagement. Deburr.
 3. Drop the tube into both foot channels. It stands 7 mm proud of the post top.
 4. Slide the two `cradle`s onto the tube before capping, then fit a `saddle_cap`
@@ -146,7 +146,8 @@ z = 0. Do not rotate them. The overhangs that matter:
 - **Rib engagement is a plain groove, not a positive lock.** It resists sliding
   but nothing holds the foot down. A real latch needs the measured lid geometry
   first. Treat the current feet as a fit prototype.
-- **The feet are heavy** — 52 g each, mostly the 76 × 76 × 6 base plate. There
+- **The feet are the bulk of the build** — 38 g each, mostly the 76 × 76 × 6.5
+  base plate. There
   is easy weight to remove from the underside once the rib geometry is settled;
   I left it solid rather than risk cutting into the slots.
 - **Load capacity is uncalculated.** No FEA has been run. The 20 × 20 aluminium

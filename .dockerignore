@@ -1,4 +1,7 @@
 node_modules
+.next
+stl_output
+*.tsbuildinfo
 !node_modules/.prisma
 npm-debug.log
 .git

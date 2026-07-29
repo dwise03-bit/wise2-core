@@ -83,11 +83,14 @@ services:
   studio:
     build:
       context: .
-      dockerfile: Dockerfile.studio
+      dockerfile: apps/studio/Dockerfile
+      args:
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: wise2-studio
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: ${API_BASE_URL}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     ports:
       - "3005:3005"
     depends_on:

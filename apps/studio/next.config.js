@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  basePath: '/studio',
+  output: 'standalone',
   swcMinify: true,
   eslint: {
     ignoreDuringBuilds: true,
