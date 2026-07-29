@@ -14,13 +14,13 @@ tidiness fixes them:
    `rib_width = 8`, `rib_height = 3` at the top of the `.scad` were not measured
    from a real organizer. Until you measure yours, the feet will probably not
    engage. This is what `fit_coupon` exists for — print it first.
-2. **Print time is unmeasured.** Neither installed slicer would run headless
-   (both fail on the vendor bed-exclusion resource), so the time figures have to
-   come from your slicer GUI. Any number you may have seen from me earlier for
-   print time, filament mass, or safety factor was invented, not derived.
+2. **This does not meet the original "under 3 hours" target.** Measured, it is
+   **8h 24m** for a full set on a 0.4 mm nozzle. See *Print time* below for why
+   that is a material-throughput limit rather than a settings problem. Any
+   earlier "3h 12m" figure from me was invented, not measured.
 
-Filament mass below *is* computed — from the actual STL volume and surface area
-with a stated shell/infill model. It is an estimate, not a slicer readout.
+Print time and mass below are **measured** — CuraEngine slicing the actual
+STLs (`tools/slice_report.py`). Load capacity is still uncalculated.
 
 **Nozzle: 0.4 mm.** Every wall thickness and fit clearance in the model derives
 from `nozzle` at the top of the `.scad`, so changing that one number retargets
@@ -36,16 +36,17 @@ left and right.
 
 | Part | Qty | Bbox (mm) | Est. PLA | Role |
 |---|---|---|---|---|
-| `fit_coupon` | 1 | 82 × 34 × 7 | 13 g | **print first** — dial in the rib fit |
-| `foot` | 2 | 76 × 76 × 41 | 38 g ea | sits on the lid, hosts the tube channel |
-| `saddle_cap` | 2 | 38 × 30 × 12 | 7 g ea | bolts down, traps the tube |
-| `cradle` | 2 | 34 × 41 × 60 | 18 g ea | monitor slot, slides along the tube |
-| `clip_usbc` | 1 | 17 × 12 × 12 | 1.4 g | cable routing |
-| `clip_hdmi` | 1 | 20 × 15 × 15 | 2.3 g | cable routing |
+| Part | Qty | Bbox (mm) | Each | PLA ea | Role |
+|---|---|---|---|---|---|
+| `fit_coupon` | 1 | 82 × 34 × 7 | 55 m | 11 g | **print first** — dial in the rib fit |
+| `foot` | 2 | 76 × 70 × 41 | 2h 14m | 28 g | sits on the lid, hosts the tube channel |
+| `saddle_cap` | 2 | 38 × 30 × 12 | 29 m | 6 g | bolts down, traps the tube |
+| `cradle` | 2 | 34 × 41 × 60 | 1h 18m | 16 g | monitor slot, slides along the tube |
+| `clip_usbc` | 1 | 17 × 12 × 12 | 7 m | 1.3 g | cable routing |
+| `clip_hdmi` | 1 | 20 × 15 × 15 | 10 m | 2.1 g | cable routing |
 
-**Full set ≈ 130 g PLA**, plus 13 g for the test coupon. (Thinner 0.4 mm shells
-put this well below the ~174 g a 0.6 nozzle would use.)
-Every part is a single solid, sits on z = 0, and fits the 260 mm bed.
+**Full set: 8h 24m, 103 g PLA** (0.4 mm nozzle, 0.20 mm layers), plus 55 m for
+the coupon. Every part is a single solid, sits on z = 0, fits the 260 mm bed.
 
 ### Bought parts
 
@@ -76,7 +77,12 @@ python3 tools/verify_stl.py
 `verify_stl.py` exits non-zero if any part is more than one body, sits off the
 bed, or busts the build volume. **Run it after every geometry edit** — that
 check is the whole reason the current model works. The first version of this
-model had 4 of 7 parts silently exporting as loose disconnected chunks.
+model had 4 of 7 parts silently exporting as loose disconnected chunks, and the
+0.4 mm retarget later pushed a clip 0.02 mm off its own base.
+
+For time and mass, `python3 tools/slice_report.py` drives CuraEngine directly.
+Its mass figures supersede the rough shell estimate `verify_stl.py` prints,
+which runs about 20 % high.
 
 ---
 
@@ -98,10 +104,30 @@ Then set:
 | Supports | **off** | geometry is designed support-free — see below |
 | Nozzle / bed | 205 / 58 °C | generic PLA |
 
-**Read the print time off the slicer — I have not measured it.** Expect it to be
-substantially longer than a 0.6 nozzle would take: the same walls need more,
-thinner passes and the layers are shallower. The `foot` is the long pole at
-74 cm³ of enclosed volume; consider printing one, checking it, then the second.
+### Print time
+
+Measured with `tools/slice_report.py` (CuraEngine on the real STLs):
+
+| Nozzle / layer | Full set | Mass | `foot` each |
+|---|---|---|---|
+| 0.4 mm, 0.20 mm | **8h 24m** | 103 g | 2h 14m |
+| 0.4 mm, 0.28 mm | 6h 27m | 107 g | 1h 43m |
+| 0.6 mm, 0.30 mm | 5h 03m | 133 g | 1h 23m |
+| 0.6 mm, 0.36 mm | 4h 22m | 139 g | 1h 12m |
+
+**The original "under 3 hours" target is not reachable with this part set.** It
+is ~100 g of plastic; 3 hours would need ~34 g/hr, well beyond a Kobra X with a
+0.4 mm nozzle at three walls. Coarser layers *raise* mass (thicker solid top and
+bottom layers) while lowering time, so the two do not trade cleanly.
+
+If time matters more than surface finish, the 0.6 mm nozzle at 0.36 mm is the
+single biggest lever — 4h 22m, roughly half. Otherwise plan on printing this
+across two sessions; the parts are independent, so there is no penalty for it.
+
+Geometry changes already applied and measured: making the foot base an H instead
+of a solid slab saved 11 min and 2.5 g per foot. Dropping `post_h` from 34 to 20
+saves a further 20 min and 5 g per foot, at the cost of sitting the monitor
+14 mm lower — that is an ergonomics call, so it is left at 34.
 
 ### Orientation
 
@@ -146,10 +172,11 @@ z = 0. Do not rotate them. The overhangs that matter:
 - **Rib engagement is a plain groove, not a positive lock.** It resists sliding
   but nothing holds the foot down. A real latch needs the measured lid geometry
   first. Treat the current feet as a fit prototype.
-- **The feet are the bulk of the build** — 38 g each, mostly the 76 × 76 × 6.5
-  base plate. There
-  is easy weight to remove from the underside once the rib geometry is settled;
-  I left it solid rather than risk cutting into the slots.
+- **The feet dominate the build** — 2h 14m and 28 g each, over half the total.
+  The base is already an H rather than a slab; the remaining bulk is the 34 mm
+  post, which is a height/ergonomics tradeoff rather than waste. Note the foot
+  footprint is driven by `rib_pitch`, which is still a guess — if the real
+  Packout pitch is tighter, the foot shrinks and so does the print time.
 - **Load capacity is uncalculated.** No FEA has been run. The 20 × 20 aluminium
   tube carries the bending load and will be far stiffer than the printed parts;
   the likely failure points are the self-tapped M4 bosses and the cradle arms.

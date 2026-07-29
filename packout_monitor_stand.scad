@@ -112,12 +112,28 @@ sad_depth = 13;      // how deep the tube drops into the channel
 boss_dx = tube_fit/2 + boss_w/2;       // bolt centre offset from post centre
 tube_proud = tube - sad_depth;         // tube sticks this far above the post top
 
+// The base only needs material where the ribs and the post are, so it is an
+// H: a transverse bar over each rib, joined by a central spine. A solid slab
+// here cost ~25 min per foot for nothing.
+bar_w   = rib_width + rib_clear + 12;      // rib slot + 6 mm either side
+spine_x = post_x + 8;
+module foot_base() {
+    cx = base_x/2;
+    union() {
+        for (s = [-1, 1])
+            translate([0, base_y/2 + s*rib_pitch/2 - bar_w/2, 0])
+                slab(base_x, bar_w, plate_t, 3);
+        // spine, overlapping both bars
+        translate([cx - spine_x/2, base_y/2 - rib_pitch/2 + bar_w/2 - 3, 0])
+            slab(spine_x, rib_pitch - bar_w + 6, plate_t, 3);
+    }
+}
+
 module foot() {
     cx = base_x/2;
     difference() {
         union() {
-            // base plate
-            slab(base_x, base_y, plate_t);
+            foot_base();
 
             // upright post -- overlaps the plate so the union is one body.
             // The post itself forms the tube channel and both bolt bosses.
