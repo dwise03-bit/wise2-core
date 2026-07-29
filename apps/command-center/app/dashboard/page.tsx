@@ -149,14 +149,17 @@ export default function DashboardPage() {
 
   const allServices = data?.services || [];
   const onlineCount = allServices.filter(s => s.status === 'online').length;
-  const systemStatus = allServices.length === 0 ? 'offline'
-    : onlineCount === allServices.length ? 'online'
-    : onlineCount > 0 ? 'partial' : 'offline';
+  let systemStatus = 'offline';
+  if (allServices.length > 0 && onlineCount === allServices.length) {
+    systemStatus = 'online';
+  } else if (allServices.length > 0 && onlineCount > 0) {
+    systemStatus = 'partial';
+  }
 
   return (
     <div className="min-h-screen flex flex-col pb-24 md:pb-0 animate-fade-in">
       <div className="space-y-4 md:space-y-6">
-        {/* Greeting Header — Time-aware */}
+        {/* Greeting Header - Time-aware */}
         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3 xs:gap-4 px-4 xs:px-0">
           <div>
             <h1 className="text-xl xs:text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-0.5 xs:mb-1">
@@ -172,7 +175,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-      {/* Executive Metrics — 5-column grid, responsive */}
+      {/* Executive Metrics - 5-column grid, responsive */}
       <div className="px-4 xs:px-0">
         <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 gap-2 xs:gap-3">
           <MetricCard label="Revenue" value="$0" href="/dashboard/billing" status="neutral" />
@@ -183,7 +186,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Phase 4: Priority Actions — Full width, top priority */}
+      {/* Phase 4: Priority Actions - Full width, top priority */}
       <div className="px-4 xs:px-0">
         <div className="wise-card p-4 xs:p-5">
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Priority Actions</h2>
@@ -208,7 +211,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Phase 4: WISE Intelligence — AI Insights with green glow */}
+      {/* Phase 4: WISE Intelligence - AI Insights with green glow */}
       <div className="px-4 xs:px-0">
         <div className="wise-card p-4 xs:p-5 bg-[var(--wise-dark-steel)] border-[var(--border-green)]">
           <div className="flex items-center justify-between mb-3">
@@ -230,7 +233,7 @@ export default function DashboardPage() {
 
       {/* Main Grid */}
       <div className="px-4 xs:px-0 grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Operations — 2 cols */}
+        {/* Operations - 2 cols */}
         <div className="lg:col-span-2 space-y-4 px-4 xs:px-0">
           {/* Business Activity */}
           <div className="wise-card p-4 xs:p-5">
@@ -300,7 +303,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Phase 4: Digital Workforce — Agent status with green pulse */}
+          {/* Phase 4: Digital Workforce - Agent status with green pulse */}
           <div className="wise-card p-4 xs:p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Digital Workforce</h2>
@@ -443,7 +446,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Phase 5: Mobile Bottom Navigation — 5 max items with touch targets (44px+) */}
+      {/* Phase 5: Mobile Bottom Navigation - 5 max items with touch targets (44px+) */}
       <nav className="fixed bottom-0 left-0 right-0 md:hidden border-t border-[var(--border-medium)] bg-[var(--wise-black)] z-40">
         <div className="flex items-center justify-around h-16 xs:h-14 sm:h-16 max-w-full overflow-x-auto">
           <a href="/dashboard" className="flex flex-col items-center justify-center flex-1 min-h-[56px] xs:min-h-[52px] gap-1 text-[var(--text-muted)] hover:text-[var(--organized-chaos-green)] transition-colors border-t-2 border-[var(--organized-chaos-green)]">
