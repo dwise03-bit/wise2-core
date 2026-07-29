@@ -2,27 +2,28 @@
 
 Anycubic Kobra X · **0.4 mm hardened steel** nozzle · PLA-CF
 
-## Print in this order
+## Print
 
-| # | File | Time | PLA-CF |
-|---|---|---|---|
-| 1 | `PLATE1_HoleTemplate.3mf` | **8 min** | 1.7 g |
-| 2 | `PLATE2_Mount_x2.3mf` | **1h 16m** | 35.1 g |
+| File | Time | PLA-CF |
+|---|---|---|
+| `PLATE2_Mount_x2.3mf` | **1h 16m** | 35.1 g |
 
-**Total 1h 24m / 37 g.** Times are from the Anycubic slicer itself, not an estimate.
+Times are from the Anycubic slicer itself, not an estimate.
 
-## Plate 1 first — it is an 8 minute gate
+**Before you hit print, check one number:** `insert_d = 5.7` is the pilot hole for
+the M4 heat-set inserts, and it varies by brand. If your inserts are not ~6.0 mm
+OD × 8 mm long, set `insert_d` / `insert_l` in the `.scad` and re-export.
 
-`hole_template` does two jobs:
+Recovery if it turns out wrong: too tight, run a 5.8–6.0 mm drill through the
+boss by hand; too loose, more iron heat and a sliver of filament packed alongside.
+Only two holes per mount, so it is not fatal either way.
 
-1. **Bolt pattern.** Offer it to your printed Packout feet. Both M4 bolts must
-   drop straight through. If not, fix `hole_pitch` in the `.scad` (measured at
-   39.5 mm from CK's 3mf) and re-export before printing plate 2.
-2. **Insert fit.** Melt one M4 heat-set insert into the test boss. Soldering iron
-   ~200 °C, flat tip, press slowly and keep it square. If the boss splits or the
-   insert sinks loose, adjust `insert_d` (5.7 mm pilot) to your brand's spec.
+## `PLATE1_HoleTemplate.3mf` — optional 8 min pre-check
 
-Do not skip it. Plate 2 is 1h 16m; this is 8 minutes.
+Kept if you want it. It confirms the 39.5 mm bolt pattern against your real
+printed feet and lets you test-melt one insert first. Skippable because feet and
+mounts printed in the same PLA-CF shrink proportionally on the same 39.5 mm, so
+the pattern stays matched.
 
 ## Filament profile
 
