@@ -307,4 +307,57 @@ export class AuthService {
         'Password changed successfully. Please login with your new password.',
     };
   }
+
+  getGoogleAuthUrl(): string {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const redirectUri = process.env.GOOGLE_CALLBACK_URL;
+    const scope = encodeURIComponent('openid email profile');
+    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline`;
+  }
+
+  async handleGoogleCallback(code: string): Promise<any> {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const redirectUri = process.env.GOOGLE_CALLBACK_URL;
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: 'authorization_code',
+      }),
+    });
+
+    const tokens = await tokenResponse.json();
+    if (!tokens.access_token) throw new UnauthorizedException('Invalid Google code');
+
+    const userResponse = await fetch(
+      'https://www.googleapis.com/oauth2/v2/userinfo',
+      { headers: { Authorization: `Bearer ${tokens.access_token}` } },
+    );
+    const googleUser = await userResponse.json();
+
+    let user = await this.userRepository.findOneBy({ email: googleUser.email });
+    if (!user) {
+      user = this.userRepository.create({
+        email: googleUser.email,
+        name: googleUser.name,
+        password_hash: 'oauth', // OAuth users have no password
+        role: UserRole.CUSTOMER,
+      });
+      user = await this.userRepository.save(user);
+    }
+
+    const accessToken = this.tokenService.generateAccessToken(
+      user.id,
+      user.email,
+      user.role,
+    );
+
+    return { accessToken, user: { id: user.id, email: user.email, name: user.name } };
+  }
 }

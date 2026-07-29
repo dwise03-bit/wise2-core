@@ -1,11 +1,14 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   UseGuards,
   Request,
   UseInterceptors,
+  Query,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +17,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/index';
 import { LoginDto } from './dto/index';
@@ -278,5 +282,43 @@ export class AuthController {
       dto.oldPassword,
       dto.newPassword,
     );
+  }
+
+  @Get('google/authorize')
+  @ApiOperation({ summary: 'Initiate Google OAuth flow' })
+  @ApiResponse({ status: 302, description: 'Redirect to Google consent screen' })
+  async googleAuthorize(@Res() res: Response): Promise<void> {
+    const authUrl = this.authService.getGoogleAuthUrl();
+    res.redirect(authUrl);
+  }
+
+  @Get('google/callback')
+  @ApiOperation({ summary: 'Handle Google OAuth callback' })
+  @ApiResponse({
+    status: 200,
+    description: 'OAuth successful',
+    schema: {
+      properties: {
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+        user: { type: 'object' },
+      },
+    },
+  })
+  async googleCallback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      const result = await this.authService.handleGoogleCallback(code);
+      res.redirect(
+        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?token=${result.accessToken}`,
+      );
+    } catch (error) {
+      res.redirect(
+        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?error=oauth_failed`,
+      );
+    }
   }
 }
