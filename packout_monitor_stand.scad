@@ -13,7 +13,7 @@ $fn = 48;
 // ---- Nozzle ----------------------------------------------------------------
 // Wall thicknesses and every fit clearance below are derived from this, so the
 // model retargets to another nozzle by changing this one number.
-nozzle = 0.4;
+nozzle = 0.6;   // PLA-CF: 0.4 clogs with carbon fill; 0.6 is the practical min
 line_w = nozzle * 1.05;              // slicer line width (~105% of nozzle)
 
 // ============================================================================
@@ -307,8 +307,20 @@ module bracket() {
 // face. Fundamental pitch is 39.5 mm; it recurs in Single Cleat Tight Fit at
 // ±19.75, which cross-checks it.
 //
-// The bolt comes UP through the foot into this part, so these are blind
-// self-tapping holes, not clearance holes.
+// The bolt comes UP through the foot into this part.
+//
+// M4 HEAT-SET BRASS INSERTS, not self-tapped plastic. Self-tapping into PLA was
+// always the weakest joint here, and PLA-CF is more brittle and holds a cut
+// thread worse than plain PLA -- so with CF it goes from weak to unreliable.
+// Inserts cost pennies and make it the strongest joint instead.
+//
+// !! CHECK YOUR INSERTS -- these vary by brand !!
+// insert_d is the PILOT HOLE, deliberately under the insert OD so the brass
+// melts in and grips. Typical M4: OD 6.0-6.3, pilot 5.6-5.7, length 8.
+// `hole_template` includes a test boss; try one insert in it first.
+insert_d  = 5.7;     // pilot hole diameter   <-- CHECK VENDOR SPEC
+insert_l  = 8.0;     // insert length         <-- CHECK VENDOR SPEC
+
 cleat_y   = 50;      // cleat depth -- our base matches it for full bearing
 cleat_h   = 14;      // how far the feet raise this part off the lid
 hole_pitch = 39.5;   // fundamental pitch (adjacent holes). 62.5 or 141.5
@@ -321,15 +333,33 @@ mt_col  = 26;        // column width -- lateral support for the monitor
 mt_h    = 30;        // plate top -> bottom of the monitor slot
 mt_slot = 16;        // slot depth; ample grip on a 10 mm panel
 
-// Blind M4 self-tap, entered from below. Stops short of the top face.
-module bolt_holes() {
-    for (s = [-1, 1])
-        translate([mt_x/2 + s*hole_pitch/2, mt_y/2, -0.5])
-            cylinder(d=m4_tap, h=mt_t + 3.5);
+// An 8 mm insert will not fit a 4.5 mm plate, so each hole gets a local boss on
+// the TOP face. Bosses print as plain upward extrusions -- no overhang.
+boss_od = insert_d + 2*2.6;               // ~10.9, keeps 2.6 mm wall round brass
+boss_h  = insert_l + 2 - mt_t;            // total depth = insert_l + 2
+
+module insert_boss() {
+    cylinder(d=boss_od, h=mt_t + boss_h);
 }
 
-// 4 min, ~2 g. Confirms the pitch against your actual printed feet before you
-// commit to a mount that does not line up.
+// Pilot for the insert from above, then bolt clearance the rest of the way down
+// so the bolt can reach it from underneath.
+module insert_cut() {
+    top = mt_t + boss_h;
+    translate([0, 0, top - (insert_l + 0.5)]) cylinder(d=insert_d, h=insert_l + 1);
+    translate([0, 0, -1]) cylinder(d=m4_free, h=top + 2);
+    // lead-in chamfer so the insert starts square
+    translate([0, 0, top - 0.6]) cylinder(d1=insert_d, d2=insert_d + 1.2, h=0.8);
+}
+
+module bolt_features(cut) {
+    for (s = [-1, 1])
+        translate([mt_x/2 + s*hole_pitch/2, mt_y/2, 0])
+            if (cut) insert_cut(); else insert_boss();
+}
+
+// ~5 min, ~2 g. Two jobs: confirm the 39.5 mm pitch against your real feet, and
+// let you test-melt one insert before committing to a mount.
 module hole_template() {
     r = 6.5;
     difference() {
@@ -337,9 +367,14 @@ module hole_template() {
             for (s = [0, 1])
                 translate([r + s*hole_pitch, r, 0]) cylinder(d=2*r, h=2.4);
             translate([r - 3, r - 3, 0]) cube([hole_pitch + 6, 6, 2.4]);
+            // insert test boss, offset clear of the two pitch holes, with a
+            // web back to the bar so it is not a separate body
+            translate([r + hole_pitch/2, r + 17, 0]) insert_boss();
+            translate([r + hole_pitch/2 - 3, r, 0]) cube([6, 18, 2.4]);
         }
         for (s = [0, 1])
             translate([r + s*hole_pitch, r, -1]) cylinder(d=m4_free, h=5);
+        translate([r + hole_pitch/2, r + 17, 0]) insert_cut();
     }
 }
 
@@ -350,6 +385,7 @@ module mount() {
     difference() {
         union() {
             slab(mt_x, mt_y, mt_t, 3);
+            bolt_features(false);         // insert bosses
 
             // column
             translate([cx - mt_col/2, cy - 12, mt_t - 2])
@@ -368,7 +404,7 @@ module mount() {
                         gusset(13, mt_h * 0.6, 24);
         }
 
-        bolt_holes();
+        bolt_features(true);          // insert pilots + bolt clearance
 
         // monitor slot
         translate([cx, cy, mt_t + mt_h - 4])

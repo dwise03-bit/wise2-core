@@ -15,15 +15,40 @@ CK Designs' *Packout Feet Easy Alignment* already solves it (4.9 / 127 ratings,
 reviewers specifically confirming fitment). Those feet mount anything via
 through-holes, so our job shrinks to a small monitor bracket that bolts to them.
 
-| Print | Qty | Time | PLA |
+**Material: PLA-CF, 0.6 mm nozzle.**
+
+| Print | Qty | Time | PLA-CF |
 |---|---|---|---|
-| `hole_template` | 1 | **3–7 min** | 1.2 g |
-| `mount` | 2 | 1h 30m ea | 22 g ea |
+| `hole_template` | 1 | **6 min** | 2.3 g |
+| `mount` | 2 | 55 m ea | 25 g ea |
 
-**Total: 2h 59m / 38 g** at 0.4 mm · 0.20 mm — **1h 39m / 52 g** at 0.6 mm ·
-0.36 mm. Plus CK's feet (their own profile: 0.2 mm layer, 2 walls, 15 % infill).
+**Total: 1h 51m / 50 g** at 0.6 mm · 0.30 mm. Plus CK's feet (their own profile:
+0.2 mm layer, 2 walls, 15 % infill).
 
-Also needed: 2 × M4 bolts (or #6), 4 adhesive pads for the slot. Nothing else.
+Also needed: **2 × M4 heat-set brass inserts**, 2 × M4 × 20 bolts, 4 adhesive
+pads for the slot.
+
+### PLA-CF changes three things
+
+1. **Hardened nozzle required.** Carbon fibre is abrasive and will wear out
+   brass. If the Kobra X still has its stock brass nozzle, replace it first.
+2. **0.6 mm, not 0.4.** CF blends clog 0.4 mm readily; 0.6 is the practical
+   minimum. The model is retargeted (`nozzle = 0.6`), which also happens to be
+   the faster option — those two decisions align. Every wall and clearance
+   derives from `nozzle`, so this was a one-line change plus re-export.
+3. **Heat-set inserts, not self-tapped threads.** Self-tapping M4 into plain PLA
+   was already the weakest joint in this design; PLA-CF is more brittle and holds
+   a cut thread worse, which takes it from weak to unreliable. Each mount now has
+   two bosses on its top face for M4 brass inserts. Pennies each, and it turns
+   the weakest joint into the strongest.
+
+   `insert_d = 5.7` (pilot) and `insert_l = 8.0` are typical but **vary by
+   brand** — check your vendor's spec sheet. `hole_template` includes a test boss
+   so you can melt one insert in before committing to a mount.
+
+Print the feet themselves in the same PLA-CF: it is their shrinkage that decides
+whether the bolt pattern lines up, which is why `hole_template` should be printed
+in CF too, not plain PLA.
 
 ### Bolt pattern — measured, not guessed
 
@@ -45,13 +70,15 @@ the foot, so the mount's holes are blind M4 self-tap — not clearance holes.
    bolts don't drop straight through, fix `hole_pitch` before printing anything
    bigger.
 2. Print CK's feet, and two `mount`s.
-3. Bolt each mount to a set of feet, 2 × M4 up from underneath. Snug only —
-   self-tapping into PLA strips if overtightened. Run each bolt in and out once
-   first to cut a thread.
-4. Line both slots with the adhesive pads. **The pads are structural** — the slot
+3. Melt an M4 insert into each boss on the mount's top face, using a soldering
+   iron at ~200 °C and a flat tip. Press slowly and keep it square; let it cool
+   before loading. Practise on `hole_template` first.
+4. Bolt each mount to a set of feet, 2 × M4 × 20 up from underneath. Into brass
+   you can torque these properly — that is the point of the inserts.
+5. Line both slots with the adhesive pads. **The pads are structural** — the slot
    is `mon_thick + 2*pad_t + line_w`, so without them the monitor rattles.
-5. Slide the feet onto the lid and latch them.
-6. Lower the monitor into both slots together, supporting it until seated.
+6. Slide the feet onto the lid and latch them.
+7. Lower the monitor into both slots together, supporting it until seated.
 
 ### Licence
 
@@ -65,8 +92,13 @@ that cleared, and don't bundle their geometry.
 
 ## Still unverified
 
-- **Load capacity.** No FEA, no calculation. Two M4 bolts into PLA and a 30 mm
-  column carry a ~1.8 kg monitor leaning 20° back. Test it before trusting it.
+- **Load capacity.** No FEA, no calculation. Two M4 bolts and a 30 mm column
+  carry a ~1.8 kg monitor leaning 20° back. The inserts make the joint far
+  stronger than self-tapped PLA, but nobody has calculated whether the column or
+  the gussets are adequate. Test before trusting it.
+- **PLA-CF is stiffer but more brittle** than plain PLA. Better against creep
+  under the bolt load, worse under impact. If this gets knocked about, PETG-CF is
+  the tougher choice.
 - **`mon_thick = 10.3`** is your measurement of the VILVA panel; the slot follows
   it. Check the fit on the first mount before printing the second.
 
@@ -81,8 +113,12 @@ attaches. They are slower and less likely to fit. Superseded by the mount above.
 
 | Variant | Parts | 0.4/0.20 | 0.6/0.36 |
 |---|---|---|---|
+| `mount` ×2 (recommended) | 2 printed | 2h 59m · 38 g | 1h 39m · 52 g |
 | `bracket` ×2 + clips | 4 printed | 5h 11m · 66 g | 2h 45m · 88 g |
 | `foot`/`saddle_cap`/`cradle` ×2 + tube | 6 printed + tube + 6 screws | 8h 24m · 103 g | 4h 22m · 139 g |
+
+Those legacy figures were measured before the 0.6 mm retarget and still use
+self-tapped threads; only `mount` has been updated for PLA-CF and inserts.
 
 The tubed one is the only variant with a rigid crossbar, so it is the stiffest
 if you ever need that. `fit_coupon` sweeps rib slot widths for either.

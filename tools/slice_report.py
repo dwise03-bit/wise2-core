@@ -19,14 +19,16 @@ RES = "/Applications/UltiMaker Cura.app/Contents/Resources/share/cura/resources"
 ENG = "/Applications/UltiMaker Cura.app/Contents/Resources/CuraEngine"
 DEF = f"{RES}/definitions/fdmprinter.def.json"
 
-NOZZLE, LAYER = 0.4, 0.20
+NOZZLE, LAYER = 0.6, 0.30
 LW = round(NOZZLE * 1.05, 2)
 PLA = 1.24                      # g/cm^3
 
 # one of each part in a full build
-QTY = {'foot': 2, 'saddle_cap': 2, 'cradle': 2, 'clip_usbc': 1, 'clip_hdmi': 1,
-       'fit_coupon': 0}         # coupon is a pre-test, not part of the set
-ORDER = ['fit_coupon', 'foot', 'saddle_cap', 'cradle', 'clip_usbc', 'clip_hdmi']
+QTY = {'mount': 2, 'hole_template': 0,     # template is a pre-test, not in the set
+       'bracket': 2,                        # legacy variants
+       'foot': 2, 'saddle_cap': 2, 'cradle': 2,
+       'clip_usbc': 1, 'clip_hdmi': 1, 'fit_coupon': 0}
+ORDER = ['hole_template', 'mount']         # the recommended build
 
 
 def base_settings():
@@ -149,7 +151,7 @@ def main():
 
     print('-' * 56)
     print(f"{'FULL SET':<12}{'':>4}{'':>10}{'':>9}{hm(tt):>10}{tg:>9.1f}")
-    print("\nApproximates the Kobra X 0.4 mm profile; confirm in the slicer GUI.")
+    print(f"\nApproximates the Kobra X {NOZZLE} mm profile; confirm in the slicer GUI.")
     return 0
 
 
