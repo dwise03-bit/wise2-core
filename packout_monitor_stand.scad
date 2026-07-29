@@ -77,7 +77,7 @@ module gusset(len, ht, t) {
 }
 
 // ============================================================================
-// PART: fit_coupon   -- PRINT THIS FIRST
+// PART: fit_coupon   -- superseded by snap_coupon; kept for the tubed variant
 // ============================================================================
 // Three trial rib slots at -0.5 / nominal / +0.5 mm width so you can find the
 // engagement that actually fits your lid. ~4 g, ~10 min.
@@ -289,6 +289,95 @@ module bracket() {
     }
 }
 
+
+// ============================================================================
+// MOUNT-ON-PROVEN-FEET VARIANT  --  the simple one
+// ============================================================================
+// Packout does not snap on: it SLIDES in and a tab latches it, like a real
+// Packout box. Getting that profile right is the hard part of this whole
+// project, and it is already solved by well-reviewed community feet that mount
+// whatever you like via through-holes (#6 or M4).
+//
+// So: do not design the lid interface. Bolt to it. Our part becomes a small
+// monitor bracket with a bolt pattern -- no rib plate, no big footprint.
+//
+// Bolt pattern MEASURED from CK Designs' "Full Packout Feet Set" 3mf
+// (Regular Dual Cleat): 186 x 50 x 14 mm, four Ø4.5 through-holes in a single
+// row at x = ±31.25 and ±70.75, y = 0, with a Ø10 head counterbore on the far
+// face. Fundamental pitch is 39.5 mm; it recurs in Single Cleat Tight Fit at
+// ±19.75, which cross-checks it.
+//
+// The bolt comes UP through the foot into this part, so these are blind
+// self-tapping holes, not clearance holes.
+cleat_y   = 50;      // cleat depth -- our base matches it for full bearing
+cleat_h   = 14;      // how far the feet raise this part off the lid
+hole_pitch = 39.5;   // fundamental pitch (adjacent holes). 62.5 or 141.5
+                     // also exist if you want a wider base.
+
+mt_x    = hole_pitch + 20;
+mt_y    = cleat_y;
+mt_t    = 4.5;       // base plate: thin, it is backed by the cleat
+mt_col  = 26;        // column width -- lateral support for the monitor
+mt_h    = 30;        // plate top -> bottom of the monitor slot
+mt_slot = 16;        // slot depth; ample grip on a 10 mm panel
+
+// Blind M4 self-tap, entered from below. Stops short of the top face.
+module bolt_holes() {
+    for (s = [-1, 1])
+        translate([mt_x/2 + s*hole_pitch/2, mt_y/2, -0.5])
+            cylinder(d=m4_tap, h=mt_t + 3.5);
+}
+
+// 4 min, ~2 g. Confirms the pitch against your actual printed feet before you
+// commit to a mount that does not line up.
+module hole_template() {
+    r = 6.5;
+    difference() {
+        union() {
+            for (s = [0, 1])
+                translate([r + s*hole_pitch, r, 0]) cylinder(d=2*r, h=2.4);
+            translate([r - 3, r - 3, 0]) cube([hole_pitch + 6, 6, 2.4]);
+        }
+        for (s = [0, 1])
+            translate([r + s*hole_pitch, r, -1]) cylinder(d=m4_free, h=5);
+    }
+}
+
+// THE STAND. Printed twice, bolted to a set of Packout feet each.
+module mount() {
+    cx = mt_x/2; cy = mt_y/2;
+    arm_h = mt_slot + 7;
+    difference() {
+        union() {
+            slab(mt_x, mt_y, mt_t, 3);
+
+            // column
+            translate([cx - mt_col/2, cy - 12, mt_t - 2])
+                slab(mt_col, 24, mt_h + 2, 3);
+
+            // leaning slot arm, overlapping the column by 4 mm
+            translate([cx, cy, mt_t + mt_h - 4])
+                rotate([-lean_deg, 0, 0])
+                    translate([-(slot_w/2 + wall), -12, 0])
+                        slab(slot_w + 2*wall, 24, arm_h + 4, 2);
+
+            // gussets tying the column to the plate
+            for (s = [0, 1])
+                translate([cx + (s ? mt_col/2 - 3 : -mt_col/2 + 3), cy - 12, mt_t - 2.5])
+                    mirror([s ? 0 : 1, 0, 0])
+                        gusset(13, mt_h * 0.6, 24);
+        }
+
+        bolt_holes();
+
+        // monitor slot
+        translate([cx, cy, mt_t + mt_h - 4])
+            rotate([-lean_deg, 0, 0])
+                translate([-slot_w/2, -13, 5])
+                    cube([slot_w, 26, arm_h + 8]);
+    }
+}
+
 // ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
@@ -340,7 +429,9 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "fit_coupon") fit_coupon();
+if      (part == "mount")         mount();
+else if (part == "hole_template") hole_template();
+else if (part == "fit_coupon")    fit_coupon();
 else if (part == "bracket")    bracket();
 else if (part == "foot")       foot();
 else if (part == "saddle_cap") saddle_cap();

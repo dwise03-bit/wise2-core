@@ -1,66 +1,91 @@
 # Milwaukee Packout Monitor Stand — Build Notes
 
-**Status:** geometry verified printable. **Fit to a real Packout is unverified.**
-**Model:** `packout_monitor_stand.scad` · **Checker:** `tools/verify_stl.py`
+**Model:** `packout_monitor_stand.scad` · **Checker:** `tools/verify_stl.py` ·
+**Timing:** `tools/slice_report.py`
 
 ---
 
-## Read this first
+## The simple build (use this)
 
-Two things about this design are genuinely unknown, and no amount of CAD
-tidiness fixes them:
+**Don't design the Packout interface — bolt onto proven feet.**
 
-1. **The Packout lid dimensions are placeholders.** `rib_pitch = 50`,
-   `rib_width = 8`, `rib_height = 3` at the top of the `.scad` were not measured
-   from a real organizer. Until you measure yours, the feet will probably not
-   engage. This is what `fit_coupon` exists for — print it first.
-2. **There are two variants.** The **tubeless** one (`bracket` ×2) is the
-   default recommendation: 5h 11m and 66 g, or **2h 45m on a 0.6 mm nozzle**,
-   which is the only configuration that meets the original "under 3 hours"
-   target. The **tubed** one is stiffer but 8h 24m and 103 g. Any earlier
-   "3h 12m" figure from me was invented, not measured.
+Packout does not snap on: it *slides* in and a tab latches, like a real Packout
+box. Getting that profile right is the hard part of this whole project, and
+CK Designs' *Packout Feet Easy Alignment* already solves it (4.9 / 127 ratings,
+reviewers specifically confirming fitment). Those feet mount anything via
+through-holes, so our job shrinks to a small monitor bracket that bolts to them.
 
-Print time and mass below are **measured** — CuraEngine slicing the actual
-STLs (`tools/slice_report.py`). Load capacity is still uncalculated.
+| Print | Qty | Time | PLA |
+|---|---|---|---|
+| `hole_template` | 1 | **3–7 min** | 1.2 g |
+| `mount` | 2 | 1h 30m ea | 22 g ea |
 
-**Nozzle: 0.4 mm.** Every wall thickness and fit clearance in the model derives
-from `nozzle` at the top of the `.scad`, so changing that one number retargets
-the whole design.
+**Total: 2h 59m / 38 g** at 0.4 mm · 0.20 mm — **1h 39m / 52 g** at 0.6 mm ·
+0.36 mm. Plus CK's feet (their own profile: 0.2 mm layer, 2 walls, 15 % infill).
+
+Also needed: 2 × M4 bolts (or #6), 4 adhesive pads for the slot. Nothing else.
+
+### Bolt pattern — measured, not guessed
+
+Extracted from the `Full Packout Feet Set.3mf` geometry (Regular Dual Cleat):
+
+- Cleat **186 × 50 × 14 mm** — the feet raise the mount 14 mm off the lid
+- **Ø4.5 mm** through-holes, **Ø10 mm** head counterbore on the far face
+- Four holes in a **single row** at x = ±31.25 and ±70.75, y = 0
+- **Fundamental pitch 39.5 mm** — cross-checked against Single Cleat Tight Fit,
+  whose two holes sit at ±19.75
+
+`hole_pitch = 39.5` in the `.scad`; 62.5 (the ±31.25 pair) and 141.5 (±70.75)
+also exist if you want a wider base. The bolt enters from **below**, up through
+the foot, so the mount's holes are blind M4 self-tap — not clearance holes.
+
+### Steps
+
+1. Print `hole_template` (3–7 min) and offer it to your printed feet. If the
+   bolts don't drop straight through, fix `hole_pitch` before printing anything
+   bigger.
+2. Print CK's feet, and two `mount`s.
+3. Bolt each mount to a set of feet, 2 × M4 up from underneath. Snug only —
+   self-tapping into PLA strips if overtightened. Run each bolt in and out once
+   first to cut a thread.
+4. Line both slots with the adhesive pads. **The pads are structural** — the slot
+   is `mon_thick + 2*pad_t + line_w`, so without them the monitor rattles.
+5. Slide the feet onto the lid and latch them.
+6. Lower the monitor into both slots together, supporting it until seated.
+
+### Licence
+
+CK Designs' files are under a Standard Digital File License: no redistribution
+and **no derivative works**. So do not vendor their STLs into this repo or ship
+them. Our `mount` is an independent part that interoperates via a measured bolt
+pattern, which is fine — but if this is ever sold under the WISE² brand, get
+that cleared, and don't bundle their geometry.
 
 ---
 
-## Parts
+## Still unverified
 
-`foot`, `saddle_cap` and `cradle` are each printed **twice** from the same STL,
-so there are only 5 unique parts. The foot is symmetric — there is no separate
-left and right.
+- **Load capacity.** No FEA, no calculation. Two M4 bolts into PLA and a 30 mm
+  column carry a ~1.8 kg monitor leaning 20° back. Test it before trusting it.
+- **`mon_thick = 10.3`** is your measurement of the VILVA panel; the slot follows
+  it. Check the fit on the first mount before printing the second.
 
-| Part | Qty | Bbox (mm) | Est. PLA | Role |
-|---|---|---|---|---|
-| Part | Qty | Bbox (mm) | Each | PLA ea | Role |
-|---|---|---|---|---|---|
-| `fit_coupon` | 1 | 82 × 34 × 7 | 55 m | 11 g | **print first** — dial in the rib fit |
-| `foot` | 2 | 76 × 70 × 41 | 2h 14m | 28 g | sits on the lid, hosts the tube channel |
-| `saddle_cap` | 2 | 38 × 30 × 12 | 29 m | 6 g | bolts down, traps the tube |
-| `cradle` | 2 | 34 × 41 × 60 | 1h 18m | 16 g | monitor slot, slides along the tube |
-| `clip_usbc` | 1 | 17 × 12 × 12 | 7 m | 1.3 g | cable routing |
-| `clip_hdmi` | 1 | 20 × 15 × 15 | 10 m | 2.1 g | cable routing |
+---
 
-**Full set: 8h 24m, 103 g PLA** (0.4 mm nozzle, 0.20 mm layers), plus 55 m for
-the coupon. Every part is a single solid, sits on z = 0, fits the 260 mm bed.
+## Older variants (kept, not recommended)
 
-### Bought parts
+Both of these design the lid interface themselves, using **invented** rib
+dimensions (`rib_pitch`, `rib_width`, `rib_height`) that were never measured off
+an organizer — and both engage with a plain groove, which is not how Packout
+attaches. They are slower and less likely to fit. Superseded by the mount above.
 
-| Item | Qty | Note |
-|---|---|---|
-| 20 × 20 mm aluminium square tube | ~300 mm | length sets the foot spacing |
-| M4 × 20 socket cap screw | 4 | cap → foot boss, self-taps into PLA |
-| M4 × 16 socket cap screw | 2 | cradle pinch bolts |
-| M3 × 10 screw | 2 | cable clips |
-| TPU / felt pad, adhesive | 4 | line the monitor slot |
+| Variant | Parts | 0.4/0.20 | 0.6/0.36 |
+|---|---|---|---|
+| `bracket` ×2 + clips | 4 printed | 5h 11m · 66 g | 2h 45m · 88 g |
+| `foot`/`saddle_cap`/`cradle` ×2 + tube | 6 printed + tube + 6 screws | 8h 24m · 103 g | 4h 22m · 139 g |
 
-No M4 nuts or T-nuts — the screws self-tap into the printed bosses. (An earlier
-BOM listed T-slot nuts; the design no longer uses them.)
+The tubed one is the only variant with a rigid crossbar, so it is the stiffest
+if you ever need that. `fit_coupon` sweeps rib slot widths for either.
 
 ---
 
@@ -69,24 +94,19 @@ BOM listed T-slot nuts; the design no longer uses them.)
 ```bash
 OSCAD="/Applications/OpenSCAD-2021.01.app/Contents/MacOS/OpenSCAD"
 mkdir -p stl_output
-for p in fit_coupon foot saddle_cap cradle clip_usbc clip_hdmi; do
+for p in hole_template mount; do
   "$OSCAD" -o "stl_output/$p.stl" -D "part=\"$p\"" packout_monitor_stand.scad
 done
-python3 tools/verify_stl.py
+python3 tools/verify_stl.py        # topology gate
+python3 tools/slice_report.py      # real time + mass via CuraEngine
 ```
 
-`verify_stl.py` exits non-zero if any part is more than one body, sits off the
-bed, or busts the build volume. **Run it after every geometry edit** — that
-check is the whole reason the current model works. The first version of this
-model had 4 of 7 parts silently exporting as loose disconnected chunks, and the
-0.4 mm retarget later pushed a clip 0.02 mm off its own base.
-
-For time and mass, `python3 tools/slice_report.py` drives CuraEngine directly.
-Its mass figures supersede the rough shell estimate `verify_stl.py` prints,
-which runs about 20 % high.
+`verify_stl.py` fails on multi-body, off-bed, or oversized parts. **Run it after
+every edit.** It has caught three real breakages so far: the original model
+exporting 4 of 7 parts as loose chunks, the 0.4 mm retarget pushing a clip
+0.02 mm off its own base, and a check part that came out in two pieces.
 
 ---
-
 ## Slicing
 
 Anycubic Kobra X, **0.4 mm nozzle**. In the Anycubic slicer the stock
