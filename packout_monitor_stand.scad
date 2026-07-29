@@ -10,6 +10,12 @@
 
 $fn = 48;
 
+// ---- Nozzle ----------------------------------------------------------------
+// Wall thicknesses and every fit clearance below are derived from this, so the
+// model retargets to another nozzle by changing this one number.
+nozzle = 0.4;
+line_w = nozzle * 1.05;              // slicer line width (~105% of nozzle)
+
 // ============================================================================
 // !! UNVERIFIED -- MEASURE YOUR PACKOUT BEFORE PRINTING THE FEET !!
 // ============================================================================
@@ -24,25 +30,32 @@ rib_clear  =  0.4;   // slot clearance added to rib_width
 
 // ---- Monitor ---------------------------------------------------------------
 mon_thick   = 10.3;  // measured VILVA V156F1 thickness
-mon_clear   =  0.6;  // total slot clearance (0.3 per side) -- 0.6 nozzle needs this
-slot_w      = mon_thick + mon_clear;   // 10.9
+pad_t       =  0.5;  // thickness of ONE adhesive pad lining the slot
+// The slot is deliberately oversized: the pads take up the slack and do the
+// gripping. Bare slot minus pads leaves ~one line width of play.
+slot_w      = mon_thick + 2*pad_t + line_w;
 slot_depth  = 22.0;  // how deep the monitor sits into the cradle
 lean_deg    = 20.0;  // screen leans BACK this many degrees from vertical
 
 // ---- Crossbar --------------------------------------------------------------
 tube        = 20.0;  // 20x20 aluminium square tube
-tube_fit    = 20.5;  // bore for the tube (slip fit, printed)
+tube_fit    = tube + line_w;           // slip fit; FDM bores print undersized
 
 // ---- Fasteners -------------------------------------------------------------
-m4_free     =  4.4;  // M4 clearance hole
-m4_tap      =  3.7;  // M4 self-tapping into plastic
-m4_head     =  7.6;  // M4 socket head counterbore
-m3_free     =  3.4;
+// Holes print undersized by roughly half a line width, so compensate with it.
+m4_free     = 4.2 + line_w/2;          // M4 clearance
+m4_tap      = 3.3 + line_w/2;          // M4 self-tapping into PLA
+m4_head     = 7.6;                     // socket head counterbore
+m3_free     = 3.2 + line_w/2;
 
 // ---- Print / structure -----------------------------------------------------
-wall        =  2.4;  // 4 x 0.6 extrusions -- solid, no gaps
-plate_t     =  6.0;  // foot base plate (must exceed rib_height + 2.4)
-corner_r    =  4.0;
+// Round the wall up to a whole number of extrusions >= 2.4 mm so the slicer
+// fills it solid with no gap-fill stripe down the middle.
+wall        = line_w * ceil(2.4 / line_w);
+// Base plate must leave a full wall of material above the rib slots, so it
+// grows automatically if you measure a taller rib.
+plate_t     = max(6.0, rib_height + wall + 1);
+corner_r    = 4.0;
 
 // ============================================================================
 // helpers
@@ -209,16 +222,18 @@ module cradle() {
 // ============================================================================
 module clip(loop_d = 6) {
     od = loop_d + 2*wall;
+    bx = od + 6;
+    by = od + 1;             // base must contain the loop, whatever wall is
     difference() {
         union() {
-            slab(od + 6, 14, 3, 2);
-            translate([(od + 6)/2, 7, 2]) cylinder(d=od, h=loop_d + 4);
+            slab(bx, by, 3, 2);
+            translate([bx/2, by/2, 2]) cylinder(d=od, h=loop_d + 4);
         }
         // cable bore, open on one side so the cable snaps in
-        translate([(od + 6)/2, 7, 4]) cylinder(d=loop_d, h=loop_d + 4);
-        translate([(od + 6)/2 - loop_d*0.35, 7, 5]) cube([loop_d*0.7, 14, loop_d + 4]);
+        translate([bx/2, by/2, 4]) cylinder(d=loop_d, h=loop_d + 4);
+        translate([bx/2 - loop_d*0.35, by/2, 5]) cube([loop_d*0.7, by, loop_d + 4]);
         // mount hole
-        translate([(od + 6)/2, 7, -1]) cylinder(d=m3_free, h=6);
+        translate([bx/2, by/2, -1]) cylinder(d=m3_free, h=6);
     }
 }
 

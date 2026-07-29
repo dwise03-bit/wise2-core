@@ -22,6 +22,10 @@ tidiness fixes them:
 Filament mass below *is* computed — from the actual STL volume and surface area
 with a stated shell/infill model. It is an estimate, not a slicer readout.
 
+**Nozzle: 0.4 mm.** Every wall thickness and fit clearance in the model derives
+from `nozzle` at the top of the `.scad`, so changing that one number retargets
+the whole design.
+
 ---
 
 ## Parts
@@ -32,14 +36,15 @@ left and right.
 
 | Part | Qty | Bbox (mm) | Est. PLA | Role |
 |---|---|---|---|---|
-| `fit_coupon` | 1 | 82 × 34 × 6 | 16 g | **print first** — dial in the rib fit |
-| `foot` | 2 | 76 × 76 × 40 | 52 g ea | sits on the lid, hosts the tube channel |
-| `saddle_cap` | 2 | 39 × 30 × 12 | 10 g ea | bolts down, traps the tube |
-| `cradle` | 2 | 34 × 41 × 60 | 23 g ea | monitor slot, slides along the tube |
-| `clip_usbc` | 1 | 17 × 14 × 12 | 1.5 g | cable routing |
-| `clip_hdmi` | 1 | 20 × 14 × 15 | 2 g | cable routing |
+| `fit_coupon` | 1 | 82 × 34 × 7 | 13 g | **print first** — dial in the rib fit |
+| `foot` | 2 | 76 × 76 × 41 | 38 g ea | sits on the lid, hosts the tube channel |
+| `saddle_cap` | 2 | 38 × 30 × 12 | 7 g ea | bolts down, traps the tube |
+| `cradle` | 2 | 34 × 41 × 60 | 18 g ea | monitor slot, slides along the tube |
+| `clip_usbc` | 1 | 17 × 12 × 12 | 1.4 g | cable routing |
+| `clip_hdmi` | 1 | 20 × 15 × 15 | 2.3 g | cable routing |
 
-**Full set ≈ 174 g PLA**, plus 16 g for the test coupon.
+**Full set ≈ 130 g PLA**, plus 13 g for the test coupon. (Thinner 0.4 mm shells
+put this well below the ~174 g a 0.6 nozzle would use.)
 Every part is a single solid, sits on z = 0, and fits the 260 mm bed.
 
 ### Bought parts
@@ -77,22 +82,26 @@ model had 4 of 7 parts silently exporting as loose disconnected chunks.
 
 ## Slicing
 
-Anycubic Kobra X, 0.6 mm nozzle. In the Anycubic slicer the stock
-**`0.30mm Standard @Anycubic Kobra X 0.6 nozzle`** process is the right starting
-point; in Cura there is no Kobra X definition, so start from Kobra Plus and set
-the bed to 260 × 260.
+Anycubic Kobra X, **0.4 mm nozzle**. In the Anycubic slicer the stock
+**`0.20mm Standard @Anycubic Kobra X 0.4 nozzle`** process is the right starting
+point (`0.24mm Standard` if you want it faster and don't mind layer lines). In
+Cura there is no Kobra X definition, so start from Kobra Plus and set the bed to
+260 × 260.
 
 Then set:
 
 | Setting | Value | Why |
 |---|---|---|
-| Layer height | 0.30 mm | stock profile; 0.32 also fine |
+| Layer height | 0.20 mm | 0.24 or 0.28 trade finish for speed |
 | Walls | 3 | `verify_stl.py` assumes this for its mass estimate |
 | Infill | 12 % gyroid | |
 | Supports | **off** | geometry is designed support-free — see below |
 | Nozzle / bed | 205 / 58 °C | generic PLA |
 
-**Read the print time off the slicer.** I have not measured it.
+**Read the print time off the slicer — I have not measured it.** Expect it to be
+substantially longer than a 0.6 nozzle would take: the same walls need more,
+thinner passes and the layers are shallower. The `foot` is the long pole at
+74 cm³ of enclosed volume; consider printing one, checking it, then the second.
 
 ### Orientation
 
@@ -102,9 +111,10 @@ z = 0. Do not rotate them. The overhangs that matter:
 - **`foot`** — the rib slots are grooves in the underside, printed as bridges
   ~8 mm wide over a 3 mm drop. Fine unsupported. The tube channel opens upward,
   so it needs nothing.
-- **`saddle_cap`** — the tube pocket opens *downward*, a 20.5 mm bridge. This is
-  the one span worth watching on the first print. If it sags, print the cap
-  rotated 180° (roof down) and accept counterbores that need cleaning out.
+- **`saddle_cap`** — the tube pocket opens *downward*, a ~20.4 mm bridge. This
+  is the one span worth watching on the first print, though a 0.4 nozzle bridges
+  noticeably better than a 0.6. If it sags, print the cap rotated 180° (roof
+  down) and accept counterbores that need cleaning out.
 - **`cradle`** — the slot arm leans 20°, well under the 45° threshold.
 
 ---
@@ -123,9 +133,10 @@ z = 0. Do not rotate them. The overhangs that matter:
    these are self-tapping into PLA; overtightening strips them. Cut a starter
    thread by running each screw in and out once before final assembly.
 5. Position the cradles to suit the monitor width and tighten their pinch bolts.
-6. Line the cradle slots with the adhesive pads. Slot is 10.9 mm for a 10.3 mm
-   monitor, so the pads take up the slack — fit them before trusting the monitor
-   to it.
+6. Line the cradle slots with the adhesive pads. The slot is sized
+   `mon_thick + 2*pad_t + line_w` — 11.7 mm for a 10.3 mm monitor with 0.5 mm
+   pads — so **the pads are structural, not cosmetic.** Fit them before trusting
+   the monitor to it, or use thicker pads and widen `pad_t` to match.
 7. Screw the clips to the foot base and route the cables.
 
 ---
@@ -152,11 +163,16 @@ Everything dimensional is a variable at the top of the `.scad`. The ones you are
 most likely to touch:
 
 ```scad
+nozzle    = 0.4                      // walls + all clearances derive from this
 rib_pitch / rib_width / rib_height   // Packout lid — MEASURE THESE
 mon_thick = 10.3                     // your monitor
-lean_deg  = 20                        // screen lean back from vertical
-tube      = 20                        // if you use a different extrusion
+pad_t     = 0.5                      // one slot pad; slot width follows
+lean_deg  = 20                       // screen lean back from vertical
+tube      = 20                       // if you use a different extrusion
 ```
+
+If you change `nozzle`, also update `NOZZLE` in `tools/verify_stl.py` so the
+mass estimate stays honest.
 
 Two traps this model already hit, worth avoiding on edits:
 
@@ -166,5 +182,8 @@ Two traps this model already hit, worth avoiding on edits:
 - **Overlap unioned solids by 2–3 mm, not 0.5 mm.** Thin contacts make CGAL emit
   separate bodies. And `rotate([90,0,0])` extrudes toward −Y — pre-translate or
   the feature lands off the bed.
+- **Size enclosing shapes off the derived wall, not a constant.** Retargeting to
+  0.4 mm grew `wall` and pushed the HDMI clip's loop 0.02 mm outside its own base
+  plate; the checker caught it, but only because it was run.
 
 Re-run `tools/verify_stl.py` after any change.

@@ -16,7 +16,8 @@ import struct, sys, os
 
 # --- print assumptions (keep in sync with the slicer profile) ---------------
 WALLS       = 3
-LINE_WIDTH  = 0.65      # 0.6 nozzle at ~108%
+NOZZLE      = 0.4
+LINE_WIDTH  = NOZZLE * 1.05
 INFILL      = 0.12      # 12%
 PLA_DENSITY = 1.24      # g/cm^3
 BED         = (260.0, 260.0, 260.0)
@@ -133,7 +134,7 @@ def main():
               f"{a['solid_cm3']:>11.2f}{a['est_g']:>8.1f}  {status}")
 
     print('-' * 104)
-    print(f"one of each: {total:.1f} g PLA  (ESTIMATE: {WALLS} walls x {LINE_WIDTH} mm, "
+    print(f"one of each: {total:.1f} g PLA  (ESTIMATE: {WALLS} walls x {LINE_WIDTH:.2f} mm ({NOZZLE} nozzle), "
           f"{int(INFILL * 100)}% infill, {PLA_DENSITY} g/cm3)")
     print("Print time is NOT estimated here -- read it off your slicer.")
     if bad:
