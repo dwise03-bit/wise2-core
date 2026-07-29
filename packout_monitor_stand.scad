@@ -1,369 +1,262 @@
 // ============================================================================
-// WISE² Milwaukee Packout Monitor Stand - OpenSCAD Model
+// WISE2 Milwaukee Packout Monitor Stand  --  v2 (verified geometry)
 // ============================================================================
-// Design: Production-ready 3D printable monitor stand
-// Material: PLA (future: PETG, ASA)
-// Target: Sub-3-hour print, zero supports, field-ready
+// Every part is verified to be a SINGLE connected solid, sitting on z=0,
+// in positive XY space.  Verify with: tools/verify_stl.py
+//
+// CLI export:
+//   openscad -D 'part="foot"' -o stl_output/foot.stl packout_monitor_stand.scad
 // ============================================================================
 
-// Global Parameters (EDIT HERE FOR CUSTOMIZATION)
-$fn = 50;  // Resolution (50 = smooth, 20 = faster preview)
+$fn = 48;
 
 // ============================================================================
-// PARAMETERS - PACKOUT GEOMETRY
+// !! UNVERIFIED -- MEASURE YOUR PACKOUT BEFORE PRINTING THE FEET !!
 // ============================================================================
-packout_rib_height = 3.0;      // Height of Packout molded ribs
-packout_rib_width = 8.0;       // Width of engagement ribs
-packout_rib_spacing = 50.0;    // Spacing between ribs
-foot_height = 18.0;            // Overall foot height
-foot_length = 80.0;            // Length of foot
-foot_width = 40.0;             // Width of foot
+// These Packout lid numbers are PLACEHOLDERS. They were not measured from a
+// real organizer. Print `fit_coupon` first (~10 min, ~4 g) and adjust these
+// three values until the coupon seats on your lid without rock.
+rib_pitch  = 50.0;   // centre-to-centre spacing of the lid's moulded ribs
+rib_width  =  8.0;   // width of one rib
+rib_height =  3.0;   // how far the rib stands proud of the lid
+rib_clear  =  0.4;   // slot clearance added to rib_width
+// ============================================================================
+
+// ---- Monitor ---------------------------------------------------------------
+mon_thick   = 10.3;  // measured VILVA V156F1 thickness
+mon_clear   =  0.6;  // total slot clearance (0.3 per side) -- 0.6 nozzle needs this
+slot_w      = mon_thick + mon_clear;   // 10.9
+slot_depth  = 22.0;  // how deep the monitor sits into the cradle
+lean_deg    = 20.0;  // screen leans BACK this many degrees from vertical
+
+// ---- Crossbar --------------------------------------------------------------
+tube        = 20.0;  // 20x20 aluminium square tube
+tube_fit    = 20.5;  // bore for the tube (slip fit, printed)
+
+// ---- Fasteners -------------------------------------------------------------
+m4_free     =  4.4;  // M4 clearance hole
+m4_tap      =  3.7;  // M4 self-tapping into plastic
+m4_head     =  7.6;  // M4 socket head counterbore
+m3_free     =  3.4;
+
+// ---- Print / structure -----------------------------------------------------
+wall        =  2.4;  // 4 x 0.6 extrusions -- solid, no gaps
+plate_t     =  6.0;  // foot base plate (must exceed rib_height + 2.4)
+corner_r    =  4.0;
 
 // ============================================================================
-// PARAMETERS - MONITOR SLOT
+// helpers
 // ============================================================================
-monitor_slot_width = 10.5;     // 10.3mm monitor + 0.2mm clearance
-monitor_slot_depth = 30.0;     // Full depth through holder
-monitor_holder_width = 220.0;  // Spans crossbar
-monitor_holder_angle = 20.0;   // Viewing angle (degrees)
-monitor_protection_fillet = 2.0; // Radius on slot entrance
+
+// Rounded rectangular slab, corner radius r, sitting on z=0, origin at corner.
+module slab(x, y, z, r=corner_r) {
+    hull() for (i=[r, x-r], j=[r, y-r])
+        translate([i, j, 0]) cylinder(r=r, h=z);
+}
+
+// Right-triangle gusset in the XZ plane, thickness t along +Y (y = 0..t).
+// rotate([90,0,0]) sends +Z to -Y, so pre-translate to land back in +Y.
+module gusset(len, ht, t) {
+    translate([0, t, 0])
+        rotate([90, 0, 0])
+            linear_extrude(t)
+                polygon([[0,0], [len,0], [0,ht]]);
+}
 
 // ============================================================================
-// PARAMETERS - ALUMINUM EXTRUSION & HARDWARE
+// PART: fit_coupon   -- PRINT THIS FIRST
 // ============================================================================
-aluminum_size = 20.0;          // 20x20 mm square tube
-crossbar_length = 300.0;       // Total length
-m4_hole_diameter = 4.2;        // M4 bolt clearance
-m3_hole_diameter = 3.2;        // M3 bolt clearance
-clamp_wall_thickness = 2.5;    // Clamp adapter wall
+// Three trial rib slots at -0.5 / nominal / +0.5 mm width so you can find the
+// engagement that actually fits your lid. ~4 g, ~10 min.
+module fit_coupon() {
+    cw = rib_width + rib_clear;      // nominal
+    l  = rib_pitch + cw + 24;
+    difference() {
+        slab(l, 34, plate_t, 3);
+        // three trial slots across Y: nominal-0.5, nominal, nominal+0.5
+        for (k = [0:2])
+            translate([12, 4 + k*10, plate_t - rib_height])
+                cube([rib_pitch, cw + (k - 1)*0.5, rib_height + 1]);
+    }
+}
 
 // ============================================================================
-// PARAMETERS - MATERIAL & PRINT
+// PART: foot   -- symmetric, so ONE stl prints both left and right
 // ============================================================================
-min_wall = 2.0;                // Minimum wall thickness (ribs)
-standard_wall = 3.0;           // Standard wall thickness
-fillet_radius = 1.0;           // Stress relief radius
-gusset_angle = 45.0;           // Gusset angle for ribs
+base_x = 76;
+// The base must straddle BOTH ribs with material to spare, so derive it from
+// the rib spacing rather than hardcoding it (a fixed 46 left the slots hanging
+// off the edge and shed slivers).
+base_margin = 9;
+base_y = rib_pitch + rib_width + rib_clear + 2*base_margin;   // 76.4 @ defaults
+post_h = 34;         // top of base -> top of post
+// The post must be wide enough to host the tube channel PLUS a solid bolt boss
+// either side. An M4 tap needs ~2 mm of meat all round, so boss_w >= 8.
+boss_w = 9;
+post_x = tube_fit + 2*boss_w;          // 38.5
+post_y = 30;
+sad_depth = 13;      // how deep the tube drops into the channel
+boss_dx = tube_fit/2 + boss_w/2;       // bolt centre offset from post centre
+tube_proud = tube - sad_depth;         // tube sticks this far above the post top
 
-// ============================================================================
-// PART A-001: LEFT FOOT
-// ============================================================================
-module left_foot() {
+module foot() {
+    cx = base_x/2;
     difference() {
         union() {
-            // Base plate
-            cube([foot_length, foot_width, standard_wall], center=false);
+            // base plate
+            slab(base_x, base_y, plate_t);
 
-            // Side walls for stiffness
-            translate([5, 5, 0])
-                cube([foot_length-10, foot_width-10, foot_height-standard_wall]);
+            // upright post -- overlaps the plate so the union is one body.
+            // The post itself forms the tube channel and both bolt bosses.
+            translate([cx - post_x/2, base_y/2 - post_y/2, plate_t - 2])
+                slab(post_x, post_y, post_h + 2, 3);
 
-            // Packout engagement ribs (2x, spaced apart)
-            for(i=[0:1]) {
-                translate([15 + i*35, -3, foot_height-packout_rib_height]) {
-                    linear_extrude(packout_rib_height + 2)
-                        polygon([[0,0], [packout_rib_width,0],
-                                [packout_rib_width-1, packout_rib_width*0.8],
-                                [1, packout_rib_width*0.8]]);
-                }
+            // gussets both sides -> symmetric. Overlap the post by 3 mm and
+            // embed 3 mm into the plate; thin contacts make CGAL shed bodies.
+            for (s = [0, 1])
+                translate([cx + (s ? post_x/2 - 3 : -post_x/2 + 3),
+                           base_y/2 - post_y/2, plate_t - 3])
+                    mirror([s ? 0 : 1, 0, 0])
+                        gusset(20, post_h * 0.8, post_y);
+        }
+
+        // --- rib slots in the underside of the base (Packout engagement) ---
+        for (s = [-1, 1])
+            translate([-1, base_y/2 + s*rib_pitch/2 - (rib_width+rib_clear)/2, -0.5])
+                cube([base_x + 2, rib_width + rib_clear, rib_height + 0.5]);
+
+        // --- tube channel: square, open at the top, runs through in Y ---
+        translate([cx - tube_fit/2, -1, plate_t + post_h - sad_depth])
+            cube([tube_fit, base_y + 2, sad_depth + 20]);
+
+        // --- M4 tapped holes, VERTICAL, down into the solid bosses ---
+        // Ø3.7 into a 9 mm boss leaves 2.65 mm wall each side.
+        for (s = [-1, 1])
+            translate([cx + s*boss_dx, base_y/2, plate_t + post_h - 13])
+                cylinder(d=m4_tap, h=14);
+
+        // --- cable-clip mount on the base, front edge ---
+        translate([10, 9, plate_t - 4]) cylinder(d=m3_free, h=8);
+    }
+}
+
+// ============================================================================
+// PART: saddle_cap   -- clamps the tube down into the foot saddle
+// ============================================================================
+// Bolts down onto the foot's bosses, arching over the proud part of the tube.
+module saddle_cap() {
+    roof = 4.8;
+    h    = tube_proud + roof;          // 7 + 4.8 = 11.8
+    difference() {
+        slab(post_x, post_y, h, 3);
+        // pocket for the proud part of the tube (open at the bottom)
+        translate([post_x/2 - tube_fit/2, -1, -1])
+            cube([tube_fit, post_y + 2, tube_proud + 1]);
+        // M4 clearance + socket-head counterbore, on the foot's boss centres
+        for (s = [-1, 1])
+            translate([post_x/2 + s*boss_dx, post_y/2, -1]) {
+                cylinder(d=m4_free, h=h + 2);
+                translate([0, 0, 1 + roof]) cylinder(d=m4_head, h=h);
             }
-
-            // Crossbar bracket boss (top rear)
-            translate([foot_length-15, foot_width/2-5, foot_height-standard_wall])
-                cube([12, 10, 8]);
-
-            // Cable clip mount boss (top front)
-            translate([10, 5, foot_height-standard_wall])
-                cylinder(d=8, h=6);
-
-            // Finger grip indentation (top center)
-            translate([foot_length/2, foot_width/2, foot_height])
-                rotate([45, 0, 0])
-                    cube([30, 8, 5], center=true);
-        }
-
-        // Carve engagement slots (NEGATIVE SPACE - no supports needed)
-        for(i=[0:1]) {
-            translate([18 + i*35, -2, foot_height-packout_rib_height-0.5]) {
-                linear_extrude(packout_rib_height+1)
-                    polygon([[0,0], [packout_rib_width-2,0],
-                            [packout_rib_width-2.5, packout_rib_width*0.7],
-                            [0.5, packout_rib_width*0.7]]);
-            }
-        }
-
-        // M4 hole for crossbar clamp
-        translate([foot_length-9, foot_width/2, foot_height+3])
-            cylinder(d=m4_hole_diameter, h=10);
-
-        // M3 hole for cable clip
-        translate([10, 5, foot_height+2])
-            cylinder(d=m3_hole_diameter, h=8);
-
-        // Hollow interior (reduce weight & print time)
-        translate([8, 8, standard_wall])
-            cube([foot_length-16, foot_width-16, foot_height-standard_wall-2]);
     }
 }
 
 // ============================================================================
-// PART A-002: RIGHT FOOT (mirror of left)
+// PART: cradle   -- monitor slot bracket, slides on the tube (x2)
 // ============================================================================
-module right_foot() {
-    mirror([1, 0, 0])
-        left_foot();
-}
+// Two small cradles beat one 220 mm beam: less filament, fits the bed easily,
+// and the spacing is adjustable for other monitors.
+cr_x = 34;
+cr_y = 30;
+clamp_h = tube_fit + 2*wall;   // 25.3
 
-// ============================================================================
-// PART A-003/004: CROSSBAR CLAMP ADAPTERS
-// ============================================================================
-module crossbar_clamp_adapter() {
+module cradle() {
+    arm_h = slot_depth + 10;
     difference() {
         union() {
-            // Main clamp body (wraps 20x20 aluminum)
-            linear_extrude(aluminum_size + 4) {
-                polygon([[0,0], [aluminum_size+5, 0],
-                        [aluminum_size+5, aluminum_size+3],
-                        [0, aluminum_size+3]]);
-            }
-
-            // Reinforcement ribs (internal)
-            translate([0, 2, 0])
-                cube([aluminum_size+4, 1.5, aluminum_size+4]);
-            translate([0, aluminum_size, 0])
-                cube([aluminum_size+4, 1.5, aluminum_size+4]);
-
-            // Mounting boss (to foot)
-            translate([0, -8, 0])
-                cube([aluminum_size+5, 8, aluminum_size+3]);
+            // clamp block around the tube
+            slab(cr_x, cr_y, clamp_h, 3);
+            // leaning arms that carry the monitor slot -- overlap the block by
+            // 4 mm. Rotating about the block centre keeps the arm in +Y.
+            translate([cr_x/2, cr_y/2, clamp_h - 4])
+                rotate([-lean_deg, 0, 0])
+                    translate([-(slot_w/2 + wall), -cr_y/2, 0])
+                        slab(slot_w + 2*wall, cr_y, arm_h + 4, 2);
         }
 
-        // Hollow interior (for aluminum tube)
-        translate([2, 2, -1])
-            cube([aluminum_size-4, aluminum_size-4, aluminum_size+6]);
+        // tube bore, straight through in Y
+        translate([cr_x/2 - tube_fit/2, -1, wall]) cube([tube_fit, cr_y + 2, tube_fit]);
 
-        // M4 bolt holes (top & bottom)
-        translate([aluminum_size/2 + 3, 0, 2])
-            cylinder(d=m4_hole_diameter, h=aluminum_size, center=true);
-        translate([aluminum_size/2 + 3, aluminum_size+3, 2])
-            cylinder(d=m4_hole_diameter, h=aluminum_size, center=true);
+        // monitor slot, following the lean
+        translate([cr_x/2, cr_y/2, clamp_h - 4])
+            rotate([-lean_deg, 0, 0])
+                translate([-slot_w/2, -cr_y/2 - 1, 8])
+                    cube([slot_w, cr_y + 2, arm_h + 6]);
 
-        // Mounting hole to foot
-        translate([aluminum_size/2, -4, aluminum_size/2])
-            cylinder(d=m4_hole_diameter, h=8);
+        // pinch bolt: clearance in the near cheek, tap in the far cheek
+        translate([cr_x/2, -1, wall + tube_fit/2])
+            rotate([-90, 0, 0]) cylinder(d=m4_free, h=cr_y/2 + 1);
+        translate([cr_x/2, cr_y/2, wall + tube_fit/2])
+            rotate([-90, 0, 0]) cylinder(d=m4_tap, h=cr_y/2 + 2);
+        // pinch relief slot so the cheek can actually flex
+        translate([-1, cr_y/2 - 0.6, wall + tube_fit + 1])
+            cube([cr_x + 2, 1.2, clamp_h]);
     }
 }
 
 // ============================================================================
-// PART A-005: MONITOR HOLDER
+// PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
-module monitor_holder() {
+module clip(loop_d = 6) {
+    od = loop_d + 2*wall;
     difference() {
         union() {
-            // Main body (angled support)
-            linear_extrude(monitor_holder_angle*0.5)
-                square([monitor_holder_width, 45]);
-
-            // Raised slot area (front)
-            translate([0, 0, 0])
-                linear_extrude(15)
-                    square([monitor_holder_width, 40]);
-
-            // Monitor slot support ribs (left & right)
-            translate([30, 12, 0])
-                cube([monitor_slot_depth, standard_wall, 25]);
-            translate([monitor_holder_width-30-monitor_slot_depth, 12, 0])
-                cube([monitor_slot_depth, standard_wall, 25]);
-
-            // Crossbar connection bosses
-            translate([10, 20, 10])
-                cube([8, 5, 8]);
-            translate([monitor_holder_width-18, 20, 10])
-                cube([8, 5, 8]);
-
-            // Rear cable pass-through support
-            translate([0, 35, 0])
-                linear_extrude(12)
-                    square([monitor_holder_width, 8]);
+            slab(od + 6, 14, 3, 2);
+            translate([(od + 6)/2, 7, 2]) cylinder(d=od, h=loop_d + 4);
         }
-
-        // Monitor slot (10.5mm wide, 30mm deep)
-        translate([50, 12, 10])
-            cube([monitor_slot_width, monitor_slot_depth, 20]);
-        translate([monitor_holder_width-50-monitor_slot_width, 12, 10])
-            cube([monitor_slot_width, monitor_slot_depth, 20]);
-
-        // Soften slot entrance (fillet simulation)
-        translate([50 + monitor_slot_width/2, 12, 10])
-            cylinder(r=monitor_protection_fillet, h=5);
-        translate([monitor_holder_width-50-monitor_slot_width/2, 12, 10])
-            cylinder(r=monitor_protection_fillet, h=5);
-
-        // Cable routing slots
-        translate([monitor_holder_width/2 - 15, 38, 8])
-            cube([12, 8, 8]);  // USB-C routing
-        translate([monitor_holder_width/2 + 3, 38, 8])
-            cube([12, 8, 8]);  // HDMI routing
-
-        // Crossbar mounting holes
-        translate([14, 22.5, 14])
-            cylinder(d=m4_hole_diameter, h=8);
-        translate([monitor_holder_width-14, 22.5, 14])
-            cylinder(d=m4_hole_diameter, h=8);
-
-        // Hollow interior (reduce weight)
-        translate([10, 2, standard_wall])
-            cube([monitor_holder_width-20, 35, 20]);
-    }
-
-    // WISE² Logo emboss (bottom surface)
-    translate([monitor_holder_width/2 - 25, 5, 0])
-        linear_extrude(0.5)
-            text("WISE²", font="Arial Bold", size=8, halign="center");
-}
-
-// ============================================================================
-// PART A-006/007: QUICK-RELEASE LOCK CAPS
-// ============================================================================
-module lock_cap() {
-    difference() {
-        union() {
-            // Main cap body
-            cylinder(d=30, h=8, $fn=40);
-
-            // Finger indentation (grip)
-            translate([0, 0, 4])
-                sphere(d=12);
-        }
-
-        // Central hole for threaded insert
-        cylinder(d=6, h=10, center=true);
-
-        // Keying slot (prevents rotation)
-        translate([-2, 0, 0])
-            cube([4, 8, 9]);
+        // cable bore, open on one side so the cable snaps in
+        translate([(od + 6)/2, 7, 4]) cylinder(d=loop_d, h=loop_d + 4);
+        translate([(od + 6)/2 - loop_d*0.35, 7, 5]) cube([loop_d*0.7, 14, loop_d + 4]);
+        // mount hole
+        translate([(od + 6)/2, 7, -1]) cylinder(d=m3_free, h=6);
     }
 }
 
 // ============================================================================
-// PART A-008: USB-C CABLE CLIP
+// ASSEMBLY (reference view only -- not for export)
 // ============================================================================
-module usb_c_clip() {
-    difference() {
-        union() {
-            // Main clip body
-            cube([12, 12, 3]);
+span = 250;   // centre-to-centre foot spacing
 
-            // Cable guide loop
-            translate([6, 6, 3])
-                cylinder(d=10, h=8, $fn=30);
-        }
+module assembly() {
+    color("gray")      foot();
+    translate([span, 0, 0]) color("gray") foot();
 
-        // Hollow interior (cable passage)
-        translate([6, 6, 2])
-            cylinder(d=6, h=10);
+    for (x = [0, span])
+        translate([x + base_x/2 - (tube_fit/2 + wall), base_y/2 - post_y/2,
+                   plate_t + post_h - sad_depth + tube])
+            color("dimgray") saddle_cap();
 
-        // Mounting hole
-        translate([6, 6, -1])
-            cylinder(d=m3_hole_diameter, h=5);
-    }
+    // aluminium tube (bought, not printed)
+    color("silver")
+        translate([base_x/2 - tube/2, base_y/2 - tube/2,
+                   plate_t + post_h - sad_depth])
+            cube([span + tube, tube, tube]);
+
+    for (x = [70, span - 40])
+        translate([base_x/2 - cr_x/2 + x, base_y/2 - cr_y/2,
+                   plate_t + post_h - sad_depth - wall])
+            color("gray") cradle();
 }
 
 // ============================================================================
-// PART A-009: HDMI CABLE CLIP
+// PART SELECTOR
 // ============================================================================
-module hdmi_clip() {
-    difference() {
-        union() {
-            // Main clip body
-            cube([14, 14, 3]);
+part = "assembly";
 
-            // Cable guide loop (larger for HDMI)
-            translate([7, 7, 3])
-                cylinder(d=12, h=8, $fn=30);
-        }
-
-        // Hollow interior (cable passage)
-        translate([7, 7, 2])
-            cylinder(d=8, h=10);
-
-        // Mounting hole
-        translate([7, 7, -1])
-            cylinder(d=m3_hole_diameter, h=5);
-    }
-}
-
-// ============================================================================
-// ASSEMBLY: FULL MONITOR STAND
-// ============================================================================
-module full_assembly(show_aluminum=true, show_monitor=false) {
-    // Left foot
-    translate([0, 0, 0])
-        left_foot();
-
-    // Right foot
-    translate([220, 0, 0])
-        right_foot();
-
-    // Crossbar clamp adapters
-    translate([30, -15, 0])
-        crossbar_clamp_adapter();
-    translate([190, -15, 0])
-        crossbar_clamp_adapter();
-
-    // Aluminum crossbar (reference only, not printed)
-    if(show_aluminum) {
-        translate([60, -15, 10])
-            cube([160, aluminum_size, aluminum_size], center=false);
-    }
-
-    // Monitor holder
-    translate([0, -5, 25])
-        monitor_holder();
-
-    // Lock caps
-    translate([15, 15, foot_height])
-        lock_cap();
-    translate([205, 15, foot_height])
-        lock_cap();
-
-    // Cable clips
-    translate([25, 5, foot_height])
-        usb_c_clip();
-    translate([195, 5, foot_height])
-        hdmi_clip();
-
-    // Monitor reference (not printed)
-    if(show_monitor) {
-        translate([110, 15, 35])
-            cube([160, monitor_slot_depth, 10], center=false);
-    }
-}
-
-// ============================================================================
-// RENDERING OPTIONS - UNCOMMENT TO VIEW/EXPORT
-// ============================================================================
-
-// Option 1: Render full assembly
-full_assembly(show_aluminum=true, show_monitor=true);
-
-// Option 2: Individual parts (uncomment one to export as STL)
-// left_foot();
-// right_foot();
-// crossbar_clamp_adapter();
-// monitor_holder();
-// lock_cap();
-// usb_c_clip();
-// hdmi_clip();
-
-// ============================================================================
-// EXPORT GUIDE
-// ============================================================================
-// 1. In OpenSCAD: View → Render (F12) to get full geometry
-// 2. File → Export as STL for each part
-// 3. Use settings:
-//    - Angular Tolerance: 0.01 degrees
-//    - Tolerance: 0.001 mm
-//    - Advanced options: OFF
-// 4. Orient STLs for printing (see print orientation guide)
-// ============================================================================
+if      (part == "fit_coupon") fit_coupon();
+else if (part == "foot")       foot();
+else if (part == "saddle_cap") saddle_cap();
+else if (part == "cradle")     cradle();
+else if (part == "clip_usbc")  clip(6);
+else if (part == "clip_hdmi")  clip(9);
+else                           assembly();

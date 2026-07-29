@@ -144,3 +144,6 @@ Build/
 
 # TypeScript incremental build info
 *.tsbuildinfo
+
+# generated STL exports
+stl_output/
