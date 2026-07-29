@@ -34,13 +34,19 @@ const nextConfig = {
 
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api',
+    NEXT_PUBLIC_BRAIN_API_URL: process.env.NEXT_PUBLIC_BRAIN_API_URL || '/brain-api',
     NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'localhost:3011',
     NEXT_PUBLIC_LOGIN_URL: process.env.NEXT_PUBLIC_LOGIN_URL || 'http://localhost:3001/login',
   },
 
   rewrites: async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+    const brainUrl = process.env.BRAIN_API_INTERNAL_URL || 'http://127.0.0.1:3012/api';
     return [
+      {
+        source: '/brain-api/:path*',
+        destination: `${brainUrl}/:path*`,
+      },
       {
         source: '/api/:path*',
         destination: `${apiUrl}/:path*`,

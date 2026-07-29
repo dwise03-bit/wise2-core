@@ -14,7 +14,8 @@
       "name": "command-center",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--workspace=apps/command-center"],
-      "port": 3002
+      "port": 3002,
+      "autoPort": true
     }
   ]
 }
