@@ -2,18 +2,18 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages ./packages
 COPY apps/website ./apps/website
 COPY apps/dashboard ./apps/dashboard
 
-RUN npm install --frozen-lockfile
+RUN npm install -g pnpm && pnpm install --frozen-lockfile --recursive
 
 WORKDIR /app/apps/dashboard
 # NEXT_PUBLIC_* vars inline into the client bundle at build time.
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-RUN npm run build
+RUN pnpm run build
 
 FROM node:20-alpine
 
