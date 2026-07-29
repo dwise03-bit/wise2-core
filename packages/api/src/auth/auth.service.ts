@@ -332,14 +332,14 @@ export class AuthService {
       }),
     });
 
-    const tokens = await tokenResponse.json();
+    const tokens: any = await tokenResponse.json();
     if (!tokens.access_token) throw new UnauthorizedException('Invalid Google code');
 
     const userResponse = await fetch(
       'https://www.googleapis.com/oauth2/v2/userinfo',
       { headers: { Authorization: `Bearer ${tokens.access_token}` } },
     );
-    const googleUser = await userResponse.json();
+    const googleUser: any = await userResponse.json();
 
     let user = await this.userRepository.findOneBy({ email: googleUser.email });
     if (!user) {
