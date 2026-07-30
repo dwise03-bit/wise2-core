@@ -24,7 +24,7 @@
   "0.96"
  ],
  "filament_max_volumetric_speed": [
-  "8"
+  "13"
  ],
  "activate_air_filtration": [
   "0"
@@ -255,7 +255,7 @@
   "-1"
  ],
  "nozzle_temperature": [
-  "215"
+  "210"
  ],
  "nozzle_temperature_BRASS": [
   "220"
