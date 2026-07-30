@@ -6,6 +6,11 @@ Checks that matter before printing:
   bodies   -- MUST be 1. More than 1 means the part prints as loose chunks.
   origin   -- should be ~(0,0,0): part sits on the bed, in positive space.
   bbox     -- must fit the Kobra X 260x260x260 build volume.
+  overhang -- cross-section must not step outward more than MAX_OVERHANG per side
+              at any height. A part on a narrow pedestal under a wide plate prints
+              the plate into thin air. This check was ADDED AFTER shipping seven
+              unprintable parts whose plates overhung their tongues by up to
+              30.7 mm; topology was fine and they still could not print.
 
 Mass is an ESTIMATE computed from geometry (shell + infill), not a slicer
 result. Confirm in your slicer before ordering filament.
@@ -21,6 +26,8 @@ LINE_WIDTH  = NOZZLE * 1.05
 INFILL      = 0.12      # 12%
 PLA_DENSITY = 1.24      # g/cm^3
 BED         = (260.0, 260.0, 260.0)
+MAX_OVERHANG = 2.0      # mm per side of unsupported outward step
+OVERHANG_SLICES = 60
 
 WALL_T = WALLS * LINE_WIDTH
 
@@ -43,6 +50,36 @@ def read_stl(path):
             v = struct.unpack_from('<12f', data, i * 50)
             out.append(((v[3], v[4], v[5]), (v[6], v[7], v[8]), (v[9], v[10], v[11])))
         return out
+
+
+def worst_overhang(tris):
+    """Largest outward step per side, scanning cross-sections up Z."""
+    zs = [p[2] for t in tris for p in t]
+    lo, hi = min(zs), max(zs)
+    if hi - lo < 0.1:
+        return 0.0, None
+
+    def extent(z):
+        xs, ys = [], []
+        for tri in tris:
+            for a, b in ((0, 1), (1, 2), (2, 0)):
+                z1, z2 = tri[a][2], tri[b][2]
+                if (z1 - z) * (z2 - z) < 0:
+                    f = (z - z1) / (z2 - z1)
+                    xs.append(tri[a][0] + f * (tri[b][0] - tri[a][0]))
+                    ys.append(tri[a][1] + f * (tri[b][1] - tri[a][1]))
+        return (max(xs) - min(xs), max(ys) - min(ys)) if xs else (0.0, 0.0)
+
+    worst, at_z, prev = 0.0, None, None
+    for i in range(1, OVERHANG_SLICES):
+        z = lo + (hi - lo) * i / OVERHANG_SLICES
+        e = extent(z)
+        if prev:
+            step = max((e[0] - prev[0]) / 2, (e[1] - prev[1]) / 2)
+            if step > worst:
+                worst, at_z = step, z
+        prev = e
+    return worst, at_z
 
 
 def analyse(path):
@@ -90,6 +127,7 @@ def analyse(path):
         union(k[1], k[2])
     bodies = len({find(k) for k in parent})
 
+    oh, oh_z = worst_overhang(tris)
     shell = min(area * WALL_T, vol)
     printed = shell + max(0.0, vol - shell) * INFILL
 
@@ -99,6 +137,8 @@ def analyse(path):
         origin=(round(min(xs), 2), round(min(ys), 2), round(min(zs), 2)),
         solid_cm3=vol / 1000.0,
         est_g=printed / 1000.0 * PLA_DENSITY,
+        overhang=oh,
+        overhang_z=oh_z,
     )
 
 
@@ -109,8 +149,8 @@ def main():
         print(f"no STLs in {d}/")
         return 1
 
-    print(f"{'part':<14}{'bodies':>7}{'bbox (mm)':>26}{'origin':>18}"
-          f"{'solid cm3':>11}{'est g':>8}  status")
+    print(f"{'part':<14}{'bodies':>7}{'bbox (mm)':>24}{'ovhang':>8}"
+          f"{'est g':>8}  status")
     print('-' * 104)
 
     total, bad = 0.0, []
@@ -126,12 +166,15 @@ def main():
             problems.append("negative space / off bed")
         if any(b > lim for b, lim in zip(a['bbox'], BED)):
             problems.append("exceeds build volume")
+        if a['overhang'] > MAX_OVERHANG:
+            problems.append(f"OVERHANG {a['overhang']:.1f} mm/side at z={a['overhang_z']:.1f}"
+                            " -- needs supports or a chamfer")
         if problems:
             bad.append(f)
         status = 'OK' if not problems else 'FAIL: ' + '; '.join(problems)
         total += a['est_g']
-        print(f"{f[:-4]:<14}{a['bodies']:>7}{str(a['bbox']):>26}{str(a['origin']):>18}"
-              f"{a['solid_cm3']:>11.2f}{a['est_g']:>8.1f}  {status}")
+        print(f"{f[:-4]:<14}{a['bodies']:>7}{str(a['bbox']):>24}"
+              f"{a['overhang']:>7.1f} {a['est_g']:>7.1f}  {status}")
 
     print('-' * 104)
     print(f"one of each: {total:.1f} g PLA  (ESTIMATE: {WALLS} walls x {LINE_WIDTH:.2f} mm ({NOZZLE} nozzle), "
