@@ -440,39 +440,43 @@ tongue_w      = channel_w - channel_clear;      // 58.4
 tongue_l      = 44;      // length along the channel
 tongue_draft  = 1.5;     // deg per side -- clears injection-moulding draft
 
-// !! UNVERIFIED -- I do not have this measurement !!
-// How deep the channel is. 4 mm is a conservative guess: too shallow only wastes
-// engagement, too deep bottoms out and the base will not sit down on the lid.
-// `lid_coupon` checks it in ~6 min before you commit to a mount.
-channel_depth = 4.0;
+// MEASURED: channel is 4.3 mm deep.
+//
+// The TONGUE is deliberately shallower than the channel. Load has to land on the
+// plate sitting flat on the lid, not on the tongue tip touching the channel
+// floor. Equal depths mean any first-layer squish or over-extrusion bottoms the
+// tongue out first and the part rocks on it.
+channel_depth = 4.3;     // measured
+seat_clear    = 0.3;     // tongue sits this far off the channel floor
+tongue_depth  = channel_depth - seat_clear;
 
 lm_x = 76;               // base bears on the lid either side of the channel
 lm_y = 50;
 
 // Tongue, narrowing very slightly downward so moulding draft cannot jam it.
 module lid_tongue_at(cx, cy) {
-    dw = 2 * channel_depth * tan(tongue_draft);
+    dw = 2 * tongue_depth * tan(tongue_draft);
     hull() {
         translate([cx, cy, 0])
             cube([tongue_w - dw, tongue_l, 0.01], center=true);
-        translate([cx, cy, channel_depth])
+        translate([cx, cy, tongue_depth])
             cube([tongue_w, tongue_l, 0.01], center=true);
     }
 }
 module lid_tongue() { lid_tongue_at(lm_x/2, lm_y/2); }
 
 // ~6 min, ~3 g. Drop it in the lid channel. It should seat with the plate flat
-// on the lid and no side rock. If it stands proud, channel_depth is too big; if
+// on the lid and no side rock. If it stands proud, raise seat_clear; if
 // it rocks side to side, raise channel_clear.
 module lid_coupon() {
     difference() {
         union() {
             lid_tongue();
-            translate([lm_x/2 - 34, lm_y/2 - 14, channel_depth])
+            translate([lm_x/2 - 34, lm_y/2 - 14, tongue_depth])
                 slab(68, 28, 2.6, 3);
         }
         // window so you can see the tongue seated
-        translate([lm_x/2 - 10, lm_y/2 - 5, channel_depth - 1])
+        translate([lm_x/2 - 10, lm_y/2 - 5, tongue_depth - 1])
             cube([20, 10, 6]);
     }
 }
@@ -480,7 +484,7 @@ module lid_coupon() {
 // THE LID-MOUNTED STAND. Printed twice. No feet, no bolts, no inserts.
 module lid_mount() {
     cx = lm_x/2; cy = lm_y/2;
-    z0 = channel_depth;                 // top of tongue = underside of plate
+    z0 = tongue_depth;                 // top of tongue = underside of plate
     arm_h = mt_slot + 7;
     difference() {
         union() {
@@ -540,7 +544,7 @@ module strap_slots(z0) {
 
 module pi_mount() {
     cx = pm_x/2; cy = pm_y/2;
-    z0 = channel_depth;
+    z0 = tongue_depth;
     top = z0 + pm_t;
     difference() {
         union() {
@@ -588,7 +592,7 @@ pi_post = 8;             // corner column width left either side of each opening
 
 module pi_case() {
     cx = pm_x/2; cy = pm_y/2;
-    z0 = channel_depth;
+    z0 = tongue_depth;
     top = z0 + pm_t;                       // plate top
     iw = pi_bx + pi_clear;                 // inside wall dims
     il = pi_by + pi_clear;
@@ -662,7 +666,7 @@ pu_hole_zc = pu_board_z + 3.5 + pi_hole_y/2;
 
 module pi_upright() {
     cx = lm_x/2; cy = lm_y/2;
-    z0 = channel_depth;
+    z0 = tongue_depth;
     top = z0 + mt_t;
     difference() {
         union() {
@@ -749,7 +753,7 @@ module corner_bracket(ix, iy) {
 
 module pi_cradle() {
     cx = cr_px/2; cy = cr_py/2;
-    z0 = channel_depth;
+    z0 = tongue_depth;
     top = z0 + mt_t;
     difference() {
         union() {
