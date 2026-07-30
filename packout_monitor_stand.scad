@@ -957,6 +957,15 @@ module tongue_block() {
 // ============================================================================
 // PART: cradle_plate  -- pi_cradle with NO tongue. Prints flat, zero overhang.
 // ============================================================================
+// Mounts on CK's Packout feet, which are the proven fit -- so it carries THEIR
+// bolt pattern: 39.5 mm pitch, M4, measured from their 3mf.
+//
+// Standard M4 heat-set inserts are 8 mm and this plate is 4.5 mm, which is why
+// `mount` uses raised bosses. Bosses are not an option here: they would lift the
+// Pi case off the plate. So this uses SHORT M4 inserts (4 mm), which sit flush in
+// a 4.5 mm plate with nothing protruding either side.
+insert_l_short = 4.0;
+
 module cradle_plate() {
     cx = cr_px/2; cy = cr_py/2;
     difference() {
@@ -966,7 +975,15 @@ module cradle_plate() {
                 translate([cx, cy, mt_t - 1])
                     corner_bracket(ix, iy);
         }
-        tongue_bolt_holes(cx, cy, mt_t);
+        // short M4 insert from above, bolt clearance right through
+        for (s = [-1, 1])
+            translate([cx + s*hole_pitch/2, cy, 0]) {
+                translate([0, 0, mt_t - insert_l_short])
+                    cylinder(d=insert_d, h=insert_l_short + 1);
+                translate([0, 0, -1]) cylinder(d=m4_free, h=mt_t + 2);
+                translate([0, 0, mt_t - 0.6])
+                    cylinder(d1=insert_d, d2=insert_d + 1.2, h=0.8);
+            }
         for (sy = [-1, 1])
             for (sx = [-1, 1])
                 translate([cx + sx*(case_w/2 - 6) - 1.6,
