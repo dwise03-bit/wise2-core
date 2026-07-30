@@ -10,6 +10,15 @@ Anycubic Kobra X · **0.4 mm hardened steel** nozzle · PLA-CF
 
 Times are from the Anycubic slicer itself, not an estimate.
 
+**Monitor slot is now 11.22 mm** (was 11.72). Tightened 0.5 mm per fit testing on
+a printed mount. `slot_adjust = -0.5` in the `.scad` is the knob — negative is
+tighter, and it is the only value to touch for fit.
+
+This figure **assumes the adhesive pads are fitted**: 11.22 minus 2 × 0.5 mm of
+pad leaves 10.22 mm against a 10.3 mm panel, i.e. ~0.1 mm interference — a grip.
+Running bare, without pads, leaves ~0.9 mm of play; use `slot_adjust = -1.4`
+instead and re-export.
+
 **Before you hit print, check one number:** `insert_d = 5.7` is the pilot hole for
 the M4 heat-set inserts, and it varies by brand. If your inserts are not ~6.0 mm
 OD × 8 mm long, set `insert_d` / `insert_l` in the `.scad` and re-export.

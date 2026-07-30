@@ -35,7 +35,16 @@ mon_thick   = 10.3;  // measured VILVA V156F1 thickness
 pad_t       =  0.5;  // thickness of ONE adhesive pad lining the slot
 // The slot is deliberately oversized: the pads take up the slack and do the
 // gripping. Bare slot minus pads leaves ~one line width of play.
-slot_w      = mon_thick + 2*pad_t + line_w;
+//
+// slot_adjust is the fit knob -- negative is tighter. Measured on a printed
+// mount, the computed slot came out loose, so it is pulled in 0.5 mm.
+// NOTE this assumes the pads ARE fitted:
+//   bare slot        10.3 + 1.0 + 0.42 - 0.5 = 11.22
+//   minus 2 x 0.5 pad                        = 10.22 against a 10.3 panel
+//   -> ~0.1 mm interference, i.e. a grip.
+// Running WITHOUT pads leaves ~0.9 mm of play; use slot_adjust = -1.4 instead.
+slot_adjust = -0.5;
+slot_w      = mon_thick + 2*pad_t + line_w + slot_adjust;
 slot_depth  = 22.0;  // how deep the monitor sits into the cradle
 lean_deg    = 20.0;  // screen leans BACK this many degrees from vertical
 
