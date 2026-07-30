@@ -925,10 +925,13 @@ module foot_pocket() {
         for (s = [-1, 1])
             translate([foot_x/2, foot_y/2 + s*tb_bolt_pitch/2, -0.5])
                 cylinder(d=m3_tap, h=foot_h + 1);
-        // hollow it out -- solid would be 30 g for a locating block
-        translate([5, 5, -0.5])
+        // Hollow from the TOP, never the bottom. Cutting it from the bottom left
+        // the first layer as a 5 mm rim and put a 56 x 78 mm ceiling bridging over
+        // open air at z=1.9 -- filled area jumped 7.4x. Opening the pocket upward
+        // keeps the whole underside solid: full bed contact, nothing to bridge.
+        translate([5, 5, 1.6])
             hull() for (i=[6, foot_x-11], j=[6, foot_y-11])
-                translate([i, j, 0]) cylinder(r=6, h=foot_h - 1.6);
+                translate([i, j, 0]) cylinder(r=6, h=foot_h);
     }
 }
 

@@ -6,11 +6,16 @@ Checks that matter before printing:
   bodies   -- MUST be 1. More than 1 means the part prints as loose chunks.
   origin   -- should be ~(0,0,0): part sits on the bed, in positive space.
   bbox     -- must fit the Kobra X 260x260x260 build volume.
-  overhang -- cross-section must not step outward more than MAX_OVERHANG per side
-              at any height. A part on a narrow pedestal under a wide plate prints
-              the plate into thin air. This check was ADDED AFTER shipping seven
-              unprintable parts whose plates overhung their tongues by up to
-              30.7 mm; topology was fine and they still could not print.
+  overhang -- FILLED AREA per slice must not grow with height. Measured by ray
+              casting a grid, not by bounding box, because bbox misses internal
+              voids entirely.
+
+              Two separate escapes led here. First: seven parts whose plates
+              overhung their tongues by up to 30.7 mm per side -- caught by an
+              extent check. Then a foot hollowed from the BOTTOM, where the outer
+              extent never changes so the extent check passed at 0.0 while the
+              part had a 56 x 78 mm ceiling bridging over open air and a first
+              layer that was a bare rim. Area catches both.
 
 Mass is an ESTIMATE computed from geometry (shell + infill), not a slicer
 result. Confirm in your slicer before ordering filament.
@@ -26,8 +31,9 @@ LINE_WIDTH  = NOZZLE * 1.05
 INFILL      = 0.12      # 12%
 PLA_DENSITY = 1.24      # g/cm^3
 BED         = (260.0, 260.0, 260.0)
-MAX_OVERHANG = 2.0      # mm per side of unsupported outward step
-OVERHANG_SLICES = 60
+AREA_GROWTH_LIMIT = 1.25   # a slice may not exceed 1.25x the one below it
+OVERHANG_SLICES   = 40
+AREA_GRID         = 70
 
 WALL_T = WALLS * LINE_WIDTH
 
@@ -53,32 +59,52 @@ def read_stl(path):
 
 
 def worst_overhang(tris):
-    """Largest outward step per side, scanning cross-sections up Z."""
-    zs = [p[2] for t in tris for p in t]
+    """Largest upward growth in FILLED cross-section area, as a ratio."""
+    pts = [p for t in tris for p in t]
+    xs = [p[0] for p in pts]; ys = [p[1] for p in pts]; zs = [p[2] for p in pts]
     lo, hi = min(zs), max(zs)
-    if hi - lo < 0.1:
-        return 0.0, None
+    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+    if hi - lo < 0.1 or x1 <= x0 or y1 <= y0:
+        return 1.0, None
+    n = AREA_GRID
+    cell = ((x1 - x0) / n) * ((y1 - y0) / n)
 
-    def extent(z):
-        xs, ys = [], []
+    def area(z):
+        segs = []
         for tri in tris:
+            hit = []
             for a, b in ((0, 1), (1, 2), (2, 0)):
                 z1, z2 = tri[a][2], tri[b][2]
                 if (z1 - z) * (z2 - z) < 0:
                     f = (z - z1) / (z2 - z1)
-                    xs.append(tri[a][0] + f * (tri[b][0] - tri[a][0]))
-                    ys.append(tri[a][1] + f * (tri[b][1] - tri[a][1]))
-        return (max(xs) - min(xs), max(ys) - min(ys)) if xs else (0.0, 0.0)
+                    hit.append((tri[a][0] + f * (tri[b][0] - tri[a][0]),
+                                tri[a][1] + f * (tri[b][1] - tri[a][1])))
+            if len(hit) == 2:
+                segs.append(hit)
+        if not segs:
+            return 0.0
+        inside = 0
+        for i in range(n):
+            py = y0 + (y1 - y0) * (i + 0.5) / n
+            xc = sorted(ax + (py - ay) / (by - ay) * (bx - ax)
+                        for (ax, ay), (bx, by) in segs if (ay - py) * (by - py) < 0)
+            if not xc:
+                continue
+            for j in range(n):
+                px = x0 + (x1 - x0) * (j + 0.5) / n
+                if sum(1 for c in xc if c > px) % 2:
+                    inside += 1
+        return inside * cell
 
-    worst, at_z, prev = 0.0, None, None
+    worst, at_z, prev = 1.0, None, None
     for i in range(1, OVERHANG_SLICES):
         z = lo + (hi - lo) * i / OVERHANG_SLICES
-        e = extent(z)
-        if prev:
-            step = max((e[0] - prev[0]) / 2, (e[1] - prev[1]) / 2)
-            if step > worst:
-                worst, at_z = step, z
-        prev = e
+        a = area(z)
+        if prev and prev > 1.0:
+            g = a / prev
+            if g > worst:
+                worst, at_z = g, z
+        prev = a
     return worst, at_z
 
 
@@ -166,15 +192,15 @@ def main():
             problems.append("negative space / off bed")
         if any(b > lim for b, lim in zip(a['bbox'], BED)):
             problems.append("exceeds build volume")
-        if a['overhang'] > MAX_OVERHANG:
-            problems.append(f"OVERHANG {a['overhang']:.1f} mm/side at z={a['overhang_z']:.1f}"
-                            " -- needs supports or a chamfer")
+        if a['overhang'] > AREA_GROWTH_LIMIT:
+            problems.append(f"AREA GROWS x{a['overhang']:.1f} at z={a['overhang_z']:.1f}"
+                            " -- overhang or internal bridge")
         if problems:
             bad.append(f)
         status = 'OK' if not problems else 'FAIL: ' + '; '.join(problems)
         total += a['est_g']
         print(f"{f[:-4]:<14}{a['bodies']:>7}{str(a['bbox']):>24}"
-              f"{a['overhang']:>7.1f} {a['est_g']:>7.1f}  {status}")
+              f"x{a['overhang']:>5.1f} {a['est_g']:>7.1f}  {status}")
 
     print('-' * 104)
     print(f"one of each: {total:.1f} g PLA  (ESTIMATE: {WALLS} walls x {LINE_WIDTH:.2f} mm ({NOZZLE} nozzle), "
