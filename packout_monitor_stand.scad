@@ -642,7 +642,9 @@ module pi_case() {
 // From the caliper photos of a 48-22-8436 underside:
 //   36.1 mm   rib width          <- USED HERE as the tongue width
 //   25.2 mm   (role unconfirmed) probably the gap between ribs
-//   75.4 mm   (role unconfirmed) span of some kind
+//   75.1 mm   (role unconfirmed) span of some kind
+// 75.1 does not reconcile cleanly with the other two: 36.1 + 25.2 = 61.3, and
+// 36.1 x 2 = 72.2, so 75.1 is measuring something else again. Noted, unused.
 // Cross-check: CK's dovetail measured 38.05 mm across its top face, same
 // ballpark as 36.1, which supports 36.1 being the rib width.
 //
