@@ -165,7 +165,7 @@
   "0"
  ],
  "filament_notes": [
-  "Plain PLA. No hardened nozzle needed. Bed 55C stays under the 60C vitrification point so the stock bed-temp warning clears."
+  "Plain PLA. Bed 60C / 65C first layer -- textured PEI wants this. Anycubic's stock profile emits bed_temperature_too_high_than_filament because it declares vitrification at 60; that warning is cosmetic and should be IGNORED. An earlier revision here dropped the bed to 55 just to silence it, which traded real adhesion for a clean log."
  ],
  "filament_ramming_parameters": [
   "120 100 6.6 6.8 7.2 7.6 7.9 8.2 8.7 9.4 9.9 10.0| 0.05 6.6 0.45 6.8 0.95 7.8 1.45 8.3 1.95 9.7 2.45 10 2.95 7.6 3.45 7.6 3.95 7.6 4.45 7.6 4.95 7.6"
@@ -243,10 +243,10 @@
   "0"
  ],
  "hot_plate_temp": [
-  "55"
+  "60"
  ],
  "hot_plate_temp_initial_layer": [
-  "55"
+  "65"
  ],
  "idle_temperature": [
   "0"
@@ -324,9 +324,9 @@
   "40"
  ],
  "textured_plate_temp": [
-  "55"
+  "60"
  ],
  "textured_plate_temp_initial_layer": [
-  "55"
+  "65"
  ]
 }
