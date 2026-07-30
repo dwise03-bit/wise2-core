@@ -890,8 +890,49 @@ module tongue_bolt_holes(cx, cy, plate_t_local) {
         }
 }
 
-// The tongue, as its own part. Printed mating-face DOWN: the widest section is
-// on the bed and it narrows going up, so nothing overhangs.
+// ============================================================================
+// PART: foot   -- STANDALONE. Fills the lid pocket. Nothing else attached.
+// ============================================================================
+// The first tongue_block (58.4 x 44) was far too small: it sat loose in the
+// pocket with room all round. 58.8 mm was evidently not the pocket dimension.
+//
+// These are ESTIMATED from the photo, scaling off that printed block as a known
+// 58.4 x 44 reference. Expect +/- 5 mm -- a perspective shot cannot do better.
+//
+// DIAL IT IN WITH THE SLICER, do not wait for me to re-cut it. Load the STL,
+// scale X/Y together, print, repeat. It is ~15 min a go:
+//   sits loose      -> scale UP  in 3% steps
+//   will not seat   -> scale DOWN in 3% steps
+//   right           -> read the % off the slicer and tell me, and I will bake it
+//                      in so every other part inherits it
+foot_x = 88;             // ESTIMATE -- pocket long axis
+foot_y = 66;             // ESTIMATE -- pocket short axis
+foot_h = 4.0;            // engagement depth; shallower than the pocket is safe
+
+module foot_pocket() {
+    dw = 2 * foot_h * tan(tongue_draft);
+    difference() {
+        // widest face on the bed, narrowing upward -> zero overhang
+        hull() {
+            translate([foot_x/2, foot_y/2, 0])
+                cube([foot_x, foot_y, 0.01], center=true);
+            translate([foot_x/2, foot_y/2, foot_h])
+                cube([foot_x - dw, foot_y - dw, 0.01], center=true);
+        }
+        // same 2 x M3 pattern as everything else, so it bolts to any plate later
+        for (s = [-1, 1])
+            translate([foot_x/2, foot_y/2 + s*tb_bolt_pitch/2, -0.5])
+                cylinder(d=m3_tap, h=foot_h + 1);
+        // hollow it out -- solid would be 30 g for a locating block
+        translate([5, 5, -0.5])
+            hull() for (i=[6, foot_x-11], j=[6, foot_y-11])
+                translate([i, j, 0]) cylinder(r=6, h=foot_h - 1.6);
+    }
+}
+
+// The original small tongue, kept for the two-piece cradle.
+// Printed mating-face DOWN: the widest section is on the bed and it narrows
+// going up, so nothing overhangs.
 module tongue_block() {
     dw = 2 * tongue_depth * tan(tongue_draft);
     difference() {
@@ -984,7 +1025,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "cradle_plate")  cradle_plate();
+if      (part == "foot_pocket")   foot_pocket();
+else if (part == "cradle_plate")  cradle_plate();
 else if (part == "tongue_block")  tongue_block();
 else if (part == "firstlayer_test") firstlayer_test();
 else if (part == "pi_cradle")     pi_cradle();
