@@ -450,15 +450,16 @@ lm_x = 76;               // base bears on the lid either side of the channel
 lm_y = 50;
 
 // Tongue, narrowing very slightly downward so moulding draft cannot jam it.
-module lid_tongue() {
+module lid_tongue_at(cx, cy) {
     dw = 2 * channel_depth * tan(tongue_draft);
     hull() {
-        translate([lm_x/2, lm_y/2, 0])
+        translate([cx, cy, 0])
             cube([tongue_w - dw, tongue_l, 0.01], center=true);
-        translate([lm_x/2, lm_y/2, channel_depth])
+        translate([cx, cy, channel_depth])
             cube([tongue_w, tongue_l, 0.01], center=true);
     }
 }
+module lid_tongue() { lid_tongue_at(lm_x/2, lm_y/2); }
 
 // ~6 min, ~3 g. Drop it in the lid channel. It should seat with the plate flat
 // on the lid and no side rock. If it stands proud, channel_depth is too big; if
@@ -505,6 +506,62 @@ module lid_mount() {
             rotate([-lean_deg, 0, 0])
                 translate([-slot_w/2, -13, 5])
                     cube([slot_w, 26, arm_h + 8]);
+    }
+}
+
+// ============================================================================
+// PART: pi_mount   -- same lid tongue, Raspberry Pi platform on top
+// ============================================================================
+// Identical cleat to lid_mount, so it drops into the same 58.8 mm lid channel.
+//
+// Pi mounting is standardised: an 85 x 56 mm board with four M2.5 holes 3.5 mm
+// in from each edge, giving 58 x 49 mm centres. True for Pi 3B+, 4B and 5.
+// The board runs its long axis ALONG the channel so it does not overhang the
+// channel walls.
+pi_hole_x   = 49;        // across the channel
+pi_hole_y   = 58;        // along the channel
+pi_board    = [56, 85];  // for reference / clearance checks
+m25_tap     = 2.1 + line_w/2;      // M2.5 self-tap into PLA
+standoff_h  = 4.0;       // clearance under the PCB for the SD card + solder
+standoff_od = 6.0;
+
+pm_x = 76;               // wider than the board so the plate bears on the lid
+pm_y = 93;
+pm_t = 4.5;
+
+// Slots for a zip tie / velcro strap, so a CASED Pi can be strapped down
+// instead of screwed to the standoffs.
+module strap_slots(z0) {
+    for (sy = [-1, 1])
+        for (sx = [-1, 1])
+            translate([pm_x/2 + sx*30 - 1.6, pm_y/2 + sy*34 - 5, z0 - 1])
+                cube([3.2, 10, pm_t + 2]);
+}
+
+module pi_mount() {
+    cx = pm_x/2; cy = pm_y/2;
+    z0 = channel_depth;
+    top = z0 + pm_t;
+    difference() {
+        union() {
+            lid_tongue_at(cx, cy);
+            translate([0, 0, z0]) slab(pm_x, pm_y, pm_t, 3);
+            // standoffs
+            for (sx = [-1, 1], sy = [-1, 1])
+                translate([cx + sx*pi_hole_x/2, cy + sy*pi_hole_y/2, top - 1])
+                    cylinder(d=standoff_od, h=standoff_h + 1);
+        }
+        // M2.5 self-tap down the standoffs
+        for (sx = [-1, 1], sy = [-1, 1])
+            translate([cx + sx*pi_hole_x/2, cy + sy*pi_hole_y/2, top - 3])
+                cylinder(d=m25_tap, h=standoff_h + 4);
+        strap_slots(z0);
+        // vent / weight relief under the board, clear of the standoffs
+        for (sy = [-1, 1])
+            translate([cx, cy + sy*18, z0 - 1]) {
+                for (i = [-1, 0, 1])
+                    translate([i*13, 0, 0]) cylinder(d=9, h=pm_t + 2);
+            }
     }
 }
 
@@ -559,7 +616,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "lid_mount")     lid_mount();
+if      (part == "pi_mount")      pi_mount();
+else if (part == "lid_mount")     lid_mount();
 else if (part == "lid_coupon")    lid_coupon();
 else if (part == "mount")         mount();
 else if (part == "hole_template") hole_template();
