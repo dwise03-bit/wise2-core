@@ -75,13 +75,20 @@ def build_workflow(prompt: str, negative: str, steps: int, cfg: float) -> dict:
             "inputs": {"ckpt_name": "sd_xl_base_1.0.safetensors"},
             "class_type": "CheckpointLoaderSimple",
         },
+        # Was missing entirely, so KSampler had no latent_image and ComfyUI
+        # rejected the whole workflow. Also the only place the 1080x1350 the
+        # quickstart promises can actually come from.
+        "5": {
+            "inputs": {"width": 1080, "height": 1350, "batch_size": 1},
+            "class_type": "EmptyLatentImage",
+        },
         "6": {
             "inputs": {"text": prompt, "clip": ["4", 1]},
-            "class_type": "CLIPTextEncode(Positive)",
+            "class_type": "CLIPTextEncode",
         },
         "7": {
             "inputs": {"text": negative, "clip": ["4", 1]},
-            "class_type": "CLIPTextEncode(Negative)",
+            "class_type": "CLIPTextEncode",
         },
         "8": {
             "inputs": {"samples": ["9", 0], "vae": ["4", 2]},
@@ -98,6 +105,7 @@ def build_workflow(prompt: str, negative: str, steps: int, cfg: float) -> dict:
                 "model": ["4", 0],
                 "positive": ["6", 0],
                 "negative": ["7", 0],
+                "latent_image": ["5", 0],
             },
             "class_type": "KSampler",
         },
