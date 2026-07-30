@@ -706,6 +706,72 @@ module pi_upright() {
 }
 
 // ============================================================================
+// PART: pi_cradle   -- holds a GENERIC cased Pi, on the lid tongue
+// ============================================================================
+// There is no single "generic Pi case" size:
+//   Official Pi 3 case   93 x 62 x 31
+//   Flirc                90 x 62 x 24
+//   cheap ABS clones     ~90 x 62 x 30
+//   Argon ONE            106 x 70 x 30
+// A close-fitting box would suit exactly one of those. So this uses four CORNER
+// BRACKETS rather than continuous walls: they locate a box by its corners and
+// tolerate a few mm of variation in either direction, and any radius on the
+// case's own corners just seats into the bracket.
+//
+// Set case_l / case_w to your case and re-export if it is outside ~90-100 x
+// 60-68. Anything in that window should drop in as-is.
+case_l = 95;             // along the pocket   <- yours may differ
+case_w = 65;             // across the pocket
+case_fit = 0.8;          // total clearance so it drops in rather than presses
+brk_h = 12;              // bracket height -- enough to retain, not to enclose
+brk_leg = 15;            // how far each bracket leg runs along the case edge
+
+cr_px = case_w + case_fit + 2*wall + 8;      // base plate
+cr_py = case_l + case_fit + 2*wall + 8;
+
+module corner_bracket(ix, iy) {
+    // ix/iy are +-1: which corner. Legs run inward from that corner.
+    w = case_w + case_fit;
+    l = case_l + case_fit;
+    x0 = ix < 0 ? -w/2 - wall : w/2;
+    y0 = iy < 0 ? -l/2 - wall : l/2;
+    union() {
+        // leg along X
+        translate([ix < 0 ? -w/2 - wall : w/2 - brk_leg + wall,
+                   y0, 0]) cube([brk_leg, wall, brk_h]);
+        // leg along Y
+        translate([x0,
+                   iy < 0 ? -l/2 - wall : l/2 - brk_leg + wall,
+                   0]) cube([wall, brk_leg, brk_h]);
+    }
+}
+
+module pi_cradle() {
+    cx = cr_px/2; cy = cr_py/2;
+    z0 = channel_depth;
+    top = z0 + mt_t;
+    difference() {
+        union() {
+            lid_tongue_at(cx, cy);
+            translate([0, 0, z0]) slab(cr_px, cr_py, mt_t, 3);
+            for (ix = [-1, 1], iy = [-1, 1])
+                translate([cx, cy, top - 1])
+                    corner_bracket(ix, iy);
+        }
+        // strap slots, so the case is actually held down and not just fenced in
+        for (sy = [-1, 1])
+            for (sx = [-1, 1])
+                translate([cx + sx*(case_w/2 - 6) - 1.6, cy + sy*cr_py/2 - sy*5 - 5, z0 - 1])
+                    cube([3.2, 10, mt_t + 2]);
+        // floor vents under the case
+        for (iy = [-1, 0, 1])
+            for (ix = [-1, 0, 1])
+                translate([cx + ix*20, cy + iy*24, z0 - 1])
+                    cylinder(d=11, h=mt_t + 2);
+    }
+}
+
+// ============================================================================
 // PACKOUT BOX-TOP CLEAT  --  the structural interlock, not the lid
 // ============================================================================
 // From the caliper photos of a 48-22-8436 underside:
@@ -807,7 +873,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "pi_upright")    pi_upright();
+if      (part == "pi_cradle")     pi_cradle();
+else if (part == "pi_upright")    pi_upright();
 else if (part == "cleat_coupon")  cleat_coupon();
 else if (part == "pi_case")       pi_case();
 else if (part == "pi_mount")      pi_mount();
