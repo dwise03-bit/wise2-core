@@ -828,6 +828,37 @@ module cleat_coupon() {
 }
 
 // ============================================================================
+// PART: firstlayer_test   -- 5 min. Print THIS to dial Z, not a real part.
+// ============================================================================
+// Five pads spread across the bed, joined by thin ribs so it stays one body.
+// One layer tall, so it is over in minutes and tells you two things at once:
+//   Z OFFSET  -- lines should be flat and fused with no gaps between them. Round,
+//                separated lines = nozzle too high. Translucent, scarred, or
+//                ridged = too low.
+//   BED LEVEL -- compare all five pads. If the centre looks different from the
+//                corners, level before anything else.
+// Peel a pad afterwards: it should resist and leave a matte imprint on the PEI.
+fl_pad = 25;
+fl_span = 180;           // spread across the bed to catch a level error
+
+module firstlayer_test() {
+    h = 0.28;            // matches initial_layer_print_height
+    o = fl_span/2;
+    pts = [[0,0], [-o,-o], [o,-o], [-o,o], [o,o]];
+    translate([fl_span/2 + fl_pad, fl_span/2 + fl_pad, 0]) {
+        for (p = pts)
+            translate([p[0], p[1], 0])
+                linear_extrude(h) square([fl_pad, fl_pad], center=true);
+        // ribs to the centre, so the gate still sees a single body
+        for (p = [pts[1], pts[2], pts[3], pts[4]])
+            hull() {
+                translate([p[0], p[1], 0]) linear_extrude(h) square([4,4], center=true);
+                linear_extrude(h) square([4,4], center=true);
+            }
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -878,7 +909,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "pi_cradle")     pi_cradle();
+if      (part == "firstlayer_test") firstlayer_test();
+else if (part == "pi_cradle")     pi_cradle();
 else if (part == "pi_upright")    pi_upright();
 else if (part == "cleat_coupon")  cleat_coupon();
 else if (part == "pi_case")       pi_case();
