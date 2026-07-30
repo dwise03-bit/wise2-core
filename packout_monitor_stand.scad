@@ -859,6 +859,81 @@ module firstlayer_test() {
 }
 
 // ============================================================================
+// TWO-PIECE TONGUE  --  the fix for the unprintable overhang
+// ============================================================================
+// The single-piece parts put a narrow tongue (58.4 x 44) under a wide plate
+// (up to 75.5 x 105.3). At the top of the tongue the cross-section steps out by
+// up to 30.7 mm PER SIDE into open air, so the plate printed into nothing and
+// every one of those parts failed at ~21% height. No orientation fixes it: the
+// tongue is below the plate and the brackets are above it.
+//
+// Splitting it removes the overhang completely:
+//   plate   prints face-down, brackets pointing UP -> cross-section only ever
+//           shrinks with height, so zero overhang
+//   tongue  prints as a separate block, mating face down -> also zero overhang
+//
+// The tongue block is UNIVERSAL: same 2-hole pattern on every plate, so one STL
+// serves the cradle, the monitor mount and the Pi case. It also makes the tongue
+// swappable, which the still-unmeasured lid geometry argues for anyway.
+tb_bolt_pitch = 30;      // 2 x M3, along the tongue's long axis
+m3_tap        = 2.6 + line_w/2;
+m3_head       = 6.0;
+
+// Holes in a PLATE: clearance through, head counterbored flush into the top so
+// the case or monitor still sits flat.
+module tongue_bolt_holes(cx, cy, plate_t_local) {
+    for (s = [-1, 1])
+        translate([cx, cy + s*tb_bolt_pitch/2, -1]) {
+            cylinder(d=m3_free, h=plate_t_local + 2);
+            translate([0, 0, 1 + plate_t_local - 2.2])
+                cylinder(d=m3_head, h=plate_t_local);
+        }
+}
+
+// The tongue, as its own part. Printed mating-face DOWN: the widest section is
+// on the bed and it narrows going up, so nothing overhangs.
+module tongue_block() {
+    dw = 2 * tongue_depth * tan(tongue_draft);
+    difference() {
+        hull() {
+            translate([tongue_w/2, tongue_l/2, 0])
+                cube([tongue_w, tongue_l, 0.01], center=true);
+            translate([tongue_w/2, tongue_l/2, tongue_depth])
+                cube([tongue_w - dw, tongue_l, 0.01], center=true);
+        }
+        // M3 self-tap, entered from the mating face (which is on the bed)
+        for (s = [-1, 1])
+            translate([tongue_w/2, tongue_l/2 + s*tb_bolt_pitch/2, -0.5])
+                cylinder(d=m3_tap, h=tongue_depth + 1);
+    }
+}
+
+// ============================================================================
+// PART: cradle_plate  -- pi_cradle with NO tongue. Prints flat, zero overhang.
+// ============================================================================
+module cradle_plate() {
+    cx = cr_px/2; cy = cr_py/2;
+    difference() {
+        union() {
+            slab(cr_px, cr_py, mt_t, 3);
+            for (ix = [-1, 1], iy = [-1, 1])
+                translate([cx, cy, mt_t - 1])
+                    corner_bracket(ix, iy);
+        }
+        tongue_bolt_holes(cx, cy, mt_t);
+        for (sy = [-1, 1])
+            for (sx = [-1, 1])
+                translate([cx + sx*(case_w/2 - 6) - 1.6,
+                           cy + sy*cr_py/2 - sy*5 - 5, -1])
+                    cube([3.2, 10, mt_t + 2]);
+        for (iy = [-1, 0, 1])
+            for (ix = [-1, 0, 1])
+                translate([cx + ix*20, cy + iy*24, -1])
+                    cylinder(d=11, h=mt_t + 2);
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -909,7 +984,9 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "firstlayer_test") firstlayer_test();
+if      (part == "cradle_plate")  cradle_plate();
+else if (part == "tongue_block")  tongue_block();
+else if (part == "firstlayer_test") firstlayer_test();
 else if (part == "pi_cradle")     pi_cradle();
 else if (part == "pi_upright")    pi_upright();
 else if (part == "cleat_coupon")  cleat_coupon();
