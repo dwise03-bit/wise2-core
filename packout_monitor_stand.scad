@@ -637,6 +637,75 @@ module pi_case() {
 }
 
 // ============================================================================
+// PART: pi_upright  --  ALTERNATIVE, NOT THE DEFAULT
+// ============================================================================
+// Kept because it verifies clean, but pi_case (flat) is the chosen layout --
+// upright was a wrong turn on my part. Use this only if bed space or footprint
+// matters more than lying the board flat.
+//
+// Matches lid_mount's 76 x 50 base and shares the identical lid tongue.
+//
+// The Pi board is 85 x 56, which cannot lie flat on a 50 mm deep base -- so it
+// stands upright on a backplate instead. That also vents better than a flat tray
+// (chimney effect) and takes less bed space.
+//
+// Backplate is VERTICAL, not leaned 20 deg like the monitor. A 92 mm plate leaned
+// 20 deg would throw its top back by 92*sin20 = 31 mm over a 50 mm deep base,
+// which is asking to tip. Viewing angle does not matter for a Pi.
+pu_plate_x = 62;         // >= board 56, fits within the 76 base
+pu_plate_y = 3.6;        // backplate thickness
+pu_plate_h = 92;         // >= board 85 plus margin
+pu_board_z = 6;          // board bottom edge, above the base top
+// Holes sit 3.5 mm in from the board edge, so the pair straddles this centre.
+// Deriving it stopped the lower standoffs landing at z = -6.5, under the bed.
+pu_hole_zc = pu_board_z + 3.5 + pi_hole_y/2;
+
+module pi_upright() {
+    cx = lm_x/2; cy = lm_y/2;
+    z0 = channel_depth;
+    top = z0 + mt_t;
+    difference() {
+        union() {
+            lid_tongue_at(cx, cy);
+            translate([0, 0, z0]) slab(lm_x, lm_y, mt_t, 3);
+
+            // backplate, embedded 2 mm into the base
+            translate([cx - pu_plate_x/2, cy - pu_plate_y/2, top - 2])
+                slab(pu_plate_x, pu_plate_y, pu_plate_h + 2, 3);
+
+            // standoffs stand off the FRONT face, board solder-side inward
+            for (sx = [-1, 1], sy = [-1, 1])
+                translate([cx + sx*pi_hole_x/2,
+                           cy + pu_plate_y/2,
+                           top + pu_hole_zc + sy*pi_hole_y/2])
+                    rotate([-90, 0, 0])
+                        cylinder(d=standoff_od, h=standoff_h);
+
+            // Buttress BACKWARD from the plate's rear face. Sideways gussets do
+            // not fit: a 62 mm plate on a 76 mm base leaves only 7 mm a side, and
+            // they ran off to x = -6.
+            for (i = [-1, 0, 1])
+                translate([cx + i*20 + 2.5, cy - pu_plate_y/2 + 0.5, top - 2.5])
+                    rotate([0, 0, -90])
+                        gusset(18, pu_plate_h * 0.38, 5);
+        }
+
+        // M2.5 self-tap into each standoff, through the plate
+        for (sx = [-1, 1], sy = [-1, 1])
+            translate([cx + sx*pi_hole_x/2,
+                       cy - pu_plate_y/2 - 1,
+                       top + pu_hole_zc + sy*pi_hole_y/2])
+                rotate([-90, 0, 0])
+                    cylinder(d=m25_tap, h=standoff_h + pu_plate_y + 2);
+
+        // lightening / airflow slots up the backplate, clear of the standoffs
+        for (i = [-1, 0, 1])
+            translate([cx + i*17, cy - pu_plate_y, top + 40])
+                cube([9, pu_plate_y*3, 34], center=true);
+    }
+}
+
+// ============================================================================
 // PACKOUT BOX-TOP CLEAT  --  the structural interlock, not the lid
 // ============================================================================
 // From the caliper photos of a 48-22-8436 underside:
@@ -738,7 +807,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "cleat_coupon")  cleat_coupon();
+if      (part == "pi_upright")    pi_upright();
+else if (part == "cleat_coupon")  cleat_coupon();
 else if (part == "pi_case")       pi_case();
 else if (part == "pi_mount")      pi_mount();
 else if (part == "lid_mount")     lid_mount();
