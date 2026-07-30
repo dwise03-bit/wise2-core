@@ -566,6 +566,77 @@ module pi_mount() {
 }
 
 // ============================================================================
+// PART: pi_case   -- integrated Pi 3B case on the lid tongue
+// ============================================================================
+// Board size and hole pattern are solid: 85 x 56 x 17 mm, four M2.5 at
+// 58 x 49 mm centres, 3.5 mm in from each edge.
+//
+// Port OFFSETS are not. I could not find a verifiable dimensioned drawing for
+// the 3B's HDMI / micro-USB / audio / USB / Ethernet positions, so this does NOT
+// cut individual port holes -- guessing five offsets is how you make scrap.
+// Instead each wall is opened across its full span, leaving corner columns. No
+// port can be blocked because there is no wall in front of any of them. It also
+// vents far better than a sealed shell.
+//
+// Consequence to be aware of: this is a cradle/skeleton, not a sealed box. It
+// will not keep dust out. Sealing it needs those five measurements.
+pi_bx = 56;              // board width  (across the pocket)
+pi_by = 85;              // board length (along the pocket)
+pi_clear = 0.6;          // clearance around the board
+pi_wall_h = 18;          // wall height above the plate
+pi_post = 8;             // corner column width left either side of each opening
+
+module pi_case() {
+    cx = pm_x/2; cy = pm_y/2;
+    z0 = channel_depth;
+    top = z0 + pm_t;                       // plate top
+    iw = pi_bx + pi_clear;                 // inside wall dims
+    il = pi_by + pi_clear;
+    ow = iw + 2*wall;
+    ol = il + 2*wall;
+    difference() {
+        union() {
+            lid_tongue_at(cx, cy);
+            translate([0, 0, z0]) slab(pm_x, pm_y, pm_t, 3);
+            // perimeter wall
+            translate([cx - ow/2, cy - ol/2, top - 1])
+                slab(ow, ol, pi_wall_h + 1, 3);
+            // standoffs
+            for (sx = [-1, 1], sy = [-1, 1])
+                translate([cx + sx*pi_hole_x/2, cy + sy*pi_hole_y/2, top - 1])
+                    cylinder(d=standoff_od, h=standoff_h + 1);
+        }
+        // hollow the wall interior
+        translate([cx - iw/2, cy - il/2, top]) slab(iw, il, pi_wall_h + 2, 2);
+
+        // --- full-span openings, from below the board up past the top ---
+        // Start 1 mm under the board underside so the microSD (which sits on the
+        // underside of a short edge) clears too.
+        oz = top + standoff_h - 1;
+        oh = pi_wall_h + 4;
+        for (sy = [-1, 1])                       // long edges: USB/Ethernet, GPIO
+            translate([cx - (il - 2*pi_post)/2 + (il-2*pi_post)/2, cy + sy*ol/2, oz])
+                translate([-(il - 2*pi_post)/2, -wall*2, 0])
+                    cube([il - 2*pi_post, wall*4, oh]);
+        for (sx = [-1, 1])                       // short edges: HDMI/power/audio
+            translate([cx + sx*ow/2, cy - (iw - 2*pi_post)/2, oz])
+                translate([-wall*2, 0, 0])
+                    cube([wall*4, iw - 2*pi_post, oh]);
+
+        // M2.5 self-tap down the standoffs
+        for (sx = [-1, 1], sy = [-1, 1])
+            translate([cx + sx*pi_hole_x/2, cy + sy*pi_hole_y/2, top + standoff_h - 3])
+                cylinder(d=m25_tap, h=standoff_h + 4);
+
+        // floor vents, clear of the standoffs
+        for (sy = [-1, 0, 1])
+            for (i = [-1, 0, 1])
+                translate([cx + i*13, cy + sy*16, z0 - 1])
+                    cylinder(d=9, h=pm_t + 2);
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -616,7 +687,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "pi_mount")      pi_mount();
+if      (part == "pi_case")       pi_case();
+else if (part == "pi_mount")      pi_mount();
 else if (part == "lid_mount")     lid_mount();
 else if (part == "lid_coupon")    lid_coupon();
 else if (part == "mount")         mount();
