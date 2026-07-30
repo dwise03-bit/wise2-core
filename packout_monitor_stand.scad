@@ -637,6 +637,55 @@ module pi_case() {
 }
 
 // ============================================================================
+// PACKOUT BOX-TOP CLEAT  --  the structural interlock, not the lid
+// ============================================================================
+// From the caliper photos of a 48-22-8436 underside:
+//   36.1 mm   rib width          <- USED HERE as the tongue width
+//   25.2 mm   (role unconfirmed) probably the gap between ribs
+//   75.4 mm   (role unconfirmed) span of some kind
+// Cross-check: CK's dovetail measured 38.05 mm across its top face, same
+// ballpark as 36.1, which supports 36.1 being the rib width.
+//
+// STILL UNKNOWN, and why cleat_coupon exists:
+//   - rib height / engagement depth       -> cleat_h below is a guess
+//   - whether the flank undercuts (dovetail) or is straight
+// A straight tongue is the safe starting point: if the real channel undercuts,
+// a straight tongue still locates and takes side load, it just will not resist
+// lift. Cutting a dovetail the wrong way round is worse than not cutting one.
+cleat_w  = 36.1;      // measured rib width
+cleat_h  = 5.0;       // GUESS -- deliberately shallow so it cannot bottom out
+cleat_len = 22;       // along the slide direction
+
+// One tongue, w wide, sitting under a plate whose top is at z=cleat_h.
+module cleat_tongue(w, l = cleat_len) {
+    translate([-w/2, -l/2, 0]) cube([w, l, cleat_h]);
+}
+
+// ~12 min, ~5 g. Three tongues at 35.7 / 36.1 / 36.5 mm, notch-coded 1/2/3.
+// Try each in a box-top channel: you want the one that slides with light thumb
+// pressure and no side rock. Set cleat_w to it.
+//   - if none go in at all           -> 36.1 is not the rib width, tell me
+//   - if all three slide loosely     -> the channel is wider; measure the female
+//   - if it slides but lifts out     -> the flank undercuts, I need that angle
+module cleat_coupon() {
+    ws = [35.7, 36.1, 36.5];
+    pitch = 30;
+    px = 44; py = 3*pitch + 10;
+    difference() {
+        union() {
+            translate([0, 0, cleat_h]) slab(px, py, 2.6, 3);
+            for (i = [0:2])
+                translate([px/2, 20 + i*pitch, 0]) cleat_tongue(ws[i]);
+        }
+        // notch code: 1, 2 or 3 marks beside each tongue
+        for (i = [0:2])
+            for (k = [0:i])
+                translate([3 + k*4, 20 + i*pitch - 2, cleat_h + 1.2])
+                    cube([2, 4, 2]);
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -687,7 +736,8 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "pi_case")       pi_case();
+if      (part == "cleat_coupon")  cleat_coupon();
+else if (part == "pi_case")       pi_case();
 else if (part == "pi_mount")      pi_mount();
 else if (part == "lid_mount")     lid_mount();
 else if (part == "lid_coupon")    lid_coupon();
