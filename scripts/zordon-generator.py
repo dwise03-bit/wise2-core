@@ -53,9 +53,43 @@ POSES = {
     "celebrate": "both arms raised in celebration, wide grin, mid-cheer",
 }
 
+# --- per-page variants --------------------------------------------------------
+# Keyed to real routes in apps/command-center and apps/website.
+#
+# DISCIPLINE: the seven canon features never change. Each page adds exactly ONE
+# prop plus a background hint. That is what keeps forty renders recognisably the
+# same character instead of forty different mascots. Resist adding a second prop.
+PAGES = {
+    # command-center /dashboard/*
+    "sound-labs":      ("gold studio headphones around the neck",      "recording studio, soft blue monitors"),
+    "live-studio":     ("holding a small chrome microphone",           "broadcast set, blue key light"),
+    "ai":              ("a glowing blue holographic orb hovering above one open palm", "abstract data space"),
+    "workflows":       ("a floating gold gear beside the shoulder",    "flowing circuit lines"),
+    "leads":           ("holding a slim tablet showing a rising line", "clean office glass"),
+    "customers":       ("holding a slim tablet showing a rising line", "clean office glass"),
+    "billing":         ("a single gold coin balanced on one fingertip","dark vault, gold accents"),
+    "print-on-demand": ("holding up a folded black t-shirt",           "print shop racks"),
+    "gallery":         ("holding a gold-tipped paintbrush",            "gallery wall, spotlights"),
+    "projects":        ("holding a gold clipboard",                    "planning wall"),
+    "discord":         ("holding a small game controller",             "neon lounge"),
+    "business-os":     ("a small floating gold crown above the beanie","command centre, screens"),
+    # website
+    "consulting":      ("holding a gold pointer at a floating chart",  "boardroom, blue glass"),
+    "jingle-lab":      ("gold music notes floating from one hand",     "sound booth"),
+    "pricing":         ("a gold coin in each hand",                    "clean gradient"),
+    "community":       ("one arm raised in a welcoming open gesture",  "crowd bokeh, warm blue"),
+}
 
-def build_prompt(blue: str, pose: str) -> str:
-    """Locked description from MASCOT_SPEC. All seven canon features present."""
+
+def build_prompt(blue: str, pose: str, page: str = None) -> str:
+    """Locked description from MASCOT_SPEC. All seven canon features present.
+
+    `page` appends one prop and a background hint. Canon is untouched.
+    """
+    extra = ""
+    if page:
+        prop, bg = PAGES[page]
+        extra = f"{prop}, "
     return (
         "Chibi imp mascot character, full body, centred, "
         "near-black skin with {blue} rim lighting, "
@@ -66,11 +100,17 @@ def build_prompt(blue: str, pose: str) -> str:
         "black hoodie with a gold letter mark on the chest, "
         "black joggers, black boots with gold accents, "
         "slim pointed spade-tip tail, "
+        "{extra}"
         "{pose}, "
-        "dark navy background with subtle neon city bokeh, "
+        "{bg}, "
         "clean vector illustration style, bold outlines, high contrast, "
         "centred composition, full character visible, studio character sheet"
-    ).format(blue=blue, pose=pose)
+    ).format(
+        blue=blue,
+        pose=pose,
+        extra=extra,
+        bg=(PAGES[page][1] if page else "dark navy background with subtle neon city bokeh"),
+    )
 
 
 # Off-model traits from MASCOT_SPEC, plus the usual SDXL failure modes.
@@ -173,12 +213,21 @@ def main() -> int:
     ap.add_argument("--variants", type=int, default=4, help="seeds to render")
     ap.add_argument("--blue", choices=BLUES, default="cyan")
     ap.add_argument("--pose", choices=POSES, default="idle")
+    ap.add_argument("--page", choices=sorted(PAGES), help="render the variant for one page")
+    ap.add_argument("--all-pages", action="store_true", help="one render per page")
+    ap.add_argument("--list", action="store_true", help="list page variants and exit")
     ap.add_argument("--steps", type=int, default=30)
     ap.add_argument("--cfg", type=float, default=7.0)
     ap.add_argument("--dry-run", action="store_true", help="print the prompt, render nothing")
     a = ap.parse_args()
 
-    prompt = build_prompt(BLUES[a.blue], POSES[a.pose])
+    if a.list:
+        print(f"{len(PAGES)} page variants:\n")
+        for k, (prop, bg) in sorted(PAGES.items()):
+            print(f"  {k:18s} {prop}")
+        return 0
+
+    prompt = build_prompt(BLUES[a.blue], POSES[a.pose], a.page)
 
     if a.dry_run:
         print(f"blue  : {a.blue} — {BLUES[a.blue]}")
@@ -198,18 +247,24 @@ def main() -> int:
     OUTPUT_DIR.mkdir(exist_ok=True)
     print(f"Zordon — {a.variants} variants, {a.blue} blue, {a.pose} pose, {WIDTH}x{HEIGHT}")
 
+    jobs = (
+        [(p, build_prompt(BLUES[a.blue], POSES[a.pose], p)) for p in sorted(PAGES)]
+        if a.all_pages else
+        [(a.page or a.pose, prompt)] * a.variants
+    )
+
     ok = 0
-    for i in range(a.variants):
+    for i, (tag, pr) in enumerate(jobs):
         seed = random.randint(0, 2**31 - 1)
-        print(f"\n[{i+1}/{a.variants}] seed {seed}")
-        pid = submit(build_workflow(prompt, NEGATIVE, seed, a.steps, a.cfg), f"zordon-{i}")
+        print(f"\n[{i+1}/{len(jobs)}] {tag}  seed {seed}")
+        pid = submit(build_workflow(pr, NEGATIVE, seed, a.steps, a.cfg), f"zordon-{tag}-{i}")
         if pid and wait(pid):
             print("   done")
             ok += 1
         else:
             print("   failed")
 
-    print(f"\n{ok}/{a.variants} rendered. Check ComfyUI's output folder.")
+    print(f"\n{ok}/{len(jobs)} rendered. Check ComfyUI's output folder.")
     print("\nNext: pick the most on-model render against docs/MASCOT_SPEC.md")
     print("      (all seven canon features present), then /animate-character it.")
     return 0 if ok else 1

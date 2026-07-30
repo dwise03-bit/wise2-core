@@ -95,6 +95,42 @@ Precedent for a character component exists in `PiffCityRabbit.tsx`.
 
 ---
 
+## Per-page variants
+
+16 variants keyed to real routes in `apps/command-center` and `apps/website`.
+
+**The rule that keeps them one character:** canon never changes, and each page
+adds exactly **one** prop plus a background hint. Two props and he stops reading
+as the same mascot across the product.
+
+```bash
+python scripts/zordon-generator.py --list          # see all 16
+python scripts/zordon-generator.py --page ai       # one
+python scripts/zordon-generator.py --all-pages     # the set
+```
+
+| page | prop |
+|---|---|
+| `sound-labs` | gold headphones round the neck |
+| `live-studio` | chrome microphone |
+| `ai` | holographic orb on an open palm |
+| `workflows` | floating gold gear |
+| `leads` / `customers` | tablet with a rising line |
+| `billing` | gold coin on a fingertip |
+| `print-on-demand` | folded black t-shirt |
+| `gallery` | gold-tipped paintbrush |
+| `projects` | gold clipboard |
+| `discord` | game controller |
+| `business-os` | floating gold crown |
+| `consulting` | gold pointer at a chart |
+| `jingle-lab` | gold music notes |
+| `pricing` | a coin in each hand |
+| `community` | welcoming open arm |
+
+Verified: all 16 carry the full canon set.
+
+---
+
 ## Generation prompt
 
 Reusable, for keeping renders on-model:
