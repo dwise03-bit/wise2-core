@@ -147,3 +147,6 @@ Build/
 
 # generated STL exports
 stl_output/
+
+# sliced output
+print_ready/*.gcode
