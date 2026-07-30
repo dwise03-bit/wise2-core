@@ -24,7 +24,7 @@
   "0.96"
  ],
  "filament_max_volumetric_speed": [
-  "13"
+  "8"
  ],
  "activate_air_filtration": [
   "0"
@@ -165,7 +165,7 @@
   "0"
  ],
  "filament_notes": [
-  "Plain PLA. Bed 60C / 65C first layer -- textured PEI wants this. Anycubic's stock profile emits bed_temperature_too_high_than_filament because it declares vitrification at 60; that warning is cosmetic and should be IGNORED. An earlier revision here dropped the bed to 55 just to silence it, which traded real adhesion for a clean log."
+  "Plain PLA, HARDENED STEEL 0.4 nozzle. Volumetric cap cut 13 -> 8 mm3/s and temp raised 205 -> 215: hardened steel conducts heat far worse than brass, so its melt capacity is LOWER than the nozzle it replaced, while the stock profile still assumes brass. Bed 60/65 for textured PEI; ignore the vendor bed-temp warning, it fires against its own profile."
  ],
  "filament_ramming_parameters": [
   "120 100 6.6 6.8 7.2 7.6 7.9 8.2 8.7 9.4 9.9 10.0| 0.05 6.6 0.45 6.8 0.95 7.8 1.45 8.3 1.95 9.7 2.45 10 2.95 7.6 3.45 7.6 3.95 7.6 4.45 7.6 4.95 7.6"
@@ -255,7 +255,7 @@
   "-1"
  ],
  "nozzle_temperature": [
-  "205"
+  "215"
  ],
  "nozzle_temperature_BRASS": [
   "220"
@@ -264,7 +264,7 @@
   "220"
  ],
  "nozzle_temperature_initial_layer": [
-  "215"
+  "220"
  ],
  "nozzle_temperature_initial_layer_BRASS": [
   "220"
