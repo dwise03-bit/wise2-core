@@ -720,8 +720,10 @@ module pi_upright() {
 //
 // Set case_l / case_w to your case and re-export if it is outside ~90-100 x
 // 60-68. Anything in that window should drop in as-is.
-case_l = 95;             // along the pocket   <- yours may differ
-case_w = 65;             // across the pocket
+case_l = 91.5;           // MEASURED off the user's clear case
+case_w = 65;             // !! STILL ASSUMED -- measure the short axis !!
+                         // Most Pi 3B cases run 62-63; 65 leaves ~3 mm slop,
+                         // which the corner brackets tolerate but do not remove.
 case_fit = 0.8;          // total clearance so it drops in rather than presses
 brk_h = 12;              // bracket height -- enough to retain, not to enclose
 brk_leg = 15;            // how far each bracket leg runs along the case edge
