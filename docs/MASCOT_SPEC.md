@@ -56,17 +56,18 @@ settling in one pass.
 
 ---
 
-## Naming
+## Name — ZORDON
 
-Undecided. Candidates that play off the `²`:
+Chosen by dwise, 2026-07-30.
 
-- **Deuce** — "squared", street read, one syllable
-- **Squared** — literal, works as a handle
-- **Bit** — small, digital, pet-like
-- **Watt** — W, energy, tech
+⚠️ **Trademark check needed before any commercial use.** Zordon is a Saban /
+Hasbro *Power Rangers* character (the mentor). Fine as an internal codename;
+on merch, packaging, a public site or anything sold under WISE² it is real
+exposure, and mascot names are exactly what gets noticed. Clear it with whoever
+handles IP before it ships on product.
 
-I'd take **Deuce**. It carries the `²` without explaining it and suits the
-crown-and-chain attitude.
+If it needs changing later, alternatives that play off the `²`:
+Deuce · Squared · Bit · Watt
 
 ---
 
@@ -109,7 +110,8 @@ Reusable, for keeping renders on-model:
 
 ## Open
 
-- [ ] Name
+- [x] Name — **Zordon**
+- [ ] **Trademark clearance on "Zordon"** before commercial use
 - [ ] Blue: `#0094FF` or `#0055FF`
 - [ ] Gold: add to brand tokens or drop
 - [ ] Where it lives — dashboard companion, marketing only, or both
