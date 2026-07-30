@@ -905,8 +905,10 @@ module tongue_bolt_holes(cx, cy, plate_t_local) {
 //   will not seat   -> scale DOWN in 3% steps
 //   right           -> read the % off the slicer and tell me, and I will bake it
 //                      in so every other part inherits it
-foot_x = 88;             // ESTIMATE -- pocket long axis
-foot_y = 66;             // ESTIMATE -- pocket short axis
+// Rotated: long axis now runs in Y, so the 2 x M3 pair (which is spaced along Y)
+// lies along the LONG direction -- better anti-rotation and it matches the plates.
+foot_x = 66;             // ESTIMATE -- pocket short axis
+foot_y = 88;             // ESTIMATE -- pocket long axis
 foot_h = 4.0;            // engagement depth; shallower than the pocket is safe
 
 module foot_pocket() {
