@@ -430,6 +430,85 @@ module mount() {
 }
 
 // ============================================================================
+// LID-CLEAT VARIANT  --  drops straight into the organiser lid channel
+// ============================================================================
+// MEASURED: 58.8 mm across the INSIDE of the channel on the hex-pattern clear
+// organiser lid (caliper photo). The tongue therefore has to come in under that.
+channel_w     = 58.8;    // measured, internal
+channel_clear = 0.4;     // total side clearance for a sliding fit
+tongue_w      = channel_w - channel_clear;      // 58.4
+tongue_l      = 44;      // length along the channel
+tongue_draft  = 1.5;     // deg per side -- clears injection-moulding draft
+
+// !! UNVERIFIED -- I do not have this measurement !!
+// How deep the channel is. 4 mm is a conservative guess: too shallow only wastes
+// engagement, too deep bottoms out and the base will not sit down on the lid.
+// `lid_coupon` checks it in ~6 min before you commit to a mount.
+channel_depth = 4.0;
+
+lm_x = 76;               // base bears on the lid either side of the channel
+lm_y = 50;
+
+// Tongue, narrowing very slightly downward so moulding draft cannot jam it.
+module lid_tongue() {
+    dw = 2 * channel_depth * tan(tongue_draft);
+    hull() {
+        translate([lm_x/2, lm_y/2, 0])
+            cube([tongue_w - dw, tongue_l, 0.01], center=true);
+        translate([lm_x/2, lm_y/2, channel_depth])
+            cube([tongue_w, tongue_l, 0.01], center=true);
+    }
+}
+
+// ~6 min, ~3 g. Drop it in the lid channel. It should seat with the plate flat
+// on the lid and no side rock. If it stands proud, channel_depth is too big; if
+// it rocks side to side, raise channel_clear.
+module lid_coupon() {
+    difference() {
+        union() {
+            lid_tongue();
+            translate([lm_x/2 - 34, lm_y/2 - 14, channel_depth])
+                slab(68, 28, 2.6, 3);
+        }
+        // window so you can see the tongue seated
+        translate([lm_x/2 - 10, lm_y/2 - 5, channel_depth - 1])
+            cube([20, 10, 6]);
+    }
+}
+
+// THE LID-MOUNTED STAND. Printed twice. No feet, no bolts, no inserts.
+module lid_mount() {
+    cx = lm_x/2; cy = lm_y/2;
+    z0 = channel_depth;                 // top of tongue = underside of plate
+    arm_h = mt_slot + 7;
+    difference() {
+        union() {
+            lid_tongue();
+            translate([0, 0, z0]) slab(lm_x, lm_y, mt_t, 3);
+
+            translate([cx - mt_col/2, cy - 12, z0 + mt_t - 2])
+                slab(mt_col, 24, mt_h + 2, 3);
+
+            translate([cx, cy, z0 + mt_t + mt_h - 4])
+                rotate([-lean_deg, 0, 0])
+                    translate([-(slot_w/2 + wall), -12, 0])
+                        slab(slot_w + 2*wall, 24, arm_h + 4, 2);
+
+            for (s = [0, 1])
+                translate([cx + (s ? mt_col/2 - 3 : -mt_col/2 + 3), cy - 12,
+                           z0 + mt_t - 2.5])
+                    mirror([s ? 0 : 1, 0, 0])
+                        gusset(13, mt_h * 0.6, 24);
+        }
+
+        translate([cx, cy, z0 + mt_t + mt_h - 4])
+            rotate([-lean_deg, 0, 0])
+                translate([-slot_w/2, -13, 5])
+                    cube([slot_w, 26, arm_h + 8]);
+    }
+}
+
+// ============================================================================
 // PART: clip   -- cable clip; loop_d 6 for USB-C, 9 for HDMI
 // ============================================================================
 module clip(loop_d = 6) {
@@ -480,7 +559,9 @@ module assembly() {
 // ============================================================================
 part = "assembly";
 
-if      (part == "mount")         mount();
+if      (part == "lid_mount")     lid_mount();
+else if (part == "lid_coupon")    lid_coupon();
+else if (part == "mount")         mount();
 else if (part == "hole_template") hole_template();
 else if (part == "fit_coupon")    fit_coupon();
 else if (part == "bracket")    bracket();
