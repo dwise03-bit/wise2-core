@@ -337,7 +337,11 @@ cleat_h   = 14;      // how far the feet raise this part off the lid
 hole_pitch = 39.5;   // fundamental pitch (adjacent holes). 62.5 or 141.5
                      // also exist if you want a wider base.
 
-mt_x    = hole_pitch + 20;
+// MEASURED off the organiser: the Packout slot the feet sit in is 58.9 mm wide,
+// so the base is built to that rather than derived from the hole pitch (which
+// happened to give 59.5 -- 0.6 mm over).
+packout_slot_w = 58.9;
+mt_x    = packout_slot_w;
 mt_y    = cleat_y;
 mt_t    = 4.5;       // base plate: thin, it is backed by the cleat
 mt_col  = 26;        // column width -- lateral support for the monitor

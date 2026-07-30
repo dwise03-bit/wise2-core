@@ -10,6 +10,10 @@ Anycubic Kobra X · **0.4 mm hardened steel** nozzle · PLA-CF
 
 Times are from the Anycubic slicer itself, not an estimate.
 
+**Base is now 58.9 mm wide** to match the measured Packout slot, set by
+`packout_slot_w` in the `.scad`. It was 59.5 mm, derived from the bolt pitch —
+0.6 mm over.
+
 **Monitor slot is now 11.22 mm** (was 11.72). Tightened 0.5 mm per fit testing on
 a printed mount. `slot_adjust = -0.5` in the `.scad` is the knob — negative is
 tighter, and it is the only value to touch for fit.
