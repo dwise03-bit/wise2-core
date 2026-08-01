@@ -22,15 +22,23 @@ Complete AI integration supporting:
 
 Download from: https://ollama.ai
 
+**On macOS, run the setup script instead of doing this by hand** - it installs
+Ollama, starts the server, pulls the coding models, writes `.env.local`, and
+verifies a real chat round-trip:
+
+```bash
+./scripts/setup-mac-local-models.sh
+```
+
+Manual equivalent (any platform):
+
 ```bash
 # Start Ollama (on port 11434)
 ollama serve
 
 # In another terminal, pull models:
-ollama pull llama2
-ollama pull mistral
-ollama pull neural-chat
-ollama pull codellama
+ollama pull qwen2.5-coder:7b
+ollama pull qwen2.5-coder:1.5b
 ```
 
 ### 2. Configure API Keys
@@ -63,12 +71,15 @@ npm install
 
 ### Ollama (Local - No API Key Needed)
 
-| Model | ID | Context | Speed | Best For |
-|-------|-----|---------|-------|----------|
-| Llama 2 7B | `ollama-llama2` | 4K | ⚡⚡⚡ | General purpose |
-| Mistral 7B | `ollama-mistral` | 8K | ⚡⚡⚡ | High quality local |
-| Neural Chat 7B | `ollama-neural` | 8K | ⚡⚡⚡ | Conversations |
-| Code Llama 7B | `ollama-codellama` | 4K | ⚡⚡ | Code generation |
+| Model | ID | Context | Host | Best For |
+|-------|-----|---------|------|----------|
+| Qwen 2.5 Coder 7B | `ollama-qwen-coder` | 32K | Mac | Default coding model |
+| Qwen 2.5 Coder 1.5B | `ollama-qwen-coder-fast` | 32K | Mac | Completions, quick edits |
+| Qwen 3.5 4B MLX | `ollama-qwen35-mlx` | 256K | Mac | Long context, MLX-accelerated |
+| Gemma 4 12B MLX | `ollama-gemma4-mlx` | 256K | Mac | Highest local quality on Mac |
+| Qwen 3 Coder 30B | `ollama-qwen3-coder` | 256K | gpu-nmls | Strongest local coder |
+| Devstral 24B | `ollama-devstral` | 128K | gpu-nmls | Agentic coding |
+| Mistral 7B | `ollama-mistral` | 32K | gpu-nmls | General purpose |
 
 ### Claude (Anthropic)
 
@@ -119,7 +130,7 @@ import { aiManager } from '@wise2/ai';
 // Use Ollama locally
 const response = await aiManager.chat(
   [{ role: 'user', content: 'What is AI?' }],
-  'ollama-llama2'
+  'ollama-qwen-coder'
 );
 
 // Use ChatGPT
@@ -421,7 +432,7 @@ echo $ANTHROPIC_API_KEY
 ### High Latency
 ```typescript
 // Switch to faster model
-'ollama-llama2'        // Fastest local
+'ollama-qwen-coder'        // Fastest local
 'gpt-3.5-turbo'        // Fastest API
 'gemini-2.0-flash'     // Google's fastest
 ```

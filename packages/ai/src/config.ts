@@ -20,42 +20,73 @@ export interface AIModel {
 }
 
 export const AI_MODELS: Record<string, AIModel> = {
-  // Ollama (Local Models)
-  'ollama-llama2': {
-    id: 'ollama-llama2',
-    name: 'Llama 2 (Local)',
-    provider: 'ollama',
-    description: 'Meta Llama 2 7B - Fast local inference',
-    contextWindow: 4096,
-    isLocal: true,
-    modelName: 'llama2',
-  },
+  // Ollama (Local Models). Every entry below is installed on at least one
+  // host - the Mac (100.64.72.14) or gpu-nmls. contextWindow values are read
+  // from /api/show, not estimated. Verify before adding new entries:
+  //   curl -s localhost:11434/api/show -d '{"model":"<tag>"}'
   'ollama-mistral': {
     id: 'ollama-mistral',
     name: 'Mistral (Local)',
     provider: 'ollama',
-    description: 'Mistral 7B - High quality local model',
-    contextWindow: 8192,
+    description: 'Mistral 7B - general purpose, gpu-nmls',
+    contextWindow: 32768,
     isLocal: true,
     modelName: 'mistral',
   },
-  'ollama-neural': {
-    id: 'ollama-neural',
-    name: 'Neural Chat (Local)',
+  'ollama-qwen3-coder': {
+    id: 'ollama-qwen3-coder',
+    name: 'Qwen 3 Coder 30B (Local)',
     provider: 'ollama',
-    description: 'Neural Chat 7B - Optimized for conversations',
-    contextWindow: 8192,
+    description: 'Strongest local coder - gpu-nmls only, too large for the Mac',
+    contextWindow: 262144,
     isLocal: true,
-    modelName: 'neural-chat',
+    modelName: 'qwen3-coder:30b',
   },
-  'ollama-codellama': {
-    id: 'ollama-codellama',
-    name: 'Code Llama (Local)',
+  'ollama-devstral': {
+    id: 'ollama-devstral',
+    name: 'Devstral 24B (Local)',
     provider: 'ollama',
-    description: 'Code Llama 7B - Optimized for code generation',
-    contextWindow: 4096,
+    description: 'Agentic coding model - gpu-nmls only',
+    contextWindow: 131072,
     isLocal: true,
-    modelName: 'codellama',
+    modelName: 'devstral:24b',
+  },
+  'ollama-qwen-coder': {
+    id: 'ollama-qwen-coder',
+    name: 'Qwen 2.5 Coder 7B (Local)',
+    provider: 'ollama',
+    description: 'Primary local coding model - Mac dev default',
+    contextWindow: 32768,
+    isLocal: true,
+    modelName: 'qwen2.5-coder:7b',
+  },
+  'ollama-qwen-coder-fast': {
+    id: 'ollama-qwen-coder-fast',
+    name: 'Qwen 2.5 Coder 1.5B (Local)',
+    provider: 'ollama',
+    description: 'Small/fast local coder - completions, quick edits',
+    contextWindow: 32768,
+    isLocal: true,
+    modelName: 'qwen2.5-coder:1.5b',
+  },
+  // MLX builds - Apple Silicon only. Context windows read from /api/show.
+  'ollama-qwen35-mlx': {
+    id: 'ollama-qwen35-mlx',
+    name: 'Qwen 3.5 4B MLX (Local)',
+    provider: 'ollama',
+    description: 'MLX-accelerated general model - long context, Mac only',
+    contextWindow: 262144,
+    isLocal: true,
+    modelName: 'qwen3.5:4b-mlx',
+  },
+  'ollama-gemma4-mlx': {
+    id: 'ollama-gemma4-mlx',
+    name: 'Gemma 4 12B MLX (Local)',
+    provider: 'ollama',
+    description: 'MLX-accelerated 12B - highest local quality, Mac only',
+    contextWindow: 262144,
+    isLocal: true,
+    modelName: 'gemma4:12b-mlx',
   },
 
   // Claude (Anthropic)
@@ -154,13 +185,16 @@ export const PROVIDER_KEYS = {
   ollama: process.env.OLLAMA_API_URL || 'http://localhost:11434',
 };
 
-// Ollama available models (check at runtime)
+// Ollama tags actually installed across our hosts (verified 2026-08-01).
+// Availability still varies per machine - call isModelAvailable() at runtime.
 export const OLLAMA_MODELS = [
-  'llama2',
+  // Mac (Apple Silicon)
+  'qwen2.5-coder:7b',
+  'qwen2.5-coder:1.5b',
+  'qwen3.5:4b-mlx',
+  'gemma4:12b-mlx',
+  // gpu-nmls
+  'qwen3-coder:30b',
+  'devstral:24b',
   'mistral',
-  'neural-chat',
-  'codellama',
-  'falcon',
-  'dolphin-mixtral',
-  'openchat',
 ];
