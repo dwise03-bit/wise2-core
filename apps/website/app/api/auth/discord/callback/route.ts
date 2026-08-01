@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DASHBOARD_URL } from '@/lib/urls';
 
 /**
  * OAuth callback route for Discord authentication
@@ -15,7 +14,8 @@ import { DASHBOARD_URL } from '@/lib/urls';
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
-const REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'http://localhost:3000/api/auth/discord/callback';
+const REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/api/auth/discord/callback';
+const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -27,13 +27,20 @@ export async function GET(request: NextRequest) {
   if (error) {
     console.log('User rejected OAuth:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=user_rejected', request.url)
+      new URL('/auth/login?error=user_rejected', PUBLIC_SITE_URL)
     );
   }
 
   if (!code) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=no_code', request.url)
+      new URL('/auth/login?error=no_code', PUBLIC_SITE_URL)
+    );
+  }
+
+  const savedState = request.cookies.get('discord_oauth_state')?.value;
+  if (state && savedState && state !== savedState) {
+    return NextResponse.redirect(
+      new URL('/auth/login?error=state_mismatch', PUBLIC_SITE_URL)
     );
   }
 
@@ -114,7 +121,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Step 5: Create response and set session (dashboard is a separate app)
-    const response = NextResponse.redirect(DASHBOARD_URL);
+    const response = NextResponse.redirect(new URL('/dashboard', PUBLIC_SITE_URL));
 
     // Store user data in secure cookie
     response.cookies.set('discord_user', JSON.stringify(userData), {
@@ -145,12 +152,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    response.cookies.delete('discord_oauth_state');
+
     console.log('Discord OAuth successful for user:', user.id);
     return response;
   } catch (error) {
     console.error('Discord OAuth callback error:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=oauth_failed', request.url)
+      new URL('/auth/login?error=oauth_failed', PUBLIC_SITE_URL)
     );
   }
 }
