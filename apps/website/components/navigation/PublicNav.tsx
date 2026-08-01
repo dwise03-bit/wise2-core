@@ -26,6 +26,7 @@ const PRIMARY_LINKS: NavLink[] = [
   { href: '/audit', label: 'AI Audit', icon: <AuditIcon size={18} /> },
   { href: '/powered-businesses', label: 'Powered Businesses', icon: <BusinessesIcon size={18} /> },
   { href: '/pricing', label: 'Pricing', icon: <PricingIcon size={18} /> },
+  { href: '/printshop', label: 'Print Shop', icon: <PlatformIcon size={18} /> },
 ];
 
 const MORE_LINKS: NavLink[] = [
@@ -56,7 +57,8 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
     setMounted(true);
   }, []);
 
-  const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || '/dashboard';
+  const dashboardUrl = '/dashboard';
+  const loginUrl = '/auth/login';
   const isAuthenticated = false; // TODO: Connect to real auth system
 
   if (!mounted) return null;
@@ -233,7 +235,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
               </Link>
             ) : (
               <Link
-                href={dashboardUrl}
+                href={loginUrl}
                 className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                 style={{
                   backgroundColor: '#39FF14',

@@ -92,7 +92,7 @@ const NAV_SECTIONS: NavSection[] = [
       { id: 'sound-labs-jingle-lab', label: 'Jingle Lab', href: '/dashboard/sound-labs/jingle-lab', icon: 'waveform' },
       { id: 'sound-labs-library', label: 'Audio Library', href: '/dashboard/sound-labs/library', icon: 'book' },
       { id: 'gallery', label: 'Gallery', href: '/dashboard/gallery', icon: 'image' },
-      { id: 'print-on-demand', label: 'DTF Print Studio', href: '/dashboard/print-on-demand', icon: 'printer' },
+      { id: 'print-on-demand', label: 'Print Shop', href: '/dashboard/print-on-demand', icon: 'printer' },
     ],
   },
   {

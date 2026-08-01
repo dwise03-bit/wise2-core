@@ -38,6 +38,9 @@ model User {
   // Consulting relationships
   consultingBookings Booking[] @relation("consultingBookings")
 
+  // Print Shop relationships
+  printFiles PrintFile[] @relation("printFileUploader")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -1548,4 +1551,400 @@ model ConsultingPlanPhase {
   updatedAt DateTime @updatedAt
 
   @@index([planId])
+}
+
+// ===== WISE² PRINT SHOP SYSTEM =====
+
+enum PrintOrderStatus {
+  DRAFT
+  PENDING_REVIEW
+  QUOTED
+  AWAITING_PAYMENT
+  PAID
+  IN_PRODUCTION
+  QUALITY_CHECK
+  READY_FOR_PICKUP
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PrintOrderType {
+  THREE_D_PRINT
+  DTF_TRANSFER
+  DTF_GANG_SHEET
+  APPAREL
+  BUNDLE
+  DESIGN_SERVICE
+}
+
+enum PrintFileStatus {
+  UPLOADING
+  UPLOADED
+  PREFLIGHT_PENDING
+  PREFLIGHT_PROCESSING
+  PREFLIGHT_PASSED
+  PREFLIGHT_PASSED_WITH_WARNINGS
+  PREFLIGHT_FAILED
+  MANUAL_REVIEW
+}
+
+enum ProofStatus {
+  PENDING
+  SENT
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model PrintOrder {
+  id               String           @id @default(cuid())
+  orderNumber      String           @unique
+  userId           String?
+  customerEmail    String
+  customerName     String
+  customerPhone    String?
+
+  orderType        PrintOrderType
+  status           PrintOrderStatus @default(DRAFT)
+
+  // Pricing
+  subtotal         Float            @default(0)
+  taxAmount        Float            @default(0)
+  shippingCost     Float            @default(0)
+  rushFee          Float            @default(0)
+  discountAmount   Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // Stripe
+  stripePaymentIntentId String?
+  stripeCheckoutSessionId String?
+  paymentStatus    String           @default("unpaid")
+
+  // Shipping
+  shippingMethod   String?
+  shippingAddress  Json?
+  trackingNumber   String?
+  isLocalPickup    Boolean          @default(false)
+
+  // Production
+  rushOrder        Boolean          @default(false)
+  estimatedCompletionDate DateTime?
+  actualCompletionDate DateTime?
+  productionNotes  String?          @db.Text
+  internalNotes    String?          @db.Text
+
+  // Relationships
+  items            PrintOrderItem[]
+  files            PrintFile[]
+  quotes           PrintQuote[]
+  proofs           ProofApproval[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([customerEmail])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
+model PrintOrderItem {
+  id               String           @id @default(cuid())
+  orderId          String
+  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId        String?
+  product          PrintProduct?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Item details
+  name             String
+  description      String?          @db.Text
+  quantity         Int              @default(1)
+  unitPrice        Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // 3D-specific
+  material         String?
+  color            String?
+  layerHeight      String?
+  infill           String?
+  strengthPriority String?
+  surfaceQuality   String?
+  fitType          String?
+  toleranceNotes   String?          @db.Text
+
+  // DTF-specific
+  transferWidth    Float?
+  transferHeight   Float?
+  garmentType      String?
+  garmentColor     String?
+  placement        String?
+  mirrorOutput     Boolean          @default(false)
+  whiteUnderbase   Boolean          @default(true)
+
+  // Options
+  options          Json?
+  metadata         Json?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model PrintProduct {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  name             String
+  description      String           @db.Text
+  shortDescription String?
+
+  categoryId       String?
+  category         PrintProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  productType      PrintOrderType
+  isActive         Boolean          @default(true)
+  isFeatured       Boolean          @default(false)
+  isMadeToOrder    Boolean          @default(true)
+
+  // Pricing
+  basePrice        Float            @default(0)
+  bulkPriceBreaks  Json?
+
+  // Production
+  estimatedDays    Int              @default(5)
+  materials        String[]         @default([])
+  colors           String[]         @default([])
+
+  // Media
+  images           String[]         @default([])
+  thumbnailUrl     String?
+  modelFileUrl     String?
+
+  // SEO
+  seoTitle         String?
+  seoDescription   String?
+
+  // Relationships
+  variants         PrintProductVariant[]
+  orderItems       PrintOrderItem[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([categoryId])
+  @@index([productType])
+  @@index([isActive])
+  @@index([slug])
+}
+
+model PrintProductCategory {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  name             String
+  description      String?          @db.Text
+  icon             String?
+  displayOrder     Int              @default(0)
+  parentId         String?
+  parent           PrintProductCategory? @relation("SubCategories", fields: [parentId], references: [id], onDelete: SetNull)
+  children         PrintProductCategory[] @relation("SubCategories")
+  products         PrintProduct[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([parentId])
+  @@index([slug])
+}
+
+model PrintProductVariant {
+  id               String           @id @default(cuid())
+  productId        String
+  product          PrintProduct     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  name             String
+  sku              String?          @unique
+  priceModifier    Float            @default(0)
+  material         String?
+  color            String?
+  dimensions       String?
+  inStock          Boolean          @default(true)
+  stockQuantity    Int?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([productId])
+}
+
+model PrintFile {
+  id               String           @id @default(cuid())
+  orderId          String?
+  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // Upload info
+  originalFilename String
+  storedFilename   String
+  s3Key            String
+  s3Url            String           @db.Text
+  mimeType         String
+  fileExtension    String
+  fileSizeBytes    Int
+  checksum         String?
+
+  status           PrintFileStatus  @default(UPLOADING)
+  uploadedBy       String?
+  uploader         User?            @relation("printFileUploader", fields: [uploadedBy], references: [id], onDelete: SetNull)
+
+  // Preflight results (stored as structured JSON)
+  preflightResult  Json?
+  preflightErrors  String[]         @default([])
+  preflightWarnings String[]        @default([])
+
+  // 3D metadata
+  dimensionsX      Float?
+  dimensionsY      Float?
+  dimensionsZ      Float?
+  units            String           @default("mm")
+  triangleCount    Int?
+  vertexCount      Int?
+  isWatertight     Boolean?
+  isManifold       Boolean?
+  estimatedVolume  Float?
+  shellCount       Int?
+  fitsVolume       Boolean?
+
+  // DTF / image metadata
+  pixelWidth       Int?
+  pixelHeight      Int?
+  dpi              Int?
+  colorMode        String?
+  hasTransparency  Boolean?
+  embeddedProfile  String?
+
+  // Preview
+  previewUrl       String?          @db.Text
+  thumbnailUrl     String?          @db.Text
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([uploadedBy])
+}
+
+model PrintQuote {
+  id               String           @id @default(cuid())
+  orderId          String?
+  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  quoteNumber      String           @unique
+  status           QuoteStatus      @default(DRAFT)
+
+  // Customer
+  customerEmail    String
+  customerName     String
+
+  // Line items as structured JSON
+  lineItems        Json             @default("[]")
+
+  // Totals
+  materialCost     Float            @default(0)
+  laborCost        Float            @default(0)
+  machineCost      Float            @default(0)
+  setupFee         Float            @default(0)
+  designFee        Float            @default(0)
+  rushFee          Float            @default(0)
+  shippingCost     Float            @default(0)
+  subtotal         Float            @default(0)
+  taxAmount        Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // Validity
+  validUntil       DateTime?
+  acceptedAt       DateTime?
+  declinedAt       DateTime?
+
+  notes            String?          @db.Text
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([customerEmail])
+  @@index([quoteNumber])
+}
+
+model ProofApproval {
+  id               String           @id @default(cuid())
+  orderId          String
+  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  proofToken       String           @unique
+  status           ProofStatus      @default(PENDING)
+
+  // Proof files
+  proofImageUrl    String?          @db.Text
+  proofPdfUrl      String?          @db.Text
+  proofNotes       String?          @db.Text
+
+  // Customer response
+  customerResponse String?          @db.Text
+  respondedAt      DateTime?
+
+  sentAt           DateTime?
+  expiresAt        DateTime?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([proofToken])
+  @@index([status])
+}
+
+model DtfGangSheet {
+  id               String           @id @default(cuid())
+  orderId          String?
+
+  // Sheet dimensions
+  sheetWidth       Float
+  sheetHeight      Float
+  dpi              Int              @default(300)
+
+  // Layout
+  layoutData       Json
+  artworkManifest  Json
+
+  // Metrics
+  usedAreaPercent  Float            @default(0)
+  artworkCount     Int              @default(0)
+
+  // Output files
+  productionPngUrl String?          @db.Text
+  proofPdfUrl      String?          @db.Text
+  thumbnailUrl     String?          @db.Text
+
+  // Status
+  status           String           @default("draft")
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
 }
