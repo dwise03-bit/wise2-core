@@ -268,6 +268,48 @@ services:
       start_period: 40s
 
   # ============================================================================
+  # BACKGROUND JOBS & WORKERS
+  # ============================================================================
+  worker:
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
+    container_name: wise2-worker-content-prod
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD:-password}@redis:6379
+      DATABASE_URL: postgresql://wise2_prod_user:${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+      JWT_SECRET: ${JWT_SECRET}
+      COMMAND_CENTER_URL: http://command-center:3000
+      EVENTS_SECRET: ${EVENTS_SECRET}
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY}
+      CONTENT_STORAGE_PROVIDER: ${CONTENT_STORAGE_PROVIDER:-s3}
+      CONTENT_STORAGE_BUCKET: ${CONTENT_STORAGE_BUCKET:-wise2-content}
+      CONTENT_STORAGE_ENDPOINT: ${CONTENT_STORAGE_ENDPOINT}
+      CONTENT_STORAGE_REGION: ${CONTENT_STORAGE_REGION:-us-east-1}
+      CONTENT_STORAGE_ACCESS_KEY: ${CONTENT_STORAGE_ACCESS_KEY}
+      CONTENT_STORAGE_SECRET_KEY: ${CONTENT_STORAGE_SECRET_KEY}
+      FFMPEG_PATH: /usr/bin/ffmpeg
+      FFPROBE_PATH: /usr/bin/ffprobe
+      CONTENT_MAX_RENDER_TIMEOUT_MS: 600000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - /tmp/wise-content:/tmp/wise-content
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('ioredis')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================================================
   # MONITORING & OBSERVABILITY
   # ============================================================================
   prometheus:
