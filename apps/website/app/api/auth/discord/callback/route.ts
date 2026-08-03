@@ -15,7 +15,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
 const REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/api/auth/discord/callback';
-const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
+const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
+const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net').replace(/\/$/, '');
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -121,7 +122,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Step 5: Create response and set session (dashboard is a separate app)
-    const response = NextResponse.redirect(new URL('/dashboard', PUBLIC_SITE_URL));
+    const response = NextResponse.redirect(new URL(DASHBOARD_URL));
 
     // Store user data in secure cookie
     response.cookies.set('discord_user', JSON.stringify(userData), {

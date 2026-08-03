@@ -5,7 +5,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const REDIRECT_URI =
   process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
-const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL || `${PUBLIC_SITE_URL}/dashboard`;
+const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net').replace(/\/$/, '');
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    const response = NextResponse.redirect(DASHBOARD_URL);
+    const response = NextResponse.redirect(new URL(DASHBOARD_URL));
 
     response.cookies.set('google_user', JSON.stringify(userData), {
       httpOnly: false,

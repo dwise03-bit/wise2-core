@@ -162,7 +162,7 @@ export class DashboardAPI {
           type: d.deviceType,
           isOnline: d.isOnline,
           signal: d.lastHeartbeat?.wifiSignal,
-          battery: d.lastHeartbeat?.battery,
+          battery: d.lastHeartbeat?.batteryLevel,
           lastHeartbeat: d.lastHeartbeat?.timestamp || 0,
         })),
       },
