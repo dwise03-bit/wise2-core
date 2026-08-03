@@ -117,7 +117,20 @@ export const Hero: React.FC = () => {
   const buildNumber = new Date().toISOString().slice(0, 10).replace(/-/g, '');
 
   return (
-    <div className={`${styles.heroContainer}`} ref={containerRef}>
+    <div
+      ref={containerRef}
+      style={{
+        position: 'relative',
+        width: '100%',
+        minHeight: '120vh',
+        background: '#000000',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       {/* Build Number Badge */}
       <div style={{
         position: 'fixed',
@@ -136,17 +149,84 @@ export const Hero: React.FC = () => {
       </div>
 
       {/* Parallax Background Layer */}
-      <div className={styles.bgLayer} ref={bgLayerRef}>
-        <div className={styles.bgGradient1} />
-        <div className={styles.bgGradient2} />
-        <div className={styles.bgSkyline} />
+      <div
+        ref={bgLayerRef}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 0,
+          opacity: 0.6,
+          willChange: 'transform',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(135deg, rgba(200, 0, 150, 0.5) 0%, rgba(57, 255, 20, 0.2) 50%, transparent 100%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'radial-gradient(ellipse at center, rgba(200, 0, 150, 0.4) 0%, rgba(57, 255, 20, 0.15) 50%, transparent 80%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'url("https://d8j0ntlcm91z4.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/hf_20260725_154235_77db1f2d-9a7c-480c-8bae-37c48614647a.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.45,
+            filter: 'brightness(0.8) contrast(1.2) saturate(1.1)',
+          }}
+        />
       </div>
 
       {/* REDESIGNED: Central Hero Section with 4 Leaders */}
-      <div className={styles.heroSection} ref={heroSectionRef}>
+      <div
+        ref={heroSectionRef}
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '120vh',
+          padding: '60px 24px',
+          gap: '32px',
+          willChange: 'opacity',
+        }}
+      >
         {/* Top Messaging */}
-        <div className={styles.topMessaging} ref={messagingRef}>
-          <h2 className={`${styles.messagingItem} ${styles.topTagline}`}>
+        <div
+          ref={messagingRef}
+          style={{
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            width: '100%',
+            marginBottom: '20px',
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 'clamp(1rem, 2.5vw, 1.6rem)',
+              fontWeight: 900,
+              color: '#39FF14',
+              margin: 0,
+              letterSpacing: '4px',
+              textTransform: 'uppercase',
+              fontFamily: "'Orbitron', monospace",
+              textShadow: '0 0 40px rgba(57, 255, 20, 0.8), 0 0 80px rgba(57, 255, 20, 0.5), 0 0 120px rgba(200, 0, 150, 0.3)',
+            }}
+          >
             FOUR LEADERS. ONE EMPIRE.
           </h2>
         </div>
