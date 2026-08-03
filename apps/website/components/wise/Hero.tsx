@@ -266,40 +266,40 @@ export const Hero: React.FC = () => {
         {/* Central Leaders Grid - 4 Portraits in Center */}
         <div className={styles.leadersGrid} ref={leadersGridRef}>
           {/* Leader 1 - Daniel */}
-          <div className={styles.leaderPortrait + ' leader-portrait'} data-leader="daniel">
-            <div className={styles.leaderFrame}>
-              <div className={styles.leaderGloss} />
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', perspective: '1000px', transition: 'transform 0.3s ease' }} className="leader-portrait" data-leader="daniel">
+            <div style={{ position: 'relative', width: '140px', aspectRatio: '3 / 4', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(57, 255, 20, 0.6)', boxShadow: '0 0 40px rgba(57, 255, 20, 0.7), 0 0 80px rgba(200, 0, 150, 0.4), inset 0 0 20px rgba(57, 255, 20, 0.2)', transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', willChange: 'box-shadow, transform', transformStyle: 'preserve-3d' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
               <Image
                 src="/uploads/daniel.png"
                 alt="Daniel WISE"
                 fill
                 sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
-                className={styles.leaderImage}
+                style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
                 priority
               />
             </div>
-            <div className={styles.leaderLabel}>
-              <p className={styles.leaderName}>DANIEL</p>
-              <p className={styles.leaderRole}>FOUNDER & ARCHITECT</p>
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.95rem)', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Rajdhani', monospace" }}>DANIEL</p>
+              <p style={{ fontSize: 'clamp(0.55rem, 1.2vw, 0.65rem)', color: '#39FF14', margin: '2px 0 0 0', fontWeight: 600, letterSpacing: '0.5px', fontFamily: "'Rajdhani', monospace", textTransform: 'uppercase', textShadow: '0 0 10px rgba(57, 255, 20, 0.5)' }}>FOUNDER & ARCHITECT</p>
             </div>
           </div>
 
           {/* Leader 2 - Darrin */}
-          <div className={styles.leaderPortrait + ' leader-portrait'} data-leader="darrin">
-            <div className={styles.leaderFrame}>
-              <div className={styles.leaderGloss} />
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', perspective: '1000px', transition: 'transform 0.3s ease' }} className="leader-portrait" data-leader="darrin">
+            <div style={{ position: 'relative', width: '140px', aspectRatio: '3 / 4', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(57, 255, 20, 0.6)', boxShadow: '0 0 40px rgba(57, 255, 20, 0.7), 0 0 80px rgba(200, 0, 150, 0.4), inset 0 0 20px rgba(57, 255, 20, 0.2)', transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', willChange: 'box-shadow, transform', transformStyle: 'preserve-3d' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
               <Image
                 src="/uploads/darrin.png"
                 alt="Darrin WISE"
                 fill
                 sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
-                className={styles.leaderImage}
+                style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
                 priority
               />
             </div>
-            <div className={styles.leaderLabel}>
-              <p className={styles.leaderName}>DARRIN</p>
-              <p className={styles.leaderRole}>OPERATIONS LEADER</p>
+            <div style={{ textAlign: 'center', width: '100%' }}>
+              <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.95rem)', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Rajdhani', monospace" }}>DARRIN</p>
+              <p style={{ fontSize: 'clamp(0.55rem, 1.2vw, 0.65rem)', color: '#39FF14', margin: '2px 0 0 0', fontWeight: 600, letterSpacing: '0.5px', fontFamily: "'Rajdhani', monospace", textTransform: 'uppercase', textShadow: '0 0 10px rgba(57, 255, 20, 0.5)' }}>OPERATIONS LEADER</p>
             </div>
           </div>
 
