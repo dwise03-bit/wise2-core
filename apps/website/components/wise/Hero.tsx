@@ -270,7 +270,7 @@ export const Hero: React.FC = () => {
             <div className={styles.leaderFrame}>
               <div className={styles.leaderGloss} />
               <Image
-                src="/uploads/daniel-wise-source.png"
+                src="/uploads/daniel.png"
                 alt="Daniel WISE"
                 fill
                 sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
@@ -289,7 +289,7 @@ export const Hero: React.FC = () => {
             <div className={styles.leaderFrame}>
               <div className={styles.leaderGloss} />
               <Image
-                src="/uploads/darrin-wise-source.png"
+                src="/uploads/darrin.png"
                 alt="Darrin WISE"
                 fill
                 sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
