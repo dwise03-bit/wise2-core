@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Hero, PoweredBusinesses, Features, Stats, About, Footer } from '@/components/wise';
 
 // ── Section: What's Broken (Problem) ──────────────────────────────────────────
