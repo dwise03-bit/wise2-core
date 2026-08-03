@@ -3,24 +3,39 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+# Install pnpm
+RUN npm install -g pnpm
+
+COPY pnpm-lock.yaml ./
+COPY .npmrc ./
+COPY package.json pnpm-workspace.yaml ./
 COPY apps/website/package.json ./apps/website/
-RUN npm install
+COPY packages/db/package.json ./packages/db/
+
+RUN pnpm install --frozen-lockfile
 
 COPY apps/website ./apps/website
-RUN npm run build
+COPY packages/db ./packages/db
+
+RUN pnpm --filter @wise2/website build
 
 # Production image
 FROM node:18-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/apps/website/.next ./apps/website/.next
-COPY --from=builder /app/apps/website/package.json ./apps/website/
-COPY package*.json ./
+# Install pnpm
+RUN npm install -g pnpm
 
-RUN cd apps/website && npm install --production
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/.npmrc ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/apps/website ./apps/website
+COPY --from=builder /app/packages/db ./packages/db
+
+RUN pnpm install --frozen-lockfile --production
 
 EXPOSE 3001
 
-CMD ["npm", "--prefix", "apps/website", "start", "--", "-p", "3001"]
+CMD ["pnpm", "--filter", "@wise2/website", "start", "--", "-p", "3001"]
