@@ -24,91 +24,117 @@ export const Hero: React.FC = () => {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   };
 
+  // Ensure all elements are visible by default
+  if (typeof window !== 'undefined') {
+    if (centerLogoRef.current?.querySelector('.logo-text')) {
+      (centerLogoRef.current.querySelector('.logo-text') as HTMLElement).style.opacity = '1';
+    }
+    if (leadersGridRef.current) {
+      (leadersGridRef.current as HTMLElement).style.opacity = '1';
+      leadersGridRef.current.querySelectorAll('.leader-portrait').forEach((el) => {
+        (el as HTMLElement).style.opacity = '1';
+      });
+    }
+    if (messagingRef.current) {
+      messagingRef.current.querySelectorAll('.messaging-item').forEach((el) => {
+        (el as HTMLElement).style.opacity = '1';
+      });
+    }
+  }
+
   useGSAP(
     () => {
+      if (!containerRef.current) return;
       if (prefersReducedMotion()) return;
 
-      // Parallax background effect
-      gsap.to(bgLayerRef.current, {
-        yPercent: 20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          scrub: 0.5,
-          start: 'top top',
-          end: 'bottom top',
-        },
-      });
+      try {
+        // Parallax background effect
+        if (bgLayerRef.current) {
+          gsap.to(bgLayerRef.current, {
+            yPercent: 20,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              scrub: 0.5,
+              start: 'top top',
+              end: 'bottom top',
+            },
+          });
+        }
 
-      // Center logo text - scale up and glow with intense neon
-      const logoText = centerLogoRef.current?.querySelector('.logo-text');
-      if (logoText) {
-        gsap.from(logoText, {
-          scale: 0.5,
-          opacity: 0,
-          duration: 1.2,
-          ease: 'back.out(1.2)',
-          delay: 0.2,
-        });
+        // Center logo text - scale up and glow with intense neon
+        const logoText = centerLogoRef.current?.querySelector('.logo-text');
+        if (logoText) {
+          gsap.from(logoText, {
+            scale: 0.5,
+            opacity: 0,
+            duration: 1.2,
+            ease: 'back.out(1.2)',
+            delay: 0.2,
+          });
 
-        // Intense neon yellow/purple glow pulse
-        gsap.fromTo(
-          logoText,
-          { textShadow: '0 0 40px rgba(57, 255, 20, 0.6), 0 0 80px rgba(200, 0, 150, 0.4)' },
-          { textShadow: '0 0 80px rgba(57, 255, 20, 0.9), 0 0 150px rgba(200, 0, 150, 0.7)', duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' }
-        );
-      }
+          // Intense neon yellow/purple glow pulse
+          gsap.fromTo(
+            logoText,
+            { textShadow: '0 0 40px rgba(57, 255, 20, 0.6), 0 0 80px rgba(200, 0, 150, 0.4)' },
+            { textShadow: '0 0 80px rgba(57, 255, 20, 0.9), 0 0 150px rgba(200, 0, 150, 0.7)', duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' }
+          );
+        }
 
-      // Leaders grid - fade in and scale
-      if (leadersGridRef.current) {
-        gsap.from(leadersGridRef.current, {
-          opacity: 0,
-          scale: 0.9,
-          duration: 0.8,
-          ease: 'power2.out',
-          delay: 0.4,
-        });
+        // Leaders grid - fade in and scale
+        if (leadersGridRef.current) {
+          gsap.from(leadersGridRef.current, {
+            opacity: 0,
+            scale: 0.9,
+            duration: 0.8,
+            ease: 'power2.out',
+            delay: 0.4,
+          });
 
-        // Individual leader portraits fade in with stagger
-        const portraits = leadersGridRef.current.querySelectorAll('.leader-portrait');
-        gsap.from(portraits, {
-          opacity: 0,
-          y: 30,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-          delay: 0.6,
-        });
-      }
+          // Individual leader portraits fade in with stagger
+          const portraits = leadersGridRef.current.querySelectorAll('.leader-portrait');
+          gsap.from(portraits, {
+            opacity: 0,
+            y: 30,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power2.out',
+            delay: 0.6,
+          });
+        }
 
-      // Messaging elements stagger animation
-      const messagingElements = messagingRef.current?.querySelectorAll('.messaging-item');
-      if (messagingElements) {
-        gsap.from(messagingElements, {
-          opacity: 0,
-          y: 15,
-          duration: 0.5,
-          stagger: 0.08,
-          ease: 'power2.out',
-          delay: 0.8,
-        });
-      }
+        // Messaging elements stagger animation
+        const messagingElements = messagingRef.current?.querySelectorAll('.messaging-item');
+        if (messagingElements) {
+          gsap.from(messagingElements, {
+            opacity: 0,
+            y: 15,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: 'power2.out',
+            delay: 0.8,
+          });
+        }
 
-      // Scroll-triggered reveal for Powered Businesses section
-      const businessCards = poweredRef.current?.querySelectorAll('.business-card');
-      if (businessCards) {
-        gsap.from(businessCards, {
-          opacity: 0,
-          y: 24,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: poweredRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-        });
+        // Scroll-triggered reveal for Powered Businesses section
+        const businessCards = poweredRef.current?.querySelectorAll('.business-card');
+        if (businessCards) {
+          gsap.from(businessCards, {
+            opacity: 0,
+            y: 24,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: poweredRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          });
+        }
+      } catch (e) {
+        console.warn('GSAP animations failed gracefully:', e);
+        // Elements remain visible - animations are just not applied
       }
     },
     { scope: containerRef }
