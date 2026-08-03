@@ -41,4 +41,4 @@ RUN pnpm install --frozen-lockfile --production
 
 EXPOSE 3001
 
-CMD ["pnpm", "--filter", "@wise2/website", "start", "--", "-p", "3001"]
+CMD ["pnpm", "--filter", "@wise2/website", "start"]
