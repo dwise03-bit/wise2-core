@@ -1948,3 +1948,179 @@ model DtfGangSheet {
   @@index([orderId])
   @@index([status])
 }
+
+// ============================================================================
+// WISE² Faceless Content Studio
+// ============================================================================
+
+model ContentBrand {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  voice           String?  @db.Text
+  audience        String?  @db.Text
+  visualStyle     String?  @db.Text
+  primaryColor    String?
+  secondaryColor  String?
+  logoUrl         String?
+  defaultVoice    String?
+  defaultCta      String?
+  disclaimer      String?  @db.Text
+  prohibitedPhrases String[] @default([])
+  settings        Json?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  projects        ContentProject[]
+
+  @@index([slug])
+}
+
+model ContentProject {
+  id              String   @id @default(cuid())
+  guildId         String
+  channelId       String
+  creatorDiscordId String
+  brandId         String
+  brand           ContentBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  topic           String   @db.Text
+  objective       String?
+  platform        String
+  durationSeconds Int?
+  style           String?
+  sourceUrl       String?
+
+  status          String   @default("idea_received")
+  currentVersion  Int      @default(1)
+  estimatedCost   Float?
+  actualCost      Float?   @default(0)
+
+  approvedBy      String?
+  approvedAt      DateTime?
+  scheduledAt     DateTime?
+  publishedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  versions        ContentVersion[]
+  assets          ContentAsset[]
+  approvals       ContentApproval[]
+  publishJobs     ContentPublishJob[]
+  auditLog        ContentAuditLog[]
+
+  @@index([status])
+  @@index([guildId])
+  @@index([creatorDiscordId])
+  @@index([scheduledAt])
+  @@index([platform])
+}
+
+model ContentVersion {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  version         Int
+  title           String?
+  hook            String?  @db.Text
+  script          String?  @db.Text
+  caption         String?  @db.Text
+  hashtags        String[] @default([])
+  scenes          Json?
+  generationMetadata Json?
+
+  createdBy       String?
+  createdAt       DateTime @default(now())
+
+  assets          ContentAsset[]
+  approvals       ContentApproval[]
+
+  @@index([projectId])
+}
+
+model ContentAsset {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  versionId       String?
+  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  assetType       String
+  provider        String?
+  providerJobId   String?
+  storageKey      String?
+  publicUrl       String?
+  mimeType        String?
+  fileSize        Int?
+  durationMs      Int?
+  metadata        Json?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+  @@index([providerJobId])
+}
+
+model ContentApproval {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  versionId       String?
+  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  approvalType    String
+  decision        String
+  discordUserId   String
+  notes           String?  @db.Text
+  interactionId   String?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model ContentPublishJob {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  platform        String
+  accountId       String?
+  scheduledAt     DateTime?
+  status          String   @default("pending")
+  providerPostId  String?
+  providerPostUrl String?
+  attempts        Int      @default(0)
+  lastError       String?  @db.Text
+  publishedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([platform])
+  @@index([scheduledAt])
+}
+
+model ContentAuditLog {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  guildId         String
+  discordUserId   String
+  action          String
+  previousState   String?  @db.Text
+  nextState       String?  @db.Text
+  metadata        Json?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+  @@index([guildId])
+}
