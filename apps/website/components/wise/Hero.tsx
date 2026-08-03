@@ -114,8 +114,27 @@ export const Hero: React.FC = () => {
     { scope: containerRef }
   );
 
+  const buildNumber = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
   return (
     <div className={`${styles.heroContainer}`} ref={containerRef}>
+      {/* Build Number Badge */}
+      <div style={{
+        position: 'fixed',
+        top: '12px',
+        left: '12px',
+        fontSize: '10px',
+        fontFamily: 'monospace',
+        color: '#39FF14',
+        backgroundColor: 'rgba(57, 255, 20, 0.1)',
+        border: '1px solid rgba(57, 255, 20, 0.3)',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        zIndex: 1000,
+      }}>
+        {buildNumber}
+      </div>
+
       {/* Parallax Background Layer */}
       <div className={styles.bgLayer} ref={bgLayerRef}>
         <div className={styles.bgGradient1} />
