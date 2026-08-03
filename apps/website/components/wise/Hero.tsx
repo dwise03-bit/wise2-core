@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -268,15 +267,12 @@ export const Hero: React.FC = () => {
           {/* Leader 1 - Daniel */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', perspective: '1000px', transition: 'transform 0.3s ease' }} className="leader-portrait" data-leader="daniel">
             <div style={{ position: 'relative', width: '140px', aspectRatio: '3 / 4', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(57, 255, 20, 0.6)', boxShadow: '0 0 40px rgba(57, 255, 20, 0.7), 0 0 80px rgba(200, 0, 150, 0.4), inset 0 0 20px rgba(57, 255, 20, 0.2)', transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', willChange: 'box-shadow, transform', transformStyle: 'preserve-3d' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
-              <Image
+              <img
                 src="/uploads/daniel.png"
                 alt="Daniel WISE"
-                fill
-                sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
-                style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
-                priority
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
               />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
             </div>
             <div style={{ textAlign: 'center', width: '100%' }}>
               <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.95rem)', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Rajdhani', monospace" }}>DANIEL</p>
@@ -287,15 +283,12 @@ export const Hero: React.FC = () => {
           {/* Leader 2 - Darrin */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', perspective: '1000px', transition: 'transform 0.3s ease' }} className="leader-portrait" data-leader="darrin">
             <div style={{ position: 'relative', width: '140px', aspectRatio: '3 / 4', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(57, 255, 20, 0.6)', boxShadow: '0 0 40px rgba(57, 255, 20, 0.7), 0 0 80px rgba(200, 0, 150, 0.4), inset 0 0 20px rgba(57, 255, 20, 0.2)', transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', willChange: 'box-shadow, transform', transformStyle: 'preserve-3d' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
-              <Image
+              <img
                 src="/uploads/darrin.png"
                 alt="Darrin WISE"
-                fill
-                sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 180px"
-                style={{ objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
-                priority
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'brightness(1.15) contrast(1.2) saturate(1)' }}
               />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)', zIndex: 2, pointerEvents: 'none' }} />
             </div>
             <div style={{ textAlign: 'center', width: '100%' }}>
               <p style={{ fontSize: 'clamp(0.75rem, 1.8vw, 0.95rem)', fontWeight: 900, color: '#ffffff', margin: 0, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Rajdhani', monospace" }}>DARRIN</p>
