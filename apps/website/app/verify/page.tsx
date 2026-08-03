@@ -54,7 +54,7 @@ function VerifyContent() {
             <h1 className="text-3xl font-bold text-wise-primary mb-2">Email Verified!</h1>
             <p className="text-wise-muted mb-6">Your account is fully activated and ready to use.</p>
             <a
-              href="/auth/login"
+              href="/auth/signin"
               className="inline-block px-6 py-2 bg-wise-primary hover:bg-wise-primary-hover text-wise font-semibold rounded-md transition-colors shadow-glow-blue-sm hover:shadow-glow-blue-md"
             >
               Sign In Now

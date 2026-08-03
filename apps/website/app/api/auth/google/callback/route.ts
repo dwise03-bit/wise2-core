@@ -15,20 +15,20 @@ export async function GET(request: NextRequest) {
   if (error) {
     console.error('Google OAuth error:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=google_rejected', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=google_rejected', PUBLIC_SITE_URL),
     );
   }
 
   if (!code) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=no_code', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=no_code', PUBLIC_SITE_URL),
     );
   }
 
   const savedState = request.cookies.get('google_oauth_state')?.value;
   if (state && savedState && state !== savedState) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=state_mismatch', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=state_mismatch', PUBLIC_SITE_URL),
     );
   }
 
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('Google OAuth callback error:', err);
     return NextResponse.redirect(
-      new URL('/auth/login?error=oauth_failed', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=oauth_failed', PUBLIC_SITE_URL),
     );
   }
 }

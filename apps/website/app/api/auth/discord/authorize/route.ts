@@ -8,7 +8,7 @@ const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
 export async function GET(request: NextRequest) {
   if (!CLIENT_ID) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=discord_not_configured', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=discord_not_configured', PUBLIC_SITE_URL),
     );
   }
 
