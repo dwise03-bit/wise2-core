@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation Confirmed - WISE²</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #0a0a0a;
+            border: 1px solid #2a2a2a;
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #666666 0%, #444444 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 2px solid #FF0040;
+        }
+
+        .email-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .email-header p {
+            font-size: 14px;
+            color: #e0e0e0;
+            letter-spacing: 0.5px;
+        }
+
+        .email-body {
+            padding: 40px 30px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #d0d0d0;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .confirmation-badge {
+            display: inline-block;
+            background-color: #666666;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 28px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #0055FF;
+        }
+
+        .cancellation-details {
+            background-color: #151515;
+            border-left: 4px solid #666666;
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 8px;
+        }
+
+        .cancellation-details h3 {
+            color: #ffffff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 14px;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #8d9ba5;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .refund-section {
+            background-color: #151515;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .refund-section h3 {
+            color: #20C558;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .refund-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 14px;
+        }
+
+        .refund-item:last-child {
+            border-bottom: none;
+        }
+
+        .refund-item.total {
+            padding: 16px 0;
+            font-weight: 700;
+            font-size: 16px;
+            color: #20C558;
+            border-top: 2px solid #2a2a2a;
+            margin-top: 12px;
+        }
+
+        .refund-label {
+            color: #d0d0d0;
+        }
+
+        .refund-amount {
+            color: #d0d0d0;
+            text-align: right;
+        }
+
+        .refund-total {
+            color: #20C558;
+            text-align: right;
+        }
+
+        .refund-status {
+            background-color: #0a4620;
+            border: 1px solid #20C558;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: #20C558;
+            text-align: center;
+        }
+
+        .timeline-section {
+            background-color: #151515;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .timeline-section h3 {
+            color: #0055FF;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 16px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item:not(:last-child):before {
+            content: "";
+            position: absolute;
+            left: 9px;
+            top: 30px;
+            bottom: -20px;
+            width: 2px;
+            background-color: #2a2a2a;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #0055FF;
+            border: 2px solid #0a0a0a;
+        }
+
+        .timeline-content h4 {
+            color: #0055FF;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            color: #8d9ba5;
+            font-size: 13px;
+        }
+
+        .rebook-section {
+            background: linear-gradient(135deg, #0055FF 0%, rgba(0, 85, 255, 0.1) 100%);
+            border: 1px solid #0055FF;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .rebook-section h3 {
+            color: #0055FF;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .rebook-section p {
+            color: #d0d0d0;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #0055FF 0%, #2A3AFF 100%);
+            color: #ffffff;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .faq-section {
+            background-color: #151515;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .faq-section h3 {
+            color: #FFB808;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .faq-item {
+            margin-bottom: 16px;
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .faq-answer {
+            color: #8d9ba5;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .email-footer {
+            background-color: #0a0a0a;
+            border-top: 1px solid #2a2a2a;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #8d9ba5;
+        }
+
+        .footer-link {
+            color: #0055FF;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .email-body {
+                padding: 20px 15px;
+            }
+
+            .email-header {
+                padding: 30px 15px;
+            }
+
+            .email-header h1 {
+                font-size: 22px;
+            }
+
+            .detail-item {
+                flex-direction: column;
+            }
+
+            .detail-value {
+                text-align: left;
+                margin-top: 4px;
+            }
+
+            .refund-item {
+                flex-direction: column;
+            }
+
+            .refund-amount,
+            .refund-total {
+                text-align: left;
+                margin-top: 4px;
+            }
+
+            .timeline-item {
+                padding-left: 20px;
+            }
+
+            .timeline-dot {
+                width: 16px;
+                height: 16px;
+                left: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="email-header">
+            <h1>WISE²</h1>
+            <p>CANCELLATION CONFIRMATION</p>
+        </div>
+
+        <!-- Body -->
+        <div class="email-body">
+            <div class="confirmation-badge">✓ Cancelled</div>
+
+            <div class="greeting">
+                Hi {{firstName}},
+            </div>
+
+            <p class="info-text">
+                We've processed your cancellation request. Below are the details of your cancelled booking and refund information.
+            </p>
+
+            <!-- Cancellation Details -->
+            <div class="section-title">Booking Details</div>
+            <div class="cancellation-details">
+                <h3>Cancelled Consultation</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Original Date & Time</span>
+                    <span class="detail-value">{{bookingDate}} at {{bookingTime}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Consultant</span>
+                    <span class="detail-value">{{consultantName}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Booking ID</span>
+                    <span class="detail-value">{{bookingId}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Cancellation Date</span>
+                    <span class="detail-value">{{cancellationDate}}</span>
+                </div>
+            </div>
+
+            <!-- Refund Information -->
+            {{#if showRefund}}
+            <div class="section-title">Refund Details</div>
+            <div class="refund-section">
+                <h3>Your Refund</h3>
+                <div class="refund-item">
+                    <span class="refund-label">Booking Amount</span>
+                    <span class="refund-amount">{{bookingAmount}}</span>
+                </div>
+                {{#if cancellationFee}}
+                <div class="refund-item">
+                    <span class="refund-label">Cancellation Fee</span>
+                    <span class="refund-amount">-{{cancellationFee}}</span>
+                </div>
+                {{/if}}
+                <div class="refund-item total">
+                    <span class="refund-label">Refund Amount</span>
+                    <span class="refund-total">{{refundAmount}}</span>
+                </div>
+                <div class="refund-status">
+                    ✓ Refund processed to {{refundMethod}}
+                </div>
+                <p style="color: #8d9ba5; font-size: 12px; margin-top: 12px;">
+                    {{refundTimeline}}
+                </p>
+            </div>
+            {{/if}}
+
+            <!-- Processing Timeline -->
+            <div class="section-title">What Happens Next</div>
+            <div class="timeline-section">
+                <h3>Refund Timeline</h3>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Immediately</h4>
+                        <p>Cancellation processed and confirmed</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>1-2 Business Days</h4>
+                        <p>Refund initiated to your account</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>3-5 Business Days</h4>
+                        <p>Refund appears in your {{refundMethod}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rebook Section -->
+            <div class="rebook-section">
+                <h3>Want to Reschedule?</h3>
+                <p>
+                    We'd love to help! {{consultantName}} is still available for consultations. You can book a new session anytime.
+                </p>
+                <a href="{{rebookLink}}" class="cta-button">Schedule New Consultation →</a>
+            </div>
+
+            <!-- FAQ -->
+            <div class="faq-section">
+                <h3>Frequently Asked Questions</h3>
+                <div class="faq-item">
+                    <div class="faq-question">When will I receive my refund?</div>
+                    <div class="faq-answer">
+                        Refunds are typically processed within 1-2 business days. Your bank may take 3-5 additional business days to reflect the amount.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Can I book with a different consultant?</div>
+                    <div class="faq-answer">
+                        Absolutely! You can browse our full list of consultants and book with anyone who fits your needs and availability.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Is there a cancellation fee?</div>
+                    <div class="faq-answer">
+                        {{#if cancellationFee}}Our cancellation policy includes a fee of {{cancellationFee}} if cancelled within {{cancellationWindowDays}} days of the scheduled call.{{else}}No cancellation fees apply to your booking.{{/if}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support -->
+            <div style="background-color: #151515; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                <p style="color: #ffffff; font-weight: 600; margin-bottom: 8px;">Having Issues?</p>
+                <p style="color: #d0d0d0; font-size: 14px; margin-bottom: 12px;">
+                    If you don't see your refund or have any questions about this cancellation, our support team is here to help.
+                </p>
+                <a href="mailto:support@wise2.io" style="color: #0055FF; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    Contact Support →
+                </a>
+            </div>
+
+            <p class="info-text" style="margin-top: 32px;">
+                Thank you for your interest in WISE² Consulting. We hope to work with you in the future!
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="email-footer">
+            <p style="margin-bottom: 12px;">
+                © 2026 WISE² - Organized Chaos Command Center
+            </p>
+            <p style="margin-bottom: 16px;">
+                <a href="{{unsubscribeLink}}" class="footer-link">Unsubscribe</a> |
+                <a href="{{preferencesLink}}" class="footer-link">Email Preferences</a> |
+                <a href="{{privacyLink}}" class="footer-link">Privacy Policy</a>
+            </p>
+            <p>
+                Questions? Contact us at <a href="mailto:support@wise2.io" class="footer-link">support@wise2.io</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

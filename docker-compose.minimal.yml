@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: wise2-postgres-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-secure_postgres_admin_2026}
+      POSTGRES_DB: postgres
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./infrastructure/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - |
+          pg_isready -U postgres -h localhost -p 5432 && \
+          pg_isready -U wise2_prod_user -h localhost -p 5432 -d wise2_core_prod
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: wise2-redis-prod
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-0LicvPUf6P23GnrQ2QG4Y9vjUQiBHzb+}
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: wise2-api-prod
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      DATABASE_URL: postgresql://wise2_prod_user:${DB_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+      REDIS_URL: redis://:${REDIS_PASSWORD:-0LicvPUf6P23GnrQ2QG4Y9vjUQiBHzb+}@redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-fb034b9d3cf0b6532a98985d440299141e279c526af5d5a21791be102a49ac5a}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      NEXT_PUBLIC_API_URL: https://api.wise2.net
+    ports:
+      - "127.0.0.1:3010:3010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile.website
+    container_name: wise2-website-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://api.wise2.net
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  postgres_wal:
+
+networks:
+  default:
+    name: wise2-core_default

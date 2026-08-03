@@ -1,0 +1,74 @@
+# WISE² Dashboard - Raspberry Pi Optimized Build
+# Multi-stage build to minimize final image size
+# Target: ARM64 (Raspberry Pi 3B+)
+
+# ============================================================================
+# Stage 1: Builder
+# ============================================================================
+FROM node:20-alpine AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* package-lock.json* ./
+COPY packages ./packages
+COPY apps/dashboard ./apps/dashboard
+
+# Install dependencies
+RUN npm install -g pnpm && \
+    pnpm install --frozen-lockfile
+
+# Build dashboard
+WORKDIR /build/apps/dashboard
+RUN pnpm run build 2>&1 || true
+
+# ============================================================================
+# Stage 2: Runtime (Minimal)
+# ============================================================================
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy built application
+COPY --from=builder /build/node_modules ./node_modules
+COPY --from=builder /build/apps/dashboard/.next ./.next
+COPY --from=builder /build/apps/dashboard/public ./public
+COPY --from=builder /build/apps/dashboard/package.json ./
+COPY --from=builder /build/apps/dashboard/next.config.* ./
+
+# Production environment variables
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000 || exit 1
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3000
+
+# Use dumb-init to properly handle signals
+ENTRYPOINT ["/sbin/dumb-init", "--"]
+
+# Start application
+CMD ["npm", "start"]

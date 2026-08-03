@@ -1,0 +1,20 @@
+{
+  "name": "@wise2/db",
+  "version": "0.1.0",
+  "description": "WISE² Database schema and migrations",
+  "private": true,
+  "scripts": {
+    "migrate": "typeorm migration:run",
+    "migrate:revert": "typeorm migration:revert",
+    "migrate:generate": "typeorm migration:generate",
+    "seed": "node dist/seeds/seed.js",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+  },
+  "dependencies": {
+    "typeorm": "^0.3.17",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

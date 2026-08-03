@@ -1,0 +1,376 @@
+# WISE² Platform Production Compose (AUTHORITATIVE for platform API architecture)
+# This file defines the Prisma-based platform API and all frontend apps.
+# See also: docker-compose.prod.yml (LEGACY — customer journey stack)
+version: '3.8'
+
+services:
+  # ============================================================================
+  # DATABASE & CACHE
+  # ============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: wise2-postgres-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-secure_postgres_admin_2026}
+      POSTGRES_DB: postgres
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./infrastructure/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_wal:/var/lib/postgresql/wal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: wise2-redis-prod
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+    command: redis-server --bind 127.0.0.1 --requirepass ${REDIS_PASSWORD:-password}
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7
+    container_name: wise2-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-secure_password_2026}
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================================================
+  # BACKEND API
+  # ============================================================================
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    container_name: wise2-api-prod
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      API_PORT: 3001
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${POSTGRES_APP_USER:-wise2_prod_user}
+      DB_PASSWORD: ${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}
+      DB_NAME: wise2_core_prod
+      DATABASE_URL: postgresql://wise2_prod_user:wise2_prod_secure_2026@postgres:5432/wise2_core_prod
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production-to-secure-random-string}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://localhost:3002,http://localhost:3003,http://localhost:3005}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+    ports:
+      - "127.0.0.1:3010:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================================================
+  # AI & INFERENCE
+  # ============================================================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wise2-ollama-prod
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - default
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.10.2
+    container_name: wise2-open-webui-prod
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_API_BASE_URL: http://host.docker.internal:11434
+      WEBUI_SECRET_KEY: ${OPEN_WEBUI_SECRET_KEY:-change-this-to-random-secret-in-production}
+      WEBUI_AUTH: "true"
+      WEBUI_AUTH_TRUSTED_EMAIL_HEADER: X-Remote-User
+      WEBUI_MAIN_API_URL: http://open-webui:8080
+      ENABLE_OLLAMA_API: "true"
+      ENABLE_OPENAI_API: "true"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      DATABASE_URL: postgresql://wise2_webui:webui_password_2026@postgres:5432/wise2_webui
+    ports:
+      - "127.0.0.1:3020:8080"
+    volumes:
+      - open_webui_data:/app/backend/data
+    networks:
+      - default
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================================================
+  # FRONTEND APPLICATIONS
+  # ============================================================================
+  website:
+    build:
+      context: .
+      dockerfile: apps/website/Dockerfile
+    container_name: wise2-website-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3011:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    container_name: wise2-dashboard-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3002:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: wise2-admin-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3003:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  studio:
+    build:
+      context: .
+      dockerfile: apps/studio/Dockerfile
+    container_name: wise2-studio-prod
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3005:3003"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  command-center:
+    build:
+      context: .
+      dockerfile: apps/command-center/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-wss://api.wise2.net}
+        NEXT_PUBLIC_LOGIN_URL: ${NEXT_PUBLIC_LOGIN_URL:-https://wise2.net/command-center/login}
+    container_name: wise2-command-center-prod
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:3004:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================================================
+  # BACKGROUND JOBS & WORKERS
+  # ============================================================================
+  worker:
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
+    container_name: wise2-worker-content-prod
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD:-password}@redis:6379
+      DATABASE_URL: postgresql://wise2_prod_user:${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+      JWT_SECRET: ${JWT_SECRET}
+      COMMAND_CENTER_URL: http://command-center:3000
+      EVENTS_SECRET: ${EVENTS_SECRET}
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY}
+      CONTENT_STORAGE_PROVIDER: ${CONTENT_STORAGE_PROVIDER:-s3}
+      CONTENT_STORAGE_BUCKET: ${CONTENT_STORAGE_BUCKET:-wise2-content}
+      CONTENT_STORAGE_ENDPOINT: ${CONTENT_STORAGE_ENDPOINT}
+      CONTENT_STORAGE_REGION: ${CONTENT_STORAGE_REGION:-us-east-1}
+      CONTENT_STORAGE_ACCESS_KEY: ${CONTENT_STORAGE_ACCESS_KEY}
+      CONTENT_STORAGE_SECRET_KEY: ${CONTENT_STORAGE_SECRET_KEY}
+      FFMPEG_PATH: /usr/bin/ffmpeg
+      FFPROBE_PATH: /usr/bin/ffprobe
+      CONTENT_MAX_RENDER_TIMEOUT_MS: 600000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - /tmp/wise-content:/tmp/wise-content
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('ioredis')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================================================
+  # MONITORING & OBSERVABILITY
+  # ============================================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wise2-prometheus-prod
+    volumes:
+      - ./infrastructure/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.listen-address=127.0.0.1:9090'
+    ports:
+      - "127.0.0.1:9090:9090"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wise2-grafana-prod
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-}
+      GF_SERVER_ROOT_URL: https://grafana.wise2.net
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3100:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+  postgres_wal:
+    driver: local
+  redis_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  ollama_data:
+    driver: local
+  open_webui_data:
+    driver: local
+
+networks:
+  default:
+    name: wise2-prod-network
+    driver: bridge

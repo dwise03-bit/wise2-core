@@ -1,0 +1,77 @@
+# WISE² API - Raspberry Pi Optimized Build
+# Multi-stage build to minimize final image size
+# Target: Arm64 (Raspberry Pi 3B+)
+
+# ============================================================================
+# Stage 1: Builder
+# ============================================================================
+FROM node:20-alpine AS builder
+
+WORKDIR /build
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* package-lock.json* ./
+COPY packages ./packages
+COPY services/api ./services/api
+
+# Install dependencies
+RUN npm install -g pnpm && \
+    pnpm install --frozen-lockfile
+
+# Build API
+WORKDIR /build/services/api
+RUN pnpm run build 2>&1 || true
+
+# ============================================================================
+# Stage 2: Runtime (Minimal)
+# ============================================================================
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install runtime dependencies only
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy built application
+COPY --from=builder /build/node_modules ./node_modules
+COPY --from=builder /build/services/api/dist ./dist
+COPY --from=builder /build/services/api/src ./src
+COPY --from=builder /build/services/api/package.json ./
+
+# Copy configuration
+COPY pi/config/api.env ./.env.production
+
+# Create data directory
+RUN mkdir -p /data && chown nodejs:nodejs /data
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port
+EXPOSE 3000
+
+# Use dumb-init to properly handle signals
+ENTRYPOINT ["/sbin/dumb-init", "--"]
+
+# Start application
+CMD ["node", "dist/main.js"]

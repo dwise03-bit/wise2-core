@@ -1,0 +1,48 @@
+# WISE² REVENUE API CANDIDATE
+# P0 Revenue Build: SaaS subscriptions + Prospects CRM
+# Zero source mutation, selective compilation via tsconfig.revenue.json
+
+FROM node:20-slim AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
+
+# Copy monorepo manifests
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+
+# Copy packages
+COPY packages/api packages/api/
+COPY packages/db packages/db/
+
+# Install dependencies
+RUN npm install -g pnpm && pnpm install --frozen-lockfile --recursive
+
+# Generate Prisma client
+WORKDIR /app/packages/db
+RUN pnpm exec prisma generate
+
+# Build revenue candidate (P0-only via tsconfig.revenue.json)
+WORKDIR /app/packages/api
+RUN pnpm run build:revenue
+
+# Runtime image
+FROM node:20-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/* && npm install -g pnpm
+
+# Copy entire monorepo structure for pnpm
+COPY --from=builder /app /app
+
+# Recreate pnpm symlinks in runtime
+RUN pnpm install --offline --frozen-lockfile --recursive 2>/dev/null || true
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3001/api/health || exit 1
+
+CMD ["node", "packages/api/dist-revenue/main.p0.js"]

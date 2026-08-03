@@ -1,0 +1,65 @@
+# Ansible Inventory for WISE² Edge Appliance Deployment
+# Define your Raspberry Pi edge nodes here
+
+all:
+  vars:
+    # Repository configuration
+    wise2_repo_url: https://github.com/wise2/wise2-core.git
+    wise2_repo_branch: main
+
+    # Cloud configuration
+    cloud_url: https://api.wise2.cloud
+    api_key: "{{ vault_api_key }}" # Use Ansible vault for secrets
+
+    # Admin contact for health reports
+    admin_email: admin@wise2.cloud
+
+    # Ansible configuration
+    ansible_user: pi
+    ansible_password: "{{ vault_raspberry_password }}"
+    ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+
+  children:
+    edge_nodes:
+      hosts:
+        edge-node-1:
+          ansible_host: 192.168.1.100
+          node_id: edge-node-1
+          location: office
+
+        edge-node-2:
+          ansible_host: 192.168.1.101
+          node_id: edge-node-2
+          location: warehouse
+
+        edge-node-3:
+          ansible_host: 192.168.1.102
+          node_id: edge-node-3
+          location: factory
+
+      vars:
+        # Override Node.js version for specific nodes
+        node_version: "20.10.0"
+
+        # WireGuard VPN configuration
+        wireguard_private_key: "{{ vault_wireguard_key }}"
+        wireguard_address: "10.0.0.{{ groups['edge_nodes'].index(inventory_hostname) + 2 }}/32"
+        wireguard_server: vpn.wise2.cloud
+        wireguard_port: 51820
+
+    # Subset for quick deployments
+    edge_primary:
+      hosts:
+        - edge-node-1
+
+    # Subset for canary deployments
+    edge_canary:
+      hosts:
+        - edge-node-2
+
+    # Subset for production
+    edge_production:
+      hosts:
+        - edge-node-1
+        - edge-node-2
+        - edge-node-3

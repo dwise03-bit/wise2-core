@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise² Core - Corporate Style</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #f5f5f5; }
+        .flyer {
+            width: 8.5in; height: 11in; margin: 20px auto; background: white; display: grid;
+            grid-template-rows: 0.9in 0.6in 1fr 0.6in; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .header {
+            background: linear-gradient(to right, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 0.4in; display: flex; align-items: center; gap: 0.2in;
+        }
+        .logo-box { font-size: 2.5em; font-weight: 900; color: #999; }
+        .header-text { color: white; }
+        .header-title { font-size: 1.2em; font-weight: bold; letter-spacing: 2px; }
+        .header-sub { font-size: 0.7em; color: #ccc; margin-top: 0.05in; }
+        .stats {
+            background: #f9f9f9; padding: 0.3in 0.4in; display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0.2in; border-bottom: 2px solid #1a1a1a;
+        }
+        .stat { text-align: center; }
+        .stat-num { font-size: 1.4em; font-weight: bold; color: #1a1a1a; }
+        .stat-label { font-size: 0.65em; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .content { padding: 0.4in; display: flex; flex-direction: column; justify-content: center; }
+        .headline { font-size: 1.8em; color: #1a1a1a; margin-bottom: 0.2in; font-weight: bold; }
+        .copy { font-size: 0.9em; color: #333; line-height: 1.6; margin-bottom: 0.2in; }
+        .benefits {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.2in; margin-top: 0.2in;
+        }
+        .benefit { font-size: 0.8em; color: #555; }
+        .benefit::before { content: "■ "; color: #0066CC; margin-right: 0.1in; font-weight: bold; }
+        .footer {
+            background: #1a1a1a; color: white; padding: 0.25in 0.4in; font-size: 0.8em;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 0.2in; align-items: center;
+        }
+        .footer-left { }
+        .footer-right { text-align: right; }
+        @media print { .flyer { box-shadow: none; margin: 0; } }
+    </style>
+</head>
+<body>
+    <div class="flyer">
+        <div class="header">
+            <div class="logo-box">W²</div>
+            <div class="header-text">
+                <div class="header-title">WISE² CORE</div>
+                <div class="header-sub">Enterprise Foundation Platform</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">7,250+</div>
+                <div class="stat-label">Lines of Code</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">5 min</div>
+                <div class="stat-label">Setup Time</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">99.9%</div>
+                <div class="stat-label">Uptime Design</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <h1 class="headline">Zero Technical Debt. Complete Infrastructure.</h1>
+            <p class="copy">Wise² delivers production-ready enterprise foundation with integrated security, automation, and monitoring. Ship with confidence.</p>
+            <div class="benefits">
+                <div class="benefit">Enterprise RBAC</div>
+                <div class="benefit">CI/CD Pipeline</div>
+                <div class="benefit">Automated Testing</div>
+                <div class="benefit">Daily Backups</div>
+                <div class="benefit">Monitoring Ready</div>
+                <div class="benefit">Full Documentation</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-left">
+                <strong>github.com/dwise03-bit/wise2-core</strong>
+            </div>
+            <div class="footer-right">
+                Phase 1 ✓ | Phase 2 Ready
+            </div>
+        </div>
+    </div>
+</body>
+</html>

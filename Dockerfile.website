@@ -1,0 +1,44 @@
+# Next.js Website Dockerfile
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+COPY pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml ./
+
+# Copy all workspace package.json files
+COPY apps/website/package.json ./apps/website/
+COPY apps/dashboard/package.json ./apps/dashboard/
+COPY apps/admin/package.json ./apps/admin/
+COPY packages/db/package.json ./packages/db/
+COPY packages/api/package.json ./packages/api/
+
+RUN pnpm install --frozen-lockfile
+
+COPY apps/website ./apps/website
+COPY packages/db ./packages/db
+
+RUN pnpm --filter @wise2/website build
+
+# Production image
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/apps/website ./apps/website
+COPY --from=builder /app/packages/db ./packages/db
+
+RUN pnpm install --frozen-lockfile --production
+
+EXPOSE 3001
+
+CMD ["pnpm", "--filter", "@wise2/website", "start"]

@@ -1,0 +1,48 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm type-check
+      - run: pnpm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker images
+        run: |
+          docker build -t wise2-api:${{ github.ref_name }} -f Dockerfile.api .
+          docker build -t wise2-website:${{ github.ref_name }} -f Dockerfile.website .
+      - name: Push to registry
+        run: |
+          docker push wise2-api:${{ github.ref_name }}
+          docker push wise2-website:${{ github.ref_name }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying ${{ github.ref_name }} to production"
+          # Deploy via SSH to production server
+      - name: Health check
+        run: |
+          curl -f https://api.wise2.com/health || exit 1

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise² Core - Bold Dynamic Style</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial Black', sans-serif; background: #f5f5f5; }
+        .flyer {
+            width: 8.5in; height: 11in; margin: 20px auto; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: grid; grid-template-rows: 1.2in 1fr 0.7in; box-shadow: 0 20px 60px rgba(0,0,0,0.4); color: white;
+        }
+        .header {
+            padding: 0.3in; display: grid; grid-template-columns: 1.5in 1fr; gap: 0.2in; align-items: center;
+            background: linear-gradient(135deg, #0066CC 0%, #00B4FF 100%); clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+        }
+        .logo { font-size: 3.5em; font-weight: 900; color: white; text-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .header-text h1 { font-size: 1.8em; font-weight: 900; margin-bottom: 0.05in; }
+        .header-text p { font-size: 0.7em; font-weight: bold; letter-spacing: 2px; }
+        .content {
+            padding: 0.4in; display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .content::before {
+            content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,180,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .content > * { position: relative; z-index: 2; }
+        .headline {
+            font-size: 2.1em; font-weight: 900; margin-bottom: 0.2in; line-height: 1.1;
+            background: linear-gradient(135deg, #00B4FF 0%, #00FF88 100%); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stats {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.15in; margin-bottom: 0.2in;
+        }
+        .stat {
+            background: rgba(0,180,255,0.2); padding: 0.12in; border-left: 3px solid #00B4FF;
+            border-radius: 4px;
+        }
+        .stat-num { font-size: 1.3em; font-weight: 900; color: #00FF88; }
+        .stat-label { font-size: 0.65em; color: #aaa; margin-top: 0.05in; }
+        .cta { font-size: 1.1em; font-weight: 900; color: #00FF88; text-transform: uppercase; letter-spacing: 2px; }
+        .footer {
+            background: linear-gradient(90deg, #0066CC 0%, #00B4FF 100%); padding: 0.25in 0.4in;
+            text-align: center; font-size: 0.85em; font-weight: bold;
+        }
+        @media print { .flyer { box-shadow: none; margin: 0; } }
+    </style>
+</head>
+<body>
+    <div class="flyer">
+        <div class="header">
+            <div class="logo">W²</div>
+            <div class="header-text">
+                <h1>WISE²</h1>
+                <p>Enterprise Foundation • Production Ready</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2 class="headline">Ship Enterprise-Grade Code in 3 Weeks</h2>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num">7K+</div>
+                    <div class="stat-label">LOC</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">5 min</div>
+                    <div class="stat-label">Setup</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">80%+</div>
+                    <div class="stat-label">Tests</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+            <div class="cta">✓ Security • ✓ Testing • ✓ Deployment • ✓ Monitoring</div>
+        </div>
+
+        <div class="footer">
+            github.com/dwise03-bit/wise2-core | PHASE 1 COMPLETE ✓
+        </div>
+    </div>
+</body>
+</html>

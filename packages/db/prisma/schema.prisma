@@ -1,0 +1,2126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         UserRole @default(CUSTOMER)
+
+  // Relationships
+  subscription      Subscription?
+  projects          Project[]
+  podcastProjects   PodcastProject[]   @relation("podcastProjects")
+  soundLabsProjects SoundLabsProject[] @relation("soundLabsProjects")
+  usageRecords      UsageRecord[]      @relation("usageRecords")
+
+  // Collaboration relationships
+  collaborations  ProjectCollaborator[] @relation("collaborations")
+  sentInvites     ProjectInvite[]       @relation("sentInvites")
+  acceptedInvites ProjectInvite[]       @relation("acceptedInvites")
+  comments        ProjectComment[]      @relation("comments")
+  activities      ActivityLog[]         @relation("activities")
+  versions        VersionHistory[]      @relation("versions")
+  presence        UserPresence[]        @relation("presence")
+
+  // Consulting relationships
+  consultingBookings Booking[] @relation("consultingBookings")
+
+  // Print Shop relationships
+  printFiles PrintFile[] @relation("printFileUploader")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  FOUNDER
+}
+
+// Subscriptions/Billing
+model Subscription {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  status               SubscriptionStatus @default(ACTIVE)
+  plan                 PricingPlan        @default(FREE)
+
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  canceledAt         DateTime?
+  trialEndsAt        DateTime?
+
+  // Usage tracking
+  generationsThisMonth Int      @default(0)
+  lastResetDate        DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship to usage logs
+  usageLogs UsageLog[]
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  INACTIVE
+}
+
+enum PricingPlan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+// Track generation usage for feature gating
+model UsageLog {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  generationType String // "music_generation", "podcast_generation", etc.
+  creditsUsed    Int    @default(1)
+  metadata       Json?
+
+  createdAt DateTime @default(now())
+}
+
+// Projects
+model Project {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String  @db.Text
+  budget      Float?
+  timeline    String?
+
+  status ProjectStatus @default(IDEA)
+
+  // Project details
+  category String?
+  tags     String[]
+  fileUrl  String?
+
+  // Pipeline tracking
+  updates ProjectUpdate[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProjectStatus {
+  IDEA
+  DECIPHER
+  EXECUTE
+  HUMAN_REVIEW
+  APPROVED
+  DELIVERED
+  REJECTED
+}
+
+model ProjectUpdate {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  status    ProjectStatus
+  message   String        @db.Text
+  timestamp DateTime      @default(now())
+}
+
+// Notifications
+model Notification {
+  id     String @id @default(cuid())
+  userId String
+
+  type    String // "project_approved", "project_submitted", etc.
+  title   String
+  message String  @db.Text
+  read    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+// Podcast Music - Podcast Projects
+model PodcastProject {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("podcastProjects", fields: [userId], references: [id], onDelete: Cascade)
+
+  title        String
+  description  String? @db.Text
+  thumbnailUrl String?
+
+  // Podcast details
+  podcastName     String
+  podcastCategory String?
+  episodeNumber   Int?
+  releaseDate     DateTime?
+
+  // Music generation settings
+  mood     String? // "upbeat", "calm", "dramatic", etc.
+  duration Int? // in seconds
+  genre    String? // "pop", "electronic", "orchestral", etc.
+
+  status PodcastProjectStatus @default(DRAFT)
+
+  // Generated content
+  musicGenerations AudioGeneration[]
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PodcastProjectStatus {
+  DRAFT
+  GENERATING
+  READY
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// AI Audio Generation Jobs
+model AudioGeneration {
+  id               String         @id @default(cuid())
+  podcastProjectId String
+  podcastProject   PodcastProject @relation(fields: [podcastProjectId], references: [id], onDelete: Cascade)
+
+  // Job tracking
+  jobId    String?          @unique // AI service job ID
+  status   GenerationStatus @default(PENDING)
+  progress Int              @default(0) // 0-100
+
+  // Generation parameters
+  prompt  String @db.Text
+  aiModel String @default("default")
+  seed    Int?
+
+  // Output
+  audioUrl      String? // S3 or similar storage URL
+  audioFileSize Int? // bytes
+  duration      Int? // seconds
+  waveformData  String? // JSON array of amplitude values
+
+  // Error handling
+  errorMessage String? @db.Text
+  retryCount   Int     @default(0)
+  maxRetries   Int     @default(3)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+}
+
+enum GenerationStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// Usage tracking for billing
+model UsageRecord {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("usageRecords", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage type
+  type   UsageType
+  amount Int // credits or units used
+
+  // Reference
+  podcastProjectId  String?
+  audioGenerationId String?
+
+  // Billing
+  costInCents Int // cost in cents (USD)
+
+  createdAt DateTime @default(now())
+}
+
+enum UsageType {
+  AUDIO_GENERATION
+  STORAGE
+  API_CALL
+}
+
+// SoundLabs Studio Projects
+model SoundLabsProject {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("soundLabsProjects", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Project metadata
+  name        String
+  description String? @db.Text
+
+  // Mixer state (saved as JSON)
+  // Contains: tracks array, track settings, master volume, BPM, playback position
+  mixerState Json @default("{}")
+
+  // Recordings associated with this project
+  recordings SoundLabsRecording[]
+
+  // Collaboration data
+  collaborators ProjectCollaborator[] @relation("collaborators")
+  invites       ProjectInvite[]       @relation("invites")
+  comments      ProjectComment[]      @relation("comments")
+  activityLog   ActivityLog[]         @relation("activityLog")
+  versions      VersionHistory[]      @relation("versions")
+  presence      UserPresence[]        @relation("presence")
+
+  // Storage info
+  projectSize Int @default(0) // bytes
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Audio Recordings for SoundLabs Projects
+model SoundLabsRecording {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Recording metadata
+  name        String
+  description String? @db.Text
+
+  // S3 storage
+  s3Url    String @db.Text // Full S3 URL for the recording
+  s3Key    String @db.Text // S3 object key
+  fileSize Int // bytes
+  duration Int? // seconds
+
+  // Upload status
+  uploadStatus   UploadStatus @default(PENDING)
+  uploadProgress Int          @default(0) // 0-100
+  uploadError    String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UploadStatus {
+  PENDING
+  UPLOADING
+  COMPLETED
+  FAILED
+}
+
+// ===== REAL-TIME COLLABORATION SYSTEM =====
+
+// ProjectCollaborator: Track collaborators and their roles
+model ProjectCollaborator {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("collaborators", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("collaborations", fields: [userId], references: [id], onDelete: Cascade)
+
+  role         CollaboratorRole @default(EDITOR)
+  permissions  String[]         @default([])
+  joinedAt     DateTime         @default(now())
+  lastActiveAt DateTime         @default(now())
+  status       String           @default("active")
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+enum CollaboratorRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+// ProjectInvite: Shareable invitations for projects
+model ProjectInvite {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("invites", fields: [projectId], references: [id], onDelete: Cascade)
+
+  invitedBy     String
+  invitedByUser User   @relation("sentInvites", fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  invitedEmail String
+  token        String           @unique
+  role         CollaboratorRole @default(EDITOR)
+
+  expiresAt      DateTime?
+  acceptedAt     DateTime?
+  acceptedBy     String?
+  acceptedByUser User?     @relation("acceptedInvites", fields: [acceptedBy], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([token])
+}
+
+// ProjectComment: Comments and annotations on projects
+model ProjectComment {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("comments", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("comments", fields: [userId], references: [id], onDelete: Cascade)
+
+  content   String  @db.Text
+  timestamp Float? // in seconds, for audio timeline
+  trackId   String? // which track this comment is on
+  threadId  String? // for threaded comments
+
+  mentions  String[] @default([])
+  reactions Json     @default("{}")
+  resolved  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([threadId])
+  @@index([userId])
+}
+
+// ActivityLog: Comprehensive audit trail
+model ActivityLog {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("activityLog", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("activities", fields: [userId], references: [id], onDelete: Cascade)
+
+  action     String // "volume_changed", "track_added", "comment_added", etc.
+  entityType String // "track", "mixer", "gallery", "comment", etc.
+  entityId   String?
+  details    Json    @default("{}")
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// VersionHistory: Track project snapshots for version control
+model VersionHistory {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("versions", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("versions", fields: [userId], references: [id], onDelete: Cascade)
+
+  snapshot  Json // Full project state
+  label     String? // User-provided label like "Final Mix v2"
+  changeLog String? @db.Text // Description of changes
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([createdAt])
+}
+
+// UserPresence: Track active collaborators (real-time)
+model UserPresence {
+  id        String           @id @default(cuid())
+  projectId String
+  project   SoundLabsProject @relation("presence", fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("presence", fields: [userId], references: [id], onDelete: Cascade)
+
+  status         String   @default("online") // "online", "away", "idle"
+  cursorPosition Json? // { x, y, track, time }
+  editingTrackId String?
+  lastHeartbeat  DateTime @default(now())
+  socketId       String?
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+}
+
+// ===== AI CONSULTING SERVICES SYSTEM =====
+
+// ConsultingService: Available consulting service types
+model ConsultingService {
+  id          String   @id @default(cuid())
+  name        String   // "AI Strategy Consulting", "Implementation", etc.
+  description String   @db.Text
+  hourlyRate  Float
+  minHours    Int      @default(1)
+  maxHours    Int?
+  tags        String[] // ["strategy", "implementation", "training", "audit"]
+  icon        String? // Icon name for UI
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  consultants ConsultantService[]
+  bookings    Booking[]
+}
+
+// Consultant: WISE² AI consultants
+model Consultant {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  bio       String?  @db.Text
+  expertise String[] // ["AI Strategy", "Prompt Engineering", etc.]
+  hourlyRate Float
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  availability CalendarAvailability[]
+  services     ConsultantService[]
+  bookings     Booking[]
+}
+
+// ConsultantService: Junction model between Consultant and ConsultingService
+model ConsultantService {
+  id                String            @id @default(cuid())
+  consultantId      String
+  consultant        Consultant        @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  serviceId         String
+  service           ConsultingService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  customHourlyRate  Float? // Override hourly rate for this service/consultant combo
+  capacity          Int               @default(10) // Max concurrent bookings
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([consultantId, serviceId])
+  @@index([consultantId])
+  @@index([serviceId])
+}
+
+// CalendarAvailability: Recurring/one-time availability slots
+model CalendarAvailability {
+  id          String  @id @default(cuid())
+  consultantId String
+  consultant   Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int     // 0-6 (Monday-Sunday), or -1 for one-time
+  startTime   String  // "09:00" (24-hour format)
+  endTime     String  // "17:00"
+  timezone    String  @default("UTC")
+  isRecurring Boolean @default(true)
+  validFrom   DateTime? // Start date for recurring availability
+  validTo     DateTime? // End date for recurring availability
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([consultantId])
+}
+
+// Booking: Consulting session bookings
+model Booking {
+  id                    String            @id @default(cuid())
+  userId                String
+  user                  User              @relation("consultingBookings", fields: [userId], references: [id], onDelete: Cascade)
+  serviceId             String
+  service               ConsultingService @relation(fields: [serviceId], references: [id])
+  consultantId          String
+  consultant            Consultant        @relation(fields: [consultantId], references: [id])
+
+  startTime             DateTime
+  endTime               DateTime
+  durationHours         Float
+  status                String            @default("scheduled") // scheduled, in_progress, completed, cancelled, no_show
+  totalPrice            Float
+  stripePaymentIntentId String?
+  paymentStatus         String            @default("pending") // pending, succeeded, failed, refunded
+  meetingLink           String?
+  notes                 String?           @db.Text
+  consultantNotes       String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  postCallSummary PostCallSummary?
+  consultingAuditSession ConsultingAuditSession?
+
+  @@index([userId])
+  @@index([consultantId])
+  @@index([serviceId])
+  @@index([startTime])
+}
+
+// PostCallSummary: AI-generated post-call summaries and action items
+model PostCallSummary {
+  id            String   @id @default(cuid())
+  bookingId     String   @unique
+  booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  recordingUrl  String?  @db.Text
+  transcript    String?  @db.Text
+  summary       String   @db.Text
+  followUpDate  DateTime?
+  followUpNotes String?  @db.Text
+  sentAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  actionItems ActionItem[]
+
+  @@index([bookingId])
+}
+
+// ActionItem: Individual action items from post-call summary
+model ActionItem {
+  id          String          @id @default(cuid())
+  summaryId   String
+  summary     PostCallSummary @relation(fields: [summaryId], references: [id], onDelete: Cascade)
+  title       String
+  description String?         @db.Text
+  owner       String? // "user" or "consultant"
+  dueDate     DateTime?
+  completed   Boolean         @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([summaryId])
+}
+
+// ===== PROSPECT INTAKE & CRM SYSTEM =====
+
+// Prospect: Sales prospect/lead management
+model Prospect {
+  id                String   @id @default(cuid())
+
+  // Contact information
+  businessName      String
+  contactName       String
+  email             String   @unique
+  phone             String?
+  website           String?
+
+  // Business details
+  industry          String?
+  primaryProblem    String   @db.Text
+  leadSource        String   @default("DIRECT") // DIRECT, REFERRAL, WEBSITE, CONTENT, PARTNERSHIP, OTHER
+
+  // Sales tracking
+  estimatedOpportunity Float  @default(0) // in dollars
+  status            ProspectStatus @default(NEW) // NEW, CONTACTED, QUALIFIED, AUDIT_SCHEDULED, AUDIT_COMPLETE, PROPOSAL_SENT, WON, LOST
+
+  // Additional fields
+  notes             String?  @db.Text
+  tags              String[] @default([])
+
+  // Conversion tracking
+  auditScheduledAt  DateTime?
+  auditCompletedAt  DateTime?
+  proposalSentAt    DateTime?
+  wonAt             DateTime?
+  lostAt            DateTime?
+  lostReason        String?  @db.Text
+
+  // Relationships
+  auditSession      AuditSession?
+  proposals         Proposal[]
+
+  // Metadata
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+  @@index([estimatedOpportunity])
+}
+
+enum ProspectStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  AUDIT_SCHEDULED
+  AUDIT_COMPLETE
+  PROPOSAL_SENT
+  WON
+  LOST
+}
+
+// ===== CUSTOMER MANAGEMENT =====
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  CHURNED
+}
+
+model Customer {
+  id              String         @id @default(cuid())
+  businessName    String
+  contactName     String
+  email           String         @unique
+  phone           String?
+  website         String?
+  industry        String?
+  notes           String?        @db.Text
+  tags            String[]       @default([])
+  status          CustomerStatus @default(ACTIVE)
+  mrr             Float          @default(0)
+  prospectId      String?        @unique
+  userId          String?
+  convertedAt     DateTime       @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+// ===== GALLERY / ASSET MANAGEMENT =====
+
+enum AssetType {
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
+}
+
+model GalleryAsset {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  assetType   AssetType
+  storagePath String
+  url         String?
+  userId      String
+  sourceModule String?
+  sourceId    String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([assetType])
+  @@index([sourceModule, sourceId])
+}
+
+// ===== AI AUDIT & FINDINGS SYSTEM =====
+
+// AuditSession: AI-powered sales audit of a prospect
+model AuditSession {
+  id          String   @id @default(cuid())
+  prospectId  String   @unique
+  prospect    Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+
+  // Audit metadata
+  status      AuditStatus @default(SCHEDULED)
+
+  // Audit data
+  transcriptUrl      String? @db.Text
+  transcript         String? @db.Text
+  auditNotes         String? @db.Text
+  auditedAt          DateTime?
+
+  // AI Analysis
+  analysisStatus     AnalysisStatus @default(PENDING)
+  analysisErrorMsg   String?
+  analyzedAt         DateTime?
+
+  // Readiness score (0-100)
+  aiReadinessScore   Int?
+  scoreDetails       Json? // { "techStack": 45, "processAutomation": 62, ... }
+
+  // Financial summary
+  totalMoneyLeaks    Float @default(0)
+  estimatedROI       Float @default(0)
+
+  // Findings
+  findings           Finding[]
+
+  // Proposals
+  proposals          Proposal[]
+
+  // Metadata
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([prospectId])
+  @@index([status])
+  @@index([analysisStatus])
+}
+
+enum AuditStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  ANALYZED
+}
+
+enum AnalysisStatus {
+  PENDING
+  ANALYZING
+  COMPLETED
+  FAILED
+}
+
+// Finding: Individual finding from audit analysis
+model Finding {
+  id              String         @id @default(cuid())
+  auditSessionId  String
+  auditSession    AuditSession   @relation(fields: [auditSessionId], references: [id], onDelete: Cascade)
+
+  // Details
+  title           String
+  description     String         @db.Text
+  category        FindingCategory
+  severity        FindingSeverity
+
+  // Evidence
+  evidenceSnippet String?        @db.Text
+  evidenceUrl     String?
+
+  // Impact
+  estimatedAnnualImpact Float?
+  implementationDays Int?
+
+  // Recommendation
+  recommendedAction String @db.Text
+
+  // Metadata
+  isCustom        Boolean @default(false)
+  isHidden        Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([auditSessionId])
+  @@index([category])
+  @@index([severity])
+}
+
+enum FindingCategory {
+  COST_LEAK
+  PROCESS_GAP
+  AUTOMATION_OPPORTUNITY
+  SECURITY_RISK
+  COMPLIANCE_ISSUE
+  DATA_QUALITY_ISSUE
+  OTHER
+}
+
+enum FindingSeverity {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ServiceCatalogItem: Available consulting services for proposals
+model ServiceCatalogItem {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  description         String   @db.Text
+  category            String   // "audit", "automation", "strategy", "training"
+
+  // Pricing
+  setupPrice          Float @default(0)
+  monthlyPrice        Float @default(0)
+  annualPrice         Float?
+
+  // Implementation
+  implementationDays  Int?
+
+  // Expected outcomes
+  expectedOutcomes    String[] @default([])
+
+  // Configuration
+  isActive            Boolean @default(true)
+  displayOrder        Int @default(0)
+
+  // Metadata
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+// Proposal: Sales proposal generated from audit findings
+model Proposal {
+  id                  String   @id @default(cuid())
+  prospectId          String
+  prospect            Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  auditSessionId      String?
+  auditSession        AuditSession? @relation(fields: [auditSessionId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  title               String
+  status              ProposalStatus @default(DRAFT)
+
+  // Content
+  summary             String   @db.Text
+  problemStatement    String   @db.Text
+  proposedSolution    String   @db.Text
+  expectedOutcomes    String[] @default([])
+
+  // Financial
+  totalSetupPrice     Float @default(0)
+  totalMonthlyPrice   Float @default(0)
+  setupPriceDiscount  Float @default(0)
+  monthlyPriceDiscount Float @default(0)
+  estimatedROI        Float?
+  paybackPeriodMonths Float?
+
+  // Line items
+  lineItems           ProposalLineItem[]
+
+  // Tracking
+  sentAt              DateTime?
+  viewedAt            DateTime?
+  acceptedAt          DateTime?
+  declinedAt          DateTime?
+  declineReason       String? @db.Text
+
+  // Metadata
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([prospectId])
+  @@index([auditSessionId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  DECLINED
+}
+
+// ProposalLineItem: Individual service in a proposal
+model ProposalLineItem {
+  id                  String   @id @default(cuid())
+  proposalId          String
+  proposal            Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  serviceId           String?
+  serviceName         String   // Copy of service name
+
+  // Pricing
+  setupPrice          Float @default(0)
+  monthlyPrice        Float @default(0)
+  quantity            Int @default(1)
+
+  // Customization
+  description         String? @db.Text
+  implementationDays  Int?
+
+  // Metadata
+  displayOrder        Int @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([proposalId])
+  @@index([serviceId])
+}
+
+// ===== CONSULTING AUDIT RECORDING & EVIDENCE SYSTEM =====
+
+// ConsultingAuditSession: Container for recording evidence during consulting engagements
+model ConsultingAuditSession {
+  id                String            @id @default(cuid())
+  bookingId         String            @unique
+  booking           Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  // Link to consulting client
+  clientId          String?
+  client            ConsultingClient? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Audit details
+  clientName        String
+  auditTopic        String            @db.Text
+  status            ConsultingAuditSessionStatus @default(SCHEDULED)
+
+  // Timing
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  // AI-generated summary
+  summary           String?           @db.Text
+  summaryStatus     ConsultingSummaryStatus @default(PENDING)
+  summaryApprovedBy String?
+  summaryApprovedAt DateTime?
+
+  // Recordings
+  recordings        ConsultingRecording[]
+
+  // Metadata
+  notes             String?           @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bookingId])
+  @@index([clientId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+
+// ConsultingRecording: Individual audio/video recordings for evidence
+model ConsultingRecording {
+  id                    String           @id @default(cuid())
+  sessionId             String
+  session               ConsultingAuditSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Recording metadata
+  filename              String
+  type                  ConsultingRecordingType @default(AUDIO)
+  duration              Int?
+  fileSize              Int?
+
+  // S3 Storage
+  s3Url                 String?          @db.Text
+  s3Key                 String?          @db.Text
+
+  // Upload tracking
+  uploadStatus          UploadStatus     @default(PENDING)
+  uploadProgress        Int              @default(0)
+  uploadError           String?
+
+  // Transcription
+  transcriptionStatus   TranscriptionStatus @default(PENDING)
+  transcriptionJobId    String?
+  transcript            String?          @db.Text
+  transcriptionError    String?
+
+  // Moments
+  moments               ConsultingAuditMoment[]
+
+  // User notes
+  userNotes             String?          @db.Text
+
+  // Timestamps
+  recordedAt            DateTime         @default(now())
+  uploadedAt            DateTime?
+  transcribedAt         DateTime?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  // Retention
+  expiresAt             DateTime?
+  archivedAt            DateTime?
+
+  @@index([sessionId])
+  @@index([uploadStatus])
+  @@index([transcriptionStatus])
+  @@index([expiresAt])
+}
+
+
+// ConsultingAuditMoment: Marked moments in a recording
+model ConsultingAuditMoment {
+  id              String             @id @default(cuid())
+  recordingId     String
+  recording       ConsultingRecording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
+
+  // Moment details
+  label           String
+  description     String?            @db.Text
+  timestampMs     Int
+
+  // Categorization
+  category        String?
+  severity        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recordingId])
+  @@index([category])
+  @@index([severity])
+}
+
+// Enums for consulting audit system (defined in migrations)
+enum ConsultingAuditSessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum TranscriptionStatus {
+  PENDING
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ConsultingRecordingType {
+  AUDIO
+  VIDEO
+}
+
+enum ConsultingSummaryStatus {
+  PENDING
+  GENERATING
+  READY_FOR_REVIEW
+  APPROVED
+  REJECTED
+}
+
+// ===== LOCAL STREAM RECORDING SYSTEM =====
+
+// LocalStreamRecording: Metadata for locally recorded streams
+model LocalStreamRecording {
+  id        String   @id @default(cuid())
+
+  // Recording metadata
+  title     String
+  description String? @db.Text
+
+  // File information
+  filePath  String   @db.Text       // Local path: /recordings/{timestamp}-{uuid}
+  fileSize  Int                      // bytes
+  duration  Int?                     // seconds
+  format    RecordingFormat @default(MP4) // MP4, MKV
+
+  // Platform tracking
+  platform  String?                  // "youtube", "twitch", "facebook", "linkedin", "rtmp", "custom"
+  streamTitle String?
+
+  // Audio tracks
+  videoTrackPath   String? @db.Text // Path to video-only file
+  audioTrackPath   String? @db.Text // Path to audio-only file (for post-editing)
+  audioTracks      Json @default("[]") // Array of separate audio tracks with metadata
+
+  // File splitting (for >1GB auto-split)
+  isSplit          Boolean @default(false)
+  splitParts       Int @default(1)  // Total number of split files
+  parentRecordingId String?          // If this is a split part, reference parent
+
+  // Status tracking
+  status   RecordingStatus @default(IDLE)
+  quality  String @default("high") // "high", "medium", "low"
+  bitrate  Int @default(5000)      // kbps
+
+  // User association (optional, for multi-user systems)
+  userId   String?
+
+  // Timestamps
+  startedAt DateTime
+  stoppedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([platform])
+  @@index([status])
+  @@index([createdAt])
+  @@index([startedAt])
+}
+
+enum RecordingFormat {
+  MP4
+  MKV
+  WEBM
+}
+
+enum RecordingStatus {
+  IDLE
+  RECORDING
+  PAUSED
+  STOPPED
+  PROCESSING
+  FAILED
+}
+
+// Multistream configuration
+model MultistreamConfig {
+  id        String   @id @default(cuid())
+  userId    String?
+
+  name      String
+  description String? @db.Text
+
+  // Platform configurations (stored as JSON array)
+  // Structure: PlatformConfig[]
+  platforms Json     @default("[]")
+
+  // Global encoding settings
+  encodingPreset String @default("fast") // ultrafast, fast, medium, slow
+  videoBitrate   Int    @default(4500)   // kbps
+  audioBitrate   Int    @default(128)    // kbps
+  resolution     String @default("1080p") // 720p, 1080p, 1440p, 2160p
+  fps            Int    @default(30)      // 30 or 60
+
+  // Failover and recovery settings
+  enableFailover Boolean @default(true)
+  failoverDelay  Int     @default(5000)   // milliseconds
+
+  // Monitoring settings
+  enableMetrics  Boolean @default(true)
+  metricsInterval Int    @default(1000)   // milliseconds
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  sessions MultistreamSession[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Multistream session (historical record of a broadcast)
+model MultistreamSession {
+  id       String @id @default(cuid())
+  configId String
+  config   MultistreamConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  // Session timing
+  startedAt DateTime
+  stoppedAt DateTime?
+  duration  Int?     // seconds
+
+  // Platforms used in this session
+  platforms String[] // Array of platform names: ["twitch", "youtube", ...]
+
+  // Aggregate stats
+  totalViewers Int @default(0)
+  totalChatMessages Int? @default(0)
+
+  // Per-platform stats (stored as JSON)
+  // Structure: PlatformStats[]
+  platformStats Json @default("[]")
+
+  // Metadata
+  title     String?
+  category  String?
+  tags      String[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([configId])
+  @@index([startedAt])
+  @@index([createdAt])
+}
+
+// ===== WISE² CONSULTANT AUDIT OS =====
+
+// ConsultingClient: Client organization being audited
+model ConsultingClient {
+  id String @id @default(cuid())
+  workspaceId String
+
+  companyName String
+  industry String?
+  employees Int?
+  revenue String?
+  website String?
+
+  // Contact information
+  primaryContact String?
+  primaryContactEmail String?
+  primaryContactPhone String?
+
+  // Consulting status
+  status ConsultingStatus @default(INTAKE)
+  auditScore Int @default(0) // 0-100
+
+  // Research and intelligence
+  researchBrief String? @db.Text
+  competitors String? @db.Text // JSON array
+  marketContext String? @db.Text
+
+  // Relationships
+  contacts ConsultingContact[]
+  intakeResponses ConsultingIntakeResponse[]
+  sessions ConsultingAuditSession[]
+  consultingFindings ConsultingFinding[]
+  tasks ConsultingTask[]
+  research ConsultingResearchItem[]
+  plan ConsultingImplementationPlan?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId])
+  @@index([status])
+}
+
+enum ConsultingStatus {
+  INTAKE
+  PRE_MEETING_RESEARCH
+  MEETING_SCHEDULED
+  IN_MEETING
+  POST_MEETING_ANALYSIS
+  RECOMMENDATIONS_REVIEW
+  PLAN_GENERATION
+  PLAN_APPROVED
+  IMPLEMENTATION_STARTED
+  COMPLETED
+}
+
+// ConsultingContact: Contacts at the consulting client
+model ConsultingContact {
+  id String @id @default(cuid())
+  clientId String
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  name String
+  title String?
+  email String
+  phone String?
+  role String? // "primary_contact", "technical_contact", "finance_contact"
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// ConsultingIntakeForm: Template for intake questions
+model ConsultingIntakeForm {
+  id String @id @default(cuid())
+  workspaceId String
+
+  name String
+  description String? @db.Text
+
+  // Questions stored as JSON
+  questions Json @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+// ConsultingIntakeResponse: Answers to intake form
+model ConsultingIntakeResponse {
+  id String @id @default(cuid())
+  clientId String
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  formId String?
+
+  // Responses stored as JSON { questionId: answer }
+  responses Json @default("{}")
+
+  submittedAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// ConsultingSession: Link between client and audit session (aliased as meeting)
+// Uses existing ConsultingAuditSession table
+
+// ConsultingFinding: Consulting finding or recommendation
+model ConsultingFinding {
+  id String @id @default(cuid())
+  clientId String
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  title String
+  description String @db.Text
+
+  category String // "automation", "security", "revenue", "efficiency", "risk"
+  severity ConsultingFindingSeverity @default(MEDIUM)
+
+  source ConsultingFindingSource // "intake", "meeting", "research", "observation", "screen_analysis"
+  confidence Int @default(100) // 0-100
+
+  // Evidence
+  evidence String? @db.Text // URL or description
+  recordingTimestamp Int? // seconds into recording
+
+  // Status
+  status ConsultingFindingStatus @default(PENDING_APPROVAL)
+  approvedBy String?
+  approvedAt DateTime?
+
+  // Impact
+  impactType String? // "revenue", "savings", "speed", "risk", "experience"
+  estimatedValue Int? // dollars
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+}
+
+enum ConsultingFindingSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ConsultingFindingSource {
+  INTAKE
+  MEETING
+  RESEARCH
+  OBSERVATION
+  SCREEN_ANALYSIS
+  CONSULTANT
+}
+
+enum ConsultingFindingStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+// ConsultingTask: Task or action item
+model ConsultingTask {
+  id String @id @default(cuid())
+  clientId String
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  title String
+  description String? @db.Text
+
+  findingId String? // Link to finding if applicable
+
+  owner ConsultingTaskOwner // who's responsible
+  priority ConsultingTaskPriority @default(MEDIUM)
+  status ConsultingTaskStatus @default(TODO)
+
+  estimatedHours Int?
+  estimatedCost Int? // dollars
+
+  dueDate DateTime?
+  completedAt DateTime?
+
+  dependencies String[] @default([]) // Array of task IDs
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+}
+
+enum ConsultingTaskOwner {
+  CLIENT
+  CONSULTANT
+  VENDOR
+}
+
+enum ConsultingTaskPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ConsultingTaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  COMPLETED
+  CANCELLED
+}
+
+// ConsultingResearchItem: Business research findings
+model ConsultingResearchItem {
+  id String @id @default(cuid())
+  clientId String
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  title String
+  content String @db.Text
+
+  category String // "company", "competitor", "market", "tool", "regulation", "opportunity"
+
+  source String? // URL or publication
+  accessedAt DateTime?
+
+  relevance Int @default(100) // 0-100
+  confidence Int @default(100) // 0-100
+
+  suggestedAction String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId])
+}
+
+// ConsultingImplementationPlan: Generated roadmap for client
+model ConsultingImplementationPlan {
+  id String @id @default(cuid())
+  clientId String @unique
+  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  title String
+  description String? @db.Text
+
+  // Timeline
+  startDate DateTime
+  targetDate DateTime?
+
+  // Financial impact
+  totalEstimatedCost Int? // dollars
+  estimatedROI Int? // dollars
+  paybackPeriod Int? // months
+
+  // Status
+  status ConsultingPlanStatus @default(DRAFT)
+  approvedBy String?
+  approvedAt DateTime?
+
+  // Phases
+  phases ConsultingPlanPhase[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ConsultingPlanStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ConsultingPlanPhase: Phase of implementation plan
+model ConsultingPlanPhase {
+  id String @id @default(cuid())
+  planId String
+  plan ConsultingImplementationPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  name String // "Immediate Actions", "30-Day Plan", etc.
+  description String? @db.Text
+
+  startDate DateTime?
+  endDate DateTime?
+
+  // Tasks in this phase (stored as JSON for flexibility)
+  // Structure: { id, title, description, owner, priority, estimatedHours, cost, dependency }
+  tasks Json @default("[]")
+
+  // Success criteria
+  successMetrics String? @db.Text // JSON array
+
+  order Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([planId])
+}
+
+// ===== WISE² PRINT SHOP SYSTEM =====
+
+enum PrintOrderStatus {
+  DRAFT
+  PENDING_REVIEW
+  QUOTED
+  AWAITING_PAYMENT
+  PAID
+  IN_PRODUCTION
+  QUALITY_CHECK
+  READY_FOR_PICKUP
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PrintOrderType {
+  THREE_D_PRINT
+  DTF_TRANSFER
+  DTF_GANG_SHEET
+  APPAREL
+  BUNDLE
+  DESIGN_SERVICE
+}
+
+enum PrintFileStatus {
+  UPLOADING
+  UPLOADED
+  PREFLIGHT_PENDING
+  PREFLIGHT_PROCESSING
+  PREFLIGHT_PASSED
+  PREFLIGHT_PASSED_WITH_WARNINGS
+  PREFLIGHT_FAILED
+  MANUAL_REVIEW
+}
+
+enum ProofStatus {
+  PENDING
+  SENT
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model PrintOrder {
+  id               String           @id @default(cuid())
+  orderNumber      String           @unique
+  userId           String?
+  customerEmail    String
+  customerName     String
+  customerPhone    String?
+
+  orderType        PrintOrderType
+  status           PrintOrderStatus @default(DRAFT)
+
+  // Pricing
+  subtotal         Float            @default(0)
+  taxAmount        Float            @default(0)
+  shippingCost     Float            @default(0)
+  rushFee          Float            @default(0)
+  discountAmount   Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // Stripe
+  stripePaymentIntentId String?
+  stripeCheckoutSessionId String?
+  paymentStatus    String           @default("unpaid")
+
+  // Shipping
+  shippingMethod   String?
+  shippingAddress  Json?
+  trackingNumber   String?
+  isLocalPickup    Boolean          @default(false)
+
+  // Production
+  rushOrder        Boolean          @default(false)
+  estimatedCompletionDate DateTime?
+  actualCompletionDate DateTime?
+  productionNotes  String?          @db.Text
+  internalNotes    String?          @db.Text
+
+  // Relationships
+  items            PrintOrderItem[]
+  files            PrintFile[]
+  quotes           PrintQuote[]
+  proofs           ProofApproval[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([customerEmail])
+  @@index([status])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
+model PrintOrderItem {
+  id               String           @id @default(cuid())
+  orderId          String
+  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId        String?
+  product          PrintProduct?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // Item details
+  name             String
+  description      String?          @db.Text
+  quantity         Int              @default(1)
+  unitPrice        Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // 3D-specific
+  material         String?
+  color            String?
+  layerHeight      String?
+  infill           String?
+  strengthPriority String?
+  surfaceQuality   String?
+  fitType          String?
+  toleranceNotes   String?          @db.Text
+
+  // DTF-specific
+  transferWidth    Float?
+  transferHeight   Float?
+  garmentType      String?
+  garmentColor     String?
+  placement        String?
+  mirrorOutput     Boolean          @default(false)
+  whiteUnderbase   Boolean          @default(true)
+
+  // Options
+  options          Json?
+  metadata         Json?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model PrintProduct {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  name             String
+  description      String           @db.Text
+  shortDescription String?
+
+  categoryId       String?
+  category         PrintProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  productType      PrintOrderType
+  isActive         Boolean          @default(true)
+  isFeatured       Boolean          @default(false)
+  isMadeToOrder    Boolean          @default(true)
+
+  // Pricing
+  basePrice        Float            @default(0)
+  bulkPriceBreaks  Json?
+
+  // Production
+  estimatedDays    Int              @default(5)
+  materials        String[]         @default([])
+  colors           String[]         @default([])
+
+  // Media
+  images           String[]         @default([])
+  thumbnailUrl     String?
+  modelFileUrl     String?
+
+  // SEO
+  seoTitle         String?
+  seoDescription   String?
+
+  // Relationships
+  variants         PrintProductVariant[]
+  orderItems       PrintOrderItem[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([categoryId])
+  @@index([productType])
+  @@index([isActive])
+  @@index([slug])
+}
+
+model PrintProductCategory {
+  id               String           @id @default(cuid())
+  slug             String           @unique
+  name             String
+  description      String?          @db.Text
+  icon             String?
+  displayOrder     Int              @default(0)
+  parentId         String?
+  parent           PrintProductCategory? @relation("SubCategories", fields: [parentId], references: [id], onDelete: SetNull)
+  children         PrintProductCategory[] @relation("SubCategories")
+  products         PrintProduct[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([parentId])
+  @@index([slug])
+}
+
+model PrintProductVariant {
+  id               String           @id @default(cuid())
+  productId        String
+  product          PrintProduct     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  name             String
+  sku              String?          @unique
+  priceModifier    Float            @default(0)
+  material         String?
+  color            String?
+  dimensions       String?
+  inStock          Boolean          @default(true)
+  stockQuantity    Int?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([productId])
+}
+
+model PrintFile {
+  id               String           @id @default(cuid())
+  orderId          String?
+  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  // Upload info
+  originalFilename String
+  storedFilename   String
+  s3Key            String
+  s3Url            String           @db.Text
+  mimeType         String
+  fileExtension    String
+  fileSizeBytes    Int
+  checksum         String?
+
+  status           PrintFileStatus  @default(UPLOADING)
+  uploadedBy       String?
+  uploader         User?            @relation("printFileUploader", fields: [uploadedBy], references: [id], onDelete: SetNull)
+
+  // Preflight results (stored as structured JSON)
+  preflightResult  Json?
+  preflightErrors  String[]         @default([])
+  preflightWarnings String[]        @default([])
+
+  // 3D metadata
+  dimensionsX      Float?
+  dimensionsY      Float?
+  dimensionsZ      Float?
+  units            String           @default("mm")
+  triangleCount    Int?
+  vertexCount      Int?
+  isWatertight     Boolean?
+  isManifold       Boolean?
+  estimatedVolume  Float?
+  shellCount       Int?
+  fitsVolume       Boolean?
+
+  // DTF / image metadata
+  pixelWidth       Int?
+  pixelHeight      Int?
+  dpi              Int?
+  colorMode        String?
+  hasTransparency  Boolean?
+  embeddedProfile  String?
+
+  // Preview
+  previewUrl       String?          @db.Text
+  thumbnailUrl     String?          @db.Text
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([uploadedBy])
+}
+
+model PrintQuote {
+  id               String           @id @default(cuid())
+  orderId          String?
+  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  quoteNumber      String           @unique
+  status           QuoteStatus      @default(DRAFT)
+
+  // Customer
+  customerEmail    String
+  customerName     String
+
+  // Line items as structured JSON
+  lineItems        Json             @default("[]")
+
+  // Totals
+  materialCost     Float            @default(0)
+  laborCost        Float            @default(0)
+  machineCost      Float            @default(0)
+  setupFee         Float            @default(0)
+  designFee        Float            @default(0)
+  rushFee          Float            @default(0)
+  shippingCost     Float            @default(0)
+  subtotal         Float            @default(0)
+  taxAmount        Float            @default(0)
+  totalPrice       Float            @default(0)
+
+  // Validity
+  validUntil       DateTime?
+  acceptedAt       DateTime?
+  declinedAt       DateTime?
+
+  notes            String?          @db.Text
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([customerEmail])
+  @@index([quoteNumber])
+}
+
+model ProofApproval {
+  id               String           @id @default(cuid())
+  orderId          String
+  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  proofToken       String           @unique
+  status           ProofStatus      @default(PENDING)
+
+  // Proof files
+  proofImageUrl    String?          @db.Text
+  proofPdfUrl      String?          @db.Text
+  proofNotes       String?          @db.Text
+
+  // Customer response
+  customerResponse String?          @db.Text
+  respondedAt      DateTime?
+
+  sentAt           DateTime?
+  expiresAt        DateTime?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([proofToken])
+  @@index([status])
+}
+
+model DtfGangSheet {
+  id               String           @id @default(cuid())
+  orderId          String?
+
+  // Sheet dimensions
+  sheetWidth       Float
+  sheetHeight      Float
+  dpi              Int              @default(300)
+
+  // Layout
+  layoutData       Json
+  artworkManifest  Json
+
+  // Metrics
+  usedAreaPercent  Float            @default(0)
+  artworkCount     Int              @default(0)
+
+  // Output files
+  productionPngUrl String?          @db.Text
+  proofPdfUrl      String?          @db.Text
+  thumbnailUrl     String?          @db.Text
+
+  // Status
+  status           String           @default("draft")
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+}
+
+// ============================================================================
+// WISE² Faceless Content Studio
+// ============================================================================
+
+model ContentBrand {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  voice           String?  @db.Text
+  audience        String?  @db.Text
+  visualStyle     String?  @db.Text
+  primaryColor    String?
+  secondaryColor  String?
+  logoUrl         String?
+  defaultVoice    String?
+  defaultCta      String?
+  disclaimer      String?  @db.Text
+  prohibitedPhrases String[] @default([])
+  settings        Json?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  projects        ContentProject[]
+
+  @@index([slug])
+}
+
+model ContentProject {
+  id              String   @id @default(cuid())
+  guildId         String
+  channelId       String
+  creatorDiscordId String
+  brandId         String
+  brand           ContentBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  topic           String   @db.Text
+  objective       String?
+  platform        String
+  durationSeconds Int?
+  style           String?
+  sourceUrl       String?
+
+  status          String   @default("idea_received")
+  currentVersion  Int      @default(1)
+  estimatedCost   Float?
+  actualCost      Float?   @default(0)
+
+  approvedBy      String?
+  approvedAt      DateTime?
+  scheduledAt     DateTime?
+  publishedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  versions        ContentVersion[]
+  assets          ContentAsset[]
+  approvals       ContentApproval[]
+  publishJobs     ContentPublishJob[]
+  auditLog        ContentAuditLog[]
+
+  @@index([status])
+  @@index([guildId])
+  @@index([creatorDiscordId])
+  @@index([scheduledAt])
+  @@index([platform])
+}
+
+model ContentVersion {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  version         Int
+  title           String?
+  hook            String?  @db.Text
+  script          String?  @db.Text
+  caption         String?  @db.Text
+  hashtags        String[] @default([])
+  scenes          Json?
+  generationMetadata Json?
+
+  createdBy       String?
+  createdAt       DateTime @default(now())
+
+  assets          ContentAsset[]
+  approvals       ContentApproval[]
+
+  @@index([projectId])
+}
+
+model ContentAsset {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  versionId       String?
+  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  assetType       String
+  provider        String?
+  providerJobId   String?
+  storageKey      String?
+  publicUrl       String?
+  mimeType        String?
+  fileSize        Int?
+  durationMs      Int?
+  metadata        Json?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+  @@index([providerJobId])
+}
+
+model ContentApproval {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  versionId       String?
+  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  approvalType    String
+  decision        String
+  discordUserId   String
+  notes           String?  @db.Text
+  interactionId   String?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+}
+
+model ContentPublishJob {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  platform        String
+  accountId       String?
+  scheduledAt     DateTime?
+  status          String   @default("pending")
+  providerPostId  String?
+  providerPostUrl String?
+  attempts        Int      @default(0)
+  lastError       String?  @db.Text
+  publishedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([platform])
+  @@index([scheduledAt])
+}
+
+model ContentAuditLog {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  guildId         String
+  discordUserId   String
+  action          String
+  previousState   String?  @db.Text
+  nextState       String?  @db.Text
+  metadata        Json?
+
+  createdAt       DateTime @default(now())
+
+  @@index([projectId])
+  @@index([guildId])
+}
