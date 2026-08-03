@@ -311,6 +311,9 @@ importers:
       '@wise2/ui-components':
         specifier: 0.1.0
         version: link:../../packages/ui-components
+      axios:
+        specifier: ^1.6.0
+        version: 1.18.1
       framer-motion:
         specifier: ^11.0.0
         version: 11.18.2(react-dom@18.2.0)(react@18.2.0)
@@ -329,6 +332,9 @@ importers:
       react-hook-form:
         specifier: ^7.48.0
         version: 7.81.0(react@18.2.0)
+      stripe:
+        specifier: ^13.0.0
+        version: 13.11.0
     devDependencies:
       '@types/node':
         specifier: ^20.10.0
@@ -10609,6 +10615,14 @@ packages:
     dependencies:
       acorn: 8.17.0
     dev: true
+
+  /stripe@13.11.0:
+    resolution: {integrity: sha512-yPxVJxUzP1QHhHeFnYjJl48QwDS1+5befcL7ju7+t+i88D5r0rbsL+GkCCS6zgcU+TiV5bF9eMGcKyJfLf8BZQ==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 20.19.43
+      qs: 6.15.3
+    dev: false
 
   /stripe@14.25.0:
     resolution: {integrity: sha512-wQS3GNMofCXwH8TSje8E1SE8zr6ODiGtHQgPtO95p9Mb4FhKC9jvXR2NUTpZ9ZINlckJcFidCmaTFV4P6vsb9g==}
