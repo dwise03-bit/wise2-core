@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/CMakeFiles/bootloader
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/CMakeFiles/bootloader.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/CMakeFiles/bootloader-complete.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

@@ -1,0 +1,1239 @@
+[1/954] Generating project_elf_src_esp32c5.c
+[2/954] Generating /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/esp-idf/esp_system/ld/memory.ld linker script...
+[3/954] Generating /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/esp-idf/esp_system/ld/sections.ld.in linker script...
+[4/954] Building C object esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/riscv/gdbstub_riscv.c.obj
+[5/954] Building C object esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/gdbstub_transport.c.obj
+[6/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj
+[7/954] Generating ../../partition_table/partition-table.bin
+Partition table binary generated. Contents:
+*******************************************************************************
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,24K,
+phy_init,data,phy,0xf000,4K,
+factory,app,factory,0x10000,1M,
+*******************************************************************************
+[8/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj
+[9/954] Building C object esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/packet.c.obj
+[10/954] Building C object esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/gdbstub.c.obj
+[11/954] Building C object esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/riscv/rv_decode.c.obj
+[12/954] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_header.c.obj
+[13/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj
+[14/954] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_utils.c.obj
+[15/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj
+[16/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj
+[17/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj
+[18/954] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj
+[19/954] Building C object esp-idf/esp-tls/CMakeFiles/__idf_esp-tls.dir/esp-tls-crypto/esp_tls_crypto.c.obj
+[20/954] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj
+[21/954] Linking C static library esp-idf/esp_http_server/libesp_http_server.a
+[22/954] Building C object esp-idf/esp-tls/CMakeFiles/__idf_esp-tls.dir/esp_tls_platform_port.c.obj
+[23/954] Linking C static library esp-idf/esp_gdbstub/libesp_gdbstub.a
+[24/954] Building C object esp-idf/esp-tls/CMakeFiles/__idf_esp-tls.dir/esp_tls_error_capture.c.obj
+[25/954] Building C object esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transport.dir/transport_internal.c.obj
+[26/954] Building C object esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj
+[27/954] Linking C static library esp-idf/esp_https_ota/libesp_https_ota.a
+[28/954] Building C object esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transport.dir/transport.c.obj
+[29/954] Building C object esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transport.dir/transport_socks_proxy.c.obj
+[30/954] Building C object esp-idf/esp_wifi/CMakeFiles/__idf_esp_wifi.dir/src/wifi_default_ap.c.obj
+[31/954] Building C object esp-idf/esp_eth/CMakeFiles/__idf_esp_eth.dir/src/esp_eth_netif_glue.c.obj
+[32/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/esp_netif_objects.c.obj
+[33/954] Building C object esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transport.dir/transport_ssl.c.obj
+[34/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/esp_netif_defaults.c.obj
+[35/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/esp_netif_handlers.c.obj
+[36/954] Building C object esp-idf/esp_wifi/CMakeFiles/__idf_esp_wifi.dir/src/wifi_netif.c.obj
+[37/954] Building C object esp-idf/esp_wifi/CMakeFiles/__idf_esp_wifi.dir/src/wifi_default.c.obj
+[38/954] Building C object esp-idf/esp-tls/CMakeFiles/__idf_esp-tls.dir/esp_tls.c.obj
+[39/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/esp_netif_lwip_defaults.c.obj
+[40/954] Building C object esp-idf/esp_eth/CMakeFiles/__idf_esp_eth.dir/src/esp_eth.c.obj
+[41/954] Building C object esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transport.dir/transport_ws.c.obj
+[42/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/netif/wlanif.c.obj
+[43/954] Building C object esp-idf/esp_eth/CMakeFiles/__idf_esp_eth.dir/src/phy/esp_eth_phy_802_3.c.obj
+[44/954] Building C object esp-idf/esp-tls/CMakeFiles/__idf_esp-tls.dir/esp_tls_mbedtls.c.obj
+[45/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/netif/ethernetif.c.obj
+[46/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/esp_netif_sntp.c.obj
+[47/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/netif/ppp.c.obj
+[48/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/netif/esp_pbuf_ref.c.obj
+[49/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/if_api.c.obj
+[50/954] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj
+[51/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/netifapi.c.obj
+[52/954] Linking C static library esp-idf/esp_http_client/libesp_http_client.a
+[53/954] Linking C static library esp-idf/tcp_transport/libtcp_transport.a
+[54/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/err.c.obj
+[55/954] Linking C static library esp-idf/esp-tls/libesp-tls.a
+[56/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/apps/sntp/sntp.c.obj
+[57/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/netbuf.c.obj
+[58/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/esp_netif_lwip_ppp.c.obj
+[59/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/netdb.c.obj
+[60/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/api_lib.c.obj
+[61/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/tcpip.c.obj
+[62/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/def.c.obj
+[63/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/apps/netbiosns/netbiosns.c.obj
+[64/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/apps/sntp/sntp.c.obj
+[65/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/init.c.obj
+[66/954] Building C object esp-idf/http_parser/CMakeFiles/__idf_http_parser.dir/http_parser.c.obj
+[67/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ip.c.obj
+[68/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/inet_chksum.c.obj
+[69/954] Linking C static library esp-idf/http_parser/libhttp_parser.a
+[70/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/mem.c.obj
+[71/954] Linking C static library esp-idf/esp_eth/libesp_eth.a
+[72/954] Linking C static library esp-idf/esp_wifi/libesp_wifi.a
+[73/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/memp.c.obj
+[74/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/api_msg.c.obj
+[75/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/stats.c.obj
+[76/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/sys.c.obj
+[77/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/dns.c.obj
+[78/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/autoip.c.obj
+[79/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/raw.c.obj
+[80/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/pbuf.c.obj
+[81/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/timeouts.c.obj
+[82/954] Building C object esp-idf/esp_netif/CMakeFiles/__idf_esp_netif.dir/lwip/esp_netif_lwip.c.obj
+[83/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/netif.c.obj
+[84/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/udp.c.obj
+[85/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/ip4_napt.c.obj
+[86/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/icmp.c.obj
+[87/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/igmp.c.obj
+[88/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/ip4.c.obj
+[89/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/etharp.c.obj
+[90/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/dhcp6.c.obj
+[91/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/tcp_out.c.obj
+[92/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/tcp_in.c.obj
+[93/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/ip4_frag.c.obj
+[94/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/ip4_addr.c.obj
+[95/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/inet6.c.obj
+[96/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/ethip6.c.obj
+[97/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/tcp.c.obj
+[98/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv4/dhcp.c.obj
+[99/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/api/sockets.c.obj
+[100/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/ip6_frag.c.obj
+[101/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/icmp6.c.obj
+[102/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ethernet.c.obj
+[103/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/ip6_addr.c.obj
+[104/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/bridgeif_fdb.c.obj
+[105/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/demand.c.obj
+[106/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/bridgeif.c.obj
+[107/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/mld6.c.obj
+[108/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/slipif.c.obj
+[109/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/auth.c.obj
+[110/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/chap-md5.c.obj
+[111/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/ccp.c.obj
+[112/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/chap-new.c.obj
+[113/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/chap_ms.c.obj
+[114/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/ecp.c.obj
+[115/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/eap.c.obj
+[116/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/magic.c.obj
+[117/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/ip6.c.obj
+[118/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/mppe.c.obj
+[119/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/multilink.c.obj
+[120/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/pppcrypt.c.obj
+[121/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/eui64.c.obj
+[122/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/pppoe.c.obj
+[123/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/pppol2tp.c.obj
+[124/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/pppapi.c.obj
+[125/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/upap.c.obj
+[126/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/ipv6cp.c.obj
+[127/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/fsm.c.obj
+[128/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/hooks/tcp_isn_default.c.obj
+[129/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/pppos.c.obj
+[130/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/ppp.c.obj
+[131/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/hooks/lwip_default_hooks.c.obj
+[132/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/polarssl/arc4.c.obj
+[133/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/ipcp.c.obj
+[134/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/utils.c.obj
+[135/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/sockets_ext.c.obj
+[136/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/polarssl/des.c.obj
+[137/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/lcp.c.obj
+[138/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/polarssl/md5.c.obj
+[139/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/polarssl/sha1.c.obj
+[140/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/core/ipv6/nd6.c.obj
+[141/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/vj.c.obj
+[142/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/debug/lwip_debug.c.obj
+[143/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/lwip/src/netif/ppp/polarssl/md4.c.obj
+[144/954] Linking C static library esp-idf/esp_netif/libesp_netif.a
+[145/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/esp32xx/vfs_lwip.c.obj
+[146/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/port/freertos/sys_arch.c.obj
+[147/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/apps/ping/esp_ping.c.obj
+[148/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/apps/ping/ping.c.obj
+[149/954] Building C object esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj
+[150/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/apps/ping/ping_sock.c.obj
+[151/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_init.c.obj
+[152/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sd_pwr_ctrl/sd_pwr_ctrl.c.obj
+[153/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_common.c.obj
+[154/954] Building C object esp-idf/vfs/CMakeFiles/__idf_vfs.dir/vfs_eventfd.c.obj
+[155/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_mmc.c.obj
+[156/954] Building C object esp-idf/lwip/CMakeFiles/__idf_lwip.dir/apps/dhcpserver/dhcpserver.c.obj
+[157/954] Building C object esp-idf/vfs/CMakeFiles/__idf_vfs.dir/vfs_semihost.c.obj
+[158/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_cmd.c.obj
+[159/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_io.c.obj
+[160/954] Building C object esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/sdmmc_sd.c.obj
+[161/954] Building C object esp-idf/driver/CMakeFiles/__idf_driver.dir/deprecated/timer_legacy.c.obj
+[162/954] Building C object esp-idf/vfs/CMakeFiles/__idf_vfs.dir/vfs.c.obj
+[163/954] Linking C static library esp-idf/lwip/liblwip.a
+[164/954] Linking C static library esp-idf/vfs/libvfs.a
+[165/954] Linking C static library esp-idf/esp_vfs_console/libesp_vfs_console.a
+[166/954] Linking C static library esp-idf/driver/libdriver.a
+[167/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_partition.cpp.obj
+[168/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_platform.cpp.obj
+[169/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_partition_lookup.cpp.obj
+[170/954] Linking C static library esp-idf/sdmmc/libsdmmc.a
+[171/954] Building C object esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/default_event_loop.c.obj
+[172/954] Building C object esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/esp_event.c.obj
+[173/954] Building C object esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/esp_event_private.c.obj
+[174/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_item_hash_list.cpp.obj
+[175/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_handle_locked.cpp.obj
+[176/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_cxx_api.cpp.obj
+[177/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_pagemanager.cpp.obj
+[178/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_handle_simple.cpp.obj
+[179/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_page.cpp.obj
+[180/954] Building C object esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/src/gptimer_priv.c.obj
+[181/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/esp_timer_init.c.obj
+[182/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/ets_timer_legacy.c.obj
+[183/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/system_time.c.obj
+[184/954] Building C object esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/src/uart_vfs.c.obj
+[185/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/esp_timer_impl_common.c.obj
+[186/954] Building C object esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/src/gptimer.c.obj
+[187/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_storage.cpp.obj
+[188/954] Building C object esp-idf/esp_ringbuf/CMakeFiles/__idf_esp_ringbuf.dir/ringbuf.c.obj
+[189/954] Building C object esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/src/uart.c.obj
+[190/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_partition_manager.cpp.obj
+[191/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/esp_timer.c.obj
+[192/954] Building CXX object esp-idf/cxx/CMakeFiles/__idf_cxx.dir/cxx_init.cpp.obj
+[193/954] Building C object esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/src/esp_timer_impl_systimer.c.obj
+[194/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/abort.c.obj
+[195/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_types.cpp.obj
+[196/954] Building CXX object esp-idf/cxx/CMakeFiles/__idf_cxx.dir/cxx_exception_stubs.cpp.obj
+[197/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/assert.c.obj
+[198/954] Building C object esp-idf/pthread/CMakeFiles/__idf_pthread.dir/pthread_rwlock.c.obj
+[199/954] Building C object esp-idf/pthread/CMakeFiles/__idf_pthread.dir/pthread_semaphore.c.obj
+[200/954] Building C object esp-idf/pthread/CMakeFiles/__idf_pthread.dir/pthread_cond_var.c.obj
+[201/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_api.cpp.obj
+[202/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/pthread.c.obj
+[203/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/heap.c.obj
+[204/954] Building C object esp-idf/pthread/CMakeFiles/__idf_pthread.dir/pthread_local_storage.c.obj
+[205/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/random.c.obj
+[206/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/reent_init.c.obj
+[207/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/poll.c.obj
+[208/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/newlib_init.c.obj
+[209/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/getentropy.c.obj
+[210/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/sysconf.c.obj
+[211/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/termios.c.obj
+[212/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/locks.c.obj
+[213/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/syscalls.c.obj
+[214/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/port/esp_time_impl.c.obj
+[215/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/scandir.c.obj
+[216/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/realpath.c.obj
+[217/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/app_startup.c.obj
+[218/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/heap_idf.c.obj
+[219/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/port_common.c.obj
+[220/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/list.c.obj
+[221/954] Building C object esp-idf/pthread/CMakeFiles/__idf_pthread.dir/pthread.c.obj
+[222/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/port_systick.c.obj
+[223/954] Building ASM object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/portable/riscv/portasm.S.obj
+[224/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/stdatomic.c.obj
+[225/954] Building C object esp-idf/newlib/CMakeFiles/__idf_newlib.dir/time.c.obj
+[226/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/esp_cpu_intr.c.obj
+[227/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/esp_additions/freertos_compatibility.c.obj
+[228/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/cpu.c.obj
+[229/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/event_groups.c.obj
+[230/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/portable/riscv/port.c.obj
+[231/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/esp_memory_utils.c.obj
+[232/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/cpu_region_protect.c.obj
+[233/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/timers.c.obj
+[234/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/esp_additions/idf_additions.c.obj
+[235/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/hw_random.c.obj
+[236/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/stream_buffer.c.obj
+[237/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/revision.c.obj
+[238/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/periph_ctrl.c.obj
+[239/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/sleep_console.c.obj
+[240/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/mac_addr.c.obj
+[241/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/esp_gpio_reserve.c.obj
+[242/954] Building CXX object esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/src/nvs_encrypted_partition.cpp.obj
+[243/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/clk_ctrl_os.c.obj
+[244/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/esp_clk.c.obj
+[245/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/sleep_event.c.obj
+[246/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/queue.c.obj
+[247/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/sar_periph_ctrl_common.c.obj
+[248/954] Linking C static library esp-idf/nvs_flash/libnvs_flash.a
+[249/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/regi2c_ctrl.c.obj
+[250/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/rtc_module.c.obj
+[251/954] Linking C static library esp-idf/esp_event/libesp_event.a
+[252/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/dma/esp_async_memcpy.c.obj
+[253/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/esp_clk_tree.c.obj
+[254/954] Linking C static library esp-idf/esp_driver_uart/libesp_driver_uart.a
+[255/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/io_mux.c.obj
+[256/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/systimer.c.obj
+[257/954] Linking C static library esp-idf/esp_ringbuf/libesp_ringbuf.a
+[258/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/spi_share_hw_ctrl.c.obj
+[259/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/dma/esp_dma_utils.c.obj
+[260/954] Linking C static library esp-idf/esp_driver_gptimer/libesp_driver_gptimer.a
+[261/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/intr_alloc.c.obj
+[262/954] Building CXX object esp-idf/cxx/CMakeFiles/__idf_cxx.dir/cxx_guards.cpp.obj
+[263/954] Linking C static library esp-idf/esp_timer/libesp_timer.a
+[264/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/deprecated/gdma_legacy.c.obj
+[265/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/mspi_timing_tuning.c.obj
+[266/954] Linking C static library esp-idf/cxx/libcxx.a
+[267/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/chip_info.c.obj
+[268/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/esp_crypto_lock.c.obj
+[269/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/lldesc.c.obj
+[270/954] Linking C static library esp-idf/pthread/libpthread.a
+[271/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/dport_access_common.c.obj
+[272/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32c5/mp/interrupts.c.obj
+[273/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/sar_periph_ctrl.c.obj
+[274/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32c5/mp/gpio_periph.c.obj
+[275/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32c5/mp/uart_periph.c.obj
+[276/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32c5/mp/gdma_periph.c.obj
+[277/954] Building C object esp-idf/soc/CMakeFiles/__idf_soc.dir/esp32c5/mp/timer_periph.c.obj
+[278/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/rtc_clk_init.c.obj
+[279/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/spi_bus_lock.c.obj
+[280/954] Linking C static library esp-idf/newlib/libnewlib.a
+[281/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/rtc_time.c.obj
+[282/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/port/esp32c5/memory_layout.c.obj
+[283/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/port/memory_layout_utils.c.obj
+[284/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/dma/gdma.c.obj
+[285/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/dma/async_memcpy_gdma.c.obj
+[286/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/multi_heap.c.obj
+[287/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/hal_utils.c.obj
+[288/954] Building C object esp-idf/freertos/CMakeFiles/__idf_freertos.dir/FreeRTOS-Kernel/tasks.c.obj
+[289/954] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/log_buffers.c.obj
+[290/954] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/log.c.obj
+[291/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/efuse_hal.c.obj
+[292/954] Building C object esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/port/esp32c5/rtc_clk.c.obj
+[293/954] Building C object esp-idf/log/CMakeFiles/__idf_log.dir/log_freertos.c.obj
+[294/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/heap_caps_init.c.obj
+[295/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/color_hal.c.obj
+[296/954] Linking C static library esp-idf/freertos/libfreertos.a
+[297/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/heap_caps_base.c.obj
+[298/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/spi_flash_encrypt_hal_iram.c.obj
+[299/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/esp32c5/efuse_hal.c.obj
+[300/954] Building C object esp-idf/heap/CMakeFiles/__idf_heap.dir/heap_caps.c.obj
+[301/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/uart_hal_iram.c.obj
+[302/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/gpio_hal.c.obj
+[303/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/gdma_hal_top.c.obj
+[304/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_crc.c.obj
+[305/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/timer_hal.c.obj
+[306/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/mmu_hal.c.obj
+[307/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_sys.c.obj
+[308/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/cache_hal.c.obj
+[309/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/spi_flash_hal.c.obj
+[310/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_spiflash.c.obj
+[311/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_efuse.c.obj
+[312/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/fpga_overrides_rng.c.obj
+[313/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_systimer.c.obj
+[314/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_wdt.c.obj
+[315/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/gdma_hal_ahb_v2.c.obj
+[316/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/spi_flash_hal_iram.c.obj
+[317/954] Building C object esp-idf/esp_rom/CMakeFiles/__idf_esp_rom.dir/patches/esp_rom_uart.c.obj
+[318/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/esp_err.c.obj
+[319/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/fpga_overrides_clk.c.obj
+[320/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/crosscore_int.c.obj
+[321/954] Building C object esp-idf/hal/CMakeFiles/__idf_hal.dir/uart_hal.c.obj
+[322/954] Linking C static library esp-idf/esp_hw_support/libesp_hw_support.a
+[323/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/stack_check.c.obj
+[324/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/esp_ipc.c.obj
+[325/954] Linking C static library esp-idf/soc/libsoc.a
+[326/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/startup.c.obj
+[327/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/freertos_hooks.c.obj
+[328/954] Linking C static library esp-idf/heap/libheap.a
+[329/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/esp_system.c.obj
+[330/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/int_wdt.c.obj
+[331/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/system_time.c.obj
+[332/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/panic.c.obj
+[333/954] Linking C static library esp-idf/log/liblog.a
+[334/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/xt_wdt.c.obj
+[335/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/ubsan.c.obj
+[336/954] Linking C static library esp-idf/hal/libhal.a
+[337/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/task_wdt/task_wdt_impl_timergroup.c.obj
+[338/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/arch/riscv/expression_with_stack.c.obj
+[339/954] Linking C static library esp-idf/esp_rom/libesp_rom.a
+[340/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/arch/riscv/panic_arch.c.obj
+[341/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/startup_funcs.c.obj
+[342/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/panic_handler.c.obj
+[343/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/esp_system_chip.c.obj
+[344/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/arch/riscv/debug_helpers.c.obj
+[345/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/flash_brownout_hook.c.obj
+[346/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/arch/riscv/debug_stubs.c.obj
+[347/954] Building C object esp-idf/esp_common/CMakeFiles/__idf_esp_common.dir/src/esp_err_to_name.c.obj
+[348/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/soc/esp32c5/reset_reason.c.obj
+[349/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_drivers.c.obj
+[350/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/soc/esp32c5/cache_err_int.c.obj
+[351/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/image_process.c.obj
+[352/954] Linking C static library esp-idf/esp_common/libesp_common.a
+[353/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_issi.c.obj
+[354/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_th.c.obj
+[355/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/cpu_start.c.obj
+[356/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_boya.c.obj
+[357/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/soc/esp32c5/system_internal.c.obj
+[358/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_gd.c.obj
+[359/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_mxic.c.obj
+[360/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_winbond.c.obj
+[361/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/task_wdt/task_wdt.c.obj
+[362/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_wrap.c.obj
+[363/954] Building C object esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/soc/esp32c5/clk.c.obj
+[364/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_os_func_noos.c.obj
+[365/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_mxic_opi.c.obj
+[366/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/flash_ops.c.obj
+[367/954] Building C object esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/port/esp32c5/ext_mem_layout.c.obj
+[368/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/flash_mmap.c.obj
+[369/954] Linking C static library esp-idf/esp_system/libesp_system.a
+[370/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/cache_utils.c.obj
+[371/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/memspi_host_driver.c.obj
+[372/954] Building C object esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/heap_align_hw.c.obj
+[373/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_chip_generic.c.obj
+[374/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_mem.c.obj
+[375/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_random.c.obj
+[376/954] Building C object esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj
+[377/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_efuse.c.obj
+[378/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/esp_flash_spi_init.c.obj
+[379/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/spi_flash_os_func_app.c.obj
+[380/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_clock_init.c.obj
+[381/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/flash_encrypt.c.obj
+[382/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_common_loader.c.obj
+[383/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/flash_partitions.c.obj
+[384/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32c5/esp_efuse_table.c.obj
+[385/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_common.c.obj
+[386/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_boot.c.obj
+[387/954] Building C object esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_mmu_map.c.obj
+[388/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32c5/esp_efuse_fields.c.obj
+[389/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/flash_qio_mode.c.obj
+[390/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/idf/bootloader_sha.c.obj
+[391/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32c5/esp_efuse_rtc_calib.c.obj
+[392/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/bootloader_flash.c.obj
+[393/954] Building C object esp-idf/spi_flash/CMakeFiles/__idf_spi_flash.dir/esp_flash_api.c.obj
+[394/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_fields.c.obj
+[395/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/esp32c5/esp_efuse_utility.c.obj
+[396/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/bootloader_flash/src/bootloader_flash_config_esp32c5.c.obj
+[397/954] Building C object esp-idf/app_update/CMakeFiles/__idf_app_update.dir/esp_ota_app_desc.c.obj
+[398/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_startup.c.obj
+[399/954] Linking C static library esp-idf/spi_flash/libspi_flash.a
+[400/954] Building C object esp-idf/esp_bootloader_format/CMakeFiles/__idf_esp_bootloader_format.dir/esp_bootloader_desc.c.obj
+[401/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/efuse_controller/keys/with_key_purposes/esp_efuse_api_key.c.obj
+[402/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/esp_image_format.c.obj
+[403/954] Linking C static library esp-idf/esp_mm/libesp_mm.a
+[404/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/debug.c.obj
+[405/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/mps_reader.c.obj
+[406/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/mps_trace.c.obj
+[407/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_api.c.obj
+[408/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_debug_helpers_generated.c.obj
+[409/954] Building C object esp-idf/efuse/CMakeFiles/__idf_efuse.dir/src/esp_efuse_utility.c.obj
+[410/954] Building C object esp-idf/esp_app_format/CMakeFiles/__idf_esp_app_format.dir/esp_app_desc.c.obj
+[411/954] Building C object esp-idf/esp_partition/CMakeFiles/__idf_esp_partition.dir/partition.c.obj
+[412/954] Building C object esp-idf/esp_partition/CMakeFiles/__idf_esp_partition.dir/partition_target.c.obj
+[413/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls13_keys.c.obj
+[414/954] Building C object esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloader_utility.c.obj
+[415/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls13_server.c.obj
+[416/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_cache.c.obj
+[417/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_cookie.c.obj
+[418/954] Linking C static library esp-idf/bootloader_support/libbootloader_support.a
+[419/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls13_generic.c.obj
+[420/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls13_client.c.obj
+[421/954] Linking C static library esp-idf/efuse/libefuse.a
+[422/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/esp_platform_time.c.obj
+[423/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_ticket.c.obj
+[424/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_ciphersuites.c.obj
+[425/954] Linking C static library esp-idf/esp_partition/libesp_partition.a
+[426/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/mbedtls_debug.c.obj
+[427/954] Building C object esp-idf/app_update/CMakeFiles/__idf_app_update.dir/esp_ota_ops.c.obj
+[428/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_client.c.obj
+[429/954] Linking C static library esp-idf/app_update/libapp_update.a
+[430/954] Linking C static library esp-idf/esp_bootloader_format/libesp_bootloader_format.a
+[431/954] Linking C static library esp-idf/esp_app_format/libesp_app_format.a
+[432/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509write.c.obj
+[433/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509_create.c.obj
+[434/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509_csr.c.obj
+[435/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509_crl.c.obj
+[436/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/pkcs7.c.obj
+[437/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/net_sockets.c.obj
+[438/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/aesce.c.obj
+[439/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/aesni.c.obj
+[440/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls12_client.c.obj
+[441/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls12_server.c.obj
+[442/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_msg.c.obj
+[443/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509write_csr.c.obj
+[444/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/asn1parse.c.obj
+[445/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/bignum_mod.c.obj
+[446/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509write_crt.c.obj
+[447/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/bignum_mod_raw.c.obj
+[448/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/asn1write.c.obj
+[449/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/camellia.c.obj
+[450/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/aria.c.obj
+[451/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/block_cipher.c.obj
+[452/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/chacha20.c.obj
+[453/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/chachapoly.c.obj
+[454/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/base64.c.obj
+[455/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509.c.obj
+[456/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/constant_time.c.obj
+[457/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/des.c.obj
+[458/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/dhm.c.obj
+[459/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/cipher_wrap.c.obj
+[460/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ccm.c.obj
+[461/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/bignum_core.c.obj
+[462/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecdh.c.obj
+[463/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecjpake.c.obj
+[464/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/aes.c.obj
+[465/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecp_curves_new.c.obj
+[466/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/cmac.c.obj
+[467/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedx509.dir/x509_crt.c.obj
+[468/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ctr_drbg.c.obj
+[469/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/entropy_poll.c.obj
+[470/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/hkdf.c.obj
+[471/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecdsa.c.obj
+[472/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/cipher.c.obj
+[473/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/entropy.c.obj
+[474/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/md5.c.obj
+[475/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/memory_buffer_alloc.c.obj
+[476/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedtls.dir/ssl_tls.c.obj
+[477/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/nist_kw.c.obj
+[478/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/hmac_drbg.c.obj
+[479/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/lms.c.obj
+[480/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/padlock.c.obj
+[481/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/error.c.obj
+[482/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/lmots.c.obj
+[483/954] Linking CXX static library esp-idf/mbedtls/mbedtls/library/libmbedtls.a
+[484/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pk_ecc.c.obj
+[485/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/gcm.c.obj
+[486/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/md.c.obj
+[487/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/bignum.c.obj
+[488/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pk_wrap.c.obj
+[489/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pem.c.obj
+[490/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/platform.c.obj
+[491/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/poly1305.c.obj
+[492/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/platform_util.c.obj
+[493/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pkcs12.c.obj
+[494/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pkcs5.c.obj
+[495/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/oid.c.obj
+[496/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pkwrite.c.obj
+[497/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pk.c.obj
+[498/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_client.c.obj
+[499/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_ffdh.c.obj
+[500/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_driver_wrappers_no_static.c.obj
+[501/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecp_curves.c.obj
+[502/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_aead.c.obj
+[503/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_cipher.c.obj
+[504/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_pake.c.obj
+[505/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_se.c.obj
+[506/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ecp.c.obj
+[507/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_hash.c.obj
+[508/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/pkparse.c.obj
+[509/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/ripemd160.c.obj
+[510/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_mac.c.obj
+[511/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_its_file.c.obj
+[512/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_ecp.c.obj
+[513/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_util.c.obj
+[514/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/threading.c.obj
+[515/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_storage.c.obj
+[516/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_rsa.c.obj
+[517/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/timing.c.obj
+[518/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/version.c.obj
+[519/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/version_features.c.obj
+[520/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/rsa_alt_helpers.c.obj
+[521/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto_slot_management.c.obj
+[522/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/esp_mem.c.obj
+[523/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/md/esp_md.c.obj
+[524/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/esp_timing.c.obj
+[525/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/Users/danielwise/esp/esp-idf/components/mbedtls/port/esp_hardware.c.obj
+[526/954] Linking CXX static library esp-idf/mbedtls/mbedtls/library/libmbedx509.a
+[527/954] Building C object esp-idf/mbedtls/mbedtls/3rdparty/everest/CMakeFiles/everest.dir/library/everest.c.obj
+[528/954] Creating directories for 'bootloader'
+[529/954] Building C object esp-idf/mbedtls/mbedtls/3rdparty/everest/CMakeFiles/everest.dir/library/x25519.c.obj
+[530/954] Building C object esp-idf/mbedtls/mbedtls/3rdparty/everest/CMakeFiles/everest.dir/library/Hacl_Curve25519_joined.c.obj
+[531/954] No download step for 'bootloader'
+[532/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/sha256.c.obj
+[533/954] Building C object esp-idf/mbedtls/mbedtls/3rdparty/p256-m/CMakeFiles/p256m.dir/p256-m_driver_entrypoints.c.obj
+[534/954] Building C object esp-idf/mbedtls/mbedtls/3rdparty/p256-m/CMakeFiles/p256m.dir/p256-m/p256-m.c.obj
+[535/954] No update step for 'bootloader'
+[536/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/sha3.c.obj
+[537/954] No patch step for 'bootloader'
+[538/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/sha1.c.obj
+[539/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/sha512.c.obj
+[540/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/rsa.c.obj
+[541/954] Building C object esp-idf/mbedtls/mbedtls/library/CMakeFiles/mbedcrypto.dir/psa_crypto.c.obj
+[542/954] Linking CXX static library esp-idf/mbedtls/mbedtls/library/libmbedcrypto.a
+[543/954] Linking CXX static library esp-idf/mbedtls/mbedtls/3rdparty/p256-m/libp256m.a
+[544/954] Linking CXX static library esp-idf/mbedtls/mbedtls/3rdparty/everest/libeverest.a
+[545/954] Generating x509_crt_bundle
+[546/954] Generating ../../x509_crt_bundle.S
+[547/954] Building ASM object esp-idf/riscv/CMakeFiles/__idf_riscv.dir/vectors.S.obj
+[548/954] Building C object esp-idf/riscv/CMakeFiles/__idf_riscv.dir/instruction_decode.c.obj
+[549/954] Building C object esp-idf/esp_pm/CMakeFiles/__idf_esp_pm.dir/pm_trace.c.obj
+[550/954] Building ASM object esp-idf/mbedtls/CMakeFiles/__idf_mbedtls.dir/__/__/x509_crt_bundle.S.obj
+[551/954] Building ASM object esp-idf/riscv/CMakeFiles/__idf_riscv.dir/vectors_clic.S.obj
+[552/954] Building C object esp-idf/esp_driver_gpio/CMakeFiles/__idf_esp_driver_gpio.dir/src/gpio_glitch_filter_ops.c.obj
+[553/954] Building C object esp-idf/esp_pm/CMakeFiles/__idf_esp_pm.dir/pm_locks.c.obj
+[554/954] Building C object esp-idf/riscv/CMakeFiles/__idf_riscv.dir/interrupt_clic.c.obj
+[555/954] Building C object esp-idf/riscv/CMakeFiles/__idf_riscv.dir/interrupt.c.obj
+[556/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/split_argv.c.obj
+[557/954] Building C object esp-idf/esp_driver_gpio/CMakeFiles/__idf_esp_driver_gpio.dir/src/rtc_io.c.obj
+[558/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_dbl.c.obj
+[559/954] Building C object esp-idf/esp_pm/CMakeFiles/__idf_esp_pm.dir/pm_impl.c.obj
+[560/954] Building C object esp-idf/mbedtls/CMakeFiles/__idf_mbedtls.dir/esp_crt_bundle/esp_crt_bundle.c.obj
+[561/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/commands.c.obj
+[562/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_end.c.obj
+[563/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/esp_console_repl_chip.c.obj
+[564/954] Linking C static library esp-idf/mbedtls/libmbedtls.a
+[565/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_dstr.c.obj
+[566/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_cmd.c.obj
+[567/954] Linking C static library esp-idf/esp_pm/libesp_pm.a
+[568/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_rem.c.obj
+[569/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_file.c.obj
+[570/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/esp_console_common.c.obj
+[571/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_date.c.obj
+[572/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_lit.c.obj
+[573/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_str.c.obj
+[574/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_int.c.obj
+[575/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/SPI_Flash.cpp.obj
+[576/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_hashtable.c.obj
+[577/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_utils.c.obj
+[578/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/crc32.cpp.obj
+[579/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/Partition.cpp.obj
+[580/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/WL_Ext_Perf.cpp.obj
+[581/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_common.c.obj
+[582/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/linenoise/linenoise.c.obj
+[583/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/WL_Ext_Safe.cpp.obj
+[584/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_panel_io.c.obj
+[585/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/wear_levelling.cpp.obj
+[586/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_panel_ops.c.obj
+[587/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_panel_ssd1306.c.obj
+[588/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/arg_rex.c.obj
+[589/954] Building C object esp-idf/console/CMakeFiles/__idf_console.dir/argtable3/argtable3.c.obj
+[590/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_panel_nt35510.c.obj
+[591/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/diskio/diskio.c.obj
+[592/954] Building C object esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/src/esp_lcd_panel_st7789.c.obj
+[593/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/diskio/diskio_rawflash.c.obj
+[594/954] Building C object esp-idf/esp_driver_gpio/CMakeFiles/__idf_esp_driver_gpio.dir/src/gpio.c.obj
+[595/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/diskio/diskio_wl.c.obj
+[596/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/src/ffunicode.c.obj
+[597/954] Linking C static library esp-idf/esp_driver_gpio/libesp_driver_gpio.a
+[598/954] Linking C static library esp-idf/riscv/libriscv.a
+[599/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/port/freertos/ffsystem.c.obj
+[600/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/diskio/diskio_sdmmc.c.obj
+[601/954] Building CXX object esp-idf/wear_levelling/CMakeFiles/__idf_wear_levelling.dir/WL_Flash.cpp.obj
+[602/954] Linking C static library esp-idf/wear_levelling/libwear_levelling.a
+[603/954] Linking C static library esp-idf/console/libconsole.a
+[604/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs_api.c.obj
+[605/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs/src/spiffs_cache.c.obj
+[606/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/vfs/vfs_fat_spiflash.c.obj
+[607/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/vfs/vfs_fat_sdmmc.c.obj
+[608/954] Building C object esp-idf/esp_hid/CMakeFiles/__idf_esp_hid.dir/src/esp_hidd.c.obj
+[609/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs/src/spiffs_gc.c.obj
+[610/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_compat.c.obj
+[611/954] Building C object esp-idf/esp_hid/CMakeFiles/__idf_esp_hid.dir/src/esp_hid_common.c.obj
+[612/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs/src/spiffs_check.c.obj
+[613/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/esp_spiffs.c.obj
+[614/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_utils_freertos.c.obj
+[615/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/vfs/vfs_fat.c.obj
+[616/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_runner.c.obj
+[617/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_utils_cache.c.obj
+[618/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/port/esp/unity_utils_memory_esp.c.obj
+[619/954] Linking C static library esp-idf/esp_lcd/libesp_lcd.a
+[620/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs/src/spiffs_hydrogen.c.obj
+[621/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_utils_memory.c.obj
+[622/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/proto-c/constants.pb-c.c.obj
+[623/954] Building C object esp-idf/esp_hid/CMakeFiles/__idf_esp_hid.dir/src/esp_hidh.c.obj
+[624/954] Building C object esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/protobuf-c/protobuf-c/protobuf-c.c.obj
+[625/954] Linking C static library esp-idf/protobuf-c/libprotobuf-c.a
+[626/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/proto-c/session.pb-c.c.obj
+[627/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/proto-c/sec1.pb-c.c.obj
+[628/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/proto-c/sec2.pb-c.c.obj
+[629/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity_port_esp32.c.obj
+[630/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/proto-c/sec0.pb-c.c.obj
+[631/954] Building C object esp-idf/fatfs/CMakeFiles/__idf_fatfs.dir/src/ff.c.obj
+[632/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/common/protocomm.c.obj
+[633/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/transports/protocomm_console.c.obj
+[634/954] Building C object esp-idf/unity/CMakeFiles/__idf_unity.dir/unity/src/unity.c.obj
+[635/954] Building C object esp-idf/esp_https_server/CMakeFiles/__idf_esp_https_server.dir/src/https_server.c.obj
+[636/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/security/security0.c.obj
+[637/954] Building C object esp-idf/esp_lcd_st7796/CMakeFiles/__idf_esp_lcd_st7796.dir/esp_lcd_st7796.c.obj
+[638/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/crypto/srp6a/esp_srp_mpi.c.obj
+[639/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/transports/protocomm_httpd.c.obj
+[640/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/crypto/srp6a/esp_srp.c.obj
+[641/954] Building C object esp-idf/app_trace/CMakeFiles/__idf_app_trace.dir/host_file_io.c.obj
+[642/954] Building C object esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/spiffs/src/spiffs_nucleus.c.obj
+[643/954] Building C object esp-idf/app_trace/CMakeFiles/__idf_app_trace.dir/app_trace_util.c.obj
+[644/954] Linking C static library esp-idf/fatfs/libfatfs.a
+[645/954] Linking C static library esp-idf/esp_hid/libesp_hid.a
+[646/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/security/security2.c.obj
+[647/954] Building C object esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/src/security/security1.c.obj
+[648/954] Linking C static library esp-idf/spiffs/libspiffs.a
+[649/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-adc.c.obj
+[650/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-bt.c.obj
+[651/954] Building C object esp-idf/app_trace/CMakeFiles/__idf_app_trace.dir/port/port_uart.c.obj
+[652/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-dac.c.obj
+[653/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-hosted.c.obj
+[654/954] Building C object esp-idf/esp_lcd_st7796/CMakeFiles/__idf_esp_lcd_st7796.dir/esp_lcd_st7796_general.c.obj
+[655/954] Building C object esp-idf/app_trace/CMakeFiles/__idf_app_trace.dir/app_trace.c.obj
+[656/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-i2c.c.obj
+[657/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-i2c-slave.c.obj
+[658/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-i2c-ng.c.obj
+[659/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/ColorFormat.c.obj
+[660/954] Building C object esp-idf/json/CMakeFiles/__idf_json.dir/cJSON/cJSON_Utils.c.obj
+[661/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-ledc.c.obj
+[662/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-log-wrapper.c.obj
+[663/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-ldo.c.obj
+[664/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/cbuf.cpp.obj
+[665/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-sigmadelta.c.obj
+[666/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-psram.c.obj
+[667/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-matrix.c.obj
+[668/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-periman.c.obj
+[669/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-spi.c.obj
+[670/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-tinyusb.c.obj
+[671/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-gpio.c.obj
+[672/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-touch.c.obj
+[673/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-touch-ng.c.obj
+[674/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-cpu.c.obj
+[675/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-rmt.c.obj
+[676/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-misc.c.obj
+[677/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/freertos_stats.cpp.obj
+[678/954] Building C object esp-idf/json/CMakeFiles/__idf_json.dir/cJSON/cJSON.c.obj
+[679/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-rgb-led.c.obj
+[680/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/idf_openthread_mpool_wrapper.c.obj
+[681/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/HashBuilder.cpp.obj
+[682/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-time.c.obj
+[683/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/libb64/cdecode.c.obj
+[684/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/libb64/cencode.c.obj
+[685/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-timer.c.obj
+[686/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/HEXBuilder.cpp.obj
+[687/954] Performing configure step for 'bootloader'
+-- Found Git: /usr/bin/git (found version "2.50.1 (Apple Git-155)")
+-- The C compiler identification is GNU 13.2.0
+-- The CXX compiler identification is GNU 13.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32c5
+CMake Warning at /Users/danielwise/esp/esp-idf/tools/cmake/build.cmake:577 (message):
+  "idf_component.yml" file was found for components:
+
+  	/Users/danielwise/esp/esp-idf/components/arduino-esp32
+
+  However, the component manager is not enabled.
+Call Stack (most recent call first):
+  /Users/danielwise/esp/esp-idf/tools/cmake/project.cmake:710 (idf_build_process)
+  CMakeLists.txt:66 (project)
+
+
+-- Project sdkconfig file /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/sdkconfig
+info: INFO: Symbol SOC_UART_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:6
+info: INFO: Symbol SOC_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:10
+info: INFO: Symbol SOC_AHB_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:14
+info: INFO: Symbol SOC_GPTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:18
+info: INFO: Symbol SOC_ASYNC_MEMCPY_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:22
+info: INFO: Symbol SOC_SUPPORTS_SECURE_DL_MODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:26
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:34
+info: INFO: Symbol SOC_EFUSE_KEY_PURPOSE_FIELD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:38
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:30
+info: INFO: Symbol SOC_EFUSE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:42
+info: INFO: Symbol SOC_RTC_FAST_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:38
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:46
+info: INFO: Symbol SOC_RTC_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:42
+info: INFO: Symbol SOC_SYSTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:70
+info: INFO: Symbol SOC_FLASH_ENC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:98
+info: INFO: Symbol SOC_LP_PERIPHERALS_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:118
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:54
+info: INFO: Symbol SOC_SPI_FLASH_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:58
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:130
+info: INFO: Symbol SOC_XTAL_SUPPORT_40M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:150
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:62
+info: INFO: Symbol SOC_XTAL_SUPPORT_48M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:154
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:66
+info: INFO: Symbol SOC_ADC_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:174
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:70
+info: INFO: Symbol SOC_ADC_MAX_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:74
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:178
+info: INFO: Symbol SOC_SHARED_IDCACHE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:182
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:78
+info: INFO: Symbol SOC_CACHE_FREEZE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:186
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:82
+info: INFO: Symbol SOC_CPU_CORES_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:86
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:190
+info: INFO: Symbol SOC_CPU_INTR_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:194
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:90
+info: INFO: Symbol SOC_CPU_HAS_FLEXIBLE_INTC defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:94
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:198
+info: INFO: Symbol SOC_INT_CLIC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:202
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:98
+info: INFO: Symbol SOC_INT_HW_NESTED_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:102
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:206
+info: INFO: Symbol SOC_BRANCH_PREDICTOR_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:106
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:210
+info: INFO: Symbol SOC_CPU_BREAKPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:110
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:214
+info: INFO: Symbol SOC_CPU_WATCHPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:218
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:114
+info: INFO: Symbol SOC_CPU_WATCHPOINT_MAX_REGION_SIZE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:118
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:222
+info: INFO: Symbol SOC_CPU_HAS_PMA defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:226
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:122
+info: INFO: Symbol SOC_CPU_IDRAM_SPLIT_USING_PMP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:126
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:230
+info: INFO: Symbol SOC_AHB_GDMA_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:134
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:234
+info: INFO: Symbol SOC_GDMA_NUM_GROUPS_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:238
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:138
+info: INFO: Symbol SOC_GDMA_PAIRS_PER_GROUP_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:242
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:142
+info: INFO: Symbol SOC_GPIO_PORT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:246
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:146
+info: INFO: Symbol SOC_GPIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:250
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:150
+info: INFO: Symbol SOC_GPIO_SUPPORT_PIN_HYS_FILTER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:154
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:254
+info: INFO: Symbol SOC_GPIO_SUPPORT_RTC_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:258
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:158
+info: INFO: Symbol SOC_GPIO_IN_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:162
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:262
+info: INFO: Symbol SOC_GPIO_OUT_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:166
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:266
+info: INFO: Symbol SOC_GPIO_DEEP_SLEEP_WAKE_VALID_GPIO_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:170
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:270
+info: INFO: Symbol SOC_GPIO_VALID_DIGITAL_IO_PAD_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:274
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:174
+info: INFO: Symbol SOC_GPIO_SUPPORT_FORCE_HOLD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:178
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:278
+info: INFO: Symbol SOC_GPIO_SUPPORT_HOLD_SINGLE_IO_IN_DSLP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:282
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:182
+info: INFO: Symbol SOC_GPIO_CLOCKOUT_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:286
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:186
+info: INFO: Symbol SOC_RTCIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:290
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:190
+info: INFO: Symbol SOC_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:294
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:194
+info: INFO: Symbol SOC_HP_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:298
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:198
+info: INFO: Symbol SOC_LEDC_SUPPORT_PLL_DIV_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:202
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:342
+info: INFO: Symbol SOC_LEDC_SUPPORT_XTAL_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:206
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:346
+info: INFO: Symbol SOC_LEDC_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:350
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:210
+info: INFO: Symbol SOC_MMU_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:354
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:214
+info: INFO: Symbol SOC_MMU_LINEAR_ADDRESS_REGION_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:358
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:218
+info: INFO: Symbol SOC_MMU_DI_VADDR_SHARED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:362
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:222
+info: INFO: Symbol SOC_RMT_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:366
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:226
+info: INFO: Symbol SOC_RMT_TX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:370
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:230
+info: INFO: Symbol SOC_RMT_RX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:234
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:374
+info: INFO: Symbol SOC_RMT_CHANNELS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:238
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:378
+info: INFO: Symbol SOC_RMT_MEM_WORDS_PER_CHANNEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:242
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:382
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_PINGPONG defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:246
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:386
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_DEMODULATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:250
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:390
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_ASYNC_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:394
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:254
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:258
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:398
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_AUTO_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:402
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:262
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_SYNCHRO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:406
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:266
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_CARRIER_DATA_ONLY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:270
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:410
+info: INFO: Symbol SOC_RMT_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:414
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:274
+info: INFO: Symbol SOC_RSA_MAX_BIT_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:278
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:426
+info: INFO: Symbol SOC_SPI_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:458
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:282
+info: INFO: Symbol SOC_SPI_MAX_CS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:462
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:286
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_80M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:290
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:502
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_40M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:506
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:294
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_20M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:298
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:510
+info: INFO: Symbol SOC_SYSTIMER_COUNTER_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:514
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:302
+info: INFO: Symbol SOC_SYSTIMER_ALARM_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:306
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:518
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_LO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:310
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:522
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_HI defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:314
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:526
+info: INFO: Symbol SOC_SYSTIMER_FIXED_DIVIDER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:318
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:530
+info: INFO: Symbol SOC_SYSTIMER_SUPPORT_RC_FAST defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:322
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:534
+info: INFO: Symbol SOC_SYSTIMER_INT_LEVEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:538
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:326
+info: INFO: Symbol SOC_SYSTIMER_ALARM_MISS_COMPENSATE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:542
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:330
+info: INFO: Symbol SOC_TIMER_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:554
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:334
+info: INFO: Symbol SOC_TIMER_GROUP_TIMERS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:558
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:338
+info: INFO: Symbol SOC_TIMER_GROUP_COUNTER_BIT_WIDTH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:342
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:562
+info: INFO: Symbol SOC_TIMER_GROUP_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:346
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:566
+info: INFO: Symbol SOC_TIMER_GROUP_TOTAL_TIMERS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:350
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:570
+info: INFO: Symbol SOC_EFUSE_ECDSA_KEY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:574
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:354
+info: INFO: Symbol SOC_EFUSE_SECURE_BOOT_KEY_DIGESTS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:578
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:358
+info: INFO: Symbol SOC_FLASH_ENCRYPTED_XTS_AES_BLOCK_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:362
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:582
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:586
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:366
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES_128 defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:370
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:590
+info: INFO: Symbol SOC_UART_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:374
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:594
+info: INFO: Symbol SOC_UART_HP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:378
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:598
+info: INFO: Symbol SOC_UART_LP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:602
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:382
+info: INFO: Symbol SOC_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:606
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:386
+info: INFO: Symbol SOC_LP_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:390
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:610
+info: INFO: Symbol SOC_UART_BITRATE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:614
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:394
+info: INFO: Symbol SOC_UART_SUPPORT_XTAL_CLK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:398
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:622
+info: INFO: Symbol SOC_UART_SUPPORT_WAKEUP_INT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:626
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:402
+info: INFO: Symbol SOC_UART_HAS_LP_UART defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:406
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:630
+info: INFO: Symbol SOC_UART_SUPPORT_FSM_TX_WAIT_SEND defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:410
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:634
+info: INFO: Symbol SOC_PM_SUPPORT_MODEM_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:650
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:414
+info: INFO: Symbol SOC_PM_SUPPORT_XTAL32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:654
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:418
+info: INFO: Symbol SOC_PM_SUPPORT_RC32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:658
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:422
+info: INFO: Symbol SOC_PM_SUPPORT_RC_FAST_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:426
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:662
+info: INFO: Symbol SOC_PM_SUPPORT_VDDSDIO_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:430
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:666
+info: INFO: Symbol SOC_PM_SUPPORT_TOP_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:434
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:670
+info: INFO: Symbol SOC_PM_SUPPORT_HP_AON_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:674
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:438
+info: INFO: Symbol SOC_PM_SUPPORT_RTC_PERIPH_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:442
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:678
+info: INFO: Symbol SOC_CLK_RC_FAST_SUPPORT_CALIBRATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:446
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:702
+info: INFO: Symbol SOC_MODEM_CLOCK_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:706
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:450
+info: INFO: Symbol SOC_CLK_XTAL32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:710
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:454
+info: INFO: Symbol SOC_CLK_OSC_SLOW_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:458
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:714
+info: INFO: Symbol SOC_CLK_RC32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:462
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:718
+info: INFO: Symbol SOC_RCC_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:466
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:722
+info: INFO: Symbol IDF_TARGET_LINUX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/Kconfig:162
+    /Users/danielwise/esp/esp-idf/Kconfig:78
+info: INFO: Symbol ESP_ROM_HAS_CRC_LE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:6
+info: INFO: Symbol ESP_ROM_HAS_CRC_BE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:10
+info: INFO: Symbol ESP_ROM_HAS_JPEG_DECODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:14
+info: INFO: Symbol ESP_ROM_UART_CLK_IS_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:18
+info: INFO: Symbol ESP_ROM_USB_SERIAL_DEVICE_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:22
+info: INFO: Symbol ESP_ROM_HAS_RETARGETABLE_LOCKING defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:26
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:26
+info: INFO: Symbol ESP_ROM_GET_CLK_FREQ defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:30
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:30
+info: INFO: Symbol ESP_ROM_HAS_RVFPLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:34
+info: INFO: Symbol ESP_ROM_HAS_HAL_WDT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:38
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:38
+info: INFO: Symbol ESP_ROM_HAS_HAL_SYSTIMER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:42
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:42
+info: INFO: Symbol ESP_ROM_HAS_HEAP_TLSF defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:46
+info: INFO: Symbol ESP_ROM_HAS_LAYOUT_TABLE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:58
+info: INFO: Symbol ESP_ROM_HAS_SPI_FLASH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:54
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:62
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:62
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:70
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB_NORMAL_FORMAT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:74
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:66
+info: INFO: Symbol ESP_ROM_WDT_INIT_PATCH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:78
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:70
+info: INFO: Symbol ESP_ROM_RAM_APP_NEEDS_MMU_INIT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:74
+info: INFO: Symbol ESP_ROM_HAS_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:90
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:78
+info: INFO: Symbol ESP_ROM_SUPPORT_DEEP_SLEEP_WAKEUP_STUB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:94
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:82
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/riscv/ld/rom.api.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/ld/esp32c5.peripherals.ld
+-- Bootloader project name: "bootloader" version: 1
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.api.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.rvfp.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.wdt.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.systimer.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.version.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/ld/esp32c5.rom.newlib.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main/ld/esp32c5/mp/bootloader.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main/ld/esp32c5/mp/bootloader.rom.ld
+-- Components: bootloader bootloader_support efuse esp_app_format esp_bootloader_format esp_common esp_hw_support esp_rom esp_system esptool_py freertos hal log main micro-ecc newlib partition_table riscv soc spi_flash
+-- Component paths: /Users/danielwise/esp/esp-idf/components/bootloader /Users/danielwise/esp/esp-idf/components/bootloader_support /Users/danielwise/esp/esp-idf/components/efuse /Users/danielwise/esp/esp-idf/components/esp_app_format /Users/danielwise/esp/esp-idf/components/esp_bootloader_format /Users/danielwise/esp/esp-idf/components/esp_common /Users/danielwise/esp/esp-idf/components/esp_hw_support /Users/danielwise/esp/esp-idf/components/esp_rom /Users/danielwise/esp/esp-idf/components/esp_system /Users/danielwise/esp/esp-idf/components/esptool_py /Users/danielwise/esp/esp-idf/components/freertos /Users/danielwise/esp/esp-idf/components/hal /Users/danielwise/esp/esp-idf/components/log /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main /Users/danielwise/esp/esp-idf/components/bootloader/subproject/components/micro-ecc /Users/danielwise/esp/esp-idf/components/newlib /Users/danielwise/esp/esp-idf/components/partition_table /Users/danielwise/esp/esp-idf/components/riscv /Users/danielwise/esp/esp-idf/components/soc /Users/danielwise/esp/esp-idf/components/spi_flash
+-- Configuring done (7.6s)
+-- Generating done (0.8s)
+-- Build files have been written to: /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader
+[688/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-uart.c.obj
+FAILED: [code=1] esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-uart.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -D_POSIX_READER_WRITER_LOCKS -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/config -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/variants/esp32c5 -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32 -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ArduinoOTA/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/AsyncUDP/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/BLE/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/BluetoothSerial/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Console/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/DNSServer/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/EEPROM/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_I2S/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_NOW/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_SR/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_HostedOTA/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_Video/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESPmDNS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Ethernet/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/FFat/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/FS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Hash/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/HTTPClient/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/HTTPUpdate/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Insights/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/LittleFS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Matter/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/NetBIOS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Network/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/OpenThread/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/PPP/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Preferences/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/RainMaker/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SD_MMC/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SD/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SimpleBLE/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SPIFFS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SPI/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Ticker/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Update/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/USB/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WebServer/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/NetworkClientSecure/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WiFi/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WiFiProv/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Wire/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Zigbee/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/libb64 -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/freertos/config/include -I/Users/danielwise/esp/esp-idf/components/freertos/config/include/freertos -I/Users/danielwise/esp/esp-idf/components/freertos/config/riscv/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos -I/Users/danielwise/esp/esp-idf/components/freertos/esp_additions/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/heap/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include -I/Users/danielwise/esp/esp-idf/components/hal/platform_port/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/mp/include -I/Users/danielwise/esp/esp-idf/components/hal/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/mp/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/mp -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_system/include -I/Users/danielwise/esp/esp-idf/components/esp_system/port/soc -I/Users/danielwise/esp/esp-idf/components/esp_system/port/include/riscv -I/Users/danielwise/esp/esp-idf/components/esp_system/port/include/private -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/spi_flash/include -I/Users/danielwise/esp/esp-idf/components/esp_partition/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/wpa_supplicant/esp_supplicant/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/interface -I/Users/danielwise/esp/esp-idf/components/esp_adc/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/deprecated/include -I/Users/danielwise/esp/esp-idf/components/esp_eth/include -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_spi/include -I/Users/danielwise/esp/esp-idf/components/esp_pm/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_ringbuf/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_gptimer/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_usb_serial_jtag/include -I/Users/danielwise/esp/esp-idf/components/driver/deprecated -I/Users/danielwise/esp/esp-idf/components/driver/i2c/include -I/Users/danielwise/esp/esp-idf/components/driver/touch_sensor/include -I/Users/danielwise/esp/esp-idf/components/driver/twai/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_gpio/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_pcnt/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_mcpwm/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_ana_cmpr/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_i2s/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdmmc/include -I/Users/danielwise/esp/esp-idf/components/sdmmc/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdspi/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdio/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_dac/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_rmt/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_tsens/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdm/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_i2c/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_uart/include -I/Users/danielwise/esp/esp-idf/components/vfs/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_ledc/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_parlio/include -I/Users/danielwise/esp/esp-idf/components/esp_http_client/include -I/Users/danielwise/esp/esp-idf/components/esp_https_ota/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/bootloader_flash/include -I/Users/danielwise/esp/esp-idf/components/esp_app_format/include -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -I/Users/danielwise/esp/esp-idf/components/esp_netif/include -I/Users/danielwise/esp/esp-idf/components/fatfs/diskio -I/Users/danielwise/esp/esp-idf/components/fatfs/src -I/Users/danielwise/esp/esp-idf/components/fatfs/vfs -I/Users/danielwise/esp/esp-idf/components/wear_levelling/include -I/Users/danielwise/esp/esp-idf/components/nvs_flash/include -I/Users/danielwise/esp/esp-idf/components/app_update/include -I/Users/danielwise/esp/esp-idf/components/esp_bootloader_format/include -I/Users/danielwise/esp/esp-idf/components/spiffs/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/wifi_apps/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/wifi_apps/nan_app/include -I/Users/danielwise/esp/esp-idf/components/esp_phy/include -I/Users/danielwise/esp/esp-idf/components/esp_phy/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hid/include -I/Users/danielwise/esp/esp-idf/components/esp_psram/include -I/Users/danielwise/esp/esp-idf/components/console -I/Users/danielwise/esp/esp-idf/components/esp_vfs_console/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Og -fno-shrink-wrap -fmacro-prefix-map=/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -std=gnu17 -Wno-old-style-declaration -DARDUINO=10812 -DARDUINO_ESP32C5_DEV -DARDUINO_ARCH_ESP32 -DARDUINO_BOARD=\"ESP32C5_DEV\" -DARDUINO_VARIANT=\"esp32c5\" -DESP32=ESP32 -MD -MT esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-uart.c.obj -MF esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-uart.c.obj.d -o esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/esp32-hal-uart.c.obj -c /Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c: In function 'lp_uart_config_io':
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:157:7: error: implicit declaration of function 'rtc_gpio_init' [-Werror=implicit-function-declaration]
+  157 |   if (rtc_gpio_init(pin) != ESP_OK) {
+      |       ^~~~~~~~~~~~~
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:163:7: error: implicit declaration of function 'rtc_gpio_set_direction'; did you mean 'gpio_set_direction'? [-Werror=implicit-function-declaration]
+  163 |   if (rtc_gpio_set_direction(pin, direction) != ESP_OK) {
+      |       ^~~~~~~~~~~~~~~~~~~~~~
+      |       gpio_set_direction
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:172:7: error: implicit declaration of function 'rtc_gpio_iomux_func_sel'; did you mean 'gpio_ll_iomux_func_sel'? [-Werror=implicit-function-declaration]
+  172 |   if (rtc_gpio_iomux_func_sel(pin, upin->iomux_func) != ESP_OK) {
+      |       ^~~~~~~~~~~~~~~~~~~~~~~
+      |       gpio_ll_iomux_func_sel
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c: In function 'uartBegin':
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:1421:14: error: 'uart_config_t' has no member named 'flags'
+ 1421 |   uart_config.flags.backup_before_sleep = false;  // new flag from IDF v5.3
+      |              ^
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c: In function 'uartSetClockSource':
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:2023:7: error: duplicate case value
+ 2023 |       case UART_SCLK_DEFAULT:
+      |       ^~~~
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:2015:7: note: previously used here
+ 2015 |       case UART_SCLK_XTAL: uart->_uart_clock_source = LP_UART_SCLK_XTAL_D2; break;
+      |       ^~~~
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c: At top level:
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/esp32-hal-uart.c:150:13: warning: 'lp_uart_config_io' defined but not used [-Wunused-function]
+  150 | static bool lp_uart_config_io(uint8_t uart_num, int8_t pin, rtc_gpio_mode_t direction, uint32_t idx) {
+      |             ^~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+[689/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/MD5Builder.cpp.obj
+[690/954] Building C object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/stdlib_noniso.c.obj
+[691/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/IPAddress.cpp.obj
+[692/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/chip-debug-report.cpp.obj
+FAILED: [code=1] esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/chip-debug-report.cpp.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-g++ -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -D_POSIX_READER_WRITER_LOCKS -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/config -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/variants/esp32c5 -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32 -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ArduinoOTA/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/AsyncUDP/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/BLE/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/BluetoothSerial/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Console/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/DNSServer/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/EEPROM/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_I2S/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_NOW/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_SR/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_HostedOTA/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESP_Video/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/ESPmDNS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Ethernet/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/FFat/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/FS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Hash/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/HTTPClient/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/HTTPUpdate/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Insights/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/LittleFS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Matter/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/NetBIOS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Network/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/OpenThread/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/PPP/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Preferences/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/RainMaker/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SD_MMC/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SD/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SimpleBLE/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SPIFFS/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/SPI/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Ticker/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Update/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/USB/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WebServer/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/NetworkClientSecure/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WiFi/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/WiFiProv/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Wire/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/libraries/Zigbee/src -I/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/libb64 -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/freertos/config/include -I/Users/danielwise/esp/esp-idf/components/freertos/config/include/freertos -I/Users/danielwise/esp/esp-idf/components/freertos/config/riscv/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include -I/Users/danielwise/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/include/freertos -I/Users/danielwise/esp/esp-idf/components/freertos/esp_additions/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/heap/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include -I/Users/danielwise/esp/esp-idf/components/hal/platform_port/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/mp/include -I/Users/danielwise/esp/esp-idf/components/hal/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/mp/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/mp -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_system/include -I/Users/danielwise/esp/esp-idf/components/esp_system/port/soc -I/Users/danielwise/esp/esp-idf/components/esp_system/port/include/riscv -I/Users/danielwise/esp/esp-idf/components/esp_system/port/include/private -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/spi_flash/include -I/Users/danielwise/esp/esp-idf/components/esp_partition/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/wpa_supplicant/esp_supplicant/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/interface -I/Users/danielwise/esp/esp-idf/components/esp_adc/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_adc/deprecated/include -I/Users/danielwise/esp/esp-idf/components/esp_eth/include -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_spi/include -I/Users/danielwise/esp/esp-idf/components/esp_pm/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_ringbuf/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_gptimer/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_usb_serial_jtag/include -I/Users/danielwise/esp/esp-idf/components/driver/deprecated -I/Users/danielwise/esp/esp-idf/components/driver/i2c/include -I/Users/danielwise/esp/esp-idf/components/driver/touch_sensor/include -I/Users/danielwise/esp/esp-idf/components/driver/twai/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_gpio/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_pcnt/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_mcpwm/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_ana_cmpr/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_i2s/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdmmc/include -I/Users/danielwise/esp/esp-idf/components/sdmmc/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdspi/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdio/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_dac/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_rmt/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_tsens/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_sdm/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_i2c/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_uart/include -I/Users/danielwise/esp/esp-idf/components/vfs/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_ledc/include -I/Users/danielwise/esp/esp-idf/components/esp_driver_parlio/include -I/Users/danielwise/esp/esp-idf/components/esp_http_client/include -I/Users/danielwise/esp/esp-idf/components/esp_https_ota/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/bootloader_flash/include -I/Users/danielwise/esp/esp-idf/components/esp_app_format/include -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -I/Users/danielwise/esp/esp-idf/components/esp_netif/include -I/Users/danielwise/esp/esp-idf/components/fatfs/diskio -I/Users/danielwise/esp/esp-idf/components/fatfs/src -I/Users/danielwise/esp/esp-idf/components/fatfs/vfs -I/Users/danielwise/esp/esp-idf/components/wear_levelling/include -I/Users/danielwise/esp/esp-idf/components/nvs_flash/include -I/Users/danielwise/esp/esp-idf/components/app_update/include -I/Users/danielwise/esp/esp-idf/components/esp_bootloader_format/include -I/Users/danielwise/esp/esp-idf/components/spiffs/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/wifi_apps/include -I/Users/danielwise/esp/esp-idf/components/esp_wifi/wifi_apps/nan_app/include -I/Users/danielwise/esp/esp-idf/components/esp_phy/include -I/Users/danielwise/esp/esp-idf/components/esp_phy/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hid/include -I/Users/danielwise/esp/esp-idf/components/esp_psram/include -I/Users/danielwise/esp/esp-idf/components/console -I/Users/danielwise/esp/esp-idf/components/esp_vfs_console/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Og -fno-shrink-wrap -fmacro-prefix-map=/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -std=gnu++2b -fno-exceptions -fno-rtti -DARDUINO=10812 -DARDUINO_ESP32C5_DEV -DARDUINO_ARCH_ESP32 -DARDUINO_BOARD=\"ESP32C5_DEV\" -DARDUINO_VARIANT=\"esp32c5\" -DESP32=ESP32 -MD -MT esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/chip-debug-report.cpp.obj -MF esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/chip-debug-report.cpp.obj.d -o esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/chip-debug-report.cpp.obj -c /Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp
+In file included from /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/efuse_reg.h:9,
+                 from /Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp:9:
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp: In function 'void printPkgVersion()':
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp:73:59: error: 'EFUSE_PKG_VERSION_S' was not declared in this scope; did you mean 'EFUSE_SECURE_VERSION_S'?
+   73 |   uint32_t pkg_ver = REG_GET_FIELD(EFUSE_RD_MAC_SYS2_REG, EFUSE_PKG_VERSION);
+      |                                                           ^~~~~~~~~~~~~~~~~
+/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/soc.h:67:32: note: in definition of macro 'REG_GET_FIELD'
+   67 |             ((REG_READ(_r) >> (_f##_S)) & (_f##_V));                                                                   \
+      |                                ^~
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp:73:59: error: 'EFUSE_PKG_VERSION_V' was not declared in this scope; did you mean 'EFUSE_SECURE_VERSION_V'?
+   73 |   uint32_t pkg_ver = REG_GET_FIELD(EFUSE_RD_MAC_SYS2_REG, EFUSE_PKG_VERSION);
+      |                                                           ^~~~~~~~~~~~~~~~~
+/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/soc.h:67:44: note: in definition of macro 'REG_GET_FIELD'
+   67 |             ((REG_READ(_r) >> (_f##_S)) & (_f##_V));                                                                   \
+      |                                            ^~
+/Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/soc.h:66:31: error: void value not ignored as it ought to be
+   66 | #define REG_GET_FIELD(_r, _f) ({                                                                                       \
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   67 |             ((REG_READ(_r) >> (_f##_S)) & (_f##_V));                                                                   \
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   68 |         })
+      |         ~~                     
+/Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/chip-debug-report.cpp:73:22: note: in expansion of macro 'REG_GET_FIELD'
+   73 |   uint32_t pkg_ver = REG_GET_FIELD(EFUSE_RD_MAC_SYS2_REG, EFUSE_PKG_VERSION);
+      |                      ^~~~~~~~~~~~~
+[693/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/base64.cpp.obj
+[694/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/FunctionalInterrupt.cpp.obj
+[695/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/MacAddress.cpp.obj
+[696/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/HardwareSerial.cpp.obj
+[697/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/main.cpp.obj
+[698/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/Print.cpp.obj
+[699/954] Building CXX object esp-idf/arduino-esp32/CMakeFiles/__idf_arduino-esp32.dir/cores/esp32/Esp.cpp.obj
+In file included from /Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spi_flash_ll.h:18,
+                 from /Users/danielwise/esp/esp-idf/components/arduino-esp32/cores/esp32/Esp.cpp:41:
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h: In function 'void spimem_flash_ll_read_phase(spi_mem_dev_t*)':
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::reserved0' [-Wmissing-field-initializers]
+  422 |     };
+      |     ^
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::cs_hold' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::cs_setup' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::reserved8' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::ck_out_edge' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::reserved10' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::fwrite_dual' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::fwrite_quad' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::fwrite_dio' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::fwrite_qio' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::reserved16' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::usr_miso_highpart' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::usr_mosi_highpart' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::usr_dummy_idle' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:422:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::usr_dummy' [-Wmissing-field-initializers]
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h: In function 'void spimem_flash_ll_set_command(spi_mem_dev_t*, uint32_t, uint32_t)':
+/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include/hal/spimem_flash_ll.h:527:5: warning: missing initializer for member 'spi_mem_dev_s::<unnamed union>::<unnamed struct>::reserved16' [-Wmissing-field-initializers]
+  527 |     };
+      |     ^
+ninja: build stopped: subcommand failed.

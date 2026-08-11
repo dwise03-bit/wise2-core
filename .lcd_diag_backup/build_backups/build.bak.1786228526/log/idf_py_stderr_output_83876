@@ -1,0 +1,417 @@
+info: INFO: Symbol SOC_UART_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:6
+info: INFO: Symbol SOC_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:10
+info: INFO: Symbol SOC_AHB_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:14
+info: INFO: Symbol SOC_GPTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:18
+info: INFO: Symbol SOC_ASYNC_MEMCPY_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:22
+info: INFO: Symbol SOC_SUPPORTS_SECURE_DL_MODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:26
+info: INFO: Symbol SOC_EFUSE_KEY_PURPOSE_FIELD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:30
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:38
+info: INFO: Symbol SOC_EFUSE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:42
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:34
+info: INFO: Symbol SOC_RTC_FAST_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:38
+info: INFO: Symbol SOC_RTC_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:42
+info: INFO: Symbol SOC_SYSTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:70
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:46
+info: INFO: Symbol SOC_FLASH_ENC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:98
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:50
+info: INFO: Symbol SOC_LP_PERIPHERALS_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:54
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:118
+info: INFO: Symbol SOC_SPI_FLASH_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:130
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:58
+info: INFO: Symbol SOC_XTAL_SUPPORT_40M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:150
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:62
+info: INFO: Symbol SOC_XTAL_SUPPORT_48M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:154
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:66
+info: INFO: Symbol SOC_ADC_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:174
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:70
+info: INFO: Symbol SOC_ADC_MAX_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:74
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:178
+info: INFO: Symbol SOC_SHARED_IDCACHE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:78
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:182
+info: INFO: Symbol SOC_CACHE_FREEZE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:186
+info: INFO: Symbol SOC_CPU_CORES_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:86
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:190
+info: INFO: Symbol SOC_CPU_INTR_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:194
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:90
+info: INFO: Symbol SOC_CPU_HAS_FLEXIBLE_INTC defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:198
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:94
+info: INFO: Symbol SOC_INT_CLIC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:98
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:202
+info: INFO: Symbol SOC_INT_HW_NESTED_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:102
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:206
+info: INFO: Symbol SOC_BRANCH_PREDICTOR_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:106
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:210
+info: INFO: Symbol SOC_CPU_BREAKPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:110
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:214
+info: INFO: Symbol SOC_CPU_WATCHPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:114
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:218
+info: INFO: Symbol SOC_CPU_WATCHPOINT_MAX_REGION_SIZE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:222
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:118
+info: INFO: Symbol SOC_CPU_HAS_PMA defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:226
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:122
+info: INFO: Symbol SOC_CPU_IDRAM_SPLIT_USING_PMP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:126
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:230
+info: INFO: Symbol SOC_AHB_GDMA_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:134
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:234
+info: INFO: Symbol SOC_GDMA_NUM_GROUPS_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:138
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:238
+info: INFO: Symbol SOC_GDMA_PAIRS_PER_GROUP_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:142
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:242
+info: INFO: Symbol SOC_GPIO_PORT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:146
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:246
+info: INFO: Symbol SOC_GPIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:250
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:150
+info: INFO: Symbol SOC_GPIO_SUPPORT_PIN_HYS_FILTER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:254
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:154
+info: INFO: Symbol SOC_GPIO_SUPPORT_RTC_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:158
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:258
+info: INFO: Symbol SOC_GPIO_IN_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:262
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:162
+info: INFO: Symbol SOC_GPIO_OUT_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:266
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:166
+info: INFO: Symbol SOC_GPIO_DEEP_SLEEP_WAKE_VALID_GPIO_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:170
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:270
+info: INFO: Symbol SOC_GPIO_VALID_DIGITAL_IO_PAD_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:274
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:174
+info: INFO: Symbol SOC_GPIO_SUPPORT_FORCE_HOLD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:178
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:278
+info: INFO: Symbol SOC_GPIO_SUPPORT_HOLD_SINGLE_IO_IN_DSLP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:182
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:282
+info: INFO: Symbol SOC_GPIO_CLOCKOUT_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:186
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:286
+info: INFO: Symbol SOC_RTCIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:190
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:290
+info: INFO: Symbol SOC_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:294
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:194
+info: INFO: Symbol SOC_HP_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:198
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:298
+info: INFO: Symbol SOC_LEDC_SUPPORT_PLL_DIV_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:202
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:342
+info: INFO: Symbol SOC_LEDC_SUPPORT_XTAL_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:206
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:346
+info: INFO: Symbol SOC_LEDC_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:350
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:210
+info: INFO: Symbol SOC_MMU_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:354
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:214
+info: INFO: Symbol SOC_MMU_LINEAR_ADDRESS_REGION_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:218
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:358
+info: INFO: Symbol SOC_MMU_DI_VADDR_SHARED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:362
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:222
+info: INFO: Symbol SOC_RMT_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:226
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:366
+info: INFO: Symbol SOC_RMT_TX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:370
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:230
+info: INFO: Symbol SOC_RMT_RX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:374
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:234
+info: INFO: Symbol SOC_RMT_CHANNELS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:238
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:378
+info: INFO: Symbol SOC_RMT_MEM_WORDS_PER_CHANNEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:382
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:242
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_PINGPONG defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:246
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:386
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_DEMODULATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:390
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:250
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_ASYNC_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:394
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:254
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:398
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:258
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_AUTO_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:262
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:402
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_SYNCHRO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:266
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:406
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_CARRIER_DATA_ONLY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:270
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:410
+info: INFO: Symbol SOC_RMT_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:274
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:414
+info: INFO: Symbol SOC_RSA_MAX_BIT_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:426
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:278
+info: INFO: Symbol SOC_SPI_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:458
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:282
+info: INFO: Symbol SOC_SPI_MAX_CS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:286
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:462
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_80M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:502
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:290
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_40M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:294
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:506
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_20M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:510
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:298
+info: INFO: Symbol SOC_SYSTIMER_COUNTER_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:302
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:514
+info: INFO: Symbol SOC_SYSTIMER_ALARM_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:518
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:306
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_LO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:522
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:310
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_HI defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:526
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:314
+info: INFO: Symbol SOC_SYSTIMER_FIXED_DIVIDER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:530
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:318
+info: INFO: Symbol SOC_SYSTIMER_SUPPORT_RC_FAST defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:322
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:534
+info: INFO: Symbol SOC_SYSTIMER_INT_LEVEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:538
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:326
+info: INFO: Symbol SOC_SYSTIMER_ALARM_MISS_COMPENSATE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:330
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:542
+info: INFO: Symbol SOC_TIMER_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:554
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:334
+info: INFO: Symbol SOC_TIMER_GROUP_TIMERS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:338
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:558
+info: INFO: Symbol SOC_TIMER_GROUP_COUNTER_BIT_WIDTH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:342
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:562
+info: INFO: Symbol SOC_TIMER_GROUP_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:566
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:346
+info: INFO: Symbol SOC_TIMER_GROUP_TOTAL_TIMERS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:350
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:570
+info: INFO: Symbol SOC_EFUSE_ECDSA_KEY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:354
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:574
+info: INFO: Symbol SOC_EFUSE_SECURE_BOOT_KEY_DIGESTS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:358
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:578
+info: INFO: Symbol SOC_FLASH_ENCRYPTED_XTS_AES_BLOCK_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:362
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:582
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:586
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:366
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES_128 defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:370
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:590
+info: INFO: Symbol SOC_UART_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:374
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:594
+info: INFO: Symbol SOC_UART_HP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:378
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:598
+info: INFO: Symbol SOC_UART_LP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:382
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:602
+info: INFO: Symbol SOC_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:386
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:606
+info: INFO: Symbol SOC_LP_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:610
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:390
+info: INFO: Symbol SOC_UART_BITRATE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:614
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:394
+info: INFO: Symbol SOC_UART_SUPPORT_XTAL_CLK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:622
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:398
+info: INFO: Symbol SOC_UART_SUPPORT_WAKEUP_INT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:626
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:402
+info: INFO: Symbol SOC_UART_HAS_LP_UART defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:406
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:630
+info: INFO: Symbol SOC_UART_SUPPORT_FSM_TX_WAIT_SEND defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:410
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:634
+info: INFO: Symbol SOC_PM_SUPPORT_MODEM_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:414
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:650
+info: INFO: Symbol SOC_PM_SUPPORT_XTAL32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:418
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:654
+info: INFO: Symbol SOC_PM_SUPPORT_RC32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:422
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:658
+info: INFO: Symbol SOC_PM_SUPPORT_RC_FAST_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:662
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:426
+info: INFO: Symbol SOC_PM_SUPPORT_VDDSDIO_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:430
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:666
+info: INFO: Symbol SOC_PM_SUPPORT_TOP_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:434
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:670
+info: INFO: Symbol SOC_PM_SUPPORT_HP_AON_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:438
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:674
+info: INFO: Symbol SOC_PM_SUPPORT_RTC_PERIPH_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:442
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:678
+info: INFO: Symbol SOC_CLK_RC_FAST_SUPPORT_CALIBRATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:702
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:446
+info: INFO: Symbol SOC_MODEM_CLOCK_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:450
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:706
+info: INFO: Symbol SOC_CLK_XTAL32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:454
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:710
+info: INFO: Symbol SOC_CLK_OSC_SLOW_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:714
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:458
+info: INFO: Symbol SOC_CLK_RC32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:718
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:462
+info: INFO: Symbol SOC_RCC_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:722
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:466
+info: INFO: Symbol IDF_TARGET_LINUX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/Kconfig:78
+    /Users/danielwise/esp/esp-idf/Kconfig:162
+info: INFO: Symbol ESP_ROM_HAS_CRC_LE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:6
+info: INFO: Symbol ESP_ROM_HAS_CRC_BE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:10
+info: INFO: Symbol ESP_ROM_HAS_JPEG_DECODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:14
+info: INFO: Symbol ESP_ROM_UART_CLK_IS_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:18
+info: INFO: Symbol ESP_ROM_USB_SERIAL_DEVICE_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:22
+info: INFO: Symbol ESP_ROM_HAS_RETARGETABLE_LOCKING defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:26
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:26
+info: INFO: Symbol ESP_ROM_GET_CLK_FREQ defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:30
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:30
+info: INFO: Symbol ESP_ROM_HAS_RVFPLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:34
+info: INFO: Symbol ESP_ROM_HAS_HAL_WDT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:38
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:38
+info: INFO: Symbol ESP_ROM_HAS_HAL_SYSTIMER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:42
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:42
+info: INFO: Symbol ESP_ROM_HAS_HEAP_TLSF defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:46
+info: INFO: Symbol ESP_ROM_HAS_LAYOUT_TABLE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:58
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:50
+info: INFO: Symbol ESP_ROM_HAS_SPI_FLASH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:54
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:62
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:70
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:62
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB_NORMAL_FORMAT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:74
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:66
+info: INFO: Symbol ESP_ROM_WDT_INIT_PATCH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:70
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:78
+info: INFO: Symbol ESP_ROM_RAM_APP_NEEDS_MMU_INIT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:74
+info: INFO: Symbol ESP_ROM_HAS_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:78
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:90
+info: INFO: Symbol ESP_ROM_SUPPORT_DEEP_SLEEP_WAKEUP_STUB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:94
+CMake Warning (deprecated) at /Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+ESP Insights Project commit: v1.1.0-832-g077df40d
+ESP RainMaker Project commit: v1.1.0-832-g077df40d

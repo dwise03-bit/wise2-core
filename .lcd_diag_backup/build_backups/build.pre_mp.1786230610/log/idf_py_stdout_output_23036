@@ -1,0 +1,628 @@
+[0/1] Re-running CMake...
+-- Building ESP-IDF components for target esp32c5
+-- Project sdkconfig file /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/sdkconfig
+Loading defaults file /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/sdkconfig.defaults...
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/riscv/ld/rom.api.ld
+-- App "byte_lcd_diag" version: v1.1.0-832-g077df40d
+-- Adding linker script /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/esp-idf/esp_system/ld/sections.ld.in
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.api.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.rvfp.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.wdt.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.systimer.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.version.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.newlib.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.newlib-normal.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.heap.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/ld/esp32c5.peripherals.ld
+-- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_bootloader_format esp_coex esp_common esp_driver_ana_cmpr esp_driver_cam esp_driver_dac esp_driver_gpio esp_driver_gptimer esp_driver_i2c esp_driver_i2s esp_driver_isp esp_driver_jpeg esp_driver_ledc esp_driver_mcpwm esp_driver_parlio esp_driver_pcnt esp_driver_ppa esp_driver_rmt esp_driver_sdio esp_driver_sdm esp_driver_sdmmc esp_driver_sdspi esp_driver_spi esp_driver_tsens esp_driver_uart esp_driver_usb_serial_jtag esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_lcd_st7796 esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_vfs_console esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip main mbedtls mqtt newlib nvs_flash nvs_sec_provider openthread partition_table protobuf-c protocomm pthread riscv sdmmc soc spi_flash spiffs tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant
+-- Component paths: /Users/danielwise/esp/esp-idf/components/app_trace /Users/danielwise/esp/esp-idf/components/app_update /Users/danielwise/esp/esp-idf/components/bootloader /Users/danielwise/esp/esp-idf/components/bootloader_support /Users/danielwise/esp/esp-idf/components/bt /Users/danielwise/esp/esp-idf/components/cmock /Users/danielwise/esp/esp-idf/components/console /Users/danielwise/esp/esp-idf/components/cxx /Users/danielwise/esp/esp-idf/components/driver /Users/danielwise/esp/esp-idf/components/efuse /Users/danielwise/esp/esp-idf/components/esp-tls /Users/danielwise/esp/esp-idf/components/esp_adc /Users/danielwise/esp/esp-idf/components/esp_app_format /Users/danielwise/esp/esp-idf/components/esp_bootloader_format /Users/danielwise/esp/esp-idf/components/esp_coex /Users/danielwise/esp/esp-idf/components/esp_common /Users/danielwise/esp/esp-idf/components/esp_driver_ana_cmpr /Users/danielwise/esp/esp-idf/components/esp_driver_cam /Users/danielwise/esp/esp-idf/components/esp_driver_dac /Users/danielwise/esp/esp-idf/components/esp_driver_gpio /Users/danielwise/esp/esp-idf/components/esp_driver_gptimer /Users/danielwise/esp/esp-idf/components/esp_driver_i2c /Users/danielwise/esp/esp-idf/components/esp_driver_i2s /Users/danielwise/esp/esp-idf/components/esp_driver_isp /Users/danielwise/esp/esp-idf/components/esp_driver_jpeg /Users/danielwise/esp/esp-idf/components/esp_driver_ledc /Users/danielwise/esp/esp-idf/components/esp_driver_mcpwm /Users/danielwise/esp/esp-idf/components/esp_driver_parlio /Users/danielwise/esp/esp-idf/components/esp_driver_pcnt /Users/danielwise/esp/esp-idf/components/esp_driver_ppa /Users/danielwise/esp/esp-idf/components/esp_driver_rmt /Users/danielwise/esp/esp-idf/components/esp_driver_sdio /Users/danielwise/esp/esp-idf/components/esp_driver_sdm /Users/danielwise/esp/esp-idf/components/esp_driver_sdmmc /Users/danielwise/esp/esp-idf/components/esp_driver_sdspi /Users/danielwise/esp/esp-idf/components/esp_driver_spi /Users/danielwise/esp/esp-idf/components/esp_driver_tsens /Users/danielwise/esp/esp-idf/components/esp_driver_uart /Users/danielwise/esp/esp-idf/components/esp_driver_usb_serial_jtag /Users/danielwise/esp/esp-idf/components/esp_eth /Users/danielwise/esp/esp-idf/components/esp_event /Users/danielwise/esp/esp-idf/components/esp_gdbstub /Users/danielwise/esp/esp-idf/components/esp_hid /Users/danielwise/esp/esp-idf/components/esp_http_client /Users/danielwise/esp/esp-idf/components/esp_http_server /Users/danielwise/esp/esp-idf/components/esp_https_ota /Users/danielwise/esp/esp-idf/components/esp_https_server /Users/danielwise/esp/esp-idf/components/esp_hw_support /Users/danielwise/esp/esp-idf/components/esp_lcd /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/components/esp_lcd_st7796 /Users/danielwise/esp/esp-idf/components/esp_local_ctrl /Users/danielwise/esp/esp-idf/components/esp_mm /Users/danielwise/esp/esp-idf/components/esp_netif /Users/danielwise/esp/esp-idf/components/esp_netif_stack /Users/danielwise/esp/esp-idf/components/esp_partition /Users/danielwise/esp/esp-idf/components/esp_phy /Users/danielwise/esp/esp-idf/components/esp_pm /Users/danielwise/esp/esp-idf/components/esp_psram /Users/danielwise/esp/esp-idf/components/esp_ringbuf /Users/danielwise/esp/esp-idf/components/esp_rom /Users/danielwise/esp/esp-idf/components/esp_system /Users/danielwise/esp/esp-idf/components/esp_timer /Users/danielwise/esp/esp-idf/components/esp_vfs_console /Users/danielwise/esp/esp-idf/components/esp_wifi /Users/danielwise/esp/esp-idf/components/espcoredump /Users/danielwise/esp/esp-idf/components/esptool_py /Users/danielwise/esp/esp-idf/components/fatfs /Users/danielwise/esp/esp-idf/components/freertos /Users/danielwise/esp/esp-idf/components/hal /Users/danielwise/esp/esp-idf/components/heap /Users/danielwise/esp/esp-idf/components/http_parser /Users/danielwise/esp/esp-idf/components/idf_test /Users/danielwise/esp/esp-idf/components/ieee802154 /Users/danielwise/esp/esp-idf/components/json /Users/danielwise/esp/esp-idf/components/log /Users/danielwise/esp/esp-idf/components/lwip /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/main /Users/danielwise/esp/esp-idf/components/mbedtls /Users/danielwise/esp/esp-idf/components/mqtt /Users/danielwise/esp/esp-idf/components/newlib /Users/danielwise/esp/esp-idf/components/nvs_flash /Users/danielwise/esp/esp-idf/components/nvs_sec_provider /Users/danielwise/esp/esp-idf/components/openthread /Users/danielwise/esp/esp-idf/components/partition_table /Users/danielwise/esp/esp-idf/components/protobuf-c /Users/danielwise/esp/esp-idf/components/protocomm /Users/danielwise/esp/esp-idf/components/pthread /Users/danielwise/esp/esp-idf/components/riscv /Users/danielwise/esp/esp-idf/components/sdmmc /Users/danielwise/esp/esp-idf/components/soc /Users/danielwise/esp/esp-idf/components/spi_flash /Users/danielwise/esp/esp-idf/components/spiffs /Users/danielwise/esp/esp-idf/components/tcp_transport /Users/danielwise/esp/esp-idf/components/ulp /Users/danielwise/esp/esp-idf/components/unity /Users/danielwise/esp/esp-idf/components/usb /Users/danielwise/esp/esp-idf/components/vfs /Users/danielwise/esp/esp-idf/components/wear_levelling /Users/danielwise/esp/esp-idf/components/wifi_provisioning /Users/danielwise/esp/esp-idf/components/wpa_supplicant
+-- Configuring done (5.2s)
+-- Generating done (0.8s)
+-- Build files have been written to: /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build
+[1/5] cd /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/esp-idf/esptool_py && /Users/danielwise/.espressif/python_env/idf5.3_py3.9_env/bin/python /Users/danielwise/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/partition_table/partition-table.bin /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/byte_lcd_diag.bin
+byte_lcd_diag.bin binary size 0x2d450 bytes. Smallest app partition is 0x100000 bytes. 0xd2bb0 bytes (82%) free.
+[2/5] Performing build step for 'bootloader'
+FAILED: [code=1] bootloader-prefix/src/bootloader-stamp/bootloader-build bootloader/bootloader.elf bootloader/bootloader.bin bootloader/bootloader.map /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader-prefix/src/bootloader-stamp/bootloader-build /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/bootloader.elf /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/bootloader.bin /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/bootloader.map 
+cd /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader && /opt/homebrew/bin/cmake --build .
+[0/1] Re-running CMake...
+-- Building ESP-IDF components for target esp32c5
+NOTICE: Skipping optional dependency: espressif/mqtt
+NOTICE: Skipping optional dependency: espressif/esp-sr
+NOTICE: Skipping optional dependency: espressif/esp_hosted
+NOTICE: Skipping optional dependency: espressif/esp_wifi_remote
+NOTICE: Skipping optional dependency: espressif/lan867x
+NOTICE: Skipping optional dependency: espressif/cjson
+NOTICE: Skipping optional dependency: espressif/w5500
+NOTICE: Skipping optional dependency: espressif/dm9051
+NOTICE: Skipping optional dependency: espressif/ksz8851snl
+NOTICE: Processing 30 dependencies:
+NOTICE: [1/30] chmorgan/esp-libhelix-mp3 (1.0.3)
+NOTICE: [2/30] espressif/cbor (0.6.1~4)
+NOTICE: [3/30] espressif/esp-dsp (1.8.2)
+NOTICE: [4/30] espressif/esp-modbus (2.1.3)
+NOTICE: [5/30] espressif/esp-zboss-lib (1.6.4)
+NOTICE: [6/30] espressif/esp-zigbee-lib (1.6.8)
+NOTICE: [7/30] espressif/esp_daylight (1.0.1)
+NOTICE: [8/30] espressif/esp_diag_data_store (1.1.1)
+NOTICE: [9/30] espressif/esp_diagnostics (1.3.4)
+NOTICE: [10/30] espressif/esp_insights (1.3.4)
+NOTICE: [11/30] espressif/esp_modem (2.1.0)
+NOTICE: [12/30] espressif/esp_rainmaker (1.16.0)
+NOTICE: [13/30] espressif/esp_schedule (1.3.3)
+NOTICE: [14/30] espressif/esp_secure_cert_mgr (2.9.3)
+NOTICE: [15/30] espressif/jsmn (1.1.0)
+NOTICE: [16/30] espressif/json_generator (1.1.2)
+NOTICE: [17/30] espressif/json_parser (1.0.3)
+NOTICE: [18/30] espressif/libsodium (1.0.22~1)
+NOTICE: [19/30] espressif/mdns (1.11.3)
+NOTICE: [20/30] espressif/network_provisioning (1.0.2)
+NOTICE: [21/30] espressif/qrcode (0.1.0~2)
+NOTICE: [22/30] espressif/rmaker_cmd_resp (1.0.0)
+NOTICE: [23/30] espressif/rmaker_common (1.8.5)
+NOTICE: [24/30] espressif/rmaker_common_events (1.0.0)
+NOTICE: [25/30] espressif/rmaker_console (1.0.0)
+NOTICE: [26/30] espressif/rmaker_system_ctrl (1.0.0)
+NOTICE: [27/30] espressif/rmaker_time_sync (1.0.2)
+NOTICE: [28/30] espressif/rmaker_work_queue (1.0.0)
+NOTICE: [29/30] joltwallet/littlefs (1.22.3)
+NOTICE: [30/30] idf (5.3.0)
+-- DEBUG: Use esp-modbus component folder: /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-modbus.
+NOTICE: Skipping optional dependency: espressif/esp-sr
+NOTICE: Skipping optional dependency: espressif/esp_hosted
+NOTICE: Skipping optional dependency: espressif/esp_wifi_remote
+NOTICE: Skipping optional dependency: espressif/lan867x
+NOTICE: Skipping optional dependency: espressif/cjson
+NOTICE: Skipping optional dependency: espressif/w5500
+NOTICE: Skipping optional dependency: espressif/dm9051
+NOTICE: Skipping optional dependency: espressif/ksz8851snl
+NOTICE: Skipping optional dependency: espressif/mqtt
+-- Project sdkconfig file /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/sdkconfig
+info: INFO: Symbol SOC_UART_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:6
+info: INFO: Symbol SOC_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:10
+info: INFO: Symbol SOC_AHB_GDMA_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:14
+info: INFO: Symbol SOC_GPTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:18
+info: INFO: Symbol SOC_ASYNC_MEMCPY_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:22
+info: INFO: Symbol SOC_SUPPORTS_SECURE_DL_MODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:26
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:34
+info: INFO: Symbol SOC_EFUSE_KEY_PURPOSE_FIELD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:30
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:38
+info: INFO: Symbol SOC_EFUSE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:42
+info: INFO: Symbol SOC_RTC_FAST_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:38
+info: INFO: Symbol SOC_RTC_MEM_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:42
+info: INFO: Symbol SOC_SYSTIMER_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:70
+info: INFO: Symbol SOC_FLASH_ENC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:50
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:98
+info: INFO: Symbol SOC_LP_PERIPHERALS_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:118
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:54
+info: INFO: Symbol SOC_SPI_FLASH_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:58
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:130
+info: INFO: Symbol SOC_XTAL_SUPPORT_40M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:150
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:62
+info: INFO: Symbol SOC_XTAL_SUPPORT_48M defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:154
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:66
+info: INFO: Symbol SOC_ADC_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:174
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:70
+info: INFO: Symbol SOC_ADC_MAX_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:178
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:74
+info: INFO: Symbol SOC_SHARED_IDCACHE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:182
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:78
+info: INFO: Symbol SOC_CACHE_FREEZE_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:186
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:82
+info: INFO: Symbol SOC_CPU_CORES_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:190
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:86
+info: INFO: Symbol SOC_CPU_INTR_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:90
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:194
+info: INFO: Symbol SOC_CPU_HAS_FLEXIBLE_INTC defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:198
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:94
+info: INFO: Symbol SOC_INT_CLIC_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:202
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:98
+info: INFO: Symbol SOC_INT_HW_NESTED_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:206
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:102
+info: INFO: Symbol SOC_BRANCH_PREDICTOR_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:210
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:106
+info: INFO: Symbol SOC_CPU_BREAKPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:214
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:110
+info: INFO: Symbol SOC_CPU_WATCHPOINTS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:114
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:218
+info: INFO: Symbol SOC_CPU_WATCHPOINT_MAX_REGION_SIZE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:118
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:222
+info: INFO: Symbol SOC_CPU_HAS_PMA defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:226
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:122
+info: INFO: Symbol SOC_CPU_IDRAM_SPLIT_USING_PMP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:230
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:126
+info: INFO: Symbol SOC_AHB_GDMA_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:134
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:234
+info: INFO: Symbol SOC_GDMA_NUM_GROUPS_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:138
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:238
+info: INFO: Symbol SOC_GDMA_PAIRS_PER_GROUP_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:142
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:242
+info: INFO: Symbol SOC_GPIO_PORT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:246
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:146
+info: INFO: Symbol SOC_GPIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:250
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:150
+info: INFO: Symbol SOC_GPIO_SUPPORT_PIN_HYS_FILTER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:254
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:154
+info: INFO: Symbol SOC_GPIO_SUPPORT_RTC_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:258
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:158
+info: INFO: Symbol SOC_GPIO_IN_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:162
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:262
+info: INFO: Symbol SOC_GPIO_OUT_RANGE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:266
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:166
+info: INFO: Symbol SOC_GPIO_DEEP_SLEEP_WAKE_VALID_GPIO_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:270
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:170
+info: INFO: Symbol SOC_GPIO_VALID_DIGITAL_IO_PAD_MASK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:274
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:174
+info: INFO: Symbol SOC_GPIO_SUPPORT_FORCE_HOLD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:278
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:178
+info: INFO: Symbol SOC_GPIO_SUPPORT_HOLD_SINGLE_IO_IN_DSLP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:282
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:182
+info: INFO: Symbol SOC_GPIO_CLOCKOUT_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:186
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:286
+info: INFO: Symbol SOC_RTCIO_PIN_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:290
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:190
+info: INFO: Symbol SOC_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:194
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:294
+info: INFO: Symbol SOC_HP_I2C_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:198
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:298
+info: INFO: Symbol SOC_LEDC_SUPPORT_PLL_DIV_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:342
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:202
+info: INFO: Symbol SOC_LEDC_SUPPORT_XTAL_CLOCK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:346
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:206
+info: INFO: Symbol SOC_LEDC_CHANNEL_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:210
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:350
+info: INFO: Symbol SOC_MMU_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:354
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:214
+info: INFO: Symbol SOC_MMU_LINEAR_ADDRESS_REGION_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:218
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:358
+info: INFO: Symbol SOC_MMU_DI_VADDR_SHARED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:222
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:362
+info: INFO: Symbol SOC_RMT_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:366
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:226
+info: INFO: Symbol SOC_RMT_TX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:230
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:370
+info: INFO: Symbol SOC_RMT_RX_CANDIDATES_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:234
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:374
+info: INFO: Symbol SOC_RMT_CHANNELS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:238
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:378
+info: INFO: Symbol SOC_RMT_MEM_WORDS_PER_CHANNEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:382
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:242
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_PINGPONG defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:386
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:246
+info: INFO: Symbol SOC_RMT_SUPPORT_RX_DEMODULATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:390
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:250
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_ASYNC_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:394
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:254
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_COUNT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:398
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:258
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_LOOP_AUTO_STOP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:262
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:402
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_SYNCHRO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:266
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:406
+info: INFO: Symbol SOC_RMT_SUPPORT_TX_CARRIER_DATA_ONLY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:270
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:410
+info: INFO: Symbol SOC_RMT_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:274
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:414
+info: INFO: Symbol SOC_RSA_MAX_BIT_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:278
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:426
+info: INFO: Symbol SOC_SPI_PERIPH_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:282
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:458
+info: INFO: Symbol SOC_SPI_MAX_CS_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:462
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:286
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_80M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:502
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:290
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_40M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:294
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:506
+info: INFO: Symbol SOC_MEMSPI_SRC_FREQ_20M_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:510
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:298
+info: INFO: Symbol SOC_SYSTIMER_COUNTER_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:514
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:302
+info: INFO: Symbol SOC_SYSTIMER_ALARM_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:306
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:518
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_LO defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:522
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:310
+info: INFO: Symbol SOC_SYSTIMER_BIT_WIDTH_HI defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:314
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:526
+info: INFO: Symbol SOC_SYSTIMER_FIXED_DIVIDER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:318
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:530
+info: INFO: Symbol SOC_SYSTIMER_SUPPORT_RC_FAST defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:534
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:322
+info: INFO: Symbol SOC_SYSTIMER_INT_LEVEL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:326
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:538
+info: INFO: Symbol SOC_SYSTIMER_ALARM_MISS_COMPENSATE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:330
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:542
+info: INFO: Symbol SOC_TIMER_GROUPS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:334
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:554
+info: INFO: Symbol SOC_TIMER_GROUP_TIMERS_PER_GROUP defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:558
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:338
+info: INFO: Symbol SOC_TIMER_GROUP_COUNTER_BIT_WIDTH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:342
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:562
+info: INFO: Symbol SOC_TIMER_GROUP_SUPPORT_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:566
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:346
+info: INFO: Symbol SOC_TIMER_GROUP_TOTAL_TIMERS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:350
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:570
+info: INFO: Symbol SOC_EFUSE_ECDSA_KEY defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:354
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:574
+info: INFO: Symbol SOC_EFUSE_SECURE_BOOT_KEY_DIGESTS defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:358
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:578
+info: INFO: Symbol SOC_FLASH_ENCRYPTED_XTS_AES_BLOCK_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:362
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:582
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:366
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:586
+info: INFO: Symbol SOC_FLASH_ENCRYPTION_XTS_AES_128 defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:370
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:590
+info: INFO: Symbol SOC_UART_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:374
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:594
+info: INFO: Symbol SOC_UART_HP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:378
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:598
+info: INFO: Symbol SOC_UART_LP_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:602
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:382
+info: INFO: Symbol SOC_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:386
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:606
+info: INFO: Symbol SOC_LP_UART_FIFO_LEN defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:390
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:610
+info: INFO: Symbol SOC_UART_BITRATE_MAX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:394
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:614
+info: INFO: Symbol SOC_UART_SUPPORT_XTAL_CLK defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:398
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:622
+info: INFO: Symbol SOC_UART_SUPPORT_WAKEUP_INT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:402
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:626
+info: INFO: Symbol SOC_UART_HAS_LP_UART defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:630
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:406
+info: INFO: Symbol SOC_UART_SUPPORT_FSM_TX_WAIT_SEND defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:410
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:634
+info: INFO: Symbol SOC_PM_SUPPORT_MODEM_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:414
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:650
+info: INFO: Symbol SOC_PM_SUPPORT_XTAL32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:418
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:654
+info: INFO: Symbol SOC_PM_SUPPORT_RC32K_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:658
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:422
+info: INFO: Symbol SOC_PM_SUPPORT_RC_FAST_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:662
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:426
+info: INFO: Symbol SOC_PM_SUPPORT_VDDSDIO_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:666
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:430
+info: INFO: Symbol SOC_PM_SUPPORT_TOP_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:434
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:670
+info: INFO: Symbol SOC_PM_SUPPORT_HP_AON_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:438
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:674
+info: INFO: Symbol SOC_PM_SUPPORT_RTC_PERIPH_PD defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:442
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:678
+info: INFO: Symbol SOC_CLK_RC_FAST_SUPPORT_CALIBRATION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:702
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:446
+info: INFO: Symbol SOC_MODEM_CLOCK_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:706
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:450
+info: INFO: Symbol SOC_CLK_XTAL32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:454
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:710
+info: INFO: Symbol SOC_CLK_OSC_SLOW_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:714
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:458
+info: INFO: Symbol SOC_CLK_RC32K_SUPPORTED defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:718
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:462
+info: INFO: Symbol SOC_RCC_IS_INDEPENDENT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include/soc/Kconfig.soc_caps.in:722
+    /Users/danielwise/esp/esp-idf/components/soc/esp32c5/mp/include/soc/Kconfig.soc_caps.in:466
+info: INFO: Symbol IDF_TARGET_LINUX defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/Kconfig:78
+    /Users/danielwise/esp/esp-idf/Kconfig:162
+info: INFO: Symbol ESP_ROM_HAS_CRC_LE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:6
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:6
+info: INFO: Symbol ESP_ROM_HAS_CRC_BE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:10
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:10
+info: INFO: Symbol ESP_ROM_HAS_JPEG_DECODE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:14
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:14
+info: INFO: Symbol ESP_ROM_UART_CLK_IS_XTAL defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:18
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:18
+info: INFO: Symbol ESP_ROM_USB_SERIAL_DEVICE_NUM defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:22
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:22
+info: INFO: Symbol ESP_ROM_HAS_RETARGETABLE_LOCKING defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:26
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:26
+info: INFO: Symbol ESP_ROM_GET_CLK_FREQ defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:30
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:30
+info: INFO: Symbol ESP_ROM_HAS_RVFPLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:34
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:34
+info: INFO: Symbol ESP_ROM_HAS_HAL_WDT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:38
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:38
+info: INFO: Symbol ESP_ROM_HAS_HAL_SYSTIMER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:42
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:42
+info: INFO: Symbol ESP_ROM_HAS_HEAP_TLSF defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:46
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:46
+info: INFO: Symbol ESP_ROM_HAS_LAYOUT_TABLE defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:58
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:50
+info: INFO: Symbol ESP_ROM_HAS_SPI_FLASH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:62
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:54
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:70
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:62
+info: INFO: Symbol ESP_ROM_HAS_NEWLIB_NORMAL_FORMAT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:66
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:74
+info: INFO: Symbol ESP_ROM_WDT_INIT_PATCH defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:78
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:70
+info: INFO: Symbol ESP_ROM_RAM_APP_NEEDS_MMU_INIT defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:74
+info: INFO: Symbol ESP_ROM_HAS_VERSION defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:78
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:90
+info: INFO: Symbol ESP_ROM_SUPPORT_DEEP_SLEEP_WAKEUP_STUB defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/mp/esp32c5/Kconfig.soc_caps.in:82
+    /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/Kconfig.soc_caps.in:94
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/riscv/ld/rom.api.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/ld/esp32c5.peripherals.ld
+-- Bootloader project name: "bootloader" version: 1
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.api.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.rvfp.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.wdt.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.systimer.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.version.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5/ld/esp32c5.rom.newlib.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main/ld/esp32c5/beta3/bootloader.ld
+-- Adding linker script /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main/ld/esp32c5/beta3/bootloader.rom.ld
+-- DEBUG: Use esp-modbus component folder: /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-modbus.
+-- build_components = riscv;newlib;soc;micro-ecc;hal;spi_flash;esp_bootloader_format;esp_app_format;bootloader_support;efuse;esp_system;esp_hw_support;esp_common;esp_rom;log;esptool_py;partition_table;bootloader;freertos;main;chmorgan__esp-libhelix-mp3;espressif__cbor;espressif__esp-dsp;esp_driver_gpio;esp_timer;esp_pm;esp_ringbuf;esp_driver_uart;esp_event;esp_driver_usb_serial_jtag;esp_vfs_console;vfs;lwip;esp_netif_stack;esp_netif;espressif__esp-modbus;espressif__esp-zboss-lib;driver;app_update;esp_partition;nvs_flash;heap;mbedtls;wpa_supplicant;esp_coex;esp_wifi;esp_phy;ieee802154;console;openthread;espressif__esp-zigbee-lib;espressif__esp_daylight;espressif__esp_diag_data_store;espressif__rmaker_cmd_resp;espressif__rmaker_common_events;espressif__rmaker_system_ctrl;espressif__rmaker_time_sync;espressif__rmaker_console;espressif__rmaker_work_queue;http_parser;esp-tls;tcp_transport;mqtt;espressif__rmaker_common;espressif__esp_diagnostics;espcoredump;espressif__esp_insights;espressif__esp_modem;protobuf-c;espressif__jsmn;espressif__json_parser;espressif__json_generator;esp_http_client;esp_https_ota;bt;esp_http_server;protocomm;esp_https_server;esp_local_ctrl;espressif__mdns;espressif__esp_schedule;json;espressif__network_provisioning;espressif__esp_secure_cert_mgr;espressif__esp_rainmaker;espressif__libsodium;espressif__qrcode;esp_mm;sdmmc;joltwallet__littlefs
+-- Req espressif__mdns is found and added into espressif__esp-modbus dependencies.
+-- The mdns included is: 
+CMake Warning (deprecated) at /Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+ESP Insights Project commit: v5.3-dirty
+ESP RainMaker Project commit: v5.3-dirty
+-- Components: app_update bootloader bootloader_support bt chmorgan__esp-libhelix-mp3 console driver efuse esp-tls esp_app_format esp_bootloader_format esp_coex esp_common esp_driver_gpio esp_driver_uart esp_driver_usb_serial_jtag esp_event esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_ringbuf esp_rom esp_system esp_timer esp_vfs_console esp_wifi espcoredump espressif__cbor espressif__esp-dsp espressif__esp-modbus espressif__esp-zboss-lib espressif__esp-zigbee-lib espressif__esp_daylight espressif__esp_diag_data_store espressif__esp_diagnostics espressif__esp_insights espressif__esp_modem espressif__esp_rainmaker espressif__esp_schedule espressif__esp_secure_cert_mgr espressif__jsmn espressif__json_generator espressif__json_parser espressif__libsodium espressif__mdns espressif__network_provisioning espressif__qrcode espressif__rmaker_cmd_resp espressif__rmaker_common espressif__rmaker_common_events espressif__rmaker_console espressif__rmaker_system_ctrl espressif__rmaker_time_sync espressif__rmaker_work_queue esptool_py freertos hal heap http_parser ieee802154 joltwallet__littlefs json log lwip main mbedtls micro-ecc mqtt newlib nvs_flash openthread partition_table protobuf-c protocomm riscv sdmmc soc spi_flash tcp_transport vfs wpa_supplicant
+-- Component paths: /Users/danielwise/esp/esp-idf/components/app_update /Users/danielwise/esp/esp-idf/components/bootloader /Users/danielwise/esp/esp-idf/components/bootloader_support /Users/danielwise/esp/esp-idf/components/bt /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/chmorgan__esp-libhelix-mp3 /Users/danielwise/esp/esp-idf/components/console /Users/danielwise/esp/esp-idf/components/driver /Users/danielwise/esp/esp-idf/components/efuse /Users/danielwise/esp/esp-idf/components/esp-tls /Users/danielwise/esp/esp-idf/components/esp_app_format /Users/danielwise/esp/esp-idf/components/esp_bootloader_format /Users/danielwise/esp/esp-idf/components/esp_coex /Users/danielwise/esp/esp-idf/components/esp_common /Users/danielwise/esp/esp-idf/components/esp_driver_gpio /Users/danielwise/esp/esp-idf/components/esp_driver_uart /Users/danielwise/esp/esp-idf/components/esp_driver_usb_serial_jtag /Users/danielwise/esp/esp-idf/components/esp_event /Users/danielwise/esp/esp-idf/components/esp_http_client /Users/danielwise/esp/esp-idf/components/esp_http_server /Users/danielwise/esp/esp-idf/components/esp_https_ota /Users/danielwise/esp/esp-idf/components/esp_https_server /Users/danielwise/esp/esp-idf/components/esp_hw_support /Users/danielwise/esp/esp-idf/components/esp_local_ctrl /Users/danielwise/esp/esp-idf/components/esp_mm /Users/danielwise/esp/esp-idf/components/esp_netif /Users/danielwise/esp/esp-idf/components/esp_netif_stack /Users/danielwise/esp/esp-idf/components/esp_partition /Users/danielwise/esp/esp-idf/components/esp_phy /Users/danielwise/esp/esp-idf/components/esp_pm /Users/danielwise/esp/esp-idf/components/esp_ringbuf /Users/danielwise/esp/esp-idf/components/esp_rom /Users/danielwise/esp/esp-idf/components/esp_system /Users/danielwise/esp/esp-idf/components/esp_timer /Users/danielwise/esp/esp-idf/components/esp_vfs_console /Users/danielwise/esp/esp-idf/components/esp_wifi /Users/danielwise/esp/esp-idf/components/espcoredump /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__cbor /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-dsp /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-modbus /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-zboss-lib /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp-zigbee-lib /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_daylight /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_diag_data_store /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_diagnostics /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_insights /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_modem /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_rainmaker /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_schedule /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__esp_secure_cert_mgr /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__jsmn /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__json_generator /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__json_parser /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__libsodium /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__mdns /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__network_provisioning /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__qrcode /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_cmd_resp /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_common /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_common_events /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_console /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_system_ctrl /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_time_sync /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/espressif__rmaker_work_queue /Users/danielwise/esp/esp-idf/components/esptool_py /Users/danielwise/esp/esp-idf/components/freertos /Users/danielwise/esp/esp-idf/components/hal /Users/danielwise/esp/esp-idf/components/heap /Users/danielwise/esp/esp-idf/components/http_parser /Users/danielwise/esp/esp-idf/components/ieee802154 /Users/danielwise/esp/esp-idf/components/bootloader/subproject/managed_components/joltwallet__littlefs /Users/danielwise/esp/esp-idf/components/json /Users/danielwise/esp/esp-idf/components/log /Users/danielwise/esp/esp-idf/components/lwip /Users/danielwise/esp/esp-idf/components/bootloader/subproject/main /Users/danielwise/esp/esp-idf/components/mbedtls /Users/danielwise/esp/esp-idf/components/bootloader/subproject/components/micro-ecc /Users/danielwise/esp/esp-idf/components/mqtt /Users/danielwise/esp/esp-idf/components/newlib /Users/danielwise/esp/esp-idf/components/nvs_flash /Users/danielwise/esp/esp-idf/components/openthread /Users/danielwise/esp/esp-idf/components/partition_table /Users/danielwise/esp/esp-idf/components/protobuf-c /Users/danielwise/esp/esp-idf/components/protocomm /Users/danielwise/esp/esp-idf/components/riscv /Users/danielwise/esp/esp-idf/components/sdmmc /Users/danielwise/esp/esp-idf/components/soc /Users/danielwise/esp/esp-idf/components/spi_flash /Users/danielwise/esp/esp-idf/components/tcp_transport /Users/danielwise/esp/esp-idf/components/vfs /Users/danielwise/esp/esp-idf/components/wpa_supplicant
+-- Configuring done (11.8s)
+-- Generating done (0.7s)
+-- Build files have been written to: /Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader
+[1/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_txrx.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_txrx.c
+In file included from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_txrx.c:12:
+/Users/danielwise/esp/esp-idf/components/esp_http_server/include/esp_http_server.h:12:10: fatal error: freertos/FreeRTOS.h: No such file or directory
+   12 | #include <freertos/FreeRTOS.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[2/1148] Building C object esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj
+FAILED: [code=1] esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_https_ota/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/esp_http_client/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/bootloader_flash/include -I/Users/danielwise/esp/esp-idf/components/bootloader_support/private_include -I/Users/danielwise/esp/esp-idf/components/esp_app_format/include -I/Users/danielwise/esp/esp-idf/components/app_update/include -I/Users/danielwise/esp/esp-idf/components/esp_bootloader_format/include -I/Users/danielwise/esp/esp-idf/components/esp_partition/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj -MF esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj.d -o esp-idf/esp_https_ota/CMakeFiles/__idf_esp_https_ota.dir/src/esp_https_ota.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_https_ota/src/esp_https_ota.c
+In file included from /Users/danielwise/esp/esp-idf/components/esp_https_ota/include/esp_https_ota.h:9,
+                 from /Users/danielwise/esp/esp-idf/components/esp_https_ota/src/esp_https_ota.c:10:
+/Users/danielwise/esp/esp-idf/components/esp_http_client/include/esp_http_client.h:10:10: fatal error: freertos/FreeRTOS.h: No such file or directory
+   10 | #include "freertos/FreeRTOS.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[3/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_parse.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_parse.c
+In file included from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_parse.c:16:
+/Users/danielwise/esp/esp-idf/components/esp_http_server/include/esp_http_server.h:12:10: fatal error: freertos/FreeRTOS.h: No such file or directory
+   12 | #include <freertos/FreeRTOS.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[4/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/util/ctrl_sock.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/util/ctrl_sock.c
+In file included from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/opt.h:51,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h:42,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/include/lwip/sockets.h:8,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys/socket.h:15,
+                 from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/util/ctrl_sock.c:10:
+/Users/danielwise/esp/esp-idf/components/lwip/port/include/lwipopts.h:20:10: fatal error: esp_task.h: No such file or directory
+   20 | #include "esp_task.h"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+[5/1148] Building C object esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj
+FAILED: [code=1] esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_mm/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/heap/include -I/Users/danielwise/esp/esp-idf/components/spi_flash/include -I/Users/danielwise/esp/esp-idf/components/hal/platform_port/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/hal/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/hal/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj -MF esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj.d -o esp-idf/esp_mm/CMakeFiles/__idf_esp_mm.dir/esp_cache.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_mm/esp_cache.c
+/Users/danielwise/esp/esp-idf/components/esp_mm/esp_cache.c:21:10: fatal error: esp_private/critical_section.h: No such file or directory
+   21 | #include "esp_private/critical_section.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[6/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_main.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_main.c
+In file included from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/opt.h:51,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h:42,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/include/lwip/sockets.h:8,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys/socket.h:15,
+                 from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_main.c:8:
+/Users/danielwise/esp/esp-idf/components/lwip/port/include/lwipopts.h:20:10: fatal error: esp_task.h: No such file or directory
+   20 | #include "esp_task.h"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+[7/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_uri.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_uri.c
+In file included from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_uri.c:13:
+/Users/danielwise/esp/esp-idf/components/esp_http_server/include/esp_http_server.h:12:10: fatal error: freertos/FreeRTOS.h: No such file or directory
+   12 | #include <freertos/FreeRTOS.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[8/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_ws.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_ws.c
+In file included from /Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include/mbedtls/sha1.h:53,
+                 from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_ws.c:14:
+/Users/danielwise/esp/esp-idf/components/mbedtls/port/include/sha1_alt.h:28:10: fatal error: hal/sha_types.h: No such file or directory
+   28 | #include "hal/sha_types.h"
+      |          ^~~~~~~~~~~~~~~~~
+compilation terminated.
+[9/1148] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj
+FAILED: [code=1] esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_client/include -I/Users/danielwise/esp/esp-idf/components/esp_http_client/lib/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/tcp_transport/include -I/Users/danielwise/esp/esp-idf/components/esp-tls -I/Users/danielwise/esp/esp-idf/components/esp-tls/esp-tls-crypto -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -I/Users/danielwise/esp/esp-idf/components/http_parser -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj -MF esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj.d -o esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_auth.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_client/lib/http_auth.c
+In file included from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/opt.h:51,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h:42,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/include/lwip/sockets.h:8,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys/socket.h:15,
+                 from /Users/danielwise/esp/esp-idf/components/esp_http_client/lib/http_auth.c:12:
+/Users/danielwise/esp/esp-idf/components/lwip/port/include/lwipopts.h:20:10: fatal error: esp_task.h: No such file or directory
+   20 | #include "esp_task.h"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+[10/1148] Building C object esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj
+FAILED: [code=1] esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_server/include -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/util -I/Users/danielwise/esp/esp-idf/components/esp_http_server/src/port/esp32 -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/http_parser -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj -MF esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj.d -o esp-idf/esp_http_server/CMakeFiles/__idf_esp_http_server.dir/src/httpd_sess.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_sess.c
+In file included from /Users/danielwise/esp/esp-idf/components/esp_http_server/src/httpd_sess.c:13:
+/Users/danielwise/esp/esp-idf/components/esp_http_server/include/esp_http_server.h:12:10: fatal error: freertos/FreeRTOS.h: No such file or directory
+   12 | #include <freertos/FreeRTOS.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[11/1148] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj
+FAILED: [code=1] esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj 
+/Users/danielwise/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin/riscv32-esp-elf-gcc -DBOOTLOADER_BUILD=1 -DESP_PLATFORM -DIDF_VER=\"v5.3-dirty\" -DMBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -I/Users/danielwise/Projects/wise2-core/products/byte-mini-4.0/lcd_diag/build/bootloader/config -I/Users/danielwise/esp/esp-idf/components/esp_http_client/include -I/Users/danielwise/esp/esp-idf/components/esp_http_client/lib/include -I/Users/danielwise/esp/esp-idf/components/log/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/esp32c5/beta3/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_rom/include/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/esp_common/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/include/soc/esp32c5 -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/dma/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/ldo/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/. -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/include -I/Users/danielwise/esp/esp-idf/components/esp_hw_support/port/esp32c5/private_include -I/Users/danielwise/esp/esp-idf/components/newlib/platform_include -I/Users/danielwise/esp/esp-idf/components/riscv/include -I/Users/danielwise/esp/esp-idf/components/soc/include -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3 -I/Users/danielwise/esp/esp-idf/components/soc/esp32c5/beta3/include -I/Users/danielwise/esp/esp-idf/components/lwip/include -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps -I/Users/danielwise/esp/esp-idf/components/lwip/include/apps/sntp -I/Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/freertos/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/Users/danielwise/esp/esp-idf/components/esp_event/include -I/Users/danielwise/esp/esp-idf/components/tcp_transport/include -I/Users/danielwise/esp/esp-idf/components/esp-tls -I/Users/danielwise/esp/esp-idf/components/esp-tls/esp-tls-crypto -I/Users/danielwise/esp/esp-idf/components/mbedtls/port/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/library -I/Users/danielwise/esp/esp-idf/components/mbedtls/esp_crt_bundle/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/everest/include -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m -I/Users/danielwise/esp/esp-idf/components/mbedtls/mbedtls/3rdparty/p256-m/p256-m -I/Users/danielwise/esp/esp-idf/components/esp_timer/include -I/Users/danielwise/esp/esp-idf/components/http_parser -march=rv32imac_zicsr_zifencei  -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -nostartfiles -Os -freorder-blocks -fmacro-prefix-map=/Users/danielwise/esp/esp-idf/components/bootloader/subproject=. -fmacro-prefix-map=/Users/danielwise/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -fno-stack-protector -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj -MF esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj.d -o esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/esp_http_client.c.obj -c /Users/danielwise/esp/esp-idf/components/esp_http_client/esp_http_client.c
+In file included from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/opt.h:51,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h:42,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/include/lwip/sockets.h:8,
+                 from /Users/danielwise/esp/esp-idf/components/lwip/port/esp32xx/include/sys/socket.h:15,
+                 from /Users/danielwise/esp/esp-idf/components/tcp_transport/include/esp_transport_tcp.h:11,
+                 from /Users/danielwise/esp/esp-idf/components/esp_http_client/esp_http_client.c:17:
+/Users/danielwise/esp/esp-idf/components/lwip/port/include/lwipopts.h:20:10: fatal error: esp_task.h: No such file or directory
+   20 | #include "esp_task.h"
+      |          ^~~~~~~~~~~~
+compilation terminated.
+[12/1148] Building C object esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_header.c.obj
+ninja: build stopped: subcommand failed.
+ninja: build stopped: subcommand failed.
