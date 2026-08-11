@@ -489,6 +489,14 @@ model ConsultingService {
   tags        String[] // ["strategy", "implementation", "training", "audit"]
   icon        String? // Icon name for UI
 
+  // Revenue system fields
+  stripePriceId       String?   // Stripe price ID for this service
+  featured            Boolean   @default(false)
+  isRecurring         Boolean   @default(false)
+  isManagementTier    Boolean   @default(false)
+  prepInstructions    String?   @db.Text
+  confirmationText    String?   @db.Text
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -567,10 +575,17 @@ model Booking {
   status                String            @default("scheduled") // scheduled, in_progress, completed, cancelled, no_show
   totalPrice            Float
   stripePaymentIntentId String?
+  stripeCheckoutSessionId String?  // Added for revenue system
   paymentStatus         String            @default("pending") // pending, succeeded, failed, refunded
   meetingLink           String?
   notes                 String?           @db.Text
   consultantNotes       String?           @db.Text
+
+  // Revenue system relationships
+  lead                  ConsultingLead?   @relation("leadToBooking")
+  followUps             ConsultingFollowUp[] @relation("followUps")
+  deliverableReportUrl  String?           @db.Text
+  managementSubscriptionId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2123,4 +2138,135 @@ model ContentAuditLog {
 
   @@index([projectId])
   @@index([guildId])
+}
+
+// ===== CONSULTING REVENUE SYSTEM =====
+
+// ConsultingLead: Prospect intake form responses
+model ConsultingLead {
+  id                    String    @id @default(cuid())
+
+  // Contact information
+  fullName              String
+  email                 String
+  phone                 String?
+  companyName           String
+  website               String?
+
+  // Business information
+  industry              String?
+  businessDescription   String?   @db.Text
+  currentProblem        String    @db.Text
+  desiredBuild          String    @db.Text
+
+  // Current state
+  currentTools          String[]  @default([])
+  desiredResult         String?   @db.Text
+  timeline              String?
+  budgetRange           String?
+
+  // Business details
+  teamSize              Int?
+  revenueRange          String?
+  crm                   String?
+  websitePlatform       String?
+  socialPlatforms       String[]  @default([])
+  existingAutomations   String[]  @default([])
+  aiTools               String[]  @default([])
+
+  // Qualification
+  leadScore             Int       @default(0) // 0-100
+  qualificationStatus   ConsultingLeadStatus @default(NEW)
+  recommendedService    String?   // Service ID
+  recommendedNextAction String?
+
+  // Admin notes
+  notes                 String?   @db.Text
+
+  // Tracking
+  source                String?   // direct, facebook, instagram, email, organic, referral, wise-defense, etc.
+  utmSource             String?
+  utmMedium             String?
+  utmCampaign           String?
+
+  // Relationships
+  booking               Booking?  @relation("leadToBooking", fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId             String?   @unique
+  followUps             ConsultingFollowUp[]
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  leadConvertedAt       DateTime?
+
+  @@index([email])
+  @@index([qualificationStatus])
+  @@index([leadScore])
+  @@index([createdAt])
+}
+
+enum ConsultingLeadStatus {
+  NEW
+  QUALIFYING
+  QUALIFIED
+  BOOKED
+  PAID
+  CONVERTED
+  DISQUALIFIED
+}
+
+// ConsultingFollowUp: Track follow-up automations
+model ConsultingFollowUp {
+  id              String    @id @default(cuid())
+
+  // Relationships
+  leadId          String?
+  lead            ConsultingLead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  bookingId       String?   // Can also track follow-ups to existing bookings
+  booking         Booking?  @relation("followUps", fields: [bookingId], references: [id], onDelete: SetNull)
+
+  // Details
+  type            ConsultingFollowUpType
+  description     String?   @db.Text
+
+  // Timing
+  scheduledFor    DateTime
+  status          ConsultingFollowUpStatus @default(PENDING)
+  sentAt          DateTime?
+  completedAt     DateTime?
+
+  // Admin
+  notes           String?   @db.Text
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([leadId])
+  @@index([bookingId])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+enum ConsultingFollowUpType {
+  INTAKE_CONFIRMATION
+  QUALIFICATION_RESULT
+  PAYMENT_CONFIRMATION
+  BOOKING_CONFIRMATION
+  SESSION_REMINDER_24H
+  SESSION_REMINDER_1H
+  SESSION_COMPLETE
+  DELIVERABLES
+  FOLLOWUP_24H
+  FOLLOWUP_7D
+  FOLLOWUP_30D
+  MANAGEMENT_OFFER
+  CUSTOM_EMAIL
+  CUSTOM_CALL
+}
+
+enum ConsultingFollowUpStatus {
+  PENDING
+  SENT
+  COMPLETED
+  FAILED
 }

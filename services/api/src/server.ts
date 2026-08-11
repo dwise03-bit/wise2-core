@@ -24,6 +24,7 @@ import metricsRouter from './routes/metrics';
 import authRouter from './routes/auth';
 import paymentsRouter from './routes/payments';
 import filesRouter from './routes/files';
+import consultingRouter from './routes/consulting';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -119,6 +120,9 @@ export async function createServer(): Promise<Express> {
 
   // Metrics API
   app.use('/api/v1/metrics', metricsRouter);
+
+  // Consulting Revenue System API
+  app.use('/api/v1/consulting', consultingRouter);
 
   // ============================================================================
   // 404 Handler
