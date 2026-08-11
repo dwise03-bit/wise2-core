@@ -1,0 +1,61 @@
+# Dockerfile for BYTE MINI 4.0 ESP32-C6 Build
+# Usage: docker build -f Dockerfile.build -t byte-mini-build . && \
+#        docker run --rm -v $(pwd):/workspace byte-mini-build
+
+FROM espressif/idf:v5.3
+
+WORKDIR /workspace
+
+# Copy entire firmware project
+COPY . .
+
+# Verify CMakeLists.txt is correct
+RUN echo "=== Verifying build configuration ===" && \
+    echo "Root CMakeLists.txt:" && head -5 CMakeLists.txt && \
+    echo && echo "Main component CMakeLists.txt:" && cat main/CMakeLists.txt && \
+    echo && echo "=== Checking sdkconfig ===" && \
+    grep "CONFIG_IDF_TARGET" sdkconfig
+
+# Set target
+RUN echo "=== Setting target esp32c6 ===" && \
+    idf.py set-target esp32c6
+
+# Clean build
+RUN echo "=== Cleaning previous build ===" && \
+    idf.py fullclean || rm -rf build
+
+# Configure
+RUN echo "=== Configuring CMake ===" && \
+    idf.py reconfigure -v
+
+# Verify configuration
+RUN echo "=== Verifying configuration ===" && \
+    ls -la build/CMakeCache.txt && \
+    ls -la build/compile_commands.json && \
+    ls -la build/project_description.json
+
+# Build
+RUN echo "=== Building BYTE MINI firmware ===" && \
+    idf.py build -v
+
+# Verify build outputs
+RUN echo "=== Verifying build outputs ===" && \
+    ls -lh build/bootloader/bootloader.bin && \
+    ls -lh build/partition_table/partition-table.bin && \
+    ls -lh build/*.bin && \
+    ls -lh build/*.elf && \
+    echo "✓ Build completed successfully" && \
+    echo && echo "=== Build Output Files ===" && \
+    find build -name "*.bin" -o -name "*.elf" | sort
+
+# Copy outputs to workspace for host access
+RUN echo "=== Copying build artifacts ===" && \
+    mkdir -p /workspace/build_output && \
+    cp -v build/*.bin build_output/ 2>/dev/null || true && \
+    cp -v build/*.elf build_output/ 2>/dev/null || true && \
+    cp -v build/bootloader/*.bin build_output/bootloader_ 2>/dev/null || true && \
+    cp -v build/partition_table/*.bin build_output/partition_table_ 2>/dev/null || true && \
+    cp -v build/*.json build_output/ 2>/dev/null || true && \
+    echo "✓ Build artifacts staged in build_output/"
+
+ENTRYPOINT ["/bin/bash"]

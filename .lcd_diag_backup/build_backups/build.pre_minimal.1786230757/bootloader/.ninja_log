@@ -1,0 +1,3 @@
+# ninja log v7
+58	398	1786230713567918493	esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_utils.c.obj	d6121b38945248e8
+58	403	1786230713567559780	esp-idf/esp_http_client/CMakeFiles/__idf_esp_http_client.dir/lib/http_header.c.obj	19a40d96c575f6b3
