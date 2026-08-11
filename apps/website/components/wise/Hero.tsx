@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
@@ -23,8 +23,8 @@ export const Hero: React.FC = () => {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   };
 
-  // Ensure all elements are visible by default
-  if (typeof window !== 'undefined') {
+  // Ensure all elements are visible by default - only on client
+  useEffect(() => {
     if (centerLogoRef.current?.querySelector('.logo-text')) {
       (centerLogoRef.current.querySelector('.logo-text') as HTMLElement).style.opacity = '1';
     }
@@ -39,7 +39,7 @@ export const Hero: React.FC = () => {
         (el as HTMLElement).style.opacity = '1';
       });
     }
-  }
+  }, []);
 
   useGSAP(
     () => {
