@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const REDIRECT_URI =
-  process.env.GOOGLE_REDIRECT_URI ||
-  process.env.NEXT_PUBLIC_SITE_URL
-    ? `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '')}/api/auth/google/callback`
-    : 'https://wise2.net/api/auth/google/callback';
+  process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
 
 export async function GET(request: NextRequest) {
   if (!GOOGLE_CLIENT_ID) {

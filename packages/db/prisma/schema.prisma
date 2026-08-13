@@ -2270,3 +2270,19 @@ enum ConsultingFollowUpStatus {
   COMPLETED
   FAILED
 }
+
+// Anonymous, privacy-safe product analytics for the Wise Imp website
+// companion. No conversation transcripts or PII — see
+// apps/website/lib/wise-imp and apps/website/app/api/analytics/route.ts.
+model WiseImpEvent {
+  id        String   @id @default(cuid())
+  type      String
+  path      String
+  sessionId String
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([sessionId])
+  @@index([createdAt])
+}

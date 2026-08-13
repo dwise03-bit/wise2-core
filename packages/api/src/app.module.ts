@@ -16,6 +16,7 @@ import { DiscordModule } from './discord/discord.module';
 // import { ConsultingModule } from './v1/consulting/consulting.module';
 import { BillingModule } from './v1/billing/billing.module';
 import { ProspectsModule } from './v1/prospects/prospects.module';
+import { WiseImpEventsModule } from './v1/wise-imp-events/wise-imp-events.module';
 // import { AuditsModule } from './v1/audits/audits.module'; // DEFERRED
 import { SoundLabsModule } from './v1/sound-labs/sound-labs.module';
 import { CustomersModule } from './v1/customers/customers.module';
@@ -105,6 +106,7 @@ import { APIStatusController } from './config/api-status.controller';
     BillingModule,
     SoundLabsModule,
     ProspectsModule,
+    WiseImpEventsModule,
     CustomersModule,
     GalleryModule,
     // AuditsModule, // DEFERRED
