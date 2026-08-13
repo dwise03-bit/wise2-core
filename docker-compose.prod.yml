@@ -37,7 +37,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgresql://wise2_prod_user:${DATABASE_PASSWORD:-wise2}@postgres:5432/wise2_core_prod
+      DATABASE_URL: postgresql://${DB_USER:-wise2}:${DATABASE_PASSWORD:-wise2}@postgres:5432/${DB_NAME:-wise2_prod}
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/0
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
@@ -94,6 +94,9 @@ services:
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
       DISCORD_REDIRECT_URI: ${DISCORD_REDIRECT_URI:-https://wise2.net/api/auth/discord/callback}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI_WEBSITE:-https://wise2.net/api/auth/google/callback}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://wise2.net}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://172.17.0.1:11435}
       HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11435/v1/chat/completions}

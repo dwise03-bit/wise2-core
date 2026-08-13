@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
 import { PublicNav, PublicFooter } from '@/components/navigation';
-import ChatWidgetWrapper from '../components/ChatWidgetWrapper';
+import { WiseImp } from '@/components/wise-imp/WiseImp';
 import { ToastProvider } from '@/components/ui/Toast';
 
 export const viewport: Viewport = {
@@ -65,8 +65,8 @@ export default function RootLayout({
               {children}
             </main>
 
-            {/* Global support chat */}
-            <ChatWidgetWrapper />
+            {/* Wise Imp — WISE² AI companion */}
+            <WiseImp />
 
             {/* Footer */}
             <PublicFooter />

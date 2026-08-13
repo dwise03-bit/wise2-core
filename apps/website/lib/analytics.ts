@@ -10,7 +10,16 @@ export type EventType =
   | 'signup_complete'
   | 'login_complete'
   | 'button_click'
-  | 'discord_signin_click';
+  | 'discord_signin_click'
+  | 'wise_imp_widget_opened'
+  | 'wise_imp_suggested_question_selected'
+  | 'wise_imp_service_category_identified'
+  | 'wise_imp_intake_started'
+  | 'wise_imp_intake_step_completed'
+  | 'wise_imp_human_help_requested'
+  | 'wise_imp_intake_submitted'
+  | 'wise_imp_error'
+  | 'wise_imp_glow_color_selected';
 
 export interface AnalyticsEvent {
   type: EventType;

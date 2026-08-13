@@ -342,6 +342,9 @@ importers:
         specifier: ^13.0.0
         version: 13.11.0
     devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.43
@@ -366,6 +369,9 @@ importers:
       eslint-config-next:
         specifier: 14.2.35
         version: 14.2.35(eslint@8.57.1)(typescript@5.9.3)
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.19.43)
       postcss:
         specifier: ^8.4.0
         version: 8.5.19

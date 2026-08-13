@@ -5,14 +5,17 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import type { LucideIcon } from 'lucide-react';
-import {
-  Zap,
-  Users2,
-  CreditCard,
-  BarChart3,
-  Rocket,
-  Monitor,
-} from 'lucide-react';
+// Imported via stable subpaths rather than the `lucide-react` barrel: Next.js's
+// built-in optimizePackageImports transform rewrites barrel imports from this
+// package, and for this icon set that rewrite resolves inconsistently between
+// the server and client bundle, causing a hydration mismatch (missing <path>
+// inside <svg>). Deep-importing sidesteps the transform entirely.
+import Zap from 'lucide-react/dist/esm/icons/zap';
+import Users2 from 'lucide-react/dist/esm/icons/users-2';
+import CreditCard from 'lucide-react/dist/esm/icons/credit-card';
+import BarChart3 from 'lucide-react/dist/esm/icons/bar-chart-3';
+import Rocket from 'lucide-react/dist/esm/icons/rocket';
+import Monitor from 'lucide-react/dist/esm/icons/monitor';
 import styles from './Features.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
