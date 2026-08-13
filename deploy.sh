@@ -53,7 +53,7 @@ echo ""
 # ============================================================================
 echo "🔨 Building Docker images..."
 
-docker-compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml build
 
 echo "✅ Docker images built"
 echo ""
@@ -63,7 +63,7 @@ echo ""
 # ============================================================================
 echo "🚀 Starting services..."
 
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 
 echo "⏳ Waiting for services to be healthy..."
 sleep 30
@@ -76,7 +76,7 @@ echo ""
 # ============================================================================
 echo "🗄️  Running database migrations..."
 
-docker-compose -f docker-compose.prod.yml exec -T postgres psql \
+docker compose -f docker-compose.prod.yml exec -T postgres psql \
   -U wise2 \
   -d wise2_prod \
   -f /docker-entrypoint-initdb.d/01-schema.sql
@@ -93,7 +93,7 @@ services=("api" "website" "studio" "postgres")
 all_healthy=true
 
 for service in "${services[@]}"; do
-  if docker-compose -f docker-compose.prod.yml ps | grep -q "$service.*Up"; then
+  if docker compose -f docker-compose.prod.yml ps | grep -q "$service.*Up"; then
     echo "✅ $service is running"
   else
     echo "❌ $service is not running"
@@ -103,7 +103,7 @@ done
 
 if [ "$all_healthy" = false ]; then
   echo "⚠️  Some services are not running. Check logs:"
-  echo "   docker-compose -f docker-compose.prod.yml logs -f"
+  echo "   docker compose -f docker-compose.prod.yml logs -f"
   exit 1
 fi
 
@@ -130,7 +130,7 @@ echo "  4. Configure Stripe webhook at: ${API_BASE_URL}/v1/billing/webhook"
 echo ""
 
 echo "Useful Commands:"
-echo "  View logs:        docker-compose -f docker-compose.prod.yml logs -f"
-echo "  Stop services:    docker-compose -f docker-compose.prod.yml down"
-echo "  Restart service:  docker-compose -f docker-compose.prod.yml restart api"
+echo "  View logs:        docker compose -f docker-compose.prod.yml logs -f"
+echo "  Stop services:    docker compose -f docker-compose.prod.yml down"
+echo "  Restart service:  docker compose -f docker-compose.prod.yml restart api"
 echo ""
