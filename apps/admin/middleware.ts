@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Protected routes that require admin authentication
 const protectedRoutes = ['/admin/dashboard', '/admin/users', '/admin/settings', '/admin/logs'];
-const publicRoutes = ['/auth/login'];
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
