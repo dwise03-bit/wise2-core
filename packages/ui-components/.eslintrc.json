@@ -6,6 +6,7 @@
   },
   "extends": ["eslint:recommended"],
   "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
@@ -13,7 +14,9 @@
   "rules": {
     "prefer-const": "warn",
     "semi": ["error", "always"],
-    "no-undef": "off"
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error"
   },
   "ignorePatterns": ["dist", "build", ".next"]
 }

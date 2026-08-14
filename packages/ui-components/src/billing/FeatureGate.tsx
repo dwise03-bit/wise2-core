@@ -33,7 +33,7 @@ export interface GenerationLimit {
 /**
  * Hook to check generation limits
  */
-export const useGenerationLimit = () => {
+export const useGenerationLimit = (featureName?: string) => {
   const [limit, setLimit] = useState<GenerationLimit | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +41,10 @@ export const useGenerationLimit = () => {
   const checkLimit = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/v1/billing/can-generate');
+      const url = featureName
+        ? `/api/v1/billing/can-generate?feature=${encodeURIComponent(featureName)}`
+        : '/api/v1/billing/can-generate';
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error('Failed to check generation limit');
@@ -69,7 +72,7 @@ export const useGenerationLimit = () => {
     // Recheck every minute
     const interval = setInterval(checkLimit, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [featureName]);
 
   return { limit, loading, error, checkLimit };
 };
@@ -85,7 +88,7 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
   warningThreshold = 0.2, // Show warning at 20% of limit
   className = '',
 }) => {
-  const { limit, loading, error, checkLimit } = useGenerationLimit();
+  const { limit, loading, error, checkLimit } = useGenerationLimit(featureName);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (loading) {
@@ -152,7 +155,6 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
   }
 
   // Show warning if approaching limit
-  const isApproachingLimit = limit.remaining < limit.remaining;
   const percentUsed = 1 - limit.remaining / 100; // Rough estimate
 
   return (
@@ -201,6 +203,10 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose, currentLimit }) =>
         <p className="text-gray-600 mb-6">
           You've used your monthly generation limit. Upgrade to get unlimited
           access to all features.
+        </p>
+
+        <p className="text-sm text-gray-500 mb-6">
+          Resets on {currentLimit.resetDate.toLocaleDateString()}
         </p>
 
         <div className="space-y-4 mb-6">
