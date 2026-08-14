@@ -82,7 +82,7 @@ export class AIManager {
   async checkHealth(): Promise<Record<string, boolean>> {
     const health: Record<string, boolean> = {};
 
-    for (const [modelId, model] of Object.entries(AI_MODELS)) {
+    for (const modelId of Object.keys(AI_MODELS)) {
       try {
         const provider = this.getProvider(modelId);
         health[modelId] = await provider.checkHealth();
