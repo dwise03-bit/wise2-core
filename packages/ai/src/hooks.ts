@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AIMessage, AIResponse, AIStreamEvent } from './providers/base';
 import { aiManager } from './manager';
 import { AI_MODELS, AIProvider } from './config';
@@ -22,7 +22,6 @@ export function useAIChat(options: UseAIChatOptions = {}) {
   const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState(options.modelId || 'claude-opus');
   const [streamingContent, setStreamingContent] = useState('');
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   const sendMessage = useCallback(
     async (userMessage: string, useStream: boolean = true) => {

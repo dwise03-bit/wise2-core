@@ -2,7 +2,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { useAIChat, useAvailableModels, useProviderHealth } from '../hooks';
-import { AIMessage } from '../providers/base';
 
 interface AIChatProps {
   initialModel?: string;
