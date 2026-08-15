@@ -14,6 +14,12 @@ export interface TourStop {
 }
 
 const STEP_MS = 7000;
+/**
+ * Minimum width for roaming. Below this there is no room to sit beside an
+ * element without covering it. Chosen from real windows: 900 excluded an
+ * ordinary 894px Chrome window, which is well above tablet portrait.
+ */
+const MIN_WIDTH = 820;
 const IMP_SIZE = 72;
 const GUTTER = 16;
 
@@ -34,8 +40,19 @@ const GUTTER = 16;
  */
 export function useImpTour(pathname: string, panelOpen: boolean): TourStop | null {
   const [stop, setStop] = useState<TourStop | null>(null);
+  const [wideEnough, setWideEnough] = useState(false);
   const stepRef = useRef(0);
   const selectors = useMemo(() => tourSelectors(pathname), [pathname]);
+
+  // Width lives in state, not in a ref read once inside the effect, so that
+  // widening a window actually restarts the tour instead of leaving it off
+  // until the next navigation.
+  useEffect(() => {
+    const measure = () => setWideEnough(window.innerWidth >= MIN_WIDTH);
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
 
   useEffect(() => {
     // Reset when the route changes so a stop from the previous page never
@@ -118,18 +135,16 @@ export function useImpTour(pathname: string, panelOpen: boolean): TourStop | nul
     visit();
     const timer = window.setInterval(visit, STEP_MS);
 
-    const onChange = () => {
-      if (reduceMotion.matches || tooNarrow()) setStop(null);
+    const onMotionChange = () => {
+      if (reduceMotion.matches) setStop(null);
     };
-    reduceMotion.addEventListener('change', onChange);
-    window.addEventListener('resize', onChange);
+    reduceMotion.addEventListener('change', onMotionChange);
 
     return () => {
       window.clearInterval(timer);
-      reduceMotion.removeEventListener('change', onChange);
-      window.removeEventListener('resize', onChange);
+      reduceMotion.removeEventListener('change', onMotionChange);
     };
-  }, [selectors, panelOpen, pathname]);
+  }, [selectors, panelOpen, pathname, wideEnough]);
 
   return stop;
 }
