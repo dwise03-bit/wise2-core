@@ -8,6 +8,7 @@
     "migrate:revert": "typeorm migration:revert",
     "migrate:generate": "typeorm migration:generate",
     "seed": "node dist/seeds/seed.js",
+    "seed:revenue-os": "ts-node -O '{\"module\":\"commonjs\",\"rootDir\":\".\"}' prisma/seed-revenue-os.ts",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "prisma:generate": "prisma generate"
   },
