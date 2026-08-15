@@ -192,7 +192,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             {/* Free AI Audit CTA - Secondary (Electric Blue) */}
             <Link
               href="/audit"
-              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+              className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
               style={{
                 color: '#0094FF',
                 backgroundColor: 'rgba(0, 148, 255, 0.1)',
@@ -216,7 +216,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             {isAuthenticated ? (
               <Link
                 href={dashboardUrl}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                 style={{
                   backgroundColor: '#39FF14',
                   color: '#050505',
@@ -236,7 +236,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             ) : (
               <Link
                 href={loginUrl}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                 style={{
                   backgroundColor: '#39FF14',
                   color: '#050505',
@@ -326,7 +326,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                 Get Free AI Audit
               </Link>
               <Link
-                href={dashboardUrl}
+                href={isAuthenticated ? dashboardUrl : loginUrl}
                 className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 text-center"
                 onClick={() => setMobileOpen(false)}
               >
