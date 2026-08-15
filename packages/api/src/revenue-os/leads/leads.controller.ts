@@ -22,7 +22,7 @@ import { CreateLeadDto, UpdateLeadDto } from './dto/lead.dto';
  * TenantGuard then resolves into tenant context. Every handler takes the
  * tenant from @Tenant() — no route param or body field carries a tenant id.
  */
-@Controller('api/revenue-os/leads')
+@Controller('revenue-os/leads')
 @UseGuards(JwtAuthGuard, TenantGuard)
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
