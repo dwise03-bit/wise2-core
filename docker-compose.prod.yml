@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: wise2
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-wise2}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./packages/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
@@ -60,7 +60,7 @@ services:
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-mistral:latest}
       HERMES_TIMEOUT_MS: ${HERMES_TIMEOUT_MS:-90000}
     ports:
-      - "3010:3000"
+      - "127.0.0.1:3010:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -69,7 +69,7 @@ services:
     networks:
       - wise2
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,7 +104,7 @@ services:
       OLLAMA_GRAPHICS_MODEL: ${OLLAMA_GRAPHICS_MODEL:-mistral:latest}
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
     ports:
-      - "3000:3001"
+      - "127.0.0.1:3000:3001"
     volumes:
       - graphics_data:/app/data/graphics
     depends_on:
@@ -148,7 +148,7 @@ services:
     restart: unless-stopped
     command: redis-server --requirepass ${REDIS_PASSWORD:-redis123}
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     networks:
