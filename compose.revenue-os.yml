@@ -1,0 +1,17 @@
+# Revenue OS runtime flags + API build fix.
+#
+# The root Dockerfile.api does `COPY packages/api/dist ./dist` — it copies a
+# PREBUILT dist from the build context and never compiles TypeScript, so the
+# image is only ever as fresh as whatever happens to sit in packages/api/dist
+# on the host. That is why a rebuilt API kept serving pre-Revenue-OS code.
+#
+# packages/api/Dockerfile compiles inside the image (pnpm install --recursive
+# then pnpm run build), so it needs no host toolchain. Same build context.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    environment:
+      REVENUE_OS_ENABLED: "true"
+      REVENUE_OS_WORKER: "false"
