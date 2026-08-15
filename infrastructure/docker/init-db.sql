@@ -307,22 +307,26 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER IF NOT EXISTS users_updated_at_trigger
+DROP TRIGGER IF EXISTS users_updated_at_trigger ON users;
+CREATE TRIGGER users_updated_at_trigger
   BEFORE UPDATE ON users
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER IF NOT EXISTS deployments_updated_at_trigger
+DROP TRIGGER IF EXISTS deployments_updated_at_trigger ON deployments;
+CREATE TRIGGER deployments_updated_at_trigger
   BEFORE UPDATE ON deployments
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER IF NOT EXISTS deployment_services_updated_at_trigger
+DROP TRIGGER IF EXISTS deployment_services_updated_at_trigger ON deployment_services;
+CREATE TRIGGER deployment_services_updated_at_trigger
   BEFORE UPDATE ON deployment_services
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER IF NOT EXISTS automation_jobs_updated_at_trigger
+DROP TRIGGER IF EXISTS automation_jobs_updated_at_trigger ON automation_jobs;
+CREATE TRIGGER automation_jobs_updated_at_trigger
   BEFORE UPDATE ON automation_jobs
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
@@ -353,20 +357,20 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Audit users table
-CREATE TRIGGER IF NOT EXISTS audit_users_trigger
+DROP TRIGGER IF EXISTS audit_users_trigger ON users;
+CREATE TRIGGER audit_users_trigger
   AFTER INSERT OR UPDATE OR DELETE ON users
   FOR EACH ROW
   EXECUTE FUNCTION audit_log_function('update');
 
--- Audit deployments table
-CREATE TRIGGER IF NOT EXISTS audit_deployments_trigger
+DROP TRIGGER IF EXISTS audit_deployments_trigger ON deployments;
+CREATE TRIGGER audit_deployments_trigger
   AFTER INSERT OR UPDATE OR DELETE ON deployments
   FOR EACH ROW
   EXECUTE FUNCTION audit_log_function('update');
 
--- Audit automation_jobs table
-CREATE TRIGGER IF NOT EXISTS audit_automation_jobs_trigger
+DROP TRIGGER IF EXISTS audit_automation_jobs_trigger ON automation_jobs;
+CREATE TRIGGER audit_automation_jobs_trigger
   AFTER INSERT OR UPDATE OR DELETE ON automation_jobs
   FOR EACH ROW
   EXECUTE FUNCTION audit_log_function('update');
