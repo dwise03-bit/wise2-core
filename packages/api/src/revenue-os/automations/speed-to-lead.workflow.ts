@@ -12,13 +12,12 @@ import { ConsentService } from '../consent/consent.service';
 import { AgentsService } from '../agents/agents.service';
 import { MockProvider } from '../providers/mock.provider';
 import { SpeedToLeadJob, WorkflowKey, SPEED_TO_LEAD_CADENCE_MINUTES } from './workflow.types';
-
-export interface WorkflowResult {
-  status: AutomationRunStatus;
-  detail: string;
-  /** Minutes until the next attempt, when the cadence should continue. */
-  retryInMinutes?: number;
-}
+import {
+  WorkflowRunnerService,
+  WorkflowResult,
+  skipped,
+  succeeded,
+} from './workflow-runner.service';
 
 /**
  * Workflow A — Speed to Lead.
@@ -36,6 +35,7 @@ export class SpeedToLeadWorkflow {
 
   constructor(
     private prisma: PrismaService,
+    private runner: WorkflowRunnerService,
     private safety: HvacSafetyService,
     private classifier: HvacClassifierService,
     private consent: ConsentService,
@@ -46,31 +46,17 @@ export class SpeedToLeadWorkflow {
   async execute(job: SpeedToLeadJob): Promise<WorkflowResult> {
     const { tenantId, leadId, attempt = 0 } = job;
 
-    const run = await this.prisma.automationRun.create({
-      data: {
+    return this.runner.run(
+      {
         tenantId,
         workflowKey: WorkflowKey.SPEED_TO_LEAD,
         entityType: 'Lead',
         entityId: leadId,
-        status: AutomationRunStatus.RUNNING,
-        startedAt: new Date(),
         payload: { attempt },
-        retryCount: attempt,
+        attempt,
       },
-    });
-
-    try {
-      const result = await this.run(tenantId, leadId, attempt);
-      await this.finish(run.id, result);
-      return result;
-    } catch (err: any) {
-      const failure: WorkflowResult = {
-        status: AutomationRunStatus.FAILED,
-        detail: err?.message ?? 'unknown error',
-      };
-      await this.finish(run.id, failure, err?.message);
-      throw err;
-    }
+      () => this.run(tenantId, leadId, attempt),
+    );
   }
 
   private async run(
@@ -84,18 +70,15 @@ export class SpeedToLeadWorkflow {
     });
 
     if (!lead) {
-      return { status: AutomationRunStatus.SKIPPED, detail: 'lead not found for tenant' };
+      return skipped('lead not found for tenant');
     }
 
     if (lead.status === LeadStatus.BOOKED || lead.status === LeadStatus.WON) {
-      return { status: AutomationRunStatus.SKIPPED, detail: 'lead already progressed' };
+      return skipped('lead already progressed');
     }
 
     if (!(await this.agents.canRun(tenantId, AgentType.SPEED_TO_LEAD))) {
-      return {
-        status: AutomationRunStatus.SKIPPED,
-        detail: 'Speed-to-Lead agent disabled or NEEDS_CONFIG',
-      };
+      return skipped('Speed-to-Lead agent disabled or NEEDS_CONFIG');
     }
 
     // Classify before contact so the message reflects the real intent.
@@ -108,14 +91,11 @@ export class SpeedToLeadWorkflow {
         where: { id: leadId, tenantId },
         data: { urgency: 'EMERGENCY', status: LeadStatus.CONTACTING },
       });
-      return {
-        status: AutomationRunStatus.SKIPPED,
-        detail: `safety escalation: ${safety.detection?.riskType} — handed to human`,
-      };
+      return skipped(`safety escalation: ${safety.detection?.riskType} — handed to human`);
     }
 
     if (!lead.customerId) {
-      return { status: AutomationRunStatus.SKIPPED, detail: 'lead has no customer to contact' };
+      return skipped('lead has no customer to contact');
     }
 
     const allowed = await this.consent.canContact(
@@ -124,10 +104,7 @@ export class SpeedToLeadWorkflow {
       ConsentChannel.SMS,
     );
     if (!allowed) {
-      return {
-        status: AutomationRunStatus.SKIPPED,
-        detail: 'no SMS consent on record — not contacted',
-      };
+      return skipped('no SMS consent on record — not contacted');
     }
 
     const send = await this.provider.sendSms({
@@ -139,10 +116,7 @@ export class SpeedToLeadWorkflow {
     if (!send.sent) {
       // Not a failure: an unconfigured provider is an expected state, and
       // reporting success here would be a lie recorded in the audit trail.
-      return {
-        status: AutomationRunStatus.SKIPPED,
-        detail: send.detail ?? 'messaging provider not configured',
-      };
+      return skipped(send.detail ?? 'messaging provider not configured');
     }
 
     await this.prisma.lead.updateMany({
@@ -153,11 +127,7 @@ export class SpeedToLeadWorkflow {
     await this.agents.recordRun(tenantId, AgentType.SPEED_TO_LEAD);
 
     const nextIndex = attempt + 1;
-    return {
-      status: AutomationRunStatus.SUCCEEDED,
-      detail: 'opener sent',
-      retryInMinutes: SPEED_TO_LEAD_CADENCE_MINUTES[nextIndex],
-    };
+    return succeeded('opener sent', { retryInMinutes: SPEED_TO_LEAD_CADENCE_MINUTES[nextIndex] });
   }
 
   /**
@@ -174,16 +144,5 @@ export class SpeedToLeadWorkflow {
       openers[category] ??
       'Thanks for reaching out. Would you like to book a visit with one of our technicians?'
     );
-  }
-
-  private async finish(runId: string, result: WorkflowResult, error?: string) {
-    await this.prisma.automationRun.update({
-      where: { id: runId },
-      data: {
-        status: result.status,
-        finishedAt: new Date(),
-        errorMessage: error,
-      },
-    });
   }
 }

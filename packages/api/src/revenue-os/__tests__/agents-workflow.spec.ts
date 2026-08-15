@@ -13,6 +13,7 @@ import {
   GLOBAL_AGENT_RULES,
 } from '../agents/agent-definitions';
 import { SpeedToLeadWorkflow } from '../automations/speed-to-lead.workflow';
+import { WorkflowRunnerService } from '../automations/workflow-runner.service';
 import { HvacSafetyService } from '../safety/hvac-safety.service';
 import { HvacClassifierService } from '../safety/hvac-classifier.service';
 import { ConsentService } from '../consent/consent.service';
@@ -144,6 +145,7 @@ describe('Workflow A — Speed to Lead (Phase 6)', () => {
 
     const workflow = new SpeedToLeadWorkflow(
       prisma,
+      new WorkflowRunnerService(prisma),
       new HvacSafetyService(prisma),
       new HvacClassifierService(),
       consent,
