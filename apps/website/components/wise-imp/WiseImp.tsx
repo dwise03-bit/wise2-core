@@ -7,12 +7,8 @@ import { ColorPicker } from './ColorPicker';
 import { ChatPanel } from './ChatPanel';
 import { IntakeFlow } from './IntakeFlow';
 import { useWiseImpStore } from './useWiseImpStore';
-
-const PAGE_HINTS: Record<string, string> = {
-  '/consulting': "You're looking at consulting services — want the short version of which one fits?",
-  '/pricing': 'Happy to help you figure out which plan makes sense.',
-  '/audit': 'The AI Business Audit is a good first step if you\'re not sure where to start.',
-};
+import { useImpTour } from './useImpTour';
+import { pageGreeting } from './pageContext';
 
 export function WiseImp() {
   const router = useRouter();
@@ -52,14 +48,25 @@ export function WiseImp() {
     }
   }, [state.open]);
 
-  const hint = PAGE_HINTS[pathname];
+  // Route-aware greeting, plus the idle page tour. The tour is suppressed
+  // whenever the panel is open so the assistant always takes priority.
+  const hint = pageGreeting(pathname);
+  const tourStop = useImpTour(pathname, state.open);
 
   return (
     <div
+      data-wise-imp
       style={{
         position: 'fixed',
-        bottom: 'max(20px, calc(20px + env(safe-area-inset-bottom)))',
-        right: 'max(20px, calc(20px + env(safe-area-inset-right)))',
+        // While touring the companion drifts to the element it is describing;
+        // otherwise it rests in its usual corner.
+        ...(tourStop
+          ? { top: tourStop.top, left: tourStop.left, bottom: 'auto', right: 'auto' }
+          : {
+              bottom: 'max(20px, calc(20px + env(safe-area-inset-bottom)))',
+              right: 'max(20px, calc(20px + env(safe-area-inset-right)))',
+            }),
+        transition: 'top 900ms ease, left 900ms ease',
         zIndex: 60,
       }}
     >
@@ -170,6 +177,29 @@ export function WiseImp() {
         </div>
       )}
 
+      {tourStop && !state.open && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: 72,
+            right: 0,
+            maxWidth: 220,
+            padding: '6px 10px',
+            fontSize: 12,
+            lineHeight: 1.35,
+            color: '#E8ECEF',
+            background: 'rgba(13, 17, 23, 0.92)',
+            border: '1px solid rgba(57, 255, 20, 0.28)',
+            borderRadius: 10,
+            whiteSpace: 'normal',
+            pointerEvents: 'none',
+          }}
+        >
+          {tourStop.reaction}
+        </div>
+      )}
+
       <button
         ref={openButtonRef}
         type="button"
@@ -189,7 +219,11 @@ export function WiseImp() {
           padding: 4,
         }}
       >
-        <WiseImpMascot glowColor={state.glowColor} mascotState={state.open ? 'idle' : state.mascotState} size={52} />
+        <WiseImpMascot
+          glowColor={state.glowColor}
+          mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
+          size={52}
+        />
       </button>
     </div>
   );
