@@ -7,9 +7,14 @@ npm-debug.log
 .git
 .gitignore
 README.md
-.env
-.env.local
-.env.*.local
+# Patterns without ** match only the context root, so a bare `.env.local`
+# did NOT exclude apps/website/.env.local — that file was copied into the
+# image and its NEXT_PUBLIC_* values compiled into the bundle.
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.production
+**/.env.development
 .turbo
 dist
 build
