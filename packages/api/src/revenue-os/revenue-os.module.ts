@@ -6,6 +6,8 @@ import { TenantService } from './tenant/tenant.service';
 import { TenantGuard } from './tenant/tenant.guard';
 import { LeadsController } from './leads/leads.controller';
 import { LeadsService } from './leads/leads.service';
+import { AttributionController } from './attribution/attribution.controller';
+import { AttributionService } from './attribution/attribution.service';
 import { HvacSafetyService } from './safety/hvac-safety.service';
 import { HvacClassifierService } from './safety/hvac-classifier.service';
 import { ConsentService } from './consent/consent.service';
@@ -36,11 +38,12 @@ import { RevenueWorkerService } from './automations/revenue-worker.service';
  */
 @Module({
   imports: [ConfigModule, PrismaModule, AuthModule],
-  controllers: [LeadsController],
+  controllers: [LeadsController, AttributionController],
   providers: [
     TenantService,
     TenantGuard,
     LeadsService,
+    AttributionService,
     HvacSafetyService,
     HvacClassifierService,
     ConsentService,
@@ -60,6 +63,7 @@ import { RevenueWorkerService } from './automations/revenue-worker.service';
   exports: [
     TenantService,
     LeadsService,
+    AttributionService,
     HvacSafetyService,
     HvacClassifierService,
     ConsentService,
