@@ -14,6 +14,12 @@ import { WebhookSecurityService } from './webhooks/webhook-security.service';
 import { AgentsService } from './agents/agents.service';
 import { RevenueQueueService } from './automations/queue.service';
 import { SpeedToLeadWorkflow } from './automations/speed-to-lead.workflow';
+import { WorkflowRunnerService } from './automations/workflow-runner.service';
+import { InboundReceptionistWorkflow } from './automations/inbound-receptionist.workflow';
+import { EstimateRecoveryWorkflow } from './automations/estimate-recovery.workflow';
+import { ReviewWorkflow } from './automations/review.workflow';
+import { MembershipWorkflow } from './automations/membership.workflow';
+import { ReactivationWorkflow } from './automations/reactivation.workflow';
 
 /**
  * WISE² Revenue OS.
@@ -42,6 +48,12 @@ import { SpeedToLeadWorkflow } from './automations/speed-to-lead.workflow';
     AgentsService,
     RevenueQueueService,
     SpeedToLeadWorkflow,
+    WorkflowRunnerService,
+    InboundReceptionistWorkflow,
+    EstimateRecoveryWorkflow,
+    ReviewWorkflow,
+    MembershipWorkflow,
+    ReactivationWorkflow,
   ],
   exports: [
     TenantService,
