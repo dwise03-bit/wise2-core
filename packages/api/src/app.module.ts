@@ -22,6 +22,7 @@ import { SoundLabsModule } from './v1/sound-labs/sound-labs.module';
 import { CustomersModule } from './v1/customers/customers.module';
 import { GalleryModule } from './v1/gallery/gallery.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { RevenueOsModule } from './revenue-os/revenue-os.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -101,6 +102,7 @@ import { APIStatusController } from './config/api-status.controller';
     ModulesModule,
     DiscordModule,
     PrismaModule,
+    RevenueOsModule,
     // ConsultingAuditModule, // DEFERRED - has type errors
     // ConsultingModule, // DEFERRED
     BillingModule,
