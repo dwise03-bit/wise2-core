@@ -14,6 +14,12 @@ services:
       NODE_ENV: production
       PORT: "3000"
       HOSTNAME: 0.0.0.0
+      # Server-side proxy target for /api/auth/*. Without this the route falls
+      # back to http://localhost:3011/api, where nothing listens inside the
+      # container, and every sign-in returns 502 "Authentication service
+      # unavailable". Reached over the compose network; verified that
+      # http://api:3000/api/health returns 200 from this container.
+      API_URL: http://api:3000/api
     ports:
       - "127.0.0.1:3004:3000"
     networks:
