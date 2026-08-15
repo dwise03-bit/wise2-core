@@ -15,3 +15,7 @@ services:
     environment:
       REVENUE_OS_ENABLED: "true"
       REVENUE_OS_WORKER: "false"
+      # Google sign-in for the Command Center. The API owns the code exchange,
+      # so its redirect_uri must be the Command Center callback the browser was
+      # sent to, not the API's own host.
+      GOOGLE_CALLBACK_URL: https://command.wise2.net/api/auth/google/callback
