@@ -2286,3 +2286,527 @@ model WiseImpEvent {
   @@index([sessionId])
   @@index([createdAt])
 }
+
+// ============================================================================
+// WISE² REVENUE OS
+// ----------------------------------------------------------------------------
+// Tenant-scoped revenue pipeline: CAMPAIGN → LEAD → CONVERSATION → BOOKING →
+// ESTIMATE → SOLD JOB → REVENUE → REVIEW → MEMBERSHIP → REACTIVATION.
+//
+// Vertical neutrality: core models carry a free-form `serviceType` string so
+// the same pipeline serves plumbing/electrical/roofing tenants. HVAC-specific
+// classification is namespaced (see HvacServiceCategory) and always nullable.
+//
+// Identity seam: `TenantMembership.userId` references the TypeORM auth user
+// (packages/api/src/auth/user.entity.ts), which lives in a different ORM than
+// this schema. It is intentionally an unconstrained String — no Prisma
+// relation — and must only ever be populated from an authenticated session.
+// ============================================================================
+
+model Tenant {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  vertical  String   @default("hvac")
+  timezone  String   @default("America/New_York")
+
+  // Phase 16 feature gate. When false, no Revenue OS automation may execute.
+  revenueOsEnabled Boolean @default(false)
+
+  // Tenant-approved copy the AI must use verbatim rather than improvising.
+  safetyScript String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships  TenantMembership[]
+  customers    RevenueCustomer[]
+  leads        Lead[]
+  conversations Conversation[]
+  serviceJobs  ServiceJob[]
+  estimates    Estimate[]
+  campaigns    Campaign[]
+  agents       AgentConfig[]
+  automationRuns AutomationRun[]
+  webhookEvents WebhookEvent[]
+  consentRecords ConsentRecord[]
+  safetyEvents SafetyEvent[]
+
+  @@index([slug])
+}
+
+enum TenantRole {
+  OWNER
+  ADMIN
+  DISPATCHER
+  TECHNICIAN
+  VIEWER
+}
+
+// Authoritative tenant membership. TenantGuard resolves tenant context from
+// this table using the authenticated user id — never from a client-supplied
+// tenant_id.
+model TenantMembership {
+  id       String     @id @default(cuid())
+  tenantId String
+  userId   String     // TypeORM auth user id — see identity seam note above.
+  role     TenantRole @default(VIEWER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([userId])
+}
+
+enum MembershipStatus {
+  NONE
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
+
+// End-customer of a tenant (e.g. a homeowner served by Wise HVAC).
+// Distinct from the existing `Customer` model, which holds WISE²'s own
+// consulting clients and is not tenant-scoped.
+model RevenueCustomer {
+  id       String @id @default(cuid())
+  tenantId String
+
+  firstName String?
+  lastName  String?
+  phone     String?
+  email     String?
+
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  postalCode   String?
+
+  systemType   String?
+  equipmentAge Int?
+
+  membershipStatus MembershipStatus @default(NONE)
+  tags             String[]         @default([])
+  notes            String?          @db.Text
+
+  lastServicedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leads         Lead[]
+  conversations Conversation[]
+  serviceJobs   ServiceJob[]
+  estimates     Estimate[]
+  consentRecords ConsentRecord[]
+
+  @@index([tenantId])
+  @@index([tenantId, phone])
+  @@index([tenantId, email])
+  @@index([tenantId, membershipStatus])
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTING
+  QUALIFIED
+  BOOKED
+  ESTIMATE
+  WON
+  LOST
+  NURTURE
+}
+
+enum LeadUrgency {
+  EMERGENCY
+  SAME_DAY
+  THIS_WEEK
+  FLEXIBLE
+}
+
+// HVAC-specific intent classification (Phase 4). Namespaced and nullable so
+// non-HVAC tenants simply leave it unset.
+enum HvacServiceCategory {
+  NO_COOLING
+  NO_HEAT
+  PREVENTATIVE_MAINTENANCE
+  THERMOSTAT
+  WATER_OR_CONDENSATE_LEAK
+  INDOOR_AIR_QUALITY
+  EQUIPMENT_REPLACEMENT
+  COMMERCIAL_HVAC
+  BILLING
+  OTHER
+}
+
+model Lead {
+  id         String  @id @default(cuid())
+  tenantId   String
+  customerId String?
+  campaignId String?
+
+  source      String
+  serviceType String?
+  hvacCategory HvacServiceCategory?
+
+  urgency LeadUrgency @default(FLEXIBLE)
+  status  LeadStatus  @default(NEW)
+
+  summary        String? @db.Text
+  estimatedValue Decimal? @db.Decimal(12, 2)
+
+  bookedAt   DateTime?
+  wonAt      DateTime?
+  lostReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant        Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer      RevenueCustomer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  campaign      Campaign?        @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  conversations Conversation[]
+  serviceJobs   ServiceJob[]
+  estimates     Estimate[]
+  safetyEvents  SafetyEvent[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt])
+  @@index([campaignId])
+  @@index([customerId])
+}
+
+enum ConversationChannel {
+  PHONE
+  SMS
+  EMAIL
+  WEBCHAT
+}
+
+enum ConversationDirection {
+  INBOUND
+  OUTBOUND
+}
+
+model Conversation {
+  id         String @id @default(cuid())
+  tenantId   String
+  customerId String?
+  leadId     String?
+
+  channel   ConversationChannel
+  direction ConversationDirection
+
+  fromValue String?
+  toValue   String?
+  body      String? @db.Text
+  transcript String? @db.Text
+
+  aiHandled    Boolean @default(false)
+  consentState ConsentState @default(UNKNOWN)
+
+  // Provider-side id, used together with WebhookEvent for idempotency.
+  externalProviderId String?
+
+  createdAt DateTime @default(now())
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer RevenueCustomer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lead     Lead?            @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, createdAt])
+  @@index([leadId])
+  @@index([customerId])
+  @@index([externalProviderId])
+}
+
+enum ServiceJobStatus {
+  SCHEDULED
+  DISPATCHED
+  ON_SITE
+  COMPLETED
+  CANCELED
+}
+
+// Named ServiceJob rather than Job to avoid ambiguity with BullMQ jobs and
+// the existing ContentPublishJob model.
+model ServiceJob {
+  id         String  @id @default(cuid())
+  tenantId   String
+  customerId String?
+  leadId     String?
+
+  serviceType    String?
+  scheduledStart DateTime?
+  scheduledEnd   DateTime?
+  technician     String?
+
+  status ServiceJobStatus @default(SCHEDULED)
+  notes  String?          @db.Text
+
+  revenue Decimal? @db.Decimal(12, 2)
+
+  // Source attribution preserved on the job so completed revenue can be
+  // traced back to the originating campaign without re-joining the lead.
+  sourceAttribution String?
+  campaignId        String?
+
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer RevenueCustomer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lead     Lead?            @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, scheduledStart])
+  @@index([leadId])
+  @@index([customerId])
+}
+
+enum EstimateStatus {
+  DRAFT
+  SENT
+  VIEWED
+  SOLD
+  DECLINED
+  EXPIRED
+}
+
+model Estimate {
+  id         String  @id @default(cuid())
+  tenantId   String
+  customerId String?
+  leadId     String?
+
+  amount Decimal @db.Decimal(12, 2)
+  status EstimateStatus @default(DRAFT)
+
+  followUpAt DateTime?
+  soldAt     DateTime?
+
+  // Objection captured by WISE Recovery; pricing exceptions route to a human.
+  objection String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer RevenueCustomer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lead     Lead?            @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, followUpAt])
+  @@index([leadId])
+}
+
+model Campaign {
+  id       String @id @default(cuid())
+  tenantId String
+
+  platform          String
+  campaignName      String
+  externalCampaignId String?
+
+  spend  Decimal @default(0) @db.Decimal(12, 2)
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leads  Lead[]
+
+  @@unique([tenantId, platform, externalCampaignId])
+  @@index([tenantId])
+  @@index([tenantId, active])
+}
+
+enum AgentType {
+  RECEPTIONIST
+  SPEED_TO_LEAD
+  BOOKING
+  RECOVERY
+  MEMBERSHIP
+  REVIEW
+  REACTIVATION
+}
+
+enum AgentStatus {
+  ONLINE
+  PAUSED
+  ERROR
+  NEEDS_CONFIG
+}
+
+model AgentConfig {
+  id       String @id @default(cuid())
+  tenantId String
+
+  type    AgentType
+  name    String
+  enabled Boolean @default(false)
+  status  AgentStatus @default(NEEDS_CONFIG)
+
+  instructions String? @db.Text
+  config       Json?
+
+  // Reference to provider credentials by key, never the secret itself.
+  providerConfigRef String?
+
+  lastRunAt    DateTime?
+  lastError    String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, type])
+  @@index([tenantId])
+}
+
+enum AutomationRunStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  SKIPPED
+}
+
+model AutomationRun {
+  id       String @id @default(cuid())
+  tenantId String
+
+  workflowKey String
+  entityType  String?
+  entityId    String?
+
+  status AutomationRunStatus @default(PENDING)
+
+  payload Json?
+
+  startedAt  DateTime?
+  finishedAt DateTime?
+
+  errorMessage String? @db.Text
+  retryCount   Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, workflowKey])
+  @@index([tenantId, status])
+  @@index([entityType, entityId])
+}
+
+// Durable webhook idempotency + replay protection (Phase 12).
+// Tenant is resolved from trusted provider mapping, never from payload body.
+model WebhookEvent {
+  id       String  @id @default(cuid())
+  tenantId String?
+
+  provider   String
+  externalId String
+
+  signatureValid Boolean @default(false)
+  processedAt    DateTime?
+
+  payloadHash String
+  error       String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@unique([provider, externalId])
+  @@index([tenantId])
+  @@index([createdAt])
+}
+
+enum ConsentChannel {
+  SMS
+  CALL
+  EMAIL
+}
+
+enum ConsentState {
+  UNKNOWN
+  OPTED_IN
+  OPTED_OUT
+  DNC
+}
+
+model ConsentRecord {
+  id         String @id @default(cuid())
+  tenantId   String
+  customerId String?
+
+  channel ConsentChannel
+  state   ConsentState   @default(UNKNOWN)
+
+  // Where the consent signal came from (web form, STOP keyword, call IVR…).
+  source String?
+
+  // Raw inbound keyword for STOP/START events, retained for audit.
+  keyword String?
+
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  tenant   Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer RevenueCustomer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, customerId, channel])
+  @@index([occurredAt])
+}
+
+enum SafetyRiskType {
+  GAS_ODOR
+  CARBON_MONOXIDE
+  SMOKE
+  FIRE
+  ELECTRICAL_BURNING
+  ARCING
+  ELECTRICAL_HAZARD
+  REFRIGERANT_EXPOSURE
+  IMMEDIATE_DANGER
+}
+
+// Every safety-gate trip is logged (Phase 4). Presence of a row means normal
+// sales/diagnosis flow was halted and the tenant escalation policy applied.
+model SafetyEvent {
+  id       String @id @default(cuid())
+  tenantId String
+  leadId   String?
+
+  riskType SafetyRiskType
+  matchedTerm String?
+  sourceText  String? @db.Text
+
+  escalated  Boolean @default(false)
+  escalatedTo String?
+
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lead   Lead?  @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, riskType])
+  @@index([createdAt])
+}

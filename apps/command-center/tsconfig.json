@@ -11,7 +11,6 @@
     "strict": false,
     "noEmit": true,
     "skipLibCheck": false,
-    "suppressImplicitAnyIndexErrors": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
