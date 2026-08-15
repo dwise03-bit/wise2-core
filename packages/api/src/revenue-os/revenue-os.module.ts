@@ -9,6 +9,8 @@ import { LeadsService } from './leads/leads.service';
 import { HvacSafetyService } from './safety/hvac-safety.service';
 import { HvacClassifierService } from './safety/hvac-classifier.service';
 import { ConsentService } from './consent/consent.service';
+import { MockProvider } from './providers/mock.provider';
+import { WebhookSecurityService } from './webhooks/webhook-security.service';
 
 /**
  * WISE² Revenue OS.
@@ -32,6 +34,8 @@ import { ConsentService } from './consent/consent.service';
     HvacSafetyService,
     HvacClassifierService,
     ConsentService,
+    MockProvider,
+    WebhookSecurityService,
   ],
   exports: [
     TenantService,
@@ -39,6 +43,8 @@ import { ConsentService } from './consent/consent.service';
     HvacSafetyService,
     HvacClassifierService,
     ConsentService,
+    MockProvider,
+    WebhookSecurityService,
   ],
 })
 export class RevenueOsModule {}
