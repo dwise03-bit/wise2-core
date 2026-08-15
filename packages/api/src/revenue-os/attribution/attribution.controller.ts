@@ -13,7 +13,7 @@ import { AttributionFilter } from './attribution.types';
  * a tenant id, and `:campaignId` below is resolved against the session
  * tenant inside the service.
  */
-@Controller('api/revenue-os/attribution')
+@Controller('revenue-os/attribution')
 @UseGuards(JwtAuthGuard, TenantGuard)
 export class AttributionController {
   constructor(private readonly attributionService: AttributionService) {}
