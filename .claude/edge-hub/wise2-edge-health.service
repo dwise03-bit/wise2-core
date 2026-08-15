@@ -1,0 +1,36 @@
+[Unit]
+Description=WISE² Edge Hub - Health API
+Documentation=https://wise2.net/docs/edge-hub
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-edge/app
+Environment="NODE_ENV=production"
+Environment="MQTT_URL=mqtt://127.0.0.1:1883"
+Environment="HEALTH_PORT=4900"
+Environment="LOG_LEVEL=info"
+ExecStart=/usr/bin/node /home/dwise/wise2-edge/app/dist/health-api.js
+
+Restart=on-failure
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+
+MemoryMax=150M
+CPUQuota=40%
+TasksMax=80
+
+StandardOutput=append:/home/dwise/wise2-edge/app/logs/health-out.log
+StandardError=append:/home/dwise/wise2-edge/app/logs/health-error.log
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/dwise/wise2-edge/app/logs
+
+[Install]
+WantedBy=multi-user.target

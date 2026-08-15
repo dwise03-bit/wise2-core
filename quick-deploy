@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+echo "🚀 WISE² Quick Deployment"
+
+# Just rebuild what's absolutely necessary
+cd /Users/danielwise/Projects/wise2-core
+
+git push origin main
+
+ssh dwise@wise2.net << 'REMOTE'
+cd /home/dwise/wise2-core
+git fetch origin && git reset --hard origin/main
+
+# Stop old containers
+docker-compose -f docker-compose.prod.yml down 2>/dev/null || true
+docker system prune -f 2>/dev/null || true
+
+# Just bring up the website (already working)
+cd apps/website
+docker-compose down 2>/dev/null || true
+docker-compose up -d --build
+
+sleep 5
+echo "✅ Website deployed"
+REMOTE
+
+echo "✅ Deployment complete!"

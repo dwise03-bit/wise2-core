@@ -1,0 +1,33 @@
+# WISE² BYTE MINI 4.0 — UNIHIKER K10 dual-slot OTA partition table
+#
+# The Arduino core copies this file automatically when it sits beside the
+# sketch (platform.txt recipe.hooks.prebuild.1), so no build flag is needed.
+#
+# WHY THIS EXISTS
+# DFRobot's stock scheme (large_spiffs_16MB) declares a single `factory` app
+# partition and no otadata, so esp_ota_get_next_update_partition() returns
+# NULL and over-the-air updates are impossible. Verified on hardware:
+#     [OTA] running='factory' size=5120KB sketch=897KB next=NONE
+#
+# WHAT CHANGED
+# The single 5 MB factory slot is split into two 2.5 MB OTA slots, and otadata
+# is placed in the unused 8 KB gap at 0xe000 (between nvs, which ends at
+# 0xe000, and the app start at 0x10000).
+#
+# 0x10000 + 2 * 0x280000 == 0x510000 exactly, so ota_1 ends precisely where
+# `model` begins. The AI model and TTS voice partitions keep their original
+# offsets, which matters because boards.txt flashes those images to hardcoded
+# addresses (0x510000 and 0x985000) when Model=CN or Model=EN is selected.
+# Repartitioning therefore does not break speech recognition or TTS.
+#
+# Headroom: firmware is ~900 KB against a 2.5 MB slot (~2.9x).
+#
+# Name,      Type, SubType,  Offset,    Size,  Flags
+nvs,         data, nvs,      0x9000,    0x5000,
+otadata,     data, ota,      0xe000,    0x2000,
+ota_0,       app,  ota_0,    0x10000,   0x280000,
+ota_1,       app,  ota_1,    0x290000,  0x280000,
+model,       data, spiffs,   0x510000,  4563K,
+voice_data,  data, fat,      0x985000,  2542K,
+fr,          data, ,         0xC01000,  100K,
+coredump,    data, coredump, ,          64K,

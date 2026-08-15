@@ -1,0 +1,142 @@
+/* Import centralized design system tokens */
+@import '@wise2/design-system/design-tokens.css';
+
+/*
+ * Studio is built with Tailwind utility classes.  The design-token import
+ * supplies CSS variables only; these layers generate the actual layout,
+ * color, typography, and responsive utility rules used by the app.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Studio-specific styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Range slider styling - Mobile friendly */
+input[type='range'].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  padding: 8px 0;
+}
+
+/* Larger touch targets for mobile */
+@media (max-width: 640px) {
+  input[type='range'].slider {
+    padding: 12px 0;
+  }
+}
+
+/* Webkit slider thumb - mobile optimized */
+input[type='range'].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d9ff, #0096ff);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 217, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  input[type='range'].slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+input[type='range'].slider::-webkit-slider-thumb:hover,
+input[type='range'].slider::-webkit-slider-thumb:active {
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 2px 12px rgba(0, 217, 255, 0.6);
+}
+
+/* Firefox slider thumb */
+input[type='range'].slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d9ff, #0096ff);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 217, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  input[type='range'].slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+input[type='range'].slider::-moz-range-thumb:hover,
+input[type='range'].slider::-moz-range-thumb:active {
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 2px 12px rgba(0, 217, 255, 0.6);
+}
+
+/* Track styling - responsive height */
+input[type='range'].slider::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #1f2937, #374151);
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid #4b5563;
+}
+
+@media (max-width: 640px) {
+  input[type='range'].slider::-webkit-slider-runnable-track {
+    height: 10px;
+  }
+}
+
+input[type='range'].slider::-moz-range-track {
+  background: linear-gradient(to right, #1f2937, #374151);
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid #4b5563;
+}
+
+/* Timeline scrubber specific styling */
+.timeline-scrubber {
+  background: linear-gradient(to right, #1f2937, #374151);
+  height: 8px;
+  border-radius: 4px;
+  border: 1px solid #4b5563;
+}
+
+@media (max-width: 640px) {
+  .timeline-scrubber {
+    height: 10px;
+  }
+}
+
+/* Mobile-specific touch improvements */
+@media (max-width: 768px) {
+  /* Disable hover effects on touch devices */
+  @media (hover: none) {
+    input[type='range'].slider::-webkit-slider-thumb:hover {
+      width: 18px;
+      height: 18px;
+    }
+
+    input[type='range'].slider::-moz-range-thumb:hover {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  /* Ensure sufficient tap target areas */
+  button, input[type='button'], input[type='submit'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

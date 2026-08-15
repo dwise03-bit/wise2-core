@@ -1,0 +1,30 @@
+# WISE² Core — Code Owners
+
+# Global owners
+* @dwise03
+
+# API services
+services/api/ @dwise03
+services/api/src/ @dwise03
+
+# Dashboard
+services/dashboard/ @dwise03
+services/dashboard/src/ @dwise03
+
+# Website (Sound Labs)
+wise-touch/ @dwise03
+wise-touch/src/ @dwise03
+wise-touch/src/components/sound-labs/ @dwise03
+
+# Database & infrastructure
+docker-compose.prod.yml @dwise03
+infrastructure/ @dwise03
+config/ @dwise03
+
+# Documentation
+*.md @dwise03
+docs/ @dwise03
+
+# Configuration
+.github/ @dwise03
+.gitignore @dwise03

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  studio:
+    image: wise2-soundlabs:latest
+    container_name: wise2-studio
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    restart: always
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3003"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  wise2-network:
+    driver: bridge

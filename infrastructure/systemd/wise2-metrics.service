@@ -1,0 +1,34 @@
+[Unit]
+Description=WISE² Metrics Daemon
+Documentation=https://wise2.com
+After=network.target
+Wants=wise2-api.service
+
+[Service]
+Type=simple
+User=wise2
+WorkingDirectory=/opt/wise2-core
+Environment="NODE_ENV=production"
+Environment="METRICS_INTERVAL=60"
+
+# Load environment from .env.production
+EnvironmentFile=/opt/wise2-core/.env.production
+
+ExecStart=/usr/bin/node /opt/wise2-core/scripts/monitoring/metrics-daemon.js
+
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-metrics
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target

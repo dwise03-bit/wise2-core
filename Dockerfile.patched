@@ -1,0 +1,7 @@
+FROM byte-mini:arduino
+
+# Patch the mbedtls CMakeLists.txt to add heap dependency
+RUN sed -i 's/set(priv_requires soc esp_hw_support)/set(priv_requires soc esp_hw_support heap)/' /opt/esp/idf/components/mbedtls/CMakeLists.txt
+
+# Verify the patch
+RUN grep "set(priv_requires" /opt/esp/idf/components/mbedtls/CMakeLists.txt | head -1
