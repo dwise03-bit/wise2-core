@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Must never be prerendered: this reads credentials from the runtime
+// environment and mints a per-request CSRF state. When Next.js decides the
+// branch is static it freezes the build-time response — which is exactly how
+// Discord ended up permanently serving "not configured" in production.
+export const dynamic = 'force-dynamic';
+
+
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const REDIRECT_URI =
   process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/api/auth/discord/callback';

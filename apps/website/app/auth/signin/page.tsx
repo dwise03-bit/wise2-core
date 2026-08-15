@@ -79,7 +79,7 @@ export default function LoginPage() {
 
     try {
       // Call login API
-      const result = await apiClient.post('/api/v1/auth/signin', {
+      const result = await apiClient.post('/api/v1/auth/login', {
         email,
         password,
       });
