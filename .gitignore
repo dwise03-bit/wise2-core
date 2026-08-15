@@ -8,6 +8,9 @@
 .env.prod
 .env.prod.local
 .env.backups/
+.env.backup*
+.env.bak
+.env.*.bak
 # (keep the *.example / *.prod.example templates tracked)
 
 # IDE & Editor
