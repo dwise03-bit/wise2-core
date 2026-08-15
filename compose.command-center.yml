@@ -20,6 +20,12 @@ services:
       # unavailable". Reached over the compose network; verified that
       # http://api:3000/api/health returns 200 from this container.
       API_URL: http://api:3000/api
+      # Google sign-in. The redirect_uri must match GOOGLE_CALLBACK_URL on the
+      # api service exactly — Google requires the value used at authorize time
+      # to match the one used at token exchange, and the API performs the
+      # exchange.
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CALLBACK_URL: https://command.wise2.net/api/auth/google/callback
     ports:
       - "127.0.0.1:3004:3000"
     networks:
