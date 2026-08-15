@@ -6,6 +6,9 @@ import { TenantService } from './tenant/tenant.service';
 import { TenantGuard } from './tenant/tenant.guard';
 import { LeadsController } from './leads/leads.controller';
 import { LeadsService } from './leads/leads.service';
+import { HvacSafetyService } from './safety/hvac-safety.service';
+import { HvacClassifierService } from './safety/hvac-classifier.service';
+import { ConsentService } from './consent/consent.service';
 
 /**
  * WISE² Revenue OS.
@@ -22,7 +25,20 @@ import { LeadsService } from './leads/leads.service';
 @Module({
   imports: [ConfigModule, PrismaModule, AuthModule],
   controllers: [LeadsController],
-  providers: [TenantService, TenantGuard, LeadsService],
-  exports: [TenantService, LeadsService],
+  providers: [
+    TenantService,
+    TenantGuard,
+    LeadsService,
+    HvacSafetyService,
+    HvacClassifierService,
+    ConsentService,
+  ],
+  exports: [
+    TenantService,
+    LeadsService,
+    HvacSafetyService,
+    HvacClassifierService,
+    ConsentService,
+  ],
 })
 export class RevenueOsModule {}
