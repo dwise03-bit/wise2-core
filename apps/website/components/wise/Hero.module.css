@@ -105,10 +105,10 @@
    ============================================================================ */
 
 .logoOverlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /* Flows in normal document order between the headline and the hero artwork.
+     Previously absolute-centred over the portrait grid, which after the hero
+     artwork replaced that grid left it sitting on top of the body copy. */
+  position: relative;
   z-index: 15;
   display: flex;
   flex-direction: column;
@@ -812,4 +812,12 @@
     transparent 2px
   );
   z-index: 1000;
+}
+
+/* Mobile: the hero artwork crop includes the WISE2 wordmark, so the live
+   overlay wordmark would duplicate it. */
+@media (max-width: 767px) {
+  .logoOverlay {
+    display: none;
+  }
 }
