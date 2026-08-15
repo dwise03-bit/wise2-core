@@ -20,6 +20,7 @@ import { EstimateRecoveryWorkflow } from './automations/estimate-recovery.workfl
 import { ReviewWorkflow } from './automations/review.workflow';
 import { MembershipWorkflow } from './automations/membership.workflow';
 import { ReactivationWorkflow } from './automations/reactivation.workflow';
+import { RevenueWorkerService } from './automations/revenue-worker.service';
 
 /**
  * WISE² Revenue OS.
@@ -54,6 +55,7 @@ import { ReactivationWorkflow } from './automations/reactivation.workflow';
     ReviewWorkflow,
     MembershipWorkflow,
     ReactivationWorkflow,
+    RevenueWorkerService,
   ],
   exports: [
     TenantService,
