@@ -18,6 +18,11 @@ WORKDIR /app/packages/api
 # Without this, incremental TypeScript builds skip .js emission on Alpine
 RUN rm -f tsconfig.tsbuildinfo
 
+# Generate the Prisma client BEFORE compiling: the builder otherwise
+# type-checks against the un-generated client stub, which fails with
+# "Prisma has no exported member InputJsonValue" across the codebase.
+RUN cd /app/packages/db && npx prisma generate --schema=prisma/schema.prisma
+
 # Build the application
 RUN pnpm run build
 
