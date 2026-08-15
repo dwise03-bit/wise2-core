@@ -11,6 +11,9 @@ import { HvacClassifierService } from './safety/hvac-classifier.service';
 import { ConsentService } from './consent/consent.service';
 import { MockProvider } from './providers/mock.provider';
 import { WebhookSecurityService } from './webhooks/webhook-security.service';
+import { AgentsService } from './agents/agents.service';
+import { RevenueQueueService } from './automations/queue.service';
+import { SpeedToLeadWorkflow } from './automations/speed-to-lead.workflow';
 
 /**
  * WISE² Revenue OS.
@@ -36,6 +39,9 @@ import { WebhookSecurityService } from './webhooks/webhook-security.service';
     ConsentService,
     MockProvider,
     WebhookSecurityService,
+    AgentsService,
+    RevenueQueueService,
+    SpeedToLeadWorkflow,
   ],
   exports: [
     TenantService,
