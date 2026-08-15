@@ -1,0 +1,20 @@
+# Command Center (Revenue OS UI). Not present in docker-compose.prod.yml, so
+# nginx has been proxying command.wise2.net to an empty port 3011 — hence the
+# 502. Container listens on 3000; published on 3004, which is what the nginx root location proxies to (3011 is reserved for /brain-api/).
+services:
+  command-center:
+    build:
+      context: .
+      dockerfile: apps/command-center/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://api.wise2.net
+    container_name: wise2-command-center
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:3004:3000"
+    networks:
+      - wise2
