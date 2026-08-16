@@ -33,8 +33,8 @@ export function SunoGeneratorWithErrorHandling() {
     try {
       await generate({
         prompt: 'Upbeat electronic dance music',
-        genre: 'EDM',
-        mood: 'energetic',
+        genre: 'Electronic',
+        mood: 'Energetic',
         duration: 180,
       });
     } catch (err) {
