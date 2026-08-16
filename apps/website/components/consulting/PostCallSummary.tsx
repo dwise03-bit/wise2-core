@@ -17,10 +17,10 @@ import {
   Volume2,
   FileText,
 } from 'lucide-react'
-import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Card } from '@/components/ui/Card'
 import Tabs from '@/components/ui/Tabs'
-import Input from '@/components/ui/Input'
+import { Input } from '@/components/ui/Input'
 import Checkbox from '@/components/ui/Checkbox'
 
 // TypeScript Interfaces
@@ -171,7 +171,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         >
           {/* Summary Text */}
           <motion.div variants={itemVariants}>
-            <Card variant="glass" className="p-6">
+            <Card variant="elevated" className="p-6">
               <h3 className="text-lg font-semibold text-wise-text-primary mb-4">
                 Call Summary
               </h3>
@@ -184,7 +184,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
           {/* Consultant Notes */}
           {summary.consultantNotes && (
             <motion.div variants={itemVariants}>
-              <Card variant="glass" className="p-6 border-l-2 border-wise-primary">
+              <Card variant="elevated" className="p-6 border-l-2 border-wise-primary">
                 <h3 className="text-lg font-semibold text-wise-text-primary mb-4 flex items-center gap-2">
                   <AlertCircle className="w-5 h-5 text-wise-primary" />
                   Consultant Notes
@@ -211,7 +211,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         >
           {actionItems.length === 0 ? (
             <motion.div variants={itemVariants}>
-              <Card variant="glass" className="p-8 text-center">
+              <Card variant="elevated" className="p-8 text-center">
                 <p className="text-wise-text-muted">No action items recorded</p>
               </Card>
             </motion.div>
@@ -223,13 +223,12 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
                 custom={index}
               >
                 <Card
-                  variant="glass"
-                  className={`p-4 transition-all ${
+                  variant="elevated"
+                  className={`p-4 transition-all hover:border-[#2CD588] ${
                     item.completed
                       ? 'opacity-60 border-wise-success/30'
                       : 'border-wise-surface/50'
                   }`}
-                  hoverable
                 >
                   <div className="flex gap-4">
                     {/* Checkbox */}
@@ -343,7 +342,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
           className="space-y-4"
         >
           <motion.div variants={itemVariants}>
-            <Card variant="metal" className="p-8">
+            <Card variant="elevated" className="p-8">
               <div className="flex flex-col items-center justify-center gap-6">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-wise-primary to-blue-600 flex items-center justify-center shadow-glow-blue-lg">
                   <motion.button
@@ -385,7 +384,6 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
                 <Button
                   variant="secondary"
                   size="md"
-                  icon={<Download className="w-4 h-4" />}
                   onClick={() => {
                     const a = document.createElement('a')
                     a.href = summary.recordingUrl
@@ -393,6 +391,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
                     a.click()
                   }}
                 >
+                  <Download className="w-4 h-4" />
                   Download Recording
                 </Button>
               </div>
@@ -413,7 +412,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
           className="space-y-4"
         >
           <motion.div variants={itemVariants}>
-            <Card variant="glass" className="p-6">
+            <Card variant="elevated" className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-wise-text-primary">
                   Call Transcript
@@ -421,9 +420,9 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
                 <Button
                   variant="secondary"
                   size="sm"
-                  icon={<Download className="w-4 h-4" />}
                   onClick={downloadTranscript}
                 >
+                  <Download className="w-4 h-4" />
                   Download
                 </Button>
               </div>
@@ -461,7 +460,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
 
       {/* Premium Card Container */}
       <motion.div variants={itemVariants}>
-        <Card variant="glass" className="overflow-hidden">
+        <Card variant="elevated" className="overflow-hidden">
           {/* Tabs Navigation */}
           <div className="p-6 pb-0">
             <Tabs
@@ -499,18 +498,18 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         <Button
           variant="primary"
           size="lg"
-          icon={<Calendar className="w-4 h-4" />}
           onClick={() => setShowScheduleFollowUp(!showScheduleFollowUp)}
         >
+          <Calendar className="w-4 h-4" />
           Schedule Follow-up
         </Button>
 
         <Button
           variant="secondary"
           size="lg"
-          icon={<Share2 className="w-4 h-4" />}
           onClick={shareViaEmail}
         >
+          <Share2 className="w-4 h-4" />
           {copiedEmail ? 'Email Prepared' : 'Share via Email'}
         </Button>
       </motion.div>
@@ -524,7 +523,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
             animate="visible"
             exit="hidden"
           >
-            <Card variant="glass" className="p-6 border-l-2 border-wise-primary">
+            <Card variant="elevated" className="p-6 border-l-2 border-wise-primary">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-wise-text-primary flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-wise-primary" />
@@ -542,7 +541,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
                   </div>
 
                   <Button
-                    variant="success"
+                    variant="primary"
                     size="md"
                     onClick={() => {
                       setShowScheduleFollowUp(false)
@@ -576,7 +575,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
         {/* Completion Stats */}
-        <Card variant="glass" className="p-6 text-center" hoverable>
+        <Card variant="elevated" className="p-6 text-center transition-colors hover:border-[#2CD588]">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -591,7 +590,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         </Card>
 
         {/* Owner Distribution */}
-        <Card variant="glass" className="p-6 text-center" hoverable>
+        <Card variant="elevated" className="p-6 text-center transition-colors hover:border-[#2CD588]">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -604,7 +603,7 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         </Card>
 
         {/* Follow-up Scheduled */}
-        <Card variant="glass" className="p-6 text-center" hoverable>
+        <Card variant="elevated" className="p-6 text-center transition-colors hover:border-[#2CD588]">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}

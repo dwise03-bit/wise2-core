@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   AlertCircle,
+  Check,
   Loader,
   X,
   Mail,
