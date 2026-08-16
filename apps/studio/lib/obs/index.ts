@@ -84,7 +84,7 @@ export {
   type VideoSource,
   type AudioSource,
   type AudioEffect,
-  type StreamMetrics,
+  type StreamMetrics as StreamMetricsConfig,
   type QualityProfile,
 } from './streamPipeline';
 
