@@ -13,6 +13,7 @@ const REDIRECT_URI =
   process.env.GOOGLE_CALLBACK_URL ||
   'https://command.wise2.net/api/auth/google/callback';
 const LOGIN_URL = '/login';
+const APP_URL = (process.env.APP_URL || 'https://command.wise2.net').replace(/\/$/, '');
 
 /**
  * Starts Google sign-in for the Command Center.
@@ -21,10 +22,10 @@ const LOGIN_URL = '/login';
  * the API performs the token exchange and Google requires the value used at
  * authorize time to match the one used at exchange time.
  */
-export async function GET(request: Request) {
+export async function GET() {
   if (!CLIENT_ID) {
     return NextResponse.redirect(
-      new URL(`${LOGIN_URL}?error=google_not_configured`, request.url),
+      new URL(`${LOGIN_URL}?error=google_not_configured`, APP_URL),
     );
   }
 

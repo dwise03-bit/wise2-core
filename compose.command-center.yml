@@ -26,6 +26,10 @@ services:
       # exchange.
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CALLBACK_URL: https://command.wise2.net/api/auth/google/callback
+      # Public base for post-login redirects. Without it the callback would
+      # derive the origin from the container's listening address and send
+      # users to https://0.0.0.0:3000.
+      APP_URL: https://command.wise2.net
     ports:
       - "127.0.0.1:3004:3000"
     networks:
