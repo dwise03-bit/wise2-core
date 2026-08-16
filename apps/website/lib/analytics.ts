@@ -11,6 +11,7 @@ export type EventType =
   | 'login_complete'
   | 'button_click'
   | 'discord_signin_click'
+  | 'google_signin_click'
   | 'wise_imp_widget_opened'
   | 'wise_imp_suggested_question_selected'
   | 'wise_imp_service_category_identified'
