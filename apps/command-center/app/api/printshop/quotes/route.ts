@@ -38,12 +38,27 @@ interface DtfQuoteInput {
   gangSheetSizeInches?: { width: number; height: number };
 }
 
+/** Per-material rates. Keyed by lowercase material name. */
+interface MaterialPricing {
+  perGram: number;
+  setupFee: number;
+  minOrder: number;
+}
+
+const DEFAULT_MATERIAL = 'pla';
+
+const THREE_D_MATERIALS: Record<string, MaterialPricing> = {
+  pla: { perGram: 0.08, setupFee: 5.0, minOrder: 10.0 },
+  petg: { perGram: 0.10, setupFee: 5.0, minOrder: 12.0 },
+  abs: { perGram: 0.09, setupFee: 5.0, minOrder: 12.0 },
+  tpu: { perGram: 0.15, setupFee: 8.0, minOrder: 15.0 },
+};
+
 const PRICING = {
   '3d': {
-    pla: { perGram: 0.08, setupFee: 5.0, minOrder: 10.0 },
-    petg: { perGram: 0.10, setupFee: 5.0, minOrder: 12.0 },
-    abs: { perGram: 0.09, setupFee: 5.0, minOrder: 12.0 },
-    tpu: { perGram: 0.15, setupFee: 8.0, minOrder: 15.0 },
+    // Materials are nested so the map stays a homogeneous Record<string, MaterialPricing>
+    // and the scalar rates below don't have to be filtered out at lookup time.
+    materials: THREE_D_MATERIALS,
     machineHourRate: 3.50,
     designFeePerHour: 45.0,
     supportRemovalFee: 5.0,
@@ -72,8 +87,9 @@ const PRICING = {
 };
 
 function calculate3DQuote(input: ThreeDQuoteInput): { lineItems: QuoteLineItem[]; totals: Record<string, number> } {
-  const materialKey = input.material.toLowerCase() as keyof typeof PRICING['3d'];
-  const materialConfig = (PRICING['3d'] as Record<string, { perGram: number; setupFee: number; minOrder: number }>)[materialKey] || PRICING['3d'].pla;
+  const materialKey = input.material.toLowerCase();
+  const materialConfig: MaterialPricing =
+    PRICING['3d'].materials[materialKey] ?? PRICING['3d'].materials[DEFAULT_MATERIAL];
 
   const lineItems: QuoteLineItem[] = [];
 
@@ -191,7 +207,7 @@ export async function GET() {
   return NextResponse.json({
     pricing: {
       '3d': {
-        materials: ['PLA', 'PETG', 'ABS', 'TPU'],
+        materials: Object.keys(PRICING['3d'].materials).map(m => m.toUpperCase()),
         note: 'Prices are WISE² starting baselines. Final pricing determined after preflight analysis.',
       },
       dtf: {

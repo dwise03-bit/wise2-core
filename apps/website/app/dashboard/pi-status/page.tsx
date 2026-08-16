@@ -86,6 +86,8 @@ const statusColors = {
   'in-progress': 'text-blue-400',
   critical: 'text-red-400',
   warning: 'text-yellow-400',
+  // Log entries report severity as `warn`; services/alerts report `warning`.
+  warn: 'text-yellow-400',
   info: 'text-blue-400',
 };
 
@@ -98,6 +100,8 @@ const statusBgColors = {
   'in-progress': 'bg-blue-500/20',
   critical: 'bg-red-500/20',
   warning: 'bg-yellow-500/20',
+  // Log entries report severity as `warn`; services/alerts report `warning`.
+  warn: 'bg-yellow-500/20',
   info: 'bg-blue-500/20',
 };
 
