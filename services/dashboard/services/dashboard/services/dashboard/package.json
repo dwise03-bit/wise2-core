@@ -1,0 +1,33 @@
+{
+  "name": "wise2-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "format:check": "prettier --check '**/*.{ts,tsx,js,jsx,json,md}' --ignore-path .prettierignore",
+    "format": "prettier --write '**/*.{ts,tsx,js,jsx,json,md}' --ignore-path .prettierignore",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "16.2.7",
+    "framer-motion": "^11.0.8",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.6",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "16.2.7",
+    "prettier": "^3.0.0",
+    "tailwindcss": "^4.3.2",
+    "@tailwindcss/postcss": "^4.3.2",
+    "postcss": "^8.4.33"
+  }
+}

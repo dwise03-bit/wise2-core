@@ -1,0 +1,25 @@
+node_modules
+.next
+stl_output
+*.tsbuildinfo
+!node_modules/.prisma
+npm-debug.log
+.git
+.gitignore
+README.md
+# Patterns without ** match only the context root, so a bare `.env.local`
+# did NOT exclude apps/website/.env.local — that file was copied into the
+# image and its NEXT_PUBLIC_* values compiled into the bundle.
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.production
+**/.env.development
+.turbo
+dist
+build
+coverage
+.DS_Store
+*.log
+.idea
+.vscode

@@ -1,0 +1,18 @@
+{
+  "name": "wise-defense-monitoring",
+  "version": "1.0.0",
+  "description": "Multi-agent monitoring system for Wise Defense SaaS",
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "NODE_ENV=development node start.js",
+    "test": "node test-cycle.js"
+  },
+  "dependencies": {
+    "pg": "^8.11.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

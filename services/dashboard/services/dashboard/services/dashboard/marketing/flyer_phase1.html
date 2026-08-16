@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise² Core - Phase 1 Marketing Flyer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: white;
+            color: #1F2937;
+            line-height: 1.6;
+        }
+
+        /* Print-ready 300 DPI @ 8.5"x11" */
+        .flyer {
+            width: 8.5in;
+            height: 11in;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header Section - Bold Brand */
+        .header {
+            background: linear-gradient(135deg, #0066CC 0%, #7C3AED 100%);
+            color: white;
+            padding: 0.5in 0.5in;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-size: 3.2em;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 0.1in;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 0.95em;
+            font-weight: 400;
+            opacity: 0.95;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content Section */
+        .content {
+            flex: 1;
+            padding: 0.4in 0.5in;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Headline */
+        .headline {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #0066CC;
+            margin-bottom: 0.15in;
+            line-height: 1.2;
+        }
+
+        .subheadline {
+            font-size: 0.85em;
+            color: #6B7280;
+            margin-bottom: 0.25in;
+            font-weight: 500;
+        }
+
+        /* Metrics Grid */
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.15in;
+            margin-bottom: 0.25in;
+        }
+
+        .metric {
+            background: linear-gradient(135deg, #F0F4FF 0%, #F3EDFF 100%);
+            padding: 0.15in;
+            border-left: 3px solid #0066CC;
+            border-radius: 4px;
+        }
+
+        .metric.alt {
+            border-left-color: #7C3AED;
+        }
+
+        .metric-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #0066CC;
+        }
+
+        .metric.alt .metric-value {
+            color: #7C3AED;
+        }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: #6B7280;
+            margin-top: 0.05in;
+            font-weight: 500;
+        }
+
+        /* Features */
+        .features {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            padding: 0.2in;
+            margin-bottom: 0.2in;
+            flex: 1;
+        }
+
+        .features-title {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 0.1in;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.08in 0.1in;
+            font-size: 0.75em;
+            line-height: 1.4;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: #10B981;
+            font-weight: 700;
+            margin-right: 0.08in;
+            flex-shrink: 0;
+        }
+
+        /* Bottom CTA Section */
+        .footer {
+            background: #1F2937;
+            color: white;
+            padding: 0.25in 0.5in;
+            text-align: center;
+            flex-shrink: 0;
+            border-top: 3px solid #0066CC;
+        }
+
+        .cta-text {
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 0.08in;
+        }
+
+        .cta-details {
+            font-size: 0.8em;
+            opacity: 0.9;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.1in;
+            margin-top: 0.08in;
+        }
+
+        .cta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-label {
+            font-size: 0.65em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .cta-value {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #10B981;
+        }
+
+        /* Print styling */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .flyer {
+                box-shadow: none;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+            }
+        }
+
+        /* Screen preview */
+        @media screen {
+            body {
+                padding: 1in;
+                background: #F3F4F6;
+            }
+            .flyer {
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flyer">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-text">WISE² CORE</div>
+            <div class="tagline">ENTERPRISE FOUNDATION PLATFORM</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Headline -->
+            <div class="headline">Production-Ready in 3 Weeks</div>
+            <div class="subheadline">Zero Technical Debt • Enterprise Security • Developer Friendly</div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">7,250+</div>
+                    <div class="metric-label">Lines of Code</div>
+                </div>
+                <div class="metric alt">
+                    <div class="metric-value">5 min</div>
+                    <div class="metric-label">Setup Time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">80%+</div>
+                    <div class="metric-label">Test Coverage</div>
+                </div>
+                <div class="metric alt">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">Availability</div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="features">
+                <div class="features-title">What You Get</div>
+                <div class="features-list">
+                    <div class="feature-item">Enterprise Security</div>
+                    <div class="feature-item">CI/CD Pipeline</div>
+                    <div class="feature-item">Full Test Suite</div>
+                    <div class="feature-item">Auto Backups</div>
+                    <div class="feature-item">Docker Stack</div>
+                    <div class="feature-item">Monitoring Ready</div>
+                    <div class="feature-item">API Standards</div>
+                    <div class="feature-item">DB Schema</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer CTA -->
+        <div class="footer">
+            <div class="cta-text">Ready to Build?</div>
+            <div class="cta-details">
+                <div class="cta-item">
+                    <div class="cta-label">Repository</div>
+                    <div class="cta-value">github.com/dwise03-bit</div>
+                </div>
+                <div class="cta-item">
+                    <div class="cta-label">Status</div>
+                    <div class="cta-value">Phase 1 Complete ✓</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

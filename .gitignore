@@ -1,0 +1,158 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+.env.production
+.env.production.save
+.env.production.save.*
+.env.prod
+.env.prod.local
+.env.backups/
+.env.backup*
+.env.bak
+.env.*.bak
+# (keep the *.example / *.prod.example templates tracked)
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Dependencies
+node_modules/
+yarn.lock
+.pnp
+.pnp.js
+# Keep root package-lock.json for CI; ignore workspace lock files
+apps/*/package-lock.json
+packages/*/package-lock.json
+services/*/package-lock.json
+
+# Build outputs
+dist/
+build/
+*.compiled.js
+out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Database
+data/
+# Exception: track website data fixtures
+!apps/website/data/
+*.db
+*.sqlite
+postgres_data/
+redis_data/
+
+# Temporary files
+tmp/
+temp/
+/.lcd_diag_backup/
+*.tmp
+*.bak
+
+# OS specific
+Thumbs.db
+.AppleDouble
+.LSOverride
+._*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Certificates and keys
+*.key
+*.pem
+*.crt
+*.cer
+
+# Secrets (never commit)
+secrets/
+.secrets/
+private/
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Node
+.npm
+npm-debug.log
+
+# Misc
+.cache/
+*.egg-info/
+dist/
+build/
+.claude/settings.local.json
+
+# Next.js
+.next/
+out/
+
+# Turbo
+.turbo/
+
+# Audio files (for development only)
+*.wav
+*.mp3
+*.flac
+*.aac
+
+# Video files
+*.mp4
+*.mov
+*.avi
+
+# Large media
+media/
+uploads/
+downloads/
+# ...but NOT source routes that happen to be named "downloads"
+!apps/dashboard/app/podcast/downloads/
+!apps/dashboard/app/podcast/downloads/**
+
+# IDE specific
+.vscode/settings.json
+.idea/codeStyleSettings.xml
+.next
+Build/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# generated STL exports
+stl_output/
+
+# sliced output
+print_ready/*.gcode
+.vercel
+.env*

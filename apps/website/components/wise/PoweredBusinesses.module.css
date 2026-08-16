@@ -1,0 +1,501 @@
+/* ============================================================================
+   POWERED BUSINESSES SECTION - Premium Neon Cards Design
+   Master Landing Page Reference - Three-card layout with center infinity
+   ============================================================================ */
+
+.container {
+  position: relative;
+  width: 100%;
+  padding: 80px 24px;
+  background: #050505;
+  overflow: hidden;
+}
+
+/* Background Layer */
+.background {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
+  border-top: 1px solid rgba(0, 102, 255, 0.1);
+  pointer-events: none;
+}
+
+/* ============================================================================
+   HEADER SECTION
+   ============================================================================ */
+
+.header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Rajdhani', monospace;
+}
+
+.subtitle {
+  font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+  font-family: 'Rajdhani', monospace;
+  color: #8D9BA5;
+  margin: 0;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ============================================================================
+   CONTENT GRID - Three Column Layout
+   ============================================================================ */
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 0 20px;
+}
+
+/* ============================================================================
+   BUSINESS CARDS - Left & Right
+   ============================================================================ */
+
+.businessCard {
+  position: relative;
+  padding: 48px 32px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform, box-shadow;
+  border: 2px solid;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* PIFF CITY - Purple Theme */
+.piffCity {
+  border-color: rgba(176, 32, 255, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(176, 32, 255, 0.1) 0%,
+    rgba(176, 32, 255, 0.03) 50%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 40px rgba(176, 32, 255, 0.3),
+    0 0 80px rgba(176, 32, 255, 0.15),
+    inset 0 0 30px rgba(176, 32, 255, 0.1);
+}
+
+.piffCity:hover {
+  border-color: rgba(176, 32, 255, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(176, 32, 255, 0.2) 0%,
+    rgba(176, 32, 255, 0.08) 50%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 80px rgba(176, 32, 255, 0.5),
+    0 0 120px rgba(176, 32, 255, 0.3),
+    inset 0 0 40px rgba(176, 32, 255, 0.15),
+    0 20px 40px rgba(176, 32, 255, 0.2);
+}
+
+/* WISE SHINE - Gold Theme */
+.wiseShine {
+  border-color: rgba(255, 184, 0, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 184, 0, 0.1) 0%,
+    rgba(255, 184, 0, 0.03) 50%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 40px rgba(255, 184, 0, 0.3),
+    0 0 80px rgba(255, 184, 0, 0.15),
+    inset 0 0 30px rgba(255, 184, 0, 0.1);
+}
+
+.wiseShine:hover {
+  border-color: rgba(255, 184, 0, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 184, 0, 0.2) 0%,
+    rgba(255, 184, 0, 0.08) 50%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 80px rgba(255, 184, 0, 0.5),
+    0 0 120px rgba(255, 184, 0, 0.3),
+    inset 0 0 40px rgba(255, 184, 0, 0.15),
+    0 20px 40px rgba(255, 184, 0, 0.2);
+}
+
+/* ============================================================================
+   CARD CONTENT
+   ============================================================================ */
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.businessName {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-style: italic;
+  font-family: 'Playfair Display', serif;
+}
+
+.piffCity .businessName {
+  color: #B020FF;
+  text-shadow: 0 0 20px rgba(176, 32, 255, 0.5);
+}
+
+.wiseShine .businessName {
+  color: #FFB800;
+  text-shadow: 0 0 20px rgba(255, 184, 0, 0.5);
+}
+
+.tagline {
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #e0e0e0;
+}
+
+.description {
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  color: #b0b0b0;
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ============================================================================
+   BADGES
+   ============================================================================ */
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.badge {
+  display: inline-block;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d0d0d0;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.piffCity .badge {
+  border-color: rgba(176, 32, 255, 0.2);
+  background: rgba(176, 32, 255, 0.08);
+}
+
+.piffCity .badge:hover {
+  border-color: rgba(176, 32, 255, 0.4);
+  background: rgba(176, 32, 255, 0.12);
+}
+
+.wiseShine .badge {
+  border-color: rgba(255, 184, 0, 0.2);
+  background: rgba(255, 184, 0, 0.08);
+}
+
+.wiseShine .badge:hover {
+  border-color: rgba(255, 184, 0, 0.4);
+  background: rgba(255, 184, 0, 0.12);
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.button {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  font-family: 'Rajdhani', monospace;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid;
+  cursor: pointer;
+  margin-top: 12px;
+  will-change: transform, box-shadow;
+}
+
+.purpleButton {
+  border-color: rgba(176, 32, 255, 0.6);
+  color: #B020FF;
+  background: linear-gradient(135deg, rgba(176, 32, 255, 0.05), transparent);
+  box-shadow: 0 0 20px rgba(176, 32, 255, 0.2);
+}
+
+.purpleButton:hover {
+  border-color: rgba(176, 32, 255, 0.9);
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(176, 32, 255, 0.3), rgba(176, 32, 255, 0.1));
+  box-shadow:
+    0 0 40px rgba(176, 32, 255, 0.4),
+    0 0 80px rgba(176, 32, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.goldButton {
+  border-color: rgba(255, 184, 0, 0.6);
+  color: #FFB800;
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.05), transparent);
+  box-shadow: 0 0 20px rgba(255, 184, 0, 0.2);
+}
+
+.goldButton:hover {
+  border-color: rgba(255, 184, 0, 0.9);
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.3), rgba(255, 184, 0, 0.1));
+  box-shadow:
+    0 0 40px rgba(255, 184, 0, 0.4),
+    0 0 80px rgba(255, 184, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* ============================================================================
+   CENTER ELEMENT - Infinity Symbol & Label
+   ============================================================================ */
+
+.center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-width: 120px;
+}
+
+.infinitySymbol {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 900;
+  color: #0066FF;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(0, 102, 255, 0.4);
+  filter: drop-shadow(0 0 20px rgba(0, 102, 255, 0.3));
+  will-change: text-shadow;
+}
+
+.centerLabel {
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-weight: 700;
+  color: #6B8AFF;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 1.5rem;
+  color: rgba(0, 102, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.arrowLeft,
+.arrowRight {
+  transition: color 0.3s ease;
+}
+
+.businessCard:hover .arrowLeft {
+  color: rgba(0, 102, 255, 0.7);
+}
+
+.businessCard:hover .arrowRight {
+  color: rgba(0, 102, 255, 0.7);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - Mobile, Tablet, Desktop
+   ============================================================================ */
+
+/* Tablet - Adjust layout */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .center {
+    display: none;
+  }
+
+  .businessCard {
+    min-height: 360px;
+  }
+}
+
+/* Mobile - Stack vertically */
+@media (max-width: 768px) {
+  .container {
+    padding: 60px 16px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .title {
+    margin-bottom: 8px;
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 0 12px;
+  }
+
+  .businessCard {
+    padding: 32px 24px;
+    min-height: auto;
+  }
+
+  .cardContent {
+    gap: 12px;
+  }
+
+  .badges {
+    gap: 6px;
+    margin: 4px 0;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+
+  .button {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 50px 12px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+  }
+
+  .businessCard {
+    padding: 24px 16px;
+  }
+
+  .businessName {
+    font-size: 1.5rem;
+  }
+
+  .cardContent {
+    gap: 10px;
+  }
+
+  .badges {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .badge {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .businessCard,
+  .button,
+  .infinitySymbol {
+    transition: none;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #050505;
+  }
+
+  .businessCard {
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Light mode fallback */
+@media (prefers-color-scheme: light) {
+  .container {
+    background: #f5f5f5;
+  }
+
+  .businessCard {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .businessName,
+  .title {
+    color: #1a1a1a;
+  }
+
+  .description,
+  .tagline {
+    color: #555555;
+  }
+}

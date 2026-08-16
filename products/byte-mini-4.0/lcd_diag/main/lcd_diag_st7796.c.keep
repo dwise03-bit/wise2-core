@@ -1,0 +1,413 @@
+/*!
+ * WISE² BYTE MINI 4.0 — ST7796S LCD-ONLY DIAGNOSTIC
+ *
+ * Waveshare ESP32-C5-WROOM-1 + Hosyond 4.0" 320x480 SPI (ST7796S controller).
+ *
+ * This firmware initialises GPIO, SPI, the backlight and the ST7796S. Nothing
+ * else. WiFi, BLE, touch, audio, animations and every application are absent
+ * from the build, not merely disabled at runtime, so a fault here can only be
+ * in the display path.
+ *
+ * A white screen means SPI is not talking to the controller — wrong GPIO,
+ * wrong reset sequence, wrong init, or wrong SPI settings. It does not mean
+ * the panel is defective.
+ *
+ * SPI starts at 10 MHz deliberately. Raise it only once colour is confirmed.
+ */
+
+#include <stdio.h>
+#include <string.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
+#include "driver/spi_master.h"
+#include "esp_lcd_panel_io.h"
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_st7796.h"
+#include "esp_heap_caps.h"
+#include "esp_chip_info.h"
+#include "esp_flash.h"
+#include "esp_idf_version.h"
+#include "esp_log.h"
+#include "esp_check.h"
+#include "esp_timer.h"
+
+static const char *TAG = "BYTE-LCD";
+
+#define FW_VERSION "BYTE MINI 4.0 / lcd-diag 1.0"
+
+/* ---------------------------------------------------------------------------
+ * GPIO MAP  —  single source of truth, printed at boot.
+ *
+ * PROVENANCE WARNING: these values come from the XIAO ESP32-C5 revision of
+ * products/byte-mini-4.0/firmware/main/config/pins.h. The board has since been
+ * specified as a Waveshare ESP32-C5-WROOM-1, which is a different module with
+ * a different header. They are NOT silently assumed correct — they are printed
+ * at startup so they can be checked against the actual wiring before anything
+ * is blamed on the panel.
+ * ------------------------------------------------------------------------ */
+#define PIN_LCD_CS    4
+#define PIN_LCD_RST   8
+#define PIN_LCD_DC    5
+#define PIN_LCD_SCK   6
+#define PIN_LCD_MOSI  7
+#define PIN_LCD_MISO  2
+#define PIN_LCD_BL   10
+
+/* Declared for the boot report only. Touch is NOT initialised in this build. */
+#define PIN_CTP_SCL   1
+#define PIN_CTP_SDA   0
+#define PIN_CTP_RST   3
+#define PIN_CTP_INT   9
+
+/* Panel is 320x480 portrait native; the product orientation is landscape. */
+#define LCD_H_RES_NATIVE 320
+#define LCD_V_RES_NATIVE 480
+
+#define LCD_SPI_HOST      SPI2_HOST
+/* 2 MHz. The panel is wired to the dev board with flying leads, and SPI at
+ * 10 MHz over that is marginal. The ST7796S read cycle is also far slower
+ * than its write cycle (~6.6 MHz max), so a 10 MHz read returns garbage even
+ * when writes are fine. Raise this only after colour is confirmed. */
+#define LCD_PIXEL_CLOCK   (10 * 1000 * 1000)  /* 10 MHz; step down if white */
+#define LCD_CMD_BITS      8
+#define LCD_PARAM_BITS    8
+#define LCD_BITS_PER_PIXEL 16
+
+static esp_lcd_panel_handle_t s_panel = NULL;
+static esp_lcd_panel_io_handle_t s_io = NULL;
+
+static void probe_registers(const char *when);   /* defined below lcd_init */
+static int s_w = 0, s_h = 0;
+
+/* --------------------------------------------------------------------- */
+
+static void print_banner(void)
+{
+    esp_chip_info_t chip;
+    esp_chip_info(&chip);
+
+    uint32_t flash_size = 0;
+    esp_flash_get_size(NULL, &flash_size);
+
+    printf("\n");
+    printf("==================================================\n");
+    printf(" %s\n", FW_VERSION);
+    printf("==================================================\n");
+    printf(" ESP-IDF        : %s\n", esp_get_idf_version());
+    printf(" Target         : %s\n", CONFIG_IDF_TARGET);
+    printf(" Chip cores     : %d\n", chip.cores);
+    printf(" Chip revision  : v%d.%d\n", chip.revision / 100, chip.revision % 100);
+    printf(" Flash size     : %lu MB\n", (unsigned long)(flash_size / (1024 * 1024)));
+    printf(" Free heap      : %lu bytes\n", (unsigned long)esp_get_free_heap_size());
+    printf("--------------------------------------------------\n");
+    printf(" DISPLAY        : Hosyond 4.0\" ST7796S\n");
+    printf(" Native res     : %dx%d (portrait)\n", LCD_H_RES_NATIVE, LCD_V_RES_NATIVE);
+    printf(" Phase 1 orient : NATIVE PORTRAIT 320x480 rot 0\n");
+    printf("--------------------------------------------------\n");
+    printf(" GPIO MAP  (verify against actual wiring)\n");
+    printf("   LCD_CS   : GPIO %d\n", PIN_LCD_CS);
+    printf("   LCD_RST  : GPIO %d\n", PIN_LCD_RST);
+    printf("   LCD_DC   : GPIO %d\n", PIN_LCD_DC);
+    printf("   LCD_SCK  : GPIO %d\n", PIN_LCD_SCK);
+    printf("   LCD_MOSI : GPIO %d\n", PIN_LCD_MOSI);
+    printf("   LCD_MISO : GPIO %d\n", PIN_LCD_MISO);
+    printf("   LCD_BL   : GPIO %d\n", PIN_LCD_BL);
+    printf("   CTP_SCL  : GPIO %d  (touch NOT initialised)\n", PIN_CTP_SCL);
+    printf("   CTP_SDA  : GPIO %d  (touch NOT initialised)\n", PIN_CTP_SDA);
+    printf("   CTP_RST  : GPIO %d  (touch NOT initialised)\n", PIN_CTP_RST);
+    printf("   CTP_INT  : GPIO %d  (touch NOT initialised)\n", PIN_CTP_INT);
+    printf(" Source: owner-specified Waveshare C5 -> Hosyond wiring\n");
+    printf("--------------------------------------------------\n");
+    printf(" SPI CONFIG\n");
+    printf("   Host       : SPI2_HOST\n");
+    printf("   Mode       : 0\n");
+    printf("   Clock      : %d Hz (%d MHz)\n", LCD_PIXEL_CLOCK, LCD_PIXEL_CLOCK / 1000000);
+    printf("   Cmd bits   : %d\n", LCD_CMD_BITS);
+    printf("   Param bits : %d\n", LCD_PARAM_BITS);
+    printf("   BPP        : %d\n", LCD_BITS_PER_PIXEL);
+    printf("--------------------------------------------------\n");
+    printf(" SUBSYSTEMS (LCD diagnostic build)\n");
+    printf("   WiFi       : NOT COMPILED IN\n");
+    printf("   BLE        : NOT COMPILED IN\n");
+    printf("   Touch      : NOT COMPILED IN\n");
+    printf("   Microphone : NOT COMPILED IN\n");
+    printf("   Animations : NOT COMPILED IN\n");
+    printf("   Apps       : NOT COMPILED IN\n");
+    printf("==================================================\n\n");
+    fflush(stdout);
+}
+
+static esp_err_t backlight_init(void)
+{
+    ESP_LOGI(TAG, "[BLTEST] configuring GPIO %d as OUTPUT", PIN_LCD_BL);
+    gpio_config_t io = {
+        .mode         = GPIO_MODE_OUTPUT,
+        .pin_bit_mask = 1ULL << PIN_LCD_BL,
+        .pull_up_en   = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type    = GPIO_INTR_DISABLE,
+    };
+    esp_err_t err = gpio_config(&io);
+    if (err != ESP_OK) return err;
+
+    /* Blink so the backlight can be confirmed independently of any pixels. */
+    for (int i = 0; i < 2; ++i) {
+        gpio_set_level(PIN_LCD_BL, 0);
+        vTaskDelay(pdMS_TO_TICKS(200));
+        gpio_set_level(PIN_LCD_BL, 1);
+        vTaskDelay(pdMS_TO_TICKS(200));
+    }
+    ESP_LOGI(TAG, "[BLTEST] GPIO %d HIGH", PIN_LCD_BL);
+    return ESP_OK;
+}
+
+static esp_err_t lcd_init(int spi_mode, int hz)
+{
+    /* Explicit hardware reset with specified timing, not left implicit. */
+    ESP_LOGI(TAG, "reset: driving RST (GPIO %d)", PIN_LCD_RST);
+    gpio_config_t rst_io = {
+        .mode = GPIO_MODE_OUTPUT,
+        .pin_bit_mask = 1ULL << PIN_LCD_RST,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&rst_io);
+    gpio_set_level(PIN_LCD_RST, 1); vTaskDelay(pdMS_TO_TICKS(10));
+    gpio_set_level(PIN_LCD_RST, 0); vTaskDelay(pdMS_TO_TICKS(30));
+    gpio_set_level(PIN_LCD_RST, 1); vTaskDelay(pdMS_TO_TICKS(150));
+    ESP_LOGI(TAG, "[DISPLAY] Hardware reset complete");
+
+    ESP_LOGI(TAG, "SPI: host %d, mode %d, %d Hz", LCD_SPI_HOST, spi_mode, hz);
+    spi_bus_config_t buscfg = {
+        .sclk_io_num     = PIN_LCD_SCK,
+        .mosi_io_num     = PIN_LCD_MOSI,
+        .miso_io_num     = PIN_LCD_MISO,
+        .quadwp_io_num   = -1,
+        .quadhd_io_num   = -1,
+        /* One full landscape row of RGB565, the largest single transfer. */
+        .max_transfer_sz = LCD_V_RES_NATIVE * 80 * sizeof(uint16_t),
+    };
+    ESP_RETURN_ON_ERROR(spi_bus_initialize(LCD_SPI_HOST, &buscfg, SPI_DMA_CH_AUTO),
+                        TAG, "spi_bus_initialize failed");
+
+    ESP_LOGI(TAG, "LCD: creating panel IO (CS=%d DC=%d)", PIN_LCD_CS, PIN_LCD_DC);
+    esp_lcd_panel_io_handle_t io = NULL;
+    esp_lcd_panel_io_spi_config_t io_cfg = {
+        .dc_gpio_num       = PIN_LCD_DC,
+        .cs_gpio_num       = PIN_LCD_CS,
+        .pclk_hz           = hz,
+        .lcd_cmd_bits      = LCD_CMD_BITS,
+        .lcd_param_bits    = LCD_PARAM_BITS,
+        .spi_mode          = spi_mode,
+        .trans_queue_depth = 10,
+    };
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_io_spi(
+                            (esp_lcd_spi_bus_handle_t)LCD_SPI_HOST, &io_cfg, &io),
+                        TAG, "panel IO failed");
+    s_io = io;
+    probe_registers("after panel IO, before reset");
+
+    ESP_LOGI(TAG, "LCD: creating ST7796S panel (RST=%d)", PIN_LCD_RST);
+    esp_lcd_panel_dev_config_t panel_cfg = {
+        .reset_gpio_num = PIN_LCD_RST,
+        .rgb_ele_order  = LCD_RGB_ELEMENT_ORDER_BGR,   /* ST7796S is BGR */
+        .bits_per_pixel = LCD_BITS_PER_PIXEL,
+    };
+    ESP_RETURN_ON_ERROR(esp_lcd_new_panel_st7796(io, &panel_cfg, &s_panel),
+                        TAG, "st7796 create failed");
+
+    ESP_LOGI(TAG, "LCD: hardware reset");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_reset(s_panel), TAG, "reset failed");
+    vTaskDelay(pdMS_TO_TICKS(120));
+
+    ESP_LOGI(TAG, "LCD: init");
+    ESP_RETURN_ON_ERROR(esp_lcd_panel_init(s_panel), TAG, "init failed");
+
+    /* PHASE 1: native portrait, rotation 0. Landscape only after colour passes. */
+    ESP_ERROR_CHECK(esp_lcd_panel_invert_color(s_panel, false));
+    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(s_panel, true));
+
+    probe_registers("after init + DISPON");
+
+    s_w = LCD_H_RES_NATIVE;   /* 320 */
+    s_h = LCD_V_RES_NATIVE;   /* 480 */
+    ESP_LOGI(TAG, "LCD: ready, %dx%d NATIVE PORTRAIT (rot 0)", s_w, s_h);
+    return ESP_OK;
+}
+
+/*
+ * Read ST7796S registers back over MISO.
+ *
+ * This is the decisive test for "is SPI actually communicating". Writing
+ * commands proves nothing: esp_lcd_panel_init() reports ESP_OK as long as the
+ * transactions queue, whether or not the controller ever hears them. Reading
+ * a sane value back proves the full loop — CS, SCK, MOSI, DC and MISO.
+ *
+ * 0x04 RDDID  : manufacturer / version / driver id
+ * 0x0A RDDPM  : display power mode. After SLPOUT + DISPON this should have
+ *               bit4 (sleep out) and bit2 (display on) set, i.e. ~0x9C.
+ *               A value that reflects commands we sent is proof of comms.
+ * 0x09 RDDST  : display status
+ *
+ * All 0x00 or all 0xFF means nothing is driving MISO: no communication.
+ */
+static void probe_registers(const char *when)
+{
+    if (!s_io) return;
+    uint8_t b[4];
+
+    ESP_LOGI(TAG, "---- register read-back (%s) ----", when);
+
+    uint8_t w[8];
+    memset(w, 0, sizeof(w));
+    esp_err_t e1 = esp_lcd_panel_io_rx_param(s_io, 0x04, w, 5);
+    ESP_LOGI(TAG, "  RDDID (0x04) rc=%-10s -> %02X %02X %02X %02X %02X",
+             esp_err_to_name(e1), w[0], w[1], w[2], w[3], w[4]);
+    /* Some controllers prepend a dummy byte, so look for the 77 96 signature
+     * at any offset rather than assuming alignment. */
+    for (int i = 0; i + 1 < 5; ++i) {
+        if (w[i] == 0x77 && w[i + 1] == 0x96) {
+            ESP_LOGI(TAG, "  >>> ST7796 signature 77 96 found at offset %d", i);
+        }
+    }
+
+    memset(b, 0, sizeof(b));
+    esp_err_t e2 = esp_lcd_panel_io_rx_param(s_io, 0x0A, b, 1);
+    ESP_LOGI(TAG, "  RDDPM (0x0A) rc=%-10s -> %02X   (expect ~9C after DISPON)",
+             esp_err_to_name(e2), b[0]);
+
+    uint8_t s9[4];
+    memset(s9, 0, sizeof(s9));
+    esp_err_t e3 = esp_lcd_panel_io_rx_param(s_io, 0x09, s9, 4);
+    ESP_LOGI(TAG, "  RDDST (0x09) rc=%-10s -> %02X %02X %02X %02X",
+             esp_err_to_name(e3), s9[0], s9[1], s9[2], s9[3]);
+    const uint8_t last09 = s9[0];
+
+    /* Judge honestly. Identical bytes from DIFFERENT registers means we are
+     * not reading register contents at all - that is an undriven MISO line,
+     * which is extremely common because most hand-wired SPI panels never
+     * connect SDO. It proves nothing about whether WRITES are working. */
+    if (w[0] == b[0] && b[0] == last09) {
+        ESP_LOGW(TAG, "  VERDICT: identical bytes from different registers.");
+        ESP_LOGW(TAG, "           MISO is undriven - read-back is UNUSABLE here.");
+        ESP_LOGW(TAG, "           This says NOTHING about the write path.");
+    } else if (w[0] == 0 && b[0] == 0 && last09 == 0) {
+        ESP_LOGW(TAG, "  VERDICT: all zero - MISO undriven or not wired.");
+    } else {
+        ESP_LOGI(TAG, "  VERDICT: registers differ - read-back looks genuine.");
+    }
+    ESP_LOGI(TAG, "----------------------------------------");
+}
+
+static void lcd_teardown(void)
+{
+    if (s_panel) { esp_lcd_panel_del(s_panel); s_panel = NULL; }
+    if (s_io)    { esp_lcd_panel_io_del(s_io);  s_io = NULL; }
+    spi_bus_free(LCD_SPI_HOST);
+}
+
+/* Fill the whole screen by streaming bands, so no full framebuffer is needed. */
+static void fill_screen(uint16_t colour, const char *name)
+{
+    const int band_rows = 40;
+    const size_t px = (size_t)s_w * band_rows;
+    uint16_t *buf = heap_caps_malloc(px * sizeof(uint16_t), MALLOC_CAP_DMA);
+    if (!buf) {
+        ESP_LOGE(TAG, "band buffer alloc failed");
+        return;
+    }
+    for (size_t i = 0; i < px; ++i) buf[i] = colour;
+
+    for (int y = 0; y < s_h; y += band_rows) {
+        const int rows = (y + band_rows > s_h) ? (s_h - y) : band_rows;
+        esp_lcd_panel_draw_bitmap(s_panel, 0, y, s_w, y + rows, buf);
+    }
+    free(buf);
+    ESP_LOGI(TAG, "[COLOR] %s (0x%04X)", name, colour);
+}
+
+void app_main(void)
+{
+    print_banner();
+
+    if (backlight_init() != ESP_OK) {
+        ESP_LOGE(TAG, "backlight init FAILED");
+    }
+
+    esp_err_t err = lcd_init(0, LCD_PIXEL_CLOCK);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "===============================================");
+        ESP_LOGE(TAG, " ST7796S INIT FAILED: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, " Check GPIO map above against actual wiring,");
+        ESP_LOGE(TAG, " then CS / DC / RST / SPI host. The panel is");
+        ESP_LOGE(TAG, " not assumed faulty.");
+        ESP_LOGE(TAG, "===============================================");
+        while (1) vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+
+    /* ------------------------------------------------------------------
+     * COMMAND-RESPONSE TEST — isolates the command path from the pixel path
+     * and needs no MISO.
+     *
+     * DISPOFF/DISPON (0x28/0x29) and INVOFF/INVON (0x20/0x21) are single-byte
+     * commands carrying no data. If the controller hears us at all, the panel
+     * VISIBLY changes. If the screen never changes through this whole loop,
+     * commands are not reaching the controller and the fault is CS, DC, SCK
+     * or MOSI - not the init sequence and not the panel.
+     * ------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------
+     * AUTOMATIC SPI SWEEP
+     *
+     * The panel is lit and GPIO10 responds, so outputs work and the wiring
+     * map is real. What remains unproven is the SPI signalling itself. Rather
+     * than one guess per flash cycle, walk every plausible combination and
+     * paint RED then GREEN for each, announcing it on serial. The operator
+     * watches for the moment colour appears and reports the combination.
+     *
+     * Mode 3 is included because many ST7796 breakout modules clock on the
+     * opposite edge to mode 0. The procedure permits a non-zero mode once
+     * mode 0 has been shown to fail.
+     * ------------------------------------------------------------------ */
+    const int modes[] = {0, 3};
+    const int freqs[] = {10000000, 4000000, 2000000, 1000000};
+
+    uint32_t pass = 0;
+    while (1) {
+        ++pass;
+        for (unsigned m = 0; m < sizeof(modes)/sizeof(modes[0]); ++m) {
+            for (unsigned f = 0; f < sizeof(freqs)/sizeof(freqs[0]); ++f) {
+                printf("\n########################################\n");
+                printf("## TRY  mode=%d  clock=%d MHz\n", modes[m], freqs[f]/1000000);
+                printf("########################################\n");
+                fflush(stdout);
+
+                lcd_teardown();
+                vTaskDelay(pdMS_TO_TICKS(50));
+
+                esp_err_t e = lcd_init(modes[m], freqs[f]);
+                if (e != ESP_OK) {
+                    ESP_LOGE(TAG, "  init failed: %s", esp_err_to_name(e));
+                    continue;
+                }
+                s_w = LCD_H_RES_NATIVE;
+                s_h = LCD_V_RES_NATIVE;
+
+                ESP_LOGW(TAG, ">>> mode=%d %dMHz : RED now <<<",
+                         modes[m], freqs[f]/1000000);
+                fill_screen(0xF800, "RED");
+                vTaskDelay(pdMS_TO_TICKS(2500));
+
+                ESP_LOGW(TAG, ">>> mode=%d %dMHz : GREEN now <<<",
+                         modes[m], freqs[f]/1000000);
+                fill_screen(0x07E0, "GREEN");
+                vTaskDelay(pdMS_TO_TICKS(2500));
+            }
+        }
+        printf("\n[SWEEP] pass %lu complete, repeating. free heap %lu\n",
+               (unsigned long)pass, (unsigned long)esp_get_free_heap_size());
+        fflush(stdout);
+    }
+}

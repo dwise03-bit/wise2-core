@@ -1,0 +1,161 @@
+# WISE² Edge Appliance Deployment Report
+
+**Deployment Date**: {{ ansible_date_time.iso8601 }}
+**Node**: {{ inventory_hostname }}
+**OS**: {{ ansible_distribution }} {{ ansible_distribution_version }}
+**Architecture**: {{ ansible_architecture }}
+**Memory**: {{ ansible_memtotal_mb }} MB
+**CPU Cores**: {{ ansible_processor_vcpus }}
+
+## Installation Summary
+
+- ✓ System dependencies installed
+- ✓ Docker configured and running
+- ✓ Node.js {{ node_version }} installed
+- ✓ WISE² Edge Appliance deployed
+- ✓ WireGuard VPN configured
+- ✓ Systemd services configured
+- ✓ Health monitoring enabled
+
+## Service Information
+
+### Main Service: WISE² Edge Appliance
+- **Status**: systemctl status wise2-edge
+- **Enable**: systemctl enable wise2-edge
+- **Start**: systemctl start wise2-edge
+- **Stop**: systemctl stop wise2-edge
+- **Logs**: journalctl -u wise2-edge -f
+
+### Health Check Timer
+- **Status**: systemctl status wise2-health-check.timer
+- **Interval**: Every 30 minutes (configurable)
+
+## API Endpoints
+
+### Status & Health
+- `GET /health` - Service health status
+- `GET /status` - Detailed runtime status
+- `GET /health/metrics` - Performance metrics
+- `GET /health/report` - Health report
+
+### Commands
+- `POST /commands` - Execute AI commands locally
+- `POST /voice/speak` - Text-to-speech
+
+### Hardware Control
+- `POST /gpio/:pin` - GPIO pin control
+- `POST /camera/capture` - Capture image from camera
+
+### Automation
+- `GET /automations/triggers` - List all triggers
+- `POST /automations/triggers` - Create new trigger
+
+### Synchronization
+- `POST /sync` - Trigger sync with cloud
+
+## Configuration Files
+
+- **Environment**: {{ wise2_home }}/.env
+- **WireGuard**: /etc/wireguard/wise2.conf
+- **Systemd Service**: /etc/systemd/system/wise2-edge.service
+- **Logs**: /var/log/wise2-edge-appliance/
+
+## Useful Commands
+
+### Monitor Service
+```bash
+journalctl -u wise2-edge -f
+systemctl status wise2-edge
+```
+
+### Check API Health
+```bash
+curl http://localhost:3000/health
+curl http://localhost:3000/health/report
+```
+
+### View Metrics
+```bash
+curl http://localhost:3000/health/metrics | jq
+```
+
+### Execute Command
+```bash
+curl -X POST http://localhost:3000/commands \
+  -H "Content-Type: application/json" \
+  -d '{"command": "turn on light 1"}'
+```
+
+### Control GPIO
+```bash
+curl -X POST http://localhost:3000/gpio/17 \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "out", "value": true}'
+```
+
+## Troubleshooting
+
+### Service Not Starting
+```bash
+journalctl -u wise2-edge -n 50  # View recent logs
+systemctl status wise2-edge      # Check service status
+```
+
+### Docker Issues
+```bash
+docker ps                        # List running containers
+docker logs wise2-edge-runtime   # View container logs
+```
+
+### Network/VPN Issues
+```bash
+wg show                          # Show WireGuard status
+ip a show wg0                    # Check VPN interface
+```
+
+### Disk Space
+```bash
+df -h                            # Check disk usage
+du -sh {{ wise2_home }}/*        # Check app directory sizes
+```
+
+## Performance Tuning
+
+The deployment includes CPU and memory limits to prevent resource exhaustion:
+- **Memory Limit**: 768 MB
+- **CPU Quota**: 75%
+
+Adjust in `/etc/systemd/system/wise2-edge.service` if needed:
+```ini
+MemoryMax=1024M
+CPUQuota=100%
+```
+
+Then reload: `systemctl daemon-reload && systemctl restart wise2-edge`
+
+## Security Notes
+
+- Service runs as non-root user: `{{ wise2_user }}`
+- WireGuard VPN encrypts all cloud communication
+- APIKeys should be stored in Ansible vault
+- Firewall rules configured for essential ports only
+- TLS should be enabled for production use
+
+## Next Steps
+
+1. Configure cloud API credentials in `{{ wise2_home }}/.env`
+2. Test connectivity: `curl http://localhost:3000/health`
+3. Verify WireGuard VPN: `wg show`
+4. Monitor health reports: `curl http://localhost:3000/health/report`
+5. Create automation triggers via API
+6. Set up centralized monitoring (optional)
+
+## Support & Documentation
+
+- **Main Docs**: https://wise2.cloud/docs/edge-appliance
+- **API Reference**: https://wise2.cloud/api/edge-appliance
+- **Issues**: https://github.com/wise2/wise2-core/issues
+- **Email**: support@wise2.cloud
+
+---
+*Deployed with Ansible - Edge Appliance v1.0.0*

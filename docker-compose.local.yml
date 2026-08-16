@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: wise2
+      POSTGRES_PASSWORD: wise2dev
+      POSTGRES_DB: wise2
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_local:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wise2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_local:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://wise2:wise2dev@postgres:5432/wise2
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: wise2
+      DB_PASSWORD: wise2dev
+      DB_NAME: wise2
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-key-do-not-use-in-production
+      JWT_EXPIRATION: 86400
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    ports:
+      - "3002:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://api:3000
+      NODE_ENV: production
+    depends_on:
+      - api
+
+volumes:
+  postgres_local:
+  redis_local:

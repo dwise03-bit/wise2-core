@@ -1,0 +1,145 @@
+╔════════════════════════════════════════════════════════════════╗
+║      WISE² AGENTIC OS GUIDE - GOOGLE DRIVE SYNC SETUP         ║
+╚════════════════════════════════════════════════════════════════╝
+
+📂 FOLDER CONTENTS
+═══════════════════
+
+✓ index.html               - Interactive visual guide (15 KB)
+✓ README.txt              - Quick reference (3.2 KB)
+✓ GOOGLE_DRIVE_SETUP.md   - Sync instructions (4.2 KB)
+✓ START_HERE.txt          - This file
+
+🎯 QUICK START
+═══════════════
+
+STEP 1: Open the Visual Guide (Do This First!)
+────────────────────────────────────────────────
+→ Double-click: index.html
+→ Or drag to browser window
+→ See interactive diagrams of the Agentic OS
+
+STEP 2: Set Up Google Drive Sync
+──────────────────────────────────
+→ Read: GOOGLE_DRIVE_SETUP.md
+→ Choose your method:
+  
+  Option A: Google Drive for Desktop (RECOMMENDED)
+  • 5 minutes, fully automatic
+  • Download from: https://www.google.com/drive/download/
+  
+  Option B: rclone (Command-line)
+  • 10 minutes, manual commands
+  • For power users
+  
+  Option C: Python Script
+  • 15 minutes, custom automation
+  • Code provided in GOOGLE_DRIVE_SETUP.md
+
+STEP 3: Sync This Folder
+──────────────────────────
+→ Once you choose a method, sync these files to Google Drive
+→ Folder name: WISE2-Agentic-OS-Guide
+→ Account: wisedefensellc@gmail.com
+
+STEP 4: Access from Anywhere
+──────────────────────────────
+✓ Browser: https://drive.google.com
+✓ Mobile: Open Google Drive app
+✓ Desktop: Auto-synced folder
+✓ Offline: Enable in Drive settings
+
+═══════════════════════════════════════════════════════════════════
+
+📖 FILE DESCRIPTIONS
+═════════════════════
+
+index.html
+──────────
+Interactive visual guide showing:
+• How tasks route to specialist agents
+• The 5 agents: @dev, @design, @ops, @writer, @researcher
+• Persistent memory system (data/ folder)
+• Real examples and workflows
+• Key benefits
+
+Open in browser. Scroll to explore. Very visual and easy to understand.
+
+README.txt
+──────────
+Quick reference card:
+• What the Agentic OS is
+• How it works in simple terms
+• Key concepts
+• Next steps
+
+GOOGLE_DRIVE_SETUP.md
+─────────────────────
+Detailed setup instructions:
+• Three methods to sync (ranked by ease)
+• Step-by-step for each method
+• Python script with code
+• Comparison table
+• Troubleshooting
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 RECOMMENDED PATH
+════════════════════
+
+1. RIGHT NOW: Open index.html
+   └─> Understand the Agentic OS visually (5 minutes)
+
+2. THEN: Read GOOGLE_DRIVE_SETUP.md
+   └─> Choose your sync method (2 minutes to decide)
+
+3. SETUP: Follow the instructions for your chosen method
+   └─> Google Drive for Desktop = 5 min setup
+   └─> rclone = 10 min setup
+   └─> Python = 15 min setup
+
+4. DONE: Access from phone, laptop, or web
+   └─> Files auto-sync to Google Drive
+   └─> Share with team if needed
+
+═══════════════════════════════════════════════════════════════════
+
+💡 WHY YOU'RE DOING THIS
+═════════════════════════
+
+✓ Access guide from any device (phone, laptop, browser)
+✓ Share with team members (optional)
+✓ Keep files backed up in the cloud
+✓ Offline access (if you enable it)
+✓ Version history (Google Drive tracks changes)
+
+═══════════════════════════════════════════════════════════════════
+
+❓ QUESTIONS?
+═══════════════
+
+Q: Which sync method should I choose?
+A: Google Drive for Desktop. It's official, automatic, and easiest.
+
+Q: Can I sync this with my team?
+A: Yes! Once in Google Drive, share the folder with team members.
+
+Q: Can I edit files in Google Drive?
+A: Yes, but note: index.html is best viewed in browser (not edited).
+   README.txt and GOOGLE_DRIVE_SETUP.md are regular text files.
+
+Q: Do I need the internet?
+A: To sync yes, but you can enable offline access in Google Drive.
+
+Q: Will this overwrite files?
+A: No, it's sync (both directions). Local changes sync to Drive.
+
+═══════════════════════════════════════════════════════════════════
+
+✅ YOU'RE ALL SET!
+
+Next: Open index.html in your browser
+Then:  Follow GOOGLE_DRIVE_SETUP.md
+Done:  Access from anywhere!
+
+═══════════════════════════════════════════════════════════════════

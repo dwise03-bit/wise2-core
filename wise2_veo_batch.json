@@ -1,0 +1,87 @@
+{
+  "generation_batch": "wise2_launch_campaign",
+  "clips": [
+    {
+      "clip_id": "instagram_clip1_problem",
+      "clip_order": 1,
+      "duration": 20,
+      "resolution": "1080x1920",
+      "prompt": "Close-up shot of an entrepreneur at a minimalist desk, early morning light from window. Stressed expression, multiple monitors showing browser tabs, notifications, calendar apps conflicting. Camera slowly pushes in on face. Fast cuts: sticky notes scattered, cables tangled, hands typing frantically. Each cut is 1-2 seconds. Color: cool desaturated blues, harsh fluorescent lighting. Sound design: glitch effects on each cut, tension building. The desk is clean but visually chaotic with digital chaos. No text on screen. Cinematic 24mm lens, shallow depth of field. End on close-up of frustrated face, eyes looking at screen. Emotional tone: overwhelm, relatable stress, desperate need for solution.",
+      "voiceover": "What if there was ONE system...",
+      "continuity": {
+        "character": "Entrepreneur, stressed, early 30s, professional",
+        "setting": "Modern minimalist desk, window light, multiple screens",
+        "visual_motif": "Cool blues, glitch effects, digital chaos",
+        "sound_bed": "Orchestral minor key, building tension, notification sounds"
+      },
+      "cfg_scale": 7.5,
+      "output_format": "mp4"
+    },
+    {
+      "clip_id": "instagram_clip2_reveal",
+      "clip_order": 2,
+      "duration": 20,
+      "resolution": "1080x1920",
+      "prompt": "Dramatic transition: screen goes black. Single blue line appears (loading animation). Blue light floods the screen (electric blue #0066FF glow). Wide shot of entrepreneur's workspace as everything transforms. Dashboard interface materializes with glowing data streams. Holographic-style UI elements appear floating above desk. Smooth camera rise from close-up to wide, revealing the transformed space. Clean, organized, minimalist. Glowing blue accents. Chrome and glass surfaces reflecting light. No chaos, pure organization. Sound design: deep bass hit, synth rise, orchestral swell, transition from tension to hope. Color grading: cool blues, slight desaturation, electric blue highlights glowing. Cinematic 35mm lens equivalent. Smooth gimbal movement. End on wide shot of organized workspace, entrepreneur looking calm, dashboard glowing softly. Emotional tone: relief, hope emerging, solution revealed, wow moment.",
+      "voiceover": "Then comes Wise². One system. Everything connected. Fully automated.",
+      "continuity": {
+        "character": "Same entrepreneur (expression softening from stress to calm)",
+        "setting": "Same desk, now transformed and organized",
+        "visual_motif": "Electric blue glow, organized geometry, smooth transitions",
+        "sound_bed": "Orchestral rise, bass foundation, synth layer entering"
+      },
+      "cfg_scale": 7.5,
+      "output_format": "mp4"
+    },
+    {
+      "clip_id": "instagram_clip3_transform",
+      "clip_order": 3,
+      "duration": 20,
+      "resolution": "1080x1920",
+      "prompt": "Time-lapse montage of business scaling. Fast cuts (0.8-1.5s each): dashboard metrics climbing, revenue graph rising, client list growing, team expanding, projects multiplying. Each metric glows with electric blue highlighting. Smooth transitions between screens. Wide shot of entrepreneur at desk with multiple holographic displays around them, confident expression, peaceful morning light. Camera pulls back slowly revealing scale of operation. Clean white and blue color palette, professional office space, luxury aesthetic. Sound design: uplifting orchestral music, no glitches, pure positive energy, subtle data-flow sounds. Final image: Wise² logo centered on screen, glowing with blue light rays radiating outward. Text appears: 'GET ACCESS NOW - wisesquared.com'. Entrepreneur in corner, smiling slightly, confident. Professional, premium, powerful. Emotional tone: triumph, growth, calm confidence, 'I need this' moment, ready to act.",
+      "voiceover": "Your business grows. Everything connects. This is Wise².",
+      "continuity": {
+        "character": "Same entrepreneur (now confident, satisfied, in control)",
+        "setting": "Transformed workspace, scales up to show operations",
+        "visual_motif": "Electric blue metrics, upward movement, light rays, organized power",
+        "sound_bed": "Orchestral triumph, no tension, motivational energy",
+        "final_image": "Wise² logo locked, CTA locked, entrepreneur peaceful in frame"
+      },
+      "cfg_scale": 7.5,
+      "output_format": "mp4"
+    },
+    {
+      "clip_id": "tiktok_clip1_accelerated",
+      "clip_order": 4,
+      "duration": 15,
+      "resolution": "1080x1920",
+      "prompt": "Open on entrepreneur stressed at desk (2s), quick montage of chaos (4s: sticky notes, tangled cables, frustrated face, multiple apps, glitches), hard cut to black (0.5s). Dramatic reveal: blue light floods screen (1s), dashboard materializes with electric blue glow (2s), workspace transforms to organized and calm, entrepreneur's expression shifts to relief (3s). Camera movement: steady push-in during chaos, brief pause on black, quick rise/expand during reveal. No text. Color: chaos is desaturated cool, reveal is vibrant electric blue with glowing accents. Sound: glitch sounds → silence → orchestral swell + deep bass hit. Cinematic, high energy, fast-paced. Shallow depth of field. Emotional tone: Rapid problem acknowledgment → instant hope → relief. TikTok hook: every second counts, no wasted movement, visceral transformation.",
+      "voiceover": "What if building your business didn't feel like this? Then comes Wise².",
+      "continuity": {
+        "character": "Entrepreneur (stressed → calm)",
+        "setting": "Desk/workspace (chaos → organized)",
+        "visual_motif": "Cool chaos → electric blue organization",
+        "sound": "Glitch → silence → orchestral"
+      },
+      "cfg_scale": 7.5,
+      "output_format": "mp4"
+    },
+    {
+      "clip_id": "tiktok_clip2_cta",
+      "clip_order": 5,
+      "duration": 15,
+      "resolution": "1080x1920",
+      "prompt": "Fast montage of success: dashboard growing (2s), metrics rising (2s), revenue climbing (2s), team expanding (2s), confidence building (2s). Each cut is snappy, energetic. Wise² logo appears center screen (2s), glowing blue with light rays. Text: 'GET ACCESS NOW - link in bio'. Entrepreneur visible in corner, peaceful, accomplished. Camera work: fast cuts with smooth transitions, final push-zoom on logo. Color: vibrant blues, clean, professional, premium. Sound: orchestral climax, motivational, no glitches, pure power. Emotional tone: Rapid success visualization → empowerment → action. TikTok engagement: fast, energetic, satisfying, shareable, 'I need this' moment locked at end.",
+      "voiceover": "Scale without chaos. Get access now.",
+      "continuity": {
+        "character": "Same entrepreneur (confident, peaceful)",
+        "setting": "Workspace scaled up to show operations",
+        "visual_motif": "Electric blue highlights, upward metrics, light rays, organized growth",
+        "sound_bed": "Orchestral triumph, motivational peak",
+        "final_image": "Logo + CTA + peaceful entrepreneur"
+      },
+      "cfg_scale": 7.5,
+      "output_format": "mp4"
+    }
+  ]
+}

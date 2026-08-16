@@ -1,0 +1,35 @@
+{
+  "name": "@wise2/studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WISE² Creative Studio - SoundLabs, Live Studio, and Content Creation Suite",
+  "scripts": {
+    "dev": "next dev -p 3005",
+    "build": "next build",
+    "start": "next start -p 3005",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@wise2/shared": "workspace:*",
+    "@wise2/audio": "workspace:*",
+    "@prisma/client": "^5.0.0",
+    "framer-motion": "^11.0.3",
+    "jsonwebtoken": "^9.0.0",
+    "lucide-react": "^0.312.0",
+    "socket.io": "^4.7.0",
+    "socket.io-client": "^4.7.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.3.3"
+  }
+}

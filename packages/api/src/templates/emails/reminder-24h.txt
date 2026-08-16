@@ -1,0 +1,77 @@
+================================================================================
+                        WISE² - CONSULTATION REMINDER
+================================================================================
+
+Hi {{firstName}},
+
+Your consultation with {{consultantName}} is coming up soon!
+Here's everything you need to know to prepare.
+
+================================================================================
+YOUR CALL STARTS IN ~24 HOURS
+================================================================================
+
+Date & Time: {{bookingDate}}, {{bookingTime}}
+Duration:    {{duration}} minutes
+
+================================================================================
+SESSION DETAILS
+================================================================================
+
+Date & Time:    {{bookingDate}}, {{bookingTime}}
+Duration:       {{duration}} minutes
+Consultant:     {{consultantName}}
+Meeting Type:   Video Call
+
+================================================================================
+CONSULTING WITH {{consultantName}}
+================================================================================
+
+Title: {{consultantTitle}}
+
+{{#if consultantBio}}
+{{consultantBio}}
+{{/if}}
+
+================================================================================
+PREPARATION TIPS
+================================================================================
+
+✓ Test your camera and microphone before the call
+✓ Ensure you have a stable internet connection
+✓ Find a quiet, professional space for the call
+✓ Gather any documents or materials you want to discuss
+✓ Join the call 5 minutes early
+✓ Have a pen and paper ready for notes
+
+================================================================================
+JOIN YOUR CALL
+================================================================================
+
+Click the link below to access your video call at the scheduled time:
+{{meetingLink}}
+
+================================================================================
+NEED TO RESCHEDULE?
+================================================================================
+
+Changes must be made at least 12 hours in advance.
+
+Manage Your Booking: {{rescheduleLink}}
+
+================================================================================
+
+See you tomorrow! If you have any questions, feel free to reach out.
+
+Questions? Contact us at support@wise2.io
+
+================================================================================
+PREFERENCES & LEGAL
+================================================================================
+
+Unsubscribe:      {{unsubscribeLink}}
+Email Preferences: {{preferencesLink}}
+Privacy Policy:   {{privacyLink}}
+
+© 2026 WISE² - Organized Chaos Command Center
+All rights reserved.
