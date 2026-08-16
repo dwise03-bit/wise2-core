@@ -23,11 +23,11 @@ interface WebDesignBuilderProps {
 export default function WebDesignBuilder({
   initialProjectId,
   onSave,
-  showTemplates = true,
+  showTemplates: showTemplatesProp = true,
 }: WebDesignBuilderProps) {
   const store = useWebDesignBuilder();
   const [showPreview, setShowPreview] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(showTemplates && !initialProjectId);
+  const [showTemplates, setShowTemplates] = useState(showTemplatesProp && !initialProjectId);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

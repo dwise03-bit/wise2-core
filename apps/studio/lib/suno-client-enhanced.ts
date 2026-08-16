@@ -426,7 +426,6 @@ export class SunoClientEnhanced {
         ErrorType.STORAGE_ERROR,
         {
           context: { generationId: id, format },
-          recoveryActions: [RecoveryAction.FALLBACK_PLAYBACK],
         }
       );
     }
@@ -448,8 +447,7 @@ export class SunoClientEnhanced {
           {
             code: 'FETCH_FAILED',
             context: { url, status: response.status },
-            recoveryActions: [RecoveryAction.FALLBACK_PLAYBACK],
-          }
+            }
         );
       }
 
@@ -478,7 +476,6 @@ export class SunoClientEnhanced {
             url,
             error: error instanceof Error ? error.message : String(error),
           },
-          recoveryActions: [RecoveryAction.FALLBACK_PLAYBACK],
         }
       );
     }
@@ -623,7 +620,7 @@ export class SunoClientEnhanced {
   /**
    * Get connection status
    */
-  isOnline(): boolean {
+  getConnectionStatus(): boolean {
     return this.isOnline;
   }
 }
