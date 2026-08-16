@@ -18,16 +18,16 @@ const FOOTER_SECTIONS: FooterSection[] = [
     title: 'Product',
     links: [
       { href: '/platform', label: 'Platform' },
-      { href: '/sound-labs', label: 'Sound Labs' },
-      { href: '/audit', label: 'AI Audit' },
-      { href: '/pricing', label: 'Pricing' },
+      { href: '/powered-businesses', label: 'Powered Businesses' },
+      { href: '/studio', label: 'Studio' },
+      { href: '/start-your-build', label: 'Start Your Build' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { href: '/powered-businesses', label: 'Powered Businesses' },
-      { href: '/consulting', label: 'Consulting' },
+      { href: '/wise-shine', label: 'Wise Shine' },
+      { href: '/piff-city', label: 'Piff City' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },
     ],
@@ -63,18 +63,18 @@ export const PublicFooter: React.FC = () => {
           {/* Brand Column */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                W2
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C7FF2E] to-[#B36BFF] flex items-center justify-center text-black font-black text-sm">
+                W
               </div>
               <span className="font-bold text-white text-lg tracking-tight">
                 WISE²
               </span>
             </Link>
             <p className="text-sm text-slate-400 mb-4">
-              Enterprise AI operating system for creators, businesses, and entrepreneurs.
+              Building empires, changing culture. A founder-led business OS for brands that want one system and a real legacy.
             </p>
             <div className="text-xs text-slate-500">
-              <p>© {currentYear} WISE² Genesis. All rights reserved.</p>
+              <p>© {currentYear} WISE². All rights reserved.</p>
             </div>
           </div>
 
@@ -105,7 +105,7 @@ export const PublicFooter: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>WISE² • Advanced. Automated. Autonomous.</p>
+          <p>WISE² • Building empires. Changing culture.</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:text-slate-300 transition-colors duration-200">
               Privacy

@@ -20,7 +20,10 @@ export type EventType =
   | 'wise_imp_human_help_requested'
   | 'wise_imp_intake_submitted'
   | 'wise_imp_error'
-  | 'wise_imp_glow_color_selected';
+  | 'wise_imp_glow_color_selected'
+  | 'big-byte.online'
+  | 'big-byte.offline'
+  | 'big-byte.alert';
 
 export interface AnalyticsEvent {
   type: EventType;

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "WISE² Enterprise public website & landing page",
   "private": true,
+  "packageManager": "pnpm@8.15.9",
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "SKIP_ENV_VALIDATION=true next build",
@@ -15,6 +16,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
+    "@stripe/react-stripe-js": "^6.8.1",
+    "@stripe/stripe-js": "^9.13.0",
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
     "framer-motion": "^11.0.0",

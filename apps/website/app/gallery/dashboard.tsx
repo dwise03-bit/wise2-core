@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Image, Music, Video, File, Upload, Loader, AlertCircle, Folder, Search } from 'lucide-react';
+import { getBrowserAuthToken } from '@/lib/auth-session';
 
 interface Asset {
   id: string;
@@ -38,7 +39,7 @@ export default function GalleryDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = getBrowserAuthToken();
     if (!token) {
       router.push('/login');
       return;

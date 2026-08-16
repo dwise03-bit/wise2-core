@@ -271,7 +271,7 @@ build_images() {
     cd "$PROJECT_DIR"
 
     # Build images
-    docker-compose -f pi/docker-compose.yml build --no-cache api dashboard
+    docker-compose -f pi/docker-compose.yml build api dashboard
 
     success "Docker images built successfully"
 }

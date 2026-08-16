@@ -156,7 +156,7 @@ function ChannelStripComponent({
           className="w-full h-24 bg-gray-700 rounded appearance-none cursor-pointer slider-vertical"
           style={{
             WebkitAppearance: 'slider-vertical',
-            writingMode: 'bt-lr',
+            writingMode: 'bt-lr' as any,
             width: '40px',
             height: '100px',
             margin: '0 auto',
@@ -324,7 +324,7 @@ export function Mixer({
                   className="h-24 bg-gray-700 rounded appearance-none cursor-pointer slider-vertical"
                   style={{
                     WebkitAppearance: 'slider-vertical',
-                    writingMode: 'bt-lr',
+                    writingMode: 'bt-lr' as any,
                     width: '40px',
                     height: '100px',
                   }}

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Redis from 'ioredis';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 interface LeadData {

@@ -14,6 +14,9 @@ import {
 } from '@/lib/api-middleware';
 import { UserContext } from '@/types/api';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 const listRecordingsSchema: ValidationSchema = {
   page: {
     type: 'number',

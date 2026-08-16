@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GeneratedTrack } from '@/types/aimusic';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * GET /api/musicgen/generations
  * Fetch generated music tracks with pagination

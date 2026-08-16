@@ -15,7 +15,10 @@ export type EventType =
   | 'discord.command'
   | 'security.alert'
   | 'stream.connected'
-  | 'stream.heartbeat';
+  | 'stream.heartbeat'
+  | 'big-byte.online'
+  | 'big-byte.offline'
+  | 'big-byte.alert';
 
 export interface LiveEvent {
   id: string;

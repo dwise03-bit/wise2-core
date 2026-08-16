@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Footer } from '@/components/wise';
+import { PublicFooter } from '@/components/navigation';
 
 const PLAN_DETAILS = {
   STARTER: {
@@ -75,13 +75,13 @@ function CheckoutContent() {
 
   return (
     <div>
-      <main className="bg-wise-bg-primary min-h-screen pb-20">
+      <main className="bg-[#050505] min-h-screen pb-20 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Form Section */}
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Complete Your Purchase</h1>
-              <p className="text-gray-300 mb-8">Enter your details to proceed</p>
+              <h1 className="text-4xl font-black uppercase tracking-[0.08em] text-white mb-2">Complete Your Build</h1>
+              <p className="text-[#B7BDC8] mb-8">Enter your details to continue into the WISE² system.</p>
 
               <form onSubmit={handleCheckout} className="space-y-6">
                 {error && (
@@ -97,7 +97,7 @@ function CheckoutContent() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#0094FF]"
+                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
                     disabled={loading}
                   />
                 </div>
@@ -109,24 +109,24 @@ function CheckoutContent() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#0094FF]"
+                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
                     disabled={loading}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-white font-semibold">
-                    By proceeding, you agree to our Terms of Service
+                    By proceeding, you agree to our terms
                   </label>
                   <p className="text-sm text-gray-300">
-                    You'll be taken to our secure payment processor to complete your purchase.
+                    You&apos;ll be taken to our secure payment processor to complete your build.
                   </p>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 bg-[#C7FF2E] text-black rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Processing...' : 'Continue to Payment'}
                 </button>
@@ -134,7 +134,7 @@ function CheckoutContent() {
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="w-full py-3 bg-wise-bg-secondary border-2 border-[#0094FF]/30 text-[#0094FF] rounded-lg font-semibold hover:border-[#0094FF]/60 transition-all"
+                  className="w-full py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 text-[#C7FF2E] rounded-lg font-semibold hover:border-[#C7FF2E]/60 transition-all"
                   disabled={loading}
                 >
                   Back to Pricing
@@ -144,22 +144,22 @@ function CheckoutContent() {
 
             {/* Order Summary */}
             <div>
-              <div className="sticky top-32 bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-8">
+              <div className="sticky top-32 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-3xl p-8">
                 <h2 className="text-2xl font-bold text-white mb-8">Order Summary</h2>
 
-                <div className="border-b border-[#0094FF]/20 pb-8 mb-8">
+                <div className="border-b border-[#C7FF2E]/20 pb-8 mb-8">
                   <h3 className="text-xl font-bold text-white mb-2">{plan.name} Plan</h3>
-                  <p className="text-gray-300 text-sm mb-4">{plan.description}</p>
+                  <p className="text-[#B7BDC8] text-sm mb-4">{plan.description}</p>
 
                   <div className="flex justify-between items-baseline mb-4">
                     <span className="text-gray-300">Plan Price:</span>
                     {typeof plan.price === 'number' ? (
-                      <span className="text-2xl font-bold text-[#0094FF]">
+                      <span className="text-2xl font-bold text-[#C7FF2E]">
                         ${plan.price}
                         <span className="text-lg text-gray-300">/mo</span>
                       </span>
                     ) : (
-                      <span className="text-2xl font-bold text-[#0094FF]">Custom</span>
+                      <span className="text-2xl font-bold text-[#C7FF2E]">Custom</span>
                     )}
                   </div>
                 </div>
@@ -177,7 +177,7 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <div className="bg-[#0094FF]/10 border border-[#0094FF]/30 rounded-lg p-4 text-sm text-gray-300">
+                <div className="bg-[#C7FF2E]/10 border border-[#C7FF2E]/30 rounded-lg p-4 text-sm text-gray-300">
                   ✓ 14-day free trial included
                   <br />✓ Cancel anytime
                   <br />✓ No hidden fees
@@ -187,7 +187,7 @@ function CheckoutContent() {
           </div>
         </div>
       </main>
-      <Footer />
+      <PublicFooter />
     </div>
   );
 }

@@ -3,6 +3,8 @@
  * Centralized storage for cart, auth, user preferences
  */
 
+import { clearBrowserAuthSession, getBrowserAuthToken, getBrowserAuthUser } from './auth-session';
+
 export interface CartItem {
   id: string;
   name: string;
@@ -73,10 +75,14 @@ class Store {
     }
 
     // Check for auth token
-    const token = localStorage.getItem('auth_token');
+    const token = getBrowserAuthToken();
     if (token) {
       this.state.auth.token = token;
       this.state.auth.isAuthenticated = true;
+      const user = getBrowserAuthUser();
+      if (user) {
+        this.state.auth.user = user;
+      }
     }
   }
 
@@ -169,7 +175,7 @@ class Store {
       user: null,
       token: null,
     };
-    localStorage.removeItem('auth_token');
+    clearBrowserAuthSession();
     this.persist();
     this.notify();
   }

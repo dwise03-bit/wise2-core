@@ -8,6 +8,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "prebuild": "pnpm --filter @wise2/db prisma:generate",
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
     "start": "turbo run start",

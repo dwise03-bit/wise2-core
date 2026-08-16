@@ -1,8 +1,10 @@
 import Stripe from 'stripe';
+import * as crypto from 'crypto';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { BillingService } from './billing.service';
 
 /**
  * Stripe Webhook Handler for Customer Journey & Consulting Bookings
@@ -17,6 +19,7 @@ export class StripeWebhookHandler {
     private emailService: EmailService,
     private analyticsService: AnalyticsService,
     private prisma: PrismaService,
+    private billingService: BillingService,
   ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
     this.webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -241,14 +244,16 @@ export class StripeWebhookHandler {
       const customerId = subscription.customer as string;
       const customer = await this.stripe.customers.retrieve(customerId);
       const email = (customer as Stripe.Customer).email;
-      const userId = subscription.metadata?.userId;
+      const metadataUserId = subscription.metadata?.userId;
+      const fullName = subscription.metadata?.fullName || (customer as Stripe.Customer).name || undefined;
       const planId = subscription.metadata?.planId as string;
+      const billingCycle = subscription.metadata?.billingCycle as 'monthly' | 'annual' | undefined;
 
-      if (!email || !userId) {
+      if (!email && !metadataUserId) {
         console.warn('⚠️  Missing email or userId in subscription metadata:', {
           subscriptionId: subscription.id,
           email,
-          userId,
+          userId: metadataUserId,
         });
         return;
       }
@@ -257,11 +262,42 @@ export class StripeWebhookHandler {
       const priceId = subscription.items.data[0]?.price?.id;
       const plan = this.mapPriceIdToPlan(priceId, planId);
 
+      let user = metadataUserId
+        ? await this.prisma.user.findFirst({
+            where: {
+              OR: [{ id: metadataUserId }, { email: metadataUserId }],
+            },
+          })
+        : null;
+
+      if (!user && email) {
+        user = await this.prisma.user.findUnique({
+          where: { email },
+        });
+      }
+
+      if (!user && email) {
+        const temporaryPassword = crypto.randomBytes(16).toString('hex');
+        user = await this.prisma.user.create({
+          data: {
+            email,
+            name: fullName || email.split('@')[0],
+            passwordHash: temporaryPassword,
+            role: 'CUSTOMER',
+          },
+        });
+      }
+
+      if (!user) {
+        console.warn('⚠️  Unable to resolve or create user for subscription:', subscription.id);
+        return;
+      }
+
       // Create or update subscription record
       await this.prisma.subscription.upsert({
-        where: { userId },
+        where: { userId: user.id },
         create: {
-          userId,
+          userId: user.id,
           stripeCustomerId: customerId,
           stripeSubscriptionId: subscription.id,
           stripePriceId: priceId,
@@ -287,17 +323,18 @@ export class StripeWebhookHandler {
         },
       });
 
-      console.log('✅ Subscription persisted:', { userId, subscriptionId: subscription.id });
+      console.log('✅ Subscription persisted:', { userId: user.id, subscriptionId: subscription.id, billingCycle });
 
       // Track event
       await this.analyticsService.trackEvent({
         eventType: 'subscription_created',
         journeyStep: 'trial_started',
-        userId,
+        userId: user.id,
         metadata: {
           subscriptionId: subscription.id,
           plan,
           trialEndsAt: new Date(subscription.trial_end ? subscription.trial_end * 1000 : Date.now()),
+          billingCycle,
         },
       });
     } catch (error) {

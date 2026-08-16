@@ -24,6 +24,9 @@ import {
 import { SunoExportResponse } from '@/types/api';
 import { UserContext } from '@/types/api';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Validation schema for export request
 const exportSchema: ValidationSchema = {
   format: {

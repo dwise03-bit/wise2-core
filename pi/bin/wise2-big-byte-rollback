@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CORE_DIR="${WISE2_CORE_DIR:-/opt/wise2/core}"
+
+if [ -x "$CORE_DIR/scripts/rollback-pi.sh" ]; then
+  exec bash "$CORE_DIR/scripts/rollback-pi.sh" "$@"
+fi
+
+echo "WISE² core checkout not found at $CORE_DIR"
+exit 1

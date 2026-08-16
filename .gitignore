@@ -62,6 +62,7 @@ redis_data/
 # Temporary files
 tmp/
 temp/
+/.lcd_diag_backup/
 *.tmp
 *.bak
 
@@ -153,3 +154,5 @@ stl_output/
 
 # sliced output
 print_ready/*.gcode
+.vercel
+.env*

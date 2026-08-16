@@ -26,6 +26,9 @@ import {
 } from '@/types/api';
 import { UserContext } from '@/types/api';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Validation schema for query params
 const querySchema: ValidationSchema = {
   page: {

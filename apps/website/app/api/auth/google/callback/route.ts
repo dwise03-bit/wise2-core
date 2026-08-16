@@ -13,6 +13,7 @@ const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net'
 const REDIRECT_URI =
   process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
 const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net').replace(/\/$/, '');
+const COOKIE_DOMAIN = PUBLIC_SITE_URL.endsWith('wise2.net') ? '.wise2.net' : undefined;
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
@@ -90,6 +91,16 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60,
       path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
+    });
+
+    response.cookies.set('authUser', JSON.stringify(userData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
     });
 
     response.cookies.set('google_token', access_token, {
@@ -98,6 +109,16 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: expires_in || 3600,
       path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
+    });
+
+    response.cookies.set('authToken', access_token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: expires_in || 3600,
+      path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
     });
 
     if (refresh_token) {
@@ -107,6 +128,7 @@ export async function GET(request: NextRequest) {
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
+        ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
       });
     }
 

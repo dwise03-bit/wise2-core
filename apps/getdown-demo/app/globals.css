@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
+}
+
+html,
+body {
+  background: #02060c;
+  color: #e8f0f8;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Get Down surface: deep water over black */
+.gd-canvas {
+  background-color: #02060c;
+  background-image:
+    radial-gradient(1100px 620px at 8% -12%, rgba(34, 184, 255, 0.16), transparent 62%),
+    radial-gradient(900px 520px at 98% -4%, rgba(124, 255, 61, 0.07), transparent 58%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(14, 123, 209, 0.1), transparent 60%);
+}
+
+/* Chrome / metallic headline treatment from the brand mark */
+.chrome-text {
+  background: linear-gradient(180deg, #ffffff 0%, #dbe6f0 34%, #8ea4ba 52%, #f2f7fb 72%, #b6c6d6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  letter-spacing: -0.02em;
+}
+
+.gd-panel {
+  background: linear-gradient(180deg, rgba(15, 36, 57, 0.72), rgba(7, 19, 34, 0.88));
+  border: 1px solid rgba(22, 50, 77, 0.9);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.045),
+    0 20px 44px -30px rgba(0, 0, 0, 0.95);
+}
+
+.gd-panel-hover:hover {
+  border-color: rgba(34, 184, 255, 0.45);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(34, 184, 255, 0.14),
+    0 24px 48px -30px rgba(0, 0, 0, 0.95);
+}
+
+/* Thin neon rule used under section headers */
+.gd-rule {
+  height: 2px;
+  background: linear-gradient(90deg, #7cff3d, rgba(34, 184, 255, 0.6) 40%, transparent 85%);
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(34, 184, 255, 0.14), transparent);
+  transform: translateX(-100%);
+  animation: sweep 3.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* Guide avatar voice bars — driven by inline animation on the SVG rects */
+@keyframes guideWave {
+  from {
+    transform: scaleY(0.42);
+  }
+  to {
+    transform: scaleY(1.25);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 255, 61, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(124, 255, 61, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 255, 61, 0);
+  }
+}
+
+/* Scrollbars — keep the dark shell intact */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #040b16;
+}
+::-webkit-scrollbar-thumb {
+  background: #16324d;
+  border-radius: 999px;
+  border: 2px solid #040b16;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #22b8ff55;
+}
+
+.drag-ghost {
+  opacity: 0.35;
+}
+
+.stage-hot {
+  outline: 2px dashed rgba(124, 255, 61, 0.55);
+  outline-offset: -4px;
+  background: rgba(124, 255, 61, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

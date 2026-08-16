@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { StreamStats, type StreamStatsSnapshot, type StreamSession } from './StreamStats';
+import StreamStatsComponent from './StreamStats';
+import type { StreamStats, HealthStatus, StreamGraph } from './streamingTypes';
 
 /**
  * Example implementation of StreamStats component
@@ -9,7 +10,7 @@ import { StreamStats, type StreamStatsSnapshot, type StreamSession } from './Str
  */
 
 // Mock data generator for realistic streaming stats
-function generateMockStats(): StreamStatsSnapshot {
+function generateMockStats(): StreamStats {
   const base = {
     bitrate: 5000 + Math.random() * 500,
     fps: Math.random() > 0.95 ? 59 : 60,
@@ -31,7 +32,7 @@ function generateMockStats(): StreamStatsSnapshot {
 }
 
 // Mock session data
-const mockSessions: StreamSession[] = [
+const mockSessions: any[] = [
   {
     id: 'session-1',
     platform: 'twitch',
@@ -85,7 +86,7 @@ const mockSessions: StreamSession[] = [
 ];
 
 export function StreamStatsExample() {
-  const [currentStats, setCurrentStats] = useState<StreamStatsSnapshot>(generateMockStats());
+  const [currentStats, setCurrentStats] = useState<StreamStats>(generateMockStats());
   const [isLive, setIsLive] = useState(true);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);

@@ -43,7 +43,7 @@ export default function StreamingControl({
   const [resolution, setResolution] = useState<Resolution>('720p');
   const [fps, setFps] = useState<FPS>(30);
   const [bitrateMode, setBitrateMode] = useState<'auto' | 'custom'>('auto');
-  const [customBitrate, setCustomBitrate] = useState<BitrateSettings>(
+  const [customBitrate, setCustomBitrate] = useState<BitrateSettings | any>(
     BITRATE_PRESETS['720p']
   );
   const [encoder, setEncoder] = useState<Encoder>('x264');

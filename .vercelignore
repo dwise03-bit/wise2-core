@@ -1,0 +1,14 @@
+node_modules
+.next
+.turbo
+.vercel
+**/node_modules
+**/.next
+**/.turbo
+**/.vercel
+.lcd_diag_backup
+**/.lcd_diag_backup
+coverage
+dist
+build
+*.log

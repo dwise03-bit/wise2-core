@@ -8,6 +8,9 @@ import {
   ApiError,
 } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // For a real implementation, you would:
 // 1. Fetch the file from S3/cloud storage
 // 2. Stream it to the client

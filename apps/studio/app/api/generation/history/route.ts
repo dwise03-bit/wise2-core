@@ -30,6 +30,9 @@ import {
 } from '@/types/api';
 import { generationDb } from '@/lib/generation-db';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * Get generation history
  * Requires authentication

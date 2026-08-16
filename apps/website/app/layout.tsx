@@ -12,31 +12,31 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'WISE² | Organized Chaos Command Center',
-  description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs. All-in-one platform for brand creation, audio production, and AI-powered automation.',
-  keywords: 'brand creation, audio branding, AI, music production, design, marketing, AI tools, automation',
+  title: 'WISE² | Building Empires, Changing Culture',
+  description: 'WISE² is the new business OS for a founder-led empire: Wise Shine, Piff City Creative Studios, and the systems that power legacy.',
+  keywords: 'WISE2, WISE², business OS, brand identity, Atlanta, Wise Shine, Piff City, creative studio, empire building, legacy brand',
   robots: 'index, follow',
   metadataBase: new URL('https://wise2.net'),
   openGraph: {
     type: 'website',
     url: 'https://wise2.net',
-    title: 'WISE² | Organized Chaos Command Center',
-    description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs.',
+    title: 'WISE² | Building Empires, Changing Culture',
+    description: 'The new WISE² brand identity and homepage for the next chapter of the business OS.',
     siteName: 'WISE²',
     images: [
       {
-        url: '/og-image.png',
+        url: '/brand/wise2-brand-identity.png',
         width: 1200,
         height: 630,
-        alt: 'WISE² Enterprise',
+        alt: 'WISE² brand identity poster',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WISE² | Organized Chaos Command Center',
-    description: 'Enterprise AI operating system for creators, businesses, and entrepreneurs.',
+    title: 'WISE² | Building Empires, Changing Culture',
+    description: 'The new WISE² brand identity and homepage for the next chapter of the business OS.',
   },
   alternates: {
     canonical: 'https://wise2.net',

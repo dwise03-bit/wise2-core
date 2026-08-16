@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
+import { getBrowserAuthToken } from '@/lib/auth-session';
 import { Music, Plus, Play, Download, Share2, Trash2, AlertCircle, Loader } from 'lucide-react';
 
 interface SoundLabsProject {
@@ -33,7 +34,7 @@ interface JingleProject {
 
 const soundLabsApiClient = {
   async getProjects(): Promise<SoundLabsProject[]> {
-    const token = localStorage.getItem('auth_token');
+    const token = getBrowserAuthToken();
     const res = await fetch('/api/v1/sound-labs/me/projects', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -48,7 +49,7 @@ const soundLabsApiClient = {
   },
 
   async createProject(name: string, description?: string): Promise<SoundLabsProject> {
-    const token = localStorage.getItem('auth_token');
+    const token = getBrowserAuthToken();
     const res = await fetch('/api/v1/sound-labs/me/projects', {
       method: 'POST',
       headers: {
@@ -63,7 +64,7 @@ const soundLabsApiClient = {
   },
 
   async deleteProject(projectId: string): Promise<void> {
-    const token = localStorage.getItem('auth_token');
+    const token = getBrowserAuthToken();
     const res = await fetch(`/api/v1/sound-labs/me/projects/${projectId}`, {
       method: 'DELETE',
       headers: {
@@ -78,7 +79,7 @@ const soundLabsApiClient = {
     name?: string,
     description?: string
   ): Promise<SoundLabsProject> {
-    const token = localStorage.getItem('auth_token');
+    const token = getBrowserAuthToken();
     const res = await fetch(`/api/v1/sound-labs/me/projects/${projectId}`, {
       method: 'PATCH',
       headers: {

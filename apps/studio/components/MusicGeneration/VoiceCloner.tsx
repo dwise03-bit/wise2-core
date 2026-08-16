@@ -426,7 +426,7 @@ export function VoiceCloner() {
     source.start(0);
 
     offlineContext.startRendering().then((rendered) => {
-      const blob = new Blob([rendered], { type: 'audio/wav' });
+      const blob = new Blob([rendered as any], { type: 'audio/wav' });
       const url = URL.createObjectURL(blob);
       previewAudioRef.current!.src = url;
       previewAudioRef.current!.play();

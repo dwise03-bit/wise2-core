@@ -206,12 +206,23 @@ export function PreviewUI({
                 className="flex items-center justify-center"
               >
                 {activeScene && (
-                  <PreviewCanvas
-                    sources={activeSceneSources}
-                    width={canvasWidth}
-                    height={canvasHeight}
-                    showMetrics={showFps}
-                  />
+                  <div style={{ width: canvasWidth, height: canvasHeight }}>
+                    <PreviewCanvas
+                      sources={activeSceneSources as any}
+                      sceneName="active"
+                      isRecording={false}
+                      isStreaming={false}
+                      elapsedTime="00:00"
+                      resolution={{ width: canvasWidth, height: canvasHeight }}
+                      targetResolution={{ width: canvasWidth, height: canvasHeight }}
+                      metrics={{
+                        cpuUsage: 0,
+                        gpuUsage: 0,
+                        renderTime: 0,
+                        encodeTime: 0,
+                      }}
+                    />
+                  </div>
                 )}
               </motion.div>
             )}
@@ -331,10 +342,19 @@ export function PreviewUI({
           {activeScene ? (
             <div className="flex flex-col items-center justify-center p-4">
               <PreviewCanvas
-                sources={activeSceneSources}
-                width={canvasWidth}
-                height={canvasHeight}
-                showMetrics={showFps}
+                sources={activeSceneSources as any}
+                sceneName="active"
+                isRecording={false}
+                isStreaming={false}
+                elapsedTime="00:00"
+                resolution={{ width: canvasWidth, height: canvasHeight }}
+                targetResolution={{ width: canvasWidth, height: canvasHeight }}
+                metrics={{
+                  cpuUsage: 0,
+                  gpuUsage: 0,
+                  renderTime: 0,
+                  encodeTime: 0,
+                }}
               />
               <div className="mt-4 text-xs text-wise-text-muted">
                 {canvasWidth}x{canvasHeight} @ {showFps ? '60 FPS' : 'N/A'}
@@ -385,10 +405,19 @@ export function PreviewUI({
           >
             {activeScene && (
               <PreviewCanvas
-                sources={activeSceneSources}
-                width={canvasWidth}
-                height={canvasHeight}
-                showMetrics={showFps}
+                sources={activeSceneSources as any}
+                sceneName="active"
+                isRecording={false}
+                isStreaming={false}
+                elapsedTime="00:00"
+                resolution={{ width: canvasWidth, height: canvasHeight }}
+                targetResolution={{ width: canvasWidth, height: canvasHeight }}
+                metrics={{
+                  cpuUsage: 0,
+                  gpuUsage: 0,
+                  renderTime: 0,
+                  encodeTime: 0,
+                }}
               />
             )}
 

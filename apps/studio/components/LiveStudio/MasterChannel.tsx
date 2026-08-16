@@ -117,7 +117,7 @@ export function MasterChannel({
               onChange={(e) => onVolumeChange?.(parseFloat(e.target.value))}
               className="h-32 w-12 bg-gradient-to-t from-gray-600 to-gray-700 rounded cursor-pointer appearance-none"
               style={{
-                writingMode: 'bt-lr',
+                writingMode: 'bt-lr' as any,
                 WebkitAppearance: 'slider-vertical',
               }}
               title={`Master Volume: ${masterVolume.toFixed(1)} dB`}
@@ -126,7 +126,7 @@ export function MasterChannel({
               {masterVolume > 0 ? '+' : ''}{masterVolume.toFixed(1)} dB
             </div>
             <div className="text-xs text-gray-400 text-center">
-              Headroom: {Math.max(0, (6 - masterPeakLevel).toFixed(1))} dB
+              Headroom: {Math.max(0, 6 - masterPeakLevel).toFixed(1)} dB
             </div>
           </div>
         </div>

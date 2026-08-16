@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getBrowserAuthToken } from '@/lib/auth-session';
 import { Music, Zap, FileAudio, Library, Sparkles, Loader, AlertCircle } from 'lucide-react';
 
 interface SoundLabsProject {
@@ -34,7 +35,7 @@ export default function SoundLabsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = getBrowserAuthToken();
     if (!token) {
       router.push('/login');
       return;
