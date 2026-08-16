@@ -26,6 +26,7 @@ import paymentsRouter from './routes/payments';
 import filesRouter from './routes/files';
 import consultingRouter from './routes/consulting';
 import webhooksRouter from './routes/webhooks';
+import crmRouter from './routes/crm';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -124,6 +125,9 @@ export async function createServer(): Promise<Express> {
 
   // Payment routes
   app.use('/api/v1/payments', paymentsRouter);
+
+  // CRM routes (Command Center - requires auth + tenant context)
+  app.use('/api/v1/crm', crmRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
