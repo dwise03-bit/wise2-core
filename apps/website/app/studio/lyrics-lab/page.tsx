@@ -27,7 +27,7 @@ export default function LyricsLabPage() {
       const response = await fetch('/api/generate-lyrics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ genre, mood, theme, userEmail: auth?.email }),
+        body: JSON.stringify({ genre, mood, theme, userEmail: auth?.user?.email }),
       });
 
       if (!response.ok) {
