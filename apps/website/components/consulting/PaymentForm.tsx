@@ -9,7 +9,7 @@ import {
   Elements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/js';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { AlertCircle, Check, Clock, DollarSign, User } from 'lucide-react';
 
 interface PaymentFormProps {

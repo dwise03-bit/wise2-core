@@ -710,7 +710,7 @@ const PaymentStep = ({
             value={paymentData.cardNumber}
             onChange={handleCardNumberChange}
             placeholder="1234 5678 9012 3456"
-            maxLength="19"
+            maxLength={19}
             className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
           />
         </motion.div>
@@ -724,7 +724,7 @@ const PaymentStep = ({
               value={paymentData.expiryDate}
               onChange={handleExpiryChange}
               placeholder="MM/YY"
-              maxLength="5"
+              maxLength={5}
               className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
             />
           </motion.div>
@@ -735,7 +735,7 @@ const PaymentStep = ({
               value={paymentData.cvc}
               onChange={handleCvcChange}
               placeholder="123"
-              maxLength="4"
+              maxLength={4}
               className="w-full px-4 py-3 rounded-lg bg-wise-bg-secondary border border-wise-surface-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF] transition-colors font-mono"
             />
           </motion.div>
