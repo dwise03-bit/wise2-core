@@ -501,7 +501,6 @@ export class ObsClientEnhanced {
             {
               code: 'SCENE_SWITCH_FAILED_REVERTED',
               context: { targetScene: sceneName, fallbackScene: this.sceneState.previous },
-              recoveryActions: [RecoveryAction.FALLBACK],
             }
           );
           ErrorLogger.log(fallbackError);
@@ -526,7 +525,7 @@ export class ObsClientEnhanced {
       }
 
       if (error instanceof ObsError) {
-        error.recoveryActions = [RecoveryAction.FALLBACK, RecoveryAction.RETRY];
+        // recoveryActions removed due to read-only property
         throw error;
       }
       throw new ObsError(
@@ -678,7 +677,6 @@ export class ObsClientEnhanced {
           {
             code: 'SOURCE_NOT_FOUND',
             context: { sceneName, sourceName },
-            recoveryActions: [RecoveryAction.FALLBACK],
           }
         );
         ErrorLogger.log(sourceError);
@@ -745,7 +743,6 @@ export class ObsClientEnhanced {
           ErrorType.AUTH_EXPIRED,
           {
             code: 'AUTH_EXPIRED',
-            recoveryActions: [RecoveryAction.REAUTHORIZE],
           }
         );
         ErrorLogger.log(authError);
@@ -855,7 +852,6 @@ export class ObsClientEnhanced {
           {
             code: 'DISK_ALMOST_FULL',
             context: { bytesUsed: status.outputTotalBytes },
-            recoveryActions: [RecoveryAction.STOP_RECORDING, RecoveryAction.MANUAL_INTERVENTION],
           }
         );
         ErrorLogger.log(diskError);

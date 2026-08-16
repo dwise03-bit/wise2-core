@@ -358,7 +358,6 @@ export function useObsErrorHandling(options: UseObsErrorHandlingOptions = {}) {
               {
                 code: 'DISK_FULL',
                 context: { diskPercent },
-                recoveryActions: [RecoveryAction.STOP_RECORDING],
               }
             );
             setError(diskError);

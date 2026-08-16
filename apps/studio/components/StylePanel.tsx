@@ -49,12 +49,14 @@ export default function StylePanel({ elementId }: StylePanelProps) {
     onChange,
     type = 'text',
     options,
+    placeholder,
   }: {
     label: string;
     value: any;
     onChange: (value: any) => void;
     type?: string;
     options?: Array<{ label: string; value: string }>;
+    placeholder?: string;
   }) => (
     <div className="mb-4">
       <label className="block text-xs font-medium text-gray-300 mb-2">
@@ -94,7 +96,7 @@ export default function StylePanel({ elementId }: StylePanelProps) {
           type={type}
           value={value || ''}
           onChange={(e) => onChange(e.target.value || undefined)}
-          placeholder="auto"
+          placeholder={placeholder}
           className="w-full px-3 py-2 bg-gray-700 text-white text-sm rounded border border-gray-600 focus:outline-none focus:border-blue-500"
         />
       )}

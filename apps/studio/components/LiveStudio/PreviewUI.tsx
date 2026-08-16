@@ -352,8 +352,11 @@ export function PreviewUI({
                 metrics={{
                   cpuUsage: 0,
                   gpuUsage: 0,
-                  renderTime: 0,
-                  encodeTime: 0,
+                  frameRate: 0,
+                  targetFrameRate: 0,
+                  bitrate: 0,
+                  encodingTime: 0,
+                  networkStatus: 'good',
                 }}
               />
               <div className="mt-4 text-xs text-wise-text-muted">
@@ -415,8 +418,11 @@ export function PreviewUI({
                 metrics={{
                   cpuUsage: 0,
                   gpuUsage: 0,
-                  renderTime: 0,
-                  encodeTime: 0,
+                  frameRate: 0,
+                  targetFrameRate: 0,
+                  bitrate: 0,
+                  encodingTime: 0,
+                  networkStatus: 'good',
                 }}
               />
             )}
