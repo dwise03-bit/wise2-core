@@ -6,6 +6,8 @@ settings:
 
 overrides:
   typescript: ^5.3.0
+  '@types/react': 18.3.31
+  '@types/react-dom': 18.3.7
 
 importers:
 
@@ -56,11 +58,11 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -71,10 +73,10 @@ importers:
         specifier: ^20.0.0
         version: 20.19.43
       '@types/react':
-        specifier: ^18.2.0
+        specifier: 18.3.31
         version: 18.3.31
       '@types/react-dom':
-        specifier: ^18.2.0
+        specifier: 18.3.7
         version: 18.3.7(@types/react@18.3.31)
       autoprefixer:
         specifier: ^10.4.0
@@ -184,11 +186,11 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -239,11 +241,11 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.13.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.1)(typescript@5.9.3)
@@ -300,10 +302,10 @@ importers:
         specifier: ^20.11.0
         version: 20.19.43
       '@types/react':
-        specifier: ^18.3.0
+        specifier: 18.3.31
         version: 18.3.31
       '@types/react-dom':
-        specifier: ^18.3.0
+        specifier: 18.3.7
         version: 18.3.7(@types/react@18.3.31)
       typescript:
         specifier: ^5.3.0
@@ -349,11 +351,11 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.13.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.1)(typescript@5.9.3)
@@ -426,11 +428,11 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.43)
@@ -645,8 +647,8 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -686,8 +688,8 @@ importers:
         specifier: ^20.10.0
         version: 20.19.43
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -772,11 +774,11 @@ importers:
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@3.4.19)
       '@types/react':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.31
+        version: 18.3.31
       '@types/react-dom':
-        specifier: 18.2.0
-        version: 18.2.0
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.19
@@ -3404,36 +3406,18 @@ packages:
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
     dev: true
 
-  /@types/react-dom@18.2.0:
-    resolution: {integrity: sha512-8yQrvS6sMpSwIovhPOwfyNf2Wz6v/B62LFSVYQ85+Rq3tLsBIG7rP5geMxaijTUxSkrO6RzN/IRuIAADYQsleA==}
-    dependencies:
-      '@types/react': 18.3.31
-    dev: true
-
   /@types/react-dom@18.3.7(@types/react@18.3.31):
     resolution: {integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==}
     peerDependencies:
-      '@types/react': ^18.0.0
+      '@types/react': 18.3.31
     dependencies:
       '@types/react': 18.3.31
-
-  /@types/react@18.2.0:
-    resolution: {integrity: sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==}
-    dependencies:
-      '@types/prop-types': 15.7.15
-      '@types/scheduler': 0.26.0
-      csstype: 3.2.3
-    dev: true
 
   /@types/react@18.3.31:
     resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
-
-  /@types/scheduler@0.26.0:
-    resolution: {integrity: sha512-WFHp9YUJQ6CKshqoC37iOlHnQSmxNc795UhB26CyBBttrN9svdIrUjl/NjnNmfcwtncN0h/0PPAFWv9ovP8mLA==}
-    dev: true
 
   /@types/semver@7.7.1:
     resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
@@ -12310,7 +12294,7 @@ packages:
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
-      '@types/react': '>=16.8'
+      '@types/react': 18.3.31
       immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
@@ -12330,7 +12314,7 @@ packages:
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
-      '@types/react': '>=16.8'
+      '@types/react': 18.3.31
       immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
