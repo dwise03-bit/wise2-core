@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --jo-blue: #0066CC;
+  --jo-teal: #00A8A8;
+  --jo-success: #00A651;
+  --jo-warning: #FFA500;
+  --jo-error: #CC0000;
+}
+
+* {
+  @apply box-border;
+}
+
+html, body {
+  @apply bg-gray-50;
+}
