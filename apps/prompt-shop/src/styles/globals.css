@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --laser-orange: #FF5C00;
+  --laser-orange-2: #FF9D00;
+  --burnt-orange: #B93400;
+  --machine-black: #070707;
+  --graphite: #151515;
+  --gunmetal: #34383D;
+  --blueprint-white: #F2F0EA;
+  --wise-green: #00FF00;
+  --cyan: #00D9FF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--machine-black);
+  color: var(--blueprint-white);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Construction/Industrial UI Language */
+.industrial-panel {
+  @apply border border-gunmetal rounded bg-graphite/50 backdrop-blur;
+  background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
+}
+
+.industrial-button {
+  @apply px-4 py-2 rounded font-medium transition-all;
+  background-color: var(--laser-orange);
+  color: var(--machine-black);
+  border: 2px solid var(--laser-orange-2);
+}
+
+.industrial-button:hover {
+  box-shadow: 0 0 20px rgba(255, 92, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.hazard-stripe {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--burnt-orange),
+    var(--burnt-orange) 10px,
+    var(--machine-black) 10px,
+    var(--machine-black) 20px
+  );
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.foreman-speech {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
+  border: 2px solid var(--laser-orange);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  box-shadow: 0 0 20px rgba(255, 92, 0, 0.3);
+}
+
+.foreman-speech::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--laser-orange);
+  border-radius: 50%;
+  left: -15px;
+  top: 12px;
+}
+
+/* Laser/Neon effect */
+.neon-text {
+  text-shadow:
+    0 0 10px currentColor,
+    0 0 20px rgba(255, 92, 0, 0.5),
+    0 0 30px rgba(255, 92, 0, 0.3);
+}
+
+.laser-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--laser-orange), transparent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--graphite);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gunmetal);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--laser-orange);
+}
+
+/* Animations */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 92, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 92, 0, 0.6);
+  }
+}
+
+.glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
