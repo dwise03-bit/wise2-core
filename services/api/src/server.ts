@@ -25,6 +25,7 @@ import authRouter from './routes/auth';
 import paymentsRouter from './routes/payments';
 import filesRouter from './routes/files';
 import consultingRouter from './routes/consulting';
+import webhooksRouter from './routes/webhooks';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -33,6 +34,15 @@ export async function createServer(): Promise<Express> {
   // Security Middleware
   // ============================================================================
   app.use(helmet());
+
+  // ============================================================================
+  // Webhook Raw Body Capture (before JSON parsing)
+  // Required for Stripe signature verification
+  // ============================================================================
+  app.use('/api/v1/webhooks', express.raw({ type: 'application/json' }), (req, res, next) => {
+    (req as any).rawBody = req.body;
+    next();
+  });
 
   // ============================================================================
   // Request Parsing Middleware
@@ -105,6 +115,9 @@ export async function createServer(): Promise<Express> {
   // ============================================================================
   // API Routes
   // ============================================================================
+
+  // Webhook routes (before auth routes, no auth required)
+  app.use('/api/v1/webhooks', webhooksRouter);
 
   // Authentication routes
   app.use('/api/v1/auth', authRouter);
