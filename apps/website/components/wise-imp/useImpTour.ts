@@ -11,6 +11,12 @@ export interface TourStop {
   state: MascotState;
   label: string;
   reaction: string;
+  /**
+   * Which way the speech bubble opens. Anchoring it to the right edge means it
+   * grows leftward, which is what we want when the companion is near the right
+   * of the viewport — and the reverse on the left.
+   */
+  bubbleSide: 'left' | 'right';
 }
 
 const STEP_MS = 7000;
@@ -129,7 +135,18 @@ export function useImpTour(pathname: string, panelOpen: boolean): TourStop | nul
         window.innerHeight - IMP_SIZE - GUTTER,
       );
 
-      setStop({ top, left, state, label, reaction: targetReaction(state, label) });
+      // Open the bubble toward whichever side has room.
+      const bubbleSide: 'left' | 'right' =
+        left > window.innerWidth / 2 ? 'right' : 'left';
+
+      setStop({
+        top,
+        left,
+        state,
+        label,
+        reaction: targetReaction(state, label),
+        bubbleSide,
+      });
     };
 
     visit();

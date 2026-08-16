@@ -183,7 +183,12 @@ export function WiseImp() {
           style={{
             position: 'absolute',
             bottom: 72,
-            right: 0,
+            // The container is only as wide as the 64px launcher, so an
+            // absolutely positioned child shrink-to-fits into 64px and wraps
+            // one word per line. width: max-content lets the bubble size to
+            // its text and overflow the container, with maxWidth capping it.
+            ...(tourStop.bubbleSide === 'right' ? { right: 0 } : { left: 0 }),
+            width: 'max-content',
             maxWidth: 220,
             padding: '6px 10px',
             fontSize: 12,
