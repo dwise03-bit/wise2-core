@@ -186,3 +186,4 @@ echo "  Installed: $(ollama list | tail -n +2 | awk '{print $1}' | tr '\n' ' ')"
 echo
 echo "  In wise2:  import { aiManager } from '@wise2/ai'"
 echo "             await aiManager.chat([{role:'user',content:'hi'}], 'ollama-qwen-coder')"
+echo "  Ghostty : source ./scripts/wise2-ghostty.zsh for safe macOS shell sessions"
