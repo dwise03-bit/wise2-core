@@ -58,11 +58,11 @@ export function WaveformVisualizer({
     if (!ctx) return;
 
     const draw = () => {
-      try {
-        const width = canvas.width;
-        const height = canvas.height;
-        const centerY = height / 2;
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerY = height / 2;
 
+      try {
         // Clear canvas with slight trail effect
         ctx.fillStyle = 'rgba(5, 5, 5, 0.1)';
         ctx.fillRect(0, 0, width, height);
@@ -93,39 +93,39 @@ export function WaveformVisualizer({
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
+
+        // Draw reflection
+        ctx.globalAlpha = 0.3;
+        ctx.beginPath();
+        for (let i = 0; i < waveformData.length; i++) {
+          const x = (i / (waveformData.length - 1)) * width;
+          const amplitude = waveformData[i];
+          const y = centerY + (amplitude * height * 0.35);
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Draw playhead
+        if (duration > 0) {
+          const playheadX = (currentTime / duration) * width;
+          ctx.strokeStyle = 'rgb(57, 255, 20)';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(playheadX, 0);
+          ctx.lineTo(playheadX, height);
+          ctx.stroke();
+
+          // Draw playhead indicator circle
+          ctx.fillStyle = 'rgb(57, 255, 20)';
+          ctx.beginPath();
+          ctx.arc(playheadX, centerY - height * 0.4, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } catch (err) {
         console.error('Waveform drawing error:', err);
-      }
-
-      // Draw reflection
-      ctx.globalAlpha = 0.3;
-      ctx.beginPath();
-      for (let i = 0; i < waveformData.length; i++) {
-        const x = (i / (waveformData.length - 1)) * width;
-        const amplitude = waveformData[i];
-        const y = centerY + (amplitude * height * 0.35);
-
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      // Draw playhead
-      if (duration > 0) {
-        const playheadX = (currentTime / duration) * width;
-        ctx.strokeStyle = 'rgb(57, 255, 20)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(playheadX, 0);
-        ctx.lineTo(playheadX, height);
-        ctx.stroke();
-
-        // Draw playhead indicator circle
-        ctx.fillStyle = 'rgb(57, 255, 20)';
-        ctx.beginPath();
-        ctx.arc(playheadX, centerY - height * 0.4, 4, 0, Math.PI * 2);
-        ctx.fill();
       }
     };
 

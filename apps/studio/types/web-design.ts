@@ -33,6 +33,7 @@ export interface ElementStyle {
   justifyContent?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around';
   alignItems?: 'flex-start' | 'center' | 'flex-end' | 'stretch';
   gap?: string;
+  gridTemplateColumns?: string;
 
   // Typography
   fontSize?: string;
@@ -50,6 +51,7 @@ export interface ElementStyle {
   // Borders & Shadows
   border?: string;
   borderRadius?: string;
+  borderBottom?: string;
   boxShadow?: string;
 
   // Positioning
@@ -120,6 +122,7 @@ export interface Template {
     background: string;
     text: string;
   };
+  fonts?: Record<string, string>; // font family mappings
 }
 
 /**
