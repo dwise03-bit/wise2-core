@@ -41,6 +41,9 @@ model User {
   // Print Shop relationships
   printFiles PrintFile[] @relation("printFileUploader")
 
+  // JO CREDIT OS relationships
+  joClients JOClient[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -2809,4 +2812,402 @@ model SafetyEvent {
   @@index([tenantId])
   @@index([tenantId, riskType])
   @@index([createdAt])
+}
+
+// ============================================================================
+// JO CREDIT OS™ — Compliance-First Credit Audit & Case Management Platform
+// ============================================================================
+
+// Extended User Role for JO CREDIT OS
+enum JOUserRole {
+  CLIENT
+  CREDIT_SPECIALIST
+  COMPLIANCE_MANAGER
+  JO_ADMIN
+}
+
+// JO CREDIT OS Client
+model JOClient {
+  id                  String   @id @default(cuid())
+  userId              String?  @unique
+  user                User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  legalName           String
+  preferredName       String?
+  email               String   @unique
+  phone               String?
+  address             String?
+  state               String?
+  timezone            String?
+
+  // Encrypted PII
+  dateOfBirth         String?  // encrypted
+  ssn                 String?  // tokenized, never display by default
+
+  identityVerificationStatus String @default("PENDING") // PENDING, VERIFIED, FAILED
+  onboardingStatus    String   @default("INCOMPLETE") // INCOMPLETE, COMPLETED, REJECTED
+  serviceStatus       String   @default("INACTIVE") // INACTIVE, ACTIVE, SUSPENDED, COMPLETED
+
+  assignedSpecialistId String?
+  assignedSpecialist  JOUser?  @relation("assignedClients", fields: [assignedSpecialistId], references: [id], onDelete: SetNull)
+
+  // Relationships
+  agreements          JOAgreement[]
+  creditReports       JOCreditReport[]
+  tradelines          JOTradeline[]
+  auditFindings       JOAuditFinding[]
+  evidence            JOEvidence[]
+  cases               JODisputeCase[]
+  actions             JOClientAction[]
+  auditLog            JOAuditLog[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([email])
+  @@index([state])
+  @@index([serviceStatus])
+}
+
+// JO User (Staff)
+model JOUser {
+  id                  String   @id @default(cuid())
+  email               String   @unique
+  name                String
+  passwordHash        String
+  role                JOUserRole @default(CREDIT_SPECIALIST)
+
+  assignedClients     JOClient[] @relation("assignedClients")
+  auditFindings       JOAuditFinding[] @relation("reviewer")
+  cases               JODisputeCase[] @relation("owner")
+  auditLog            JOAuditLog[] @relation("actor")
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+// JO Consent / Agreement
+model JOAgreement {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  agreementType       String   // "DISCLOSURE", "SERVICE_AGREEMENT", "CONSENT", etc.
+  version             String
+
+  deliveredAt         DateTime?
+  signedAt            DateTime?
+  cancelledAt         DateTime?
+  revokedAt           DateTime?
+
+  cancellationWindowStatus String?
+  documentHash        String   @unique
+  storageReference    String   // File storage reference (S3, etc.)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([agreementType])
+}
+
+// JO Credit Report
+model JOCreditReport {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  bureau              String   // "EQUIFAX", "EXPERIAN", "TRANSUNION"
+  reportDate          DateTime
+  source              String   // "MANUAL", "IMPORT", "API", etc.
+  sourceFileReference String?
+
+  parsingStatus       String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  importedAt          DateTime @default(now())
+
+  // Relationships
+  tradelines          JOTradeline[]
+  observations        JOBureauObservation[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([bureau])
+  @@index([reportDate])
+}
+
+// JO Tradeline (Normalized Account)
+model JOTradeline {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  reportId            String
+  report              JOCreditReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  normalizedCreditorName String
+  accountMask         String
+  accountType         String   // "CREDIT_CARD", "AUTO_LOAN", "MORTGAGE", "COLLECTION", etc.
+
+  openDate            DateTime?
+  status              String   // "OPEN", "CLOSED", "COLLECTION", "CHARGE_OFF", etc.
+  balance             Float?
+  creditLimit         Float?
+  highBalance         Float?
+  pastDue             Float?
+
+  paymentStatus       String?
+  paymentHistory      String?
+  lastReportedDate    DateTime?
+  dateOfFirstDelinquency DateTime?
+
+  remarks             String?
+  ownershipType       String?  // "INDIVIDUAL", "JOINT", "AUTHORIZED_USER"
+  disputeIndicator    Boolean  @default(false)
+  rawSourceReference  String?  // Reference to original bureau report field
+
+  // Relationships
+  observations        JOBureauObservation[]
+  findings            JOAuditFinding[]
+  cases               JODisputeCase[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([normalizedCreditorName])
+  @@index([status])
+}
+
+// JO Bureau Observation (Single Bureau's Version of Tradeline)
+model JOBureauObservation {
+  id                  String   @id @default(cuid())
+  tradlineId          String
+  tradeline           JOTradeline @relation(fields: [tradlineId], references: [id], onDelete: Cascade)
+
+  reportId            String
+  report              JOCreditReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  bureau              String   // "EQUIFAX", "EXPERIAN", "TRANSUNION"
+  sourceReportId      String
+
+  fieldSnapshot       Json     // Raw field data from bureau
+  confidence          Float    @default(1.0)
+  importedAt          DateTime @default(now())
+
+  @@index([tradlineId])
+  @@index([bureau])
+}
+
+// JO Audit Finding
+model JOAuditFinding {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  tradlineId          String
+  tradeline           JOTradeline @relation(fields: [tradlineId], references: [id], onDelete: Cascade)
+
+  findingType         String   // Finding types from blueprint
+  affectedField       String?
+  description         String   @db.Text
+  sourceComparison    String?  @db.Text
+
+  severity            String   @default("INFO") // INFO, LOW, MEDIUM, HIGH, CRITICAL
+  status              String   @default("DRAFT_FINDING") // From case workflow states
+
+  evidenceRequired    Boolean  @default(false)
+
+  reviewerId          String?
+  reviewer            JOUser?  @relation("reviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  reviewedAt          DateTime?
+
+  // Relationships
+  cases               JODisputeCase[]
+  evidence            JOEvidence[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([tradlineId])
+  @@index([status])
+  @@index([severity])
+}
+
+// JO Evidence
+model JOEvidence {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  findingId           String?
+  finding             JOAuditFinding? @relation(fields: [findingId], references: [id], onDelete: SetNull)
+
+  caseId              String?
+  case                JODisputeCase? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+
+  fileReference       String   // Storage reference (S3, etc.)
+  evidenceType        String   // Types from blueprint
+  description         String?  @db.Text
+
+  uploadedBy          String
+  uploadedAt          DateTime @default(now())
+
+  verificationStatus  String   @default("PENDING") // PENDING, VERIFIED, REJECTED
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([findingId])
+  @@index([caseId])
+}
+
+// JO Dispute Case
+model JODisputeCase {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  tradlineId          String
+  tradeline           JOTradeline @relation(fields: [tradlineId], references: [id], onDelete: Cascade)
+
+  findingId           String?
+  finding             JOAuditFinding? @relation(fields: [findingId], references: [id], onDelete: SetNull)
+
+  channelType         String   // "CRA", "FURNISHER"
+  recipient           String   // Bureau or furnisher name/ID
+
+  disputeBasis        String   @db.Text
+  factualStatement    String   @db.Text
+  applicableRuleIds   String[] // References to Rule.id
+
+  draftStatus         String   @default("DRAFT") // DRAFT, READY_FOR_REVIEW, READY_FOR_CLIENT_REVIEW
+  clientReviewStatus  String?  // PENDING_REVIEW, APPROVED, REJECTED
+  submissionStatus    String   @default("NOT_SUBMITTED") // NOT_SUBMITTED, SUBMITTED, PENDING_RESPONSE, RESPONDED
+
+  sentAt              DateTime?
+  responseEstimate    DateTime?
+  responseReceivedAt  DateTime?
+
+  outcome             String?  // CORRECTED, DELETED, VERIFIED_NO_CHANGE, etc.
+  nextAction          String?  @db.Text
+
+  ownerId             String
+  owner               JOUser   @relation("owner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  // Relationships
+  evidence            JOEvidence[]
+  response            JOResponse?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([tradlineId])
+  @@index([submissionStatus])
+  @@index([outcome])
+}
+
+// JO Response
+model JOResponse {
+  id                  String   @id @default(cuid())
+  caseId              String   @unique
+  case                JODisputeCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  source              String   // "CRA", "FURNISHER"
+  receivedAt          DateTime
+  documentReference   String   // Storage reference
+
+  extractedResult     String   @db.Text
+  fieldChanges        Json?    // Structured field changes
+  unresolvedIssues    String?  @db.Text
+
+  reviewerStatus      String   @default("PENDING") // PENDING, REVIEWED, APPROVED
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([caseId])
+}
+
+// JO Client Action (Tasks for Client)
+model JOClientAction {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  category            String   // "PAYMENT_CONSISTENCY", "UTILIZE_CREDIT", etc.
+  title               String
+  description         String   @db.Text
+
+  priority            String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  dueDate             DateTime?
+  status              String   @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED, CANCELLED
+
+  completionEvidence  String?  // Storage reference if evidence attached
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([clientId])
+  @@index([status])
+}
+
+// JO Rule / Legal Authority
+model JORule {
+  id                  String   @id @default(cuid())
+
+  authorityType       String   // "STATUTE", "REGULATION", "CASE", "AGENCY_GUIDANCE", "STATE_RULE"
+  jurisdiction        String   // "FEDERAL", "STATE_CA", "STATE_NY", etc.
+  citation            String   @unique
+
+  title               String
+  sourceUrl           String?
+  effectiveDate       DateTime?
+  lastVerifiedAt      DateTime @default(now())
+
+  summary             String   @db.Text
+  factPatterns        String[] // Case facts this rule applies to
+  workflowEffect      String?  // How this rule affects dispute workflow
+
+  riskLevel           String   @default("LOW") // LOW, MEDIUM, HIGH, CRITICAL
+  attorneyReviewRequired Boolean @default(false)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([authorityType])
+  @@index([jurisdiction])
+  @@index([citation])
+}
+
+// JO Audit Log (Compliance Audit Trail)
+model JOAuditLog {
+  id                  String   @id @default(cuid())
+  clientId            String
+  client              JOClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  actorId             String
+  actor               JOUser   @relation("actor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  objectType          String   // "CASE", "CLIENT", "AGREEMENT", etc.
+  objectId            String
+  action              String   // "CREATE", "UPDATE", "DELETE", "SUBMIT", "APPROVE"
+
+  beforeSnapshot      Json?    // State before change (immutable)
+  afterSnapshot       Json?    // State after change (immutable)
+  reason              String?  @db.Text
+
+  timestamp           DateTime @default(now())
+
+  @@index([clientId])
+  @@index([actorId])
+  @@index([objectType])
+  @@index([timestamp])
 }
