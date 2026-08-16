@@ -149,6 +149,22 @@ pnpm db:seed          # Seed database
 pnpm db:reset         # Reset database
 ```
 
+### Ghostty on Mac
+
+If you use Ghostty as your terminal on macOS, source the helper before running Wise² workflows:
+
+```bash
+source ./scripts/wise2-ghostty.zsh
+wise2 dev
+wise2 models
+wise2 update-pi pi.local full-stack
+wise2 ssh dwise@192.168.8.137
+```
+
+That helper:
+- Falls back from Ghostty's `xterm-ghostty` TERM to `xterm-256color` for SSH sessions.
+- Turns zsh globbing errors into literal text, so pasted transcript lines like `key(s)` do not explode the shell.
+
 ---
 
 ## Documentation
