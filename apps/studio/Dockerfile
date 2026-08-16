@@ -1,31 +1,40 @@
-FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm fetch
-
 FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
+
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+# Install pnpm
+RUN npm install -g pnpm
+
 COPY pnpm-lock.yaml ./
-COPY . .
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
-RUN cd apps/studio && pnpm run build
+COPY package.json pnpm-workspace.yaml ./
+COPY apps/studio/package.json ./apps/studio/
+COPY packages/db/package.json ./packages/db/
+COPY packages/api/package.json ./packages/api/
+
+RUN pnpm install --frozen-lockfile
+
+COPY apps/studio ./apps/studio
+COPY packages/db ./packages/db
+
+RUN pnpm --filter @wise2/studio build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
 ENV PORT 3005
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm
 
-COPY --from=builder /app/apps/studio/public ./public
-COPY --from=builder /app/apps/studio/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/apps/studio ./apps/studio
+COPY --from=builder /app/packages/db ./packages/db
 
-USER nextjs
+RUN pnpm install --frozen-lockfile --production
+
 EXPOSE 3005
-CMD ["node_modules/.bin/next", "start", "-p", "3005"]
+CMD ["pnpm", "--filter", "@wise2/studio", "start"]
