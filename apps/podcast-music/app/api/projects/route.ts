@@ -1,5 +1,4 @@
 import { NextRequest } from 'next/server';
-import { PodcastProjectStatus } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   createPodcastProjectSchema,
@@ -11,6 +10,14 @@ import {
   extractUserFromHeaders,
   ApiError,
 } from '@/lib/utils';
+
+type PodcastProjectStatus =
+  | 'DRAFT'
+  | 'GENERATING'
+  | 'READY'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED';
 
 export async function POST(request: NextRequest) {
   try {

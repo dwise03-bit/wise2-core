@@ -5,27 +5,27 @@
 @tailwind utilities;
 
 /* ============================================================================
-   WISE² MASTER DESIGN SYSTEM - ORGANIZED CHAOS™
+   WISE² UNITED IDENTITY - BUILDING EMPIRES / CHANGING CULTURE
    ============================================================================ */
 
 :root {
-  /* ===== COLOR SYSTEM - MASTER PALETTE ===== */
+  /* ===== COLOR SYSTEM - UNITED PALETTE ===== */
   /* Foundation - Black & Steel */
   --wise-black: #050505;
-  --wise-dark-steel: #0B0B0B;
-  --wise-steel-panel: #1A1A1A;
-  --wise-chrome: #BFC4C9;
-  --wise-muted-gray: #8D98A5;
+  --wise-dark-steel: #0A0A0A;
+  --wise-steel-panel: #161616;
+  --wise-chrome: #E6E8EC;
+  --wise-muted-gray: #9CA3AF;
   --wise-white: #FFFFFF;
 
-  /* Primary Accent - Neon Green */
-  --wise-neon-green: #39FF14;
-  --wise-green-secondary: #7CFF00;
-  --wise-dark-green: #0B8F00;
+  /* Primary Accent - Neon Lime */
+  --wise-neon-green: #C7FF2E;
+  --wise-green-secondary: #E4FF79;
+  --wise-dark-green: #7DAA00;
 
-  /* Secondary Accent - Electric Blue */
-  --wise-electric-blue: #0094FF;
-  --wise-hover-blue: #32A8FF;
+  /* Secondary Accent - Studio Purple */
+  --wise-electric-blue: #B36BFF;
+  --wise-hover-blue: #CC9CFF;
 
   /* Status Colors */
   --wise-success: #22C55E;
@@ -98,7 +98,7 @@
     margin: 0;
     background: #050505;
     color: #fff;
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
 }
 
@@ -207,7 +207,7 @@
 
 /* Gradient text */
 .gradient-text {
-  @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-[#C7FF2E] to-[#B36BFF] bg-clip-text text-transparent;
 }
 
 /* ============================================================================

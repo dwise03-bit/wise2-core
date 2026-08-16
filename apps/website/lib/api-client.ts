@@ -2,6 +2,7 @@
  * Centralized API Client
  * Handles all API communication with error handling, auth, and response formatting
  */
+import { getBrowserAuthToken } from './auth-session';
 
 export interface ApiOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -29,7 +30,7 @@ class ApiClient {
 
   private async getAuthToken(): Promise<string | null> {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('auth_token');
+    return getBrowserAuthToken();
   }
 
   async request<T = any>(

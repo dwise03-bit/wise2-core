@@ -17,6 +17,7 @@
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
     "framer-motion": "^11.0.0",
+    "lucide-react": "^0.408.0",
     "jsonwebtoken": "^9.0.0",
     "next": "14.2.35",
     "pg": "^8.11.0",
@@ -25,6 +26,7 @@
     "react-hook-form": "^7.48.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.0",
     "@types/node": "^20.10.0",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",

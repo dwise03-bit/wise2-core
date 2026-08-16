@@ -1,37 +1,40 @@
-import { Footer } from '@/components/wise';
+import { PublicFooter } from '@/components/navigation';
 
 export default function AboutPage() {
   return (
     <>
-      <main className="bg-black min-h-screen pt-32 pb-20">
+      <main className="bg-[#050505] min-h-screen pt-32 pb-20 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              About <span className="text-blue-500">WISE²</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#C7FF2E]/30 bg-[#C7FF2E]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#C7FF2E]">
+              Atlanta-built / Founder-led
+            </div>
+            <h1 className="mt-6 text-6xl md:text-7xl font-black uppercase tracking-[0.08em] text-white mb-6">
+              About <span className="text-[#C7FF2E]">WISE²</span>
             </h1>
-            <p className="text-xl text-gray-300">
-              Organized Chaos Command Center for creative entrepreneurs.
+            <p className="text-xl text-[#B7BDC8]">
+              The business OS behind Wise Shine, Piff City, and the legacy systems that connect the brand.
             </p>
           </div>
 
           <div className="space-y-16">
-            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-12">
               <h2 className="text-3xl font-bold text-white mb-4">Our Mission</h2>
-              <p className="text-gray-300 leading-relaxed">
-                WISE² is built for creators, builders, and entrepreneurs who want to turn their ideas into reality. We provide the tools, guidance, and support needed to navigate the journey from concept to successful launch and beyond.
+              <p className="text-[#B7BDC8] leading-relaxed">
+                WISE² exists to help ambitious founders build a brand that looks like a movement and runs like a system. We combine identity, operations, and execution into one legacy-minded platform.
               </p>
             </section>
 
-            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-12">
               <h2 className="text-3xl font-bold text-white mb-4">What We Do</h2>
-              <p className="text-gray-300 leading-relaxed mb-6">
-                We combine technology, design, and strategy to help you build, launch, and scale. Whether you need a complete branding package, a custom web platform, or expert guidance on growth—we've got you covered.
+              <p className="text-[#B7BDC8] leading-relaxed mb-6">
+                We shape the look, language, and operating structure of WISE² and its powered businesses. The goal is simple: make the brand feel premium, consistent, and built to last.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['Design', 'Development', 'Strategy'].map((item) => (
+                {['Identity', 'Operations', 'Culture'].map((item) => (
                   <div
                     key={item}
-                    className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-center"
+                    className="p-4 bg-[#C7FF2E]/10 border border-[#C7FF2E]/20 rounded-xl text-center"
                   >
                     <p className="text-white font-bold">{item}</p>
                   </div>
@@ -39,37 +42,37 @@ export default function AboutPage() {
               </div>
             </section>
 
-            <section className="bg-wise-bg-secondary border-2 border-blue-500/30 rounded-3xl p-12">
+            <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-12">
               <h2 className="text-3xl font-bold text-white mb-6">Our Process</h2>
               <div className="space-y-4">
                 {[
-                  { phase: 'Idea', desc: 'Define your vision and goals.' },
-                  { phase: 'Strategy', desc: 'Build a comprehensive roadmap.' },
-                  { phase: 'Build', desc: 'Execute with excellence.' },
-                  { phase: 'Launch', desc: 'Go public and gain traction.' },
-                  { phase: 'Multiply', desc: 'Scale and optimize for growth.' },
+                  { phase: 'Vision', desc: 'Clarify the identity and the business story.' },
+                  { phase: 'System', desc: 'Unify the brand architecture and core operations.' },
+                  { phase: 'Build', desc: 'Design the public-facing experience and rollout.' },
+                  { phase: 'Launch', desc: 'Put the identity in front of the market.' },
+                  { phase: 'Legacy', desc: 'Keep iterating until the brand becomes durable.' },
                 ].map((item) => (
                   <div key={item.phase} className="flex gap-4">
-                    <div className="text-blue-500 font-bold min-w-24">{item.phase}</div>
-                    <div className="text-gray-300">{item.desc}</div>
+                    <div className="text-[#C7FF2E] font-bold min-w-24">{item.phase}</div>
+                    <div className="text-[#B7BDC8]">{item.desc}</div>
                   </div>
                 ))}
               </div>
             </section>
 
             <section className="text-center">
-              <p className="text-gray-300 mb-8">Ready to start your journey?</p>
+              <p className="text-[#B7BDC8] mb-8">Ready to start your build?</p>
               <a
                 href="/start-your-build"
-                className="inline-block px-12 py-4 bg-blue-500 text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
+                className="inline-block px-12 py-4 bg-[#C7FF2E] text-black rounded-lg font-bold hover:brightness-110 transition-all"
               >
-                ✦ Start Your Build
+                Start Your Build
               </a>
             </section>
           </div>
         </div>
       </main>
-      <Footer />
+      <PublicFooter />
     </>
   );
 }

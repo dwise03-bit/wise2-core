@@ -21,24 +21,53 @@ export class BillingService {
    * Create a Stripe checkout session for subscription
    * Handles both authenticated and unauthenticated (new customer) flows
    */
-  async createCheckoutSession(userIdOrEmail: string, planId: string, email: string) {
-    const PLANS: Record<string, { priceId: string; trialDays: number }> = {
-      STARTER: { priceId: process.env.STRIPE_STARTER_PRICE_ID || '', trialDays: 14 },
-      PRO: { priceId: process.env.STRIPE_PRO_PRICE_ID || '', trialDays: 14 },
-      ENTERPRISE: { priceId: '', trialDays: 30 },
+  async createCheckoutSession(
+    userIdOrEmail: string,
+    planId: string,
+    email: string,
+    fullName?: string,
+    billingCycle: 'monthly' | 'annual' = 'monthly',
+    successUrl?: string,
+    cancelUrl?: string,
+  ) {
+    const PLANS: Record<string, { monthly: string; annual: string; trialDays: number }> = {
+      STARTER: {
+        monthly: process.env.STRIPE_STARTER_PRICE_ID || '',
+        annual: process.env.STRIPE_STARTER_PRICE_ID_ANNUAL || '',
+        trialDays: 14,
+      },
+      PRO: {
+        monthly: process.env.STRIPE_PRO_PRICE_ID || '',
+        annual: process.env.STRIPE_PRO_PRICE_ID_ANNUAL || '',
+        trialDays: 14,
+      },
+      ENTERPRISE: {
+        monthly: process.env.STRIPE_ENTERPRISE_PRICE_ID || '',
+        annual: process.env.STRIPE_ENTERPRISE_PRICE_ID_ANNUAL || '',
+        trialDays: 30,
+      },
     };
 
     const plan = PLANS[planId];
-    if (!plan || !plan.priceId) {
+    if (!plan) {
       throw new Error('Invalid plan');
     }
 
+    const priceId = plan[billingCycle] || plan.monthly;
+    if (!priceId) {
+      throw new Error(`Stripe price ID not configured for ${planId} (${billingCycle})`);
+    }
+
+    if (!email) {
+      throw new Error('Email is required for checkout');
+    }
+
     // Determine if this is an authenticated user or new customer
-    let userId = userIdOrEmail;
+    let userId = userIdOrEmail || email;
     let isNewCustomer = false;
 
     // If userIdOrEmail looks like an email (contains @), treat as new customer
-    if (userIdOrEmail.includes('@')) {
+    if (userIdOrEmail && userIdOrEmail.includes('@')) {
       isNewCustomer = true;
 
       // Check if user already exists
@@ -52,7 +81,7 @@ export class BillingService {
       } else {
         // For new customers, we'll create the user in the webhook handler
         // Use email as a temporary ID in checkout metadata
-        userId = userIdOrEmail;
+          userId = userIdOrEmail;
       }
     }
 
@@ -60,20 +89,23 @@ export class BillingService {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: plan.priceId,
+          price: priceId,
           quantity: 1,
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.APP_URL}/checkout/cancel`,
+      success_url: successUrl || `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl || `${process.env.APP_URL}/checkout/cancel`,
       customer_email: email,
+      customer_creation: 'if_required',
       subscription_data: {
         trial_period_days: plan.trialDays,
         metadata: {
           userId,
           planId,
           email, // Include email as fallback identifier
+          fullName: fullName || '',
+          billingCycle,
           isNewCustomer: String(isNewCustomer),
         },
       },
@@ -81,6 +113,8 @@ export class BillingService {
         userId,
         planId,
         email,
+        fullName: fullName || '',
+        billingCycle,
         isNewCustomer: String(isNewCustomer),
       },
     });
@@ -104,6 +138,7 @@ export class BillingService {
     const email = session.metadata?.email || session.customer_email;
     const planId = session.metadata?.planId;
     const isNewCustomer = session.metadata?.isNewCustomer === 'true';
+    const fullName = session.metadata?.fullName || undefined;
 
     // If new customer (email-based), create a User record
     if (isNewCustomer && email && !userId?.includes('@')) {
@@ -121,7 +156,7 @@ export class BillingService {
         const newUser = await this.prisma.user.create({
           data: {
             email,
-            name: email.split('@')[0], // Use email prefix as name placeholder
+            name: fullName || email.split('@')[0],
             passwordHash: temporaryPassword, // Temporary - customer should reset
           },
         });
@@ -146,6 +181,7 @@ export class BillingService {
     return {
       userId,
       email,
+      fullName,
       stripeSubscriptionId: subscription.id,
       stripeCustomerId: subscription.customer,
       planId,

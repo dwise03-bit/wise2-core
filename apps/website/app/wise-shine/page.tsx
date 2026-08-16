@@ -1,39 +1,38 @@
-import { Footer } from '@/components/wise';
 import Link from 'next/link';
+import { PublicFooter } from '@/components/navigation';
 
 export default function WiseshinePage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#050505] text-white">
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-4 py-2 text-sm text-yellow-300 backdrop-blur mb-8">
-                <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#C7FF2E]/30 bg-[#C7FF2E]/10 px-4 py-2 text-sm text-[#C7FF2E] backdrop-blur mb-8">
+                <span className="w-2 h-2 bg-[#C7FF2E] rounded-full"></span>
                 Powered by WISE²
               </div>
-              <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-6">
-                <span className="text-yellow-400">WISE</span> <span className="text-yellow-400">SHINE</span>
+              <h1 className="text-5xl md:text-6xl font-black uppercase tracking-[0.08em] mb-6">
+                <span className="text-[#C7FF2E]">WISE</span> <span className="text-white">SHINE</span>
               </h1>
-              <p className="text-2xl font-bold text-yellow-300 mb-6">
-                PREMIUM. EXCLUSIVE. LUMINOUS.
+              <p className="text-2xl font-bold text-[#C7FF2E] mb-6">
+                PREMIUM. SHARP. LEGENDARY.
               </p>
-              <p className="text-xl text-gray-400 mb-8">
-                Where luxury meets innovation. Premium services and exclusive experiences designed for those who demand excellence.
+              <p className="text-xl text-[#B7BDC8] mb-8">
+                The premium detailing arm of WISE². Built for finish, first impressions, and the kind of polish that signals a higher standard.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/prospects/new" className="px-6 py-3 bg-yellow-600 text-black rounded-lg font-bold hover:bg-yellow-500 transition-all">
+                <Link href="/prospects/new" className="px-6 py-3 bg-[#C7FF2E] text-black rounded-lg font-bold hover:brightness-110 transition-all">
                   Access WISE SHINE
                 </Link>
-                <Link href="/powered-businesses" className="px-6 py-3 bg-gray-900 border border-gray-700 text-white rounded-lg font-bold hover:border-yellow-500 transition-all">
+                <Link href="/powered-businesses" className="px-6 py-3 bg-white/[0.04] border border-white/10 text-white rounded-lg font-bold hover:border-[#C7FF2E]/40 transition-all">
                   Back
                 </Link>
               </div>
             </div>
-            <div className="relative h-96 rounded-2xl overflow-hidden border border-yellow-500/30">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/40 via-transparent to-transparent" />
+            <div className="relative h-96 rounded-2xl overflow-hidden border border-[#C7FF2E]/30 bg-[radial-gradient(circle_at_center,rgba(199,255,46,0.15),transparent_60%)]">
               <div className="absolute inset-0 flex items-center justify-center text-6xl">✨</div>
             </div>
           </div>
@@ -43,18 +42,18 @@ export default function WiseshinePage() {
       {/* What is WISE SHINE */}
       <section className="py-20 px-6 border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">WHAT IS WISE SHINE?</h2>
+          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center uppercase tracking-[0.08em]">What is Wise Shine?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-yellow-900/20 to-transparent border border-yellow-500/30">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4">👑 The Premium Experience</h3>
-              <p className="text-gray-300 leading-relaxed">
-                WISE SHINE is our premium tier offering. Exclusive access to top-tier services, priority support, and VIP experiences. When you choose WISE SHINE, you're not just getting a service—you're joining an elite community.
+            <div className="p-8 rounded-2xl bg-white/[0.04] border border-[#C7FF2E]/20">
+              <h3 className="text-2xl font-bold text-[#C7FF2E] mb-4">👑 The Premium Experience</h3>
+              <p className="text-[#B7BDC8] leading-relaxed">
+                Wise Shine is built for clients who want meticulous work and a result that reads expensive before anyone says a word.
               </p>
             </div>
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-yellow-900/20 to-transparent border border-yellow-500/30">
-              <h3 className="text-2xl font-bold text-yellow-400 mb-4">💎 Our Commitment</h3>
-              <p className="text-gray-300 leading-relaxed">
-                Excellence at every touchpoint. From personalized service to exclusive content, we've designed WISE SHINE for those who refuse to settle for anything less than extraordinary.
+            <div className="p-8 rounded-2xl bg-white/[0.04] border border-[#C7FF2E]/20">
+              <h3 className="text-2xl font-bold text-[#C7FF2E] mb-4">💎 Our Commitment</h3>
+              <p className="text-[#B7BDC8] leading-relaxed">
+                Excellence at every touchpoint. Clean execution, clear standards, and a finish that strengthens the whole WISE² story.
               </p>
             </div>
           </div>
@@ -64,7 +63,7 @@ export default function WiseshinePage() {
       {/* Premium Services */}
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">PREMIUM SERVICES</h2>
+          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center uppercase tracking-[0.08em]">Premium Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -88,10 +87,10 @@ export default function WiseshinePage() {
                 desc: 'White-glove service tailored to your needs.',
               },
             ].map((service) => (
-              <div key={service.title} className="p-6 rounded-xl bg-gray-900/50 border border-yellow-500/20 hover:border-yellow-500/50 transition-all">
+              <div key={service.title} className="p-6 rounded-xl bg-white/[0.04] border border-[#C7FF2E]/20 hover:border-[#C7FF2E]/50 transition-all">
                 <div className="text-4xl mb-3">{service.emoji}</div>
-                <h3 className="text-lg font-bold text-yellow-400 mb-2">{service.title}</h3>
-                <p className="text-sm text-gray-400">{service.desc}</p>
+                <h3 className="text-lg font-bold text-[#C7FF2E] mb-2">{service.title}</h3>
+                <p className="text-sm text-[#B7BDC8]">{service.desc}</p>
               </div>
             ))}
           </div>
@@ -99,9 +98,9 @@ export default function WiseshinePage() {
       </section>
 
       {/* Membership Tiers */}
-      <section className="py-20 px-6 bg-yellow-900/10 border-t border-yellow-500/20">
+      <section className="py-20 px-6 bg-white/[0.02] border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center">MEMBERSHIP TIERS</h2>
+          <h2 className="text-3xl md:text-4xl font-black mb-12 text-center uppercase tracking-[0.08em]">Membership Tiers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
@@ -124,20 +123,20 @@ export default function WiseshinePage() {
               <div
                 key={tier.tier}
                 className={`p-8 rounded-2xl border transition-all ${
-                  tier.highlight
-                    ? 'bg-gradient-to-br from-yellow-900/30 to-transparent border-yellow-500/50 ring-2 ring-yellow-500/30'
-                    : 'bg-gray-900/50 border-gray-700 hover:border-yellow-500/30'
+                tier.highlight
+                    ? 'bg-gradient-to-br from-[#C7FF2E]/15 to-transparent border-[#C7FF2E]/50 ring-2 ring-[#C7FF2E]/20'
+                    : 'bg-white/[0.04] border-white/10 hover:border-[#C7FF2E]/30'
                 }`}
               >
-                <h3 className="text-2xl font-bold text-yellow-400 mb-2">{tier.tier}</h3>
+                <h3 className="text-2xl font-bold text-[#C7FF2E] mb-2">{tier.tier}</h3>
                 <p className="text-3xl font-black mb-6">
                   {tier.price}
                   {tier.price !== 'Custom' && <span className="text-sm text-gray-400">/month</span>}
                 </p>
                 <ul className="space-y-3">
                   {tier.features.map((feature) => (
-                    <li key={feature} className="text-gray-300 flex items-center gap-2">
-                      <span className="text-yellow-400">✓</span>
+                    <li key={feature} className="text-[#B7BDC8] flex items-center gap-2">
+                      <span className="text-[#C7FF2E]">✓</span>
                       {feature}
                     </li>
                   ))}
@@ -171,17 +170,17 @@ export default function WiseshinePage() {
       {/* CTA */}
       <section className="py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready for the Premium Experience?</h2>
-          <p className="text-gray-400 mb-8 text-lg">
-            Join WISE SHINE and experience excellence like never before.
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 uppercase tracking-[0.08em]">Ready for the premium experience?</h2>
+          <p className="text-[#B7BDC8] mb-8 text-lg">
+            Join Wise Shine and bring a higher finish to the WISE² brand family.
           </p>
-          <Link href="/prospects/new" className="px-8 py-4 bg-yellow-600 text-black rounded-lg font-bold hover:bg-yellow-500 transition-all inline-block">
+          <Link href="/prospects/new" className="px-8 py-4 bg-[#C7FF2E] text-black rounded-lg font-bold hover:brightness-110 transition-all inline-block">
             Join WISE SHINE
           </Link>
         </div>
       </section>
 
-      <Footer />
+      <PublicFooter />
     </div>
   );
 }

@@ -1,22 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// OAuth routes must never be prerendered. These read credentials from the
-// runtime environment and mint a per-request CSRF state; if Next.js decides
-// a branch is static it freezes that response at build time. That is exactly
-// what happened to Discord: DISCORD_CLIENT_ID was empty during the image
-// build, so the "not configured" redirect was baked in and served forever,
-// even though the running container has the credential.
+// Legacy compatibility route for the pre-move Google OAuth flow.
+// Some production OAuth clients may still be configured with the older
+// /auth/google/callback redirect URI, so we keep this path alive.
 export const dynamic = 'force-dynamic';
 
-
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const REDIRECT_URI =
-  process.env.GOOGLE_REDIRECT_URI ||
-  process.env.NEXT_PUBLIC_SITE_URL
-    ? `${(process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '')}/api/auth/google/callback`
-    : 'https://wise2.net/api/auth/google/callback';
+  process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/auth/google/callback`;
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   if (!GOOGLE_CLIENT_ID) {
     return NextResponse.json(
       { error: 'Google OAuth not configured' },

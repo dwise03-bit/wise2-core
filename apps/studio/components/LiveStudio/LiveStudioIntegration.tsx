@@ -295,7 +295,7 @@ export function LiveStudioIntegration() {
         <div className="flex-1 flex flex-col gap-4 p-4 overflow-auto">
           {/* Preview Canvas */}
           <OBSPreviewCanvas
-            sources={sources}
+            sources={sources as any}
             resolution={resolution}
             fps={fps}
             isLive={isStreaming}

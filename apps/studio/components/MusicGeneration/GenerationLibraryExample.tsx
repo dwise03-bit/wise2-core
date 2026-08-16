@@ -70,7 +70,7 @@ function generateMockGenerations(count: number = 12): GeneratedTrack[] {
       waveformData: Array.from({ length: 100 }, () => Math.random()),
       createdAt,
       modifiedAt: createdAt,
-      status: Math.random() > 0.1 ? 'complete' : Math.random() > 0.5 ? 'generating' : 'queued',
+      status: Math.random() > 0.1 ? 'complete' : Math.random() > 0.5 ? 'generating' : 'failed',
       progress: Math.random() > 0.1 ? 100 : Math.floor(Math.random() * 100),
       isFavorite: Math.random() > 0.8,
       tags: ['ai-generated', 'music', 'track'],

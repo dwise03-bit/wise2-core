@@ -281,7 +281,7 @@ export default function LoginPage() {
             type="button"
             onClick={() => {
               analytics.track('google_signin_click');
-              window.location.href = '/api/auth/google/authorize';
+              window.location.href = '/auth/google/authorize';
             }}
             className="w-full py-2 border border-wise-subtle hover:border-wise-primary text-wise-primary rounded-md transition-colors hover:bg-wise-surface flex items-center justify-center gap-2"
           >

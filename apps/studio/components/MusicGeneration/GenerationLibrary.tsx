@@ -949,7 +949,7 @@ function DetailsPanel({
                   ? '✓ Ready'
                   : generation.status === 'generating'
                     ? '⏳ Generating'
-                    : generation.status === 'queued'
+                    : (generation.status as any) === 'queued'
                       ? '⏳ Queued'
                       : '✗ Failed'}
               </span>

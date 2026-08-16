@@ -1,18 +1,9 @@
 {
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "env": {
-    "NEXT_PUBLIC_SITE_URL": {
-      "description": "Public site URL",
-      "required": false
-    },
-    "NEXT_PUBLIC_API_URL": {
-      "description": "Public API URL",
-      "required": false
-    }
-  },
   "headers": [
     {
       "source": "/api/:path*",

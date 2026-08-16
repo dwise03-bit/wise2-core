@@ -1,121 +1,104 @@
-# Brand Context: WISE² Empire OS
+# Brand Context: WISE² United Identity
 
 ## Brand Identity
 
-- **Name**: WISE² (superscript 2)
-- **Location**: Atlanta, GA
-- **Category**: AI-native Business Operating System
-- **Stage**: Production-ready, multi-division expansion
+- **Name**: WISE²
+- **Category**: Founder-led business OS and multi-division brand system
+- **Home Base**: Atlanta, GA
+- **Status**: New canonical identity for the website and core brand narrative
 - **Official Site**: https://wise2.net
 
-## Taglines
+## Core Lines
 
-- **Primary**: "BUILDING EMPIRES, CHANGING CULTURE"
-- **Secondary**: "One System. Three Powered Businesses. Four Leaders."
-- **Tertiary**: "Together We Build Legacy."
+- **Primary**: "Building empires. Changing culture."
+- **Secondary**: "One system. Three powered businesses. Four leaders."
+- **Tertiary**: "Together we build legacy."
 
-## Visual Identity (v12.0 Empire)
+## Visual Identity
 
-### Color Palette
-- **Ground**: Void Black (#07080A)
-- **Primary Accent**: Empire Green (#39FF14)
-- **Text**: Chrome (#C8CCD4), Chrome Bright (#E8EAEF), Chrome Dim (#6B7080)
-- **Sub-Brand Colors**:
-  - Piff City: Studio Purple (#9333EA)
-  - Wise Defense: Gold Thread (#C5A55A)
+### Palette
+
+- **Void Black**: `#050505`
+- **Chrome**: `#E6E8EC`
+- **Chrome Dim**: `#A0A7B3`
+- **Neon Lime**: `#C7FF2E`
+- **Studio Purple**: `#B36BFF`
+- **Signal White**: `#FFFFFF`
 
 ### Typography
-- **Headlines**: Segoe UI, 800 weight, uppercase, +0.06em tracking
-- **Body**: Segoe UI, 400 weight, Chrome Dim text
-- **Data**: Monospace, all technical content
+
+- **Display**: Orbitron, uppercase, heavyweight, wide tracking
+- **Body**: Raleway or a similar clean sans-serif
+- **Supporting Data**: Monospace where precision matters
+
+### Visual Tone
+
+- Cinematic
+- Metallic
+- Premium but street-rooted
+- High contrast with neon edge lighting
+- Large-scale, poster-like compositions
 
 ## Brand Architecture
 
 ```
-WISE² (Parent)
-├── Wise Shine (Premium Detailing, Empire Green)
-├── Piff City Creative Studios (Music/Media, Studio Purple)
-└── Wise Defense (Security & Tech, Gold Thread)
+WISE² (Parent / Business OS)
+├── Wise Shine (Premium Detailing)
+├── Piff City Creative Studios (Music / Media)
+└── Wise Defense (Security / Tech)
 ```
-
-## Audience
-
-- **Primary**: Builders, founders, entrepreneurs who need production-grade infrastructure
-- **Secondary**: Small business owners, creative studios, tech services firms
-- **Tertiary**: Enterprises looking for flexible, modular systems
 
 ## Positioning
 
-"The AI-native business operating system for builders who ship, not theorize. Built by hustlers who design, implement, and execute relentlessly."
+WISE² is the operating layer for founders who want a brand that looks like a movement and runs like a system. It blends premium design, business infrastructure, and culture-first storytelling into one identity.
 
-## Brand Personality
+## Personality
 
-- **Hustler**: Executes, ships, doesn't theorize
-- **Builder**: Production-grade quality, not demos
-- **Empire**: Multi-business thinking, scalable architecture
-- **Legacy**: Built for permanence, not trends
-- **Culture**: Atlanta-rooted, ambitious, uncompromising
+- Founder-led
+- High conviction
+- Precise
+- Legacy-minded
+- Culture-aware
+- Production-grade
 
-## Brand Voice
+## Voice
 
-### Tone
-- Direct, no-nonsense
-- Confident, never arrogant
-- Empowering, action-oriented
-- Professional but accessible
-- Speaks to builders, not enterprises
+- Direct, confident, and clear
+- Built for builders and operators
+- Proud of the aesthetic, but anchored in execution
+- Speaks in outcomes, systems, and legacy
 
-### Values
-- **Affordability**: Enterprise-grade without enterprise costs
-- **Execution**: Shipping over theorizing
-- **Design Excellence**: Thoughtful, deliberate choices
-- **Accessibility**: Built for the struggling business owner
-- **Ambition**: No limits on what you can build
+## Homepage Direction
 
-## Brand Mission
+The homepage should feel like the poster brought to life:
 
-Help ambitious builders turn their dreams into reality by providing affordable, production-ready infrastructure they can trust to scale from $0 to millions in revenue.
-
-## Key Differentiators
-
-1. **One Platform, No Fragmentation**: Build, sell, deploy, monitor, automate, recover, scale
-2. **AI-Native Architecture**: Every system integrated with AI reasoning and orchestration
-3. **Multi-Division Design**: Supports 3+ separate businesses under one operating system
-4. **Production-Grade from Day One**: No sandbox, no training wheels, real infrastructure
-5. **Founded by Builders**: Designed and executed by people who actually ship
-
-## Goals
-
-- Grow adoption among ambitious builders and founders
-- Establish WISE² as the default platform for multi-business operators
-- Maintain production-grade quality and reliability (99.99% uptime)
-- Build community and legacy around the platform
-- Create 10,000+ success stories within 2 years
-
-## Metrics
-
-- **Platform Adoption**: Active users, monthly deployments, revenue
-- **Business Owner Success**: Revenue generated by customers, jobs created, growth stories
-- **Reliability**: 99.99% uptime, incident response time, customer satisfaction
-- **Brand Health**: NPS, social mention volume, organic growth rate
+- Hero-first and image-led
+- Chrome, lime, and purple accents on a black base
+- Bold typography with short, declarative lines
+- Strong references to the three businesses and four leaders
+- Clear invitation to start, explore, or open the system
 
 ## Messaging Framework
 
-### Problem
-"You're tired of piecing together fragmented tools, paying enterprise prices on a startup budget, waiting for deploys, and choosing between 'good enough' and 'unaffordable.'"
+### What WISE² Is
 
-### Solution
-"WISE² is the production-ready, affordable, AI-native operating system for builders. One platform, no fragmentation."
+"A founder-led business OS built to unify brand, operations, and creative output."
 
-### Proof
-"99.99% uptime. 10M+ AI tasks completed. 500+ automations deployed. 24/7 AI workforce."
+### Why It Matters
 
-### Call to Action
-"START BUILDING" — No credit card required, no signup friction, production-ready in minutes.
+"Most brands look fragmented. WISE² is built to look and operate like one empire."
+
+### What Makes It Different
+
+"One system. Multiple businesses. Shared identity. Real legacy."
+
+### CTA
+
+"Start your build" or "Open the system"
 
 ---
 
-**Version**: 12.0 (Empire Identity)  
-**Last Updated**: 2026-08-01  
+**Version**: 13.0 (WISE² United Identity)  
+**Last Updated**: 2026-08-16  
 **Maintained By**: Daniel Wise (Founder)  
 **Status**: Canonical Brand Reference

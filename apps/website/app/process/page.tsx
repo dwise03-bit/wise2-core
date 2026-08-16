@@ -1,4 +1,4 @@
-import { Footer } from '@/components/wise';
+import { PublicFooter } from '@/components/navigation';
 
 export default function ProcessPage() {
   const phases = [
@@ -46,14 +46,17 @@ export default function ProcessPage() {
 
   return (
     <>
-      <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20">
+      <main className="bg-[#050505] min-h-screen pt-32 pb-20 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              Our <span className="text-[#0094FF]">Process</span>
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Five strategic phases to turn your idea into a thriving business.
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#B36BFF]/30 bg-[#B36BFF]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#B36BFF]">
+              Brand rollout
+              </div>
+              <h1 className="mt-6 text-6xl md:text-7xl font-black uppercase tracking-[0.08em] text-white mb-6">
+              Our <span className="text-[#C7FF2E]">Process</span>
+              </h1>
+            <p className="text-xl text-[#B7BDC8] max-w-3xl mx-auto">
+              Five deliberate phases to move from concept to a branded operating system with real momentum.
             </p>
           </div>
 
@@ -61,29 +64,29 @@ export default function ProcessPage() {
             {phases.map((p) => (
               <div
                 key={p.phase}
-                className="bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-8 md:p-12 hover:border-[#0094FF]/60 transition-all"
+                className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 md:p-12 hover:border-[#C7FF2E]/40 transition-all"
               >
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="flex-shrink-0">
                     <div className="text-6xl mb-4">{p.icon}</div>
-                    <div className="text-[#0094FF] font-bold text-lg">Phase {p.phase}</div>
+                    <div className="text-[#C7FF2E] font-bold text-lg">Phase {p.phase}</div>
                   </div>
 
                   <div className="flex-grow">
                     <h3 className="text-3xl font-bold text-white mb-2">{p.name}</h3>
-                    <p className="text-gray-300 mb-6">{p.description}</p>
+                    <p className="text-[#B7BDC8] mb-6">{p.description}</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <p className="text-sm text-gray-400 mb-2">TIMELINE</p>
+                        <p className="text-sm text-[#9BA3B1] mb-2">TIMELINE</p>
                         <p className="text-white font-semibold">{p.duration}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-400 mb-2">DELIVERABLES</p>
+                        <p className="text-sm text-[#9BA3B1] mb-2">DELIVERABLES</p>
                         <ul className="space-y-1">
                           {p.deliverables.map((d) => (
-                            <li key={d} className="text-gray-300 text-sm flex items-center gap-2">
-                              <span className="text-[#0094FF]">✓</span> {d}
+                            <li key={d} className="text-[#B7BDC8] text-sm flex items-center gap-2">
+                              <span className="text-[#C7FF2E]">✓</span> {d}
                             </li>
                           ))}
                         </ul>
@@ -96,17 +99,17 @@ export default function ProcessPage() {
           </div>
 
           <div className="mt-20 text-center">
-            <p className="text-gray-300 mb-8">Ready to start?</p>
+            <p className="text-[#B7BDC8] mb-8">Ready to open the system?</p>
             <a
-              href="/pricing"
-              className="inline-block px-12 py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
+              href="/start-your-build"
+              className="inline-block px-12 py-4 bg-[#C7FF2E] text-black rounded-lg font-bold hover:brightness-110 transition-all"
             >
-              View Pricing →
+              Start Your Build →
             </a>
           </div>
         </div>
       </main>
-      <Footer />
+      <PublicFooter />
     </>
   );
 }

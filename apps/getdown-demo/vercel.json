@@ -1,0 +1,16 @@
+{
+  "installCommand": "npm install --no-audit --no-fund",
+  "buildCommand": "next build",
+  "framework": "nextjs",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
+  ]
+}

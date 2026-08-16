@@ -70,8 +70,8 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
       transition={{ duration: 0.3 }}
       className="fixed top-0 left-0 right-0 z-50 h-16 border-b"
       style={{
-        borderColor: 'rgba(57, 255, 20, 0.2)',
-        background: 'linear-gradient(to right, #0B0B0B, #050505, #0B0B0B)',
+        borderColor: 'rgba(199, 255, 46, 0.2)',
+        background: 'linear-gradient(to right, #090909, #050505, #090909)',
         backdropFilter: 'blur(10px)',
       }}
     >
@@ -82,12 +82,17 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             href="/"
             className="flex items-center gap-2 flex-shrink-0"
           >
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ background: 'linear-gradient(135deg, #39FF14, #7CFF00)' }}>
-              W2
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-black font-black text-sm" style={{ background: 'linear-gradient(135deg, #C7FF2E, #B36BFF)' }}>
+              W
             </div>
-            <span className="hidden sm:inline font-bold text-white text-lg tracking-widest" style={{ fontFamily: 'Orbitron' }}>
+            <div className="hidden sm:flex flex-col leading-none">
+              <span className="font-bold text-white text-lg tracking-widest" style={{ fontFamily: 'Orbitron' }}>
               WISE²
-            </span>
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.35em] text-[#9BA3B1]">
+                Business OS
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -101,8 +106,8 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                   color: '#8D98A5',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#39FF14';
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                  e.currentTarget.style.color = '#C7FF2E';
+                  e.currentTarget.style.backgroundColor = 'rgba(199, 255, 46, 0.1)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = '#8D98A5';
@@ -122,8 +127,8 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                   color: '#8D98A5',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#39FF14';
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                  e.currentTarget.style.color = '#C7FF2E';
+                  e.currentTarget.style.backgroundColor = 'rgba(199, 255, 46, 0.1)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = '#8D98A5';
@@ -152,11 +157,11 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
                     className="absolute top-full left-0 mt-1 w-48 rounded-lg overflow-hidden"
-                    style={{
-                      border: '1px solid rgba(57, 255, 20, 0.2)',
-                      backgroundColor: 'rgba(11, 11, 11, 0.95)',
-                      backdropFilter: 'blur(10px)',
-                      boxShadow: '0 0 20px rgba(57, 255, 20, 0.1)',
+                      style={{
+                        border: '1px solid rgba(199, 255, 46, 0.2)',
+                        backgroundColor: 'rgba(11, 11, 11, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                      boxShadow: '0 0 20px rgba(199, 255, 46, 0.1)',
                     }}
                   >
                     {MORE_LINKS.map((link) => (
@@ -166,11 +171,11 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
                         className="block px-4 py-2.5 text-sm transition-all duration-200"
                         style={{
                           color: '#8D98A5',
-                          borderBottom: '1px solid rgba(57, 255, 20, 0.1)',
+                          borderBottom: '1px solid rgba(199, 255, 46, 0.1)',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#39FF14';
-                          e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
+                          e.currentTarget.style.color = '#C7FF2E';
+                          e.currentTarget.style.backgroundColor = 'rgba(199, 255, 46, 0.1)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.color = '#8D98A5';
@@ -189,65 +194,65 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Free AI Audit CTA - Secondary (Electric Blue) */}
+            {/* Primary build CTA */}
             <Link
-              href="/audit"
+              href="/start-your-build"
               className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
               style={{
-                color: '#0094FF',
-                backgroundColor: 'rgba(0, 148, 255, 0.1)',
-                border: '1px solid rgba(0, 148, 255, 0.3)',
+                color: '#C7FF2E',
+                backgroundColor: 'rgba(199, 255, 46, 0.1)',
+                border: '1px solid rgba(199, 255, 46, 0.3)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 148, 255, 0.2)';
-                e.currentTarget.style.borderColor = 'rgba(0, 148, 255, 0.5)';
-                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 148, 255, 0.3)';
+                e.currentTarget.style.backgroundColor = 'rgba(199, 255, 46, 0.2)';
+                e.currentTarget.style.borderColor = 'rgba(199, 255, 46, 0.5)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(199, 255, 46, 0.3)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 148, 255, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(0, 148, 255, 0.3)';
+                e.currentTarget.style.backgroundColor = 'rgba(199, 255, 46, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(199, 255, 46, 0.3)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              Get Free AI Audit
+              Start Your Build
             </Link>
 
-            {/* Login / Command Center - Primary (Neon Green) */}
+            {/* Login / Open System */}
             {isAuthenticated ? (
               <Link
                 href={dashboardUrl}
                 className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                 style={{
-                  backgroundColor: '#39FF14',
+                  backgroundColor: '#C7FF2E',
                   color: '#050505',
-                  boxShadow: '0 0 15px rgba(57, 255, 20, 0.3)',
+                  boxShadow: '0 0 15px rgba(199, 255, 46, 0.3)',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(199, 255, 46, 0.5)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(199, 255, 46, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                Command Center →
+                Open System →
               </Link>
             ) : (
               <Link
                 href={loginUrl}
                 className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
                 style={{
-                  backgroundColor: '#39FF14',
+                  backgroundColor: '#C7FF2E',
                   color: '#050505',
-                  boxShadow: '0 0 15px rgba(57, 255, 20, 0.3)',
+                  boxShadow: '0 0 15px rgba(199, 255, 46, 0.3)',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.5)';
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(199, 255, 46, 0.5)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(199, 255, 46, 0.3)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -280,7 +285,7 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
             transition={{ duration: 0.2 }}
             className="absolute top-16 left-0 right-0 lg:hidden"
             style={{
-              borderBottom: '1px solid rgba(57, 255, 20, 0.2)',
+              borderBottom: '1px solid rgba(199, 255, 46, 0.2)',
               backgroundColor: 'rgba(11, 11, 11, 0.95)',
               backdropFilter: 'blur(10px)',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
@@ -319,18 +324,18 @@ export const PublicNav: React.FC<PublicNavProps> = ({ showCommandCenter = true }
 
               {/* Mobile CTAs */}
               <Link
-                href="/audit"
-                className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10 border border-blue-500/30 hover:border-blue-500/50 hover:bg-blue-500/15 transition-all duration-200 text-center"
+                href="/start-your-build"
+                className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C7FF2E] bg-[#C7FF2E]/10 border border-[#C7FF2E]/30 hover:border-[#C7FF2E]/50 hover:bg-[#C7FF2E]/15 transition-all duration-200 text-center"
                 onClick={() => setMobileOpen(false)}
               >
-                Get Free AI Audit
+                Start Your Build
               </Link>
               <Link
                 href={isAuthenticated ? dashboardUrl : loginUrl}
-                className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 text-center"
+                className="block px-3 py-2.5 rounded-lg text-sm font-semibold text-black bg-[#C7FF2E] hover:brightness-110 transition-colors duration-200 text-center"
                 onClick={() => setMobileOpen(false)}
               >
-                {isAuthenticated ? 'Command Center' : 'Login'} →
+                {isAuthenticated ? 'Open System' : 'Login'} →
               </Link>
             </div>
           </motion.div>

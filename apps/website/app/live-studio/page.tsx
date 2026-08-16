@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import IntakeForm from '@/components/IntakeForm';
+import { getBrowserAuthToken } from '@/lib/auth-session';
 import { ArrowRight, Sparkles, Radio, MessageCircle, PlayCircle, CheckCircle2, Loader } from 'lucide-react';
 
 const stats = [
@@ -45,7 +46,7 @@ export default function LiveStudioLandingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = getBrowserAuthToken();
     setIsAuthenticated(!!token);
     setLoading(false);
   }, []);

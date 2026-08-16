@@ -16,6 +16,17 @@
       "details": "Starts all apps in parallel:\n- Website: localhost:3001\n- Dashboard: localhost:3002\n- Admin: localhost:3003\n- Studio: localhost:3005\n- API: localhost:3010"
     },
     {
+      "name": "getdown-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@wise2/getdown-demo",
+        "dev"
+      ],
+      "port": 3020,
+      "description": "Get Down Pressure Washing — Owner Demo Command Center"
+    },
+    {
       "name": "command-center",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

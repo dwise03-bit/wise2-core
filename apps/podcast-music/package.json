@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3006",
-    "build": "next build",
+    "build": "pnpm --filter @wise2/db prisma:generate && next build",
     "start": "next start -p 3006 -H 0.0.0.0",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",

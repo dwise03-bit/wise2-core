@@ -34,3 +34,4 @@ Thumbs.db
 *.tsbuildinfo
 dist/
 .next/
+.vercel

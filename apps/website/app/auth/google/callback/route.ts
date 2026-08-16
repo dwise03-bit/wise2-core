@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// OAuth routes must never be prerendered. These read credentials from the
-// runtime environment and mint a per-request CSRF state; if Next.js decides
-// a branch is static it freezes that response at build time. That is exactly
-// what happened to Discord: DISCORD_CLIENT_ID was empty during the image
-// build, so the "not configured" redirect was baked in and served forever,
-// even though the running container has the credential.
+// Legacy compatibility route for the pre-move Google OAuth flow.
+// Keep this route aligned with the old callback URI so existing Google
+// OAuth client settings continue to work.
 export const dynamic = 'force-dynamic';
-
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const REDIRECT_URI =
-  process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
+  process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/auth/google/callback`;
 const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net').replace(/\/$/, '');
+const COOKIE_DOMAIN = PUBLIC_SITE_URL.endsWith('wise2.net') ? '.wise2.net' : undefined;
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
@@ -24,20 +21,20 @@ export async function GET(request: NextRequest) {
   if (error) {
     console.error('Google OAuth error:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=google_rejected', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=google_rejected', PUBLIC_SITE_URL),
     );
   }
 
   if (!code) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=no_code', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=no_code', PUBLIC_SITE_URL),
     );
   }
 
   const savedState = request.cookies.get('google_oauth_state')?.value;
   if (state && savedState && state !== savedState) {
     return NextResponse.redirect(
-      new URL('/auth/login?error=state_mismatch', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=state_mismatch', PUBLIC_SITE_URL),
     );
   }
 
@@ -61,7 +58,7 @@ export async function GET(request: NextRequest) {
     }
 
     const tokenData = await tokenRes.json();
-    const { access_token, id_token, refresh_token, expires_in } = tokenData;
+    const { access_token, refresh_token, expires_in } = tokenData;
 
     const userRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${access_token}` },
@@ -92,6 +89,16 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60,
       path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
+    });
+
+    response.cookies.set('authUser', JSON.stringify(userData), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
     });
 
     response.cookies.set('google_token', access_token, {
@@ -100,6 +107,16 @@ export async function GET(request: NextRequest) {
       sameSite: 'lax',
       maxAge: expires_in || 3600,
       path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
+    });
+
+    response.cookies.set('authToken', access_token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: expires_in || 3600,
+      path: '/',
+      ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
     });
 
     if (refresh_token) {
@@ -109,6 +126,7 @@ export async function GET(request: NextRequest) {
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60,
         path: '/',
+        ...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {}),
       });
     }
 
@@ -119,7 +137,7 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('Google OAuth callback error:', err);
     return NextResponse.redirect(
-      new URL('/auth/login?error=oauth_failed', PUBLIC_SITE_URL),
+      new URL('/auth/signin?error=oauth_failed', PUBLIC_SITE_URL),
     );
   }
 }

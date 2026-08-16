@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AdminProviders } from '@/lib/admin-providers';
 
 export const metadata: Metadata = {
   title: 'WISE² Admin',
@@ -20,7 +21,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-black text-chrome font-sans">
-        {children}
+        <AdminProviders>{children}</AdminProviders>
       </body>
     </html>
   );

@@ -1,626 +1,275 @@
-'use client';
-
-import Link from 'next/link';
 import Image from 'next/image';
-import { Hero, PoweredBusinesses, Features, Stats, About, Footer } from '@/components/wise';
+import Link from 'next/link';
 
-// ── Section: What's Broken (Problem) ──────────────────────────────────────────
-function ProblemSection() {
-  const problems = [
-    { icon: '🔀', title: 'Tools That Don\'t Talk', text: '11+ disconnected apps. Zero unified view. Your team wastes hours each week stitching systems together.' },
-    { icon: '🕳️', title: 'Revenue Leaking Daily', text: 'Leads fall through the cracks, follow-ups slip, and invoices sit unpaid. Every gap costs you money.' },
-    { icon: '🔬', title: 'Decisions Made Blind', text: 'No real-time dashboard. No AI insight. You\'re flying without instruments while competitors use data.' },
-    { icon: '🔁', title: 'Hiring to Fix Systems', text: 'You\'re paying people to do things software should automate. That\'s not a team — that\'s a workaround.' },
-  ];
+const businessUnits = [
+  {
+    name: 'Wise Shine',
+    label: 'Premium detailing',
+    description:
+      'A precision service brand built for shine, finish, and first impressions that last.',
+    accent: 'from-[#C7FF2E]/30 to-transparent',
+  },
+  {
+    name: 'Piff City Creative Studios',
+    label: 'Music and media',
+    description:
+      'A creative engine for sound, story, visuals, and culture-making output.',
+    accent: 'from-[#B36BFF]/30 to-transparent',
+  },
+  {
+    name: 'WISE² Business OS',
+    label: 'Operating layer',
+    description:
+      'The system connecting the businesses, the leaders, and the daily execution that powers the brand.',
+    accent: 'from-white/20 to-transparent',
+  },
+];
 
+const pillars = [
+  {
+    title: 'Building empires',
+    text: 'Create durable systems that scale beyond one offer, one team, or one season.',
+  },
+  {
+    title: 'Changing culture',
+    text: 'Push the aesthetic, the standard, and the expectation for what a modern Black-led brand can look like.',
+  },
+  {
+    title: 'One system',
+    text: 'Connect operations, storytelling, commerce, and service into a single operating core.',
+  },
+  {
+    title: 'Together we build legacy',
+    text: 'Every launch, every client win, and every product adds to something bigger than a campaign.',
+  },
+];
+
+const metrics = [
+  { value: '1', label: 'system' },
+  { value: '3', label: 'powered businesses' },
+  { value: '4', label: 'leaders' },
+];
+
+export default function HomePage() {
   return (
-    <section className="bg-[#050505] py-24 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-            style={{ background: 'rgba(57, 255, 20, 0.1)', border: '1px solid rgba(57, 255, 20, 0.3)', color: '#39FF14' }}
-          >
-            THE PROBLEM
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-            Most Businesses Are <span style={{ color: '#E53935' }}>Running on Chaos</span>
-          </h2>
-          <p className="text-xl max-w-2xl mx-auto" style={{ color: '#8D98A5' }}>
-            The average small business uses 14 disconnected tools. That fragmentation costs you time, money, and your competitive edge.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {problems.map((p, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-2xl flex gap-5 transition-all duration-200"
-              style={{
-                background: 'linear-gradient(135deg, #0B0B0B, #1A1A1A)',
-                border: '1px solid rgba(57, 255, 20, 0.2)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.4)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.2)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <span className="text-3xl flex-shrink-0 mt-1">{p.icon}</span>
-              <div>
-                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#8D98A5' }}>{p.text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <p className="text-sm mb-6" style={{ color: '#8D98A5' }}>Sound familiar? You're not alone — and there&apos;s a fix.</p>
-          <Link
-            href="/audit"
-            className="inline-block px-8 py-4 rounded-lg font-bold transition-all duration-200"
-            style={{
-              background: '#39FF14',
-              color: '#050505',
-              boxShadow: '0 0 20px rgba(57, 255, 20, 0.2)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.4)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.2)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Get Your Free Business AI Audit →
-          </Link>
-        </div>
+    <main className="relative overflow-hidden bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-x-0 top-0 h-[36rem] bg-[radial-gradient(circle_at_top,rgba(199,255,46,0.18),transparent_42%),radial-gradient(circle_at_80%_18%,rgba(179,107,255,0.16),transparent_28%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] opacity-20" />
+        <div className="absolute left-[-8rem] top-1/3 h-64 w-64 rounded-full bg-[#C7FF2E]/10 blur-3xl" />
+        <div className="absolute right-[-8rem] top-1/4 h-80 w-80 rounded-full bg-[#B36BFF]/12 blur-3xl" />
       </div>
-    </section>
-  );
-}
 
-// ── Section: How It Works ──────────────────────────────────────────────────────
-function HowItWorksSection() {
-  const steps = [
-    {
-      num: '01',
-      title: 'Audit Your Operation',
-      text: 'Take our 5-minute Business AI Audit. We analyze your workflows, tools, team, and revenue — and show you exactly where AI will move the needle.',
-      cta: 'Start Free Audit',
-      href: '/audit',
-      color: '#0094FF',
-    },
-    {
-      num: '02',
-      title: 'Get Your AI Strategy',
-      text: 'A WISE² consultant reviews your audit results and maps a custom implementation plan — prioritized by ROI, not buzzwords.',
-      cta: 'Book a Consultation',
-      href: '/consulting',
-      color: '#39FF14',
-    },
-    {
-      num: '03',
-      title: 'Run Your Empire',
-      text: 'We deploy your WISE² Command Center: automations firing, dashboards live, revenue tracked. One system. Total control.',
-      cta: 'See the Platform',
-      href: '/platform',
-      color: '#39FF14',
-    },
-  ];
-
-  return (
-    <section className="bg-[#0B0B0B] py-24 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-            style={{ background: 'rgba(57, 255, 20, 0.1)', border: '1px solid rgba(57, 255, 20, 0.3)', color: '#39FF14' }}
-          >
-            HOW IT WORKS
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-            From Chaos to <span style={{ color: '#39FF14' }}>Command Center</span>
-          </h2>
-          <p className="text-xl max-w-xl mx-auto" style={{ color: '#8D98A5' }}>
-            Three steps from where you are to a business that runs with intelligence.
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="flex gap-8 p-8 rounded-2xl items-start transition-all duration-200"
-              style={{
-                background: 'linear-gradient(135deg, #050505, #1A1A1A)',
-                border: '1px solid rgba(57, 255, 20, 0.2)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.4)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.2)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div
-                className="text-4xl font-black flex-shrink-0 w-16 text-center leading-none pt-1"
-                style={{ color: step.color, opacity: 0.8 }}
-              >
-                {step.num}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-white mb-3">{step.title}</h3>
-                <p className="leading-relaxed mb-4" style={{ color: '#8D98A5' }}>{step.text}</p>
-                <Link
-                  href={step.href}
-                  className="inline-block text-sm font-bold transition-all duration-200"
-                  style={{ color: step.color, textShadow: `0 0 10px rgba(${step.color === '#39FF14' ? '57, 255, 20' : '0, 148, 255'}, 0)` }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.textShadow = `0 0 10px rgba(${step.color === '#39FF14' ? '57, 255, 20' : '0, 148, 255'}, 0.5)`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.textShadow = `0 0 10px rgba(${step.color === '#39FF14' ? '57, 255, 20' : '0, 148, 255'}, 0)`;
-                  }}
-                >
-                  {step.cta} →
-                </Link>
-              </div>
+      <section className="relative mx-auto max-w-7xl px-4 pb-12 pt-24 sm:px-6 lg:px-8 lg:pb-20 lg:pt-28">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative z-10">
+            <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#C7FF2E]">
+              Atlanta, GA
+              <span className="h-1 w-1 rounded-full bg-[#B36BFF]" />
+              Command Center
             </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-// ── Section: AI Audit CTA ──────────────────────────────────────────────────────
-function AuditCTASection() {
-  return (
-    <section
-      className="py-24 px-6"
-      style={{
-        background: 'linear-gradient(135deg, rgba(57, 255, 20, 0.08) 0%, rgba(57, 255, 20, 0.03) 50%, rgba(0,0,0,0) 100%)',
-        borderTop: '1px solid rgba(57, 255, 20, 0.15)',
-        borderBottom: '1px solid rgba(57, 255, 20, 0.15)',
-      }}
-    >
-      <div className="max-w-4xl mx-auto text-center">
-        <div
-          className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-          style={{ background: 'rgba(57, 255, 20, 0.15)', border: '1px solid rgba(57, 255, 20, 0.4)', color: '#39FF14' }}
-        >
-          FREE — NO CREDIT CARD REQUIRED
-        </div>
+            <h1 className="max-w-4xl text-5xl font-black uppercase leading-[0.88] tracking-[0.08em] text-white sm:text-6xl lg:text-7xl">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-[#D7DADF] to-[#8B929E]">
+                WISE²
+              </span>
+              <span className="mt-3 block text-[#C7FF2E]">
+                Business OS
+              </span>
+            </h1>
 
-        <h2 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-          What&apos;s Your<br />
-          <span style={{ color: '#39FF14' }}>Business AI Score?</span>
-        </h2>
-
-        <p className="text-xl max-w-2xl mx-auto mb-10" style={{ color: '#BFC4C9' }}>
-          In 5 minutes, get a personalized score from 0–100 that shows exactly where AI can save you time, money, and manual work — with specific recommendations for your business type.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <Link
-            href="/audit"
-            className="px-10 py-5 rounded-xl font-black text-lg transition-all duration-200 w-full sm:w-auto text-center"
-            style={{
-              background: '#39FF14',
-              color: '#050505',
-              boxShadow: '0 0 30px rgba(57, 255, 20, 0.3)',
-              letterSpacing: '0.05em',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(57, 255, 20, 0.5)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.3)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            TAKE THE FREE AI AUDIT
-          </Link>
-          <Link
-            href="/consulting"
-            className="px-10 py-5 rounded-xl font-bold text-lg transition-all duration-200 w-full sm:w-auto text-center"
-            style={{
-              background: 'rgba(57, 255, 20, 0.1)',
-              border: '1px solid rgba(57, 255, 20, 0.35)',
-              color: '#39FF14',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.15)';
-              e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.5)';
-              e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.35)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            Book a Consultation →
-          </Link>
-        </div>
-
-        <div className="flex gap-8 justify-center flex-wrap">
-          {['5-minute assessment', 'Personalized AI score', 'Custom recommendations', 'Zero spam, ever'].map((badge) => (
-            <div key={badge} className="flex items-center gap-2 text-sm" style={{ color: '#8D98A5' }}>
-              <span style={{ color: '#39FF14' }}>✓</span>
-              {badge}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ── Section: Pricing Teaser ────────────────────────────────────────────────────
-function PricingTeaserSection() {
-  const plans = [
-    {
-      name: 'Starter',
-      planId: 'STARTER',
-      price: 29,
-      tagline: 'Get the foundation right',
-      features: ['1 workspace', 'Core dashboard', 'Basic analytics', 'Email support'],
-      cta: 'Start Free Trial',
-      highlight: false,
-      color: '#0094FF',
-    },
-    {
-      name: 'Professional',
-      planId: 'PRO',
-      price: 99,
-      tagline: 'For growing operations',
-      features: ['5 workspaces', 'Advanced analytics', 'API access', 'Priority support', 'Custom integrations', 'RBAC'],
-      cta: 'Start 14-Day Trial',
-      highlight: true,
-      color: '#39FF14',
-    },
-    {
-      name: 'Enterprise',
-      planId: 'ENTERPRISE',
-      price: null,
-      tagline: 'Custom for your organization',
-      features: ['Unlimited workspaces', 'Dedicated API', '24/7 support', 'SSO & compliance', 'Custom onboarding'],
-      cta: 'Schedule Demo',
-      highlight: false,
-      color: '#0094FF',
-    },
-  ];
-
-  return (
-    <section className="bg-[#050505] py-24 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-            style={{ background: 'rgba(57, 255, 20, 0.1)', border: '1px solid rgba(57, 255, 20, 0.3)', color: '#39FF14' }}
-          >
-            PRICING
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-            Simple, <span style={{ color: '#39FF14' }}>Transparent Pricing</span>
-          </h2>
-          <p className="text-xl max-w-xl mx-auto" style={{ color: '#8D98A5' }}>
-            14-day free trial. Cancel anytime. No hidden fees.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          {plans.map((plan, i) => (
-            <div
-              key={i}
-              className="rounded-2xl p-8 transition-all duration-200"
-              style={plan.highlight ? {
-                background: 'linear-gradient(to bottom, rgba(57, 255, 20, 0.12), rgba(57, 255, 20, 0.04))',
-                border: `2px solid ${plan.color}`,
-              } : {
-                background: 'linear-gradient(135deg, #0B0B0B, #1A1A1A)',
-                border: '1px solid rgba(57, 255, 20, 0.2)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = plan.highlight ? plan.color : 'rgba(57, 255, 20, 0.4)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = plan.highlight ? plan.color : 'rgba(57, 255, 20, 0.2)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              {plan.highlight && (
-                <div className="mb-4 inline-block px-3 py-1 rounded-full text-xs font-bold text-[#050505]"
-                  style={{ background: '#39FF14' }}>
-                  MOST POPULAR
-                </div>
-              )}
-              <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
-              <p className="text-sm mb-6" style={{ color: '#8D98A5' }}>{plan.tagline}</p>
-
-              <div className="mb-8">
-                {plan.price ? (
-                  <>
-                    <span className="text-4xl font-black" style={{ color: plan.color }}>${plan.price}</span>
-                    <span className="text-sm ml-1" style={{ color: '#8D98A5' }}>/mo</span>
-                  </>
-                ) : (
-                  <span className="text-3xl font-black text-white">Custom</span>
-                )}
-              </div>
-
-              <ul className="space-y-2 mb-8">
-                {plan.features.map((f, fi) => (
-                  <li key={fi} className="flex items-center gap-2 text-sm" style={{ color: '#BFC4C9' }}>
-                    <span style={{ color: plan.color }}>✓</span>{f}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                href={plan.price === null ? '/contact' : `/checkout?plan=${plan.planId}`}
-                className="block text-center py-3 rounded-lg font-bold text-sm transition-all duration-200"
-                style={plan.highlight
-                  ? {
-                      background: '#39FF14',
-                      color: '#050505',
-                      boxShadow: '0 0 16px rgba(57, 255, 20, 0.3)',
-                    }
-                  : {
-                      background: 'rgba(57, 255, 20, 0.1)',
-                      color: '#0094FF',
-                      border: '1px solid rgba(0, 148, 255, 0.3)',
-                    }}
-                onMouseEnter={(e) => {
-                  if (plan.highlight) {
-                    e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.5)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (plan.highlight) {
-                    e.currentTarget.style.boxShadow = '0 0 16px rgba(57, 255, 20, 0.3)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }
-                }}
-              >
-                {plan.cta}
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center">
-          <Link href="/pricing" className="text-sm font-semibold transition-all duration-200" style={{ color: '#39FF14' }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.textShadow = '0 0 10px rgba(57, 255, 20, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.textShadow = 'none';
-            }}
-          >
-            See full pricing comparison →
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ── Section: Consulting CTA ────────────────────────────────────────────────────
-function ConsultingCTASection() {
-  return (
-    <section className="bg-[#0B0B0B] py-24 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-      <div className="max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div
-              className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-              style={{ background: 'rgba(57, 255, 20, 0.1)', border: '1px solid rgba(57, 255, 20, 0.3)', color: '#39FF14' }}
-            >
-              WISE² CONSULTING
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              Want Expert Eyes on Your Business?
-            </h2>
-            <p className="leading-relaxed mb-8" style={{ color: '#8D98A5' }}>
-              Our consulting team — led by Daniel and Darrin Wise — will audit your operation, build your AI strategy, and implement WISE² to spec. We don&apos;t just give you software. We give you a running system.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#B7BDC8] sm:text-xl">
+              Building empires, changing culture. WISE² is the brand system for
+              founders who want a sharper identity, stronger execution, and a
+              legacy that reads like a movement.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/consulting"
-                className="px-8 py-4 rounded-lg font-bold text-center transition-all duration-200"
-                style={{
-                  background: '#39FF14',
-                  color: '#050505',
-                  boxShadow: '0 0 20px rgba(57, 255, 20, 0.3)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.5)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(57, 255, 20, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
+                href="/start-your-build"
+                className="inline-flex items-center justify-center rounded-full border border-[#C7FF2E]/40 bg-[#C7FF2E] px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-black transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(199,255,46,0.35)]"
               >
-                Explore Consulting →
+                Start Your Build
               </Link>
               <Link
-                href="/contact"
-                className="px-8 py-4 rounded-lg font-bold text-center transition-all duration-200"
-                style={{
-                  background: 'rgba(57, 255, 20, 0.1)',
-                  border: '1px solid rgba(57, 255, 20, 0.35)',
-                  color: '#39FF14',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.35)';
-                }}
+                href="/powered-businesses"
+                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#B36BFF]/40 hover:bg-[#B36BFF]/10"
               >
-                Contact Us
+                See the Businesses
               </Link>
+            </div>
+
+            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+              {metrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-sm"
+                >
+                  <div className="text-3xl font-black uppercase tracking-[0.16em] text-[#C7FF2E]">
+                    {metric.value}
+                  </div>
+                  <div className="mt-1 text-xs uppercase tracking-[0.3em] text-[#9BA3B1]">
+                    {metric.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-4">
-            {[
-              { icon: '🎯', title: 'AI Strategy Session', text: 'Map out your automation roadmap in a 90-minute strategy call with a WISE² expert.' },
-              { icon: '🔧', title: 'Implementation', text: 'We build, configure, and deploy your custom WISE² setup — done for you.' },
-              { icon: '📈', title: 'Ongoing Advisory', text: 'Monthly check-ins, system optimization, and growth strategy as you scale.' },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex gap-4 p-5 rounded-xl transition-all duration-200"
-                style={{
-                  background: 'linear-gradient(135deg, #050505, #1A1A1A)',
-                  border: '1px solid rgba(57, 255, 20, 0.2)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.4)';
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.2)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                <div>
-                  <h3 className="font-bold text-white mb-1">{item.title}</h3>
-                  <p className="text-sm" style={{ color: '#8D98A5' }}>{item.text}</p>
+          <div className="relative">
+            <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(199,255,46,0.18),transparent_55%),radial-gradient(circle_at_75%_20%,rgba(179,107,255,0.18),transparent_30%)] blur-2xl" />
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#090909]/90 shadow-[0_0_90px_rgba(0,0,0,0.55)]">
+              <div className="border-b border-white/10 px-5 py-4">
+                <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.32em] text-[#9BA3B1]">
+                  <span>New Brand Identity</span>
+                  <span className="text-[#C7FF2E]">Legacy mode</span>
                 </div>
               </div>
-            ))}
+              <div className="relative aspect-[1672/941] bg-black">
+                <Image
+                  src="/brand/wise2-brand-identity.png"
+                  alt="WISE² new brand identity poster"
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,5,0.86),transparent_30%),radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.08),transparent_28%)]" />
+                <div className="pointer-events-none absolute inset-x-5 bottom-5 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 backdrop-blur-md">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-[#C7FF2E]">
+                    One system. Three powered businesses. Four leaders.
+                  </p>
+                  <p className="mt-1 text-sm text-[#E5E8EC]">
+                    Together we build legacy.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
 
-// ── Section: Final CTA ─────────────────────────────────────────────────────────
-function FinalCTASection() {
-  return (
-    <section
-      className="py-28 px-6 text-center"
-      style={{
-        background: 'radial-gradient(ellipse at center, rgba(57, 255, 20, 0.08) 0%, rgba(0,0,0,0) 70%)',
-        borderTop: '1px solid rgba(57, 255, 20, 0.12)',
-      }}
-    >
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-          Ready to Run Your<br />
-          <span style={{ color: '#39FF14' }}>Business Like a System?</span>
-        </h2>
-        <p className="text-xl mb-10 max-w-xl mx-auto" style={{ color: '#BFC4C9' }}>
-          Join businesses using WISE² to automate operations, make smarter decisions, and build lasting legacies.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/audit"
-            className="px-10 py-5 rounded-xl font-black text-lg transition-all duration-200"
-            style={{
-              background: '#39FF14',
-              color: '#050505',
-              boxShadow: '0 0 30px rgba(57, 255, 20, 0.3)',
-              letterSpacing: '0.05em',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 40px rgba(57, 255, 20, 0.5)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.3)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            START FREE — GET MY AI SCORE
-          </Link>
-          <Link
-            href="/pricing"
-            className="px-10 py-5 rounded-xl font-bold text-lg transition-all duration-200"
-            style={{
-              background: 'rgba(57, 255, 20, 0.1)',
-              border: '1px solid rgba(57, 255, 20, 0.35)',
-              color: '#39FF14',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.15)';
-              e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.5)';
-              e.currentTarget.style.boxShadow = '0 0 15px rgba(57, 255, 20, 0.2)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.35)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            See Pricing
-          </Link>
+      <section className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.38em] text-[#B36BFF]">
+              Brand architecture
+            </p>
+            <h2 className="mt-3 text-3xl font-black uppercase tracking-[0.08em] text-white sm:text-4xl">
+              Three businesses. One operating system.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-sm leading-7 text-[#AAB1BC] sm:text-base">
+            The poster is the promise. The homepage is the proof. Every part of
+            the experience should feel like a high-trust, high-output studio for
+            founders who are building something bigger than a service page.
+          </p>
         </div>
-        <p className="mt-6 text-sm" style={{ color: '#8D98A5' }}>14-day free trial • No credit card required • Cancel anytime</p>
-      </div>
-    </section>
-  );
-}
 
-// ── Root Page ──────────────────────────────────────────────────────────────────
-export default function Home() {
-  return (
-    <main>
-      {/* 1. Cinematic Hero with founder portraits + primary CTA */}
-      <Hero />
+        <div className="grid gap-5 lg:grid-cols-3">
+          {businessUnits.map((unit) => (
+            <article
+              key={unit.name}
+              className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${unit.accent} opacity-70`} />
+              <div className="relative">
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C7FF2E]">
+                  {unit.label}
+                </p>
+                <h3 className="mt-3 text-2xl font-black uppercase tracking-[0.08em] text-white">
+                  {unit.name}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[#B7BDC8]">
+                  {unit.description}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-      {/* 2. Problem — what's broken for most businesses */}
-      <ProblemSection />
+      <section className="relative border-y border-white/10 bg-[#070707]/90">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.38em] text-[#C7FF2E]">
+                Brand statement
+              </p>
+              <h2 className="mt-3 text-3xl font-black uppercase tracking-[0.08em] text-white sm:text-4xl">
+                This is not a refresh.
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-8 text-[#B7BDC8]">
+                This is a full identity shift toward a more cinematic,
+                founder-led, legacy-focused WISE². The new visual language should
+                feel premium, electric, and unmistakably rooted in Atlanta.
+              </p>
 
-      {/* 3. Stats — impact numbers */}
-      <Stats />
+              <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-6">
+                <p className="text-[11px] uppercase tracking-[0.34em] text-[#9BA3B1]">
+                  Primary line
+                </p>
+                <p className="mt-3 text-2xl font-black uppercase tracking-[0.12em] text-[#F3F5F7]">
+                  Building empires. Changing culture.
+                </p>
+                <p className="mt-4 text-sm uppercase tracking-[0.24em] text-[#C7FF2E]">
+                  Together we build legacy.
+                </p>
+              </div>
+            </div>
 
-      {/* 4. How It Works — 3-step journey */}
-      <HowItWorksSection />
+            <div className="grid gap-4 sm:grid-cols-2">
+              {pillars.map((pillar) => (
+                <article
+                  key={pillar.title}
+                  className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-6"
+                >
+                  <h3 className="text-xl font-bold uppercase tracking-[0.08em] text-white">
+                    {pillar.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-[#B7BDC8]">
+                    {pillar.text}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* 5. AI Audit CTA — primary revenue entry */}
-      <AuditCTASection />
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(199,255,46,0.12),rgba(179,107,255,0.12),rgba(255,255,255,0.03))] p-8 sm:p-10 lg:p-12">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.36em] text-[#C7FF2E]">
+                Next step
+              </p>
+              <h2 className="mt-3 text-3xl font-black uppercase tracking-[0.08em] text-white sm:text-4xl">
+                Open the system.
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-[#E0E4EA]">
+                Explore the businesses, step into the studio, or start a build
+                that reflects the new WISE² identity from day one.
+              </p>
+            </div>
 
-      {/* 6. Platform Capabilities */}
-      <Features />
-
-      {/* 7. Powered Businesses — PIFF CITY, WISE SHINE */}
-      <PoweredBusinesses />
-
-      {/* 8. About — mission and founders */}
-      <About />
-
-      {/* 9. Pricing Teaser */}
-      <PricingTeaserSection />
-
-      {/* 10. Consulting CTA */}
-      <ConsultingCTASection />
-
-      {/* 11. Final CTA */}
-      <FinalCTASection />
-
-      {/* 12. Footer */}
-      <Footer />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/studio"
+                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-black/35 px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-200 hover:-translate-y-0.5 hover:border-[#B36BFF]/40 hover:bg-[#B36BFF]/10"
+              >
+                Open the Studio
+              </Link>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center justify-center rounded-full border border-[#C7FF2E]/40 bg-[#C7FF2E] px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-black transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(199,255,46,0.35)]"
+              >
+                Command Center
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { clearBrowserAuthSession, getBrowserAuthToken, getBrowserAuthUser } from '@/lib/auth-session';
 
 interface DashboardMetrics {
   revenue: number;
@@ -67,16 +68,22 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userEmail = localStorage.getItem('userEmail');
-    const userId = localStorage.getItem('userId');
+    const token = getBrowserAuthToken();
+    const sessionUser = getBrowserAuthUser();
 
     if (!token) {
       router.push('/login');
       return;
     }
 
-    setUser({ email: userEmail || '', userId: userId ?? undefined });
+    setUser(
+      sessionUser
+        ? {
+            email: String(sessionUser.email ?? ''),
+            userId: String(sessionUser.userId ?? sessionUser.id ?? ''),
+          }
+        : null
+    );
     fetchMetrics(token);
   }, [router]);
 
@@ -131,9 +138,7 @@ export default function DashboardPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userId');
+    clearBrowserAuthSession();
     router.push('/');
   };
 

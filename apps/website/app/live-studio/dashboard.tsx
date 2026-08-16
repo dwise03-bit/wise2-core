@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getBrowserAuthToken } from '@/lib/auth-session';
 import {
   Radio,
   Zap,
@@ -55,7 +56,7 @@ export default function LiveStudioDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = getBrowserAuthToken();
     if (!token) {
       router.push('/login');
       return;
@@ -101,7 +102,7 @@ export default function LiveStudioDashboard() {
       const res = await fetch(`/api/v1/live-studio/stream/${action}`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${getBrowserAuthToken() ?? ''}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

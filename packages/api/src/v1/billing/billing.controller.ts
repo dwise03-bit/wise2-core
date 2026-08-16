@@ -27,15 +27,27 @@ export class BillingController {
       planId: string;
       email: string;
       fullName: string;
+      billingCycle?: 'monthly' | 'annual';
       successUrl: string;
       cancelUrl: string;
     },
   ) {
     try {
+      if (!body.planId) {
+        throw new BadRequestException('Plan ID is required');
+      }
+      if (!body.email) {
+        throw new BadRequestException('Email is required');
+      }
+
       const { url, sessionId } = await this.billingService.createCheckoutSession(
         body.email, // Will be userId after auth
         body.planId,
         body.email,
+        body.fullName,
+        body.billingCycle,
+        body.successUrl,
+        body.cancelUrl,
       );
 
       // Track event
