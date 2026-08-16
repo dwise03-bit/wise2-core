@@ -142,7 +142,6 @@ class GenerationDatabase {
       ...generation,
       status,
       ...updates,
-      updatedAt: new Date().toISOString(),
     };
 
     this.generations.set(id, updated);
@@ -161,7 +160,6 @@ class GenerationDatabase {
     const updated: GenerationMetadata = {
       ...generation,
       progress: Math.min(100, Math.max(0, progress)),
-      updatedAt: new Date().toISOString(),
     };
 
     this.generations.set(id, updated);
@@ -208,7 +206,6 @@ class GenerationDatabase {
     const updated: GenerationMetadata = {
       ...generation,
       favorite,
-      updatedAt: new Date().toISOString(),
     };
 
     this.generations.set(id, updated);

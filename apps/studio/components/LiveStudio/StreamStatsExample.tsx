@@ -25,7 +25,6 @@ function generateMockStats(): StreamStats {
   };
 
   return {
-    timestamp: Date.now(),
     viewers: Math.max(100, Math.floor(1000 + Math.random() * 500 + Math.sin(Date.now() / 5000) * 300)),
     ...base,
   };
