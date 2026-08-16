@@ -160,8 +160,12 @@ export default function LiveStudio() {
                     style={{
                       width: '8px',
                       height: '120px',
-                      appearance: 'slider-vertical',
-                      writingMode: 'bt-lr',
+                      // Standard vertical-range recipe: `vertical-lr` orients the
+                      // track vertically and `rtl` puts the minimum at the bottom.
+                      // Replaces the non-standard `appearance: slider-vertical`
+                      // (removed from Chromium) and IE-only `writing-mode: bt-lr`.
+                      writingMode: 'vertical-lr',
+                      direction: 'rtl',
                       cursor: 'pointer',
                     }}
                   />

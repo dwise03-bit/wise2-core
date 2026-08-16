@@ -4,6 +4,35 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Footer } from '@/components/wise';
 
+interface IntakeFormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  companyName: string;
+  website: string;
+  industry: string;
+  businessDescription: string;
+  currentProblem: string;
+  desiredBuild: string;
+  currentTools: string[];
+  desiredResult: string;
+  timeline: string;
+  budgetRange: string;
+  teamSize: string;
+  revenueRange: string;
+  crm: string;
+  websitePlatform: string;
+  socialPlatforms: string[];
+  existingAutomations: string[];
+  aiTools: string[];
+  notes: string;
+}
+
+/** Keys of IntakeFormData whose value is a list of strings. */
+type IntakeArrayField = {
+  [K in keyof IntakeFormData]: IntakeFormData[K] extends string[] ? K : never;
+}[keyof IntakeFormData];
+
 export default function IntakePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -11,7 +40,7 @@ export default function IntakePage() {
   const [leadData, setLeadData] = useState<any>(null);
   const [showRecommendation, setShowRecommendation] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IntakeFormData>({
     fullName: '',
     email: '',
     phone: '',
@@ -43,19 +72,19 @@ export default function IntakePage() {
     }));
   };
 
-  const handleArrayInput = (field: string, value: string) => {
+  const handleArrayInput = (field: IntakeArrayField, value: string) => {
     if (value.trim()) {
       setFormData((prev) => ({
         ...prev,
-        [field]: [...(prev[field as any] || []), value],
+        [field]: [...prev[field], value],
       }));
     }
   };
 
-  const handleArrayRemove = (field: string, index: number) => {
+  const handleArrayRemove = (field: IntakeArrayField, index: number) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: (prev[field as any] || []).filter((_: any, i: number) => i !== index),
+      [field]: prev[field].filter((_, i) => i !== index),
     }));
   };
 

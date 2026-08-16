@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Card, KPICard, Badge, Button } from '../../../src/components/ui';
+import { Card, Badge, Button } from '../../../src/components/ui';
 
 type OrderStatus = 'DRAFT' | 'PENDING_REVIEW' | 'QUOTED' | 'AWAITING_PAYMENT' | 'PAID' | 'IN_PRODUCTION' | 'QUALITY_CHECK' | 'READY_FOR_PICKUP' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
@@ -46,6 +46,58 @@ function fmtStatus(s: string): string {
   return s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
+/** Direction the underlying metric moved. */
+type TrendDirection = 'up' | 'down' | 'neutral';
+
+/** Whether that movement is good or bad for the business. */
+type TrendTone = 'positive' | 'negative' | 'neutral';
+
+const TREND_GLYPH: Record<TrendDirection, string> = { up: '▲', down: '▼', neutral: '–' };
+const TONE_CLASS: Record<TrendTone, string> = {
+  positive: 'text-success',
+  negative: 'text-danger',
+  neutral: 'text-text-muted',
+};
+
+interface PrintShopKPIProps {
+  label: string;
+  value: string;
+  /** Direction the metric moved — drives the indicator glyph. */
+  trend: TrendDirection;
+  /** Human-readable explanation of the movement, shown under the value. */
+  caption: string;
+  /**
+   * Whether the movement is good or bad. Defaults to `neutral`. Kept separate
+   * from `trend` because a falling number can be a win (e.g. turnaround time).
+   */
+  tone?: TrendTone;
+}
+
+/**
+ * KPI tile for the Print Shop overview.
+ *
+ * The shared `KPICard` only renders a trend indicator when it receives a numeric
+ * `change` percentage, so it cannot display a free-form caption like
+ * "2 3D / 2 DTF". This local tile mirrors `KPICard`'s layout and adds that
+ * caption line alongside a real direction indicator.
+ */
+function PrintShopKPI({ label, value, trend, caption, tone = 'neutral' }: PrintShopKPIProps) {
+  return (
+    <Card className="p-4 lg:p-6">
+      <div className="space-y-2">
+        <p className="text-xs lg:text-sm font-medium uppercase tracking-wider text-text-muted">{label}</p>
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl lg:text-3xl font-bold text-text-primary tabular-nums">{value}</span>
+          <span className={`text-xs lg:text-sm font-semibold ${TONE_CLASS[tone]}`} aria-hidden="true">
+            {TREND_GLYPH[trend]}
+          </span>
+        </div>
+        <p className={`text-xs font-medium ${TONE_CLASS[tone]}`}>{caption}</p>
+      </div>
+    </Card>
+  );
+}
+
 export default function PrintShopDashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | '3d' | 'dtf'>('overview');
 
@@ -65,10 +117,11 @@ export default function PrintShopDashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <KPICard label="Active Orders" value="7" trend="+3 this week" />
-        <KPICard label="Revenue (MTD)" value="$2,340" trend="+18% vs last month" />
-        <KPICard label="In Production" value="4" trend="2 3D / 2 DTF" />
-        <KPICard label="Avg Turnaround" value="3.2d" trend="-0.5d improvement" />
+        <PrintShopKPI label="Active Orders" value="7" trend="up" tone="positive" caption="+3 this week" />
+        <PrintShopKPI label="Revenue (MTD)" value="$2,340" trend="up" tone="positive" caption="+18% vs last month" />
+        <PrintShopKPI label="In Production" value="4" trend="neutral" tone="neutral" caption="2 3D / 2 DTF" />
+        {/* Turnaround falling is an improvement, hence a downward trend with a positive tone. */}
+        <PrintShopKPI label="Avg Turnaround" value="3.2d" trend="down" tone="positive" caption="-0.5d improvement" />
       </div>
 
       <div className="flex gap-1 border-b border-border-subtle">

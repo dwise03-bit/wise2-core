@@ -20,7 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PaymentForm } from './PaymentForm';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface BookingDetails {

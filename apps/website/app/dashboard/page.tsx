@@ -76,7 +76,7 @@ export default function DashboardPage() {
       return;
     }
 
-    setUser({ email: userEmail || '', userId });
+    setUser({ email: userEmail || '', userId: userId ?? undefined });
     fetchMetrics(token);
   }, [router]);
 
