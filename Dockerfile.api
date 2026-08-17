@@ -30,4 +30,4 @@ RUN cd packages/api && npx tsc --build
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "packages/api/dist/main.js"]
