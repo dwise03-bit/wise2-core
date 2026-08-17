@@ -1,0 +1,282 @@
+╔═══════════════════════════════════════════════════════════╗
+║    WISE² AGENTIC OS - ACCESS FROM iPHONE (192.168.8.212) ║
+╚═══════════════════════════════════════════════════════════╝
+
+YOUR SETUP
+═════════════════════════════════════════════════════════════
+
+iPhone IP:  192.168.8.212 (Termius on phone)
+Mac:        (Running server or accessible via SSH)
+Goal:       Access Agentic OS guide from iPhone
+
+
+🎯 OPTION A: VIEW GUIDE IN SAFARI ON iPHONE (Recommended)
+═══════════════════════════════════════════════════════════
+
+STEP 1: On Your Mac - Start Server
+───────────────────────────────────
+Terminal: ~/start-wise2-guide.sh
+
+Output will show:
+  📱 View on iPhone (Safari):
+     http://YOUR_MAC_IP:8080
+
+STEP 2: Find Your Mac's IP
+──────────────────────────
+In the script output, look for "SSH Connect"
+Or run: ipconfig getifaddr en0
+
+STEP 3: On iPhone Safari
+────────────────────────
+1. Open Safari
+2. Go to: http://YOUR_MAC_IP:8080
+3. Click: index.html
+4. See interactive diagrams!
+
+EXAMPLE:
+  If Mac IP is 192.168.8.100:
+  → Safari: http://192.168.8.100:8080
+  → Click index.html
+  → View guide!
+
+
+🎯 OPTION B: SSH INTO MAC FROM TERMIUS ON iPHONE
+═══════════════════════════════════════════════════
+
+STEP 1: On Your Mac - Start Server
+───────────────────────────────────
+Terminal: ~/start-wise2-guide.sh
+
+STEP 2: Note Your Mac's IP
+──────────────────────────
+From script output, copy the IP shown
+Example: 192.168.8.100
+
+STEP 3: In Termius on iPhone (192.168.8.212)
+─────────────────────────────────────────────
+1. Open Termius app
+2. + New Host
+3. Settings:
+   ├─ Label: "My Mac"
+   ├─ Host: 192.168.8.100 (your Mac's IP)
+   ├─ Port: 22
+   ├─ Username: dwise
+   ├─ Password: [Your Mac password]
+   └─ Save & Connect
+
+4. In Termius Terminal, run:
+   cd ~/Desktop/wise2-agentic-os-guide
+   ls -la
+
+STEP 4: View Files
+──────────────────
+In Termius Terminal:
+  cat README.txt              # Read file
+  cat START_HERE.txt          # Read setup guide
+  cat GOOGLE_DRIVE_SETUP.md   # Read cloud sync options
+
+STEP 5: View Guide in Safari
+─────────────────────────────
+Also open Safari on iPhone:
+  Go to: http://192.168.8.100:8080/index.html
+  (from the Mac IP found in Step 2)
+
+
+🎯 OPTION C: VIEW VIA SFTP IN TERMIUS
+═════════════════════════════════════════
+
+STEP 1: Create SFTP Connection in Termius
+──────────────────────────────────────────
+1. Open Termius
+2. + New Host (SFTP)
+3. Settings:
+   ├─ Label: "My Mac Files"
+   ├─ Protocol: SFTP
+   ├─ Host: 192.168.8.100 (your Mac IP)
+   ├─ Port: 22
+   ├─ Username: dwise
+   ├─ Password: [Your Mac password]
+   └─ Save
+
+STEP 2: Browse Files
+────────────────────
+1. Open SFTP connection
+2. Navigate to: /Users/dwise/Desktop/wise2-agentic-os-guide
+3. See files listed
+4. Tap to download or view
+
+STEP 3: View in Safari
+──────────────────────
+After downloading, tap index.html to view
+
+
+═══════════════════════════════════════════════════════════
+
+⚡ QUICKEST WORKFLOW
+═════════════════════
+
+For YOU (iPhone at 192.168.8.212):
+
+1. Mac Terminal: ~/start-wise2-guide.sh
+2. Mac Terminal output shows: 192.168.8.XXX (your Mac IP)
+3. iPhone Safari: http://192.168.8.XXX:8080
+4. Click index.html
+5. DONE! View interactive guide
+
+Total time: 2 minutes ⚡
+
+
+═══════════════════════════════════════════════════════════
+
+COPY-PASTE COMMANDS FOR YOUR SETUP
+═════════════════════════════════════
+
+Mac (Terminal):
+───────────────
+~/start-wise2-guide.sh
+
+iPhone (Termius) - SSH Connection:
+───────────────────────────────────
+In Termius, when connected, run:
+cd ~/Desktop/wise2-agentic-os-guide
+ls -la
+cat README.txt
+
+iPhone (Safari):
+────────────────
+http://192.168.8.XXX:8080/index.html
+(Replace XXX with your Mac's IP from terminal output)
+
+
+═══════════════════════════════════════════════════════════
+
+FIND YOUR MAC'S IP EASILY
+═══════════════════════════
+
+Method 1: Script Output
+───────────────────────
+Run: ~/start-wise2-guide.sh
+Output shows: "SSH Connect: ssh dwise@192.168.8.XXX"
+
+Method 2: Manual Check
+──────────────────────
+Run: ipconfig getifaddr en0
+Shows: 192.168.8.XXX
+
+Method 3: System Preferences
+─────────────────────────────
+System Preferences → Network → WiFi → Advanced → TCP/IP
+Shows your IP
+
+Most likely your Mac IP is in range: 192.168.8.X
+
+
+═══════════════════════════════════════════════════════════
+
+TERMIUS SETUP ON iPHONE (Save This!)
+═════════════════════════════════════
+
+Snippet 1: Start Server on Mac
+───────────────────────────────
+Title: "Start Server"
+Command: ssh dwise@192.168.8.XXX
+(Or SSH into Mac, then run: ~/start-wise2-guide.sh)
+
+Snippet 2: Get Mac IP
+─────────────────────
+Title: "Mac IP"
+Command: ipconfig getifaddr en0
+
+Snippet 3: View Guide Files
+──────────────────────────
+Title: "Show Guide"
+Command: cd ~/Desktop/wise2-agentic-os-guide && ls -la
+
+
+═══════════════════════════════════════════════════════════
+
+📱 FULL WORKFLOW FOR YOUR IPHONE
+═════════════════════════════════
+
+DAY 1 - First Time Setup
+────────────────────────
+1. Mac: Open Terminal
+2. Mac: Type ~/start-wise2-guide.sh
+3. Mac Terminal: Copy the IP shown (192.168.8.XXX)
+4. iPhone: Open Safari
+5. iPhone Safari: Paste http://192.168.8.XXX:8080
+6. iPhone: Click index.html
+7. iPhone: Read interactive guide!
+
+DAY 2+ - Regular Access
+───────────────────────
+1. Mac: ~/start-wise2-guide.sh (start server)
+2. iPhone Safari: http://192.168.8.XXX:8080 (in bookmarks)
+3. iPhone: Browse guide
+4. When done: Ctrl+C on Mac to stop server
+
+File Management (Optional)
+──────────────────────────
+1. iPhone Termius: SSH to Mac
+2. iPhone Termius: cd ~/Desktop/wise2-agentic-os-guide
+3. iPhone Termius: ls -la (list files)
+4. iPhone Termius: cat README.txt (read)
+
+
+═══════════════════════════════════════════════════════════
+
+✅ CHECKLIST
+══════════════
+
+□ Find your Mac's IP
+  Run: ipconfig getifaddr en0
+  Write down: 192.168.8.___
+
+□ Start server on Mac
+  Run: ~/start-wise2-guide.sh
+  Wait for: "Serving HTTP on..."
+
+□ Test on iPhone Safari
+  Open: http://192.168.8.XXX:8080
+  Click: index.html
+  See: Interactive diagrams ✓
+
+□ (Optional) Add Termius SSH host
+  Label: My Mac
+  Host: 192.168.8.XXX
+  Username: dwise
+  Connect: Test login ✓
+
+
+═══════════════════════════════════════════════════════════
+
+FILES AVAILABLE FROM iPHONE
+══════════════════════════════
+
+Via Safari (at http://YOUR_MAC_IP:8080):
+  ✓ index.html - Full interactive guide
+
+Via Termius SSH Terminal:
+  ✓ README.txt - Quick reference
+  ✓ START_HERE.txt - Setup guide
+  ✓ TERMIUS_SETUP.md - Detailed guide
+  ✓ GOOGLE_DRIVE_SETUP.md - Cloud sync
+
+Via Termius SFTP:
+  ✓ Download all files to iPhone
+  ✓ View offline later
+
+
+═══════════════════════════════════════════════════════════
+
+🚀 START RIGHT NOW
+
+1. Your iPhone: 192.168.8.212
+2. Your Mac: [Find IP with: ipconfig getifaddr en0]
+3. Mac Terminal: ~/start-wise2-guide.sh
+4. iPhone Safari: http://[Mac IP]:8080
+5. Click: index.html
+6. Done! 🎉
+
+
+═══════════════════════════════════════════════════════════

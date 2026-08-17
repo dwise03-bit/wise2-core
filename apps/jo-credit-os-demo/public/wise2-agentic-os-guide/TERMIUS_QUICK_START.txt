@@ -1,0 +1,212 @@
+╔═══════════════════════════════════════════════════════════╗
+║   WISE² AGENTIC OS - TERMIUS QUICK START (iPhone/Mac)    ║
+╚═══════════════════════════════════════════════════════════╝
+
+🎯 FASTEST WAY TO GET STARTED
+═══════════════════════════════
+
+STEP 1: On Mac Terminal (or Termius)
+──────────────────────────────────────
+Copy this ONE command:
+
+    ~/start-wise2-guide.sh
+
+That's it! This will:
+  ✓ Start a web server
+  ✓ Show you your Mac's IP address
+  ✓ List available files
+  ✓ Tell you the URL to visit
+
+STEP 2: On iPhone Safari
+──────────────────────────
+The script output will show:
+
+    http://192.168.X.X:8080
+                    ↑
+    (Your Mac's IP - copy from Terminal)
+
+1. Open Safari on iPhone
+2. Paste the URL
+3. Click index.html
+4. View interactive Agentic OS guide!
+
+STEP 3: Manage Files via Termius
+──────────────────────────────────
+1. Open Termius on iPhone
+2. SSH to your Mac (use IP from step 1)
+3. Command: cd ~/Desktop/wise2-agentic-os-guide
+4. List files: ls -la
+5. Read files: cat README.txt
+
+═══════════════════════════════════════════════════════════
+
+⚡ COPY-PASTE COMMANDS
+════════════════════════
+
+Start Server (on Mac):
+──────────────────────
+~/start-wise2-guide.sh
+
+Get Your Mac's IP (if needed):
+──────────────────────────────
+ipconfig getifaddr en0
+
+SSH into Mac from iPhone (Termius):
+───────────────────────────────────
+ssh dwise@YOUR_MAC_IP
+
+View Files in Terminal:
+──────────────────────
+cd ~/Desktop/wise2-agentic-os-guide
+ls -la
+cat START_HERE.txt
+
+═══════════════════════════════════════════════════════════
+
+📚 FILES OVERVIEW
+═══════════════════
+
+index.html
+──────────
+→ Interactive visual guide
+→ Open in Safari: http://YOUR_IP:8080/index.html
+→ See all diagrams
+→ No terminal needed
+
+README.txt
+──────────
+→ Quick reference
+→ Read via: cat README.txt
+→ Terminal only
+
+START_HERE.txt
+──────────────
+→ Setup instructions
+→ Read via: cat START_HERE.txt
+→ Terminal only
+
+TERMIUS_SETUP.md
+────────────────
+→ Full Termius guide
+→ 4 different options
+→ Detailed steps
+→ Read via: cat TERMIUS_SETUP.md
+
+GOOGLE_DRIVE_SETUP.md
+─────────────────────
+→ Sync to Google Drive
+→ Access from any device
+→ Backup and offline access
+
+═══════════════════════════════════════════════════════════
+
+🔧 TERMIUS SETUP (Save This!)
+═════════════════════════════════
+
+In Termius App:
+
+1. ADD SSH HOST TO TERMIUS
+   ├─ Label: "My Mac"
+   ├─ Host: 192.168.X.X (your Mac's IP)
+   ├─ Port: 22
+   ├─ Username: dwise
+   ├─ Password: [Your Mac password]
+   └─ Save
+
+2. CREATE SNIPPET (Favorite Command)
+   ├─ Title: "Start WISE2 Guide"
+   ├─ Command: ~/start-wise2-guide.sh
+   └─ Save
+   
+   Now tap it to run anytime!
+
+3. VIEW YOUR MAC IP IN SNIPPET
+   ├─ Title: "Mac IP"
+   ├─ Command: ipconfig getifaddr en0
+   └─ Save
+
+═══════════════════════════════════════════════════════════
+
+📱 WORKFLOW (Recommended)
+═════════════════════════════
+
+DAY 1: First time
+──────────────────
+→ Mac: Run ~/start-wise2-guide.sh
+→ iPhone: Note the IP address
+→ iPhone Safari: Open http://IP:8080
+→ View index.html (interactive guide)
+
+DAY 2+: Regular access
+──────────────────────
+→ Termius: Tap "Start WISE2 Guide" snippet
+→ iPhone Safari: Visit http://YOUR_IP:8080
+→ Browse/read guide files
+
+ANYTIME: Manage files
+──────────────────────
+→ Termius: SSH to Mac
+→ cd ~/Desktop/wise2-agentic-os-guide
+→ Read, edit, or list files
+
+═══════════════════════════════════════════════════════════
+
+✅ CHECKLIST
+══════════════
+
+On Mac:
+  [ ] Run: ~/start-wise2-guide.sh
+  [ ] Note the IP address shown
+  [ ] Server shows: "Serving HTTP on..."
+
+On iPhone:
+  [ ] Open Safari
+  [ ] Go to: http://[MAC_IP]:8080
+  [ ] Click: index.html
+  [ ] See interactive diagrams
+
+In Termius:
+  [ ] SSH host added (My Mac)
+  [ ] Snippets created (quick access)
+  [ ] Connected to Mac via SSH
+  [ ] Can run: ls ~/Desktop/wise2-agentic-os-guide/
+
+═══════════════════════════════════════════════════════════
+
+❓ TROUBLESHOOTING
+═════════════════════
+
+Q: "Can't find start-wise2-guide.sh"
+A: Run: ls ~/start-wise2-guide.sh
+   If not there, run in Terminal:
+   chmod +x ~/start-wise2-guide.sh
+
+Q: "Port 8080 already in use"
+A: Kill the old server: lsof -i :8080 | grep LISTEN
+   Then: kill -9 [PID]
+   Or use different port:
+   python3 -m http.server 8081
+
+Q: "Can't connect from iPhone"
+A: • Make sure both on same WiFi
+   • Check Mac IP: ipconfig getifaddr en0
+   • Check firewall: System Preferences → Network
+   • Try: http://localhost:8080 on Mac first
+
+Q: "index.html looks wrong"
+A: Make sure you're at port 8080
+   Try: http://YOUR_IP:8080/index.html
+   Not: http://YOUR_IP/index.html
+
+═══════════════════════════════════════════════════════════
+
+🚀 YOU'RE READY!
+
+1. Open Terminal on Mac
+2. Type: ~/start-wise2-guide.sh
+3. Open Safari on iPhone
+4. Visit: http://[IP shown in Terminal]:8080
+5. Click index.html
+6. Done! 🎉
+
+═══════════════════════════════════════════════════════════
