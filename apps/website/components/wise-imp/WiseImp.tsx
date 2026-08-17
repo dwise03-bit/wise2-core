@@ -126,7 +126,7 @@ export function WiseImp() {
                 ✕
               </button>
             </div>
-            <WiseImpMascot glowColor={state.glowColor} mascotState={state.mascotState} size={140} animated breathing={state.loading} />
+            <WiseImpMascot glowColor={state.glowColor} mascotState={state.mascotState} size={240} animated breathing={state.loading} />
             <div style={{ marginTop: 6, textAlign: 'center' }}>
               <div style={{ color: '#E8ECEF', fontWeight: 700, fontSize: 14 }}>Wise Imp</div>
               <div style={{ color: state.loading ? GLOW_HEX[state.glowColor] : '#8D98A5', fontSize: 11, transition: 'color 300ms ease' }}>
