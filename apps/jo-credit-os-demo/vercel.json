@@ -1,5 +1,6 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm --filter '@wise2/jo-credit-os-demo' build",
+  "installCommand": "pnpm install",
   "devCommand": "pnpm run dev",
   "outputDirectory": ".next",
   "framework": "nextjs",
