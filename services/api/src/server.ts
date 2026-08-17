@@ -34,6 +34,7 @@ import approvalsRouter from './routes/approvals';
 import workflowsRouter from './routes/workflows';
 import industryTemplatesRouter from './routes/industry-templates';
 import observabilityRouter from './routes/observability';
+import aiAdvisorRouter from './routes/ai-advisor';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -156,6 +157,9 @@ export async function createServer(): Promise<Express> {
 
   // Observability routes (Phase 16)
   app.use('/api/v1/crm', observabilityRouter);
+
+  // AI Advisor routes (Phase 18)
+  app.use('/api/v1/crm', aiAdvisorRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
