@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
@@ -7,12 +8,12 @@ export function ImpsGallery() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const galleryItems = [
-    { id: 1, title: 'Front View', description: 'Hero perspective of the BYTE MINI character' },
-    { id: 2, title: 'Three-Quarter View', description: 'Product depth and dimension' },
-    { id: 3, title: 'Rear Enclosure', description: 'Serviceable rear shell design' },
-    { id: 4, title: 'Internal Layout', description: 'ESP32-C5 and components arrangement' },
-    { id: 5, title: 'Screen Close-up', description: 'Touch display with vibrant face animations' },
-    { id: 6, title: 'Case Assembly', description: '3D-printed enclosure components' },
+    { id: 1, title: 'Front View', description: 'Neon blue eyes and tactical design aesthetic', image: '/wise-imp/imps-product.png' },
+    { id: 2, title: 'Full Body', description: 'Complete device with harness and branding', image: '/wise-imp/imps-product.png' },
+    { id: 3, title: 'Display & Face', description: '4" touchscreen with dynamic neon animations', image: '/wise-imp/imps-product.png' },
+    { id: 4, title: 'Rabbit Ears', description: 'Distinctive sensor and communication antennae', image: '/wise-imp/imps-product.png' },
+    { id: 5, title: 'Tactical Gear', description: 'Integrated harness, pockets, and W² branding', image: '/wise-imp/imps-product.png' },
+    { id: 6, title: 'Premium Build', description: 'High-detail robotics with blue accent lighting', image: '/wise-imp/imps-product.png' },
   ];
 
   const nextImage = () => {
@@ -46,12 +47,18 @@ export function ImpsGallery() {
             <button
               key={item.id}
               onClick={() => setSelectedIndex(idx)}
-              className="group relative aspect-square bg-gradient-to-br from-blue-950/30 to-black border border-blue-500/30 hover:border-blue-400/60 rounded-lg overflow-hidden cursor-pointer transition"
+              className="group relative aspect-square bg-black border border-blue-500/30 hover:border-blue-400/60 rounded-lg overflow-hidden cursor-pointer transition"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={400}
+                height={400}
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 group-hover:to-black/40 transition" />
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 group-hover:text-blue-400 transition">
-                <div className="text-3xl sm:text-4xl opacity-60 group-hover:opacity-100 transition">📷</div>
-                <p className="text-xs sm:text-sm font-bold text-center px-2">{item.title}</p>
+                <p className="text-xs sm:text-sm font-bold text-center px-2 text-white group-hover:text-blue-400">{item.title}</p>
               </div>
             </button>
           ))}
@@ -71,11 +78,15 @@ export function ImpsGallery() {
 
               {/* Image Container */}
               <div className="bg-black border border-blue-500/50 rounded-lg overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-blue-950/40 to-black flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="text-6xl">📷</div>
-                    <p className="text-sm text-gray-400">{galleryItems[selectedIndex].title}</p>
-                  </div>
+                <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+                  <Image
+                    src={galleryItems[selectedIndex].image}
+                    alt={galleryItems[selectedIndex].title}
+                    width={1024}
+                    height={576}
+                    priority
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Image Info */}

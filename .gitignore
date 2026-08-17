@@ -52,8 +52,9 @@ docker-compose.override.yml
 
 # Database
 data/
-# Exception: track website data fixtures
+# Exceptions: track app data fixtures
 !apps/website/data/
+!apps/prompt-shop/data/
 *.db
 *.sqlite
 postgres_data/

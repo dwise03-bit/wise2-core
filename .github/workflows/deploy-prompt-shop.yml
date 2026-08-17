@@ -1,0 +1,36 @@
+name: Deploy Prompt Shop to VPS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/prompt-shop/**'
+      - 'docker-compose.prod.yml'
+      - 'nginx.conf'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/dwise/wise2-core
+            git pull origin main
+            docker-compose -f docker-compose.prod.yml build --no-cache prompt-shop
+            docker-compose -f docker-compose.prod.yml up -d prompt-shop
+            docker-compose -f docker-compose.prod.yml logs prompt-shop | tail -20
+
+      - name: Notify Success
+        if: success()
+        run: echo "✅ Deployment successful!"
+
+      - name: Notify Failure
+        if: failure()
+        run: echo "❌ Deployment failed - check logs"
