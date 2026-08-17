@@ -27,6 +27,9 @@ import filesRouter from './routes/files';
 import consultingRouter from './routes/consulting';
 import webhooksRouter from './routes/webhooks';
 import crmRouter from './routes/crm';
+import estimatesRouter from './routes/estimates';
+import dispatchRouter from './routes/dispatch';
+import followUpsRouter from './routes/followups';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -128,6 +131,15 @@ export async function createServer(): Promise<Express> {
 
   // CRM routes (Command Center - requires auth + tenant context)
   app.use('/api/v1/crm', crmRouter);
+
+  // Estimates routes (Phase 8)
+  app.use('/api/v1/crm', estimatesRouter);
+
+  // Dispatch routes (Phase 9)
+  app.use('/api/v1/crm', dispatchRouter);
+
+  // Follow-ups routes (Phase 10)
+  app.use('/api/v1/crm', followUpsRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
