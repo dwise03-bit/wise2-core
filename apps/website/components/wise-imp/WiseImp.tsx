@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { WiseImpMascot } from './WiseImpMascot';
+import { WiseImpMascot, GLOW_HEX } from './WiseImpMascot';
 import { ColorPicker } from './ColorPicker';
 import { ChatPanel } from './ChatPanel';
 import { IntakeFlow } from './IntakeFlow';
@@ -93,25 +93,19 @@ export function WiseImp() {
             overflow: 'hidden',
           }}
         >
+          {/* Header with prominent mascot */}
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
+              padding: '14px 12px 10px',
               borderBottom: '1px solid rgba(255,255,255,0.08)',
+              background: `radial-gradient(ellipse at center bottom, ${GLOW_HEX[state.glowColor]}08 0%, transparent 70%)`,
+              position: 'relative',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WiseImpMascot glowColor={state.glowColor} mascotState={state.mascotState} size={36} />
-              <div>
-                <div style={{ color: '#E8ECEF', fontWeight: 700, fontSize: 13 }}>Wise Imp</div>
-                {state.intake.active && currentCategory && (
-                  <div style={{ color: '#8D98A5', fontSize: 10 }}>{currentCategory.label}</div>
-                )}
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, position: 'absolute', top: 8, right: 8 }}>
               {!state.intake.active && !state.handoff && (
                 <button
                   type="button"
@@ -131,6 +125,13 @@ export function WiseImp() {
               >
                 ✕
               </button>
+            </div>
+            <WiseImpMascot glowColor={state.glowColor} mascotState={state.mascotState} size={80} animated breathing={state.loading} />
+            <div style={{ marginTop: 6, textAlign: 'center' }}>
+              <div style={{ color: '#E8ECEF', fontWeight: 700, fontSize: 14 }}>Wise Imp</div>
+              <div style={{ color: state.loading ? GLOW_HEX[state.glowColor] : '#8D98A5', fontSize: 11, transition: 'color 300ms ease' }}>
+                {state.loading ? 'Thinking…' : state.intake.active && currentCategory ? currentCategory.label : 'Your AI guide'}
+              </div>
             </div>
           </div>
 
@@ -213,24 +214,39 @@ export function WiseImp() {
         onClick={() => (state.open ? store.close() : store.open())}
         aria-expanded={state.open}
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
+        className="wise-imp-launcher"
         style={{
           width: 64,
           height: 64,
           borderRadius: '50%',
           background: 'rgba(13, 17, 23, 0.85)',
-          border: '1px solid rgba(57, 255, 20, 0.35)',
+          border: `1px solid ${GLOW_HEX[state.glowColor]}59`,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: 4,
+          transition: 'border-color 400ms ease, box-shadow 400ms ease',
         }}
       >
         <WiseImpMascot
           glowColor={state.glowColor}
           mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
           size={52}
+          breathing={!state.open}
         />
+        <style jsx>{`
+          .wise-imp-launcher {
+            animation: launcher-glow 2.8s ease-in-out infinite;
+          }
+          @keyframes launcher-glow {
+            0%, 100% { box-shadow: 0 0 12px ${GLOW_HEX[state.glowColor]}33, inset 0 0 8px ${GLOW_HEX[state.glowColor]}11; }
+            50% { box-shadow: 0 0 22px ${GLOW_HEX[state.glowColor]}55, inset 0 0 14px ${GLOW_HEX[state.glowColor]}22; }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .wise-imp-launcher { animation: none; }
+          }
+        `}</style>
       </button>
     </div>
   );

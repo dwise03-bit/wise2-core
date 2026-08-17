@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { analytics } from '@/lib/analytics';
 import { ActionConfirm } from './ActionConfirm';
-import { WiseImpMascot } from './WiseImpMascot';
 import type { ChatMessage, GlowColor, MascotState } from './useWiseImpStore';
 import type { WiseImpAction } from '@/lib/wise-imp/actions';
 
@@ -62,27 +61,6 @@ export function ChatPanel({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Header with Mascot */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 12,
-          padding: '16px 12px',
-          borderBottom: '1px solid rgba(57, 255, 20, 0.15)',
-          background: 'linear-gradient(135deg, rgba(0, 148, 255, 0.05) 0%, rgba(57, 255, 20, 0.05) 100%)',
-        }}
-      >
-        <WiseImpMascot glowColor={glowColor} mascotState={mascotState} size={64} animated={true} />
-        <div style={{ flex: 1 }}>
-          <h3 style={{ margin: 0, color: '#39FF14', fontSize: 14, fontWeight: 700 }}>Wise Imp</h3>
-          <p style={{ margin: '2px 0 0', color: '#8D98A5', fontSize: 12 }}>
-            {loading ? 'Thinking…' : aiUnavailable ? 'Offline' : 'Ready to help'}
-          </p>
-        </div>
-      </div>
-
       {/* Chat Messages */}
       <div
         ref={listRef}
