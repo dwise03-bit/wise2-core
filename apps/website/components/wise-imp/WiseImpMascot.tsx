@@ -42,24 +42,33 @@ export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = tr
   }, [src, prevSrc]);
 
   const glowSize = Math.round(size * 0.14);
-  const glowColor6 = `${GLOW_HEX[glowColor]}66`;
-  const instanceId = useRef(`wimp-${Math.random().toString(36).slice(2, 7)}`).current;
+  const colorHex = GLOW_HEX[glowColor];
+
+  const classNames = [
+    'wise-imp-mascot',
+    animated ? 'wimp-float' : '',
+    breathing ? 'wimp-breathe' : '',
+    mascotState === 'thinking' ? 'wimp-think' : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <div
-      className={[
-        animated ? 'wise-imp-float' : '',
-        breathing ? 'wise-imp-breathe' : '',
-        mascotState === 'thinking' ? 'wise-imp-think-pulse' : '',
-      ].filter(Boolean).join(' ')}
+      className={classNames}
       style={{
         width: size,
         height: size,
         position: 'relative',
-        filter: `drop-shadow(0 0 ${glowSize}px ${glowColor6})`,
-      }}
+        '--wimp-color': colorHex,
+        '--wimp-color-66': `${colorHex}66`,
+        '--wimp-color-99': `${colorHex}99`,
+        '--wimp-color-88': `${colorHex}88`,
+        '--wimp-glow': `${glowSize}px`,
+        '--wimp-glow-lg': `${Math.round(glowSize * 2.5)}px`,
+        '--wimp-glow-xl': `${Math.round(glowSize * 4)}px`,
+        '--wimp-glow-md': `${Math.round(glowSize * 2)}px`,
+        filter: `drop-shadow(0 0 ${glowSize}px ${colorHex}66)`,
+      } as React.CSSProperties}
     >
-      {/* Previous image (fades out during transition) */}
       {transitioning && (
         <Image
           src={prevSrc}
@@ -75,7 +84,6 @@ export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = tr
         />
       )}
 
-      {/* Current image (fades in) */}
       <Image
         src={src}
         alt="Wise Imp, the WISE² AI companion"
@@ -94,47 +102,6 @@ export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = tr
           }
         }}
       />
-
-      <style jsx>{`
-        .wise-imp-float {
-          animation: ${instanceId}-bob 3.2s ease-in-out infinite;
-        }
-        @keyframes ${instanceId}-bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
-
-        .wise-imp-breathe {
-          animation: ${instanceId}-breathe 2.8s ease-in-out infinite;
-        }
-        @keyframes ${instanceId}-breathe {
-          0%, 100% { filter: drop-shadow(0 0 ${glowSize}px ${glowColor6}); }
-          50% { filter: drop-shadow(0 0 ${glowSize * 2.5}px ${GLOW_HEX[glowColor]}99) drop-shadow(0 0 ${glowSize * 4}px ${glowColor6}); }
-        }
-
-        .wise-imp-think-pulse {
-          animation: ${instanceId}-think 1.2s ease-in-out infinite;
-        }
-        @keyframes ${instanceId}-think {
-          0%, 100% { filter: drop-shadow(0 0 ${glowSize}px ${glowColor6}); transform: translateY(0) scale(1); }
-          50% { filter: drop-shadow(0 0 ${glowSize * 2}px ${GLOW_HEX[glowColor]}88); transform: translateY(-3px) scale(1.03); }
-        }
-
-        .wise-imp-float.wise-imp-breathe {
-          animation: ${instanceId}-bob 3.2s ease-in-out infinite, ${instanceId}-breathe 2.8s ease-in-out infinite;
-        }
-        .wise-imp-float.wise-imp-think-pulse {
-          animation: ${instanceId}-bob 3.2s ease-in-out infinite, ${instanceId}-think 1.2s ease-in-out infinite;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .wise-imp-float,
-          .wise-imp-breathe,
-          .wise-imp-think-pulse {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }

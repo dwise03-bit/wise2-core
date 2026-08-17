@@ -227,7 +227,11 @@ export function WiseImp() {
           justifyContent: 'center',
           padding: 4,
           transition: 'border-color 400ms ease, box-shadow 400ms ease',
-        }}
+          '--wimp-color-33': `${GLOW_HEX[state.glowColor]}33`,
+          '--wimp-color-55': `${GLOW_HEX[state.glowColor]}55`,
+          '--wimp-color-11': `${GLOW_HEX[state.glowColor]}11`,
+          '--wimp-color-22': `${GLOW_HEX[state.glowColor]}22`,
+        } as React.CSSProperties}
       >
         <WiseImpMascot
           glowColor={state.glowColor}
@@ -235,18 +239,6 @@ export function WiseImp() {
           size={52}
           breathing={!state.open}
         />
-        <style jsx>{`
-          .wise-imp-launcher {
-            animation: launcher-glow 2.8s ease-in-out infinite;
-          }
-          @keyframes launcher-glow {
-            0%, 100% { box-shadow: 0 0 12px ${GLOW_HEX[state.glowColor]}33, inset 0 0 8px ${GLOW_HEX[state.glowColor]}11; }
-            50% { box-shadow: 0 0 22px ${GLOW_HEX[state.glowColor]}55, inset 0 0 14px ${GLOW_HEX[state.glowColor]}22; }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .wise-imp-launcher { animation: none; }
-          }
-        `}</style>
       </button>
     </div>
   );
