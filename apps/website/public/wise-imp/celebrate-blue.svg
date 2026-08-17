@@ -1,0 +1,95 @@
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow-celebrate-blue">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <radialGradient id="eye-glow-celebrate-blue" cx="35%" cy="35%">
+      <stop offset="0%" style="stop-color:#0094FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0094FF;stop-opacity:0.5" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background glow -->
+  <circle cx="100" cy="120" r="95" fill="none" stroke="#0094FF" stroke-width="1" opacity="0.2"/>
+
+  <!-- Tail -->
+  <path d="M 130 180 Q 148 160 145 130" fill="none" stroke="#1a1a2e" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Left leg -->
+  <rect x="75" y="185" width="16" height="40" rx="8" fill="#2d3561"/>
+  <ellipse cx="83" cy="225" rx="10" ry="6" fill="#1a1a2e"/>
+
+  <!-- Right leg -->
+  <rect x="109" y="185" width="16" height="40" rx="8" fill="#2d3561"/>
+  <ellipse cx="117" cy="225" rx="10" ry="6" fill="#1a1a2e"/>
+
+  <!-- Body armor -->
+  <ellipse cx="100" cy="140" rx="35" ry="45" fill="#1a1a2e" stroke="#4a4a6e" stroke-width="2"/>
+  <rect x="75" y="130" width="50" height="50" rx="6" fill="#2d2d4e"/>
+
+  <!-- Chest plate highlight -->
+  <path d="M 80 125 Q 100 115 120 125" fill="none" stroke="#5a5a8e" stroke-width="2" opacity="0.6"/>
+
+  <!-- Chest insignia (W²) -->
+  <g filter="url(#glow-celebrate-blue)">
+    <circle cx="100" cy="145" r="18" fill="none" stroke="#0094FF" stroke-width="2" opacity="0.8"/>
+    <text x="100" y="152" font-size="20" font-weight="bold" text-anchor="middle" fill="#0094FF" font-family="Arial">W²</text>
+  </g>
+
+  <!-- Left arm -->
+  <g>
+    <ellipse cx="65" cy="130" rx="12" ry="35" fill="#2d3561"/>
+    <ellipse cx="55" cy="165" rx="10" ry="12" fill="#3d4571"/>
+  </g>
+
+  <!-- Right arm -->
+  <g>
+    <ellipse cx="135" cy="130" rx="12" ry="35" fill="#2d3561"/>
+    <ellipse cx="145" cy="165" rx="10" ry="12" fill="#3d4571"/>
+  </g>
+
+  <!-- Neck -->
+  <rect x="90" y="95" width="20" height="15" fill="#2d2d4e"/>
+
+  <!-- Head -->
+  <circle cx="100" cy="70" r="30" fill="#1a1a2e" stroke="#4a4a6e" stroke-width="2"/>
+
+  <!-- Left horn -->
+  <path d="M 80 35 Q 70 15 75 5" fill="none" stroke="#3a3a5e" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 80 35 Q 70 15 75 5" fill="none" stroke="#6a6aae" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Right horn -->
+  <path d="M 120 35 Q 130 15 125 5" fill="none" stroke="#3a3a5e" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 120 35 Q 130 15 125 5" fill="none" stroke="#6a6aae" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Left ear -->
+  <ellipse cx="72" cy="50" rx="8" ry="15" fill="#2d2d4e" stroke="#4a4a6e" stroke-width="1"/>
+
+  <!-- Right ear -->
+  <ellipse cx="128" cy="50" rx="8" ry="15" fill="#2d2d4e" stroke="#4a4a6e" stroke-width="1"/>
+
+  <!-- Left eye white -->
+  <ellipse cx="85" cy="65" rx="8" ry="10" fill="#ffffff"/>
+
+  <!-- Right eye white -->
+  <ellipse cx="115" cy="65" rx="8" ry="10" fill="#ffffff"/>
+
+  <!-- Left eye glow -->
+  <circle cx="85" cy="65" r="7" fill="url(#eye-glow-celebrate-blue)" filter="url(#glow-celebrate-blue)"/>
+
+  <!-- Right eye glow -->
+  <circle cx="115" cy="65" r="7" fill="url(#eye-glow-celebrate-blue)" filter="url(#glow-celebrate-blue)"/>
+
+  <!-- Left eye pupil -->
+  <circle cx="87" cy="63" r="3" fill="#000000"/>
+
+  <!-- Right eye pupil -->
+  <circle cx="113" cy="63" r="3" fill="#000000"/>
+
+  <!-- Mouth (excited) -->
+  <path d="M 85 90 Q 100 100 115 90" fill="none" stroke="#5a5a8e" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

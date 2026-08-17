@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { analytics } from '@/lib/analytics';
 import { ActionConfirm } from './ActionConfirm';
-import type { ChatMessage } from './useWiseImpStore';
+import { WiseImpMascot } from './WiseImpMascot';
+import type { ChatMessage, GlowColor, MascotState } from './useWiseImpStore';
 import type { WiseImpAction } from '@/lib/wise-imp/actions';
 
 const SUGGESTED_QUESTIONS = [
@@ -18,6 +19,8 @@ interface ChatPanelProps {
   loading: boolean;
   aiUnavailable: boolean;
   pendingAction: WiseImpAction | null;
+  glowColor: GlowColor;
+  mascotState: MascotState;
   onSend: (text: string) => void;
   onConfirmAction: () => void;
   onDismissAction: () => void;
@@ -30,6 +33,8 @@ export function ChatPanel({
   loading,
   aiUnavailable,
   pendingAction,
+  glowColor,
+  mascotState,
   onSend,
   onConfirmAction,
   onDismissAction,
@@ -57,6 +62,28 @@ export function ChatPanel({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Header with Mascot */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12,
+          padding: '16px 12px',
+          borderBottom: '1px solid rgba(57, 255, 20, 0.15)',
+          background: 'linear-gradient(135deg, rgba(0, 148, 255, 0.05) 0%, rgba(57, 255, 20, 0.05) 100%)',
+        }}
+      >
+        <WiseImpMascot glowColor={glowColor} mascotState={mascotState} size={64} animated={true} />
+        <div style={{ flex: 1 }}>
+          <h3 style={{ margin: 0, color: '#39FF14', fontSize: 14, fontWeight: 700 }}>Wise Imp</h3>
+          <p style={{ margin: '2px 0 0', color: '#8D98A5', fontSize: 12 }}>
+            {loading ? 'Thinking…' : aiUnavailable ? 'Offline' : 'Ready to help'}
+          </p>
+        </div>
+      </div>
+
+      {/* Chat Messages */}
       <div
         ref={listRef}
         role="log"
@@ -84,6 +111,15 @@ export function ChatPanel({
                     color: '#39FF14',
                     fontSize: 13,
                     cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(57, 255, 20, 0.15)';
+                    e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(57, 255, 20, 0.08)';
+                    e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.25)';
                   }}
                 >
                   {q}
@@ -161,6 +197,7 @@ export function ChatPanel({
         )}
       </div>
 
+      {/* Input */}
       <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <label htmlFor="wise-imp-input" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
           Message Wise Imp
@@ -196,6 +233,7 @@ export function ChatPanel({
             fontSize: 13,
             cursor: loading || !draft.trim() ? 'not-allowed' : 'pointer',
             opacity: loading || !draft.trim() ? 0.5 : 1,
+            transition: 'all 0.2s ease',
           }}
         >
           Send
