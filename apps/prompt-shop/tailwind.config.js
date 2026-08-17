@@ -9,6 +9,17 @@ module.exports = {
     extend: {
       colors: {
         // WISE TOUCH // PROMPT SHOP™ Brand Colors
+        'laser-orange': '#FF5C00',
+        'laser-orange-2': '#FF9D00',
+        'burnt-orange': '#B93400',
+        'cyan': '#00D9FF',
+        'machine-black': '#070707',
+        'graphite': '#151515',
+        'gunmetal': '#34383D',
+        'blueprint-white': '#F2F0EA',
+        'blueprint-dark': '#1a1a1a',
+        'wise-green': '#00FF00',
+        // Nested versions for component usage
         laser: {
           orange: '#FF5C00',
           orange2: '#FF9D00',
