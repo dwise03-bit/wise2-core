@@ -24,10 +24,10 @@ WORKDIR /app
 # Install pnpm in production container
 RUN npm install -g pnpm
 
-# Copy built app from builder
+# Copy built app from builder (full monorepo structure needed)
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/apps/prompt-shop ./apps/prompt-shop
+COPY --from=builder /app/package.json ./
 
 # Expose port
 EXPOSE 3002
@@ -36,5 +36,6 @@ EXPOSE 3002
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3002', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Start the application
+# Navigate to app and start
+WORKDIR /app/apps/prompt-shop
 CMD ["pnpm", "start"]

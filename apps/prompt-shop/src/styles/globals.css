@@ -34,7 +34,7 @@ body {
 
 /* Construction/Industrial UI Language */
 .industrial-panel {
-  @apply border border-gunmetal rounded bg-graphite/50 backdrop-blur;
+  @apply border border-machine-gunmetal rounded backdrop-blur;
   background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
 }
 
