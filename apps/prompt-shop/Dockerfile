@@ -13,8 +13,8 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 # Copy app source
 COPY . .
 
-# Build the app
-RUN pnpm run build
+# Build only prompt-shop (not entire monorepo)
+RUN pnpm --filter @wise2/prompt-shop build
 
 # Production stage
 FROM node:20-alpine
