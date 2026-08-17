@@ -108,49 +108,24 @@ services:
       timeout: 10s
       retries: 3
 
-  # Studio App
-  studio:
-    image: wise2-core-studio:latest
-    container_name: wise2-studio
-    environment:
-      NODE_ENV: production
-      NEXT_PUBLIC_API_URL: ${API_BASE_URL}
-      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-    ports:
-      - "3005:3005"
-    depends_on:
-      - api
-    networks:
-      - wise2
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3005/studio/auth"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # WISE TOUCH // PROMPT SHOP™
-  # prompt-shop:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/prompt-shop/Dockerfile
-  #   container_name: wise2-prompt-shop
-  #   restart: unless-stopped
+  # Studio App (COMMENTED OUT — not yet deployed)
+  # Uncomment and build Dockerfile when ready to deploy
+  # studio:
+  #   image: wise2-core-studio:latest
+  #   container_name: wise2-studio
   #   environment:
   #     NODE_ENV: production
-  #     PORT: 3002
-  #     HOSTNAME: 0.0.0.0
-  #     NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+  #     NEXT_PUBLIC_API_URL: ${API_BASE_URL}
+  #     NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
   #   ports:
-  #     - "127.0.0.1:3002:3002"
+  #     - "3005:3005"
   #   depends_on:
   #     - api
   #   networks:
   #     - wise2
-  #   healthcheck:
-  #     test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3002', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
+
+  # WISE TOUCH // PROMPT SHOP™ (COMMENTED OUT — not yet deployed)
+  # prompt-shop:
 
   # Redis Cache & Queue
   redis:
@@ -183,7 +158,6 @@ services:
     depends_on:
       - api
       - website
-      - studio
       - redis
     networks:
       - wise2
