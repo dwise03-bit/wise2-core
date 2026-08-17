@@ -28,6 +28,9 @@ services:
 
   # NestJS API
   api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
     image: wise2-core-api:latest
     container_name: wise2-api
     restart: unless-stopped
