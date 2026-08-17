@@ -1,363 +1,54 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User, UserRole } from './user.entity';
-import { TokenService } from './token.service';
-import { PasswordService } from './password.service';
-import { EmailService } from '../email/email.service';
+// DEPRECATED: Use PrismaAuthService instead
+// This file is kept for backward compatibility only and should not be used directly
+import { Injectable } from '@nestjs/common';
+import { PrismaAuthService } from './prisma-auth.service';
 
-/**
- * AuthService handles user authentication, registration, and account management.
- * Works with TokenService and PasswordService for token and password operations.
- */
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly tokenService: TokenService,
-    private readonly passwordService: PasswordService,
-    private readonly emailService: EmailService,
-  ) {}
+  constructor(private prismaAuthService: PrismaAuthService) {}
 
-  /**
-   * Register a new user account
-   * @param email User email address
-   * @param password Plain text password
-   * @param firstName Optional first name
-   * @param lastName Optional last name
-   * @returns User and email verification message
-   * @throws ConflictException if email already exists
-   * @throws BadRequestException if password is weak
-   */
-  async signup(
-    email: string,
-    password: string,
-    firstName?: string,
-    lastName?: string,
-  ): Promise<any> {
-    // Check if email already exists
-    const existingUser = await this.userRepository.findOneBy({ email });
-    if (existingUser) {
-      throw new ConflictException('Email address is already registered');
-    }
-
-    // Validate password strength
-    this.passwordService.validatePasswordStrength(password);
-
-    // Hash password
-    const passwordHash = await this.passwordService.hashPassword(password);
-
+  async signup(email: string, password: string, firstName?: string, lastName?: string) {
     const fullName = [firstName, lastName].filter(Boolean).join(' ') || undefined;
-    const user = this.userRepository.create({
-      email,
-      password_hash: passwordHash,
-      name: fullName,
-      role: UserRole.CUSTOMER,
-    });
-
-    const savedUser = await this.userRepository.save(user);
-
-    // Create email verification token
-    const { token } = await this.passwordService.createEmailVerificationToken(
-      savedUser.id,
-    );
-
-    // Send verification email
-    await this.emailService.sendVerificationEmail(email, token, savedUser.firstName);
-
-    return {
-      user: {
-        id: savedUser.id,
-        email: savedUser.email,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
-      },
-      message: 'Signup successful. Check your email to verify your account.',
-    };
+    return this.prismaAuthService.signup(email, password, fullName);
   }
 
-  /**
-   * Authenticate user and generate tokens
-   * @param email User email address
-   * @param password Plain text password
-   * @param ipAddress Optional client IP address
-   * @param userAgent Optional client user agent
-   * @returns Access token, refresh token, and user info
-   * @throws UnauthorizedException if email not found or password invalid
-   * @throws BadRequestException if email not verified
-   */
-  async login(
-    email: string,
-    password: string,
-    ipAddress?: string,
-    userAgent?: string,
-  ): Promise<any> {
-    // Find user by email
-    const user = await this.userRepository.findOneBy({ email });
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    // Validate password
-    const isPasswordValid = await this.passwordService.validatePassword(
-      password,
-      user.password_hash,
-    );
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    // Note: email verification check skipped — Prisma User table has no email_verified column.
-    // Users created via Prisma are considered verified.
-
-    // Generate tokens
-    const accessToken = this.tokenService.generateAccessToken(
-      user.id,
-      user.email,
-      user.role,
-    );
-
-    const refreshToken = await this.tokenService.generateRefreshToken(
-      user.id,
-      user.email,
-      user.role,
-      ipAddress,
-      userAgent,
-    );
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      expiresIn: 900, // 15 minutes in seconds
-    };
+  async login(email: string, password: string) {
+    return this.prismaAuthService.login(email, password);
   }
 
-  /**
-   * Verify user email using verification token
-   * @param token Email verification token
-   * @returns Verification success message
-   * @throws BadRequestException if token invalid or expired
-   * @throws NotFoundException if user not found
-   */
-  async verifyEmail(token: string): Promise<any> {
-    // This is a simplified version - in production you'd hash the token
-    // For now, we'll validate it directly through the PasswordService
-    const parts = token.split(':');
-    if (parts.length !== 2) {
-      throw new BadRequestException('Invalid verification token format');
-    }
-
-    const [userId, tokenHash] = parts;
-
-    // Find user
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Verify email using PasswordService
-    await this.passwordService.verifyEmail(userId, tokenHash);
-
-    return {
-      message: 'Email verified successfully',
-    };
+  async getCurrentUser(userId: string) {
+    return this.prismaAuthService.getCurrentUser(userId);
   }
 
-  /**
-   * Refresh access token using refresh token
-   * @param refreshToken Refresh token from login
-   * @returns New access token
-   * @throws UnauthorizedException if refresh token invalid or expired
-   */
-  async refreshAccessToken(refreshToken: string): Promise<any> {
-    // Verify refresh token
-    const payload = await this.tokenService.verifyRefreshToken(refreshToken);
-
-    // Find user
-    const user = await this.userRepository.findOneBy({ id: payload.sub });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Generate new access token
-    const accessToken = this.tokenService.generateAccessToken(
-      user.id,
-      user.email,
-      user.role,
-    );
-
-    return {
-      accessToken,
-      expiresIn: 900, // 15 minutes in seconds
-    };
+  async refreshAccessToken(token: string) {
+    return this.prismaAuthService.refreshToken(token);
   }
 
-  /**
-   * Logout user by revoking all sessions
-   * @param userId User ID to logout
-   * @returns Logout success message
-   */
-  async logout(userId: string): Promise<any> {
-    await this.tokenService.revokeAllTokens(userId);
-
-    return {
-      message: 'Logged out successfully',
-    };
+  async logout() {
+    return this.prismaAuthService.logout();
   }
 
-  /**
-   * Request password reset email
-   * @param email User email address
-   * @returns Success message (doesn't reveal if email exists)
-   */
-  async requestPasswordReset(email: string): Promise<any> {
-    // Find user by email
-    const user = await this.userRepository.findOneBy({ email });
-
-    // Always return success for security (don't reveal if email exists)
-    if (!user) {
-      return {
-        message: 'If the email is registered, password reset instructions have been sent',
-      };
-    }
-
-    // Create password reset token
-    const { token } = await this.passwordService.createPasswordResetToken(
-      user.id,
-    );
-
-    // Send reset email
-    await this.emailService.sendPasswordReset(email, token, user.firstName);
-
-    return {
-      message: 'If the email is registered, password reset instructions have been sent',
-    };
+  async verifyEmail(token: string) {
+    return this.prismaAuthService.verifyEmail(token);
   }
 
-  /**
-   * Confirm password reset with token
-   * @param token Password reset token
-   * @param newPassword New password
-   * @returns Reset success message
-   * @throws BadRequestException if token invalid or password weak
-   */
-  async confirmPasswordReset(token: string, newPassword: string): Promise<any> {
-    // Parse token to get userId and tokenHash
-    const parts = token.split(':');
-    if (parts.length !== 2) {
-      throw new BadRequestException('Invalid password reset token');
-    }
-
-    const [userId, tokenHash] = parts;
-
-    // Validate password strength
-    this.passwordService.validatePasswordStrength(newPassword);
-
-    // Reset password using PasswordService
-    await this.passwordService.resetPassword(userId, tokenHash, newPassword);
-
-    // Revoke all sessions (force re-login)
-    await this.tokenService.revokeAllTokens(userId);
-
-    return {
-      message: 'Password reset successfully. Please login with your new password.',
-    };
+  async requestPasswordReset(email: string) {
+    return this.prismaAuthService.requestPasswordReset(email);
   }
 
-  /**
-   * Change password for authenticated user
-   * @param userId User ID
-   * @param oldPassword Current password
-   * @param newPassword New password
-   * @returns Password change success message
-   * @throws UnauthorizedException if old password invalid
-   * @throws BadRequestException if new password weak
-   */
-  async changePassword(
-    userId: string,
-    oldPassword: string,
-    newPassword: string,
-  ): Promise<any> {
-    // Validate password strength
-    this.passwordService.validatePasswordStrength(newPassword);
-
-    // Change password using PasswordService
-    await this.passwordService.changePassword(userId, oldPassword, newPassword);
-
-    // Revoke all sessions except current one (force re-login on other devices)
-    // For now, revoke all and let user re-login
-    await this.tokenService.revokeAllTokens(userId);
-
-    return {
-      message:
-        'Password changed successfully. Please login with your new password.',
-    };
+  async confirmPasswordReset(token: string, newPassword: string) {
+    return this.prismaAuthService.confirmPasswordReset(token, newPassword);
   }
 
-  getGoogleAuthUrl(): string {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const redirectUri = process.env.GOOGLE_CALLBACK_URL;
-    const scope = encodeURIComponent('openid email profile');
-    return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline`;
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    return this.prismaAuthService.changePassword(userId, currentPassword, newPassword);
   }
 
-  async handleGoogleCallback(code: string): Promise<any> {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_CALLBACK_URL;
+  getGoogleAuthUrl() {
+    return this.prismaAuthService.getGoogleAuthUrl();
+  }
 
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code,
-        client_id: clientId,
-        client_secret: clientSecret,
-        redirect_uri: redirectUri,
-        grant_type: 'authorization_code',
-      }),
-    });
-
-    const tokens: any = await tokenResponse.json();
-    if (!tokens.access_token) throw new UnauthorizedException('Invalid Google code');
-
-    const userResponse = await fetch(
-      'https://www.googleapis.com/oauth2/v2/userinfo',
-      { headers: { Authorization: `Bearer ${tokens.access_token}` } },
-    );
-    const googleUser: any = await userResponse.json();
-
-    let user = await this.userRepository.findOneBy({ email: googleUser.email });
-    if (!user) {
-      user = this.userRepository.create({
-        email: googleUser.email,
-        name: googleUser.name,
-        password_hash: 'oauth', // OAuth users have no password
-        role: UserRole.CUSTOMER,
-      });
-      user = await this.userRepository.save(user);
-    }
-
-    const accessToken = this.tokenService.generateAccessToken(
-      user.id,
-      user.email,
-      user.role,
-    );
-
-    return { accessToken, user: { id: user.id, email: user.email, name: user.name } };
+  async handleGoogleCallback(code: string) {
+    return this.prismaAuthService.handleGoogleCallback(code);
   }
 }

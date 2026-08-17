@@ -1,27 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { PrismaAuthService } from './prisma-auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { GoogleStrategy } from './strategies/google.strategy';
-import { GitHubStrategy } from './strategies/github.strategy';
-import { User } from './user.entity';
-import { Session } from './session.entity';
-import { PasswordResetToken } from './password-reset-token.entity';
-import { EmailVerificationToken } from './email-verification-token.entity';
-import { TokenService } from './token.service';
-import { PasswordService } from './password.service';
 import { EmailModule } from '../email/email.module';
 import { EventsModule } from '../analytics/events.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Session, PasswordResetToken, EmailVerificationToken]),
+    PrismaModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'dev-secret',
@@ -39,13 +31,9 @@ import { EventsModule } from '../analytics/events.module';
   ],
   controllers: [AuthController],
   providers: [
-    AuthService,
-    TokenService,
-    PasswordService,
+    PrismaAuthService,
     JwtStrategy,
-    GoogleStrategy,
-    GitHubStrategy,
   ],
-  exports: [AuthService, TokenService, PasswordService, JwtModule, EmailModule],
+  exports: [PrismaAuthService, JwtModule, EmailModule, PrismaModule],
 })
 export class AuthModule {}

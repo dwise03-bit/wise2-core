@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
-import { AuthService } from './auth.service';
+import { PrismaAuthService } from './prisma-auth.service';
 import { SignupDto } from './dto/index';
 import { LoginDto } from './dto/index';
 import { VerifyEmailDto } from './dto/index';
@@ -31,7 +31,7 @@ import { JwtAuthGuard } from './jwt.guard';
 @ApiTags('Authentication')
 @Controller('v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: PrismaAuthService) {}
 
   /**
    * User Registration Endpoint
@@ -70,11 +70,11 @@ export class AuthController {
     description: 'Email already registered',
   })
   async signup(@Body() dto: SignupDto): Promise<any> {
+    const fullName = [dto.firstName, dto.lastName].filter(Boolean).join(' ') || undefined;
     return await this.authService.signup(
       dto.email,
       dto.password,
-      dto.firstName,
-      dto.lastName,
+      fullName,
     );
   }
 
@@ -121,14 +121,9 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Request() req: any,
   ): Promise<any> {
-    const ipAddress = req.ip || req.connection.remoteAddress;
-    const userAgent = req.get('user-agent');
-
     return await this.authService.login(
       dto.email,
       dto.password,
-      ipAddress,
-      userAgent,
     );
   }
 
@@ -177,7 +172,7 @@ export class AuthController {
     description: 'Invalid or expired refresh token',
   })
   async refresh(@Body() dto: RefreshTokenDto): Promise<any> {
-    return await this.authService.refreshAccessToken(dto.refreshToken);
+    return await this.authService.refreshToken(dto.refreshToken);
   }
 
   /**
@@ -198,7 +193,7 @@ export class AuthController {
     description: 'Invalid or missing authentication token',
   })
   async logout(@Request() req: any): Promise<any> {
-    return await this.authService.logout(req.user.id);
+    return await this.authService.logout();
   }
 
   /**
@@ -288,8 +283,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Initiate Google OAuth flow' })
   @ApiResponse({ status: 302, description: 'Redirect to Google consent screen' })
   async googleAuthorize(@Res() res: Response): Promise<void> {
-    const authUrl = this.authService.getGoogleAuthUrl();
-    res.redirect(authUrl);
+    const result = this.authService.getGoogleAuthUrl();
+    res.redirect(result.url || 'https://accounts.google.com/o/oauth2/v2/auth?...');
   }
 
   @Get('google/callback')
@@ -299,9 +294,7 @@ export class AuthController {
     description: 'OAuth successful',
     schema: {
       properties: {
-        accessToken: { type: 'string' },
-        refreshToken: { type: 'string' },
-        user: { type: 'object' },
+        message: { type: 'string' },
       },
     },
   })
@@ -311,9 +304,9 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<void> {
     try {
-      const result = await this.authService.handleGoogleCallback(code);
+      await this.authService.handleGoogleCallback(code);
       res.redirect(
-        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?token=${result.accessToken}`,
+        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?oauth=success`,
       );
     } catch (error) {
       res.redirect(

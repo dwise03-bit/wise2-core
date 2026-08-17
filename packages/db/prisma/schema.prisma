@@ -41,6 +41,11 @@ model User {
   // Print Shop relationships
   printFiles PrintFile[] @relation("printFileUploader")
 
+  // Auth relationships
+  sessions Session[]
+  accounts Account[] @relation("accounts")
+  passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -49,6 +54,63 @@ enum UserRole {
   CUSTOMER
   ADMIN
   FOUNDER
+}
+
+// Authentication - Sessions
+model Session {
+  id        String   @id @default(cuid())
+  sessionToken String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sessionToken])
+}
+
+// Authentication - Verification Tokens
+model VerificationToken {
+  id     String   @id @default(cuid())
+  email  String
+  token  String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+// Authentication - Password Reset Tokens
+model PasswordResetToken {
+  id     String   @id @default(cuid())
+  userId String
+  user   User     @relation("passwordResetTokens", fields: [userId], references: [id], onDelete: Cascade)
+  token  String   @unique
+  expires DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+// OAuth Accounts
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  user               User    @relation("accounts", fields: [userId], references: [id], onDelete: Cascade)
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 // Subscriptions/Billing

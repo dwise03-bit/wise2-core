@@ -418,6 +418,194 @@ export class HermesService {
     };
   }
 
+  async *chatStream(
+    tenantUserId: string,
+    dto: HermesChatDto,
+  ): AsyncIterable<{ event: string; data: string }> {
+    const startedAt = Date.now();
+    const model = process.env.OLLAMA_CHAT_MODEL || 'mistral:latest';
+    const configuredEndpoint =
+      process.env.HERMES_ENDPOINT ||
+      process.env.OLLAMA_BASE_URL ||
+      'http://127.0.0.1:11434';
+    const endpoint = configuredEndpoint.includes('/v1/chat/completions')
+      ? configuredEndpoint
+      : `${configuredEndpoint.replace(/\/+$/, '')}/api/chat`;
+    const history = (dto.messages ?? []).slice(-10);
+    const system = [
+      'You are Hermes, the WISE² business intelligence assistant.',
+      `Active mode: ${dto.mode || 'executive'}.`,
+      `Authenticated tenant: ${tenantUserId}.`,
+      'Do not claim to have read business records unless they are supplied in the conversation.',
+      'Distinguish facts from inference. State when evidence or access is missing.',
+      'Never claim an external action was completed; high-risk actions require human approval.',
+    ].join(' ');
+
+    const openAiCompatible = endpoint.includes('/v1/chat/completions');
+    const body = {
+      model,
+      stream: true,
+      messages: [
+        { role: 'system', content: system },
+        ...history,
+        { role: 'user', content: dto.message },
+      ],
+    };
+
+    let response: Response;
+    try {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(Number(process.env.HERMES_TIMEOUT_MS || 90000)),
+      });
+    } catch (error) {
+      yield {
+        event: 'error',
+        data: JSON.stringify({
+          code: 'CONNECTION_FAILED',
+          message: error instanceof Error ? error.message : 'connection failed',
+        }),
+      };
+      return;
+    }
+
+    if (!response.ok) {
+      const data = (await response.json().catch(() => ({}))) as any;
+      yield {
+        event: 'error',
+        data: JSON.stringify({
+          code: `ERROR_${response.status}`,
+          message: data?.error?.message || `inference failed (${response.status})`,
+        }),
+      };
+      return;
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      yield {
+        event: 'error',
+        data: JSON.stringify({ code: 'NO_STREAM', message: 'response body not readable' }),
+      };
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let tokenCount = 0;
+    let cumulativeText = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          let jsonStr = line;
+          if (line.startsWith('data: ')) {
+            jsonStr = line.slice(6);
+          }
+          if (jsonStr === '[DONE]') {
+            yield {
+              event: 'done',
+              data: JSON.stringify({
+                totalTokens: tokenCount,
+                durationMs: Date.now() - startedAt,
+                model,
+              }),
+            };
+            return;
+          }
+
+          try {
+            const chunk = JSON.parse(jsonStr);
+            const token = openAiCompatible
+              ? chunk?.choices?.[0]?.delta?.content ?? ''
+              : chunk?.message?.content ?? '';
+
+            if (token) {
+              tokenCount++;
+              cumulativeText += token;
+
+              yield {
+                event: 'token',
+                data: JSON.stringify({
+                  token,
+                  cumulative: cumulativeText,
+                  index: tokenCount,
+                }),
+              };
+            }
+
+            if (chunk.done === true || chunk?.choices?.[0]?.finish_reason) {
+              yield {
+                event: 'done',
+                data: JSON.stringify({
+                  totalTokens: tokenCount,
+                  durationMs: Date.now() - startedAt,
+                  model,
+                }),
+              };
+              return;
+            }
+          } catch (parseError) {
+            console.warn('[Hermes] Malformed chunk:', jsonStr);
+            continue;
+          }
+        }
+      }
+
+      if (buffer.trim()) {
+        try {
+          const chunk = JSON.parse(buffer);
+          const token = openAiCompatible
+            ? chunk?.choices?.[0]?.delta?.content ?? ''
+            : chunk?.message?.content ?? '';
+          if (token) {
+            cumulativeText += token;
+            yield {
+              event: 'token',
+              data: JSON.stringify({
+                token,
+                cumulative: cumulativeText,
+                index: ++tokenCount,
+              }),
+            };
+          }
+        } catch {
+          // Ignore
+        }
+      }
+
+      yield {
+        event: 'done',
+        data: JSON.stringify({
+          totalTokens: tokenCount,
+          durationMs: Date.now() - startedAt,
+          model,
+        }),
+      };
+    } catch (error) {
+      yield {
+        event: 'error',
+        data: JSON.stringify({
+          code: 'STREAM_ERROR',
+          message: error instanceof Error ? error.message : 'unknown error',
+        }),
+      };
+    } finally {
+      reader.cancel();
+    }
+  }
+
   private assertPendingDecision(action: HermesAction) {
     if (action.status !== 'pending_approval') {
       throw new BadRequestException(
