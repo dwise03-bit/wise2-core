@@ -97,15 +97,15 @@ export function ImpsByteMiniHero() {
               <div className="absolute inset-0 bg-gradient-radial from-blue-500/30 to-transparent rounded-full blur-3xl opacity-50" />
 
               {/* Character Image */}
-              <div className="relative z-10 w-full h-full flex items-center justify-center">
+              <div className="relative z-10 flex items-center justify-center">
                 <div className="relative w-64 h-80 rounded-2xl overflow-hidden shadow-2xl shadow-blue-500/20">
                   <Image
                     src="/wise-imp/idle-blue.webp"
                     alt="WISE² IMPS BYTE MINI 4.0 - AI Companion Robot"
-                    fill
+                    width={256}
+                    height={320}
                     priority
-                    sizes="(max-width: 640px) 256px, 320px"
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
               </div>

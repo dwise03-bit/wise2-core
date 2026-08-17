@@ -52,9 +52,9 @@ export function ImpsGallery() {
               <Image
                 src={item.image}
                 alt={item.title}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                className="object-cover group-hover:scale-110 transition duration-300"
+                width={400}
+                height={400}
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 group-hover:to-black/40 transition" />
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 group-hover:text-blue-400 transition">
@@ -78,14 +78,14 @@ export function ImpsGallery() {
 
               {/* Image Container */}
               <div className="bg-black border border-blue-500/50 rounded-lg overflow-hidden">
-                <div className="relative aspect-video bg-black">
+                <div className="relative w-full aspect-video bg-black flex items-center justify-center">
                   <Image
                     src={galleryItems[selectedIndex].image}
                     alt={galleryItems[selectedIndex].title}
-                    fill
-                    sizes="(max-width: 1280px) 90vw, 1024px"
+                    width={1024}
+                    height={576}
                     priority
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
