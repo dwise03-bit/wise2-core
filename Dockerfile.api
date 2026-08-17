@@ -23,8 +23,10 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist
 # Generate Prisma client for current environment (linux-musl on Alpine)
 RUN cd packages/db && npx prisma generate || true
 
-# Copy pre-built API
-COPY packages/api/dist ./dist
+# Copy API source and build it
+COPY packages/api/src ./packages/api/src
+COPY packages/api/tsconfig.json ./packages/api/
+RUN cd packages/api && npx tsc --build
 
 EXPOSE 3000
 
