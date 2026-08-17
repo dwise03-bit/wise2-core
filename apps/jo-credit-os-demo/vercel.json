@@ -1,9 +1,6 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "cd ../.. && pnpm --filter @wise2/jo-credit-os-demo build",
-  "outputDirectory": "apps/jo-credit-os-demo/.next",
   "env": {
     "SKIP_ENV_VALIDATION": "true",
     "NODE_ENV": "production"
