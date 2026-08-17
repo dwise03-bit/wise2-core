@@ -41,9 +41,18 @@ add_secret() {
 echo "📍 DEPLOYMENT SECRETS"
 add_secret "DEPLOY_HOST" "173.208.147.165"
 add_secret "DEPLOY_USER" "dwise"
-add_secret "DEPLOY_KEY" "-----BEGIN PRIVATE KEY-----
-MC4CAQAwBQYDK2VwBCIEIF0CC6MhmLqT1/nC+ratvYAawDHhkRsxdfprunlN4w3a
------END PRIVATE KEY-----"
+
+# SSH Key - read from file or environment
+if [ -z "$DEPLOY_KEY" ]; then
+    if [ -f "$HOME/.ssh/wise2-deploy" ]; then
+        DEPLOY_KEY=$(cat "$HOME/.ssh/wise2-deploy")
+    else
+        echo "❌ DEPLOY_KEY not found!"
+        echo "Set DEPLOY_KEY environment variable or place key at ~/.ssh/wise2-deploy"
+        exit 1
+    fi
+fi
+add_secret "DEPLOY_KEY" "$DEPLOY_KEY"
 
 # DATABASE SECRETS
 echo ""
