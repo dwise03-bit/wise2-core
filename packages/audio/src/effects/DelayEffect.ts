@@ -53,21 +53,23 @@ export class DelayEffect extends EffectBase {
     this.config.parameters[param] = value;
 
     switch (param) {
-      case 'time':
+      case 'time': {
         // Delay time in milliseconds, range: 1-5000ms
         const timeSeconds = Math.max(0.001, Math.min(5, value / 1000));
         this.delayNode.delayTime.value = timeSeconds;
         break;
+      }
       case 'feedback':
         // Feedback amount, range: 0-0.95 (prevent infinite feedback)
         this.feedbackNode.gain.value = Math.max(0, Math.min(0.95, value));
         break;
-      case 'mix':
+      case 'mix': {
         // Wet/dry mix
         const mix = Math.max(0, Math.min(1, value));
         this.dryNode.gain.value = 1 - mix;
         this.wetNode.gain.value = mix;
         break;
+      }
     }
   }
 

@@ -224,12 +224,8 @@ export class Playback {
    * In a real implementation, this would use Web Audio API scheduling
    */
   private schedulePlayback(): void {
-    const bufferDuration = 0.5; // 500ms lookahead buffer
-
-    this.tracks.forEach((track, trackId) => {
-      // Get all clips for this track and play those within our time window
-      // This is simplified - real implementation would use Web Audio's timing
-    });
+    // TODO: Implement proper Web Audio scheduling with lookahead buffer
+    // For now, clips are played immediately
   }
 
   /**
@@ -281,7 +277,6 @@ export class Playback {
    * Convert time to bar.beat.tick format
    */
   timeToBarBeatTick(time: number, timeSignature: [number, number] = [4, 4]): [number, number, number] {
-    const beatDuration = this.getBeatDuration() / 1000;
     const beatsPerBar = timeSignature[0];
     const beatDurationInSeconds = (60 / this.bpm);
 

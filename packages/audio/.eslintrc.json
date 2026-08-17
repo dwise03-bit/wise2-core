@@ -1,5 +1,6 @@
 {
   "env": {
+    "browser": true,
     "node": true,
     "es2021": true
   },
@@ -11,6 +12,7 @@
   },
   "rules": {
     "prefer-const": "warn",
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "no-unused-vars": "off"
   }
 }

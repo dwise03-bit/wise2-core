@@ -127,7 +127,7 @@ export class AudioContextManager {
   /**
    * Get audio context state
    */
-  getState(): AudioContextState {
+  getState(): string {
     if (!this.audioContext) return 'closed';
     return this.audioContext.state;
   }
@@ -144,7 +144,7 @@ export class AudioContextManager {
    */
   private detectSampleRate(): number {
     try {
-      const offlineContext = new OfflineAudioContext(1, 1, 48000);
+      new OfflineAudioContext(1, 1, 48000);
       return 48000;
     } catch {
       return 44100;
