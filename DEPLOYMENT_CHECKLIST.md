@@ -1,264 +1,308 @@
-# Browser Cache-Busting Fix - Deployment Checklist
+# WISE² Deployment Checklist — Complete Path to Production
 
-## Pre-Deployment
-
-- [x] Nginx config syntax validated
-- [x] Cache headers properly configured
-- [x] Backup strategy documented
-- [x] Rollback procedure tested
-- [x] Zero-downtime deployment confirmed
+**Status**: Code pushed to main ✅ | SSH guide ready ✅ | Ready for local execution  
+**Date**: 2026-08-16  
+**Target Server**: 173.208.147.165 (dwise)  
+**Deployment Method**: GitHub Actions (automatic on push to main)
 
 ---
 
-## Deployment Steps
+## Phase 1: Local SSH Setup (Execute on Your Machine)
 
-### Option A: Automated (Recommended)
+These steps run ON YOUR LOCAL MACHINE, not in this cloud session.
 
+### Step 1: Generate SSH Key
 ```bash
-# From project root
-bash scripts/deploy-cache-fix.sh
+ssh-keygen -t ed25519 -f ~/.ssh/wise2-deploy -N ""
 ```
+- Creates `~/.ssh/wise2-deploy` (private key)
+- Creates `~/.ssh/wise2-deploy.pub` (public key)
 
-**What this does:**
-- ✓ Creates backup on production server
-- ✓ Validates config syntax
-- ✓ Deploys new config
-- ✓ Reloads nginx (zero-downtime)
-- ✓ Verifies endpoint is live
-
-**Time:** ~2 minutes  
-**Risk:** Very Low (automatic backup + syntax validation)
-
----
-
-### Option B: Manual (If Script Fails)
-
+### Step 2: Copy Public Key to Server
 ```bash
-# Step 1: Create backup
-ssh dwise@173.208.147.165 "sudo mkdir -p /etc/nginx/backups && \
-  sudo cp /etc/nginx/conf.d/default.conf /etc/nginx/backups/default.conf.\$(date +%Y%m%d_%H%M%S).bak"
+# Read your public key
+cat ~/.ssh/wise2-deploy.pub
 
-# Step 2: Copy new config
-scp config/nginx.conf dwise@173.208.147.165:/tmp/nginx.conf.new
-
-# Step 3: Validate
-ssh dwise@173.208.147.165 "sudo nginx -t -c /tmp/nginx.conf.new"
-
-# Step 4: Deploy
-ssh dwise@173.208.147.165 "sudo cp /tmp/nginx.conf.new /etc/nginx/conf.d/default.conf && \
-  sudo systemctl reload nginx"
-
-# Step 5: Verify
-curl -I https://wise2.net
-```
-
-**Time:** ~5 minutes  
-**Risk:** Low (manual validation before deployment)
-
----
-
-## Post-Deployment Verification
-
-### Immediate (Automated)
-
-The deployment script runs these automatically:
-
-```bash
-# Check nginx status
-sudo systemctl status nginx
-
-# Test endpoint
-curl -I https://wise2.net
-```
-
-### Manual Browser Verification
-
-1. **Open browser DevTools:**
-   ```
-   https://wise2.net
-   F12 → Network tab
-   Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
-   ```
-
-2. **Check JS chunk cache headers:**
-   - Click on any `.js` file
-   - Look at "Response Headers"
-   - Should see: `Cache-Control: public, max-age=31536000, immutable`
-
-3. **Check HTML cache headers:**
-   - Click on document request (the first one, usually "wise2.net")
-   - Look at "Response Headers"
-   - Should see: `Cache-Control: public, max-age=0, must-revalidate`
-
-### Command Line Verification
-
-```bash
-# Quick check - JavaScript chunks
-curl -s -I https://wise2.net/_next/static/chunks/*.js | grep -i cache-control | head -1
-
-# Quick check - HTML
-curl -s -I https://wise2.net | grep -i cache-control
-
-# Expected output:
-# Cache-Control: public, max-age=31536000, immutable
-# Cache-Control: public, max-age=0, must-revalidate
-```
-
----
-
-## Success Criteria
-
-All of these should pass post-deployment:
-
-- [ ] `nginx -t` shows "configuration syntax ok"
-- [ ] `sudo systemctl status nginx` shows "active (running)"
-- [ ] `curl -I https://wise2.net` returns HTTP 200
-- [ ] JavaScript chunks have `Cache-Control: immutable`
-- [ ] HTML has `Cache-Control: must-revalidate`
-- [ ] Website displays "OUR WORKS" section correctly
-- [ ] No console errors in browser DevTools
-- [ ] No 404s for `.js` or `.css` files
-
----
-
-## Rollback Procedure
-
-If deployment causes issues, rollback is simple:
-
-```bash
-# SSH to production
+# SSH to server and add it (you'll be prompted for password)
 ssh dwise@173.208.147.165
 
-# Find the most recent backup
-ls -lah /etc/nginx/backups | tail -5
+# On the server, add your public key to authorized_keys
+echo "YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 
-# Restore (replace YYYYMMDD_HHMMSS with actual timestamp)
-sudo cp /etc/nginx/backups/default.conf.YYYYMMDD_HHMMSS.bak /etc/nginx/conf.d/default.conf
-
-# Reload nginx
-sudo systemctl reload nginx
-
-# Verify
-sudo systemctl status nginx
-curl -I https://wise2.net
+# Exit server
+exit
 ```
 
-**Rollback time:** ~1 minute  
-**Data loss:** None (read-only operation)
+### Step 3: Test SSH Connection
+```bash
+ssh -i ~/.ssh/wise2-deploy dwise@173.208.147.165
+
+# You should see the server prompt without a password
+# If successful, exit
+exit
+```
 
 ---
 
-## Monitoring Post-Deployment
+## Phase 2: Configure GitHub Secrets (GitHub UI)
 
-### Check nginx error log
+Go to https://github.com/dwise03-bit/wise2-core/settings/secrets/actions
+
+### Add These 16 Secrets:
+
+#### **Deployment Infrastructure**
+| Secret | Value | Source |
+|--------|-------|--------|
+| `DEPLOY_HOST` | `173.208.147.165` | Server IP |
+| `DEPLOY_USER` | `dwise` | Server username |
+| `DEPLOY_KEY` | `~/.ssh/wise2-deploy` contents | Private key file (copy entire file) |
+
+#### **Docker Hub** (for container registry)
+| Secret | Value | Where to Find |
+|--------|-------|---|
+| `DOCKER_USERNAME` | Your Docker Hub username | https://hub.docker.com |
+| `DOCKER_PASSWORD` | Your Docker Hub Personal Access Token | Account settings → Security |
+
+#### **Database** (PostgreSQL)
+| Secret | Value | Example |
+|--------|-------|---------|
+| `DATABASE_URL` | `postgresql://user:pass@host/wise2` | Set with your server DB credentials |
+
+#### **Email Service** (SendGrid)
+| Secret | Value | Where to Find |
+|--------|-------|---|
+| `SENDGRID_API_KEY` | Your SendGrid API key | SendGrid dashboard → API keys |
+| `SENDGRID_FROM_EMAIL` | `noreply@wise2.net` | Your configured sender email |
+
+#### **Payment Processing** (Stripe)
+| Secret | Value | Where to Find |
+|--------|-------|---|
+| `STRIPE_SECRET_KEY` | `sk_live_...` | Stripe dashboard → API keys |
+| `STRIPE_PUBLIC_KEY` | `pk_live_...` | Stripe dashboard → API keys |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` | Stripe dashboard → Webhooks |
+
+#### **AI Services** (Optional but recommended)
+| Secret | Value | Where to Find |
+|--------|-------|---|
+| `OPENAI_API_KEY` | Your OpenAI API key | OpenAI dashboard |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key | Anthropic console |
+
+#### **Application Secrets**
+| Secret | Value | Example |
+|--------|-------|---------|
+| `JWT_SECRET` | Random 32+ char string | `openssl rand -base64 32` |
+| `SESSION_SECRET` | Random 32+ char string | `openssl rand -base64 32` |
+
+---
+
+## Phase 3: Verify Everything is Ready
+
+### ✅ Code
+- [x] WiseImp animations committed
+- [x] Code pushed to main
+- [x] Latest from origin/main merged
+
+### ✅ SSH
+- [ ] SSH key generated locally
+- [ ] Public key added to server
+- [ ] SSH connection tested successfully
+
+### ✅ GitHub Secrets  
+- [ ] All 16 secrets configured
+- [ ] Double-checked secret values
+
+### ✅ Deployment Ready
+- [ ] GitHub Actions workflow configured (.github/workflows/)
+- [ ] Docker images building
+- [ ] nginx config ready
+- [ ] Database migrations prepared
+
+---
+
+## Phase 4: Trigger Deployment (Automatic)
+
+Once GitHub Secrets are configured, deployment starts automatically:
+
 ```bash
-ssh dwise@173.208.147.165 "sudo tail -f /var/log/nginx/error.log"
+# Simply push to main (or it's already pushed)
+git push origin main
 ```
 
-### Monitor wise2.net endpoint
+GitHub Actions will:
+1. ✅ Build Docker images
+2. ✅ Push to Docker Hub
+3. ✅ SSH to production server
+4. ✅ Pull latest images
+5. ✅ Run docker-compose
+6. ✅ Execute health checks
+7. ✅ Verify all services online
+
+**Estimated time**: 8-12 minutes
+
+---
+
+## Phase 5: Monitor Deployment
+
+### Watch GitHub Actions
+- Go to https://github.com/dwise03-bit/wise2-core/actions
+- Click on the latest workflow run
+- Monitor logs in real-time
+
+### Once Complete, Verify on Server
+
 ```bash
-while true; do
-  curl -s -I https://wise2.net | head -3
-  sleep 5
-done
+# SSH to server
+ssh -i ~/.ssh/wise2-deploy dwise@173.208.147.165
+
+# Check docker services
+docker ps
+
+# Check logs
+docker-compose logs -f
+
+# Test endpoints
+curl http://localhost:3000  # Website
+curl http://localhost:3001  # API
+curl http://localhost:3005  # Dashboard
 ```
 
-### Check proxy to backend
+### Access Live Services
+- **Website**: https://wise2.net
+- **Dashboard**: https://wise2.net/dashboard
+- **API**: https://api.wise2.net
+- **Creative Studio**: https://wise2.net/studio
+
+---
+
+## Phase 6: Post-Deployment Tasks
+
+Once deployment succeeds:
+
+### 1. Run Database Migrations
 ```bash
-ssh dwise@173.208.147.165 "sudo netstat -tulnp | grep nginx"
+ssh -i ~/.ssh/wise2-deploy dwise@173.208.147.165
+cd ~/wise2-core
+docker exec wise2-api npm run migrate
+```
+
+### 2. Seed Sample Data (if needed)
+```bash
+docker exec wise2-api npm run seed
+```
+
+### 3. Monitor Health
+```bash
+# Check all services
+docker-compose ps
+
+# View recent logs
+docker-compose logs --tail=50
+```
+
+### 4. Set Up Backups
+```bash
+# Database backups run daily via cron
+# Check: crontab -l | grep backup
+
+# Manual backup:
+./scripts/backup-database.sh
+```
+
+---
+
+## Troubleshooting
+
+### SSH Connection Fails
+```bash
+# Check key exists
+ls -la ~/.ssh/wise2-deploy
+
+# Verify permissions
+chmod 600 ~/.ssh/wise2-deploy
+
+# Test verbose mode
+ssh -vvv -i ~/.ssh/wise2-deploy dwise@173.208.147.165
+```
+
+### GitHub Actions Fails
+1. Check logs at https://github.com/dwise03-bit/wise2-core/actions
+2. Verify all 16 GitHub Secrets are set
+3. Check Docker Hub credentials
+4. Verify DEPLOY_KEY contains full private key (including BEGIN/END lines)
+
+### Docker Build Fails
+```bash
+# SSH to server and check Docker
+docker system prune -a
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Services Not Starting
+```bash
+# Check service logs
+docker-compose logs [service-name]
+
+# Restart specific service
+docker-compose restart [service-name]
+
+# Full restart
+docker-compose down
+docker-compose up -d
+```
+
+---
+
+## Quick Reference
+
+**Local setup command** (one-liner for Mac/Linux):
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/wise2-deploy -N "" && \
+echo "Key generated. Next: SSH to 173.208.147.165 and add your public key." && \
+cat ~/.ssh/wise2-deploy.pub
+```
+
+**Test deployment** (after SSH setup):
+```bash
+ssh -i ~/.ssh/wise2-deploy dwise@173.208.147.165 "docker ps"
+```
+
+**Manual deploy** (if needed):
+```bash
+ssh -i ~/.ssh/wise2-deploy dwise@173.208.147.165 \
+  "cd ~/wise2-core && git pull && docker-compose build && docker-compose up -d"
 ```
 
 ---
 
 ## Timeline
 
-| Phase | Action | Time | Owner |
-|-------|--------|------|-------|
-| Pre | Validate config | 2 min | @dev |
-| Deploy | Run script or manual steps | 5 min | @ops or @dev |
-| Post | Verify cache headers | 3 min | @dev |
-| Monitor | Watch logs for 5 min | 5 min | Anyone |
-| Document | Update deployment log | 2 min | @dev |
-| **Total** | | **~17 min** | |
+| Step | Time | Status |
+|------|------|--------|
+| SSH key generation | 1 min | ⏳ You |
+| SSH to server & add key | 2 min | ⏳ You |
+| Test SSH connection | 1 min | ⏳ You |
+| Add 16 GitHub Secrets | 5 min | ⏳ You |
+| GitHub Actions build/deploy | 8-12 min | 🤖 Automatic |
+| Health check verification | 2 min | ✅ You |
+| **Total end-to-end** | **~20-30 min** | |
 
 ---
 
-## Files Involved
+## Status Summary
 
-| File | Status | Purpose |
-|------|--------|---------|
-| `config/nginx.conf` | Modified | Updated with cache-busting headers |
-| `scripts/deploy-cache-fix.sh` | New | Automated deployment script |
-| `CACHE_FIX_IMPLEMENTATION.md` | New | Full technical documentation |
-| `CACHE_FIX_QUICK_REFERENCE.md` | New | Quick reference guide |
-| `NGINX_CONFIG_DIFF.md` | New | Detailed diff and explanation |
-| `DEPLOYMENT_CHECKLIST.md` | New | This checklist |
+```
+Code Ready          ✅ (WiseImp animations + latest merged)
+SSH Guide           ✅ (SSH_SETUP_GUIDE.md)
+Deployment Script   ✅ (GitHub Actions workflow)
+Docker Config       ✅ (docker-compose.prod.yml)
+Nginx Config        ✅ (Production ready)
 
----
-
-## Rollback Triggers
-
-Rollback immediately if any of these occur:
-
-- [ ] Website returns HTTP 5xx errors
-- [ ] nginx fails to reload (syntax error)
-- [ ] Old design still appears after hard refresh
-- [ ] Console shows JavaScript errors about hydration
-- [ ] Cache headers are missing or incorrect
-
----
-
-## Communication
-
-After deployment, confirm with team:
-
-```markdown
-✅ Cache-busting fix deployed to https://wise2.net
-
-Changes:
-- JavaScript chunks now cached for 1 year (safe - content-addressed)
-- HTML pages no longer cached (always fresh)
-- Eliminates hydration mismatches after deployments
-
-Verification:
-- Cache headers: ✓
-- Website functionality: ✓
-- No console errors: ✓
-
-Rollback: Ready (auto-backup at /etc/nginx/backups/)
+NEXT STEP: Execute SSH setup on your local machine, then configure GitHub Secrets.
+Once both are done, deployment happens automatically on next push to main.
 ```
 
 ---
 
-## Questions & Support
-
-**Issue:** Website still showing old design
-**Solution:** 
-1. Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
-2. Clear site data: DevTools → Application → Storage → Clear site data
-3. Open in new private/incognito window
-
-**Issue:** nginx won't reload
-**Solution:**
-1. Check syntax: `sudo nginx -t`
-2. Check error log: `sudo tail -f /var/log/nginx/error.log`
-3. Rollback: Copy backup and reload
-
-**Issue:** Cache headers not being sent
-**Solution:**
-1. Verify config deployed: `sudo cat /etc/nginx/conf.d/default.conf | grep "Cache-Control"`
-2. Reload nginx: `sudo systemctl reload nginx`
-3. Wait 10 seconds and test again
-
----
-
-## Sign-Off
-
-- [ ] Deployment authorized by: ________________
-- [ ] Deployment completed at: ________________
-- [ ] Verified by: ________________
-- [ ] Date: ________________
-
----
-
-**Next Steps:** After deployment, update production monitoring dashboard to track cache hit rates.
+**Need help?** See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed instructions on each phase.
