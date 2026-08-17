@@ -129,28 +129,28 @@ services:
       retries: 3
 
   # WISE TOUCH // PROMPT SHOP™
-  # prompt-shop:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/prompt-shop/Dockerfile
-  #   container_name: wise2-prompt-shop
-  #   restart: unless-stopped
-  #   environment:
-  #     NODE_ENV: production
-  #     PORT: 3002
-  #     HOSTNAME: 0.0.0.0
-  #     NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
-  #   ports:
-  #     - "127.0.0.1:3002:3002"
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - wise2
-  #   healthcheck:
-  #     test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3002', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
+  prompt-shop:
+    build:
+      context: .
+      dockerfile: apps/prompt-shop/Dockerfile
+    container_name: wise2-prompt-shop
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3002:3002"
+    depends_on:
+      - api
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3002', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Redis Cache & Queue
   redis:
@@ -184,6 +184,7 @@ services:
       - api
       - website
       - studio
+      - prompt-shop
       - redis
     networks:
       - wise2
