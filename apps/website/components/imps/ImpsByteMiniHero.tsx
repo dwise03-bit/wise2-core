@@ -1,6 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+
 export function ImpsByteMiniHero() {
+  const [animationFrame, setAnimationFrame] = useState('idle-blue');
   return (
     <section id="home" className="relative min-h-screen bg-gradient-to-br from-black via-blue-950/10 to-black pt-20 pb-16 overflow-hidden">
       {/* Background effects */}
@@ -85,27 +89,24 @@ export function ImpsByteMiniHero() {
             </div>
           </div>
 
-          {/* Right Column — Character Render (Placeholder) */}
+          {/* Right Column — Character Render */}
           <div className="relative h-96 sm:h-[600px] flex items-center justify-center">
             {/* Character Container */}
             <div className="relative w-full h-full flex items-center justify-center">
               {/* Glow Background */}
               <div className="absolute inset-0 bg-gradient-radial from-blue-500/30 to-transparent rounded-full blur-3xl opacity-50" />
 
-              {/* Character Placeholder — Will be replaced with actual render */}
-              <div className="relative z-10 w-64 h-80 bg-gradient-to-b from-blue-900/20 to-black/40 border-2 border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-500/20 flex items-center justify-center group">
-                <div className="text-center space-y-4">
-                  {/* Screen Face Simulation */}
-                  <div className="w-48 h-32 bg-gradient-to-br from-blue-600/40 to-cyan-500/20 rounded-xl border border-blue-400/50 flex items-center justify-center">
-                    <div className="space-y-2">
-                      <div className="flex gap-4 justify-center">
-                        <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse" />
-                        <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-                      </div>
-                      <p className="text-xs text-blue-300 font-bold">WISE² IMPS</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400">Character Render</p>
+              {/* Character Image */}
+              <div className="relative z-10 w-full h-full flex items-center justify-center">
+                <div className="relative w-64 h-80 rounded-2xl overflow-hidden shadow-2xl shadow-blue-500/20">
+                  <Image
+                    src="/wise-imp/idle-blue.webp"
+                    alt="WISE² IMPS BYTE MINI 4.0 - AI Companion Robot"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 256px, 320px"
+                    className="object-cover"
+                  />
                 </div>
               </div>
 
