@@ -36,7 +36,7 @@ router.get('/dashboard', async (req: Request, res: Response, next: NextFunction)
         where: scopedWhere(req, { status: 'SCHEDULED', technician: null }),
       }),
       db.revenueCustomer.count({
-        where: scopedWhere(req, { lastServicedAt: { lte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) } } }),
+        where: scopedWhere(req, { lastServicedAt: { lte: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) } }),
       }),
     ]);
 
