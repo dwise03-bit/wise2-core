@@ -25,6 +25,20 @@ import authRouter from './routes/auth';
 import paymentsRouter from './routes/payments';
 import filesRouter from './routes/files';
 import consultingRouter from './routes/consulting';
+import webhooksRouter from './routes/webhooks';
+import crmRouter from './routes/crm';
+import estimatesRouter from './routes/estimates';
+import dispatchRouter from './routes/dispatch';
+import followUpsRouter from './routes/followups';
+import approvalsRouter from './routes/approvals';
+import workflowsRouter from './routes/workflows';
+import industryTemplatesRouter from './routes/industry-templates';
+import observabilityRouter from './routes/observability';
+import aiAdvisorRouter from './routes/ai-advisor';
+import communicationsRouter from './routes/communications';
+import reportsRouter from './routes/reports';
+import mobileRouter from './routes/mobile';
+import claudeApiRouter from './routes/claude-api';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -33,6 +47,15 @@ export async function createServer(): Promise<Express> {
   // Security Middleware
   // ============================================================================
   app.use(helmet());
+
+  // ============================================================================
+  // Webhook Raw Body Capture (before JSON parsing)
+  // Required for Stripe signature verification
+  // ============================================================================
+  app.use('/api/v1/webhooks', express.raw({ type: 'application/json' }), (req, res, next) => {
+    (req as any).rawBody = req.body;
+    next();
+  });
 
   // ============================================================================
   // Request Parsing Middleware
@@ -106,14 +129,56 @@ export async function createServer(): Promise<Express> {
   // API Routes
   // ============================================================================
 
+  // Webhook routes (before auth routes, no auth required)
+  app.use('/api/v1/webhooks', webhooksRouter);
+
   // Authentication routes
   app.use('/api/v1/auth', authRouter);
 
   // Payment routes
   app.use('/api/v1/payments', paymentsRouter);
 
+  // CRM routes (Command Center - requires auth + tenant context)
+  app.use('/api/v1/crm', crmRouter);
+
+  // Estimates routes (Phase 8)
+  app.use('/api/v1/crm', estimatesRouter);
+
+  // Dispatch routes (Phase 9)
+  app.use('/api/v1/crm', dispatchRouter);
+
+  // Follow-ups routes (Phase 10)
+  app.use('/api/v1/crm', followUpsRouter);
+
+  // Approvals routes (Phase 13)
+  app.use('/api/v1/crm', approvalsRouter);
+
+  // Workflows routes (Phase 14)
+  app.use('/api/v1/crm', workflowsRouter);
+
+  // Industry templates routes (Phase 15)
+  app.use('/api/v1/crm', industryTemplatesRouter);
+
+  // Observability routes (Phase 16)
+  app.use('/api/v1/crm', observabilityRouter);
+
+  // AI Advisor routes (Phase 18)
+  app.use('/api/v1/crm', aiAdvisorRouter);
+
+  // Communications routes (Phase 7)
+  app.use('/api/v1/crm', communicationsRouter);
+
+  // Reports routes (Phase 11)
+  app.use('/api/v1/crm', reportsRouter);
+
+  // Claude API routes (Phase 19)
+  app.use('/api/v1/crm', claudeApiRouter);
+
   // File storage routes
   app.use('/api/v1/files', filesRouter);
+
+  // Mobile routes (Phase 12)
+  app.use('/api/v1/mobile', mobileRouter);
 
   // Hermes Website Builder API
   app.use('/api/v1/hermes', hermesRouter);

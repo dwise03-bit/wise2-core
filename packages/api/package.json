@@ -1,7 +1,7 @@
 {
-  "name": "@wise2/api",
+  "name": "@wise2/platform-api",
   "version": "0.1.0",
-  "description": "WISE² Enterprise backend API",
+  "description": "WISE² Enterprise platform backend API (legacy NestJS)",
   "private": true,
   "main": "dist/main.js",
   "scripts": {
