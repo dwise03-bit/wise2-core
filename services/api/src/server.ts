@@ -38,6 +38,7 @@ import aiAdvisorRouter from './routes/ai-advisor';
 import communicationsRouter from './routes/communications';
 import reportsRouter from './routes/reports';
 import mobileRouter from './routes/mobile';
+import claudeApiRouter from './routes/claude-api';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -169,6 +170,9 @@ export async function createServer(): Promise<Express> {
 
   // Reports routes (Phase 11)
   app.use('/api/v1/crm', reportsRouter);
+
+  // Claude API routes (Phase 19)
+  app.use('/api/v1/crm', claudeApiRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
