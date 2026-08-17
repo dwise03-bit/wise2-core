@@ -1,14 +1,10 @@
 import { AgentType } from '@prisma/client';
-import type { AgentConfig } from '@wise2/agent-framework';
 
 /**
  * The WISE² AI workforce (Phase 5).
  *
- * These conform to the existing framework's AgentConfig contract rather than
- * introducing a parallel agent abstraction — `packages/agent-framework` stays
- * the single definition of what an agent is. The import is type-only, so the
- * CommonJS API build takes on no ESM runtime dependency; execution wires to
- * BaseAgent when the agents are given live providers.
+ * Agent definitions for the revenue OS, extending base configuration with
+ * business-specific capability requirements and guardrails.
  *
  * Capability requirements are declared per agent so an agent whose providers
  * are unconfigured reports NEEDS_CONFIG instead of running and failing.
@@ -20,8 +16,12 @@ export type AgentCapability =
   | 'calendar'
   | 'review';
 
-export interface RevenueAgentDefinition extends AgentConfig {
+export interface RevenueAgentDefinition {
+  id: string;
   type: AgentType;
+  name: string;
+  promptPath: string;
+  tools: string[];
   purpose: string;
   requires: AgentCapability[];
   /** Behaviour the agent must never exhibit; enforced in review and tests. */
