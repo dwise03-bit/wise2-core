@@ -166,6 +166,8 @@ export function WiseImp() {
                 loading={state.loading}
                 aiUnavailable={state.aiUnavailable}
                 pendingAction={state.pendingAction}
+                glowColor={state.glowColor}
+                mascotState={state.mascotState}
                 onSend={store.sendMessage}
                 onConfirmAction={() => store.confirmPendingAction(handleNavigate, scrollToContact)}
                 onDismissAction={store.dismissAction}
