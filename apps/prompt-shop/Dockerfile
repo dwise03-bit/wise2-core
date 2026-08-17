@@ -6,16 +6,19 @@ WORKDIR /app
 # Copy workspace files
 COPY package*.json ./
 COPY pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml* ./
 
-# Install dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# Install pnpm
+RUN npm install -g pnpm
 
-# Copy app source
+# Copy entire monorepo (needed for workspace linking)
 COPY . .
 
-# Build only prompt-shop (using pnpm workspace)
-WORKDIR /app/apps/prompt-shop
-RUN pnpm exec next build
+# Install all dependencies in the monorepo
+RUN pnpm install --frozen-lockfile
+
+# Build prompt-shop specifically
+RUN pnpm --filter @wise2/prompt-shop run build
 
 # Production stage
 FROM node:20-alpine
