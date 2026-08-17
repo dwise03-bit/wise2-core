@@ -2309,12 +2309,28 @@ model Tenant {
   name      String
   vertical  String   @default("hvac")
   timezone  String   @default("America/New_York")
+  state     TenantState @default(PAYMENT_PENDING)
+
+  // Multi-tenancy demo mode flag. When true, no external side effects.
+  demoMode  Boolean @default(false)
+
+  // Billing reference
+  stripeCustomerId    String? @unique
+  stripeSubscriptionId String? @unique
 
   // Phase 16 feature gate. When false, no Revenue OS automation may execute.
   revenueOsEnabled Boolean @default(false)
 
   // Tenant-approved copy the AI must use verbatim rather than improvising.
   safetyScript String? @db.Text
+
+  // Discord workspace integration
+  discordGuildId String? @unique
+  discordBotToken String? // Should be encrypted in production
+
+  // Onboarding progress tracking
+  onboardingStep Int @default(0)
+  onboardingCompletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2331,8 +2347,16 @@ model Tenant {
   webhookEvents WebhookEvent[]
   consentRecords ConsentRecord[]
   safetyEvents SafetyEvent[]
+  provisioning ProvisioningRun?
+  approvals Approval[]
+  workflows WorkflowDefinition[]
+  followUps FollowUp[]
+  contracts Contract[]
+  auditLogs AuditLog[]
 
   @@index([slug])
+  @@index([state])
+  @@index([stripeCustomerId])
 }
 
 enum TenantRole {
@@ -2341,6 +2365,17 @@ enum TenantRole {
   DISPATCHER
   TECHNICIAN
   VIEWER
+}
+
+enum TenantState {
+  PAYMENT_PENDING
+  PROVISIONING
+  ONBOARDING
+  ACTIVE
+  PAST_DUE
+  SUSPENDED
+  CANCELLED
+  ARCHIVED
 }
 
 // Authoritative tenant membership. TenantGuard resolves tenant context from
@@ -2404,6 +2439,7 @@ model RevenueCustomer {
   serviceJobs   ServiceJob[]
   estimates     Estimate[]
   consentRecords ConsentRecord[]
+  contracts     Contract[]
 
   @@index([tenantId])
   @@index([tenantId, phone])
@@ -2734,6 +2770,296 @@ model WebhookEvent {
 
   @@unique([provider, externalId])
   @@index([tenantId])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// PROVISIONING ENGINE (Phase 1)
+// Tracks the multi-step activation of a tenant after payment
+// ============================================================================
+
+enum ProvisioningStep {
+  CREATE_TENANT
+  CREATE_MEMBERSHIP
+  INITIALIZE_DATABASE
+  LOAD_TEMPLATE
+  CREATE_PIPELINE
+  CREATE_WORKFLOWS
+  INITIALIZE_HERMES
+  PROVISION_DISCORD
+  START_ONBOARDING
+  ACTIVATE
+}
+
+enum ProvisioningStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  RETRYING
+  SKIPPED
+}
+
+model ProvisioningRun {
+  id       String @id @default(cuid())
+  tenantId String @unique
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Payment event trigger
+  paymentEventId String?
+  paymentEventType String? // e.g., "charge.succeeded", "payment_intent.succeeded"
+
+  // Current state
+  currentStep ProvisioningStep @default(CREATE_TENANT)
+  status ProvisioningStatus @default(PENDING)
+
+  // Progress tracking
+  completedSteps ProvisioningStep[]
+
+  // Error recovery
+  lastError String? @db.Text
+  lastErrorStep ProvisioningStep?
+  retryCount Int @default(0)
+  maxRetries Int @default(3)
+
+  // Lifecycle
+  startedAt DateTime?
+  completedAt DateTime?
+  expiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([tenantId, status])
+}
+
+// ============================================================================
+// APPROVAL ENGINE (Phase 13)
+// Safety gate for high-impact external actions
+// ============================================================================
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  EXECUTED
+  FAILED
+}
+
+model Approval {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Request details
+  actor String // User ID who requested
+  action String // What action (send_sms, publish_social, charge_payment)
+  target String // Target entity (Lead, Customer, Estimate)
+  targetId String // ID of target entity
+
+  // Payload (encrypted in production)
+  payloadHash String @unique // Hash of payload for integrity
+  payload Json // Actual payload
+  preview String @db.Text // Human-readable preview
+
+  // Approval tracking
+  status ApprovalStatus @default(PENDING)
+  approver String? // User ID who approved/rejected
+  note String? @db.Text
+  approvedAt DateTime?
+
+  // Execution
+  executedAt DateTime?
+  executionResult Json? // Result of executing approved action
+  executionError String? @db.Text
+
+  // Lifecycle
+  createdAt DateTime @default(now())
+  expiresAt DateTime // Approvals expire after 24 hours
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, actor])
+  @@index([expiresAt])
+}
+
+// ============================================================================
+// WORKFLOW ENGINE (Phase 14)
+// Declarative automation triggered by events
+// ============================================================================
+
+enum WorkflowTrigger {
+  LEAD_CREATED
+  LEAD_STATUS_CHANGED
+  ESTIMATE_SENT
+  ESTIMATE_VIEWED
+  JOB_CREATED
+  JOB_COMPLETED
+  CONVERSATION_RECEIVED
+  CAMPAIGN_STARTED
+  SCHEDULED_TIME
+  MANUAL
+}
+
+model WorkflowDefinition {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name String
+  description String? @db.Text
+  trigger WorkflowTrigger
+  triggerConditions Json? // Condition filters (e.g., leadStatus = "NEW")
+
+  // Workflow steps (action pipeline)
+  steps Json // Array of {action, params, condition}
+
+  enabled Boolean @default(true)
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  runs WorkflowRun[]
+
+  @@unique([tenantId, trigger])
+  @@index([tenantId])
+  @@index([tenantId, enabled])
+}
+
+model WorkflowRun {
+  id String @id @default(cuid())
+  workflowId String
+  workflow WorkflowDefinition @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  // Trigger source
+  triggerEntityType String
+  triggerEntityId String
+
+  // Execution
+  status AutomationRunStatus @default(PENDING)
+  results Json? // Step results
+  error String? @db.Text
+
+  startedAt DateTime?
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([workflowId])
+  @@index([status])
+  @@index([triggerEntityType, triggerEntityId])
+}
+
+// ============================================================================
+// CRM ENHANCEMENTS (Phases 9-11)
+// Missing models for complete customer lifecycle
+// ============================================================================
+
+enum FollowUpType {
+  LEAD_CONTACT
+  ESTIMATE_FOLLOW_UP
+  JOB_SCHEDULING
+  JOB_REMINDER
+  POST_SERVICE
+  REVIEW_REQUEST
+  PAYMENT_REMINDER
+  MAINTENANCE_OPPORTUNITY
+  REACTIVATION
+}
+
+enum FollowUpStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+  FAILED
+}
+
+model FollowUp {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  followUpType FollowUpType
+  relatedEntityType String
+  relatedEntityId String
+
+  // Who needs to follow up
+  assignedTo String? // User ID
+
+  // What to do
+  message String? @db.Text
+  priority Int @default(0)
+  dueAt DateTime
+
+  // Status
+  status FollowUpStatus @default(PENDING)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, dueAt])
+  @@index([relatedEntityType, relatedEntityId])
+}
+
+model Contract {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId String
+  customer RevenueCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  contractValue Decimal @db.Decimal(12, 2)
+  startDate DateTime
+  renewalDate DateTime
+  frequency String? // "monthly", "quarterly", "annually", "as-needed"
+
+  services String[] // Array of service names
+  status String @default("active") // "active", "renewing", "paused", "ended"
+
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([status])
+  @@index([renewalDate])
+}
+
+// ============================================================================
+// AUDIT LOG (Phase 17)
+// Comprehensive audit trail for compliance
+// ============================================================================
+
+model AuditLog {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  actor String // User ID
+  action String // What happened
+  resourceType String // What entity
+  resourceId String // Which entity
+
+  changesBefore Json? // Before state
+  changesAfter Json? // After state
+
+  traceId String? // Correlation ID
+  source String? // API, Discord, Webhook, etc.
+
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([actor])
+  @@index([resourceType, resourceId])
   @@index([createdAt])
 }
 
