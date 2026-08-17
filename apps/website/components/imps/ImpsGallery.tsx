@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
@@ -7,12 +8,12 @@ export function ImpsGallery() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const galleryItems = [
-    { id: 1, title: 'Front View', description: 'Hero perspective of the BYTE MINI character' },
-    { id: 2, title: 'Three-Quarter View', description: 'Product depth and dimension' },
-    { id: 3, title: 'Rear Enclosure', description: 'Serviceable rear shell design' },
-    { id: 4, title: 'Internal Layout', description: 'ESP32-C5 and components arrangement' },
-    { id: 5, title: 'Screen Close-up', description: 'Touch display with vibrant face animations' },
-    { id: 6, title: 'Case Assembly', description: '3D-printed enclosure components' },
+    { id: 1, title: 'Front View', description: 'Hero perspective of the BYTE MINI character', image: '/wise-imp/idle-blue.webp' },
+    { id: 2, title: 'Three-Quarter View', description: 'Product depth and dimension', image: '/wise-imp/idle-blue.webp' },
+    { id: 3, title: 'Rear Enclosure', description: 'Serviceable rear shell design', image: '/wise-imp/thinking-blue.webp' },
+    { id: 4, title: 'Internal Layout', description: 'ESP32-C5 and components arrangement', image: '/wise-imp/thinking-blue.webp' },
+    { id: 5, title: 'Screen Close-up', description: 'Touch display with vibrant face animations', image: '/wise-imp/celebrate-blue.webp' },
+    { id: 6, title: 'Case Assembly', description: '3D-printed enclosure components', image: '/wise-imp/wave-blue.webp' },
   ];
 
   const nextImage = () => {
@@ -46,12 +47,18 @@ export function ImpsGallery() {
             <button
               key={item.id}
               onClick={() => setSelectedIndex(idx)}
-              className="group relative aspect-square bg-gradient-to-br from-blue-950/30 to-black border border-blue-500/30 hover:border-blue-400/60 rounded-lg overflow-hidden cursor-pointer transition"
+              className="group relative aspect-square bg-black border border-blue-500/30 hover:border-blue-400/60 rounded-lg overflow-hidden cursor-pointer transition"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className="object-cover group-hover:scale-110 transition duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 group-hover:to-black/40 transition" />
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 group-hover:text-blue-400 transition">
-                <div className="text-3xl sm:text-4xl opacity-60 group-hover:opacity-100 transition">📷</div>
-                <p className="text-xs sm:text-sm font-bold text-center px-2">{item.title}</p>
+                <p className="text-xs sm:text-sm font-bold text-center px-2 text-white group-hover:text-blue-400">{item.title}</p>
               </div>
             </button>
           ))}
@@ -71,11 +78,15 @@ export function ImpsGallery() {
 
               {/* Image Container */}
               <div className="bg-black border border-blue-500/50 rounded-lg overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-blue-950/40 to-black flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="text-6xl">📷</div>
-                    <p className="text-sm text-gray-400">{galleryItems[selectedIndex].title}</p>
-                  </div>
+                <div className="relative aspect-video bg-black">
+                  <Image
+                    src={galleryItems[selectedIndex].image}
+                    alt={galleryItems[selectedIndex].title}
+                    fill
+                    sizes="(max-width: 1280px) 90vw, 1024px"
+                    priority
+                    className="object-cover"
+                  />
                 </div>
 
                 {/* Image Info */}
