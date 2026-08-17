@@ -90,20 +90,24 @@ export function ImpsByteMiniHero() {
           </div>
 
           {/* Right Column — Character Render */}
-          <div className="relative h-96 sm:h-[600px] flex items-center justify-center">
+          <div className="relative h-96 sm:h-[700px] flex items-center justify-center">
             {/* Character Container */}
             <div className="relative w-full h-full flex items-center justify-center">
-              {/* Glow Background */}
-              <div className="absolute inset-0 bg-gradient-radial from-blue-500/30 to-transparent rounded-full blur-3xl opacity-50" />
+              {/* Enhanced Glow Background */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="absolute w-96 h-96 bg-blue-500/40 rounded-full blur-3xl opacity-60" />
+                <div className="absolute w-80 h-80 bg-blue-600/30 rounded-full blur-2xl opacity-50" />
+              </div>
 
               {/* Character Image */}
               <div className="relative z-10 flex items-center justify-center">
-                <div className="relative w-64 h-80 rounded-2xl overflow-hidden shadow-2xl shadow-blue-500/20">
+                <div className="relative w-72 h-96 rounded-3xl overflow-hidden shadow-2xl shadow-blue-500/50 border border-blue-500/30">
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-blue-500/5" />
                   <Image
                     src="/wise-imp/imps-product.png"
                     alt="WISE² IMPS BYTE MINI 4.0 - Physical AI Companion with neon blue eyes, tactical harness, and rabbit ears"
-                    width={256}
-                    height={320}
+                    width={288}
+                    height={384}
                     priority
                     className="w-full h-full object-cover"
                   />
