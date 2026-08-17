@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "installCommand": "pnpm install",
+  "env": {
+    "SKIP_ENV_VALIDATION": "true",
+    "NODE_ENV": "production"
+  }
+}
