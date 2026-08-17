@@ -30,6 +30,7 @@ import crmRouter from './routes/crm';
 import estimatesRouter from './routes/estimates';
 import dispatchRouter from './routes/dispatch';
 import followUpsRouter from './routes/followups';
+import approvalsRouter from './routes/approvals';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -140,6 +141,9 @@ export async function createServer(): Promise<Express> {
 
   // Follow-ups routes (Phase 10)
   app.use('/api/v1/crm', followUpsRouter);
+
+  // Approvals routes (Phase 13)
+  app.use('/api/v1/crm', approvalsRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
