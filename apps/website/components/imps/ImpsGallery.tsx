@@ -8,12 +8,12 @@ export function ImpsGallery() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const galleryItems = [
-    { id: 1, title: 'Front View', description: 'Hero perspective of the BYTE MINI character', image: '/wise-imp/idle-blue.webp' },
-    { id: 2, title: 'Three-Quarter View', description: 'Product depth and dimension', image: '/wise-imp/idle-blue.webp' },
-    { id: 3, title: 'Rear Enclosure', description: 'Serviceable rear shell design', image: '/wise-imp/thinking-blue.webp' },
-    { id: 4, title: 'Internal Layout', description: 'ESP32-C5 and components arrangement', image: '/wise-imp/thinking-blue.webp' },
-    { id: 5, title: 'Screen Close-up', description: 'Touch display with vibrant face animations', image: '/wise-imp/celebrate-blue.webp' },
-    { id: 6, title: 'Case Assembly', description: '3D-printed enclosure components', image: '/wise-imp/wave-blue.webp' },
+    { id: 1, title: 'Front View', description: 'Neon blue eyes and tactical design aesthetic', image: '/wise-imp/imps-product.png' },
+    { id: 2, title: 'Full Body', description: 'Complete device with harness and branding', image: '/wise-imp/imps-product.png' },
+    { id: 3, title: 'Display & Face', description: '4" touchscreen with dynamic neon animations', image: '/wise-imp/imps-product.png' },
+    { id: 4, title: 'Rabbit Ears', description: 'Distinctive sensor and communication antennae', image: '/wise-imp/imps-product.png' },
+    { id: 5, title: 'Tactical Gear', description: 'Integrated harness, pockets, and W² branding', image: '/wise-imp/imps-product.png' },
+    { id: 6, title: 'Premium Build', description: 'High-detail robotics with blue accent lighting', image: '/wise-imp/imps-product.png' },
   ];
 
   const nextImage = () => {

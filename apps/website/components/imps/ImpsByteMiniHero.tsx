@@ -100,8 +100,8 @@ export function ImpsByteMiniHero() {
               <div className="relative z-10 flex items-center justify-center">
                 <div className="relative w-64 h-80 rounded-2xl overflow-hidden shadow-2xl shadow-blue-500/20">
                   <Image
-                    src="/wise-imp/idle-blue.webp"
-                    alt="WISE² IMPS BYTE MINI 4.0 - AI Companion Robot"
+                    src="/wise-imp/imps-product.png"
+                    alt="WISE² IMPS BYTE MINI 4.0 - Physical AI Companion with neon blue eyes, tactical harness, and rabbit ears"
                     width={256}
                     height={320}
                     priority
