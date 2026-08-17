@@ -33,6 +33,7 @@ import followUpsRouter from './routes/followups';
 import approvalsRouter from './routes/approvals';
 import workflowsRouter from './routes/workflows';
 import industryTemplatesRouter from './routes/industry-templates';
+import observabilityRouter from './routes/observability';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -152,6 +153,9 @@ export async function createServer(): Promise<Express> {
 
   // Industry templates routes (Phase 15)
   app.use('/api/v1/crm', industryTemplatesRouter);
+
+  // Observability routes (Phase 16)
+  app.use('/api/v1/crm', observabilityRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
