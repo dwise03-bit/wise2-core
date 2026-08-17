@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm --filter '@wise2/website' build",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "regions": ["sfo1"],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/website package.json pnpm-lock.yaml",
+  "outputDirectory": "apps/website/.next",
+  "env": {
+    "SKIP_ENV_VALIDATION": "true",
+    "NODE_ENV": "production"
+  }
+}
