@@ -1,137 +1,172 @@
-# WISE² Customer Journey — Deployment Guide
+# WISE² Genesis v1.0 - Deployment Guide
 
-Complete guide to deploy the full customer journey system.
+## Quick Start (Docker Compose)
 
-## Prerequisites
-- ✅ Stripe account
-- ✅ Email service (SendGrid/Mailgun/AWS SES)  
-- ✅ PostgreSQL 15+ database
-- ✅ Node.js 18+
-- ✅ NestJS API running
+### Prerequisites
+- Docker and Docker Compose installed on server (173.208.147.165)
+- User: `dwise` with SSH access
+- Production secrets configured
 
-## Step 1: Stripe Configuration
-
-### Create Products & Prices
+### Step 1: Clone Repository
 ```bash
-# Starter: $29/month
-STARTER_PRICE=price_1234567890
-# Pro: $99/month  
-PRO_PRICE=price_0987654321
+ssh dwise@173.208.147.165
+git clone https://github.com/dwise03-bit/wise2-core.git
+cd wise2-core
 ```
 
-### Environment Variables
+### Step 2: Configure Production Secrets
 ```bash
-STRIPE_PUBLIC_KEY=pk_live_...
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_STARTER_PRICE_ID=price_...
-STRIPE_PRO_PRICE_ID=price_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-APP_URL=https://wise2.io
-API_BASE_URL=https://api.wise2.io
-
-SENDGRID_API_KEY=SG.xxxxxx
-SENDGRID_FROM_EMAIL=billing@wise2.io
-
-DATABASE_URL=postgresql://user:pass@localhost:5432/wise2_prod
+cp .env.prod.example .env.prod
+# Edit .env.prod with actual production values
+nano .env.prod
 ```
 
-### Webhook Configuration
-Register webhook at: `https://api.wise2.io/v1/billing/webhook`
+Required secrets:
+- DATABASE_PASSWORD
+- JWT_SECRET
+- REDIS_PASSWORD
+- STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET
+- SENDGRID_API_KEY
+- Google OAuth credentials
+- Discord Bot token (optional)
 
-Subscribe to events:
-- customer.subscription.created
-- customer.subscription.updated
-- customer.subscription.deleted
-- invoice.payment_succeeded
-- invoice.payment_failed
-- charge.refunded
-
-## Step 2: Database Setup
-
+### Step 3: SSL Certificates
 ```bash
-# Run migrations
-psql $DATABASE_URL < packages/db/schema.sql
-
-# Verify tables
-\dt subscriptions, workspaces, invoices, analytics_events
+mkdir -p certs
+# Add your SSL certificates:
+# - certs/wise2.net.crt (certificate)
+# - certs/wise2.net.key (private key)
 ```
 
-## Step 3: API Deployment
-
+### Step 4: Deploy
 ```bash
-cd packages/api
-npm install stripe @sendgrid/mail
-
-# Build
-npm run build
-
-# Start
-npm run start:prod
-
-# Or with PM2
-pm2 start dist/main.js --name api
+chmod +x deploy-docker.sh
+./deploy-docker.sh
 ```
 
-## Step 4: Frontend Deployment
-
-Pages created and ready:
-- ✅ `/pricing` - Pricing tiers
-- ✅ `/checkout` - Payment form
-- ✅ `/onboarding` - 5-step wizard
-- ✅ `/dashboard/subscription` - Account management
-
+### Step 5: Verify Deployment
 ```bash
-cd apps/website
-npm run build
-npm run start
+docker compose -f docker-compose.prod.yml ps
+curl http://localhost:3000  # Should see website
+curl http://localhost:3010  # Should see API health check
 ```
 
-## Step 5: Complete Flow Test
+## Services
 
-1. Visit `/pricing` page
-2. Select plan and click "Start Trial"
-3. Complete checkout with test card: `4242 4242 4242 4242`
-4. Verify:
-   - [ ] Subscription created in database
-   - [ ] Workspace provisioned
-   - [ ] Welcome email sent
-5. Complete onboarding (5 steps)
-6. Visit `/dashboard/subscription` to manage plan
+| Service | Port (Internal) | Port (External) | Container |
+|---------|-----------------|-----------------|-----------|
+| Nginx Reverse Proxy | 80, 443 | 80, 443 | wise2-nginx |
+| API (NestJS) | 3000 | 3010 | wise2-api |
+| Website (Next.js) | 3001 | 3000 | wise2-website |
+| Prompt Shop | 3002 | 3002 | wise2-prompt-shop |
+| Studio | 3005 | 3005 | wise2-studio |
+| PostgreSQL | 5432 | 5432 | wise2-db |
+| Redis | 6379 | 6379 | wise2-redis |
 
-## Step 6: Stripe Test Events
+## Management
 
+### View Logs
 ```bash
-# Trigger test webhook events
-stripe listen --forward-to localhost:3000/v1/billing/webhook
-
-stripe trigger customer.subscription.created
-stripe trigger invoice.payment_succeeded
+docker compose -f docker-compose.prod.yml logs -f api
+docker compose -f docker-compose.prod.yml logs -f website
 ```
+
+### Restart Service
+```bash
+docker compose -f docker-compose.prod.yml restart api
+```
+
+### Stop All Services
+```bash
+docker compose -f docker-compose.prod.yml down
+```
+
+### Update Deployment
+```bash
+git pull origin main
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+```
+
+## Troubleshooting
+
+### Database Connection Failed
+- Check DATABASE_PASSWORD in .env.prod
+- Verify postgres container is healthy: `docker compose -f docker-compose.prod.yml logs postgres`
+
+### API Not Responding
+- Check JWT_SECRET is set
+- Verify database is running: `docker compose -f docker-compose.prod.yml ps postgres`
+- View API logs: `docker compose -f docker-compose.prod.yml logs api`
+
+### Port Already in Use
+- Check running containers: `docker ps`
+- Kill conflicting processes: `sudo lsof -i :8080`
+
+### SSL Certificate Issues
+- Verify certs directory exists with proper permissions
+- Ensure certificate files are named correctly
+- Check nginx logs: `docker compose -f docker-compose.prod.yml logs nginx`
+
+## GitHub Actions Auto-Deployment
+
+The repository is configured to automatically deploy via GitHub Actions when pushing to main branch.
+
+**Required GitHub Secrets:**
+- DOCKER_USERNAME
+- DOCKER_PASSWORD
+- DEPLOY_HOST (173.208.147.165)
+- DEPLOY_USER (dwise)
+- DEPLOY_KEY (SSH private key)
+- STRIPE_SECRET_KEY
+- STRIPE_WEBHOOK_SECRET
+- SENDGRID_API_KEY
+- DATABASE_URL
+
+Once secrets are configured, deployments happen automatically on push to main.
 
 ## Monitoring
 
+### Health Checks
+All services have health checks configured. View status:
 ```bash
-# Dashboard metrics
-curl https://api.wise2.io/v1/analytics/dashboard-metrics
-
-# Check failed payments daily
-curl https://api.wise2.io/v1/billing/failed-payments
-
-# Monitor churn risk
-curl https://api.wise2.io/v1/analytics/churn-report
+docker compose -f docker-compose.prod.yml ps
+# Look for "(healthy)" status
 ```
 
-## Success Metrics
+### Database Backups
+PostgreSQL data is stored in named volume `postgres_data`.
 
-Track these KPIs:
-- Pricing page → Checkout conversion
-- Checkout → Payment success rate
-- Trial → Paid conversion
-- Monthly recurring revenue (MRR)
-- Customer churn rate
-- Invoice payment success rate
+Backup:
+```bash
+docker compose -f docker-compose.prod.yml exec postgres \
+  pg_dump -U wise2 wise2_prod > backup.sql
+```
 
----
+Restore:
+```bash
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  psql -U wise2 wise2_prod < backup.sql
+```
 
-Status: ✅ All code implemented | 🔧 Ready to configure and deploy
+## Production Checklist
+
+- [ ] SSL certificates in certs/ directory
+- [ ] .env.prod configured with all secrets
+- [ ] Database password changed from default
+- [ ] Redis password changed from default
+- [ ] JWT_SECRET is a strong, random string
+- [ ] STRIPE credentials configured
+- [ ] SendGrid API key configured
+- [ ] Google OAuth credentials configured
+- [ ] Domain DNS pointing to server (173.208.147.165)
+- [ ] Firewall allowing ports 80, 443, 3000-3010
+- [ ] Monitoring and alerting configured
+- [ ] Backup strategy in place
+
+## Support
+
+For issues or questions:
+1. Check logs: `docker compose -f docker-compose.prod.yml logs -f`
+2. Review GitHub Issues: https://github.com/dwise03-bit/wise2-core/issues
+3. Contact: dwise03@gmail.com
