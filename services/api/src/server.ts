@@ -37,6 +37,7 @@ import observabilityRouter from './routes/observability';
 import aiAdvisorRouter from './routes/ai-advisor';
 import communicationsRouter from './routes/communications';
 import reportsRouter from './routes/reports';
+import mobileRouter from './routes/mobile';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -171,6 +172,9 @@ export async function createServer(): Promise<Express> {
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
+
+  // Mobile routes (Phase 12)
+  app.use('/api/v1/mobile', mobileRouter);
 
   // Hermes Website Builder API
   app.use('/api/v1/hermes', hermesRouter);
