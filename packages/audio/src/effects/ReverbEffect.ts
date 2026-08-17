@@ -66,12 +66,13 @@ export class ReverbEffect extends EffectBase {
     this.config.parameters[param] = value;
 
     switch (param) {
-      case 'mix':
+      case 'mix': {
         // Mix: 0 = dry, 1 = wet
         const mix = Math.max(0, Math.min(1, value));
         this.dryNode.gain.value = 1 - mix;
         this.wetNode.gain.value = mix;
         break;
+      }
       case 'roomSize':
         this.roomSize = Math.max(0, Math.min(1, value));
         // Regenerate impulse with new room size
