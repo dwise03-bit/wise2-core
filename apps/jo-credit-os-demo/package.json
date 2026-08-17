@@ -1,7 +1,7 @@
 {
-  "name": "@wise2/website",
+  "name": "@wise2/jo-credit-os-demo",
   "version": "0.1.0",
-  "description": "WISE² Enterprise public website & landing page",
+  "description": "WISE² JO Credit OS Demo App",
   "private": true,
   "packageManager": "pnpm@8.15.9",
   "scripts": {
