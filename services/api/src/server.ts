@@ -36,6 +36,7 @@ import industryTemplatesRouter from './routes/industry-templates';
 import observabilityRouter from './routes/observability';
 import aiAdvisorRouter from './routes/ai-advisor';
 import communicationsRouter from './routes/communications';
+import reportsRouter from './routes/reports';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -164,6 +165,9 @@ export async function createServer(): Promise<Express> {
 
   // Communications routes (Phase 7)
   app.use('/api/v1/crm', communicationsRouter);
+
+  // Reports routes (Phase 11)
+  app.use('/api/v1/crm', reportsRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
