@@ -32,6 +32,7 @@ import dispatchRouter from './routes/dispatch';
 import followUpsRouter from './routes/followups';
 import approvalsRouter from './routes/approvals';
 import workflowsRouter from './routes/workflows';
+import industryTemplatesRouter from './routes/industry-templates';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -148,6 +149,9 @@ export async function createServer(): Promise<Express> {
 
   // Workflows routes (Phase 14)
   app.use('/api/v1/crm', workflowsRouter);
+
+  // Industry templates routes (Phase 15)
+  app.use('/api/v1/crm', industryTemplatesRouter);
 
   // File storage routes
   app.use('/api/v1/files', filesRouter);
