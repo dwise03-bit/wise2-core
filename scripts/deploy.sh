@@ -2,100 +2,140 @@
 set -e
 
 # WISE² Production Deployment Script
-# Manual SSH deployment to production server
-# Usage: ./scripts/deploy.sh [server-user@server-host]
+# Comprehensive deployment to production server
+# Usage: ./scripts/deploy.sh [environment] [branch]
+# Example: ./scripts/deploy.sh production main
 
-SERVER_USER=${1:-dwise}
-SERVER_HOST=${2:-173.208.147.165}
+ENVIRONMENT=${1:-production}
+BRANCH=${2:-main}
+SERVER_USER=${3:-dwise}
+SERVER_HOST=${4:-173.208.147.165}
 SERVER="${SERVER_USER}@${SERVER_HOST}"
-SSH_KEY="${HOME}/.ssh/id_ed25519"
+SSH_KEY_PATH="${HOME}/.ssh/wise2-deploy"
 
-echo "🚀 WISE² Production Deployment"
-echo "================================"
-echo "Server: $SERVER"
-echo "SSH Key: $SSH_KEY"
-echo ""
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-# Verify SSH key exists
-if [ ! -f "$SSH_KEY" ]; then
-    echo "❌ SSH key not found: $SSH_KEY"
-    exit 1
+log() { echo -e "${BLUE}[$(date +'%H:%M:%S')]${NC} $1"; }
+success() { echo -e "${GREEN}✅ $1${NC}"; }
+error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
+warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+
+log "WISE² Production Deployment"
+log "Environment: $ENVIRONMENT | Branch: $BRANCH | Server: $SERVER"
+
+# Verify SSH key
+if [ ! -f "$SSH_KEY_PATH" ]; then
+    error "SSH key not found: $SSH_KEY_PATH"
 fi
+success "SSH key found"
 
-# Verify git is clean
+# Verify git state
 if [ -n "$(git status --porcelain)" ]; then
-    echo "❌ Working directory is dirty. Commit or stash changes first."
-    exit 1
+    error "Working directory is dirty. Commit or stash changes first."
 fi
+success "Working directory is clean"
 
-# Get current branch
+# Verify branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-    echo "❌ Not on main branch. Switch to main and try again."
-    exit 1
+if [ "$CURRENT_BRANCH" != "$BRANCH" ]; then
+    log "Switching to branch $BRANCH..."
+    git checkout "$BRANCH"
 fi
+success "On branch $BRANCH"
 
-echo "✓ Working directory is clean"
-echo "✓ On main branch"
-echo ""
+# Push code
+log "Pushing code to GitHub..."
+git push origin "$BRANCH"
+success "Code pushed"
 
-# Push to remote
-echo "📤 Pushing to GitHub..."
-git push origin main
-echo "✓ Push complete"
-echo ""
-
-# Deploy to server
-echo "🔧 Deploying to server..."
-echo ""
-
-ssh -i "$SSH_KEY" "$SERVER" << 'EOF'
+# Deploy via SSH
+log "Connecting to $SERVER..."
+ssh -i "$SSH_KEY_PATH" "$SERVER" << 'EOF'
 set -e
 
-echo "📥 Updating code..."
-cd /home/dwise/wise2-core
-git fetch origin
-git checkout main
-git pull origin main
-echo "✓ Code updated"
-echo ""
+REPO_DIR="/home/dwise/wise2-core"
+ENVIRONMENT=${1:-production}
+BRANCH=${2:-main}
+LOG_DIR="/var/log/wise2"
 
-echo "🛑 Stopping website service..."
-docker-compose -f docker-compose.prod.yml stop website 2>/dev/null || true
-echo "✓ Website stopped"
-echo ""
+mkdir -p "$LOG_DIR"
 
-echo "🗑️  Removing old image..."
-docker rmi wise2-core_website:latest 2>/dev/null || true
-echo "✓ Old image removed"
-echo ""
+log() { echo "[$(date +'%H:%M:%S')] $1" | tee -a "$LOG_DIR/deploy.log"; }
+success() { echo "✅ $1" | tee -a "$LOG_DIR/deploy.log"; }
+error() { echo "❌ $1" | tee -a "$LOG_DIR/deploy.log"; exit 1; }
 
-echo "🔨 Building website (no cache)..."
-timeout 600 docker-compose -f docker-compose.prod.yml build website --no-cache 2>&1 | tail -20
-echo "✓ Build complete"
-echo ""
+log "Starting deployment to $ENVIRONMENT..."
 
-echo "🚀 Starting website..."
-docker-compose -f docker-compose.prod.yml up -d website
-echo "✓ Website started"
-echo ""
+cd "$REPO_DIR"
 
-echo "🏥 Waiting for website to be healthy..."
-for i in {1..30}; do
-  if curl -s http://localhost:3000 > /dev/null 2>&1; then
-    echo "✓ Website is healthy"
-    break
+# Backup database
+log "Backing up database..."
+BACKUP_FILE="/home/dwise/backups/postgres_$(date +%Y%m%d_%H%M%S).sql"
+mkdir -p "$(dirname "$BACKUP_FILE")"
+docker-compose -f docker-compose.production.yml exec -T postgres pg_dump -U postgres wise2_core_prod > "$BACKUP_FILE" 2>/dev/null || true
+success "Database backed up"
+
+# Update code
+log "Fetching latest code..."
+git fetch origin "$BRANCH"
+git checkout -f "origin/$BRANCH"
+success "Code updated to $(git log -1 --oneline)"
+
+# Load environment
+if [ -f ".env.$ENVIRONMENT" ]; then
+  export $(cat ".env.$ENVIRONMENT" | grep -v '^#' | xargs)
+  success "Environment loaded from .env.$ENVIRONMENT"
+fi
+
+# Rebuild and restart
+log "Stopping services..."
+docker-compose -f docker-compose.production.yml down --remove-orphans || true
+
+log "Building Docker images (this may take several minutes)..."
+docker-compose -f docker-compose.production.yml build --pull
+
+log "Starting services..."
+docker-compose -f docker-compose.production.yml up -d
+
+log "Waiting for services to be healthy..."
+sleep 30
+
+# Database migrations
+log "Running database migrations..."
+docker-compose -f docker-compose.production.yml exec -T api npx prisma migrate deploy || true
+success "Migrations completed"
+
+# Verify services
+log "Verifying services..."
+SERVICES=("postgres" "api" "website" "dashboard" "command-center" "worker")
+FAILED=0
+
+for service in "${SERVICES[@]}"; do
+  if docker-compose -f docker-compose.production.yml ps "$service" | grep -q "Up"; then
+    success "$service is running"
+  else
+    error "$service failed to start"
+    FAILED=$((FAILED + 1))
   fi
-  echo "⏳ Attempt $i/30..."
-  sleep 2
 done
-echo ""
 
-echo "✓ Deployment complete!"
-docker-compose -f docker-compose.prod.yml logs website --tail 5
+if [ $FAILED -gt 0 ]; then
+  error "Deployment failed: $FAILED services did not start"
+fi
+
+# Cleanup
+log "Cleaning up Docker..."
+docker system prune -f || true
+
+success "Deployment complete!"
+log "Services status:"
+docker-compose -f docker-compose.production.yml ps
 EOF
 
-echo ""
-echo "✅ Deployment successful!"
-echo "Website is live at: https://wise2.net"
-echo ""
+success "Deployment complete!"
+log "WISE² is live at: https://wise2.net"

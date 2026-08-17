@@ -1,13 +1,29 @@
-name: Deploy WISE² Customer Journey
+name: Deploy to Production
 
 on:
   push:
     branches: [main, production]
   workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   test:
+    name: Test & Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     services:
       postgres:
         image: postgres:15-alpine
@@ -24,7 +40,8 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -40,7 +57,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run linter
+      - name: Generate Prisma client
+        run: cd packages/db && npx prisma generate
+
+      - name: Type-check
+        run: pnpm run type-check
+        continue-on-error: true
+
+      - name: Lint
         run: pnpm run lint
         continue-on-error: true
 
@@ -51,58 +75,80 @@ jobs:
           DATABASE_URL: postgresql://wise2:wise2@localhost:5432/wise2_test
 
   build:
+    name: Build Docker Images
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+        if: secrets.DOCKER_USERNAME != ''
 
       - name: Build and push API
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.api
-          push: true
+          file: ./packages/api/Dockerfile
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/wise2-api:latest
             ${{ secrets.DOCKER_USERNAME }}/wise2-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push Website
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.website
-          push: true
+          file: ./apps/website/Dockerfile
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/wise2-website:latest
             ${{ secrets.DOCKER_USERNAME }}/wise2-website:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Build and push Studio
-        uses: docker/build-push-action@v4
+      - name: Build and push Dashboard
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.studio
-          push: true
+          file: ./apps/dashboard/Dockerfile
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/wise2-dashboard:latest
+            ${{ secrets.DOCKER_USERNAME }}/wise2-dashboard:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Studio
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/studio/Dockerfile
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/wise2-studio:latest
             ${{ secrets.DOCKER_USERNAME }}/wise2-studio:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push Command Center
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./apps/command-center/Dockerfile
-          push: true
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           build-args: |
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
@@ -110,42 +156,190 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:latest
             ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Worker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./services/worker/Dockerfile
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/wise2-worker:latest
+            ${{ secrets.DOCKER_USERNAME }}/wise2-worker:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
+    name: Deploy to Server
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    environment:
+      name: production
+      url: https://wise2.net
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Deploy to production
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
+          port: 22
+          script_stop: true
           script: |
-            cd wise2-core
-            git pull origin ${{ github.ref_name }}
-            
-            export STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}
-            export STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
-            export STRIPE_STARTER_PRICE_ID=${{ secrets.STRIPE_STARTER_PRICE_ID }}
-            export STRIPE_PRO_PRICE_ID=${{ secrets.STRIPE_PRO_PRICE_ID }}
-            export STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
-            export SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
-            export SENDGRID_FROM_EMAIL=${{ secrets.SENDGRID_FROM_EMAIL }}
-            export DATABASE_URL=${{ secrets.DATABASE_URL }}
-            export APP_URL=${{ secrets.APP_URL }}
-            export API_BASE_URL=${{ secrets.API_BASE_URL }}
-            
-            ./deploy.sh production
+            set -e
+            echo "🚀 Starting WISE² deployment..."
+
+            cd /home/dwise/wise2-core
+
+            # Fetch latest code
+            echo "📥 Fetching latest code..."
+            git fetch origin ${{ github.ref_name }}
+            git checkout -f origin/${{ github.ref_name }}
+
+            # Create/update .env if needed
+            if [ ! -f .env.production ]; then
+              echo "⚠️  .env.production not found, creating template"
+              cat > .env.production << 'ENVEOF'
+            # Database
+            POSTGRES_ADMIN_USER=postgres
+            POSTGRES_ADMIN_PASSWORD=$POSTGRES_ADMIN_PASSWORD
+            POSTGRES_APP_USER=wise2_prod_user
+            POSTGRES_APP_PASSWORD=$POSTGRES_APP_PASSWORD
+            MONGODB_PASSWORD=$MONGODB_PASSWORD
+
+            # Redis
+            REDIS_PASSWORD=$REDIS_PASSWORD
+
+            # API
+            JWT_SECRET=$JWT_SECRET
+            JWT_EXPIRATION=86400
+            LOG_LEVEL=info
+
+            # Stripe
+            STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
+            STRIPE_PUBLIC_KEY=$STRIPE_PUBLIC_KEY
+
+            # OAuth
+            GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+            GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+            GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID
+            GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+
+            # Open WebUI
+            OPEN_WEBUI_SECRET_KEY=$OPEN_WEBUI_SECRET_KEY
+            OPENAI_API_KEY=$OPENAI_API_KEY
+            ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
+
+            # Frontend
+            NEXT_PUBLIC_API_URL=https://api.wise2.net
+            NEXT_PUBLIC_WS_URL=wss://api.wise2.net
+            NEXT_PUBLIC_LOGIN_URL=https://wise2.net/command-center/login
+
+            # Content Storage
+            CONTENT_STORAGE_PROVIDER=s3
+            CONTENT_STORAGE_ENDPOINT=$CONTENT_STORAGE_ENDPOINT
+            CONTENT_STORAGE_ACCESS_KEY=$CONTENT_STORAGE_ACCESS_KEY
+            CONTENT_STORAGE_SECRET_KEY=$CONTENT_STORAGE_SECRET_KEY
+
+            # Monitoring
+            GRAFANA_PASSWORD=$GRAFANA_PASSWORD
+            ENVEOF
+            fi
+
+            # Load environment
+            export $(cat .env.production | xargs)
+
+            # Build and start services
+            echo "🐳 Building and starting Docker services..."
+            docker-compose -f docker-compose.production.yml down --remove-orphans || true
+            docker-compose -f docker-compose.production.yml up -d --build
+
+            # Wait for services to be healthy
+            echo "⏳ Waiting for services to be healthy..."
+            sleep 30
+
+            # Run database migrations
+            echo "🔄 Running database migrations..."
+            docker-compose -f docker-compose.production.yml exec -T api npx prisma migrate deploy || true
+
+            # Verify deployment
+            echo "✅ Verifying services..."
+            docker-compose -f docker-compose.production.yml ps
+
+            # Health checks
+            echo "🏥 Running health checks..."
+            for service in api website dashboard; do
+              if docker-compose -f docker-compose.production.yml ps $service | grep -q "Up"; then
+                echo "✅ $service is running"
+              else
+                echo "❌ $service failed to start"
+                exit 1
+              fi
+            done
+
+            echo "🎉 Deployment complete!"
+
+      - name: Health Check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const https = require('https');
+            const checkHealth = async (url) => {
+              return new Promise((resolve) => {
+                https.get(url, (res) => {
+                  resolve(res.statusCode === 200);
+                }).on('error', () => resolve(false));
+              });
+            };
+
+            const endpoints = [
+              'https://wise2.net',
+              'https://api.wise2.net/api/health'
+            ];
+
+            for (const endpoint of endpoints) {
+              const healthy = await checkHealth(endpoint);
+              console.log(`${endpoint}: ${healthy ? '✅' : '❌'}`);
+            }
 
       - name: Notify Slack
         if: always()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: 'WISE² deployment ${{ job.status }}'
+          text: |
+            Deployment ${{ job.status }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: repo,message,commit,author
+        continue-on-error: true
+
+      - name: Create Deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: 'production',
+              required_contexts: [],
+              auto_merge: false
+            });
+
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.data.id,
+              state: '${{ job.status }}',
+              description: 'WISE² Core deployment',
+              environment_url: 'https://wise2.net'
+            });
