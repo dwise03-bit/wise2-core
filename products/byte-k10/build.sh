@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
 #
-# WISE² BYTE MINI 4.0 — UNIHIKER K10 build / flash / monitor
+# WISE² K10 PRODUCTION DEMO — build / flash / monitor
 #
-#   ./build.sh            compile only
-#   ./build.sh flash      compile + upload
-#   ./build.sh monitor    compile + upload + serial monitor
-#   ./build.sh ota        compile + upload OVER WIFI (no cable)
+# BUILD TARGETS:
+#   ./build.sh                  compile only
+#   ./build.sh flash            compile + upload via USB
+#   ./build.sh monitor          compile + upload + serial monitor
+#   ./build.sh ota              compile + upload over WiFi
 #
-# OTA requires the dual-slot partitions.csv beside this script; the stock
+# CONFIGURATION ENVIRONMENT VARIABLES:
+#   K10_PORT                    USB device port (default: /dev/cu.usbmodem101)
+#   BYTE_AI_ENDPOINT            API endpoint for AI chat
+#                               Example: http://localhost:3000/api/chat
+#   BYTE_AI_KEY                 Optional API key for authenticated endpoints
+#   K10_OTA_HOST                Hostname/IP for OTA updates (default: byte-k10.local)
+#
+# EXAMPLE USAGE WITH WISE² SERVICES:
+#   # Build with local Hermes/Second Brain API:
+#   BYTE_AI_ENDPOINT="http://192.168.1.100:3012/api/chat" ./build.sh flash
+#
+#   # Build without AI (gracefully degrades):
+#   ./build.sh flash
+#
+# NOTE: OTA requires the dual-slot partitions.csv beside this script; the stock
 # DFRobot table has a single `factory` app and cannot OTA at all.
 #
 # WHY THE TFT FLAGS EXIST
@@ -52,15 +67,35 @@ TFT_FLAGS="\
 -DSPI_FREQUENCY=80000000 \
 -DSPI_READ_FREQUENCY=20000000"
 
-echo "==> Compiling BYTE for UNIHIKER K10"
+# Build AI integration flags if endpoint is configured
+AI_FLAGS=""
+if [[ -n "${BYTE_AI_ENDPOINT:-}" ]]; then
+    AI_FLAGS="-DBYTE_AI_ENDPOINT='\"${BYTE_AI_ENDPOINT}\"'"
+    if [[ -n "${BYTE_AI_KEY:-}" ]]; then
+        AI_FLAGS="$AI_FLAGS -DBYTE_AI_KEY='\"${BYTE_AI_KEY}\"'"
+    fi
+    echo "==> AI Chat enabled: $BYTE_AI_ENDPOINT"
+else
+    echo "==> AI Chat disabled (set BYTE_AI_ENDPOINT to enable)"
+fi
+
+COMBINED_FLAGS="$TFT_FLAGS $AI_FLAGS"
+
+echo "==> Compiling WISE² K10 Production Demo Firmware"
+echo "    Display: ILI9341 240x320 @ 80 MHz SPI"
+echo "    Arch: ESP32-S3 (UNIHIKER K10)"
+echo "    Apps: Dashboard, Voice, Camera, WiFi, AI Chat, +10 more"
+
 arduino-cli compile \
     --fqbn "$FQBN" \
     --library "$CORE_TFT" \
-    --build-property "compiler.cpp.extra_flags=$TFT_FLAGS" \
-    --build-property "compiler.c.extra_flags=$TFT_FLAGS" \
+    --build-property "compiler.cpp.extra_flags=$COMBINED_FLAGS" \
+    --build-property "compiler.c.extra_flags=$COMBINED_FLAGS" \
     "$SKETCH_DIR"
 
 if [[ "${1:-}" == "flash" || "${1:-}" == "monitor" ]]; then
+    echo "==> Erasing ota_0 partition (0x10000 - 0x280000)..."
+    python3 -m esptool --port "$PORT" erase_region 0x10000 0x280000
     echo "==> Uploading to $PORT"
     arduino-cli upload --fqbn "$FQBN" -p "$PORT" "$SKETCH_DIR"
 fi

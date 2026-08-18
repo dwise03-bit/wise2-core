@@ -345,6 +345,18 @@ model SoundLabsProject {
   name        String
   description String? @db.Text
 
+  // Lyrics management
+  lyrics      String? @db.Text // Full lyrics content
+  lyricsTitle String? // Song title for lyrics
+
+  // Music generation (engine-agnostic)
+  generationEngine  String? // Engine used: "musicgen", "ollama", "custom", etc.
+  generationJobId   String? // Job ID from generation engine
+  generationStatus  String? @default("draft") // draft, queued, processing, completed, failed
+  generatedAudioUrl String? @db.Text // URL to generated audio file
+  generationMetadata Json? // Engine-specific metadata
+  generatedAt DateTime? // When the audio was generated
+
   // Mixer state (saved as JSON)
   // Contains: tracks array, track settings, master volume, BPM, playback position
   mixerState Json @default("{}")

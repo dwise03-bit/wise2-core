@@ -270,7 +270,7 @@ function pageHtml() {
 
     .board {
       display: grid;
-      grid-template-columns: 27% 39% 34%;
+      grid-template-columns: 1fr;
       gap: 0;
       border: 1px solid var(--line);
       background: rgba(0,0,0,0.94);
@@ -279,9 +279,10 @@ function pageHtml() {
 
     .column {
       min-width: 0;
-      border-right: 1px solid var(--line);
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
     }
-    .column:last-child { border-right: 0; }
+    .column:last-child { border-bottom: 0; }
 
     .stack {
       display: grid;
@@ -388,7 +389,7 @@ function pageHtml() {
       position: relative;
     }
     .badge-mark::before {
-      content: "JO";
+      content: "JV";
       font-family: "Bebas Neue", Impact, sans-serif;
       font-size: 34px;
       color: var(--gold);
@@ -701,7 +702,7 @@ function pageHtml() {
       box-shadow: 0 0 25px rgba(212,175,55,0.18);
     }
     .hero-shield::before {
-      content: "JO";
+      content: "JV";
     }
     .hero-shield::after {
       content: "";
@@ -1418,12 +1419,9 @@ function pageHtml() {
     }
 
     @media (max-width: 1360px) {
-      .board,
       .footer-bar {
         grid-template-columns: 1fr;
       }
-      .column { border-right: 0; border-bottom: 1px solid var(--line); }
-      .column:last-child { border-bottom: 0; }
       .hero-copy,
       .results-inner,
       .footer-bar {
@@ -1531,11 +1529,11 @@ function pageHtml() {
             <div class="section-title left"><span class="num">1.</span> Brand Identity</div>
             <div class="mini-logo-row">
               <div class="logo-tile">
-                <div class="monogram">JO</div>
+                <div class="monogram">JV</div>
                 <div class="logo-text">Primary logo</div>
               </div>
               <div class="logo-tile">
-                <div class="monogram">JO</div>
+                <div class="monogram">JV</div>
                 <div class="logo-text">Icon logo</div>
               </div>
               <div class="logo-tile">

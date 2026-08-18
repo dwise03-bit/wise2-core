@@ -24,6 +24,9 @@
       "@/*": [
         "./*"
       ],
+      "@wise2/db": [
+        "../../packages/db/src"
+      ],
       "@wise2/design-system": [
         "../../packages/design-system"
       ],

@@ -2,63 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-interface SoundLabsProject {
-  id: string;
-  userId: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-  recordingCount: number;
-  recordings: Array<{ id: string; name: string; duration: number }>;
-  projectSize: number;
-}
+// In-memory storage for demo (persists per session)
+const projects = new Map<string, any>();
 
-// Mock projects for demonstration
-const mockProjects: SoundLabsProject[] = [
-  {
-    id: 'proj_001',
-    userId: 'user_dev',
-    name: 'Managers for Managers',
-    description: 'Morgan Wallen & Young MA inspired track - 389 words, 95 BPM',
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    recordingCount: 3,
-    recordings: [
-      { id: 'rec_001', name: 'Main Vocals', duration: 270 },
-      { id: 'rec_002', name: 'Beat Layer 1', duration: 270 },
-      { id: 'rec_003', name: 'Production Mix', duration: 270 },
-    ],
-    projectSize: 45 * 1024 * 1024, // 45 MB
-  },
-  {
-    id: 'proj_002',
-    userId: 'user_dev',
-    name: 'Brand Jingle - WISE²',
-    description: 'Professional sonic logo for WISE² brand',
-    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    recordingCount: 2,
-    recordings: [
-      { id: 'rec_004', name: 'Jingle Version 1', duration: 15 },
-      { id: 'rec_005', name: 'Jingle Version 2 (Extended)', duration: 30 },
-    ],
-    projectSize: 12 * 1024 * 1024, // 12 MB
-  },
-  {
-    id: 'proj_003',
-    userId: 'user_dev',
-    name: 'Interview Podcast - Episode 1',
-    description: 'Recorded interview with embedded background music',
-    createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    recordingCount: 1,
-    recordings: [
-      { id: 'rec_006', name: 'Full Episode', duration: 3600 },
-    ],
-    projectSize: 250 * 1024 * 1024, // 250 MB
-  },
-];
+function extractUserId(token: string): string | null {
+  if (token.startsWith('dev_token_')) {
+    return 'dev_' + token.split('_')[2];
+  }
+  return null;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -71,21 +23,29 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Extract and validate token (format: "Bearer <token>")
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const userId = extractUserId(token);
 
-    if (!token) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Invalid token format' },
+        { error: 'Invalid token' },
         { status: 401 }
       );
     }
 
-    // Return mock projects for any valid token
-    // In production, this would query a database filtered by userId
+    // Get projects for this user
+    const userProjects = Array.from(projects.values()).filter((p) => p.userId === userId);
+    const recordingCount = userProjects.reduce((sum, p) => sum + (p.recordingCount || 0), 0);
+    const totalStorage = userProjects.reduce((sum, p) => sum + (p.projectSize || 0), 0);
+
     return NextResponse.json({
-      projects: mockProjects,
-      count: mockProjects.length,
+      projects: userProjects,
+      count: userProjects.length,
+      stats: {
+        projectCount: userProjects.length,
+        recordingCount,
+        storageUsed: totalStorage,
+      },
       success: true,
     });
   } catch (error) {
@@ -108,6 +68,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const userId = extractUserId(token);
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { name, description } = body;
 
@@ -118,18 +88,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a mock new project
-    const newProject: SoundLabsProject = {
-      id: `proj_${Date.now()}`,
-      userId: 'user_dev',
+    // Create mock project
+    const projectId = `proj_${Date.now()}`;
+    const newProject = {
+      id: projectId,
+      userId,
       name,
-      description: description || '',
+      description: description || null,
+      lyrics: '',
+      lyricsTitle: '',
+      sunoJobId: null,
+      sunoStatus: 'draft',
+      generatedAudioUrl: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       recordingCount: 0,
       recordings: [],
       projectSize: 0,
     };
+
+    projects.set(projectId, newProject);
 
     return NextResponse.json({
       project: newProject,

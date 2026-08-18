@@ -1,6 +1,8 @@
 /**
  * WISE² Database Module
- * TypeORM setup, migrations, and database utilities
+ * Prisma setup, migrations, and database utilities
  */
 
+export { prisma } from './client';
+export { PrismaClient } from '@prisma/client';
 export const version = '0.1.0';
