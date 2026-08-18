@@ -42,24 +42,41 @@ export function ImpsGallery() {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 sm:gap-8">
           {galleryItems.map((item, idx) => (
             <button
               key={item.id}
               onClick={() => setSelectedIndex(idx)}
-              className="group relative aspect-square bg-black border border-blue-500/40 hover:border-blue-400/80 rounded-xl overflow-hidden cursor-pointer transition shadow-lg hover:shadow-blue-500/30"
+              className="group relative aspect-square bg-black rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:scale-105"
             >
+              {/* Border & Glow Container */}
+              <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/40 via-blue-600/20 to-cyan-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-300 -z-10" />
+
+              {/* Main Border */}
+              <div className="absolute inset-0 border border-blue-500/30 group-hover:border-blue-400/60 rounded-2xl transition duration-300" />
+
+              {/* Image with better scaling */}
               <Image
                 src={item.image}
                 alt={item.title}
                 width={400}
                 height={400}
-                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-black/70 group-hover:to-black/50 transition" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 opacity-0 group-hover:opacity-100 transition">
-                <p className="text-xs sm:text-sm font-bold text-center px-2 text-white drop-shadow-lg">{item.title}</p>
-                <p className="text-xs text-gray-300 text-center px-2 drop-shadow-md line-clamp-2">{item.description}</p>
+
+              {/* Enhanced Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent via-50% to-black/80 group-hover:to-black/60 transition duration-300" />
+
+              {/* Top Edge Highlight */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-300/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
+
+              {/* Content with refined styling */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-xs sm:text-sm font-bold text-center px-3 text-white drop-shadow-lg tracking-wide">{item.title}</p>
+                <p className="text-xs text-gray-200 text-center px-3 drop-shadow-md line-clamp-2">{item.description}</p>
+                <div className="pt-2">
+                  <span className="text-2xs text-blue-300 font-medium">→ VIEW</span>
+                </div>
               </div>
             </button>
           ))}
@@ -67,66 +84,73 @@ export function ImpsGallery() {
 
         {/* Lightbox Modal */}
         {selectedIndex !== null && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="relative w-full max-w-4xl">
+          <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200">
+            <div className="relative w-full max-w-5xl">
               {/* Close Button */}
               <button
                 onClick={() => setSelectedIndex(null)}
-                className="absolute -top-12 right-0 p-2 text-gray-400 hover:text-white transition"
+                className="absolute -top-14 sm:-top-12 right-0 p-2 text-gray-400 hover:text-blue-400 transition duration-200"
               >
-                <X size={32} />
+                <X size={32} className="drop-shadow-lg" />
               </button>
 
-              {/* Image Container */}
-              <div className="bg-black border border-blue-500/50 rounded-lg overflow-hidden">
+              {/* Image Container - Enhanced */}
+              <div className="bg-black border border-blue-500/40 rounded-2xl overflow-hidden shadow-2xl shadow-blue-600/50">
                 <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+                  {/* Glow effect behind image */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-blue-600/10 pointer-events-none" />
                   <Image
                     src={galleryItems[selectedIndex].image}
                     alt={galleryItems[selectedIndex].title}
                     width={1024}
                     height={576}
                     priority
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover relative z-10"
                   />
                 </div>
 
-                {/* Image Info */}
-                <div className="p-6 space-y-2 border-t border-blue-500/20">
-                  <h3 className="text-lg sm:text-xl font-bold text-white">{galleryItems[selectedIndex].title}</h3>
-                  <p className="text-sm text-gray-400">{galleryItems[selectedIndex].description}</p>
+                {/* Image Info - Enhanced Styling */}
+                <div className="p-6 sm:p-8 space-y-3 border-t border-blue-500/30 bg-gradient-to-b from-blue-950/20 to-black/60">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{galleryItems[selectedIndex].title}</h3>
+                  <p className="text-sm sm:text-base text-gray-300 leading-relaxed">{galleryItems[selectedIndex].description}</p>
                 </div>
               </div>
 
-              {/* Navigation Buttons */}
-              <div className="flex justify-between mt-6">
+              {/* Navigation Buttons - Premium Style */}
+              <div className="flex items-center justify-between mt-8 gap-4">
                 <button
                   onClick={prevImage}
-                  className="p-3 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/50 rounded-lg transition"
+                  className="p-3 sm:p-4 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/50 hover:border-blue-300/80 rounded-lg transition duration-200 text-blue-300 hover:text-blue-200 transform hover:scale-110"
                 >
                   <ChevronLeft size={24} />
                 </button>
-                <div className="flex items-center gap-2">
+
+                {/* Progress Dots */}
+                <div className="flex items-center gap-2.5">
                   {galleryItems.map((_, idx) => (
                     <button
                       key={idx}
                       onClick={() => setSelectedIndex(idx)}
-                      className={`w-2 h-2 rounded-full transition ${
-                        idx === selectedIndex ? 'bg-blue-400 w-8' : 'bg-gray-600'
+                      className={`rounded-full transition-all duration-300 ${
+                        idx === selectedIndex
+                          ? 'bg-blue-400 w-8 h-2.5 shadow-lg shadow-blue-400/50'
+                          : 'bg-gray-600 hover:bg-gray-500 w-2 h-2'
                       }`}
                     />
                   ))}
                 </div>
+
                 <button
                   onClick={nextImage}
-                  className="p-3 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/50 rounded-lg transition"
+                  className="p-3 sm:p-4 bg-blue-500/20 hover:bg-blue-500/40 border border-blue-400/50 hover:border-blue-300/80 rounded-lg transition duration-200 text-blue-300 hover:text-blue-200 transform hover:scale-110"
                 >
                   <ChevronRight size={24} />
                 </button>
               </div>
 
-              {/* Counter */}
-              <p className="text-center mt-4 text-sm text-gray-500">
-                {selectedIndex + 1} / {galleryItems.length}
+              {/* Counter - Premium */}
+              <p className="text-center mt-6 text-sm sm:text-base font-medium text-blue-300/80 tracking-wider">
+                {selectedIndex + 1} <span className="text-gray-500">/ {galleryItems.length}</span>
               </p>
             </div>
           </div>
