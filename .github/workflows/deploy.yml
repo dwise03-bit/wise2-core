@@ -85,11 +85,11 @@ jobs:
           command_timeout: 30m
           script: |
             set -e
-            cd wise2-core || exit 1
+            cd wise2-core || { echo "❌ Failed to cd to wise2-core"; exit 1; }
 
             echo "📋 Fetching latest code..."
-            git fetch origin ${{ github.ref_name }}
-            git reset --hard origin/${{ github.ref_name }}
+            git fetch origin ${{ github.ref_name }} || { echo "❌ Git fetch failed"; exit 1; }
+            git reset --hard origin/${{ github.ref_name }} || { echo "❌ Git reset failed"; exit 1; }
 
             echo "🔐 Setting environment variables..."
             export STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}
@@ -103,9 +103,25 @@ jobs:
             export APP_URL=${{ secrets.APP_URL }}
             export API_BASE_URL=${{ secrets.API_BASE_URL }}
 
+            echo "📊 Docker status before deployment..."
+            docker ps -a || echo "⚠️ Docker ps failed"
+
             echo "🚀 Starting deployment..."
             chmod +x ./deploy.sh
-            ./deploy.sh production || { echo "❌ Deployment failed"; exit 1; }
+            if ! ./deploy.sh production; then
+              echo ""
+              echo "❌ Deployment script failed. Collecting debug info..."
+              echo ""
+              echo "Docker container status:"
+              docker ps -a || true
+              echo ""
+              echo "Docker network check:"
+              docker network ls || true
+              echo ""
+              echo "Recent logs:"
+              docker compose -f docker-compose.prod.yml logs -n 50 || true
+              exit 1
+            fi
 
             echo "✅ Deployment successful"
 
