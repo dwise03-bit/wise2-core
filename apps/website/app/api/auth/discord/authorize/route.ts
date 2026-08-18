@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID || '';
 const REDIRECT_URI =
-  process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/api/auth/discord/callback';
+  process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/auth/discord/callback';
 const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
 
 export async function GET(request: NextRequest) {

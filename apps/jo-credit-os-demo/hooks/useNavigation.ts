@@ -13,6 +13,11 @@ const DEFAULT_STATE: NavigationState = {
   mobileMenuOpen: false,
 };
 
+function stripTransientState(state: NavigationState) {
+  const { commandPaletteOpen: _commandPaletteOpen, mobileMenuOpen: _mobileMenuOpen, ...persisted } = state;
+  return persisted;
+}
+
 export function useNavigation() {
   const [state, setState] = useState<NavigationState>(DEFAULT_STATE);
   const [mounted, setMounted] = useState(false);
@@ -23,7 +28,14 @@ export function useNavigation() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          setState((prev) => ({ ...prev, ...JSON.parse(saved) }));
+          const parsed = JSON.parse(saved) as Partial<NavigationState>;
+          setState((prev) => ({
+            ...prev,
+            ...parsed,
+            // Never restore blocking overlays on load.
+            commandPaletteOpen: false,
+            mobileMenuOpen: false,
+          }));
         } catch (e) {
           console.error('Failed to load nav state:', e);
         }
@@ -37,7 +49,7 @@ export function useNavigation() {
     setState((prev) => {
       const updated = { ...prev, ...newState };
       if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stripTransientState(updated)));
       }
       return updated;
     });

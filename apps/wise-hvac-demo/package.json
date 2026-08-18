@@ -1,0 +1,28 @@
+{
+  "name": "@wise2/wise-hvac-demo",
+  "version": "1.0.0",
+  "description": "WISE HVAC Solutions demo experience powered by WISE²",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3024",
+    "build": "next build",
+    "start": "next start -p 3024",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^0.408.0",
+    "next": "14.2.35",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.0"
+  }
+}

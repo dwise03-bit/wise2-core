@@ -15,12 +15,24 @@
     "lint": "turbo run lint",
     "test": "turbo run test -- --passWithNoTests",
     "type-check": "turbo run type-check",
+    "prompt-shop:dev": "npm --prefix apps/prompt-shop run dev",
+    "prompt-shop:build": "npm --prefix apps/prompt-shop run build",
+    "prompt-shop:start": "npm --prefix apps/prompt-shop run start",
+    "prompt-shop:test": "npm --prefix apps/prompt-shop run test",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "migration:run": "npm --prefix packages/api run migration:run",
     "migration:revert": "npm --prefix packages/api run migration:revert"
   },
   "workspaces": [
-    "apps/*",
+    "apps/admin",
+    "apps/command-center",
+    "apps/dashboard",
+    "apps/getdown-demo",
+    "apps/jo-credit-os-demo",
+    "apps/podcast-music",
+    "apps/studio",
+    "apps/website",
+    "apps/wise-hvac-demo",
     "packages/*"
   ],
   "devDependencies": {

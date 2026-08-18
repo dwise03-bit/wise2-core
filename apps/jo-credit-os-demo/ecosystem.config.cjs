@@ -4,7 +4,7 @@ module.exports = {
     script: 'proxy-server.js',
     cwd: __dirname,
     env: { 
-      PORT: '3000',
+      PORT: '3006',
       NODE_ENV: 'production'
     },
     instances: 1,

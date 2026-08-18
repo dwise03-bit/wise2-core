@@ -624,6 +624,45 @@ importers:
         specifier: ^5.3.0
         version: 5.9.3
 
+  apps/wise-hvac-demo:
+    dependencies:
+      lucide-react:
+        specifier: ^0.408.0
+        version: 0.408.0(react@18.2.0)
+      next:
+        specifier: 14.2.35
+        version: 14.2.35(@babel/core@7.29.7)(react-dom@18.2.0)(react@18.2.0)
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.0
+        version: 20.19.43
+      '@types/react':
+        specifier: 18.3.31
+        version: 18.3.31
+      '@types/react-dom':
+        specifier: 18.3.7
+        version: 18.3.7(@types/react@18.3.31)
+      autoprefixer:
+        specifier: ^10.4.0
+        version: 10.5.4(postcss@8.5.19)
+      postcss:
+        specifier: ^8.4.0
+        version: 8.5.19
+      tailwindcss:
+        specifier: ^3.4.0
+        version: 3.4.19
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
+  packages/aether-trader: {}
+
   packages/agent-framework:
     dependencies:
       typescript:

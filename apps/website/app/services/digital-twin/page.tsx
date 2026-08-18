@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { wise2Content } from '@/data/wise2-content';
 import {
   digitalTwinAutonomyLevels,
   digitalTwinClones,
@@ -8,12 +9,19 @@ import {
   digitalTwinPackages,
 } from '@/lib/digital-twin';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'WISE² Digital Twin™ | Clone Your Knowledge, Voice, and Sales Process',
   description:
     'Build a tenant-scoped AI version of your business that creates content, responds to leads, and supports customers 24/7 with approval-aware automation.',
+  alternates: {
+    canonical: '/services/digital-twin',
+  },
   openGraph: {
     title: 'WISE² Digital Twin™',
+    url: '/services/digital-twin',
     description:
       'Clone your knowledge. Clone your voice. Clone your sales process. Scale without adding more of you.',
     images: [
@@ -35,6 +43,8 @@ export const metadata: Metadata = {
 };
 
 export default function DigitalTwinPage() {
+  const { adsPlaceholderData } = wise2Content;
+
   return (
     <div className="min-h-screen bg-[#050505] text-[#F4EBDD]">
         <section className="relative overflow-hidden border-b border-[#39FF14]/15 px-6 pb-20 pt-28">
@@ -180,6 +190,51 @@ export default function DigitalTwinPage() {
               <p className="mt-6 text-sm leading-7 text-[#bfb5a6]">
                 Voice cloning, avatar creation, sales communications, and customer communications can be granted, revoked, audited, and limited per tenant.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-[#39FF14]/10 px-6 py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+              <div className="rounded-[1.75rem] border border-[#39FF14]/20 bg-[linear-gradient(180deg,rgba(57,255,20,0.08),rgba(255,255,255,0.03))] p-8">
+                <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Ads System</p>
+                <h2 className="mt-3 text-4xl font-black uppercase text-[#F4EBDD] md:text-5xl">
+                  {adsPlaceholderData.headline}
+                </h2>
+                <p className="mt-5 max-w-2xl text-lg leading-8 text-[#d1c7b7]">
+                  {adsPlaceholderData.subheading}
+                </p>
+                <div className="mt-8 flex flex-wrap gap-2">
+                  {adsPlaceholderData.channels.map((channel) => (
+                    <span
+                      key={channel}
+                      className="rounded-full border border-[#F4EBDD]/12 bg-black/25 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#ddd3c2]"
+                    >
+                      {channel}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-6">
+                <div className="grid gap-6 md:grid-cols-3">
+                  {adsPlaceholderData.metrics.map((metric) => (
+                    <div key={metric.label} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-6">
+                      <div className="text-3xl font-black uppercase text-[#39FF14]">{metric.value}</div>
+                      <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-[#b3a999]">{metric.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid gap-6 md:grid-cols-3">
+                  {adsPlaceholderData.offers.map((offer) => (
+                    <article key={offer.id} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-6">
+                      <h3 className="text-xl font-black uppercase text-[#F4EBDD]">{offer.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-[#c5bcad]">{offer.description}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>

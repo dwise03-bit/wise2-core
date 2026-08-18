@@ -21,6 +21,11 @@ RUN pnpm install --frozen-lockfile
 COPY apps/website ./apps/website
 COPY packages/db ./packages/db
 
+# Copying the full app source after the initial workspace install can clobber
+# the app-local node_modules symlink created by pnpm. Re-link dependencies now
+# so `next build` resolves the workspace binaries reliably in Docker.
+RUN pnpm install --frozen-lockfile
+
 # NEXT_PUBLIC_* are inlined into the client bundle at build time, so they
 # must be present as build args. Previously they came from an .env.local
 # copied into the build context, which is how http://localhost:3001 ended
@@ -63,17 +68,12 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+ENV NODE_ENV=production
 
-COPY --from=builder /app/pnpm-lock.yaml ./
-COPY --from=builder /app/pnpm-workspace.yaml ./
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/apps/website ./apps/website
-COPY --from=builder /app/packages/db ./packages/db
-
-RUN pnpm install --frozen-lockfile --production
+COPY --from=builder /app/apps/website/.next/standalone ./
+COPY --from=builder /app/apps/website/.next/static ./apps/website/.next/static
+COPY --from=builder /app/apps/website/public ./apps/website/public
 
 EXPOSE 3001
 
-CMD ["pnpm", "--filter", "@wise2/website", "start"]
+CMD ["node", "apps/website/server.js"]

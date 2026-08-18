@@ -224,6 +224,35 @@ export const budgetOptions = [
   'Not sure yet',
 ];
 
+export const adsPlaceholderData = {
+  headline: 'Ads That Sound Like You, Not Generic AI',
+  subheading:
+    'WISE² ad systems turn founder knowledge, offers, and proof into reusable paid media assets for Meta, Google, YouTube, and landing-page follow-up.',
+  channels: ['Meta', 'Google Search', 'YouTube', 'Retargeting', 'Landing Pages', 'Lead Forms'],
+  offers: [
+    {
+      id: 'lead-capture',
+      title: 'Lead Capture Ads',
+      description: 'Hook, offer, proof, and follow-up flows designed to turn clicks into qualified conversations.',
+    },
+    {
+      id: 'retargeting',
+      title: 'Retargeting Sequences',
+      description: 'Campaign reminders and objection-handling creative for warm traffic that did not convert the first time.',
+    },
+    {
+      id: 'founder-content',
+      title: 'Founder-Led Creative',
+      description: 'Digital Twin-trained ad copy and scripts that keep your positioning, tone, and sales angle consistent.',
+    },
+  ],
+  metrics: [
+    { label: 'Creative angles', value: '12+' },
+    { label: 'Launch-ready assets', value: '24/7' },
+    { label: 'Channels covered', value: '6' },
+  ],
+};
+
 export const contactFormFields = {
   required: ['fullName', 'email', 'company', 'projectType'],
   optional: ['phone', 'website', 'budget', 'timeline', 'details'],
@@ -283,6 +312,7 @@ export const projectFormFields = {
 export const wise2Content = {
   serviceOptions,
   budgetOptions,
+  adsPlaceholderData,
   contactFormFields,
   projectFormFields,
 };

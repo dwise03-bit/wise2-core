@@ -282,6 +282,9 @@ function useDemoState(slug: string, profile: DemoProfile) {
       ...initial,
       currentSection: initial.currentSection ?? "command-center",
       currentTourStepId: initial.currentTourStepId,
+      // Never restore blocking UI on load. Users should always land on a clickable page.
+      tourStarted: initial.tourStarted && Boolean(initial.currentTourStepId),
+      pricingAckOpen: false,
     };
   });
 
@@ -454,9 +457,9 @@ function TourOverlay({
     <div className="pointer-events-none fixed inset-0 z-[40]">
       {rect ? (
         <>
-          <div className="absolute inset-0 bg-black/72" />
+          <div className="pointer-events-none absolute inset-0 bg-black/72" />
           <div
-            className="absolute rounded-[1.8rem] border border-[#d8a43a]/85 shadow-[0_0_0_9999px_rgba(0,0,0,0.72),0_0_40px_rgba(216,164,58,0.18)]"
+            className="pointer-events-none absolute rounded-[1.8rem] border border-[#d8a43a]/85 shadow-[0_0_0_9999px_rgba(0,0,0,0.72),0_0_40px_rgba(216,164,58,0.18)]"
             style={
               {
                 top: rect.top - 10,
@@ -468,7 +471,7 @@ function TourOverlay({
           />
         </>
       ) : (
-        <div className="absolute inset-0 bg-black/72" />
+        <div className="pointer-events-none absolute inset-0 bg-black/72" />
       )}
 
       <div className="pointer-events-auto absolute right-4 bottom-4 left-4 mx-auto max-w-4xl rounded-[1.75rem] border border-[rgba(216,164,58,0.3)] bg-[rgba(8,8,10,0.96)] p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_18px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl md:right-6 md:bottom-6 md:left-auto md:w-[min(760px,calc(100vw-3rem))]">
