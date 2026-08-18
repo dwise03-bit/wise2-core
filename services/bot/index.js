@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const express = require("express");
+const { promisify } = require("util");
 const {
   AttachmentBuilder,
   ActionRowBuilder,
@@ -15,9 +16,10 @@ const {
   Routes
 } = require("discord.js");
 const cron = require("node-cron");
-const { exec } = require("child_process");
+const { exec, execFile } = require("child_process");
 const webhookHandler = require("./webhook-handler");
 const { initializeScheduledTasks } = require("./scheduled-tasks");
+const execFileAsync = promisify(execFile);
 
 const client = new Client({
   intents: [
@@ -43,10 +45,35 @@ const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "../../data");
+const REPO_ROOT = path.join(__dirname, "../..");
 const ADS_SCHEDULES_PATH = path.join(DATA_DIR, "ads-schedules.json");
 const WISE2_ADS_DIR =
   process.env.WISE2_ADS_DIR ||
   "/Users/danielwise/Downloads/WISE2_Revenue_Blitz_Ads";
+const SECOND_BRAIN_API_BASE = (() => {
+  const raw = (
+    process.env.SECOND_BRAIN_API_URL ||
+    process.env.BRAIN_API_URL ||
+    "http://127.0.0.1:3012"
+  )
+    .trim()
+    .replace(/\/+$/, "");
+
+  if (!raw) {
+    return "http://127.0.0.1:3012/api";
+  }
+
+  return raw.endsWith("/api") ? raw : `${raw}/api`;
+})();
+const SECOND_BRAIN_JWT_SECRET =
+  process.env.SECOND_BRAIN_JWT_SECRET ||
+  process.env.BRAIN_JWT_SECRET ||
+  process.env.JWT_SECRET ||
+  "";
+const SECOND_BRAIN_SERVICE_SUB =
+  process.env.SECOND_BRAIN_SERVICE_SUB || "discord-bot";
+const SECOND_BRAIN_DEFAULT_BUSINESS =
+  process.env.SECOND_BRAIN_BUSINESS || "wise2";
 const ADS_IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
 const AD_SCHEDULE_JOBS = new Map();
 const AD_APPROVAL_PROMPTS = new Map();
@@ -425,6 +452,730 @@ function getPresetListForDisplay() {
   return Object.values(AD_PRESETS)
     .map((preset) => `• **${preset.label}** (\`${preset.name}\`) - ${preset.description}`)
     .join("\n");
+}
+
+const WISE2_DOC_INDEX = [
+  { file: "README_WISE2.md", category: "overview", label: "WISE² Enterprise Master" },
+  { file: "WISE2_COMPLETE_OPERATING_SYSTEM.md", category: "overview", label: "Complete Operating System" },
+  { file: "WISE2_ENTERPRISE_MASTER.md", category: "architecture", label: "Enterprise Master Spec" },
+  { file: "WISE2_BUILD_PLAN.md", category: "roadmap", label: "Enterprise Build Plan" },
+  { file: "WISE2_CORE_V1_FINAL_BUILD_REPORT.md", category: "roadmap", label: "Core v1 Final Build Report" },
+  { file: "WISE2_DEPLOYMENT_TO_PRODUCTION.md", category: "deployment", label: "Deployment to Production" },
+  { file: "WISE2_DEPLOYMENT_READINESS.md", category: "deployment", label: "Deployment Readiness" },
+  { file: "WISE2_CONSULTANT_AUDIT_OS_INTEGRATION.md", category: "ops", label: "Consultant Audit OS" },
+  { file: "WISE2_AUDIT_OS_DESIGN_SYSTEM.md", category: "brand", label: "Audit OS Design System" },
+  { file: "WISE2_PHASE_1_COMPLETION.md", category: "phase", label: "Phase 1 Completion" },
+  { file: "WISE2_PHASE_2_STATUS.md", category: "phase", label: "Phase 2 Status" },
+  { file: "WISE2_FEATURE_RECOVERY_MATRIX.md", category: "ops", label: "Feature Recovery Matrix" },
+  { file: "WISE2_MODERNIZATION_AUDIT.md", category: "brand", label: "Modernization Audit" },
+  { file: "STATUS_REPORT.md", category: "ops", label: "Status Report" },
+  { file: "CURRENT_STATE.md", category: "ops", label: "Current State" },
+  { file: "README.md", category: "support", label: "Primary Repo README" },
+];
+
+const WISE2_HUB_SECTION_CHOICES = [
+  { name: "Overview", value: "overview" },
+  { name: "Modules", value: "modules" },
+  { name: "Docs", value: "docs" },
+  { name: "Operations", value: "operations" },
+  { name: "Roadmap", value: "roadmap" },
+  { name: "Brand", value: "brand" },
+  { name: "Support", value: "support" },
+  { name: "Data", value: "data" },
+  { name: "Ads", value: "ads" },
+  { name: "Knowledge", value: "knowledge" },
+  { name: "Second Brain", value: "second-brain" },
+];
+
+const WISE2_SEARCH_SCOPE_CHOICES = [
+  { name: "All", value: "all" },
+  { name: "Docs", value: "docs" },
+  { name: "Code", value: "code" },
+  { name: "Data", value: "data" },
+  { name: "Brand", value: "brand" },
+  { name: "Ops", value: "ops" },
+  { name: "Second Brain", value: "brain" },
+];
+
+function summarizeMarkdown(content, maxLines = 3) {
+  const lines = content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !line.startsWith("#"));
+
+  if (lines.length === 0) {
+    return "No summary available.";
+  }
+
+  return lines.slice(0, maxLines).join(" ");
+}
+
+function getWise2DocCatalog() {
+  return WISE2_DOC_INDEX.flatMap((entry) => {
+    const absPath = path.join(REPO_ROOT, entry.file);
+    if (!fs.existsSync(absPath)) {
+      return [];
+    }
+
+    const content = fs.readFileSync(absPath, "utf-8");
+    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const title = titleMatch ? titleMatch[1].trim() : entry.label;
+    return [{
+      ...entry,
+      title,
+      path: absPath,
+      summary: summarizeMarkdown(content),
+    }];
+  });
+}
+
+function countFilesInDir(dirPath) {
+  try {
+    return fs.existsSync(dirPath) ? fs.readdirSync(dirPath).length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+async function buildWise2HubEmbed(section = "overview") {
+  const docCatalog = getWise2DocCatalog();
+  const counts = {
+    docs: docCatalog.length,
+    dailyLogs: countFilesInDir(path.join(DATA_DIR, "daily-logs")),
+    decisions: countFilesInDir(path.join(DATA_DIR, "decisions")),
+    inbox: countFilesInDir(path.join(DATA_DIR, "inbox")),
+  };
+
+  const base = {
+    color: WISE2_COLORS.primary,
+    title: "🌐 WISE² Discord Hub",
+    description: "Unified command center for the WISE² operating system.",
+    footer: {
+      text: "WISE² Organized Chaos Command Center",
+    },
+    timestamp: new Date(),
+  };
+
+  switch (section) {
+    case "modules":
+      return {
+        ...base,
+        title: "📦 WISE² Modules",
+        description: "Production modules and active platform surfaces.",
+        fields: [
+          {
+            name: "Production Modules",
+            value: [
+              "• SoundLab",
+              "• Live Studio",
+              "• Dashboard Pro",
+              "• AI Command Center",
+              "• CRM Suite",
+              "• Creative Studio",
+            ].join("\n"),
+            inline: false,
+          },
+          {
+            name: "Commerce + Growth",
+            value: [
+              "• DropShip AI",
+              "• Marketing automation",
+              "• Revenue blitz ads",
+              "• Campaign presets",
+            ].join("\n"),
+            inline: false,
+          },
+          {
+            name: "AI Workforce",
+            value: "17 specialist agents + executive coordination layer.",
+            inline: false,
+          },
+        ],
+      };
+    case "docs":
+      return {
+        ...base,
+        title: "📚 WISE² Knowledge Index",
+        description: `Curated docs catalog with ${counts.docs} tracked documents.`,
+        fields: docCatalog.slice(0, 8).map((doc) => ({
+          name: `${doc.category.toUpperCase()} • ${doc.label}`,
+          value: `${doc.title}\n${doc.summary}`.slice(0, 1024),
+          inline: false,
+        })),
+      };
+    case "operations":
+      return {
+        ...base,
+        title: "⚙️ WISE² Operations",
+        description: "Operational controls, workflows, and command surfaces.",
+        fields: [
+          {
+            name: "Discord Controls",
+            value: [
+              "/status",
+              "/deploy",
+              "/phase",
+              "/tasks",
+              "/decision",
+              "/alert",
+              "/organize-content",
+            ].join(" • "),
+            inline: false,
+          },
+          {
+            name: "Docs + Data",
+            value: [
+              `Docs: ${counts.docs}`,
+              `Daily logs: ${counts.dailyLogs}`,
+              `Decisions: ${counts.decisions}`,
+              `Inbox items: ${counts.inbox}`,
+            ].join("\n"),
+            inline: false,
+          },
+        ],
+      };
+    case "roadmap":
+      return {
+        ...base,
+        title: "🗺️ WISE² Roadmap",
+        description: "Current platform trajectory and build phases.",
+        fields: [
+          {
+            name: "Current Platform State",
+            value: "Phases 5-6 active, with the broader WISE² Core and enterprise systems documented in the repo.",
+            inline: false,
+          },
+          {
+            name: "Milestones",
+            value: [
+              "• Platform modernization",
+              "• Discord command center",
+              "• Ad ops automation",
+              "• Knowledge search and docs index",
+              "• Deployment / monitoring coverage",
+            ].join("\n"),
+            inline: false,
+          },
+        ],
+      };
+    case "brand":
+      return {
+        ...base,
+        title: "🎨 WISE² Brand System",
+        description: "Brand language, colors, and visual system references.",
+        fields: [
+          {
+            name: "Core Colors",
+            value: [
+              "Primary Blue: #0055FF",
+              "Accent Red: #FF5535",
+              "Success Green: #2CD588",
+              "Dark Black: #000000",
+            ].join("\n"),
+            inline: false,
+          },
+          {
+            name: "Brand Voice",
+            value: "Bold, high-contrast, organized chaos, premium, operational, and decisive.",
+            inline: false,
+          },
+        ],
+      };
+    case "support":
+      return {
+        ...base,
+        title: "🆘 WISE² Support Surface",
+        description: "Support and user-facing commands available in Discord.",
+        fields: [
+          {
+            name: "Support Commands",
+            value: [
+              "/support-ticket",
+              "/faq",
+              "/customer-help",
+              "/report-bug",
+              "/feature-request",
+              "/account-status",
+            ].join(" • "),
+            inline: false,
+          },
+          {
+            name: "External Paths",
+            value: [
+              "Website pages",
+              "Docs and build plans",
+              "Discord channels",
+            ].join("\n"),
+            inline: false,
+          },
+        ],
+      };
+    case "data":
+      return {
+        ...base,
+        title: "🗃️ WISE² Data Layer",
+        description: "Key data folders and what the Discord bot can read/write.",
+        fields: [
+          {
+            name: "Data Folders",
+            value: [
+              `daily-logs: ${counts.dailyLogs} file(s)`,
+              `decisions: ${counts.decisions} file(s)`,
+              `inbox: ${counts.inbox} file(s)`,
+            ].join("\n"),
+            inline: false,
+          },
+          {
+            name: "New Ad Ops Storage",
+            value: `ads-schedules.json at ${path.relative(REPO_ROOT, ADS_SCHEDULES_PATH)}`,
+            inline: false,
+          },
+        ],
+      };
+    case "ads":
+      return {
+        ...base,
+        title: "📣 WISE² Ad Ops",
+        description: "Creative selection, approval, and scheduling control surface.",
+        fields: [
+          {
+            name: "Commands",
+            value: [
+              "/preview-ads",
+              "/run-ads",
+              "/schedule-ads",
+              "/ads-schedules",
+              "/cancel-ad-schedule",
+              "/ads-library",
+            ].join(" • "),
+            inline: false,
+          },
+          {
+            name: "Presets",
+            value: getPresetListForDisplay().slice(0, 1024),
+            inline: false,
+          },
+        ],
+      };
+    case "knowledge":
+      return {
+        ...base,
+        title: "🧠 WISE² Knowledge Hub",
+        description: "Searchable system memory for WISE² docs, code, and ops context.",
+        fields: [
+          {
+            name: "Search",
+            value: "Use `/wise2-search query:<text>` to search docs, code, data, or the second brain.",
+            inline: false,
+          },
+          {
+            name: "Indexed Sources",
+            value: docCatalog.slice(0, 10).map((doc) => `• ${doc.label}`).join("\n"),
+            inline: false,
+          },
+        ],
+      };
+    case "second-brain": {
+      const snapshot = await getSecondBrainSnapshot();
+      const knowledge = snapshot.knowledge || {};
+      const entries = Array.isArray(knowledge.entries) ? knowledge.entries : [];
+      return {
+        ...base,
+        title: "🧠 WISE² Second Brain",
+        description: "Live link between Discord and the second-brain API.",
+        fields: [
+          {
+            name: "Status",
+            value: [
+              `API: ${snapshot.errors.length ? "degraded" : "online"}`,
+              `Mongo: ${snapshot.status?.mongo ? "connected" : "disconnected"}`,
+              `Ollama: ${snapshot.status?.ollama ? "connected" : "disconnected"}`,
+              `Knowledge: ${snapshot.status?.knowledgeCount ?? knowledge.total ?? 0}`,
+            ].join("\n"),
+            inline: true,
+          },
+          {
+            name: "Bridge Commands",
+            value: [
+              "/brain-status",
+              "/brain-search",
+              "/brain-save",
+              "/wise2-search scope:brain",
+            ].join(" • "),
+            inline: false,
+          },
+          {
+            name: "Recent Entries",
+            value: entries.length
+              ? entries
+                  .slice(0, 5)
+                  .map((entry, index) => formatSecondBrainEntry(entry, index))
+                  .join("\n\n")
+                  .slice(0, 1024)
+              : "No recent knowledge entries returned yet.",
+            inline: false,
+          },
+        ],
+      };
+    }
+    default:
+      return {
+        ...base,
+        title: "🌐 WISE² Discord Hub",
+        description: `Unified command center for the WISE² operating system. Tracked docs: ${counts.docs}.`,
+        fields: [
+          {
+            name: "Core Modules",
+            value: [
+              "SoundLab",
+              "Live Studio",
+              "Dashboard Pro",
+              "AI Command Center",
+              "CRM Suite",
+              "Creative Studio",
+            ].join(" • "),
+            inline: false,
+          },
+          {
+            name: "Operational Surfaces",
+            value: [
+              "Deployment",
+              "Support",
+              "Ad Ops",
+              "Data Layer",
+              "Brand System",
+              "Knowledge Search",
+            ].join(" • "),
+            inline: false,
+          },
+        ],
+      };
+  }
+}
+
+async function searchWise2Repo(query, scope = "all", limit = 8) {
+  const searchRoots = {
+    all: [
+      "README_WISE2.md",
+      "WISE2_*.md",
+      "README.md",
+      "services",
+      "src",
+      "apps",
+      "data",
+    ],
+    docs: ["README_WISE2.md", "WISE2_*.md", "README.md"],
+    code: ["services", "src", "apps"],
+    data: ["data"],
+    brand: ["BRANDING*.md", "WISE2_*DESIGN*.md", "WISE2_*BRAND*.md"],
+    ops: ["services/bot", "services", "src/services", "data"],
+  };
+
+  const roots = searchRoots[scope] || searchRoots.all;
+  const args = [
+    "--fixed-strings",
+    "-n",
+    "-i",
+    "--hidden",
+    "--glob",
+    "!.git",
+    "--glob",
+    "!node_modules",
+    "--max-count",
+    String(limit),
+    query,
+    ...roots,
+  ];
+
+  try {
+    const { stdout } = await execFileAsync("rg", args, {
+      cwd: REPO_ROOT,
+      maxBuffer: 1024 * 1024,
+    });
+    return stdout
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, limit);
+  } catch (error) {
+    if (error.code === 1) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+function base64UrlEncode(input) {
+  return Buffer.from(input)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function normalizeSecondBrainUrl(baseUrl) {
+  const trimmed = String(baseUrl || "").trim().replace(/\/+$/, "");
+  if (!trimmed) {
+    return "http://127.0.0.1:3012/api";
+  }
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+}
+
+function createSecondBrainToken(extraClaims = {}) {
+  if (!SECOND_BRAIN_JWT_SECRET) {
+    return null;
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const header = { alg: "HS256", typ: "JWT" };
+  const payload = {
+    sub: SECOND_BRAIN_SERVICE_SUB,
+    iat: now,
+    exp: now + 60 * 10,
+    ...extraClaims,
+  };
+  const signingInput = `${base64UrlEncode(JSON.stringify(header))}.${base64UrlEncode(
+    JSON.stringify(payload)
+  )}`;
+  const signature = crypto
+    .createHmac("sha256", SECOND_BRAIN_JWT_SECRET)
+    .update(signingInput)
+    .digest("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+
+  return `${signingInput}.${signature}`;
+}
+
+function secondBrainEndpoint(pathname) {
+  return new URL(pathname.replace(/^\/+/, ""), `${SECOND_BRAIN_API_BASE}/`);
+}
+
+function getSecondBrainHeaders(extraHeaders = {}, extraClaims = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...extraHeaders,
+  };
+
+  const token = createSecondBrainToken(extraClaims);
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
+async function secondBrainRequest(pathname, options = {}) {
+  const {
+    method = "GET",
+    query = {},
+    body,
+    headers = {},
+    timeoutMs = 10000,
+    tokenClaims = {},
+  } = options;
+
+  const url = secondBrainEndpoint(pathname);
+  Object.entries(query || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, String(value));
+    }
+  });
+
+  const response = await fetch(url, {
+    method,
+    headers: getSecondBrainHeaders(headers, tokenClaims),
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+
+  const raw = await response.text();
+  let data = null;
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = raw;
+    }
+  }
+
+  if (!response.ok) {
+    const errorMessage =
+      (data && typeof data === "object" && (data.error || data.message)) ||
+      (typeof data === "string" ? data : null) ||
+      `Second brain request failed (${response.status})`;
+    throw new Error(errorMessage);
+  }
+
+  return data;
+}
+
+async function fetchSecondBrainStatus() {
+  return secondBrainRequest("/v1/brain-auth/status", { timeoutMs: 8000 });
+}
+
+async function fetchSecondBrainGraphStats() {
+  return secondBrainRequest("/v1/brain-auth/knowledge/graph/stats", { timeoutMs: 8000 });
+}
+
+async function fetchSecondBrainKnowledge(limit = 5, business = SECOND_BRAIN_DEFAULT_BUSINESS) {
+  return secondBrainRequest("/brain/knowledge", {
+    query: { limit, business },
+    timeoutMs: 10000,
+  });
+}
+
+async function searchSecondBrainKnowledge(query, limit = 8) {
+  const response = await secondBrainRequest("/brain/knowledge/search", {
+    query: { q: query, limit },
+    timeoutMs: 10000,
+  });
+
+  const entries = Array.isArray(response?.entries) ? response.entries : [];
+  return entries.map((entry, index) => {
+    const title = entry.title || "Untitled";
+    const tags = Array.isArray(entry.tags) && entry.tags.length ? ` [${entry.tags.join(", ")}]` : "";
+    const createdAt = entry.createdAt ? ` • ${new Date(entry.createdAt).toLocaleDateString()}` : "";
+    const content = String(entry.content || "").replace(/\s+/g, " ").trim().slice(0, 160);
+    return `${index + 1}. ${title}${tags}${createdAt}${content ? ` — ${content}` : ""}`;
+  });
+}
+
+async function saveSecondBrainKnowledge(payload) {
+  return secondBrainRequest("/brain/knowledge", {
+    method: "POST",
+    body: {
+      business: payload.business || SECOND_BRAIN_DEFAULT_BUSINESS,
+      type: payload.type || "knowledge",
+      title: payload.title,
+      content: payload.content,
+      tags: Array.isArray(payload.tags) ? payload.tags : [],
+    },
+    timeoutMs: 15000,
+  });
+}
+
+function formatSecondBrainEntry(entry, index) {
+  const title = entry.title || "Untitled";
+  const tags = Array.isArray(entry.tags) && entry.tags.length ? ` • ${entry.tags.join(", ")}` : "";
+  const createdAt = entry.createdAt ? ` • ${new Date(entry.createdAt).toLocaleDateString()}` : "";
+  const preview = String(entry.content || "").replace(/\s+/g, " ").trim().slice(0, 120);
+  return `${index + 1}. ${title}${tags}${createdAt}${preview ? `\n${preview}` : ""}`.trim();
+}
+
+async function getSecondBrainSnapshot() {
+  const [statusResult, graphResult, knowledgeResult] = await Promise.allSettled([
+    fetchSecondBrainStatus(),
+    fetchSecondBrainGraphStats(),
+    fetchSecondBrainKnowledge(5),
+  ]);
+
+  return {
+    status: statusResult.status === "fulfilled" ? statusResult.value : null,
+    graph: graphResult.status === "fulfilled" ? graphResult.value : null,
+    knowledge: knowledgeResult.status === "fulfilled" ? knowledgeResult.value : null,
+    errors: [
+      statusResult.status === "rejected" ? statusResult.reason?.message || String(statusResult.reason) : null,
+      graphResult.status === "rejected" ? graphResult.reason?.message || String(graphResult.reason) : null,
+      knowledgeResult.status === "rejected" ? knowledgeResult.reason?.message || String(knowledgeResult.reason) : null,
+    ].filter(Boolean),
+  };
+}
+
+async function buildSecondBrainEmbed() {
+  const snapshot = await getSecondBrainSnapshot();
+  const status = snapshot.status || {};
+  const knowledge = snapshot.knowledge || {};
+  const entries = Array.isArray(knowledge.entries) ? knowledge.entries : [];
+  const totalKnowledge = status.knowledgeCount ?? knowledge.total ?? 0;
+
+  const fields = [
+    {
+      name: "Connectivity",
+      value: [
+        `API: ${snapshot.errors.length ? "degraded" : "online"}`,
+        `Mongo: ${status.mongo ? "connected" : "disconnected"}`,
+        `Ollama: ${status.ollama ? "connected" : "disconnected"}`,
+      ].join("\n"),
+      inline: true,
+    },
+    {
+      name: "Knowledge",
+      value: [
+        `Entries: ${totalKnowledge}`,
+        `Graph nodes: ${snapshot.graph?.nodes ?? totalKnowledge}`,
+        `Graph edges: ${snapshot.graph?.edges ?? 0}`,
+      ].join("\n"),
+      inline: true,
+    },
+    {
+      name: "Bridge Commands",
+      value: [
+        "/brain-status",
+        "/brain-search",
+        "/brain-save",
+        "/wise2-hub section:second-brain",
+      ].join(" • "),
+      inline: false,
+    },
+  ];
+
+  if (entries.length > 0) {
+    fields.push({
+      name: "Recent Knowledge",
+      value: entries
+        .slice(0, 5)
+        .map((entry, index) => formatSecondBrainEntry(entry, index))
+        .join("\n\n")
+        .slice(0, 1024),
+      inline: false,
+    });
+  }
+
+  if (snapshot.errors.length > 0) {
+    fields.push({
+      name: "Bridge Notes",
+      value: snapshot.errors.map((error) => `• ${error}`).join("\n").slice(0, 1024),
+      inline: false,
+    });
+  }
+
+  return {
+    color: snapshot.errors.length ? WISE2_COLORS.warning : WISE2_COLORS.primary,
+    title: "🧠 WISE² Second Brain",
+    description:
+      "Discord is linked to the second-brain API for live knowledge search, status checks, and vault updates.",
+    fields,
+    footer: {
+      text: "WISE² Organized Chaos Command Center",
+    },
+    timestamp: new Date(),
+  };
+}
+
+async function searchWise2Workspace(query, scope = "all", limit = 8) {
+  const normalizedScope = scope || "all";
+  if (normalizedScope === "brain") {
+    return searchSecondBrainKnowledge(query, limit);
+  }
+
+  if (normalizedScope === "all") {
+    const repoLimit = Math.max(1, Math.ceil(limit / 2));
+    const brainLimit = Math.max(1, limit - repoLimit);
+    const [repoMatches, brainMatches] = await Promise.all([
+      searchWise2Repo(query, "all", repoLimit),
+      searchSecondBrainKnowledge(query, brainLimit).catch(() => []),
+    ]);
+
+    return [
+      ...repoMatches.map((line) => `[repo] ${line}`),
+      ...brainMatches.map((line) => `[brain] ${line}`),
+    ].slice(0, limit);
+  }
+
+  return searchWise2Repo(query, normalizedScope, limit);
 }
 
 // WISE² Branding Colors
@@ -1552,6 +2303,359 @@ ${description}
         files: firstAttachment ? [firstAttachment] : [],
         ephemeral: true,
       });
+    },
+  },
+
+  "wise2-hub": {
+    data: {
+      name: "wise2-hub",
+      description: "Open the WISE² master command center",
+      options: [
+        {
+          name: "section",
+          description: "Hub section to show",
+          type: 3,
+          required: false,
+          choices: WISE2_HUB_SECTION_CHOICES,
+        },
+        {
+          name: "target",
+          description: "Optional Discord channel to broadcast the hub card",
+          type: 7,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const section = interaction.options.getString("section") || "overview";
+      const targetChannel = interaction.options.getChannel("target");
+
+      if (targetChannel && !targetChannel.isTextBased()) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Invalid Target Channel",
+              description: "Choose a text-based channel for the WISE² hub broadcast.",
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const embed = await buildWise2HubEmbed(section);
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        if (targetChannel) {
+          await targetChannel.send({ embeds: [embed] });
+        }
+
+        await interaction.editReply({
+          content: targetChannel
+            ? `✅ Posted the WISE² ${section} hub to ${targetChannel}.`
+            : `✅ Loaded the WISE² ${section} hub.`,
+          embeds: [embed],
+        });
+      } catch (error) {
+        await interaction.editReply({
+          content: "❌ Failed to load the WISE² hub.",
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ WISE² Hub Error",
+              description: error.message,
+            },
+          ],
+        });
+      }
+    },
+  },
+
+  "wise2-search": {
+    data: {
+      name: "wise2-search",
+      description: "Search WISE² docs, code, data, and second-brain context from Discord",
+      options: [
+        {
+          name: "query",
+          description: "Search text",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "scope",
+          description: "Where to search",
+          type: 3,
+          required: false,
+          choices: WISE2_SEARCH_SCOPE_CHOICES,
+        },
+        {
+          name: "limit",
+          description: "Max results to return",
+          type: 4,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const query = interaction.options.getString("query");
+      const scope = interaction.options.getString("scope") || "all";
+      const limit = Math.min(Math.max(interaction.options.getInteger("limit") || 8, 1), 15);
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        const matches = await searchWise2Workspace(query, scope, limit);
+        if (matches.length === 0) {
+          return interaction.editReply({
+            embeds: [
+              {
+                color: WISE2_COLORS.info,
+                title: "🔎 WISE² Search",
+                description: `No matches found for \`${query}\` in \`${scope}\`.`,
+              },
+            ],
+          });
+        }
+
+        const embed = {
+          color: WISE2_COLORS.primary,
+          title: "🔎 WISE² Search Results",
+          description: `Query: \`${query}\` • Scope: \`${scope}\``,
+          fields: [
+            {
+              name: "Matches",
+              value: matches
+                .map((line) => `• ${line}`.slice(0, 220))
+                .join("\n")
+                .slice(0, 1024),
+              inline: false,
+            },
+          ],
+          footer: {
+            text: "WISE² Organized Chaos Command Center",
+          },
+          timestamp: new Date(),
+        };
+
+        await interaction.editReply({ embeds: [embed] });
+      } catch (error) {
+        await interaction.editReply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Search Error",
+              description: error.message,
+            },
+          ],
+        });
+      }
+    },
+  },
+
+  "brain-status": {
+    data: {
+      name: "brain-status",
+      description: "Show second-brain health, knowledge counts, and recent entries",
+    },
+    async execute(interaction) {
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        const embed = await buildSecondBrainEmbed();
+        await interaction.editReply({ embeds: [embed] });
+      } catch (error) {
+        await interaction.editReply({
+          embeds: [
+            {
+              color: WISE2_COLORS.warning,
+              title: "🧠 Second Brain Offline",
+              description: `Could not reach the second brain API: ${error.message}`,
+            },
+          ],
+        });
+      }
+    },
+  },
+
+  "brain-search": {
+    data: {
+      name: "brain-search",
+      description: "Search the WISE² second brain knowledge base",
+      options: [
+        {
+          name: "query",
+          description: "Search text",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "limit",
+          description: "Max results to return",
+          type: 4,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const query = interaction.options.getString("query");
+      const limit = Math.min(Math.max(interaction.options.getInteger("limit") || 8, 1), 15);
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        const matches = await searchSecondBrainKnowledge(query, limit);
+        if (matches.length === 0) {
+          return interaction.editReply({
+            embeds: [
+              {
+                color: WISE2_COLORS.info,
+                title: "🔎 Second Brain Search",
+                description: `No knowledge entries found for \`${query}\`.`,
+              },
+            ],
+          });
+        }
+
+        await interaction.editReply({
+          embeds: [
+            {
+              color: WISE2_COLORS.primary,
+              title: "🔎 Second Brain Search Results",
+              description: `Query: \`${query}\``,
+              fields: [
+                {
+                  name: "Matches",
+                  value: matches.map((line) => `• ${line}`).join("\n").slice(0, 1024),
+                  inline: false,
+                },
+              ],
+              footer: {
+                text: "WISE² Organized Chaos Command Center",
+              },
+              timestamp: new Date(),
+            },
+          ],
+        });
+      } catch (error) {
+        await interaction.editReply({
+          embeds: [
+            {
+              color: WISE2_COLORS.warning,
+              title: "❌ Second Brain Search Error",
+              description: error.message,
+            },
+          ],
+        });
+      }
+    },
+  },
+
+  "brain-save": {
+    data: {
+      name: "brain-save",
+      description: "Save a note or decision into the WISE² second brain",
+      options: [
+        {
+          name: "title",
+          description: "Knowledge title",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "content",
+          description: "Knowledge content",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "tags",
+          description: "Comma-separated tags",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "business",
+          description: "Business or workspace key",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "type",
+          description: "Entry type",
+          type: 3,
+          required: false,
+          choices: [
+            { name: "knowledge", value: "knowledge" },
+            { name: "decision", value: "decision" },
+            { name: "project", value: "project" },
+            { name: "meeting", value: "meeting" },
+            { name: "note", value: "note" },
+            { name: "insight", value: "insight" },
+          ],
+        },
+      ],
+    },
+    async execute(interaction) {
+      const title = interaction.options.getString("title");
+      const content = interaction.options.getString("content");
+      const tags = interaction.options
+        .getString("tags")
+        ?.split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean) || [];
+      const business = interaction.options.getString("business") || SECOND_BRAIN_DEFAULT_BUSINESS;
+      const type = interaction.options.getString("type") || "knowledge";
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        const result = await saveSecondBrainKnowledge({
+          title,
+          content,
+          tags,
+          business,
+          type,
+        });
+
+        await interaction.editReply({
+          embeds: [
+            {
+              color: WISE2_COLORS.success,
+              title: "✅ Saved to Second Brain",
+              description: `Stored \`${title}\` in the WISE² knowledge base.`,
+              fields: [
+                {
+                  name: "Entry",
+                  value: [
+                    `ID: ${result.id || result.entry?._id || "created"}`,
+                    `Business: \`${business}\``,
+                    `Type: \`${type}\``,
+                    `Tags: ${tags.length ? tags.map((tag) => `\`${tag}\``).join(", ") : "none"}`,
+                  ].join("\n"),
+                  inline: false,
+                },
+              ],
+              footer: {
+                text: "WISE² Organized Chaos Command Center",
+              },
+              timestamp: new Date(),
+            },
+          ],
+        });
+      } catch (error) {
+        await interaction.editReply({
+          embeds: [
+            {
+              color: WISE2_COLORS.warning,
+              title: "❌ Second Brain Save Failed",
+              description: error.message,
+            },
+          ],
+        });
+      }
     },
   },
 

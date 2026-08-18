@@ -1,18 +1,19 @@
 # WISE² Discord Bot - Phase A
 
-Discord integration bot for the WISE² Agentic OS kernel providing system commands, deployment status, decision logging, and team synchronization.
+Discord integration bot for the WISE² Agentic OS kernel providing system commands, deployment status, decision logging, ad ops, and second-brain synchronization.
 
 ## Overview
 
 **Status**: Phase A (MVP - Slash Commands & Webhooks)
 
 **Bot Features**:
-- 12+ slash commands for system operations and ad ops
+- 30+ slash commands for system operations, ad ops, WISE² knowledge access, and second-brain sync
 - 6 Discord channels with webhook integration
 - Real-time system status monitoring
 - Daily sync and decision logging
 - Alert distribution system
 - Ad preview, approval, preset, and scheduling workflow
+- Hub, search, and docs browsing for the full WISE² workspace
 - Integration with data layer (`data/daily-logs`, `data/decisions`)
 
 ## Technology Stack
@@ -117,7 +118,7 @@ Expected output:
 ```
 ✅ Logged in as WISE² Bot#1234
 Guilds: WISE²(123456789)
-✅ Successfully reloaded 7 application (/) commands.
+✅ Successfully reloaded application (/) commands.
 ✅ Sent startup ping to #status
 ```
 
@@ -272,6 +273,61 @@ Browse the full WISE² creative library.
 → Includes the active preset catalog
 ```
 
+### `/wise2-hub [section:<name>] [target:<channel>]`
+
+Open the WISE² master command center.
+
+```
+/wise2-hub section:overview
+→ Shows the unified WISE² overview card
+→ Sections include modules, docs, operations, roadmap, brand, support, data, ads, and knowledge
+→ If you pass a target channel, the hub card is also broadcast there
+```
+
+### `/wise2-search query:<text> [scope:<name>] [limit:<n>]`
+
+Search the WISE² repo and second brain from Discord.
+
+```
+/wise2-search query:deployment scope:docs limit:5
+→ Searches docs, code, data, brand, ops, or second-brain context
+→ Returns matching file names and snippets
+→ Great for finding the canonical doc or implementation point fast
+```
+
+### `/brain-status`
+
+Show second-brain connectivity, knowledge counts, graph stats, and recent entries.
+
+```
+/brain-status
+→ Shows API, Mongo, and Ollama health
+→ Lists the most recent knowledge entries returned by the API
+→ Confirms whether Discord is linked to the second brain
+```
+
+### `/brain-search query:<text> [limit:<n>]`
+
+Search the WISE² second brain directly.
+
+```
+/brain-search query:launch plan limit:5
+→ Searches the live knowledge base over the second-brain API
+→ Returns titles, tags, and content previews
+→ Best for vault items, decisions, and reusable knowledge
+```
+
+### `/brain-save title:<text> content:<text> [tags:<tag1,tag2>] [business:<key>] [type:<kind>]`
+
+Save a note, decision, or reusable insight into the second brain from Discord.
+
+```
+/brain-save title:"Launch note" content:"Approved the blitz ad bundle" tags:ads,launch type:decision
+→ Posts a structured knowledge entry to the second-brain API
+→ Supports tags, business key, and entry type
+→ Useful for capturing decisions live during Discord discussions
+```
+
 ## Data Integration
 
 Bot reads from the WISE² data layer:
@@ -305,6 +361,39 @@ Preset names available in the ad commands:
 - `retargeting`
 - `ugc`
 - `direct-response`
+
+### WISE² Hub Sections
+
+Available section values for `/wise2-hub`:
+
+- `overview`
+- `modules`
+- `docs`
+- `operations`
+- `roadmap`
+- `brand`
+- `support`
+- `data`
+- `ads`
+- `knowledge`
+- `second-brain`
+
+### Second Brain Integration
+
+The bot can connect to the WISE² second-brain API if you set these environment variables:
+
+```bash
+SECOND_BRAIN_API_URL=http://127.0.0.1:3012
+SECOND_BRAIN_JWT_SECRET=your_shared_brain_secret
+SECOND_BRAIN_SERVICE_SUB=discord-bot
+SECOND_BRAIN_BUSINESS=wise2
+```
+
+Notes:
+
+- `SECOND_BRAIN_API_URL` should point to the API root without the trailing `/api` or with it; both work.
+- The bot signs requests with `SECOND_BRAIN_JWT_SECRET`, falling back to `JWT_SECRET` if you already use that shared secret.
+- If the brain is offline or the secret is missing, the new brain commands fail gracefully with a clear error.
 
 ### Daily Log Format
 
