@@ -11,9 +11,10 @@ ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
-COPY package.json ./
+COPY package.json tsconfig.json tsconfig.*.json ./
 COPY packages ./packages
 COPY apps/studio/package.json ./apps/studio/
+COPY apps/studio/tsconfig.json ./apps/studio/
 
 # Install dependencies using pnpm
 RUN pnpm install --frozen-lockfile
