@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '/studio',
+  // basePath should be empty for root domain deployment
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   output: 'standalone',
   swcMinify: true,
   eslint: {
@@ -11,7 +12,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: process.env.NODE_ENV === 'development',
+    unoptimized: true,
   },
   experimental: {
     optimizePackageImports: ["@wise2/shared"],
