@@ -58,6 +58,8 @@ export class TenantGuard implements CanActivate {
     }
 
     request.tenant = tenant;
+    request.tenant_id = tenant.tenantId;
+    request.user_id = userId;
     return true;
   }
 

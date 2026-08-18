@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { MongooseModule } from '@nestjs/mongoose'; // DEFERRED for Phase B
@@ -23,6 +23,8 @@ import { CustomersModule } from './v1/customers/customers.module';
 import { GalleryModule } from './v1/gallery/gallery.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RevenueOsModule } from './revenue-os/revenue-os.module';
+import { DigitalTwinModule } from './digital-twin/digital-twin.module';
+import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
@@ -103,6 +105,7 @@ import { APIStatusController } from './config/api-status.controller';
     DiscordModule,
     PrismaModule,
     RevenueOsModule,
+    DigitalTwinModule,
     // ConsultingAuditModule, // DEFERRED - has type errors
     // ConsultingModule, // DEFERRED
     BillingModule,
@@ -114,6 +117,10 @@ import { APIStatusController } from './config/api-status.controller';
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],
-  providers: [AppService],
+  providers: [AppService, TenantMiddleware],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenantMiddleware).forRoutes('*');
+  }
+}

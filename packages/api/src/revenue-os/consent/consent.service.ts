@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConsentChannel, ConsentState } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 
 /** Inbound keywords that must stop outbound messaging immediately. */
 const STOP_KEYWORDS = [
@@ -29,7 +30,7 @@ export class ConsentService {
     channel: ConsentChannel,
   ): Promise<boolean> {
     const latest = await this.prisma.consentRecord.findFirst({
-      where: { tenantId, customerId, channel },
+      where: withTenant(tenantId, { customerId, channel }),
       orderBy: { occurredAt: 'desc' },
     });
 

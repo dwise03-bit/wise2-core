@@ -42,8 +42,8 @@ model User {
   printFiles PrintFile[] @relation("printFileUploader")
 
   // Auth relationships
-  sessions Session[]
-  accounts Account[] @relation("accounts")
+  sessions            Session[]
+  accounts            Account[]            @relation("accounts")
   passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
 
   createdAt DateTime @default(now())
@@ -58,13 +58,13 @@ enum UserRole {
 
 // Authentication - Sessions
 model Session {
-  id        String   @id @default(cuid())
+  id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expires   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([userId])
   @@index([sessionToken])
@@ -72,9 +72,9 @@ model Session {
 
 // Authentication - Verification Tokens
 model VerificationToken {
-  id     String   @id @default(cuid())
-  email  String
-  token  String   @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
@@ -82,11 +82,11 @@ model VerificationToken {
 
 // Authentication - Password Reset Tokens
 model PasswordResetToken {
-  id     String   @id @default(cuid())
-  userId String
-  user   User     @relation("passwordResetTokens", fields: [userId], references: [id], onDelete: Cascade)
-  token  String   @unique
-  expires DateTime
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("passwordResetTokens", fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expires   DateTime
   createdAt DateTime @default(now())
 
   @@index([userId])
@@ -95,19 +95,19 @@ model PasswordResetToken {
 
 // OAuth Accounts
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  user               User    @relation("accounts", fields: [userId], references: [id], onDelete: Cascade)
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation("accounts", fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -543,7 +543,7 @@ model UserPresence {
 // ConsultingService: Available consulting service types
 model ConsultingService {
   id          String   @id @default(cuid())
-  name        String   // "AI Strategy Consulting", "Implementation", etc.
+  name        String // "AI Strategy Consulting", "Implementation", etc.
   description String   @db.Text
   hourlyRate  Float
   minHours    Int      @default(1)
@@ -552,12 +552,12 @@ model ConsultingService {
   icon        String? // Icon name for UI
 
   // Revenue system fields
-  stripePriceId       String?   // Stripe price ID for this service
-  featured            Boolean   @default(false)
-  isRecurring         Boolean   @default(false)
-  isManagementTier    Boolean   @default(false)
-  prepInstructions    String?   @db.Text
-  confirmationText    String?   @db.Text
+  stripePriceId    String? // Stripe price ID for this service
+  featured         Boolean @default(false)
+  isRecurring      Boolean @default(false)
+  isManagementTier Boolean @default(false)
+  prepInstructions String? @db.Text
+  confirmationText String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -568,13 +568,13 @@ model ConsultingService {
 
 // Consultant: WISE² AI consultants
 model Consultant {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  bio       String?  @db.Text
-  expertise String[] // ["AI Strategy", "Prompt Engineering", etc.]
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  bio        String?  @db.Text
+  expertise  String[] // ["AI Strategy", "Prompt Engineering", etc.]
   hourlyRate Float
-  isActive  Boolean  @default(true)
+  isActive   Boolean  @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -586,13 +586,13 @@ model Consultant {
 
 // ConsultantService: Junction model between Consultant and ConsultingService
 model ConsultantService {
-  id                String            @id @default(cuid())
-  consultantId      String
-  consultant        Consultant        @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-  serviceId         String
-  service           ConsultingService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  customHourlyRate  Float? // Override hourly rate for this service/consultant combo
-  capacity          Int               @default(10) // Max concurrent bookings
+  id               String            @id @default(cuid())
+  consultantId     String
+  consultant       Consultant        @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  serviceId        String
+  service          ConsultingService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  customHourlyRate Float? // Override hourly rate for this service/consultant combo
+  capacity         Int               @default(10) // Max concurrent bookings
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -604,16 +604,16 @@ model ConsultantService {
 
 // CalendarAvailability: Recurring/one-time availability slots
 model CalendarAvailability {
-  id          String  @id @default(cuid())
+  id           String     @id @default(cuid())
   consultantId String
   consultant   Consultant @relation(fields: [consultantId], references: [id], onDelete: Cascade)
-  dayOfWeek   Int     // 0-6 (Monday-Sunday), or -1 for one-time
-  startTime   String  // "09:00" (24-hour format)
-  endTime     String  // "17:00"
-  timezone    String  @default("UTC")
-  isRecurring Boolean @default(true)
-  validFrom   DateTime? // Start date for recurring availability
-  validTo     DateTime? // End date for recurring availability
+  dayOfWeek    Int // 0-6 (Monday-Sunday), or -1 for one-time
+  startTime    String // "09:00" (24-hour format)
+  endTime      String // "17:00"
+  timezone     String     @default("UTC")
+  isRecurring  Boolean    @default(true)
+  validFrom    DateTime? // Start date for recurring availability
+  validTo      DateTime? // End date for recurring availability
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -623,36 +623,36 @@ model CalendarAvailability {
 
 // Booking: Consulting session bookings
 model Booking {
-  id                    String            @id @default(cuid())
-  userId                String
-  user                  User              @relation("consultingBookings", fields: [userId], references: [id], onDelete: Cascade)
-  serviceId             String
-  service               ConsultingService @relation(fields: [serviceId], references: [id])
-  consultantId          String
-  consultant            Consultant        @relation(fields: [consultantId], references: [id])
+  id           String            @id @default(cuid())
+  userId       String
+  user         User              @relation("consultingBookings", fields: [userId], references: [id], onDelete: Cascade)
+  serviceId    String
+  service      ConsultingService @relation(fields: [serviceId], references: [id])
+  consultantId String
+  consultant   Consultant        @relation(fields: [consultantId], references: [id])
 
-  startTime             DateTime
-  endTime               DateTime
-  durationHours         Float
-  status                String            @default("scheduled") // scheduled, in_progress, completed, cancelled, no_show
-  totalPrice            Float
-  stripePaymentIntentId String?
-  stripeCheckoutSessionId String?  // Added for revenue system
-  paymentStatus         String            @default("pending") // pending, succeeded, failed, refunded
-  meetingLink           String?
-  notes                 String?           @db.Text
-  consultantNotes       String?           @db.Text
+  startTime               DateTime
+  endTime                 DateTime
+  durationHours           Float
+  status                  String   @default("scheduled") // scheduled, in_progress, completed, cancelled, no_show
+  totalPrice              Float
+  stripePaymentIntentId   String?
+  stripeCheckoutSessionId String? // Added for revenue system
+  paymentStatus           String   @default("pending") // pending, succeeded, failed, refunded
+  meetingLink             String?
+  notes                   String?  @db.Text
+  consultantNotes         String?  @db.Text
 
   // Revenue system relationships
-  lead                  ConsultingLead?   @relation("leadToBooking")
-  followUps             ConsultingFollowUp[] @relation("followUps")
-  deliverableReportUrl  String?           @db.Text
+  lead                     ConsultingLead?      @relation("leadToBooking")
+  followUps                ConsultingFollowUp[] @relation("followUps")
+  deliverableReportUrl     String?              @db.Text
   managementSubscriptionId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  postCallSummary PostCallSummary?
+  postCallSummary        PostCallSummary?
   consultingAuditSession ConsultingAuditSession?
 
   @@index([userId])
@@ -663,14 +663,14 @@ model Booking {
 
 // PostCallSummary: AI-generated post-call summaries and action items
 model PostCallSummary {
-  id            String   @id @default(cuid())
-  bookingId     String   @unique
-  booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  recordingUrl  String?  @db.Text
-  transcript    String?  @db.Text
-  summary       String   @db.Text
+  id            String    @id @default(cuid())
+  bookingId     String    @unique
+  booking       Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  recordingUrl  String?   @db.Text
+  transcript    String?   @db.Text
+  summary       String    @db.Text
   followUpDate  DateTime?
-  followUpNotes String?  @db.Text
+  followUpNotes String?   @db.Text
   sentAt        DateTime?
 
   createdAt DateTime @default(now())
@@ -702,43 +702,43 @@ model ActionItem {
 
 // Prospect: Sales prospect/lead management
 model Prospect {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Contact information
-  businessName      String
-  contactName       String
-  email             String   @unique
-  phone             String?
-  website           String?
+  businessName String
+  contactName  String
+  email        String  @unique
+  phone        String?
+  website      String?
 
   // Business details
-  industry          String?
-  primaryProblem    String   @db.Text
-  leadSource        String   @default("DIRECT") // DIRECT, REFERRAL, WEBSITE, CONTENT, PARTNERSHIP, OTHER
+  industry       String?
+  primaryProblem String  @db.Text
+  leadSource     String  @default("DIRECT") // DIRECT, REFERRAL, WEBSITE, CONTENT, PARTNERSHIP, OTHER
 
   // Sales tracking
-  estimatedOpportunity Float  @default(0) // in dollars
-  status            ProspectStatus @default(NEW) // NEW, CONTACTED, QUALIFIED, AUDIT_SCHEDULED, AUDIT_COMPLETE, PROPOSAL_SENT, WON, LOST
+  estimatedOpportunity Float          @default(0) // in dollars
+  status               ProspectStatus @default(NEW) // NEW, CONTACTED, QUALIFIED, AUDIT_SCHEDULED, AUDIT_COMPLETE, PROPOSAL_SENT, WON, LOST
 
   // Additional fields
-  notes             String?  @db.Text
-  tags              String[] @default([])
+  notes String?  @db.Text
+  tags  String[] @default([])
 
   // Conversion tracking
-  auditScheduledAt  DateTime?
-  auditCompletedAt  DateTime?
-  proposalSentAt    DateTime?
-  wonAt             DateTime?
-  lostAt            DateTime?
-  lostReason        String?  @db.Text
+  auditScheduledAt DateTime?
+  auditCompletedAt DateTime?
+  proposalSentAt   DateTime?
+  wonAt            DateTime?
+  lostAt           DateTime?
+  lostReason       String?   @db.Text
 
   // Relationships
-  auditSession      AuditSession?
-  proposals         Proposal[]
+  auditSession AuditSession?
+  proposals    Proposal[]
 
   // Metadata
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([email])
@@ -766,22 +766,22 @@ enum CustomerStatus {
 }
 
 model Customer {
-  id              String         @id @default(cuid())
-  businessName    String
-  contactName     String
-  email           String         @unique
-  phone           String?
-  website         String?
-  industry        String?
-  notes           String?        @db.Text
-  tags            String[]       @default([])
-  status          CustomerStatus @default(ACTIVE)
-  mrr             Float          @default(0)
-  prospectId      String?        @unique
-  userId          String?
-  convertedAt     DateTime       @default(now())
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id           String         @id @default(cuid())
+  businessName String
+  contactName  String
+  email        String         @unique
+  phone        String?
+  website      String?
+  industry     String?
+  notes        String?        @db.Text
+  tags         String[]       @default([])
+  status       CustomerStatus @default(ACTIVE)
+  mrr          Float          @default(0)
+  prospectId   String?        @unique
+  userId       String?
+  convertedAt  DateTime       @default(now())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([status])
   @@index([email])
@@ -797,20 +797,20 @@ enum AssetType {
 }
 
 model GalleryAsset {
-  id          String    @id @default(cuid())
-  filename    String
+  id           String    @id @default(cuid())
+  filename     String
   originalName String
-  mimeType    String
-  size        Int
-  assetType   AssetType
-  storagePath String
-  url         String?
-  userId      String
+  mimeType     String
+  size         Int
+  assetType    AssetType
+  storagePath  String
+  url          String?
+  userId       String
   sourceModule String?
-  sourceId    String?
-  metadata    Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  sourceId     String?
+  metadata     Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([userId])
   @@index([assetType])
@@ -821,41 +821,41 @@ model GalleryAsset {
 
 // AuditSession: AI-powered sales audit of a prospect
 model AuditSession {
-  id          String   @id @default(cuid())
-  prospectId  String   @unique
-  prospect    Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  prospectId String   @unique
+  prospect   Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
 
   // Audit metadata
-  status      AuditStatus @default(SCHEDULED)
+  status AuditStatus @default(SCHEDULED)
 
   // Audit data
-  transcriptUrl      String? @db.Text
-  transcript         String? @db.Text
-  auditNotes         String? @db.Text
-  auditedAt          DateTime?
+  transcriptUrl String?   @db.Text
+  transcript    String?   @db.Text
+  auditNotes    String?   @db.Text
+  auditedAt     DateTime?
 
   // AI Analysis
-  analysisStatus     AnalysisStatus @default(PENDING)
-  analysisErrorMsg   String?
-  analyzedAt         DateTime?
+  analysisStatus   AnalysisStatus @default(PENDING)
+  analysisErrorMsg String?
+  analyzedAt       DateTime?
 
   // Readiness score (0-100)
-  aiReadinessScore   Int?
-  scoreDetails       Json? // { "techStack": 45, "processAutomation": 62, ... }
+  aiReadinessScore Int?
+  scoreDetails     Json? // { "techStack": 45, "processAutomation": 62, ... }
 
   // Financial summary
-  totalMoneyLeaks    Float @default(0)
-  estimatedROI       Float @default(0)
+  totalMoneyLeaks Float @default(0)
+  estimatedROI    Float @default(0)
 
   // Findings
-  findings           Finding[]
+  findings Finding[]
 
   // Proposals
-  proposals          Proposal[]
+  proposals Proposal[]
 
   // Metadata
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([prospectId])
   @@index([status])
@@ -878,33 +878,33 @@ enum AnalysisStatus {
 
 // Finding: Individual finding from audit analysis
 model Finding {
-  id              String         @id @default(cuid())
-  auditSessionId  String
-  auditSession    AuditSession   @relation(fields: [auditSessionId], references: [id], onDelete: Cascade)
+  id             String       @id @default(cuid())
+  auditSessionId String
+  auditSession   AuditSession @relation(fields: [auditSessionId], references: [id], onDelete: Cascade)
 
   // Details
-  title           String
-  description     String         @db.Text
-  category        FindingCategory
-  severity        FindingSeverity
+  title       String
+  description String          @db.Text
+  category    FindingCategory
+  severity    FindingSeverity
 
   // Evidence
-  evidenceSnippet String?        @db.Text
+  evidenceSnippet String? @db.Text
   evidenceUrl     String?
 
   // Impact
   estimatedAnnualImpact Float?
-  implementationDays Int?
+  implementationDays    Int?
 
   // Recommendation
   recommendedAction String @db.Text
 
   // Metadata
-  isCustom        Boolean @default(false)
-  isHidden        Boolean @default(false)
+  isCustom Boolean @default(false)
+  isHidden Boolean @default(false)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([auditSessionId])
   @@index([category])
@@ -929,29 +929,29 @@ enum FindingSeverity {
 
 // ServiceCatalogItem: Available consulting services for proposals
 model ServiceCatalogItem {
-  id                  String   @id @default(cuid())
-  name                String   @unique
-  description         String   @db.Text
-  category            String   // "audit", "automation", "strategy", "training"
+  id          String @id @default(cuid())
+  name        String @unique
+  description String @db.Text
+  category    String // "audit", "automation", "strategy", "training"
 
   // Pricing
-  setupPrice          Float @default(0)
-  monthlyPrice        Float @default(0)
-  annualPrice         Float?
+  setupPrice   Float  @default(0)
+  monthlyPrice Float  @default(0)
+  annualPrice  Float?
 
   // Implementation
-  implementationDays  Int?
+  implementationDays Int?
 
   // Expected outcomes
-  expectedOutcomes    String[] @default([])
+  expectedOutcomes String[] @default([])
 
   // Configuration
-  isActive            Boolean @default(true)
-  displayOrder        Int @default(0)
+  isActive     Boolean @default(true)
+  displayOrder Int     @default(0)
 
   // Metadata
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([category])
   @@index([isActive])
@@ -959,43 +959,43 @@ model ServiceCatalogItem {
 
 // Proposal: Sales proposal generated from audit findings
 model Proposal {
-  id                  String   @id @default(cuid())
-  prospectId          String
-  prospect            Prospect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
-  auditSessionId      String?
-  auditSession        AuditSession? @relation(fields: [auditSessionId], references: [id], onDelete: SetNull)
+  id             String        @id @default(cuid())
+  prospectId     String
+  prospect       Prospect      @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  auditSessionId String?
+  auditSession   AuditSession? @relation(fields: [auditSessionId], references: [id], onDelete: SetNull)
 
   // Metadata
-  title               String
-  status              ProposalStatus @default(DRAFT)
+  title  String
+  status ProposalStatus @default(DRAFT)
 
   // Content
-  summary             String   @db.Text
-  problemStatement    String   @db.Text
-  proposedSolution    String   @db.Text
-  expectedOutcomes    String[] @default([])
+  summary          String   @db.Text
+  problemStatement String   @db.Text
+  proposedSolution String   @db.Text
+  expectedOutcomes String[] @default([])
 
   // Financial
-  totalSetupPrice     Float @default(0)
-  totalMonthlyPrice   Float @default(0)
-  setupPriceDiscount  Float @default(0)
-  monthlyPriceDiscount Float @default(0)
-  estimatedROI        Float?
-  paybackPeriodMonths Float?
+  totalSetupPrice      Float  @default(0)
+  totalMonthlyPrice    Float  @default(0)
+  setupPriceDiscount   Float  @default(0)
+  monthlyPriceDiscount Float  @default(0)
+  estimatedROI         Float?
+  paybackPeriodMonths  Float?
 
   // Line items
-  lineItems           ProposalLineItem[]
+  lineItems ProposalLineItem[]
 
   // Tracking
-  sentAt              DateTime?
-  viewedAt            DateTime?
-  acceptedAt          DateTime?
-  declinedAt          DateTime?
-  declineReason       String? @db.Text
+  sentAt        DateTime?
+  viewedAt      DateTime?
+  acceptedAt    DateTime?
+  declinedAt    DateTime?
+  declineReason String?   @db.Text
 
   // Metadata
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([prospectId])
   @@index([auditSessionId])
@@ -1013,25 +1013,25 @@ enum ProposalStatus {
 
 // ProposalLineItem: Individual service in a proposal
 model ProposalLineItem {
-  id                  String   @id @default(cuid())
-  proposalId          String
-  proposal            Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
-  serviceId           String?
-  serviceName         String   // Copy of service name
+  id          String   @id @default(cuid())
+  proposalId  String
+  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  serviceId   String?
+  serviceName String // Copy of service name
 
   // Pricing
-  setupPrice          Float @default(0)
-  monthlyPrice        Float @default(0)
-  quantity            Int @default(1)
+  setupPrice   Float @default(0)
+  monthlyPrice Float @default(0)
+  quantity     Int   @default(1)
 
   // Customization
-  description         String? @db.Text
-  implementationDays  Int?
+  description        String? @db.Text
+  implementationDays Int?
 
   // Metadata
-  displayOrder        Int @default(0)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([proposalId])
   @@index([serviceId])
@@ -1041,34 +1041,34 @@ model ProposalLineItem {
 
 // ConsultingAuditSession: Container for recording evidence during consulting engagements
 model ConsultingAuditSession {
-  id                String            @id @default(cuid())
-  bookingId         String            @unique
-  booking           Booking           @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  bookingId String  @unique
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   // Link to consulting client
-  clientId          String?
-  client            ConsultingClient? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  clientId String?
+  client   ConsultingClient? @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
   // Audit details
-  clientName        String
-  auditTopic        String            @db.Text
-  status            ConsultingAuditSessionStatus @default(SCHEDULED)
+  clientName String
+  auditTopic String                       @db.Text
+  status     ConsultingAuditSessionStatus @default(SCHEDULED)
 
   // Timing
-  startedAt         DateTime?
-  completedAt       DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
 
   // AI-generated summary
-  summary           String?           @db.Text
+  summary           String?                 @db.Text
   summaryStatus     ConsultingSummaryStatus @default(PENDING)
   summaryApprovedBy String?
   summaryApprovedAt DateTime?
 
   // Recordings
-  recordings        ConsultingRecording[]
+  recordings ConsultingRecording[]
 
   // Metadata
-  notes             String?           @db.Text
+  notes String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1079,50 +1079,49 @@ model ConsultingAuditSession {
   @@index([startedAt])
 }
 
-
 // ConsultingRecording: Individual audio/video recordings for evidence
 model ConsultingRecording {
-  id                    String           @id @default(cuid())
-  sessionId             String
-  session               ConsultingAuditSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  id        String                 @id @default(cuid())
+  sessionId String
+  session   ConsultingAuditSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   // Recording metadata
-  filename              String
-  type                  ConsultingRecordingType @default(AUDIO)
-  duration              Int?
-  fileSize              Int?
+  filename String
+  type     ConsultingRecordingType @default(AUDIO)
+  duration Int?
+  fileSize Int?
 
   // S3 Storage
-  s3Url                 String?          @db.Text
-  s3Key                 String?          @db.Text
+  s3Url String? @db.Text
+  s3Key String? @db.Text
 
   // Upload tracking
-  uploadStatus          UploadStatus     @default(PENDING)
-  uploadProgress        Int              @default(0)
-  uploadError           String?
+  uploadStatus   UploadStatus @default(PENDING)
+  uploadProgress Int          @default(0)
+  uploadError    String?
 
   // Transcription
-  transcriptionStatus   TranscriptionStatus @default(PENDING)
-  transcriptionJobId    String?
-  transcript            String?          @db.Text
-  transcriptionError    String?
+  transcriptionStatus TranscriptionStatus @default(PENDING)
+  transcriptionJobId  String?
+  transcript          String?             @db.Text
+  transcriptionError  String?
 
   // Moments
-  moments               ConsultingAuditMoment[]
+  moments ConsultingAuditMoment[]
 
   // User notes
-  userNotes             String?          @db.Text
+  userNotes String? @db.Text
 
   // Timestamps
-  recordedAt            DateTime         @default(now())
-  uploadedAt            DateTime?
-  transcribedAt         DateTime?
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
+  recordedAt    DateTime  @default(now())
+  uploadedAt    DateTime?
+  transcribedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Retention
-  expiresAt             DateTime?
-  archivedAt            DateTime?
+  expiresAt  DateTime?
+  archivedAt DateTime?
 
   @@index([sessionId])
   @@index([uploadStatus])
@@ -1130,21 +1129,20 @@ model ConsultingRecording {
   @@index([expiresAt])
 }
 
-
 // ConsultingAuditMoment: Marked moments in a recording
 model ConsultingAuditMoment {
-  id              String             @id @default(cuid())
-  recordingId     String
-  recording       ConsultingRecording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
+  id          String              @id @default(cuid())
+  recordingId String
+  recording   ConsultingRecording @relation(fields: [recordingId], references: [id], onDelete: Cascade)
 
   // Moment details
-  label           String
-  description     String?            @db.Text
-  timestampMs     Int
+  label       String
+  description String? @db.Text
+  timestampMs Int
 
   // Categorization
-  category        String?
-  severity        String?
+  category String?
+  severity String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1187,45 +1185,45 @@ enum ConsultingSummaryStatus {
 
 // LocalStreamRecording: Metadata for locally recorded streams
 model LocalStreamRecording {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Recording metadata
-  title     String
+  title       String
   description String? @db.Text
 
   // File information
-  filePath  String   @db.Text       // Local path: /recordings/{timestamp}-{uuid}
-  fileSize  Int                      // bytes
-  duration  Int?                     // seconds
-  format    RecordingFormat @default(MP4) // MP4, MKV
+  filePath String          @db.Text // Local path: /recordings/{timestamp}-{uuid}
+  fileSize Int // bytes
+  duration Int? // seconds
+  format   RecordingFormat @default(MP4) // MP4, MKV
 
   // Platform tracking
-  platform  String?                  // "youtube", "twitch", "facebook", "linkedin", "rtmp", "custom"
+  platform    String? // "youtube", "twitch", "facebook", "linkedin", "rtmp", "custom"
   streamTitle String?
 
   // Audio tracks
-  videoTrackPath   String? @db.Text // Path to video-only file
-  audioTrackPath   String? @db.Text // Path to audio-only file (for post-editing)
-  audioTracks      Json @default("[]") // Array of separate audio tracks with metadata
+  videoTrackPath String? @db.Text // Path to video-only file
+  audioTrackPath String? @db.Text // Path to audio-only file (for post-editing)
+  audioTracks    Json    @default("[]") // Array of separate audio tracks with metadata
 
   // File splitting (for >1GB auto-split)
-  isSplit          Boolean @default(false)
-  splitParts       Int @default(1)  // Total number of split files
-  parentRecordingId String?          // If this is a split part, reference parent
+  isSplit           Boolean @default(false)
+  splitParts        Int     @default(1) // Total number of split files
+  parentRecordingId String? // If this is a split part, reference parent
 
   // Status tracking
-  status   RecordingStatus @default(IDLE)
-  quality  String @default("high") // "high", "medium", "low"
-  bitrate  Int @default(5000)      // kbps
+  status  RecordingStatus @default(IDLE)
+  quality String          @default("high") // "high", "medium", "low"
+  bitrate Int             @default(5000) // kbps
 
   // User association (optional, for multi-user systems)
-  userId   String?
+  userId String?
 
   // Timestamps
   startedAt DateTime
   stoppedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([userId])
   @@index([platform])
@@ -1251,30 +1249,30 @@ enum RecordingStatus {
 
 // Multistream configuration
 model MultistreamConfig {
-  id        String   @id @default(cuid())
-  userId    String?
+  id     String  @id @default(cuid())
+  userId String?
 
-  name      String
+  name        String
   description String? @db.Text
 
   // Platform configurations (stored as JSON array)
   // Structure: PlatformConfig[]
-  platforms Json     @default("[]")
+  platforms Json @default("[]")
 
   // Global encoding settings
   encodingPreset String @default("fast") // ultrafast, fast, medium, slow
-  videoBitrate   Int    @default(4500)   // kbps
-  audioBitrate   Int    @default(128)    // kbps
+  videoBitrate   Int    @default(4500) // kbps
+  audioBitrate   Int    @default(128) // kbps
   resolution     String @default("1080p") // 720p, 1080p, 1440p, 2160p
-  fps            Int    @default(30)      // 30 or 60
+  fps            Int    @default(30) // 30 or 60
 
   // Failover and recovery settings
   enableFailover Boolean @default(true)
-  failoverDelay  Int     @default(5000)   // milliseconds
+  failoverDelay  Int     @default(5000) // milliseconds
 
   // Monitoring settings
-  enableMetrics  Boolean @default(true)
-  metricsInterval Int    @default(1000)   // milliseconds
+  enableMetrics   Boolean @default(true)
+  metricsInterval Int     @default(1000) // milliseconds
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -1289,20 +1287,20 @@ model MultistreamConfig {
 
 // Multistream session (historical record of a broadcast)
 model MultistreamSession {
-  id       String @id @default(cuid())
+  id       String            @id @default(cuid())
   configId String
   config   MultistreamConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
 
   // Session timing
   startedAt DateTime
   stoppedAt DateTime?
-  duration  Int?     // seconds
+  duration  Int? // seconds
 
   // Platforms used in this session
   platforms String[] // Array of platform names: ["twitch", "youtube", ...]
 
   // Aggregate stats
-  totalViewers Int @default(0)
+  totalViewers      Int  @default(0)
   totalChatMessages Int? @default(0)
 
   // Per-platform stats (stored as JSON)
@@ -1310,9 +1308,9 @@ model MultistreamSession {
   platformStats Json @default("[]")
 
   // Metadata
-  title     String?
-  category  String?
-  tags      String[]
+  title    String?
+  category String?
+  tags     String[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -1326,37 +1324,37 @@ model MultistreamSession {
 
 // ConsultingClient: Client organization being audited
 model ConsultingClient {
-  id String @id @default(cuid())
+  id          String @id @default(cuid())
   workspaceId String
 
   companyName String
-  industry String?
-  employees Int?
-  revenue String?
-  website String?
+  industry    String?
+  employees   Int?
+  revenue     String?
+  website     String?
 
   // Contact information
-  primaryContact String?
+  primaryContact      String?
   primaryContactEmail String?
   primaryContactPhone String?
 
   // Consulting status
-  status ConsultingStatus @default(INTAKE)
-  auditScore Int @default(0) // 0-100
+  status     ConsultingStatus @default(INTAKE)
+  auditScore Int              @default(0) // 0-100
 
   // Research and intelligence
   researchBrief String? @db.Text
-  competitors String? @db.Text // JSON array
+  competitors   String? @db.Text // JSON array
   marketContext String? @db.Text
 
   // Relationships
-  contacts ConsultingContact[]
-  intakeResponses ConsultingIntakeResponse[]
-  sessions ConsultingAuditSession[]
+  contacts           ConsultingContact[]
+  intakeResponses    ConsultingIntakeResponse[]
+  sessions           ConsultingAuditSession[]
   consultingFindings ConsultingFinding[]
-  tasks ConsultingTask[]
-  research ConsultingResearchItem[]
-  plan ConsultingImplementationPlan?
+  tasks              ConsultingTask[]
+  research           ConsultingResearchItem[]
+  plan               ConsultingImplementationPlan?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1380,15 +1378,15 @@ enum ConsultingStatus {
 
 // ConsultingContact: Contacts at the consulting client
 model ConsultingContact {
-  id String @id @default(cuid())
+  id       String           @id @default(cuid())
   clientId String
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  name String
+  name  String
   title String?
   email String
   phone String?
-  role String? // "primary_contact", "technical_contact", "finance_contact"
+  role  String? // "primary_contact", "technical_contact", "finance_contact"
 
   createdAt DateTime @default(now())
 
@@ -1397,10 +1395,10 @@ model ConsultingContact {
 
 // ConsultingIntakeForm: Template for intake questions
 model ConsultingIntakeForm {
-  id String @id @default(cuid())
+  id          String @id @default(cuid())
   workspaceId String
 
-  name String
+  name        String
   description String? @db.Text
 
   // Questions stored as JSON
@@ -1414,9 +1412,9 @@ model ConsultingIntakeForm {
 
 // ConsultingIntakeResponse: Answers to intake form
 model ConsultingIntakeResponse {
-  id String @id @default(cuid())
+  id       String           @id @default(cuid())
   clientId String
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   formId String?
 
@@ -1424,7 +1422,7 @@ model ConsultingIntakeResponse {
   responses Json @default("{}")
 
   submittedAt DateTime
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   @@index([clientId])
 }
@@ -1434,30 +1432,30 @@ model ConsultingIntakeResponse {
 
 // ConsultingFinding: Consulting finding or recommendation
 model ConsultingFinding {
-  id String @id @default(cuid())
+  id       String           @id @default(cuid())
   clientId String
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  title String
+  title       String
   description String @db.Text
 
   category String // "automation", "security", "revenue", "efficiency", "risk"
   severity ConsultingFindingSeverity @default(MEDIUM)
 
-  source ConsultingFindingSource // "intake", "meeting", "research", "observation", "screen_analysis"
-  confidence Int @default(100) // 0-100
+  source     ConsultingFindingSource // "intake", "meeting", "research", "observation", "screen_analysis"
+  confidence Int                     @default(100) // 0-100
 
   // Evidence
-  evidence String? @db.Text // URL or description
+  evidence           String? @db.Text // URL or description
   recordingTimestamp Int? // seconds into recording
 
   // Status
-  status ConsultingFindingStatus @default(PENDING_APPROVAL)
+  status     ConsultingFindingStatus @default(PENDING_APPROVAL)
   approvedBy String?
   approvedAt DateTime?
 
   // Impact
-  impactType String? // "revenue", "savings", "speed", "risk", "experience"
+  impactType     String? // "revenue", "savings", "speed", "risk", "experience"
   estimatedValue Int? // dollars
 
   createdAt DateTime @default(now())
@@ -1492,23 +1490,23 @@ enum ConsultingFindingStatus {
 
 // ConsultingTask: Task or action item
 model ConsultingTask {
-  id String @id @default(cuid())
+  id       String           @id @default(cuid())
   clientId String
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  title String
+  title       String
   description String? @db.Text
 
   findingId String? // Link to finding if applicable
 
-  owner ConsultingTaskOwner // who's responsible
+  owner    ConsultingTaskOwner // who's responsible
   priority ConsultingTaskPriority @default(MEDIUM)
-  status ConsultingTaskStatus @default(TODO)
+  status   ConsultingTaskStatus   @default(TODO)
 
   estimatedHours Int?
-  estimatedCost Int? // dollars
+  estimatedCost  Int? // dollars
 
-  dueDate DateTime?
+  dueDate     DateTime?
   completedAt DateTime?
 
   dependencies String[] @default([]) // Array of task IDs
@@ -1543,19 +1541,19 @@ enum ConsultingTaskStatus {
 
 // ConsultingResearchItem: Business research findings
 model ConsultingResearchItem {
-  id String @id @default(cuid())
+  id       String           @id @default(cuid())
   clientId String
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  title String
+  title   String
   content String @db.Text
 
   category String // "company", "competitor", "market", "tool", "regulation", "opportunity"
 
-  source String? // URL or publication
+  source     String? // URL or publication
   accessedAt DateTime?
 
-  relevance Int @default(100) // 0-100
+  relevance  Int @default(100) // 0-100
   confidence Int @default(100) // 0-100
 
   suggestedAction String? @db.Text
@@ -1567,24 +1565,24 @@ model ConsultingResearchItem {
 
 // ConsultingImplementationPlan: Generated roadmap for client
 model ConsultingImplementationPlan {
-  id String @id @default(cuid())
-  clientId String @unique
-  client ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  id       String           @id @default(cuid())
+  clientId String           @unique
+  client   ConsultingClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  title String
+  title       String
   description String? @db.Text
 
   // Timeline
-  startDate DateTime
+  startDate  DateTime
   targetDate DateTime?
 
   // Financial impact
   totalEstimatedCost Int? // dollars
-  estimatedROI Int? // dollars
-  paybackPeriod Int? // months
+  estimatedROI       Int? // dollars
+  paybackPeriod      Int? // months
 
   // Status
-  status ConsultingPlanStatus @default(DRAFT)
+  status     ConsultingPlanStatus @default(DRAFT)
   approvedBy String?
   approvedAt DateTime?
 
@@ -1605,15 +1603,15 @@ enum ConsultingPlanStatus {
 
 // ConsultingPlanPhase: Phase of implementation plan
 model ConsultingPlanPhase {
-  id String @id @default(cuid())
+  id     String                       @id @default(cuid())
   planId String
-  plan ConsultingImplementationPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  plan   ConsultingImplementationPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
-  name String // "Immediate Actions", "30-Day Plan", etc.
+  name        String // "Immediate Actions", "30-Day Plan", etc.
   description String? @db.Text
 
   startDate DateTime?
-  endDate DateTime?
+  endDate   DateTime?
 
   // Tasks in this phase (stored as JSON for flexibility)
   // Structure: { id, title, description, owner, priority, estimatedHours, cost, dependency }
@@ -1684,50 +1682,50 @@ enum QuoteStatus {
 }
 
 model PrintOrder {
-  id               String           @id @default(cuid())
-  orderNumber      String           @unique
-  userId           String?
-  customerEmail    String
-  customerName     String
-  customerPhone    String?
+  id            String  @id @default(cuid())
+  orderNumber   String  @unique
+  userId        String?
+  customerEmail String
+  customerName  String
+  customerPhone String?
 
-  orderType        PrintOrderType
-  status           PrintOrderStatus @default(DRAFT)
+  orderType PrintOrderType
+  status    PrintOrderStatus @default(DRAFT)
 
   // Pricing
-  subtotal         Float            @default(0)
-  taxAmount        Float            @default(0)
-  shippingCost     Float            @default(0)
-  rushFee          Float            @default(0)
-  discountAmount   Float            @default(0)
-  totalPrice       Float            @default(0)
+  subtotal       Float @default(0)
+  taxAmount      Float @default(0)
+  shippingCost   Float @default(0)
+  rushFee        Float @default(0)
+  discountAmount Float @default(0)
+  totalPrice     Float @default(0)
 
   // Stripe
-  stripePaymentIntentId String?
+  stripePaymentIntentId   String?
   stripeCheckoutSessionId String?
-  paymentStatus    String           @default("unpaid")
+  paymentStatus           String  @default("unpaid")
 
   // Shipping
-  shippingMethod   String?
-  shippingAddress  Json?
-  trackingNumber   String?
-  isLocalPickup    Boolean          @default(false)
+  shippingMethod  String?
+  shippingAddress Json?
+  trackingNumber  String?
+  isLocalPickup   Boolean @default(false)
 
   // Production
-  rushOrder        Boolean          @default(false)
+  rushOrder               Boolean   @default(false)
   estimatedCompletionDate DateTime?
-  actualCompletionDate DateTime?
-  productionNotes  String?          @db.Text
-  internalNotes    String?          @db.Text
+  actualCompletionDate    DateTime?
+  productionNotes         String?   @db.Text
+  internalNotes           String?   @db.Text
 
   // Relationships
-  items            PrintOrderItem[]
-  files            PrintFile[]
-  quotes           PrintQuote[]
-  proofs           ProofApproval[]
+  items  PrintOrderItem[]
+  files  PrintFile[]
+  quotes PrintQuote[]
+  proofs ProofApproval[]
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([customerEmail])
@@ -1737,19 +1735,19 @@ model PrintOrder {
 }
 
 model PrintOrderItem {
-  id               String           @id @default(cuid())
-  orderId          String
-  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String     @id @default(cuid())
+  orderId String
+  order   PrintOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  productId        String?
-  product          PrintProduct?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?
+  product   PrintProduct? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   // Item details
-  name             String
-  description      String?          @db.Text
-  quantity         Int              @default(1)
-  unitPrice        Float            @default(0)
-  totalPrice       Float            @default(0)
+  name        String
+  description String? @db.Text
+  quantity    Int     @default(1)
+  unitPrice   Float   @default(0)
+  totalPrice  Float   @default(0)
 
   // 3D-specific
   material         String?
@@ -1759,67 +1757,67 @@ model PrintOrderItem {
   strengthPriority String?
   surfaceQuality   String?
   fitType          String?
-  toleranceNotes   String?          @db.Text
+  toleranceNotes   String? @db.Text
 
   // DTF-specific
-  transferWidth    Float?
-  transferHeight   Float?
-  garmentType      String?
-  garmentColor     String?
-  placement        String?
-  mirrorOutput     Boolean          @default(false)
-  whiteUnderbase   Boolean          @default(true)
+  transferWidth  Float?
+  transferHeight Float?
+  garmentType    String?
+  garmentColor   String?
+  placement      String?
+  mirrorOutput   Boolean @default(false)
+  whiteUnderbase Boolean @default(true)
 
   // Options
-  options          Json?
-  metadata         Json?
+  options  Json?
+  metadata Json?
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([productId])
 }
 
 model PrintProduct {
-  id               String           @id @default(cuid())
-  slug             String           @unique
+  id               String  @id @default(cuid())
+  slug             String  @unique
   name             String
-  description      String           @db.Text
+  description      String  @db.Text
   shortDescription String?
 
-  categoryId       String?
-  category         PrintProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?
+  category   PrintProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  productType      PrintOrderType
-  isActive         Boolean          @default(true)
-  isFeatured       Boolean          @default(false)
-  isMadeToOrder    Boolean          @default(true)
+  productType   PrintOrderType
+  isActive      Boolean        @default(true)
+  isFeatured    Boolean        @default(false)
+  isMadeToOrder Boolean        @default(true)
 
   // Pricing
-  basePrice        Float            @default(0)
-  bulkPriceBreaks  Json?
+  basePrice       Float @default(0)
+  bulkPriceBreaks Json?
 
   // Production
-  estimatedDays    Int              @default(5)
-  materials        String[]         @default([])
-  colors           String[]         @default([])
+  estimatedDays Int      @default(5)
+  materials     String[] @default([])
+  colors        String[] @default([])
 
   // Media
-  images           String[]         @default([])
-  thumbnailUrl     String?
-  modelFileUrl     String?
+  images       String[] @default([])
+  thumbnailUrl String?
+  modelFileUrl String?
 
   // SEO
-  seoTitle         String?
-  seoDescription   String?
+  seoTitle       String?
+  seoDescription String?
 
   // Relationships
-  variants         PrintProductVariant[]
-  orderItems       PrintOrderItem[]
+  variants   PrintProductVariant[]
+  orderItems PrintOrderItem[]
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
   @@index([productType])
@@ -1828,95 +1826,95 @@ model PrintProduct {
 }
 
 model PrintProductCategory {
-  id               String           @id @default(cuid())
-  slug             String           @unique
-  name             String
-  description      String?          @db.Text
-  icon             String?
-  displayOrder     Int              @default(0)
-  parentId         String?
-  parent           PrintProductCategory? @relation("SubCategories", fields: [parentId], references: [id], onDelete: SetNull)
-  children         PrintProductCategory[] @relation("SubCategories")
-  products         PrintProduct[]
+  id           String                 @id @default(cuid())
+  slug         String                 @unique
+  name         String
+  description  String?                @db.Text
+  icon         String?
+  displayOrder Int                    @default(0)
+  parentId     String?
+  parent       PrintProductCategory?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: SetNull)
+  children     PrintProductCategory[] @relation("SubCategories")
+  products     PrintProduct[]
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([parentId])
   @@index([slug])
 }
 
 model PrintProductVariant {
-  id               String           @id @default(cuid())
-  productId        String
-  product          PrintProduct     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id        String       @id @default(cuid())
+  productId String
+  product   PrintProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  name             String
-  sku              String?          @unique
-  priceModifier    Float            @default(0)
-  material         String?
-  color            String?
-  dimensions       String?
-  inStock          Boolean          @default(true)
-  stockQuantity    Int?
+  name          String
+  sku           String? @unique
+  priceModifier Float   @default(0)
+  material      String?
+  color         String?
+  dimensions    String?
+  inStock       Boolean @default(true)
+  stockQuantity Int?
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([productId])
 }
 
 model PrintFile {
-  id               String           @id @default(cuid())
-  orderId          String?
-  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  id      String      @id @default(cuid())
+  orderId String?
+  order   PrintOrder? @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   // Upload info
   originalFilename String
   storedFilename   String
   s3Key            String
-  s3Url            String           @db.Text
+  s3Url            String  @db.Text
   mimeType         String
   fileExtension    String
   fileSizeBytes    Int
   checksum         String?
 
-  status           PrintFileStatus  @default(UPLOADING)
-  uploadedBy       String?
-  uploader         User?            @relation("printFileUploader", fields: [uploadedBy], references: [id], onDelete: SetNull)
+  status     PrintFileStatus @default(UPLOADING)
+  uploadedBy String?
+  uploader   User?           @relation("printFileUploader", fields: [uploadedBy], references: [id], onDelete: SetNull)
 
   // Preflight results (stored as structured JSON)
-  preflightResult  Json?
-  preflightErrors  String[]         @default([])
-  preflightWarnings String[]        @default([])
+  preflightResult   Json?
+  preflightErrors   String[] @default([])
+  preflightWarnings String[] @default([])
 
   // 3D metadata
-  dimensionsX      Float?
-  dimensionsY      Float?
-  dimensionsZ      Float?
-  units            String           @default("mm")
-  triangleCount    Int?
-  vertexCount      Int?
-  isWatertight     Boolean?
-  isManifold       Boolean?
-  estimatedVolume  Float?
-  shellCount       Int?
-  fitsVolume       Boolean?
+  dimensionsX     Float?
+  dimensionsY     Float?
+  dimensionsZ     Float?
+  units           String   @default("mm")
+  triangleCount   Int?
+  vertexCount     Int?
+  isWatertight    Boolean?
+  isManifold      Boolean?
+  estimatedVolume Float?
+  shellCount      Int?
+  fitsVolume      Boolean?
 
   // DTF / image metadata
-  pixelWidth       Int?
-  pixelHeight      Int?
-  dpi              Int?
-  colorMode        String?
-  hasTransparency  Boolean?
-  embeddedProfile  String?
+  pixelWidth      Int?
+  pixelHeight     Int?
+  dpi             Int?
+  colorMode       String?
+  hasTransparency Boolean?
+  embeddedProfile String?
 
   // Preview
-  previewUrl       String?          @db.Text
-  thumbnailUrl     String?          @db.Text
+  previewUrl   String? @db.Text
+  thumbnailUrl String? @db.Text
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([status])
@@ -1924,41 +1922,41 @@ model PrintFile {
 }
 
 model PrintQuote {
-  id               String           @id @default(cuid())
-  orderId          String?
-  order            PrintOrder?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  id      String      @id @default(cuid())
+  orderId String?
+  order   PrintOrder? @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
-  quoteNumber      String           @unique
-  status           QuoteStatus      @default(DRAFT)
+  quoteNumber String      @unique
+  status      QuoteStatus @default(DRAFT)
 
   // Customer
-  customerEmail    String
-  customerName     String
+  customerEmail String
+  customerName  String
 
   // Line items as structured JSON
-  lineItems        Json             @default("[]")
+  lineItems Json @default("[]")
 
   // Totals
-  materialCost     Float            @default(0)
-  laborCost        Float            @default(0)
-  machineCost      Float            @default(0)
-  setupFee         Float            @default(0)
-  designFee        Float            @default(0)
-  rushFee          Float            @default(0)
-  shippingCost     Float            @default(0)
-  subtotal         Float            @default(0)
-  taxAmount        Float            @default(0)
-  totalPrice       Float            @default(0)
+  materialCost Float @default(0)
+  laborCost    Float @default(0)
+  machineCost  Float @default(0)
+  setupFee     Float @default(0)
+  designFee    Float @default(0)
+  rushFee      Float @default(0)
+  shippingCost Float @default(0)
+  subtotal     Float @default(0)
+  taxAmount    Float @default(0)
+  totalPrice   Float @default(0)
 
   // Validity
-  validUntil       DateTime?
-  acceptedAt       DateTime?
-  declinedAt       DateTime?
+  validUntil DateTime?
+  acceptedAt DateTime?
+  declinedAt DateTime?
 
-  notes            String?          @db.Text
+  notes String? @db.Text
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([status])
@@ -1967,27 +1965,27 @@ model PrintQuote {
 }
 
 model ProofApproval {
-  id               String           @id @default(cuid())
-  orderId          String
-  order            PrintOrder       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String     @id @default(cuid())
+  orderId String
+  order   PrintOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  proofToken       String           @unique
-  status           ProofStatus      @default(PENDING)
+  proofToken String      @unique
+  status     ProofStatus @default(PENDING)
 
   // Proof files
-  proofImageUrl    String?          @db.Text
-  proofPdfUrl      String?          @db.Text
-  proofNotes       String?          @db.Text
+  proofImageUrl String? @db.Text
+  proofPdfUrl   String? @db.Text
+  proofNotes    String? @db.Text
 
   // Customer response
-  customerResponse String?          @db.Text
+  customerResponse String?   @db.Text
   respondedAt      DateTime?
 
-  sentAt           DateTime?
-  expiresAt        DateTime?
+  sentAt    DateTime?
+  expiresAt DateTime?
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([proofToken])
@@ -1995,32 +1993,32 @@ model ProofApproval {
 }
 
 model DtfGangSheet {
-  id               String           @id @default(cuid())
-  orderId          String?
+  id      String  @id @default(cuid())
+  orderId String?
 
   // Sheet dimensions
-  sheetWidth       Float
-  sheetHeight      Float
-  dpi              Int              @default(300)
+  sheetWidth  Float
+  sheetHeight Float
+  dpi         Int   @default(300)
 
   // Layout
-  layoutData       Json
-  artworkManifest  Json
+  layoutData      Json
+  artworkManifest Json
 
   // Metrics
-  usedAreaPercent  Float            @default(0)
-  artworkCount     Int              @default(0)
+  usedAreaPercent Float @default(0)
+  artworkCount    Int   @default(0)
 
   // Output files
-  productionPngUrl String?          @db.Text
-  proofPdfUrl      String?          @db.Text
-  thumbnailUrl     String?          @db.Text
+  productionPngUrl String? @db.Text
+  proofPdfUrl      String? @db.Text
+  thumbnailUrl     String? @db.Text
 
   // Status
-  status           String           @default("draft")
+  status String @default("draft")
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([status])
@@ -2031,62 +2029,62 @@ model DtfGangSheet {
 // ============================================================================
 
 model ContentBrand {
-  id              String   @id @default(cuid())
-  slug            String   @unique
-  name            String
-  voice           String?  @db.Text
-  audience        String?  @db.Text
-  visualStyle     String?  @db.Text
-  primaryColor    String?
-  secondaryColor  String?
-  logoUrl         String?
-  defaultVoice    String?
-  defaultCta      String?
-  disclaimer      String?  @db.Text
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  name              String
+  voice             String?  @db.Text
+  audience          String?  @db.Text
+  visualStyle       String?  @db.Text
+  primaryColor      String?
+  secondaryColor    String?
+  logoUrl           String?
+  defaultVoice      String?
+  defaultCta        String?
+  disclaimer        String?  @db.Text
   prohibitedPhrases String[] @default([])
-  settings        Json?
+  settings          Json?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  projects        ContentProject[]
+  projects ContentProject[]
 
   @@index([slug])
 }
 
 model ContentProject {
-  id              String   @id @default(cuid())
-  guildId         String
-  channelId       String
+  id               String       @id @default(cuid())
+  guildId          String
+  channelId        String
   creatorDiscordId String
-  brandId         String
-  brand           ContentBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId          String
+  brand            ContentBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
 
-  topic           String   @db.Text
+  topic           String  @db.Text
   objective       String?
   platform        String
   durationSeconds Int?
   style           String?
   sourceUrl       String?
 
-  status          String   @default("idea_received")
-  currentVersion  Int      @default(1)
-  estimatedCost   Float?
-  actualCost      Float?   @default(0)
+  status         String @default("idea_received")
+  currentVersion Int    @default(1)
+  estimatedCost  Float?
+  actualCost     Float? @default(0)
 
-  approvedBy      String?
-  approvedAt      DateTime?
-  scheduledAt     DateTime?
-  publishedAt     DateTime?
+  approvedBy  String?
+  approvedAt  DateTime?
+  scheduledAt DateTime?
+  publishedAt DateTime?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  versions        ContentVersion[]
-  assets          ContentAsset[]
-  approvals       ContentApproval[]
-  publishJobs     ContentPublishJob[]
-  auditLog        ContentAuditLog[]
+  versions    ContentVersion[]
+  assets      ContentAsset[]
+  approvals   ContentApproval[]
+  publishJobs ContentPublishJob[]
+  auditLog    ContentAuditLog[]
 
   @@index([status])
   @@index([guildId])
@@ -2096,88 +2094,88 @@ model ContentProject {
 }
 
 model ContentVersion {
-  id              String   @id @default(cuid())
-  projectId       String
-  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  projectId String
+  project   ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  version         Int
-  title           String?
-  hook            String?  @db.Text
-  script          String?  @db.Text
-  caption         String?  @db.Text
-  hashtags        String[] @default([])
-  scenes          Json?
+  version            Int
+  title              String?
+  hook               String?  @db.Text
+  script             String?  @db.Text
+  caption            String?  @db.Text
+  hashtags           String[] @default([])
+  scenes             Json?
   generationMetadata Json?
 
-  createdBy       String?
-  createdAt       DateTime @default(now())
+  createdBy String?
+  createdAt DateTime @default(now())
 
-  assets          ContentAsset[]
-  approvals       ContentApproval[]
+  assets    ContentAsset[]
+  approvals ContentApproval[]
 
   @@index([projectId])
 }
 
 model ContentAsset {
-  id              String   @id @default(cuid())
-  projectId       String
-  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  projectId String
+  project   ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  versionId       String?
-  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  versionId String?
+  version   ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
 
-  assetType       String
-  provider        String?
-  providerJobId   String?
-  storageKey      String?
-  publicUrl       String?
-  mimeType        String?
-  fileSize        Int?
-  durationMs      Int?
-  metadata        Json?
+  assetType     String
+  provider      String?
+  providerJobId String?
+  storageKey    String?
+  publicUrl     String?
+  mimeType      String?
+  fileSize      Int?
+  durationMs    Int?
+  metadata      Json?
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([providerJobId])
 }
 
 model ContentApproval {
-  id              String   @id @default(cuid())
-  projectId       String
-  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  projectId String
+  project   ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  versionId       String?
-  version         ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  versionId String?
+  version   ContentVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
 
-  approvalType    String
-  decision        String
-  discordUserId   String
-  notes           String?  @db.Text
-  interactionId   String?
+  approvalType  String
+  decision      String
+  discordUserId String
+  notes         String? @db.Text
+  interactionId String?
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
 }
 
 model ContentPublishJob {
-  id              String   @id @default(cuid())
-  projectId       String
-  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  projectId String
+  project   ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   platform        String
   accountId       String?
   scheduledAt     DateTime?
-  status          String   @default("pending")
+  status          String    @default("pending")
   providerPostId  String?
   providerPostUrl String?
-  attempts        Int      @default(0)
-  lastError       String?  @db.Text
+  attempts        Int       @default(0)
+  lastError       String?   @db.Text
   publishedAt     DateTime?
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status])
   @@index([platform])
@@ -2185,18 +2183,18 @@ model ContentPublishJob {
 }
 
 model ContentAuditLog {
-  id              String   @id @default(cuid())
-  projectId       String
-  project         ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id        String         @id @default(cuid())
+  projectId String
+  project   ContentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  guildId         String
-  discordUserId   String
-  action          String
-  previousState   String?  @db.Text
-  nextState       String?  @db.Text
-  metadata        Json?
+  guildId       String
+  discordUserId String
+  action        String
+  previousState String? @db.Text
+  nextState     String? @db.Text
+  metadata      Json?
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
   @@index([guildId])
@@ -2206,59 +2204,59 @@ model ContentAuditLog {
 
 // ConsultingLead: Prospect intake form responses
 model ConsultingLead {
-  id                    String    @id @default(cuid())
+  id String @id @default(cuid())
 
   // Contact information
-  fullName              String
-  email                 String
-  phone                 String?
-  companyName           String
-  website               String?
+  fullName    String
+  email       String
+  phone       String?
+  companyName String
+  website     String?
 
   // Business information
-  industry              String?
-  businessDescription   String?   @db.Text
-  currentProblem        String    @db.Text
-  desiredBuild          String    @db.Text
+  industry            String?
+  businessDescription String? @db.Text
+  currentProblem      String  @db.Text
+  desiredBuild        String  @db.Text
 
   // Current state
-  currentTools          String[]  @default([])
-  desiredResult         String?   @db.Text
-  timeline              String?
-  budgetRange           String?
+  currentTools  String[] @default([])
+  desiredResult String?  @db.Text
+  timeline      String?
+  budgetRange   String?
 
   // Business details
-  teamSize              Int?
-  revenueRange          String?
-  crm                   String?
-  websitePlatform       String?
-  socialPlatforms       String[]  @default([])
-  existingAutomations   String[]  @default([])
-  aiTools               String[]  @default([])
+  teamSize            Int?
+  revenueRange        String?
+  crm                 String?
+  websitePlatform     String?
+  socialPlatforms     String[] @default([])
+  existingAutomations String[] @default([])
+  aiTools             String[] @default([])
 
   // Qualification
-  leadScore             Int       @default(0) // 0-100
+  leadScore             Int                  @default(0) // 0-100
   qualificationStatus   ConsultingLeadStatus @default(NEW)
-  recommendedService    String?   // Service ID
+  recommendedService    String? // Service ID
   recommendedNextAction String?
 
   // Admin notes
-  notes                 String?   @db.Text
+  notes String? @db.Text
 
   // Tracking
-  source                String?   // direct, facebook, instagram, email, organic, referral, wise-defense, etc.
-  utmSource             String?
-  utmMedium             String?
-  utmCampaign           String?
+  source      String? // direct, facebook, instagram, email, organic, referral, wise-defense, etc.
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
 
   // Relationships
-  booking               Booking?  @relation("leadToBooking", fields: [bookingId], references: [id], onDelete: SetNull)
-  bookingId             String?   @unique
-  followUps             ConsultingFollowUp[]
+  booking   Booking?             @relation("leadToBooking", fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId String?              @unique
+  followUps ConsultingFollowUp[]
 
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-  leadConvertedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  leadConvertedAt DateTime?
 
   @@index([email])
   @@index([qualificationStatus])
@@ -2278,30 +2276,30 @@ enum ConsultingLeadStatus {
 
 // ConsultingFollowUp: Track follow-up automations
 model ConsultingFollowUp {
-  id              String    @id @default(cuid())
+  id String @id @default(cuid())
 
   // Relationships
-  leadId          String?
-  lead            ConsultingLead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId String?
+  lead   ConsultingLead? @relation(fields: [leadId], references: [id], onDelete: Cascade)
 
-  bookingId       String?   // Can also track follow-ups to existing bookings
-  booking         Booking?  @relation("followUps", fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId String? // Can also track follow-ups to existing bookings
+  booking   Booking? @relation("followUps", fields: [bookingId], references: [id], onDelete: SetNull)
 
   // Details
-  type            ConsultingFollowUpType
-  description     String?   @db.Text
+  type        ConsultingFollowUpType
+  description String?                @db.Text
 
   // Timing
-  scheduledFor    DateTime
-  status          ConsultingFollowUpStatus @default(PENDING)
-  sentAt          DateTime?
-  completedAt     DateTime?
+  scheduledFor DateTime
+  status       ConsultingFollowUpStatus @default(PENDING)
+  sentAt       DateTime?
+  completedAt  DateTime?
 
   // Admin
-  notes           String?   @db.Text
+  notes String? @db.Text
 
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([leadId])
   @@index([bookingId])
@@ -2366,18 +2364,18 @@ model WiseImpEvent {
 // ============================================================================
 
 model Tenant {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  name      String
-  vertical  String   @default("hvac")
-  timezone  String   @default("America/New_York")
-  state     TenantState @default(PAYMENT_PENDING)
+  id       String      @id @default(cuid())
+  slug     String      @unique
+  name     String
+  vertical String      @default("hvac")
+  timezone String      @default("America/New_York")
+  state    TenantState @default(PAYMENT_PENDING)
 
   // Multi-tenancy demo mode flag. When true, no external side effects.
-  demoMode  Boolean @default(false)
+  demoMode Boolean @default(false)
 
   // Billing reference
-  stripeCustomerId    String? @unique
+  stripeCustomerId     String? @unique
   stripeSubscriptionId String? @unique
 
   // Phase 16 feature gate. When false, no Revenue OS automation may execute.
@@ -2387,34 +2385,37 @@ model Tenant {
   safetyScript String? @db.Text
 
   // Discord workspace integration
-  discordGuildId String? @unique
+  discordGuildId  String? @unique
   discordBotToken String? // Should be encrypted in production
 
   // Onboarding progress tracking
-  onboardingStep Int @default(0)
+  onboardingStep        Int       @default(0)
   onboardingCompletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberships  TenantMembership[]
-  customers    RevenueCustomer[]
-  leads        Lead[]
-  conversations Conversation[]
-  serviceJobs  ServiceJob[]
-  estimates    Estimate[]
-  campaigns    Campaign[]
-  agents       AgentConfig[]
+  memberships    TenantMembership[]
+  customers      RevenueCustomer[]
+  leads          Lead[]
+  conversations  Conversation[]
+  serviceJobs    ServiceJob[]
+  estimates      Estimate[]
+  campaigns      Campaign[]
+  agents         AgentConfig[]
   automationRuns AutomationRun[]
-  webhookEvents WebhookEvent[]
+  webhookEvents  WebhookEvent[]
   consentRecords ConsentRecord[]
-  safetyEvents SafetyEvent[]
-  provisioning ProvisioningRun?
-  approvals Approval[]
-  workflows WorkflowDefinition[]
-  followUps FollowUp[]
-  contracts Contract[]
-  auditLogs AuditLog[]
+  safetyEvents   SafetyEvent[]
+  provisioning   ProvisioningRun?
+  approvals      Approval[]
+  workflows      WorkflowDefinition[]
+  followUps      FollowUp[]
+  contracts      Contract[]
+  auditLogs      AuditLog[]
+  digitalTwins   DigitalTwin[]
+  twinKnowledge  DigitalTwinKnowledgeItem[]
+  twinConsents   DigitalTwinConsent[]
 
   @@index([slug])
   @@index([state])
@@ -2440,13 +2441,42 @@ enum TenantState {
   ARCHIVED
 }
 
+enum DigitalTwinStatus {
+  DRAFT
+  ONBOARDING
+  TRAINING
+  TESTING
+  AWAITING_APPROVAL
+  ACTIVE
+  PAUSED
+  REVOKED
+  ARCHIVED
+}
+
+enum DigitalTwinAutonomyLevel {
+  LEVEL_0
+  LEVEL_1
+  LEVEL_2
+  LEVEL_3
+}
+
+enum DigitalTwinConsentType {
+  VOICE_CLONING
+  VIDEO_LIKENESS
+  AVATAR_CREATION
+  SYNTHETIC_SPEECH
+  PUBLIC_CONTENT
+  SALES_COMMUNICATION
+  CUSTOMER_COMMUNICATION
+}
+
 // Authoritative tenant membership. TenantGuard resolves tenant context from
 // this table using the authenticated user id — never from a client-supplied
 // tenant_id.
 model TenantMembership {
   id       String     @id @default(cuid())
-  tenantId String
-  userId   String     // TypeORM auth user id — see identity seam note above.
+  tenantId String     @map("tenant_id")
+  userId   String // TypeORM auth user id — see identity seam note above.
   role     TenantRole @default(VIEWER)
 
   createdAt DateTime @default(now())
@@ -2456,6 +2486,92 @@ model TenantMembership {
 
   @@unique([tenantId, userId])
   @@index([userId])
+}
+
+model DigitalTwin {
+  id       String @id @default(cuid())
+  tenantId String @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  ownerUserId String? @map("owner_user_id")
+  packageId   String? @map("package_id")
+  name        String
+  displayName String? @map("display_name")
+  status      DigitalTwinStatus @default(DRAFT)
+  onboardingStatus String? @map("onboarding_status")
+  autonomyLevel    DigitalTwinAutonomyLevel @default(LEVEL_1) @map("autonomy_level")
+
+  businessProfile Json? @map("business_profile")
+  brandProfile    Json? @map("brand_profile")
+  writingProfile  Json? @map("writing_profile")
+  voiceProfile    Json? @map("voice_profile")
+  avatarProfile   Json? @map("avatar_profile")
+  salesProfile    Json? @map("sales_profile")
+  supportProfile  Json? @map("support_profile")
+  contentProfile  Json? @map("content_profile")
+  permissions     Json?
+  approvalPolicy  Json? @map("approval_policy")
+  riskPolicy      Json? @map("risk_policy")
+
+  activatedAt DateTime? @map("activated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  knowledgeItems DigitalTwinKnowledgeItem[]
+  consents       DigitalTwinConsent[]
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("DigitalTwin")
+}
+
+model DigitalTwinKnowledgeItem {
+  id            String @id @default(cuid())
+  tenantId      String @map("tenant_id")
+  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  digitalTwinId String @map("digital_twin_id")
+  digitalTwin   DigitalTwin @relation(fields: [digitalTwinId], references: [id], onDelete: Cascade)
+
+  sourceType String @map("source_type")
+  sourceName String @map("source_name")
+  status     String
+  version    String?
+  approved   Boolean @default(false)
+  approvedBy String? @map("approved_by")
+  approvedAt DateTime? @map("approved_at")
+  metadata   Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([digitalTwinId])
+  @@map("DigitalTwinKnowledgeItem")
+}
+
+model DigitalTwinConsent {
+  id            String @id @default(cuid())
+  tenantId      String @map("tenant_id")
+  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  digitalTwinId String @map("digital_twin_id")
+  digitalTwin   DigitalTwin @relation(fields: [digitalTwinId], references: [id], onDelete: Cascade)
+
+  consentType DigitalTwinConsentType @map("consent_type")
+  granted     Boolean
+  grantedBy   String? @map("granted_by")
+  grantedAt   DateTime? @map("granted_at")
+  revokedAt   DateTime? @map("revoked_at")
+  sourceAsset String? @map("source_asset")
+  version     String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([digitalTwinId])
+  @@index([tenantId, consentType])
+  @@map("DigitalTwinConsent")
 }
 
 enum MembershipStatus {
@@ -2470,7 +2586,7 @@ enum MembershipStatus {
 // consulting clients and is not tenant-scoped.
 model RevenueCustomer {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
 
   firstName String?
   lastName  String?
@@ -2495,13 +2611,13 @@ model RevenueCustomer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  leads         Lead[]
-  conversations Conversation[]
-  serviceJobs   ServiceJob[]
-  estimates     Estimate[]
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leads          Lead[]
+  conversations  Conversation[]
+  serviceJobs    ServiceJob[]
+  estimates      Estimate[]
   consentRecords ConsentRecord[]
-  contracts     Contract[]
+  contracts      Contract[]
 
   @@index([tenantId])
   @@index([tenantId, phone])
@@ -2544,18 +2660,18 @@ enum HvacServiceCategory {
 
 model Lead {
   id         String  @id @default(cuid())
-  tenantId   String
+  tenantId   String  @map("tenant_id")
   customerId String?
   campaignId String?
 
-  source      String
-  serviceType String?
+  source       String
+  serviceType  String?
   hvacCategory HvacServiceCategory?
 
   urgency LeadUrgency @default(FLEXIBLE)
   status  LeadStatus  @default(NEW)
 
-  summary        String? @db.Text
+  summary        String?  @db.Text
   estimatedValue Decimal? @db.Decimal(12, 2)
 
   bookedAt   DateTime?
@@ -2593,20 +2709,20 @@ enum ConversationDirection {
 }
 
 model Conversation {
-  id         String @id @default(cuid())
-  tenantId   String
+  id         String  @id @default(cuid())
+  tenantId   String  @map("tenant_id")
   customerId String?
   leadId     String?
 
   channel   ConversationChannel
   direction ConversationDirection
 
-  fromValue String?
-  toValue   String?
-  body      String? @db.Text
+  fromValue  String?
+  toValue    String?
+  body       String? @db.Text
   transcript String? @db.Text
 
-  aiHandled    Boolean @default(false)
+  aiHandled    Boolean      @default(false)
   consentState ConsentState @default(UNKNOWN)
 
   // Provider-side id, used together with WebhookEvent for idempotency.
@@ -2637,7 +2753,7 @@ enum ServiceJobStatus {
 // the existing ContentPublishJob model.
 model ServiceJob {
   id         String  @id @default(cuid())
-  tenantId   String
+  tenantId   String  @map("tenant_id")
   customerId String?
   leadId     String?
 
@@ -2683,11 +2799,11 @@ enum EstimateStatus {
 
 model Estimate {
   id         String  @id @default(cuid())
-  tenantId   String
+  tenantId   String  @map("tenant_id")
   customerId String?
   leadId     String?
 
-  amount Decimal @db.Decimal(12, 2)
+  amount Decimal        @db.Decimal(12, 2)
   status EstimateStatus @default(DRAFT)
 
   followUpAt DateTime?
@@ -2711,10 +2827,10 @@ model Estimate {
 
 model Campaign {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
 
-  platform          String
-  campaignName      String
+  platform           String
+  campaignName       String
   externalCampaignId String?
 
   spend  Decimal @default(0) @db.Decimal(12, 2)
@@ -2750,11 +2866,11 @@ enum AgentStatus {
 
 model AgentConfig {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
 
   type    AgentType
   name    String
-  enabled Boolean @default(false)
+  enabled Boolean     @default(false)
   status  AgentStatus @default(NEEDS_CONFIG)
 
   instructions String? @db.Text
@@ -2763,8 +2879,8 @@ model AgentConfig {
   // Reference to provider credentials by key, never the secret itself.
   providerConfigRef String?
 
-  lastRunAt    DateTime?
-  lastError    String?   @db.Text
+  lastRunAt DateTime?
+  lastError String?   @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2785,7 +2901,7 @@ enum AutomationRunStatus {
 
 model AutomationRun {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
 
   workflowKey String
   entityType  String?
@@ -2815,12 +2931,12 @@ model AutomationRun {
 // Tenant is resolved from trusted provider mapping, never from payload body.
 model WebhookEvent {
   id       String  @id @default(cuid())
-  tenantId String?
+  tenantId String? @map("tenant_id")
 
   provider   String
   externalId String
 
-  signatureValid Boolean @default(false)
+  signatureValid Boolean   @default(false)
   processedAt    DateTime?
 
   payloadHash String
@@ -2864,30 +2980,30 @@ enum ProvisioningStatus {
 
 model ProvisioningRun {
   id       String @id @default(cuid())
-  tenantId String @unique
+  tenantId String @unique @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Payment event trigger
-  paymentEventId String?
+  paymentEventId   String?
   paymentEventType String? // e.g., "charge.succeeded", "payment_intent.succeeded"
 
   // Current state
-  currentStep ProvisioningStep @default(CREATE_TENANT)
-  status ProvisioningStatus @default(PENDING)
+  currentStep ProvisioningStep   @default(CREATE_TENANT)
+  status      ProvisioningStatus @default(PENDING)
 
   // Progress tracking
   completedSteps ProvisioningStep[]
 
   // Error recovery
-  lastError String? @db.Text
+  lastError     String?           @db.Text
   lastErrorStep ProvisioningStep?
-  retryCount Int @default(0)
-  maxRetries Int @default(3)
+  retryCount    Int               @default(0)
+  maxRetries    Int               @default(3)
 
   // Lifecycle
-  startedAt DateTime?
+  startedAt   DateTime?
   completedAt DateTime?
-  expiresAt DateTime?
+  expiresAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2912,30 +3028,30 @@ enum ApprovalStatus {
 
 model Approval {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   // Request details
-  actor String // User ID who requested
-  action String // What action (send_sms, publish_social, charge_payment)
-  target String // Target entity (Lead, Customer, Estimate)
+  actor    String // User ID who requested
+  action   String // What action (send_sms, publish_social, charge_payment)
+  target   String // Target entity (Lead, Customer, Estimate)
   targetId String // ID of target entity
 
   // Payload (encrypted in production)
   payloadHash String @unique // Hash of payload for integrity
-  payload Json // Actual payload
-  preview String @db.Text // Human-readable preview
+  payload     Json // Actual payload
+  preview     String @db.Text // Human-readable preview
 
   // Approval tracking
-  status ApprovalStatus @default(PENDING)
-  approver String? // User ID who approved/rejected
-  note String? @db.Text
+  status     ApprovalStatus @default(PENDING)
+  approver   String? // User ID who approved/rejected
+  note       String?        @db.Text
   approvedAt DateTime?
 
   // Execution
-  executedAt DateTime?
+  executedAt      DateTime?
   executionResult Json? // Result of executing approved action
-  executionError String? @db.Text
+  executionError  String?   @db.Text
 
   // Lifecycle
   createdAt DateTime @default(now())
@@ -2967,19 +3083,19 @@ enum WorkflowTrigger {
 
 model WorkflowDefinition {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  name String
-  description String? @db.Text
-  trigger WorkflowTrigger
+  name              String
+  description       String?         @db.Text
+  trigger           WorkflowTrigger
   triggerConditions Json? // Condition filters (e.g., leadStatus = "NEW")
 
   // Workflow steps (action pipeline)
   steps Json // Array of {action, params, condition}
 
   enabled Boolean @default(true)
-  order Int @default(0)
+  order   Int     @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2992,20 +3108,20 @@ model WorkflowDefinition {
 }
 
 model WorkflowRun {
-  id String @id @default(cuid())
+  id         String             @id @default(cuid())
   workflowId String
-  workflow WorkflowDefinition @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow   WorkflowDefinition @relation(fields: [workflowId], references: [id], onDelete: Cascade)
 
   // Trigger source
   triggerEntityType String
-  triggerEntityId String
+  triggerEntityId   String
 
   // Execution
-  status AutomationRunStatus @default(PENDING)
+  status  AutomationRunStatus @default(PENDING)
   results Json? // Step results
-  error String? @db.Text
+  error   String?             @db.Text
 
-  startedAt DateTime?
+  startedAt   DateTime?
   completedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -3042,23 +3158,23 @@ enum FollowUpStatus {
 
 model FollowUp {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  followUpType FollowUpType
+  followUpType      FollowUpType
   relatedEntityType String
-  relatedEntityId String
+  relatedEntityId   String
 
   // Who needs to follow up
   assignedTo String? // User ID
 
   // What to do
-  message String? @db.Text
-  priority Int @default(0)
-  dueAt DateTime
+  message  String?  @db.Text
+  priority Int      @default(0)
+  dueAt    DateTime
 
   // Status
-  status FollowUpStatus @default(PENDING)
+  status      FollowUpStatus @default(PENDING)
   completedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -3071,19 +3187,19 @@ model FollowUp {
 }
 
 model Contract {
-  id       String @id @default(cuid())
-  tenantId String
-  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id         String          @id @default(cuid())
+  tenantId   String          @map("tenant_id")
+  tenant     Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   customerId String
-  customer RevenueCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   RevenueCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  contractValue Decimal @db.Decimal(12, 2)
-  startDate DateTime
-  renewalDate DateTime
-  frequency String? // "monthly", "quarterly", "annually", "as-needed"
+  contractValue Decimal  @db.Decimal(12, 2)
+  startDate     DateTime
+  renewalDate   DateTime
+  frequency     String? // "monthly", "quarterly", "annually", "as-needed"
 
   services String[] // Array of service names
-  status String @default("active") // "active", "renewing", "paused", "ended"
+  status   String   @default("active") // "active", "renewing", "paused", "ended"
 
   notes String? @db.Text
 
@@ -3103,19 +3219,19 @@ model Contract {
 
 model AuditLog {
   id       String @id @default(cuid())
-  tenantId String
+  tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  actor String // User ID
-  action String // What happened
+  actor        String // User ID
+  action       String // What happened
   resourceType String // What entity
-  resourceId String // Which entity
+  resourceId   String // Which entity
 
   changesBefore Json? // Before state
-  changesAfter Json? // After state
+  changesAfter  Json? // After state
 
   traceId String? // Correlation ID
-  source String? // API, Discord, Webhook, etc.
+  source  String? // API, Discord, Webhook, etc.
 
   createdAt DateTime @default(now())
 
@@ -3139,8 +3255,8 @@ enum ConsentState {
 }
 
 model ConsentRecord {
-  id         String @id @default(cuid())
-  tenantId   String
+  id         String  @id @default(cuid())
+  tenantId   String  @map("tenant_id")
   customerId String?
 
   channel ConsentChannel
@@ -3178,15 +3294,15 @@ enum SafetyRiskType {
 // Every safety-gate trip is logged (Phase 4). Presence of a row means normal
 // sales/diagnosis flow was halted and the tenant escalation policy applied.
 model SafetyEvent {
-  id       String @id @default(cuid())
-  tenantId String
+  id       String  @id @default(cuid())
+  tenantId String  @map("tenant_id")
   leadId   String?
 
-  riskType SafetyRiskType
+  riskType    SafetyRiskType
   matchedTerm String?
-  sourceText  String? @db.Text
+  sourceText  String?        @db.Text
 
-  escalated  Boolean @default(false)
+  escalated   Boolean @default(false)
   escalatedTo String?
 
   createdAt DateTime @default(now())

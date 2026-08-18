@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AgentType, ConsentChannel, EstimateStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { ConsentService } from '../consent/consent.service';
 import { AgentsService } from '../agents/agents.service';
 import { MockProvider } from '../providers/mock.provider';
@@ -50,7 +51,7 @@ export class EstimateRecoveryWorkflow {
       },
       async () => {
         const estimate = await this.prisma.estimate.findFirst({
-          where: { id: estimateId, tenantId },
+          where: withTenant(tenantId, { id: estimateId }),
           include: { customer: true },
         });
 
@@ -95,7 +96,7 @@ export class EstimateRecoveryWorkflow {
         }
 
         await this.prisma.estimate.updateMany({
-          where: { id: estimateId, tenantId },
+          where: withTenant(tenantId, { id: estimateId }),
           data: { status: EstimateStatus.VIEWED, followUpAt: new Date() },
         });
 
@@ -118,7 +119,7 @@ export class EstimateRecoveryWorkflow {
     );
 
     await this.prisma.estimate.updateMany({
-      where: { id: estimateId, tenantId },
+      where: withTenant(tenantId, { id: estimateId }),
       data: { objection },
     });
 

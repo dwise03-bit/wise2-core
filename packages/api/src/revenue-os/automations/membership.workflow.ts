@@ -5,6 +5,7 @@ import {
   MembershipStatus,
 } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { ConsentService } from '../consent/consent.service';
 import { AgentsService } from '../agents/agents.service';
 import { MockProvider } from '../providers/mock.provider';
@@ -47,7 +48,7 @@ export class MembershipWorkflow {
       },
       async () => {
         const customer = await this.prisma.revenueCustomer.findFirst({
-          where: { id: customerId, tenantId },
+          where: withTenant(tenantId, { id: customerId }),
         });
 
         if (!customer) {
@@ -104,7 +105,7 @@ export class MembershipWorkflow {
     tenantId: string,
   ): Promise<{ name: string } | null> {
     const agent = await this.prisma.agentConfig.findFirst({
-      where: { tenantId, type: AgentType.MEMBERSHIP },
+      where: withTenant(tenantId, { type: AgentType.MEMBERSHIP }),
       select: { config: true },
     });
 

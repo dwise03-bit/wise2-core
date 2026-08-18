@@ -5,7 +5,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { planId, email, fullName, successUrl, cancelUrl, billingCycle } = body;
+    const { planId, product, email, fullName, successUrl, cancelUrl, billingCycle } = body;
 
     if (!planId || !email || !fullName || !successUrl || !cancelUrl) {
       return NextResponse.json(
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         planId,
+        product,
         email,
         fullName,
         billingCycle: billingCycle || 'monthly',

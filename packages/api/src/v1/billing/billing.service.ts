@@ -29,6 +29,7 @@ export class BillingService {
     billingCycle: 'monthly' | 'annual' = 'monthly',
     successUrl?: string,
     cancelUrl?: string,
+    product: string = 'platform',
   ) {
     const PLANS: Record<string, { monthly: string; annual: string; trialDays: number }> = {
       STARTER: {
@@ -47,8 +48,31 @@ export class BillingService {
         trialDays: 30,
       },
     };
+    const DIGITAL_TWIN_PLANS: Record<string, { monthly: string; annual: string; trialDays: number }> = {
+      STARTER: {
+        monthly: process.env.STRIPE_DIGITAL_TWIN_STARTER_PRICE_ID || '',
+        annual: process.env.STRIPE_DIGITAL_TWIN_STARTER_PRICE_ID || '',
+        trialDays: 0,
+      },
+      GROWTH: {
+        monthly: process.env.STRIPE_DIGITAL_TWIN_GROWTH_PRICE_ID || '',
+        annual: process.env.STRIPE_DIGITAL_TWIN_GROWTH_PRICE_ID || '',
+        trialDays: 0,
+      },
+      SCALE: {
+        monthly: process.env.STRIPE_DIGITAL_TWIN_SCALE_PRICE_ID || '',
+        annual: process.env.STRIPE_DIGITAL_TWIN_SCALE_PRICE_ID || '',
+        trialDays: 0,
+      },
+      ENTERPRISE: {
+        monthly: process.env.STRIPE_DIGITAL_TWIN_ENTERPRISE_PRICE_ID || '',
+        annual: process.env.STRIPE_DIGITAL_TWIN_ENTERPRISE_PRICE_ID || '',
+        trialDays: 0,
+      },
+    };
 
-    const plan = PLANS[planId];
+    const isDigitalTwin = product === 'digital-twin';
+    const plan = (isDigitalTwin ? DIGITAL_TWIN_PLANS : PLANS)[planId];
     if (!plan) {
       throw new Error('Invalid plan');
     }
@@ -93,22 +117,25 @@ export class BillingService {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: isDigitalTwin ? 'payment' : 'subscription',
       success_url: successUrl || `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${process.env.APP_URL}/checkout/cancel`,
       customer_email: email,
       customer_creation: 'if_required',
-      subscription_data: {
-        trial_period_days: plan.trialDays,
-        metadata: {
-          userId,
-          planId,
-          email, // Include email as fallback identifier
-          fullName: fullName || '',
-          billingCycle,
-          isNewCustomer: String(isNewCustomer),
-        },
-      },
+      subscription_data: isDigitalTwin
+        ? undefined
+        : {
+            trial_period_days: plan.trialDays,
+            metadata: {
+              userId,
+              planId,
+              email,
+              fullName: fullName || '',
+              billingCycle,
+              isNewCustomer: String(isNewCustomer),
+              product,
+            },
+          },
       metadata: {
         userId,
         planId,
@@ -116,6 +143,7 @@ export class BillingService {
         fullName: fullName || '',
         billingCycle,
         isNewCustomer: String(isNewCustomer),
+        product,
       },
     });
 

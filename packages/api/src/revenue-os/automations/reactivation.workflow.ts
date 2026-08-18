@@ -6,6 +6,7 @@ import {
   Prisma,
 } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { ConsentService } from '../consent/consent.service';
 import { AgentsService } from '../agents/agents.service';
 import { MockProvider } from '../providers/mock.provider';
@@ -118,7 +119,7 @@ export class ReactivationWorkflow {
     const cutoff = new Date(Date.now() - dormantDays * 24 * 3600 * 1000);
 
     const where: Prisma.RevenueCustomerWhereInput = {
-      tenantId,
+      ...withTenant(tenantId),
       OR: [
         { lastServicedAt: { lt: cutoff } },
         { lastServicedAt: null },

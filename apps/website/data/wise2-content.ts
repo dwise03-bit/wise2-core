@@ -67,6 +67,13 @@ export const services = [
     outcomes: ['Workflow automation', 'Integration systems', 'CRM setup', 'Analytics dashboards'],
   },
   {
+    title: 'WISE² Digital Twin',
+    description: 'Permission-based AI operators trained on your business',
+    details: 'Tenant-scoped digital twins that ingest approved knowledge, operate in brand voice, support leads and customers, and connect directly into Revenue OS workflows.',
+    icon: '🧠',
+    outcomes: ['Knowledge clone', 'Sales clone', 'Content engine', 'Approval-controlled automation'],
+  },
+  {
     title: 'Consulting and Strategy',
     description: 'Executive-level guidance and business transformation',
     details: 'Strategic consulting, business planning, market analysis, competitive positioning, and roadmap development for sustainable growth.',

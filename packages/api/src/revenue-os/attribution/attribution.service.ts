@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EstimateStatus, LeadStatus, Prisma, ServiceJobStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import {
   AttributionFilter,
   AttributionMetrics,
@@ -34,7 +35,7 @@ export class AttributionService {
   ): Promise<AttributionSummary> {
     const [campaigns, cohort] = await Promise.all([
       this.prisma.campaign.findMany({
-        where: { tenantId },
+        where: withTenant(tenantId),
         orderBy: { createdAt: 'desc' },
       }),
       this.loadCohort(tenantId, filter),
@@ -80,7 +81,7 @@ export class AttributionService {
     // findFirst with the tenant in the where clause, not findUnique by id and
     // a check afterwards: the latter leaks the existence of foreign rows.
     const campaign = await this.prisma.campaign.findFirst({
-      where: { id: campaignId, tenantId },
+      where: withTenant(tenantId, { id: campaignId }),
     });
 
     if (!campaign) {
@@ -104,7 +105,7 @@ export class AttributionService {
     filter: AttributionFilter = {},
   ): Promise<FunnelStage[]> {
     const [campaignCount, cohort] = await Promise.all([
-      this.prisma.campaign.count({ where: { tenantId } }),
+      this.prisma.campaign.count({ where: withTenant(tenantId) }),
       this.loadCohort(tenantId, filter),
     ]);
 
@@ -148,7 +149,7 @@ export class AttributionService {
         : undefined;
 
     const leadWhere: Prisma.LeadWhereInput = {
-      tenantId,
+      ...withTenant(tenantId),
       ...(campaignId ? { campaignId } : {}),
       ...(createdAt ? { createdAt } : {}),
     };
@@ -175,15 +176,15 @@ export class AttributionService {
 
     const [conversations, estimates, jobs] = await Promise.all([
       this.prisma.conversation.findMany({
-        where: { tenantId, leadId: { in: leadIds } },
+        where: withTenant(tenantId, { leadId: { in: leadIds } }),
         select: { leadId: true },
       }),
       this.prisma.estimate.findMany({
-        where: { tenantId, leadId: { in: leadIds } },
+        where: withTenant(tenantId, { leadId: { in: leadIds } }),
         select: { leadId: true, status: true, amount: true },
       }),
       this.prisma.serviceJob.findMany({
-        where: { tenantId, leadId: { in: leadIds } },
+        where: withTenant(tenantId, { leadId: { in: leadIds } }),
         select: { leadId: true, status: true, revenue: true },
       }),
     ]);

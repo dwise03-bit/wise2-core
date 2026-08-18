@@ -49,6 +49,27 @@ export const ROUTES: Record<string, Route> = {
     label: 'Services',
     category: 'main',
   },
+  DIGITAL_TWIN: {
+    path: '/services/digital-twin',
+    label: 'Digital Twin',
+    category: 'main',
+    description: 'WISE² Digital Twin service overview',
+  },
+  DIGITAL_TWIN_HOW_IT_WORKS: {
+    path: '/services/digital-twin/how-it-works',
+    label: 'Digital Twin How It Works',
+    category: 'content',
+  },
+  DIGITAL_TWIN_PRICING: {
+    path: '/services/digital-twin/pricing',
+    label: 'Digital Twin Pricing',
+    category: 'shop',
+  },
+  DIGITAL_TWIN_START: {
+    path: '/services/digital-twin/start',
+    label: 'Start Your Digital Twin',
+    category: 'content',
+  },
 
   // Gallery & Content
   GALLERY: {

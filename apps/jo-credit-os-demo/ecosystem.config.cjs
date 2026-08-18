@@ -1,11 +1,10 @@
 module.exports = {
   apps: [{
-    name: 'wise2-website',
-    script: 'npm',
-    args: 'start',
-    cwd: '/Users/danielwise/Projects/wise2-core/apps/website',
+    name: 'jo-credit-os-demo',
+    script: 'proxy-server.js',
+    cwd: __dirname,
     env: { 
-      PORT: '3000', 
+      PORT: '3000',
       NODE_ENV: 'production'
     },
     instances: 1,

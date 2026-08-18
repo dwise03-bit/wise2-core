@@ -5,6 +5,7 @@ import {
   ServiceJobStatus,
 } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { ConsentService } from '../consent/consent.service';
 import { AgentsService } from '../agents/agents.service';
 import { MockProvider } from '../providers/mock.provider';
@@ -51,7 +52,7 @@ export class ReviewWorkflow {
       },
       async () => {
         const serviceJob = await this.prisma.serviceJob.findFirst({
-          where: { id: serviceJobId, tenantId },
+          where: withTenant(tenantId, { id: serviceJobId }),
           include: { customer: true },
         });
 
@@ -112,7 +113,7 @@ export class ReviewWorkflow {
     comment?: string,
   ) {
     const serviceJob = await this.prisma.serviceJob.findFirst({
-      where: { id: serviceJobId, tenantId },
+      where: withTenant(tenantId, { id: serviceJobId }),
     });
     if (!serviceJob) {
       return { recorded: false };

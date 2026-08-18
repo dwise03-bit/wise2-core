@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AgentType, LeadStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { HvacSafetyService } from '../safety/hvac-safety.service';
 import { HvacClassifierService } from '../safety/hvac-classifier.service';
 import { AgentsService } from '../agents/agents.service';
@@ -43,7 +44,7 @@ export class InboundReceptionistWorkflow {
       },
       async () => {
         const conversation = await this.prisma.conversation.findFirst({
-          where: { id: conversationId, tenantId },
+          where: withTenant(tenantId, { id: conversationId }),
         });
 
         if (!conversation) {
@@ -75,7 +76,7 @@ export class InboundReceptionistWorkflow {
         // so repeat callers do not accumulate duplicate records.
         const customer = conversation.fromValue
           ? await this.prisma.revenueCustomer.findFirst({
-              where: { tenantId, phone: conversation.fromValue },
+              where: withTenant(tenantId, { phone: conversation.fromValue }),
             })
           : null;
 

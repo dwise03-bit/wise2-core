@@ -6,6 +6,7 @@ import {
   LeadStatus,
 } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { HvacSafetyService } from '../safety/hvac-safety.service';
 import { HvacClassifierService } from '../safety/hvac-classifier.service';
 import { ConsentService } from '../consent/consent.service';
@@ -65,7 +66,7 @@ export class SpeedToLeadWorkflow {
     attempt: number,
   ): Promise<WorkflowResult> {
     const lead = await this.prisma.lead.findFirst({
-      where: { id: leadId, tenantId },
+      where: withTenant(tenantId, { id: leadId }),
       include: { customer: true },
     });
 
@@ -85,12 +86,12 @@ export class SpeedToLeadWorkflow {
     const classification = this.classifier.classify(lead.summary);
 
     // Safety gate: halts the sales flow entirely.
-    const safety = await this.safety.evaluate(tenantId, lead.summary, lead.id);
-    if (!safety.safe) {
-      await this.prisma.lead.updateMany({
-        where: { id: leadId, tenantId },
-        data: { urgency: 'EMERGENCY', status: LeadStatus.CONTACTING },
-      });
+      const safety = await this.safety.evaluate(tenantId, lead.summary, lead.id);
+      if (!safety.safe) {
+        await this.prisma.lead.updateMany({
+          where: withTenant(tenantId, { id: leadId }),
+          data: { urgency: 'EMERGENCY', status: LeadStatus.CONTACTING },
+        });
       return skipped(`safety escalation: ${safety.detection?.riskType} — handed to human`);
     }
 
@@ -120,7 +121,7 @@ export class SpeedToLeadWorkflow {
     }
 
     await this.prisma.lead.updateMany({
-      where: { id: leadId, tenantId },
+      where: withTenant(tenantId, { id: leadId }),
       data: { status: LeadStatus.CONTACTING, hvacCategory: classification.category },
     });
 

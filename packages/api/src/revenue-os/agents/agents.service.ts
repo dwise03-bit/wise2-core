@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { AgentStatus, AgentType } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { withTenant } from '../../common/prisma/tenant-isolation';
 import { MockProvider } from '../providers/mock.provider';
 import {
   AGENT_DEFINITIONS,
@@ -32,7 +33,7 @@ export class AgentsService {
    */
   async seedForTenant(tenantId: string) {
     const existing = await this.prisma.agentConfig.findMany({
-      where: { tenantId },
+      where: withTenant(tenantId),
       select: { type: true },
     });
     const have = new Set(existing.map((e) => e.type));
@@ -66,7 +67,7 @@ export class AgentsService {
   /** Workforce view for the Command Center, with live status per agent. */
   async listForTenant(tenantId: string) {
     const rows = await this.prisma.agentConfig.findMany({
-      where: { tenantId },
+      where: withTenant(tenantId),
       orderBy: { type: 'asc' },
     });
 
@@ -91,7 +92,7 @@ export class AgentsService {
 
   async setEnabled(tenantId: string, type: AgentType, enabled: boolean) {
     const agent = await this.prisma.agentConfig.findFirst({
-      where: { tenantId, type },
+      where: withTenant(tenantId, { type }),
     });
     if (!agent) {
       throw new NotFoundException('Agent not configured for this tenant');
@@ -101,7 +102,7 @@ export class AgentsService {
     const missing = this.missingCapabilities(definition?.requires ?? []);
 
     await this.prisma.agentConfig.updateMany({
-      where: { tenantId, type },
+      where: withTenant(tenantId, { type }),
       data: {
         enabled,
         status: this.deriveStatus(enabled, agent.status, missing),
@@ -117,7 +118,9 @@ export class AgentsService {
    * dispatched and never invents the data it is missing.
    */
   async canRun(tenantId: string, type: AgentType): Promise<boolean> {
-    const agent = await this.prisma.agentConfig.findFirst({ where: { tenantId, type } });
+    const agent = await this.prisma.agentConfig.findFirst({
+      where: withTenant(tenantId, { type }),
+    });
     if (!agent || !agent.enabled) {
       return false;
     }
@@ -127,7 +130,7 @@ export class AgentsService {
 
   async recordRun(tenantId: string, type: AgentType, error?: string) {
     return this.prisma.agentConfig.updateMany({
-      where: { tenantId, type },
+      where: withTenant(tenantId, { type }),
       data: {
         lastRunAt: new Date(),
         lastError: error ?? null,

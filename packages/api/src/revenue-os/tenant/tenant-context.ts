@@ -20,4 +20,6 @@ export interface TenantContext {
 export interface RequestWithTenant {
   user?: { id: string; email: string; role?: string };
   tenant?: TenantContext;
+  tenant_id?: string;
+  user_id?: string;
 }

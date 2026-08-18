@@ -4,35 +4,30 @@ import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { PublicFooter } from '@/components/navigation';
-
-const PLAN_DETAILS = {
-  STARTER: {
-    name: 'Starter',
-    price: 29,
-    description: 'Perfect for trying out WISE²',
-  },
-  PRO: {
-    name: 'Professional',
-    price: 99,
-    description: 'For growing businesses',
-  },
-  ENTERPRISE: {
-    name: 'Enterprise',
-    price: 'Custom',
-    description: 'For large organizations',
-  },
-};
+import { getDigitalTwinPackage } from '@/lib/digital-twin';
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const planId = searchParams.get('plan') || 'PRO';
+  const product = searchParams.get('product') || 'platform';
+  const planId = searchParams.get('plan') || (product === 'digital-twin' ? 'GROWTH' : 'PRO');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
-
-  const plan = PLAN_DETAILS[planId as keyof typeof PLAN_DETAILS] || PLAN_DETAILS.PRO;
+  const isDigitalTwin = product === 'digital-twin';
+  const twinPlan = getDigitalTwinPackage(planId);
+  const plan = isDigitalTwin
+    ? {
+        name: twinPlan.name,
+        price: twinPlan.price ?? 'Custom',
+        description: twinPlan.description,
+      }
+    : {
+        name: 'Professional',
+        price: 99,
+        description: 'For growing businesses',
+      };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,9 +44,10 @@ function CheckoutContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId,
+          product,
           email,
           fullName,
-          successUrl: `${window.location.origin}/checkout/success`,
+          successUrl: `${window.location.origin}/checkout/success?product=${product}&plan=${planId}`,
           cancelUrl: `${window.location.origin}/checkout/cancel`,
         }),
       });
@@ -80,8 +76,14 @@ function CheckoutContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Form Section */}
             <div>
-              <h1 className="text-4xl font-black uppercase tracking-[0.08em] text-white mb-2">Complete Your Build</h1>
-              <p className="text-[#B7BDC8] mb-8">Enter your details to continue into the WISE² system.</p>
+              <h1 className="text-4xl font-black uppercase tracking-[0.08em] text-white mb-2">
+                {isDigitalTwin ? 'Build Your Digital Twin' : 'Complete Your Build'}
+              </h1>
+              <p className="text-[#B7BDC8] mb-8">
+                {isDigitalTwin
+                  ? 'Enter your details to launch tenant setup, onboarding, and the approval-controlled Digital Twin workflow.'
+                  : 'Enter your details to continue into the WISE² system.'}
+              </p>
 
               <form onSubmit={handleCheckout} className="space-y-6">
                 {error && (
@@ -119,7 +121,9 @@ function CheckoutContent() {
                     By proceeding, you agree to our terms
                   </label>
                   <p className="text-sm text-gray-300">
-                    You&apos;ll be taken to our secure payment processor to complete your build.
+                    {isDigitalTwin
+                      ? 'You’ll be taken to our secure payment processor. After payment, your Digital Twin onboarding and tenant-linked build flow begin.'
+                      : 'You&apos;ll be taken to our secure payment processor to complete your build.'}
                   </p>
                 </div>
 
@@ -148,7 +152,7 @@ function CheckoutContent() {
                 <h2 className="text-2xl font-bold text-white mb-8">Order Summary</h2>
 
                 <div className="border-b border-[#C7FF2E]/20 pb-8 mb-8">
-                  <h3 className="text-xl font-bold text-white mb-2">{plan.name} Plan</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
                   <p className="text-[#B7BDC8] text-sm mb-4">{plan.description}</p>
 
                   <div className="flex justify-between items-baseline mb-4">
@@ -178,9 +182,19 @@ function CheckoutContent() {
                 </div>
 
                 <div className="bg-[#C7FF2E]/10 border border-[#C7FF2E]/30 rounded-lg p-4 text-sm text-gray-300">
-                  ✓ 14-day free trial included
-                  <br />✓ Cancel anytime
-                  <br />✓ No hidden fees
+                  {isDigitalTwin ? (
+                    <>
+                      ✓ Tenant-linked onboarding
+                      <br />✓ Approval-aware activation path
+                      <br />✓ Revenue OS integration readiness
+                    </>
+                  ) : (
+                    <>
+                      ✓ 14-day free trial included
+                      <br />✓ Cancel anytime
+                      <br />✓ No hidden fees
+                    </>
+                  )}
                 </div>
               </div>
             </div>

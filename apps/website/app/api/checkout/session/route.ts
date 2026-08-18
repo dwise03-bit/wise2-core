@@ -8,7 +8,7 @@ import Stripe from 'stripe';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { planId, email, fullName, successUrl, cancelUrl } = body;
+    const { planId, product, email, fullName, successUrl, cancelUrl } = body;
 
     if (!planId) {
       return NextResponse.json(
@@ -31,11 +31,19 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net';
 
     // Map plan IDs to Stripe price IDs
-    const planToPriceId: Record<string, string> = {
-      STARTER: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kY9z9', // Fallback test ID
-      PRO: process.env.NEXT_PUBLIC_STRIPE_PROFESSIONAL_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kZ0z0',
-      ENTERPRISE: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kZ1z1',
-    };
+    const isDigitalTwin = product === 'digital-twin';
+    const planToPriceId: Record<string, string> = isDigitalTwin
+      ? {
+          STARTER: process.env.NEXT_PUBLIC_STRIPE_DIGITAL_TWIN_STARTER_PRICE_ID || 'price_digital_twin_starter_test',
+          GROWTH: process.env.NEXT_PUBLIC_STRIPE_DIGITAL_TWIN_GROWTH_PRICE_ID || 'price_digital_twin_growth_test',
+          SCALE: process.env.NEXT_PUBLIC_STRIPE_DIGITAL_TWIN_SCALE_PRICE_ID || 'price_digital_twin_scale_test',
+          ENTERPRISE: process.env.NEXT_PUBLIC_STRIPE_DIGITAL_TWIN_ENTERPRISE_PRICE_ID || 'price_digital_twin_enterprise_test',
+        }
+      : {
+          STARTER: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kY9z9',
+          PRO: process.env.NEXT_PUBLIC_STRIPE_PROFESSIONAL_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kZ0z0',
+          ENTERPRISE: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID || 'price_1QeJ9eD5L8vqYqJz8b8kZ1z1',
+        };
 
     const priceId = planToPriceId[planId];
     if (!priceId) {
@@ -54,7 +62,7 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      mode: 'subscription',
+      mode: isDigitalTwin ? 'payment' : 'subscription',
       success_url: successUrl || `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${baseUrl}/checkout/cancel`,
       customer_email: email,
@@ -62,6 +70,7 @@ export async function POST(request: NextRequest) {
         fullName,
         email,
         planId,
+        product: product || 'platform',
         timestamp: new Date().toISOString(),
       },
     });

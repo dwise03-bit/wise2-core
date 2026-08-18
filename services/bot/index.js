@@ -1,14 +1,20 @@
 require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const express = require("express");
 const {
+  AttachmentBuilder,
+  ActionRowBuilder,
   Client,
   GatewayIntentBits,
   Collection,
+  ButtonBuilder,
+  ButtonStyle,
   REST,
   Routes
 } = require("discord.js");
+const cron = require("node-cron");
 const { exec } = require("child_process");
 const webhookHandler = require("./webhook-handler");
 const { initializeScheduledTasks } = require("./scheduled-tasks");
@@ -37,6 +43,47 @@ const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "../../data");
+const ADS_SCHEDULES_PATH = path.join(DATA_DIR, "ads-schedules.json");
+const WISE2_ADS_DIR =
+  process.env.WISE2_ADS_DIR ||
+  "/Users/danielwise/Downloads/WISE2_Revenue_Blitz_Ads";
+const ADS_IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp", ".gif"]);
+const AD_SCHEDULE_JOBS = new Map();
+const AD_APPROVAL_PROMPTS = new Map();
+const AD_PRESETS = {
+  launch: {
+    name: "launch",
+    label: "Launch Burst",
+    description: "High-intent launch sequence for new campaign drops.",
+    selection: "1,2",
+    caption: "Launching the WISE² revenue blitz.",
+  },
+  retargeting: {
+    name: "retargeting",
+    label: "Retargeting Loop",
+    description: "Re-engage warm audiences with stronger proof and urgency.",
+    selection: "3,4,5",
+    caption: "Still thinking it over? This is your sign.",
+  },
+  ugc: {
+    name: "ugc",
+    label: "UGC Angle",
+    description: "More social-proof driven creative for native-feeling placements.",
+    selection: "6,7,8",
+    caption: "Looks native. Converts like a machine.",
+  },
+  "direct-response": {
+    name: "direct-response",
+    label: "Direct Response",
+    description: "Sharper offer-first creative for faster clicks.",
+    selection: "1,3,5",
+    caption: "Built to stop the scroll and drive the click.",
+  },
+};
+const AD_PRESET_CHOICES = Object.values(AD_PRESETS).map((preset) => ({
+  name: preset.label,
+  value: preset.name,
+}));
 
 const CHANNELS_CONFIG = {
   deployments: process.env.DISCORD_WEBHOOK_DEPLOYMENTS,
@@ -70,6 +117,314 @@ function readDataFile(filePath) {
 function getTodayLogPath() {
   const date = new Date().toISOString().split("T")[0];
   return path.join(DATA_DIR, "daily-logs", `${date}.md`);
+}
+
+function getWise2AdCreatives(limit = 2) {
+  if (!fs.existsSync(WISE2_ADS_DIR)) {
+    return { files: [], error: `Ads folder not found: ${WISE2_ADS_DIR}` };
+  }
+
+  const files = fs
+    .readdirSync(WISE2_ADS_DIR)
+    .filter((file) => ADS_IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase()))
+    .sort((a, b) => a.localeCompare(b))
+    .map((file) => ({
+      name: file,
+      path: path.join(WISE2_ADS_DIR, file),
+      size: fs.statSync(path.join(WISE2_ADS_DIR, file)).size,
+    }));
+
+  return { files: files.slice(0, limit), error: null, allFiles: files };
+}
+
+function chunkArray(items, size) {
+  const chunks = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function readJsonFile(filePath, fallback) {
+  try {
+    if (!fs.existsSync(filePath)) {
+      return fallback;
+    }
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch (error) {
+    console.error(`Failed to read JSON file ${filePath}:`, error);
+    return fallback;
+  }
+}
+
+function writeJsonFile(filePath, data) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
+function getAdPreset(presetName) {
+  return presetName ? AD_PRESETS[presetName] || null : null;
+}
+
+function parseAdSelection(selection, allFiles) {
+  if (!selection || !selection.trim()) {
+    return null;
+  }
+
+  const tokens = selection
+    .split(",")
+    .map((token) => token.trim())
+    .filter(Boolean);
+
+  const selected = [];
+  const seen = new Set();
+
+  for (const token of tokens) {
+    const rangeMatch = token.match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      const start = Number(rangeMatch[1]);
+      const end = Number(rangeMatch[2]);
+      if (!Number.isNaN(start) && !Number.isNaN(end)) {
+        const low = Math.min(start, end);
+        const high = Math.max(start, end);
+        for (let index = low; index <= high; index += 1) {
+          const file = allFiles[index - 1];
+          if (file && !seen.has(file.name)) {
+            selected.push(file);
+            seen.add(file.name);
+          }
+        }
+      }
+      continue;
+    }
+
+    if (/^\d+$/.test(token)) {
+      const file = allFiles[Number(token) - 1];
+      if (file && !seen.has(file.name)) {
+        selected.push(file);
+        seen.add(file.name);
+      }
+      continue;
+    }
+
+    const normalized = token.toLowerCase();
+    const file = allFiles.find((entry) => entry.name.toLowerCase() === normalized);
+    if (file && !seen.has(file.name)) {
+      selected.push(file);
+      seen.add(file.name);
+    }
+  }
+
+  return selected;
+}
+
+function buildAdSelectionEmbed(files, title, description, meta = {}) {
+  const summaryLines = files.map(
+    (file, index) => `${index + 1}. ${file.name} (${formatFileSize(file.size || 0)})`
+  );
+
+  const fields = [
+    {
+      name: "Source Folder",
+      value: `\`${WISE2_ADS_DIR}\``,
+      inline: false,
+    },
+    {
+      name: "Files",
+      value: summaryLines.join("\n").slice(0, 1024),
+      inline: false,
+    },
+  ];
+
+  if (meta.preset) {
+    fields.unshift({
+      name: "Preset",
+      value: `${meta.preset.label}${meta.preset.description ? `\n${meta.preset.description}` : ""}`,
+      inline: false,
+    });
+  }
+
+  if (meta.caption) {
+    fields.push({
+      name: "Caption",
+      value: meta.caption.slice(0, 1024),
+      inline: false,
+    });
+  }
+
+  return {
+    color: WISE2_COLORS.primary,
+    title,
+    description,
+    fields,
+    footer: {
+      text: "WISE² Organized Chaos Command Center",
+    },
+    timestamp: new Date(),
+  };
+}
+
+function buildAdActionRow(proposalId) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`wise2-ads-approve:${proposalId}`)
+      .setLabel("Approve & Post")
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId(`wise2-ads-cancel:${proposalId}`)
+      .setLabel("Cancel")
+      .setStyle(ButtonStyle.Secondary)
+  );
+}
+
+function buildAdFiles(files) {
+  return files.slice(0, 10).map(
+    (file) =>
+      new AttachmentBuilder(file.path, {
+        name: file.name,
+      })
+  );
+}
+
+function buildAdManifest(options, allFiles) {
+  const preset = getAdPreset(options.preset);
+  const selectionSource = options.selection || (preset ? preset.selection : null);
+  const selectedFromSelection = selectionSource
+    ? parseAdSelection(selectionSource, allFiles)
+    : null;
+  const selectedFiles =
+    selectedFromSelection && selectedFromSelection.length > 0
+      ? selectedFromSelection
+      : allFiles.slice(0, Math.max(1, options.count || 2));
+  const files = selectedFiles.slice(0, 10);
+
+  return {
+    files,
+    preset,
+    selection: selectionSource,
+    caption: options.caption || (preset ? preset.caption : ""),
+    targetChannelId: options.targetChannelId || null,
+    targetChannelName: options.targetChannelName || null,
+    approvalRequested: Boolean(options.approvalRequested),
+  };
+}
+
+function createApprovalPrompt(proposal) {
+  const proposalId = proposal.id;
+  AD_APPROVAL_PROMPTS.set(proposalId, proposal);
+  return buildAdActionRow(proposalId);
+}
+
+async function postAdManifestToChannel(channel, manifest) {
+  const batches = chunkArray(manifest.files, 10);
+  const introEmbed = buildAdSelectionEmbed(
+    manifest.files,
+    "📣 WISE² Revenue Blitz Ads",
+    manifest.selection
+      ? `Posting ${manifest.files.length} selected creative(s) from the local ads folder.`
+      : `Posting ${manifest.files.length} creative(s) from the local ads folder.`,
+    {
+      preset: manifest.preset,
+      caption: manifest.caption,
+    }
+  );
+
+  for (let i = 0; i < batches.length; i += 1) {
+    const batch = batches[i];
+    const attachments = buildAdFiles(batch);
+    const content =
+      i === 0
+        ? `${manifest.caption ? `${manifest.caption}\n\n` : ""}Running WISE² ads in ${channel} from \`${WISE2_ADS_DIR}\``
+        : `Additional ad batch ${i + 1} of ${batches.length}`;
+
+    await channel.send({
+      content,
+      embeds: i === 0 ? [introEmbed] : undefined,
+      files: attachments,
+    });
+  }
+}
+
+async function scheduleAdJobsFromFile(clientInstance) {
+  const schedules = readJsonFile(ADS_SCHEDULES_PATH, []);
+  for (const schedule of schedules) {
+    if (!schedule.active) continue;
+    if (AD_SCHEDULE_JOBS.has(schedule.id)) continue;
+    const valid = cron.validate(schedule.cronExpression);
+    if (!valid) {
+      console.warn(`Skipping invalid ad schedule ${schedule.id}: ${schedule.cronExpression}`);
+      continue;
+    }
+
+    const task = cron.schedule(
+      schedule.cronExpression,
+      async () => {
+        try {
+          const channel = await clientInstance.channels.fetch(schedule.targetChannelId);
+          if (!channel || !channel.isTextBased()) {
+            console.warn(`Ad schedule ${schedule.id} target is not text-based`);
+            return;
+          }
+
+          const { files: allFiles, error } = getWise2AdCreatives(1000);
+          if (error || allFiles.length === 0) {
+            console.warn(`Ad schedule ${schedule.id} has no creatives to post`);
+            return;
+          }
+
+          const manifest = buildAdManifest(
+            {
+              count: schedule.count,
+              selection: schedule.selection,
+              preset: schedule.preset,
+              caption: schedule.caption,
+              targetChannelId: schedule.targetChannelId,
+              approvalRequested: false,
+            },
+            allFiles
+          );
+
+          await postAdManifestToChannel(channel, manifest);
+          console.log(`✅ Scheduled ads posted for ${schedule.name || schedule.id}`);
+        } catch (error) {
+          console.error(`Scheduled ad job failed for ${schedule.id}:`, error);
+        }
+      },
+      { timezone: schedule.timezone || "UTC" }
+    );
+
+    AD_SCHEDULE_JOBS.set(schedule.id, task);
+  }
+}
+
+function persistAdSchedule(schedule) {
+  const schedules = readJsonFile(ADS_SCHEDULES_PATH, []);
+  schedules.push(schedule);
+  writeJsonFile(ADS_SCHEDULES_PATH, schedules);
+}
+
+function listAdSchedules() {
+  return readJsonFile(ADS_SCHEDULES_PATH, []);
+}
+
+function updateAdSchedule(updatedSchedule) {
+  const schedules = readJsonFile(ADS_SCHEDULES_PATH, []);
+  const nextSchedules = schedules.map((schedule) =>
+    schedule.id === updatedSchedule.id ? updatedSchedule : schedule
+  );
+  writeJsonFile(ADS_SCHEDULES_PATH, nextSchedules);
+}
+
+function getPresetListForDisplay() {
+  return Object.values(AD_PRESETS)
+    .map((preset) => `• **${preset.label}** (\`${preset.name}\`) - ${preset.description}`)
+    .join("\n");
 }
 
 // WISE² Branding Colors
@@ -508,6 +863,695 @@ ${description}
           ],
         });
       }
+    },
+  },
+
+  "run-ads": {
+    data: {
+      name: "run-ads",
+      description: "Post WISE² ad creatives from the local ads folder",
+      options: [
+        {
+          name: "count",
+          description: "How many creatives to post",
+          type: 4,
+          required: false,
+        },
+        {
+          name: "preset",
+          description: "Campaign preset to use",
+          type: 3,
+          required: false,
+          choices: AD_PRESET_CHOICES,
+        },
+        {
+          name: "selection",
+          description: "Comma-separated file names or indexes, e.g. 1,3-5 or poster.png",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "target",
+          description: "Discord channel to post the ads into",
+          type: 7,
+          required: false,
+        },
+        {
+          name: "caption",
+          description: "Optional caption to send with the first ad batch",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "approval",
+          description: "Require approval buttons before posting",
+          type: 5,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const requestedCount = interaction.options.getInteger("count") || 2;
+      const preset = interaction.options.getString("preset");
+      const selection = interaction.options.getString("selection");
+      const caption = interaction.options.getString("caption");
+      const approvalRequested = interaction.options.getBoolean("approval") || false;
+      const targetChannel = interaction.options.getChannel("target") || interaction.channel;
+
+      if (!targetChannel || !targetChannel.isTextBased()) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Invalid Target Channel",
+              description: "Choose a text-based Discord channel for `/run-ads`.",
+            },
+          ],
+        });
+      }
+
+      const { files: allFiles, error } = getWise2AdCreatives(1000);
+
+      if (error) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Ads Folder Not Found",
+              description: error,
+            },
+          ],
+        });
+      }
+
+      const manifest = buildAdManifest(
+        {
+          count: requestedCount,
+          selection,
+          preset,
+          caption,
+          targetChannelId: targetChannel.id,
+          targetChannelName: targetChannel.toString(),
+          approvalRequested,
+        },
+        allFiles
+      );
+      const files = manifest.files;
+
+      if (files.length === 0) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ No Ad Creatives Found",
+              description: `No supported image files found in ${WISE2_ADS_DIR}`,
+            },
+          ],
+        });
+      }
+
+      const introEmbed = buildAdSelectionEmbed(
+        files,
+        "📣 WISE² Revenue Blitz Ads",
+        manifest.selection
+          ? `Posting ${files.length} selected creative(s) from the local ads folder.`
+          : `Posting ${files.length} creative(s) from the local ads folder.`,
+        {
+          preset: manifest.preset,
+          caption: manifest.caption,
+        }
+      );
+
+      if (approvalRequested) {
+        const proposalId = crypto.randomUUID();
+        AD_APPROVAL_PROMPTS.set(proposalId, {
+          id: proposalId,
+          userId: interaction.user.id,
+          originChannelId: interaction.channelId,
+          targetChannelId: targetChannel.id,
+          manifest,
+          createdAt: new Date().toISOString(),
+        });
+
+        return interaction.reply({
+          embeds: [
+            {
+              ...introEmbed,
+              title: "🛑 Approval Required",
+              description:
+                "Review the creative set below, then click Approve & Post to send it live.",
+            },
+          ],
+          files: buildAdFiles(files),
+          components: [buildAdActionRow(proposalId)],
+          ephemeral: true,
+        });
+      }
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        await postAdManifestToChannel(targetChannel, manifest);
+        await interaction.editReply({
+          content: `✅ Posted ${files.length} creative(s) to ${targetChannel}.`,
+          embeds: [introEmbed],
+        });
+      } catch (sendError) {
+        await interaction.editReply({
+          content: `❌ Failed to post ads to ${targetChannel}.`,
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Discord Send Failed",
+              description: sendError.message,
+            },
+          ],
+        });
+      }
+    },
+  },
+
+  "preview-ads": {
+    data: {
+      name: "preview-ads",
+      description: "Preview WISE² ad creatives before posting them live",
+      options: [
+        {
+          name: "count",
+          description: "How many creatives to preview",
+          type: 4,
+          required: false,
+        },
+        {
+          name: "preset",
+          description: "Campaign preset to use",
+          type: 3,
+          required: false,
+          choices: AD_PRESET_CHOICES,
+        },
+        {
+          name: "selection",
+          description: "Comma-separated file names or indexes, e.g. 1,3-5 or poster.png",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "target",
+          description: "Discord channel to post the ads into after approval",
+          type: 7,
+          required: false,
+        },
+        {
+          name: "caption",
+          description: "Optional caption to send with the first ad batch",
+          type: 3,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const requestedCount = interaction.options.getInteger("count") || 2;
+      const preset = interaction.options.getString("preset");
+      const selection = interaction.options.getString("selection");
+      const caption = interaction.options.getString("caption");
+      const targetChannel = interaction.options.getChannel("target") || interaction.channel;
+
+      if (!targetChannel || !targetChannel.isTextBased()) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Invalid Target Channel",
+              description: "Choose a text-based Discord channel for `/preview-ads`.",
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const { files: allFiles, error } = getWise2AdCreatives(1000);
+
+      if (error) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Ads Folder Not Found",
+              description: error,
+            },
+          ],
+        });
+      }
+
+      const manifest = buildAdManifest(
+        {
+          count: requestedCount,
+          selection,
+          preset,
+          caption,
+          targetChannelId: targetChannel?.id || interaction.channelId,
+          targetChannelName: targetChannel ? targetChannel.toString() : interaction.channel?.toString(),
+          approvalRequested: true,
+        },
+        allFiles
+      );
+      const files = manifest.files;
+
+      if (files.length === 0) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ No Ad Creatives Found",
+              description: `No supported image files found in ${WISE2_ADS_DIR}`,
+            },
+          ],
+        });
+      }
+
+      const attachments = files.slice(0, 10).map(
+        (file) =>
+          new AttachmentBuilder(file.path, {
+            name: file.name,
+          })
+      );
+
+      const embed = buildAdSelectionEmbed(
+        files,
+        "👀 WISE² Ad Preview",
+        manifest.selection
+          ? `Previewing ${files.length} selected creative(s) from the local ads folder.`
+          : `Previewing ${files.length} creative(s) from the local ads folder.`,
+        {
+          preset: manifest.preset,
+          caption: manifest.caption,
+        }
+      );
+
+      if (attachments[0]) {
+        embed.image = { url: `attachment://${attachments[0].name}` };
+      }
+
+      const proposalId = crypto.randomUUID();
+      AD_APPROVAL_PROMPTS.set(proposalId, {
+        id: proposalId,
+        userId: interaction.user.id,
+        originChannelId: interaction.channelId,
+        targetChannelId: manifest.targetChannelId,
+        manifest,
+        createdAt: new Date().toISOString(),
+      });
+
+      await interaction.reply({
+        embeds: [
+          {
+            ...embed,
+            description:
+              "Review the creative set below, then click Approve & Post to send it live.",
+          },
+        ],
+        files: attachments,
+        components: [buildAdActionRow(proposalId)],
+        ephemeral: true,
+      });
+    },
+  },
+
+  "schedule-ads": {
+    data: {
+      name: "schedule-ads",
+      description: "Schedule recurring WISE² ad drops",
+      options: [
+        {
+          name: "name",
+          description: "Schedule name",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "cron",
+          description: "Cron expression, e.g. 0 9 * * 1-5",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "timezone",
+          description: "Timezone for the cron schedule",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "preset",
+          description: "Campaign preset to use",
+          type: 3,
+          required: false,
+          choices: AD_PRESET_CHOICES,
+        },
+        {
+          name: "selection",
+          description: "Comma-separated file names or indexes",
+          type: 3,
+          required: false,
+        },
+        {
+          name: "count",
+          description: "How many creatives to use when no selection is set",
+          type: 4,
+          required: false,
+        },
+        {
+          name: "target",
+          description: "Discord channel to post the scheduled ads into",
+          type: 7,
+          required: false,
+        },
+        {
+          name: "caption",
+          description: "Optional caption for each scheduled run",
+          type: 3,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const scheduleName = interaction.options.getString("name") || `ad-schedule-${Date.now()}`;
+      const cronExpression = interaction.options.getString("cron");
+      const timezone = interaction.options.getString("timezone") || "UTC";
+      const preset = interaction.options.getString("preset");
+      const selection = interaction.options.getString("selection");
+      const count = interaction.options.getInteger("count") || 2;
+      const caption = interaction.options.getString("caption");
+      const targetChannel = interaction.options.getChannel("target") || interaction.channel;
+
+      if (!cron.validate(cronExpression)) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Invalid Cron Expression",
+              description: `\`${cronExpression}\` is not a valid cron schedule.`,
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      if (!targetChannel || !targetChannel.isTextBased()) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Invalid Target Channel",
+              description: "Choose a text-based Discord channel for the schedule.",
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const { files: allFiles, error } = getWise2AdCreatives(1000);
+      if (error) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Ads Folder Not Found",
+              description: error,
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const manifest = buildAdManifest(
+        {
+          count,
+          selection,
+          preset,
+          caption,
+          targetChannelId: targetChannel.id,
+          targetChannelName: targetChannel.toString(),
+          approvalRequested: false,
+        },
+        allFiles
+      );
+
+      if (manifest.files.length === 0) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ No Ad Creatives Found",
+              description: `No supported image files found in ${WISE2_ADS_DIR}`,
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const schedule = {
+        id: crypto.randomUUID(),
+        name: scheduleName,
+        cronExpression,
+        timezone,
+        targetChannelId: targetChannel.id,
+        preset,
+        selection,
+        count,
+        caption,
+        createdBy: interaction.user.id,
+        createdByTag: interaction.user.tag,
+        createdAt: new Date().toISOString(),
+        active: true,
+      };
+
+      const task = cron.schedule(
+        cronExpression,
+        async () => {
+          try {
+            const channel = await client.channels.fetch(schedule.targetChannelId);
+            if (!channel || !channel.isTextBased()) {
+              console.warn(`Scheduled ad ${schedule.id} target is not text-based`);
+              return;
+            }
+
+            const { files: currentFiles, error: currentError } = getWise2AdCreatives(1000);
+            if (currentError || currentFiles.length === 0) {
+              console.warn(`Scheduled ad ${schedule.id} has no creatives`);
+              return;
+            }
+
+            const nextManifest = buildAdManifest(
+              {
+                count: schedule.count,
+                selection: schedule.selection,
+                preset: schedule.preset,
+                caption: schedule.caption,
+                targetChannelId: schedule.targetChannelId,
+                approvalRequested: false,
+              },
+              currentFiles
+            );
+
+            await postAdManifestToChannel(channel, nextManifest);
+            console.log(`✅ Scheduled ad campaign ${schedule.name} posted`);
+          } catch (error) {
+            console.error(`Scheduled ad campaign ${schedule.id} failed:`, error);
+          }
+        },
+        { timezone }
+      );
+
+      AD_SCHEDULE_JOBS.set(schedule.id, task);
+      persistAdSchedule(schedule);
+
+      const embed = buildAdSelectionEmbed(
+        manifest.files,
+        "⏰ WISE² Ad Schedule Created",
+        `Scheduled ${manifest.files.length} creative(s) on \`${cronExpression}\` (${timezone}).`,
+        {
+          preset: manifest.preset,
+          caption: manifest.caption,
+        }
+      );
+
+      await interaction.reply({
+        embeds: [
+          {
+            ...embed,
+            fields: [
+              ...embed.fields,
+              { name: "Schedule ID", value: schedule.id, inline: false },
+              { name: "Name", value: schedule.name, inline: true },
+              { name: "Target", value: targetChannel.toString(), inline: true },
+            ],
+          },
+        ],
+        ephemeral: true,
+      });
+    },
+  },
+
+  "ads-schedules": {
+    data: {
+      name: "ads-schedules",
+      description: "List active WISE² ad schedules",
+    },
+    async execute(interaction) {
+      const schedules = listAdSchedules().filter((schedule) => schedule.active);
+      if (!schedules.length) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: WISE2_COLORS.info,
+              title: "🗓️ Ad Schedules",
+              description: "No active ad schedules yet.",
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const embed = {
+        color: WISE2_COLORS.primary,
+        title: "🗓️ WISE² Ad Schedules",
+        description: "Recurring ad drops configured in the bot.",
+        fields: schedules.slice(0, 10).map((schedule) => ({
+          name: `${schedule.name} • ${schedule.id.slice(0, 8)}`,
+          value: [
+            `Cron: \`${schedule.cronExpression}\``,
+            `Timezone: \`${schedule.timezone || "UTC"}\``,
+            `Target: <#${schedule.targetChannelId}>`,
+            `Preset: \`${schedule.preset || "custom"}\``,
+            `Selection: \`${schedule.selection || `first ${schedule.count || 2}`}\``,
+            `Status: ${schedule.active ? "active" : "paused"}`,
+          ].join("\n"),
+          inline: false,
+        })),
+        footer: {
+          text: "WISE² Organized Chaos Command Center",
+        },
+        timestamp: new Date(),
+      };
+
+      await interaction.reply({ embeds: [embed], ephemeral: true });
+    },
+  },
+
+  "cancel-ad-schedule": {
+    data: {
+      name: "cancel-ad-schedule",
+      description: "Cancel a WISE² ad schedule by ID",
+      options: [
+        {
+          name: "id",
+          description: "Schedule ID",
+          type: 3,
+          required: true,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const scheduleId = interaction.options.getString("id");
+      const schedules = listAdSchedules();
+      const schedule = schedules.find((entry) => entry.id === scheduleId);
+
+      if (!schedule) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Schedule Not Found",
+              description: `No schedule found with ID \`${scheduleId}\`.`,
+            },
+          ],
+          ephemeral: true,
+        });
+      }
+
+      const task = AD_SCHEDULE_JOBS.get(scheduleId);
+      if (task) {
+        task.stop();
+        AD_SCHEDULE_JOBS.delete(scheduleId);
+      }
+
+      schedule.active = false;
+      schedule.cancelledAt = new Date().toISOString();
+      schedule.cancelledBy = interaction.user.id;
+      updateAdSchedule(schedule);
+
+      await interaction.reply({
+        embeds: [
+          {
+            color: WISE2_COLORS.success,
+            title: "✅ Ad Schedule Cancelled",
+            description: `Cancelled \`${schedule.name}\` (${schedule.id}).`,
+          },
+        ],
+        ephemeral: true,
+      });
+    },
+  },
+
+  "ads-library": {
+    data: {
+      name: "ads-library",
+      description: "Browse the full WISE² ad creative library",
+    },
+    async execute(interaction) {
+      const { files: allFiles, error } = getWise2AdCreatives(1000);
+
+      if (error) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ Ads Folder Not Found",
+              description: error,
+            },
+          ],
+        });
+      }
+
+      if (allFiles.length === 0) {
+        return interaction.reply({
+          embeds: [
+            {
+              color: 0xff0000,
+              title: "❌ No Ad Creatives Found",
+              description: `No supported image files found in ${WISE2_ADS_DIR}`,
+            },
+          ],
+        });
+      }
+
+      const embed = buildAdSelectionEmbed(
+        allFiles,
+        "🗂️ WISE² Ads Library",
+        `Found ${allFiles.length} creative asset(s) in the local ads folder.`
+      );
+
+      embed.fields.push({
+        name: "Campaign Presets",
+        value: getPresetListForDisplay().slice(0, 1024),
+        inline: false,
+      });
+
+      const firstAttachment = allFiles[0]
+        ? new AttachmentBuilder(allFiles[0].path, {
+            name: allFiles[0].name,
+          })
+        : null;
+
+      if (firstAttachment) {
+        embed.image = { url: `attachment://${firstAttachment.name}` };
+      }
+
+      await interaction.reply({
+        embeds: [embed],
+        files: firstAttachment ? [firstAttachment] : [],
+        ephemeral: true,
+      });
     },
   },
 
@@ -2424,6 +3468,7 @@ client.on("ready", async () => {
 
   // Initialize scheduled tasks
   initializeScheduledTasks();
+  await scheduleAdJobsFromFile(client);
 
   // Send startup ping
   const guild = client.guilds.cache.get(GUILD_ID);
@@ -2441,6 +3486,63 @@ client.on("ready", async () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton()) {
+    const [action, proposalId] = interaction.customId.split(":");
+    if (action !== "wise2-ads-approve" && action !== "wise2-ads-cancel") {
+      return;
+    }
+
+    const proposal = AD_APPROVAL_PROMPTS.get(proposalId);
+    if (!proposal) {
+      return interaction.reply({
+        content: "❌ This approval request has expired.",
+        ephemeral: true,
+      });
+    }
+
+    if (proposal.userId !== interaction.user.id) {
+      return interaction.reply({
+        content: "❌ Only the person who created this preview can approve it.",
+        ephemeral: true,
+      });
+    }
+
+    if (action === "wise2-ads-cancel") {
+      AD_APPROVAL_PROMPTS.delete(proposalId);
+      await interaction.update({
+        content: "✅ Ad post cancelled.",
+        embeds: [],
+        components: [],
+      });
+      return;
+    }
+
+    await interaction.deferUpdate();
+
+    try {
+      const channel = await client.channels.fetch(proposal.targetChannelId);
+      if (!channel || !channel.isTextBased()) {
+        throw new Error("Target channel is no longer available or not text-based.");
+      }
+
+      await postAdManifestToChannel(channel, proposal.manifest);
+      AD_APPROVAL_PROMPTS.delete(proposalId);
+
+      await interaction.editReply({
+        content: `✅ Posted approved ads to ${channel}.`,
+        embeds: [],
+        components: [],
+      });
+    } catch (error) {
+      await interaction.editReply({
+        content: `❌ Failed to post approved ads: ${error.message}`,
+        embeds: [],
+        components: [],
+      });
+    }
+    return;
+  }
+
   if (!interaction.isCommand()) return;
 
   const command = client.commands.get(interaction.commandName);

@@ -22,6 +22,7 @@ interface NavLink {
 
 const PRIMARY_LINKS: NavLink[] = [
   { href: '/platform', label: 'Platform', icon: <PlatformIcon size={18} /> },
+  { href: '/services/digital-twin', label: 'Digital Twin', icon: <PlatformIcon size={18} /> },
   { href: '/sound-labs', label: 'Sound Labs', icon: <SoundLabsIcon size={18} /> },
   { href: '/audit', label: 'AI Audit', icon: <AuditIcon size={18} /> },
   { href: '/powered-businesses', label: 'Powered Businesses', icon: <BusinessesIcon size={18} /> },

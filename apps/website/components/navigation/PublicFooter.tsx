@@ -18,6 +18,7 @@ const FOOTER_SECTIONS: FooterSection[] = [
     title: 'Product',
     links: [
       { href: '/platform', label: 'Platform' },
+      { href: '/services/digital-twin', label: 'Digital Twin' },
       { href: '/powered-businesses', label: 'Powered Businesses' },
       { href: '/studio', label: 'Studio' },
       { href: '/start-your-build', label: 'Start Your Build' },

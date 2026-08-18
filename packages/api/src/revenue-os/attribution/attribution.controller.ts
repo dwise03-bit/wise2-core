@@ -1,15 +1,22 @@
-import { BadRequestException, Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { TenantGuard } from '../tenant/tenant.guard';
-import { Tenant } from '../tenant/tenant.decorator';
-import { TenantContext } from '../tenant/tenant-context';
 import { AttributionService } from './attribution.service';
 import { AttributionFilter } from './attribution.types';
 
 /**
  * Guard order is significant: JwtAuthGuard populates request.user, which
  * TenantGuard then resolves into tenant context. Every handler takes the
- * tenant from @Tenant() — no route param, query string or body field carries
+ * tenant from req.tenant_id — no route param, query string or body field carries
  * a tenant id, and `:campaignId` below is resolved against the session
  * tenant inside the service.
  */
@@ -20,31 +27,31 @@ export class AttributionController {
 
   @Get()
   summary(
-    @Tenant() tenant: TenantContext,
+    @Req() req: Request,
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
-    return this.attributionService.summary(tenant.tenantId, parseRange(from, to));
+    return this.attributionService.summary(requireTenantId(req), parseRange(from, to));
   }
 
   @Get('funnel')
   funnel(
-    @Tenant() tenant: TenantContext,
+    @Req() req: Request,
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
-    return this.attributionService.funnel(tenant.tenantId, parseRange(from, to));
+    return this.attributionService.funnel(requireTenantId(req), parseRange(from, to));
   }
 
   @Get('campaigns/:campaignId')
   forCampaign(
-    @Tenant() tenant: TenantContext,
+    @Req() req: Request,
     @Param('campaignId') campaignId: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
   ) {
     return this.attributionService.forCampaign(
-      tenant.tenantId,
+      requireTenantId(req),
       campaignId,
       parseRange(from, to),
     );
@@ -68,4 +75,12 @@ function parseDate(value: string, field: string): Date {
     throw new BadRequestException(`Invalid \`${field}\` date`);
   }
   return parsed;
+}
+
+function requireTenantId(req: Request): string {
+  const tenantId = req.tenant_id;
+  if (!tenantId) {
+    throw new Error('Missing tenant_id on request');
+  }
+  return tenantId;
 }

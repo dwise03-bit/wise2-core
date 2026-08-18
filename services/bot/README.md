@@ -7,11 +7,12 @@ Discord integration bot for the WISE² Agentic OS kernel providing system comman
 **Status**: Phase A (MVP - Slash Commands & Webhooks)
 
 **Bot Features**:
-- 7 slash commands for system operations
+- 12+ slash commands for system operations and ad ops
 - 6 Discord channels with webhook integration
 - Real-time system status monitoring
 - Daily sync and decision logging
 - Alert distribution system
+- Ad preview, approval, preset, and scheduling workflow
 - Integration with data layer (`data/daily-logs`, `data/decisions`)
 
 ## Technology Stack
@@ -202,6 +203,75 @@ Send alert to a Discord channel via webhook.
 → Color-coded by severity
 ```
 
+### `/run-ads [count:<n>] [preset:<name>] [selection:<items>] [target:<channel>] [caption:<text>] [approval:true|false]`
+
+Post WISE² ad creatives from the local ads folder into Discord.
+
+```
+/run-ads selection:1,3-5 target:#campaigns caption:Launching the blitz
+→ Posts the selected image files from the ads folder
+→ Defaults to /Users/danielwise/Downloads/WISE2_Revenue_Blitz_Ads
+→ Supports up to 10 attachments per message and auto-chunks larger runs
+→ Selection accepts file names or 1-based indexes
+→ Presets: `launch`, `retargeting`, `ugc`, `direct-response`
+→ `approval:true` turns the run into a button-gated approval flow
+```
+
+### `/preview-ads [count:<n>] [preset:<name>] [selection:<items>] [target:<channel>] [caption:<text>]`
+
+Preview WISE² ad creatives before posting them live.
+
+```
+/preview-ads selection:a_bold_high_contrast_cyber_neon_promotional_poster.png
+→ Shows the selected creatives in an ephemeral Discord reply
+→ Attaches the first image as a visual preview
+→ Uses the same local folder selection as /run-ads
+→ Includes Approve & Post and Cancel buttons
+```
+
+### `/schedule-ads name:<text> cron:<expr> [timezone:<tz>] [preset:<name>] [selection:<items>] [count:<n>] [target:<channel>] [caption:<text>]`
+
+Schedule recurring ad drops with cron syntax.
+
+```
+/schedule-ads name:weekday-blitz cron:"0 9 * * 1-5" timezone:America/New_York preset:launch target:#campaigns
+→ Creates a recurring post schedule
+→ Persists the schedule in data/ads-schedules.json
+→ Rehydrates on bot restart
+→ Uses the same selection and preset logic as /run-ads
+```
+
+### `/ads-schedules`
+
+List all configured ad schedules.
+
+```
+/ads-schedules
+→ Shows the cron expression, timezone, target channel, and status
+```
+
+### `/cancel-ad-schedule id:<schedule-id>`
+
+Cancel a recurring ad schedule by ID.
+
+```
+/cancel-ad-schedule id:9f2a...
+→ Stops the cron job immediately
+→ Marks the schedule inactive in the JSON file
+```
+
+### `/ads-library`
+
+Browse the full WISE² creative library.
+
+```
+/ads-library
+→ Lists every available ad creative in the folder
+→ Shows file sizes in the embed
+→ Attaches the first asset as a quick visual reference
+→ Includes the active preset catalog
+```
+
 ## Data Integration
 
 Bot reads from the WISE² data layer:
@@ -212,9 +282,29 @@ data/
 │   └── 2026-07-20.md
 ├── decisions/           ← /decision command writes to here
 │   └── 2026-07-20-live-stream-redesign.md
+├── ads-schedules.json   ← /schedule-ads stores recurring jobs here
 └── inbox/               ← /tasks command reads from here
     └── ideas.md
 ```
+
+### Ad Creative Folder
+
+The `/run-ads` command reads local creative assets from:
+
+```
+/Users/danielwise/Downloads/WISE2_Revenue_Blitz_Ads
+```
+
+You can override this by setting `WISE2_ADS_DIR` in `services/bot/.env`.
+
+### Ad Presets
+
+Preset names available in the ad commands:
+
+- `launch`
+- `retargeting`
+- `ugc`
+- `direct-response`
 
 ### Daily Log Format
 

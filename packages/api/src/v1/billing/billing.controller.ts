@@ -25,6 +25,7 @@ export class BillingController {
   async createCheckout(
     @Body() body: {
       planId: string;
+      product?: string;
       email: string;
       fullName: string;
       billingCycle?: 'monthly' | 'annual';
@@ -48,13 +49,14 @@ export class BillingController {
         body.billingCycle,
         body.successUrl,
         body.cancelUrl,
+        body.product,
       );
 
       // Track event
       await this.analyticsService.trackEvent({
         eventType: 'checkout_session_created',
         journeyStep: 'checkout',
-        metadata: { planId: body.planId, sessionId },
+        metadata: { planId: body.planId, sessionId, product: body.product || 'platform' },
       });
 
       return { url, sessionId };
