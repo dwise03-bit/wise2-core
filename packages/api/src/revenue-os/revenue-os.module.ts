@@ -23,6 +23,14 @@ import { ReviewWorkflow } from './automations/review.workflow';
 import { MembershipWorkflow } from './automations/membership.workflow';
 import { ReactivationWorkflow } from './automations/reactivation.workflow';
 import { RevenueWorkerService } from './automations/revenue-worker.service';
+import { EstimatesService } from './estimates/estimates.service';
+import { EstimatesController } from './estimates/estimates.controller';
+import { ServiceJobsService } from './service-jobs/service-jobs.service';
+import { ServiceJobsController } from './service-jobs/service-jobs.controller';
+import { FollowUpsService } from './follow-ups/follow-ups.service';
+import { FollowUpsController } from './follow-ups/follow-ups.controller';
+import { DashboardStatsService } from './dashboard/dashboard-stats.service';
+import { DashboardStatsController } from './dashboard/dashboard-stats.controller';
 
 /**
  * WISE² Revenue OS.
@@ -38,7 +46,14 @@ import { RevenueWorkerService } from './automations/revenue-worker.service';
  */
 @Module({
   imports: [ConfigModule, PrismaModule, AuthModule],
-  controllers: [LeadsController, AttributionController],
+  controllers: [
+    LeadsController,
+    AttributionController,
+    EstimatesController,
+    ServiceJobsController,
+    FollowUpsController,
+    DashboardStatsController,
+  ],
   providers: [
     TenantService,
     TenantGuard,
@@ -59,6 +74,10 @@ import { RevenueWorkerService } from './automations/revenue-worker.service';
     MembershipWorkflow,
     ReactivationWorkflow,
     RevenueWorkerService,
+    EstimatesService,
+    ServiceJobsService,
+    FollowUpsService,
+    DashboardStatsService,
   ],
   exports: [
     TenantService,
@@ -69,6 +88,10 @@ import { RevenueWorkerService } from './automations/revenue-worker.service';
     ConsentService,
     MockProvider,
     WebhookSecurityService,
+    EstimatesService,
+    ServiceJobsService,
+    FollowUpsService,
+    DashboardStatsService,
   ],
 })
 export class RevenueOsModule {}

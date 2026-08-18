@@ -53,7 +53,10 @@ echo ""
 # ============================================================================
 echo "🔨 Building Docker images..."
 
-docker compose -f docker-compose.prod.yml build
+if ! docker compose -f docker-compose.prod.yml build; then
+  echo "❌ Docker build failed"
+  exit 1
+fi
 
 echo "✅ Docker images built"
 echo ""
@@ -63,10 +66,21 @@ echo ""
 # ============================================================================
 echo "🚀 Starting services..."
 
-docker compose -f docker-compose.prod.yml up -d
+if ! docker compose -f docker-compose.prod.yml up -d; then
+  echo "❌ Failed to start services"
+  docker compose -f docker-compose.prod.yml logs
+  exit 1
+fi
 
 echo "⏳ Waiting for services to be healthy..."
 sleep 30
+
+# Verify services are running
+if ! docker compose -f docker-compose.prod.yml ps | grep -q "Up"; then
+  echo "❌ Services failed to start properly"
+  docker compose -f docker-compose.prod.yml logs
+  exit 1
+fi
 
 echo "✅ Services started"
 echo ""

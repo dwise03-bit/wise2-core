@@ -58,58 +58,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push API
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile.api
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/wise2-api:latest
-            ${{ secrets.DOCKER_USERNAME }}/wise2-api:${{ github.sha }}
-
-      - name: Build and push Website
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile.website
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/wise2-website:latest
-            ${{ secrets.DOCKER_USERNAME }}/wise2-website:${{ github.sha }}
-
-      - name: Build and push Studio
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile.studio
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/wise2-studio:latest
-            ${{ secrets.DOCKER_USERNAME }}/wise2-studio:${{ github.sha }}
-
-      - name: Build and push Command Center
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./apps/command-center/Dockerfile
-          push: true
-          build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-            NEXT_PUBLIC_WS_URL=${{ secrets.NEXT_PUBLIC_WS_URL }}
-            NEXT_PUBLIC_LOGIN_URL=${{ secrets.NEXT_PUBLIC_LOGIN_URL }}
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:latest
-            ${{ secrets.DOCKER_USERNAME }}/wise2-command-center:${{ github.sha }}
+      - name: Validate critical files exist
+        run: |
+          echo "✓ Checking docker-compose.prod.yml"
+          test -f docker-compose.prod.yml || exit 1
+          echo "✓ Checking deploy.sh"
+          test -f deploy.sh || exit 1
+          echo "✓ Checking Dockerfiles"
+          test -f Dockerfile.api && test -f Dockerfile.website && test -f Dockerfile.studio || exit 1
+          echo "✓ All deployment files present"
 
   deploy:
     needs: build
@@ -125,10 +82,16 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 30m
           script: |
-            cd wise2-core
-            git pull origin ${{ github.ref_name }}
-            
+            set -e
+            cd wise2-core || exit 1
+
+            echo "📋 Fetching latest code..."
+            git fetch origin ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
+
+            echo "🔐 Setting environment variables..."
             export STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}
             export STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
             export STRIPE_STARTER_PRICE_ID=${{ secrets.STRIPE_STARTER_PRICE_ID }}
@@ -139,13 +102,38 @@ jobs:
             export DATABASE_URL=${{ secrets.DATABASE_URL }}
             export APP_URL=${{ secrets.APP_URL }}
             export API_BASE_URL=${{ secrets.API_BASE_URL }}
-            
-            ./deploy.sh production
 
-      - name: Notify Slack
-        if: always()
+            echo "🚀 Starting deployment..."
+            chmod +x ./deploy.sh
+            ./deploy.sh production || { echo "❌ Deployment failed"; exit 1; }
+
+            echo "✅ Deployment successful"
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@master
+        if: success()
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            echo "🏥 Verifying services..."
+            cd wise2-core
+            docker compose -f docker-compose.prod.yml ps
+            echo "✅ Services verification complete"
+
+      - name: Notify Slack on success
+        if: success()
         uses: 8398a7/action-slack@v3
         with:
-          status: ${{ job.status }}
-          text: 'WISE² deployment ${{ job.status }}'
+          status: 'success'
+          text: '✅ WISE² deployment successful | Commit: ${{ github.sha }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: 'failure'
+          text: '❌ WISE² deployment failed | Commit: ${{ github.sha }} | Branch: ${{ github.ref_name }}'
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
