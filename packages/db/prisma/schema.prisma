@@ -2417,6 +2417,22 @@ model Tenant {
   twinKnowledge  DigitalTwinKnowledgeItem[]
   twinConsents   DigitalTwinConsent[]
 
+  // WISE Defense Safety Radar + Comms Grid
+  wiseDefenseMemberships WiseDefenseMembership[]
+  incidents              Incident[]
+  watchZones             WatchZone[]
+  meshNodes              MeshNode[]
+  radioDevices           RadioDevice[]
+  radioOperators         RadioOperator[]
+  radioChannels          RadioChannel[]
+  repeaters              Repeater[]
+  sdrDevices             SDRDevice[]
+  alerts                 SafetyAlert[]
+  familyMembers          FamilyMember[]
+
+  // WISE² LIVE - Demo environment
+  demoEnvironment DemoEnvironment?
+
   @@index([slug])
   @@index([state])
   @@index([stripeCustomerId])
@@ -2428,6 +2444,45 @@ enum TenantRole {
   DISPATCHER
   TECHNICIAN
   VIEWER
+}
+
+enum WiseDefenseRole {
+  OWNER
+  ADMIN
+  OPERATOR
+  INSTRUCTOR
+  FAMILY
+  VIEWER
+  CUSTOMER
+}
+
+enum ThreatLevel {
+  LOW
+  ELEVATED
+  HIGH
+  CRITICAL
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  DEVELOPING
+  CORROBORATED
+  OFFICIAL
+  CLEARED
+}
+
+enum CommunicationState {
+  ONLINE
+  DEGRADED
+  OFFLINE
+  UNKNOWN
+}
+
+enum FamilySafetyStatus {
+  SAFE
+  CHECK_IN_REQUESTED
+  UNKNOWN
+  NEEDS_HELP
 }
 
 enum TenantState {
@@ -2488,17 +2543,258 @@ model TenantMembership {
   @@index([userId])
 }
 
+// ============================================================================
+// WISE DEFENSE — SAFETY RADAR + COMMS GRID
+// Every record below is tenant scoped. Exact private locations are kept out of
+// public-facing fields; clients must request redacted representations.
+// ============================================================================
+model WiseDefenseMembership {
+  id        String          @id @default(cuid())
+  tenantId  String          @map("tenant_id")
+  userId    String          @map("user_id")
+  role      WiseDefenseRole @default(VIEWER)
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  @@unique([tenantId, userId])
+  @@index([userId])
+}
+
+model Incident {
+  id                  String             @id @default(cuid())
+  tenantId            String             @map("tenant_id")
+  provider            String
+  providerIncidentId  String?            @map("provider_incident_id")
+  incidentType        String             @map("incident_type")
+  category            String
+  headline            String
+  description         String?            @db.Text
+  latitude            Float?
+  longitude           Float?
+  approximateLocation String?            @map("approximate_location")
+  city                String?
+  state               String?
+  postalCode          String?            @map("postal_code")
+  sourceTimestamp     DateTime?          @map("source_timestamp")
+  receivedTimestamp   DateTime           @default(now()) @map("received_timestamp")
+  status              String             @default("OPEN")
+  threatLevel         ThreatLevel        @default(LOW) @map("threat_level")
+  confidence          Int                @default(0)
+  verificationStatus  VerificationStatus @default(UNVERIFIED) @map("verification_status")
+  sourceUrl           String?            @map("source_url")
+  audioUrl            String?            @map("audio_url")
+  transcript          String?            @db.Text
+  aiSummary           String?            @map("ai_summary") @db.Text
+  sourceMetadata      Json?              @map("source_metadata")
+  isPublic            Boolean            @default(false) @map("is_public")
+  isSensitive         Boolean            @default(false) @map("is_sensitive")
+  tenant              Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+
+  @@unique([tenantId, provider, providerIncidentId])
+  @@index([tenantId, threatLevel, receivedTimestamp])
+  @@index([tenantId, category])
+}
+
+model WatchZone {
+  id                         String      @id @default(cuid())
+  tenantId                   String      @map("tenant_id")
+  name                       String
+  kind                       String
+  latitude                   Float
+  longitude                  Float
+  radiusMiles                Float       @map("radius_miles")
+  categories                 String[]
+  minimumThreat              ThreatLevel @default(ELEVATED) @map("minimum_threat")
+  enabled                    Boolean     @default(true)
+  privateLocation            Boolean     @default(true) @map("private_location")
+  notificationDestinationIds String[]    @default([]) @map("notification_destination_ids")
+  tenant                     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt                  DateTime    @default(now()) @map("created_at")
+  updatedAt                  DateTime    @updatedAt @map("updated_at")
+
+  @@index([tenantId, enabled])
+}
+
+model MeshNode {
+  id                 String             @id @default(cuid())
+  tenantId           String             @map("tenant_id")
+  nodeId             String             @map("node_id")
+  longName           String?            @map("long_name")
+  shortName          String?            @map("short_name")
+  hardwareModel      String?            @map("hardware_model")
+  latitude           Float?
+  longitude          Float?
+  altitude           Float?
+  batteryLevel       Int?               @map("battery_level")
+  voltage            Float?
+  channelUtilization Float?             @map("channel_utilization")
+  airUtilTx          Float?             @map("air_util_tx")
+  snr                Float?
+  rssi               Int?
+  lastHeard          DateTime?          @map("last_heard")
+  hopCount           Int?               @map("hop_count")
+  role               String?
+  onlineStatus       CommunicationState @default(UNKNOWN) @map("online_status")
+  firmwareVersion    String?            @map("firmware_version")
+  owner              String?
+  telemetry          MeshTelemetry[]
+  tenant             Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  @@unique([tenantId, nodeId])
+  @@index([tenantId, onlineStatus])
+}
+
+model MeshTelemetry {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  meshNodeId   String   @map("mesh_node_id")
+  batteryLevel Int?
+  voltage      Float?
+  snr          Float?
+  rssi         Int?
+  latitude     Float?
+  longitude    Float?
+  payload      Json?
+  receivedAt   DateTime @default(now()) @map("received_at")
+  node         MeshNode @relation(fields: [meshNodeId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, receivedAt])
+  @@index([meshNodeId, receivedAt])
+}
+
+model RadioDevice {
+  id           String             @id @default(cuid())
+  tenantId     String             @map("tenant_id")
+  name         String
+  kind         String
+  serialNumber String?            @map("serial_number")
+  status       CommunicationState @default(UNKNOWN)
+  lastCheckIn  DateTime?          @map("last_check_in")
+  metadata     Json?
+  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  @@index([tenantId, kind])
+}
+
+model RadioOperator {
+  id               String             @id @default(cuid())
+  tenantId         String             @map("tenant_id")
+  displayName      String             @map("display_name")
+  callSign         String?            @map("call_sign")
+  licenseClass     String?            @map("license_class")
+  licenseExpiresAt DateTime?          @map("license_expires_at")
+  status           CommunicationState @default(UNKNOWN)
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model RadioChannel {
+  id         String  @id @default(cuid())
+  tenantId   String  @map("tenant_id")
+  name       String
+  service    String
+  frequency  String?
+  tone       String?
+  offset     String?
+  band       String?
+  modulation String?
+  tenant     Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, service])
+}
+
+model Repeater {
+  id        String             @id @default(cuid())
+  tenantId  String             @map("tenant_id")
+  name      String
+  service   String
+  frequency String?
+  tone      String?
+  offset    String?
+  status    CommunicationState @default(UNKNOWN)
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, service])
+}
+
+model SDRDevice {
+  id              String             @id @default(cuid())
+  tenantId        String             @map("tenant_id")
+  name            String
+  deviceType      String             @map("device_type")
+  status          CommunicationState @default(UNKNOWN)
+  centerFrequency Float?             @map("center_frequency")
+  span            Float?
+  gain            Float?
+  sampleRate      Float?             @map("sample_rate")
+  metadata        Json?
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+}
+
+model SDRSignal {
+  id             String   @id @default(cuid())
+  tenantId       String   @map("tenant_id")
+  sdrDeviceId    String?  @map("sdr_device_id")
+  frequency      Float
+  strengthDbm    Float?   @map("strength_dbm")
+  classification String   @default("UNKNOWN")
+  detectedAt     DateTime @default(now()) @map("detected_at")
+  metadata       Json?
+
+  @@index([tenantId, detectedAt])
+}
+
+model SafetyAlert {
+  id        String      @id @default(cuid())
+  tenantId  String      @map("tenant_id")
+  type      String
+  title     String
+  message   String      @db.Text
+  severity  ThreatLevel @default(LOW)
+  status    String      @default("OPEN")
+  sourceId  String?     @map("source_id")
+  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@index([tenantId, status, createdAt])
+}
+
+model FamilyMember {
+  id               String             @id @default(cuid())
+  tenantId         String             @map("tenant_id")
+  displayName      String             @map("display_name")
+  meshNodeId       String?            @map("mesh_node_id")
+  status           FamilySafetyStatus @default(UNKNOWN)
+  lastCheckIn      DateTime?          @map("last_check_in")
+  emergencyContact String?            @map("emergency_contact")
+  privateNotes     String?            @map("private_notes") @db.Text
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, status])
+}
+
 model DigitalTwin {
   id       String @id @default(cuid())
   tenantId String @map("tenant_id")
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  ownerUserId String? @map("owner_user_id")
-  packageId   String? @map("package_id")
-  name        String
-  displayName String? @map("display_name")
-  status      DigitalTwinStatus @default(DRAFT)
-  onboardingStatus String? @map("onboarding_status")
+  ownerUserId      String?                  @map("owner_user_id")
+  packageId        String?                  @map("package_id")
+  name             String
+  displayName      String?                  @map("display_name")
+  status           DigitalTwinStatus        @default(DRAFT)
+  onboardingStatus String?                  @map("onboarding_status")
   autonomyLevel    DigitalTwinAutonomyLevel @default(LEVEL_1) @map("autonomy_level")
 
   businessProfile Json? @map("business_profile")
@@ -2526,18 +2822,18 @@ model DigitalTwin {
 }
 
 model DigitalTwinKnowledgeItem {
-  id            String @id @default(cuid())
-  tenantId      String @map("tenant_id")
-  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  digitalTwinId String @map("digital_twin_id")
+  id            String      @id @default(cuid())
+  tenantId      String      @map("tenant_id")
+  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  digitalTwinId String      @map("digital_twin_id")
   digitalTwin   DigitalTwin @relation(fields: [digitalTwinId], references: [id], onDelete: Cascade)
 
-  sourceType String @map("source_type")
-  sourceName String @map("source_name")
+  sourceType String    @map("source_type")
+  sourceName String    @map("source_name")
   status     String
   version    String?
-  approved   Boolean @default(false)
-  approvedBy String? @map("approved_by")
+  approved   Boolean   @default(false)
+  approvedBy String?   @map("approved_by")
   approvedAt DateTime? @map("approved_at")
   metadata   Json?
 
@@ -2551,18 +2847,18 @@ model DigitalTwinKnowledgeItem {
 }
 
 model DigitalTwinConsent {
-  id            String @id @default(cuid())
-  tenantId      String @map("tenant_id")
-  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  digitalTwinId String @map("digital_twin_id")
+  id            String      @id @default(cuid())
+  tenantId      String      @map("tenant_id")
+  tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  digitalTwinId String      @map("digital_twin_id")
   digitalTwin   DigitalTwin @relation(fields: [digitalTwinId], references: [id], onDelete: Cascade)
 
   consentType DigitalTwinConsentType @map("consent_type")
   granted     Boolean
-  grantedBy   String? @map("granted_by")
-  grantedAt   DateTime? @map("granted_at")
-  revokedAt   DateTime? @map("revoked_at")
-  sourceAsset String? @map("source_asset")
+  grantedBy   String?                @map("granted_by")
+  grantedAt   DateTime?              @map("granted_at")
+  revokedAt   DateTime?              @map("revoked_at")
+  sourceAsset String?                @map("source_asset")
   version     String?
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -3313,4 +3609,335 @@ model SafetyEvent {
   @@index([tenantId])
   @@index([tenantId, riskType])
   @@index([createdAt])
+}
+
+// ============================================================================
+// WISE² LIVE™ - Universal Customer Demo Engine
+// ============================================================================
+
+// Per-tenant demo environment container
+// Every tenant automatically gets a DemoEnvironment when provisioned
+model DemoEnvironment {
+  id       String @id @default(cuid())
+  tenantId String @unique @map("tenant_id")
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Brand configuration (inherited from Tenant business profile)
+  businessName    String
+  ownerName       String?
+  businessPhone   String?
+  businessEmail   String?
+  businessWebsite String?
+  industry        String  @default("hvac")
+  subIndustry     String?
+  logo            String? @db.Text
+  brandColors     Json?
+
+  // Demo configuration
+  status                DemoEnvironmentStatus @default(ACTIVE)
+  communicationMode     CommunicationMode     @default(SIMULATED)
+  paymentMode           PaymentMode           @default(SIMULATED)
+  allowDemoReset        Boolean               @default(true)
+  allowMultipleSessions Boolean               @default(true)
+
+  // Seeded demo data
+  demoCustomerCount Int       @default(3)
+  demoLeadCount     Int       @default(5)
+  demoJobCount      Int       @default(2)
+  lastResetAt       DateTime?
+
+  // Tour configuration
+  defaultTourId String?
+  tourSequence  String[] @default([]) // IDs of tours in order
+
+  // Analytics
+  totalSessions     Int    @default(0)
+  completedSessions Int    @default(0)
+  averageEngagement Float?
+  conversionRate    Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions    DemoSession[]
+  scenarios   DemoScenario[]
+  tours       DemoTour[]
+  events      DemoEvent[]
+  conversions DemoConversion[]
+
+  @@index([tenantId])
+  @@index([status])
+}
+
+enum DemoEnvironmentStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum CommunicationMode {
+  SIMULATED // No external SMS/email calls
+  SANDBOX // Twilio test credentials (future)
+  LIVE // Real SMS/email (never for demo)
+}
+
+enum PaymentMode {
+  SIMULATED // No Stripe calls
+  STRIPE_TEST // Stripe test mode (future)
+  STRIPE_LIVE // Real charges (never for demo)
+}
+
+// Demo scenario definitions
+// Examples: NEW_LEAD, MISSED_CALL, WEB_FORM, QUOTE_REQUEST, BOOKING, etc
+model DemoScenario {
+  id                String          @id @default(cuid())
+  demoEnvironmentId String          @map("demo_environment_id")
+  demoEnvironment   DemoEnvironment @relation(fields: [demoEnvironmentId], references: [id], onDelete: Cascade)
+
+  // Scenario metadata
+  key            String // e.g., "NEW_LEAD", "MISSED_CALL"
+  name           String // Display name
+  description    String? @db.Text
+  icon           String? // Icon or emoji
+  sequenceNumber Int     @default(0) // Order in scenario list
+
+  // Scenario execution config
+  triggerType   String   @default("manual") // manual, automated, scheduled
+  duration      Int      @default(30) // seconds to complete
+  eventSequence String[] @default([]) // ordered list of event types
+
+  // Industry-specific
+  industry        String   @default("hvac")
+  applicableRoles String[] @default(["owner", "customer"])
+
+  // Data template
+  dataTemplate     Json? // Pre-configured demo data
+  expectedOutcomes String[] @default([])
+
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions DemoSession[]
+  events   DemoEvent[]
+
+  @@unique([demoEnvironmentId, key])
+  @@index([demoEnvironmentId])
+  @@index([industry])
+}
+
+// Demo visitor sessions
+// One per demo URL visit/sharing
+model DemoSession {
+  id                String          @id @default(cuid())
+  demoEnvironmentId String          @map("demo_environment_id")
+  demoEnvironment   DemoEnvironment @relation(fields: [demoEnvironmentId], references: [id], onDelete: Cascade)
+
+  scenarioId String?
+  scenario   DemoScenario? @relation(fields: [scenarioId], references: [id], onDelete: SetNull)
+
+  // Session identity
+  sessionToken  String  @unique // Signed, opaque token
+  prospectEmail String?
+  prospectName  String?
+
+  // Session state
+  status         DemoSessionStatus  @default(ACTIVE)
+  selectedMode   DemoExperienceMode @default(ENTRY) // customer, owner, automation, ai, etc
+  stepsCompleted Int                @default(0)
+
+  // Engagement tracking
+  engagementScore  Float    @default(0.0)
+  actionsPerformed String[] @default([])
+  timeSpentSeconds Int      @default(0)
+
+  // Conversion signals
+  conversionIntent   Boolean   @default(false)
+  conversionIntentAt DateTime?
+
+  // Source tracking
+  source        String  @default("direct") // direct, email, qr, presentation, etc
+  campaign      String?
+  salespersonId String?
+
+  // Session lifecycle
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  lastActivityAt DateTime  @default(now())
+  expiresAt      DateTime? // Auto-expire after 30 days
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events       DemoEvent[]
+  tourProgress DemoTourProgress?
+  conversions  DemoConversion[]
+
+  @@index([demoEnvironmentId])
+  @@index([sessionToken])
+  @@index([status])
+  @@index([startedAt])
+  @@index([conversionIntent])
+}
+
+enum DemoSessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+  EXPIRED
+}
+
+enum DemoExperienceMode {
+  ENTRY // Landing screen
+  CUSTOMER // Act like customer
+  OWNER // Act like owner
+  AUTOMATION // Watch WISE² work
+  AI // Ask assistant
+  MONEY // Revenue view
+}
+
+// Demo event log
+// Tracks everything that happens in demo
+model DemoEvent {
+  id            String      @id @default(cuid())
+  demoSessionId String      @map("demo_session_id")
+  demoSession   DemoSession @relation(fields: [demoSessionId], references: [id], onDelete: Cascade)
+
+  demoEnvironmentId String          @map("demo_environment_id")
+  demoEnvironment   DemoEnvironment @relation(fields: [demoEnvironmentId], references: [id], onDelete: Cascade)
+
+  scenarioId String?
+  scenario   DemoScenario? @relation(fields: [scenarioId], references: [id], onDelete: SetNull)
+
+  // Event classification
+  eventType String // e.g., "lead.created", "estimate.sent", "payment.simulated"
+  category  String // e.g., "customer_action", "system_automation", "ai_response"
+  action    String // e.g., "form_submitted", "email_sent", "payment_confirmed"
+
+  // Event data
+  dataSnapshot    Json? // Full event details
+  affectedRecords String[] @default([]) // IDs of affected records
+
+  // Event result
+  success Boolean @default(true)
+  message String?
+
+  // Engagement signal
+  userInitiated Boolean @default(false) // vs system-triggered
+
+  createdAt DateTime @default(now())
+
+  @@index([demoSessionId])
+  @@index([demoEnvironmentId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// Guided tour definitions
+model DemoTour {
+  id                String          @id @default(cuid())
+  demoEnvironmentId String          @map("demo_environment_id")
+  demoEnvironment   DemoEnvironment @relation(fields: [demoEnvironmentId], references: [id], onDelete: Cascade)
+
+  // Tour metadata
+  key            String // e.g., "LEAD_TO_MONEY"
+  name           String
+  description    String? @db.Text
+  duration       Int     @default(300) // seconds
+  targetAudience String  @default("owner") // owner, customer, both
+
+  // Tour sequence
+  steps Json // Array of TourStep objects
+
+  // Statistics
+  completions       Int    @default(0)
+  averageCompletion Float? // seconds
+
+  enabled Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  progress DemoTourProgress[]
+
+  @@unique([demoEnvironmentId, key])
+  @@index([demoEnvironmentId])
+}
+
+// Tour progress tracking
+model DemoTourProgress {
+  id            String      @id @default(cuid())
+  demoSessionId String      @unique @map("demo_session_id")
+  demoSession   DemoSession @relation(fields: [demoSessionId], references: [id], onDelete: Cascade)
+
+  tourId String
+  tour   DemoTour @relation(fields: [tourId], references: [id], onDelete: Cascade)
+
+  // Progress state
+  currentStep    Int        @default(0)
+  completedSteps Int[]      @default([])
+  status         TourStatus @default(ACTIVE)
+
+  // Timing
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([demoSessionId])
+  @@index([tourId])
+}
+
+enum TourStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+  PAUSED
+}
+
+// Demo-to-live conversion tracking
+model DemoConversion {
+  id                String          @id @default(cuid())
+  demoEnvironmentId String          @map("demo_environment_id")
+  demoEnvironment   DemoEnvironment @relation(fields: [demoEnvironmentId], references: [id], onDelete: Cascade)
+
+  demoSessionId String?
+  demoSession   DemoSession? @relation(fields: [demoSessionId], references: [id], onDelete: SetNull)
+
+  // Conversion flow
+  prospectEmail  String
+  prospectName   String?
+  conversionStep String  @default("DEMO_VIEWED") // DEMO_VIEWED -> CHECKOUT -> PAYMENT_CONFIRMED -> ACTIVATED
+
+  // Engagement metric
+  engagementScore  Float                @default(0.0)
+  scenariosViewed  String[]             @default([])
+  modesExperienced DemoExperienceMode[] @default([])
+
+  // Stripe integration
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+
+  // Outcome
+  status      ConversionStatus @default(PROSPECT)
+  convertedAt DateTime?
+
+  // Audit
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([demoEnvironmentId])
+  @@index([status])
+  @@index([convertedAt])
+}
+
+enum ConversionStatus {
+  PROSPECT // Viewed demo
+  INTERESTED // Engaged with demo
+  QUALIFIED // Ready to convert
+  CHECKOUT // In payment flow
+  PAYMENT_CONFIRMED // Payment successful
+  ACTIVATED // Demo promoted to live
+  LOST // Abandoned
 }

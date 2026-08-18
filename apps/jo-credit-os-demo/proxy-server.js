@@ -99,7 +99,7 @@ function serviceItem(service, index) {
 function valueItem([title, desc]) {
   return `
     <div class="value-row">
-      <div class="value-mark">JO</div>
+      <div class="value-mark">JV</div>
       <div>
         <div class="value-title">${escapeHtml(title)}</div>
         <div class="value-desc">${escapeHtml(desc)}</div>
@@ -135,7 +135,7 @@ function phoneMock(title, metric, footer) {
     <div class="phone">
       <div class="phone-notch"></div>
       <div class="phone-app">
-        <div class="phone-logo">JO</div>
+        <div class="phone-logo">JV</div>
         <div class="phone-title">${escapeHtml(title)}</div>
         <div class="phone-metric">${escapeHtml(metric)}</div>
         <div class="phone-progress"><span style="width:${metric.replace(/[^0-9]/g, '') || 72}%"></span></div>
@@ -165,7 +165,7 @@ function pageHtml() {
   const stepMarkup = steps.map(stepItem).join('');
   const buildingMarkup = building.map(buildingItem).join('');
   const phonesMarkup = [
-    phoneMock('JO CREDIT OS', '72% Progress', 'Log In'),
+    phoneMock("JAVON'S CREDIT OS", '72% Progress', 'Log In'),
     phoneMock('Credit Overview', '683 698 674', 'View Full Report'),
     phoneMock('Disputes', 'In Progress', 'New Dispute'),
   ].join('');
@@ -175,8 +175,8 @@ function pageHtml() {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
-  <title>JO Credit OS | Built on WISE2</title>
-  <meta name="description" content="JO Credit OS is a live demo built from the brand board: credit, business, and life systems designed to help people take control." />
+  <title>Javon's Credit | WISE2 OS Demo</title>
+  <meta name="description" content="Javon's Credit is a live demo of his credit journey powered by WISE2 OS: a system for credit, business, and life." />
   <link rel="canonical" href="https://wise2.net/jo-credit-os" />
   <meta name="theme-color" content="#000000" />
   <style>
@@ -1518,8 +1518,8 @@ function pageHtml() {
   <div class="page">
     <header class="topbar">
       <div class="brand">
-        <span>JO CREDIT OS</span>
-        <span style="color: rgba(255,255,255,0.5);">Built on WISE2</span>
+        <span>JAVON'S CREDIT</span>
+        <span style="color: rgba(255,255,255,0.5);">Built on WISE2 OS</span>
       </div>
       <div class="status">Powered by Purpose</div>
     </header>
@@ -1544,9 +1544,9 @@ function pageHtml() {
             </div>
             <div class="primary-mark">
               <div class="wordmark">
-                <span class="blue">JO</span> <span class="white">CREDIT</span> <span class="gold">OS</span>
+                <span class="blue">JAVON'S</span> <span class="white">CREDIT</span> <span class="gold">OS</span>
               </div>
-              <div class="sub">Built on WISE2</div>
+              <div class="sub">Powered by WISE2 OS</div>
             </div>
             <div class="color-grid">
               <div class="swatch gold-swatch"><strong>Wealth Gold</strong><span>#D4AF37</span></div>
@@ -1563,7 +1563,7 @@ function pageHtml() {
               <div>
                 <div class="mission-title">Our Mission</div>
                 <div class="mission-copy">
-                  To empower people with the tools, knowledge, and strategies to take control of their credit and build generational wealth.
+                  To show Javon's credit journey through a system that gives him the tools, knowledge, and strategy to take control and build generational wealth.
                 </div>
               </div>
               <div>
@@ -1573,7 +1573,7 @@ function pageHtml() {
                 </div>
               </div>
               <div class="mission-tag">
-                <div class="badge" style="padding: 8px 10px;">JO</div>
+                <div class="badge" style="padding: 8px 10px;">JV</div>
                 <div>We do not dispute everything. We audit everything.</div>
               </div>
             </div>
@@ -1595,23 +1595,23 @@ function pageHtml() {
               <div class="hero-mark">
                 <div class="hero-shield"></div>
                 <div class="hero-wordmark">
-                  <div class="big"><span class="blue">JO</span> <span class="white">CREDIT</span> <span class="gold">OS</span></div>
-                  <div class="sub">Powered by Purpose</div>
+                  <div class="big"><span class="blue">JAVON'S</span> <span class="white">CREDIT</span> <span class="gold">OS</span></div>
+                  <div class="sub">Powered by WISE2 OS</div>
                 </div>
               </div>
-              <div class="hero-badge">Powered by WISE2</div>
+              <div class="hero-badge">Powered by WISE2 OS</div>
             </div>
             <div class="hero-copy">
               <div class="hero-words">
-                <div class="sub" style="text-transform:uppercase; letter-spacing:0.24em; color: var(--blue); font-size: 11px; font-weight: 800;">Built on WISE2</div>
+                <div class="sub" style="text-transform:uppercase; letter-spacing:0.24em; color: var(--blue); font-size: 11px; font-weight: 800;">Built on WISE2 OS</div>
                 <div class="headline">
                   <span class="white">Take Control</span><br />
-                  <span class="gold">of your credit.</span><br />
+                  <span class="gold">of Javon's credit.</span><br />
                   <span class="white">Build your future.</span><br />
                   <span class="blue">Change your life.</span>
                 </div>
                 <div class="blurb">
-                  JO Credit OS is more than credit repair. It is a system. A movement. A pathway to financial freedom.
+                  Javon's Credit is more than credit repair. It is a WISE2 OS system, a movement, and a pathway to financial freedom.
                 </div>
                 <div class="signature">Javon Oliver</div>
                 <div class="signature-label">Founder & Credit Strategist</div>
@@ -1620,9 +1620,9 @@ function pageHtml() {
                 <div class="hero-city"></div>
                 ${javon ? `<img class="hero-photo" src="${javon}" alt="Javon Oliver" />` : ''}
                 <div class="hero-overlay">
-                  <div class="small-title">Take control of your credit</div>
-                  <div class="copy">Build your future with a system designed to help you win.</div>
-                  <div class="blue-line">Change your life.</div>
+                  <div class="small-title">Javon's credit inside WISE2 OS</div>
+                  <div class="copy">Build his future with a system designed to help him win.</div>
+                  <div class="blue-line">Change his life.</div>
                 </div>
               </div>
             </div>
@@ -1630,10 +1630,10 @@ function pageHtml() {
 
           <section class="hero-bottom">
             <div class="dashboard" id="dashboard">
-              <div class="dashboard-title"><span class="num">4.</span> Client Dashboard Preview</div>
+              <div class="dashboard-title"><span class="num">4.</span> Javon's Credit Dashboard Preview</div>
               <div class="dashboard-body">
                 <div class="dash-nav">
-                  <div class="dash-logo"><span class="mini">JO</span><span>JO Credit OS</span></div>
+                  <div class="dash-logo"><span class="mini">JV</span><span>Javon's Credit OS</span></div>
                   <div class="nav-item active">Dashboard</div>
                   <div class="nav-item">Credit Overview</div>
                   <div class="nav-item">Disputes</div>
@@ -1718,8 +1718,8 @@ function pageHtml() {
           <div class="powered">
             <div class="shield">J</div>
             <div>
-              <div class="head">Powered by WISE2</div>
-              <div class="desc">The all-in-one credit & business operating system built to help you win.</div>
+              <div class="head">Powered by WISE2 OS</div>
+              <div class="desc">The all-in-one WISE2 OS for Javon's credit, business, and growth.</div>
             </div>
           </div>
           <div class="ops-row">
@@ -1731,11 +1731,11 @@ function pageHtml() {
         </section>
 
         <section class="section-card" id="results">
-          <div class="section-title right"><span class="num">7.</span> What Are We Building?</div>
+          <div class="section-title right"><span class="num">7.</span> What Is WISE2 Building?</div>
           <div class="build-grid">
             ${buildingMarkup}
           </div>
-          <div style="text-align:center; color: var(--blue); text-transform:uppercase; letter-spacing:0.18em; font-weight:800; font-size:12px;">You choose. We build.</div>
+          <div style="text-align:center; color: var(--blue); text-transform:uppercase; letter-spacing:0.18em; font-weight:800; font-size:12px;">Javon chooses. WISE2 builds.</div>
         </section>
 
         <section class="section-card">
@@ -1743,11 +1743,11 @@ function pageHtml() {
           <div class="results-inner">
             <div class="results-quote">
               <div class="label">Verified Client</div>
-              <div class="quote">JO Credit OS gave me the knowledge, the system, and the support I needed to go from stuck to unstoppable. Now I am living life on my terms.</div>
+              <div class="quote">WISE2 OS gave me the knowledge, the system, and the support I needed to go from stuck to unstoppable. Now I am living life on my terms.</div>
               <div class="stars">★★★★★</div>
             </div>
             <div class="results-portrait">
-              <div class="shadow-monogram">JO</div>
+              <div class="shadow-monogram">JV</div>
               ${javon ? `<img class="person" src="${javon}" alt="Javon Oliver portrait" />` : ''}
             </div>
           </div>
@@ -1762,15 +1762,15 @@ function pageHtml() {
         <div class="blue">Better You.</div>
       </div>
       <div class="footer-cell cta">
-        <div class="cta-title clickable" data-target="contact">Let's build your legacy.</div>
-        <div class="cta-sub clickable" data-target="contact">Schedule your <span class="blue">free</span> consultation today.</div>
+        <div class="cta-title clickable" data-target="contact">Let's build Javon's credit legacy.</div>
+        <div class="cta-sub clickable" data-target="contact">Schedule a <span class="blue">free</span> WISE2 OS consultation today.</div>
       </div>
       <div class="footer-cell brand">
-        <div class="brand-name">JO Credit OS</div>
-        <div class="brand-sub">Built on WISE2 · Powered by Purpose</div>
+        <div class="brand-name">Javon's Credit OS</div>
+        <div class="brand-sub">Built on WISE2 OS · Powered by Purpose</div>
       </div>
       <div class="footer-cell contact">
-        <div class="contact-link clickable" data-url="https://jocreditos.com">JOCREDITOS.COM</div>
+        <div class="contact-link clickable" data-target="contact">BOOK A WISE2 OS DEMO</div>
         <div class="contact-note">Follow the movement</div>
       </div>
     </section>
@@ -1833,10 +1833,6 @@ function pageHtml() {
         makeInteractive(item, () => scrollToHash('#' + item.getAttribute('data-target')));
       });
 
-      document.querySelectorAll('[data-url]').forEach((item) => {
-        makeInteractive(item, () => window.open(item.getAttribute('data-url'), '_blank', 'noopener,noreferrer'));
-      });
-
       document.querySelectorAll('.brand-name').forEach((item) => {
         makeInteractive(item, () => window.scrollTo({ top: 0, behavior: 'smooth' }));
       });
@@ -1893,5 +1889,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`JO Credit demo listening on :${PORT}`);
+  console.log(`Javon's Credit demo listening on :${PORT}`);
 });

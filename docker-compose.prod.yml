@@ -134,17 +134,22 @@ services:
   # WISE TOUCH // PROMPT SHOP™
   prompt-shop:
     build:
-      context: .
-      dockerfile: apps/prompt-shop/Dockerfile
+      context: ./apps/prompt-shop
+      dockerfile: Dockerfile
     container_name: wise2-prompt-shop
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3002
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+      DATABASE_URL: postgresql://wise2:wise2@postgres:5432/wise2_prod
     ports:
       - "127.0.0.1:3002:3002"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - api
     networks:
