@@ -47,18 +47,19 @@ export function ImpsGallery() {
             <button
               key={item.id}
               onClick={() => setSelectedIndex(idx)}
-              className="group relative aspect-square bg-black border border-blue-500/30 hover:border-blue-400/60 rounded-lg overflow-hidden cursor-pointer transition"
+              className="group relative aspect-square bg-black border border-blue-500/40 hover:border-blue-400/80 rounded-xl overflow-hidden cursor-pointer transition shadow-lg hover:shadow-blue-500/30"
             >
               <Image
                 src={item.image}
                 alt={item.title}
                 width={400}
                 height={400}
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 group-hover:to-black/40 transition" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 group-hover:text-blue-400 transition">
-                <p className="text-xs sm:text-sm font-bold text-center px-2 text-white group-hover:text-blue-400">{item.title}</p>
+              <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-black/70 group-hover:to-black/50 transition" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center space-y-2 opacity-0 group-hover:opacity-100 transition">
+                <p className="text-xs sm:text-sm font-bold text-center px-2 text-white drop-shadow-lg">{item.title}</p>
+                <p className="text-xs text-gray-300 text-center px-2 drop-shadow-md line-clamp-2">{item.description}</p>
               </div>
             </button>
           ))}
