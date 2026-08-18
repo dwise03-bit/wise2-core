@@ -70,6 +70,9 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+# Install sharp for Next.js image optimization
+RUN npm install -g sharp
+
 COPY --from=builder /app/apps/website/.next/standalone ./
 COPY --from=builder /app/apps/website/.next/static ./apps/website/.next/static
 COPY --from=builder /app/apps/website/public ./apps/website/public
