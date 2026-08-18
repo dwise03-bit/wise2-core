@@ -10,31 +10,34 @@ ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 
 COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
 COPY package.json ./
+COPY packages ./packages
 COPY apps/studio/package.json ./apps/studio/
 
 # Install dependencies using pnpm
 RUN pnpm install --frozen-lockfile
 
 COPY apps/studio ./apps/studio
-RUN pnpm --filter studio build
+RUN cd /app/apps/studio && npm run build
 
 # Production image
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install pnpm in production image
-RUN npm install -g pnpm@8
-
 COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
 COPY package.json ./
+COPY packages ./packages
 COPY apps/studio/package.json ./apps/studio/
 
 COPY --from=builder /app/apps/studio/.next ./apps/studio/.next
+COPY --from=builder /app/apps/studio/public ./apps/studio/public
 
-RUN pnpm install --frozen-lockfile --production
+# Install production dependencies
+RUN npm install -g pnpm@8 && pnpm install --frozen-lockfile --production
 
 EXPOSE 3005
 
-CMD ["pnpm", "--filter", "studio", "start", "--", "-p", "3005"]
+CMD ["node", "apps/studio/node_modules/.bin/next", "start", "-p", "3005"]
