@@ -5,6 +5,7 @@ import { validateEmail, validatePassword } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
 import { apiClient } from '@/lib/api-client';
 import { useStore } from '@/lib/useStore';
+import { devLogin } from '@/lib/auth-session';
 interface FormErrors {
   email?: string;
   password?: string;
@@ -264,6 +265,21 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-wise-subtle space-y-3">
+          {process.env.NODE_ENV !== 'production' && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  devLogin('Developer', 'dev@wise2.local');
+                }}
+                className="w-full py-2 bg-wise-surface hover:bg-wise-surface/80 border border-wise-primary text-wise-primary rounded-md transition-colors flex items-center justify-center gap-2 font-semibold"
+              >
+                <span>🚀</span>
+                Dev Login (Testing)
+              </button>
+              <div className="text-center text-xs text-wise-muted/60">or</div>
+            </>
+          )}
           <button
             type="button"
             onClick={() => {

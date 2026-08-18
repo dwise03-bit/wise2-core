@@ -43,6 +43,31 @@ function readAppState(): { auth?: { token?: string | null; user?: BrowserAuthUse
   return parseJson(localStorage.getItem('app-state'));
 }
 
+export function devLogin(name: string = 'Developer', email: string = 'developer@wise2.local') {
+  if (typeof window === 'undefined') return;
+
+  const userData = {
+    id: `dev_${Date.now()}`,
+    userId: `dev_${Date.now()}`,
+    email,
+    firstName: name.split(' ')[0],
+    lastName: name.split(' ').slice(1).join(' ') || 'User',
+    picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0055FF&color=fff`,
+    provider: 'dev',
+    verified: true,
+  };
+
+  const appState = {
+    auth: {
+      token: `dev_token_${Date.now()}`,
+      user: userData,
+    },
+  };
+
+  localStorage.setItem('app-state', JSON.stringify(appState));
+  window.location.href = '/sound-labs';
+}
+
 export function getBrowserAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
 
