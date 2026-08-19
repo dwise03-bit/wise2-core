@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  comfyui:
+    image: comfy/comfyui:latest
+    container_name: wise2-comfyui
+    restart: unless-stopped
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - comfyui-models:/root/.cache/huggingface/hub
+      - comfyui-outputs:/workspace/ComfyUI/output
+      - comfyui-temp:/workspace/ComfyUI/temp
+      - ./config/comfyui.conf:/workspace/ComfyUI/web/config.json:ro
+    ports:
+      - "8188:8188"
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8188/system_stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  visual-factory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wise2-visual-factory
+    restart: unless-stopped
+    depends_on:
+      comfyui:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - COMFYUI_URL=http://comfyui:8188
+      - PORT=8890
+      - API_KEY=${VISUAL_FACTORY_API_KEY:-change-me}
+      - LOG_LEVEL=info
+      - BRAND_DATA_PATH=/data/brands
+    volumes:
+      - ./data/brands:/data/brands
+      - ./logs:/app/logs
+      - visual-factory-cache:/app/cache
+    ports:
+      - "8890:8890"
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8890/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  comfyui-models:
+  comfyui-outputs:
+  comfyui-temp:
+  visual-factory-cache:
+
+networks:
+  wise2-network:
+    external: true
