@@ -23,6 +23,10 @@ RUN apk add --no-cache dumb-init curl
 
 COPY --from=builder /app/apps/dashboard/.next ./.next
 COPY --from=builder /app/apps/dashboard/public ./public
+# pnpm keeps dashboard dependencies as workspace symlinks. Preserve this
+# directory as well as the root store so the runtime Next.js executable and
+# its package links resolve inside the final image.
+COPY --from=builder /app/apps/dashboard/node_modules ./node_modules
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/apps/dashboard/package.json ./package.json
@@ -34,4 +38,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/ || exit 1
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "/app/node_modules/.bin/next", "start"]
+CMD ["node", "./node_modules/.bin/next", "start"]
