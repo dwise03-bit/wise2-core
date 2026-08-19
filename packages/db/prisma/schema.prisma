@@ -3953,3 +3953,90 @@ enum ConversionStatus {
   ACTIVATED // Demo promoted to live
   LOST // Abandoned
 }
+
+// ===== WISE² K10 IMP DEVICE TRACKING =====
+
+// K10Device: Track individual K10 devices
+model K10Device {
+  id              String   @id @default(cuid())
+  deviceId        String   @unique // "k10_001", "k10_002", etc.
+  deviceName      String?
+  macAddress      String?
+  firmwareVersion String?  @default("2.0")
+
+  // Status
+  lastSeen        DateTime @default(now())
+  wifiConnected   Boolean  @default(false)
+  batteryLevel    Int?
+  faceState       Int      @default(0) // 0-12 face expression enum
+
+  // Relationships
+  conversations   K10Conversation[]
+  stateHistory    K10StateHistory[]
+  analytics       K10Analytics[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deviceId])
+  @@index([lastSeen])
+}
+
+// K10Conversation: Log voice interactions
+model K10Conversation {
+  id              String   @id @default(cuid())
+  conversationId  String   @unique @default(cuid())
+  deviceId        String
+  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+
+  // ASR (Speech-to-Text)
+  userInput       String?
+  asrRecognized   String?
+  asrConfidence   Float?
+
+  // AI Response
+  aiResponse      String?
+
+  // TTS (Text-to-Speech)
+  ttsPlayed       Boolean  @default(false)
+  durationMs      Int?
+
+  // Metadata
+  timestamp       DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([timestamp])
+}
+
+// K10StateHistory: Track device state changes
+model K10StateHistory {
+  id              String   @id @default(cuid())
+  deviceId        String
+  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+
+  deviceState     Int      // 0-8: BOOTING, CONNECTING_WIFI, etc.
+  faceState       Int      // 0-12: face expression enum
+  faceExpression  String?  // "idle", "listening", "thinking", "speaking", etc.
+  wifiConnected   Boolean
+
+  timestamp       DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([timestamp])
+}
+
+// K10Analytics: Collect performance metrics
+model K10Analytics {
+  id              String   @id @default(cuid())
+  deviceId        String
+  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+
+  metricName      String   // "listening_duration", "response_latency", "tts_quality", etc.
+  metricValue     Float
+  unit            String?  // "ms", "seconds", "%", "words/min", etc.
+
+  timestamp       DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([timestamp])
+}

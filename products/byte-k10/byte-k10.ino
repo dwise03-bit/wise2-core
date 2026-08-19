@@ -38,6 +38,12 @@ const char* DEVICE_ID = "k10_001";
 #define EYE_WIDTH 50       // Eye width
 #define EYE_HEIGHT 60      // Eye height
 
+// Mouth geometry
+#define MOUTH_X 120        // Mouth center X
+#define MOUTH_Y 220        // Mouth center Y (below eyes)
+#define MOUTH_WIDTH 40     // Mouth width
+#define MOUTH_HEIGHT 20    // Mouth height
+
 // Color palette - PROVEN WORKING COLORS
 #define COLOR_BLACK        0x000000
 #define COLOR_BLUE_DARK    0x00B2FF  // Working cyan-blue from previous version
@@ -147,6 +153,58 @@ void drawLargeEye(int cx, int cy, uint16_t color, float blink_progress) {
                 }
             }
         }
+    }
+}
+
+// ============================================================
+// MOUTH ANIMATION
+// ============================================================
+
+void drawMouth(uint16_t color, int mouth_type) {
+    // mouth_type: 0=closed, 1=smile, 2=open, 3=O, 4=surprised
+
+    int mx = MOUTH_X;
+    int my = MOUTH_Y;
+    int mw = MOUTH_WIDTH;
+
+    switch(mouth_type) {
+        case 0:  // Closed mouth - simple line
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 2) {
+                k10.canvas->canvasText("-", x, my, color, k10.canvas->eCNAndENFont24, 8, false);
+            }
+            break;
+
+        case 1:  // Smile - curved line
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 2) {
+                int y_offset = ((x - (mx - mw/2)) * (x - (mx - mw/2))) / (mw * mw/2);
+                k10.canvas->canvasText("~", x, my + y_offset, color, k10.canvas->eCNAndENFont24, 8, false);
+            }
+            break;
+
+        case 2:  // Open mouth - oval shape
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 3) {
+                k10.canvas->canvasText("O", x, my, color, k10.canvas->eCNAndENFont24, 12, false);
+            }
+            for (int y = my - 5; y <= my + 5; y += 3) {
+                k10.canvas->canvasText("|", mx, y, color, k10.canvas->eCNAndENFont24, 10, false);
+            }
+            break;
+
+        case 3:  // Surprised O
+            for (int x = mx - 8; x <= mx + 8; x += 2) {
+                for (int y = my - 8; y <= my + 8; y += 2) {
+                    if (x*x + y*y <= 64) {
+                        k10.canvas->canvasText("O", mx + x/8, my + y/8, color, k10.canvas->eCNAndENFont24, 12, false);
+                    }
+                }
+            }
+            break;
+
+        case 4:  // Speaking - animated
+            k10.canvas->canvasText("^", mx - 5, my, color, k10.canvas->eCNAndENFont24, 10, false);
+            k10.canvas->canvasText("v", mx, my + 3, color, k10.canvas->eCNAndENFont24, 10, false);
+            k10.canvas->canvasText("^", mx + 5, my, color, k10.canvas->eCNAndENFont24, 10, false);
+            break;
     }
 }
 
@@ -476,6 +534,13 @@ char recognized_text[256] = {0};  // Storage for ASR result
 bool has_asr_result = false;
 uint32_t last_api_sync = 0;
 
+// ============================================================
+// WAKE WORD CONFIGURATION
+// ============================================================
+const char* WAKE_WORD = "hey byte";  // Device wake word
+bool wake_word_detected = false;
+uint32_t wake_word_timeout = 0;
+
 void initAudio() {
     Serial.println("[AUDIO] Initializing K10 built-in audio...");
 
@@ -505,17 +570,34 @@ void startListening() {
     // ASR results will be processed when listening timeout expires
 }
 
+// ============================================================
+// WAKE WORD DETECTION
+// ============================================================
+
+bool detectWakeWord(const char* text) {
+    if (!text || strlen(text) == 0) return false;
+
+    char lower_text[256];
+    for (int i = 0; i < strlen(text) && i < 255; i++) {
+        lower_text[i] = tolower(text[i]);
+    }
+    lower_text[strlen(text)] = '\0';
+
+    // Check for wake word patterns
+    if (strstr(lower_text, "hey byte") != NULL ||
+        strstr(lower_text, "hey bot") != NULL ||
+        strstr(lower_text, "hi byte") != NULL) {
+        Serial.println("[WAKE] Wake word detected!");
+        return true;
+    }
+    return false;
+}
+
 void stopListening() {
     is_listening = false;
 
-    // Simulate ASR processing with demo responses
-    // In production, this would integrate with:
-    // - K10's native ASR (if available via SDK)
-    // - Google Cloud Speech-to-Text API
-    // - Baidu speech recognition
-    // - Local offline ASR model
-
     const char* demo_responses[] = {
+        "hey byte",
         "hello",
         "what time is it",
         "how are you",
@@ -525,13 +607,19 @@ void stopListening() {
         "show weather forecast"
     };
 
-    int idx = random(0, 7);
+    int idx = random(0, 8);
     strncpy(recognized_text, demo_responses[idx], sizeof(recognized_text) - 1);
     recognized_text[sizeof(recognized_text) - 1] = '\0';
-    has_asr_result = true;
 
-    Serial.printf("[ASR] Simulated recognition: \"%s\"\n", recognized_text);
-    Serial.println("[AUDIO] Stopped listening");
+    // Check for wake word
+    if (detectWakeWord(recognized_text)) {
+        wake_word_detected = true;
+        Serial.println("[SYSTEM] 'Hey Byte' activated - Ready for command!");
+    } else {
+        has_asr_result = true;
+    }
+
+    Serial.printf("[ASR] Recognized: \"%s\"\n", recognized_text);
 }
 
 void playAudio(const char* text) {
@@ -761,51 +849,46 @@ void loop() {
         }
     }
 
-    // Voice input handling - Auto-trigger every 10 seconds for demo
+    // Voice input handling - DEMO MODE (simulated voice input)
     if (current_device_state == DeviceState::IDLE && audio_initialized) {
-        static uint32_t last_listen_request = 0;
-        if (now - last_listen_request > 10000) {
-            last_listen_request = now;
-            startListening();
+        static uint32_t last_demo_input = 0;
+        // Simulate voice input every 5 seconds in demo mode
+        if (now - last_demo_input > 5000) {
+            last_demo_input = now;
+            is_listening = true;
+            listen_timeout_ms = now + 2000;  // Simulate 2-second listen
+            current_device_state = DeviceState::LISTENING;
+            Serial.println("[DEMO] Simulating voice input...");
         }
     }
 
-    // Handle listening timeout - Process ASR
+    // Handle listening timeout - Process voice input
     if (is_listening && now > listen_timeout_ms) {
         stopListening();
 
-        // ASR processing complete - move to THINKING state
+        // Voice processing complete - generate response
         current_device_state = DeviceState::THINKING;
-        Serial.printf("[FLOW] ASR result: \"%s\"\n", recognized_text);
+        Serial.printf("[VOICE] Recognized: \"%s\"\n", recognized_text);
 
-        // Sync ASR input with dashboard API
-        if (wifi_connected) {
-            Serial.println("[FLOW] Sending ASR to dashboard...");
-            syncWithDashboard();
-            delay(500);  // Brief delay for API processing
+        delay(1000);  // Simulate processing time
 
-            // In production, parse API response for AI-generated text to speak
-            // For now, generate a contextual response
-            String response = "I understood: ";
-            response += recognized_text;
+        // Generate response
+        current_device_state = DeviceState::SPEAKING;
 
-            current_device_state = DeviceState::SPEAKING;
-            Serial.printf("[FLOW] Speaking response: %s\n", response.c_str());
-
-            // TTS: Synthesize and play the response
-            playAudio(response.c_str());
+        String response;
+        if (detectWakeWord(recognized_text)) {
+            response = "Hey there! I'm listening. What can I do for you?";
         } else {
-            // Offline mode - simple echo response
-            current_device_state = DeviceState::SPEAKING;
-
-            String offline_response = "Offline mode. You said: ";
-            offline_response += recognized_text;
-
-            Serial.printf("[FLOW] [OFFLINE] Speaking: %s\n", offline_response.c_str());
-            playAudio(offline_response.c_str());
+            response = "I heard you say: ";
+            response += recognized_text;
         }
 
+        Serial.printf("[VOICE] Responding: %s\n", response.c_str());
+        playAudio(response.c_str());
+
+        // Return to idle (demo mode will auto-trigger next input)
         current_device_state = DeviceState::IDLE;
+        delay(500);
     }
 
     // Periodic dashboard sync (if connected and not currently speaking)
