@@ -61,6 +61,10 @@ ENV NEXT_PUBLIC_DISCORD_CLIENT_ID=$NEXT_PUBLIC_DISCORD_CLIENT_ID
 ARG NEXT_PUBLIC_DISCORD_REDIRECT_URI
 ENV NEXT_PUBLIC_DISCORD_REDIRECT_URI=$NEXT_PUBLIC_DISCORD_REDIRECT_URI
 
+# Force fresh build on each docker build (prevents caching stale builds)
+ARG CACHE_BUST=none
+ENV CACHE_BUST=$CACHE_BUST
+
 RUN pnpm --filter @wise2/website build
 
 # Production image
