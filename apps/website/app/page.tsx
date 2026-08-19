@@ -237,6 +237,72 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.38em] text-[#B36BFF]">
+            Featured product
+          </p>
+          <h2 className="mt-3 text-3xl font-black uppercase tracking-[0.08em] text-white sm:text-4xl">
+            WISE² IMPS BYTE MINI
+          </h2>
+        </div>
+
+        <article className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-8 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C7FF2E]">
+                Edge AI Device
+              </p>
+              <h3 className="mt-4 text-3xl font-black uppercase tracking-[0.08em] text-white">
+                Physical AI Companion
+              </h3>
+              <p className="mt-6 text-base leading-8 text-[#B7BDC8]">
+                BYTE MINI 4.0 brings local edge computing to your fingertips. ESP32-C5 processor, 4" touchscreen, voice interaction, and offline-capable AI—everything you need to build, customize, and own your AI companion.
+              </p>
+
+              <ul className="mt-6 space-y-3 text-sm text-[#B7BDC8]">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 inline-flex h-2 w-2 rounded-full bg-[#C7FF2E] flex-shrink-0" />
+                  <span>ESP32-C5 edge processor for local AI</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 inline-flex h-2 w-2 rounded-full bg-[#C7FF2E] flex-shrink-0" />
+                  <span>4" touchscreen display with voice interaction</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 inline-flex h-2 w-2 rounded-full bg-[#C7FF2E] flex-shrink-0" />
+                  <span>Runs offline—no cloud dependency</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1.5 inline-flex h-2 w-2 rounded-full bg-[#C7FF2E] flex-shrink-0" />
+                  <span>Open ecosystem for builders and makers</span>
+                </li>
+              </ul>
+
+              <Link
+                href="/products/imps"
+                className="mt-8 inline-flex items-center justify-center rounded-full border border-[#C7FF2E]/40 bg-[#C7FF2E] px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-black transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(199,255,46,0.35)]"
+              >
+                Explore IMPS
+              </Link>
+            </div>
+
+            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-black">
+              <div className="aspect-square bg-gradient-to-br from-[#C7FF2E]/20 to-[#B36BFF]/20 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-sm uppercase tracking-[0.2em] text-[#9BA3B1]">
+                    BYTE MINI 4.0
+                  </p>
+                  <p className="mt-2 text-lg font-bold text-white">
+                    Edge AI Device
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(199,255,46,0.12),rgba(179,107,255,0.12),rgba(255,255,255,0.03))] p-8 sm:p-10 lg:p-12">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
