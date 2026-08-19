@@ -82,7 +82,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      PORT: 3001
+      PORT: 3000
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
@@ -98,7 +98,7 @@ services:
       OLLAMA_GRAPHICS_MODEL: ${OLLAMA_GRAPHICS_MODEL:-mistral:latest}
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
     ports:
-      - "127.0.0.1:3000:3001"
+      - "127.0.0.1:3000:3000"
     volumes:
       - graphics_data:/app/data/graphics
     depends_on:
@@ -106,7 +106,7 @@ services:
     networks:
       - wise2
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3001/', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
