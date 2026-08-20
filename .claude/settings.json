@@ -1,0 +1,84 @@
+{
+  "$schema": "https://claude.ai/claude-code-settings-schema.json",
+  "model": "claude-opus-5",
+  "description": "WISE² AI Engineering Command Center",
+  "enabled": true,
+  "permissions": {
+    "global": [
+      "read:all",
+      "write:codebase",
+      "bash:safe",
+      "bash:restricted"
+    ]
+  },
+  "hooks": {
+    "beforeBuild": {
+      "description": "Verify build preconditions",
+      "command": "bash .claude/scripts/verify-build.sh"
+    },
+    "beforeDeploy": {
+      "description": "Pre-deployment checks",
+      "command": "bash .claude/scripts/pre-deploy-check.sh"
+    },
+    "afterDeploy": {
+      "description": "Post-deployment verification",
+      "command": "bash .claude/scripts/verify-production.sh"
+    }
+  },
+  "agents": {
+    "active": [
+      "orchestrator",
+      "architect",
+      "frontend",
+      "backend",
+      "database",
+      "devops",
+      "qa",
+      "security"
+    ],
+    "routing": {
+      "build": "backend",
+      "fix": "debugger",
+      "deploy": "devops",
+      "test": "qa",
+      "ui": "frontend",
+      "api": "backend",
+      "db": "database",
+      "security": "security",
+      "audit": "architect"
+    }
+  },
+  "skills": [
+    "run-wise2-core",
+    "deploy",
+    "verify-production",
+    "health-check"
+  ],
+  "environment": {
+    "NODE_ENV": "development",
+    "NODE_VERSION": "20.0.0"
+  },
+  "development": {
+    "linting": true,
+    "typeChecking": true,
+    "testOnChange": true,
+    "watchMode": true
+  },
+  "deployment": {
+    "autoVerify": true,
+    "healthCheckInterval": 30,
+    "rollbackOnFailure": true,
+    "dryRun": false
+  },
+  "documentation": {
+    "updateOnChange": true,
+    "validateLinks": true,
+    "keepArchive": true
+  },
+  "safety": {
+    "requireVerificationBeforeClaim": true,
+    "noFakeConfiguration": true,
+    "secretsProtection": true,
+    "productionProtection": true
+  }
+}
