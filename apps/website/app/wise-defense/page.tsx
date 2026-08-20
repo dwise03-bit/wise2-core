@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X, CheckCircle2 } from 'lucide-react';
+import { wiseDefenseInstructors } from '@/data/wise2-content';
 
 export default function WiseDefenseLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -245,6 +246,82 @@ export default function WiseDefenseLanding() {
                 <p className="text-gray-500 text-sm font-black tracking-wider">FOUNDER / CEO</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Instructors Section */}
+      <section className="py-16 lg:py-20 border-t border-red-600/20 bg-black">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="mb-12">
+            <h2 className="text-5xl lg:text-6xl font-black mb-4">
+              OUR INSTRUCTORS
+            </h2>
+            <p className="text-xl text-red-600 font-bold tracking-wide">
+              CERTIFIED PROFESSIONALS DEDICATED TO YOUR SUCCESS
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Instructor Profile */}
+            {wiseDefenseInstructors.filter(i => i.featured).map((instructor) => (
+              <div key={instructor.id} className="space-y-8">
+                {/* Main Image */}
+                <div className="relative rounded-lg overflow-hidden border-2 border-red-600/30 h-96 lg:h-[500px]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                  <img
+                    src={instructor.image}
+                    alt={instructor.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <p className="text-red-600 text-xs font-black tracking-widest mb-2 uppercase">{instructor.role}</p>
+                    <h3 className="text-3xl lg:text-4xl font-black text-white">{instructor.name}</h3>
+                  </div>
+                </div>
+
+                {/* Secondary Image */}
+                <div className="relative rounded-lg overflow-hidden border-2 border-red-600/30 h-64 lg:h-80">
+                  <img
+                    src={instructor.actionImage}
+                    alt={`${instructor.name} in action`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            ))}
+
+            {/* Instructor Details */}
+            {wiseDefenseInstructors.filter(i => i.featured).map((instructor) => (
+              <div key={`details-${instructor.id}`} className="space-y-8">
+                <div>
+                  <h3 className="text-2xl font-black mb-4 text-red-600">CREDENTIALS</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                    {instructor.bio}
+                  </p>
+                  <p className="text-xs font-black text-gray-500 tracking-widest mb-6 uppercase">Specializations</p>
+                  <div className="space-y-3">
+                    {instructor.specialties.map((specialty, idx) => (
+                      <div key={idx} className="flex items-center gap-3 pb-3 border-b border-red-600/20">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0" />
+                        <span className="text-white font-semibold">{specialty}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-red-600/20 pt-8">
+                  <h3 className="text-2xl font-black mb-6 text-red-600">TRAINING FOCUS</h3>
+                  <p className="text-gray-400 leading-relaxed mb-8">
+                    With a passion for excellence and a commitment to safety, {instructor.name.toLowerCase()} brings years of professional expertise to every training session. Whether you're a beginner or advanced, we'll meet you where you are and elevate your skills.
+                  </p>
+                  <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
+                    BOOK TRAINING SESSION
+                    <span>→</span>
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

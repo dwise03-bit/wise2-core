@@ -309,6 +309,20 @@ export const projectFormFields = {
   ],
 };
 
+export const wiseDefenseInstructors = [
+  {
+    id: 'lead-instructor',
+    name: 'Master Trainer',
+    title: 'Chief Tactical Instructor',
+    role: 'Lead Instructor',
+    bio: 'Certified tactical firearms instructor with extensive professional training and real-world expertise. Dedicated to empowering individuals and communities through comprehensive safety education and advanced tactical training protocols.',
+    specialties: ['Tactical Firearms Training', 'Advanced Marksmanship', 'Safety Protocols', 'Professional Development'],
+    image: '/wise-defense/instructors/IMG_1573.jpeg',
+    actionImage: '/wise-defense/instructors/AC400CE5-BD5C-4598-B24B-B1820CB8ACC2_1_105_c.jpeg',
+    featured: true,
+  },
+];
+
 export const wise2Content = {
   serviceOptions,
   budgetOptions,
