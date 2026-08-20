@@ -3,6 +3,7 @@ import express, { Express, Request, Response } from 'express';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { EdgeRuntime, EdgeRuntimeConfig } from './EdgeRuntime';
+import { WiseDefenseHardware } from './WiseDefenseHardware';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ const WIREGUARD_CONFIG_PATH =
 
 let runtime: EdgeRuntime | null = null;
 let app: Express | null = null;
+const wiseDefenseHardware = new WiseDefenseHardware();
 
 async function initializeRuntime(): Promise<void> {
   const config: EdgeRuntimeConfig = {
@@ -62,6 +64,22 @@ function setupWebServer(): void {
   app.get('/status', (req: Request, res: Response) => {
     const status = runtime!.getStatus();
     res.json(status);
+  });
+
+  // Read-only commissioning surface for the Heltec V3 / SDR deployment.
+  // It deliberately reports configured/detected/missing states and never
+  // causes a radio transmission or starts SDR capture.
+  app.get('/wise-defense/hardware', async (_req: Request, res: Response) => {
+    try {
+      res.json(await wiseDefenseHardware.status());
+    } catch {
+      res.status(503).json({
+        enabled: process.env.WISE_DEFENSE_GATEWAY_ENABLED === 'true',
+        meshtastic: { state: 'DETECTED_NOT_CONFIGURED' },
+        sdr: { state: 'DETECTED_NOT_CONFIGURED' },
+        cloud: { state: 'DETECTED_NOT_CONFIGURED' },
+      });
+    }
   });
 
   // Commands endpoint

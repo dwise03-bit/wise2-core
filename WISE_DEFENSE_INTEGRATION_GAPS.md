@@ -32,6 +32,8 @@ Secret policy: values were never printed, copied, or added to this report.
 - Checked the production database for existing Wise Defense tenant/operator records before considering any insert. None exist.
 - Checked the deployed API route and health endpoint before enabling the module. The current production API does not contain the route.
 - Preserved the dashboard's honest `NOT CONFIGURED` / `UNKNOWN` behavior. No fake incident, node, radio, SDR, operator, or location was created.
+- Added the edge appliance `/wise-defense/hardware` read-only commissioning endpoint. It reports real gateway, Heltec/Meshtastic, and RTL-SDR discovery states without transmitting, recording, or guessing device identity.
+- Added a Pi/K10 deployment overlay, documented real-only environment variables, and installed SDR diagnostic tools in the edge image. The overlay is inactive until explicitly applied on the physical edge host.
 
 ## Required deployment reconciliation
 
@@ -69,6 +71,8 @@ No automatic production migration was run because these are schema-creating, ten
 
 1. Resolve the production schema/API deployment reconciliation.
 2. Create the real Wise Defense tenant and owner membership.
-3. Add approved provider credentials and hardware endpoints.
-4. Enable each integration independently only after its health test is green.
-5. Record final state as `ACTIVE`, `DETECTED_NOT_CONFIGURED`, `MISSING_CREDENTIAL`, `MISSING_HARDWARE`, or `DISABLED`—never inferred as online.
+3. On the K10 edge host, attach the Heltec V3 and set its resolved `/dev/serial/by-id/...` path in the edge `.env`.
+4. On the Pi edge host, attach the SDR, apply `docker-compose.wise-defense.yml`, and inspect `/wise-defense/hardware`.
+5. Add approved provider credentials and hardware endpoints.
+6. Enable each integration independently only after its health test is green.
+7. Record final state as `ACTIVE`, `DETECTED_NOT_CONFIGURED`, `MISSING_CREDENTIAL`, `MISSING_HARDWARE`, or `DISABLED`—never inferred as online.

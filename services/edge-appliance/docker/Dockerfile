@@ -47,6 +47,10 @@ RUN apt-get update && apt-get install -y \
     wireguard-tools \
     # Monitoring
     procps \
+    # Read-only SDR discovery / diagnostics
+    rtl-sdr \
+    soapysdr-tools \
+    usbutils \
     # Utilities
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
