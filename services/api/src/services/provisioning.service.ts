@@ -17,6 +17,13 @@ interface ProvisioningContext {
   demoMode?: boolean;
 }
 
+interface ProvisioningMetadata {
+  userId: string;
+  businessName: string;
+  industry: string;
+  stripeCustomerId: string;
+}
+
 export class ProvisioningService {
   /**
    * Start provisioning a new tenant after successful payment
@@ -25,6 +32,7 @@ export class ProvisioningService {
     logger.info('Starting tenant provisioning', {
       tenantId: context.tenantId,
       industry: context.industry,
+      userId: context.userId,
     });
 
     try {
@@ -45,6 +53,24 @@ export class ProvisioningService {
           stripeCustomerId: context.stripeCustomerId,
           stripeSubscriptionId: context.stripeSubscriptionId,
           state: 'PAYMENT_PENDING',
+        },
+      });
+
+      // Create OWNER membership immediately (idempotent)
+      await db.tenantMembership.upsert({
+        where: {
+          tenantId_userId: {
+            tenantId: context.tenantId,
+            userId: context.userId,
+          },
+        },
+        create: {
+          tenantId: context.tenantId,
+          userId: context.userId,
+          role: 'OWNER',
+        },
+        update: {
+          role: 'OWNER', // Ensure it's OWNER if already exists
         },
       });
 
@@ -239,13 +265,17 @@ export class ProvisioningService {
 
   private async stepCreateMembership(tenantId: string): Promise<void> {
     logger.info('Step: CREATE_MEMBERSHIP', { tenantId });
-    // Owner membership should be created by payment handler
-    const membership = await db.tenantMembership.findFirst({
+
+    // Verify OWNER membership exists (created during startProvisioning)
+    const ownerMembership = await db.tenantMembership.findFirst({
       where: { tenantId, role: 'OWNER' },
     });
-    if (!membership) {
-      logger.warn('No OWNER membership found', { tenantId });
+
+    if (!ownerMembership) {
+      throw new Error(`No OWNER membership found for tenant ${tenantId}. Call startProvisioning first.`);
     }
+
+    logger.info('OWNER membership verified', { tenantId, userId: ownerMembership.userId });
   }
 
   private async stepInitializeDatabase(tenantId: string): Promise<void> {
@@ -264,47 +294,322 @@ export class ProvisioningService {
     if (!tenant) {
       throw new Error(`Tenant ${tenantId} not found`);
     }
-    // TODO: Load industry template based on tenant.vertical
-    // This will create default pipeline stages, services, etc.
+
+    // Load industry-specific template based on tenant.vertical
+    const templateData = this.getIndustryTemplate(tenant.vertical);
+
+    logger.info('Loading industry template', {
+      tenantId,
+      industry: tenant.vertical,
+      services: templateData.services.length,
+    });
+
+    // Create service catalog items for this tenant
+    for (const service of templateData.services) {
+      await db.serviceCatalogItem.upsert({
+        where: {
+          tenantId_name: {
+            tenantId,
+            name: service.name,
+          },
+        },
+        create: {
+          tenantId,
+          name: service.name,
+          description: service.description,
+          basePrice: service.basePrice,
+          category: service.category,
+        },
+        update: {
+          description: service.description,
+          basePrice: service.basePrice,
+        },
+      });
+    }
+
+    logger.info('Industry template loaded', { tenantId, serviceCount: templateData.services.length });
+  }
+
+  /**
+   * Get industry template data based on vertical
+   */
+  private getIndustryTemplate(industry: string): any {
+    const templates: Record<string, any> = {
+      hvac: {
+        services: [
+          {
+            name: 'Maintenance',
+            description: 'Regular HVAC system maintenance',
+            basePrice: 150,
+            category: 'maintenance',
+          },
+          {
+            name: 'Repair',
+            description: 'HVAC system repair',
+            basePrice: 200,
+            category: 'repair',
+          },
+          {
+            name: 'Installation',
+            description: 'New HVAC system installation',
+            basePrice: 3000,
+            category: 'installation',
+          },
+          {
+            name: 'Replacement',
+            description: 'Full HVAC system replacement',
+            basePrice: 5000,
+            category: 'replacement',
+          },
+        ],
+      },
+      pressure_washing: {
+        services: [
+          {
+            name: 'Residential Washing',
+            description: 'House exterior and deck cleaning',
+            basePrice: 300,
+            category: 'residential',
+          },
+          {
+            name: 'Commercial Washing',
+            description: 'Commercial building cleaning',
+            basePrice: 500,
+            category: 'commercial',
+          },
+          {
+            name: 'Driveway Cleaning',
+            description: 'Driveway and parking lot pressure washing',
+            basePrice: 250,
+            category: 'driveway',
+          },
+          {
+            name: 'Roof Cleaning',
+            description: 'Roof and gutter cleaning',
+            basePrice: 400,
+            category: 'roof',
+          },
+        ],
+      },
+      plumbing: {
+        services: [
+          {
+            name: 'Inspection',
+            description: 'Plumbing system inspection',
+            basePrice: 100,
+            category: 'inspection',
+          },
+          {
+            name: 'Repair',
+            description: 'Plumbing repair and fixture replacement',
+            basePrice: 150,
+            category: 'repair',
+          },
+          {
+            name: 'Installation',
+            description: 'New plumbing installation',
+            basePrice: 500,
+            category: 'installation',
+          },
+          {
+            name: 'Emergency Service',
+            description: '24/7 emergency plumbing service',
+            basePrice: 300,
+            category: 'emergency',
+          },
+        ],
+      },
+      generic: {
+        services: [
+          {
+            name: 'Consultation',
+            description: 'Initial consultation',
+            basePrice: 100,
+            category: 'consultation',
+          },
+          {
+            name: 'Service',
+            description: 'Standard service',
+            basePrice: 200,
+            category: 'service',
+          },
+          {
+            name: 'Premium Service',
+            description: 'Premium service package',
+            basePrice: 500,
+            category: 'premium',
+          },
+        ],
+      },
+    };
+
+    return templates[industry] || templates.generic;
   }
 
   private async stepCreatePipeline(tenantId: string): Promise<void> {
     logger.info('Step: CREATE_PIPELINE', { tenantId });
-    // Pipeline stages are created via industry template
-    // Verify they exist
+
+    // Pipeline stages are defined in LeadStatus enum and managed by application
+    // Verify service catalog items were created (from template)
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
     if (!tenant) {
       throw new Error(`Tenant ${tenantId} not found`);
     }
+
+    const serviceCount = await db.serviceCatalogItem.count({
+      where: { tenantId },
+    });
+
+    if (serviceCount === 0) {
+      throw new Error(`No service catalog items found. Template may not have loaded.`);
+    }
+
+    logger.info('Pipeline verified', { tenantId, serviceCount });
   }
 
   private async stepCreateWorkflows(tenantId: string): Promise<void> {
     logger.info('Step: CREATE_WORKFLOWS', { tenantId });
-    // Create default workflows (e.g., lead scoring, follow-up reminders)
-    // TODO: Implement default workflow creation
-  }
 
-  private async stepInitializeHermes(tenantId: string): Promise<void> {
-    logger.info('Step: INITIALIZE_HERMES', { tenantId });
-    // Initialize Hermes agent configuration for this tenant
-    // TODO: Create default agent configs (RECEPTIONIST, SPEED_TO_LEAD, etc.)
-  }
-
-  private async stepProvisionDiscord(tenantId: string): Promise<void> {
-    logger.info('Step: PROVISION_DISCORD', { tenantId });
-    // Create Discord channels and roles for this tenant
-    // TODO: Implement Discord workspace provisioning
-  }
-
-  private async stepStartOnboarding(tenantId: string): Promise<void> {
-    logger.info('Step: START_ONBOARDING', { tenantId });
     const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
     if (!tenant) {
       throw new Error(`Tenant ${tenantId} not found`);
     }
 
-    // Send welcome message to Discord
-    // TODO: Send onboarding Discord message
+    // Create default workflows
+    const workflows = [
+      {
+        name: 'lead-scoring',
+        description: 'Automatically score and qualify leads',
+        trigger: 'lead.created',
+      },
+      {
+        name: 'follow-up-reminders',
+        description: 'Send follow-up reminders for open estimates',
+        trigger: 'estimate.sent',
+      },
+      {
+        name: 'job-completion',
+        description: 'Create invoice and request review after job completion',
+        trigger: 'job.completed',
+      },
+    ];
+
+    for (const workflow of workflows) {
+      await db.workflowDefinition.upsert({
+        where: {
+          tenantId_name: {
+            tenantId,
+            name: workflow.name,
+          },
+        },
+        create: {
+          tenantId,
+          name: workflow.name,
+          description: workflow.description,
+          trigger: workflow.trigger,
+          enabled: true,
+        },
+        update: {
+          description: workflow.description,
+          enabled: true,
+        },
+      });
+    }
+
+    logger.info('Workflows created', { tenantId, workflowCount: workflows.length });
+  }
+
+  private async stepInitializeHermes(tenantId: string): Promise<void> {
+    logger.info('Step: INITIALIZE_HERMES', { tenantId });
+
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) {
+      throw new Error(`Tenant ${tenantId} not found`);
+    }
+
+    // Create default agent configs
+    const agents = [
+      {
+        name: 'RECEPTIONIST',
+        description: 'Customer-facing AI receptionist',
+        role: 'receptionist',
+      },
+      {
+        name: 'SPEED_TO_LEAD',
+        description: 'Fast lead qualification and response',
+        role: 'lead_qualifier',
+      },
+      {
+        name: 'AI_ADVISOR',
+        description: 'Business insights and recommendations',
+        role: 'advisor',
+      },
+    ];
+
+    for (const agent of agents) {
+      await db.agentConfig.upsert({
+        where: {
+          tenantId_name: {
+            tenantId,
+            name: agent.name,
+          },
+        },
+        create: {
+          tenantId,
+          name: agent.name,
+          description: agent.description,
+          role: agent.role,
+          enabled: true,
+        },
+        update: {
+          enabled: true,
+        },
+      });
+    }
+
+    logger.info('Hermes agents initialized', { tenantId, agentCount: agents.length });
+  }
+
+  private async stepProvisionDiscord(tenantId: string): Promise<void> {
+    logger.info('Step: PROVISION_DISCORD', { tenantId });
+
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) {
+      throw new Error(`Tenant ${tenantId} not found`);
+    }
+
+    // Discord provisioning is handled by Discord bot service
+    // This step is a placeholder for webhook-based Discord setup
+    // In production, this would:
+    // 1. Call Discord API to create guild/channels
+    // 2. Set up roles and permissions
+    // 3. Store discordGuildId on tenant
+
+    // For now, just log that provisioning is ready
+    logger.info('Discord provisioning ready', {
+      tenantId,
+      note: 'Discord bot will handle workspace creation on first connection',
+    });
+  }
+
+  private async stepStartOnboarding(tenantId: string): Promise<void> {
+    logger.info('Step: START_ONBOARDING', { tenantId });
+
+    const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
+    if (!tenant) {
+      throw new Error(`Tenant ${tenantId} not found`);
+    }
+
+    // Update onboarding progress
+    await db.tenant.update({
+      where: { id: tenantId },
+      data: {
+        onboardingStep: 1,
+      },
+    });
+
+    // Onboarding Discord messages will be sent by bot when user joins Discord workspace
+    logger.info('Onboarding initialized', { tenantId, onboardingStep: 1 });
   }
 
   private async stepActivate(tenantId: string): Promise<void> {
