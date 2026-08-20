@@ -38,10 +38,15 @@ SDR_ENABLED=true
 SDR_DEVICE_TYPE=rtl-sdr
 ```
 
-Start the edge overlay:
+Start this on the physical edge host, not on the WISE² dashboard host or a
+development Mac. The generic stack works without Raspberry Pi device bindings;
+the Pi overlay is required only for the Pi-attached SDR and GPIO integrations:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.wise-defense.yml up -d
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.pi-hardware.yml \
+  -f docker-compose.wise-defense.yml up -d --build
 ```
 
 Validate without transmitting or capturing communications:
@@ -50,4 +55,12 @@ Validate without transmitting or capturing communications:
 curl http://localhost:3000/wise-defense/hardware
 ```
 
-Expected states are `ACTIVE`, `DETECTED_NOT_CONFIGURED`, `MISSING_CREDENTIAL`, `MISSING_HARDWARE`, or `DISABLED`. Do not mark a component operational until gateway enrollment and end-to-end health checks are complete.
+If that command reports connection refused, the edge runtime is not running yet;
+inspect it on the edge host with `docker compose logs edge-runtime`. It is not a
+public website route, so it will not render through `wisedefensellc.com`.
+
+Expected states are `ACTIVE`, `DETECTED_NOT_CONFIGURED`, `MISSING_CREDENTIAL`,
+`MISSING_HARDWARE`, or `DISABLED`. At the current implementation stage,
+connected hardware correctly reports `DETECTED_NOT_CONFIGURED` until the
+gateway is registered with the deployed Wise Defense API; do not label it
+`ACTIVE` before that end-to-end health check succeeds.

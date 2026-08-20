@@ -10,18 +10,19 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy package files
-COPY package.json package-lock.json* ./
+# Copy package manifest. This package currently has no committed lockfile;
+# npm install is required until one is introduced.
+COPY package.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install build dependencies, then prune them after TypeScript compilation.
+RUN npm install
 
 # Copy source code
 COPY tsconfig.json ./
 COPY src ./src
 
 # Build TypeScript
-RUN npm run build
+RUN npm run build && npm prune --omit=dev
 
 # Stage 2: Runtime
 FROM node:20-slim as runtime
