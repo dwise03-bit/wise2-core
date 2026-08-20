@@ -19,6 +19,7 @@ const cron = require("node-cron");
 const { exec, execFile } = require("child_process");
 const webhookHandler = require("./webhook-handler");
 const { initializeScheduledTasks } = require("./scheduled-tasks");
+const { businessCommands } = require("./commands-business");
 const execFileAsync = promisify(execFile);
 
 const client = new Client({
@@ -4528,6 +4529,8 @@ DISCORD_WEBHOOK_STATUS=${results.webhooks.status || "https://discord.com/api/web
       await interaction.reply({ embeds: [embed] });
     },
   },
+
+  ...businessCommands,
 };
 
 // Register commands
