@@ -68,13 +68,22 @@ log_error() {
 # Step 1: System checks
 log_info "Step 1: System checks"
 
-# Check for required commands
-for cmd in git curl python3 nvidia-smi rsync; do
+# Check for required commands (auto-install rsync if missing)
+for cmd in git curl python3 nvidia-smi; do
     if ! command -v $cmd &> /dev/null; then
         log_error "$cmd not found. Please install it."
         exit 1
     fi
 done
+
+# Check for rsync (auto-install on Debian/Ubuntu)
+if ! command -v rsync &> /dev/null; then
+    log_warn "rsync not found. Installing via apt-get..."
+    sudo apt-get update && sudo apt-get install -y rsync || {
+        log_error "Failed to install rsync"
+        exit 1
+    }
+fi
 
 log_info "Checking NVIDIA GPU..."
 nvidia-smi || { log_error "NVIDIA GPU not detected"; exit 1; }
