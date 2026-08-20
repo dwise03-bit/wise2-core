@@ -9,8 +9,12 @@ import { logger } from '../logger';
 import { authenticate } from '../middlewares/auth';
 import { tenantGuard, requireRole, scopedWhere } from '../middlewares/tenant-guard';
 import crypto from 'crypto';
+import { ApprovalExecutorFactory } from '../services/approval-executors';
 
 const router = Router();
+
+// Initialize approval executor factory (provides SMS, email, social, payment execution)
+const executorFactory = new ApprovalExecutorFactory();
 
 router.use(authenticate);
 router.use(tenantGuard);
@@ -359,30 +363,26 @@ router.post(
 
 async function executeSendSMS(approval: any): Promise<any> {
   const { payload } = approval;
-  // TODO: Integrate with SMS provider (Twilio, Nexmo, etc.)
-  logger.info('Execute: Send SMS', { phoneNumber: payload.phoneNumber, message: payload.message });
-  return { provider: 'sms', status: 'sent', messageId: `msg_${Date.now()}` };
+  logger.info('Execute: Send SMS', { phoneNumber: payload.phoneNumber, messageLength: payload.message?.length });
+  return await executorFactory.executeSendSMS(payload);
 }
 
 async function executeSendEmail(approval: any): Promise<any> {
   const { payload } = approval;
-  // TODO: Integrate with email provider (SendGrid, Mailgun, etc.)
   logger.info('Execute: Send Email', { email: payload.email, subject: payload.subject });
-  return { provider: 'email', status: 'sent', messageId: `email_${Date.now()}` };
+  return await executorFactory.executeSendEmail(payload);
 }
 
 async function executePublishSocial(approval: any): Promise<any> {
   const { payload } = approval;
-  // TODO: Integrate with social platforms (Facebook, Instagram, etc.)
-  logger.info('Execute: Publish Social', { platform: payload.platform, content: payload.content });
-  return { provider: payload.platform, status: 'published', postId: `post_${Date.now()}` };
+  logger.info('Execute: Publish Social', { platform: payload.platform, contentLength: payload.content?.length });
+  return await executorFactory.executePublishSocial(payload);
 }
 
 async function executeChargePayment(approval: any): Promise<any> {
   const { payload } = approval;
-  // TODO: Integrate with payment processor
-  logger.info('Execute: Charge Payment', { amount: payload.amount, customerId: payload.customerId });
-  return { provider: 'stripe', status: 'charged', chargeId: `ch_${Date.now()}` };
+  logger.info('Execute: Charge Payment', { amount: payload.amount, description: payload.description });
+  return await executorFactory.executeChargePayment(payload);
 }
 
 async function executeLeadStatusChange(approval: any): Promise<any> {
