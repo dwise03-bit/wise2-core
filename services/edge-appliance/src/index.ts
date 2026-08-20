@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { EdgeRuntime, EdgeRuntimeConfig } from './EdgeRuntime';
 import { WiseDefenseHardware } from './WiseDefenseHardware';
+import { DefenseImpDataProvider } from './DefenseImpDataProvider';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ const WIREGUARD_CONFIG_PATH =
 let runtime: EdgeRuntime | null = null;
 let app: Express | null = null;
 const wiseDefenseHardware = new WiseDefenseHardware();
+const defenseImpProvider = new DefenseImpDataProvider();
 
 async function initializeRuntime(): Promise<void> {
   const config: EdgeRuntimeConfig = {
@@ -79,6 +81,51 @@ function setupWebServer(): void {
         sdr: { state: 'DETECTED_NOT_CONFIGURED' },
         cloud: { state: 'DETECTED_NOT_CONFIGURED' },
       });
+    }
+  });
+
+  // Defense IMP data endpoint for K10 device display
+  app.get('/defense-imp/data', async (_req: Request, res: Response) => {
+    try {
+      const data = await defenseImpProvider.getData();
+      res.json(data);
+    } catch (error) {
+      const err = error as Error;
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Defense IMP incident report endpoint
+  app.post('/defense-imp/incident', express.json(), async (req: Request, res: Response) => {
+    try {
+      const { type, distance, location, severity } = req.body;
+      defenseImpProvider.addIncident({
+        id: Math.random().toString(36).substr(2, 9),
+        type: type || 'police',
+        distance: distance || 0,
+        location: location || 'Unknown',
+        timestamp: Date.now(),
+        severity: severity || 'info',
+      });
+      res.json({ success: true });
+    } catch (error) {
+      const err = error as Error;
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Defense IMP alert endpoint
+  app.post('/defense-imp/alert', express.json(), async (req: Request, res: Response) => {
+    try {
+      const { message } = req.body;
+      if (!message) {
+        return res.status(400).json({ error: 'Message is required' });
+      }
+      defenseImpProvider.addAlert(message);
+      res.json({ success: true });
+    } catch (error) {
+      const err = error as Error;
+      res.status(500).json({ error: err.message });
     }
   });
 

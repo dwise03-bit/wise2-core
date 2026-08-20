@@ -13,6 +13,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <cmath>
+#include "defense-imp-integration.h"
 
 UNIHIKER_K10 k10;
 uint8_t screen_dir = 2;
@@ -110,6 +111,9 @@ DeviceState current_device_state = DeviceState::BOOTING;
 FaceAnimationState face_state;
 bool wifi_connected = false;
 uint32_t last_display_update = 0;
+
+// Defense IMP integration
+DefenseImpIntegration defense_imp;
 
 // ============================================================
 // LARGE BOLD EYE DRAWING
@@ -777,6 +781,13 @@ void setup() {
     Serial.println("[BOOT] Initializing audio...");
     initAudio();
 
+    // Initialize Defense IMP integration
+    Serial.println("[BOOT] Initializing Defense IMP...");
+    String api_url = WISE2_API;
+    api_url.remove(api_url.length() - 8);  // Remove "/api/imp"
+    defense_imp.init(k10.canvas, api_url, DEVICE_ID);
+    Serial.printf("[BOOT] Defense IMP API: %s\n", api_url.c_str());
+
     // Initialize face state
     face_state.current_state = ImpFaceState::BOOT;
     face_state.state_change_ms = boot_ms;
@@ -784,7 +795,7 @@ void setup() {
 
     current_device_state = DeviceState::BOOTING;
 
-    Serial.println("[BOOT] Complete - Face engine + Audio online\n");
+    Serial.println("[BOOT] Complete - Face engine + Audio + Defense IMP online\n");
 }
 
 // ============================================================
@@ -839,6 +850,14 @@ void loop() {
         last_display_update_time = now;
         updateDisplay(now);
     }
+
+    // Update Defense IMP data (every 5 seconds)
+    if (defense_imp.should_update(5000)) {
+        defense_imp.fetch_data();
+    }
+
+    // Render Defense IMP overlays on top of face
+    defense_imp.render_overlay();
 
     // Boot sequence (only if test mode disabled)
     if (!boot_complete && !test_mode_enabled) {
