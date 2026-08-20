@@ -8,8 +8,12 @@ import { db } from '../database';
 import { logger } from '../logger';
 import { authenticate } from '../middlewares/auth';
 import { tenantGuard, requireRole, scopedWhere } from '../middlewares/tenant-guard';
+import { WorkflowEngine, WorkflowTriggerEvent } from '../services/workflow-engine';
 
 const router = Router();
+
+// Initialize workflow engine (shared across all requests)
+const workflowEngine = new WorkflowEngine();
 
 router.use(authenticate);
 router.use(tenantGuard);
@@ -412,6 +416,126 @@ router.get('/tenants/:tenantId/workflows/summary', async (req: Request, res: Res
     next(error);
   }
 });
+
+/**
+ * Initialize workflows from database into engine
+ */
+async function initializeWorkflowsFromDatabase(): Promise<void> {
+  try {
+    const workflows = await db.workflowDefinition.findMany({
+      where: { enabled: true },
+    });
+
+    for (const workflow of workflows) {
+      workflowEngine.registerWorkflow({
+        id: workflow.id,
+        tenantId: workflow.tenantId,
+        name: workflow.name,
+        description: workflow.description || undefined,
+        enabled: workflow.enabled,
+        triggers: workflow.triggers.map((t: any) => t.type || t),
+        actions: workflow.actions as any,
+        createdAt: workflow.createdAt,
+        updatedAt: workflow.updatedAt,
+      });
+    }
+
+    logger.info('Workflows initialized into engine', { count: workflows.length });
+  } catch (error) {
+    logger.warn('Failed to initialize workflows from database', { error });
+  }
+}
+
+// Initialize workflows on first request
+let workflowsInitialized = false;
+
+/**
+ * POST /api/v1/crm/tenants/:tenantId/workflows/engine/initialize
+ * Initialize workflow engine from database (admin only)
+ */
+router.post(
+  '/tenants/:tenantId/workflows/engine/initialize',
+  requireRole('OWNER', 'ADMIN'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await initializeWorkflowsFromDatabase();
+      workflowsInitialized = true;
+
+      res.json({
+        success: true,
+        data: {
+          message: 'Workflow engine initialized',
+          initialized: true,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/**
+ * POST /api/v1/crm/tenants/:tenantId/workflows/engine/trigger-event
+ * Manually trigger an event through the workflow engine
+ */
+router.post(
+  '/tenants/:tenantId/workflows/engine/trigger-event',
+  requireRole('OWNER', 'ADMIN'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Initialize workflows if not already done
+      if (!workflowsInitialized) {
+        await initializeWorkflowsFromDatabase();
+        workflowsInitialized = true;
+      }
+
+      const { triggerType, entityId, entityType, data } = req.body;
+
+      if (!triggerType || !entityId || !entityType) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'triggerType, entityId, and entityType are required',
+          },
+        });
+      }
+
+      const event: WorkflowTriggerEvent = {
+        tenantId: req.tenant!.tenantId,
+        triggerType: triggerType as any,
+        entityId,
+        entityType: entityType as any,
+        data: data || {},
+        timestamp: new Date(),
+      };
+
+      const executions = await workflowEngine.processTrigger(event);
+
+      logger.info('Workflow event triggered', {
+        tenantId: req.tenant!.tenantId,
+        triggerType,
+        executionsCount: executions.length,
+      });
+
+      res.json({
+        success: true,
+        data: {
+          event,
+          executions: executions.map(e => ({
+            id: e.id,
+            workflowId: e.workflowId,
+            status: e.status,
+            actionsCount: e.actions.length,
+            completedAt: e.completedAt,
+          })),
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 /**
  * Workflow action executors
