@@ -184,7 +184,7 @@ export class DemoAnalyticsService {
             100,
         ),
         topContacts: highEngagementSessions.slice(0, 5).map((s) => ({
-          email: s.visitorEmail || 'unknown',
+          email: 'unknown',
           engagementScore: s.engagementScore,
           completedAt: s.completedAt,
           actionsPerformed: s.actionsPerformed,

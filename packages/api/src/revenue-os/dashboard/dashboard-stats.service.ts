@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LeadStatus, EstimateStatus, ServiceJobStatus } from '@prisma/client';
+import { LeadStatus, EstimateStatus, ServiceJobStatus, FollowUpStatus } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { isolateQuery, withTenant } from '../../common/prisma/tenant-isolation';
 
@@ -32,7 +32,7 @@ export class DashboardStatsService {
       });
 
       const leadsChange =
-        lastWeekStart > 0
+        newLeadsLastWeek > 0
           ? Math.round(((newLeadsThisWeek - newLeadsLastWeek) / newLeadsLastWeek) * 100)
           : 0;
 
@@ -230,7 +230,7 @@ export class DashboardStatsService {
       // Overdue follow-ups
       const overdueFollowUps = await this.prisma.followUp.count({
         where: withTenant(tenantId, {
-          status: 'PENDING',
+          status: FollowUpStatus.PENDING,
           dueAt: { lte: now },
         }),
       });

@@ -128,8 +128,8 @@ export class DemoProvisioningService {
           eventSequence: scenario.eventSequence,
           industry: scenario.industry,
           applicableRoles: scenario.applicableRoles,
-          dataTemplate: scenario.dataTemplate,
-          expectedOutcomes: scenario.expectedOutcomes,
+          dataTemplate: scenario.dataTemplate ? JSON.parse(JSON.stringify(scenario.dataTemplate)) : {},
+          expectedOutcomes: scenario.expectedOutcomes ? JSON.parse(JSON.stringify(scenario.expectedOutcomes)) : {},
         },
       });
 
@@ -176,7 +176,7 @@ export class DemoProvisioningService {
           description: tour.description,
           duration: tour.duration,
           targetAudience: tour.targetAudience,
-          steps: tour.steps,
+          steps: JSON.parse(JSON.stringify(tour.steps || [])),
         },
       });
 

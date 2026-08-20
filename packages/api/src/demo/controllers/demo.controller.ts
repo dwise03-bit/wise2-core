@@ -152,12 +152,9 @@ export class DemoController {
   @Get('safety/:tenantId')
   async getSafety(@Param('tenantId') tenantId: string) {
     const isDemo = await this.safety.isInDemoMode(tenantId);
-    const settings = isDemo
-      ? await this.safety.getSafetySettings(
-          (
-            await this.provisioning.getDemoEnvironment(tenantId)
-          )?.id,
-        )
+    const demoEnv = await this.provisioning.getDemoEnvironment(tenantId);
+    const settings = isDemo && demoEnv
+      ? await this.safety.getSafetySettings(demoEnv.id)
       : null;
 
     return {

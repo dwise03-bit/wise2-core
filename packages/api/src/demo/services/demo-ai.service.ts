@@ -21,7 +21,6 @@ export class DemoAIService {
     return {
       businessName: demoEnv.businessName,
       industry: demoEnv.industry,
-      timezone: demoEnv.timezone,
       demoData,
       capabilities: [
         'Answer questions about the business',

@@ -40,7 +40,7 @@ export class DemoEventService {
         eventType: input.eventType,
         category: input.category,
         action: input.action,
-        dataSnapshot: (input.dataSnapshot || {}) as Record<string, unknown>,
+        dataSnapshot: input.dataSnapshot ? JSON.parse(JSON.stringify(input.dataSnapshot)) : {},
         affectedRecords: input.affectedRecords || [],
         success: input.success ?? true,
         message: input.message,
