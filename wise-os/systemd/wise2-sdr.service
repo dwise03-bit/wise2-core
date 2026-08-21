@@ -1,0 +1,11 @@
+[Unit]
+Description=WISE2 optional receive-only SDR monitor
+After=wise2-defense.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'command -v rtl_test >/dev/null && rtl_test -t >/dev/null 2>&1 || true'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

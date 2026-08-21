@@ -4,7 +4,7 @@
 
 PI_USER="${1:-dwise}"
 PI_HOST="${2:-192.168.8.136}"
-PI_PASS="${3:-Glock19!}"
+PI_PASS="${PI_PASS:-${3:-}}"
 
 PI_REMOTE="$PI_USER@$PI_HOST"
 WISEOS_LOCAL="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,7 +20,7 @@ if [[ -z "$PI_PASS" ]]; then
     SSH_CMD="ssh $PI_REMOTE"
     SCP_CMD="scp -r"
 else
-    echo "Connecting with password..."
+    echo "Connecting with password supplied through PI_PASS..."
     which sshpass &> /dev/null || {
         echo "❌ sshpass not found. Install with: brew install sshpass"
         exit 1

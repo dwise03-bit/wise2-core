@@ -1,47 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>WISE² OS</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<script src="/socket.io/socket.io.js"></script>
-<script defer src="js/app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#05090d">
+  <title>WISE² Defense IMP</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script defer src="js/app.js"></script>
 </head>
-
 <body>
-
-<div id="app">
-
-<nav class="sidebar">
-
-<div class="logo">
-<div class="wise-badge">W²</div>
-<h2>WISE² OS</h2>
-<p class="tagline">System Monitor</p>
-</div>
-
-<button class="nav active" data-page="home">📊 Dashboard</button>
-<button class="nav" data-page="stats">📈 Stats</button>
-<button class="nav" data-page="network">🌐 Network</button>
-<button class="nav" data-page="processes">⚙ Processes</button>
-<button class="nav" data-page="storage">💾 Storage</button>
-<button class="nav" data-page="settings">🔧 Settings</button>
-
-<div class="footer-text">
-  <p>Knowledge is the superpower</p>
-</div>
-
-</nav>
-
-<main id="content">
-
-</main>
-
-</div>
-
+  <div class="boot" id="boot" aria-live="polite"><div class="boot-mark">WISE²</div><h1>DEFENSE IMP</h1><p>EDGE INTELLIGENCE NODE</p><div class="boot-line"></div><div class="boot-state">INITIALIZING LOCAL SYSTEMS...</div><small>TRAIN. TEACH. PROTECT.</small></div>
+  <div class="shell">
+    <header class="brandbar"><div><strong>WISE² DEFENSE IMP</strong><span>EDGE INTELLIGENCE NODE</span></div><b>TRAIN. TEACH. PROTECT.</b></header>
+    <nav class="nav" aria-label="Primary">
+      <button class="active" data-view="home">⌂<span>HOME</span></button><button data-view="map">◇<span>MAP</span></button><button data-view="incidents">△<span>INCIDENTS</span></button><button data-view="radio">⌁<span>RADIO</span></button><button data-view="sdr">▥<span>SDR</span></button><button data-view="mesh">⌘<span>MESH</span></button><button data-view="weather">☁<span>WEATHER</span></button><button data-view="zones">⌖<span>WATCH ZONES</span></button><button data-view="sitrep">◎<span>SITREP</span></button><button data-view="imp">▣<span>IMP</span></button><button data-view="system">⚙<span>SYSTEM</span></button>
+    </nav>
+    <main>
+      <aside class="imp-column panel">
+        <div class="section-title"><span>WISE² IMP</span><small id="impState">IDLE</small></div>
+        <div class="imp-avatar" id="impAvatar" aria-label="IMP assistant status idle"><div class="radar-ring"></div><div class="ear left"></div><div class="ear right"></div><div class="face"><div class="brow l"></div><div class="brow r"></div><div class="eye l"><i></i></div><div class="eye r"><i></i></div><div class="nose"></div><div class="mouth"></div></div><div class="headset"></div><div class="mic"></div><div class="vest">WISE²</div></div>
+        <blockquote id="impMessage">“What do you want me to check?”</blockquote>
+        <div class="input-actions"><button id="voiceBtn">●<span>VOICE</span></button><button id="keyboardBtn">⌨<span>KEYBOARD</span></button></div>
+        <form id="commandForm" hidden><input id="commandInput" maxlength="160" placeholder="Ask IMP…" autocomplete="off"><button>RUN</button></form>
+        <h2>QUICK ACTIONS</h2>
+        <div class="quick-actions"><button data-command="What is happening near me?">◉ SCAN AREA</button><button data-command="Give me the local situation report">▤ LOCAL SITREP</button><button data-command="Show recent incidents">☷ RECENT INCIDENTS</button><button data-command="Is the SDR connected?">⌁ RADIO STATUS</button><button data-command="Show my Meshtastic nodes">⌘ MESH STATUS</button><button data-command="Check weather">☁ WEATHER</button><button data-command="Check system health">⌁ SYSTEM CHECK</button></div>
+      </aside>
+      <section class="center-column">
+        <section class="map-panel panel">
+          <div class="section-title"><span>DEFENSE INTELLIGENCE MAP</span><div class="filters"><small>FILTERS</small><button class="blue">⬟</button><button class="red">♨</button><button class="amber">★</button><button class="green">☁</button><button class="purple">⌘</button></div></div>
+          <div class="map" id="map"><div class="map-grid"></div><div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="zone z1"></div><div class="zone z2"></div><div class="location"><i></i></div><span class="place p1">LOCAL OPERATING AREA</span><span class="place p2">NO MAP PROVIDER CONFIGURED</span><div class="markers" id="markers"></div><div class="map-controls"><button>+</button><button>−</button><button>⌾</button></div></div>
+        </section>
+        <div class="lower-grid"><section class="panel summary"><h2>SITUATION SUMMARY</h2><dl><div><dt>INCIDENTS NEARBY</dt><dd id="incidentCount">0</dd></div><div><dt>WATCH ZONES</dt><dd id="zoneCount">0</dd></div><div><dt>ALERT LEVEL</dt><dd class="amber-text" id="alertLevel">INFO</dd></div><div><dt>LAST UPDATE</dt><dd class="green-text" id="lastUpdate">--:--:--</dd></div></dl></section><section class="panel feed"><h2>ALERT FEED <small id="demoBadge"></small></h2><div id="alertFeed" class="feed-list"><div class="empty">NO LIVE INCIDENT PROVIDER CONFIGURED</div></div></section></div>
+      </section>
+      <aside class="intel-column">
+        <section class="panel incidents"><div class="section-title"><span>INCIDENTS</span><small id="providerState">CHECKING</small></div><div id="incidentList" class="incident-list"><div class="empty">CHECKING PROVIDER…</div></div></section>
+        <div class="twin"><section class="panel status-panel"><div class="section-title"><span>SDR STATUS</span><small id="sdrState">CHECKING</small></div><dl id="sdrDetails"></dl></section><section class="panel status-panel"><div class="section-title"><span>MESH STATUS</span><small id="meshState">CHECKING</small></div><dl id="meshDetails"></dl></section></div>
+        <section class="panel system-panel"><div class="section-title"><span>SYSTEM STATUS</span><small id="coreState">CHECKING</small></div><div class="system-grid" id="systemDetails"></div></section>
+      </aside>
+    </main>
+    <footer><div id="edgeStatus"><i></i>EDGE CHECKING</div><div id="wiseStatus"><i></i>WISE² CHECKING</div><div id="footerSdr"><i></i>SDR CHECKING</div><div id="footerMesh"><i></i>MESH CHECKING</div><div id="footerGps"><i></i>GPS CHECKING</div><span>LAST SYNC <b id="lastSync">NEVER</b></span><time id="clock">--:--:--</time></footer>
+  </div>
 </body>
 </html>

@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600;700&family=Great+Vibes&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-lora: 'Lora', serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-script: 'Great Vibes', cursive;
+
+  /* CC Brand Colors */
+  --cc-purple: #6D2DBD;
+  --cc-lavender: #B785D3;
+  --cc-lilac: #F3E8FF;
+  --cc-gold: #D4AF37;
+  --cc-dark: #29233D;
+  --cc-white: #FFFFFF;
+
+  --background: #ffffff;
+  --foreground: #29233D;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #29233D;
+  font-family: var(--font-poppins);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-lora);
+  font-weight: 700;
+}
+
+.script-text {
+  font-family: var(--font-script);
+}
+
+/* Card Styles */
+.card {
+  background-color: #FFFFFF;
+  border: 1px solid #B785D3;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background-color: #F3E8FF;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}

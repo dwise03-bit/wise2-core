@@ -1,0 +1,995 @@
+/*!
+ * WISE2 K10 BYTE HOME
+ *
+ * Stabilized production-facing home screen for the UNIHIKER K10.
+ * Display stays alive first, Wi-Fi is asynchronous, and audio is held back
+ * until the screen/UI path is fully stable.
+ */
+
+#include "unihiker_k10.h"
+// #include "asr.h"  // ASR library not available - using basic mic detection instead
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <cmath>
+
+UNIHIKER_K10 k10;
+// ASR asr;  // Microphone/ASR object - DISABLED (not available)
+Music music;       // Speaker/audio output object
+uint8_t screen_dir = 2;
+uint32_t boot_ms = 0;
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+
+const char* WIFI_SSID = "WISE2_DEMO";
+const char* WIFI_PASS = "demo123456";
+const char* WISE2_API = "http://localhost:3000/api/imp";
+const char* DEVICE_ID = "k10_001";
+
+// Display dimensions (K10 240x320)
+#define SCREEN_WIDTH 240
+#define SCREEN_HEIGHT 320
+
+// Eye geometry
+#define EYE_LEFT_X 60      // Left eye center ~25% from left
+#define EYE_RIGHT_X 180    // Right eye center ~75% from left
+#define EYE_Y 150          // Eye vertical center ~47% from top
+#define EYE_WIDTH 50       // Eye width
+#define EYE_HEIGHT 60      // Eye height
+
+// Mouth geometry
+#define MOUTH_X 120        // Mouth center X
+#define MOUTH_Y 220        // Mouth center Y (below eyes)
+#define MOUTH_WIDTH 40     // Mouth width
+#define MOUTH_HEIGHT 20    // Mouth height
+
+// Color palette - PROVEN WORKING COLORS
+#define COLOR_BLACK        0x000000
+#define COLOR_BLUE_DARK    0x0F6B58  // Deep WISE2 green
+#define COLOR_BLUE_PRIMARY 0x26F28A  // Primary WISE2 neon green
+#define COLOR_BLUE_BRIGHT  0x9CFFD0  // Highlight green
+#define COLOR_LIME         0x26F28A  // Alias for active/listening state
+#define COLOR_WARNING      0xFFFF00  // Yellow
+#define COLOR_ERROR        0xFF0000  // Red (working)
+#define COLOR_GRAY         0x808080  // Gray
+
+// ============================================================
+// STATE MACHINE
+// ============================================================
+
+enum class DeviceState {
+    BOOTING = 0,
+    CONNECTING_WIFI = 1,
+    CONNECTING_WISE2 = 2,
+    IDLE = 3,
+    LISTENING = 4,
+    THINKING = 5,
+    SPEAKING = 6,
+    ERROR_STATE = 7,
+    OFFLINE = 8
+};
+
+enum class ImpFaceState {
+    BOOT = 0,
+    IDLE = 1,
+    LISTENING = 2,
+    THINKING = 3,
+    SPEAKING = 4,
+    CURIOUS = 5,
+    HAPPY = 6,
+    FOCUSED = 7,
+    MISCHIEVOUS = 8,
+    WARNING = 9,
+    ERROR = 10,
+    SLEEPING = 11,
+    OFFLINE = 12
+};
+
+struct BlinkState {
+    bool is_blinking = false;
+    uint32_t blink_start_ms = 0;
+    uint32_t blink_duration_ms = 150;
+    uint32_t next_blink_ms = 3000;
+    uint32_t blink_variance = 2000;
+};
+
+struct FaceAnimationState {
+    ImpFaceState current_state = ImpFaceState::IDLE;
+    ImpFaceState prev_state = ImpFaceState::IDLE;
+    uint32_t state_change_ms = 0;
+    uint32_t animation_frame = 0;
+    uint32_t frame_timer_ms = 0;
+    BlinkState blink;
+    float micro_x = 0;
+    float micro_y = 0;
+};
+
+// Global state
+DeviceState current_device_state = DeviceState::BOOTING;
+FaceAnimationState face_state;
+bool wifi_connected = false;
+uint32_t last_display_update = 0;
+bool wifi_attempt_started = false;
+uint32_t wifi_attempt_deadline = 0;
+uint32_t wifi_retry_after_ms = 0;
+
+// ============================================================
+// PRIMITIVE DISPLAY RENDERING
+// ============================================================
+
+void forceBacklightOn() {
+    digital_write(eLCD_BLK, 1);
+    delay(40);
+    digital_write(eLCD_BLK, 1);
+}
+
+void showBootPrime() {
+    const uint32_t colors[] = {0xFF0000, 0x00FF00, 0x0000FF};
+    for (uint32_t color : colors) {
+        k10.setScreenBackground(color);
+        k10.canvas->updateCanvas();
+        delay(220);
+    }
+    k10.setScreenBackground(COLOR_BLACK);
+    k10.canvas->updateCanvas();
+}
+
+void drawEyePrimitive(int cx, int cy, uint32_t color, float blink_progress, bool focused) {
+    if (blink_progress > 0.85f) {
+        k10.canvas->canvasLine(cx - 32, cy, cx + 32, cy, color);
+        k10.canvas->canvasLine(cx - 30, cy + 1, cx + 30, cy + 1, color);
+        return;
+    }
+
+    int eye_w = focused ? 58 : 64;
+    int eye_h = focused ? 38 : 44;
+    if (blink_progress > 0.0f) {
+        eye_h = max(4, eye_h - static_cast<int>(blink_progress * 36.0f));
+    }
+
+    k10.canvas->canvasRectangle(cx - eye_w / 2, cy - eye_h / 2, eye_w, eye_h,
+                                color, COLOR_BLACK, false);
+    k10.canvas->canvasRectangle(cx - eye_w / 2 + 2, cy - eye_h / 2 + 2, eye_w - 4, eye_h - 4,
+                                color, COLOR_BLACK, false);
+
+    if (blink_progress < 0.55f) {
+        int pupil_w = focused ? 12 : 14;
+        int pupil_h = focused ? 20 : 22;
+        k10.canvas->canvasRectangle(cx - pupil_w / 2, cy - pupil_h / 2, pupil_w, pupil_h,
+                                    color, color, true);
+        k10.canvas->canvasRectangle(cx - pupil_w / 2 - 2, cy - pupil_h / 2 - 2, pupil_w + 4, pupil_h + 4,
+                                    color, COLOR_BLACK, false);
+        k10.canvas->canvasRectangle(cx - 2, cy - 2, 4, 4, COLOR_BLACK, COLOR_BLACK, true);
+        k10.canvas->canvasLine(cx - pupil_w / 2, cy - pupil_h / 2 - 5, cx + pupil_w / 2, cy - pupil_h / 2 - 5, color);
+    }
+}
+
+void drawLargeEye(int cx, int cy, uint16_t color, float blink_progress) {
+    drawEyePrimitive(cx, cy, color, blink_progress, false);
+}
+
+void drawMouthPrimitive(uint32_t color, DeviceState state, uint32_t frame) {
+    int left = MOUTH_X - 20;
+    int right = MOUTH_X + 20;
+    int y = MOUTH_Y;
+
+    if (state == DeviceState::SPEAKING) {
+        int phase = (frame / 2) % 4;
+        int h = (phase == 0) ? 4 : (phase == 1) ? 12 : (phase == 2) ? 18 : 10;
+        k10.canvas->canvasRectangle(MOUTH_X - 14, y - h / 2, 28, h, color, COLOR_BLACK, false);
+        return;
+    }
+
+    if (state == DeviceState::THINKING || state == DeviceState::CONNECTING_WIFI || state == DeviceState::CONNECTING_WISE2) {
+        int dots = (frame / 4) % 3;
+        for (int i = 0; i <= dots; ++i) {
+            k10.canvas->canvasCircle(MOUTH_X - 16 + i * 16, y, 3, color, color, true);
+        }
+        return;
+    }
+
+    if (state == DeviceState::LISTENING) {
+        for (int i = 0; i < 3; ++i) {
+            int h = 7 + i * 4 + ((frame + i) % 3) * 2;
+            k10.canvas->canvasRectangle(MOUTH_X - 20 + i * 14, y - h / 2, 6, h, color, color, true);
+        }
+        return;
+    }
+
+    if (state == DeviceState::ERROR_STATE || state == DeviceState::OFFLINE) {
+        k10.canvas->canvasLine(left, y + 6, MOUTH_X, y, color);
+        k10.canvas->canvasLine(MOUTH_X, y, right, y + 6, color);
+        return;
+    }
+
+    k10.canvas->canvasLine(left, y, right, y, color);
+    k10.canvas->canvasLine(left + 6, y + 2, right - 6, y + 2, color);
+}
+
+// ============================================================
+// MOUTH ANIMATION
+// ============================================================
+
+void drawMouth(uint16_t color, int mouth_type) {
+    // mouth_type: 0=closed, 1=smile, 2=open, 3=O, 4=surprised
+
+    int mx = MOUTH_X;
+    int my = MOUTH_Y;
+    int mw = MOUTH_WIDTH;
+
+    switch(mouth_type) {
+        case 0:  // Closed mouth - simple line
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 2) {
+                k10.canvas->canvasText("-", x, my, color, k10.canvas->eCNAndENFont24, 8, false);
+            }
+            break;
+
+        case 1:  // Smile - curved line
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 2) {
+                int y_offset = ((x - (mx - mw/2)) * (x - (mx - mw/2))) / (mw * mw/2);
+                k10.canvas->canvasText("~", x, my + y_offset, color, k10.canvas->eCNAndENFont24, 8, false);
+            }
+            break;
+
+        case 2:  // Open mouth - oval shape
+            for (int x = mx - mw/2; x <= mx + mw/2; x += 3) {
+                k10.canvas->canvasText("O", x, my, color, k10.canvas->eCNAndENFont24, 12, false);
+            }
+            for (int y = my - 5; y <= my + 5; y += 3) {
+                k10.canvas->canvasText("|", mx, y, color, k10.canvas->eCNAndENFont24, 10, false);
+            }
+            break;
+
+        case 3:  // Surprised O
+            for (int x = mx - 8; x <= mx + 8; x += 2) {
+                for (int y = my - 8; y <= my + 8; y += 2) {
+                    if (x*x + y*y <= 64) {
+                        k10.canvas->canvasText("O", mx + x/8, my + y/8, color, k10.canvas->eCNAndENFont24, 12, false);
+                    }
+                }
+            }
+            break;
+
+        case 4:  // Speaking - animated
+            k10.canvas->canvasText("^", mx - 5, my, color, k10.canvas->eCNAndENFont24, 10, false);
+            k10.canvas->canvasText("v", mx, my + 3, color, k10.canvas->eCNAndENFont24, 10, false);
+            k10.canvas->canvasText("^", mx + 5, my, color, k10.canvas->eCNAndENFont24, 10, false);
+            break;
+    }
+}
+
+// ============================================================
+// FACE EXPRESSIONS - ALL 12 STATES
+// ============================================================
+
+void renderFace_BOOT(uint16_t color, uint32_t frame) {
+    // Boot animation: eyes illuminate gradually
+    // Frame 0-20: fade in
+    // Frame 20+: blink once and go to IDLE appearance
+
+    if (frame < 10) {
+        // Dim glow
+        for (int i = 0; i < 5; i++) {
+            int glow_x1 = EYE_LEFT_X - 30 - i*2;
+            int glow_x2 = EYE_RIGHT_X + 30 + i*2;
+            int glow_y = EYE_Y;
+            k10.canvas->canvasText("o", glow_x1, glow_y, COLOR_GRAY, k10.canvas->eCNAndENFont24, 10 - i*2, false);
+            k10.canvas->canvasText("o", glow_x2, glow_y, COLOR_GRAY, k10.canvas->eCNAndENFont24, 10 - i*2, false);
+        }
+    } else if (frame < 20) {
+        // Eyes brighten
+        drawLargeEye(EYE_LEFT_X, EYE_Y, color, 0);
+        drawLargeEye(EYE_RIGHT_X, EYE_Y, color, 0);
+    } else {
+        // Full blink and ready
+        float blink_progress = (frame >= 25 && frame < 35) ? 1.0 : 0;
+        drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink_progress);
+        drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink_progress);
+    }
+}
+
+void renderFace_IDLE(uint16_t color, float blink_progress) {
+    // Confident, ready, watching
+    drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink_progress);
+
+    if (blink_progress < 0.9) {
+        // Tiny smirk
+        k10.canvas->canvasText("~", 120, 220, color, k10.canvas->eCNAndENFont24, 20, false);
+    }
+}
+
+void renderFace_LISTENING(uint16_t color, uint32_t frame) {
+    // Attentive, eyes larger, sound waves
+    float blink = 0;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink);
+
+    // Animated sound waves
+    int wave_offset = (frame / 3) % 30;
+    for (int i = 1; i < 4; i++) {
+        int x_left = EYE_LEFT_X - 40 - wave_offset;
+        int x_right = EYE_RIGHT_X + 40 + wave_offset;
+        k10.canvas->canvasText("|", x_left, EYE_Y - 10 + i*5, color, k10.canvas->eCNAndENFont24, 8, false);
+        k10.canvas->canvasText("|", x_right, EYE_Y - 10 + i*5, color, k10.canvas->eCNAndENFont24, 8, false);
+    }
+}
+
+void renderFace_THINKING(uint16_t color, uint32_t frame) {
+    // Processing, thought dots above
+    float blink = 0;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink);
+
+    // Animated thought dots
+    int dot_phase = (frame / 5) % 3;
+    int start_x = 100;
+    for (int i = 0; i <= dot_phase && i < 3; i++) {
+        k10.canvas->canvasText(".", start_x + i*20, 80, color, k10.canvas->eCNAndENFont24, 15, false);
+    }
+}
+
+void renderFace_SPEAKING(uint16_t color, uint32_t frame) {
+    // Responding, mouth animates
+    float blink = 0;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink);
+
+    // Animated mouth
+    int mouth_frame = (frame / 2) % 4;
+    int mouth_x = 120, mouth_y = 220;
+
+    if (mouth_frame == 0) k10.canvas->canvasText("-", mouth_x, mouth_y, color, k10.canvas->eCNAndENFont24, 25, false);
+    else if (mouth_frame == 1) k10.canvas->canvasText("o", mouth_x, mouth_y, color, k10.canvas->eCNAndENFont24, 30, false);
+    else if (mouth_frame == 2) k10.canvas->canvasText("O", mouth_x, mouth_y, color, k10.canvas->eCNAndENFont24, 35, false);
+    else k10.canvas->canvasText("o", mouth_x, mouth_y, color, k10.canvas->eCNAndENFont24, 30, false);
+}
+
+void renderFace_CURIOUS(uint16_t color, float blink_progress) {
+    // Surprised: one eye wider, one brow raised
+    drawLargeEye(EYE_LEFT_X, EYE_Y - 10, color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink_progress);
+
+    // Question mark
+    k10.canvas->canvasText("?", 110, 90, color, k10.canvas->eCNAndENFont24, 60, false);
+}
+
+void renderFace_HAPPY(uint16_t color, float blink_progress) {
+    // Friendly and satisfied
+    drawLargeEye(EYE_LEFT_X, EYE_Y + 5, color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y + 5, color, blink_progress);
+
+    // Happy smile
+    k10.canvas->canvasText(")", 115, 230, color, k10.canvas->eCNAndENFont24, 50, false);
+}
+
+void renderFace_FOCUSED(uint16_t color, float blink_progress) {
+    // Intense, narrowed
+    drawLargeEye(EYE_LEFT_X, EYE_Y, color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, color, blink_progress);
+    // No mouth - all business
+}
+
+void renderFace_MISCHIEVOUS(uint16_t color, float blink_progress) {
+    // Playful, asymmetric
+    drawLargeEye(EYE_LEFT_X - 3, EYE_Y - 3, color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X + 3, EYE_Y + 3, color, blink_progress);
+
+    // Side smirk
+    k10.canvas->canvasText(">", 130, 225, color, k10.canvas->eCNAndENFont24, 30, false);
+}
+
+void renderFace_WARNING(uint16_t color, uint32_t frame) {
+    // Alert state - lime/yellow eyes
+    uint16_t alert_color = COLOR_LIME;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y - 8, alert_color, 0);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y - 8, alert_color, 0);
+
+    // Warning triangle
+    if ((frame / 10) % 2 == 0) {
+        k10.canvas->canvasText("^", 115, 85, alert_color, k10.canvas->eCNAndENFont24, 40, false);
+    }
+}
+
+void renderFace_ERROR(uint16_t color, float blink_progress) {
+    // Concerned - RED
+    uint16_t error_color = COLOR_ERROR;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y, error_color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, error_color, blink_progress);
+
+    // Frown
+    k10.canvas->canvasText("_", 115, 235, error_color, k10.canvas->eCNAndENFont24, 40, false);
+}
+
+void renderFace_SLEEPING(uint16_t color, uint32_t frame) {
+    // Closed eyes, Z animation
+    // Draw closed eyelids
+    k10.canvas->canvasText("~", EYE_LEFT_X - 20, EYE_Y, color, k10.canvas->eCNAndENFont24, 40, false);
+    k10.canvas->canvasText("~", EYE_RIGHT_X + 20, EYE_Y, color, k10.canvas->eCNAndENFont24, 40, false);
+
+    // Animated Z's
+    int z_phase = (frame / 8) % 3;
+    if (z_phase >= 1) k10.canvas->canvasText("z", 160, 100, color, k10.canvas->eCNAndENFont24, 25, false);
+    if (z_phase >= 2) k10.canvas->canvasText("z", 175, 130, color, k10.canvas->eCNAndENFont24, 25, false);
+}
+
+void renderFace_OFFLINE(uint16_t color, float blink_progress) {
+    // Dim gray
+    uint16_t offline_color = COLOR_GRAY;
+
+    drawLargeEye(EYE_LEFT_X, EYE_Y, offline_color, blink_progress);
+    drawLargeEye(EYE_RIGHT_X, EYE_Y, offline_color, blink_progress);
+}
+
+// ============================================================
+// MASTER FACE RENDERER
+// ============================================================
+
+void updateImpFaceAnimation(FaceAnimationState& state, uint32_t now_ms) {
+    // Update blink timing
+    if (!state.blink.is_blinking && (int32_t)(now_ms - state.blink.next_blink_ms) >= 0) {
+        state.blink.is_blinking = true;
+        state.blink.blink_start_ms = now_ms;
+        // Schedule next blink: 3-5 seconds from now
+        uint32_t next_interval = 3000 + (rand() % 2000);
+        state.blink.next_blink_ms = now_ms + next_interval;
+    }
+
+    if (state.blink.is_blinking) {
+        uint32_t blink_elapsed = now_ms - state.blink.blink_start_ms;
+        if (blink_elapsed >= state.blink.blink_duration_ms) {
+            state.blink.is_blinking = false;
+        }
+    }
+
+    // Update animation frame (increments every 50ms)
+    state.animation_frame = (now_ms - state.state_change_ms) / 50;
+}
+
+void renderImpFace(ImpFaceState state, FaceAnimationState& anim_state, uint32_t now_ms) {
+    // Calculate blink progress (0 = open, 1 = closed)
+    float blink_progress = 0;
+    if (anim_state.blink.is_blinking) {
+        uint32_t blink_elapsed = now_ms - anim_state.blink.blink_start_ms;
+        if (blink_elapsed < anim_state.blink.blink_duration_ms / 2) {
+            // Closing
+            blink_progress = (float)blink_elapsed / (anim_state.blink.blink_duration_ms / 2);
+        } else {
+            // Opening
+            blink_progress = 1.0 - (float)(blink_elapsed - anim_state.blink.blink_duration_ms / 2) / (anim_state.blink.blink_duration_ms / 2);
+        }
+    }
+
+    uint32_t face_color = COLOR_BLUE_PRIMARY;
+    bool focused = false;
+    int left_y = EYE_Y;
+    int right_y = EYE_Y;
+
+    switch (state) {
+        case ImpFaceState::BOOT:
+            face_color = COLOR_BLUE_BRIGHT;
+            break;
+        case ImpFaceState::LISTENING:
+            face_color = COLOR_LIME;
+            left_y -= 4;
+            right_y -= 4;
+            break;
+        case ImpFaceState::THINKING:
+            face_color = COLOR_BLUE_BRIGHT;
+            break;
+        case ImpFaceState::SPEAKING:
+            face_color = COLOR_BLUE_BRIGHT;
+            break;
+        case ImpFaceState::CURIOUS:
+            left_y -= 10;
+            break;
+        case ImpFaceState::HAPPY:
+            left_y += 4;
+            right_y += 4;
+            break;
+        case ImpFaceState::FOCUSED:
+            focused = true;
+            break;
+        case ImpFaceState::MISCHIEVOUS:
+            left_y -= 4;
+            right_y += 4;
+            break;
+        case ImpFaceState::WARNING:
+            face_color = COLOR_WARNING;
+            focused = true;
+            break;
+        case ImpFaceState::ERROR:
+            face_color = COLOR_ERROR;
+            break;
+        case ImpFaceState::SLEEPING:
+            blink_progress = 1.0f;
+            face_color = COLOR_GRAY;
+            break;
+        case ImpFaceState::OFFLINE:
+            face_color = COLOR_GRAY;
+            break;
+        case ImpFaceState::IDLE:
+        default:
+            break;
+    }
+
+    drawEyePrimitive(EYE_LEFT_X, left_y, face_color, blink_progress, focused);
+    drawEyePrimitive(EYE_RIGHT_X, right_y, face_color, blink_progress, focused);
+    drawMouthPrimitive(face_color, current_device_state, anim_state.animation_frame);
+
+    if (state == ImpFaceState::WARNING && (anim_state.animation_frame / 8) % 2 == 0) {
+        k10.canvas->canvasLine(120, 70, 105, 100, face_color);
+        k10.canvas->canvasLine(120, 70, 135, 100, face_color);
+        k10.canvas->canvasLine(105, 100, 135, 100, face_color);
+    }
+    if (state == ImpFaceState::OFFLINE) {
+        k10.canvas->canvasLine(95, 82, 145, 82, face_color);
+    }
+}
+
+// ============================================================
+// DEVICE STATE TO FACE STATE MAPPING
+// ============================================================
+
+ImpFaceState mapDeviceStateToFaceState(DeviceState device_state) {
+    switch (device_state) {
+        case DeviceState::BOOTING:
+            return ImpFaceState::BOOT;
+        case DeviceState::CONNECTING_WIFI:
+            return ImpFaceState::THINKING;
+        case DeviceState::CONNECTING_WISE2:
+            return ImpFaceState::THINKING;
+        case DeviceState::IDLE:
+            return ImpFaceState::IDLE;
+        case DeviceState::LISTENING:
+            return ImpFaceState::LISTENING;
+        case DeviceState::THINKING:
+            return ImpFaceState::THINKING;
+        case DeviceState::SPEAKING:
+            return ImpFaceState::SPEAKING;
+        case DeviceState::ERROR_STATE:
+            return ImpFaceState::ERROR;
+        case DeviceState::OFFLINE:
+            return ImpFaceState::OFFLINE;
+        default:
+            return ImpFaceState::IDLE;
+    }
+}
+
+// ============================================================
+// DISPLAY UPDATE
+// ============================================================
+
+void updateDisplay(uint32_t now_ms) {
+    forceBacklightOn();
+    k10.canvas->canvasClear(COLOR_BLACK);
+
+    // Map device state to face state and reset blink if state changed
+    ImpFaceState target_face_state = mapDeviceStateToFaceState(current_device_state);
+    if (target_face_state != face_state.current_state) {
+        face_state.prev_state = face_state.current_state;
+        face_state.current_state = target_face_state;
+        face_state.state_change_ms = now_ms;
+        face_state.animation_frame = 0;
+
+        // CRITICAL FIX: Reset blink state on expression change
+        face_state.blink.is_blinking = false;
+        face_state.blink.blink_start_ms = 0;
+        face_state.blink.next_blink_ms = now_ms + 3000;
+        Serial.printf("[DISPLAY] Face state changed to %d, blink reset\n", target_face_state);
+    }
+
+    // Update animation
+    updateImpFaceAnimation(face_state, now_ms);
+
+    // Render the IMP face
+    renderImpFace(face_state.current_state, face_state, now_ms);
+
+    if (wifi_connected) {
+        k10.canvas->canvasCircle(120, 28, 4, COLOR_BLUE_PRIMARY, COLOR_BLUE_PRIMARY, true);
+    } else if (current_device_state == DeviceState::CONNECTING_WIFI) {
+        int dots = (now_ms / 200) % 3;
+        for (int i = 0; i <= dots; ++i) {
+            k10.canvas->canvasCircle(108 + i * 12, 28, 3, COLOR_GRAY, COLOR_GRAY, true);
+        }
+    }
+
+    k10.canvas->updateCanvas();
+}
+
+// ============================================================
+// AUDIO SYSTEM - K10 BUILT-IN MIC & SPEAKER WITH ASR/TTS
+// ============================================================
+
+bool audio_initialized = false;
+bool is_listening = false;
+uint32_t listen_timeout_ms = 0;
+char recognized_text[256] = {0};  // Storage for ASR result
+bool has_asr_result = false;
+uint32_t last_api_sync = 0;
+bool audio_startup_disabled = false;
+bool speaker_test_pending = false;
+uint32_t audio_init_after_ms = 0;
+uint32_t last_mic_sample_ms = 0;
+float mic_level = 0.0f;
+bool mic_active = false;
+bool button_a_prev = false;
+
+constexpr float kMicFullScale = 900000.0f;
+constexpr float kMicActiveThreshold = 0.25f;  // INCREASED from 0.07 - ignore background noise
+constexpr uint32_t kMicSampleMs = 200;        // INCREASED sampling interval for stability
+
+// ============================================================
+// WAKE WORD CONFIGURATION
+// ============================================================
+const char* WAKE_WORD = "hey byte";  // Device wake word
+bool wake_word_detected = false;
+uint32_t wake_word_timeout = 0;
+
+void initAudio() {
+    if (audio_startup_disabled) {
+        Serial.println("[AUDIO] Startup audio init disabled for display-first stabilization");
+        audio_initialized = false;
+        return;
+    }
+
+    Serial.println("[AUDIO] Enabling basic K10 mic + speaker path");
+    audio_initialized = true;
+    speaker_test_pending = true;
+    last_mic_sample_ms = millis();
+    mic_level = 0.0f;
+    mic_active = false;
+    Serial.println("[AUDIO] Mic meter ready, speaker cue ready");
+}
+
+void playAudio(const char* text) {
+    if (!audio_initialized) return;
+
+    current_device_state = DeviceState::SPEAKING;
+    Serial.printf("[AUDIO] Speaker cue: %s\n", text ? text : "tone");
+    music.playMusic(BA_DING, OnceInBackground);
+}
+
+void serviceAudio(uint32_t now_ms) {
+    if (!audio_initialized) return;
+
+    if (speaker_test_pending && now_ms > audio_init_after_ms + 500) {
+        speaker_test_pending = false;
+        playAudio("boot");
+    }
+
+    bool button_a = k10.buttonA && k10.buttonA->isPressed();
+    if (button_a && !button_a_prev) {
+        playAudio("button");
+    }
+    button_a_prev = button_a;
+
+    if (now_ms - last_mic_sample_ms >= kMicSampleMs) {
+        last_mic_sample_ms = now_ms;
+        uint64_t raw = k10.readMICData();
+        float norm = fminf(static_cast<float>(raw) / kMicFullScale, 1.0f);
+        mic_level += (norm - mic_level) * 0.25f;
+        bool active = mic_level > kMicActiveThreshold;
+
+        if (active != mic_active) {
+            mic_active = active;
+            if (current_device_state == DeviceState::IDLE && mic_active) {
+                current_device_state = DeviceState::LISTENING;
+            } else if (current_device_state == DeviceState::LISTENING && !mic_active) {
+                current_device_state = wifi_connected ? DeviceState::IDLE : DeviceState::OFFLINE;
+            }
+        }
+    }
+
+    if (current_device_state == DeviceState::SPEAKING && now_ms > last_mic_sample_ms + 500) {
+        current_device_state = wifi_connected ? DeviceState::IDLE : DeviceState::OFFLINE;
+    }
+}
+
+// ============================================================
+// WAKE WORD DETECTION
+// ============================================================
+
+bool detectWakeWord(const char* text) {
+    if (!text || strlen(text) == 0) return false;
+
+    char lower_text[256];
+    for (int i = 0; i < strlen(text) && i < 255; i++) {
+        lower_text[i] = tolower(text[i]);
+    }
+    lower_text[strlen(text)] = '\0';
+
+    // Check for wake word patterns
+    if (strstr(lower_text, "hey byte") != NULL ||
+        strstr(lower_text, "hey bot") != NULL ||
+        strstr(lower_text, "hi byte") != NULL) {
+        Serial.println("[WAKE] Wake word detected!");
+        return true;
+    }
+    return false;
+}
+
+void stopListening() {
+    is_listening = false;
+
+    // ASR library not available - skip ASR detection
+    recognized_text[0] = '\0';  // Clear buffer
+
+    // DISABLED: ASR command detection (library not available)
+    // for (int cmd_id = 1; cmd_id <= 3; cmd_id++) {
+    //     if (asr.isDetectCmdID(cmd_id)) { ... }
+    // }
+
+    // DISABLED: Wake-up word detection
+    // if (asr.isWakeUp()) { ... }
+
+    // Use demo fallback (ASR disabled, always skip to demo)
+    if (strlen(recognized_text) == 0) {
+        Serial.println("[ASR] No speech detected - using demo fallback");
+        const char* demo_responses[] = {
+            "hey byte",
+            "hello",
+            "what time is it",
+            "how are you",
+            "tell me a joke",
+            "set reminder",
+            "play music",
+            "show weather"
+        };
+        int idx = random(0, 8);
+        strcpy(recognized_text, demo_responses[idx]);
+        Serial.printf("[ASR] Demo response: \"%s\"\n", recognized_text);
+    }
+
+    // Check for wake word
+    if (detectWakeWord(recognized_text)) {
+        wake_word_detected = true;
+        Serial.println("[SYSTEM] 'Hey Byte' activated - Ready for command!");
+    } else {
+        has_asr_result = true;
+    }
+
+    Serial.printf("[ASR] Final recognized text: \"%s\"\n", recognized_text);
+}
+
+// ============================================================
+// DASHBOARD API INTEGRATION
+// ============================================================
+
+void syncWithDashboard() {
+    if (!wifi_connected) return;
+
+    HTTPClient http;
+    String url = String(WISE2_API) + "/state";
+
+    // Build JSON payload with device state and audio data
+    String payload = "{";
+    payload += "\"device_id\":\"" + String(DEVICE_ID) + "\",";
+    payload += "\"state\":" + String((int)current_device_state) + ",";
+    payload += "\"face_state\":" + String((int)face_state.current_state) + ",";
+    payload += "\"timestamp\":" + String(millis()) + ",";
+    payload += "\"wifi_connected\":" + String(wifi_connected ? "true" : "false") + ",";
+
+    // Include audio data if available
+    if (has_asr_result && strlen(recognized_text) > 0) {
+        payload += "\"asr_input\":\"" + String(recognized_text) + "\",";
+    }
+
+    payload += "\"face_expression\":\"";
+    switch (face_state.current_state) {
+        case ImpFaceState::IDLE: payload += "idle"; break;
+        case ImpFaceState::LISTENING: payload += "listening"; break;
+        case ImpFaceState::THINKING: payload += "thinking"; break;
+        case ImpFaceState::SPEAKING: payload += "speaking"; break;
+        case ImpFaceState::ERROR: payload += "error"; break;
+        default: payload += "idle"; break;
+    }
+    payload += "\"";
+
+    payload += "}";
+
+    // POST to dashboard
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("X-Device-ID", DEVICE_ID);
+
+    int httpResponseCode = http.POST(payload);
+
+    if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.printf("[DASH] POST %d: %s\n", httpResponseCode, response.c_str());
+
+        // Parse response for API feedback (optional AI response)
+        // Can be used to trigger different face expressions or spoken responses
+        if (response.length() > 0) {
+            // Store for future processing
+            Serial.println("[DASH] Response received from API");
+        }
+    } else {
+        Serial.printf("[DASH] POST failed: %d\n", httpResponseCode);
+    }
+
+    http.end();
+}
+
+// ============================================================
+// WIFI MANAGEMENT
+// ============================================================
+
+void beginWiFiConnect(uint32_t now_ms) {
+    if (wifi_attempt_started) return;
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
+    wifi_attempt_started = true;
+    wifi_attempt_deadline = now_ms + 10000;
+    current_device_state = DeviceState::CONNECTING_WIFI;
+    Serial.println("[WIFI] Attempting connection...");
+}
+
+void serviceWiFi(uint32_t now_ms) {
+    if (wifi_connected) return;
+
+    if (!wifi_attempt_started) {
+        if (now_ms >= wifi_retry_after_ms) {
+            beginWiFiConnect(now_ms);
+        }
+        return;
+    }
+
+    wl_status_t status = WiFi.status();
+    if (status == WL_CONNECTED) {
+        wifi_connected = true;
+        wifi_attempt_started = false;
+        current_device_state = DeviceState::IDLE;
+        Serial.println("[WIFI] Connected - Dashboard sync ready");
+        return;
+    }
+
+    if ((int32_t)(now_ms - wifi_attempt_deadline) >= 0) {
+        wifi_connected = false;
+        wifi_attempt_started = false;
+        current_device_state = DeviceState::OFFLINE;
+        wifi_retry_after_ms = now_ms + 15000;
+        WiFi.disconnect();
+        Serial.println("[WIFI] Offline - retry scheduled");
+    }
+}
+
+// ============================================================
+// SETUP
+// ============================================================
+
+void setup() {
+    Serial.begin(115200);
+    delay(1000);
+
+    Serial.println("\n╔════════════════════════════════════════╗");
+    Serial.println("║   WISE² K10 IMPS - FACE ENGINE v2.0  ║");
+    Serial.println("║   Professional Animated Face           ║");
+    Serial.println("╚════════════════════════════════════════╝\n");
+
+    boot_ms = millis();
+
+    // Seed random for blinking variance
+    srand(boot_ms);
+
+    // Initialize board
+    Serial.println("[BOOT] Initializing hardware...");
+    k10.begin();
+    delay(100);
+    forceBacklightOn();
+
+    // Initialize display
+    Serial.println("[BOOT] Initializing display...");
+    k10.initScreen(screen_dir);
+    k10.creatCanvas();
+    forceBacklightOn();
+    showBootPrime();
+
+    // LED ready indicator
+    k10.rgb->brightness(9);
+    k10.rgb->write(-1, 0x00FF00);
+
+    Serial.println("[BOOT] Hardware ready");
+
+    // Initialize audio system (microphone + speaker)
+    Serial.println("[BOOT] Audio queued after display stabilization");
+    audio_init_after_ms = boot_ms + 4500;
+    beginWiFiConnect(boot_ms);
+
+    // Initialize face state
+    face_state.current_state = ImpFaceState::BOOT;
+    face_state.state_change_ms = boot_ms;
+    face_state.blink.next_blink_ms = boot_ms + 2000;  // First blink after 2 seconds
+
+    current_device_state = DeviceState::BOOTING;
+
+    Serial.println("[BOOT] Complete - Face engine online\n");
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+
+void loop() {
+    uint32_t now = millis();
+    static uint32_t last_display_update_time = 0;
+    static bool boot_complete = false;
+    static bool test_mode_enabled = false;  // Disable for production (responds to device states)
+    static uint32_t test_mode_timer = 0;
+    static int test_state_index = 0;
+
+    // TEST MODE - Cycle through all 12 face states
+    if (test_mode_enabled) {
+        if (test_mode_timer == 0) {
+            test_mode_timer = now;
+        }
+
+        uint32_t elapsed = now - test_mode_timer;
+        if (elapsed > 3000) {  // 3 seconds per state
+            test_mode_timer = now;
+            test_state_index = (test_state_index + 1) % 12;
+
+            // Map to ImpFaceState
+            ImpFaceState test_states[] = {
+                ImpFaceState::IDLE,
+                ImpFaceState::LISTENING,
+                ImpFaceState::THINKING,
+                ImpFaceState::SPEAKING,
+                ImpFaceState::CURIOUS,
+                ImpFaceState::HAPPY,
+                ImpFaceState::FOCUSED,
+                ImpFaceState::MISCHIEVOUS,
+                ImpFaceState::WARNING,
+                ImpFaceState::ERROR,
+                ImpFaceState::SLEEPING,
+                ImpFaceState::OFFLINE
+            };
+
+            face_state.current_state = test_states[test_state_index];
+            face_state.state_change_ms = now;
+            face_state.animation_frame = 0;
+
+            Serial.printf("[TEST] Face state: %d\n", test_state_index);
+        }
+    }
+
+    // Update display at 60 FPS (16.7ms)
+    if (now - last_display_update_time > 16) {
+        last_display_update_time = now;
+        updateDisplay(now);
+    }
+
+    // Boot sequence (only if test mode disabled)
+    if (!boot_complete && !test_mode_enabled) {
+        if (now - boot_ms > 3000) {
+            if (current_device_state == DeviceState::BOOTING) {
+                current_device_state = wifi_connected ? DeviceState::IDLE : DeviceState::CONNECTING_WIFI;
+            }
+            boot_complete = true;
+        }
+    }
+
+    serviceWiFi(now);
+    if (!audio_initialized && now >= audio_init_after_ms) {
+        initAudio();
+    }
+    serviceAudio(now);
+
+    // Periodic dashboard sync (if connected and not currently speaking)
+    if (wifi_connected && current_device_state == DeviceState::IDLE) {
+        static uint32_t last_sync = 0;
+        if (now - last_sync > 5000) {  // Sync every 5 seconds
+            last_sync = now;
+            syncWithDashboard();
+        }
+    }
+
+    delay(5);  // Reduced to 5ms for smoother animation
+}

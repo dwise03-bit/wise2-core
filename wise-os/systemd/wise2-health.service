@@ -1,0 +1,7 @@
+[Unit]
+Description=WISE2 Defense health check
+After=wise2-defense.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/wise2-defense/scripts/health.sh

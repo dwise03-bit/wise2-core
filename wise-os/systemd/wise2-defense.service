@@ -1,0 +1,23 @@
+[Unit]
+Description=WISE2 Defense IMP local API and dashboard
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=wise2
+Group=wise2
+WorkingDirectory=/opt/wise2-defense/app
+EnvironmentFile=-/etc/wise2-defense/wise2-defense.env
+Environment=WISE2_CONFIG_DIR=/opt/wise2-defense/app/config
+Environment=WISE2_DATA_DIR=/opt/wise2-defense/data
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/wise2-defense/data /opt/wise2-defense/logs
+
+[Install]
+WantedBy=multi-user.target
