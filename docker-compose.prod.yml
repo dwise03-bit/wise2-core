@@ -77,6 +77,9 @@ services:
 
   # Next.js Website
   website:
+    build:
+      context: .
+      dockerfile: Dockerfile.website
     image: wise2-core-website:latest
     container_name: wise2-website
     restart: unless-stopped
@@ -183,8 +186,8 @@ services:
     image: nginx:alpine
     container_name: wise2-nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
