@@ -2,269 +2,341 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, Printer, Box, Palette, Upload, Zap, Shield, Clock, Users, CheckCircle2 } from 'lucide-react';
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  FileText,
+  Image,
+  MapPin,
+  CreditCard,
+  Building2,
+  Settings,
+  BarChart3,
+  Phone,
+  Lock,
+  MessageSquare,
+  QrCode,
+  TrendingUp,
+  ChevronRight,
+  Eye,
+  Upload,
+  Menu,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
 
-const services = [
-  {
-    icon: Box,
-    title: '3D Printing',
-    desc: 'Custom parts, prototypes, and accessories. FDM printing with PLA, PETG, ABS, and TPU.',
-    href: '/printshop/3d-printing',
-    bgColor: 'bg-[#27C7FF]/15',
-    borderColor: 'border-[#27C7FF]/20',
-  },
-  {
-    icon: Printer,
-    title: 'DTF Transfers',
-    desc: 'Direct-to-film heat transfers for apparel. Individual transfers and gang sheets.',
-    href: '/printshop/dtf',
-    bgColor: 'bg-[#72FF3B]/15',
-    borderColor: 'border-[#72FF3B]/20',
-  },
-  {
-    icon: Palette,
-    title: 'Design Services',
-    desc: 'CAD design, artwork cleanup, and parametric modeling. We bring your ideas to reality.',
-    href: '/printshop/quote',
-    bgColor: 'bg-purple-500/15',
-    borderColor: 'border-purple-500/20',
-  },
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', href: '#', active: true },
+  { icon: ShoppingCart, label: 'Orders', href: '#' },
+  { icon: FileText, label: 'Quotes', href: '#' },
+  { icon: Image, label: 'Art Vault', href: '#' },
+  { icon: MapPin, label: 'Addresses', href: '#' },
+  { icon: CreditCard, label: 'Payment Methods', href: '#' },
+  { icon: Building2, label: 'Business Account', href: '#' },
+  { icon: Settings, label: 'Settings', href: '#' },
 ];
 
-const features = [
-  { icon: Upload, title: 'Upload & Quote', desc: 'Upload your files, get an instant quote. STL, 3MF, OBJ, STEP, SCAD, PNG, SVG supported.' },
-  { icon: Zap, title: 'Automated Preflight', desc: 'AI-powered file validation checks dimensions, manifold integrity, DPI, and printability.' },
-  { icon: Shield, title: 'Proof Approval', desc: 'Review and approve digital proofs before production begins. No surprises.' },
-  { icon: Clock, title: 'Fast Turnaround', desc: '2–5 day standard turnaround. Rush service available for time-sensitive projects.' },
-  { icon: Users, title: 'Business Accounts', desc: 'Bulk pricing, repeat orders, and dedicated support for businesses.' },
-  { icon: CheckCircle2, title: 'Quality Guarantee', desc: 'Every part inspected before shipping. If it does not meet spec, we reprint it.' },
+const recentOrders = [
+  { id: '#PS-10254', date: 'May 12, 2025', product: '3D Printed Parts', status: 'In Production', color: 'bg-[#72FF3B]/20 text-[#72FF3B]' },
+  { id: '#PS-10253', date: 'May 11, 2025', product: 'DTF Gang Sheet', status: 'Printing', color: 'bg-[#27C7FF]/20 text-[#27C7FF]' },
+  { id: '#PS-10252', date: 'May 10, 2025', product: 'Design Service', status: 'Proof Approval', color: 'bg-orange-500/20 text-orange-400' },
+  { id: '#PS-10251', date: 'May 8, 2025', product: '3D Printed Parts', status: 'Shipped', color: 'bg-green-500/20 text-green-400' },
 ];
 
-const capabilities3d = [
-  'Packout accessories & organizers',
-  'Monitor stands & mounts',
-  'Router & device mounts',
-  'Raspberry Pi enclosures',
-  'Cable management',
-  'Custom brackets & adapters',
-  'Replacement parts',
-  'Prototype runs',
+const artworkVault = [
+  { id: 1, name: 'IMP ENERGY', image: '🎨' },
+  { id: 2, name: 'IMP EMPIRE', image: '⚡' },
+  { id: 3, name: 'SENCERE', image: '🎭' },
+  { id: 4, name: 'IMP DRIP', image: '💧' },
 ];
 
-const capabilitiesDtf = [
-  'Individual logo transfers',
-  'Full-front & back prints',
-  'Sleeve transfers',
-  'Gang sheets (12×16" to 22×48")',
-  'Business branding packs',
-  'Names & numbers',
-  'Artwork cleanup',
-  'Rush transfers',
-];
+export default function PrintShopDashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-const processSteps = [
-  { step: '01', title: 'Upload', desc: 'Upload your 3D model or artwork. We accept STL, 3MF, OBJ, STEP, SCAD, PNG, SVG, and more.' },
-  { step: '02', title: 'Automated Preflight', desc: 'Our system validates your file for printability — dimensions, manifold integrity, DPI, and color mode.' },
-  { step: '03', title: 'Quote & Approval', desc: 'Receive an itemized quote. Review and approve the digital proof before production starts.' },
-  { step: '04', title: 'Production', desc: 'Your order enters the production queue. Track status in real time from your dashboard.' },
-  { step: '05', title: 'Quality Check & Ship', desc: 'Every part is inspected. Shipped or ready for local pickup — your choice.' },
-];
-
-export default function PrintShopPage() {
   return (
-    <div className="min-h-screen bg-[#030504] text-white">
-      {/* Hero */}
-      <section className="relative printshop-section overflow-hidden" aria-label="Print shop hero section">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#72FF3B]/5 via-transparent to-transparent" />
-        <div className="printshop-container relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+    <div className="min-h-screen bg-[#030504] text-white flex" role="application" aria-label="Print Shop Dashboard">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 lg:hidden z-40"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed lg:static left-0 top-0 h-screen bg-[#070B09] border-r border-[#27C7FF]/10 w-64 transition-transform duration-300 z-50 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+        role="navigation"
+        aria-label="Sidebar navigation"
+      >
+        {/* Logo */}
+        <div className="p-6 border-b border-[#27C7FF]/10 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#72FF3B] to-[#27C7FF] rounded-lg flex items-center justify-center">
+              <span className="text-black font-bold text-sm">W</span>
+            </div>
+            <span className="font-bold">WISE²</span>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden printshop-btn printshop-btn-secondary p-1"
+            aria-label="Close sidebar"
           >
-            <p className="text-[#72FF3B] text-sm font-semibold tracking-widest uppercase mb-4">
-              WISE² Print Shop
-            </p>
-            <h1 className="printshop-heading text-5xl md:text-6xl lg:text-7xl">
-              Design. Print.{' '}
-              <span className="bg-gradient-to-r from-[#72FF3B] to-[#27C7FF] bg-clip-text text-transparent">
-                Build.
-              </span>
-            </h1>
-            <p className="printshop-text-body max-w-2xl mx-auto mb-8">
-              From file to finished product. Custom 3D printing and DTF transfer production,
-              powered by the WISE² Business OS.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
-              <Link
-                href="/printshop/upload"
-                className="printshop-btn printshop-btn-primary"
-                aria-label="Upload your design and get an instant quote"
-              >
-                Upload & Get Quote <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </Link>
-              <Link
-                href="/printshop/products"
-                className="printshop-btn printshop-btn-secondary"
-                aria-label="Browse available products and services"
-              >
-                Browse Products
-              </Link>
-            </div>
-          </motion.div>
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      </section>
 
-      {/* Services */}
-      <section className="printshop-section" aria-label="Services offered">
-        <div className="printshop-container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {services.map((svc, i) => (
-              <motion.div
-                key={svc.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-              >
-                <Link
-                  href={svc.href}
-                  className="printshop-card hover:shadow-lg"
-                  aria-label={`Learn more about ${svc.title}`}
-                >
-                  <div className={`printshop-icon-container ${svc.bgColor}`}>
-                    <svc.icon className="w-6 h-6 text-white" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{svc.title}</h3>
-                  <p className="printshop-text-small">{svc.desc}</p>
-                  <div className="mt-4 flex items-center gap-1 printshop-text-small text-[#72FF3B] opacity-0 group-hover:opacity-100 transition-opacity">
-                    Learn more <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-4" role="list">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`printshop-nav-item mb-2 ${
+                item.active ? 'bg-[#72FF3B]/15 border-l-2 border-[#72FF3B]' : 'hover:bg-[#27C7FF]/5'
+              }`}
+              aria-current={item.active ? 'page' : undefined}
+              role="listitem"
+            >
+              <item.icon className="w-5 h-5 shrink-0" aria-hidden="true" />
+              <span className="ml-3 text-sm font-medium">{item.label}</span>
+              {item.active && <ChevronRight className="w-4 h-4 ml-auto text-[#72FF3B]" aria-hidden="true" />}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="border-t border-[#27C7FF]/10 p-4">
+          <div className="text-xs text-[#8D98A5] space-y-1">
+            <p>© 2025 SenCere Creative</p>
+            <p>Powered by WISE²</p>
           </div>
         </div>
-      </section>
+      </aside>
 
-      {/* Capabilities */}
-      <section className="printshop-section bg-[#070B09]" aria-label="Our capabilities">
-        <div className="printshop-container">
-          <h2 className="printshop-heading text-center mb-12">What We Print</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            <div>
-              <h3 className="text-lg font-semibold text-[#27C7FF] mb-6 flex items-center gap-2">
-                <Box className="w-5 h-5" aria-hidden="true" /> 3D Printing
-              </h3>
-              <ul className="space-y-3" role="list">
-                {capabilities3d.map(item => (
-                  <li key={item} className="printshop-list-item">
-                    <CheckCircle2 className="w-5 h-5 text-[#27C7FF]" aria-hidden="true" /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#72FF3B] mb-6 flex items-center gap-2">
-                <Printer className="w-5 h-5" aria-hidden="true" /> DTF Transfers
-              </h3>
-              <ul className="space-y-3" role="list">
-                {capabilitiesDtf.map(item => (
-                  <li key={item} className="printshop-list-item">
-                    <CheckCircle2 className="w-5 h-5 text-[#72FF3B]" aria-hidden="true" /> {item}
-                  </li>
-                ))}
-              </ul>
+      {/* Main Content */}
+      <main className="flex-1 overflow-hidden flex flex-col">
+        {/* Header */}
+        <header className="border-b border-[#27C7FF]/10 bg-[#030504] sticky top-0 z-40 printshop-section py-4">
+          <div className="flex items-center justify-between px-4 lg:px-8">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden printshop-btn printshop-btn-secondary p-2"
+              aria-label="Open sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex-1" />
+            <div className="flex items-center gap-4">
+              <button className="printshop-btn printshop-btn-secondary text-sm">
+                Start Your Build
+              </button>
+              <button
+                className="printshop-btn printshop-btn-secondary p-2"
+                aria-label="Login"
+              >
+                Login →
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </header>
 
-      {/* Features */}
-      <section className="printshop-section" aria-label="How it works features">
-        <div className="printshop-container">
-          <h2 className="printshop-heading text-center mb-4">How It Works</h2>
-          <p className="printshop-text-body text-center mb-12 max-w-xl mx-auto">
-            Upload your file, approve the proof, and we handle the rest. Simple.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feat, i) => (
-              <motion.div
-                key={feat.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="printshop-card"
-              >
-                <feat.icon className="w-5 h-5 text-[#72FF3B] mb-3" aria-hidden="true" />
-                <h4 className="font-semibold mb-2">{feat.title}</h4>
-                <p className="printshop-text-small">{feat.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+        {/* Page Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="printshop-section px-4 lg:px-8">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="printshop-heading text-3xl md:text-4xl mb-2">Your Order Dashboard</h1>
+              <p className="text-[#8D98A5] text-sm">TRACK. MANAGE. REORDER.</p>
+            </div>
 
-      {/* Process Timeline */}
-      <section className="printshop-section bg-[#070B09]" aria-label="Production process timeline">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="printshop-heading text-center mb-12">From File to Finished</h2>
-          <div className="space-y-6" role="list">
-            {processSteps.map((item, i) => (
-              <motion.div
-                key={item.step}
-                role="listitem"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="flex gap-4 items-start"
-              >
-                <span
-                  className="text-2xl font-bold text-[#72FF3B]/30 font-mono w-10 shrink-0"
-                  aria-hidden="true"
-                >
-                  {item.step}
-                </span>
+            {/* Production Status Widget */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-[#111815] to-[#070B09] border border-[#72FF3B]/20 rounded-xl p-6 mb-8"
+            >
+              <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h4 className="font-semibold text-white text-lg">{item.title}</h4>
-                  <p className="printshop-text-small mt-1">{item.desc}</p>
+                  <p className="text-[#72FF3B] text-sm font-semibold uppercase tracking-wider mb-2">
+                    Production Status
+                  </p>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-1">12</h2>
+                  <p className="text-[#8D98A5] text-sm">Orders in Production</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+                <TrendingUp className="w-8 h-8 text-[#72FF3B]" aria-hidden="true" />
+              </div>
 
-      {/* CTA */}
-      <section className="printshop-section text-center" aria-label="Call to action">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="printshop-heading text-4xl md:text-5xl">Ready to Print?</h2>
-          <p className="printshop-text-body mb-8">
-            Upload your files and get a quote in minutes. No account required for quotes.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
-            <Link
-              href="/printshop/upload"
-              className="printshop-btn printshop-btn-primary"
-              aria-label="Start your print order"
+              {/* Status Breakdown */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-[#72FF3B]/10 rounded-lg p-4">
+                  <p className="text-[#72FF3B] text-2xl font-bold">6</p>
+                  <p className="text-xs text-[#8D98A5]">3D Printing</p>
+                </div>
+                <div className="bg-[#27C7FF]/10 rounded-lg p-4">
+                  <p className="text-[#27C7FF] text-2xl font-bold">4</p>
+                  <p className="text-xs text-[#8D98A5]">DTF Transfers</p>
+                </div>
+                <div className="bg-green-500/10 rounded-lg p-4">
+                  <p className="text-green-400 text-2xl font-bold">2</p>
+                  <p className="text-xs text-[#8D98A5]">Shipping Today</p>
+                </div>
+              </div>
+
+              <button
+                className="printshop-btn printshop-btn-primary w-full"
+                aria-label="View production queue"
+              >
+                View Production Queue <ChevronRight className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </motion.div>
+
+            {/* Recent Orders */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6 mb-8"
             >
-              Start Your Order <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-            <Link
-              href="/printshop/help"
-              className="printshop-btn printshop-btn-secondary"
-              aria-label="Get help and support"
+              <h3 className="text-xl font-bold mb-6">Recent Orders</h3>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full" role="table">
+                  <thead>
+                    <tr className="border-b border-[#27C7FF]/10">
+                      <th className="text-left text-xs font-semibold text-[#8D98A5] py-3 px-4">ORDER</th>
+                      <th className="text-left text-xs font-semibold text-[#8D98A5] py-3 px-4">DATE</th>
+                      <th className="text-left text-xs font-semibold text-[#8D98A5] py-3 px-4">PRODUCT</th>
+                      <th className="text-left text-xs font-semibold text-[#8D98A5] py-3 px-4">STATUS</th>
+                      <th className="text-center text-xs font-semibold text-[#8D98A5] py-3 px-4">TRACKING</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentOrders.map((order) => (
+                      <tr key={order.id} className="border-b border-[#27C7FF]/5 hover:bg-[#27C7FF]/5 transition-colors">
+                        <td className="py-4 px-4 text-sm font-mono">{order.id}</td>
+                        <td className="py-4 px-4 text-sm text-[#8D98A5]">{order.date}</td>
+                        <td className="py-4 px-4 text-sm">{order.product}</td>
+                        <td className="py-4 px-4">
+                          <span className={`printshop-status-badge ${order.color}`}>
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          <button
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#27C7FF]/10 transition-colors"
+                            aria-label={`Track order ${order.id}`}
+                          >
+                            <QrCode className="w-4 h-4 text-[#27C7FF]" aria-hidden="true" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex gap-4 mt-6">
+                <button className="printshop-btn printshop-btn-primary">
+                  View All Orders
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Artwork Vault */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6 mb-8"
             >
-              Need Help?
-            </Link>
+              <h3 className="text-xl font-bold mb-6">Artwork Vault</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {artworkVault.map((art) => (
+                  <div
+                    key={art.id}
+                    className="aspect-square bg-[#070B09] border border-[#27C7FF]/20 rounded-lg flex items-center justify-center hover:border-[#72FF3B]/50 transition-colors cursor-pointer group"
+                  >
+                    <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">{art.image}</div>
+                    <p className="text-xs text-[#8D98A5] absolute bottom-2">{art.name}</p>
+                  </div>
+                ))}
+              </div>
+              <button className="printshop-btn printshop-btn-secondary w-full">
+                <Upload className="w-4 h-4" aria-hidden="true" />
+                Upload New Artwork
+              </button>
+            </motion.div>
+
+            {/* Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {/* Wholesale Pricing */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6"
+              >
+                <TrendingUp className="w-6 h-6 text-[#72FF3B] mb-4" aria-hidden="true" />
+                <h4 className="font-semibold mb-2">Wholesale & Business Pricing</h4>
+                <p className="text-sm text-[#8D98A5] mb-4">Volume discounts, net terms & more.</p>
+                <button className="text-[#72FF3B] text-sm font-semibold hover:underline">
+                  Learn more →
+                </button>
+              </motion.div>
+
+              {/* Local Pickup */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6"
+              >
+                <MapPin className="w-6 h-6 text-[#27C7FF] mb-4" aria-hidden="true" />
+                <h4 className="font-semibold mb-2">Local Pickup Schedule</h4>
+                <p className="text-sm text-[#8D98A5] mb-4">Choose a time that works for you.</p>
+                <button className="text-[#27C7FF] text-sm font-semibold hover:underline">
+                  View schedule →
+                </button>
+              </motion.div>
+
+              {/* Secure Checkout */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6"
+              >
+                <Lock className="w-6 h-6 text-green-400 mb-4" aria-hidden="true" />
+                <h4 className="font-semibold mb-2">Secure Checkout Powered by Stripe</h4>
+                <p className="text-sm text-[#8D98A5] mb-4">Fast. Safe. Reliable.</p>
+                <button className="text-green-400 text-sm font-semibold hover:underline">
+                  Learn more →
+                </button>
+              </motion.div>
+
+              {/* IMP Assistant */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="bg-[#111815] border border-[#27C7FF]/10 rounded-xl p-6"
+              >
+                <MessageSquare className="w-6 h-6 text-[#72FF3B] mb-4" aria-hidden="true" />
+                <h4 className="font-semibold mb-2">IMP Print Assistant</h4>
+                <p className="text-sm text-[#8D98A5] mb-4">Your AI production co-pilot. Ask. Help.</p>
+                <button className="text-[#72FF3B] text-sm font-semibold hover:underline">
+                  Chat now →
+                </button>
+              </motion.div>
+            </div>
           </div>
-          <p className="text-xs text-[#8D98A5]/60 mt-8">
-            Powered by <span className="text-[#72FF3B] font-semibold">WISE²</span> Business OS
-          </p>
         </div>
-      </section>
+      </main>
     </div>
   );
 }

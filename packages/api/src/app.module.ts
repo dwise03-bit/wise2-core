@@ -30,6 +30,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
 import { WiseDefenseModule } from './wise-defense/wise-defense.module';
+import { PrintShopModule } from './v1/print-shop/print-shop.module';
 
 @Module({
   imports: [
@@ -118,6 +119,7 @@ import { WiseDefenseModule } from './wise-defense/wise-defense.module';
     WiseImpEventsModule,
     CustomersModule,
     GalleryModule,
+    PrintShopModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],
