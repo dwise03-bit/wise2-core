@@ -12,7 +12,7 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const REDIRECT_URI =
   process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
-const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net').replace(/\/$/, '');
+const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || `${PUBLIC_SITE_URL}/dashboard`).replace(/\/$/, '');
 const COOKIE_DOMAIN = PUBLIC_SITE_URL.endsWith('wise2.net') ? '.wise2.net' : undefined;
 
 export async function GET(request: NextRequest) {
