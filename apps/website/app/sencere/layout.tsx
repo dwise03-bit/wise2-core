@@ -15,6 +15,15 @@ const inter = Inter({
   display: 'swap',
 });
 
+// Forces per-request rendering instead of build-time static prerendering.
+// SiteChrome (apps/website/components/SiteChrome.tsx) decides whether to
+// render the global WISE² platform nav based on usePathname(), which
+// resolves incorrectly during static generation and bakes the global nav
+// into the prerendered HTML (the same pre-existing issue affects
+// /soundlab). Dynamic rendering resolves the pathname correctly per
+// request, matching what already works in `next dev`.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'SenCere Creative LLC | Custom Apparel, Printing & Fabrication',
