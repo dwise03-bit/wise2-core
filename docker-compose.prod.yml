@@ -131,7 +131,7 @@ services:
       JOBBER_ACCESS_TOKEN: ${JOBBER_ACCESS_TOKEN:-}
       JOBBER_SYNC_INTERVAL: ${JOBBER_SYNC_INTERVAL:-15}
     ports:
-      - "127.0.0.1:3020:3020"
+      - "3020:3020"
     networks:
       - wise2
     healthcheck:
