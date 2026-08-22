@@ -44,6 +44,9 @@ model User {
   // SenCere ecommerce relationships
   senCereCustomer SenCereCustomer?
 
+  // WISE² Trading relationships
+  tradingAccount TradingAccount? @relation("tradingAccount")
+
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
@@ -4203,3 +4206,514 @@ model K10Analytics {
   @@index([deviceId])
   @@index([timestamp])
 }
+
+// ===== WISE² TRADING PLATFORM =====
+
+// TradingAccount: Per-user trading account configuration
+model TradingAccount {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation("tradingAccount", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Account settings
+  accountName       String?
+  accountType       String   @default("DEMO") // DEMO, PAPER, SHADOW, LIVE
+  riskPerTrade      Float    @default(1.0) // Risk as % of equity
+  maxDailyLoss      Float    @default(500.0)
+  maxConsecutiveLosses Int   @default(3)
+  maxOpenPositions  Int      @default(5)
+  maxCorrelation    Float    @default(0.7)
+  
+  // Status
+  isActive          Boolean  @default(true)
+  paperEquity       Float    @default(10000.0)
+  realEquity        Float?
+  
+  // Relationships
+  watchlists        Watchlist[]
+  positions         Position[]
+  trades            Trade[]
+  strategies        Strategy[]
+  backtestRuns      BacktestRun[]
+  riskPolicies      RiskPolicy[]
+  journalEntries    JournalEntry[]
+  alerts            Alert[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([accountType])
+}
+
+// User trading account relation
+
+// Watchlist: Tracked symbols
+model Watchlist {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  name              String
+  symbol            String
+  
+  // Latest snapshot
+  price             Float?
+  bid               Float?
+  ask               Float?
+  volume            Float?
+  volatility        Float?
+  
+  // Session data (cached)
+  asiaHigh          Float?
+  asiaLow           Float?
+  asiaMidpoint      Float?
+  londonHigh        Float?
+  londonLow         Float?
+  currentRegime     String? // BULLISH, BEARISH, NEUTRAL, RANGING, TRENDING
+  
+  // Fibonacci levels (cached)
+  fib0              Float?
+  fib236            Float?
+  fib382            Float?
+  fib50             Float?
+  fib618            Float?
+  fib100            Float?
+  fib162            Float?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([accountId, symbol])
+  @@index([accountId])
+  @@index([symbol])
+}
+
+// MarketRegime: Classify current market state
+model MarketRegime {
+  id                String   @id @default(cuid())
+  symbol            String
+  timeframe         String   @default("4H")
+  
+  // Regime classification
+  regime            String   // TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE, EXPANSION, COMPRESSION
+  confidence        Float    // 0-1 probability
+  
+  // Supporting metrics
+  rsiValue          Float?
+  rsiTrend          String?  // RISING, FALLING, NEUTRAL
+  volatilityLevel   String?  // LOW, MODERATE, HIGH, EXTREME
+  lastHigher        Float?
+  lastLower         Float?
+  
+  detectedAt        DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([symbol])
+  @@index([timeframe])
+  @@index([detectedAt])
+}
+
+// Setup: Trade setup detection log
+model Setup {
+  id                String   @id @default(cuid())
+  symbol            String
+  
+  // Setup identification
+  setupType         String   // LIQUIDITY_SWEEP_BULLISH, LIQUIDITY_SWEEP_BEARISH, RANGE_BREAKOUT, etc.
+  direction         String   // LONG, SHORT
+  confidence        Float    // 0-1 setup score
+  
+  // Structural data
+  impulseHigh       Float?
+  impulseLow        Float?
+  impulseStart      DateTime?
+  impulseEnd        DateTime?
+  
+  // Fibonacci zone
+  entryZone         String   // "0.382-0.618", "0.236-0.382", etc.
+  entryZoneStart    Float?
+  entryZoneEnd      Float?
+  
+  // Liquidity
+  liquidityLevel    Float?
+  sweepMagnitude    Float?
+  sweepDuration     Int?     // seconds
+  
+  // RSI state
+  rsiValue          Float?
+  rsiDivergence     String?  // BULLISH, BEARISH, NONE
+  
+  // Market regime
+  regime            String?
+  bias4H            String?  // BULLISH, BEARISH, NEUTRAL
+  
+  // Status
+  isValid           Boolean  @default(true) // Invalidated if price breaks structure
+  wasTraded         Boolean  @default(false) // Did we enter this setup?
+  
+  detectedAt        DateTime @default(now())
+  invalidatedAt     DateTime?
+  
+  @@index([symbol])
+  @@index([setupType])
+  @@index([direction])
+  @@index([confidence])
+  @@index([detectedAt])
+}
+
+// Signal: Active trading signal
+model Signal {
+  id                String   @id @default(cuid())
+  setupId           String?
+  symbol            String
+  
+  // Signal definition
+  signalType        String   // ENTRY, STOP_HIT, TARGET_HIT, INVALIDATION
+  direction         String   // LONG, SHORT
+  confidence        Float    // 0-1
+  
+  // Entry zone
+  suggestedEntry    Float
+  entryRangeStart   Float?
+  entryRangeEnd     Float?
+  
+  // Risk/Reward
+  suggestedStop     Float
+  suggestedTarget1  Float
+  suggestedTarget2  Float?
+  suggestedTarget3  Float?
+  
+  riskRewardRatio   Float?
+  expectedRiskRewInK Float? // Expected R multiple
+  
+  // Metadata
+  explanation       String?  // Why this signal?
+  sessionContext    String?  // ASIA, LONDON, NEWYORK
+  
+  // Status
+  status            String   @default("ACTIVE") // ACTIVE, ACCEPTED, REJECTED, EXPIRED, FILLED
+  expiresAt         DateTime?
+  
+  createdAt         DateTime @default(now())
+  filledAt          DateTime?
+  
+  @@index([symbol])
+  @@index([direction])
+  @@index([status])
+  @@index([confidence])
+  @@index([createdAt])
+}
+
+// Position: Active or closed trade position
+model Position {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  symbol            String
+  direction         String   // LONG, SHORT
+  
+  // Entry
+  entryPrice        Float
+  entryTime         DateTime @default(now())
+  quantity          Float
+  
+  // Stop & Targets
+  stopPrice         Float
+  target1           Float?
+  target2           Float?
+  target3           Float?
+  
+  // Risk management
+  initialRisk       Float    // Dollars at risk
+  riskPercentage    Float    // % of account equity
+  
+  // Current state
+  currentPrice      Float?
+  currentPnL        Float?   // Unrealized P&L
+  currentPnLPercent Float?
+  
+  // Closure
+  exitPrice         Float?
+  exitTime          DateTime?
+  realizedPnL       Float?
+  realizedR         Float?   // Realized R multiple
+  
+  // Metadata
+  setupType         String?
+  sessionContext    String?
+  notes             String?
+  
+  status            String   @default("OPEN") // OPEN, CLOSED, CANCELLED
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([accountId])
+  @@index([symbol])
+  @@index([direction])
+  @@index([status])
+  @@index([entryTime])
+}
+
+// Trade: Historical trade log (same as closed Position, but immutable)
+model Trade {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  symbol            String
+  direction         String
+  entryPrice        Float
+  exitPrice         Float
+  quantity          Float
+  
+  entryTime         DateTime
+  exitTime          DateTime
+  duration          Int      // minutes
+  
+  pnl               Float
+  pnlPercent        Float
+  rMultiple         Float?
+  
+  setupType         String?
+  sessionContext    String?
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([accountId])
+  @@index([symbol])
+  @@index([direction])
+  @@index([exitTime])
+}
+
+// Strategy: Trading strategy definition
+model Strategy {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  name              String
+  description       String?
+  version           Int      @default(1)
+  
+  // Strategy parameters
+  rsiPeriod         Int      @default(14)
+  rsiOverbought     Int      @default(70)
+  rsiOversold       Int      @default(30)
+  
+  atrPeriod         Int      @default(14)
+  atrMultiplier     Float    @default(1.5)
+  
+  fibonacciLevels   String   @default("0,0.236,0.382,0.50,0.618,1.0,1.618")
+  
+  entryConfidence   Float    @default(0.65) // Minimum confidence to trade
+  sweepThreshold    Float    @default(1.2)  // ATR multiplier for sweep detection
+  
+  // Session filtering
+  enableAsia        Boolean  @default(true)
+  enableLondon      Boolean  @default(true)
+  enableNewYork     Boolean  @default(true)
+  
+  // Risk settings
+  riskPerTrade      Float    @default(1.0)
+  maxPositionSize   Float?
+  
+  // Status
+  isActive          Boolean  @default(true)
+  isBacktested      Boolean  @default(false)
+  
+  backtestRuns      BacktestRun[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([accountId])
+  @@index([isActive])
+}
+
+// BacktestRun: Historical backtest result
+model BacktestRun {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  strategyId        String
+  strategy          Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  
+  // Backtest window
+  startDate         DateTime
+  endDate           DateTime
+  dataType          String   @default("HISTORICAL") // HISTORICAL, WALK_FORWARD, MONTE_CARLO
+  
+  // Results
+  totalTrades       Int      @default(0)
+  winningTrades     Int      @default(0)
+  losingTrades      Int      @default(0)
+  winRate           Float?   // percentage
+  profitFactor      Float?   // gross profit / gross loss
+  expectancy        Float?   // avg win * win% - avg loss * loss%
+  
+  totalPnL          Float    @default(0.0)
+  maxDrawdown       Float?
+  sharpeRatio       Float?
+  sortino           Float?
+  
+  avgWin            Float?
+  avgLoss           Float?
+  avgR              Float?
+  
+  maxWinningStreak  Int?
+  maxLosingStreak   Int?
+  
+  // Additional metrics
+  notes             String?
+  parametersUsed    String?  // JSON string of params
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([accountId])
+  @@index([strategyId])
+  @@index([dataType])
+  @@index([winRate])
+  @@index([createdAt])
+}
+
+// RiskPolicy: Account-level risk rules
+model RiskPolicy {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  // Daily limits
+  maxDailyLoss      Float
+  maxConsecutiveLosses Int
+  maxOpenPositions  Int
+  maxCorrelation    Float    // Max corr between open positions
+  
+  // Per-trade limits
+  maxRiskPerTrade   Float
+  minRiskReward     Float    @default(1.0)
+  
+  // Status
+  isActive          Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([accountId])
+}
+
+// RiskEvent: Log of risk rule violations
+model RiskEvent {
+  id                String   @id @default(cuid())
+  accountId         String
+  
+  eventType         String   // DAILY_LOSS_LIMIT, CONSECUTIVE_LOSSES, MAX_POSITIONS, etc.
+  severity          String   @default("WARNING") // WARNING, ALERT, SHUTDOWN
+  
+  message           String
+  metadata          String?  // JSON with context
+  
+  blockedTrade      Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([accountId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// JournalEntry: Trade review & reflection
+model JournalEntry {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  // Trade reference
+  symbol            String
+  tradeDate         DateTime
+  
+  // Setup details
+  setupType         String?
+  setupQuality      String?  // A_TIER, B_TIER, C_TIER
+  priceAction       String?
+  
+  // Outcome
+  result            String   // WIN, LOSS, BREAKEVEN
+  pnl               Float?
+  rMultiple         Float?
+  
+  // Reflection
+  whatWentWell      String?
+  whatWentWrong     String?
+  lessonsLearned    String?
+  nextTime          String?
+  
+  // Emotions
+  emotionalState    String?  // CALM, ANXIOUS, OVERCONFIDENT, FRUSTRATED
+  disciplineRating  Int?     // 1-10
+  
+  // Tags
+  tags              String?  // comma-separated
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([accountId])
+  @@index([tradeDate])
+  @@index([result])
+  @@index([setupType])
+}
+
+// Alert: User notifications
+model Alert {
+  id                String   @id @default(cuid())
+  accountId         String
+  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  alertType         String   // SIGNAL, RISK, PRICE, SETUP, etc.
+  title             String
+  message           String
+  
+  symbol            String?
+  priority          String   @default("INFO") // INFO, WARNING, CRITICAL
+  
+  isRead            Boolean  @default(false)
+  actionUrl         String?  // Link to related data
+  
+  createdAt         DateTime @default(now())
+  readAt            DateTime?
+  
+  @@index([accountId])
+  @@index([alertType])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// PriceSnapshot: Historical price data for backtesting
+model PriceSnapshot {
+  id                String   @id @default(cuid())
+  symbol            String
+  timeframe         String   @default("1H")
+  
+  openTime          DateTime
+  open              Float
+  high              Float
+  low               Float
+  close             Float
+  volume            Float?
+  
+  // Technical indicators (pre-calculated for performance)
+  rsi               Float?
+  atr               Float?
+  
+  createdAt         DateTime @default(now())
+  
+  @@unique([symbol, timeframe, openTime])
+  @@index([symbol])
+  @@index([timeframe])
+  @@index([openTime])
+}
+
