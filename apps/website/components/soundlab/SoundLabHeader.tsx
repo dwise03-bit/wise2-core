@@ -99,7 +99,7 @@ export function SoundLabHeader() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openIntake()}
-            className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2.5 rounded border border-[#9AFF00] text-[#9AFF00] text-xs font-bold tracking-wider hover:bg-[#9AFF00] hover:text-black hover:shadow-[0_0_20px_rgba(154,255,0,0.6)] transition-all cursor-pointer"
+            className="hidden md:flex items-center gap-2 px-4 md:px-5 py-2.5 rounded border border-[#9AFF00] text-[#9AFF00] text-xs font-bold tracking-wider hover:bg-[#9AFF00] hover:text-black hover:shadow-[0_0_20px_rgba(154,255,0,0.6)] transition-all cursor-pointer"
           >
             START MY PROJECT
             <AudioWaveform size={14} />

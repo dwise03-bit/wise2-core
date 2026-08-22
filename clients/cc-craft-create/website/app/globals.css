@@ -57,16 +57,4 @@ h1, h2, h3, h4, h5, h6 {
 .border-cc-dark { border-color: #29233D; }
 .border-cc-white { border-color: #FFFFFF; }
 
-.card {
-  background-color: #FFFFFF;
-  border: 1px solid #B785D3;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  background-color: #F3E8FF;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
+/* Card styling removed - using Tailwind classes instead */
