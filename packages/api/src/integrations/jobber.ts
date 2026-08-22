@@ -103,7 +103,7 @@ export class JobberClient {
       throw new Error(`Jobber API error: ${res.status} ${res.statusText}`);
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as { errors?: any; data?: T };
     if (data.errors) {
       throw new Error(`Jobber GraphQL error: ${JSON.stringify(data.errors)}`);
     }
