@@ -8,7 +8,7 @@ import { WiseImp } from '@/components/wise-imp/WiseImp';
  * Routes that own a fully custom header/footer and must not receive the
  * shared site chrome (PublicNav/PublicFooter/WiseImp).
  */
-const CUSTOM_SHELL_ROUTES = ['/soundlab'];
+const CUSTOM_SHELL_ROUTES = ['/soundlab', '/sencere'];
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
