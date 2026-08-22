@@ -2,7 +2,7 @@
 
 **Launch Start:** August 21, 2026  
 **Target Launch:** August 28, 2026  
-**Status:** 🟢 ON TRACK (Days 2-3 Complete)
+**Status:** 🟢 ON TRACK (Days 2-3 Complete, Days 4-5 Foundation Ready)
 
 ---
 
@@ -67,20 +67,25 @@
 
 **Status:** ✅ COMPLETE — Build passes TypeScript, all DB layers functional
 
-**Next:** Stripe integration (Days 4-5)
+**Setup Guide:** See `DATABASE_SETUP.md` for local/production database configuration
+
+**Next:** Complete Stripe integration (Days 4-5)
 
 ---
 
-### 🔄 Days 4-5: Stripe Payment Integration (August 24-25)
+### 🟡 Days 4-5: Stripe Payment Integration (August 24-25)
 
-**Deliverables (Planned):**
-- [ ] Stripe API key configuration
-- [ ] Stripe React integration in checkout form
-- [ ] Card element rendering & validation
-- [ ] POST /api/payments endpoint for transaction processing
-- [ ] Order status update on payment success
-- [ ] Error handling for failed payments
+**Deliverables:**
+- [x] Payment API endpoint (`/api/payments`)
+- [x] Stripe utilities (`lib/stripe.ts`) with getStripe() and createPaymentIntent()
+- [x] StripePaymentForm component with CardElement
+- [x] Database ready (stripe_payment_id column in orders)
+- [ ] Checkout form wrapped in Elements provider
+- [ ] StripePaymentForm integrated into checkout
+- [ ] PaymentIntent flow end-to-end testing
+- [ ] Error handling for declined cards
 - [ ] Payment confirmation & receipt email (Resend)
+- [ ] Webhook setup for payment status updates
 - [ ] Test mode Stripe transactions
 
 **Test Cards:**
@@ -88,13 +93,19 @@
 - Decline: 4000 0000 0000 0002
 - Auth required: 4000 0025 0000 3155
 
-**Integration Points:**
-- Frontend: Stripe Elements in checkout form
-- API: POST /api/payments → Stripe API
-- Database: Store `stripe_payment_id` in orders table
-- Webhook: Stripe events for order confirmation
+**Foundation Ready:**
+- ✅ `lib/stripe.ts`: Stripe initialization and helpers
+- ✅ `app/api/payments/route.ts`: PaymentIntent creation endpoint
+- ✅ `components/StripePaymentForm.tsx`: Card element component
+- ✅ `STRIPE_SETUP.md`: Complete integration guide (6 setup steps, testing, troubleshooting)
 
-**Status:** 🟡 READY TO START (All prerequisites met)
+**Integration Points:**
+- Frontend: Stripe Elements in checkout form (component created, needs checkout integration)
+- API: POST /api/payments → Stripe API (endpoint created)
+- Database: Store `stripe_payment_id` in orders table (schema ready)
+- Webhook: Stripe events for order confirmation (optional, documented)
+
+**Status:** 🟡 FOUNDATION COMPLETE (Checkout integration in progress)
 
 ---
 
