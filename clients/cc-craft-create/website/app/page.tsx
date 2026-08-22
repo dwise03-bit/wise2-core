@@ -62,7 +62,7 @@ export default function Home() {
         </section>
 
         {/* Value Propositions */}
-        <section className="bg-cc-lilac py-16 md:py-24 px-4">
+        <section className="py-16 md:py-24 px-4" style={{ backgroundColor: '#F3E8FF' }}>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
@@ -71,10 +71,10 @@ export default function Home() {
                 { title: 'Made with Love', desc: 'Personal touch, handcrafted care' },
               ].map((vp, i) => (
                 <div key={i} className="bg-white border border-cc-lavender rounded-lg p-8 text-center hover:shadow-lg transition-shadow">
-                  <h3 className="text-xl font-lora font-bold text-cc-purple mb-2">
+                  <h3 className="text-xl font-lora font-bold mb-2" style={{ color: '#6D2DBD' }}>
                     {vp.title}
                   </h3>
-                  <p className="text-cc-dark">{vp.desc}</p>
+                  <p style={{ color: '#29233D' }}>{vp.desc}</p>
                 </div>
               ))}
             </div>
@@ -131,17 +131,73 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Order Process */}
+        <section className="py-16 md:py-24 px-4 bg-cc-white">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-lora font-bold text-cc-dark mb-12 text-center">
+              Our Simple Order Process
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {[
+                { step: '1', title: 'YOU DREAM IT', desc: 'Tell us your idea & details' },
+                { step: '2', title: 'WE DESIGN IT', desc: 'We create your proof' },
+                { step: '3', title: 'YOU APPROVE IT', desc: 'Review & approve' },
+                { step: '4', title: 'WE CREATE IT', desc: 'Bring the vision to life' },
+                { step: '5', title: 'YOU ENJOY IT', desc: 'Made with love, just for you' },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <div style={{ backgroundColor: '#6D2DBD' }} className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-white text-2xl font-bold">{item.step}</span>
+                  </div>
+                  <h3 className="font-poppins font-bold text-cc-dark mb-2">{item.title}</h3>
+                  <p className="text-sm text-cc-dark">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* What We Specialize In */}
+        <section className="py-16 md:py-24 px-4 bg-cc-lilac">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-lora font-bold text-cc-dark mb-12 text-center">
+              What We Specialize In
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+              {[
+                { icon: '🎨', label: 'Custom Designs' },
+                { icon: '✨', label: 'High Quality Printing' },
+                { icon: '⚡', label: 'Fast Turnaround' },
+                { icon: '📍', label: 'Local Pickup' },
+                { icon: '🚚', label: 'Delivery Options' },
+                { icon: '📦', label: 'Bulk Orders' },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-5xl mb-3">{item.icon}</div>
+                  <p className="font-poppins font-semibold text-cc-dark text-sm">{item.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* About CC */}
         <section className="py-16 md:py-24 px-4 bg-cc-white">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="text-6xl text-center">👩‍⚕️</div>
               <div>
-                <h2 className="text-4xl font-lora font-bold text-cc-dark mb-4">
-                  Nurse. Entrepreneur. Creator.
+                <h2 className="text-3xl font-lora font-bold text-cc-dark mb-2">
+                  Meet CC
                 </h2>
+                <h3 className="text-2xl font-lora font-bold mb-4" style={{ color: '#6D2DBD' }}>
+                  Nurse. Entrepreneur. Creator. Purpose Driven.
+                </h3>
                 <p className="text-lg text-cc-dark mb-6">
                   CC is a nurse, entrepreneur and creative at heart. She specializes in custom products for every occasion, business and community event. Every detail is designed with love, care and purpose, because every moment deserves to be special.
+                </p>
+                <p className="text-sm italic mb-6" style={{ color: '#6D2DBD' }}>
+                  "I believe every detail matters. I love creating personalized products that help people celebrate life's most important moments."
                 </p>
                 <Link href="/about">
                   <Button variant="secondary">Learn More</Button>

@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600;700&family=Great+Vibes&display=swap');
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --font-lora: 'Lora', serif;
@@ -13,15 +15,19 @@
   --cc-gold: #D4AF37;
   --cc-dark: #29233D;
   --cc-white: #FFFFFF;
+}
 
-  --background: #ffffff;
-  --foreground: #29233D;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   background-color: #FFFFFF;
   color: #29233D;
   font-family: var(--font-poppins);
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -29,11 +35,28 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-.script-text {
-  font-family: var(--font-script);
-}
+/* Utility classes for brand colors */
+.bg-cc-purple { background-color: #6D2DBD; }
+.bg-cc-lavender { background-color: #B785D3; }
+.bg-cc-lilac { background-color: #F3E8FF; }
+.bg-cc-gold { background-color: #D4AF37; }
+.bg-cc-dark { background-color: #29233D; }
+.bg-cc-white { background-color: #FFFFFF; }
 
-/* Card Styles */
+.text-cc-purple { color: #6D2DBD; }
+.text-cc-lavender { color: #B785D3; }
+.text-cc-lilac { color: #F3E8FF; }
+.text-cc-gold { color: #D4AF37; }
+.text-cc-dark { color: #29233D; }
+.text-cc-white { color: #FFFFFF; }
+
+.border-cc-purple { border-color: #6D2DBD; }
+.border-cc-lavender { border-color: #B785D3; }
+.border-cc-lilac { border-color: #F3E8FF; }
+.border-cc-gold { border-color: #D4AF37; }
+.border-cc-dark { border-color: #29233D; }
+.border-cc-white { border-color: #FFFFFF; }
+
 .card {
   background-color: #FFFFFF;
   border: 1px solid #B785D3;

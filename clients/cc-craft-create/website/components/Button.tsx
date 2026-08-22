@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -11,14 +13,27 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClass = 'font-semibold px-6 py-3 rounded-lg transition-colors font-poppins';
-  const variantClass =
-    variant === 'primary'
-      ? 'bg-cc-gold text-cc-dark hover:bg-yellow-600'
-      : 'bg-cc-purple text-white hover:bg-purple-800';
+  const isPrimary = variant === 'primary';
+  const bgColor = isPrimary ? '#D4AF37' : '#6D2DBD';
+  const textColor = isPrimary ? '#29233D' : '#FFFFFF';
 
   return (
-    <button className={`${baseClass} ${variantClass} ${className}`} {...props}>
+    <button
+      style={{
+        backgroundColor: bgColor,
+        color: textColor,
+        fontWeight: 600,
+        padding: '12px 24px',
+        borderRadius: '8px',
+        border: 'none',
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontFamily: 'var(--font-poppins)',
+        transition: 'all 0.3s ease',
+      }}
+      className={className}
+      {...props}
+    >
       {children}
     </button>
   );
