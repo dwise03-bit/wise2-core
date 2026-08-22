@@ -114,6 +114,32 @@ services:
       timeout: 10s
       retries: 3
 
+  # Get Down Pressure Washing — Jobber Demo
+  getdown-demo:
+    build:
+      context: .
+      dockerfile: apps/getdown-demo/Dockerfile
+    image: wise2-getdown-demo:latest
+    container_name: wise2-getdown-demo
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3020
+      HOSTNAME: 0.0.0.0
+      JOBBER_ENABLED: ${JOBBER_ENABLED:-false}
+      JOBBER_ACCOUNT_ID: ${JOBBER_ACCOUNT_ID:-}
+      JOBBER_ACCESS_TOKEN: ${JOBBER_ACCESS_TOKEN:-}
+      JOBBER_SYNC_INTERVAL: ${JOBBER_SYNC_INTERVAL:-15}
+    ports:
+      - "127.0.0.1:3020:3020"
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3020', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Studio App
   studio:
     image: wise2-core-studio:latest
@@ -198,6 +224,7 @@ services:
       - website
       - studio
       - prompt-shop
+      - getdown-demo
       - redis
     networks:
       - wise2
