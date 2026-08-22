@@ -10,7 +10,7 @@ RUN npm install -g pnpm
 COPY . .
 
 # Install dependencies with pnpm for workspace support
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build Next.js app
 WORKDIR /app/apps/website
