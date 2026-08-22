@@ -13,7 +13,7 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/getdown-demo ./apps/getdown-demo
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build
 WORKDIR /app/apps/getdown-demo
