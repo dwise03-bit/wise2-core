@@ -10,27 +10,24 @@ const services = [
     title: '3D Printing',
     desc: 'Custom parts, prototypes, and accessories. FDM printing with PLA, PETG, ABS, and TPU.',
     href: '/printshop/3d-printing',
-    color: 'text-[#27C7FF]',
-    bgColor: 'bg-[#27C7FF]/10',
-    borderColor: 'hover:border-[#27C7FF]/30',
+    bgColor: 'bg-[#27C7FF]/15',
+    borderColor: 'border-[#27C7FF]/20',
   },
   {
     icon: Printer,
     title: 'DTF Transfers',
     desc: 'Direct-to-film heat transfers for apparel. Individual transfers and gang sheets.',
     href: '/printshop/dtf',
-    color: 'text-[#72FF3B]',
-    bgColor: 'bg-[#72FF3B]/10',
-    borderColor: 'hover:border-[#72FF3B]/30',
+    bgColor: 'bg-[#72FF3B]/15',
+    borderColor: 'border-[#72FF3B]/20',
   },
   {
     icon: Palette,
     title: 'Design Services',
     desc: 'CAD design, artwork cleanup, and parametric modeling. We bring your ideas to reality.',
     href: '/printshop/quote',
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-400/10',
-    borderColor: 'hover:border-purple-400/30',
+    bgColor: 'bg-purple-500/15',
+    borderColor: 'border-purple-500/20',
   },
 ];
 
@@ -65,13 +62,21 @@ const capabilitiesDtf = [
   'Rush transfers',
 ];
 
+const processSteps = [
+  { step: '01', title: 'Upload', desc: 'Upload your 3D model or artwork. We accept STL, 3MF, OBJ, STEP, SCAD, PNG, SVG, and more.' },
+  { step: '02', title: 'Automated Preflight', desc: 'Our system validates your file for printability — dimensions, manifold integrity, DPI, and color mode.' },
+  { step: '03', title: 'Quote & Approval', desc: 'Receive an itemized quote. Review and approve the digital proof before production starts.' },
+  { step: '04', title: 'Production', desc: 'Your order enters the production queue. Track status in real time from your dashboard.' },
+  { step: '05', title: 'Quality Check & Ship', desc: 'Every part is inspected. Shipped or ready for local pickup — your choice.' },
+];
+
 export default function PrintShopPage() {
   return (
     <div className="min-h-screen bg-[#030504] text-white">
       {/* Hero */}
-      <section className="relative py-20 md:py-32 px-4 overflow-hidden">
+      <section className="relative printshop-section overflow-hidden" aria-label="Print shop hero section">
         <div className="absolute inset-0 bg-gradient-to-b from-[#72FF3B]/5 via-transparent to-transparent" />
-        <div className="max-w-6xl mx-auto relative z-10 text-center">
+        <div className="printshop-container relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,26 +85,28 @@ export default function PrintShopPage() {
             <p className="text-[#72FF3B] text-sm font-semibold tracking-widest uppercase mb-4">
               WISE² Print Shop
             </p>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+            <h1 className="printshop-heading text-5xl md:text-6xl lg:text-7xl">
               Design. Print.{' '}
               <span className="bg-gradient-to-r from-[#72FF3B] to-[#27C7FF] bg-clip-text text-transparent">
                 Build.
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-[#BFC4C9] max-w-2xl mx-auto mb-8">
+            <p className="printshop-text-body max-w-2xl mx-auto mb-8">
               From file to finished product. Custom 3D printing and DTF transfer production,
               powered by the WISE² Business OS.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
               <Link
                 href="/printshop/upload"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-[#72FF3B] text-black font-semibold rounded-lg hover:bg-[#8AFF52] transition-colors"
+                className="printshop-btn printshop-btn-primary"
+                aria-label="Upload your design and get an instant quote"
               >
-                Upload & Get Quote <ArrowRight className="w-4 h-4" />
+                Upload & Get Quote <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
               <Link
                 href="/printshop/products"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3 border border-[#BFC4C9]/25 text-white rounded-lg hover:bg-white/5 transition-colors"
+                className="printshop-btn printshop-btn-secondary"
+                aria-label="Browse available products and services"
               >
                 Browse Products
               </Link>
@@ -109,9 +116,9 @@ export default function PrintShopPage() {
       </section>
 
       {/* Services */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="printshop-section" aria-label="Services offered">
+        <div className="printshop-container">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {services.map((svc, i) => (
               <motion.div
                 key={svc.title}
@@ -120,16 +127,18 @@ export default function PrintShopPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
               >
-                <Link href={svc.href}>
-                  <div className={`p-6 rounded-xl border border-[#BFC4C9]/10 bg-[#111815] ${svc.borderColor} transition-all group hover:bg-[#16211B]`}>
-                    <div className={`w-12 h-12 rounded-lg ${svc.bgColor} flex items-center justify-center mb-4`}>
-                      <svc.icon className={`w-6 h-6 ${svc.color}`} />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2 group-hover:text-[#72FF3B] transition-colors">{svc.title}</h3>
-                    <p className="text-sm text-[#8D98A5]">{svc.desc}</p>
-                    <div className="mt-4 flex items-center gap-1 text-sm text-[#27C7FF] opacity-0 group-hover:opacity-100 transition-opacity">
-                      Learn more <ArrowRight className="w-3.5 h-3.5" />
-                    </div>
+                <Link
+                  href={svc.href}
+                  className="printshop-card hover:shadow-lg"
+                  aria-label={`Learn more about ${svc.title}`}
+                >
+                  <div className={`printshop-icon-container ${svc.bgColor}`}>
+                    <svc.icon className="w-6 h-6 text-white" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{svc.title}</h3>
+                  <p className="printshop-text-small">{svc.desc}</p>
+                  <div className="mt-4 flex items-center gap-1 printshop-text-small text-[#72FF3B] opacity-0 group-hover:opacity-100 transition-opacity">
+                    Learn more <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </div>
                 </Link>
               </motion.div>
@@ -139,30 +148,30 @@ export default function PrintShopPage() {
       </section>
 
       {/* Capabilities */}
-      <section className="py-16 px-4 bg-[#070B09]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">What We Print</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <section className="printshop-section bg-[#070B09]" aria-label="Our capabilities">
+        <div className="printshop-container">
+          <h2 className="printshop-heading text-center mb-12">What We Print</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             <div>
-              <h3 className="text-lg font-semibold text-[#27C7FF] mb-4 flex items-center gap-2">
-                <Box className="w-5 h-5" /> 3D Printing
+              <h3 className="text-lg font-semibold text-[#27C7FF] mb-6 flex items-center gap-2">
+                <Box className="w-5 h-5" aria-hidden="true" /> 3D Printing
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3" role="list">
                 {capabilities3d.map(item => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-[#BFC4C9]">
-                    <CheckCircle2 className="w-4 h-4 text-[#27C7FF] shrink-0" /> {item}
+                  <li key={item} className="printshop-list-item">
+                    <CheckCircle2 className="w-5 h-5 text-[#27C7FF]" aria-hidden="true" /> {item}
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-[#72FF3B] mb-4 flex items-center gap-2">
-                <Printer className="w-5 h-5" /> DTF Transfers
+              <h3 className="text-lg font-semibold text-[#72FF3B] mb-6 flex items-center gap-2">
+                <Printer className="w-5 h-5" aria-hidden="true" /> DTF Transfers
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3" role="list">
                 {capabilitiesDtf.map(item => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-[#BFC4C9]">
-                    <CheckCircle2 className="w-4 h-4 text-[#72FF3B] shrink-0" /> {item}
+                  <li key={item} className="printshop-list-item">
+                    <CheckCircle2 className="w-5 h-5 text-[#72FF3B]" aria-hidden="true" /> {item}
                   </li>
                 ))}
               </ul>
@@ -172,10 +181,10 @@ export default function PrintShopPage() {
       </section>
 
       {/* Features */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">How It Works</h2>
-          <p className="text-[#8D98A5] text-center mb-12 max-w-xl mx-auto">
+      <section className="printshop-section" aria-label="How it works features">
+        <div className="printshop-container">
+          <h2 className="printshop-heading text-center mb-4">How It Works</h2>
+          <p className="printshop-text-body text-center mb-12 max-w-xl mx-auto">
             Upload your file, approve the proof, and we handle the rest. Simple.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -186,11 +195,11 @@ export default function PrintShopPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="p-5 rounded-xl border border-[#BFC4C9]/10 bg-[#111815]"
+                className="printshop-card"
               >
-                <feat.icon className="w-5 h-5 text-[#72FF3B] mb-3" />
-                <h4 className="font-semibold mb-1">{feat.title}</h4>
-                <p className="text-sm text-[#8D98A5]">{feat.desc}</p>
+                <feat.icon className="w-5 h-5 text-[#72FF3B] mb-3" aria-hidden="true" />
+                <h4 className="font-semibold mb-2">{feat.title}</h4>
+                <p className="printshop-text-small">{feat.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -198,29 +207,29 @@ export default function PrintShopPage() {
       </section>
 
       {/* Process Timeline */}
-      <section className="py-16 px-4 bg-[#070B09]">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">From File to Finished</h2>
-          <div className="space-y-6">
-            {[
-              { step: '01', title: 'Upload', desc: 'Upload your 3D model or artwork. We accept STL, 3MF, OBJ, STEP, SCAD, PNG, SVG, and more.' },
-              { step: '02', title: 'Automated Preflight', desc: 'Our system validates your file for printability — dimensions, manifold integrity, DPI, and color mode.' },
-              { step: '03', title: 'Quote & Approval', desc: 'Receive an itemized quote. Review and approve the digital proof before production starts.' },
-              { step: '04', title: 'Production', desc: 'Your order enters the production queue. Track status in real time from your dashboard.' },
-              { step: '05', title: 'Quality Check & Ship', desc: 'Every part is inspected. Shipped or ready for local pickup — your choice.' },
-            ].map((item, i) => (
+      <section className="printshop-section bg-[#070B09]" aria-label="Production process timeline">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="printshop-heading text-center mb-12">From File to Finished</h2>
+          <div className="space-y-6" role="list">
+            {processSteps.map((item, i) => (
               <motion.div
                 key={item.step}
+                role="listitem"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
                 className="flex gap-4 items-start"
               >
-                <span className="text-2xl font-bold text-[#72FF3B]/30 font-mono w-10 shrink-0">{item.step}</span>
+                <span
+                  className="text-2xl font-bold text-[#72FF3B]/30 font-mono w-10 shrink-0"
+                  aria-hidden="true"
+                >
+                  {item.step}
+                </span>
                 <div>
-                  <h4 className="font-semibold text-white">{item.title}</h4>
-                  <p className="text-sm text-[#8D98A5] mt-0.5">{item.desc}</p>
+                  <h4 className="font-semibold text-white text-lg">{item.title}</h4>
+                  <p className="printshop-text-small mt-1">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -229,28 +238,30 @@ export default function PrintShopPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 text-center">
+      <section className="printshop-section text-center" aria-label="Call to action">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Print?</h2>
-          <p className="text-[#8D98A5] mb-8">
+          <h2 className="printshop-heading text-4xl md:text-5xl">Ready to Print?</h2>
+          <p className="printshop-text-body mb-8">
             Upload your files and get a quote in minutes. No account required for quotes.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
             <Link
               href="/printshop/upload"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-[#72FF3B] text-black font-semibold rounded-lg hover:bg-[#8AFF52] transition-colors"
+              className="printshop-btn printshop-btn-primary"
+              aria-label="Start your print order"
             >
-              Start Your Order <ArrowRight className="w-4 h-4" />
+              Start Your Order <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
             <Link
               href="/printshop/help"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 border border-[#BFC4C9]/25 text-white rounded-lg hover:bg-white/5 transition-colors"
+              className="printshop-btn printshop-btn-secondary"
+              aria-label="Get help and support"
             >
               Need Help?
             </Link>
           </div>
           <p className="text-xs text-[#8D98A5]/60 mt-8">
-            Powered by <span className="text-[#72FF3B]">WISE²</span> Business OS
+            Powered by <span className="text-[#72FF3B] font-semibold">WISE²</span> Business OS
           </p>
         </div>
       </section>

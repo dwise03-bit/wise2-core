@@ -15,6 +15,10 @@ const inter = Inter({
   display: 'swap',
 });
 
+// Force dynamic rendering so SiteChrome's usePathname() correctly detects
+// /sencere as an isolated subtree and excludes the global nav
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: {
     default: 'SenCere Creative LLC | Custom Apparel, Printing & Fabrication',

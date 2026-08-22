@@ -689,3 +689,258 @@ a.skip-link:focus {
     animation: none !important;
   }
 }
+
+/* ============================================================================
+   PRINTSHOP ACCESSIBILITY & PRODUCTION FIXES
+   ============================================================================ */
+
+/* Focus-visible for keyboard navigation (better than blanket :focus) */
+*:focus-visible {
+  outline: 3px solid #72FF3B;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* PrintShop button base styles with proper sizing and spacing */
+.printshop-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 32px;
+  min-height: 48px;
+  min-width: 48px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.printshop-btn:hover {
+  transform: translateY(-2px);
+}
+
+.printshop-btn:active {
+  transform: translateY(0);
+}
+
+/* Primary CTA: Neon green background, black text (high contrast) */
+.printshop-btn-primary {
+  background: #72FF3B;
+  color: #000000;
+  box-shadow: 0 8px 24px rgba(114, 255, 59, 0.2);
+}
+
+.printshop-btn-primary:hover {
+  background: #8AFF52;
+  box-shadow: 0 12px 32px rgba(114, 255, 59, 0.3);
+}
+
+.printshop-btn-primary:active {
+  box-shadow: 0 4px 16px rgba(114, 255, 59, 0.25);
+}
+
+.printshop-btn-primary:focus-visible {
+  outline-color: #000000;
+}
+
+/* Secondary CTA: Border style with white text */
+.printshop-btn-secondary {
+  background: transparent;
+  color: #FFFFFF;
+  border: 2px solid rgba(191, 196, 201, 0.25);
+}
+
+.printshop-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(191, 196, 201, 0.5);
+}
+
+.printshop-btn-secondary:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Service card with proper touch targets */
+.printshop-card {
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(191, 196, 201, 0.1);
+  background: #111815;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  min-height: 200px;
+}
+
+.printshop-card:hover {
+  background: #16211B;
+  border-color: rgba(191, 196, 201, 0.2);
+  transform: translateY(-4px);
+}
+
+.printshop-card:focus-visible {
+  outline: 3px solid #72FF3B;
+  outline-offset: 2px;
+}
+
+/* Icon container with proper sizing */
+.printshop-icon-container {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+/* Status badge with proper contrast */
+.printshop-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Status colors with proper contrast */
+.status-in-production {
+  background: #72FF3B;
+  color: #000000;
+}
+
+.status-printing {
+  background: #27C7FF;
+  color: #000000;
+}
+
+.status-proof-approval {
+  background: #FFA500;
+  color: #000000;
+}
+
+.status-shipped {
+  background: #22C55E;
+  color: #FFFFFF;
+}
+
+/* Navigation item sizing for touch targets */
+.printshop-nav-item {
+  padding: 12px 16px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.printshop-nav-item:hover {
+  background-color: rgba(114, 255, 59, 0.08);
+}
+
+.printshop-nav-item:active,
+.printshop-nav-item.active {
+  background-color: rgba(114, 255, 59, 0.15);
+}
+
+/* Proper heading spacing and sizing */
+.printshop-heading {
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .printshop-heading {
+    font-size: 24px;
+  }
+}
+
+/* List item spacing for readability */
+.printshop-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.printshop-list-item > svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Section padding that respects mobile */
+.printshop-section {
+  padding: 64px 16px;
+}
+
+@media (max-width: 768px) {
+  .printshop-section {
+    padding: 48px 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  .printshop-section {
+    padding: 40px 12px;
+  }
+}
+
+/* Container with proper max-width and responsive padding */
+.printshop-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .printshop-container {
+    padding: 0 12px;
+  }
+}
+
+/* Responsive typography */
+.printshop-text-body {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #BFC4C9;
+}
+
+@media (max-width: 768px) {
+  .printshop-text-body {
+    font-size: 15px;
+  }
+}
+
+.printshop-text-small {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .printshop-text-small {
+    font-size: 13px;
+  }
+}
+
+/* Respect reduced motion on PrintShop animations */
+@media (prefers-reduced-motion: reduce) {
+  .printshop-btn,
+  .printshop-card,
+  .printshop-nav-item {
+    transition: none !important;
+    transform: none !important;
+  }
+}
