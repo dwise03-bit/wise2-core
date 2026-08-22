@@ -95,14 +95,15 @@ export default function LoginPage() {
         return;
       }
 
-      // The login API returns the access token at the TOP LEVEL
-      // ({ accessToken, refreshToken, user, expiresIn }), not nested under
-      // `tokens`. Persist it so authenticated requests work.
-      if (result.data?.user && result.data?.accessToken) {
-        setAuth(result.data.user, result.data.accessToken);
-        localStorage.setItem('auth_token', result.data.accessToken);
-        if (result.data.refreshToken) {
-          localStorage.setItem('refresh_token', result.data.refreshToken);
+      // apiClient wraps responses, so result.data contains the raw API response
+      // Extract user and tokens from the nested structure
+      const apiData = result.data?.data;
+      if (apiData?.user && apiData?.tokens?.accessToken) {
+        const { user, tokens } = apiData;
+        setAuth(user, tokens.accessToken);
+        localStorage.setItem('auth_token', tokens.accessToken);
+        if (tokens.refreshToken) {
+          localStorage.setItem('refresh_token', tokens.refreshToken);
         }
 
         // Store rememberMe preference
