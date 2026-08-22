@@ -1,9 +1,9 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/Button';
-import { useState } from 'react';
 import Link from 'next/link';
 
 export default function CheckoutPage() {
@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
 
   // Load cart from localStorage on mount
-  React.useEffect(() => {
+  useEffect(() => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     setCartItems(cart);
 

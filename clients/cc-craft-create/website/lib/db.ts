@@ -4,7 +4,7 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-pool.on('error', (err) => {
+pool.on('error', (err: Error) => {
   console.error('Unexpected error on idle client', err);
 });
 
@@ -19,7 +19,7 @@ export async function query<T = any>(
     console.log('Executed query', { text, duration, rows: result.rowCount });
     return {
       rows: result.rows,
-      rowCount: result.rowCount,
+      rowCount: result.rowCount || 0,
     };
   } catch (error) {
     console.error('Database query error', { text, error });
