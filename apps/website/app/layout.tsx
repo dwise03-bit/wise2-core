@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
-import { PublicNav, PublicFooter } from '@/components/navigation';
-import { WiseImp } from '@/components/wise-imp/WiseImp';
+import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 
 export const viewport: Viewport = {
@@ -58,19 +57,7 @@ export default function RootLayout({
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <ToastProvider>
-          <PublicNav />
-          <div className="min-h-screen flex flex-col">
-            {/* Main Content - pt-16 accounts for fixed navigation (64px) */}
-            <main className="flex-1 pt-16">
-              {children}
-            </main>
-
-            {/* Wise Imp — WISE² AI companion */}
-            <WiseImp />
-
-            {/* Footer */}
-            <PublicFooter />
-          </div>
+          <SiteChrome>{children}</SiteChrome>
         </ToastProvider>
       </body>
     </html>
