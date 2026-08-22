@@ -872,6 +872,9 @@ importers:
       redis:
         specifier: ^4.6.0
         version: 4.7.1
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
       socket.io:
         specifier: ^4.7.0
         version: 4.8.3

@@ -51,6 +51,8 @@ export class DigitalTwinService {
         userId: payload.email || 'public-intake',
         role: TenantRole.OWNER,
         revenueOsEnabled: tenant.revenueOsEnabled,
+        vertical: 'digital-twin',
+        enabledModules: [],
       },
       payload,
     );
