@@ -11,6 +11,16 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [customer, setCustomer] = useState<any>(null);
+  const [authMode, setAuthMode] = useState<'guest' | 'login' | 'signup'>('guest');
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [signupData, setSignupData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  });
 
   useEffect(() => {
     const stored = sessionStorage.getItem('sencere_cart');
@@ -20,6 +30,14 @@ export default function CheckoutPage() {
       } catch (e) {
         console.error('Failed to parse cart:', e);
       }
+    }
+
+    // Check for existing customer session
+    const userStr = sessionStorage.getItem('sencere_user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setCustomer(user);
+      setEmail(user.email);
     }
   }, []);
 
@@ -175,6 +193,155 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* Authentication Section */}
+            {!customer && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-6">
+                <h3 className="font-montserrat font-semibold text-white mb-4">Account</h3>
+                <div className="flex gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode('guest')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-montserrat text-sm transition-colors ${
+                      authMode === 'guest'
+                        ? 'bg-[#0369A1] text-white'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    Guest
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode('login')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-montserrat text-sm transition-colors ${
+                      authMode === 'login'
+                        ? 'bg-[#0369A1] text-white'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode('signup')}
+                    className={`flex-1 py-2 px-4 rounded-lg font-montserrat text-sm transition-colors ${
+                      authMode === 'signup'
+                        ? 'bg-[#0369A1] text-white'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    Create Account
+                  </button>
+                </div>
+
+                {/* Login Form */}
+                {authMode === 'login' && (
+                  <div className="space-y-3">
+                    <div>
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        placeholder="Email"
+                        className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="password"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        placeholder="Password"
+                        className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-montserrat text-sm transition-colors"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+
+                {/* Signup Form */}
+                {authMode === 'signup' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={signupData.firstName}
+                        onChange={(e) =>
+                          setSignupData({ ...signupData, firstName: e.target.value })
+                        }
+                        placeholder="First Name"
+                        className="px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={signupData.lastName}
+                        onChange={(e) =>
+                          setSignupData({ ...signupData, lastName: e.target.value })
+                        }
+                        placeholder="Last Name"
+                        className="px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="email"
+                        value={signupData.email}
+                        onChange={(e) =>
+                          setSignupData({ ...signupData, email: e.target.value })
+                        }
+                        placeholder="Email"
+                        className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="password"
+                        value={signupData.password}
+                        onChange={(e) =>
+                          setSignupData({ ...signupData, password: e.target.value })
+                        }
+                        placeholder="Password"
+                        className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-montserrat text-sm transition-colors"
+                    >
+                      Create Account
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Customer Info Display */}
+            {customer && (
+              <div className="bg-gray-900 rounded-lg p-6 border border-blue-800/50 mb-6">
+                <p className="font-montserrat text-sm text-gray-400 mb-1">Signed in as</p>
+                <p className="font-montserrat font-semibold text-white">
+                  {customer.firstName} {customer.lastName}
+                </p>
+                <p className="font-montserrat text-sm text-gray-500 mb-3">{customer.email}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.removeItem('sencere_user');
+                    sessionStorage.removeItem('sencere_token');
+                    setCustomer(null);
+                    setAuthMode('guest');
+                  }}
+                  className="text-sm text-blue-400 hover:text-blue-300 font-montserrat"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
+
             {/* Checkout Form */}
             <form onSubmit={handleCheckout} className="bg-gray-900 rounded-lg p-6 border border-gray-800">
               {error && (
@@ -183,19 +350,21 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <div className="mb-4">
-                <label className="block font-montserrat font-semibold text-white mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  required
-                  className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
-                />
-              </div>
+              {authMode === 'guest' && !customer && (
+                <div className="mb-4">
+                  <label className="block font-montserrat font-semibold text-white mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full px-4 py-2 bg-[#0F172A] border border-gray-700 rounded-lg text-white font-montserrat focus:border-[#0369A1] focus:outline-none"
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"

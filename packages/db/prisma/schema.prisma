@@ -41,6 +41,9 @@ model User {
   // Print Shop relationships
   printFiles PrintFile[] @relation("printFileUploader")
 
+  // SenCere ecommerce relationships
+  senCereCustomer SenCereCustomer?
+
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
@@ -1638,6 +1641,130 @@ model ConsultingPlanPhase {
   updatedAt DateTime @updatedAt
 
   @@index([planId])
+}
+
+// ===== SENCERE ECOMMERCE CUSTOMER SYSTEM =====
+
+model SenCereCustomer {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Profile
+  firstName  String
+  lastName   String
+  email      String @unique
+  phone      String?
+  company    String?
+
+  // Shipping/Billing Address
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  zipCode      String?
+  country      String?
+
+  // Preferences
+  newsletter     Boolean @default(false)
+  communicationPreference String @default("email")
+
+  // Stripe
+  stripeCustomerId String? @unique
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  orders SenCereOrder[]
+
+  @@index([userId])
+  @@index([email])
+}
+
+model SenCereOrder {
+  id String @id @default(cuid())
+
+  // Customer reference
+  customerId   String
+  customer     SenCereCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Order details
+  orderNumber String @unique
+  status      SenCereOrderStatus @default(PENDING)
+
+  // Pricing
+  subtotal      Float @default(0)
+  taxAmount     Float @default(0)
+  shippingCost  Float @default(0)
+  totalAmount   Float @default(0)
+
+  // Stripe
+  stripeCheckoutSessionId String? @unique
+  stripePaymentIntentId   String?
+  paymentStatus           String  @default("unpaid")
+
+  // Shipping
+  shippingAddress Json?
+  shippingMethod  String?
+  trackingNumber  String?
+
+  // Turnaround
+  estimatedCompletionDate DateTime?
+  actualCompletionDate    DateTime?
+  productionNotes         String?   @db.Text
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  items SenCereOrderItem[]
+
+  @@index([customerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SenCereOrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  IN_PRODUCTION
+  QUALITY_CHECK
+  READY_FOR_SHIPMENT
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+model SenCereOrderItem {
+  id String @id @default(cuid())
+
+  // Order reference
+  orderId String
+  order   SenCereOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  // Product details
+  productId     String
+  productName   String
+  variantId     String
+  variantName   String
+  quantity      Int
+  unitPrice     Float
+  totalPrice    Float
+
+  // Selected options (stored as JSON)
+  // e.g. { "size": "M", "color": "Black" }
+  options Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
 }
 
 // ===== WISE² PRINT SHOP SYSTEM =====
