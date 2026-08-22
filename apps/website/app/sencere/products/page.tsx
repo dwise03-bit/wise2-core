@@ -1,83 +1,81 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowRight, Shirt, Coffee, Award, Package } from 'lucide-react';
-import { UtilityBar } from '@/components/sencere/UtilityBar';
-import { Navbar } from '@/components/sencere/Navbar';
-import { Footer } from '@/components/sencere/Footer';
-import { PageHeader } from '@/components/sencere/PageHeader';
+'use client';
 
-const productGroups = [
-  {
-    icon: Shirt,
-    title: 'Custom Apparel',
-    items: ['Hoodies', 'T-Shirts', 'Hats & Caps', 'Jackets', 'Uniforms'],
-  },
-  {
-    icon: Coffee,
-    title: 'Drinkware & Everyday Gear',
-    items: ['Tumblers', 'Mugs', 'Water Bottles', 'Keychains'],
-  },
-  {
-    icon: Award,
-    title: 'Signage & Engraved Goods',
-    items: ['Wood Plaques', 'Acrylic Signs', 'Metal Tags', 'Custom Awards'],
-  },
-  {
-    icon: Package,
-    title: 'Promotional & Corporate',
-    items: ['Branded Packaging', 'Corporate Gifts', 'Event Merch', 'Bulk Promo Items'],
-  },
-];
-
-export const metadata: Metadata = {
-  title: 'Products',
-  description:
-    'Custom apparel, drinkware, engraved signage, and promotional products produced in-house by SenCere Creative LLC.',
-};
+import { useState } from 'react';
+import { SENCERE_PRODUCTS, getAllProductCategories } from '@/lib/sencere-products';
+import { ProductGrid } from '@/components/sencere/ProductGrid';
 
 export default function ProductsPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const categories = getAllProductCategories();
+  const filteredProducts = selectedCategory
+    ? SENCERE_PRODUCTS.filter((p) => p.category === selectedCategory)
+    : SENCERE_PRODUCTS;
+
   return (
-    <>
-      <UtilityBar />
-      <Navbar />
-      <PageHeader
-        eyebrow="What We Make"
-        title="Products"
-        description="Every product SenCere Creative LLC produces is decorated, printed, or fabricated in-house — built to your specs, at the quantity you need."
-      />
-      <section className="bg-[#050505] py-16">
-        <div className="mx-auto max-w-[1536px] px-6 sm:px-10">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {productGroups.map((group) => (
-              <div key={group.title} className="rounded-lg border border-[#8C6518]/30 bg-[#101010] p-7">
-                <group.icon className="h-8 w-8 text-[#D6A331]" strokeWidth={1.5} aria-hidden="true" />
-                <h2
-                  className="mt-4 text-lg font-bold uppercase tracking-wide text-[#F7F7F7]"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  {group.title}
-                </h2>
-                <ul className="mt-3 space-y-1.5 text-sm text-[#C8C8C8]">
-                  {group.items.map((item) => (
-                    <li key={item} className="flex items-center gap-2">
-                      <span className="h-1 w-1 rounded-full bg-[#D6A331]" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex justify-center">
-            <Link
-              href="/sencere/quote"
-              className="flex items-center gap-2 rounded-md bg-gradient-to-b from-[#F1C65A] to-[#D6A331] px-7 py-3.5 text-sm font-bold tracking-wide text-[#0a0a0a] transition hover:brightness-110"
+    <div className="min-h-screen bg-[#050505]">
+      {/* Hero */}
+      <section className="px-4 py-16 max-w-7xl mx-auto">
+        <h1 className="font-cormorant text-5xl md:text-6xl font-bold text-white mb-4">
+          Our Collections
+        </h1>
+        <p className="font-montserrat text-xl text-gray-400 max-w-2xl">
+          From custom apparel to fabrication, discover everything SenCere Creative has to offer.
+        </p>
+      </section>
+
+      {/* Category Filter */}
+      <section className="px-4 py-8 max-w-7xl mx-auto">
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={`px-6 py-2 rounded-full font-montserrat font-medium transition-all ${
+              selectedCategory === null
+                ? 'bg-[#0369A1] text-white'
+                : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
+            }`}
+          >
+            All Products
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full font-montserrat font-medium transition-all capitalize ${
+                selectedCategory === category
+                  ? 'bg-[#0369A1] text-white'
+                  : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
+              }`}
             >
-              GET A CUSTOM QUOTE <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+              {category}
+            </button>
+          ))}
         </div>
       </section>
-      <Footer />
-    </>
+
+      {/* Products Grid */}
+      <ProductGrid
+        products={filteredProducts}
+        featured={filteredProducts[0]}
+        title={selectedCategory ? undefined : 'Featured'}
+      />
+
+      {/* CTA Section */}
+      <section className="px-4 py-20 max-w-7xl mx-auto">
+        <div className="bg-gradient-to-r from-[#0369A1]/20 to-transparent border border-[#0369A1]/30 rounded-lg p-8 text-center">
+          <h2 className="font-cormorant text-3xl font-bold text-white mb-3">
+            Custom Order?
+          </h2>
+          <p className="font-montserrat text-gray-400 mb-6">
+            Don&apos;t see what you&apos;re looking for? We create bespoke solutions for every brand.
+          </p>
+          <a
+            href="/sencere/contact"
+            className="inline-block px-8 py-3 bg-[#0369A1] text-white rounded-lg font-montserrat font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Request a Custom Order
+          </a>
+        </div>
+      </section>
+    </div>
   );
 }

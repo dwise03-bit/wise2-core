@@ -350,12 +350,12 @@ model SoundLabsProject {
   lyricsTitle String? // Song title for lyrics
 
   // Music generation (engine-agnostic)
-  generationEngine  String? // Engine used: "musicgen", "ollama", "custom", etc.
-  generationJobId   String? // Job ID from generation engine
-  generationStatus  String? @default("draft") // draft, queued, processing, completed, failed
-  generatedAudioUrl String? @db.Text // URL to generated audio file
+  generationEngine   String? // Engine used: "musicgen", "ollama", "custom", etc.
+  generationJobId    String? // Job ID from generation engine
+  generationStatus   String?   @default("draft") // draft, queued, processing, completed, failed
+  generatedAudioUrl  String?   @db.Text // URL to generated audio file
   generationMetadata Json? // Engine-specific metadata
-  generatedAt DateTime? // When the audio was generated
+  generatedAt        DateTime? // When the audio was generated
 
   // Mixer state (saved as JSON)
   // Contains: tracks array, track settings, master volume, BPM, playback position
@@ -2393,6 +2393,10 @@ model Tenant {
   // Phase 16 feature gate. When false, no Revenue OS automation may execute.
   revenueOsEnabled Boolean @default(false)
 
+  // Contractor OS module flags, e.g. ["crm", "jobs", "team_chat", "storm"].
+  // Empty array means "use the platform default set for this vertical."
+  enabledModules String[] @default([])
+
   // Tenant-approved copy the AI must use verbatim rather than improvising.
   safetyScript String? @db.Text
 
@@ -2407,27 +2411,28 @@ model Tenant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberships    TenantMembership[]
-  customers      RevenueCustomer[]
-  leads          Lead[]
-  conversations  Conversation[]
-  serviceJobs    ServiceJob[]
-  estimates      Estimate[]
-  campaigns      Campaign[]
-  agents         AgentConfig[]
-  automationRuns AutomationRun[]
-  webhookEvents  WebhookEvent[]
-  consentRecords ConsentRecord[]
-  safetyEvents   SafetyEvent[]
-  provisioning   ProvisioningRun?
-  approvals      Approval[]
-  workflows      WorkflowDefinition[]
-  followUps      FollowUp[]
-  contracts      Contract[]
-  auditLogs      AuditLog[]
-  digitalTwins   DigitalTwin[]
-  twinKnowledge  DigitalTwinKnowledgeItem[]
-  twinConsents   DigitalTwinConsent[]
+  memberships       TenantMembership[]
+  customers         RevenueCustomer[]
+  leads             Lead[]
+  conversations     Conversation[]
+  serviceJobs       ServiceJob[]
+  estimates         Estimate[]
+  campaigns         Campaign[]
+  agents            AgentConfig[]
+  automationRuns    AutomationRun[]
+  webhookEvents     WebhookEvent[]
+  consentRecords    ConsentRecord[]
+  safetyEvents      SafetyEvent[]
+  provisioning      ProvisioningRun?
+  verticalTemplates VerticalTemplate[]
+  approvals         Approval[]
+  workflows         WorkflowDefinition[]
+  followUps         FollowUp[]
+  contracts         Contract[]
+  auditLogs         AuditLog[]
+  digitalTwins      DigitalTwin[]
+  twinKnowledge     DigitalTwinKnowledgeItem[]
+  twinConsents      DigitalTwinConsent[]
 
   // WISE Defense Safety Radar + Comms Grid
   wiseDefenseMemberships WiseDefenseMembership[]
@@ -2553,6 +2558,32 @@ model TenantMembership {
 
   @@unique([tenantId, userId])
   @@index([userId])
+}
+
+// Per-vertical estimate/service-category template for Contractor OS.
+// Global templates (tenantId null) ship with the platform per vertical
+// ("hvac", "roofing", "pressure_washing", ...); a tenant may clone one into
+// its own tenantId-scoped copy to customize categories or line items.
+model VerticalTemplate {
+  id       String  @id @default(cuid())
+  tenantId String? @map("tenant_id")
+  vertical String
+  name     String
+
+  // Free-text category keys a Lead.serviceCategory may reference for this
+  // vertical, e.g. ["inspection", "roof_repair", "roof_replacement"].
+  categories String[] @default([])
+
+  // Estimate line-item starting points: [{ name, unit, defaultPrice }, ...].
+  lineItems Json @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, vertical, name])
+  @@index([vertical])
 }
 
 // ============================================================================
@@ -2975,6 +3006,11 @@ model Lead {
   source       String
   serviceType  String?
   hvacCategory HvacServiceCategory?
+
+  // Vertical-agnostic classification, keyed against VerticalTemplate.categories
+  // for the tenant's vertical. Non-HVAC tenants classify leads here instead of
+  // hvacCategory, which stays HVAC-only.
+  serviceCategory String?
 
   urgency LeadUrgency @default(FLEXIBLE)
   status  LeadStatus  @default(NEW)
@@ -3958,22 +3994,22 @@ enum ConversionStatus {
 
 // K10Device: Track individual K10 devices
 model K10Device {
-  id              String   @id @default(cuid())
-  deviceId        String   @unique // "k10_001", "k10_002", etc.
+  id              String  @id @default(cuid())
+  deviceId        String  @unique // "k10_001", "k10_002", etc.
   deviceName      String?
   macAddress      String?
-  firmwareVersion String?  @default("2.0")
+  firmwareVersion String? @default("2.0")
 
   // Status
-  lastSeen        DateTime @default(now())
-  wifiConnected   Boolean  @default(false)
-  batteryLevel    Int?
-  faceState       Int      @default(0) // 0-12 face expression enum
+  lastSeen      DateTime @default(now())
+  wifiConnected Boolean  @default(false)
+  batteryLevel  Int?
+  faceState     Int      @default(0) // 0-12 face expression enum
 
   // Relationships
-  conversations   K10Conversation[]
-  stateHistory    K10StateHistory[]
-  analytics       K10Analytics[]
+  conversations K10Conversation[]
+  stateHistory  K10StateHistory[]
+  analytics     K10Analytics[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -3984,25 +4020,25 @@ model K10Device {
 
 // K10Conversation: Log voice interactions
 model K10Conversation {
-  id              String   @id @default(cuid())
-  conversationId  String   @unique @default(cuid())
-  deviceId        String
-  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+  id             String    @id @default(cuid())
+  conversationId String    @unique @default(cuid())
+  deviceId       String
+  device         K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
 
   // ASR (Speech-to-Text)
-  userInput       String?
-  asrRecognized   String?
-  asrConfidence   Float?
+  userInput     String?
+  asrRecognized String?
+  asrConfidence Float?
 
   // AI Response
-  aiResponse      String?
+  aiResponse String?
 
   // TTS (Text-to-Speech)
-  ttsPlayed       Boolean  @default(false)
-  durationMs      Int?
+  ttsPlayed  Boolean @default(false)
+  durationMs Int?
 
   // Metadata
-  timestamp       DateTime @default(now())
+  timestamp DateTime @default(now())
 
   @@index([deviceId])
   @@index([timestamp])
@@ -4010,16 +4046,16 @@ model K10Conversation {
 
 // K10StateHistory: Track device state changes
 model K10StateHistory {
-  id              String   @id @default(cuid())
-  deviceId        String
-  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+  id       String    @id @default(cuid())
+  deviceId String
+  device   K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
 
-  deviceState     Int      // 0-8: BOOTING, CONNECTING_WIFI, etc.
-  faceState       Int      // 0-12: face expression enum
-  faceExpression  String?  // "idle", "listening", "thinking", "speaking", etc.
-  wifiConnected   Boolean
+  deviceState    Int // 0-8: BOOTING, CONNECTING_WIFI, etc.
+  faceState      Int // 0-12: face expression enum
+  faceExpression String? // "idle", "listening", "thinking", "speaking", etc.
+  wifiConnected  Boolean
 
-  timestamp       DateTime @default(now())
+  timestamp DateTime @default(now())
 
   @@index([deviceId])
   @@index([timestamp])
@@ -4027,15 +4063,15 @@ model K10StateHistory {
 
 // K10Analytics: Collect performance metrics
 model K10Analytics {
-  id              String   @id @default(cuid())
-  deviceId        String
-  device          K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
+  id       String    @id @default(cuid())
+  deviceId String
+  device   K10Device @relation(fields: [deviceId], references: [deviceId], onDelete: Cascade)
 
-  metricName      String   // "listening_duration", "response_latency", "tts_quality", etc.
-  metricValue     Float
-  unit            String?  // "ms", "seconds", "%", "words/min", etc.
+  metricName  String // "listening_duration", "response_latency", "tts_quality", etc.
+  metricValue Float
+  unit        String? // "ms", "seconds", "%", "words/min", etc.
 
-  timestamp       DateTime @default(now())
+  timestamp DateTime @default(now())
 
   @@index([deviceId])
   @@index([timestamp])

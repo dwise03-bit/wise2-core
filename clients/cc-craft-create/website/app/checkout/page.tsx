@@ -1,335 +1,263 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { Button } from '@/components/Button';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
-    cardName: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvc: '',
-  });
-
-  const [orderPlaced, setOrderPlaced] = useState(false);
+  const router = useRouter();
+  const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [orderNumber, setOrderNumber] = useState('');
-  const [orderTotal, setOrderTotal] = useState(0);
-  const [cartItems, setCartItems] = useState<any[]>([]);
 
-  // Load cart from localStorage on mount
   useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    setCartItems(cart);
-
-    const subtotal = cart.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
-    const shipping = 5.00;
-    const tax = subtotal * 0.08;
-    const total = subtotal + shipping + tax;
-    setOrderTotal(total);
+    const cartData = localStorage.getItem('cart');
+    if (cartData) {
+      try {
+        setCart(JSON.parse(cartData));
+      } catch {
+        setCart([]);
+      }
+    }
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCheckout = async () => {
+    if (cart.length === 0) {
+      setError('Cart is empty');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const subtotal = cartItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
-      const shipping = 5.00;
-      const tax = subtotal * 0.08;
-      const total = subtotal + shipping + tax;
-
-      const orderData = {
-        customer: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          zip: formData.zip,
-        },
-        items: cartItems,
-        notes: '',
-      };
-
-      const response = await fetch('/api/orders', {
+      const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify({ items: cart }),
       });
 
-      const result = await response.json();
-
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create order');
+        throw new Error('Failed to create checkout session');
       }
 
-      setOrderNumber(result.data.order_number);
-      setOrderTotal(result.data.total);
-      setOrderPlaced(true);
-      localStorage.removeItem('cart');
-    } catch (err: any) {
-      setError(err.message || 'Failed to process order');
-    } finally {
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Checkout failed');
       setLoading(false);
     }
   };
 
-  if (orderPlaced) {
-    return (
-      <>
-        <Header />
-        <main className="flex-1 max-w-4xl mx-auto px-4 py-12">
-          <div className="text-center">
-            <div className="text-6xl mb-6">✓</div>
-            <h1 className="text-4xl font-lora font-bold text-cc-purple mb-4">Order Confirmed!</h1>
-            <p className="text-lg text-cc-dark mb-8">
-              Thank you for your order. You'll receive an email confirmation shortly.
-            </p>
-            <div className="bg-cc-lilac rounded-lg p-8 mb-8">
-              <p className="text-cc-dark mb-2">Order #: <span className="font-bold">{orderNumber}</span></p>
-              <p className="text-cc-dark mb-4">Total: <span className="font-bold text-cc-gold text-lg">${orderTotal.toFixed(2)}</span></p>
-              <p className="text-sm text-cc-dark">Expected delivery: 5-7 business days</p>
-            </div>
-            <Link href="/">
-              <Button>Back to Home</Button>
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  const handleRemoveItem = (index: number) => {
+    const newCart = cart.filter((_, i) => i !== index);
+    setCart(newCart);
+    localStorage.setItem('cart', JSON.stringify(newCart));
+  };
 
   return (
-    <>
-      <Header />
-      <main className="flex-1">
-        <section className="bg-cc-lilac py-8 px-4">
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-4xl font-lora font-bold text-cc-dark">Checkout</h1>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F3E8FF', padding: '40px 20px' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '40px' }}>
+          <h1 style={{
+            fontSize: '36px',
+            fontWeight: 'bold',
+            color: '#6D2DBD',
+            marginBottom: '10px',
+            fontFamily: 'Lora, serif',
+          }}>
+            Order Review
+          </h1>
+          <p style={{ color: '#666', fontSize: '16px' }}>
+            Review your items and complete payment
+          </p>
+        </div>
+
+        {error && (
+          <div style={{
+            backgroundColor: '#fee',
+            border: '1px solid #fcc',
+            color: '#c33',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+          }}>
+            {error}
           </div>
-        </section>
+        )}
 
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Checkout Form */}
-            <div className="lg:col-span-2">
-              {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-                  {error}
-                </div>
-              )}
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Customer Info */}
-                <section>
-                  <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">
-                    Customer Information
-                  </h2>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <input
-                      type="text"
-                      name="firstName"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="col-span-1 px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                    <input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="col-span-1 px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                  </div>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple mb-4"
-                    required
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                    required
-                  />
-                </section>
+        {cart.length === 0 ? (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '40px',
+            borderRadius: '12px',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
+              Your cart is empty
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              style={{
+                backgroundColor: '#6D2DBD',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '6px',
+                fontSize: '16px',
+                cursor: 'pointer',
+              }}
+            >
+              Continue Shopping
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '20px' }}>
+            {/* Cart Items */}
+            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '12px' }}>
+              <h2 style={{
+                fontSize: '20px',
+                fontWeight: 'bold',
+                color: '#6D2DBD',
+                marginBottom: '20px',
+              }}>
+                Cart Items ({cart.length})
+              </h2>
 
-                {/* Shipping Address */}
-                <section>
-                  <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">
-                    Shipping Address
-                  </h2>
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Street Address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple mb-4"
-                    required
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City"
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State"
-                      value={formData.state}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    name="zip"
-                    placeholder="ZIP Code"
-                    value={formData.zip}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple mt-4"
-                    required
-                  />
-                </section>
-
-                {/* Payment */}
-                <section>
-                  <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">
-                    Payment Method
-                  </h2>
-                  <input
-                    type="text"
-                    name="cardName"
-                    placeholder="Name on Card"
-                    value={formData.cardName}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple mb-4"
-                    required
-                  />
-                  <input
-                    type="text"
-                    name="cardNumber"
-                    placeholder="Card Number (demo: 4242 4242 4242 4242)"
-                    value={formData.cardNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple mb-4"
-                    required
-                  />
-                  <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="cardExpiry"
-                      placeholder="MM/YY"
-                      value={formData.cardExpiry}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                    <input
-                      type="text"
-                      name="cardCvc"
-                      placeholder="CVC"
-                      value={formData.cardCvc}
-                      onChange={handleChange}
-                      className="px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                      required
-                    />
-                  </div>
-                </section>
-
-                <Button
-                  type="submit"
-                  className="w-full text-lg"
-                  disabled={loading}
+              {cart.map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingBottom: '15px',
+                    borderBottom: '1px solid #eee',
+                    marginBottom: '15px',
+                  }}
                 >
-                  {loading ? 'Processing...' : 'Place Order'}
-                </Button>
-              </form>
+                  <div>
+                    <div style={{ fontWeight: '600', color: '#29233D' }}>
+                      {item.name}
+                    </div>
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#666',
+                      marginTop: '5px',
+                    }}>
+                      Qty: {item.quantity || 1} × ${item.price.toFixed(2)}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      color: '#D4AF37',
+                      minWidth: '80px',
+                      textAlign: 'right',
+                    }}>
+                      ${(item.price * (item.quantity || 1)).toFixed(2)}
+                    </div>
+                    <button
+                      onClick={() => handleRemoveItem(idx)}
+                      style={{
+                        backgroundColor: '#fee',
+                        color: '#c33',
+                        border: 'none',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Order Summary */}
-            <div className="bg-cc-lilac rounded-lg p-6 h-fit">
-              <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">Order Summary</h2>
+            <div style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '12px',
+              height: 'fit-content',
+            }}>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                color: '#6D2DBD',
+                marginBottom: '20px',
+              }}>
+                Order Summary
+              </h3>
 
-              <div className="space-y-3 mb-6 pb-6 border-b border-cc-lavender">
-                {cartItems.length > 0 ? (
-                  cartItems.map((item, idx) => (
-                    <div key={idx} className="flex justify-between text-cc-dark">
-                      <span>{item.name} × {item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-cc-dark text-sm">No items in cart</div>
-                )}
-              </div>
-
-              <div className="space-y-3 mb-6 pb-6 border-b border-cc-lavender">
-                <div className="flex justify-between text-cc-dark">
-                  <span>Subtotal:</span>
-                  <span>${(cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)).toFixed(2)}</span>
+              <div style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ color: '#666' }}>Subtotal</span>
+                  <span style={{ fontWeight: '600' }}>${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-cc-dark">
-                  <span>Shipping:</span>
-                  <span>$5.00</span>
-                </div>
-                <div className="flex justify-between text-cc-dark">
-                  <span>Tax:</span>
-                  <span>${((cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)) * 0.08).toFixed(2)}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#666' }}>Tax (8%)</span>
+                  <span style={{ fontWeight: '600' }}>${tax.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="flex justify-between mb-6">
-                <span className="font-bold text-cc-dark">Total:</span>
-                <span className="font-bold text-cc-gold text-lg">${orderTotal.toFixed(2)}</span>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '20px',
+              }}>
+                <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#29233D' }}>
+                  Total
+                </span>
+                <span style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: '#D4AF37',
+                }}>
+                  ${total.toFixed(2)}
+                </span>
               </div>
 
-              <p className="text-xs text-cc-dark text-center">
-                🔒 Your payment is secure and encrypted
+              <button
+                onClick={handleCheckout}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  backgroundColor: loading ? '#999' : '#6D2DBD',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.7 : 1,
+                }}
+              >
+                {loading ? 'Processing...' : 'Complete Purchase'}
+              </button>
+
+              <p style={{
+                fontSize: '12px',
+                color: '#999',
+                marginTop: '15px',
+                textAlign: 'center',
+              }}>
+                💳 Powered by Stripe
               </p>
             </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </>
+        )}
+      </div>
+    </div>
   );
 }

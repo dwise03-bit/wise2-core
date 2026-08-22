@@ -23,6 +23,7 @@ import {
 } from '@/lib/api-middleware';
 import { SunoExportResponse } from '@/types/api';
 import { UserContext } from '@/types/api';
+import { getGeneration } from '@/lib/suno-generation-store';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -70,7 +71,7 @@ async function exportMusic(
   // Parse query parameters
   const searchParams = request.nextUrl.searchParams;
   const queryData = {
-    format: searchParams.get('format') || 'mp3',
+    format: searchParams.get('format') || 'wav', // only format the MusicGen service actually produces
     bitrate: searchParams.get('bitrate')
       ? parseInt(searchParams.get('bitrate')!)
       : undefined,
@@ -84,28 +85,30 @@ async function exportMusic(
     });
   }
 
-  // TODO: Check that generation exists and belongs to user
-  // const generation = await db.generations.findUnique({
-  //   where: { id, userId: user.id }
-  // });
-  // if (!generation) {
-  //   throw new ApiException(404, 'NOT_FOUND', 'Generation not found');
-  // }
-  // if (generation.status !== 'completed') {
-  //   throw new ApiException(409, 'NOT_READY', 'Generation is not yet complete');
-  // }
+  const generation = getGeneration(id);
+  if (!generation) {
+    throw new ApiException(404, 'NOT_FOUND', 'Generation not found');
+  }
+  if (generation.status !== 'completed' || !generation.musicgenId) {
+    throw new ApiException(409, 'NOT_READY', 'Generation is not yet complete');
+  }
 
-  // TODO: Trigger export conversion job
-  // const exportJob = await sunoClient.export(id, queryData.format, {
-  //   bitrate: queryData.bitrate
-  // });
+  // The MusicGen service only produces WAV — it has no format-conversion
+  // capability. Rather than fabricate an mp3/flac download that doesn't
+  // exist, reject unsupported formats explicitly.
+  if (queryData.format !== 'wav') {
+    throw new ApiException(
+      501,
+      'FORMAT_NOT_SUPPORTED',
+      `Export format "${queryData.format}" is not supported yet — only "wav" is currently available from the MusicGen service.`
+    );
+  }
 
-  // Mock response
   const response: SunoExportResponse = {
     id,
-    format: queryData.format,
-    downloadUrl: `https://example.com/exports/${id}.${queryData.format}`,
-    expiresIn: 86400, // 24 hours
+    format: 'wav',
+    downloadUrl: `/api/suno/audio/${generation.musicgenId}`,
+    expiresIn: 3600, // matches the MusicGen service's in-memory result cache window
   };
 
   return successResponse(response);

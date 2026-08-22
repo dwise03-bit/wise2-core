@@ -13,6 +13,7 @@ import {
   Wrench,
   Zap,
 } from 'lucide-react';
+import { SiteHeader } from './components/SiteHeader';
 
 const services = [
   {
@@ -108,38 +109,7 @@ export default function Page() {
         <div className="wise-bg-pointer absolute inset-0" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
-        <header className="relative z-20 mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-5 md:px-8 lg:px-10">
-          <div>
-            <p className="font-display text-2xl font-black uppercase tracking-[0.12em]">
-              WISE<span className="text-wise-blue">2</span>
-            </p>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-wise-cyan">
-              HVAC Solutions
-            </p>
-          </div>
-          <nav className="hidden items-center gap-7 text-xs font-semibold uppercase tracking-[0.18em] text-wise-mute lg:flex">
-            <a href="#services" className="transition hover:text-white">Services</a>
-            <a href="#why-wise" className="transition hover:text-white">Why Wise</a>
-            <a href="#special" className="transition hover:text-white">Special</a>
-            <a href="#reviews" className="transition hover:text-white">Reviews</a>
-            <a href="#contact" className="transition hover:text-white">Contact</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link
-              href="#contact"
-              className="hidden rounded-full border border-wise-blue/40 bg-wise-blue px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-neon transition hover:-translate-y-0.5 sm:inline-flex"
-            >
-              Schedule Service
-            </Link>
-            <a
-              href="tel:3367090472"
-              className="inline-flex items-center gap-2 text-sm font-black tracking-[0.08em] text-white"
-            >
-              <Phone className="h-4 w-4 text-wise-cyan" />
-              336 709 0472
-            </a>
-          </div>
-        </header>
+        <SiteHeader />
 
         <section className="relative z-10 mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-8 md:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-24 lg:pt-14">
           <div className="animate-riseIn">
@@ -235,6 +205,23 @@ export default function Page() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-5 pb-4 md:px-8 lg:px-10">
+        <Link
+          href="/field-tech"
+          className="wise-panel flex flex-col gap-4 p-6 transition hover:border-wise-cyan/30 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div>
+            <p className="section-kicker text-left">New: Field Tech App</p>
+            <p className="mt-2 font-display text-2xl font-black uppercase text-white sm:text-3xl">
+              See the mobile experience our technicians run on.
+            </p>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-wise-cyan">
+            View Field Tech App <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </Link>
       </section>
 
       <section id="services" className="mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">

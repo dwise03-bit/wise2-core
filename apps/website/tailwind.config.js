@@ -69,6 +69,8 @@ module.exports = {
         },
       },
       fontFamily: {
+        cormorant: ['Cormorant', 'serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
         display: ['Inter', ...defaultTheme.fontFamily.sans],
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],

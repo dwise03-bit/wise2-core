@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { RevenueHeader } from '../../src/components/revenue-os';
 
 export const metadata: Metadata = {
-  title: 'Revenue Command Center | WISE²',
-  description: 'AI workforce, pipeline, and attribution for the WISE² Revenue OS.',
+  title: 'Contractor OS | WISE²',
+  description: 'AI workforce, pipeline, and attribution for the WISE² Contractor OS.',
   robots: 'noindex, nofollow',
 };
 

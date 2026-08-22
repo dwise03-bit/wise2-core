@@ -29,6 +29,8 @@ export function pageGreeting(pathname: string): string {
     return "The AI Business Audit is a good first step if you're not sure where to start.";
   if (pathname === '/sound-labs')
     return 'Sound Labs is the creative side — I can walk you through creation, engineering, and publishing.';
+  if (pathname === '/contractor')
+    return "This is Contractor OS — CRM, jobs, estimates, crews, and AI in one system. Want a demo, or should I point you at a specific piece?";
   if (pathname.startsWith('/intake'))
     return 'I can help you shape your project brief before you submit it.';
   if (pathname.includes('service'))
@@ -69,6 +71,9 @@ export const PAGE_TOURS: Record<string, string[]> = {
     'main input[type="file"]',
     'main button[type="submit"]',
   ],
+  // Dense two-column dashboard mockup — the generic h1/h2 fallback lands the
+  // companion over packed content instead of beside it. No safe idle target.
+  '/contractor': [],
 };
 
 export const GENERIC_TOUR: string[] = [

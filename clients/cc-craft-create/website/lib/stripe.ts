@@ -1,37 +1,40 @@
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import Stripe from 'stripe';
 
-let stripePromise: Promise<Stripe | null>;
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY environment variable is required');
+}
 
-export const getStripe = () => {
-  if (!stripePromise) {
-    stripePromise = loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''
-    );
-  }
-  return stripePromise;
-};
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  typescript: true,
+});
 
-export const createPaymentIntent = async (amount: number, description?: string) => {
-  try {
-    const response = await fetch('/api/payments', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: Math.round(amount * 100), // Convert to cents
-        currency: 'usd',
-        description,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to create payment intent');
-    }
-
-    return data.clientSecret;
-  } catch (error) {
-    console.error('Error creating payment intent:', error);
-    throw error;
-  }
-};
+export const PRODUCTS = [
+  {
+    id: 'grad_combo',
+    name: 'Graduation Combo',
+    price: 34.99,
+    image: '/images/product-graduation.webp',
+    desc: 'Celebrate achievements with custom graduation gifts',
+  },
+  {
+    id: 'nurse_set',
+    name: 'Nurse Appreciation Set',
+    price: 28.99,
+    image: '/images/product-nurse.webp',
+    desc: 'Honor healthcare heroes with personalized appreciation gifts',
+  },
+  {
+    id: 'memorial_box',
+    name: 'Memorial Keepsake Box',
+    price: 44.99,
+    image: '/images/product-memorial.webp',
+    desc: 'Preserve cherished memories with elegant memorial items',
+  },
+  {
+    id: 'holiday_pack',
+    name: 'Holiday Cheer Pack',
+    price: 39.99,
+    image: '/images/product-holiday.webp',
+    desc: 'Spread joy with custom holiday-themed collections',
+  },
+] as const;

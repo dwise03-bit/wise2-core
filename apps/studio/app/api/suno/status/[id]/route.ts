@@ -2,6 +2,9 @@
  * GET /api/suno/status/[id]
  * Poll generation status for a specific ID
  *
+ * Previously a mock returning a hard-coded "processing" response. Now reads
+ * the real outcome recorded by /api/suno/generate.
+ *
  * Path params:
  * - id: string - Generation ID
  *
@@ -17,6 +20,7 @@ import {
 } from '@/lib/api-middleware';
 import { SunoStatusResponse } from '@/types/api';
 import { UserContext } from '@/types/api';
+import { getGeneration } from '@/lib/suno-generation-store';
 
 /**
  * Get generation status
@@ -27,14 +31,12 @@ async function getStatus(
   user: UserContext | null,
   params?: Record<string, string>
 ): Promise<NextResponse> {
-  // Require authentication
   if (!requireAuth(user)) {
     throw new ApiException(401, 'UNAUTHORIZED', 'Authentication required');
   }
 
   const id = params?.id;
 
-  // Validate ID
   if (!id) {
     throw new ApiException(400, 'MISSING_PARAM', 'Generation ID is required');
   }
@@ -43,20 +45,23 @@ async function getStatus(
     throw new ApiException(400, 'INVALID_ID', 'Invalid generation ID format');
   }
 
-  // TODO: Fetch from database or Suno API
-  // const generation = await db.generations.findUnique({
-  //   where: { id, userId: user.id }
-  // });
+  const generation = getGeneration(id);
+  if (!generation) {
+    throw new ApiException(404, 'NOT_FOUND', 'Generation not found');
+  }
 
-  // Mock response
   const response: SunoStatusResponse = {
-    id,
-    prompt: 'Uplifting electronic dance music with synth lead',
-    style: 'EDM',
-    status: 'processing',
-    progress: 45,
-    createdAt: new Date(Date.now() - 60000).toISOString(),
-    updatedAt: new Date().toISOString(),
+    id: generation.id,
+    prompt: generation.prompt,
+    style: generation.style,
+    status: generation.status,
+    progress: generation.progress,
+    musicUrl: generation.musicUrl,
+    duration: generation.duration,
+    createdAt: generation.createdAt,
+    updatedAt: generation.updatedAt,
+    completedAt: generation.completedAt,
+    errorMessage: generation.error,
   };
 
   return successResponse(response);

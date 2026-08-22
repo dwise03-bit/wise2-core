@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generateMusic, getMusicGenResult, MusicGenServiceError } from '@/lib/musicgen-client';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,6 +33,10 @@ function extractUserId(token: string): string | null {
 /**
  * POST /api/v1/sound-labs/me/projects/{projectId}/generate
  * Start a new music generation job
+ *
+ * Currently only the "musicgen" engine is wired to a real backend
+ * (apps/musicgen-service). Other engine values are rejected rather than
+ * silently faked.
  */
 export async function POST(
   request: NextRequest,
@@ -81,39 +86,80 @@ export async function POST(
       );
     }
 
-    // Create generation job ID
+    if (engine !== 'musicgen') {
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Engine "${engine}" is not wired to a real generation backend yet. Only "musicgen" is currently supported.`,
+        } as any,
+        { status: 400 }
+      );
+    }
+
     const jobId = `${engine}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Update project with generation info
-    const updated = {
+    // Mark as processing before the (synchronous, potentially slow) call so
+    // a concurrent GET during generation reflects real state, not a guess.
+    projects.set(projectId, {
       ...project,
       generationEngine: engine,
       generationJobId: jobId,
-      generationStatus: 'queued',
-      generationMetadata: {
-        lyrics,
-        title,
-        options,
-        createdAt: new Date().toISOString(),
-      },
+      generationStatus: 'processing',
+      generationMetadata: { lyrics, title, options, createdAt: new Date().toISOString() },
       updatedAt: new Date().toISOString(),
-    };
+    });
 
-    projects.set(projectId, updated);
+    // MusicGen generates instrumental audio from a text prompt — it does not
+    // sing lyrics. We fold the title + lyrics into a descriptive prompt
+    // until the product supports a real vocal/lyrics pipeline.
+    const prompt = [title, lyrics].filter(Boolean).join(' — ').slice(0, 500);
 
-    // TODO: Route to actual generation engine
-    // This will be implemented based on selected engine:
-    // - MusicGen: Call Hugging Face API or local endpoint
-    // - Ollama: Call local Ollama server
-    // - Custom: Call your trained model
+    let result;
+    try {
+      result = await generateMusic({
+        prompt,
+        duration: options.duration,
+        genre: options.genre,
+        mood: options.mood,
+        tempo: options.tempo,
+        temperature: options.temperature,
+        seed: options.seed,
+      });
+    } catch (err) {
+      const message =
+        err instanceof MusicGenServiceError
+          ? err.message
+          : 'Music generation failed unexpectedly';
+      projects.set(projectId, {
+        ...projects.get(projectId),
+        generationStatus: 'failed',
+        generationError: message,
+        updatedAt: new Date().toISOString(),
+      });
+      return NextResponse.json(
+        { success: false, jobId, status: 'failed', engine, message } as GenerationResponse,
+        { status: 502 }
+      );
+    }
+
+    const audioUrl = `/api/v1/sound-labs/audio/${result.generationId}`;
+    const current = projects.get(projectId);
+    projects.set(projectId, {
+      ...current,
+      generationStatus: 'completed',
+      generatedAudioUrl: audioUrl,
+      generationResult: result,
+      generatedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       success: true,
       jobId,
-      status: 'queued',
+      status: 'completed',
       engine,
-      estimatedTime: engine === 'musicgen' ? '30-90 seconds' : '60-180 seconds',
-      message: `Music generation queued with ${engine} engine`,
+      audioUrl,
+      message: `Music generated with ${engine} engine`,
     });
   } catch (error) {
     console.error('Sound Labs generation error:', error);
@@ -127,6 +173,9 @@ export async function POST(
 /**
  * GET /api/v1/sound-labs/me/projects/{projectId}/generate
  * Poll generation job status
+ *
+ * Since apps/musicgen-service generates synchronously inside POST above,
+ * this reflects the real stored status rather than simulating progress.
  */
 export async function GET(
   request: NextRequest,
@@ -153,32 +202,19 @@ export async function GET(
     }
 
     const engine = project.generationEngine || 'musicgen';
-    let status = project.generationStatus || 'draft';
+    const status = project.generationStatus || 'draft';
     let audioUrl = project.generatedAudioUrl;
 
-    // TODO: Poll actual generation engine for real status
-    // This will query:
-    // - MusicGen API job status
-    // - Ollama queue
-    // - Custom model job tracker
-
-    // For demo: simulate status progression
-    if (status === 'queued') {
-      status = 'processing';
-    } else if (status === 'processing') {
-      status = 'completed';
-      audioUrl = `https://storage.googleapis.com/wise2-audio/${engine}/${projectId}_${Date.now()}.mp3`;
+    // If we believe it's completed, confirm the result still exists on the
+    // MusicGen service (its cache can expire) rather than trusting stale state.
+    if (status === 'completed' && project.generationResult?.generationId) {
+      const stillCached = await getMusicGenResult(project.generationResult.generationId).catch(
+        () => null
+      );
+      if (!stillCached) {
+        audioUrl = undefined;
+      }
     }
-
-    const updated = {
-      ...project,
-      generationStatus: status,
-      generatedAudioUrl: audioUrl,
-      generatedAt: status === 'completed' ? new Date().toISOString() : project.generatedAt,
-      updatedAt: new Date().toISOString(),
-    };
-
-    projects.set(projectId, updated);
 
     return NextResponse.json({
       success: true,
@@ -186,7 +222,8 @@ export async function GET(
       status,
       engine,
       audioUrl,
-      generatedAt: updated.generatedAt,
+      error: project.generationError,
+      generatedAt: project.generatedAt,
     });
   } catch (error) {
     console.error('Sound Labs status check error:', error);

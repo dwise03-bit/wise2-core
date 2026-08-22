@@ -59,6 +59,8 @@ export class TenantService {
       userId,
       role: membership.role,
       revenueOsEnabled: membership.tenant.revenueOsEnabled,
+      vertical: membership.tenant.vertical,
+      enabledModules: membership.tenant.enabledModules,
     };
   }
 }

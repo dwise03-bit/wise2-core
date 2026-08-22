@@ -14,6 +14,9 @@ export interface TenantContext {
   userId: string;
   role: TenantRole;
   revenueOsEnabled: boolean;
+  vertical: string;
+  /** Raw override list from Tenant.enabledModules; resolve via module-flags helpers. */
+  enabledModules: string[];
 }
 
 /** Request shape after TenantGuard has run. */

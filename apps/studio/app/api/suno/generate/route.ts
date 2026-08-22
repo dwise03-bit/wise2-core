@@ -1,6 +1,9 @@
 /**
  * POST /api/suno/generate
- * Submit a Suno music generation request
+ * Submit a music generation request
+ *
+ * Previously a mock ("TODO: Call Suno API"). Now calls the real WISE²
+ * MusicGen service (apps/musicgen-service) via lib/musicgen-client.
  *
  * Request body:
  * - prompt: string (required) - Music generation prompt
@@ -19,7 +22,6 @@ import {
   validateRequest,
   createdResponse,
   ApiException,
-  successResponse,
   ValidationSchema,
 } from '@/lib/api-middleware';
 import {
@@ -27,6 +29,8 @@ import {
   SunoGenerationResponse,
 } from '@/types/api';
 import { UserContext } from '@/types/api';
+import { generateMusic, MusicGenServiceError } from '@/lib/musicgen-client';
+import { createGeneration } from '@/lib/suno-generation-store';
 
 // Validation schema for generation request
 const generationSchema: ValidationSchema = {
@@ -60,22 +64,19 @@ const generationSchema: ValidationSchema = {
 };
 
 /**
- * Generate new music using Suno
- * Requires authentication
+ * Generate new music via the WISE² MusicGen service.
+ * Requires authentication.
  */
-async function generateMusic(
+async function generateMusicHandler(
   request: NextRequest,
   user: UserContext | null
 ): Promise<NextResponse> {
-  // Require authentication
   if (!requireAuth(user)) {
     throw new ApiException(401, 'UNAUTHORIZED', 'Authentication required');
   }
 
-  // Parse request body
   const body = (await request.json()) as Record<string, unknown>;
 
-  // Validate request
   const { valid, errors } = validateRequest(body, generationSchema);
   if (!valid) {
     throw new ApiException(400, 'VALIDATION_ERROR', 'Invalid request data', {
@@ -91,23 +92,77 @@ async function generateMusic(
     tags: body.tags as any,
   };
 
-  // TODO: Call Suno API
-  // const sunoResponse = await sunoClient.generate(payload);
+  const id = `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const now = new Date().toISOString();
 
-  // Mock response for now
-  const response: SunoGenerationResponse = {
-    id: `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  createGeneration({
+    id,
     prompt: payload.prompt,
     style: payload.style,
-    status: 'pending',
-    createdAt: new Date().toISOString(),
+    status: 'processing',
+    progress: 0,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  // MusicGen generates synchronously, so by the time this handler returns
+  // the audio already exists (or generation has genuinely failed).
+  let finalStatus: SunoGenerationResponse['status'] = 'processing';
+  let errorMessage: string | undefined;
+
+  try {
+    const result = await generateMusic({
+      prompt: payload.style ? `${payload.style}: ${payload.prompt}` : payload.prompt,
+      duration: payload.duration,
+      temperature: payload.temperature,
+    });
+
+    finalStatus = 'completed';
+    createGeneration({
+      id,
+      musicgenId: result.generationId,
+      prompt: payload.prompt,
+      style: payload.style,
+      status: 'completed',
+      progress: 100,
+      musicUrl: `/api/suno/audio/${result.generationId}`,
+      duration: result.duration,
+      createdAt: now,
+      updatedAt: new Date().toISOString(),
+      completedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    finalStatus = 'failed';
+    errorMessage =
+      err instanceof MusicGenServiceError ? err.message : 'Music generation failed unexpectedly';
+    createGeneration({
+      id,
+      prompt: payload.prompt,
+      style: payload.style,
+      status: 'failed',
+      progress: 0,
+      error: errorMessage,
+      createdAt: now,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  // Generation already finished (MusicGen is synchronous) — report the real
+  // outcome rather than a stale "processing" placeholder.
+  const response: SunoGenerationResponse = {
+    id,
+    prompt: payload.prompt,
+    style: payload.style,
+    status: finalStatus,
+    createdAt: now,
     updatedAt: new Date().toISOString(),
+    errorMessage,
   };
 
   return createdResponse(response);
 }
 
-export async function POST(request: NextRequest, context: any = {}) { const { params = {} } = context; return withMiddleware(generateMusic)(request, { params: params as Record<string, string> });
+export async function POST(request: NextRequest, context: any = {}) { const { params = {} } = context; return withMiddleware(generateMusicHandler)(request, { params: params as Record<string, string> });
 }
 
 /**

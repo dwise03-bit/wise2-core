@@ -103,7 +103,7 @@ export const RevenueHeader: React.FC = () => {
             <span className="truncate">WISE HVAC Solutions</span>
           </div>
           <h1 className="mt-1 text-xl font-bold tracking-tight text-text-primary md:text-2xl">
-            Revenue Command Center
+            Contractor OS
           </h1>
         </div>
 

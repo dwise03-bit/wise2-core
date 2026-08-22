@@ -3,6 +3,10 @@ import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 
+// Force dynamic rendering so SiteChrome's usePathname() correctly detects
+// isolated subtrees (/sencere, /soundlab) at request time
+export const dynamic = 'force-dynamic';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
