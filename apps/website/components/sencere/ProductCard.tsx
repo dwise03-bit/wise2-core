@@ -1,19 +1,29 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Product } from '@/lib/sencere-products';
+import { Package } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
   featured?: boolean;
 }
 
+const categoryGradients: Record<string, string> = {
+  apparel: 'from-blue-600 to-blue-800',
+  printing: 'from-purple-600 to-purple-800',
+  fabrication: 'from-cyan-600 to-blue-800',
+  design: 'from-indigo-600 to-purple-800',
+  service: 'from-teal-600 to-cyan-800',
+};
+
 export function ProductCard({ product, featured }: ProductCardProps) {
   const displayPrice =
     product.variants.length > 1
       ? `From $${product.basePrice}`
       : `$${product.basePrice}`;
+
+  const gradient = categoryGradients[product.category] || 'from-gray-600 to-gray-800';
 
   return (
     <Link href={`/sencere/products/${product.slug}`}>
@@ -29,16 +39,11 @@ export function ProductCard({ product, featured }: ProductCardProps) {
           </div>
         )}
 
-        {/* Image Container */}
-        <div className="relative h-64 w-full overflow-hidden bg-[#0F172A]">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
-            sizes={featured ? '(max-width: 768px) 100vw, 50vw' : '(max-width: 768px) 100vw, 33vw'}
-            priority={featured}
-          />
+        {/* Image Container - Gradient background with icon */}
+        <div className={`relative h-64 w-full overflow-hidden bg-gradient-to-br ${gradient}`}>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Package className="w-24 h-24 text-white/30" strokeWidth={1} />
+          </div>
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>

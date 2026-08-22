@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import Image from 'next/image';
 import { Product, ProductVariant } from '@/lib/sencere-products';
 import { CartItem } from '@/lib/sencere-cart';
-import { ChevronRight, ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, Package } from 'lucide-react';
 
 interface ProductDetailProps {
   product: Product;
@@ -55,32 +54,21 @@ export function ProductDetail({ product, onAddToCart }: ProductDetailProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
       {/* Gallery */}
       <div className="space-y-4">
-        <div className="relative h-[500px] bg-[#0F172A] rounded-lg overflow-hidden">
-          <Image
-            src={allImages[currentImageIdx]}
-            alt={product.name}
-            fill
-            className="object-cover"
-            priority
-          />
+        <div className="relative h-[500px] bg-gradient-to-br from-blue-600/30 to-purple-600/30 rounded-lg overflow-hidden flex items-center justify-center border border-gray-700">
+          <Package className="w-32 h-32 text-white/20" strokeWidth={1} />
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {allImages.map((img, idx) => (
+          {[0, 1, 2, 3].map((idx) => (
             <button
               key={idx}
-              onClick={() => setCurrentImageIdx(idx)}
-              className={`relative h-24 rounded-lg overflow-hidden border-2 transition-colors ${
+              onClick={() => setCurrentImageIdx(idx % (allImages.length || 1))}
+              className={`relative h-24 rounded-lg overflow-hidden border-2 transition-colors flex items-center justify-center bg-gradient-to-br from-blue-600/20 to-purple-600/20 ${
                 idx === currentImageIdx
                   ? 'border-[#0369A1]'
                   : 'border-gray-700 hover:border-gray-500'
               }`}
             >
-              <Image
-                src={img}
-                alt={`${product.name} ${idx + 1}`}
-                fill
-                className="object-cover"
-              />
+              <Package className="w-8 h-8 text-white/20" strokeWidth={1} />
             </button>
           ))}
         </div>
