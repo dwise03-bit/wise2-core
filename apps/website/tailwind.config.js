@@ -74,6 +74,9 @@ module.exports = {
         display: ['Inter', ...defaultTheme.fontFamily.sans],
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
+        bebas: ['Bebas Neue', 'sans-serif'],
+        oswald: ['Oswald', 'sans-serif'],
+        script: ['cursive'],
       },
       boxShadow: {
         // Electric Blue glows (WISE²)

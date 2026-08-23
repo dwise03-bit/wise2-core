@@ -81,8 +81,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      // Call login API
-      const result = await apiClient.post('/api/v1/auth/login', {
+      // Call login API (apiClient baseUrl already includes /api)
+      const result = await apiClient.post('/v1/auth/login', {
         email,
         password,
       });
