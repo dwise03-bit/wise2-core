@@ -112,10 +112,11 @@ fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         OutlinedButton(
             onClick = {
-                activity?.let {
+                activity?.let { act ->
                     googleSignInClient.signOut().addOnCompleteListener {
                         val signInIntent = googleSignInClient.signInIntent
-                        it.startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQUEST_CODE)
+                        @Suppress("DEPRECATION")
+                        act.startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQUEST_CODE)
                     }
                 }
             },
