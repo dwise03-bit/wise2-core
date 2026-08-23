@@ -35,12 +35,13 @@ class AppContainer private constructor(context: Context) {
     val apiService: ApiService = NetworkModule.buildApiService(tokenStore)
 
     val authRepository = AuthRepository(apiService, tokenStore)
-    val jobRepository = JobRepository(apiService, database.jobDao(), database.pendingSyncDao())
-    val equipmentRepository = EquipmentRepository(apiService, database.equipmentDao())
-    val readingRepository = ReadingRepository(apiService, database.readingDao())
-    val diagnosticRepository = DiagnosticRepository(database.diagnosticDao())
-    val reportRepository = ReportRepository(apiService, database.reportDao())
-    val impRepository = ImpRepository(apiService, database.impMessageDao())
+    // Temporarily disabled - will re-enable after fixing Room KSP issue
+    // val jobRepository = JobRepository(apiService, database.jobDao(), database.pendingSyncDao())
+    // val equipmentRepository = EquipmentRepository(apiService, database.equipmentDao())
+    // val readingRepository = ReadingRepository(apiService, database.readingDao())
+    // val diagnosticRepository = DiagnosticRepository(database.diagnosticDao())
+    // val reportRepository = ReportRepository(apiService, database.reportDao())
+    // val impRepository = ImpRepository(apiService, database.impMessageDao())
     val updateRepository = UpdateRepository(apiService)
 
     val toolManager = ToolManager(SimulatedToolAdapter())

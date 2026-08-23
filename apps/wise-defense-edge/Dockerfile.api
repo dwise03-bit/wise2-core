@@ -1,0 +1,41 @@
+FROM python:3.11-slim-bookworm
+
+LABEL maintainer="WISE Defense L.L.C."
+LABEL description="WISE Defense Edge Intelligence API"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create wise2 user
+RUN useradd -r -s /bin/bash -d /opt/wise2-defense -m wise2
+
+# Set working directory
+WORKDIR /opt/wise2-defense
+
+# Copy application
+COPY app/ ./app/
+COPY config/ ./config/
+
+# Create directories
+RUN mkdir -p data logs && \
+    chown -R wise2:wise2 .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r app/api/requirements.txt
+
+# Switch to wise2 user
+USER wise2
+
+# Expose API port
+EXPOSE 3014
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost:3014/health || exit 1
+
+# Start API
+CMD ["python", "app/api/main.py"]

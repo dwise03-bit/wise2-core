@@ -193,13 +193,30 @@ export function Hero() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 background: 'rgba(3,5,7,0.55)',
-                boxShadow: '0 0 30px rgba(245,132,38,0.25)',
+                boxShadow: '0 0 30px rgba(245,132,38,0.25), inset 0 0 20px rgba(245,132,38,0.1)',
               }}
             >
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F58426', position: 'relative' }}>
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 2, background: '#030507' }} />
-                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#030507' }} />
-              </div>
+              <svg width="56" height="56" viewBox="0 0 56 56" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.6))' }}>
+                {/* Basketball fill */}
+                <circle cx="28" cy="28" r="28" fill="#F58426" />
+
+                {/* Basketball panels - top half panels */}
+                <path d="M 28 0 Q 28 18 28 28" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
+                <path d="M 28 28 Q 28 37 28 56" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+                {/* Outer curve panels */}
+                <path d="M 12 15 Q 20 22 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                <path d="M 44 15 Q 36 22 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                <path d="M 12 41 Q 20 34 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                <path d="M 44 41 Q 36 34 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+
+                {/* Diagonal accent lines for depth */}
+                <path d="M 8 28 Q 18 28 28 28" stroke="#030507" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.7" />
+                <path d="M 28 28 Q 38 28 48 28" stroke="#030507" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.7" />
+
+                {/* Shine/gloss effect */}
+                <ellipse cx="18" cy="16" rx="8" ry="6" fill="#030507" opacity="0.15" />
+              </svg>
             </div>
             <div style={{ marginTop: 8, fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#F8F9FB', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
               NEW YORK

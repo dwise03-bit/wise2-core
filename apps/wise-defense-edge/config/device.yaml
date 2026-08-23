@@ -1,0 +1,94 @@
+# WISE DEFENSE EDGE DEVICE CONFIGURATION
+# Configure providers, hardware, and behavior
+
+device:
+  id: "EDGE-001"  # Unique device identifier
+  location:
+    latitude: 40.7128
+    longitude: -74.0060
+    city: "New York"
+    state: "NY"
+  timezone: "America/New_York"
+
+# API Configuration
+api:
+  port: 3014
+  host: "0.0.0.0"
+  api_key: "{{ WISE_DEFENSE_API_KEY }}"
+  cloud_url: "{{ WISE_DEFENSE_CLOUD_URL }}"
+  cloud_api_key: "{{ WISE_DEFENSE_CLOUD_API_KEY }}"
+
+# Incident Providers (Optional)
+providers:
+  crimeradar:
+    enabled: false
+    api_key: "{{ CRIMERADAR_API_KEY }}"
+    update_interval_minutes: 5
+    categories: ["police", "fire", "ems", "traffic"]
+
+  weather:
+    enabled: true
+    source: "noaa"  # NOAA/NWS
+    update_interval_minutes: 15
+    alerts: ["tornado", "severe_thunderstorm", "flash_flood", "extreme_heat"]
+
+# Hardware Configuration
+hardware:
+  sdr:
+    enabled: false
+    device_type: "rtl-sdr"
+    profiles: ["NOAA", "GMRS", "HAM", "PUBLIC_SAFETY"]
+    default_profile: "NOAA"
+
+  meshtastic:
+    enabled: false
+    port: "/dev/ttyUSB0"
+    baudrate: 115200
+
+  gps:
+    enabled: false
+    port: "/dev/ttyUSB1"
+    baudrate: 9600
+
+# Watch Zones
+watch_zones:
+  - name: "Home"
+    kind: "HOME"
+    latitude: 40.7128
+    longitude: -74.0060
+    radius_miles: 1.0
+    minimum_threat: "ELEVATED"
+    categories: ["police", "fire", "ems"]
+    enabled: true
+
+# Alerting
+alerts:
+  notify_via:
+    - "local"      # Display in dashboard
+    - "log"        # Write to logs
+    # - "cloud"    # Send to cloud (when online)
+    # - "discord"  # Send to Discord webhook
+
+  critical_alert_levels: ["CRITICAL", "HIGH"]
+  watch_alert_levels: ["ELEVATED", "WARNING"]
+
+# System Behavior
+system:
+  offline_mode: true        # Continue operating without cloud connection
+  auto_repair: true         # Automatically restart failed services
+  log_retention_days: 30    # Keep logs for N days
+  max_database_size_mb: 2048  # Max SQLite database size
+  sync_queue_retry_max: 3   # Max retries for cloud sync
+  health_check_interval: 300  # Check health every N seconds
+
+# Security
+security:
+  require_api_key: true
+  allowed_local_networks: ["127.0.0.1/8", "192.168.0.0/16", "10.0.0.0/8"]
+  tailscale_required: false  # Require Tailscale for cloud sync
+
+# Compliance Notices
+compliance:
+  operations_lawful_only: true
+  verify_official_sources: true
+  ai_assumptions_not_facts: true

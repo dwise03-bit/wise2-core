@@ -1,0 +1,21 @@
+[Unit]
+Description=WISE Defense Edge Intelligence Node
+Documentation=https://wise2.net/defense
+After=network.target
+Wants=wise2-health.service
+
+[Service]
+Type=simple
+User=wise2
+WorkingDirectory=/opt/wise2-defense
+Environment="PATH=/opt/wise2-defense/venv/bin:/usr/local/bin:/usr/bin"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/opt/wise2-defense/venv/bin/python /opt/wise2-defense/app/api/main.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-defense
+
+[Install]
+WantedBy=multi-user.target

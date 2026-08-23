@@ -206,7 +206,7 @@ export default function FieldTechPage() {
         </section>
       </div>
 
-      <section className="animate-slideUp" className="mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">
+      <section className="animate-slideUp mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-kicker">Field Tech App</p>
           <h2 className="section-title">Everything A Tech Needs, Nothing They Don&apos;t</h2>
@@ -235,7 +235,7 @@ export default function FieldTechPage() {
         </div>
       </section>
 
-      <section className="animate-slideUp" className="mx-auto max-w-7xl px-5 pb-8 md:px-8 lg:px-10">
+      <section className="animate-slideUp mx-auto max-w-7xl px-5 pb-8 md:px-8 lg:px-10">
         <div className="wise-panel relative overflow-hidden p-7 sm:p-8">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(36,167,255,.18),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(255,122,24,.16),transparent_35%)]" />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -276,7 +276,7 @@ export default function FieldTechPage() {
         </div>
       </section>
 
-      <section className="animate-slideUp" id="contact" className="border-t border-white/10">
+      <section className="animate-slideUp border-t border-white/10" id="contact">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-8 lg:grid-cols-[.9fr_1.1fr] lg:px-10 lg:py-16">
           <div>
             <p className="font-display text-3xl font-black uppercase tracking-[0.08em] text-white">
