@@ -1,16 +1,15 @@
 {
-  "installCommand": "npm install --no-audit --no-fund",
-  "buildCommand": "next build",
+  "name": "Get Down Pressure Washing × WISE² Owner Demo",
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install",
   "framework": "nextjs",
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        }
-      ]
+  "public": true,
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_DEMO_MODE": {
+      "description": "Demo mode enabled",
+      "default": "true"
     }
-  ]
+  }
 }
