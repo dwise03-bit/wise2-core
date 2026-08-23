@@ -1,181 +1,141 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Facebook, Instagram, Music, Youtube, MapPin } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+const footerLinks = [
+  { label: 'Home', href: '#home' },
+  { label: 'Reviews', href: '#reviews' },
+  { label: 'Services', href: '#services' },
+  { label: 'About', href: '#about' },
+  { label: 'Packages', href: '#packages' },
+  { label: 'Contact', href: '#contact' },
+  { label: 'Gallery', href: '#gallery' },
+  { label: 'Book My Detail', href: '#book' },
+];
+
+const socials = ['FB', 'IG', 'TT', 'YT'];
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
+  const [isMobile, setIsMobile] = useState(false);
+  const [year, setYear] = useState(2026);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 980);
+    onResize();
+    window.addEventListener('resize', onResize);
+    setYear(new Date().getFullYear());
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   return (
-    <footer className="relative bg-black border-t border-gray-800 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Brand Column */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded border-2 border-orange-500 flex items-center justify-center">
-                <div className="text-orange-500 font-black text-xs">UWD</div>
-              </div>
-              <div>
-                <div className="text-white font-black text-sm leading-tight">
-                  ULTRA WISE
-                </div>
-                <div className="text-blue-500 font-black text-sm leading-tight">
-                  DETAIL
-                </div>
-              </div>
-            </div>
-            <p className="text-sm text-gray-400 mb-4">
-              Premium detailing and auto recon services that bring your vehicle back to life.
-            </p>
-            <p className="text-xs font-black text-orange-500 mb-1">
-              NEW YORK MENTALITY.
-            </p>
-            <p className="text-xs font-black text-white">
-              ULTRA WISE RESULTS.
-            </p>
-          </motion.div>
-
-          {/* Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            <h3 className="font-black text-white mb-4">QUICK LINKS</h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Services
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Packages
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Gallery
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Reviews
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition">
-                  Contact
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-orange-500 transition font-bold">
-                  Book My Detail
-                </a>
-              </li>
-            </ul>
-          </motion.div>
-
-          {/* Service Area */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            <h3 className="font-black text-white mb-4">SERVICE AREA</h3>
-            <div className="flex items-start gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-orange-500 flex-shrink-0 mt-1" />
-              <div>
-                <p className="text-sm font-bold text-white">
-                  Proudly serving South Florida
-                </p>
-                <ul className="text-xs text-gray-400 space-y-1 mt-2">
-                  <li>Broward County</li>
-                  <li>Miami-Dade County</li>
-                  <li>Palm Beach County</li>
-                  <li>surrounding areas</li>
-                </ul>
+    <footer style={{ background: '#030507', padding: isMobile ? '36px 20px 24px' : '48px 32px 28px', position: 'relative' }}>
+      <div style={{ height: 2, background: 'linear-gradient(90deg, #F58426, #006BB6)', position: 'absolute', top: 0, left: 0, right: 0 }} />
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr 1fr',
+          gap: isMobile ? 28 : 32,
+          marginBottom: 28,
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div
+              style={{
+                position: 'relative',
+                width: 36,
+                height: 40,
+                clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                background: 'linear-gradient(160deg, #F58426, #006BB6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <div
+                style={{
+                  width: 31,
+                  height: 35,
+                  clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                  background: '#030507',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 14, color: '#F8F9FB' }}>UW</span>
               </div>
             </div>
-          </motion.div>
-
-          {/* Social & Powered By */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <h3 className="font-black text-white mb-4">FOLLOW US</h3>
-            <div className="flex gap-3 mb-8">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center text-white transition"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center text-white transition"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center text-white transition"
-              >
-                <Music className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-gray-800 hover:bg-orange-500 flex items-center justify-center text-white transition"
-              >
-                <Youtube className="w-5 h-5" />
-              </a>
+            <div style={{ lineHeight: 1.05 }}>
+              <div style={{ fontWeight: 900, fontSize: 13, color: '#F8F9FB' }}>ULTRA WISE</div>
+              <div style={{ fontWeight: 900, fontSize: 13, color: '#006BB6' }}>DETAIL</div>
             </div>
-
-            {/* Powered By */}
-            <div className="text-xs">
-              <p className="text-gray-500 mb-2">POWERED BY</p>
-              <p className="text-white font-black text-sm">
-                WISE² <span className="text-orange-500">AUTOMATION</span>
-              </p>
-            </div>
-          </motion.div>
+          </div>
+          <p style={{ fontSize: 12, color: '#8b909a', lineHeight: 1.5, margin: '0 0 12px', maxWidth: 260 }}>
+            Premium detailing and auto recon services that bring your vehicle back to life.
+          </p>
+          <p style={{ fontSize: 10, fontWeight: 900, color: '#F58426', margin: 0 }}>NEW YORK MENTALITY.</p>
+          <p style={{ fontSize: 10, fontWeight: 900, color: '#F8F9FB', margin: 0 }}>ULTRA WISE RESULTS.</p>
         </div>
 
-        {/* Bottom Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="border-t border-gray-800 pt-8 text-center"
-        >
-          <p className="text-sm text-gray-500">
-            © {currentYear} Ultra Wise Detail. All Rights Reserved.
+        <div>
+          <h3 style={{ fontSize: 12, fontWeight: 900, color: '#F8F9FB', margin: '0 0 12px', letterSpacing: '0.05em' }}>QUICK LINKS</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px' }}>
+            {footerLinks.map((l) => (
+              <a key={l.label} href={l.href} style={{ fontSize: 12, color: '#8b909a', textDecoration: 'none' }}>
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 style={{ fontSize: 12, fontWeight: 900, color: '#F8F9FB', margin: '0 0 12px', letterSpacing: '0.05em' }}>SERVICE AREA</h3>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#F8F9FB', margin: '0 0 8px' }}>Proudly serving South Florida</p>
+          <p style={{ fontSize: 11, color: '#8b909a', margin: 0, lineHeight: 1.7 }}>
+            Broward County &middot; Miami-Dade County
+            <br />
+            Palm Beach County &amp; surrounding areas
           </p>
-          <p className="text-xs text-gray-600 mt-2">
-            Premium detailing and auto recon services serving South Florida.
+        </div>
+
+        <div>
+          <h3 style={{ fontSize: 12, fontWeight: 900, color: '#F8F9FB', margin: '0 0 12px', letterSpacing: '0.05em' }}>FOLLOW US</h3>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+            {socials.map((soc) => (
+              <a
+                key={soc}
+                href="#"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: '#17191c',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 9,
+                  fontWeight: 800,
+                  color: '#F8F9FB',
+                  textDecoration: 'none',
+                }}
+              >
+                {soc}
+              </a>
+            ))}
+          </div>
+          <p style={{ fontSize: 9, color: '#5b606a', margin: '0 0 4px', letterSpacing: '0.05em' }}>POWERED BY</p>
+          <p style={{ fontSize: 12, fontWeight: 900, color: '#F8F9FB', margin: 0 }}>
+            WISE&sup2; <span style={{ color: '#F58426' }}>AUTOMATION</span>
           </p>
-        </motion.div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid #17191c', paddingTop: 18, textAlign: 'center' }}>
+        <p style={{ fontSize: 11, color: '#5b606a', margin: 0 }}>&copy; {year} Ultra Wise Detail. All Rights Reserved.</p>
       </div>
     </footer>
   );

@@ -1,160 +1,123 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Shield, Droplets, Sparkles, Zap, Wand2, Wind, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Wind, Sparkles, Zap, Shield, Droplets, Plus } from 'lucide-react';
 
 const services = [
   {
-    id: 1,
     title: 'EXPRESS REFRESH',
-    description: 'Quick exterior clean to keep your car looking its best.',
-    icon: Wind,
+    desc: 'Quick exterior clean to keep your car looking its best.',
+    img: '/images/ultra-wise-detail/uwd-svc-express-refresh.png',
   },
   {
-    id: 2,
     title: 'INTERIOR RESET',
-    description: 'Refresh & sanitize your interior for a clean, comfortable ride.',
-    icon: Sparkles,
+    desc: 'Refresh & sanitize your interior for a clean, comfortable ride.',
+    img: '/images/ultra-wise-detail/uwd-svc-interior-reset.png',
   },
   {
-    id: 3,
     title: 'FULL DETAIL',
-    description: 'Interior & exterior detailing for a showroom finish.',
-    icon: Wand2,
+    desc: 'Interior & exterior detailing for a showroom finish.',
+    img: '/images/ultra-wise-detail/uwd-svc-full-detail.png',
   },
   {
-    id: 4,
     title: 'PAINT ENHANCEMENT',
-    description: 'Remove swirl marks & bring back depth, gloss & clarity.',
+    desc: 'Remove swirl marks & bring back depth, gloss & clarity.',
     icon: Zap,
   },
   {
-    id: 5,
     title: 'CERAMIC PROTECTION',
-    description: 'Long-lasting protection with hydrophobic ceramic coatings.',
+    desc: 'Long-lasting protection with hydrophobic ceramic coatings.',
     icon: Shield,
   },
   {
-    id: 6,
     title: 'DEEP INTERIOR RECOVERY',
-    description: 'Deep clean, stain removal & odor elimination.',
+    desc: 'Deep clean, stain removal & odor elimination.',
     icon: Droplets,
   },
   {
-    id: 7,
     title: 'ADD-ONS',
-    description: 'Headlight restoration, engine bay cleaning, pet hair removal & more.',
+    desc: 'Headlight restoration, engine bay cleaning, pet hair removal & more.',
     icon: Plus,
   },
 ];
 
 export function Services() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  const [isMobile, setIsMobile] = useState(false);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 980);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   return (
-    <section className="relative py-20 md:py-32 bg-black overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+    <section style={{ background: '#030507', padding: isMobile ? '44px 20px' : '60px 32px', position: 'relative' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 10 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 800, letterSpacing: '0.15em', color: '#F58426' }}>
+            <span style={{ width: 16, height: 2, background: '#F58426', display: 'inline-block' }} />
+            WHAT WE OFFER
+            <span style={{ width: 16, height: 2, background: '#F58426', display: 'inline-block' }} />
+          </span>
+        </div>
+        <h2 style={{ textAlign: 'center', fontFamily: "'Bebas Neue', sans-serif", fontSize: isMobile ? 32 : 'clamp(32px, 4vw, 44px)', margin: '0 0 32px' }}>
+          <span style={{ color: '#F8F9FB' }}>OUR </span>
+          <span style={{ color: '#006BB6' }}>SERVICES</span>
+        </h2>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${isMobile ? 2 : 4}, 1fr)`,
+            gap: 16,
+          }}
         >
-          <h2 className="text-5xl md:text-6xl font-black font-bebas mb-4">
-            <span className="text-white">OUR </span>
-            <span className="text-blue-500">SERVICES</span>
-          </h2>
-        </motion.div>
-
-        {/* Services Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            const isInteriorService = service.id === 2 || service.id === 6;
-
+          {services.map((s) => {
+            const Icon = s.icon;
             return (
-              <motion.div
-                key={service.id}
-                variants={itemVariants}
-                whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                className="group relative"
+              <div
+                key={s.title}
+                style={{
+                  background: 'linear-gradient(to bottom right, #101215, #030507)',
+                  border: '1.5px solid #1c1f24',
+                  borderTop: '2px solid #F58426',
+                  padding: 18,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                }}
               >
-                <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-gray-800 group-hover:border-orange-500 rounded overflow-hidden transition-all duration-300 h-full p-6 flex flex-col">
-                  {/* Icon Container or Image */}
-                  <div className="mb-6">
-                    {isInteriorService ? (
-                      <div className="w-full h-24 rounded overflow-hidden border border-blue-500/30 group-hover:border-orange-500 transition-colors">
-                        <img
-                          src="/images/ultra-wise-detail/genesis-interior.jpg"
-                          alt="Premium vehicle interior"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500/20 to-orange-500/20 flex items-center justify-center border border-blue-500/50 group-hover:border-orange-500 transition-colors">
-                        <Icon className="w-7 h-7 text-blue-500 group-hover:text-orange-500 transition-colors" />
-                      </div>
-                    )}
+                {s.img ? (
+                  <div style={{ position: 'relative', width: 'calc(100% + 36px)', height: 78, borderRadius: 3, overflow: 'hidden', margin: '-18px -18px 14px' }}>
+                    <img src={s.img} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(0.95) brightness(1.05) contrast(1.05)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 55%, rgba(16,18,21,0.55) 85%, #101215 100%)' }} />
                   </div>
-
-                  {/* Content */}
-                  <h3 className="text-lg font-black text-white mb-3 group-hover:text-orange-500 transition-colors">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 flex-grow">
-                    {service.description}
-                  </p>
-
-                  {/* Glow effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-blue-500/0 group-hover:from-orange-500/10 group-hover:to-blue-500/10 transition-all duration-300 pointer-events-none" />
-                </div>
-              </motion.div>
+                ) : (
+                  <div style={{ marginBottom: 14 }}>
+                    <div
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        background: 'rgba(0,107,182,0.12)',
+                        border: '1px solid rgba(0,107,182,0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {Icon && <Icon size={22} color="#006BB6" />}
+                    </div>
+                  </div>
+                )}
+                <h3 style={{ fontSize: 13, fontWeight: 900, color: '#F8F9FB', margin: '0 0 8px', letterSpacing: '0.01em' }}>
+                  {s.title}
+                </h3>
+                <p style={{ fontSize: 12, color: '#8b909a', margin: 0, lineHeight: 1.5 }}>{s.desc}</p>
+              </div>
             );
           })}
-        </motion.div>
-
-        {/* Bottom Accent */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-block px-8 py-3 bg-blue-500/10 border border-blue-500/30 rounded">
-            <p className="text-sm text-blue-400">
-              All services include professional-grade products & expert application
-            </p>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

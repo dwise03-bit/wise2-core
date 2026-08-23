@@ -1,99 +1,152 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export function OwnerSection() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 980);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
-    <section className="relative py-20 md:py-32 bg-gradient-to-b from-black to-slate-900 overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Owner Photo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative"
+    <section
+      style={{
+        background: 'linear-gradient(to bottom, #030507, #0b0e12)',
+        padding: isMobile ? '40px 20px' : '56px 32px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: '10%',
+          right: -100,
+          width: 320,
+          height: 320,
+          background: 'radial-gradient(circle, rgba(245,132,38,0.10), transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'minmax(220px,300px) minmax(280px,1fr) minmax(180px,240px)',
+          gap: isMobile ? 28 : 36,
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
+        <div style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: -10,
+              left: 4,
+              zIndex: 2,
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: 13,
+              color: '#F58426',
+              lineHeight: 1.3,
+              textShadow: '0 1px 4px rgba(0,0,0,0.8)',
+            }}
           >
-            <div className="relative w-full aspect-square rounded border border-orange-500/50 overflow-hidden">
-              {/* Ronald Wise owner photo */}
-              <img
-                src="/images/ultra-wise-detail/ronald-wise.jpg"
-                alt="Ronald Wise, owner of Ultra Wise Detail"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Knicks Basketball accent */}
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 opacity-20 pointer-events-none">
-              <svg viewBox="0 0 100 100" className="w-full h-full" fill="currentColor">
-                <circle cx="50" cy="50" r="45" className="text-orange-500" />
-                <text x="50" y="60" textAnchor="middle" className="text-2xl font-bold fill-blue-500">
-                  🏀
-                </text>
-              </svg>
-            </div>
-          </motion.div>
-
-          {/* Owner Info */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            Once a Knick,
+            <br />
+            Always a Knick
+          </div>
+          <div
+            style={{
+              width: '100%',
+              aspectRatio: '1/1',
+              border: '1px solid rgba(245,132,38,0.5)',
+              overflow: 'hidden',
+              borderRadius: 4,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            }}
           >
-            {/* Owner Name */}
-            <div className="mb-8">
-              <p className="text-sm text-gray-500 mb-2 tracking-widest">OWNER</p>
-              <h2 className="text-5xl md:text-6xl font-black text-orange-500 mb-2 font-bebas">
-                RONALD WISE
-              </h2>
-              <p className="text-xl md:text-2xl text-blue-500 font-bold">
-                ULTRA WISE DETAIL
+            <img
+              src="/images/ultra-wise-detail/ronald-wise.jpg"
+              alt="Ronald Wise, owner"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 32%' }}
+            />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: -10,
+              left: -10,
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: '#F58426',
+              opacity: 0.9,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 20px rgba(245,132,38,0.4)',
+            }}
+          >
+            <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#030507' }} />
+          </div>
+        </div>
+
+        <div>
+          <p style={{ fontSize: 11, color: '#6b7280', letterSpacing: '0.12em', margin: '0 0 4px', fontWeight: 700 }}>
+            OWNER
+          </p>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: isMobile ? 34 : 'clamp(34px, 4vw, 48px)', color: '#F58426', margin: '0 0 2px', letterSpacing: '0.01em' }}>
+            RONALD WISE
+          </h2>
+          <p style={{ fontSize: 15, color: '#006BB6', fontWeight: 800, margin: '0 0 16px' }}>
+            ULTRA WISE DETAIL
+          </p>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ fontSize: 40, color: 'rgba(245,132,38,0.35)', fontWeight: 900, lineHeight: 1, fontFamily: 'Georgia, serif' }}>
+              &ldquo;
+            </div>
+            <div>
+              <p style={{ fontSize: 15, color: '#F8F9FB', margin: '0 0 14px', lineHeight: 1.5 }}>
+                We don&apos;t just wash cars&mdash;we treat them like investments.
+              </p>
+              <p style={{ fontSize: 14, fontWeight: 800, color: '#F58426', margin: '0 0 2px' }}>
+                Precision. Protection. Pride.
+              </p>
+              <p style={{ fontSize: 13, color: '#8b909a', margin: 0, fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>
+                That&apos;s the Ultra Wise way &mdash; Ronald Wise
               </p>
             </div>
+          </div>
+        </div>
 
-            {/* Signature */}
-            <div className="mb-8 pb-8 border-b border-gray-800">
-              <p className="text-2xl italic text-gray-400 font-script">Ronald Wise</p>
-            </div>
-
-            {/* Quote */}
-            <div className="mb-8">
-              <div className="flex items-start gap-4">
-                <div className="text-6xl text-orange-500/30 font-bold leading-none">"</div>
-                <div>
-                  <p className="text-lg md:text-xl text-white mb-4 leading-relaxed">
-                    We don't just wash cars—
-                    <br />
-                    we treat them like investments.
-                  </p>
-                  <p className="text-lg font-bold text-orange-500">
-                    Precision. Protection. Pride.
-                  </p>
-                  <p className="text-base text-gray-400">
-                    That's the Ultra Wise way.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Lifestyle text */}
-            <div className="pt-8 border-t border-gray-800">
-              <p className="text-sm text-gray-500 italic mb-2">Lifestyle</p>
-              <p className="text-3xl font-black text-blue-500 mb-4">
-                ONCE A KNICK,
-                <br />
-                ALWAYS A KNICK
-              </p>
-              <p className="text-xl font-black text-orange-500">
-                NEW YORK FOREVER
-              </p>
-            </div>
-          </motion.div>
+        <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
+          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, color: '#006BB6', letterSpacing: '0.02em', margin: 0 }}>
+            NEW YORK
+          </p>
+          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 26, color: '#F58426', letterSpacing: '0.02em', margin: '0 0 10px' }}>
+            FOREVER
+          </p>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: '50%',
+              border: '2px solid #006BB6',
+              margin: isMobile ? 0 : '0 0 0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#006BB6' }} />
+          </div>
         </div>
       </div>
     </section>

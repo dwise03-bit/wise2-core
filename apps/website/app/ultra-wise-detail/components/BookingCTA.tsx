@@ -1,98 +1,78 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Phone } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function BookingCTA() {
-  const handlePhoneClick = () => {
-    window.location.href = 'tel:+19177498960';
-  };
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 980);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   return (
-    <section className="relative py-20 md:py-32 bg-gradient-to-r from-blue-600 via-blue-700 to-orange-600 overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          {/* Headline */}
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-4 font-bebas">
-            READY TO RESTORE.{' '}
-            <span className="text-black">PROTECT. ELEVATE?</span>
-          </h2>
-
-          {/* Subheading */}
-          <p className="text-xl md:text-2xl font-bold text-white/90 mb-12">
-            BOOK YOUR DETAIL TODAY!
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-12">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-black font-black text-lg transition transform"
-            >
-              BOOK MY DETAIL
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handlePhoneClick}
-              className="px-8 py-4 bg-black/80 hover:bg-black text-white font-black text-lg border-2 border-white transition transform flex items-center justify-center gap-3"
-            >
-              <Phone className="w-5 h-5" />
-              CALL NOW
-            </motion.button>
-          </div>
-
-          {/* Phone Number Display */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex flex-col sm:flex-row justify-center items-center gap-4"
-          >
-            <div className="flex items-center gap-2">
-              <Phone className="w-6 h-6 text-black" />
-              <a
-                href="tel:+19177498960"
-                className="text-2xl md:text-3xl font-black text-black hover:text-white transition"
-              >
-                (917) 749-8960
-              </a>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Mobile Floating Action Bar */}
-      <motion.div
-        initial={{ y: 100 }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true }}
-        className="fixed bottom-0 left-0 right-0 lg:hidden bg-black/95 backdrop-blur-sm border-t border-orange-500 p-3 gap-3 flex z-40"
+    <section
+      style={{
+        background: 'linear-gradient(100deg, #006BB6 0%, #0057a0 55%, #F58426 100%)',
+        padding: isMobile ? '28px 20px' : '28px 32px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 26px)',
+          pointerEvents: 'none',
+        }}
+      />
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: '0 auto',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 20,
+          position: 'relative',
+        }}
       >
-        <button className="flex-1 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-black font-bold transition">
-          BOOK
-        </button>
-        <button
-          onClick={handlePhoneClick}
-          className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold transition flex items-center justify-center gap-2"
-        >
-          <Phone className="w-5 h-5" />
-          CALL
-        </button>
-      </motion.div>
+        <div>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: isMobile ? 22 : 'clamp(22px, 2.6vw, 30px)', color: '#F8F9FB', margin: '0 0 4px', letterSpacing: '0.01em' }}>
+            READY TO RESTORE. PROTECT. ELEVATE?
+          </h2>
+          <p style={{ fontSize: 13, fontWeight: 800, color: '#F8F9FB', margin: 0 }}>BOOK YOUR DETAIL TODAY!</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <button
+            style={{
+              background: '#F58426',
+              color: '#030507',
+              fontWeight: 900,
+              fontSize: 13,
+              border: 'none',
+              padding: '14px 26px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            BOOK MY DETAIL
+          </button>
+          <a href="tel:+19177498960" style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#F8F9FB', textDecoration: 'none' }}>
+            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #F8F9FB' }} />
+            </div>
+            <div style={{ lineHeight: 1.2 }}>
+              <div style={{ fontWeight: 900, fontSize: 15 }}>(917) 749-8960</div>
+              <div style={{ fontSize: 10, opacity: 0.85 }}>Proudly Serving South Florida</div>
+            </div>
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
