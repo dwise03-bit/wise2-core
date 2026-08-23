@@ -31,6 +31,8 @@ import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
 import { WiseDefenseModule } from './wise-defense/wise-defense.module';
 import { PrintShopModule } from './v1/print-shop/print-shop.module';
+import { HermesModule } from './hermes/hermes.module';
+import { TradingModule } from './trading/trading.module';
 
 @Module({
   imports: [
@@ -120,6 +122,8 @@ import { PrintShopModule } from './v1/print-shop/print-shop.module';
     CustomersModule,
     GalleryModule,
     PrintShopModule,
+    HermesModule,
+    TradingModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

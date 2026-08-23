@@ -366,11 +366,6 @@ export class HermesService {
       : {
           model,
           stream: false,
-          think: false,
-          options: {
-            num_ctx: 4096,
-            num_predict: 1024,
-          },
           messages: [
             { role: 'system', content: system },
             ...history,
@@ -450,11 +445,6 @@ export class HermesService {
     const body = {
       model,
       stream: true,
-      think: false,
-      options: {
-        num_ctx: 4096,
-        num_predict: 1024,
-      },
       messages: [
         { role: 'system', content: system },
         ...history,

@@ -76,6 +76,13 @@ export class PrismaAuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    console.log('LOGIN DEBUG', {
+      userFound: !!user,
+      hasPasswordHash: !!user?.passwordHash,
+      passwordHashType: typeof user?.passwordHash,
+      passwordHashLength: user?.passwordHash?.length,
+    });
+
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
