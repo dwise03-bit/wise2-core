@@ -100,6 +100,7 @@ services:
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-mistral:latest}
       OLLAMA_GRAPHICS_MODEL: ${OLLAMA_GRAPHICS_MODEL:-mistral:latest}
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
+      OWNER_EMAIL: ${OWNER_EMAIL:-}
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
