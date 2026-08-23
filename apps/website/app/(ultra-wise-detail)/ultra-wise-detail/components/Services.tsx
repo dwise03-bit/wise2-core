@@ -88,7 +88,7 @@ export function Services() {
                 }}
               >
                 {s.img ? (
-                  <div style={{ position: 'relative', width: 'calc(100% + 36px)', height: 78, borderRadius: 3, overflow: 'hidden', margin: '-18px -18px 14px' }}>
+                  <div style={{ position: 'relative', width: 'calc(100% + 36px)', height: 140, borderRadius: 3, overflow: 'hidden', margin: '-18px -18px 14px' }}>
                     <img src={s.img} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(0.95) brightness(1.05) contrast(1.05)' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 55%, rgba(16,18,21,0.55) 85%, #101215 100%)' }} />
                   </div>
