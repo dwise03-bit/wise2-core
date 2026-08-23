@@ -192,30 +192,47 @@ export function Hero() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'rgba(3,5,7,0.55)',
-                boxShadow: '0 0 30px rgba(245,132,38,0.25), inset 0 0 20px rgba(245,132,38,0.1)',
+                background: 'radial-gradient(circle at 30% 30%, rgba(245,132,38,0.6), rgba(3,5,7,0.55))',
+                boxShadow: '0 0 40px rgba(245,132,38,0.3), inset -10px -10px 20px rgba(0,0,0,0.5), inset 8px 8px 12px rgba(255,255,255,0.1)',
               }}
             >
-              <svg width="56" height="56" viewBox="0 0 56 56" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.6))' }}>
-                {/* Basketball fill */}
-                <circle cx="28" cy="28" r="28" fill="#F58426" />
+              <svg width="60" height="60" viewBox="0 0 60 60" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.8))' }}>
+                <defs>
+                  <radialGradient id="ballGradient" cx="35%" cy="35%">
+                    <stop offset="0%" stopColor="#ff9d5c" />
+                    <stop offset="60%" stopColor="#F58426" />
+                    <stop offset="100%" stopColor="#d45f1a" />
+                  </radialGradient>
+                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.3" />
+                  </filter>
+                </defs>
 
-                {/* Basketball panels - top half panels */}
-                <path d="M 28 0 Q 28 18 28 28" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <path d="M 28 28 Q 28 37 28 56" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
+                {/* Main ball sphere */}
+                <circle cx="30" cy="30" r="29" fill="url(#ballGradient)" />
 
-                {/* Outer curve panels */}
-                <path d="M 12 15 Q 20 22 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                <path d="M 44 15 Q 36 22 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                <path d="M 12 41 Q 20 34 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                <path d="M 44 41 Q 36 34 28 28" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                {/* Center vertical line (primary spine) */}
+                <path d="M 30 1 Q 30 30 30 59" stroke="#030507" strokeWidth="2.5" fill="none" strokeLinecap="round" />
 
-                {/* Diagonal accent lines for depth */}
-                <path d="M 8 28 Q 18 28 28 28" stroke="#030507" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.7" />
-                <path d="M 28 28 Q 38 28 48 28" stroke="#030507" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.7" />
+                {/* Curved horizontal seams - upper half */}
+                <path d="M 12 20 Q 30 18 48 20" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
+                <path d="M 10 30 Q 30 28 50 30" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
+                <path d="M 12 40 Q 30 42 48 40" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
 
-                {/* Shine/gloss effect */}
-                <ellipse cx="18" cy="16" rx="8" ry="6" fill="#030507" opacity="0.15" />
+                {/* Diagonal curved lines - left side */}
+                <path d="M 20 10 Q 22 25 20 40" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.8" />
+                <path d="M 15 18 Q 18 30 15 45" stroke="#030507" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6" />
+
+                {/* Diagonal curved lines - right side */}
+                <path d="M 40 10 Q 38 25 40 40" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.8" />
+                <path d="M 45 18 Q 42 30 45 45" stroke="#030507" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6" />
+
+                {/* Highlight/shine */}
+                <ellipse cx="20" cy="15" rx="10" ry="8" fill="white" opacity="0.25" />
+                <ellipse cx="22" cy="13" rx="6" ry="5" fill="white" opacity="0.15" />
+
+                {/* Shadow at bottom */}
+                <ellipse cx="30" cy="54" rx="14" ry="4" fill="#030507" opacity="0.3" />
               </svg>
             </div>
             <div style={{ marginTop: 8, fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#F8F9FB', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>

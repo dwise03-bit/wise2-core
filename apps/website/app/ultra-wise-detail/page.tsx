@@ -59,6 +59,42 @@ export default function UltraWiseDetail() {
         a:hover { color: #ff9c4d; }
         ::selection { background: #F58426; color: #030507; }
         .uwd-grain { background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 3px 3px; }
+
+        /* Ultra Wise Detail IMP Theming */
+        [data-wise-imp] {
+          --imp-primary: #F58426;
+          --imp-secondary: #006BB6;
+          --imp-bg: #030507;
+          --imp-text: #F8F9FB;
+          --imp-accent: #ff9c4d;
+        }
+
+        /* IMP Button - Orange/Blue theme */
+        button[aria-label*="Imp"], button[aria-label*="imp"] {
+          background: linear-gradient(135deg, #F58426 0%, #ff9c4d 100%) !important;
+          box-shadow: 0 8px 24px rgba(245,132,38,0.3) !important;
+        }
+
+        button[aria-label*="Imp"]:hover, button[aria-label*="imp"]:hover {
+          box-shadow: 0 12px 32px rgba(245,132,38,0.4) !important;
+          transform: translateY(-2px) !important;
+        }
+
+        /* IMP Panel - Dark theme with brand colors */
+        [data-wise-imp-panel] {
+          background: linear-gradient(135deg, rgba(3,5,7,0.98), rgba(0,107,182,0.15)) !important;
+          border: 1px solid rgba(245,132,38,0.2) !important;
+          box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 40px rgba(245,132,38,0.1) !important;
+        }
+
+        /* IMP Text elements */
+        [data-wise-imp-text] {
+          color: #F8F9FB !important;
+        }
+
+        [data-wise-imp-accent] {
+          color: #F58426 !important;
+        }
       `}</style>
       <Header />
       <main>

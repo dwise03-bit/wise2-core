@@ -1,4 +1,23 @@
 import { Metadata } from 'next';
+import { Bebas_Neue, Inter } from 'next/font/google';
+
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-body',
+  display: 'swap',
+});
+
+// Force dynamic rendering so the main SiteChrome correctly detects
+// /ultra-wise-detail as an isolated subtree and excludes the global nav
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Ultra Wise Detail | Premium Auto Detailing & Restoration',
@@ -31,5 +50,12 @@ export default function UltraWiseDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <div
+      className={`${bebasNeue.variable} ${inter.variable}`}
+      style={{ fontFamily: 'var(--font-body)' }}
+    >
+      {children}
+    </div>
+  );
 }
