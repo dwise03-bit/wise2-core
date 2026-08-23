@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 
 // Must never be prerendered: this reads credentials from the runtime
 // environment and mints a per-request CSRF state. When Next.js decides the
 // branch is static it freezes the build-time response — which is exactly how
 // Discord ended up permanently serving "not configured" in production.
 export const dynamic = 'force-dynamic';
-
-const prisma = new PrismaClient();
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
@@ -86,27 +83,6 @@ export async function GET(request: NextRequest) {
       verified: profile.verified_email,
       createdAt: new Date().toISOString(),
     };
-
-    // Create/update user in database
-    try {
-      const isOwner = OWNER_EMAIL && profile.email === OWNER_EMAIL;
-      await prisma.user.upsert({
-        where: { email: profile.email },
-        create: {
-          email: profile.email,
-          name: `${userData.firstName} ${userData.lastName}`.trim(),
-          image: userData.picture,
-          role: isOwner ? 'FOUNDER' : 'CUSTOMER',
-        },
-        update: {
-          name: `${userData.firstName} ${userData.lastName}`.trim(),
-          image: userData.picture,
-          ...(isOwner ? { role: 'FOUNDER' } : {}),
-        },
-      });
-    } catch (dbError) {
-      console.error('Database error creating user:', dbError);
-    }
 
     const response = NextResponse.redirect(new URL(DASHBOARD_URL));
 

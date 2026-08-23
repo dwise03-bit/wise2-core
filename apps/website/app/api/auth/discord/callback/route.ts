@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 
 // Must never be prerendered: this reads credentials from the runtime
 // environment and mints a per-request CSRF state. When Next.js decides the
 // branch is static it freezes the build-time response — which is exactly how
 // Discord ended up permanently serving "not configured" in production.
 export const dynamic = 'force-dynamic';
-
-const prisma = new PrismaClient();
 
 
 /**
@@ -132,28 +129,7 @@ export async function GET(request: NextRequest) {
       })),
     };
 
-    // Step 5: Create user in database
-    try {
-      const isOwner = OWNER_EMAIL && user.email === OWNER_EMAIL;
-      await prisma.user.upsert({
-        where: { email: user.email || `discord_${user.id}` },
-        create: {
-          email: user.email || `discord_${user.id}`,
-          name: user.username,
-          image: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : null,
-          role: isOwner ? 'FOUNDER' : 'CUSTOMER',
-        },
-        update: {
-          name: user.username,
-          image: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : undefined,
-          ...(isOwner ? { role: 'FOUNDER' } : {}),
-        },
-      });
-    } catch (dbError) {
-      console.error('Database error creating user:', dbError);
-    }
-
-    // Step 6: Create response and set session (dashboard is a separate app)
+    // Step 5: Create response and set session (dashboard is a separate app)
     const response = NextResponse.redirect(new URL(DASHBOARD_URL));
 
     // Store user data in secure cookie
