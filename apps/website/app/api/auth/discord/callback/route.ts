@@ -27,6 +27,7 @@ const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
 const REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'https://wise2.net/auth/discord/callback';
 const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://wise2.net').replace(/\/$/, '');
 const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || `${PUBLIC_SITE_URL}/dashboard`).replace(/\/$/, '');
+const OWNER_EMAIL = process.env.OWNER_EMAIL || '';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -133,7 +134,7 @@ export async function GET(request: NextRequest) {
 
     // Step 5: Create user in database
     try {
-      const isOwner = user.email === 'dwise03@gmail.com';
+      const isOwner = OWNER_EMAIL && user.email === OWNER_EMAIL;
       await prisma.user.upsert({
         where: { email: user.email || `discord_${user.id}` },
         create: {
@@ -145,7 +146,7 @@ export async function GET(request: NextRequest) {
         update: {
           name: user.username,
           image: user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : undefined,
-          role: isOwner ? 'FOUNDER' : undefined,
+          ...(isOwner ? { role: 'FOUNDER' } : {}),
         },
       });
     } catch (dbError) {

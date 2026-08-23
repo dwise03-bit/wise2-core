@@ -17,6 +17,7 @@ const REDIRECT_URI =
   process.env.GOOGLE_REDIRECT_URI || `${PUBLIC_SITE_URL}/api/auth/google/callback`;
 const DASHBOARD_URL = (process.env.NEXT_PUBLIC_DASHBOARD_URL || `${PUBLIC_SITE_URL}/dashboard`).replace(/\/$/, '');
 const COOKIE_DOMAIN = PUBLIC_SITE_URL.endsWith('wise2.net') ? '.wise2.net' : undefined;
+const OWNER_EMAIL = process.env.OWNER_EMAIL || '';
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     // Create/update user in database
     try {
-      const isOwner = profile.email === 'dwise03@gmail.com';
+      const isOwner = OWNER_EMAIL && profile.email === OWNER_EMAIL;
       await prisma.user.upsert({
         where: { email: profile.email },
         create: {
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest) {
         update: {
           name: `${userData.firstName} ${userData.lastName}`.trim(),
           image: userData.picture,
-          role: isOwner ? 'FOUNDER' : undefined,
+          ...(isOwner ? { role: 'FOUNDER' } : {}),
         },
       });
     } catch (dbError) {
