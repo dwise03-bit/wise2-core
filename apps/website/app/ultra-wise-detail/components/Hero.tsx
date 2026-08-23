@@ -31,8 +31,8 @@ export function Hero() {
               <span className="text-orange-500">ULTRA WISE FINISH.</span>
             </p>
 
-            {/* MASSIVE Headline */}
-            <h1 className="font-black text-7xl sm:text-8xl leading-none mb-8 font-bebas tracking-tighter">
+            {/* MASSIVE Headline - Luxury Typography */}
+            <h1 className="font-black text-7xl sm:text-8xl leading-none mb-8 font-luxury tracking-tight" style={{fontWeight: 700, letterSpacing: '-0.02em'}}>
               <div className="text-white">RESTORE.</div>
               <div className="text-blue-500">PROTECT.</div>
               <div className="text-orange-500">ELEVATE.</div>

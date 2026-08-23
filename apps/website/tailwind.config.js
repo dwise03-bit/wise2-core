@@ -72,11 +72,13 @@ module.exports = {
         cormorant: ['Cormorant', 'serif'],
         montserrat: ['Montserrat', 'sans-serif'],
         display: ['Inter', ...defaultTheme.fontFamily.sans],
-        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+        sans: ['Jost', 'Inter', ...defaultTheme.fontFamily.sans],
         mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
         bebas: ['Bebas Neue', 'sans-serif'],
         oswald: ['Oswald', 'sans-serif'],
         script: ['cursive'],
+        luxury: ['Bodoni Moda', 'serif'],
+        jost: ['Jost', 'sans-serif'],
       },
       boxShadow: {
         // Electric Blue glows (WISE²)
