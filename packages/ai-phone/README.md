@@ -210,11 +210,12 @@ curl -X POST http://localhost:3001/test/conversation \
 - [x] Tool execution system
 - [x] Express test server
 
-### Phase 2: Carrier Integration (Next)
-- [ ] Twilio integration
-- [ ] WebSocket media stream
-- [ ] Real call state tracking
-- [ ] Call recording and transcription
+### Phase 2: Carrier Integration ✅
+- [x] Twilio integration
+- [x] Google Voice integration
+- [x] WebSocket media stream
+- [x] Real call state tracking
+- [x] Call recording and transcription
 
 ### Phase 3: Production Features
 - [ ] Real OpenAI voice integration
@@ -227,6 +228,43 @@ curl -X POST http://localhost:3001/test/conversation \
 - [ ] Conversation recording
 - [ ] Custom model fine-tuning
 - [ ] Advanced transfer logic
+
+## Telephony Providers
+
+Wise² Phone supports multiple telephony carriers:
+
+### Twilio
+```typescript
+import { TwilioProvider } from '@wise2/ai-phone';
+
+const twilio = new TwilioProvider({
+  accountSid: process.env.TWILIO_ACCOUNT_SID!,
+  authToken: process.env.TWILIO_AUTH_TOKEN!,
+  phoneNumber: '+1-555-0123',
+});
+```
+
+### Google Voice
+```typescript
+import { GoogleVoiceProvider } from '@wise2/ai-phone';
+
+const googleVoice = new GoogleVoiceProvider({
+  projectId: process.env.GOOGLE_PROJECT_ID!,
+  credentials: {
+    type: 'service_account',
+    project_id: process.env.GOOGLE_PROJECT_ID!,
+    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID!,
+    private_key: process.env.GOOGLE_PRIVATE_KEY!,
+    client_email: process.env.GOOGLE_CLIENT_EMAIL!,
+    client_id: process.env.GOOGLE_CLIENT_ID!,
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+    client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL!,
+  },
+  phoneNumber: '+1-555-0456',
+});
+```
 
 ## Provider Interfaces
 
@@ -261,12 +299,17 @@ interface VoiceModelProvider {
 ### TelephonyProvider
 ```typescript
 interface TelephonyProvider {
+  readonly name: string;
   acceptCall(callId: string): Promise<void>;
+  rejectCall(callId: string): Promise<void>;
+  startMediaStream(callId: string, wsUrl: string): Promise<void>;
   transferCall(callId: string, destination: string): Promise<void>;
   endCall(callId: string): Promise<void>;
-  // ... more methods
+  getCall(callId: string): Promise<CallInfo>;
 }
 ```
+
+Each provider (Twilio, Google Voice, etc.) implements this interface for carrier-independent call handling.
 
 ## Development
 
