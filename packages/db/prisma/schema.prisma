@@ -801,6 +801,15 @@ model Customer {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  // HVAC relationships
+  hvacProperties HVACProperty[]
+  appointments   Appointment[]
+  workOrders     WorkOrder[]
+  calls          Call[]
+  smsMessages    SMSMessage[]
+  callbackTasks  CallbackTask[]
+  consentRecords Consent[]
+
   @@index([status])
   @@index([email])
 }
@@ -4874,4 +4883,817 @@ model FieldTechRelease {
 
   @@index([versionCode])
 }
+
+// ===== WISE² HVAC PHONE SERVICE =====
+
+// Technician: HVAC service technicians
+model Technician {
+  id            String   @id @default(cuid())
+  firstName     String
+  lastName      String
+  email         String   @unique
+  phone         String
+  specialization String[] @default([]) // ["cooling", "heating", "electrical", "refrigerant"]
+  licenseNumber String?
+  certifications String[] @default([])
+  isActive      Boolean  @default(true)
+
+  // Relationships
+  calls         Call[]
+  workOrders    WorkOrder[]
+  appointments  Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+}
+
+// HVACProperty: Customer property/address with HVAC equipment
+model HVACProperty {
+  id            String   @id @default(cuid())
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Property details
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  coordinates   String? // JSON: {lat, lng}
+  propertyType  String  // residential, commercial, multi-unit
+  squareFeet    Int?
+
+  // HVAC system info
+  heatingType   String? // furnace, heat_pump, boiler
+  coolingType   String? // ac, heat_pump, other
+  age           Int?    // years
+
+  // Contact
+  phonePrimary  String?
+  phoneSecondary String?
+  preferredContact String? // phone, email, sms
+
+  // Service info
+  serviceArea   String?
+  maintenancePlan String? // bronze, silver, gold
+
+  // Relationships
+  equipment     HVACEquipment[]
+  workOrders    WorkOrder[]
+  appointments  Appointment[]
+  calls         Call[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([customerId, address])
+  @@index([customerId])
+  @@index([zipCode])
+}
+
+// HVACEquipment: Specific HVAC equipment at a property
+model HVACEquipment {
+  id            String   @id @default(cuid())
+  propertyId    String
+  property      HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Equipment identity
+  equipmentType String  // ac_unit, heat_pump, furnace, air_handler, thermostat, etc.
+  manufacturer  String
+  model         String
+  serial        String  @unique
+
+  // Specifications
+  tonnage       Float?  // cooling capacity
+  voltage       String?
+  phase         String?
+  refrigerant   String?
+
+  // Lifecycle
+  installDate   DateTime?
+  warrantyEnd   DateTime?
+  lastServiceDate DateTime?
+
+  // Photos/documentation
+  nameplatePhotoUrl String? @db.Text
+  locationPhotoUrl  String? @db.Text
+
+  // Notes
+  techniciamNotes   String? @db.Text
+
+  // Relationships
+  diagnosticReadings DiagnosticReading[]
+  serviceHistory     EquipmentServiceHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([propertyId, serial])
+  @@index([propertyId])
+  @@index([serial])
+}
+
+// DiagnosticReading: HVAC measurements (suction/liquid pressure, temps, electrical, etc.)
+model DiagnosticReading {
+  id            String   @id @default(cuid())
+  equipmentId   String
+  equipment     HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  // Refrigeration measurements
+  suctionPsig   Float?
+  liquidPsig    Float?
+  suctionSatTempF Float?
+  liquidSatTempF Float?
+  suctionTempF  Float?
+  liquidTempF   Float?
+  superheat     Float?
+  subcooling    Float?
+
+  // Temperatures
+  returnTempF   Float?
+  supplyTempF   Float?
+  outdoorTempF  Float?
+  deltaTempF    Float?
+
+  // Airflow/static pressure
+  staticPressure Float?
+
+  // Electrical
+  voltageL1     Float?
+  voltageL2     Float?
+  voltageL3     Float?
+  currentL1     Float?
+  currentL2     Float?
+  currentL3     Float?
+  frequencyHz   Float?
+
+  // Continuity/resistance
+  continuityOk  Boolean?
+  resistanceOhms Float?
+
+  // Context
+  workOrderId   String?
+  workOrder     WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  capturedAt    DateTime @default(now())
+  verifiedBy    String?  // Technician name
+  notes         String? @db.Text
+
+  @@index([equipmentId])
+  @@index([workOrderId])
+  @@index([capturedAt])
+}
+
+// EquipmentServiceHistory: Log of maintenance/repairs
+model EquipmentServiceHistory {
+  id            String   @id @default(cuid())
+  equipmentId   String
+  equipment     HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  serviceType   String  // maintenance, repair, installation, inspection
+  summary       String  @db.Text
+  partsReplaced String[] @default([])
+  technicianName String
+
+  workOrderId   String?
+  workOrder     WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+
+  serviceDate   DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([equipmentId])
+  @@index([serviceDate])
+}
+
+// ===== WISE² PHONE SERVICE SYSTEM =====
+
+// PhoneProvider: Carrier configuration
+model PhoneProvider {
+  id              String   @id @default(cuid())
+  providerName    String   @unique // twilio, telnyx, signalwire
+  isConfigured    Boolean  @default(false)
+  isConnected     Boolean  @default(false)
+
+  // Configuration
+  accountId       String?
+  apiKey          String?  // Encrypted
+  authToken       String?  // Encrypted
+
+  // Webhook
+  webhookUrl      String?
+  webhookSecret   String?  // Encrypted
+
+  // Phone number
+  inboundNumber   String?
+  outboundNumber  String?
+
+  // Status
+  lastTestedAt    DateTime?
+  lastError       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// PhoneConfiguration: System settings
+model PhoneConfiguration {
+  id                String   @id @default(cuid())
+
+  // Company info
+  businessName      String  @default("WISE² HVAC Solutions")
+  businessPhone     String?
+  greeting          String? @db.Text
+
+  // Hours
+  timezone          String  @default("UTC")
+  businessHours     Json?   // {mon: {open: "09:00", close: "17:00"}, ...}
+
+  // Routing
+  officePhoneNumber String?
+  dispatchPhoneNumber String?
+  emergencyPhoneNumber String?
+
+  // AI Settings
+  aiEnabled         Boolean @default(true)
+  aiModel           String  @default("hermes")
+  aiTimeout         Int     @default(30000) // milliseconds
+
+  // Recording
+  recordingEnabled  Boolean @default(true)
+  recordingNotice   String? @db.Text // Legal disclosure
+  recordingRetentionDays Int? @default(90)
+
+  // Costs
+  dailyBudget       Float?  // dollars
+  monthlyBudget     Float?
+  alertThreshold    Float?  // percentage of budget
+
+  // SMS
+  smsEnabled        Boolean @default(false)
+  smsOptInRequired  Boolean @default(true)
+
+  updatedAt DateTime @updatedAt
+}
+
+// PhoneNumber: Track inbound numbers used for this system
+model PhoneNumber {
+  id            String   @id @default(cuid())
+  number        String   @unique
+  provider      String   // twilio, telnyx, etc.
+  providerNumberId String?
+
+  isActive      Boolean  @default(true)
+  isPrimary     Boolean  @default(false)
+
+  // Capacity
+  maxConcurrentCalls Int? @default(5)
+
+  // Stats
+  callsThisMonth Int @default(0)
+  callsThisYear  Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([number])
+  @@index([isActive])
+}
+
+// Call: Phone call log
+model Call {
+  id                String   @id @default(cuid())
+
+  // Identifiers
+  callSid           String?  @unique // Provider's call ID
+
+  // Parties
+  inboundNumber     String
+  callerNumber      String
+  customerId        String?
+  customer          Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  propertyId        String?
+  property          HVACProperty? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  technicianId      String?
+  technician        Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+
+  // Call state
+  status            CallStatus @default(INITIATED)
+  direction         CallDirection @default(INBOUND)
+
+  // Timing
+  startedAt         DateTime
+  answeredAt        DateTime?
+  endedAt           DateTime?
+  durationSeconds   Int?
+
+  // Recording
+  recordingUrl      String? @db.Text
+  recordingConsent  RecordingConsent @default(NOT_REQUIRED)
+
+  // Transcript
+  transcript        CallTranscript?
+
+  // Summary
+  summary           CallSummary?
+
+  // Outcome
+  disposition       CallDisposition @default(UNKNOWN)
+
+  // A call may create a work order (one-to-one relationship)
+  // Don't store reference here; WorkOrder will reference back to this call if needed
+
+  appointmentId     String?
+  appointment       Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  // Compliance (check customer's consent record by type)
+  optOut            Boolean @default(false)
+
+  // Events
+  events            CallEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([callerNumber])
+  @@index([status])
+  @@index([startedAt])
+  @@index([disposition])
+}
+
+enum CallStatus {
+  INITIATED
+  RINGING
+  ANSWERED
+  IN_PROGRESS
+  HELD
+  TRANSFERRING
+  DISCONNECTED
+  FAILED
+}
+
+enum CallDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CallDisposition {
+  UNKNOWN
+  ANSWERED
+  ABANDONED
+  NO_ANSWER
+  BUSY
+  FAILED
+  TRANSFERRED
+  ESCALATED
+}
+
+enum RecordingConsent {
+  NOT_REQUIRED
+  REQUIRED_NOT_GIVEN
+  REQUIRED_AND_GIVEN
+  FORBIDDEN
+}
+
+// CallEvent: State transitions during a call
+model CallEvent {
+  id            String   @id @default(cuid())
+  callId        String
+  call          Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  eventType     String   // answered, transferred, held, disconnected
+  timestamp     DateTime @default(now())
+  details       Json?
+
+  @@index([callId])
+  @@index([timestamp])
+}
+
+// Relation for CallEvent
+// Call to CallEvent
+// Need to add back to Call model: events CallEvent[]
+
+// CallTranscript: STT output
+model CallTranscript {
+  id            String   @id @default(cuid())
+  callId        String   @unique
+  call          Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  // Transcript content
+  segments      TranscriptSegment[]
+
+  // Metadata
+  language      String  @default("en-US")
+  confidence    Float?  // Overall confidence 0-100
+
+  // Status
+  status        TranscriptionStatus @default(PENDING)
+  errorMessage  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([callId])
+  @@index([status])
+}
+
+// TranscriptSegment: Individual speaker turn
+model TranscriptSegment {
+  id            String   @id @default(cuid())
+  transcriptId  String
+  transcript    CallTranscript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  speaker       String  // "customer" or "agent"
+  text          String  @db.Text
+  startMs       Int
+  endMs         Int
+  confidence    Float?  // Speaker confidence 0-100
+
+  createdAt DateTime @default(now())
+
+  @@index([transcriptId])
+}
+
+// TranscriptionStatus enum is already defined in consulting system (line ~1190)
+// Reusing: PENDING, QUEUED, PROCESSING, COMPLETED, FAILED
+
+// CallSummary: AI-generated summary
+model CallSummary {
+  id              String   @id @default(cuid())
+  callId          String   @unique
+  call            Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+
+  // Summary content
+  reason          String  @db.Text   // Why customer called
+  symptoms        String[] @default([]) // HVAC issues
+  urgency         CallUrgency @default(ROUTINE)
+  equipmentType   String?
+
+  // Actions proposed
+  actions         String[] @default([])
+
+  // Follow-up
+  needsFollowUp   Boolean @default(false)
+  followUpDate    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([callId])
+  @@index([urgency])
+}
+
+enum CallUrgency {
+  ROUTINE
+  PRIORITY
+  URGENT
+  SAFETY_CRITICAL
+}
+
+// ===== APPOINTMENTS & SCHEDULING =====
+
+// Appointment: Service appointments
+model Appointment {
+  id              String   @id @default(cuid())
+
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  propertyId      String
+  property        HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  technicianId    String?
+  technician      Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+
+  // Scheduling
+  scheduledAt     DateTime
+  duration        Int      @default(60) // minutes
+  status          AppointmentStatus @default(SCHEDULED)
+
+  // Type
+  appointmentType String  // service_call, maintenance, inspection, estimate
+
+  // Notes
+  notes           String? @db.Text
+
+  // Relationship
+  workOrderId     String?    @unique
+  workOrder       WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+
+  calls           Call[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([propertyId])
+  @@index([technicianId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  REMINDED
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+// ===== WORK ORDERS =====
+
+// WorkOrder: Service jobs
+model WorkOrder {
+  id              String   @id @default(cuid())
+
+  // Reference
+  workOrderNumber String  @unique
+
+  // Customer
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  propertyId      String
+  property        HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Technician
+  technicianId    String?
+  technician      Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+
+  // Service details
+  description     String  @db.Text
+  serviceType     String  // cooling, heating, electrical, maintenance, emergency
+  urgency         WorkOrderUrgency @default(ROUTINE)
+
+  // Status
+  status          WorkOrderStatus @default(CREATED)
+
+  // Source
+  sourceType      String  @default("PHONE")  // PHONE, WEBSITE, WALK_IN, REFERRAL
+  sourceCallId    String?  // Reference to originating phone call
+
+  // Timing
+  createdAt       DateTime @default(now())
+  scheduledAt     DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  // Photos/documents
+  photosBefore    String[] @default([]) // Array of URLs
+  photosAfter     String[] @default([])
+
+  // Parts/materials
+  materialsUsed   Json    @default("[]")
+
+  // Diagnostics
+  diagnosticReadings DiagnosticReading[]
+  serviceHistory     EquipmentServiceHistory[]
+
+  // Follow-up
+  needsFollowUp   Boolean @default(false)
+  followUpDate    DateTime?
+
+  // Related
+  appointment     Appointment?
+
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([propertyId])
+  @@index([technicianId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([completedAt])
+}
+
+enum WorkOrderStatus {
+  CREATED
+  ASSIGNED
+  ACCEPTED
+  EN_ROUTE
+  ARRIVED
+  IN_PROGRESS
+  DIAGNOSIS
+  REPAIR
+  ON_HOLD
+  NEEDS_PARTS
+  COMPLETED
+  CANCELLED
+  RETURN_VISIT_NEEDED
+}
+
+enum WorkOrderUrgency {
+  ROUTINE
+  PRIORITY
+  URGENT
+  EMERGENCY
+}
+
+// ===== SMS & OUTBOUND COMMUNICATION =====
+
+// SMSMessage: Outbound and inbound SMS
+model SMSMessage {
+  id              String   @id @default(cuid())
+
+  // Identifiers
+  smsId           String?  @unique // Provider ID
+
+  // Parties
+  fromNumber      String
+  toNumber        String
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  // Message
+  direction       String  @default("OUTBOUND") // INBOUND, OUTBOUND
+  message         String  @db.Text
+  status          SMSStatus @default(SENT)
+
+  // Campaign
+  campaignId      String?
+  campaign        OutboundCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  templateId      String?
+  variables       Json?   // Template variable values
+
+  // Tracking
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  failureReason   String?
+
+  // Compliance (check customer's consent record separately)
+  optOut          Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([toNumber])
+  @@index([status])
+  @@index([sentAt])
+}
+
+enum SMSStatus {
+  SENT
+  DELIVERED
+  FAILED
+  BOUNCED
+  QUEUED
+  FAILED_DELIVERY
+}
+
+// OutboundCampaign: Automated SMS campaigns
+model OutboundCampaign {
+  id              String   @id @default(cuid())
+
+  name            String
+  campaignType    String  // reminder, follow_up, maintenance, survey, other
+  description     String? @db.Text
+
+  // Content
+  templateText    String  @db.Text
+  variables       String[] @default([])
+
+  // Scheduling
+  status          CampaignStatus @default(DRAFT)
+  scheduledAt     DateTime?
+  startAt         DateTime?
+  endAt           DateTime?
+
+  // Targeting
+  targetAudience  String  // all, customers, new_customers, at_risk
+  filters         Json?   // Filter criteria
+
+  // Execution
+  messagesSent    Int @default(0)
+  messagesDelivered Int @default(0)
+  messagesFailed  Int @default(0)
+
+  // Relationship
+  messages        SMSMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([campaignType])
+  @@index([status])
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  ACTIVE
+  COMPLETED
+  PAUSED
+  FAILED
+}
+
+// CallbackTask: Missed call automation
+model CallbackTask {
+  id              String   @id @default(cuid())
+
+  callId          String?  // Original missed call
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Retry strategy
+  attempts        Int @default(0)
+  maxAttempts     Int @default(3)
+  nextAttempt     DateTime?
+
+  // Status
+  status          CallbackStatus @default(PENDING)
+
+  // Method
+  method          String  @default("CALL") // CALL, SMS
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([nextAttempt])
+}
+
+enum CallbackStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  ABANDONED
+}
+
+// ===== COMPLIANCE & CONSENT =====
+
+// Consent: Opt-in/compliance records
+model Consent {
+  id              String   @id @default(cuid())
+
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  phoneNumber     String?
+
+  // Consent type
+  consentType     String  // call_recording, sms_marketing, call_marketing, email_marketing
+
+  // State
+  isGiven         Boolean @default(false)
+  consentDate     DateTime?
+  consentMethod   String? // voice, written, email, checkbox, etc.
+  consentChannel  String? // phone_call, in_app, email, paper
+
+  // Documentation
+  notes           String? @db.Text
+  documentUrl     String? @db.Text
+
+  // Compliance
+  revokedAt       DateTime?
+  revokeMethod    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([customerId, consentType])
+  @@index([customerId])
+  @@index([consentType])
+  @@index([isGiven])
+}
+
+// OptOut: Do-not-call / do-not-SMS lists
+model OptOut {
+  id              String   @id @default(cuid())
+
+  phoneNumber     String   @unique
+  type            String   @default("CALL")  // CALL, SMS, EMAIL
+
+  reason          String?
+  optOutDate      DateTime @default(now())
+
+  // Reversal
+  optInDate       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phoneNumber])
+}
+
+// Update Customer model to include new relationships
+// (These should be added to the existing Customer model)
+// - hvacProperties: HVACProperty[]
+// - appointments: Appointment[]
+// - workOrders: WorkOrder[]
+// - calls: Call[]
+// - smsMessages: SMSMessage[]
+// - callbackTasks: CallbackTask[]
+// - consentRecords: Consent[]
 
