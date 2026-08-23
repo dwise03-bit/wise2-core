@@ -8,7 +8,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtGuard } from '../auth/jwt.guard';
 import { TradingService } from './trading.service';
 
 /**
@@ -24,7 +24,7 @@ export class TradingController {
    * Get user's trading account details
    */
   @Get('account')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async getAccount(@Request() req) {
     return this.tradingService.getAccount(req.user.id);
   }
@@ -67,7 +67,7 @@ export class TradingController {
    * Create a paper trading order
    */
   @Post('paper-order')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async createPaperOrder(
     @Request() req,
     @Body() orderData: {
@@ -88,7 +88,7 @@ export class TradingController {
    * Get user's open positions
    */
   @Get('positions')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async getPositions(@Request() req) {
     return this.tradingService.getPositions(req.user.id);
   }
@@ -98,7 +98,7 @@ export class TradingController {
    * Close an open position
    */
   @Post('close-position/:positionId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async closePosition(
     @Request() req,
     @Param('positionId') positionId: string,
@@ -112,7 +112,7 @@ export class TradingController {
    * Get user's trade history
    */
   @Get('trades')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async getTrades(@Request() req) {
     return this.tradingService.getTrades(req.user.id);
   }
@@ -122,7 +122,7 @@ export class TradingController {
    * Log a trade in the journal
    */
   @Post('journal-entry')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async createJournalEntry(
     @Request() req,
     @Body() journalData: {
@@ -143,7 +143,7 @@ export class TradingController {
    * Get user's trading journal
    */
   @Get('journal')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async getJournal(@Request() req) {
     return this.tradingService.getJournal(req.user.id);
   }
@@ -162,7 +162,7 @@ export class TradingController {
    * Log a risk management event
    */
   @Post('risk-event')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   async logRiskEvent(
     @Request() req,
     @Body() eventData: {
