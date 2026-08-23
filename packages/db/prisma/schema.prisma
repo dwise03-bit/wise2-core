@@ -4717,3 +4717,161 @@ model PriceSnapshot {
   @@index([openTime])
 }
 
+// ===== WISE² FIELD TECH (Android) =====
+// Net-new module (see docs/ANDROID_IMPLEMENTATION_AUDIT.md) — no equipment/reading/report
+// model existed anywhere in this schema prior to this build. Deliberately not FK'd to the
+// CRM `Customer` model above: field-tech jobs come from dispatch/intake, not the sales CRM,
+// and coupling them risks breaking either flow under time pressure. Revisit if/when the two
+// systems need to reconcile the same customer record.
+
+enum FieldTechJobStatus {
+  SCHEDULED
+  EN_ROUTE
+  ARRIVED
+  DIAGNOSING
+  REPAIRING
+  WAITING
+  COMPLETE
+}
+
+enum FieldTechJobPriority {
+  LOW
+  NORMAL
+  HIGH
+  EMERGENCY
+}
+
+enum FieldTechReportStatus {
+  DRAFT
+  FINALIZED
+  SENT
+}
+
+model FieldTechJob {
+  id              String               @id @default(cuid())
+  technicianId    String
+  customerName    String
+  customerPhone   String
+  address         String
+  appointmentAt   DateTime
+  complaint       String               @db.Text
+  equipmentId     String?
+  equipment       FieldTechEquipment?  @relation(fields: [equipmentId], references: [id])
+  status          FieldTechJobStatus   @default(SCHEDULED)
+  priority        FieldTechJobPriority @default(NORMAL)
+  notes           String               @default("") @db.Text
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  readings        FieldTechReading[]
+  serviceHistory  FieldTechServiceHistory[]
+  report          FieldTechReport?
+
+  @@index([technicianId])
+  @@index([status])
+  @@index([appointmentAt])
+}
+
+model FieldTechEquipment {
+  id                     String    @id @default(cuid())
+  customerName           String
+  manufacturer           String
+  equipmentType          String
+  model                  String
+  serial                 String
+  refrigerant            String
+  voltage                String
+  phase                  String
+  tonnage                Float?
+  installationDate       DateTime?
+  location               String
+  filterSize             String?
+  technicianNotes        String    @default("") @db.Text
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  jobs                   FieldTechJob[]
+  serviceHistory         FieldTechServiceHistory[]
+
+  @@index([serial])
+}
+
+model FieldTechServiceHistory {
+  id             String             @id @default(cuid())
+  equipmentId    String
+  equipment      FieldTechEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  jobId          String
+  job            FieldTechJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  date           DateTime
+  summary        String             @db.Text
+  technicianName String
+  createdAt      DateTime           @default(now())
+
+  @@index([equipmentId])
+}
+
+model FieldTechReading {
+  id                String   @id @default(cuid())
+  jobId             String
+  job               FieldTechJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  sourceDeviceName  String
+  capturedAt        DateTime
+
+  lowSidePsig       Float?
+  highSidePsig      Float?
+  suctionSaturationF Float?
+  liquidSaturationF Float?
+  suctionLineTempF  Float?
+  liquidLineTempF   Float?
+  dischargeTempF    Float?
+  outdoorAmbientF   Float?
+
+  voltageL1         Float?
+  voltageL2         Float?
+  voltageL3         Float?
+  currentL1         Float?
+  currentL2         Float?
+  currentL3         Float?
+  frequencyHz       Float?
+  capacitanceMfd    Float?
+  resistanceOhms    Float?
+  continuityOk      Boolean?
+
+  returnTempF       Float?
+  supplyTempF       Float?
+  staticPressureInWc Float?
+
+  createdAt         DateTime @default(now())
+
+  @@index([jobId])
+}
+
+model FieldTechReport {
+  jobId               String                 @id
+  job                 FieldTechJob           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobSummary          String                 @default("") @db.Text
+  systemInfo          String                 @default("") @db.Text
+  customerComplaint   String                 @default("") @db.Text
+  diagnosis           String                 @default("") @db.Text
+  workPerformed       String[]               @default([])
+  materials           Json                   @default("[]")
+  recommendations     String                 @default("") @db.Text
+  technicianNotes     String                 @default("") @db.Text
+  customerApprovalName String?
+  status              FieldTechReportStatus  @default(DRAFT)
+  updatedAt           DateTime               @updatedAt
+}
+
+model FieldTechRelease {
+  id           String   @id @default(cuid())
+  versionCode  Int      @unique
+  versionName  String
+  apkUrl       String
+  sha256       String
+  required     Boolean  @default(false)
+  releaseNotes String   @default("") @db.Text
+  publishedAt  DateTime @default(now())
+
+  @@index([versionCode])
+}
+

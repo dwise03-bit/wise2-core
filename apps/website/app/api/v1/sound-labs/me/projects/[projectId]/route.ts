@@ -2,41 +2,33 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// In-memory storage for demo
-const projects = new Map<string, any>();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-function extractUserId(token: string): string | null {
-  if (token.startsWith('dev_token_')) {
-    return 'dev_' + token.split('_')[2];
-  }
-  return null;
-}
-
+/**
+ * GET /api/v1/sound-labs/me/projects/[projectId]
+ * Proxies to the real Prisma-backed backend (packages/api).
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: { projectId: string } }
 ) {
   try {
     const authHeader = request.headers.get('Authorization');
-    const { projectId } = params;
-
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const userId = extractUserId(token);
+    const upstream = await fetch(
+      `${API_BASE_URL}/v1/sound-labs/me/projects/${params.projectId}`,
+      { headers: { Authorization: authHeader } }
+    );
+    const raw = await upstream.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    if (!upstream.ok) {
+      return NextResponse.json(raw, { status: upstream.status });
     }
 
-    const project = projects.get(projectId);
-
-    if (!project || project.userId !== userId) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-    }
-
+    const project = { ...raw, recordingCount: raw.recordings?.length || 0 };
     return NextResponse.json({ project, success: true });
   } catch (error) {
     console.error('Sound Labs API error:', error);
@@ -44,81 +36,68 @@ export async function GET(
   }
 }
 
+/**
+ * PATCH /api/v1/sound-labs/me/projects/[projectId]
+ * Proxies to the real Prisma-backed backend (packages/api).
+ */
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { projectId: string } }
 ) {
   try {
     const authHeader = request.headers.get('Authorization');
-    const { projectId } = params;
-    const body = await request.json();
-
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const userId = extractUserId(token);
+    const body = await request.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    const upstream = await fetch(
+      `${API_BASE_URL}/v1/sound-labs/me/projects/${params.projectId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: authHeader,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    const data = await upstream.json();
+
+    if (!upstream.ok) {
+      return NextResponse.json(data, { status: upstream.status });
     }
 
-    const project = projects.get(projectId);
-    if (!project || project.userId !== userId) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-    }
-
-    const { name, description, mixerState, lyrics, lyricsTitle, sunoJobId, sunoStatus, generatedAudioUrl } = body;
-    const updated = {
-      ...project,
-      ...(name && { name }),
-      ...(description !== undefined && { description }),
-      ...(mixerState && { mixerState }),
-      ...(lyrics !== undefined && { lyrics }),
-      ...(lyricsTitle !== undefined && { lyricsTitle }),
-      ...(sunoJobId !== undefined && { sunoJobId }),
-      ...(sunoStatus !== undefined && { sunoStatus }),
-      ...(generatedAudioUrl !== undefined && { generatedAudioUrl }),
-      updatedAt: new Date().toISOString(),
-    };
-
-    projects.set(projectId, updated);
-
-    return NextResponse.json({ project: updated, success: true });
+    const project = { ...data.project, recordingCount: data.project?.recordings?.length || 0 };
+    return NextResponse.json({ success: true, project });
   } catch (error) {
     console.error('Sound Labs API error:', error);
     return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
   }
 }
 
+/**
+ * DELETE /api/v1/sound-labs/me/projects/[projectId]
+ * Proxies to the real Prisma-backed backend (packages/api).
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { projectId: string } }
 ) {
   try {
     const authHeader = request.headers.get('Authorization');
-    const { projectId } = params;
-
     if (!authHeader) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const userId = extractUserId(token);
+    const upstream = await fetch(
+      `${API_BASE_URL}/v1/sound-labs/me/projects/${params.projectId}`,
+      { method: 'DELETE', headers: { Authorization: authHeader } }
+    );
+    const data = await upstream.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
-    const project = projects.get(projectId);
-    if (!project || project.userId !== userId) {
-      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-    }
-
-    projects.delete(projectId);
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json(data, { status: upstream.status });
   } catch (error) {
     console.error('Sound Labs API error:', error);
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });

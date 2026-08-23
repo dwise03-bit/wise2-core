@@ -2,18 +2,22 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "CC Website",
+      "name": "wise-hvac-demo",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3011,
-      "cwd": "/Users/danielwise/Projects/wise2-core/clients/cc-craft-create/website"
+      "runtimeArgs": ["--prefix", "apps/wise-hvac-demo", "run", "dev"],
+      "port": 3024
     },
     {
-      "name": "WISE2 Website",
+      "name": "studio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3001,
-      "cwd": "/Users/danielwise/Projects/wise2-core/apps/website"
+      "runtimeArgs": ["--prefix", "apps/studio", "run", "dev"],
+      "port": 3005
+    },
+    {
+      "name": "website",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/website", "run", "dev"],
+      "port": 3001
     }
   ]
 }

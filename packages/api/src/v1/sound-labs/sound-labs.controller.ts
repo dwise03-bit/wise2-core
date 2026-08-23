@@ -14,7 +14,7 @@ import {
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { SoundLabsService } from './sound-labs.service';
-import { CreateProjectDto, UpdateProjectDto } from './dto';
+import { CreateProjectDto, UpdateProjectDto, GenerateMusicDto } from './dto';
 
 @Controller('v1/sound-labs')
 export class SoundLabsController {
@@ -163,6 +163,62 @@ export class SoundLabsController {
         error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Failed to delete project: ${message}`);
     }
+  }
+
+  /**
+   * POST /v1/sound-labs/me/projects/:projectId/generate
+   * Generate music for a project via the MusicGen service.
+   * SECURE: JWT required, ownership + entitlements enforced.
+   * Synchronous: resolves once audio is ready.
+   */
+  @Post('me/projects/:projectId/generate')
+  @UseGuards(JwtAuthGuard)
+  async generate(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Body() dto: GenerateMusicDto,
+  ) {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const project = await this.soundLabsService.generate(
+      projectId,
+      req.user.id,
+      dto,
+    );
+    return {
+      success: true,
+      project,
+    };
+  }
+
+  /**
+   * GET /v1/sound-labs/me/projects/:projectId/generate
+   * Poll current generation status/result for a project.
+   * SECURE: JWT required, ownership enforced.
+   */
+  @Get('me/projects/:projectId/generate')
+  @UseGuards(JwtAuthGuard)
+  async getGenerationStatus(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+  ) {
+    if (!req.user || !req.user.id) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const project = await this.soundLabsService.getUserProject(
+      projectId,
+      req.user.id,
+    );
+    return {
+      success: true,
+      jobId: project.generationJobId,
+      status: project.generationStatus,
+      audioUrl: project.generatedAudioUrl,
+      generatedAt: project.generatedAt,
+    };
   }
 
   /**

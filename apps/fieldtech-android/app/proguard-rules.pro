@@ -1,0 +1,7 @@
+-keepattributes *Annotation*
+-keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
+-keep,includedescriptorclasses class com.wise2.fieldtech.**$$serializer { *; }
+-keepclassmembers class com.wise2.fieldtech.** { *** Companion; }
+-keepclasseswithmembers class com.wise2.fieldtech.** { kotlinx.serialization.KSerializer serializer(...); }
+-dontwarn okhttp3.**
+-dontwarn okio.**

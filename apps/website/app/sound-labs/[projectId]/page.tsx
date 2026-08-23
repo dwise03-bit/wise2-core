@@ -7,7 +7,7 @@ import { getBrowserAuthToken } from '@/lib/auth-session';
 import { ArrowLeft, Music, FileAudio, Clock, HardDrive, Loader, AlertCircle, Edit2, Save, Play } from 'lucide-react';
 import { MeterGauge } from '@/components/sound-labs/MeterGauge';
 import { LyricsEditor, SAMPLE_LYRICS } from '@/components/sound-labs/LyricsEditor';
-import { SunoStatus } from '@/components/sound-labs/SunoStatus';
+import { GenerationStatus } from '@/components/sound-labs/SunoStatus';
 
 interface SoundLabsProject {
   id: string;
@@ -16,8 +16,8 @@ interface SoundLabsProject {
   description?: string;
   lyrics?: string;
   lyricsTitle?: string;
-  sunoJobId?: string;
-  sunoStatus?: string;
+  generationJobId?: string;
+  generationStatus?: string;
   generatedAudioUrl?: string;
   createdAt: string;
   updatedAt: string;
@@ -397,22 +397,22 @@ export default function ProjectDetailsPage() {
           }}
         />
 
-        {/* Suno Generation Status */}
-        <SunoStatus
+        {/* Generation Status */}
+        <GenerationStatus
           projectId={projectId}
-          status={project.sunoStatus || 'draft'}
+          status={project.generationStatus || 'draft'}
           audioUrl={project.generatedAudioUrl}
           onStatusChange={(status, audioUrl) => {
             setProject({
               ...project,
-              sunoStatus: status,
+              generationStatus: status,
               ...(audioUrl && { generatedAudioUrl: audioUrl }),
             });
           }}
         />
 
         {/* Generate Track Button */}
-        {project.lyrics && project.sunoStatus !== 'processing' && project.sunoStatus !== 'queued' && (
+        {project.lyrics && project.generationStatus !== 'processing' && project.generationStatus !== 'queued' && (
           <button
             onClick={async () => {
               const token = getBrowserAuthToken();
@@ -432,15 +432,16 @@ export default function ProjectDetailsPage() {
                   }),
                 });
 
-                if (!res.ok) {
-                  throw new Error('Failed to start generation');
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                  throw new Error(data.message || 'Failed to start generation');
                 }
 
-                const data = await res.json();
                 setProject({
                   ...project,
-                  sunoJobId: data.jobId,
-                  sunoStatus: 'queued',
+                  generationJobId: data.jobId,
+                  generationStatus: data.status,
+                  ...(data.audioUrl && { generatedAudioUrl: data.audioUrl }),
                 });
               } catch (err) {
                 setError(err instanceof Error ? err.message : 'Generation failed');
@@ -449,7 +450,7 @@ export default function ProjectDetailsPage() {
             className="w-full px-6 py-3 bg-gradient-to-r from-wise-primary to-purple-500 hover:from-wise-primary-hover hover:to-purple-600 text-white rounded-lg font-semibold transition-all inline-flex items-center justify-center gap-2"
           >
             <Music className="w-5 h-5" />
-            Generate Track with Suno
+            Generate Track
           </button>
         )}
       </div>

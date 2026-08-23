@@ -1,7 +1,8 @@
 import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EntitlementsService } from '../billing/entitlements.service';
-import { CreateProjectDto, UpdateProjectDto } from './dto';
+import { CreateProjectDto, UpdateProjectDto, GenerateMusicDto } from './dto';
+import { generateMusic, MusicGenServiceError } from './musicgen-client';
 
 @Injectable()
 export class SoundLabsService {
@@ -112,6 +113,8 @@ export class SoundLabsService {
         ...(dto.name && { name: dto.name }),
         ...(dto.description !== undefined && { description: dto.description }),
         ...(dto.mixerState && { mixerState: dto.mixerState }),
+        ...(dto.lyrics !== undefined && { lyrics: dto.lyrics }),
+        ...(dto.lyricsTitle !== undefined && { lyricsTitle: dto.lyricsTitle }),
       },
       include: {
         recordings: true,
@@ -214,5 +217,79 @@ export class SoundLabsService {
         },
       },
     });
+  }
+
+  /**
+   * Generate music for a project via the WISE² MusicGen service.
+   * SECURITY: ownership + entitlements verified before calling out.
+   * Synchronous: musicgen-service generates inline, so this resolves once
+   * audio is ready (or throws) rather than returning a pollable job id.
+   */
+  async generate(projectId: string, userId: string, dto: GenerateMusicDto) {
+    await this.getUserProject(projectId, userId);
+
+    const eligibility = await this.canGenerate(userId);
+    if (!eligibility.allowed) {
+      throw new ForbiddenException(eligibility.reason);
+    }
+
+    await this.prisma.soundLabsProject.update({
+      where: { id: projectId },
+      data: {
+        generationEngine: 'musicgen',
+        generationStatus: 'processing',
+      },
+    });
+
+    let result;
+    try {
+      result = await generateMusic({
+        prompt: dto.prompt,
+        duration: dto.duration,
+        genre: dto.genre,
+        mood: dto.mood,
+        tempo: dto.tempo,
+        temperature: dto.temperature,
+        seed: dto.seed,
+      });
+    } catch (err) {
+      const message =
+        err instanceof MusicGenServiceError ? err.message : 'Music generation failed unexpectedly';
+      await this.prisma.soundLabsProject.update({
+        where: { id: projectId },
+        data: { generationStatus: 'failed' },
+      });
+      throw new BadRequestException(message);
+    }
+
+    const audioUrl = `/api/v1/sound-labs/audio/${result.generationId}`;
+
+    await this.prisma.soundLabsProject.update({
+      where: { id: projectId },
+      data: {
+        generationJobId: result.generationId,
+        generationStatus: 'completed',
+        generatedAudioUrl: audioUrl,
+        generationMetadata: { ...result } as any,
+        generatedAt: new Date(),
+      },
+    });
+
+    await this.prisma.soundLabsRecording.create({
+      data: {
+        projectId,
+        name: dto.prompt.slice(0, 100),
+        s3Url: audioUrl,
+        s3Key: result.generationId,
+        fileSize: 0,
+        duration: result.duration,
+        uploadStatus: 'COMPLETED',
+        uploadProgress: 100,
+      },
+    });
+
+    await this.recordGeneration(userId, projectId);
+
+    return this.getUserProject(projectId, userId);
   }
 }

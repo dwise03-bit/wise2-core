@@ -33,6 +33,7 @@ import { WiseDefenseModule } from './wise-defense/wise-defense.module';
 import { PrintShopModule } from './v1/print-shop/print-shop.module';
 import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
+import { FieldtechModule } from './fieldtech/fieldtech.module';
 
 @Module({
   imports: [
@@ -124,6 +125,7 @@ import { TradingModule } from './trading/trading.module';
     PrintShopModule,
     HermesModule,
     TradingModule,
+    FieldtechModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

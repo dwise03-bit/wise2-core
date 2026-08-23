@@ -44,11 +44,31 @@ module.exports = {
           '0%': { opacity: 0, transform: 'translateY(18px)' },
           '100%': { opacity: 1, transform: 'translateY(0)' },
         },
+        slideUp: {
+          '0%': { opacity: 0, transform: 'translateY(32px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+        stagger: {
+          '0%': { opacity: 0, transform: 'translateY(24px) scale(0.95)' },
+          '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+        },
+        scaleIn: {
+          '0%': { opacity: 0, transform: 'scale(0.9)' },
+          '100%': { opacity: 1, transform: 'scale(1)' },
+        },
+        fadeInUp: {
+          '0%': { opacity: 0, transform: 'translateY(40px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
         pulseGlow: 'pulseGlow 3.2s ease-in-out infinite',
         riseIn: 'riseIn .7s cubic-bezier(.22,1,.36,1) both',
+        slideUp: 'slideUp 0.8s cubic-bezier(.34,.1,.68,.55) forwards',
+        stagger: 'stagger 0.6s cubic-bezier(.22,.82,.56,1) forwards',
+        scaleIn: 'scaleIn 0.7s cubic-bezier(.34,1.56,.64,1) forwards',
+        fadeInUp: 'fadeInUp 1s ease-out forwards',
       },
       backgroundImage: {
         'wise-grid':

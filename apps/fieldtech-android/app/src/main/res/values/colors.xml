@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="jet_black">#050505</color>
+    <color name="carbon_black">#0A0A0A</color>
+    <color name="concrete_black">#111111</color>
+    <color name="gunmetal">#1A1A1A</color>
+    <color name="chaos_blue">#007BFF</color>
+    <color name="electric_blue">#00AEEF</color>
+    <color name="graffiti_blue">#0088FF</color>
+    <color name="neon_ice_blue">#4FC3FF</color>
+    <color name="chrome_silver">#C0C0C0</color>
+</resources>

@@ -83,6 +83,24 @@ curl -H "Authorization: Bearer $TOKEN" \
 - Auth: JWT + Bcrypt
 - ORM: TypeORM 0.3.17
 
+## WISE² Field Tech (Android)
+
+Native Kotlin/Compose Android app for HVAC technicians — `apps/fieldtech-android/`. Private
+signed-APK distribution (no Google Play), backed by a net-new `/api/v1/fieldtech/*` module in
+this same API. See:
+
+- [`docs/ANDROID_IMPLEMENTATION_AUDIT.md`](docs/ANDROID_IMPLEMENTATION_AUDIT.md) — what exists, what's net-new, what's blocked
+- [`docs/ANDROID_ARCHITECTURE.md`](docs/ANDROID_ARCHITECTURE.md) — app layering and package map
+- [`docs/FIELD_TOOL_INTEGRATION.md`](docs/FIELD_TOOL_INTEGRATION.md) — Bluetooth instrument adapter design (simulator only; no Fieldpiece SDK access)
+- [`docs/IMP_ANDROID_INTEGRATION.md`](docs/IMP_ANDROID_INTEGRATION.md) — how IMP maps onto the existing Hermes chat endpoint
+- [`docs/OFFLINE_SYNC.md`](docs/OFFLINE_SYNC.md) — offline-first read/write queue design
+- [`docs/PRIVATE_APK_RELEASE.md`](docs/PRIVATE_APK_RELEASE.md) — signing, release scripts, update-check contract
+- [`docs/ANDROID_SECURITY.md`](docs/ANDROID_SECURITY.md) — credential storage, network, auth lifecycle
+
+This machine has no Android SDK/emulator installed; builds are verified via a headless Docker
+Gradle build (`apps/fieldtech-android/ci/android-build.Dockerfile`) — see
+`ANDROID_ARCHITECTURE.md` for the exact commands.
+
 ## Deployment
 
 ### Local

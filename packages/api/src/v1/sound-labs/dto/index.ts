@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsObject, IsNumber, Min, Max } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
@@ -21,4 +21,47 @@ export class UpdateProjectDto {
   @IsOptional()
   @IsObject()
   mixerState?: Record<string, any>;
+
+  @IsOptional()
+  @IsString()
+  lyrics?: string | null;
+
+  @IsOptional()
+  @IsString()
+  lyricsTitle?: string | null;
+}
+
+export class GenerateMusicDto {
+  @IsString()
+  prompt!: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(10)
+  @Max(300)
+  duration?: number;
+
+  @IsOptional()
+  @IsString()
+  genre?: string;
+
+  @IsOptional()
+  @IsString()
+  mood?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(30)
+  @Max(300)
+  tempo?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  temperature?: number;
+
+  @IsOptional()
+  @IsNumber()
+  seed?: number;
 }

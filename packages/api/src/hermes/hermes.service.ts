@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +16,10 @@ import {
   DecideHermesActionDto,
   HermesChatDto,
 } from './hermes.dto';
+import {
+  HermesGenerationResolver,
+  HermesProfile,
+} from './hermes-generation.config';
 
 type SourceState<T> =
   | { available: true; value: T }
@@ -22,6 +27,8 @@ type SourceState<T> =
 
 @Injectable()
 export class HermesService {
+  private readonly logger = new Logger('HermesService');
+
   constructor(
     @InjectRepository(HermesAction)
     private readonly actions: Repository<HermesAction>,
@@ -334,7 +341,25 @@ export class HermesService {
 
   async chat(tenantUserId: string, dto: HermesChatDto) {
     const startedAt = Date.now();
-    const model = process.env.OLLAMA_CHAT_MODEL || 'mistral:latest';
+
+    const history = (dto.messages ?? []).slice(-10);
+    const conversationLength = history.length;
+
+    // Resolve reasoning profile (FAST, DEEP, or AUTO)
+    let profile: HermesProfile = dto.profile || 'auto';
+    if (profile === 'auto') {
+      profile = HermesGenerationResolver.autoClassify(
+        dto.message,
+        conversationLength,
+        dto.mode,
+      );
+      this.logger.debug(
+        `Auto-classified request to profile: ${profile} (message length: ${dto.message.length}, conversation length: ${conversationLength})`,
+      );
+    }
+
+    // Resolve generation configuration
+    const config = HermesGenerationResolver.resolve(profile);
     const configuredEndpoint =
       process.env.HERMES_ENDPOINT ||
       process.env.OLLAMA_BASE_URL ||
@@ -342,7 +367,7 @@ export class HermesService {
     const endpoint = configuredEndpoint.includes('/v1/chat/completions')
       ? configuredEndpoint
       : `${configuredEndpoint.replace(/\/+$/, '')}/api/chat`;
-    const history = (dto.messages ?? []).slice(-10);
+
     const system = [
       'You are Hermes, the WISE² business intelligence assistant.',
       `Active mode: ${dto.mode || 'executive'}.`,
@@ -354,29 +379,23 @@ export class HermesService {
 
     const openAiCompatible = endpoint.includes('/v1/chat/completions');
     const body = openAiCompatible
-      ? {
-          model,
-          stream: false,
-          messages: [
-            { role: 'system', content: system },
-            ...history,
-            { role: 'user', content: dto.message },
-          ],
-        }
-      : {
-          model,
-          stream: false,
-          think: false,
-          options: {
-            num_ctx: 4096,
-            num_predict: 1024,
-          },
-          messages: [
-            { role: 'system', content: system },
-            ...history,
-            { role: 'user', content: dto.message },
-          ],
-        };
+      ? HermesGenerationResolver.buildOpenAiBody(
+          config.model,
+          system,
+          history,
+          dto.message,
+        )
+      : HermesGenerationResolver.buildOllamaBody(
+          config.model,
+          system,
+          history,
+          dto.message,
+          config.selectedSettings,
+        );
+
+    this.logger.debug(
+      `[${profile}] model=${config.model} think=${config.selectedSettings.think} ctx=${config.selectedSettings.numCtx}`,
+    );
 
     let response: Response;
     try {
@@ -384,40 +403,44 @@ export class HermesService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(
-          Number(process.env.HERMES_TIMEOUT_MS || 90000),
-        ),
+        signal: AbortSignal.timeout(config.selectedSettings.timeoutMs),
       });
     } catch (error) {
-      throw new BadRequestException(
-        `Hermes inference unavailable: ${
-          error instanceof Error ? error.message : 'connection failed'
-        }`,
-      );
+      const errorMsg = error instanceof Error ? error.message : 'connection failed';
+      this.logger.error(`Hermes inference failed: ${errorMsg}`);
+      throw new BadRequestException(`Hermes inference unavailable: ${errorMsg}`);
     }
 
     const data = (await response.json().catch(() => ({}))) as any;
     if (!response.ok) {
-      throw new BadRequestException(
+      const errorMsg =
         data?.error?.message ||
-          data?.error ||
-          `Hermes inference failed (${response.status})`,
-      );
+        data?.error ||
+        `inference failed (${response.status})`;
+      this.logger.error(`Hermes inference error: ${errorMsg}`);
+      throw new BadRequestException(`Hermes inference failed: ${errorMsg}`);
     }
 
     const content = openAiCompatible
       ? data?.choices?.[0]?.message?.content
       : data?.message?.content;
     if (!content) {
+      this.logger.error('Hermes inference returned empty response');
       throw new BadRequestException('Hermes inference returned no response');
     }
+
+    const durationMs = Date.now() - startedAt;
+    this.logger.log(
+      `[${profile}] Chat complete: ${durationMs}ms (model=${config.model})`,
+    );
 
     return {
       response: content,
       mode: dto.mode || 'executive',
-      model: data?.model || model,
-      provider: 'ollama',
-      durationMs: Date.now() - startedAt,
+      model: data?.model || config.model,
+      profile,
+      provider: config.provider,
+      durationMs,
       sources: [],
       evidenceStatus: 'conversation-only',
     };
@@ -428,7 +451,22 @@ export class HermesService {
     dto: HermesChatDto,
   ): AsyncIterable<{ event: string; data: string }> {
     const startedAt = Date.now();
-    const model = process.env.OLLAMA_CHAT_MODEL || 'mistral:latest';
+
+    const history = (dto.messages ?? []).slice(-10);
+    const conversationLength = history.length;
+
+    // Resolve reasoning profile (FAST, DEEP, or AUTO)
+    let profile: HermesProfile = dto.profile || 'auto';
+    if (profile === 'auto') {
+      profile = HermesGenerationResolver.autoClassify(
+        dto.message,
+        conversationLength,
+        dto.mode,
+      );
+    }
+
+    // Resolve generation configuration
+    const config = HermesGenerationResolver.resolve(profile);
     const configuredEndpoint =
       process.env.HERMES_ENDPOINT ||
       process.env.OLLAMA_BASE_URL ||
@@ -436,7 +474,7 @@ export class HermesService {
     const endpoint = configuredEndpoint.includes('/v1/chat/completions')
       ? configuredEndpoint
       : `${configuredEndpoint.replace(/\/+$/, '')}/api/chat`;
-    const history = (dto.messages ?? []).slice(-10);
+
     const system = [
       'You are Hermes, the WISE² business intelligence assistant.',
       `Active mode: ${dto.mode || 'executive'}.`,
@@ -447,20 +485,20 @@ export class HermesService {
     ].join(' ');
 
     const openAiCompatible = endpoint.includes('/v1/chat/completions');
-    const body = {
-      model,
-      stream: true,
-      think: false,
-      options: {
-        num_ctx: 4096,
-        num_predict: 1024,
-      },
-      messages: [
-        { role: 'system', content: system },
-        ...history,
-        { role: 'user', content: dto.message },
-      ],
-    };
+    const body = openAiCompatible
+      ? HermesGenerationResolver.buildOpenAiBody(
+          config.model,
+          system,
+          history,
+          dto.message,
+        )
+      : HermesGenerationResolver.buildOllamaStreamBody(
+          config.model,
+          system,
+          history,
+          dto.message,
+          config.selectedSettings,
+        );
 
     let response: Response;
     try {
@@ -468,7 +506,7 @@ export class HermesService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(Number(process.env.HERMES_TIMEOUT_MS || 90000)),
+        signal: AbortSignal.timeout(config.selectedSettings.timeoutMs),
       });
     } catch (error) {
       yield {
@@ -529,7 +567,8 @@ export class HermesService {
               data: JSON.stringify({
                 totalTokens: tokenCount,
                 durationMs: Date.now() - startedAt,
-                model,
+                model: config.model,
+                profile,
               }),
             };
             return;
@@ -561,13 +600,14 @@ export class HermesService {
                 data: JSON.stringify({
                   totalTokens: tokenCount,
                   durationMs: Date.now() - startedAt,
-                  model,
+                  model: config.model,
+                  profile,
                 }),
               };
               return;
             }
           } catch (parseError) {
-            console.warn('[Hermes] Malformed chunk:', jsonStr);
+            this.logger.warn(`[Hermes] Malformed chunk: ${jsonStr}`);
             continue;
           }
         }
@@ -591,7 +631,7 @@ export class HermesService {
             };
           }
         } catch {
-          // Ignore
+          // Ignore final buffer parse error
         }
       }
 
@@ -600,7 +640,8 @@ export class HermesService {
         data: JSON.stringify({
           totalTokens: tokenCount,
           durationMs: Date.now() - startedAt,
-          model,
+          model: config.model,
+          profile,
         }),
       };
     } catch (error) {

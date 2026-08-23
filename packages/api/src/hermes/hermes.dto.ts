@@ -90,4 +90,8 @@ export class HermesChatDto {
   @ValidateNested({ each: true })
   @Type(() => HermesChatMessageDto)
   messages?: HermesChatMessageDto[];
+
+  @IsOptional()
+  @IsIn(['fast', 'deep', 'auto'])
+  profile?: 'fast' | 'deep' | 'auto';
 }

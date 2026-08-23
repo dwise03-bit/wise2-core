@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapability="true">
+        <exclude domain="sharedpref" path="wise2_secure_prefs.xml" />
+        <exclude domain="database" path="wise2_fieldtech.db" />
+    </cloud-backup>
+</data-extraction-rules>

@@ -114,7 +114,7 @@ export default function FieldTechPage() {
 
         <SiteHeader activeHref="/field-tech" />
 
-        <section className="relative z-10 mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-8 md:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-24 lg:pt-14">
+        <section className="relative z-10 mx-auto grid max-w-7xl gap-12 px-5 pb-16 pt-8 md:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-24 lg:pt-14 animate-fadeInUp">
           <div className="animate-riseIn">
             <p className="inline-flex rounded-full border border-wise-blue/30 bg-wise-blue/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.28em] text-wise-cyan">
               Powered by WISE²
@@ -206,7 +206,7 @@ export default function FieldTechPage() {
         </section>
       </div>
 
-      <section className="mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">
+      <section className="animate-slideUp" className="mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-kicker">Field Tech App</p>
           <h2 className="section-title">Everything A Tech Needs, Nothing They Don&apos;t</h2>
@@ -218,10 +218,10 @@ export default function FieldTechPage() {
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {capabilities.map((item) => {
+          {capabilities.map((item, index) => {
             const Icon = item.icon;
             return (
-              <article key={item.title} className="wise-service-card">
+              <article key={item.title} className="wise-service-card animate-scaleIn" style={{ animationDelay: `${index * 100}ms` }}>
                 <div className={`inline-flex rounded-2xl border px-4 py-3 ${accentClasses(item.accent)}`}>
                   <Icon className="h-6 w-6" />
                 </div>
@@ -235,7 +235,7 @@ export default function FieldTechPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 pb-8 md:px-8 lg:px-10">
+      <section className="animate-slideUp" className="mx-auto max-w-7xl px-5 pb-8 md:px-8 lg:px-10">
         <div className="wise-panel relative overflow-hidden p-7 sm:p-8">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(36,167,255,.18),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(255,122,24,.16),transparent_35%)]" />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -276,7 +276,7 @@ export default function FieldTechPage() {
         </div>
       </section>
 
-      <section id="contact" className="border-t border-white/10">
+      <section className="animate-slideUp" id="contact" className="border-t border-white/10">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-8 lg:grid-cols-[.9fr_1.1fr] lg:px-10 lg:py-16">
           <div>
             <p className="font-display text-3xl font-black uppercase tracking-[0.08em] text-white">

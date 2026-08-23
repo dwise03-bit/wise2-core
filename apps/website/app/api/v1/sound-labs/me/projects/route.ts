@@ -2,122 +2,81 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// In-memory storage for demo (persists per session)
-const projects = new Map<string, any>();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-function extractUserId(token: string): string | null {
-  if (token.startsWith('dev_token_')) {
-    return 'dev_' + token.split('_')[2];
-  }
-  return null;
-}
-
+/**
+ * GET /api/v1/sound-labs/me/projects
+ * Proxies to the real Prisma-backed backend (packages/api).
+ */
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
-
     if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Missing Authorization header' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
     }
 
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const userId = extractUserId(token);
+    const upstream = await fetch(`${API_BASE_URL}/v1/sound-labs/me/projects`, {
+      headers: { Authorization: authHeader },
+    });
+    const data = await upstream.json();
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      );
+    if (!upstream.ok) {
+      return NextResponse.json(data, { status: upstream.status });
     }
 
-    // Get projects for this user
-    const userProjects = Array.from(projects.values()).filter((p) => p.userId === userId);
-    const recordingCount = userProjects.reduce((sum, p) => sum + (p.recordingCount || 0), 0);
-    const totalStorage = userProjects.reduce((sum, p) => sum + (p.projectSize || 0), 0);
+    const rawProjects = data.projects || [];
+    const projects = rawProjects.map((p: any) => ({
+      ...p,
+      recordingCount: p.recordings?.length || 0,
+    }));
+    const recordingCount = projects.reduce(
+      (sum: number, p: any) => sum + p.recordingCount,
+      0
+    );
+    const storageUsed = projects.reduce((sum: number, p: any) => sum + (p.projectSize || 0), 0);
 
     return NextResponse.json({
-      projects: userProjects,
-      count: userProjects.length,
+      projects,
+      count: projects.length,
       stats: {
-        projectCount: userProjects.length,
+        projectCount: projects.length,
         recordingCount,
-        storageUsed: totalStorage,
+        storageUsed,
       },
       success: true,
     });
   } catch (error) {
     console.error('Sound Labs API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch projects' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
   }
 }
 
+/**
+ * POST /api/v1/sound-labs/me/projects
+ * Proxies to the real Prisma-backed backend (packages/api).
+ */
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization');
-
     if (!authHeader) {
-      return NextResponse.json(
-        { error: 'Missing Authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
-    const userId = extractUserId(token);
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { name, description } = body;
 
-    if (!name) {
-      return NextResponse.json(
-        { error: 'Project name is required' },
-        { status: 400 }
-      );
-    }
-
-    // Create mock project
-    const projectId = `proj_${Date.now()}`;
-    const newProject = {
-      id: projectId,
-      userId,
-      name,
-      description: description || null,
-      lyrics: '',
-      lyricsTitle: '',
-      sunoJobId: null,
-      sunoStatus: 'draft',
-      generatedAudioUrl: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      recordingCount: 0,
-      recordings: [],
-      projectSize: 0,
-    };
-
-    projects.set(projectId, newProject);
-
-    return NextResponse.json({
-      project: newProject,
-      success: true,
+    const upstream = await fetch(`${API_BASE_URL}/v1/sound-labs/me/projects`, {
+      method: 'POST',
+      headers: {
+        Authorization: authHeader,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
+    const data = await upstream.json();
+
+    return NextResponse.json(data, { status: upstream.status });
   } catch (error) {
     console.error('Sound Labs API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create project' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
   }
 }
