@@ -40,4 +40,15 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
             }
         }
     }
+
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            when (val result = authRepository.loginWithGoogle(idToken)) {
+                is WiseResult.Success -> _uiState.value = _uiState.value.copy(isLoading = false, loggedIn = true)
+                is WiseResult.Error -> _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = result.message)
+                else -> _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
 }
