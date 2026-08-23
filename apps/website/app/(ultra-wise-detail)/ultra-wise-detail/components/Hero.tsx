@@ -192,48 +192,14 @@ export function Hero() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'radial-gradient(circle at 30% 30%, rgba(245,132,38,0.6), rgba(3,5,7,0.55))',
-                boxShadow: '0 0 40px rgba(245,132,38,0.3), inset -10px -10px 20px rgba(0,0,0,0.5), inset 8px 8px 12px rgba(255,255,255,0.1)',
+                background: 'rgba(3,5,7,0.55)',
+                boxShadow: '0 0 30px rgba(245,132,38,0.25)',
               }}
             >
-              <svg width="60" height="60" viewBox="0 0 60 60" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.8))' }}>
-                <defs>
-                  <radialGradient id="ballGradient" cx="35%" cy="35%">
-                    <stop offset="0%" stopColor="#ff9d5c" />
-                    <stop offset="60%" stopColor="#F58426" />
-                    <stop offset="100%" stopColor="#d45f1a" />
-                  </radialGradient>
-                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.3" />
-                  </filter>
-                </defs>
-
-                {/* Main ball sphere */}
-                <circle cx="30" cy="30" r="29" fill="url(#ballGradient)" />
-
-                {/* Center vertical line (primary spine) */}
-                <path d="M 30 1 Q 30 30 30 59" stroke="#030507" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-
-                {/* Curved horizontal seams - upper half */}
-                <path d="M 12 20 Q 30 18 48 20" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <path d="M 10 30 Q 30 28 50 30" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <path d="M 12 40 Q 30 42 48 40" stroke="#030507" strokeWidth="2" fill="none" strokeLinecap="round" />
-
-                {/* Diagonal curved lines - left side */}
-                <path d="M 20 10 Q 22 25 20 40" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.8" />
-                <path d="M 15 18 Q 18 30 15 45" stroke="#030507" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6" />
-
-                {/* Diagonal curved lines - right side */}
-                <path d="M 40 10 Q 38 25 40 40" stroke="#030507" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.8" />
-                <path d="M 45 18 Q 42 30 45 45" stroke="#030507" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6" />
-
-                {/* Highlight/shine */}
-                <ellipse cx="20" cy="15" rx="10" ry="8" fill="white" opacity="0.25" />
-                <ellipse cx="22" cy="13" rx="6" ry="5" fill="white" opacity="0.15" />
-
-                {/* Shadow at bottom */}
-                <ellipse cx="30" cy="54" rx="14" ry="4" fill="#030507" opacity="0.3" />
-              </svg>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F58426', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: 2, background: '#030507' }} />
+                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 2, background: '#030507' }} />
+              </div>
             </div>
             <div style={{ marginTop: 8, fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, letterSpacing: '0.06em', color: '#F8F9FB', textShadow: '0 2px 6px rgba(0,0,0,0.8)' }}>
               NEW YORK
