@@ -112,6 +112,8 @@ export async function handleIncomingGoogleVoiceCall(
   if (summary) {
     console.log(`   Duration: ${String(summary.duration ?? 0)}ms`);
     console.log(`   Disposition: ${String(summary.disposition ?? 'completed')}`);
+    console.log(`   Messages: ${(summary as any).messageCount ?? 0}`);
+    console.log(`   Tools Used: ${((summary as any).toolsUsed ?? []).length}`);
   }
 
   return { callInfo, session, summary };

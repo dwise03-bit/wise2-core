@@ -17,6 +17,7 @@ export { TestHarness } from './test-harness';
 // Phase 2: Real provider implementations
 export { TwilioProvider } from './twilio-provider';
 export { GoogleVoiceProvider } from './google-voice-provider';
+export { TelnyxProvider } from './telnyx-provider';
 export { OpenAIRealtimeProvider, createVoiceModel } from './openai-realtime-provider';
 
 // Phase 2: Media and recording
