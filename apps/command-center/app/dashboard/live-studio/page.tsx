@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useTransition } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { Card, Badge, Button } from '../../../src/components/ui';
@@ -45,6 +45,7 @@ function formatDuration(seconds: number): string {
 
 export default function LiveStudioPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const [isPending, startTransition] = useTransition();
 
   const [status, setStatus] = useState<RecordingStatus>('READY');
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export default function LiveStudioPage() {
   const captureTypeRef = useRef<CaptureType>('camera');
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
+  const pendingRef = useRef(false);
 
   const getToken = useCallback((): string | null => {
     return localStorage.getItem('auth_token') || localStorage.getItem('authToken');
@@ -89,7 +91,9 @@ export default function LiveStudioPage() {
     };
   }, []);
 
-  const startRecording = async (captureType: CaptureType) => {
+  const startRecording = useCallback(async (captureType: CaptureType) => {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     setError(null);
     setStatus('REQUESTING_PERMISSION');
     captureTypeRef.current = captureType;
@@ -118,35 +122,39 @@ export default function LiveStudioPage() {
       if (msg.includes('Permission denied') || msg.includes('NotAllowed')) {
         setError('Permission denied. Please allow camera/screen access.');
       } else if (msg.includes('AbortError') || msg.includes('cancelled')) {
-        setError(null); setStatus('READY'); return;
-      } else { setError(msg); }
-      setStatus('ERROR');
+        setError(null); setStatus('READY');
+      } else { setError(msg); setStatus('ERROR'); }
+    } finally {
+      pendingRef.current = false;
     }
-  };
+  }, []);
 
-  const stopRecording = async () => {
+  const stopRecording = useCallback(async () => {
+    if (pendingRef.current) return;
     if (!recorderRef.current || recorderRef.current.state === 'inactive') return;
+    pendingRef.current = true;
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
     setStatus('SAVING');
     const recorder = recorderRef.current;
     const stoppedAt = new Date().toISOString();
-    await new Promise<void>(resolve => { recorder.onstop = () => resolve(); recorder.stop(); });
-    stopAllTracks(streamRef.current);
-    streamRef.current = null;
-    if (videoPreviewRef.current) videoPreviewRef.current.srcObject = null;
-    const mimeType = recorder.mimeType || 'video/webm';
-    const blob = assembleBlob(chunksRef.current, mimeType);
-    chunksRef.current = [];
-    if (blob.size === 0) { setError('Recording produced no data'); setStatus('ERROR'); return; }
-    const token = getToken();
-    if (!token) { setError('Not authenticated'); setStatus('ERROR'); return; }
     try {
+      await new Promise<void>(resolve => { recorder.onstop = () => resolve(); recorder.stop(); });
+      stopAllTracks(streamRef.current);
+      streamRef.current = null;
+      if (videoPreviewRef.current) videoPreviewRef.current.srcObject = null;
+      const mimeType = recorder.mimeType || 'video/webm';
+      const blob = assembleBlob(chunksRef.current, mimeType);
+      chunksRef.current = [];
+      if (blob.size === 0) { setError('Recording produced no data'); setStatus('ERROR'); return; }
+      const token = getToken();
+      if (!token) { setError('Not authenticated'); setStatus('ERROR'); return; }
       await uploadToGallery(blob, token, API_URL, { captureType: captureTypeRef.current, duration, startedAt: startTimeRef.current, stoppedAt });
       setStatus('SAVED');
       await loadRecordings();
       setTimeout(() => setStatus('READY'), 2000);
     } catch (err) { setError(err instanceof Error ? err.message : 'Upload failed'); setStatus('ERROR'); }
-  };
+    finally { pendingRef.current = false; }
+  }, [getToken, duration, loadRecordings]);
 
   const deleteRecording = async (id: string) => {
     const token = getToken();
@@ -200,11 +208,11 @@ export default function LiveStudioPage() {
       {/* Recording Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <button
-          onClick={() => isRecording ? stopRecording() : startRecording('camera')}
-          disabled={isBusy || (isRecording && captureTypeRef.current !== 'camera')}
-          className={`p-5 text-left rounded-lg border transition-all ${
+          onClick={() => startTransition(() => isRecording ? stopRecording() : startRecording('camera'))}
+          disabled={isBusy || isPending || (isRecording && captureTypeRef.current !== 'camera')}
+          className={`p-5 text-left rounded-lg border transition-all active:scale-95 ${
             isRecording && captureTypeRef.current === 'camera' ? 'border-danger/40 bg-danger/5' : 'border-border-subtle'
-          } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
+          } ${isBusy || isPending ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer active:opacity-70'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
             {isRecording && captureTypeRef.current === 'camera' ? 'Stop Recording' : 'Record Camera'}
@@ -216,11 +224,11 @@ export default function LiveStudioPage() {
         </button>
 
         <button
-          onClick={() => isRecording ? stopRecording() : startRecording('screen')}
-          disabled={isBusy || (isRecording && captureTypeRef.current !== 'screen')}
-          className={`p-5 text-left rounded-lg border transition-all ${
+          onClick={() => startTransition(() => isRecording ? stopRecording() : startRecording('screen'))}
+          disabled={isBusy || isPending || (isRecording && captureTypeRef.current !== 'screen')}
+          className={`p-5 text-left rounded-lg border transition-all active:scale-95 ${
             isRecording && captureTypeRef.current === 'screen' ? 'border-danger/40 bg-danger/5' : 'border-border-subtle'
-          } ${isBusy ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer'}`}
+          } ${isBusy || isPending ? 'opacity-50 cursor-not-allowed' : 'hover:border-wise-electric/30 cursor-pointer active:opacity-70'}`}
         >
           <h3 className="text-sm font-semibold text-text-primary mb-1">
             {isRecording && captureTypeRef.current === 'screen' ? 'Stop Recording' : 'Record Screen'}
