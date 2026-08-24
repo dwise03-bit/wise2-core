@@ -52,7 +52,7 @@ export default function AboutPage() {
                 <value.icon className="h-6 w-6 text-[#D6A331]" strokeWidth={1.5} aria-hidden="true" />
                 <h2
                   className="mt-3 text-sm font-bold uppercase tracking-wide text-[#F7F7F7]"
-                  style={{ fontFamily: 'var(--font-display)' }}
+                  style={{ fontFamily: 'var(--font-headers)' }}
                 >
                   {value.title}
                 </h2>

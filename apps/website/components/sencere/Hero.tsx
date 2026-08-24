@@ -40,7 +40,7 @@ export function Hero() {
           <div className="flex flex-col justify-center">
             <h1
               className="text-[2.8rem] font-black uppercase leading-[1.0] tracking-tighter sm:text-[3.2rem] lg:text-[3.5rem]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-headers)' }}
             >
               <span className="block text-[#F5E6D3]">SENCERE</span>
               <span className="block bg-gradient-to-r from-[#E8A23A] via-[#D4842F] to-[#C56F24] bg-clip-text text-transparent">

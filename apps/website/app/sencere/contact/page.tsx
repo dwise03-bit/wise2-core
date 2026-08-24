@@ -53,7 +53,7 @@ export default function ContactPage() {
           <div className="flex flex-col justify-center rounded-lg border border-[#8C6518]/30 bg-[#101010] p-8 text-center">
             <h2
               className="text-xl font-bold uppercase tracking-wide text-[#F7F7F7]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-headers)' }}
             >
               Ready to start a project?
             </h2>

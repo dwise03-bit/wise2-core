@@ -87,7 +87,7 @@ export function FeaturedCollection() {
         <div className="mb-12 text-center lg:mb-16">
           <h2
             className="text-[32px] font-bold uppercase leading-tight tracking-wider text-[#E8A23A] sm:text-[40px]"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-headers)' }}
           >
             FEATURED COLLECTION
           </h2>

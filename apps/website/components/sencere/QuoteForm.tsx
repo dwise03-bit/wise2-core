@@ -73,7 +73,7 @@ export function QuoteForm() {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center gap-4 rounded-lg border border-[#8C6518]/30 bg-[#101010] p-10 text-center">
         <CheckCircle2 className="h-12 w-12 text-[#D6A331]" aria-hidden="true" />
-        <h2 className="text-xl font-bold text-[#F7F7F7]" style={{ fontFamily: 'var(--font-display)' }}>
+        <h2 className="text-xl font-bold text-[#F7F7F7]" style={{ fontFamily: 'var(--font-headers)' }}>
           Project Received
         </h2>
         <p className="text-sm text-[#888]">
@@ -89,7 +89,7 @@ export function QuoteForm() {
       <fieldset>
         <legend
           className="mb-4 text-sm font-bold uppercase tracking-wide text-[#D6A331]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-headers)' }}
         >
           Customer
         </legend>
@@ -116,7 +116,7 @@ export function QuoteForm() {
       <fieldset>
         <legend
           className="mb-4 text-sm font-bold uppercase tracking-wide text-[#D6A331]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-headers)' }}
         >
           Project
         </legend>
@@ -152,7 +152,7 @@ export function QuoteForm() {
       <fieldset>
         <legend
           className="mb-4 text-sm font-bold uppercase tracking-wide text-[#D6A331]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-headers)' }}
         >
           Customization
         </legend>
@@ -181,7 +181,7 @@ export function QuoteForm() {
       <fieldset>
         <legend
           className="mb-4 text-sm font-bold uppercase tracking-wide text-[#D6A331]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-headers)' }}
         >
           Artwork
         </legend>
