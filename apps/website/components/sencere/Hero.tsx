@@ -93,15 +93,15 @@ export function Hero() {
           <div className="relative flex items-center justify-center lg:justify-end">
             <div className="relative w-full max-w-md">
               {/* Rabbit image */}
-              <div className="relative overflow-hidden rounded-lg">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-[#1a1a1a]">
                 <Image
-                  src="/sencere-assets/piff-city-rabbit.jpeg"
+                  src="/sencere-assets/piff-city-rabbit-van.jpeg"
                   alt="PIFF CITY RABBIT - Three-eyed signature character by SenCere Creative LLC"
-                  width={600}
-                  height={600}
-                  className="h-auto w-full object-cover"
+                  fill
+                  className="object-cover object-center"
                   priority
                   quality={95}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
                 />
               </div>
 
