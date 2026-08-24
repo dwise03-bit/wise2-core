@@ -5,7 +5,7 @@ export function PageHeader({ eyebrow, title, description }: { eyebrow: string; t
         <p className="text-xs font-bold tracking-[0.2em] text-[#D6A331]">{eyebrow}</p>
         <h1
           className="mt-2 text-3xl font-bold uppercase tracking-tight text-[#F7F7F7] sm:text-4xl"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-headers)' }}
         >
           {title}
         </h1>

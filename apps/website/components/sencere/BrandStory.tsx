@@ -32,7 +32,7 @@ export function BrandStory() {
           <div className="flex flex-col justify-center">
             <h2
               className="text-[28px] font-black uppercase leading-tight tracking-wider text-[#F5E6D3] sm:text-[32px]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-headers)' }}
             >
               BUILT FROM THE STREETS.
               <br />

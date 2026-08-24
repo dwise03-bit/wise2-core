@@ -10,7 +10,7 @@ export function CapabilityGrid() {
           <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#D6A331]" />
           <h2
             className="text-center text-2xl font-bold uppercase tracking-[0.1em] text-[#D6A331] sm:text-3xl"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-headers)' }}
           >
             Our Capabilities
           </h2>
