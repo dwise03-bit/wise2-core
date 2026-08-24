@@ -1,0 +1,307 @@
+# WISE DEFENSE EDGE DEVICE CONFIGURATION - WITH TWILIO BYOC
+# Configure providers, hardware, and phone system with Asterisk PJSIP
+# Last Updated: 2026-08-24
+
+device:
+  id: "EDGE-001"  # Unique device identifier
+  location:
+    latitude: 40.7128
+    longitude: -74.0060
+    city: "New York"
+    state: "NY"
+  timezone: "America/New_York"
+
+# ============================================================================
+# API Configuration
+# ============================================================================
+api:
+  port: 3014
+  host: "0.0.0.0"
+  api_key: "{{ WISE_DEFENSE_API_KEY }}"
+  cloud_url: "{{ WISE_DEFENSE_CLOUD_URL }}"
+  cloud_api_key: "{{ WISE_DEFENSE_CLOUD_API_KEY }}"
+
+# ============================================================================
+# PHONE SYSTEM - Asterisk PJSIP + Twilio BYOC
+# ============================================================================
+phone_system:
+  # Primary provider: Asterisk PJSIP for media gateway
+  provider: "asterisk-pjsip"
+  enabled: true
+
+  asterisk:
+    # Asterisk server connection
+    host: "127.0.0.1"      # Local Asterisk instance
+    sip_port: 5060         # SIP signaling (UDP)
+    ami_port: 5038         # Asterisk Management Interface (TCP)
+    ami_username: "admin"
+    ami_secret: "{{ ASTERISK_AMI_SECRET }}"  # Configure in Asterisk manager.conf
+
+    # PJSIP configuration
+    pjsip:
+      # Main transport for Twilio SIP
+      transport: "transport-twilio"
+      protocol: "udp"
+
+      # Inbound call handling context
+      inbound_context: "from-twilio"
+
+      # Registration settings
+      registration:
+        # This should match [twilio-registration] in pjsip.conf
+        registration_name: "twilio-registration"
+        registration_endpoint: "twilio-endpoint"
+        registration_aor: "twilio-aor"
+
+  # Twilio BYOC (Bring Your Own Carrier) Configuration
+  twilio_byoc:
+    enabled: true
+    account_sid: "{{ TWILIO_ACCOUNT_SID }}"      # From console.twilio.com
+    auth_token: "{{ TWILIO_AUTH_TOKEN }}"        # Keep this secure!
+    sip_domain: "sip-us1.twilio.com"             # Twilio SIP endpoint
+
+    # Twilio BYOC connection parameters
+    registration:
+      server_uri: "sip:sip-us1.twilio.com"       # Twilio registration server
+      retry_interval: 60                          # Seconds between retries
+      expiration: 3600                            # Registration lifetime (seconds)
+
+    # Inbound call routing (Twilio → Asterisk)
+    inbound:
+      # Route calls to this context in Asterisk dialplan
+      context: "from-twilio"
+
+      # Pattern for inbound calls (E.164 format)
+      # All calls matching this pattern routed to AI receptionist
+      pattern: "+1XXXXXXXXXX"
+
+  # AI Receptionist via Asterisk AGI
+  ai_receptionist:
+    enabled: true
+    provider: "asterisk-agi"
+
+    # AGI script configuration
+    agi:
+      host: "127.0.0.1"
+      port: 4573                                  # AGI server port
+      script_name: "ai-receptionist"
+
+    # Call handling
+    answer_timeout: 30                            # Seconds to answer
+    max_retries: 3
+
+    # Routing to WISE² AI Phone API
+    ai_phone_api:
+      base_url: "http://localhost:3001"
+      endpoint: "/calls/init"
+      timeout: 5000                               # Milliseconds
+
+    # Features
+    features:
+      customer_identification: true
+      intent_detection: true
+      appointment_booking: true
+      transfer_to_agent: true
+      call_recording: true
+      transcription: true
+
+  # Media streaming & RTP
+  media:
+    rtp:
+      port_min: 10000
+      port_max: 20000
+      codec: "ulaw"                               # ulaw, alaw, gsm, g722
+      symmetric_rtp: true
+      rtcp_mux: true
+      ice_support: true
+
+    # Transcoding (if needed)
+    transcoding:
+      enabled: false
+      codec_priority:
+        - "opus"
+        - "g722"
+        - "ulaw"
+
+# ============================================================================
+# INCIDENT PROVIDERS (Optional)
+# ============================================================================
+providers:
+  crimeradar:
+    enabled: false
+    api_key: "{{ CRIMERADAR_API_KEY }}"
+    update_interval_minutes: 5
+    categories: ["police", "fire", "ems", "traffic"]
+
+  weather:
+    enabled: true
+    source: "noaa"  # NOAA/NWS
+    update_interval_minutes: 15
+    alerts: ["tornado", "severe_thunderstorm", "flash_flood", "extreme_heat"]
+
+# ============================================================================
+# HARDWARE CONFIGURATION
+# ============================================================================
+hardware:
+  sdr:
+    enabled: false
+    device_type: "rtl-sdr"
+    profiles: ["NOAA", "GMRS", "HAM", "PUBLIC_SAFETY"]
+    default_profile: "NOAA"
+
+  meshtastic:
+    enabled: false
+    port: "/dev/ttyUSB0"
+    baudrate: 115200
+
+  gps:
+    enabled: false
+    port: "/dev/ttyUSB1"
+    baudrate: 9600
+
+# ============================================================================
+# WATCH ZONES
+# ============================================================================
+watch_zones:
+  - name: "Home"
+    kind: "HOME"
+    latitude: 40.7128
+    longitude: -74.0060
+    radius_miles: 1.0
+    minimum_threat: "ELEVATED"
+    categories: ["police", "fire", "ems"]
+    enabled: true
+
+# ============================================================================
+# ALERTING
+# ============================================================================
+alerts:
+  notify_via:
+    - "local"      # Display in dashboard
+    - "log"        # Write to logs
+    # - "cloud"    # Send to cloud (when online)
+    # - "discord"  # Send to Discord webhook
+    # - "phone"    # Call via Twilio/Asterisk
+
+  critical_alert_levels: ["CRITICAL", "HIGH"]
+  watch_alert_levels: ["ELEVATED", "WARNING"]
+
+# ============================================================================
+# SYSTEM BEHAVIOR
+# ============================================================================
+system:
+  offline_mode: true        # Continue operating without cloud connection
+  auto_repair: true         # Automatically restart failed services
+  log_retention_days: 30    # Keep logs for N days
+  max_database_size_mb: 2048  # Max SQLite database size
+  sync_queue_retry_max: 3   # Max retries for cloud sync
+  health_check_interval: 300  # Check health every N seconds
+
+  # Phone system health checks
+  phone_system_health:
+    check_registration: true           # Verify PJSIP registration active
+    check_interval: 60                 # Seconds between checks
+    restart_on_failure: true
+    max_consecutive_failures: 3
+
+# ============================================================================
+# SECURITY
+# ============================================================================
+security:
+  require_api_key: true
+  allowed_local_networks: ["127.0.0.1/8", "192.168.0.0/16", "10.0.0.0/8"]
+  tailscale_required: false  # Require Tailscale for cloud sync
+
+  # Phone system security
+  phone_security:
+    # IP whitelist for Twilio SIP servers (from ACL in pjsip.conf)
+    twilio_ip_whitelist:
+      - "54.172.60.0/22"
+      - "54.244.51.0/24"
+      - "54.255.167.0/24"
+      - "54.252.254.0/24"
+      - "177.71.206.0/24"
+      - "195.14.235.0/24"
+      - "199.101.136.0/24"
+      - "203.113.98.0/24"
+      - "54.65.63.0/24"
+      - "54.199.138.0/24"
+      - "54.150.162.0/24"
+      - "54.168.67.0/24"
+      - "54.248.220.0/24"
+      - "54.92.60.0/24"
+      - "54.84.124.0/24"
+      - "54.160.191.0/24"
+      - "54.173.168.0/24"
+
+    # Call recording consent
+    record_calls: true
+    require_consent: true
+
+    # GDPR/privacy compliance
+    auto_delete_recordings: false
+    retention_days: 90
+
+# ============================================================================
+# COMPLIANCE NOTICES
+# ============================================================================
+compliance:
+  operations_lawful_only: true
+  verify_official_sources: true
+  ai_assumptions_not_facts: true
+
+  # Phone system compliance
+  phone_compliance:
+    record_calls_notice: "This call may be recorded for training and quality assurance."
+    gdpr_compliant: true
+    ccpa_compliant: true
+    telemarketing_compliance: true
+
+# ============================================================================
+# ENVIRONMENT VARIABLES REQUIRED
+# ============================================================================
+# Before deploying, set these in your environment:
+#
+# export WISE_DEFENSE_API_KEY="your-api-key"
+# export WISE_DEFENSE_CLOUD_URL="https://api.wise2.net"
+# export WISE_DEFENSE_CLOUD_API_KEY="cloud-api-key"
+# export ASTERISK_AMI_SECRET="your-ami-secret"
+# export TWILIO_ACCOUNT_SID="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# export TWILIO_AUTH_TOKEN="your_auth_token_here"
+#
+# Or in .env file (not committed to git):
+# cp device.yaml.twilio-byoc device.yaml.env
+# source device.yaml.env
+#
+# ============================================================================
+
+# ============================================================================
+# DEPLOYMENT INSTRUCTIONS
+# ============================================================================
+#
+# 1. Deploy Asterisk PJSIP configuration:
+#    sudo cp packages/ai-phone/config/pjsip.conf /etc/asterisk/
+#    sudo cp packages/ai-phone/config/sorcery.conf /etc/asterisk/
+#
+# 2. Set environment variables (see above)
+#
+# 3. Validate configuration:
+#    asterisk -rx "config validate pjsip.conf"
+#
+# 4. Restart Asterisk:
+#    sudo systemctl restart asterisk
+#
+# 5. Verify registration:
+#    asterisk -rx "pjsip show registrations"
+#    # Should show: twilio | Registered | twilio-endpoint
+#
+# 6. Monitor logs:
+#    sudo tail -f /var/log/asterisk/messages.log | grep -i registration
+#
+# 7. Test inbound call:
+#    # Call your Twilio BYOC number from another phone
+#    # Asterisk should answer and route to AI receptionist
+#
+# For detailed setup guide, see: TWILIO_BYOC_SETUP.md
+#
+# ============================================================================

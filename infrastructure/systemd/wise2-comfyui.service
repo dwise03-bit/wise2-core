@@ -1,0 +1,17 @@
+[Unit]
+Description=WISE² ComfyUI GPU media generation
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/dwise/.comfyui/ComfyUI
+Environment=PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+ExecStart=/home/dwise/.comfyui/ComfyUI/venv/bin/python main.py --listen 100.68.145.5 --port 8188 --lowvram --disable-auto-launch
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target
+

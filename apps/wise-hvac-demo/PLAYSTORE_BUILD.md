@@ -1,65 +1,48 @@
-# WISE Field Tech - Google Play Store Build
+# WISE Field Tech — Android Release Build
 
-## Prerequisites
-- Android Studio installed
-- Java Development Kit (JDK) 11+
-- Android SDK (API 34+)
-- Capacitor CLI: `npm install -g @capacitor/cli`
+The native app lives at `apps/fieldtech-android` and uses Kotlin/Compose. It is not a Capacitor app.
 
-## Build Steps
+## Required release inputs
 
-### 1. Generate Signing Key (if not exists)
 ```bash
-keytool -genkey -v -keystore release.jks \
-  -keyalg RSA -keysize 2048 -validity 10000 \
-  -alias release \
-  -storepass your_password \
-  -keypass your_password
+export WISE2_FIELD_API_BASE_URL="https://wise2.net/api/"
+export WISE2_GOOGLE_WEB_CLIENT_ID="<Google OAuth web client ID>"
+export WISE2_RELEASE_KEYSTORE="/absolute/path/to/wise-field-release.jks"
+export WISE2_RELEASE_STORE_PASSWORD="<store password>"
+export WISE2_RELEASE_KEY_ALIAS="wise-field"
+export WISE2_RELEASE_KEY_PASSWORD="<key password>"
 ```
 
-### 2. Build AAB for Play Store
+The API base URL must end in `/`. Signing material belongs outside source control.
+
+## Build and verify
+
 ```bash
-cd android
-./gradlew bundleRelease
+cd apps/fieldtech-android
+JAVA_HOME=/path/to/jdk17 ./gradlew testDebugUnitTest assembleRelease bundleRelease
 ```
 
-Output: `android/app/build/outputs/bundle/release/app-release.aab`
+Outputs:
 
-### 3. Sign APK (if needed for testing)
+- APK: `app/build/outputs/apk/release/app-release.apk`
+- Play bundle: `app/build/outputs/bundle/release/app-release.aab`
+
+Verify the APK before distribution:
+
 ```bash
-jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-  -keystore release.jks \
-  app-release-unsigned.apk release
+apksigner verify --verbose app/build/outputs/apk/release/app-release.apk
+adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
-### 4. Upload to Play Store
-- Go to [Google Play Console](https://play.google.com/console)
-- Select "WISE Field Tech" app
-- Go to "Release" → "Production"
-- Upload the AAB file
-- Add store listing, screenshots, and description
-- Submit for review
+## App identity
 
-## Environment Variables
-Set these on your system before building:
-```bash
-GOOGLE_CLIENT_ID=your_client_id
-GOOGLE_CLIENT_SECRET=your_client_secret
-NEXTAUTH_SECRET=your_secret
-```
+- Application ID: `com.wise2.fieldtech`
+- Current version: `1.0.1` (`versionCode 2`)
+- Minimum Android: API 26
+- Target Android: API 36
 
-## App Details
-- **App ID**: com.wisedefense.fieldtech
-- **App Name**: WISE Field Tech
-- **Base URL**: https://wise2.net/wise-hvac-demo
-- **API**: https://wise2.net/api/auth/callback/google
+## External release gates
 
-## Testing
-```bash
-npx cap run android
-```
-
-## Troubleshooting
-- If build fails, run: `cd android && ./gradlew clean`
-- For Java issues, ensure JAVA_HOME points to JDK 11+
-- Check Android SDK paths in local.properties
+- `https://wise2.net/api/` must serve the `/v1/auth`, `/v1/fieldtech`, and `/v1/hermes` routes.
+- Google Cloud must authorize the Android package/SHA certificate and the web client ID used for ID tokens.
+- The release AAB must use the same long-lived signing identity for every update.

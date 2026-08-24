@@ -10,7 +10,6 @@ const navLinks = [
   { href: '/#why-wise', label: 'Why Wise' },
   { href: '/#special', label: 'Special' },
   { href: '/field-tech', label: 'Field Tech App' },
-  { href: '/#reviews', label: 'Reviews' },
   { href: '/#contact', label: 'Contact' },
 ];
 

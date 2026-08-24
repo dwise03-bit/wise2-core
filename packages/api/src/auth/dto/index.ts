@@ -43,6 +43,11 @@ export class LoginDto {
   password!: string;
 }
 
+export class GoogleLoginDto {
+  @IsString({ message: 'Google ID token must be a string' })
+  idToken!: string;
+}
+
 /**
  * DTO for token refresh
  */

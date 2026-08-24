@@ -13,7 +13,7 @@ export function LoginButton() {
           <p className="text-xs">{session.user?.email}</p>
         </div>
         <button
-          onClick={() => signOut({ redirect: false })}
+          onClick={() => signOut({ callbackUrl: '/wise-hvac-demo/signin' })}
           className="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-[0.18em] border border-white/15 bg-white/5 text-white hover:border-wise-orange/35 hover:bg-wise-orange/10 transition"
         >
           Sign Out

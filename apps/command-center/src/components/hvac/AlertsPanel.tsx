@@ -103,10 +103,10 @@ export function AlertsPanel({ tenantId }: { tenantId: string }) {
     info: 'border-l-4 border-l-wise-blue',
   };
 
-  const severityBadges: Record<string, 'danger' | 'warning' | 'default'> = {
+  const severityBadges: Record<string, 'danger' | 'warning' | 'info'> = {
     critical: 'danger',
     warning: 'warning',
-    info: 'default',
+    info: 'info',
   };
 
   return (

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GoogleVoiceProvider, CallSessionManager, VoiceOrchestrator, ToolRegistry } from '@wise2/ai-phone';
-import { PrismaService } from '@wise2/db';
+import { GoogleVoiceProvider, CallSessionManager } from '@wise2/ai-phone';
+import { PrismaService } from '../prisma/prisma.service';
 
 interface GoogleVoiceWebhookPayload {
   type: 'INCOMING_CALL' | 'CALL_CONNECTED' | 'CALL_ENDED' | 'CALL_FAILED';
@@ -15,9 +15,8 @@ interface GoogleVoiceWebhookPayload {
 @Injectable()
 export class GoogleVoiceService {
   private readonly logger = new Logger('GoogleVoiceService');
-  private googleVoiceProvider: GoogleVoiceProvider;
-  private sessionManager: CallSessionManager;
-  private voiceOrchestrator: VoiceOrchestrator;
+  private googleVoiceProvider!: GoogleVoiceProvider;
+  private sessionManager!: CallSessionManager;
   private activeSessions = new Map<string, { sessionId: string; callId: string; customerId?: string }>();
 
   constructor(private readonly prisma: PrismaService) {
@@ -68,11 +67,11 @@ export class GoogleVoiceService {
 
       // Look up customer in database
       const customer = await this.prisma.customer.findFirst({
-        where: { primaryPhone: from },
+        where: { phone: from },
       });
 
       if (customer) {
-        this.logger.log(`Found customer: ${customer.fullName}`);
+        this.logger.log(`Found customer: ${customer.contactName}`);
       } else {
         this.logger.log(`New caller from ${from}`);
       }
@@ -83,16 +82,12 @@ export class GoogleVoiceService {
       // Create call record in database
       const callRecord = await this.prisma.call.create({
         data: {
-          tenantId: 'default',
-          providerId: 'google-voice',
-          direction: 'inbound',
-          fromNumber: from,
-          toNumber: to,
+          callSid: googleCallId,
+          direction: 'INBOUND',
+          status: 'RINGING',
+          callerNumber: from,
+          inboundNumber: to,
           startedAt: new Date(timestamp),
-          recordingStatus: 'none',
-          transcriptStatus: 'pending',
-          confidence: 0,
-          costEstimate: 0,
           customerId: customer?.id,
         },
       });
@@ -141,7 +136,7 @@ export class GoogleVoiceService {
       // Update call record
       await this.prisma.call.update({
         where: { id: callId },
-        data: { connectedAt: new Date(timestamp) },
+        data: { answeredAt: new Date(timestamp), status: 'ANSWERED' },
       });
     } catch (error) {
       this.logger.warn(`Could not update call record: ${error instanceof Error ? error.message : String(error)}`);
@@ -171,7 +166,9 @@ export class GoogleVoiceService {
           where: { id: callId },
           data: {
             endedAt: new Date(timestamp),
-            disposition: 'completed',
+            durationSeconds: Math.max(0, Math.round(duration / 1000)),
+            status: 'DISCONNECTED',
+            disposition: 'ANSWERED',
           },
         });
       }
@@ -179,7 +176,10 @@ export class GoogleVoiceService {
       // Get call summary from session
       if (sessionInfo) {
         const summary = this.sessionManager.getSummary(sessionInfo.sessionId);
-        this.logger.log(`Call ${callId} summary: ${summary.messageCount} messages, ${summary.toolsUsed.length} tools used`);
+        if (summary) {
+          const toolsUsed = Array.isArray(summary.toolsUsed) ? summary.toolsUsed.length : 0;
+          this.logger.log(`Call ${callId} summary: ${summary.messageCount} messages, ${toolsUsed} tools used`);
+        }
       }
 
       // Clean up session
@@ -206,7 +206,8 @@ export class GoogleVoiceService {
         where: { id: callId },
         data: {
           endedAt: new Date(timestamp),
-          disposition: 'failed',
+          status: 'FAILED',
+          disposition: 'FAILED',
         },
       });
 
@@ -232,7 +233,7 @@ export class GoogleVoiceService {
       if (recording) {
         await this.prisma.call.update({
           where: { id: callId },
-          data: { recordingStatus: 'recorded' },
+          data: { recordingUrl: recording.url },
         });
         this.logger.log(`Recording available: ${recording.url}`);
       }
@@ -241,10 +242,6 @@ export class GoogleVoiceService {
       // This happens asynchronously in Google Cloud
       const transcript = await this.googleVoiceProvider.getTranscript(callId);
       if (transcript) {
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: { transcriptStatus: 'available' },
-        });
         this.logger.log(`Transcript available: ${transcript.transcriptId}`);
       }
 

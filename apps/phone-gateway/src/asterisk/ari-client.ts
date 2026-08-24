@@ -3,7 +3,7 @@
  * Manages connection to Asterisk and call events
  */
 
-import ari from 'asterisk-ari-client';
+import ari from 'ari-client';
 import { EventEmitter } from 'events';
 import { logger } from '../logger';
 
@@ -29,19 +29,13 @@ export class AsteriskARIClient extends EventEmitter {
    */
   async connect(): Promise<void> {
     try {
-      this.client = ari.getClient({
-        baseUrl: this.config.baseUrl,
-        username: this.config.username,
-        password: this.config.password,
-      });
+      this.client = await ari.connect(
+        this.config.baseUrl,
+        this.config.username,
+        this.config.password
+      );
 
       // Setup WebSocket event listener
-      this.client.on('asterisk.start', () => {
-        logger.info('Asterisk started');
-        this.connected = true;
-        this.emit('connected');
-      });
-
       // Inbound call event
       this.client.on('StasisStart', (event, channel) => {
         logger.info(`Inbound call: ${channel.id} from ${channel.caller.number}`);
@@ -81,7 +75,7 @@ export class AsteriskARIClient extends EventEmitter {
       });
 
       // Connect to WebSocket
-      this.client.connect(this.config.baseUrl, 'local-phone-gateway');
+      this.client.start('wise2-phone-app');
 
       logger.info('Asterisk ARI client connected');
       this.connected = true;
@@ -96,7 +90,7 @@ export class AsteriskARIClient extends EventEmitter {
    */
   async disconnect(): Promise<void> {
     if (this.client) {
-      this.client.disconnect();
+      this.client.stop();
       this.connected = false;
       logger.info('Asterisk ARI client disconnected');
     }

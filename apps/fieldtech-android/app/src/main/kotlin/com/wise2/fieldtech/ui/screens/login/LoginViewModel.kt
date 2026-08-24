@@ -51,4 +51,11 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
             }
         }
     }
+
+    fun onGoogleLoginFailed() {
+        _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            errorMessage = "Google sign-in was cancelled or failed.",
+        )
+    }
 }

@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
-    // id("com.google.devtools.ksp") - Disabled due to Java 26 compatibility issue with KSP 1.9.24
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -13,18 +13,26 @@ android {
         applicationId = "com.wise2.fieldtech"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 4
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "API_BASE_URL", "\"https://wise2.net/api/\"")
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"${System.getenv("WISE2_FIELD_API_BASE_URL") ?: "https://wise2.net/api/"}\"",
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"${System.getenv("WISE2_GOOGLE_WEB_CLIENT_ID") ?: ""}\"",
+        )
     }
 
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "API_BASE_URL", "\"https://wise2.net/api/\"")
         }
         release {
             isMinifyEnabled = true
@@ -110,7 +118,7 @@ dependencies {
     // Persistence
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    // ksp("androidx.room:room-compiler:2.6.1") - Disabled due to KSP Java 26 compatibility issue
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 

@@ -6,8 +6,8 @@
 - **Status**: ✅ Live on wise2.net
 - **Client ID**: `797928011228-37panpam8v8ml7l8l7ecd2e0vf2kdmti.apps.googleusercontent.com`
 - **Client Secret**: Set in PM2 environment
-- **Redirect URI**: `https://wise2.net/api/auth/callback/google`
-- **Endpoint**: `https://wise2.net/api/auth/callback/google`
+- **Redirect URI**: `https://wise2.net/wise-hvac-demo/api/auth/callback/google`
+- **Endpoint**: `https://wise2.net/wise-hvac-demo/api/auth/callback/google`
 
 ### Capacitor Android Setup
 - **Status**: ✅ Initialized
@@ -210,7 +210,7 @@ adb install -r app-release.aab
 
 **Questions?** All OAuth configuration is live at:
 - Web app: https://wise2.net/wise-hvac-demo
-- API: https://wise2.net/api/auth/callback/google
+- API: https://wise2.net/wise-hvac-demo/api/auth/callback/google
 - PM2 process running with OAuth env vars set
 
 The app is ready for production deployment! 🚀

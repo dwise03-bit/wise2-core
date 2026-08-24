@@ -2,12 +2,11 @@ module.exports = {
   apps: [
     {
       name: 'wise-hvac-demo',
-      script: 'node',
-      args: 'apps/wise-hvac-demo/server.js',
-      cwd: '/home/dwise/wise2-core/apps/wise-hvac-demo/.next/standalone',
+      script: './start-production.sh',
+      cwd: __dirname,
       env: {
         PORT: '3024',
-        HOSTNAME: '0.0.0.0',
+        HOSTNAME: '127.0.0.1',
         NODE_ENV: 'production',
       },
       instances: 1,

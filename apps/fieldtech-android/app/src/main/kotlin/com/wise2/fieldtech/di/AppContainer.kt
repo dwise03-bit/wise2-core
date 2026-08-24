@@ -1,7 +1,9 @@
 package com.wise2.fieldtech.di
 
 import android.content.Context
-import com.wise2.fieldtech.bluetooth.SimulatedToolAdapter
+import com.wise2.fieldtech.bluetooth.CombinedToolAdapter
+import com.wise2.fieldtech.bluetooth.FieldpieceAdapter
+import com.wise2.fieldtech.bluetooth.Fluke902FcAdapter
 import com.wise2.fieldtech.bluetooth.ToolManager
 import com.wise2.fieldtech.data.local.AppDatabase
 import com.wise2.fieldtech.data.prefs.SecureTokenStore
@@ -43,7 +45,7 @@ class AppContainer private constructor(context: Context) {
     val impRepository = ImpRepository(apiService, database.impMessageDao())
     val updateRepository = UpdateRepository(apiService)
 
-    val toolManager = ToolManager(SimulatedToolAdapter())
+    val toolManager = ToolManager(CombinedToolAdapter(FieldpieceAdapter(appContext), Fluke902FcAdapter(appContext)))
     val updateManager = UpdateManager(appContext, apiService)
 
     companion object {

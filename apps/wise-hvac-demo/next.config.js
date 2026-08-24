@@ -6,6 +6,7 @@ const nextConfig = {
   trailingSlash: false,
   env: {
     NEXT_PUBLIC_DEMO_MODE: 'true',
+    NEXT_PUBLIC_BASE_PATH: '/wise-hvac-demo',
   },
 };
 

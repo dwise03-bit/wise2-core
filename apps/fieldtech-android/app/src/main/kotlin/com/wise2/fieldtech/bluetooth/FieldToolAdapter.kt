@@ -10,10 +10,8 @@ import kotlinx.coroutines.flow.Flow
  * (domain.model.ReadingSnapshot) regardless of which adapter produced it, so new brands
  * plug in without touching UI/domain code (spec §9).
  *
- * IMPORTANT: Fieldpiece does not publish a public BLE protocol/SDK as of this build. Per
- * spec §9 ("do not invent undocumented Fieldpiece Bluetooth protocols"), no FieldpieceAdapter
- * ships here — only SimulatedToolAdapter. See docs/FIELD_TOOL_INTEGRATION.md for exactly
- * what's needed to add a real adapter once vendor SDK access is available.
+ * Vendor values are decoded only after being verified against owned physical hardware.
+ * Unverified fields stay null rather than being inferred from undocumented protocols.
  */
 interface FieldToolAdapter {
     val brandName: String

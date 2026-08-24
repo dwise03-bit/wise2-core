@@ -36,6 +36,7 @@
     "@nestjs/websockets": "^10.2.0",
     "@prisma/client": "^5.22.0",
     "@wise2/agent-framework": "workspace:^",
+    "@wise2/ai-phone": "workspace:^",
     "aws-sdk": "^2.1500.0",
     "axios": "^1.6.0",
     "bcrypt": "^5.1.0",

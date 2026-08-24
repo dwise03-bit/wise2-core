@@ -22,6 +22,37 @@ VoiceOrchestrator
 └── NotificationProvider (Twilio SMS, SendGrid, etc.)
 ```
 
+## Production: Asterisk PJSIP + Twilio BYOC
+
+For production deployment with Twilio Bring Your Own Carrier (BYOC):
+
+```bash
+# Deploy Asterisk configuration
+sudo cp config/pjsip.conf /etc/asterisk/
+sudo cp config/sorcery.conf /etc/asterisk/
+
+# Configure Twilio credentials
+sudo sed -i "s/TWILIO_ACCOUNT_SID/your_account_sid/" /etc/asterisk/pjsip.conf
+sudo sed -i "s/TWILIO_AUTH_TOKEN/your_auth_token/" /etc/asterisk/pjsip.conf
+
+# Restart Asterisk
+sudo systemctl restart asterisk
+
+# Verify registration
+asterisk -rx "pjsip show registrations"
+# Expected: twilio | Registered | twilio-endpoint
+```
+
+**Key Documents:**
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** — Full production deployment guide (30 min)
+- **[TWILIO_BYOC_SETUP.md](TWILIO_BYOC_SETUP.md)** — Detailed Twilio BYOC setup
+- **[SORCERY_FIX_SUMMARY.md](SORCERY_FIX_SUMMARY.md)** — Technical explanation of Asterisk sorcery registration fix
+- **[scripts/verify-twilio-byoc.sh](scripts/verify-twilio-byoc.sh)** — Automated diagnostics
+
+**Configuration Files:**
+- `config/pjsip.conf` — Asterisk PJSIP + Twilio BYOC configuration
+- `config/sorcery.conf` — Sorcery object mappings (registration fix)
+
 ## Getting Started
 
 ### Installation

@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import { google } from 'googleapis';
 
 @Injectable()
 export class PrismaAuthService {
@@ -76,13 +77,6 @@ export class PrismaAuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    console.log('LOGIN DEBUG', {
-      userFound: !!user,
-      hasPasswordHash: !!user?.passwordHash,
-      passwordHashType: typeof user?.passwordHash,
-      passwordHashLength: user?.passwordHash?.length,
-    });
-
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -102,6 +96,67 @@ export class PrismaAuthService {
       user: { id: user.id, email: user.email, name: user.name, role: user.role },
       accessToken,
       refreshToken,
+      expiresIn: 900,
+    };
+  }
+
+  async loginWithGoogle(idToken: string) {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      throw new UnauthorizedException('Google sign-in is not configured');
+    }
+
+    const oauthClient = new google.auth.OAuth2(clientId);
+    const ticket = await oauthClient.verifyIdToken({ idToken, audience: clientId });
+    const payload = ticket.getPayload();
+
+    if (!payload?.sub || !payload.email || payload.email_verified !== true) {
+      throw new UnauthorizedException('Invalid Google identity');
+    }
+
+    const generatedPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const user = await this.prisma.user.upsert({
+      where: { email: payload.email },
+      update: { name: payload.name || undefined },
+      create: {
+        email: payload.email,
+        name: payload.name || payload.email,
+        passwordHash: generatedPasswordHash,
+        role: 'CUSTOMER',
+      },
+    });
+
+    await this.prisma.account.upsert({
+      where: {
+        provider_providerAccountId: {
+          provider: 'google',
+          providerAccountId: payload.sub,
+        },
+      },
+      update: { userId: user.id, id_token: idToken },
+      create: {
+        userId: user.id,
+        type: 'oauth',
+        provider: 'google',
+        providerAccountId: payload.sub,
+        id_token: idToken,
+      },
+    });
+
+    const accessToken = this.jwt.sign(
+      { sub: user.id, email: user.email, role: user.role },
+      { expiresIn: '15m' },
+    );
+    const refreshToken = this.jwt.sign(
+      { sub: user.id, type: 'refresh' },
+      { expiresIn: '7d' },
+    );
+
+    return {
+      user: { id: user.id, email: user.email, name: user.name, role: user.role },
+      accessToken,
+      refreshToken,
+      expiresIn: 900,
     };
   }
 
@@ -154,7 +209,7 @@ export class PrismaAuthService {
         { expiresIn: '15m' },
       );
 
-      return { accessToken: newAccessToken };
+      return { accessToken: newAccessToken, expiresIn: 900 };
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
     }

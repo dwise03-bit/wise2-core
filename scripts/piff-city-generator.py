@@ -13,13 +13,14 @@ python scripts/piff-city-generator.py
 
 import requests
 import json
+import os
 import time
 import sys
 from pathlib import Path
 from datetime import datetime
 
 # Configuration
-COMFY_API = "http://localhost:8188"
+COMFY_API = os.environ.get("COMFYUI_API_URL", "http://localhost:8188").rstrip("/")
 OUTPUT_DIR = Path("instagram_posts")
 OUTPUT_DIR.mkdir(exist_ok=True)
 

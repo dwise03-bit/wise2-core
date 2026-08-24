@@ -48,15 +48,7 @@ class HomeViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
-    init {
-        viewModelScope.launch {
-            val demoMode = userPreferences.demoModeEnabled
-            demoMode.collect { enabled ->
-                if (enabled) jobRepository.ensureDemoSeed(System.currentTimeMillis())
-            }
-        }
-        refresh()
-    }
+    init { refresh() }
 
     fun refresh() {
         viewModelScope.launch {

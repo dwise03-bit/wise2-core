@@ -1,382 +1,451 @@
 import { SlashCommandBuilder } from 'discord.js';
 
+export interface DiscordCommandContext {
+  getStatus(): any;
+  getSummary(): Promise<any>;
+  askHermes(query: string): Promise<{ ok: boolean; response?: string; reason?: string }>;
+  sendDeploymentNotification(status: string, details: any): Promise<void>;
+}
+
+export type DiscordCommandHandler = (
+  interaction: any,
+  context: DiscordCommandContext,
+) => Promise<void>;
+
 export const commands = [
-  // System & Status Commands
   new SlashCommandBuilder()
     .setName('help')
     .setDescription('Show available commands and help'),
 
   new SlashCommandBuilder()
     .setName('status')
-    .setDescription('Show WISE² system status'),
+    .setDescription('Show live WISE2 system and Discord status'),
 
   new SlashCommandBuilder()
     .setName('health')
-    .setDescription('Check API and database health'),
+    .setDescription('Check Hermes, process, and webhook health'),
 
   new SlashCommandBuilder()
     .setName('uptime')
-    .setDescription('Show system uptime and metrics'),
+    .setDescription('Show bot and API uptime'),
 
-  // Infrastructure Commands
-  new SlashCommandBuilder()
-    .setName('docker')
-    .setDescription('Check Docker container status'),
-
-  new SlashCommandBuilder()
-    .setName('logs')
-    .setDescription('View recent system logs')
-    .addStringOption((option) =>
-      option
-        .setName('service')
-        .setDescription('Service to view logs for')
-        .addChoices(
-          { name: 'API', value: 'api' },
-          { name: 'Database', value: 'database' },
-          { name: 'Redis', value: 'redis' },
-          { name: 'Nginx', value: 'nginx' }
-        )
-        .setRequired(false)
-    ),
-
-  new SlashCommandBuilder()
-    .setName('pi')
-    .setDescription('Check Raspberry Pi status'),
-
-  // AI & Assistant Commands
   new SlashCommandBuilder()
     .setName('ask')
-    .setDescription('Ask WISE² AI assistant')
+    .setDescription('Ask Hermes from Discord')
     .addStringOption((option) =>
-      option.setName('query').setDescription('Your question').setRequired(true)
+      option.setName('query').setDescription('Your question').setRequired(true),
     ),
-
-  new SlashCommandBuilder()
-    .setName('analyze')
-    .setDescription('Analyze data or metrics')
-    .addStringOption((option) =>
-      option
-        .setName('type')
-        .setDescription('Type of analysis')
-        .addChoices(
-          { name: 'Revenue', value: 'revenue' },
-          { name: 'Pipeline', value: 'pipeline' },
-          { name: 'Performance', value: 'performance' }
-        )
-        .setRequired(true)
-    ),
-
-  // Project & Business Commands
-  new SlashCommandBuilder()
-    .setName('projects')
-    .setDescription('List active projects'),
-
-  new SlashCommandBuilder()
-    .setName('customers')
-    .setDescription('List customers and metrics'),
 
   new SlashCommandBuilder()
     .setName('sales')
-    .setDescription('Show sales pipeline'),
+    .setDescription('Show live revenue pipeline summary'),
 
   new SlashCommandBuilder()
     .setName('metrics')
-    .setDescription('Show key business metrics'),
+    .setDescription('Show live business metrics'),
 
-  // Deployment & Operations
+  new SlashCommandBuilder()
+    .setName('alerts')
+    .setDescription('Show live Revenue OS alert counts'),
+
+  new SlashCommandBuilder()
+    .setName('dispatch')
+    .setDescription("Show today's dispatch snapshot"),
+
+  new SlashCommandBuilder()
+    .setName('discord')
+    .setDescription('Show Discord bot and webhook configuration status'),
+
   new SlashCommandBuilder()
     .setName('deploy')
-    .setDescription('Trigger deployment')
+    .setDescription('Send a deployment notification to Discord')
     .addStringOption((option) =>
       option
         .setName('environment')
-        .setDescription('Environment to deploy to')
+        .setDescription('Environment label for the notification')
         .addChoices(
-          { name: 'Production', value: 'prod' },
-          { name: 'Staging', value: 'staging' }
+          { name: 'Production', value: 'production' },
+          { name: 'Staging', value: 'staging' },
         )
-        .setRequired(true)
+        .setRequired(true),
     ),
 ];
 
-export const commandHandlers: Record<string, Function> = {
+export const commandHandlers: Record<string, DiscordCommandHandler> = {
   help: handleHelp,
   status: handleStatus,
   health: handleHealth,
   uptime: handleUptime,
-  docker: handleDocker,
-  logs: handleLogs,
-  pi: handlePi,
   ask: handleAsk,
-  analyze: handleAnalyze,
-  projects: handleProjects,
-  customers: handleCustomers,
   sales: handleSales,
   metrics: handleMetrics,
+  alerts: handleAlerts,
+  dispatch: handleDispatch,
+  discord: handleDiscord,
   deploy: handleDeploy,
 };
 
 async function handleHelp(interaction: any) {
   const embed = {
-    title: '📚 WISE² Discord Bot Commands',
-    description: 'Available commands for system monitoring and control',
+    title: 'WISE2 Discord Commands',
+    description: 'Live system, Hermes, and Revenue OS controls from Discord.',
     fields: [
       {
-        name: '🔧 System',
-        value: '`/status` - System status\n`/health` - Health check\n`/uptime` - Uptime metrics',
+        name: 'System',
+        value: '`/status` `/health` `/uptime` `/discord`',
         inline: true,
       },
       {
-        name: '⚙️ Infrastructure',
-        value: '`/docker` - Container status\n`/logs` - View logs\n`/pi` - Pi status',
+        name: 'Hermes',
+        value: '`/ask`',
         inline: true,
       },
       {
-        name: '🤖 AI',
-        value: '`/ask` - Ask assistant\n`/analyze` - Data analysis',
+        name: 'Revenue',
+        value: '`/sales` `/metrics` `/alerts` `/dispatch`',
         inline: true,
       },
       {
-        name: '📊 Business',
-        value: '`/projects` - Active projects\n`/customers` - Customers\n`/sales` - Pipeline\n`/metrics` - KPIs',
-        inline: true,
-      },
-      {
-        name: '🚀 Operations',
-        value: '`/deploy` - Deploy\n`/github` - GitHub status',
+        name: 'Ops',
+        value: '`/deploy`',
         inline: true,
       },
     ],
-    color: 32768,
+    color: 0x0094ff,
   };
+
   await interaction.reply({ embeds: [embed] });
 }
 
-async function handleStatus(interaction: any) {
-  const status = {
-    title: '✅ WISE² System Status',
-    fields: [
-      { name: 'API', value: '🟢 Healthy', inline: true },
-      { name: 'Database', value: '🟢 Connected', inline: true },
-      { name: 'Redis', value: '🟢 Running', inline: true },
-      { name: 'Uptime', value: '99.9%', inline: true },
-      { name: 'Response Time', value: '< 3s', inline: true },
-      { name: 'Requests/min', value: '1,200+', inline: true },
-    ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [status] });
-}
+async function handleStatus(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
 
-async function handleHealth(interaction: any) {
-  const health = {
-    title: '🏥 Health Check',
-    fields: [
-      { name: 'API', value: '✅ 200 OK', inline: true },
-      { name: 'Database', value: '✅ Connected', inline: true },
-      { name: 'Redis', value: '✅ Responding', inline: true },
-      { name: 'Disk', value: '✅ 67% used', inline: true },
-      { name: 'Memory', value: '✅ 27% used', inline: true },
-      { name: 'CPU', value: '✅ < 40%', inline: true },
-    ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [health] });
-}
-
-async function handleUptime(interaction: any) {
-  const uptime = {
-    title: '⏱️ System Uptime',
-    fields: [
-      { name: 'Server Uptime', value: '2 weeks, 3 days', inline: true },
-      { name: 'API Availability', value: '99.9%', inline: true },
-      { name: 'Last Restart', value: '6 Jul 2026', inline: true },
-    ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [uptime] });
-}
-
-async function handleDocker(interaction: any) {
-  const docker = {
-    title: '🐳 Docker Containers',
-    description: 'Current container status',
-    fields: [
-      { name: 'wise2-api', value: '🟢 Running (healthy)', inline: true },
-      { name: 'wise2-postgres', value: '🟢 Running (healthy)', inline: true },
-      { name: 'wise2-redis', value: '🟢 Running', inline: true },
-      { name: 'wise2-dashboard', value: '🟢 Running (healthy)', inline: true },
-      { name: 'wise2-mongodb', value: '🟢 Running', inline: true },
-    ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [docker] });
-}
-
-async function handleLogs(interaction: any) {
-  const service = interaction.options.getString('service') || 'api';
-  const logs = {
-    title: `📋 Recent ${service.toUpperCase()} Logs`,
-    description: `Last 10 log entries for ${service}`,
+  const embed = {
+    title: 'WISE2 Live Status',
+    color: summary.hermes.status === 'online' ? 0x22c55e : 0xffb020,
     fields: [
       {
-        name: 'Log Tail',
-        value: `\`\`\`[2026-07-22 05:23:15] ✅ Service healthy\n[2026-07-22 05:22:10] Request processed: 234ms\n[2026-07-22 05:21:05] Cache hit: 45%\n[2026-07-22 05:20:00] Database query: 125ms\n[2026-07-22 05:19:15] All systems nominal\`\`\``,
+        name: 'Discord Bot',
+        value: summary.discord.connected ? 'Connected' : 'Offline',
+        inline: true,
+      },
+      {
+        name: 'Hermes',
+        value: `${summary.hermes.status} · ${summary.hermes.model || 'unknown model'}`,
+        inline: true,
+      },
+      {
+        name: 'Revenue Context',
+        value: summary.revenue.available ? 'Configured' : 'Missing',
+        inline: true,
+      },
+      {
+        name: 'Webhooks',
+        value: `${summary.discord.webhookChannelsConfigured} configured`,
+        inline: true,
+      },
+      {
+        name: 'Pipeline',
+        value: summary.revenue.available
+          ? `$${Math.round((summary.revenue.pipeline?.totalPipelineValue || 0) / 1000)}k`
+          : 'Unavailable',
+        inline: true,
+      },
+      {
+        name: 'Appointments',
+        value: summary.revenue.available
+          ? String(summary.revenue.kpis?.todaysAppointments?.count || 0)
+          : 'Unavailable',
+        inline: true,
       },
     ],
-    color: 32768,
+    timestamp: new Date().toISOString(),
   };
-  await interaction.reply({ embeds: [logs] });
+
+  await interaction.editReply({ embeds: [embed] });
 }
 
-async function handlePi(interaction: any) {
-  const pi = {
-    title: '🍓 Raspberry Pi Status',
+async function handleHealth(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
+
+  const embed = {
+    title: 'WISE2 Health Check',
+    color: summary.hermes.status === 'online' ? 0x22c55e : 0xff4d4f,
     fields: [
-      { name: 'Tailscale IP', value: '100.103.232.8', inline: true },
-      { name: 'Status', value: '🟢 Connected', inline: true },
-      { name: 'Uptime', value: '45 days', inline: true },
-      { name: 'CPU Temp', value: '52.3°C', inline: true },
-      { name: 'Memory', value: '32% used (896MB)', inline: true },
-      { name: 'Dashboard', value: 'Running fullscreen', inline: true },
+      {
+        name: 'Bot Session',
+        value: summary.discord.connected ? 'Healthy' : 'Disconnected',
+        inline: true,
+      },
+      {
+        name: 'Hermes',
+        value: summary.hermes.status,
+        inline: true,
+      },
+      {
+        name: 'Inference Endpoint',
+        value: summary.hermes.endpoint || 'unknown',
+        inline: false,
+      },
+      {
+        name: 'Webhook Alerts',
+        value: summary.discord.channels.alerts ? 'Configured' : 'Missing',
+        inline: true,
+      },
+      {
+        name: 'Webhook Deployments',
+        value: summary.discord.channels.deployments ? 'Configured' : 'Missing',
+        inline: true,
+      },
+      {
+        name: 'Uptime',
+        value: summary.process.uptimeHuman,
+        inline: true,
+      },
     ],
-    color: 32768,
+    timestamp: new Date().toISOString(),
   };
-  await interaction.reply({ embeds: [pi] });
+
+  await interaction.editReply({ embeds: [embed] });
 }
 
-async function handleAsk(interaction: any) {
+async function handleUptime(interaction: any, context: DiscordCommandContext) {
+  const status = context.getStatus();
+  const uptimeSeconds = Math.floor(process.uptime());
+  const embed = {
+    title: 'WISE2 Uptime',
+    color: 0x22c55e,
+    fields: [
+      { name: 'API Process', value: formatDuration(uptimeSeconds), inline: true },
+      { name: 'Bot Connected', value: status.connected ? 'Yes' : 'No', inline: true },
+      { name: 'Guild ID', value: status.guildId || 'Not configured', inline: true },
+    ],
+    timestamp: new Date().toISOString(),
+  };
+
+  await interaction.reply({ embeds: [embed] });
+}
+
+async function handleAsk(interaction: any, context: DiscordCommandContext) {
   const query = interaction.options.getString('query');
   await interaction.deferReply();
 
-  const response = {
-    title: '🤖 WISE² AI Response',
-    description: query,
-    fields: [
-      {
-        name: 'Answer',
-        value: `Based on the query "${query}", WISE² AI analysis:\n\nThe system shows optimal performance with all services running at peak efficiency. Database queries average 125ms, API response times are under 3 seconds, and concurrent user capacity is 1,000+.`,
-      },
-      { name: 'Confidence', value: '87%', inline: true },
-      { name: 'Processing Time', value: '0.34s', inline: true },
-    ],
-    color: 32768,
-  };
-  await interaction.editReply({ embeds: [response] });
-}
-
-async function handleAnalyze(interaction: any) {
-  const type = interaction.options.getString('type');
-
-  let analysis: any = {
-    title: `📈 ${type.toUpperCase()} Analysis`,
-    color: 32768,
-  };
-
-  if (type === 'revenue') {
-    analysis.fields = [
-      { name: 'Current MRR', value: '$125,000', inline: true },
-      { name: 'Growth (30d)', value: '+12.5%', inline: true },
-      { name: 'Forecast', value: '$140,625 (30d)', inline: true },
-    ];
-  } else if (type === 'pipeline') {
-    analysis.fields = [
-      { name: 'Total Pipeline', value: '$685,000', inline: true },
-      { name: 'Deals in Progress', value: '9', inline: true },
-      { name: 'Close Rate', value: '65%', inline: true },
-    ];
-  } else {
-    analysis.fields = [
-      { name: 'API Uptime', value: '99.9%', inline: true },
-      { name: 'Avg Response', value: '2.3s', inline: true },
-      { name: 'Error Rate', value: '0.1%', inline: true },
-    ];
+  const result = await context.askHermes(query);
+  if (!result.ok) {
+    await interaction.editReply({
+      embeds: [
+        {
+          title: 'Hermes Unavailable',
+          description: result.reason || 'Hermes is not configured for Discord chat yet.',
+          color: 0xffb020,
+        },
+      ],
+    });
+    return;
   }
 
-  await interaction.reply({ embeds: [analysis] });
-}
-
-async function handleProjects(interaction: any) {
-  const projects = {
-    title: '📁 Active Projects',
-    fields: [
-      { name: 'WISE² Core v1.0', value: 'In Production - 100% complete', inline: false },
-      { name: 'Discord Integration', value: 'Phase 2 - 50% complete', inline: false },
-      { name: 'Raspberry Pi Sync', value: 'Phase 2 - In Progress', inline: false },
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Hermes Response',
+        description: truncate(result.response || '', 3800),
+        color: 0x0094ff,
+      },
     ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [projects] });
+  });
 }
 
-async function handleCustomers(interaction: any) {
-  const customers = {
-    title: '👥 Customer Overview',
-    fields: [
-      { name: 'Total Customers', value: '5', inline: true },
-      { name: 'Active', value: '5', inline: true },
-      { name: 'MRR', value: '$125,000', inline: true },
+async function handleSales(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
+
+  if (!summary.revenue.available) {
+    await interaction.editReply({ embeds: [buildRevenueUnavailableEmbed()] });
+    return;
+  }
+
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Revenue Pipeline',
+        color: 0x22c55e,
+        fields: [
+          {
+            name: 'Pipeline Value',
+            value: `$${Math.round((summary.revenue.pipeline.totalPipelineValue || 0) / 1000)}k`,
+            inline: true,
+          },
+          {
+            name: 'Conversion Rate',
+            value: `${summary.revenue.pipeline.conversionRate || 0}%`,
+            inline: true,
+          },
+          {
+            name: 'Open Stages',
+            value: String((summary.revenue.pipeline.stages || []).filter((stage: any) => stage.count > 0).length),
+            inline: true,
+          },
+        ],
+      },
     ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [customers] });
+  });
 }
 
-async function handleSales(interaction: any) {
-  const sales = {
-    title: '💰 Sales Pipeline',
-    fields: [
-      { name: 'Total Pipeline', value: '$685,000', inline: true },
-      { name: 'Deals', value: '9', inline: true },
-      { name: 'Avg Deal Size', value: '$76,111', inline: true },
+async function handleMetrics(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
+
+  if (!summary.revenue.available) {
+    await interaction.editReply({ embeds: [buildRevenueUnavailableEmbed()] });
+    return;
+  }
+
+  const kpis = summary.revenue.kpis;
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Business Metrics',
+        color: 0x0094ff,
+        fields: [
+          { name: 'New Leads', value: String(kpis.newLeads?.count || 0), inline: true },
+          { name: 'Sold This Week', value: `$${Math.round((kpis.soldThisWeek?.amount || 0) / 1000)}k`, inline: true },
+          { name: 'Jobs Completed', value: String(kpis.jobsCompleted?.count || 0), inline: true },
+          { name: 'Today Appointments', value: String(kpis.todaysAppointments?.count || 0), inline: true },
+        ],
+      },
     ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [sales] });
+  });
 }
 
-async function handleMetrics(interaction: any) {
-  const metrics = {
-    title: '📊 Key Metrics',
-    fields: [
-      { name: 'Revenue (30d)', value: '$125,000', inline: true },
-      { name: 'Growth', value: '+12.5%', inline: true },
-      { name: 'Customers', value: '5', inline: true },
-      { name: 'Pipeline', value: '$685,000', inline: true },
-      { name: 'Active Projects', value: '3', inline: true },
-      { name: 'Team Size', value: '1', inline: true },
+async function handleAlerts(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
+
+  if (!summary.revenue.available) {
+    await interaction.editReply({ embeds: [buildRevenueUnavailableEmbed()] });
+    return;
+  }
+
+  const alerts = summary.revenue.alerts;
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Revenue Alerts',
+        color: 0xffb020,
+        fields: [
+          { name: 'Unsold Estimates', value: String(alerts.unsoldEstimates || 0), inline: true },
+          { name: 'Customers Waiting', value: String(alerts.customersWaiting || 0), inline: true },
+          { name: 'Maintenance Due', value: String(alerts.maintenanceDue || 0), inline: true },
+          { name: 'Overdue Follow-ups', value: String(alerts.overdueFollowUps || 0), inline: true },
+        ],
+      },
     ],
-    color: 32768,
-  };
-  await interaction.reply({ embeds: [metrics] });
+  });
 }
 
-async function handleDeploy(interaction: any) {
-  const env = interaction.options.getString('environment');
+async function handleDispatch(interaction: any, context: DiscordCommandContext) {
+  await interaction.deferReply();
+  const summary = await context.getSummary();
+
+  if (!summary.revenue.available) {
+    await interaction.editReply({ embeds: [buildRevenueUnavailableEmbed()] });
+    return;
+  }
+
+  const dispatch = summary.revenue.dispatch;
+  const nextJobs = (dispatch.todaysJobs || [])
+    .slice(0, 3)
+    .map((job: any) => {
+      const customer = [job.customer?.firstName, job.customer?.lastName].filter(Boolean).join(' ') || 'Unknown customer';
+      return `${formatClock(job.scheduledStart)} · ${customer} · ${job.status}`;
+    })
+    .join('\n') || 'No jobs scheduled';
+
+  await interaction.editReply({
+    embeds: [
+      {
+        title: "Today's Dispatch",
+        color: 0xffb020,
+        fields: [
+          { name: 'Total Jobs', value: String(dispatch.totalJobs || 0), inline: true },
+          { name: 'Completed', value: String(dispatch.statusCounts?.completed || 0), inline: true },
+          { name: 'Dispatched', value: String(dispatch.statusCounts?.dispatched || 0), inline: true },
+          { name: 'Upcoming', value: nextJobs, inline: false },
+        ],
+      },
+    ],
+  });
+}
+
+async function handleDiscord(interaction: any, context: DiscordCommandContext) {
+  const status = context.getStatus();
+  await interaction.reply({
+    embeds: [
+      {
+        title: 'Discord Integration',
+        color: status.connected ? 0x22c55e : 0xffb020,
+        fields: [
+          { name: 'Connected', value: status.connected ? 'Yes' : 'No', inline: true },
+          { name: 'Commands', value: String(status.commandsCount || 0), inline: true },
+          { name: 'Guild', value: status.guildId || 'Not configured', inline: true },
+          { name: 'Webhook Channels', value: String(status.webhookChannelsConfigured || 0), inline: true },
+          { name: 'Default Tenant', value: status.defaultTenantId || 'Missing', inline: true },
+          { name: 'Hermes User', value: status.defaultHermesUserId || 'Missing', inline: true },
+        ],
+      },
+    ],
+  });
+}
+
+async function handleDeploy(interaction: any, context: DiscordCommandContext) {
+  const environment = interaction.options.getString('environment');
   await interaction.deferReply();
 
-  const deploy = {
-    title: '🚀 Deployment Started',
-    fields: [
-      { name: 'Environment', value: env === 'prod' ? 'Production' : 'Staging', inline: true },
-      { name: 'Status', value: 'In Progress...', inline: true },
-      { name: 'Branch', value: 'main', inline: true },
+  await context.sendDeploymentNotification('Deployment requested from Discord', {
+    environment,
+    duration: 'pending',
+    commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.RENDER_GIT_COMMIT || 'manual',
+  });
+
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Deployment Notification Sent',
+        description: `A deployment event was posted for ${environment}.`,
+        color: 0x22c55e,
+      },
     ],
-    color: 32768,
+  });
+}
+
+function buildRevenueUnavailableEmbed() {
+  return {
+    title: 'Revenue Context Unavailable',
+    description: 'Set `DISCORD_DEFAULT_TENANT_ID` so Discord can read live Revenue OS metrics.',
+    color: 0xffb020,
   };
+}
 
-  await interaction.editReply({ embeds: [deploy] });
+function truncate(value: string, max: number) {
+  return value.length > max ? `${value.slice(0, max - 1)}…` : value;
+}
 
-  setTimeout(async () => {
-    const complete = {
-      title: '✅ Deployment Complete',
-      fields: [
-        { name: 'Environment', value: env === 'prod' ? 'Production' : 'Staging', inline: true },
-        { name: 'Status', value: 'Success', inline: true },
-        { name: 'Duration', value: '2m 45s', inline: true },
-      ],
-      color: 32768,
-    };
-    await interaction.followUp({ embeds: [complete] });
-  }, 5000);
+function formatDuration(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+}
+
+function formatClock(value?: string) {
+  if (!value) return 'Unknown time';
+  try {
+    return new Date(value).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return value;
+  }
 }

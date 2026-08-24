@@ -1,6 +1,7 @@
 package com.wise2.fieldtech.ui.screens.login
 
-import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,14 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,33 +32,36 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.wise2.fieldtech.BuildConfig
 import com.wise2.fieldtech.R
 import com.wise2.fieldtech.ui.theme.ChaosBlue
 import com.wise2.fieldtech.ui.theme.ElectricBlue
 
-private const val GOOGLE_WEB_CLIENT_ID = "YOUR_GOOGLE_WEB_CLIENT_ID"
-private const val GOOGLE_SIGN_IN_REQUEST_CODE = 9001
-
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
-    var demoMode by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val activity = context as? Activity
+    val googleEnabled = BuildConfig.GOOGLE_WEB_CLIENT_ID.isNotBlank()
 
-    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(GOOGLE_WEB_CLIENT_ID)
+    val googleOptionsBuilder = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestEmail()
-        .build()
+    if (googleEnabled) {
+        googleOptionsBuilder.requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
+    }
+    val gso = googleOptionsBuilder.build()
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
+    val googleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val idToken = task.getResult(ApiException::class.java).idToken
+            if (idToken != null) viewModel.loginWithGoogle(idToken)
+        } catch (_: ApiException) {
+            viewModel.onGoogleLoginFailed()
+        }
+    }
 
     LaunchedEffect(state.loggedIn) {
         if (state.loggedIn) onLoggedIn()
-    }
-
-    if (demoMode) {
-        onLoggedIn()
-        return
     }
 
     Column(
@@ -112,22 +113,14 @@ fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
         Spacer(Modifier.height(12.dp))
         OutlinedButton(
             onClick = {
-                activity?.let { act ->
-                    googleSignInClient.signOut().addOnCompleteListener {
-                        val signInIntent = googleSignInClient.signInIntent
-                        @Suppress("DEPRECATION")
-                        act.startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQUEST_CODE)
-                    }
+                googleSignInClient.signOut().addOnCompleteListener {
+                    googleLauncher.launch(googleSignInClient.signInIntent)
                 }
             },
-            enabled = !state.isLoading,
+            enabled = !state.isLoading && googleEnabled,
             modifier = Modifier.fillMaxWidth().height(56.dp),
         ) {
-            Text("SIGN IN WITH GOOGLE", color = ElectricBlue)
-        }
-        Spacer(Modifier.height(16.dp))
-        TextButton(onClick = { demoMode = true }, modifier = Modifier.fillMaxWidth()) {
-            Text("DEMO MODE", color = ElectricBlue)
+            Text(if (googleEnabled) "SIGN IN WITH GOOGLE" else "GOOGLE SIGN-IN NEEDS CONFIG", color = ElectricBlue)
         }
     }
 }

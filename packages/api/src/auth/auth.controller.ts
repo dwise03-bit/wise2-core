@@ -21,6 +21,7 @@ import { Response } from 'express';
 import { PrismaAuthService } from './prisma-auth.service';
 import { SignupDto } from './dto/index';
 import { LoginDto } from './dto/index';
+import { GoogleLoginDto } from './dto/index';
 import { VerifyEmailDto } from './dto/index';
 import { RefreshTokenDto } from './dto/index';
 import { PasswordResetRequestDto } from './dto/index';
@@ -125,6 +126,15 @@ export class AuthController {
       dto.email,
       dto.password,
     );
+  }
+
+  @Post('google')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 900000 } })
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Authenticate with a Google ID token' })
+  async googleLogin(@Body() dto: GoogleLoginDto): Promise<any> {
+    return this.authService.loginWithGoogle(dto.idToken);
   }
 
   /**

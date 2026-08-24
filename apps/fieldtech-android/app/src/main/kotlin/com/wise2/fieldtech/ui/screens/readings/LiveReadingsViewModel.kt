@@ -33,6 +33,7 @@ class LiveReadingsViewModel(
     val uiState: StateFlow<LiveReadingsUiState> = _uiState.asStateFlow()
 
     private var streamJob: Job? = null
+    private var scanJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -43,7 +44,8 @@ class LiveReadingsViewModel(
     }
 
     fun scan() {
-        viewModelScope.launch {
+        scanJob?.cancel()
+        scanJob = viewModelScope.launch {
             toolManager.scan().collect { device ->
                 _uiState.value = _uiState.value.copy(discoveredDevices = _uiState.value.discoveredDevices + device)
             }
@@ -52,6 +54,7 @@ class LiveReadingsViewModel(
 
     fun connect(device: ToolDevice) {
         viewModelScope.launch {
+            scanJob?.cancel()
             toolManager.connect(device)
             streamJob?.cancel()
             streamJob = viewModelScope.launch {
@@ -68,6 +71,7 @@ class LiveReadingsViewModel(
 
     fun disconnect() {
         streamJob?.cancel()
+        scanJob?.cancel()
         viewModelScope.launch { toolManager.disconnect() }
     }
 

@@ -1,5 +1,10 @@
 package com.wise2.fieldtech.ui.screens.readings
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,7 +32,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.wise2.fieldtech.bluetooth.model.ToolConnectionState
 import com.wise2.fieldtech.ui.components.DemoDataBadge
 import com.wise2.fieldtech.ui.components.WiseCard
@@ -38,9 +45,20 @@ import com.wise2.fieldtech.ui.theme.StatusGreen
 @Composable
 fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
+    } else arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
+        if (grants.values.all { it }) viewModel.scan()
+    }
 
     LaunchedEffect(Unit) {
-        if (state.connectionState == ToolConnectionState.DISCONNECTED) viewModel.scan()
+        if (state.connectionState == ToolConnectionState.DISCONNECTED) {
+            if (bluetoothPermissions.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }) {
+                viewModel.scan()
+            } else permissionLauncher.launch(bluetoothPermissions)
+        }
     }
 
     Scaffold(

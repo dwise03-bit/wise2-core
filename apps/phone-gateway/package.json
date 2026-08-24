@@ -11,7 +11,7 @@
     "lint": "eslint src/**/*.ts"
   },
   "dependencies": {
-    "asterisk-ari-client": "^1.0.0",
+    "ari-client": "^2.2.0",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
     "dotenv": "^16.3.1",
@@ -23,7 +23,7 @@
     "redis": "^4.6.10",
     "pcm-volume": "^1.0.0",
     "wav": "^1.0.2",
-    "node-record-lpcm16": "^0.4.4"
+    "node-record-lpcm16": "^1.0.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.20",

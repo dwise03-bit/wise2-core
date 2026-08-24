@@ -32,7 +32,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
-    val startDestination = if (container.authRepository.isLoggedIn) Destination.Home.route else Destination.Login.route
+    // Demo mode: always go to Home, skip login
+    val startDestination = Destination.Home.route
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Destination.Login.route) {

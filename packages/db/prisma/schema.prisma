@@ -2572,6 +2572,10 @@ model Tenant {
   digitalTwins      DigitalTwin[]
   twinKnowledge     DigitalTwinKnowledgeItem[]
   twinConsents      DigitalTwinConsent[]
+  cjaysCustomers    CjaysCustomer[]
+  cjaysVehicles     CjaysVehicle[]
+  cjaysJobs         CjaysJob[]
+  cjaysSyncEvents   CjaysSyncEvent[]
 
   // WISE Defense Safety Radar + Comms Grid
   wiseDefenseMemberships WiseDefenseMembership[]
@@ -5697,3 +5701,78 @@ model OptOut {
 // - callbackTasks: CallbackTask[]
 // - consentRecords: Consent[]
 
+// CJAYS Auto Recon Solutions — Wise² client vertical
+model CjaysCustomer {
+  id            String   @id @default(cuid())
+  tenantId      String   @map("tenant_id")
+  clientId      String   @map("client_id")
+  name          String
+  phone         String
+  email         String   @default("")
+  serverVersion Int      @default(1) @map("server_version")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, clientId])
+  @@index([tenantId, phone])
+  @@map("cjays_customers")
+}
+
+model CjaysVehicle {
+  id               String   @id @default(cuid())
+  tenantId         String   @map("tenant_id")
+  clientId         String   @map("client_id")
+  customerClientId String?  @map("customer_client_id")
+  vin              String
+  year             String   @default("")
+  make             String   @default("")
+  model            String   @default("")
+  color            String   @default("")
+  serverVersion    Int      @default(1) @map("server_version")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, clientId])
+  @@unique([tenantId, vin])
+  @@map("cjays_vehicles")
+}
+
+model CjaysJob {
+  id              String   @id @default(cuid())
+  tenantId        String   @map("tenant_id")
+  clientId        String   @map("client_id")
+  vehicleClientId String   @map("vehicle_client_id")
+  service         String
+  status          String   @default("In Progress")
+  price           String   @default("")
+  checklist       Json     @default("[]")
+  notes           String   @default("") @db.Text
+  paymentMethod   String   @default("") @map("payment_method")
+  paidAmount      String   @default("") @map("paid_amount")
+  beforePhotos    Json     @default("[]") @map("before_photos")
+  afterPhotos     Json     @default("[]") @map("after_photos")
+  serverVersion   Int      @default(1) @map("server_version")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, clientId])
+  @@index([tenantId, status])
+  @@map("cjays_jobs")
+}
+
+model CjaysSyncEvent {
+  id           String   @id @default(cuid())
+  tenantId     String   @map("tenant_id")
+  requestId    String   @map("request_id")
+  userId       String   @map("user_id")
+  recordCounts Json     @map("record_counts")
+  createdAt    DateTime @default(now()) @map("created_at")
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, requestId])
+  @@index([tenantId, createdAt])
+  @@map("cjays_sync_events")
+}

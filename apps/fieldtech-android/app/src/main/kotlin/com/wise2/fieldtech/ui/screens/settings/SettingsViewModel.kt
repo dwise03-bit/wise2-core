@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 data class SettingsUiState(
     val technicianName: String = "",
-    val demoModeEnabled: Boolean = true,
     val currentVersionName: String = BuildConfig.VERSION_NAME,
     val updateCheckState: UpdateCheckState = UpdateCheckState.Idle,
 )
@@ -40,15 +39,10 @@ class SettingsViewModel(
 
     val uiState: StateFlow<SettingsUiState> = kotlinx.coroutines.flow.combine(
         userPreferences.technicianName,
-        userPreferences.demoModeEnabled,
         updateState,
-    ) { name, demoMode, update ->
-        SettingsUiState(technicianName = name, demoModeEnabled = demoMode, updateCheckState = update)
+    ) { name, update ->
+        SettingsUiState(technicianName = name, updateCheckState = update)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
-
-    fun setDemoMode(enabled: Boolean) {
-        viewModelScope.launch { userPreferences.setDemoMode(enabled) }
-    }
 
     fun setTechnicianName(name: String) {
         viewModelScope.launch { userPreferences.setTechnicianName(name) }

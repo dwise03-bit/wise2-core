@@ -233,7 +233,7 @@ app.post('/test/inbound-call', async (req: Request, res: Response) => {
 /**
  * WebSocket for real-time call events
  */
-wsApp.ws('/ws/calls', (ws, req) => {
+wsApp.app.ws('/ws/calls', (ws, req) => {
   logger.info('WebSocket client connected');
 
   // Send active calls on connect

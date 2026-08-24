@@ -31,8 +31,8 @@ const statusColors: Record<string, string> = {
   CANCELED: 'bg-wise-danger/10 border-wise-danger/50',
 };
 
-const statusBadges: Record<string, 'default' | 'warning' | 'success' | 'danger'> = {
-  SCHEDULED: 'default',
+const statusBadges: Record<string, 'neutral' | 'warning' | 'success' | 'danger'> = {
+  SCHEDULED: 'neutral',
   DISPATCHED: 'warning',
   ON_SITE: 'warning',
   COMPLETED: 'success',
@@ -104,7 +104,7 @@ export function TodaysDispatchBoard({ tenantId }: { tenantId: string }) {
                         <span className="text-sm font-semibold text-wise-electric">
                           {formatTime(job.scheduledStart)}
                         </span>
-                        <Badge variant={statusBadges[job.status] || 'default'}>
+                        <Badge variant={statusBadges[job.status] || 'neutral'}>
                           {job.status.replace('_', ' ')}
                         </Badge>
                       </div>

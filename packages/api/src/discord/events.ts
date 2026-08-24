@@ -9,7 +9,7 @@ export async function handleReady(client: any) {
   console.log('🟢 Bot status updated');
 }
 
-export async function handleInteraction(interaction: any, db: any) {
+export async function handleInteraction(interaction: any, db: any, context?: any) {
   if (!interaction.isChatInputCommand()) return;
 
   const { commandName } = interaction;
@@ -31,7 +31,7 @@ export async function handleInteraction(interaction: any, db: any) {
     });
 
     // Execute handler
-    await handler(interaction);
+    await handler(interaction, context);
 
     console.log(`✅ Executed command: /${commandName} by ${interaction.user.username}`);
   } catch (err) {
