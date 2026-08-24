@@ -11,9 +11,17 @@ import { STTService } from './services/stt.service';
 import { TTSService } from './services/tts.service';
 import { ConversationService } from './services/conversation.service';
 import { PhoneWebhookController } from './controllers/phone-webhook.controller';
+import { CallController } from './controllers/call.controller';
+import { CustomerController } from './controllers/customer.controller';
+import { SMSController } from './controllers/sms.controller';
 
 @Module({
-  controllers: [PhoneWebhookController],
+  controllers: [
+    PhoneWebhookController,
+    CallController,
+    CustomerController,
+    SMSController,
+  ],
   providers: [
     {
       provide: 'TELEPHONY_PROVIDER',
