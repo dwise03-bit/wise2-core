@@ -8,9 +8,6 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
   ],
-  pages: {
-    signIn: '/signin',
-  },
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Redirect to field-tech page after signin
