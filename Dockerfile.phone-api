@@ -1,54 +1,39 @@
-# WISE² Phone API Service Dockerfile
-# Includes phone service, STT/TTS, and background workers
-# Runs on existing infrastructure (shared database, Redis)
+# WISE² Phone Gateway Service Dockerfile (Simplified)
+# Phone system with Asterisk integration, STT/TTS, background workers
 
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-# Install dependencies
-COPY package*.json ./
-RUN npm ci
-
-# Copy source
-COPY apps/api ./apps/api
-COPY packages ./packages
-COPY tsconfig*.json ./
-
-# Build
-RUN npm run build --workspace=@wise2/api
-
-# Runtime
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Install runtime dependencies only
+# Install system dependencies
 RUN apk add --no-cache \
     curl \
     python3 \
-    ffmpeg
+    ffmpeg \
+    typescript
 
-# Copy from builder
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
+# Copy monorepo files
+COPY package*.json ./
+COPY apps/phone-gateway ./apps/phone-gateway
+COPY packages ./packages
+COPY tsconfig*.json ./
+COPY pnpm-workspace.yaml .
 
-# Create directories for audio files
+# Install all dependencies at root level
+RUN npm install
+
+# Create audio directory
 RUN mkdir -p /tmp/wise2-phone-audio
 
 # Environment
 ENV NODE_ENV=production \
     PORT=3001 \
-    PHONE_WEBHOOK_URL=http://localhost:3001 \
-    WHISPER_URL=http://localhost:8000/v1/audio/transcriptions \
-    HERMES_ENDPOINT=http://localhost:11435/v1/chat/completions \
-    HERMES_CHAT_MODEL=hermes2-pro \
-    HERMES_TIMEOUT_MS=90000
+    LOG_LEVEL=info
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/api/v1/phone/health || exit 1
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 
-# Run
-CMD ["node", "dist/apps/api/src/main.js"]
+# Run phone-gateway with ts-node or node
+WORKDIR /app/apps/phone-gateway
+CMD ["node", "--loader=ts-node/esm", "src/index.ts"]

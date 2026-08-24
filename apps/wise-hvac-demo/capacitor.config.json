@@ -1,9 +1,9 @@
 {
-  "appId": "com.wise2.fieldtech",
+  "appId": "com.wisedefense.fieldtech",
   "appName": "WISE Field Tech",
   "webDir": "out",
   "server": {
-    "url": "https://wise2.net/wise-hvac-demo",
+    "url": "http://192.168.8.114:3024",
     "androidScheme": "https",
     "allowNavigation": ["https://wise2.net", "https://*.wise2.net", "https://accounts.google.com"]
   },

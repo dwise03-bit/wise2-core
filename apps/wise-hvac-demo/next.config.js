@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  basePath: process.env.NODE_ENV === 'production' && !process.env.CAPACITOR_BUILD ? '/wise-hvac-demo' : '',
-  output: process.env.CAPACITOR_BUILD ? 'export' : 'standalone',
-  trailingSlash: true,
-  // Owner demo runs fully self-contained: no production API, no live integrations.
+  reactStrictMode: false,
+  basePath: '/wise-hvac-demo',
+  output: 'standalone',
+  trailingSlash: false,
   env: {
     NEXT_PUBLIC_DEMO_MODE: 'true',
   },

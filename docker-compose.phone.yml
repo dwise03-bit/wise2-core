@@ -17,8 +17,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://wise2:${DATABASE_PASSWORD:-wise2}@postgres:5432/wise2_prod
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/0
+      DATABASE_URL: postgresql://wise2:wise2_password@host.docker.internal:5433/wise2_prod
+      REDIS_URL: redis://:redis_password@host.docker.internal:6380/1
 
       # Phone Configuration
       PHONE_PUBLIC_BASE_URL: https://${DOMAIN:-localhost}/phone
@@ -42,12 +42,6 @@ services:
       LOG_LEVEL: info
 
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      whisper:
-        condition: service_healthy
       ollama:
         condition: service_started
 
@@ -57,22 +51,23 @@ services:
       - phone-audio:/tmp/wise2-phone-audio
 
   # Whisper STT Service (Local speech-to-text)
-  whisper:
-    image: onesoil/whisper-api:latest
-    container_name: wise2-whisper
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      MODEL: base
-      DEVICE: cpu
-    networks:
-      - wise2
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+  # NOTE: Disabled - waiting for valid Docker image
+  # whisper:
+  #   image: rungalileo/whisper-api:latest
+  #   container_name: wise2-whisper
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     MODEL: base
+  #     DEVICE: cpu
+  #   networks:
+  #     - wise2
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
   # Ollama / Hermes (Local LLM)
   # Note: If already running on host at 11435, comment this out
