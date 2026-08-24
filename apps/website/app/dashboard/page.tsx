@@ -278,6 +278,12 @@ export default function DashboardPage() {
                 Live Studio
               </Link>
               <Link
+                href="/dashboard/spectrum"
+                className="block px-4 py-2 bg-green-600/10 hover:bg-green-600/20 border border-green-500/30 rounded-lg text-green-400 text-sm font-semibold transition-colors text-center"
+              >
+                📡 Spectrum Monitor
+              </Link>
+              <Link
                 href="/gallery"
                 className="block px-4 py-2 bg-wise-primary/10 hover:bg-wise-primary/20 border border-wise-primary-border rounded-lg text-wise-primary text-sm font-semibold transition-colors text-center"
               >

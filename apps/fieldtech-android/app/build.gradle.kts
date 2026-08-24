@@ -21,7 +21,7 @@ android {
         buildConfigField(
             "String",
             "API_BASE_URL",
-            "\"${System.getenv("WISE2_FIELD_API_BASE_URL") ?: "https://wise2.net/api/"}\"",
+            "\"${System.getenv("WISE2_FIELD_API_BASE_URL") ?: "https://wise2.net/wise-hvac-demo/api/"}\"",
         )
         buildConfigField(
             "String",

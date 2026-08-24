@@ -414,6 +414,101 @@ async def list_sdr_signals(_: bool = Depends(verify_api_key), limit: int = 100):
     ''', (limit,))
     return {'signals': [dict(row) for row in result]}
 
+@app.get('/api/sdr/spectrum')
+async def get_spectrum(_: bool = Depends(verify_api_key)):
+    """Get latest spectrum snapshot (frequency vs power)."""
+    # Get most recent spectrum data
+    result = db.query('''
+        SELECT frequency, signal_strength as power_db, detected_at as timestamp
+        FROM sdr_signals
+        WHERE detected_at > datetime('now', '-30 seconds')
+        ORDER BY frequency ASC
+    ''')
+
+    spectrum_data = [dict(row) for row in result]
+
+    return {
+        'spectrum': spectrum_data,
+        'frequency_range': {
+            'min_mhz': 88,
+            'max_mhz': 1200
+        },
+        'timestamp': datetime.utcnow().isoformat(),
+        'total_signals': len(spectrum_data),
+        'peak_power_db': max([s['power_db'] for s in spectrum_data], default=-100)
+    }
+
+@app.get('/api/sdr/frequencies')
+async def get_active_frequencies(_: bool = Depends(verify_api_key), threshold_db: float = -50):
+    """Get detected active frequencies above threshold."""
+    result = db.query('''
+        SELECT frequency, signal_strength as power_db, mode, detected_at as timestamp
+        FROM sdr_signals
+        WHERE signal_strength > ?
+        AND detected_at > datetime('now', '-1 minutes')
+        ORDER BY signal_strength DESC
+    ''', (threshold_db,))
+
+    frequencies = [dict(row) for row in result]
+
+    # Classify signals by type
+    classified = classify_signals(frequencies)
+
+    return {
+        'frequencies': frequencies,
+        'classified': classified,
+        'threshold_db': threshold_db,
+        'count': len(frequencies),
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
+@app.get('/api/sdr/alerts')
+async def get_spectrum_alerts(_: bool = Depends(verify_api_key)):
+    """Get spectrum anomaly alerts."""
+    result = db.query('''
+        SELECT * FROM alerts
+        WHERE alert_type LIKE 'sdr%' AND status = 'OPEN'
+        ORDER BY created_at DESC
+        LIMIT 50
+    ''')
+
+    alerts = [dict(row) for row in result]
+
+    return {
+        'alerts': alerts,
+        'count': len(alerts),
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
+@app.post('/api/sdr/spectrum/snapshot')
+async def record_spectrum_snapshot(data: Dict[str, Any], _: bool = Depends(verify_api_key)):
+    """Record a full spectrum snapshot from RTL-SDR."""
+    import uuid
+    snapshot_id = str(uuid.uuid4())
+
+    # Store spectrum data points
+    for signal in data.get('signals', []):
+        db.query('''
+            INSERT INTO sdr_signals (id, frequency, signal_strength, mode, metadata)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (
+            str(uuid.uuid4()),
+            signal.get('frequency'),
+            signal.get('power_db'),
+            signal.get('mode'),
+            json.dumps(signal.get('metadata', {}))
+        ))
+
+    # Check for anomalies
+    await check_spectrum_anomalies(data.get('signals', []))
+
+    return {
+        'snapshot_id': snapshot_id,
+        'signals_recorded': len(data.get('signals', [])),
+        'status': 'recorded',
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
 @app.get('/api/system/health')
 async def system_health(_: bool = Depends(verify_api_key)):
     """Get system health status."""
@@ -505,6 +600,84 @@ def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     c = 2 * asin(sqrt(a))
     r = 3958.8  # Radius of earth in miles
     return c * r
+
+def classify_signals(frequencies: List[Dict]) -> Dict[str, List]:
+    """Classify detected signals by type."""
+    classified = {
+        'fm_radio': [],        # 88-108 MHz
+        'noaa_weather': [],    # 162.4-162.55 MHz
+        'gmrs_frs': [],        # 462-467 MHz
+        'public_safety': [],   # 700-800 MHz
+        'cellular': [],        # 824-894 MHz, 1850-1990 MHz
+        'ism': [],             # 915 MHz, 2.4 GHz
+        'other': []
+    }
+
+    for freq_data in frequencies:
+        freq = freq_data.get('frequency', 0)
+
+        if 88 <= freq <= 108:
+            classified['fm_radio'].append(freq_data)
+        elif 162.4 <= freq <= 162.55:
+            classified['noaa_weather'].append(freq_data)
+        elif 462 <= freq <= 467:
+            classified['gmrs_frs'].append(freq_data)
+        elif 700 <= freq <= 800:
+            classified['public_safety'].append(freq_data)
+        elif (824 <= freq <= 894) or (1850 <= freq <= 1990):
+            classified['cellular'].append(freq_data)
+        elif (900 <= freq <= 930) or (2400 <= freq <= 2500):
+            classified['ism'].append(freq_data)
+        else:
+            classified['other'].append(freq_data)
+
+    return {k: v for k, v in classified.items() if v}
+
+async def check_spectrum_anomalies(signals: List[Dict]):
+    """Check for spectrum anomalies and create alerts."""
+    import uuid
+
+    # Get historical average power for each frequency
+    anomalies = []
+
+    for signal in signals:
+        freq = signal.get('frequency', 0)
+        power = signal.get('power_db', -100)
+
+        # Query historical data
+        hist = db.query('''
+            SELECT AVG(signal_strength) as avg_power, COUNT(*) as count
+            FROM sdr_signals
+            WHERE frequency = ? AND detected_at > datetime('now', '-5 minutes')
+        ''', (freq,), fetch_one=True)
+
+        if hist and hist['count'] > 3:
+            avg_power = hist['avg_power']
+            deviation = power - avg_power
+
+            # Alert if signal increased significantly (>10dB)
+            if deviation > 10:
+                anomalies.append({
+                    'frequency': freq,
+                    'power_db': power,
+                    'avg_power': avg_power,
+                    'deviation': deviation
+                })
+
+    # Create alerts for anomalies
+    if anomalies:
+        for anomaly in anomalies:
+            alert_id = str(uuid.uuid4())
+            db.query('''
+                INSERT INTO alerts
+                (id, alert_type, title, message, severity, source_id)
+                VALUES (?, 'sdr.power_anomaly', ?, ?, 'WARNING', ?)
+            ''', (
+                alert_id,
+                f"Signal spike at {anomaly['frequency']:.1f} MHz",
+                f"Power increased {anomaly['deviation']:.1f}dB above baseline",
+                f"freq_{anomaly['frequency']}"
+            ))
 
 # Startup
 @app.on_event('startup')
