@@ -151,7 +151,7 @@ export function Hero() {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'center 65%',
-              filter: 'brightness(0.55) contrast(1.15) saturate(0.7)',
+              filter: 'brightness(0.75) contrast(1.1) saturate(0.85)',
             }}
           />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(3,5,7,0.9) 0%, rgba(3,5,7,0.25) 40%, transparent 65%)' }} />
