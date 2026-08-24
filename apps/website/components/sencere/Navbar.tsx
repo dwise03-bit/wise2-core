@@ -43,7 +43,7 @@ export function Navbar() {
             <span className="hidden leading-tight sm:block">
               <span
                 className="block text-lg font-black text-[#F5E6D3]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: 'var(--font-headers)' }}
               >
                 SenCere
               </span>

@@ -40,7 +40,7 @@ export function BrandShowcase() {
         <div className="mb-12 text-center lg:mb-16">
           <h2
             className="text-[32px] font-bold uppercase leading-tight tracking-wider text-[#F5E6D3] sm:text-[40px]"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-headers)' }}
           >
             OUR BRANDS. ONE MOVEMENT.
           </h2>
@@ -64,7 +64,7 @@ export function BrandShowcase() {
                   <h3
                     className="whitespace-pre-line text-[24px] font-black uppercase leading-tight tracking-wider"
                     style={{
-                      fontFamily: 'var(--font-display)',
+                      fontFamily: 'var(--font-headers)',
                       color: brand.accentColor,
                     }}
                   >

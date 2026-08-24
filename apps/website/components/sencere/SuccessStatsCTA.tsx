@@ -28,7 +28,7 @@ export function SuccessStatsCTA() {
             <div>
               <h3
                 className="text-sm font-bold uppercase tracking-wide text-[#F7F7F7]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: 'var(--font-headers)' }}
               >
                 Built For Your Success
               </h3>
@@ -45,7 +45,7 @@ export function SuccessStatsCTA() {
               <div key={stat.label} className="text-center">
                 <p
                   className="text-2xl font-bold text-[#D6A331] sm:text-3xl"
-                  style={{ fontFamily: 'var(--font-display)' }}
+                  style={{ fontFamily: 'var(--font-headers)' }}
                 >
                   {stat.value}
                 </p>
@@ -60,7 +60,7 @@ export function SuccessStatsCTA() {
           <div className="flex flex-col justify-center gap-3 p-6">
             <h3
               className="text-sm font-bold uppercase tracking-wide text-[#D6A331]"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-headers)' }}
             >
               Ready To Start Your Project?
             </h3>

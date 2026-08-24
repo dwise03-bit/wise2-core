@@ -35,7 +35,7 @@ export default function ServicesPage() {
                 <cap.icon className="h-8 w-8 text-[#D6A331]" strokeWidth={1.5} aria-hidden="true" />
                 <h2
                   className="mt-4 text-lg font-bold uppercase tracking-wide text-[#F7F7F7]"
-                  style={{ fontFamily: 'var(--font-display)' }}
+                  style={{ fontFamily: 'var(--font-headers)' }}
                 >
                   {cap.title}
                 </h2>
