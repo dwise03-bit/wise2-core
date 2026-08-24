@@ -1,11 +1,11 @@
 {
-  "appId": "com.wisedefense.fieldtech",
+  "appId": "com.wise2.fieldtech",
   "appName": "WISE Field Tech",
-  "webDir": "public",
+  "webDir": "out",
   "server": {
     "url": "https://wise2.net/wise-hvac-demo",
     "androidScheme": "https",
-    "allowNavigation": ["https://wise2.net", "https://*.wise2.net"]
+    "allowNavigation": ["https://wise2.net", "https://*.wise2.net", "https://accounts.google.com"]
   },
   "android": {
     "buildOptions": {
@@ -15,6 +15,9 @@
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000
+    },
+    "App": {
+      "scheme": "com.wise2.fieldtech"
     }
   }
 }
