@@ -21,6 +21,9 @@ data class LiveReadingsUiState(
     val latestReading: ReadingSnapshot? = null,
     val calculations: List<CalculationResult> = emptyList(),
     val brandName: String = "",
+    val pressureHistory: List<Float> = emptyList(),
+    val tempHistory: List<Float> = emptyList(),
+    val voltageHistory: List<Float> = emptyList(),
 )
 
 class LiveReadingsViewModel(
@@ -60,9 +63,17 @@ class LiveReadingsViewModel(
             streamJob = viewModelScope.launch {
                 toolManager.readingsForJob(jobId).collect { reading ->
                     val now = System.currentTimeMillis()
-                    _uiState.value = _uiState.value.copy(
+                    val state = _uiState.value
+                    val pressureHistory = (state.pressureHistory + listOfNotNull(reading.lowSidePsig)).takeLast(60).toList()
+                    val tempHistory = (state.tempHistory + listOfNotNull(reading.suctionLineTempF)).takeLast(60).toList()
+                    val voltageHistory = (state.voltageHistory + listOfNotNull(reading.voltageL1)).takeLast(60).toList()
+
+                    _uiState.value = state.copy(
                         latestReading = reading,
                         calculations = HvacCalculations.allApplicable(reading, now),
+                        pressureHistory = pressureHistory,
+                        tempHistory = tempHistory,
+                        voltageHistory = voltageHistory,
                     )
                 }
             }

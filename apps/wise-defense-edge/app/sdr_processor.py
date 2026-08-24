@@ -20,6 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 import argparse
+import re
 
 # Logging
 logging.basicConfig(
@@ -40,9 +41,14 @@ DEFAULT_SAMPLE_RATE = 2.4e6
 DEFAULT_INTERVAL = 10  # seconds
 POWER_THRESHOLD = -50  # dB (signals below this are noise)
 
+# Pi Connection
+PI_HOST = 'big-byte.tail44396d.ts.net'  # Tailscale address
+PI_USER = 'dwise'
+PI_SSH_KEY = os.path.expanduser('~/.ssh/id_rsa')  # Default SSH key
+
 
 class SDRProcessor:
-    """Process RTL-SDR spectrum data."""
+    """Process RTL-SDR spectrum data from remote Pi via SSH."""
 
     def __init__(
         self,
@@ -50,7 +56,10 @@ class SDRProcessor:
         api_key: str = '',
         freq_start: float = DEFAULT_FREQ_START,
         freq_stop: float = DEFAULT_FREQ_STOP,
-        interval: int = DEFAULT_INTERVAL
+        interval: int = DEFAULT_INTERVAL,
+        pi_host: str = PI_HOST,
+        pi_user: str = PI_USER,
+        pi_ssh_key: str = PI_SSH_KEY
     ):
         self.api_url = api_url
         self.api_key = api_key or os.getenv('WISE_DEFENSE_API_KEY', '')
@@ -60,58 +69,165 @@ class SDRProcessor:
         self.running = False
         self.headers = {'X-API-Key': self.api_key}
 
-    def check_rtl_sdr_available(self) -> bool:
-        """Check if RTL-SDR tools are available."""
+        # Pi connection details
+        self.pi_host = pi_host
+        self.pi_user = pi_user
+        self.pi_ssh_key = pi_ssh_key
+        self.ssh_client = None
+
+    def connect_pi(self) -> bool:
+        """Verify Big Byte Pi SSH access (using system SSH)."""
         try:
-            result = subprocess.run(
-                ['which', 'rtl_power'],
-                capture_output=True,
-                timeout=5
-            )
-            return result.returncode == 0
+            # Test SSH connection using system ssh command
+            cmd = f'ssh -i {self.pi_ssh_key} -o ConnectTimeout=5 -o StrictHostKeyChecking=no {self.pi_user}@{self.pi_host} echo "SSH OK"'
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
+
+            if result.returncode == 0 and 'SSH OK' in result.stdout:
+                logger.info(f'SSH connection verified to Pi: {self.pi_host}')
+                return True
+            else:
+                logger.error(f'SSH connection failed to Pi: {result.stderr}')
+                return False
+
+        except subprocess.TimeoutExpired:
+            logger.error(f'SSH connection timeout to Pi at {self.pi_host}')
+            return False
         except Exception as e:
-            logger.error(f'Failed to check for rtl_power: {e}')
+            logger.error(f'SSH authentication failed: {e}')
+            return False
+        except paramiko.SSHException as e:
+            logger.error(f'SSH connection error: {e}')
+            return False
+        except Exception as e:
+            logger.error(f'Failed to connect to Pi: {e}')
             return False
 
-    def run_rtl_power(self, duration: int = 10) -> Optional[str]:
-        """Run rtl_power for spectrum data."""
+    def disconnect_pi(self):
+        """Placeholder for disconnect (using system SSH)."""
+        pass
+
+    def check_rtl_sdr_available(self) -> bool:
+        """Check if rtl_power is running on Pi."""
         try:
-            cmd = [
-                'rtl_power',
-                '-f', f'{self.freq_start}M:{self.freq_stop}M:1M',  # 1 MHz steps
-                '-g', '40',  # gain
-                '-d', '0',   # device index
-                '-i', str(duration),  # integration time
-                '-'  # output to stdout
-            ]
+            cmd = f'ssh -i {self.pi_ssh_key} -o ConnectTimeout=5 -o StrictHostKeyChecking=no {self.pi_user}@{self.pi_host} "ps aux | grep [r]tl_power"'
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
 
-            logger.debug(f'Running: {" ".join(cmd)}')
+            if result.returncode == 0 and result.stdout.strip():
+                logger.info('rtl_power is running on Pi')
+                return True
+            else:
+                logger.error('rtl_power not running on Pi')
+                return False
 
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=duration + 5
+        except subprocess.TimeoutExpired:
+            logger.error('Timeout checking rtl_power on Pi')
+            return False
+        except Exception as e:
+            logger.error(f'Failed to check rtl_power on Pi: {e}')
+            return False
+
+    def query_pi_rtl_power(self, duration: int = 10) -> Optional[str]:
+        """Query spectrum data from rtl_power running on Pi via SSH."""
+        try:
+            # Build rtl_power command on Pi
+            pi_cmd = (
+                f'rtl_power -f {self.freq_start}M:{self.freq_stop}M:1M '
+                f'-g 40 -d 0 -i {duration} -'
             )
 
+            # SSH into Pi and run rtl_power
+            ssh_cmd = (
+                f'ssh -i {self.pi_ssh_key} -o ConnectTimeout=5 -o StrictHostKeyChecking=no '
+                f'{self.pi_user}@{self.pi_host} "{pi_cmd}"'
+            )
+
+            logger.debug(f'Executing on Pi: {pi_cmd}')
+
+            result = subprocess.run(ssh_cmd, shell=True, capture_output=True, text=True, timeout=duration + 15)
+
             if result.returncode != 0:
-                logger.error(f'rtl_power error: {result.stderr}')
+                logger.error(f'Pi rtl_power error: {result.stderr}')
                 return None
 
+            if not result.stdout:
+                logger.warning('No output from rtl_power on Pi')
+                return None
+
+            logger.debug(f'Received {len(result.stdout)} bytes from Pi')
             return result.stdout
 
         except subprocess.TimeoutExpired:
-            logger.error('rtl_power timed out')
-            return None
-        except FileNotFoundError:
-            logger.error('rtl_power not found. Install rtl-sdr: apt install rtl-sdr')
+            logger.error(f'Timeout querying rtl_power on Pi after {duration + 15}s')
             return None
         except Exception as e:
-            logger.error(f'Failed to run rtl_power: {e}')
+            logger.error(f'Failed to query rtl_power on Pi: {e}')
             return None
 
+    def classify_signal(self, frequency: float) -> str:
+        """Classify signal by frequency band."""
+        freq = frequency
+
+        # VHF/UHF allocations
+        if 88 <= freq < 108:
+            return 'FM_RADIO'
+        elif 108 <= freq < 144:
+            return 'AVIATION'
+        elif 144 <= freq < 174:
+            return 'VHF_HAM'
+        elif 162 <= freq < 163:
+            return 'NOAA_WEATHER'
+        elif 174 <= freq < 216:
+            return 'TV_BROADCAST'
+        elif 216 <= freq < 400:
+            return 'UHF_TV'
+        elif 400 <= freq < 420:
+            return 'MILITARY'
+        elif 420 <= freq < 450:
+            return 'UHF_HAM'
+        elif 450 <= freq < 470:
+            return 'PUBLIC_SAFETY'
+        elif 470 <= freq < 512:
+            return 'TV_UHF'
+        elif 700 <= freq < 800:
+            return 'PUBLIC_SAFETY'
+        elif 800 <= freq < 900:
+            return 'CELLULAR'
+        elif 900 <= freq < 1000:
+            return 'ISM_BAND'
+        else:
+            return 'OTHER'
+
+    def detect_anomalies(self, signals: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Detect anomalies (signal power spikes > 10 dB above baseline)."""
+        # Group by classification
+        by_class = {}
+        for sig in signals:
+            cls = sig['classification']
+            if cls not in by_class:
+                by_class[cls] = []
+            by_class[cls].append(sig)
+
+        # Calculate baseline per classification
+        anomalies = []
+        for cls, sigs in by_class.items():
+            if len(sigs) < 2:
+                continue
+
+            powers = [s['power_db'] for s in sigs]
+            baseline = sum(powers) / len(powers)
+
+            for sig in sigs:
+                if sig['power_db'] > baseline + 10:
+                    sig['anomaly'] = True
+                    sig['anomaly_dbm_above_baseline'] = sig['power_db'] - baseline
+                    anomalies.append(sig)
+                else:
+                    sig['anomaly'] = False
+
+        return anomalies
+
     def parse_rtl_power_output(self, output: str) -> List[Dict[str, Any]]:
-        """Parse rtl_power CSV output."""
+        """Parse rtl_power CSV output with classification and anomaly detection."""
         signals = []
 
         try:
@@ -136,9 +252,11 @@ class SDRProcessor:
                     freq = freq_low
                     for power in power_values:
                         if power > POWER_THRESHOLD:  # Filter out noise
+                            classification = self.classify_signal(freq)
                             signals.append({
                                 'frequency': freq,
                                 'power_db': power,
+                                'classification': classification,
                                 'mode': 'rtl_sdr',
                                 'timestamp': datetime.utcnow().isoformat()
                             })
@@ -150,6 +268,9 @@ class SDRProcessor:
 
         except Exception as e:
             logger.error(f'Failed to parse rtl_power output: {e}')
+
+        # Detect anomalies
+        self.detect_anomalies(signals)
 
         return signals
 
@@ -191,12 +312,13 @@ class SDRProcessor:
             return False
 
     def run_once(self) -> bool:
-        """Run a single spectrum scan."""
-        logger.info(f'Scanning spectrum {self.freq_start}M-{self.freq_stop}M...')
+        """Run a single spectrum scan from Pi."""
+        logger.info(f'Querying spectrum {self.freq_start}M-{self.freq_stop}M from Pi...')
 
-        # Run rtl_power
-        output = self.run_rtl_power(duration=self.interval)
+        # Query rtl_power on Pi
+        output = self.query_pi_rtl_power(duration=self.interval)
         if not output:
+            logger.error('Failed to query rtl_power from Pi')
             return False
 
         # Parse output
@@ -205,22 +327,51 @@ class SDRProcessor:
             logger.warning('No signals detected')
             return False
 
+        logger.info(f'Detected {len(signals)} signals')
+
         # Send to API
         return self.send_spectrum_snapshot(signals)
 
     def run_loop(self):
-        """Run continuous spectrum scanning."""
-        logger.info('Starting RTL-SDR spectrum processor loop')
+        """Run continuous spectrum scanning from Pi."""
+        logger.info('Starting RTL-SDR spectrum processor loop (remote Pi mode)')
         logger.info(f'Interval: {self.interval}s, Frequency: {self.freq_start}M-{self.freq_stop}M')
+        logger.info(f'Pi: {self.pi_user}@{self.pi_host}')
 
         self.running = True
+        reconnect_attempts = 0
+        max_reconnect_attempts = 5
 
         try:
+            # Connect to Pi
+            if not self.connect_pi():
+                logger.error('Failed to connect to Pi on startup')
+                return
+
+            # Check rtl_power is running
+            if not self.check_rtl_sdr_available():
+                logger.error('rtl_power not running on Pi')
+                return
+
             while self.running:
                 start_time = time.time()
 
                 # Run scan
-                success = self.run_once()
+                try:
+                    success = self.run_once()
+                    if success:
+                        reconnect_attempts = 0  # Reset on success
+                except Exception as e:
+                    logger.error(f'Scan error: {e}')
+                    reconnect_attempts += 1
+                    if reconnect_attempts > max_reconnect_attempts:
+                        logger.error('Max reconnection attempts reached')
+                        break
+                    # Try to reconnect
+                    logger.info(f'Attempting reconnect ({reconnect_attempts}/{max_reconnect_attempts})')
+                    self.disconnect_pi()
+                    time.sleep(5)
+                    self.connect_pi()
 
                 elapsed = time.time() - start_time
                 wait_time = max(0, self.interval - elapsed)
@@ -234,6 +385,7 @@ class SDRProcessor:
         except Exception as e:
             logger.error(f'Unexpected error: {e}', exc_info=True)
         finally:
+            self.disconnect_pi()
             self.running = False
             logger.info('RTL-SDR spectrum processor stopped')
 
@@ -280,6 +432,21 @@ def main():
         action='store_true',
         help='Run a single scan and exit'
     )
+    parser.add_argument(
+        '--pi-host',
+        default=PI_HOST,
+        help=f'Pi host/domain (default: {PI_HOST})'
+    )
+    parser.add_argument(
+        '--pi-user',
+        default=PI_USER,
+        help=f'Pi SSH user (default: {PI_USER})'
+    )
+    parser.add_argument(
+        '--pi-key',
+        default=PI_SSH_KEY,
+        help=f'Path to SSH key (default: {PI_SSH_KEY})'
+    )
 
     args = parser.parse_args()
 
@@ -289,18 +456,29 @@ def main():
         api_key=args.api_key,
         freq_start=args.freq_start,
         freq_stop=args.freq_stop,
-        interval=args.interval
+        interval=args.interval,
+        pi_host=args.pi_host,
+        pi_user=args.pi_user,
+        pi_ssh_key=args.pi_key
     )
 
-    # Check RTL-SDR availability
-    if not processor.check_rtl_sdr_available():
-        logger.error('rtl_power not found. Install: apt install rtl-sdr')
-        sys.exit(1)
+    # For single run, connect and check
+    if args.once:
+        if not processor.connect_pi():
+            logger.error('Failed to connect to Pi')
+            sys.exit(1)
+        if not processor.check_rtl_sdr_available():
+            logger.error('rtl_power not running on Pi')
+            processor.disconnect_pi()
+            sys.exit(1)
 
     # Run
     if args.once:
-        success = processor.run_once()
-        sys.exit(0 if success else 1)
+        try:
+            success = processor.run_once()
+            sys.exit(0 if success else 1)
+        finally:
+            processor.disconnect_pi()
     else:
         processor.run_loop()
 

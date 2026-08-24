@@ -12,7 +12,10 @@ ExecStart=/usr/bin/python3 /opt/wise2-defense/app/sdr_processor.py \
   --api-url http://localhost:3014 \
   --freq-start 88 \
   --freq-stop 1200 \
-  --interval 10
+  --interval 10 \
+  --pi-host big-byte.tail44396d.ts.net \
+  --pi-user dwise \
+  --pi-key /home/wise2/.ssh/id_rsa
 
 # Restart policy
 Restart=on-failure
@@ -36,6 +39,7 @@ NoNewPrivileges=yes
 # Environment
 Environment="PYTHONUNBUFFERED=1"
 Environment="WISE_DEFENSE_API_KEY=YOUR_API_KEY_HERE"
+Environment="PI_SSH_KEY=/home/wise2/.ssh/id_rsa"
 
 [Install]
 WantedBy=multi-user.target
