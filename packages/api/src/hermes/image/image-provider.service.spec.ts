@@ -1,0 +1,161 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { HttpService } from '@nestjs/axios';
+import { of, throwError } from 'rxjs';
+import { ImageProviderService } from './image-provider.service';
+import type { ImageProviderRequest } from './image.types';
+
+describe('ImageProviderService', () => {
+  let service: ImageProviderService;
+  let httpService: HttpService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ImageProviderService,
+        {
+          provide: HttpService,
+          useValue: {
+            post: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get<ImageProviderService>(ImageProviderService);
+    httpService = module.get<HttpService>(HttpService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('generate', () => {
+    it('throws if backend is not configured', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(false);
+
+      const request: ImageProviderRequest = {
+        prompt: 'test',
+        references: [],
+        aspectRatio: '16:9',
+      };
+
+      await expect(service.generate(request)).rejects.toThrow(
+        'Hermes image backend is not configured',
+      );
+    });
+
+    it('calls the backend with proper payload structure', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(true);
+      jest.spyOn(httpService, 'post' as any).mockReturnValue(
+        of({
+          data: {
+            imageUrl: 'https://result/img.png',
+            provider: 'test-provider',
+            preservedReferenceIds: ['ref1'],
+          },
+        }),
+      );
+
+      const request: ImageProviderRequest = {
+        prompt: 'test prompt',
+        references: [
+          {
+            id: 'ref1',
+            url: 'https://x/ref1.png',
+            role: 'LOCKED',
+            kind: 'person',
+          },
+        ],
+        aspectRatio: '16:9',
+      };
+
+      const result = await service.generate(request);
+
+      expect(result.imageUrl).toBe('https://result/img.png');
+      expect(result.provider).toBe('test-provider');
+    });
+
+    it('normalizes successful response to standard format', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(true);
+      jest.spyOn(httpService, 'post' as any).mockReturnValue(
+        of({
+          data: {
+            imageUrl: 'https://api/output.png',
+            provider: 'custom-backend',
+          },
+        }),
+      );
+
+      const request: ImageProviderRequest = {
+        prompt: 'test',
+        references: [],
+        aspectRatio: '16:9',
+      };
+
+      const result = await service.generate(request);
+
+      expect(result).toHaveProperty('imageUrl');
+      expect(result).toHaveProperty('provider');
+      expect(typeof result.imageUrl).toBe('string');
+      expect(typeof result.provider).toBe('string');
+    });
+
+    it('rejects response without imageUrl', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(true);
+      jest.spyOn(httpService, 'post' as any).mockReturnValue(
+        of({
+          data: {
+            provider: 'test',
+            // missing imageUrl
+          },
+        }),
+      );
+
+      const request: ImageProviderRequest = {
+        prompt: 'test',
+        references: [],
+        aspectRatio: '16:9',
+      };
+
+      await expect(service.generate(request)).rejects.toThrow();
+    });
+
+    it('throws on HTTP error from backend', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(true);
+      jest
+        .spyOn(httpService, 'post' as any)
+        .mockReturnValue(throwError(() => new Error('Backend error')));
+
+      const request: ImageProviderRequest = {
+        prompt: 'test',
+        references: [],
+        aspectRatio: '16:9',
+      };
+
+      await expect(service.generate(request)).rejects.toThrow('Backend error');
+    });
+
+    it('includes preserveLockedReferences flag in payload', async () => {
+      jest.spyOn(service, 'isConfigured').mockReturnValue(true);
+      const postSpy = jest.spyOn(httpService, 'post' as any).mockReturnValue(
+        of({
+          data: {
+            imageUrl: 'https://result.png',
+            provider: 'test',
+          },
+        }),
+      );
+
+      const request: ImageProviderRequest = {
+        prompt: 'test',
+        references: [{ id: 'r1', url: 'https://x/r.png', role: 'LOCKED' }],
+        aspectRatio: '16:9',
+      };
+
+      await service.generate(request);
+
+      const callPayload = (postSpy.mock.calls[0] ?? [])[1];
+      expect(callPayload).toHaveProperty('preserveLockedReferences', true);
+    });
+  });
+});
