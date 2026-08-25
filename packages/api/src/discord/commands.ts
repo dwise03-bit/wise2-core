@@ -5,6 +5,8 @@ export interface DiscordCommandContext {
   getSummary(): Promise<any>;
   askHermes(query: string): Promise<{ ok: boolean; response?: string; reason?: string }>;
   sendDeploymentNotification(status: string, details: any): Promise<void>;
+  generateImageFromDiscord(instruction: string, aspectRatio?: string): Promise<{ ok: boolean; result?: any; error?: string }>;
+  sendImageResult(result: any, channel?: string): Promise<void>;
 }
 
 export type DiscordCommandHandler = (
@@ -69,6 +71,29 @@ export const commands = [
         )
         .setRequired(true),
     ),
+
+  new SlashCommandBuilder()
+    .setName('image')
+    .setDescription('Generate an image using Hermes image orchestration')
+    .addStringOption((option) =>
+      option
+        .setName('instruction')
+        .setDescription('Image generation instruction (what you want in the image)')
+        .setRequired(true),
+    )
+    .addStringOption((option) =>
+      option
+        .setName('aspect-ratio')
+        .setDescription('Aspect ratio for the generated image')
+        .addChoices(
+          { name: '16:9 (Widescreen)', value: '16:9' },
+          { name: '9:16 (Portrait)', value: '9:16' },
+          { name: '1:1 (Square)', value: '1:1' },
+          { name: '4:3 (Classic)', value: '4:3' },
+          { name: '3:4 (Classic Portrait)', value: '3:4' },
+        )
+        .setRequired(false),
+    ),
 ];
 
 export const commandHandlers: Record<string, DiscordCommandHandler> = {
@@ -83,6 +108,7 @@ export const commandHandlers: Record<string, DiscordCommandHandler> = {
   dispatch: handleDispatch,
   discord: handleDiscord,
   deploy: handleDeploy,
+  image: handleImage,
 };
 
 async function handleHelp(interaction: any) {
@@ -415,6 +441,43 @@ async function handleDeploy(interaction: any, context: DiscordCommandContext) {
         title: 'Deployment Notification Sent',
         description: `A deployment event was posted for ${environment}.`,
         color: 0x22c55e,
+      },
+    ],
+  });
+}
+
+async function handleImage(interaction: any, context: DiscordCommandContext) {
+  const instruction = interaction.options.getString('instruction');
+  const aspectRatio = interaction.options.getString('aspect-ratio');
+  await interaction.deferReply();
+
+  const result = await context.generateImageFromDiscord(instruction, aspectRatio || undefined);
+  if (!result.ok) {
+    await interaction.editReply({
+      embeds: [
+        {
+          title: 'Image Generation Failed',
+          description: result.error || 'Image generation is not configured or failed.',
+          color: 0xff4d4f,
+        },
+      ],
+    });
+    return;
+  }
+
+  await context.sendImageResult(result.result, 'images');
+
+  await interaction.editReply({
+    embeds: [
+      {
+        title: 'Image Generation Started',
+        description: `Processing: ${instruction}`,
+        fields: [
+          { name: 'Job ID', value: result.result?.jobId || 'unknown', inline: true },
+          { name: 'Status', value: result.result?.status || 'pending', inline: true },
+          { name: 'Aspect Ratio', value: aspectRatio || '16:9', inline: true },
+        ],
+        color: result.result?.status === 'completed' ? 0x22c55e : 0xffb020,
       },
     ],
   });

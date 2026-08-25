@@ -256,7 +256,9 @@ export class HermesService {
         reason: (state as SourceState<unknown> & { available: false }).reason,
       }));
 
-    const customerRows = customers.available ? customers.value : [];
+    const customerRows = customers.available
+      ? (customers.value as Array<{ mrr: number; status: string }>)
+      : [];
     const mrr = customerRows.reduce((total, customer) => total + customer.mrr, 0);
 
     return {
@@ -272,12 +274,12 @@ export class HermesService {
           : null,
         monthlyRecurringRevenue: customers.available ? mrr : null,
         activeProjects: projects.available
-          ? projects.value.filter((project) =>
+          ? (projects.value as Array<{ status: string }>).filter((project) =>
               !['DELIVERED', 'REJECTED'].includes(project.status),
             ).length
           : null,
         creativeProjects: creativeProjects.available
-          ? creativeProjects.value.length
+          ? (creativeProjects.value as unknown[]).length
           : null,
         galleryAssets: galleryAssets.available ? galleryAssets.value : null,
       },
@@ -286,9 +288,10 @@ export class HermesService {
       },
       attention: {
         audits: audits.available
-          ? audits.value.filter((audit) =>
-              audit.status !== 'COMPLETED' ||
-              audit.summaryStatus === 'READY_FOR_REVIEW',
+          ? (audits.value as Array<{ status: string; summaryStatus: string }>).filter(
+              (audit) =>
+                audit.status !== 'COMPLETED' ||
+                audit.summaryStatus === 'READY_FOR_REVIEW',
             )
           : null,
         approvals: pendingApprovals.available

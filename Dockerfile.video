@@ -1,0 +1,26 @@
+FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip \
+    ffmpeg \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN pip install --no-cache-dir \
+    opencv-python \
+    pillow \
+    numpy \
+    requests
+
+# Optional: Install AI model dependencies for enhanced video generation
+# Uncomment these for advanced features (requires more space)
+# RUN pip install --no-cache-dir torch torchvision
+# RUN pip install --no-cache-dir diffusers transformers
+
+WORKDIR /app
+
+COPY generate-video-simple.py .
+
+ENTRYPOINT ["python3", "generate-video-simple.py"]

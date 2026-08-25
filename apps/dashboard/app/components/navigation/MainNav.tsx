@@ -11,6 +11,7 @@ const navItems = [
   { href: '/projects', label: '🎯 Projects', icon: '🎯' },
   { href: '/invoices', label: '💳 Invoices', icon: '💳' },
   { href: '/automation', label: '⚡ Automation', icon: '⚡' },
+  { href: '/hermes', label: '🎨 Hermes', icon: '🎨' },
   { href: '/ai-studio', label: '🧠 AI Studio', icon: '🧠' },
   { href: '/settings', label: '⚙️ Settings', icon: '⚙️' },
 ];

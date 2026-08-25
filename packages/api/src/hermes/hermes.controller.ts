@@ -16,8 +16,10 @@ import {
   CreateHermesActionDto,
   DecideHermesActionDto,
   HermesChatDto,
+  HermesImageRequestDto,
 } from './hermes.dto';
 import { HermesService } from './hermes.service';
+import { ImageOrchestratorService } from './image/image-orchestrator.service';
 import { HermesGenerationResolver } from './hermes-generation.config';
 
 interface AuthenticatedUser {
@@ -28,7 +30,10 @@ interface AuthenticatedUser {
 
 @Controller('v1/hermes')
 export class HermesController {
-  constructor(private readonly hermes: HermesService) {}
+  constructor(
+    private readonly hermes: HermesService,
+    private readonly imageOrchestrator: ImageOrchestratorService,
+  ) {}
 
   @Get('health')
   @HttpCode(200)
@@ -144,5 +149,18 @@ export class HermesController {
     @Body() dto: DecideHermesActionDto,
   ) {
     return this.hermes.rejectAction(user.id, id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('image')
+  async generateImage(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: HermesImageRequestDto,
+  ) {
+    return this.imageOrchestrator.generate({
+      instruction: dto.instruction,
+      references: dto.references,
+      aspectRatio: dto.aspectRatio,
+    });
   }
 }
