@@ -4,8 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.wise2.fieldtech.ui.theme.ElectricBlue
 import kotlin.math.cos
 import kotlin.math.sin
@@ -41,11 +44,16 @@ fun Meter(
     }
 
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Canvas(modifier = Modifier.size(180.dp)) {
+        Canvas(modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .padding(horizontal = 16.dp)) {
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.width / 2.5f
 
@@ -77,15 +85,21 @@ fun Meter(
             drawCircle(meterColor, radius = 8f, center = center)
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         Text(
             "%.1f %s".format(value, unit),
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = meterColor,
+            fontSize = 20.sp,
         )
         if (label.isNotEmpty()) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray,
+                fontSize = 12.sp,
+            )
         }
     }
 }

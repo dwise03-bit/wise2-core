@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -31,13 +33,18 @@ fun LineChart(
     val max = dataPoints.maxOrNull() ?: 100f
     val range = if (max > min) max - min else 1f
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxWidth().padding(8.dp)) {
         if (label.isNotEmpty()) {
-            Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
+            )
             Spacer(Modifier.height(8.dp))
         }
 
-        Canvas(modifier = Modifier.fillMaxWidth().height(150.dp)) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(120.dp)) {
             val width = size.width
             val height = size.height
             val padding = 30f
@@ -67,11 +74,12 @@ fun LineChart(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(6.dp))
         Text(
             "Range: %.1f – %.1f %s".format(min, max, unit),
             style = MaterialTheme.typography.labelSmall,
             color = Color.Gray,
+            fontSize = 10.sp,
         )
     }
 }
