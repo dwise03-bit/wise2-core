@@ -10,8 +10,9 @@ import {
   handleMessage,
   handleReady,
 } from './events';
+import type { HermesImageResult } from '../hermes/image/image.types';
 
-type DiscordChannel = 'alerts' | 'builds' | 'deployments' | 'decisions';
+type DiscordChannel = 'alerts' | 'builds' | 'deployments' | 'decisions' | 'images';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -31,6 +32,7 @@ export class DiscordService implements OnModuleInit {
     deployments:
       process.env.DISCORD_WEBHOOK_DEPLOYMENTS || process.env.DISCORD_WEBHOOK_URL,
     decisions: process.env.DISCORD_WEBHOOK_DECISIONS || process.env.DISCORD_WEBHOOK_URL,
+    images: process.env.DISCORD_WEBHOOK_IMAGES || process.env.DISCORD_WEBHOOK_URL,
   };
 
   private discordClient!: DiscordClient;
@@ -156,6 +158,52 @@ export class DiscordService implements OnModuleInit {
     });
   }
 
+  async sendImageResult(
+    result: HermesImageResult,
+    channel: DiscordChannel = 'images',
+  ) {
+    const statusColors = {
+      completed: 0x22c55e,
+      failed: 0xff4d4f,
+      pending: 0xffb020,
+    };
+
+    const fields: Array<{name: string; value: string; inline: boolean}> = [
+      { name: 'Job ID', value: result.jobId, inline: true },
+      { name: 'Status', value: result.status.toUpperCase(), inline: true },
+      { name: 'Provider', value: result.provider || 'Unknown', inline: true },
+    ];
+
+    if (result.instruction) {
+      fields.push({ name: 'Instruction', value: result.instruction, inline: false });
+    }
+
+    if (result.lockedAssetIds && result.lockedAssetIds.length > 0) {
+      fields.push({
+        name: 'Locked Assets',
+        value: result.lockedAssetIds.join(', '),
+        inline: false,
+      });
+    }
+
+    if (result.error) {
+      fields.push({ name: 'Error', value: result.error, inline: false });
+    }
+
+    const embed: Record<string, unknown> = {
+      title: 'Image Generation Result',
+      color: statusColors[result.status as keyof typeof statusColors] || 0x0094ff,
+      fields,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (result.imageUrl && result.status === 'completed') {
+      embed.image = { url: result.imageUrl };
+    }
+
+    return this.sendChannelEmbed(channel, embed);
+  }
+
   async sendTestNotification(
     channel: DiscordChannel = 'alerts',
     message?: string,
@@ -224,6 +272,7 @@ export class DiscordService implements OnModuleInit {
       { key: 'DISCORD_WEBHOOK_BUILDS', configured: Boolean(this.webhookUrls.builds), purpose: 'Build notifications' },
       { key: 'DISCORD_WEBHOOK_DEPLOYMENTS', configured: Boolean(this.webhookUrls.deployments), purpose: 'Deployment notifications' },
       { key: 'DISCORD_WEBHOOK_DECISIONS', configured: Boolean(this.webhookUrls.decisions), purpose: 'Decision notifications' },
+      { key: 'DISCORD_WEBHOOK_IMAGES', configured: Boolean(this.webhookUrls.images), purpose: 'Image generation result notifications' },
       { key: 'DISCORD_DEFAULT_TENANT_ID', configured: Boolean(this.defaultTenantId), purpose: 'Revenue OS context for Discord commands' },
       { key: 'DISCORD_DEFAULT_HERMES_USER_ID', configured: Boolean(this.defaultHermesUserId), purpose: 'Hermes context for Discord /ask' },
     ];
