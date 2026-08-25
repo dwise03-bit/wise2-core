@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Inject, Optional } from '@nestjs/common';
 import { DashboardStatsService } from '../revenue-os/dashboard/dashboard-stats.service';
 import { HermesService } from '../hermes/hermes.service';
 import { DiscordClient } from './discord.client';
@@ -11,6 +11,7 @@ import {
   handleReady,
 } from './events';
 import type { HermesImageResult } from '../hermes/image/image.types';
+import { ImageOrchestratorService } from '../hermes/image/image-orchestrator.service';
 
 type DiscordChannel = 'alerts' | 'builds' | 'deployments' | 'decisions' | 'images';
 
@@ -41,6 +42,7 @@ export class DiscordService implements OnModuleInit {
   constructor(
     private readonly dashboardStatsService: DashboardStatsService,
     private readonly hermesService: HermesService,
+    @Optional() private readonly imageOrchestrator?: ImageOrchestratorService,
   ) {}
 
   async onModuleInit() {
@@ -202,6 +204,39 @@ export class DiscordService implements OnModuleInit {
     }
 
     return this.sendChannelEmbed(channel, embed);
+  }
+
+  async generateImageFromDiscord(
+    instruction: string,
+    aspectRatio?: string,
+  ): Promise<{ ok: boolean; result?: HermesImageResult; error?: string }> {
+    if (!this.imageOrchestrator) {
+      return {
+        ok: false,
+        error: 'Image orchestration service not configured',
+      };
+    }
+
+    try {
+      const result = await this.imageOrchestrator.generate({
+        instruction,
+        references: [],
+        aspectRatio: aspectRatio || '16:9',
+      });
+
+      return {
+        ok: true,
+        result,
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Image generation failed';
+      this.logger.error(`Discord image generation failed: ${message}`);
+
+      return {
+        ok: false,
+        error: message,
+      };
+    }
   }
 
   async sendTestNotification(
