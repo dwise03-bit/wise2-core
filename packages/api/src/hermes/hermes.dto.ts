@@ -95,3 +95,52 @@ export class HermesChatDto {
   @IsIn(['fast', 'deep', 'auto'])
   profile?: 'fast' | 'deep' | 'auto';
 }
+
+// Image generation DTOs
+class ImageReferenceAssetDto {
+  @IsString()
+  @IsNotEmpty()
+  id!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  url!: string;
+
+  @IsOptional()
+  @IsIn(['LOCKED', 'EDITABLE', 'NEW'])
+  role?: 'LOCKED' | 'EDITABLE' | 'NEW';
+
+  @IsOptional()
+  @IsIn(['person', 'logo', 'hardware', 'screenshot', 'approved-art', 'other'])
+  kind?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  label?: string;
+}
+
+export class HermesImageRequestDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(4000)
+  instruction!: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ImageReferenceAssetDto)
+  references?: ImageReferenceAssetDto[];
+
+  @IsOptional()
+  @IsBoolean()
+  deliverToDiscord?: boolean;
+
+  @IsOptional()
+  @IsIn(['builds', 'alerts', 'decisions', 'images'])
+  discordChannel?: 'builds' | 'alerts' | 'decisions' | 'images';
+
+  @IsOptional()
+  @IsIn(['1:1', '4:5', '16:9', '9:16'])
+  aspectRatio?: '1:1' | '4:5' | '16:9' | '9:16';
+}
