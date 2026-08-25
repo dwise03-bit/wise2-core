@@ -12,11 +12,13 @@ COPY package.json pnpm-workspace.yaml ./
 # Copy workspace package.json files (only needed for website build)
 COPY apps/website/package.json ./apps/website/
 COPY packages/db/package.json ./packages/db/
+COPY packages/ui-components/package.json ./packages/ui-components/
 
 RUN pnpm install --no-frozen-lockfile
 
 COPY apps/website ./apps/website
 COPY packages/db ./packages/db
+COPY packages/ui-components ./packages/ui-components
 
 # Copying the full app source after the initial workspace install can clobber
 # the app-local node_modules symlink created by pnpm. Re-link dependencies now
