@@ -15,11 +15,15 @@ COPY apps/dashboard/package.json ./apps/dashboard/
 COPY apps/admin/package.json ./apps/admin/
 COPY packages/db/package.json ./packages/db/
 COPY packages/api/package.json ./packages/api/
+COPY packages/agent-framework/package.json ./packages/agent-framework/
+COPY packages/ai-phone/package.json ./packages/ai-phone/
 
 RUN pnpm install --no-frozen-lockfile
 
 COPY apps/website ./apps/website
 COPY packages/db ./packages/db
+COPY packages/agent-framework ./packages/agent-framework
+COPY packages/ai-phone ./packages/ai-phone
 
 # Copying the full app source after the initial workspace install can clobber
 # the app-local node_modules symlink created by pnpm. Re-link dependencies now
