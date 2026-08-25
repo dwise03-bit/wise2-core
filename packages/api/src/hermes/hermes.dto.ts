@@ -112,7 +112,7 @@ class ImageReferenceAssetDto {
 
   @IsOptional()
   @IsIn(['person', 'logo', 'hardware', 'screenshot', 'approved-art', 'other'])
-  kind?: string;
+  kind?: 'person' | 'logo' | 'hardware' | 'screenshot' | 'approved-art' | 'other';
 
   @IsOptional()
   @IsString()

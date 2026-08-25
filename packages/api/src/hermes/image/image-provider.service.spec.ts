@@ -1,28 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/axios';
-import { of, throwError } from 'rxjs';
 import { ImageProviderService } from './image-provider.service';
 import type { ImageProviderRequest } from './image.types';
 
 describe('ImageProviderService', () => {
   let service: ImageProviderService;
-  let httpService: HttpService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ImageProviderService,
-        {
-          provide: HttpService,
-          useValue: {
-            post: jest.fn(),
-          },
-        },
-      ],
+      providers: [ImageProviderService],
     }).compile();
 
     service = module.get<ImageProviderService>(ImageProviderService);
-    httpService = module.get<HttpService>(HttpService);
+
+    // Mock fetch globally for tests
+    global.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should be defined', () => {
@@ -46,15 +41,14 @@ describe('ImageProviderService', () => {
 
     it('calls the backend with proper payload structure', async () => {
       jest.spyOn(service, 'isConfigured').mockReturnValue(true);
-      jest.spyOn(httpService, 'post' as any).mockReturnValue(
-        of({
-          data: {
-            imageUrl: 'https://result/img.png',
-            provider: 'test-provider',
-            preservedReferenceIds: ['ref1'],
-          },
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          imageUrl: 'https://result/img.png',
+          provider: 'test-provider',
+          preservedReferenceIds: ['ref1'],
         }),
-      );
+      });
 
       const request: ImageProviderRequest = {
         prompt: 'test prompt',
@@ -77,14 +71,13 @@ describe('ImageProviderService', () => {
 
     it('normalizes successful response to standard format', async () => {
       jest.spyOn(service, 'isConfigured').mockReturnValue(true);
-      jest.spyOn(httpService, 'post' as any).mockReturnValue(
-        of({
-          data: {
-            imageUrl: 'https://api/output.png',
-            provider: 'custom-backend',
-          },
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          imageUrl: 'https://api/output.png',
+          provider: 'custom-backend',
         }),
-      );
+      });
 
       const request: ImageProviderRequest = {
         prompt: 'test',
@@ -102,14 +95,13 @@ describe('ImageProviderService', () => {
 
     it('rejects response without imageUrl', async () => {
       jest.spyOn(service, 'isConfigured').mockReturnValue(true);
-      jest.spyOn(httpService, 'post' as any).mockReturnValue(
-        of({
-          data: {
-            provider: 'test',
-            // missing imageUrl
-          },
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          provider: 'test',
+          // missing imageUrl
         }),
-      );
+      });
 
       const request: ImageProviderRequest = {
         prompt: 'test',
@@ -122,9 +114,7 @@ describe('ImageProviderService', () => {
 
     it('throws on HTTP error from backend', async () => {
       jest.spyOn(service, 'isConfigured').mockReturnValue(true);
-      jest
-        .spyOn(httpService, 'post' as any)
-        .mockReturnValue(throwError(() => new Error('Backend error')));
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Backend error'));
 
       const request: ImageProviderRequest = {
         prompt: 'test',
@@ -137,14 +127,13 @@ describe('ImageProviderService', () => {
 
     it('includes preserveLockedReferences flag in payload', async () => {
       jest.spyOn(service, 'isConfigured').mockReturnValue(true);
-      const postSpy = jest.spyOn(httpService, 'post' as any).mockReturnValue(
-        of({
-          data: {
-            imageUrl: 'https://result.png',
-            provider: 'test',
-          },
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          imageUrl: 'https://result.png',
+          provider: 'test',
         }),
-      );
+      });
 
       const request: ImageProviderRequest = {
         prompt: 'test',
@@ -154,8 +143,9 @@ describe('ImageProviderService', () => {
 
       await service.generate(request);
 
-      const callPayload = (postSpy.mock.calls[0] ?? [])[1];
-      expect(callPayload).toHaveProperty('preserveLockedReferences', true);
+      const callArgs = (global.fetch as jest.Mock).mock.calls[0];
+      const payload = JSON.parse((callArgs[1] as any).body);
+      expect(payload).toHaveProperty('preserveLockedReferences', true);
     });
   });
 });

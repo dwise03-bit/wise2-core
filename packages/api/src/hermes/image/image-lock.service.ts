@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import type { ImageReferenceAsset } from './image.types';
+import type { ImageReferenceAsset, ImageAssetRole } from './image.types';
 
 @Injectable()
 export class ImageLockService {
-  normalizeReferences(refs?: ImageReferenceAsset[]): ImageReferenceAsset[] {
+  normalizeReferences(refs?: ImageReferenceAsset[]): Array<ImageReferenceAsset & { role: ImageAssetRole }> {
     if (!refs || refs.length === 0) {
       return [];
     }

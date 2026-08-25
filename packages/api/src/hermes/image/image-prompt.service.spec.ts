@@ -112,8 +112,7 @@ describe('ImagePromptService', () => {
     it('includes preservation RULES in every prompt', () => {
       const result = service.build('test', []);
       expect(result.prompt).toContain('Preserve LOCKED assets exactly');
-      expect(result.prompt).toContain('Do not redraw');
-      expect(result.prompt).toContain('Do not reinterpret');
+      expect(result.prompt).toContain('Do not redraw, reinterpret');
       expect(result.prompt).toContain(
         'If exact preservation is unsupported, return an error',
       );
