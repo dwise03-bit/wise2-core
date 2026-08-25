@@ -104,7 +104,7 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
                 reading.lowSidePsig?.let { pressure ->
                     item {
                         Meter(
-                            value = pressure,
+                            value = pressure.toFloat(),
                             min = 0f,
                             max = 400f,
                             unit = "psig",
@@ -118,7 +118,7 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
                 reading.highSidePsig?.let { pressure ->
                     item {
                         Meter(
-                            value = pressure,
+                            value = pressure.toFloat(),
                             min = 0f,
                             max = 600f,
                             unit = "psig",
@@ -183,7 +183,7 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
                 reading.voltageL1?.let { voltage ->
                     item {
                         Meter(
-                            value = voltage,
+                            value = voltage.toFloat(),
                             min = 200f,
                             max = 250f,
                             unit = "V",

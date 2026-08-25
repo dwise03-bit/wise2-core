@@ -64,9 +64,9 @@ class LiveReadingsViewModel(
                 toolManager.readingsForJob(jobId).collect { reading ->
                     val now = System.currentTimeMillis()
                     val state = _uiState.value
-                    val pressureHistory = (state.pressureHistory + listOfNotNull(reading.lowSidePsig)).takeLast(60).toList()
-                    val tempHistory = (state.tempHistory + listOfNotNull(reading.suctionLineTempF)).takeLast(60).toList()
-                    val voltageHistory = (state.voltageHistory + listOfNotNull(reading.voltageL1)).takeLast(60).toList()
+                    val pressureHistory: List<Float> = (state.pressureHistory + listOfNotNull(reading.lowSidePsig?.toFloat())).takeLast(60)
+                    val tempHistory: List<Float> = (state.tempHistory + listOfNotNull(reading.suctionLineTempF?.toFloat())).takeLast(60)
+                    val voltageHistory: List<Float> = (state.voltageHistory + listOfNotNull(reading.voltageL1?.toFloat())).takeLast(60)
 
                     _uiState.value = state.copy(
                         latestReading = reading,

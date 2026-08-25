@@ -297,3 +297,59 @@ class WiseDefenseIMP:
                 'no_ai_assumptions_as_facts': True
             }
         }
+
+    def process_voice_input(self, audio_data: bytes, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Process voice input from always-on listener."""
+        # This would integrate with speech-to-text service
+        # For now, returns processing status
+        return {
+            'type': 'VOICE_INPUT',
+            'status': 'PROCESSING',
+            'timestamp': datetime.utcnow().isoformat(),
+            'note': 'Voice input processing via cloud AI or local STT'
+        }
+
+    def set_display_state(self, state: str) -> Dict[str, Any]:
+        """Update display animation state for Pi HDMI output."""
+        return {
+            'type': 'DISPLAY_STATE',
+            'state': state,
+            'timestamp': datetime.utcnow().isoformat(),
+            'animation': self._get_animation_config(state)
+        }
+
+    def _get_animation_config(self, state: str) -> Dict[str, Any]:
+        """Get animation configuration for display state."""
+        configs = {
+            'IDLE': {
+                'radar': 'pulse_slow',
+                'spectrum': 'idle',
+                'alerts': 'fade_in',
+                'duration_ms': 500
+            },
+            'LISTENING': {
+                'radar': 'pulse_fast',
+                'spectrum': 'animate_waves',
+                'alerts': 'slide_in',
+                'duration_ms': 300
+            },
+            'PROCESSING': {
+                'radar': 'spin',
+                'spectrum': 'scan',
+                'alerts': 'pulse',
+                'duration_ms': 200
+            },
+            'SPEAKING': {
+                'radar': 'pulse_medium',
+                'spectrum': 'respond_wave',
+                'alerts': 'highlight',
+                'duration_ms': 400
+            },
+            'ALERT': {
+                'radar': 'flash',
+                'spectrum': 'warning_red',
+                'alerts': 'expand_urgent',
+                'duration_ms': 100
+            }
+        }
+        return configs.get(state, configs['IDLE'])

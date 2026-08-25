@@ -17,6 +17,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
     "@prisma/client": "^5.22.0",
+    "@react-google-maps/api": "^2.20.0",
     "@stripe/react-stripe-js": "^6.8.1",
     "@stripe/stripe-js": "^9.13.0",
     "@wise2/db": "0.1.0",
