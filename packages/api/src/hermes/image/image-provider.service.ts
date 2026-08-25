@@ -1,6 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 import type {
   ImageProviderRequest,
   ImageProviderResponse,
@@ -16,7 +14,7 @@ export class ImageProviderService {
   private readonly timeoutMs =
     parseInt(process.env.HERMES_IMAGE_TIMEOUT_MS || '120000', 10);
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor() {}
 
   isConfigured(): boolean {
     return !!this.endpoint && !!this.apiKey;
@@ -42,17 +40,20 @@ export class ImageProviderService {
     try {
       this.logger.log(`Calling image backend: ${this.provider}`);
 
-      const response = await firstValueFrom(
-        this.httpService.post(this.endpoint!, payload, {
-          headers: {
-            Authorization: `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          timeout: this.timeoutMs,
-        }),
-      );
+      const response = await fetch(this.endpoint!, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-      const data = response.data;
+      if (!response.ok) {
+        throw new Error(`Backend returned ${response.status}`);
+      }
+
+      const data = (await response.json()) as Record<string, unknown>;
 
       // Validate required fields
       if (!data.imageUrl || typeof data.imageUrl !== 'string') {
@@ -61,9 +62,9 @@ export class ImageProviderService {
 
       return {
         imageUrl: data.imageUrl,
-        provider: data.provider || this.provider,
-        preservedReferenceIds: data.preservedReferenceIds,
-        preservationGuaranteed: data.preservationGuaranteed,
+        provider: (data.provider as string) || this.provider,
+        preservedReferenceIds: (data.preservedReferenceIds as string[]) || undefined,
+        preservationGuaranteed: (data.preservationGuaranteed as boolean) || undefined,
       };
     } catch (error) {
       const message =
