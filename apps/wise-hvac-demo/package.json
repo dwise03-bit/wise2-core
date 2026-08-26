@@ -23,6 +23,7 @@
     "@capacitor/android": "^8.5.0",
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
+    "@capacitor/ios": "^8.5.0",
     "@types/node": "^20.10.0",
     "@types/react": "18.3.31",
     "@types/react-dom": "18.3.7",

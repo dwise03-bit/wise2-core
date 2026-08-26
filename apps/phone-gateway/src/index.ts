@@ -12,6 +12,17 @@ import CallOrchestrator from './conversation/call-orchestrator';
 import STTService from './services/stt.service';
 import LLMService from './services/llm.service';
 import TTSService from './services/tts.service';
+import {
+  getTwilioClient,
+  createTwilioWebhookValidator,
+  handleInboundSms,
+  handleInboundCall as handleTwilioInboundCall,
+  handleCallStatus,
+  handleRecordingComplete,
+  handleTranscriptionComplete,
+  getSmsHistory,
+  getCallHistory,
+} from './providers/twilio';
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +49,25 @@ const orchestrator = new CallOrchestrator(stt, llm, tts);
 
 // Asterisk ARI (optional - would be initialized when connecting to real PBX)
 let asterisk: AsteriskARIClient | null = null;
+
+// Twilio client (optional - parallel provider)
+let twilioClient: ReturnType<typeof getTwilioClient> | null = null;
+
+/**
+ * Initialize Twilio client (optional parallel provider)
+ */
+async function initializeTwilio() {
+  try {
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+      twilioClient = getTwilioClient();
+      logger.info('Twilio client initialized');
+    } else {
+      logger.info('Twilio not configured - Asterisk will handle voice/SMS');
+    }
+  } catch (error) {
+    logger.warn('Twilio initialization failed - falling back to Asterisk:', error);
+  }
+}
 
 /**
  * Initialize Asterisk connection
@@ -112,6 +142,62 @@ async function handleInboundCall(channelId: string, callerId: string) {
     }
   }
 }
+
+// ============================
+// REST API ENDPOINTS
+// ============================
+
+// ============================
+// TWILIO WEBHOOK ROUTES
+// ============================
+
+// Twilio webhook validator middleware (if Twilio is configured)
+const twilioValidator = process.env.TWILIO_AUTH_TOKEN
+  ? createTwilioWebhookValidator(process.env.TWILIO_AUTH_TOKEN)
+  : null;
+
+/**
+ * Twilio inbound SMS webhook
+ */
+app.post('/twilio/inbound-sms', twilioValidator || ((req, res, next) => next()), handleInboundSms);
+
+/**
+ * Twilio inbound voice webhook
+ */
+app.post('/twilio/inbound-call', twilioValidator || ((req, res, next) => next()), handleTwilioInboundCall);
+
+/**
+ * Twilio call status callback
+ */
+app.post('/twilio/call-status', twilioValidator || ((req, res, next) => next()), handleCallStatus);
+
+/**
+ * Twilio recording complete callback
+ */
+app.post('/twilio/recording-complete', twilioValidator || ((req, res, next) => next()), handleRecordingComplete);
+
+/**
+ * Twilio transcription complete callback
+ */
+app.post('/twilio/transcription', twilioValidator || ((req, res, next) => next()), handleTranscriptionComplete);
+
+/**
+ * Get Twilio SMS history
+ */
+app.get('/twilio/sms-history', (req: Request, res: Response) => {
+  const linkedJob = req.query.linkedJob as string;
+  const history = getSmsHistory({ linkedJob });
+  res.json({ sms: history });
+});
+
+/**
+ * Get Twilio call history
+ */
+app.get('/twilio/call-history', (req: Request, res: Response) => {
+  const linkedJob = req.query.linkedJob as string;
+  const history = getCallHistory({ linkedJob });
+  res.json({ calls: history });
+});
 
 // ============================
 // REST API ENDPOINTS
@@ -278,12 +364,14 @@ const PORT = process.env.PORT || 3001;
 
 async function start() {
   try {
-    // Initialize Asterisk (optional)
+    // Initialize communication providers
+    await initializeTwilio();
     await initializeAsterisk();
 
     // Start server
     app.listen(PORT, () => {
       logger.info(`WISE² Phone Gateway running on port ${PORT}`);
+      logger.info('Communication providers: ' + (twilioClient ? 'Twilio + ' : '') + (asterisk ? 'Asterisk' : 'Local mode'));
       logger.info('Ready for calls');
     });
 

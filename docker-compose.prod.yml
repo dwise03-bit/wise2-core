@@ -190,6 +190,29 @@ services:
       timeout: 10s
       retries: 3
 
+  # WISE² HVAC Demo
+  hvac:
+    build:
+      context: .
+      dockerfile: apps/wise-hvac-demo/Dockerfile
+    image: wise2-hvac-demo:latest
+    container_name: wise2-hvac
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3024
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3024:3024"
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3024/wise-hvac-demo/signin"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Redis Cache & Queue
   redis:
     image: redis:7-alpine
@@ -226,6 +249,7 @@ services:
       - studio
       - prompt-shop
       - getdown-demo
+      - hvac
       - redis
     networks:
       - wise2
