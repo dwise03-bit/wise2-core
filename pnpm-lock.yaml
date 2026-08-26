@@ -675,6 +675,9 @@ importers:
       framer-motion:
         specifier: ^11.0.0
         version: 11.18.2(react-dom@18.2.0)(react@18.2.0)
+      jsonwebtoken:
+        specifier: ^9.0.0
+        version: 9.0.3
       lucide-react:
         specifier: ^0.408.0
         version: 0.408.0(react@18.2.0)
@@ -700,6 +703,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/jsonwebtoken':
+        specifier: ^9.0.0
+        version: 9.0.10
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.43
@@ -6158,7 +6164,6 @@ packages:
     dependencies:
       '@types/ms': 2.1.0
       '@types/node': 20.19.43
-    dev: false
 
   /@types/luxon@3.4.2:
     resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
@@ -6170,7 +6175,6 @@ packages:
 
   /@types/ms@2.1.0:
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
-    dev: false
 
   /@types/node-fetch@2.6.13:
     resolution: {integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==}
