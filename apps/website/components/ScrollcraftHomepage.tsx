@@ -68,15 +68,15 @@ const readings = [
 const evidence = [
   'Production Next.js website, dashboards, auth flows, and product apps live in one repository.',
   'HVAC field-tech app, iPhone wrapper, and production deployment workflow are actively maintained.',
-  'Client commerce and brand systems include Sencere, print shop, detailing, and creative studio surfaces.',
+  'Client commerce, field operations, creative tools, and deployment workflows share one operating foundation.',
 ];
 
 const clientSignals = [
   {
-    title: 'Sencere Studios',
-    text: 'Product, apparel, vinyl, and sublimation visuals organized into a client storefront system.',
-    image: '/sencere/hero/hero-product-collage.webp',
-    href: '/sencere',
+    title: 'Field Operations',
+    text: 'Technician workflows, diagnostic records, and mobile-ready job views connected to the same operating core.',
+    image: '/uploads/daniel-real.jpg',
+    href: '/fieldtech',
   },
   {
     title: 'WISE Defense',
@@ -220,7 +220,7 @@ export function ScrollcraftHomepage() {
               transition={{ duration: reduceMotion ? 0 : 0.8, delay: reduceMotion ? 0 : 0.12, ease: [0.16, 1, 0.3, 1] }}
               className="relative min-h-80 overflow-hidden border border-white/10 bg-black sm:mt-14"
             >
-              <Image src="/sencere/portfolio/work-02-vinyl-cutter.png" alt="Client production equipment artifact" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+              <Image src="/wise-defense/instructors/IMG_1573.jpeg" alt="WISE² training and field systems source imagery" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
             </motion.div>
           </div>
         </div>

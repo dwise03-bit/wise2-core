@@ -17,7 +17,6 @@ const footerSections = [
     links: [
       { href: '/solutions', label: 'Solutions' },
       { href: '/work', label: 'Client Work' },
-      { href: '/sencere', label: 'Sencere Studios' },
       { href: '/printshop', label: 'Print Shop' },
     ],
   },
