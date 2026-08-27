@@ -32,10 +32,10 @@ function StatsSection() {
 
 // ─── Feature Card ────────────────────────────────────────────────────────────
 
-function FeatureCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+function FeatureCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="rounded-xl border border-white/10 bg-[#090C10] p-6">
-      <Icon className="h-6 w-6 text-[#8EDBFF]" />
+      <div className="h-6 w-6 text-[#8EDBFF]">{children}</div>
       <h3 className="mt-4 text-lg font-bold text-white">{title}</h3>
       <p className="mt-2 text-sm text-[#B7C0CB]">{description}</p>
     </motion.div>
@@ -119,9 +119,15 @@ export default function JingleLab() {
           <div className="mx-auto max-w-7xl">
             <h2 className="text-3xl font-black leading-tight sm:text-5xl">Why Choose Jingle Lab</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-3">
-              <FeatureCard icon={Zap} title="10x Faster" description="Generate broadcast-quality jingles in seconds, not weeks. Stop waiting for expensive composers." />
-              <FeatureCard icon={Music} title="100% Customizable" description="Full control over style, tempo, instrumentation, and lyrics. Make it perfectly match your brand." />
-              <FeatureCard icon={Users} title="Unlimited Revisions" description="Iterate instantly. Create dozens of variations until you find the perfect sound." />
+              <FeatureCard title="10x Faster" description="Generate broadcast-quality jingles in seconds, not weeks. Stop waiting for expensive composers.">
+                <Zap className="h-6 w-6" />
+              </FeatureCard>
+              <FeatureCard title="100% Customizable" description="Full control over style, tempo, instrumentation, and lyrics. Make it perfectly match your brand.">
+                <Music className="h-6 w-6" />
+              </FeatureCard>
+              <FeatureCard title="Unlimited Revisions" description="Iterate instantly. Create dozens of variations until you find the perfect sound.">
+                <Users className="h-6 w-6" />
+              </FeatureCard>
             </div>
           </div>
         </section>
