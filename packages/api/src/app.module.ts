@@ -12,7 +12,7 @@ import { APIManagerModule } from './config/api-manager.module';
 import { EmailModule } from './email/email.module';
 import { EventsModule } from './analytics/events.module';
 import { QueueModule } from './queue/queue.module';
-import { DiscordModule } from './discord/discord.module';
+// import { DiscordModule } from './discord/discord.module'; // DISABLED: TokenInvalid error blocking deployment
 // import { ConsultingModule } from './v1/consulting/consulting.module';
 import { BillingModule } from './v1/billing/billing.module';
 import { ProspectsModule } from './v1/prospects/prospects.module';
@@ -109,7 +109,7 @@ import { CjaysModule } from './cjays/cjays.module';
     AnalyticsModule,
     CommunityModule,
     ModulesModule,
-    DiscordModule,
+    // DiscordModule, // DISABLED: TokenInvalid error blocking deployment
     PrismaModule,
     RevenueOsModule,
     DigitalTwinModule,
