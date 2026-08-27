@@ -30,7 +30,7 @@ struct MainTabView: View {
             }
 
           // WORK Tab
-          WorkPlaceholder()
+          WorkScreen()
             .tag(2)
             .tabItem {
               Label("Work", systemImage: "briefcase.fill")

@@ -18,6 +18,8 @@
 		3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */; };
 		3FA1001026 /* WISE2/Views/AIScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */; };
 		3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001029 /* WISE2/Views/AIScreen.swift */; };
+		3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */; };
+		3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001033 /* WISE2/Views/WorkScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		3FA1001015 /* WISE2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
 		3FA1001029 /* WISE2/Views/AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreen.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001033 /* WISE2/Views/WorkScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreen.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,8 @@
 				3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */,
 				3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */,
 				3FA1001029 /* WISE2/Views/AIScreen.swift */,
+				3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */,
+				3FA1001033 /* WISE2/Views/WorkScreen.swift */,
 				3FA1001014 /* WISE2/Info.plist */,
 			);
 			path = WISE2;
@@ -158,8 +164,10 @@
 				3FA100100D /* WISE2/Views/Auth/AuthGate.swift in Sources */,
 				3FA100100F /* WISE2/Views/Home/HomeScreen.swift in Sources */,
 				3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */,
-				3FA1001026 /* WISE2/Views/AI/AIScreenViewModel.swift in Sources */,
-				3FA1001028 /* WISE2/Views/AI/AIScreen.swift in Sources */,
+				3FA1001026 /* WISE2/Views/AIScreenViewModel.swift in Sources */,
+				3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */,
+				3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */,
+				3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
