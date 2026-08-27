@@ -58,6 +58,21 @@ const dataFlow = [
   { label: 'Action', value: 'Next step assigned' },
 ];
 
+const journeyCards = [
+  {
+    title: 'Capture',
+    text: 'Jobs, client notes, readings, requests, and production details enter one structured operating layer.',
+  },
+  {
+    title: 'Reason',
+    text: 'WISE² keeps context attached so dashboards, automations, and AI assistance see the same source of truth.',
+  },
+  {
+    title: 'Act',
+    text: 'Teams leave with assigned work, documented decisions, and deployable systems.',
+  },
+];
+
 const readings = [
   { label: 'Suction pressure', value: '118 PSI', accent: '#8EDBFF' },
   { label: 'Liquid line temp', value: '91°F', accent: '#F2B632' },
@@ -119,37 +134,25 @@ export function ScrollcraftHomepage() {
     offset: ['start end', 'end start'],
   });
 
-  const heroScale = useTransform(arrivalProgress, [0, 1], reduceMotion ? [1, 1] : [1, 1.08]);
-  const heroY = useTransform(arrivalProgress, [0, 1], reduceMotion ? [0, 0] : [0, 80]);
   const dataX = useTransform(flowProgress, [0.12, 0.82], reduceMotion ? ['0%', '0%'] : ['0%', '78%']);
   const gaugeNeedle = useTransform(hvacProgress, [0.18, 0.72], reduceMotion ? [-34, -34] : [-34, 42]);
   const phoneY = useTransform(hvacProgress, [0, 1], reduceMotion ? [0, 0] : [30, -30]);
 
   return (
     <main className="overflow-hidden bg-[#050607] text-white">
-      <section ref={arrivalRef} className="relative min-h-[calc(100vh-4rem)] border-b border-white/10">
-        <motion.div className="absolute inset-0" style={{ scale: heroScale, y: heroY }}>
-          <Image
-            src="/brand/wise2-hero-united.webp"
-            alt="WISE² brand system artwork showing the connected business operating system"
-            fill
-            priority
-            className="object-cover opacity-42"
-            sizes="100vw"
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(5,6,7,0.98)_0%,rgba(5,6,7,0.9)_42%,rgba(5,6,7,0.42)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(5,6,7,0)_0%,rgba(5,6,7,0.94)_96%)]" />
-        <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-end gap-10 px-4 pb-10 pt-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-16">
+      <section ref={arrivalRef} className="relative border-b border-white/10 bg-[#050607]">
+        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
+        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(220,231,239,0.65)_1px,transparent_1px),linear-gradient(90deg,rgba(220,231,239,0.65)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
           <RevealText className="max-w-3xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-              Real-world experience / Intelligent systems
+              WISE² Core / Business operating system
             </p>
             <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">
-              Intelligent tools for real-world businesses.
+              One operating layer for real-world work.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
-              WISE² builds operating systems, field applications, training technology, and client infrastructure for teams that need software grounded in actual work.
+              WISE² connects field work, customer records, automations, dashboards, and AI assistance into one focused system for teams that need the work to move cleanly.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -169,24 +172,45 @@ export function ScrollcraftHomepage() {
           </RevealText>
 
           <motion.div
-            style={{ y: useTransform(arrivalProgress, [0, 1], reduceMotion ? [0, 0] : [0, -36]) }}
-            className="mb-2 border border-white/12 bg-[#080B0E]/85 p-5 shadow-2xl backdrop-blur-md"
+            style={{ y: useTransform(arrivalProgress, [0, 1], reduceMotion ? [0, 0] : [18, -28]) }}
+            className="border border-white/12 bg-[#080B0E]/92 p-5 shadow-2xl backdrop-blur-md"
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4 text-[11px] uppercase tracking-[0.18em] text-[#8FA0AE]">
-              <span>WISE² journey</span>
-              <span className="text-[#8EDBFF]">Scrollcraft layer</span>
+              <span>WISE² Core</span>
+              <span className="text-[#8EDBFF]">Live operating view</span>
             </div>
-            <div className="grid grid-cols-1 gap-4 pt-5 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-              {['The field', 'The data', 'The system'].map((step) => (
-                <article key={step} className="border-l border-[#8EDBFF]/40 pl-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">
-                    {step}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[#AEB8C3]">
-                    The page moves through WISE² the same way the work does: from real context to intelligent action.
-                  </p>
-                </article>
-              ))}
+            <div className="mt-5 grid gap-3">
+              <div className="grid grid-cols-3 gap-3">
+                {['Field Ops', 'CRM', 'Automation'].map((label, index) => (
+                  <div key={label} className="border border-white/10 bg-[#050607] p-3">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#8FA0AE]">{label}</p>
+                    <p className="mt-3 font-mono text-2xl font-bold text-[#DCE7EF]">{[18, 42, 9][index]}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="border border-[#8EDBFF]/30 bg-[#071015] p-4">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">Today's command queue</p>
+                <div className="mt-4 space-y-3">
+                  {['Dispatch HVAC follow-up', 'Generate client status summary', 'Sync deployment notes'].map((item) => (
+                    <div key={item} className="flex items-center gap-3 border border-white/10 bg-black/35 p-3">
+                      <span className="h-2 w-2 bg-[#F2B632]" aria-hidden="true" />
+                      <span className="text-sm text-[#DCE7EF]">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {journeyCards.map((step) => (
+                  <article key={step.title} className="border-l border-[#8EDBFF]/40 pl-4">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">
+                      {step.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-[#AEB8C3]">
+                      {step.text}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -198,9 +222,9 @@ export function ScrollcraftHomepage() {
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
               From the real world
             </p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">WISE² was not designed in isolation.</h2>
+            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">Built around the way work actually arrives.</h2>
             <p className="mt-5 text-base leading-8 text-[#B7C0CB]">
-              Field jobs, client builds, creative production, deployment problems, and hardware experiments shape the system. Scrollcraft makes that progression visible instead of stacking claims.
+              Field jobs, service notes, client requests, deployment problems, and hardware experiments shape the system. Scrollcraft shows the operating flow without turning the WISE² front door into a mixed portfolio page.
             </p>
           </RevealText>
           <div className="grid gap-4 sm:grid-cols-2">

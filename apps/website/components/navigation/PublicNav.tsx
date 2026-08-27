@@ -11,12 +11,10 @@ interface NavLink {
 }
 
 const PRIMARY_LINKS: NavLink[] = [
-  { href: '/platform', label: 'Products' },
-  { href: '/fieldtech', label: 'HVAC' },
-  { href: '/wise-defense', label: 'Defense' },
-  { href: '/soundlab', label: 'SoundLab' },
+  { href: '/platform', label: 'Core' },
+  { href: '/fieldtech', label: 'Field Ops' },
   { href: '/solutions', label: 'Solutions' },
-  { href: '/work', label: 'Client Work' },
+  { href: '/work', label: 'Work' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
