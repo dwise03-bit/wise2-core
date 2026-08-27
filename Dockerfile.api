@@ -27,7 +27,7 @@ RUN cd packages/db && npx prisma generate || true
 # Copy API source and build it
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
-RUN cd packages/api && npx tsc --build
+RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc --build
 
 EXPOSE 3000
 
