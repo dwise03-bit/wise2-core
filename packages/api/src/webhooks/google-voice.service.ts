@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GoogleVoiceProvider, CallSessionManager } from '@wise2/ai-phone';
-import { PrismaService } from '../prisma/prisma.service';
+import { GoogleVoiceProvider, CallSessionManager, VoiceOrchestrator, ToolRegistry } from '@wise2/ai-phone';
+import { PrismaService } from '@wise2/db';
 
 interface GoogleVoiceWebhookPayload {
   type: 'INCOMING_CALL' | 'CALL_CONNECTED' | 'CALL_ENDED' | 'CALL_FAILED';
@@ -15,8 +15,9 @@ interface GoogleVoiceWebhookPayload {
 @Injectable()
 export class GoogleVoiceService {
   private readonly logger = new Logger('GoogleVoiceService');
-  private googleVoiceProvider!: GoogleVoiceProvider;
-  private sessionManager!: CallSessionManager;
+  private googleVoiceProvider: GoogleVoiceProvider;
+  private sessionManager: CallSessionManager;
+  private voiceOrchestrator: VoiceOrchestrator;
   private activeSessions = new Map<string, { sessionId: string; callId: string; customerId?: string }>();
 
   constructor(private readonly prisma: PrismaService) {
@@ -27,30 +28,39 @@ export class GoogleVoiceService {
    * Initialize Google Voice and orchestration components
    */
   private initializeProviders() {
-    // Initialize Google Voice Provider
-    this.googleVoiceProvider = new GoogleVoiceProvider({
-      projectId: process.env.GOOGLE_PROJECT_ID!,
-      credentials: {
-        type: 'service_account',
-        project_id: process.env.GOOGLE_PROJECT_ID!,
-        private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID!,
-        private_key: process.env.GOOGLE_PRIVATE_KEY!,
-        client_email: process.env.GOOGLE_CLIENT_EMAIL!,
-        client_id: process.env.GOOGLE_CLIENT_ID!,
-        auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-        token_uri: 'https://oauth2.googleapis.com/token',
-        auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-        client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL!,
-      },
-      phoneNumber: process.env.GOOGLE_PHONE_NUMBER!,
-    });
+    try {
+      // Initialize Google Voice Provider
+      this.googleVoiceProvider = new GoogleVoiceProvider({
+        projectId: process.env.GOOGLE_PROJECT_ID!,
+        credentials: {
+          type: 'service_account',
+          project_id: process.env.GOOGLE_PROJECT_ID!,
+          private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID!,
+          private_key: process.env.GOOGLE_PRIVATE_KEY!,
+          client_email: process.env.GOOGLE_CLIENT_EMAIL!,
+          client_id: process.env.GOOGLE_CLIENT_ID!,
+          auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+          token_uri: 'https://oauth2.googleapis.com/token',
+          auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+          client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL!,
+        },
+        phoneNumber: process.env.GOOGLE_PHONE_NUMBER!,
+      });
 
-    // Initialize session manager and orchestrator
-    this.sessionManager = new CallSessionManager();
-    // TODO: Initialize with actual voice model (OpenAI Realtime)
-    // this.voiceOrchestrator = new VoiceOrchestrator(voiceModel, sessionManager, toolRegistry);
+      // Initialize session manager
+      this.sessionManager = new CallSessionManager();
 
-    this.logger.log('Google Voice service initialized');
+      // Initialize tool registry
+      const toolRegistry = new ToolRegistry();
+
+      // VoiceOrchestrator will be initialized when voice model provider is available
+      // For now, we'll handle calls directly through the provider
+
+      this.logger.log('✓ Google Voice service initialized successfully');
+    } catch (error) {
+      this.logger.error(`Failed to initialize Google Voice service: ${error instanceof Error ? error.message : String(error)}`);
+      // Don't throw - allow service to start but webhooks will fail until configured
+    }
   }
 
   /**
@@ -67,11 +77,11 @@ export class GoogleVoiceService {
 
       // Look up customer in database
       const customer = await this.prisma.customer.findFirst({
-        where: { phone: from },
+        where: { primaryPhone: from },
       });
 
       if (customer) {
-        this.logger.log(`Found customer: ${customer.contactName}`);
+        this.logger.log(`Found customer: ${customer.fullName}`);
       } else {
         this.logger.log(`New caller from ${from}`);
       }
@@ -82,12 +92,16 @@ export class GoogleVoiceService {
       // Create call record in database
       const callRecord = await this.prisma.call.create({
         data: {
-          callSid: googleCallId,
-          direction: 'INBOUND',
-          status: 'RINGING',
-          callerNumber: from,
-          inboundNumber: to,
+          tenantId: 'default',
+          providerId: 'google-voice',
+          direction: 'inbound',
+          fromNumber: from,
+          toNumber: to,
           startedAt: new Date(timestamp),
+          recordingStatus: 'none',
+          transcriptStatus: 'pending',
+          confidence: 0,
+          costEstimate: 0,
           customerId: customer?.id,
         },
       });
@@ -136,7 +150,7 @@ export class GoogleVoiceService {
       // Update call record
       await this.prisma.call.update({
         where: { id: callId },
-        data: { answeredAt: new Date(timestamp), status: 'ANSWERED' },
+        data: { connectedAt: new Date(timestamp) },
       });
     } catch (error) {
       this.logger.warn(`Could not update call record: ${error instanceof Error ? error.message : String(error)}`);
@@ -166,9 +180,7 @@ export class GoogleVoiceService {
           where: { id: callId },
           data: {
             endedAt: new Date(timestamp),
-            durationSeconds: Math.max(0, Math.round(duration / 1000)),
-            status: 'DISCONNECTED',
-            disposition: 'ANSWERED',
+            disposition: 'completed',
           },
         });
       }
@@ -176,10 +188,7 @@ export class GoogleVoiceService {
       // Get call summary from session
       if (sessionInfo) {
         const summary = this.sessionManager.getSummary(sessionInfo.sessionId);
-        if (summary) {
-          const toolsUsed = Array.isArray(summary.toolsUsed) ? summary.toolsUsed.length : 0;
-          this.logger.log(`Call ${callId} summary: ${summary.messageCount} messages, ${toolsUsed} tools used`);
-        }
+        this.logger.log(`Call ${callId} summary: ${summary.messageCount} messages, ${summary.toolsUsed.length} tools used`);
       }
 
       // Clean up session
@@ -206,8 +215,7 @@ export class GoogleVoiceService {
         where: { id: callId },
         data: {
           endedAt: new Date(timestamp),
-          status: 'FAILED',
-          disposition: 'FAILED',
+          disposition: 'failed',
         },
       });
 
@@ -233,7 +241,7 @@ export class GoogleVoiceService {
       if (recording) {
         await this.prisma.call.update({
           where: { id: callId },
-          data: { recordingUrl: recording.url },
+          data: { recordingStatus: 'recorded' },
         });
         this.logger.log(`Recording available: ${recording.url}`);
       }
@@ -242,6 +250,10 @@ export class GoogleVoiceService {
       // This happens asynchronously in Google Cloud
       const transcript = await this.googleVoiceProvider.getTranscript(callId);
       if (transcript) {
+        await this.prisma.call.update({
+          where: { id: callId },
+          data: { transcriptStatus: 'available' },
+        });
         this.logger.log(`Transcript available: ${transcript.transcriptId}`);
       }
 

@@ -42,6 +42,7 @@ import { CommandCenterModule } from './command-center/command-center.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -148,6 +149,7 @@ import { CloudModule } from './v1/cloud/cloud.module';
     CommandCenterModule,
     AiPhoneModule,
     CloudModule,
+    WebhooksModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
