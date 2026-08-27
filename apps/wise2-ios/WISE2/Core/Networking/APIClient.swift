@@ -19,10 +19,8 @@ actor APIClient {
     self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3000/v1") ?? URL(fileURLWithPath: "/")
 
     #if DEBUG
-    mockMode = ProcessInfo.processInfo.environment["MOCK_API"] == "true"
-    if mockMode {
-      print("📡 API Client in MOCK mode (development)")
-    }
+    mockMode = ProcessInfo.processInfo.environment["MOCK_API"] != "false"
+    print("📡 API Client in \(mockMode ? "MOCK" : "LIVE") mode")
     #endif
   }
 
