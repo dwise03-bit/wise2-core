@@ -34,6 +34,7 @@ import { PrintShopModule } from './v1/print-shop/print-shop.module';
 import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 import { CjaysModule } from './cjays/cjays.module';
 
 @Module({
@@ -127,6 +128,7 @@ import { CjaysModule } from './cjays/cjays.module';
     HermesModule,
     TradingModule,
     FieldtechModule,
+    WebhooksModule,
     CjaysModule,
     // AuditsModule, // DEFERRED
   ],
