@@ -6,83 +6,46 @@ import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight,
-  Cpu,
-  FileSearch,
+  BarChart3,
+  Briefcase,
+  CheckCircle2,
   Gauge,
-  HardDrive,
-  Radio,
-  ShieldCheck,
-  Wrench,
+  MapPin,
+  Zap,
 } from 'lucide-react';
 
-const operatingAreas = [
+const poweredBusinesses = [
   {
-    name: 'WISE² Core',
-    label: 'Operating layer',
-    description:
-      'The command system tying field work, client records, automations, media, and decision support into one working stack.',
-    href: '/platform',
-    icon: Cpu,
+    name: 'GET DOWN Pressure Washing',
+    tagline: 'Local brand to multi-city growth',
+    metric: '3 cities',
+    description: 'Went from single location to operating across North Carolina with WISE² CRM, automation, and route management.',
+    href: '/case-studies/get-down',
+    icon: MapPin,
   },
   {
-    name: 'WISE² HVAC',
-    label: 'Field diagnostics',
-    description:
-      'Technician workflows for capturing equipment data, reading measurements, and turning site notes into recommended action.',
-    href: '/fieldtech',
+    name: 'CJAYS Auto Recon',
+    tagline: 'Detailing business at scale',
+    metric: '$18.6K revenue',
+    description: 'Professional auto detailing app with job tracking, photo management, analytics, and customer database.',
+    href: '/case-studies/cjays',
+    icon: BarChart3,
+  },
+  {
+    name: 'WISE² HVAC Solutions',
+    tagline: 'Diagnostic accuracy on the jobsite',
+    metric: '82% confidence',
+    description: 'Field technician app with real-time diagnostics, AI analysis, and smart tool connectivity.',
+    href: '/platform',
     icon: Gauge,
   },
   {
-    name: 'WISE Defense',
-    label: 'Training systems',
-    description:
-      'A darker division for training, edge technology, and specialized systems under the TRAIN. TEACH. PROTECT. standard.',
-    href: '/wise-defense',
-    icon: ShieldCheck,
-  },
-  {
-    name: 'SoundLab',
-    label: 'Creative infrastructure',
-    description:
-      'Audio, production, and campaign workflows for artists and creative businesses that need real operational support.',
-    href: '/soundlab',
-    icon: Radio,
-  },
-];
-
-const dataFlow = [
-  { label: 'Real data', value: 'Unit note + readings' },
-  { label: 'WISE² AI', value: 'Context retained' },
-  { label: 'Analysis', value: 'Pattern reviewed' },
-  { label: 'Diagnosis', value: 'Probable cause' },
-  { label: 'Action', value: 'Next step assigned' },
-];
-
-const readings = [
-  { label: 'Suction pressure', value: '118 PSI', accent: '#8EDBFF' },
-  { label: 'Liquid line temp', value: '91°F', accent: '#F2B632' },
-  { label: 'Voltage check', value: '247 V', accent: '#DCE7EF' },
-  { label: 'Subcooling', value: '8.4°F', accent: '#8EDBFF' },
-];
-
-const evidence = [
-  'Production Next.js website, dashboards, auth flows, and product apps live in one repository.',
-  'HVAC field-tech app, iPhone wrapper, and production deployment workflow are actively maintained.',
-  'Client commerce and brand systems include Sencere, print shop, detailing, and creative studio surfaces.',
-];
-
-const clientSignals = [
-  {
-    title: 'Sencere Studios',
-    text: 'Product, apparel, vinyl, and sublimation visuals organized into a client storefront system.',
-    image: '/sencere/hero/hero-product-collage.webp',
+    name: 'SenCere Creative',
+    tagline: 'Multi-brand ecommerce platform',
+    metric: '3 brands',
+    description: 'PIFF CITY, BLAKKHAIL, VANDALS—three distinct creative brands operating from one system.',
     href: '/sencere',
-  },
-  {
-    title: 'WISE Defense',
-    text: 'Instructor and training imagery connected to a distinct division identity without overtaking the parent brand.',
-    image: '/wise-defense/instructors/IMG_1573.jpeg',
-    href: '/wise-defense',
+    icon: Briefcase,
   },
 ];
 
@@ -102,61 +65,30 @@ function RevealText({ children, className = '' }: { children: React.ReactNode; c
 
 export function ScrollcraftHomepage() {
   const reduceMotion = useReducedMotion();
-  const arrivalRef = useRef<HTMLElement>(null);
-  const flowRef = useRef<HTMLElement>(null);
-  const hvacRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress: arrivalProgress } = useScroll({
-    target: arrivalRef,
-    offset: ['start start', 'end start'],
-  });
-  const { scrollYProgress: flowProgress } = useScroll({
-    target: flowRef,
-    offset: ['start end', 'end start'],
-  });
-  const { scrollYProgress: hvacProgress } = useScroll({
-    target: hvacRef,
-    offset: ['start end', 'end start'],
-  });
-
-  const heroScale = useTransform(arrivalProgress, [0, 1], reduceMotion ? [1, 1] : [1, 1.08]);
-  const heroY = useTransform(arrivalProgress, [0, 1], reduceMotion ? [0, 0] : [0, 80]);
-  const dataX = useTransform(flowProgress, [0.12, 0.82], reduceMotion ? ['0%', '0%'] : ['0%', '78%']);
-  const gaugeNeedle = useTransform(hvacProgress, [0.18, 0.72], reduceMotion ? [-34, -34] : [-34, 42]);
-  const phoneY = useTransform(hvacProgress, [0, 1], reduceMotion ? [0, 0] : [30, -30]);
 
   return (
     <main className="overflow-hidden bg-[#050607] text-white">
-      <section ref={arrivalRef} className="relative min-h-[calc(100vh-4rem)] border-b border-white/10">
-        <motion.div className="absolute inset-0" style={{ scale: heroScale, y: heroY }}>
-          <Image
-            src="/brand/wise2-hero-united.webp"
-            alt="WISE² brand system artwork showing the connected business operating system"
-            fill
-            priority
-            className="object-cover opacity-42"
-            sizes="100vw"
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(5,6,7,0.98)_0%,rgba(5,6,7,0.9)_42%,rgba(5,6,7,0.42)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(5,6,7,0)_0%,rgba(5,6,7,0.94)_96%)]" />
-        <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-end gap-10 px-4 pb-10 pt-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-16">
+      {/* Hero Section */}
+      <section className="relative border-b border-white/10 bg-[#050607]">
+        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
+        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(220,231,239,0.65)_1px,transparent_1px),linear-gradient(90deg,rgba(220,231,239,0.65)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
           <RevealText className="max-w-3xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-              Real-world experience / Intelligent systems
+              Real Business. Real Results.
             </p>
             <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">
-              Intelligent tools for real-world businesses.
+              WISE² Powers Service Businesses.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
-              WISE² builds operating systems, field applications, training technology, and client infrastructure for teams that need software grounded in actual work.
+              From pressure washing to HVAC to creative brands—WISE² gives service businesses the tools to scale. Field diagnostics, AI assistance, customer management, and automation all in one system.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/platform"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#DCE7EF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]"
               >
-                Explore the Platform
+                Explore WISE²
                 <ArrowRight size={16} aria-hidden="true" />
               </Link>
               <Link
@@ -169,144 +101,68 @@ export function ScrollcraftHomepage() {
           </RevealText>
 
           <motion.div
-            style={{ y: useTransform(arrivalProgress, [0, 1], reduceMotion ? [0, 0] : [0, -36]) }}
-            className="mb-2 border border-white/12 bg-[#080B0E]/85 p-5 shadow-2xl backdrop-blur-md"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="border border-white/12 bg-[#080B0E]/92 p-5 shadow-2xl backdrop-blur-md"
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4 text-[11px] uppercase tracking-[0.18em] text-[#8FA0AE]">
-              <span>WISE² journey</span>
-              <span className="text-[#8EDBFF]">Scrollcraft layer</span>
+              <span>WISE² Operating System</span>
+              <span className="text-[#8EDBFF]">Real businesses powered</span>
             </div>
-            <div className="grid grid-cols-1 gap-4 pt-5 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-              {['The field', 'The data', 'The system'].map((step) => (
-                <article key={step} className="border-l border-[#8EDBFF]/40 pl-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">
-                    {step}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[#AEB8C3]">
-                    The page moves through WISE² the same way the work does: from real context to intelligent action.
-                  </p>
-                </article>
-              ))}
+            <div className="mt-5 space-y-4">
+              {poweredBusinesses.map((business) => {
+                const Icon = business.icon;
+                return (
+                  <div key={business.name} className="flex items-start gap-3 border-l border-[#8EDBFF]/30 pl-4 py-2">
+                    <Icon className="mt-0.5 h-5 w-5 flex-none text-[#8EDBFF]" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-white">{business.name}</p>
+                      <p className="text-[11px] text-[#8FA0AE]">{business.metric}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
       </section>
 
-      <section className="relative border-b border-white/10 bg-[#07090C]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-24">
-          <RevealText>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-              From the real world
-            </p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">WISE² was not designed in isolation.</h2>
-            <p className="mt-5 text-base leading-8 text-[#B7C0CB]">
-              Field jobs, client builds, creative production, deployment problems, and hardware experiments shape the system. Scrollcraft makes that progression visible instead of stacking claims.
-            </p>
-          </RevealText>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <motion.div
-              initial={{ clipPath: 'inset(0 100% 0 0)' }}
-              whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
-              viewport={{ once: true, margin: '-10% 0px' }}
-              transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative min-h-80 overflow-hidden border border-white/10 bg-black"
-            >
-              <Image src="/uploads/daniel-real.jpg" alt="Daniel Wise in WISE² source imagery" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-            </motion.div>
-            <motion.div
-              initial={{ clipPath: 'inset(100% 0 0 0)' }}
-              whileInView={{ clipPath: 'inset(0 0 0 0)' }}
-              viewport={{ once: true, margin: '-10% 0px' }}
-              transition={{ duration: reduceMotion ? 0 : 0.8, delay: reduceMotion ? 0 : 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className="relative min-h-80 overflow-hidden border border-white/10 bg-black sm:mt-14"
-            >
-              <Image src="/sencere/portfolio/work-02-vinyl-cutter.png" alt="Client production equipment artifact" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section ref={flowRef} className="relative bg-[#050607] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      {/* Powered Businesses Grid */}
+      <section className="border-b border-white/10 bg-[#0A0E12] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-7xl">
-          <RevealText className="max-w-3xl">
+          <RevealText className="max-w-3xl mb-12">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-              Data enters WISE²
+              Four Real Businesses
             </p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">Real data. Better decisions.</h2>
-          </RevealText>
-          <div className="sticky top-20 mt-10 border border-white/10 bg-[#080B0E] p-5 sm:p-8">
-            <div className="relative hidden h-36 items-center md:flex">
-              <div className="absolute left-[5%] right-[7%] top-1/2 h-px bg-[#8EDBFF]/25" />
-              <motion.div
-                style={{ x: dataX }}
-                className="absolute left-[5%] top-[calc(50%-0.55rem)] h-5 w-5 border border-[#8EDBFF] bg-[#8EDBFF]"
-              />
-              <div className="grid w-full grid-cols-5 gap-4">
-                {dataFlow.map((item) => (
-                  <div key={item.label} className="relative min-h-28 border border-white/10 bg-[#050607] p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">{item.label}</p>
-                    <p className="mt-3 text-sm leading-6 text-[#DCE7EF]">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid gap-3 md:hidden">
-              {dataFlow.map((item) => (
-                <div key={item.label} className="border-l border-[#8EDBFF]/50 bg-[#050607] p-4">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">{item.label}</p>
-                  <p className="mt-2 text-sm leading-6 text-[#DCE7EF]">{item.value}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-8 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#8EDBFF]">System interpretation</p>
-                <h3 className="mt-4 text-2xl font-black">The motion follows the work.</h3>
-                <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">
-                  Context moves through the system before it becomes a recommendation. The animation is intentionally simple: it explains sequence, not spectacle.
-                </p>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {evidence.map((item) => (
-                  <div key={item} className="flex gap-3 border border-white/10 bg-[#0A0E12] p-4">
-                    <FileSearch className="mt-1 h-5 w-5 flex-none text-[#8EDBFF]" aria-hidden="true" />
-                    <p className="text-sm leading-6 text-[#C8D0D9]">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="h-24" aria-hidden="true" />
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-[#0A0E12] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-          <RevealText>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">WISE² Core</p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">The intelligence layer connects the divisions.</h2>
-            <p className="mt-5 text-base leading-8 text-[#B7C0CB]">
-              Each area keeps its own personality, but the operating philosophy stays the same: field truth enters, WISE² organizes it, the team acts.
-            </p>
+            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">
+              Built and scaled with WISE².
+            </h2>
           </RevealText>
           <div className="grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2">
-            {operatingAreas.map((area, index) => {
-              const Icon = area.icon;
+            {poweredBusinesses.map((business, index) => {
+              const Icon = business.icon;
               return (
                 <motion.div
-                  key={area.name}
+                  key={business.name}
                   initial={{ opacity: 0.55 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true, margin: '-20% 0px' }}
                   transition={{ duration: 0.35, delay: reduceMotion ? 0 : index * 0.08 }}
                 >
-                  <Link href={area.href} className="group block min-h-64 bg-[#090C10] p-6 transition duration-200 hover:bg-[#0D141A] focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
+                  <Link
+                    href={business.href}
+                    className="group block min-h-64 bg-[#090C10] p-6 transition duration-200 hover:bg-[#0D141A] focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+                  >
                     <Icon className="h-6 w-6 text-[#8EDBFF]" aria-hidden="true" />
-                    <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-[#8FA0AE]">{area.label}</p>
-                    <h3 className="mt-3 text-2xl font-black text-white">{area.name}</h3>
-                    <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">{area.description}</p>
+                    <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-[#8FA0AE]">
+                      {business.tagline}
+                    </p>
+                    <h3 className="mt-3 text-2xl font-black text-white">{business.name}</h3>
+                    <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">{business.description}</p>
                     <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#DCE7EF]">
-                      Open area
+                      Learn more
                       <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
                     </span>
                   </Link>
@@ -317,119 +173,124 @@ export function ScrollcraftHomepage() {
         </div>
       </section>
 
-      <section ref={hvacRef} className="relative bg-[#050607] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <RevealText>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#F2B632]">WISE² HVAC</p>
-              <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">Professional diagnostics, translated into software.</h2>
-              <p className="mt-5 text-base leading-8 text-[#B7C0CB]">
-                This sequence uses instrument-style readings to show how field context becomes analysis. Values are illustrative product UI content, not published performance claims.
-              </p>
-            </RevealText>
-            <motion.div style={{ y: phoneY }} className="mt-8 border border-white/10 bg-[#080B0E] p-5">
-              <div className="mx-auto max-w-sm rounded-[2rem] border border-[#DCE7EF]/30 bg-black p-3 shadow-2xl">
-                <div className="rounded-[1.4rem] border border-white/10 bg-[#071015] p-4">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#8EDBFF]">WISE² Field Tech</p>
-                      <p className="mt-1 text-sm font-semibold text-white">RTU diagnostic capture</p>
-                    </div>
-                    <span className="h-3 w-3 rounded-full bg-[#F2B632]" />
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    {readings.slice(0, 4).map((reading) => (
-                      <div key={reading.label} className="border border-white/10 bg-black/55 p-3">
-                        <p className="text-[9px] uppercase tracking-[0.18em] text-[#8FA0AE]">{reading.label}</p>
-                        <p className="mt-2 font-mono text-xl font-bold" style={{ color: reading.accent }}>{reading.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 border border-[#8EDBFF]/30 bg-[#8EDBFF]/8 p-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">AI note</p>
-                    <p className="mt-2 text-sm leading-6 text-[#DCE7EF]">Compare readings against nameplate and job history before recommending action.</p>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-4 text-xs leading-5 text-[#8FA0AE]">
-                Product UI visualization. Authentic HVAC photography or screenshots should replace this once captured.
-              </p>
-            </motion.div>
-          </div>
-          <div className="space-y-5">
-            <div className="border border-white/10 bg-[#0A0E12] p-6">
-              <div className="relative mx-auto h-52 w-52 rounded-full border border-[#8EDBFF]/30 bg-[#050607]">
-                <div className="absolute inset-6 rounded-full border border-white/10" />
-                <motion.div
-                  className="absolute left-1/2 top-1/2 h-1 w-20 origin-left bg-[#8EDBFF]"
-                  style={{ rotate: gaugeNeedle }}
-                />
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#8FA0AE]">Diagnostic confidence</p>
-                  <p className="mt-2 text-4xl font-black text-white">82%</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {readings.map((reading, index) => (
-                <motion.div
-                  key={reading.label}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-10% 0px' }}
-                  transition={{ duration: reduceMotion ? 0 : 0.4, delay: reduceMotion ? 0 : index * 0.08 }}
-                  className="border border-white/10 bg-[#0A0E12] p-5"
-                >
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8FA0AE]">{reading.label}</p>
-                  <p className="mt-4 font-mono text-3xl font-bold" style={{ color: reading.accent }}>{reading.value}</p>
-                </motion.div>
-              ))}
-            </div>
-            <div className="border border-[#F2B632]/35 bg-[#151006] p-6">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#F2B632]">Recommended action</p>
-              <p className="mt-3 text-lg font-semibold text-white">Verify airflow, compare nameplate data, document readings, and create the next work order step.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* GET DOWN Case Study Teaser */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <RevealText>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Proof and outcomes</p>
-            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">Visible artifacts, not borrowed credibility.</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Proof</p>
+            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">Real results. Real growth.</h2>
           </RevealText>
           <p className="max-w-2xl text-sm leading-7 text-[#B7C0CB]">
-            These examples use existing WISE² assets. Missing case-study numbers, testimonials, and client claims stay out until the team can verify them.
+            When a service business chooses WISE², they get field tools, customer management, automations, and growth support. Here's what that looks like.
           </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
-          {clientSignals.map((item) => (
-            <Link key={item.title} href={item.href} className="group overflow-hidden border border-white/10 bg-[#090C10] transition duration-200 hover:-translate-y-1 hover:border-[#8EDBFF]/40 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
-              <div className="relative aspect-[16/9] bg-black">
-                <Image src={item.image} alt={`${item.title} visual artifact`} fill className="object-cover transition duration-500 group-hover:scale-[1.03]" sizes="(max-width: 1024px) 100vw, 50vw" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-2xl font-black text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-[#B7C0CB]">{item.text}</p>
-              </div>
-            </Link>
-          ))}
+          <Link href="/case-studies/get-down" className="group overflow-hidden border border-white/10 bg-[#090C10] transition duration-200 hover:-translate-y-1 hover:border-[#8EDBFF]/40 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
+            <div className="relative aspect-[16/9] bg-black">
+              <Image
+                src="/uploads/daniel-real.jpg"
+                alt="GET DOWN case study"
+                fill
+                className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-black text-white">GET DOWN Pressure Washing</h3>
+              <p className="mt-3 text-sm leading-7 text-[#B7C0CB]">
+                Pressure washing company scaled from single location to 3-city operation using WISE² dispatch, CRM, and route management.
+              </p>
+            </div>
+          </Link>
+
+          <Link href="/case-studies/cjays" className="group overflow-hidden border border-white/10 bg-[#090C10] transition duration-200 hover:-translate-y-1 hover:border-[#8EDBFF]/40 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
+            <div className="relative aspect-[16/9] bg-black">
+              <Image
+                src="/wise-defense/instructors/IMG_1573.jpeg"
+                alt="CJAYS case study"
+                fill
+                className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-black text-white">CJAYS Auto Recon</h3>
+              <p className="mt-3 text-sm leading-7 text-[#B7C0CB]">
+                Professional auto detailing app with job tracking, photo capture, and analytics dashboard powering real revenue.
+              </p>
+            </div>
+          </Link>
         </div>
       </section>
 
+      {/* Features */}
+      <section className="border-y border-white/10 bg-[#0A0E12] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <RevealText className="max-w-3xl mb-12">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+              What Service Businesses Get
+            </p>
+            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">
+              Field-first tools built for the real world.
+            </h2>
+          </RevealText>
+          <div className="grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2">
+            {[
+              {
+                title: 'Field Diagnostics',
+                description: 'Smart tools capture real data. AI analysis turns readings into insights. Technicians save hours.',
+                icon: Gauge,
+              },
+              {
+                title: 'Customer Intelligence',
+                description: 'Keep every customer record, job history, and service note in one system. No more scattered spreadsheets.',
+                icon: CheckCircle2,
+              },
+              {
+                title: 'Growth Automation',
+                description: 'Automated follow-up, proposal generation, and route management scale your business without adding staff.',
+                icon: Zap,
+              },
+              {
+                title: 'Real Analytics',
+                description: 'See revenue by technician, job completion rates, customer lifetime value, and operational metrics that matter.',
+                icon: BarChart3,
+              },
+            ].map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0.55 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true, margin: '-20% 0px' }}
+                  transition={{ duration: 0.35, delay: reduceMotion ? 0 : index * 0.08 }}
+                >
+                  <div className="min-h-64 bg-[#090C10] p-6">
+                    <Icon className="h-6 w-6 text-[#8EDBFF]" aria-hidden="true" />
+                    <h3 className="mt-8 text-2xl font-black text-white">{feature.title}</h3>
+                    <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">{feature.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Footer */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="grid gap-8 border border-white/10 bg-[#DCE7EF] p-6 text-[#050607] sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
           <div>
-            <HardDrive className="h-7 w-7" aria-hidden="true" />
-            <h2 className="mt-5 text-3xl font-black leading-tight">Built from real work. Powered by intelligence.</h2>
+            <Zap className="h-7 w-7" aria-hidden="true" />
+            <h2 className="mt-5 text-3xl font-black leading-tight">Ready to scale your service business?</h2>
             <p className="mt-3 max-w-2xl text-base leading-7 text-[#26313A]">
-              Field workflow, client system, web platform, automation, or product prototype. The answer starts with what is true today.
+              WISE² gives you field tools, customer management, automations, and the intelligence to grow. Start building today.
             </p>
           </div>
-          <Link href="/start-your-build" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#050607] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#111A22] focus:outline-none focus:ring-2 focus:ring-[#050607] focus:ring-offset-2 focus:ring-offset-[#DCE7EF]">
-            Start Your Build
-            <Wrench size={16} aria-hidden="true" />
+          <Link href="/platform" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#050607] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#111A22] focus:outline-none focus:ring-2 focus:ring-[#050607] focus:ring-offset-2 focus:ring-offset-[#DCE7EF]">
+            Build with WISE²
+            <ArrowRight size={16} aria-hidden="true" />
           </Link>
         </div>
       </section>
