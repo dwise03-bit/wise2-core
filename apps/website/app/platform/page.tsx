@@ -1,67 +1,76 @@
-import { Footer } from '@/components/wise';
+import Link from 'next/link';
+import { Activity, ArrowRight, Database, Gauge, RadioTower } from 'lucide-react';
+
+const capabilities = [
+  {
+    title: 'Field Operations',
+    text: 'Capture site notes, measurements, photos, equipment details, and customer context where the work happens.',
+    icon: Gauge,
+  },
+  {
+    title: 'Business Records',
+    text: 'Keep customers, projects, tasks, assets, and decisions connected instead of spread across disconnected tools.',
+    icon: Database,
+  },
+  {
+    title: 'AI Workflows',
+    text: 'Turn raw inputs into summaries, diagnosis, next actions, and usable handoffs while preserving source context.',
+    icon: Activity,
+  },
+  {
+    title: 'Edge Systems',
+    text: 'Support local devices, deployment scripts, mobile wrappers, and offline-aware workflows for real environments.',
+    icon: RadioTower,
+  },
+];
 
 export default function PlatformPage() {
   return (
-    <>
-      <main className="bg-black min-h-screen pt-32 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              WISE² <span className="text-blue-500">Platform</span>
-            </h1>
-            <p className="text-xl text-gray-300">
-              The Command Center for all your business needs.
-            </p>
-          </div>
-
-          <div className="space-y-16">
-            <section className="bg-gray-900 border-2 border-blue-500/30 rounded-3xl p-12">
-              <h2 className="text-3xl font-bold text-white mb-4">Core Features</h2>
-              <p className="text-gray-300 leading-relaxed mb-6">
-                WISE² provides an integrated platform for managing your business operations, from brand creation to AI-powered automation.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['AI Automation', 'Business Intelligence', 'Workflows'].map((item) => (
-                  <div
-                    key={item}
-                    className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-center"
-                  >
-                    <p className="text-white font-bold">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="bg-gray-900 border-2 border-blue-500/30 rounded-3xl p-12">
-              <h2 className="text-3xl font-bold text-white mb-6">Capabilities</h2>
-              <div className="space-y-4">
-                {[
-                  { name: 'Dashboard', desc: 'Real-time business metrics and KPIs' },
-                  { name: 'Automation', desc: 'Streamline workflows and processes' },
-                  { name: 'Analytics', desc: 'Deep insights into your business' },
-                  { name: 'Integration', desc: 'Connect with your favorite tools' },
-                ].map((item) => (
-                  <div key={item.name} className="flex gap-4 pb-4 border-b border-gray-700">
-                    <div className="text-blue-500 font-bold min-w-24">{item.name}</div>
-                    <div className="text-gray-300">{item.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="text-center">
-              <p className="text-gray-300 mb-8">Ready to transform your business?</p>
-              <a
-                href="/start-your-build"
-                className="inline-block px-12 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-500 transition-all"
-              >
-                ✦ Start Your Build
-              </a>
-            </section>
-          </div>
+    <main className="min-h-screen bg-[#050607] text-white">
+      <section className="border-b border-white/10 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+            WISE² Core
+          </p>
+          <h1 className="mt-5 max-w-4xl text-5xl font-black leading-tight sm:text-6xl">
+            The operating layer behind the products.
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#B7C0CB]">
+            WISE² Core is the shared system for field data, business records, AI support, and delivery workflows. It is built around work that has to survive outside a perfect demo.
+          </p>
         </div>
-      </main>
-      <Footer />
-    </>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2">
+          {capabilities.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.title} className="min-h-60 bg-[#090C10] p-6">
+                <Icon className="h-6 w-6 text-[#8EDBFF]" aria-hidden="true" />
+                <h2 className="mt-8 text-2xl font-black text-white">{item.title}</h2>
+                <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">{item.text}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="border border-white/10 bg-[#DCE7EF] p-8 text-[#050607] lg:p-10">
+          <h2 className="text-3xl font-black">Designed for connected divisions, not isolated demos.</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[#26313A]">
+            HVAC, Defense, SoundLab, client storefronts, and automation systems share the same operating discipline: capture the facts, analyze the work, and ship a usable outcome.
+          </p>
+          <Link
+            href="/start-your-build"
+            className="mt-8 inline-flex min-h-12 items-center gap-2 bg-[#050607] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#111A22] focus:outline-none focus:ring-2 focus:ring-[#050607]"
+          >
+            Start Your Build
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }

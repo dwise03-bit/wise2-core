@@ -21,6 +21,9 @@ data class LiveReadingsUiState(
     val latestReading: ReadingSnapshot? = null,
     val calculations: List<CalculationResult> = emptyList(),
     val brandName: String = "",
+    val pressureHistory: List<Float> = emptyList(),
+    val tempHistory: List<Float> = emptyList(),
+    val voltageHistory: List<Float> = emptyList(),
 )
 
 class LiveReadingsViewModel(
@@ -33,6 +36,7 @@ class LiveReadingsViewModel(
     val uiState: StateFlow<LiveReadingsUiState> = _uiState.asStateFlow()
 
     private var streamJob: Job? = null
+    private var scanJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -43,7 +47,8 @@ class LiveReadingsViewModel(
     }
 
     fun scan() {
-        viewModelScope.launch {
+        scanJob?.cancel()
+        scanJob = viewModelScope.launch {
             toolManager.scan().collect { device ->
                 _uiState.value = _uiState.value.copy(discoveredDevices = _uiState.value.discoveredDevices + device)
             }
@@ -52,14 +57,23 @@ class LiveReadingsViewModel(
 
     fun connect(device: ToolDevice) {
         viewModelScope.launch {
+            scanJob?.cancel()
             toolManager.connect(device)
             streamJob?.cancel()
             streamJob = viewModelScope.launch {
                 toolManager.readingsForJob(jobId).collect { reading ->
                     val now = System.currentTimeMillis()
-                    _uiState.value = _uiState.value.copy(
+                    val state = _uiState.value
+                    val pressureHistory: List<Float> = (state.pressureHistory + listOfNotNull(reading.lowSidePsig?.toFloat())).takeLast(60)
+                    val tempHistory: List<Float> = (state.tempHistory + listOfNotNull(reading.suctionLineTempF?.toFloat())).takeLast(60)
+                    val voltageHistory: List<Float> = (state.voltageHistory + listOfNotNull(reading.voltageL1?.toFloat())).takeLast(60)
+
+                    _uiState.value = state.copy(
                         latestReading = reading,
                         calculations = HvacCalculations.allApplicable(reading, now),
+                        pressureHistory = pressureHistory,
+                        tempHistory = tempHistory,
+                        voltageHistory = voltageHistory,
                     )
                 }
             }
@@ -68,6 +82,7 @@ class LiveReadingsViewModel(
 
     fun disconnect() {
         streamJob?.cancel()
+        scanJob?.cancel()
         viewModelScope.launch { toolManager.disconnect() }
     }
 

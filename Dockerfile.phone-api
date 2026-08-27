@@ -1,0 +1,39 @@
+# WISE² Phone Gateway Service Dockerfile (Simplified)
+# Phone system with Asterisk integration, STT/TTS, background workers
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    python3 \
+    ffmpeg \
+    typescript
+
+# Copy monorepo files
+COPY package*.json ./
+COPY apps/phone-gateway ./apps/phone-gateway
+COPY packages ./packages
+COPY tsconfig*.json ./
+COPY pnpm-workspace.yaml .
+
+# Install all dependencies at root level
+RUN npm install
+
+# Create audio directory
+RUN mkdir -p /tmp/wise2-phone-audio
+
+# Environment
+ENV NODE_ENV=production \
+    PORT=3001 \
+    LOG_LEVEL=info
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Run phone-gateway with ts-node or node
+WORKDIR /app/apps/phone-gateway
+CMD ["node", "--loader=ts-node/esm", "src/index.ts"]

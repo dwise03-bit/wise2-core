@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 
 data class HomeUiState(
     val technicianName: String = "Technician",
@@ -32,6 +33,11 @@ class HomeViewModel(
 
     private val isRefreshing = MutableStateFlow(false)
 
+    // Guard against duplicate refresh calls (debounce protection at ViewModel level)
+    private val hasInitialized = AtomicBoolean(false)
+    private var lastRefreshTime = 0L
+    private val REFRESH_DEBOUNCE_MS = 1000L // Minimum 1s between refreshes
+
     val uiState: StateFlow<HomeUiState> = combine(
         userPreferences.technicianName,
         jobRepository.observeJobs(),
@@ -49,20 +55,29 @@ class HomeViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
     init {
-        viewModelScope.launch {
-            val demoMode = userPreferences.demoModeEnabled
-            demoMode.collect { enabled ->
-                if (enabled) jobRepository.ensureDemoSeed(System.currentTimeMillis())
-            }
+        // Only refresh once on initialization
+        if (hasInitialized.compareAndSet(false, true)) {
+            refresh()
         }
-        refresh()
     }
 
     fun refresh() {
+        val now = System.currentTimeMillis()
+        // Prevent duplicate refreshes within debounce window
+        if (now - lastRefreshTime < REFRESH_DEBOUNCE_MS) {
+            return
+        }
+        lastRefreshTime = now
+
         viewModelScope.launch {
-            isRefreshing.value = true
-            jobRepository.refreshJobs()
-            isRefreshing.value = false
+            if (!isRefreshing.value) {
+                isRefreshing.value = true
+                try {
+                    jobRepository.refreshJobs()
+                } finally {
+                    isRefreshing.value = false
+                }
+            }
         }
     }
 }

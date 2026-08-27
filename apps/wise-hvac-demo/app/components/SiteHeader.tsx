@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, Phone, X } from 'lucide-react';
+import { LoginButton } from './LoginButton';
 
 const navLinks = [
   { href: '/#services', label: 'Services' },
   { href: '/#why-wise', label: 'Why Wise' },
   { href: '/#special', label: 'Special' },
   { href: '/field-tech', label: 'Field Tech App' },
-  { href: '/#reviews', label: 'Reviews' },
   { href: '/#contact', label: 'Contact' },
 ];
 
@@ -43,15 +43,18 @@ export function SiteHeader({ activeHref }: { activeHref?: string }) {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden sm:inline-block">
+            <LoginButton />
+          </div>
           <Link
             href="/#contact"
-            className="hidden rounded-full border border-wise-blue/40 bg-wise-blue px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-neon transition hover:-translate-y-0.5 sm:inline-flex"
+            className="hidden rounded-full border border-wise-blue/40 bg-wise-blue px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-white shadow-neon transition hover:-translate-y-0.5 md:inline-flex"
           >
             Schedule Service
           </Link>
           <a
             href="tel:3367090472"
-            className="hidden items-center gap-2 text-sm font-black tracking-[0.08em] text-white md:inline-flex"
+            className="hidden items-center gap-2 text-sm font-black tracking-[0.08em] text-white lg:inline-flex"
           >
             <Phone className="h-4 w-4 text-wise-cyan" />
             336 709 0472

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, Badge } from '../ui';
+import { Card } from '../ui';
 
 interface KpiData {
   newLeads: { count: number; change: number };

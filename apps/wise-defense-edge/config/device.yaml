@@ -1,0 +1,301 @@
+# WISE DEFENSE EDGE DEVICE CONFIGURATION
+# Configure providers, hardware, and behavior
+
+device:
+  id: "EDGE-001"  # Unique device identifier
+  location:
+    latitude: 36.0726
+    longitude: -79.7920
+    city: "Greensboro"
+    state: "NC"
+  timezone: "America/New_York"
+
+# Pi Connection Configuration
+pi:
+  enabled: true
+  host: "big-byte.tail44396d.ts.net"
+  user: "dwise"
+  ssh_key: "~/.ssh/id_rsa"
+  scan_interval_seconds: 10
+  frequency_range:
+    start_mhz: 88
+    stop_mhz: 1200
+
+# API Configuration
+api:
+  port: 3014
+  host: "0.0.0.0"
+  api_key: "{{ WISE_DEFENSE_API_KEY }}"
+  cloud_url: "{{ WISE_DEFENSE_CLOUD_URL }}"
+  cloud_api_key: "{{ WISE_DEFENSE_CLOUD_API_KEY }}"
+
+# Incident Providers (Optional)
+providers:
+  crimeradar:
+    enabled: true
+    api_key: "{{ CRIMERADAR_API_KEY }}"
+    update_interval_minutes: 5
+    categories: ["police", "fire", "ems", "traffic"]
+    greensboro_specific: true
+
+  weather:
+    enabled: true
+    source: "noaa"  # NOAA/NWS
+    update_interval_minutes: 15
+    alerts: ["tornado", "severe_thunderstorm", "flash_flood", "extreme_heat"]
+
+  spectrum_monitor:
+    enabled: true
+    description: "Real-time spectrum monitoring via Pi rtl_power"
+    source: "big-byte-pi"
+    scan_interval_seconds: 10
+
+# Hardware Configuration
+hardware:
+  sdr:
+    enabled: false
+    device_type: "rtl-sdr"
+    profiles: ["NOAA", "GMRS", "HAM", "PUBLIC_SAFETY"]
+    default_profile: "NOAA"
+
+  meshtastic:
+    enabled: false
+    port: "/dev/ttyUSB0"
+    baudrate: 115200
+
+  gps:
+    enabled: false
+    port: "/dev/ttyUSB1"
+    baudrate: 9600
+
+# Watch Zones - Greensboro, NC Crime Radar
+watch_zones:
+  - name: "Downtown Greensboro"
+    kind: "DOWNTOWN"
+    latitude: 36.0726
+    longitude: -79.7920
+    radius_miles: 1.5
+    minimum_threat: "WARNING"
+    categories: ["police", "fire", "ems"]
+    frequencies: [461.1625]  # Police dispatch P25
+    enabled: true
+    priority: "high"
+
+  - name: "Residential North"
+    kind: "RESIDENTIAL"
+    latitude: 36.1150
+    longitude: -79.7920
+    radius_miles: 2.0
+    minimum_threat: "ELEVATED"
+    categories: ["police", "fire", "ems"]
+    frequencies: [461.1625, 463.5]
+    enabled: true
+    priority: "medium"
+
+  - name: "Residential South"
+    kind: "RESIDENTIAL"
+    latitude: 36.0300
+    longitude: -79.7920
+    radius_miles: 2.0
+    minimum_threat: "ELEVATED"
+    categories: ["police", "fire", "ems"]
+    frequencies: [461.1625, 463.5]
+    enabled: true
+    priority: "medium"
+
+  - name: "I-40 Corridor"
+    kind: "HIGHWAY"
+    latitude: 36.0726
+    longitude: -79.8500
+    radius_miles: 1.0
+    minimum_threat: "WARNING"
+    categories: ["police", "fire", "ems"]
+    frequencies: [461.1625]
+    enabled: true
+    priority: "medium"
+
+  - name: "UNCG Campus"
+    kind: "CAMPUS"
+    latitude: 36.0690
+    longitude: -79.8190
+    radius_miles: 0.75
+    minimum_threat: "ELEVATED"
+    categories: ["police", "fire", "ems"]
+    enabled: true
+    priority: "low"
+
+# Frequency Monitoring Configuration
+frequency_monitoring:
+  enabled: true
+  bands:
+    - name: "Greensboro Police Dispatch"
+      frequency_mhz: 461.1625
+      mode: "P25"
+      type: "police"
+      active_hours: "00:00-23:59"
+      alert_threshold_db: -40
+
+    - name: "Greensboro Fire/EMS"
+      frequency_mhz: 463.5
+      mode: "analog"
+      type: "fire_ems"
+      active_hours: "00:00-23:59"
+      alert_threshold_db: -40
+
+    - name: "Public Safety Band"
+      frequency_mhz_start: 410
+      frequency_mhz_end: 480
+      mode: "monitor"
+      type: "public_safety"
+      alert_threshold_db: -35
+
+    - name: "NOAA Weather"
+      frequency_mhz: 162.4
+      mode: "analog"
+      type: "weather"
+      active_hours: "00:00-23:59"
+      alert_threshold_db: -50
+
+# Alerting Configuration
+alerts:
+  notify_via:
+    - "local"      # Display in dashboard
+    - "log"        # Write to logs
+    - "dashboard"  # Incident timeline
+    # - "cloud"    # Send to cloud (when online)
+    # - "discord"  # Send to Discord webhook
+
+  critical_alert_levels: ["CRITICAL", "HIGH"]
+  watch_alert_levels: ["ELEVATED", "WARNING"]
+
+  # Anomaly Detection Thresholds
+  anomaly_detection:
+    enabled: true
+    power_spike_threshold_db: 10  # Alert on signals > 10 dB above baseline
+    frequency_clustering_enabled: true
+    cluster_frequency_tolerance_khz: 50
+    min_signals_for_cluster: 3
+
+  # Crime Radar Specific Rules
+  crime_radar:
+    enabled: true
+    police_activity_detection: true
+    signal_pattern_analysis: true
+    correlation_window_minutes: 15
+    multi_zone_correlation: true
+
+    # Incident correlation rules
+    high_activity_threshold: 5  # 5+ police signals in 5-minute window = incident
+    sustained_activity_minutes: 10  # Activity sustained for 10+ minutes = major incident
+
+    # Alert escalation
+    escalation_rules:
+      - name: "Minor Traffic Stop"
+        conditions: ["single_zone_police_activity", "duration_under_5_min"]
+        alert_level: "INFO"
+
+      - name: "Active Police Response"
+        conditions: ["police_activity", "multi_zone_activation", "duration_5_15_min"]
+        alert_level: "WARNING"
+
+      - name: "Major Incident"
+        conditions: ["sustained_police_activity", "fire_ems_response", "multi_zone"]
+        alert_level: "HIGH"
+
+      - name: "Critical Event"
+        conditions: ["all_zones_active", "prolonged_activity", "multiple_agencies"]
+        alert_level: "CRITICAL"
+
+  # Zone-specific alert rules
+  zone_rules:
+    downtown:
+      immediate_alert_on_activity: true
+      notify_level: "WARNING"
+
+    residential:
+      cluster_threshold: 2  # Alert on 2+ signals
+      notify_level: "ELEVATED"
+
+    highway:
+      traffic_incident_detection: true
+      notify_level: "INFO"
+
+# System Behavior
+system:
+  offline_mode: true        # Continue operating without cloud connection
+  auto_repair: true         # Automatically restart failed services
+  log_retention_days: 30    # Keep logs for N days
+  max_database_size_mb: 2048  # Max SQLite database size
+  sync_queue_retry_max: 3   # Max retries for cloud sync
+  health_check_interval: 300  # Check health every N seconds
+
+# Security
+security:
+  require_api_key: true
+  allowed_local_networks: ["127.0.0.1/8", "192.168.0.0/16", "10.0.0.0/8"]
+  tailscale_required: false  # Require Tailscale for cloud sync
+
+# Dashboard & Visualization Configuration
+dashboard:
+  enabled: true
+  name: "Greensboro Crime Radar"
+  panels:
+    - id: "frequency_heatmap"
+      type: "heatmap"
+      title: "Live Frequency Heatmap (Most Active Zones)"
+      data_source: "spectrum_monitor"
+      update_interval_seconds: 10
+      color_scale: "hot"
+      zones: ["downtown", "residential_north", "residential_south", "highway"]
+
+    - id: "incident_timeline"
+      type: "timeline"
+      title: "Incident Timeline"
+      data_source: "crime_radar"
+      time_window_hours: 24
+      critical_incidents_only: false
+      sorting: "chronological"
+
+    - id: "signal_strength_zones"
+      type: "bar_chart"
+      title: "Signal Strength by Zone"
+      data_source: "spectrum_monitor"
+      metrics: ["avg_power_db", "peak_power_db", "signal_count"]
+      zones_included: true
+
+    - id: "alert_history"
+      type: "list"
+      title: "Alert History"
+      data_source: "alerts"
+      time_window_hours: 24
+      sort_by: "timestamp"
+      limit: 50
+
+    - id: "frequency_usage"
+      type: "pie_chart"
+      title: "Frequency Band Usage"
+      bands: ["police_dispatch", "fire_ems", "public_safety", "other"]
+      period_minutes: 60
+
+    - id: "zone_activity_map"
+      type: "map"
+      title: "Zone Activity Map"
+      center_latitude: 36.0726
+      center_longitude: -79.7920
+      zoom: 12
+      layers:
+        - watch_zones
+        - active_incidents
+        - signal_hotspots
+      update_interval_seconds: 10
+
+# Compliance Notices
+compliance:
+  operations_lawful_only: true
+  verify_official_sources: true
+  ai_assumptions_not_facts: true
+  greensboro_crime_radar_notice: |
+    This system monitors public police/fire/EMS frequencies for educational
+    and emergency preparedness purposes only. Data reflects publicly available
+    radio transmissions. Not affiliated with official law enforcement.
+    Frequencies monitored: 461.1625 MHz (Police), 463.5 MHz (Fire/EMS)

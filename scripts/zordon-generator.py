@@ -19,6 +19,7 @@ box, not on a Mac — scripts/gpu-image-generator-setup.sh is CUDA/Linux.
     python scripts/zordon-generator.py --pose wave
 """
 import argparse
+import os
 import random
 import sys
 import time
@@ -30,7 +31,7 @@ try:
 except ImportError:
     sys.exit("pip install requests")
 
-COMFY_API = "http://localhost:8188"
+COMFY_API = os.environ.get("COMFYUI_API_URL", "http://localhost:8188").rstrip("/")
 OUTPUT_DIR = Path("zordon_renders")
 CHECKPOINT = "sd_xl_base_1.0.safetensors"
 

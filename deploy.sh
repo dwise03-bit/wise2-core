@@ -53,7 +53,7 @@ echo ""
 # ============================================================================
 echo "🔨 Building Docker images..."
 
-if ! docker compose -f docker-compose.prod.yml build; then
+if ! docker compose -f docker-compose.prod.yml build --no-cache; then
   echo "❌ Docker build failed"
   exit 1
 fi

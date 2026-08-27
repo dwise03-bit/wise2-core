@@ -2,16 +2,46 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Badge, Button } from '../../../src/components/ui';
+import { useAuth } from '../../../src/contexts/AuthContext';
 
-const API_URL = process.env.NEXT_PUBLIC_BRAIN_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
+const BRAIN_API_URL = process.env.NEXT_PUBLIC_BRAIN_API_URL || '/brain-api';
 
 interface HermesStatus {
-  online: boolean;
+  status: 'online' | 'degraded' | 'offline' | string;
   model: string;
-  secondBrain: boolean;
-  liveOps: boolean;
-  knowledgeCount: number;
-  edgeDevices: Array<{ deviceId: string; status: string; lastSeenMs: number; online: boolean }>;
+  provider?: string;
+  ollama?: { status?: string; endpoint?: string; error?: string };
+  context?: number;
+  predictTokens?: number;
+  think?: boolean;
+}
+
+interface BrainHealth {
+  overallStatus: string;
+  components: {
+    ai?: { status?: string };
+    automation?: { status?: string };
+    documents?: { status?: string };
+    graph?: { status?: string };
+  };
+}
+
+interface BrainStats {
+  totalOperations?: number;
+  successRate?: number;
+  totalCostUSD?: number;
+  byOperationType?: Record<string, number>;
+}
+
+interface DiscordStatus {
+  configured: boolean;
+  channels: {
+    alerts: boolean;
+    builds: boolean;
+    deployments: boolean;
+    decisions: boolean;
+  };
 }
 
 interface Message {
@@ -23,14 +53,14 @@ interface Message {
   error?: boolean;
 }
 
-const getToken = () =>
-  (typeof localStorage !== 'undefined'
-    ? localStorage.getItem('auth_token') || localStorage.getItem('authToken') || ''
-    : '');
-
 export default function HermesPage() {
+  const { user, token, isLoading: authLoading } = useAuth();
   const [status, setStatus] = useState<HermesStatus | null>(null);
+  const [brainHealth, setBrainHealth] = useState<BrainHealth | null>(null);
+  const [brainStats, setBrainStats] = useState<BrainStats | null>(null);
+  const [discordStatus, setDiscordStatus] = useState<DiscordStatus | null>(null);
   const [statusLoading, setStatusLoading] = useState(true);
+  const [discordSending, setDiscordSending] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
@@ -38,23 +68,90 @@ export default function HermesPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const loadStatus = useCallback(async () => {
+    if (!token) {
+      setStatusLoading(false);
+      return;
+    }
+
     setStatusLoading(true);
     try {
-      const res = await fetch(`${API_URL}/hermes/status`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (res.ok) setStatus(await res.json());
-    } catch { /* offline */ }
-    setStatusLoading(false);
-  }, []);
+      const headers = { Authorization: `Bearer ${token}` };
+      const [hermesRes, brainHealthRes, brainStatsRes, discordRes] = await Promise.allSettled([
+        fetch(`${API_URL}/v1/hermes/health`, { headers }),
+        fetch(`${BRAIN_API_URL}/brain/dashboard/health`, { headers }),
+        fetch(`${BRAIN_API_URL}/brain/dashboard/ai/stats`, { headers }),
+        fetch('/api/integrations/discord'),
+      ]);
 
-  useEffect(() => { loadStatus(); }, [loadStatus]);
+      if (hermesRes.status === 'fulfilled' && hermesRes.value.ok) {
+        setStatus(await hermesRes.value.json());
+      }
+
+      if (brainHealthRes.status === 'fulfilled' && brainHealthRes.value.ok) {
+        setBrainHealth(await brainHealthRes.value.json());
+      }
+
+      if (brainStatsRes.status === 'fulfilled' && brainStatsRes.value.ok) {
+        setBrainStats(await brainStatsRes.value.json());
+      }
+
+      if (discordRes.status === 'fulfilled' && discordRes.value.ok) {
+        setDiscordStatus(await discordRes.value.json());
+      }
+    } catch {
+      // offline
+    }
+    setStatusLoading(false);
+  }, [token]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user?.id || !token) {
+      setStatusLoading(false);
+      return;
+    }
+    loadStatus();
+  }, [authLoading, loadStatus, token, user?.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, thinking]);
 
+  const sendDiscordTest = useCallback(async () => {
+    if (discordSending) return;
+
+    setDiscordSending(true);
+    try {
+      const res = await fetch('/api/integrations/discord', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel: 'alerts',
+          title: 'WISE2 Hermes Alert Test',
+          description: 'Command-center test alert from the Hermes dashboard.',
+          severity: 'info',
+          fields: [
+            { name: 'User', value: user?.email || 'Unknown', inline: true },
+            { name: 'Source', value: 'command-center/app/dashboard/ai', inline: true },
+          ],
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+      setDiscordStatus(prev => ({
+        configured: prev?.configured ?? true,
+        channels: prev?.channels ?? { alerts: true, builds: false, deployments: false, decisions: false },
+      }));
+    } catch (err) {
+      console.error('Discord test failed:', err);
+    } finally {
+      setDiscordSending(false);
+    }
+  }, [discordSending, user?.email]);
+
   const send = useCallback(async () => {
+    if (!token) return;
+
     const text = input.trim();
     if (!text || thinking) return;
 
@@ -65,9 +162,9 @@ export default function HermesPage() {
 
     try {
       const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
-      const res = await fetch(`${API_URL}/hermes/chat`, {
+      const res = await fetch(`${API_URL}/v1/hermes/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ message: text, messages: history }),
       });
 
@@ -99,7 +196,7 @@ export default function HermesPage() {
       // Restore focus to input on desktop
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [input, thinking, messages]);
+  }, [input, thinking, messages, token]);
 
   const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
@@ -111,16 +208,6 @@ export default function HermesPage() {
     'What does the Second Brain know about WISE²?',
     'How many services are online?',
   ];
-
-  const deviceBadge = (d: HermesStatus['edgeDevices'][0]) => {
-    const stale = d.lastSeenMs > 120000;
-    const color = stale ? 'text-amber-400' : d.status === 'online' ? 'text-green-400' : 'text-red-400';
-    return (
-      <span key={d.deviceId} className={`text-[10px] font-mono ${color}`}>
-        {d.deviceId} {d.status.toUpperCase()}{stale ? ' (stale)' : ''}
-      </span>
-    );
-  };
 
   return (
     <div className="flex flex-col" style={{ minHeight: 'calc(100dvh - 60px)' }}>
@@ -134,61 +221,87 @@ export default function HermesPage() {
           <Button variant="secondary" size="sm" onClick={loadStatus}>Refresh</Button>
         </div>
 
-        {/* Status strip */}
+        {/* Status rail */}
         <Card className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             {statusLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-2"><div className="h-4 w-20 animate-pulse bg-border-medium rounded" /></div>
+                <div key={i} className="space-y-2">
+                  <div className="h-4 w-20 animate-pulse bg-border-medium rounded" />
+                  <div className="h-3 w-32 animate-pulse bg-border-medium rounded" />
+                </div>
               ))
             ) : status ? (
               <>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`w-2 h-2 rounded-full ${status.online ? 'bg-success' : 'bg-danger'}`} />
-                    <span className={`text-sm font-semibold ${status.online ? 'text-success' : 'text-danger'}`}>
-                      {status.online ? 'Online' : 'Offline'}
+                    <span className={`w-2 h-2 rounded-full ${status.status === 'online' ? 'bg-success' : status.status === 'degraded' ? 'bg-warning' : 'bg-danger'}`} />
+                    <span className={`text-sm font-semibold ${status.status === 'online' ? 'text-success' : status.status === 'degraded' ? 'text-warning' : 'text-danger'}`}>
+                      {status.status?.toUpperCase?.() || 'UNKNOWN'}
                     </span>
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
-                    Hermes · {status.model}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="info">Hermes</Badge>
+                    <Badge variant="neutral">{status.model}</Badge>
+                  </div>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-2">
+                    Provider · {status.provider || 'unknown'}
                   </p>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`w-2 h-2 rounded-full ${status.secondBrain ? 'bg-success' : 'bg-danger'}`} />
-                    <span className={`text-sm font-semibold ${status.secondBrain ? 'text-success' : 'text-danger'}`}>
-                      {status.secondBrain ? 'Connected' : 'Offline'}
+                    <span className={`w-2 h-2 rounded-full ${brainHealth?.overallStatus === 'healthy' ? 'bg-success' : brainHealth?.overallStatus === 'degraded' ? 'bg-warning' : 'bg-danger'}`} />
+                    <span className={`text-sm font-semibold ${brainHealth?.overallStatus === 'healthy' ? 'text-success' : brainHealth?.overallStatus === 'degraded' ? 'text-warning' : 'text-danger'}`}>
+                      {brainHealth?.overallStatus?.toUpperCase?.() || 'UNKNOWN'}
                     </span>
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
-                    Second Brain · {status.knowledgeCount} items
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="info">Second Brain</Badge>
+                    <Badge variant="neutral">{brainHealth?.components?.documents?.status || 'unknown'}</Badge>
+                  </div>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-2">
+                    Graph · {brainHealth?.components?.graph?.status || 'unknown'}
                   </p>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`w-2 h-2 rounded-full ${status.liveOps ? 'bg-success' : 'bg-warning'}`} />
-                    <span className={`text-sm font-semibold ${status.liveOps ? 'text-success' : 'text-warning'}`}>
-                      {status.liveOps ? 'Connected' : 'Degraded'}
+                    <span className={`w-2 h-2 rounded-full ${discordStatus?.configured ? 'bg-success' : 'bg-warning'}`} />
+                    <span className={`text-sm font-semibold ${discordStatus?.configured ? 'text-success' : 'text-warning'}`}>
+                      {discordStatus?.configured ? 'Configured' : 'Missing'}
                     </span>
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
-                    Live Ops Stream
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant={discordStatus?.channels.alerts ? 'success' : 'warning'}>Alerts</Badge>
+                    <Badge variant={discordStatus?.channels.deployments ? 'success' : 'neutral'}>Deployments</Badge>
+                    <Badge variant={discordStatus?.channels.builds ? 'success' : 'neutral'}>Builds</Badge>
+                  </div>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-2">
+                    Decisions · {discordStatus?.channels.decisions ? 'enabled' : 'disabled'}
                   </p>
                 </div>
                 <div>
-                  <div className="flex flex-col gap-1 mb-2">
-                    {status.edgeDevices.length > 0
-                      ? status.edgeDevices.map(deviceBadge)
-                      : <span className="text-[10px] text-text-muted">No devices</span>}
+                  <div className="grid grid-cols-2 gap-2 mb-2">
+                    <div className="rounded-lg bg-wise-black/30 border border-border-subtle p-2">
+                      <div className="text-[9px] uppercase tracking-wider text-text-muted">Ops</div>
+                      <div className="text-sm font-semibold text-text-primary">{brainStats?.totalOperations ?? '--'}</div>
+                    </div>
+                    <div className="rounded-lg bg-wise-black/30 border border-border-subtle p-2">
+                      <div className="text-[9px] uppercase tracking-wider text-text-muted">Success</div>
+                      <div className="text-sm font-semibold text-text-primary">
+                        {typeof brainStats?.successRate === 'number' ? `${brainStats.successRate.toFixed(1)}%` : '--'}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
-                    Edge Network
+                  <Button variant="secondary" size="sm" onClick={sendDiscordTest} disabled={discordSending}>
+                    {discordSending ? 'Sending…' : 'Send Discord Test'}
+                  </Button>
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-text-muted mt-2">
+                    Cost · {typeof brainStats?.totalCostUSD === 'number' ? `$${brainStats.totalCostUSD.toFixed(2)}` : '--'}
                   </p>
                 </div>
               </>
             ) : (
-              <div className="col-span-2 md:col-span-4 text-xs text-text-muted">Hermes offline — check Second Brain service</div>
+              <div className="col-span-1 md:col-span-2 xl:col-span-4 text-xs text-text-muted">Hermes offline or authentication missing — check the API and token.</div>
             )}
           </div>
         </Card>
@@ -226,7 +339,7 @@ export default function HermesPage() {
                     : 'bg-wise-black/50 border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3'
                 }`}>
                   {m.role === 'assistant' && !m.error && (
-                    <div className="flex items-center gap-1.5 mb-2">
+          <div className="flex items-center gap-1.5 mb-2">
                       <span className="text-[9px] font-bold tracking-widest text-wise-electric uppercase">Hermes</span>
                       {m.toolsUsed && m.toolsUsed.length > 0 && (
                         <span className="text-[9px] text-text-muted">
@@ -278,7 +391,7 @@ export default function HermesPage() {
               onKeyDown={onKey}
               placeholder="Ask about system status, WISE² operations, your devices…"
               rows={1}
-              disabled={thinking || !status?.online}
+              disabled={thinking || status?.status !== 'online'}
               className="flex-1 resize-none bg-wise-black/60 border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-wise-electric/50 transition-colors disabled:opacity-50"
               style={{ maxHeight: '120px', overflowY: 'auto' }}
               onInput={e => {
@@ -291,7 +404,7 @@ export default function HermesPage() {
               variant="primary"
               size="md"
               onClick={send}
-              disabled={thinking || !input.trim() || !status?.online}
+              disabled={thinking || !input.trim() || status?.status !== 'online'}
               className="shrink-0"
             >
               {thinking ? '…' : '↗'}

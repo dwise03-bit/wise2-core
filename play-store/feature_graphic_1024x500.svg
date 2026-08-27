@@ -1,0 +1,52 @@
+<svg viewBox="0 0 1024 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1f2e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Left side: workflow icons -->
+  <g opacity="0.3">
+    <circle cx="80" cy="100" r="40" fill="none" stroke="#00d4ff" stroke-width="2"/>
+    <text x="80" y="110" font-size="32" text-anchor="middle" fill="#00d4ff">📍</text>
+
+    <circle cx="80" cy="250" r="40" fill="none" stroke="#00d4ff" stroke-width="2"/>
+    <text x="80" y="260" font-size="32" text-anchor="middle" fill="#00d4ff">📸</text>
+
+    <circle cx="80" cy="400" r="40" fill="none" stroke="#00d4ff" stroke-width="2"/>
+    <text x="80" y="410" font-size="32" text-anchor="middle" fill="#00d4ff">✓</text>
+  </g>
+
+  <!-- Center: main messaging -->
+  <text x="512" y="140" font-family="Arial, sans-serif" font-size="72" font-weight="bold" text-anchor="middle" fill="#00d4ff">DIAGNOSE</text>
+  <text x="512" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" text-anchor="middle" fill="#00d4ff">FASTER</text>
+
+  <text x="512" y="300" font-family="Arial, sans-serif" font-size="48" text-anchor="middle" fill="#e8eef5">AI-Powered Field Command</text>
+  <text x="512" y="350" font-family="Arial, sans-serif" font-size="42" text-anchor="middle" fill="#8b95a8">Your Technician's Copilot</text>
+
+  <!-- Right side: data visualization HUD boxes -->
+  <g opacity="0.4">
+    <!-- Alert box -->
+    <rect x="850" y="80" width="130" height="80" fill="none" stroke="#d63031" stroke-width="2" rx="4"/>
+    <text x="915" y="100" font-size="13" font-weight="600" text-anchor="middle" fill="#d63031">ALERT</text>
+    <text x="915" y="145" font-size="32" font-weight="bold" text-anchor="middle" fill="#00d4ff">85°</text>
+
+    <!-- Pressure box -->
+    <rect x="850" y="190" width="130" height="80" fill="none" stroke="#00d4ff" stroke-width="2" rx="4"/>
+    <text x="915" y="210" font-size="13" font-weight="600" text-anchor="middle" fill="#00d4ff">PRESSURE</text>
+    <text x="915" y="255" font-size="28" font-weight="bold" text-anchor="middle" fill="#00d4ff">420 PSI</text>
+
+    <!-- CFM box -->
+    <rect x="850" y="300" width="130" height="80" fill="none" stroke="#00d4ff" stroke-width="2" rx="4"/>
+    <text x="915" y="320" font-size="13" font-weight="600" text-anchor="middle" fill="#00d4ff">CFM</text>
+    <text x="915" y="365" font-size="28" font-weight="bold" text-anchor="middle" fill="#00d4ff">4200</text>
+  </g>
+
+  <!-- W² logo bottom right -->
+  <text x="920" y="470" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#00d4ff">WISE²</text>
+  <text x="920" y="495" font-family="Arial, sans-serif" font-size="14" fill="#8b95a8">Field Tech</text>
+</svg>

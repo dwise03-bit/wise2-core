@@ -24,6 +24,10 @@ import { SunoGenerationQueue } from './SunoGenerationQueue';
 import { Mixer, type ChannelStrip } from './Mixer';
 import type { SunoGeneration, SunoGenerationParams, SunoQueueItem } from '@/types/suno';
 
+const TEST_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbXQ1ODQ3b2EwMDAwYWUzMmZ2Ymthc3prIiwiZW1haWwiOiJkd2lzZTAzQGdtYWlsLmNvbSIsInJvbGUiOiJGT1VOREVSIiwiaWF0IjoxNzg3NDYyNzU2LCJleHAiOjE3ODc0NjYzNTZ9.WQTzGcAyz98GCilgNeTHbXdxC4jrSPxkj0eFJPW8T9o';
+const TEST_PROJECT_ID = 'cmt5d6dhw00014ak3wimhgk7y';
+const API_BASE_URL = 'http://localhost:3010';
+
 type TabType = 'timeline' | 'generation' | 'mixer' | 'effects';
 
 interface SoundLabEnhancedProps {
@@ -124,17 +128,37 @@ export function SoundLabEnhanced({ onStatusUpdate }: SoundLabEnhancedProps) {
         setIsGenerating(true);
         onStatusUpdate?.('Sending generation request...');
 
-        const response = await fetch('/api/suno/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(params),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/v1/sound-labs/me/projects/${TEST_PROJECT_ID}/generate`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${TEST_JWT}`,
+            },
+            body: JSON.stringify({
+              prompt: params.prompt,
+              genre: params.genre,
+              mood: params.mood,
+              tempo: params.tempo,
+              duration: params.duration,
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`Generation failed: ${response.statusText}`);
         }
 
-        const generation = (await response.json()) as SunoGeneration;
+        const data = await response.json();
+        const generation: SunoGeneration = {
+          id: data.project.generationJobId,
+          status: data.project.generationStatus,
+          audioUrl: data.project.generatedAudioUrl,
+          params: params,
+          createdAt: new Date().toISOString(),
+          error: undefined,
+        };
 
         const queueItem: SunoQueueItem = {
           generationId: generation.id,

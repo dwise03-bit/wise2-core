@@ -28,19 +28,19 @@ export default function WiseDefenseLanding() {
 
   const navigationItems = [
     { label: 'HOME', href: '#' },
-    { label: 'TRAINING PORTAL', href: '#' },
-    { label: 'GEAR ROOM', href: '#' },
-    { label: 'COMMUNITY', href: '#' },
+    { label: 'TRAINING', href: '#' },
     { label: 'ABOUT', href: '#' },
+    { label: 'RESOURCES', href: '#' },
     { label: 'CONTACT', href: '#' },
   ];
 
   const services = [
-    { label: 'OFFICIAL WEBSITE', desc: 'News, updates & exclusive content.', status: 'COMING SOON' },
-    { label: 'TRAINING PORTAL', desc: 'Courses, certifications & training resources.', status: 'COMING SOON' },
-    { label: 'GEAR ROOM™', desc: 'Firearms, apparel, accessories & more.', status: 'COMING SOON' },
-    { label: 'ONLINE STORE', desc: 'Premium gear. Built for purpose.', status: 'COMING SOON' },
-    { label: 'COMMUNITY PROGRAMS', desc: 'Building stronger communities together.', status: 'COMING SOON' },
+    { label: 'CRIME RADAR', desc: 'Live incident map. Queens, NYC.', status: 'LIVE' },
+    { label: 'WATCH ZONES', desc: 'Monitor what matters. 4 zones.', status: 'ACTIVE' },
+    { label: 'SDR MONITORING', desc: 'Receive-only intelligence. 462-550 MHz.', status: 'ACTIVE' },
+    { label: 'MESH NETWORKING', desc: 'Encrypted & resilient. 12 nodes active.', status: 'ACTIVE' },
+    { label: 'WEATHER ALERTS', desc: 'Hyperlocal intelligence. Real-time.', status: 'ACTIVE' },
+    { label: 'OFFLINE FIRST', desc: 'No internet. No problem. 100% operational.', status: 'NATIVE' },
   ];
 
   const aboutPoints = [
@@ -85,7 +85,7 @@ export default function WiseDefenseLanding() {
             {/* CTA Button */}
             <div className="hidden lg:block">
               <button className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black tracking-wider rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
-                JOIN NOW
+                BOOK TRAINING
               </button>
             </div>
 
@@ -113,7 +113,7 @@ export default function WiseDefenseLanding() {
                 </a>
               ))}
               <button className="w-full mt-4 px-4 py-2 bg-red-600 text-white text-xs font-bold rounded">
-                JOIN NOW
+                BOOK TRAINING
               </button>
             </div>
           )}
@@ -130,29 +130,28 @@ export default function WiseDefenseLanding() {
           <div className="px-6 sm:px-8 lg:px-12 py-16 lg:py-0">
             <div className="max-w-xl animate-fade-in">
               <p className="text-red-600 text-xs font-black tracking-widest mb-4 uppercase">
-                WISE DEFENSE L.L.C.
+                WISE² DEFENSE
               </p>
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-tight mb-6 tracking-tighter">
-                TRAIN.<br />
-                TEACH.<br />
-                PROTECT.
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6 tracking-tighter">
+                NIGHTWING<br />
+                <span className="text-red-600">EDGE INTELLIGENCE NODE</span>
               </h1>
               <p className="text-red-600 text-lg font-bold mb-6 tracking-wide">
-                EMPOWERING MINDS. PROTECTING LIVES.
+                TRAIN. TEACH. PROTECT.
               </p>
               <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-md">
-                Real education. Real training. Real results. Let's get to it.
+                Offline. Encrypted. Mission Ready. Intelligence that works where others don't.
               </p>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-sm tracking-wider uppercase transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center gap-2">
-                  JOIN THE MOVEMENT
-                  <span>→</span>
+                  WATCH OVERVIEW
+                  <span>▶</span>
                 </button>
                 <button className="px-8 py-3 border-2 border-gray-700 hover:border-white text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
-                  WATCH VIDEO
-                  <span>▶</span>
+                  LEARN MORE
+                  <span>→</span>
                 </button>
               </div>
             </div>
@@ -173,14 +172,14 @@ export default function WiseDefenseLanding() {
       {/* Services Section */}
       <section className="py-16 lg:py-20 border-t border-red-600/20 bg-black/50">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service, i) => (
               <div
                 key={i}
                 className="group border border-red-600/30 rounded-lg p-6 hover:border-red-600/60 hover:bg-red-600/5 transition-all duration-300 text-center"
               >
                 <div className="text-3xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
-                  {['🌐', '🎯', '🛡️', '🛒', '👥'][i]}
+                  {['📡', '🎯', '📻', '🔗', '⛅', '📦'][i]}
                 </div>
                 <h3 className="font-black text-xs tracking-widest uppercase mb-3 text-red-600">
                   {service.label}
@@ -204,22 +203,32 @@ export default function WiseDefenseLanding() {
             {/* Left: About Content */}
             <div>
               <h2 className="text-4xl lg:text-5xl font-black mb-4 leading-tight">
-                ABOUT WISE DEFENSE
+                ABOUT NIGHTWING
               </h2>
               <h3 className="text-2xl lg:text-3xl font-black mb-8">
-                <span className="text-red-600">DISCIPLINE TODAY.</span><br />
-                <span className="text-white">IMPACT FOREVER.</span>
+                <span className="text-red-600">OFFLINE. ENCRYPTED.</span><br />
+                <span className="text-white">MISSION READY.</span>
               </h3>
               <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-md">
-                Wise Defense L.L.C. is built on discipline, knowledge, and purpose. We provide real world education, firearm safety training, and community programs that make a lasting impact.
+                NIGHTWING is an edge intelligence platform built for urban situational awareness. Private by design, encrypted by default, and mission-ready connectivity that works where others don't.
               </p>
               <ul className="space-y-4 mb-8">
-                {aboutPoints.map((point, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-300 font-semibold">{point}</span>
-                  </li>
-                ))}
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Offline-first edge platform</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Encrypted local intelligence</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Mission-ready connectivity</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Works where others don't</span>
+                </li>
               </ul>
               <button className="px-6 py-3 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
                 LEARN MORE
@@ -234,16 +243,17 @@ export default function WiseDefenseLanding() {
                 <div className="text-9xl font-black text-gray-600">W</div>
               </div>
 
-              {/* Testimonial */}
+              {/* Quote */}
               <div className="border border-red-600/30 rounded-lg p-8 bg-red-600/5">
                 <p className="text-2xl font-black text-red-600 mb-4">"</p>
                 <p className="text-white text-lg font-bold leading-relaxed mb-6">
-                  WE DON'T JUST<br />
-                  TALK ABOUT CHANGE.<br />
-                  <span className="text-red-600">WE CREATE IT.</span>
+                  It's not about looking<br />
+                  for a fight.<br />
+                  <span className="text-red-600">It's about being ready</span><br />
+                  so you don't have to.
                 </p>
-                <p className="text-gray-400 font-semibold">D Wise</p>
-                <p className="text-gray-500 text-sm font-black tracking-wider">FOUNDER / CEO</p>
+                <p className="text-gray-400 font-semibold">— Coach WISE</p>
+                <p className="text-gray-500 text-sm font-black tracking-wider">FOUNDER</p>
               </div>
             </div>
           </div>
@@ -334,10 +344,10 @@ export default function WiseDefenseLanding() {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: '👥', value: '10K+', label: 'LIVES IMPACTED' },
-              { icon: '🛡️', value: '19', label: 'YEARS EXPERIENCE' },
-              { icon: '📚', value: '100+', label: 'TRAINING COURSES' },
-              { icon: '🤝', value: 'STRONGER', label: 'TOGETHER' },
+              { icon: '⭐', value: '10+', label: 'YEARS EXPERIENCE' },
+              { icon: '👥', value: '2000+', label: 'STUDENTS TRAINED' },
+              { icon: '⭐', value: '5★', label: 'RATING BY STUDENTS' },
+              { icon: '🛡️', value: '100%', label: 'COMMITMENT TO SAFETY' },
             ].map((stat, i) => (
               <div
                 key={i}
@@ -365,13 +375,14 @@ export default function WiseDefenseLanding() {
       <section className="py-16 lg:py-20 border-t border-red-600/20">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
           <h2 className="text-5xl lg:text-6xl font-black mb-4">
-            WISE DEFENSE<br />
-            <span className="text-red-600">IS EXPANDING™</span>
+            NIGHTWING<br />
+            <span className="text-red-600">EDGE INTELLIGENCE NODE</span>
           </h2>
           <div className="mt-12 p-12 border-2 border-red-600/30 rounded-lg bg-red-600/5">
-            <p className="text-3xl lg:text-4xl font-black text-white leading-tight">
-              SOMETHING<br />
-              <span className="text-red-600">BIG IS COMING</span>
+            <p className="text-5xl lg:text-6xl font-black text-white leading-tight">
+              <span className="text-red-600">LOCK</span><br />
+              <span className="text-white">IT</span><br />
+              <span className="text-red-600">IN.</span>
             </p>
           </div>
         </div>

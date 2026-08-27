@@ -55,6 +55,10 @@ data/
 # Exceptions: track app data fixtures
 !apps/website/data/
 !apps/prompt-shop/data/
+!apps/fieldtech-android/app/src/main/kotlin/com/wise2/fieldtech/data/
+!apps/fieldtech-android/app/src/main/kotlin/com/wise2/fieldtech/data/**
+!apps/fieldtech-android/app/src/test/kotlin/com/wise2/fieldtech/data/
+!apps/fieldtech-android/app/src/test/kotlin/com/wise2/fieldtech/data/**
 *.db
 *.sqlite
 postgres_data/
@@ -137,6 +141,12 @@ out/
 media/
 uploads/
 downloads/
+!apps/wise-hvac-demo/public/downloads/
+!apps/wise-hvac-demo/public/downloads/WISE-FieldTech-latest.apk
+
+# Local Android release signing material (never commit)
+apps/fieldtech-android/.field-release/
+apps/fieldtech-android/.field-release.env
 # ...but NOT source routes that happen to be named "downloads"
 !apps/dashboard/app/podcast/downloads/
 !apps/dashboard/app/podcast/downloads/**

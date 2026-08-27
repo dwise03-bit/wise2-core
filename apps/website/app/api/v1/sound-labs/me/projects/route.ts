@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.SOUND_LABS_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010';
 
 /**
  * GET /api/v1/sound-labs/me/projects

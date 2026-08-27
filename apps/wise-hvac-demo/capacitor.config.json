@@ -1,0 +1,23 @@
+{
+  "appId": "com.wisedefense.fieldtech",
+  "appName": "WISE Field Tech",
+  "webDir": "out",
+  "server": {
+    "url": "http://192.168.8.114:3024",
+    "androidScheme": "https",
+    "allowNavigation": ["https://wise2.net", "https://*.wise2.net", "https://accounts.google.com"]
+  },
+  "android": {
+    "buildOptions": {
+      "releaseType": "AAB"
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000
+    },
+    "App": {
+      "scheme": "com.wise2.fieldtech"
+    }
+  }
+}

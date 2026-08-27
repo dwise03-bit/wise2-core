@@ -1,5 +1,10 @@
 package com.wise2.fieldtech.ui.screens.readings
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,9 +32,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.wise2.fieldtech.bluetooth.model.ToolConnectionState
 import com.wise2.fieldtech.ui.components.DemoDataBadge
+import com.wise2.fieldtech.ui.components.LineChart
+import com.wise2.fieldtech.ui.components.Meter
 import com.wise2.fieldtech.ui.components.WiseCard
 import com.wise2.fieldtech.ui.theme.ElectricBlue
 import com.wise2.fieldtech.ui.theme.StatusGreen
@@ -38,9 +47,20 @@ import com.wise2.fieldtech.ui.theme.StatusGreen
 @Composable
 fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
+    } else arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { grants ->
+        if (grants.values.all { it }) viewModel.scan()
+    }
 
     LaunchedEffect(Unit) {
-        if (state.connectionState == ToolConnectionState.DISCONNECTED) viewModel.scan()
+        if (state.connectionState == ToolConnectionState.DISCONNECTED) {
+            if (bluetoothPermissions.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }) {
+                viewModel.scan()
+            } else permissionLauncher.launch(bluetoothPermissions)
+        }
     }
 
     Scaffold(
@@ -80,19 +100,68 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
                 item { if (reading.isDemoData) DemoDataBadge() }
 
                 item { SectionHeader("REFRIGERANT") }
+
+                reading.lowSidePsig?.let { pressure ->
+                    item {
+                        Meter(
+                            value = pressure.toFloat(),
+                            min = 0f,
+                            max = 400f,
+                            unit = "psig",
+                            label = "Low Side Pressure",
+                            modifier = Modifier.fillMaxWidth(),
+                            warningThreshold = 150f,
+                        )
+                    }
+                }
+
+                reading.highSidePsig?.let { pressure ->
+                    item {
+                        Meter(
+                            value = pressure.toFloat(),
+                            min = 0f,
+                            max = 600f,
+                            unit = "psig",
+                            label = "High Side Pressure",
+                            modifier = Modifier.fillMaxWidth(),
+                            warningThreshold = 400f,
+                        )
+                    }
+                }
+
+                if (state.pressureHistory.isNotEmpty()) {
+                    item {
+                        LineChart(
+                            dataPoints = state.pressureHistory,
+                            label = "Low Side Pressure Trend",
+                            unit = "psig",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+
                 item {
                     ReadingGrid(
                         listOfNotNull(
-                            reading.lowSidePsig?.let { "LOW SIDE" to "%.1f psig".format(it) },
-                            reading.highSidePsig?.let { "HIGH SIDE" to "%.1f psig".format(it) },
                             reading.suctionSaturationF?.let { "SAT LOW" to "%.1f °F".format(it) },
                             reading.liquidSaturationF?.let { "SAT HIGH" to "%.1f °F".format(it) },
-                            reading.suctionLineTempF?.let { "SUCTION LINE" to "%.1f °F".format(it) },
-                            reading.liquidLineTempF?.let { "LIQUID LINE" to "%.1f °F".format(it) },
+                            reading.suctionLineTempF?.let { "SUCTION" to "%.1f °F".format(it) },
+                            reading.liquidLineTempF?.let { "LIQUID" to "%.1f °F".format(it) },
                             reading.dischargeTempF?.let { "DISCHARGE" to "%.1f °F".format(it) },
-                            reading.outdoorAmbientF?.let { "OUTDOOR AMBIENT" to "%.1f °F".format(it) },
+                            reading.outdoorAmbientF?.let { "AMBIENT" to "%.1f °F".format(it) },
                         )
                     )
+                }
+
+                if (state.tempHistory.isNotEmpty()) {
+                    item {
+                        LineChart(
+                            dataPoints = state.tempHistory,
+                            label = "Temperature Trend",
+                            unit = "°F",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
 
                 item { SectionHeader("CALCULATED") }
@@ -110,10 +179,36 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
                 }
 
                 item { SectionHeader("ELECTRICAL") }
+
+                reading.voltageL1?.let { voltage ->
+                    item {
+                        Meter(
+                            value = voltage.toFloat(),
+                            min = 200f,
+                            max = 250f,
+                            unit = "V",
+                            label = "L1 Voltage",
+                            modifier = Modifier.fillMaxWidth(),
+                            warningThreshold = 245f,
+                            criticalThreshold = 250f,
+                        )
+                    }
+                }
+
+                if (state.voltageHistory.isNotEmpty()) {
+                    item {
+                        LineChart(
+                            dataPoints = state.voltageHistory,
+                            label = "Voltage Trend",
+                            unit = "V",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+
                 item {
                     ReadingGrid(
                         listOfNotNull(
-                            reading.voltageL1?.let { "L1 VOLTAGE" to "%.1f V".format(it) },
                             reading.voltageL2?.let { "L2 VOLTAGE" to "%.1f V".format(it) },
                             reading.currentL1?.let { "L1 CURRENT" to "%.1f A".format(it) },
                             reading.currentL2?.let { "L2 CURRENT" to "%.1f A".format(it) },

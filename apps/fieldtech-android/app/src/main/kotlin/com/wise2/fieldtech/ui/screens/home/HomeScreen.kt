@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import com.wise2.fieldtech.ui.components.WiseCard
 import com.wise2.fieldtech.ui.components.color
 import com.wise2.fieldtech.ui.components.label
 import com.wise2.fieldtech.ui.theme.ElectricBlue
+import com.wise2.fieldtech.ui.util.ClickDebouncer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,12 +66,25 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val nextJobId = state.jobs.firstOrNull { it.status.name != "COMPLETE" }?.id
 
+    // Debounce click handlers (500ms minimum between clicks)
+    val jobClickDebouncer = remember { ClickDebouncer(500L) }
+    val diagnoseDebouncer = remember { ClickDebouncer(500L) }
+    val readingsDebouncer = remember { ClickDebouncer(500L) }
+    val equipmentDebouncer = remember { ClickDebouncer(500L) }
+    val impDebouncer = remember { ClickDebouncer(500L) }
+    val newJobDebouncer = remember { ClickDebouncer(500L) }
+    val settingsDebouncer = remember { ClickDebouncer(500L) }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("WISE² FIELD TECH", color = ElectricBlue, fontWeight = FontWeight.Bold) },
                 actions = {
-                    IconButton(onClick = onSettings) { Icon(Icons.Filled.Settings, contentDescription = "Settings") }
+                    IconButton(onClick = {
+                        if (settingsDebouncer.onClicked()) {
+                            onSettings()
+                        }
+                    }) { Icon(Icons.Filled.Settings, contentDescription = "Settings") }
                 },
             )
         },
@@ -90,7 +105,14 @@ fun HomeScreen(
                 }
 
                 items(state.jobs, key = { it.id }) { job ->
-                    JobRow(job = job, onClick = { onJobClick(job.id) })
+                    JobRow(
+                        job = job,
+                        onClick = {
+                            if (jobClickDebouncer.onClicked()) {
+                                onJobClick(job.id)
+                            }
+                        },
+                    )
                 }
 
                 item {
@@ -106,30 +128,45 @@ fun HomeScreen(
                     ) {
                         item {
                             ModuleTile("DIAGNOSE", "Run tests & get smart diagnosis", Icons.Filled.Handyman, enabled = nextJobId != null) {
-                                nextJobId?.let(onDiagnose)
+                                if (diagnoseDebouncer.onClicked()) {
+                                    nextJobId?.let(onDiagnose)
+                                }
                             }
                         }
                         item {
                             ModuleTile("LIVE READINGS", "View real-time equipment data", Icons.Filled.Speed, enabled = nextJobId != null) {
-                                nextJobId?.let(onLiveReadings)
+                                if (readingsDebouncer.onClicked()) {
+                                    nextJobId?.let(onLiveReadings)
+                                }
                             }
                         }
                         item {
                             ModuleTile("EQUIPMENT", "System info & history", Icons.Filled.Build, enabled = nextJobId != null) {
-                                val equipmentId = state.jobs.firstOrNull { it.id == nextJobId }?.equipmentId
-                                equipmentId?.let(onEquipment)
+                                if (equipmentDebouncer.onClicked()) {
+                                    val equipmentId = state.jobs.firstOrNull { it.id == nextJobId }?.equipmentId
+                                    equipmentId?.let(onEquipment)
+                                }
                             }
                         }
                         item {
                             ModuleTile("AI IMP", "Ask WISE² IMP anything", Icons.Filled.SmartToy, enabled = nextJobId != null) {
-                                nextJobId?.let(onImp)
+                                if (impDebouncer.onClicked()) {
+                                    nextJobId?.let(onImp)
+                                }
                             }
                         }
                     }
                 }
 
                 item {
-                    Button(onClick = onNewJob, modifier = Modifier.fillMaxWidth().height(56.dp)) {
+                    Button(
+                        onClick = {
+                            if (newJobDebouncer.onClicked()) {
+                                onNewJob()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                    ) {
                         Icon(Icons.Filled.Add, contentDescription = null)
                         Spacer(Modifier.height(0.dp))
                         Text("  NEW JOB")
@@ -142,7 +179,18 @@ fun HomeScreen(
 
 @Composable
 private fun JobRow(job: Job, onClick: () -> Unit) {
-    WiseCard(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+    // Debounce click handler to prevent multiple rapid taps
+    val debouncer = remember(job.id) { ClickDebouncer(500L) }
+
+    WiseCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                if (debouncer.onClicked()) {
+                    onClick()
+                }
+            }
+    ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(timeLabel(job.appointmentAtEpochMillis), style = MaterialTheme.typography.titleMedium, color = ElectricBlue)
@@ -161,7 +209,16 @@ private fun JobRow(job: Job, onClick: () -> Unit) {
 
 @Composable
 private fun ModuleTile(title: String, subtitle: String, icon: androidx.compose.ui.graphics.vector.ImageVector, enabled: Boolean, onClick: () -> Unit) {
-    WiseCard(modifier = Modifier.clickable(enabled = enabled, onClick = onClick)) {
+    // Debounce click handler to prevent multiple rapid taps
+    val debouncer = remember(title) { ClickDebouncer(500L) }
+
+    WiseCard(
+        modifier = Modifier.clickable(enabled = enabled) {
+            if (debouncer.onClicked()) {
+                onClick()
+            }
+        }
+    ) {
         Column {
             Icon(icon, contentDescription = null, tint = if (enabled) ElectricBlue else MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))

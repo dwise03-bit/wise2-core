@@ -1,120 +1,93 @@
-import { Footer } from '@/components/wise';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, MonitorSmartphone } from 'lucide-react';
+
+const projects = [
+  {
+    title: 'Sencere Studios storefront',
+    category: 'Client commerce system',
+    description:
+      'A visual storefront and brand surface for custom apparel, vinyl, sublimation, and product work.',
+    image: '/sencere/portfolio/work-01-apparel-group.png',
+    href: '/sencere',
+  },
+  {
+    title: 'WISE² HVAC field tech',
+    category: 'Field operations app',
+    description:
+      'A technician workflow for equipment records, job context, diagnostics, and mobile deployment.',
+    image: '/brand/wise2-hero-united-mobile.webp',
+    href: '/fieldtech',
+  },
+  {
+    title: 'WISE Defense Nightwing',
+    category: 'Division identity and edge system',
+    description:
+      'A darker WISE² division for training, specialized systems, and edge-intelligence presentation.',
+    image: '/wise-defense/instructors/AC400CE5-BD5C-4598-B24B-B1820CB8ACC2_1_105_c.jpeg',
+    href: '/wise-defense',
+  },
+];
 
 export default function WorkPage() {
-  const projects = [
-    {
-      title: 'SoundLabs Platform',
-      category: 'Product Design & Development',
-      description: 'Complete music production platform with DAW features and collaborative tools.',
-      icon: '🎵',
-      featured: true,
-    },
-    {
-      title: 'Live Streaming Studio',
-      category: 'Real-Time Broadcast Platform',
-      description: 'HD streaming platform with integrated chat, analytics, and monetization.',
-      icon: '🔴',
-      featured: true,
-    },
-    {
-      title: 'Brand Strategy & Design',
-      category: 'Brand Development',
-      description: 'Complete rebrand including identity, visual system, and guidelines.',
-      icon: '🎨',
-      featured: false,
-    },
-    {
-      title: 'Web Platform Development',
-      category: 'Full-Stack Development',
-      description: 'Next.js frontend with NestJS backend API and PostgreSQL database.',
-      icon: '💻',
-      featured: false,
-    },
-    {
-      title: 'Audio Engineering Suite',
-      category: 'Audio Production',
-      description: 'Professional audio effects library and mixing tools.',
-      icon: '🎧',
-      featured: false,
-    },
-    {
-      title: 'Launch Campaign',
-      category: 'Marketing & Growth',
-      description: 'Multi-channel launch strategy with PR, social media, and content marketing.',
-      icon: '🚀',
-      featured: false,
-    },
-  ];
-
-  const featured = projects.filter((p) => p.featured);
-  const others = projects.filter((p) => !p.featured);
-
   return (
-    <>
-      <main className="bg-wise-bg-primary min-h-screen pt-32 pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h1 className="text-6xl md:text-7xl font-bold font-display text-white mb-6">
-              Our <span className="text-[#0094FF]">Work</span>
-            </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Projects we're proud of. Problems we've solved. Results we've delivered.
-            </p>
-          </div>
-
-          {featured.length > 0 && (
-            <div className="mb-20">
-              <h2 className="text-3xl font-bold text-white mb-8">Featured Projects</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {featured.map((project) => (
-                  <div
-                    key={project.title}
-                    className="bg-gradient-to-br from-[#0094FF]/20 to-[#0094FF]/5 border-2 border-[#0094FF]/40 rounded-3xl p-12 hover:border-[#0094FF]/60 transition-all"
-                  >
-                    <div className="text-6xl mb-6">{project.icon}</div>
-                    <p className="text-[#0094FF] font-bold text-sm mb-2">{project.category}</p>
-                    <h3 className="text-2xl font-bold text-white mb-3">{project.title}</h3>
-                    <p className="text-gray-300">{project.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {others.length > 0 && (
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-8">Other Projects</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {others.map((project) => (
-                  <div
-                    key={project.title}
-                    className="bg-wise-bg-secondary border-2 border-[#0094FF]/20 rounded-2xl p-8 hover:border-[#0094FF]/40 transition-all"
-                  >
-                    <div className="text-4xl mb-4">{project.icon}</div>
-                    <p className="text-[#0094FF] text-xs font-bold mb-2">{project.category}</p>
-                    <h3 className="text-lg font-bold text-white mb-2">{project.title}</h3>
-                    <p className="text-sm text-gray-300">{project.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="mt-20 text-center bg-wise-bg-secondary border-2 border-[#0094FF]/30 rounded-3xl p-12">
-            <h2 className="text-3xl font-bold text-white mb-4">Interested in working together?</h2>
-            <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Let's discuss your project and create something amazing.
-            </p>
-            <a
-              href="/contact"
-              className="inline-block px-12 py-4 bg-[#0094FF] text-wise-bg-primary rounded-lg font-bold hover:brightness-110 transition-all"
-            >
-              Get In Touch →
-            </a>
-          </div>
+    <main className="min-h-screen bg-[#050607] text-white">
+      <section className="border-b border-white/10 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+            Client Work
+          </p>
+          <h1 className="mt-5 max-w-4xl text-5xl font-black leading-tight sm:text-6xl">
+            Visible artifacts from systems WISE² is building.
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#B7C0CB]">
+            This page favors proof over polish theater: actual routes, product surfaces, brand assets, field technology, and client work already present in the WISE² ecosystem.
+          </p>
         </div>
-      </main>
-      <Footer />
-    </>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {projects.map((project) => (
+            <Link
+              key={project.title}
+              href={project.href}
+              className="group overflow-hidden border border-white/10 bg-[#090C10] transition duration-200 hover:-translate-y-1 hover:border-[#8EDBFF]/40 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+            >
+              <div className="relative aspect-[4/3] bg-black">
+                <Image
+                  src={project.image}
+                  alt={`${project.title} project artifact`}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                />
+              </div>
+              <div className="p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8EDBFF]">
+                  {project.category}
+                </p>
+                <h2 className="mt-3 text-2xl font-black text-white">{project.title}</h2>
+                <p className="mt-4 text-sm leading-7 text-[#B7C0CB]">{project.description}</p>
+                <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#DCE7EF]">
+                  Open project
+                  <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="border border-white/10 bg-[#0A0E12] p-8 lg:p-10">
+          <MonitorSmartphone className="h-7 w-7 text-[#8EDBFF]" aria-hidden="true" />
+          <h2 className="mt-5 text-3xl font-black">Evidence still needed for full case studies.</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[#B7C0CB]">
+            Verified outcomes, client quotes, launch dates, revenue impact, and operational metrics should be added only when the WISE² team can confirm them.
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }

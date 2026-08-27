@@ -24,6 +24,6 @@
       "@shared/prisma": ["src/prisma"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "src/index.ts", "src/routes/**/*.ts", "src/v1/audits/**/*.ts", "src/v1/consulting/**/*.ts"]
 }

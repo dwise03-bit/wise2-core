@@ -1,7 +1,13 @@
-# Get Down Pressure Washing — Business Command Center (Owner Demo)
+# Get Down Pressure Washing × WISE² — Owner Business Command Center Demo
 
-A presentation-ready demonstration of what the WISE² Revenue Engine looks like when it is built
-around Get Down Pressure Washing. Get Down is the hero brand; WISE² is the technology underneath.
+**Built for Rob & Kaytiie Panzica**
+
+A presentation-ready demonstration of how the WISE² Operating System strengthens Get Down 
+Pressure Washing LLC—the Troutman, NC-based leader in residential and commercial pressure washing, 
+serving communities across the Carolinas.
+
+**Get Down is the brand. Get Down is the business. WISE² is the controlled-growth system that 
+powers it.**
 
 ## Run it
 
@@ -14,12 +20,23 @@ Then open **http://localhost:3020**. No login, no database, no environment varia
 Present full-screen at **1920×1080**. The guided tour advances with `→` or the space bar, goes
 back with `←`, and exits with `esc`.
 
-## Presenting
+## Presenting to Rob & Kaytiie
 
 1. The opening screen offers **Enter Command Center** or **Start Owner Tour**.
-2. The tour is 12 steps, roughly 5–7 minutes, and routes itself through the product.
+2. The tour is 12 steps, roughly 5–7 minutes, and walks through how WISE² organizes their business.
 3. It ends on the closing screen with the **Let's Build Get Down OS** call to action.
 4. **Start Owner Tour** is always available in the top bar.
+
+## About the Demo Data
+
+**Everything shown here is completely fictional.** The customers, properties, crew members, 
+financial figures, and performance metrics are simulated to demonstrate system capabilities. 
+Fictional organizations are prefixed with `*` and use reserved `example.test` domains and `555` 
+phone numbers.
+
+Nothing in this demo represents actual Get Down Pressure Washing customers, revenue, operations, 
+or results. The purpose is to show Rob & Kaytiie what organized visibility, automated follow-up, 
+and controlled growth could look like for their business.
 
 ## Guide narration (audio)
 
@@ -56,20 +73,28 @@ a matched loudness, so tracks never jump in volume mid-tour.
 
 Current runtime: **about 6.1 minutes** across 14 tracks (~2.9 MB).
 
-## Data safety
+## Data Safety & Isolation
 
-Everything in this app is self-contained. It has no connection to the WISE² production database,
-authentication, tenants, or credentials. It cannot send an SMS or email, charge a card, create a
-real invoice, publish social or Google Business Profile content, modify a production customer
-record, or trigger a production automation.
+Everything in this app is self-contained. It has **zero connection** to:
+- WISE² production infrastructure
+- Real Get Down Pressure Washing customer records
+- Payment systems or billing
+- Actual crew or property data
+- Real email, SMS, or communication channels
 
-All customers, properties, managers, and financial figures are **fictional demo data** and do not
-represent actual Get Down Pressure Washing results. Fictional organizations are prefixed with `*`
-in the seed file, and contact details use reserved `example.test` domains and `555` numbers.
+The demo **cannot**:
+- Send emails or text messages
+- Charge a card or process payments
+- Create real invoices or contracts
+- Modify production customer records
+- Publish to Google Business Profile or social media
+- Trigger production automations
 
-Actions that would reach the outside world in production are labelled **DEMO ACTION** or
-**APPROVAL REQUIRED** in the interface. The `Owner Demo` toggle in the top bar controls the
-simulated-data banner.
+**All data is fictional.** Customers, properties, managers, and financial figures are 100% simulated.
+Fictional organizations are prefixed with `*` in the seed file, and contacts use reserved `example.test` 
+domains and `555` phone numbers per RFC 2606.
+
+The `Owner Demo` toggle in the top bar controls the simulated-data banner at the top of screens.
 
 ## Structure
 

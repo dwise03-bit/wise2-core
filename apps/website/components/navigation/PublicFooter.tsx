@@ -1,128 +1,89 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
-interface FooterLink {
-  href: string;
-  label: string;
-}
-
-interface FooterSection {
-  title: string;
-  links: FooterLink[];
-}
-
-const FOOTER_SECTIONS: FooterSection[] = [
+const footerSections = [
   {
-    title: 'Product',
+    title: 'Products',
     links: [
-      { href: '/platform', label: 'Platform' },
-      { href: '/services/digital-twin', label: 'Digital Twin' },
-      { href: '/powered-businesses', label: 'Powered Businesses' },
-      { href: '/studio', label: 'Studio' },
-      { href: '/start-your-build', label: 'Start Your Build' },
+      { href: '/platform', label: 'WISE² Core' },
+      { href: '/fieldtech', label: 'WISE² HVAC' },
+      { href: '/wise-defense', label: 'WISE Defense' },
+      { href: '/soundlab', label: 'SoundLab' },
+    ],
+  },
+  {
+    title: 'Work',
+    links: [
+      { href: '/solutions', label: 'Solutions' },
+      { href: '/work', label: 'Client Work' },
+      { href: '/printshop', label: 'Print Shop' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { href: '/wise-shine', label: 'Wise Shine' },
-      { href: '/piff-city', label: 'Piff City' },
       { href: '/about', label: 'About' },
       { href: '/contact', label: 'Contact' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { href: '/privacy', label: 'Privacy Policy' },
-      { href: '/terms', label: 'Terms of Service' },
+      { href: '/privacy', label: 'Privacy' },
+      { href: '/terms', label: 'Terms' },
     ],
   },
 ];
 
-/**
- * PublicFooter - Canonical public website footer
- * Appears on all public-facing pages
- * Features: comprehensive site navigation, no invented social media
- * Routes verified against Phase 10B spec
- */
 export const PublicFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <motion.footer
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="border-t border-white/10 bg-gradient-to-b from-slate-900/30 to-slate-950"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        {/* Footer Content Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
-          {/* Brand Column */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C7FF2E] to-[#B36BFF] flex items-center justify-center text-black font-black text-sm">
+    <footer className="border-t border-white/10 bg-[#050607] text-white">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_1.4fr]">
+          <div>
+            <Link href="/" className="inline-flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
+              <span className="flex h-10 w-10 items-center justify-center bg-[#DCE7EF] text-sm font-black text-[#050607]">
                 W
-              </div>
-              <span className="font-bold text-white text-lg tracking-tight">
-                WISE²
+              </span>
+              <span>
+                <span className="block text-lg font-black tracking-[0.12em]">WISE²</span>
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-[#8FA0AE]">
+                  Field-built systems
+                </span>
               </span>
             </Link>
-            <p className="text-sm text-slate-400 mb-4">
-              Building empires, changing culture. A founder-led business OS for brands that want one system and a real legacy.
+            <p className="mt-5 max-w-md text-sm leading-7 text-[#AEB8C3]">
+              WISE² builds software, AI workflows, edge systems, and client infrastructure for real-world businesses and field operations.
             </p>
-            <div className="text-xs text-slate-500">
-              <p>© {currentYear} WISE². All rights reserved.</p>
-            </div>
+            <p className="mt-6 text-xs text-[#6F7D89]">© {currentYear} WISE². All rights reserved.</p>
           </div>
 
-          {/* Links Sections */}
-          {FOOTER_SECTIONS.map((section) => (
-            <div key={section.title} className="col-span-1">
-              <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wide">
-                {section.title}
-              </h3>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="grid gap-8 sm:grid-cols-3">
+            {footerSections.map((section) => (
+              <div key={section.title}>
+                <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#8EDBFF]">{section.title}</h2>
+                <ul className="mt-4 space-y-3">
+                  {section.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-[#AEB8C3] transition hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-white/5 mb-8" />
-
-        {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>WISE² • Building empires. Changing culture.</p>
-          <div className="flex items-center gap-6">
-            <Link href="/privacy" className="hover:text-slate-300 transition-colors duration-200">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-slate-300 transition-colors duration-200">
-              Terms
-            </Link>
-            <a
-              href="mailto:contact@wise2.net"
-              className="hover:text-slate-300 transition-colors duration-200"
-            >
-              Support
-            </a>
-          </div>
+        <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-[#6F7D89] sm:flex-row sm:items-center sm:justify-between">
+          <p>No invented testimonials, client metrics, or partner claims.</p>
+          <a href="mailto:contact@wise2.net" className="w-fit transition hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
+            contact@wise2.net
+          </a>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 };

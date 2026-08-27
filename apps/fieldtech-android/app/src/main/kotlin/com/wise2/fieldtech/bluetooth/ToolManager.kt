@@ -6,9 +6,8 @@ import com.wise2.fieldtech.domain.model.ReadingSnapshot
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Facade the rest of the app talks to. Holds the active FieldToolAdapter (SimulatedToolAdapter
- * today; swap in a real brand adapter here once one exists) so screens never depend on a
- * concrete vendor implementation.
+ * Facade the rest of the app talks to. The active adapter can combine multiple verified
+ * instrument brands while screens remain independent of vendor BLE details.
  */
 class ToolManager(private val adapter: FieldToolAdapter) {
 

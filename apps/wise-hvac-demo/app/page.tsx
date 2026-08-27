@@ -68,27 +68,6 @@ const highlights = [
   'Energy-minded upgrades that actually add value',
 ];
 
-const testimonials = [
-  {
-    quote:
-      'They responded fast, showed up on time, and had the system cooling again the same day.',
-    name: 'Mike R.',
-    city: 'Greensboro, NC',
-  },
-  {
-    quote:
-      'Their diagnostics found the airflow issue two other companies missed. The difference was immediate.',
-    name: 'Sarah J.',
-    city: 'Greensboro, NC',
-  },
-  {
-    quote:
-      'Professional, knowledgeable, and honest. It felt premium without the hard sell.',
-    name: 'David T.',
-    city: 'High Point, NC',
-  },
-];
-
 function accentClasses(accent: string) {
   if (accent === 'orange') {
     return 'border-wise-orange/35 bg-wise-orange/10 text-wise-ember';
@@ -246,9 +225,9 @@ export default function Page() {
                   {service.title}
                 </h3>
                 <p className="mt-4 text-sm leading-7 text-wise-mute">{service.copy}</p>
-                <span className="mt-6 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-wise-cyan">
+                <Link href="#contact" className="mt-6 inline-flex min-h-11 items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-wise-cyan transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wise-cyan">
                   Learn More <ArrowRight className="h-3.5 w-3.5" />
-                </span>
+                </Link>
               </article>
             );
           })}
@@ -267,9 +246,8 @@ export default function Page() {
                 <span className="text-wise-orange">Stronger Solutions.</span>
               </h3>
               <p className="mt-5 max-w-xl text-sm leading-8 text-wise-mute sm:text-base">
-                This demo takes the uploaded fire-and-ice concept and turns it into a real landing
-                page structure with service positioning, proof points, responsive sections, and
-                conversion-focused CTAs.
+                WISE² combines experienced field service, clear recommendations, and modern
+                diagnostic workflows to restore comfort quickly and responsibly.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
@@ -295,8 +273,8 @@ export default function Page() {
                   We&apos;re Here When You Need Us.
                 </h3>
                 <p className="mt-3 max-w-xl text-sm leading-7 text-wise-mute">
-                  Day or night, weekends or holidays, the page keeps emergency service prominent so
-                  the offer reads clearly at a glance.
+                  Day or night, weekends or holidays, call for priority HVAC service when your
+                  heating or cooling system cannot wait.
                 </p>
               </div>
               <Link href="#contact" className="wise-button-orange whitespace-nowrap">
@@ -316,35 +294,12 @@ export default function Page() {
                 <div className="max-w-md">
                   <p className="text-sm leading-7 text-wise-text/90">
                     Improve efficiency, lower bills, and extend system life with a clear
-                    entry-point offer that gives the demo a strong conversion hook.
+                    professional tune-up designed to identify developing problems early.
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section id="reviews" className="mx-auto max-w-7xl px-5 py-10 md:px-8 lg:px-10 lg:py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker">What Customers Say</p>
-          <h2 className="section-title">Trust That Feels Immediate</h2>
-        </div>
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
-          {testimonials.map((item) => (
-            <article key={item.name} className="wise-panel p-6">
-              <div className="mb-5 flex gap-1 text-wise-ember">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i}>★</span>
-                ))}
-              </div>
-              <p className="text-base leading-8 text-wise-text/90">&ldquo;{item.quote}&rdquo;</p>
-              <p className="mt-6 text-sm font-black uppercase tracking-[0.12em] text-white">
-                {item.name}
-              </p>
-              <p className="mt-1 text-xs uppercase tracking-[0.18em] text-wise-mute">{item.city}</p>
-            </article>
-          ))}
         </div>
       </section>
 
@@ -358,8 +313,8 @@ export default function Page() {
               HVAC Solutions
             </p>
             <p className="mt-6 max-w-md text-sm leading-8 text-wise-mute">
-              A coded demo built from the uploaded mockup so the look has real layout logic, mobile
-              behavior, and production-ready structure.
+              Responsive heating and cooling service for homes and light commercial properties in
+              the Triad.
             </p>
             <div className="mt-8 space-y-3 text-sm text-wise-text/90">
               <p className="inline-flex items-center gap-3"><Phone className="h-4 w-4 text-wise-cyan" /> 336 709 0472</p>
@@ -368,22 +323,15 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="wise-panel p-7">
+          <div className="wise-panel p-6 sm:p-7">
             <p className="section-kicker text-left">Ready For Total Comfort?</p>
             <h3 className="mt-3 font-display text-4xl font-black uppercase text-white">
               Let&apos;s Get Started Today.
             </h3>
-            <div className="mt-7 grid gap-4 sm:grid-cols-2">
-              <input className="wise-input" placeholder="Your name" />
-              <input className="wise-input" placeholder="Phone number" />
-              <input className="wise-input sm:col-span-2" placeholder="Email address" />
-              <textarea className="wise-input min-h-[132px] sm:col-span-2" placeholder="Tell us what your system is doing..." />
-            </div>
-            <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs uppercase tracking-[0.16em] text-wise-mute">
-                Demo form only. No live submission is connected.
-              </p>
-              <button className="wise-button-blue">Request Service</button>
+            <p className="mt-5 text-sm leading-7 text-wise-mute">Call for the fastest response or email the service desk with your contact information, address, and a description of the problem.</p>
+            <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              <a href="tel:3367090472" className="wise-button-blue min-h-12"><Phone className="h-4 w-4" />Call 336 709 0472</a>
+              <a href="mailto:dwise@wisehvacsolutions.com?subject=HVAC%20service%20request" className="tech-secondary-button min-h-12">Email service desk</a>
             </div>
           </div>
         </div>

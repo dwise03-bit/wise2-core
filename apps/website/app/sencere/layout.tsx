@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   },
   description:
     'SenCere Creative LLC brings ideas into reality with custom apparel, printing, engraving, fabrication, prototyping and creative production solutions powered by WISE².',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function SenCereLayout({ children }: { children: React.ReactNode }) {

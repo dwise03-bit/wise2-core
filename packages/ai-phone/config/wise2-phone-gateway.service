@@ -1,0 +1,18 @@
+[Unit]
+Description=WISE2 AI Phone Gateway
+After=network-online.target asterisk.service
+Wants=network-online.target
+Requires=asterisk.service
+
+[Service]
+Type=simple
+User=dwise
+Group=dwise
+WorkingDirectory=/home/dwise/wise2-core/apps/phone-gateway
+EnvironmentFile=/etc/wise2/phone-gateway.env
+ExecStart=/usr/bin/npx ts-node --transpile-only src/index.ts
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

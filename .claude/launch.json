@@ -18,6 +18,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "apps/website", "run", "dev"],
       "port": 3001
+    },
+    {
+      "name": "getdown-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@wise2/getdown-demo", "dev"],
+      "port": 3020
     }
   ]
 }

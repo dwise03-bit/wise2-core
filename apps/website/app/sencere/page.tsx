@@ -1,10 +1,10 @@
 import { UtilityBar } from '@/components/sencere/UtilityBar';
 import { Navbar } from '@/components/sencere/Navbar';
 import { Hero } from '@/components/sencere/Hero';
-import { IndustryStrip } from '@/components/sencere/IndustryStrip';
-import { CapabilityGrid } from '@/components/sencere/CapabilityGrid';
-import { ProductShowcase } from '@/components/sencere/ProductShowcase';
-import { SuccessStatsCTA } from '@/components/sencere/SuccessStatsCTA';
+import { BrandShowcase } from '@/components/sencere/BrandShowcase';
+import { FeaturedCollection } from '@/components/sencere/FeaturedCollection';
+import { BrandStory } from '@/components/sencere/BrandStory';
+import { Newsletter } from '@/components/sencere/Newsletter';
 import { Footer } from '@/components/sencere/Footer';
 
 export default function SenCereHomePage() {
@@ -13,10 +13,10 @@ export default function SenCereHomePage() {
       <UtilityBar />
       <Navbar />
       <Hero />
-      <IndustryStrip />
-      <CapabilityGrid />
-      <ProductShowcase />
-      <SuccessStatsCTA />
+      <BrandShowcase />
+      <FeaturedCollection />
+      <BrandStory />
+      <Newsletter />
       <Footer />
     </>
   );
