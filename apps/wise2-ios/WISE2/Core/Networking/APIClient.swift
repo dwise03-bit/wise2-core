@@ -56,6 +56,27 @@ actor APIClient {
     return try await get("/dashboard/metrics")
   }
 
+  // MARK: - AI Endpoints
+
+  func chat(prompt: String) async throws -> String {
+    if mockMode {
+      try await Task.sleep(for: .seconds(1))
+      return "This is a mock response to: \"\(prompt)\". In production, this would connect to the WISE² AI backend."
+    }
+
+    struct ChatRequest: Codable {
+      let message: String
+    }
+
+    struct ChatResponse: Codable {
+      let response: String
+    }
+
+    let request = ChatRequest(message: prompt)
+    let response: ChatResponse = try await post("/ai/chat", body: request)
+    return response.response
+  }
+
   // MARK: - HTTP Methods
 
   private func get<T: Decodable>(_ endpoint: String) async throws -> T {

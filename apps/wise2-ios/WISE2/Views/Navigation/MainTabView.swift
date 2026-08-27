@@ -23,7 +23,7 @@ struct MainTabView: View {
             }
 
           // AI Tab
-          AIPlaceholder()
+          AIScreen()
             .tag(1)
             .tabItem {
               Label("AI", systemImage: "sparkles")
