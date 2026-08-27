@@ -34,6 +34,7 @@ import { PrintShopModule } from './v1/print-shop/print-shop.module';
 import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -126,6 +127,7 @@ import { FieldtechModule } from './fieldtech/fieldtech.module';
     HermesModule,
     TradingModule,
     FieldtechModule,
+    WebhooksModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],
