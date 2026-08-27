@@ -37,7 +37,7 @@ struct MainTabView: View {
             }
 
           // SYSTEMS Tab
-          SystemsPlaceholder()
+          SystemsScreen()
             .tag(3)
             .tabItem {
               Label("Systems", systemImage: "server.rack")

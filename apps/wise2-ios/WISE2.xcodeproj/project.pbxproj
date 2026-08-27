@@ -20,6 +20,8 @@
 		3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001029 /* WISE2/Views/AIScreen.swift */; };
 		3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */; };
 		3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001033 /* WISE2/Views/WorkScreen.swift */; };
+		3FA1001034 /* WISE2/Views/SystemsScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */; };
+		3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001037 /* WISE2/Views/SystemsScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +40,8 @@
 		3FA1001029 /* WISE2/Views/AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreen.swift; sourceTree = SOURCE_ROOT; };
 		3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
 		3FA1001033 /* WISE2/Views/WorkScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreen.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/SystemsScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001037 /* WISE2/Views/SystemsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/SystemsScreen.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +71,8 @@
 				3FA1001029 /* WISE2/Views/AIScreen.swift */,
 				3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */,
 				3FA1001033 /* WISE2/Views/WorkScreen.swift */,
+				3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */,
+				3FA1001037 /* WISE2/Views/SystemsScreen.swift */,
 				3FA1001014 /* WISE2/Info.plist */,
 			);
 			path = WISE2;
@@ -168,6 +174,8 @@
 				3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */,
 				3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */,
 				3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */,
+				3FA1001034 /* WISE2/Views/SystemsScreenViewModel.swift in Sources */,
+				3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
