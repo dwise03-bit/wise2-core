@@ -36,7 +36,3 @@ struct WISE2App: App {
     }
   }
 }
-
-#Preview {
-  WISE2App()
-}
