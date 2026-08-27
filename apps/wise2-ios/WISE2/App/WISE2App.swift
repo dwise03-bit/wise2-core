@@ -1,0 +1,42 @@
+import SwiftUI
+
+@main
+struct WISE2App: App {
+  @StateObject private var authManager = AuthManager()
+  @StateObject private var appState = AppState()
+
+  init() {
+    print("🚀 WISE² Command Center launching...")
+  }
+
+  var body: some Scene {
+    WindowGroup {
+      ZStack {
+        // Background
+        Color.wise2Background
+          .ignoresSafeArea()
+
+        // Authentication Gate
+        if authManager.isAuthenticated {
+          MainTabView()
+            .environmentObject(authManager)
+            .environmentObject(appState)
+            .onAppear {
+              print("✅ User authenticated, showing main interface")
+            }
+        } else {
+          AuthGate()
+            .environmentObject(authManager)
+            .onAppear {
+              print("🔐 No active session, showing authentication")
+            }
+        }
+      }
+      .preferredColorScheme(.dark)
+    }
+  }
+}
+
+#Preview {
+  WISE2App()
+}
