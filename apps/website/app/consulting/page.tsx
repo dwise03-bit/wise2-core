@@ -2,408 +2,229 @@
 
 import Link from 'next/link';
 import { Footer } from '@/components/wise';
+import { ArrowRight, CheckCircle2, Zap, Users, FileText, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const SERVICES = [
-  {
-    id: 'audit',
-    icon: '🎯',
-    title: 'AI Business Audit',
-    price: '$149',
-    duration: '60 minutes',
-    description: 'Complete business systems audit. We analyze your workflows, identify AI opportunities, and deliver a personalized automation roadmap.',
-    deliverables: ['AI Readiness Score (0-100)', 'Opportunity Report', 'Quick-Win Recommendations', 'Priority 90-Day Plan'],
-    cta: 'Book Audit',
-    href: '/consulting/audit',
-    color: '#0094FF',
-  },
-  {
-    id: 'live-build',
-    icon: '⚡',
-    title: 'WISE² Live Build Session',
-    price: '$497',
-    duration: '60 minutes',
-    description: 'Build something REAL with us. Choose your project, and we\'ll implement it live during our session. You leave with working code.',
-    deliverables: ['Working Implementation', 'Configured Systems', 'Integration Setup', 'Next-Steps Roadmap'],
-    cta: 'Book Live Build',
-    href: '/consulting/live-build',
-    color: '#39FF14',
-    highlight: true,
-  },
-  {
-    id: 'implementation-day',
-    icon: '🚀',
-    title: 'AI Implementation Day',
-    price: '$997',
-    duration: 'Up to 6 hours',
-    description: 'Comprehensive implementation for larger scope projects. Multiple automations, integrations, dashboards, and workflows built together.',
-    deliverables: ['Multiple Automations', 'AI Assistants', 'Custom Integrations', 'Training & Documentation'],
-    cta: 'Book Implementation',
-    href: '/consulting/implementation-day',
-    color: '#0094FF',
-  },
-  {
-    id: 'management',
-    icon: '📊',
-    title: 'WISE² Management',
-    price: '$297/mo',
-    duration: 'Ongoing',
-    description: 'Recurring management and optimization. Monthly reviews, system tuning, new automations, and ongoing support.',
-    deliverables: ['Monthly Strategy Call', 'System Optimization', 'AI Monitoring', 'Priority Support'],
-    cta: 'Start Management',
-    href: '/consulting/management',
-    color: '#00D9FF',
-  },
-];
+// ─── Service Card ────────────────────────────────────────────────────────────
 
-const BENEFITS = [
-  { icon: '✓', title: 'Real Solutions', description: 'Not theory. We build working implementations during sessions.' },
-  { icon: '✓', title: 'No Code Required', description: 'Leveraging AI and no-code tools means you don\'t need technical teams.' },
-  { icon: '✓', title: 'Immediate Results', description: 'Leave each session with working systems, not recommendations.' },
-  { icon: '✓', title: 'AI-Powered', description: 'Leveraging the latest AI models and automation frameworks.' },
-  { icon: '✓', title: 'Proven Methods', description: 'Based on real business operations we\'ve built and scaled.' },
-  { icon: '✓', title: 'Next-Step Ready', description: 'Every session includes a clear roadmap for what\'s next.' },
-];
+function ServiceCard({ icon, title, price, duration, description, deliverables, highlighted }: { icon: any; title: string; price: string; duration: string; description: string; deliverables: string[]; highlighted?: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      className={`rounded-2xl p-8 transition-all ${highlighted ? 'border-2 border-[#0094FF] bg-[#0d1218] ring-2 ring-[#0094FF]/20 md:scale-105' : 'border border-white/10 bg-[#090C10]'}`}
+    >
+      {highlighted && (
+        <div className="inline-block bg-[#0094FF]/20 text-[#0094FF] text-xs font-bold px-3 py-1 rounded-full mb-4">
+          MOST POPULAR
+        </div>
+      )}
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-2xl font-black text-white">{title}</h3>
+      <p className="mt-2 text-sm text-gray-400">{duration}</p>
+      <p className="mt-4 text-3xl font-black text-[#0094FF]">{price}</p>
+      <p className="mt-4 text-base text-[#B7C0CB]">{description}</p>
+      <div className="mt-6 pt-6 border-t border-white/10">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Deliverables</p>
+        <ul className="space-y-2">
+          {deliverables.map((d, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+              <CheckCircle2 size={16} className="text-[#0094FF] flex-shrink-0 mt-0.5" />
+              {d}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button className={`mt-8 w-full py-3 rounded-lg font-bold transition-all ${highlighted ? 'bg-[#0094FF] text-white hover:bg-[#0066FF]' : 'bg-[#111] text-gray-300 hover:bg-[#1a1a1a]'}`}>
+        Book Now
+      </button>
+    </motion.div>
+  );
+}
 
-const HOW_IT_WORKS = [
-  {
-    step: '1',
-    title: 'Choose Your Path',
-    description: 'Select an audit, live build, or implementation day based on your scope.',
-  },
-  {
-    step: '2',
-    title: 'Share Your Needs',
-    description: 'Complete a brief intake form telling us about your business and goals.',
-  },
-  {
-    step: '3',
-    title: 'We Qualify',
-    description: 'We review and recommend the best service for your specific situation.',
-  },
-  {
-    step: '4',
-    title: 'Book & Prepare',
-    description: 'Schedule your session and we send prep materials to get you ready.',
-  },
-  {
-    step: '5',
-    title: 'Build Together',
-    description: 'During the session, we build real solutions with you in real-time.',
-  },
-  {
-    step: '6',
-    title: 'Get Results',
-    description: 'Leave with working implementations, reports, and a clear next-step plan.',
-  },
-];
+// ─── Benefit Card ────────────────────────────────────────────────────────────
 
-const FAQ = [
-  {
-    q: 'Do I need technical experience?',
-    a: 'Not at all. We handle the technical side. You just need to know your business and be ready to make decisions.',
-  },
-  {
-    q: 'What if the project takes longer than the session?',
-    a: 'We scope projects to fit the time. If something\'s too big, we recommend the longer Implementation Day or offer Management follow-ups.',
-  },
-  {
-    q: 'Can you work with my specific tools/platforms?',
-    a: 'We integrate with 500+ platforms and tools. If it has an API or Zapier connector, we can likely connect it.',
-  },
-  {
-    q: 'What happens after the session?',
-    a: 'You get a deliverable report, a roadmap for next steps, and an option to subscribe to our Management plan.',
-  },
-  {
-    q: 'Is the session recorded?',
-    a: 'Yes, we record every session for your reference and for our follow-up communications.',
-  },
-  {
-    q: 'Can you manage the system afterward?',
-    a: 'Yes! We offer our Management plan ($297/month) for ongoing optimization and support.',
-  },
-];
+function BenefitCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="rounded-xl border border-white/10 bg-[#090C10] p-6">
+      <Icon className="h-6 w-6 text-[#8EDBFF]" />
+      <h3 className="mt-4 text-lg font-bold text-white">{title}</h3>
+      <p className="mt-2 text-sm text-[#B7C0CB]">{description}</p>
+    </motion.div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ConsultingPage() {
   return (
     <>
-      <main className="min-h-screen bg-[#050505] text-white">
-        {/* Hero Section */}
-        <section className="pt-32 pb-20 px-6 text-center relative overflow-hidden">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(ellipse at center top, rgba(57, 255, 20, 0.12) 0%, transparent 70%)',
-            }}
-          />
-          <div className="relative max-w-4xl mx-auto">
-            <div
-              className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-              style={{ background: 'rgba(57, 255, 20, 0.12)', border: '1px solid rgba(57, 255, 20, 0.35)', color: '#39FF14' }}
-            >
-              WISE² CONSULTING
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              DON'T LEARN AI.<br />
-              <span style={{ color: '#39FF14' }}>BUILD WITH IT. LIVE.</span>
-            </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-10" style={{ color: '#8D98A5' }}>
-              Your business. Your workflows. Built together with AI.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/intake"
-                className="px-10 py-5 rounded-xl font-black text-lg transition-all duration-200"
-                style={{
-                  background: '#39FF14',
-                  color: '#050505',
-                  boxShadow: '0 0 25px rgba(57, 255, 20, 0.3)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 35px rgba(57, 255, 20, 0.5)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                Start with AI Audit →
-              </Link>
-              <Link
-                href="/consulting/live-build"
-                className="px-10 py-5 rounded-xl font-bold text-lg transition-all duration-200"
-                style={{
-                  background: 'rgba(57, 255, 20, 0.1)',
-                  border: '1px solid rgba(57, 255, 20, 0.35)',
-                  color: '#39FF14',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(57, 255, 20, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.35)';
-                }}
-              >
-                Book Live Build
-              </Link>
+      <main className="min-h-screen bg-[#050607] text-white">
+        {/* HERO */}
+        <section className="relative border-b border-white/10 bg-[#050607]">
+          <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
+          <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+            <div className="max-w-3xl">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Hands-On Implementation</p>
+              <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">Don't Learn AI. Build With It. Live.</h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
+                Stop planning and start building. WISE² Consulting brings hands-on implementation to your business. We audit, we build, and we optimize—together.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/audit" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#DCE7EF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                  Start With Audit
+                  <ArrowRight size={16} />
+                </Link>
+                <Link href="#services" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#0094FF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#0094FF] transition duration-200 hover:bg-[#0094FF]/10 focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                  See Services
+                  <ArrowRight size={16} />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Services Grid */}
-        <section className="py-20 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold mb-3" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>Choose Your Path</h2>
-              <p style={{ color: '#8D98A5' }}>Four packages designed for different needs and budgets</p>
+        {/* SERVICES */}
+        <section id="services" className="border-b border-white/10 bg-[#0A0E12] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-3xl font-black leading-tight sm:text-5xl">Choose Your Consulting Path</h2>
+            <p className="mt-4 max-w-2xl text-gray-400">Four packages designed for different scope and scale. All hands-on. All results-driven.</p>
+            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              <ServiceCard
+                icon="🎯"
+                title="AI Business Audit"
+                price="$149"
+                duration="60 minutes"
+                description="Complete analysis of your workflows and AI opportunities."
+                deliverables={['AI Readiness Score (0-100)', 'Opportunity Report', 'Quick-Win Recommendations', 'Priority 90-Day Plan']}
+              />
+              <ServiceCard
+                icon="⚡"
+                title="Live Build Session"
+                price="$497"
+                duration="60 minutes"
+                description="Build something REAL together. You choose the project, we implement it live."
+                deliverables={['Working Implementation', 'Configured Systems', 'Integration Setup', 'Next-Steps Roadmap']}
+                highlighted
+              />
+              <ServiceCard
+                icon="🚀"
+                title="Implementation Day"
+                price="$997"
+                duration="Up to 6 hours"
+                description="Comprehensive multi-system implementation for larger scope projects."
+                deliverables={['Multiple Automations', 'AI Assistants', 'Custom Integrations', 'Training & Documentation']}
+              />
+              <ServiceCard
+                icon="📊"
+                title="Management Plan"
+                price="$297/mo"
+                duration="Ongoing"
+                description="Recurring optimization, monitoring, and support for sustained results."
+                deliverables={['Monthly Strategy Call', 'System Optimization', 'AI Monitoring', 'Priority Support']}
+              />
             </div>
+          </div>
+        </section>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {SERVICES.map((service) => (
-                <div
-                  key={service.id}
-                  className="rounded-2xl p-8 relative transition-all duration-200"
-                  style={{
-                    background: service.highlight ? 'linear-gradient(135deg, rgba(57, 255, 20, 0.15), rgba(0, 148, 255, 0.05))' : 'linear-gradient(135deg, #1A1A1A, #0F0F0F)',
-                    border: service.highlight ? '2px solid #39FF14' : '1px solid rgba(57, 255, 20, 0.2)',
-                    boxShadow: service.highlight ? '0 0 30px rgba(57, 255, 20, 0.2)' : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(57, 255, 20, 0.4)';
-                    e.currentTarget.style.boxShadow = '0 0 30px rgba(57, 255, 20, 0.3)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = service.highlight ? '2px solid #39FF14' : '1px solid rgba(57, 255, 20, 0.2)';
-                    e.currentTarget.style.boxShadow = service.highlight ? '0 0 30px rgba(57, 255, 20, 0.2)' : 'none';
-                  }}
-                >
-                  {service.highlight && (
-                    <div
-                      className="absolute top-0 left-0 right-0 px-4 py-1 text-center"
-                      style={{
-                        background: '#39FF14',
-                        color: '#050505',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        borderRadius: '0 0 8px 8px',
-                      }}
-                    >
-                      MOST POPULAR
-                    </div>
-                  )}
+        {/* VALUE PROPOSITIONS */}
+        <section className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-3xl font-black leading-tight sm:text-5xl">Why Choose WISE² Consulting</h2>
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              <BenefitCard icon={CheckCircle2} title="Real Solutions" description="Not theory. We build working implementations during every session." />
+              <BenefitCard icon={Zap} title="Zero Setup Time" description="Walk in with a problem, walk out with working systems. No months of preparation." />
+              <BenefitCard icon={Users} title="Expert Partnership" description="AI specialists and business strategists working alongside you." />
+            </div>
+          </div>
+        </section>
 
-                  <div className="text-5xl mb-4">{service.icon}</div>
-                  <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
-                  <div className="mb-4">
-                    <div className="text-3xl font-bold" style={{ color: service.color }}>
-                      {service.price}
-                    </div>
-                    <div style={{ color: '#8D98A5', fontSize: '14px' }}>{service.duration}</div>
+        {/* HOW IT WORKS */}
+        <section className="border-b border-white/10 bg-[#0A0E12] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-3xl font-black leading-tight sm:text-5xl">The Process</h2>
+            <div className="mt-12 space-y-8">
+              {[
+                { n: '1', title: 'Choose Your Path', desc: 'Select Audit, Live Build, Implementation Day, or Management based on your scope.' },
+                { n: '2', title: 'Share Your Needs', desc: 'Complete a brief intake form describing your business, workflows, and goals.' },
+                { n: '3', title: 'Qualification', desc: 'We review your situation and recommend the best service option for you.' },
+                { n: '4', title: 'Book & Prepare', desc: 'Schedule your session. We send prep materials and any pre-work we need.' },
+                { n: '5', title: 'Build Together', desc: 'During the session, we implement real solutions in real-time with you.' },
+                { n: '6', title: 'Leave With Results', desc: 'Walk away with working systems, documentation, and a clear roadmap forward.' },
+              ].map(({ n, title, desc }, i) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex gap-6 md:gap-12">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, rgba(0,102,255,0.2), rgba(0,148,255,0.1))' }}>
+                    <span className="text-2xl font-black text-[#0094FF]">{n}</span>
                   </div>
-
-                  <p className="mb-6" style={{ color: '#C0C0C0' }}>
-                    {service.description}
-                  </p>
-
-                  <div className="mb-8">
-                    <div style={{ color: '#8D98A5', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>DELIVERABLES</div>
-                    <ul className="space-y-2">
-                      {service.deliverables.map((item, idx) => (
-                        <li key={idx} style={{ color: '#A0A0A0', fontSize: '14px' }}>
-                          ✓ {item}
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white">{title}</h3>
+                    <p className="mt-2 text-base text-[#B7C0CB]">{desc}</p>
                   </div>
-
-                  <Link
-                    href={service.href}
-                    className="block w-full text-center py-4 rounded-xl font-bold transition-all duration-200"
-                    style={{
-                      background: service.color,
-                      color: service.id === 'live-build' ? '#050505' : '#050505',
-                      boxShadow: `0 0 20px ${service.color}30`,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = `0 0 30px ${service.color}60`;
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = `0 0 20px ${service.color}30`;
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    {service.cta}
-                  </Link>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Benefits Section */}
-        <section className="py-20 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              Why WISE² Consulting
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {BENEFITS.map((benefit, idx) => (
-                <div
-                  key={idx}
-                  className="p-6 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(0, 148, 255, 0.1), rgba(57, 255, 20, 0.05))',
-                    border: '1px solid rgba(57, 255, 20, 0.15)',
-                  }}
-                >
-                  <div className="text-3xl mb-4" style={{ color: '#39FF14' }}>
-                    {benefit.icon}
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
-                  <p style={{ color: '#A0A0A0' }}>{benefit.description}</p>
-                </div>
+        {/* FAQ */}
+        <section className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-3xl font-black leading-tight sm:text-5xl">Questions</h2>
+            <div className="mt-12 space-y-6">
+              {[
+                {
+                  q: 'Do I need technical experience?',
+                  a: 'Not at all. We handle the technical implementation. You just need to know your business and be ready to make decisions.',
+                },
+                {
+                  q: 'What if my project takes longer than the session?',
+                  a: 'We scope carefully to fit the time available. If a project is too large, we recommend Implementation Day or our Management plan for ongoing work.',
+                },
+                {
+                  q: 'Can you work with my existing tools?',
+                  a: 'Yes. We integrate with 500+ platforms. If it has an API or Zapier connector, we can almost certainly connect it.',
+                },
+                {
+                  q: 'What do I get after the session?',
+                  a: 'You get working systems, detailed documentation, training on how to use them, and a roadmap for next steps.',
+                },
+                {
+                  q: 'Is the session recorded?',
+                  a: 'Yes. We record every session for your reference and to support any follow-up work or questions.',
+                },
+                {
+                  q: 'Can you help after the session ends?',
+                  a: 'Yes! Our Management plan ($297/month) provides ongoing optimization, monitoring, and support for sustained results.',
+                },
+              ].map(({ q, a }, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} className="rounded-xl border border-white/10 bg-[#0A0E12] p-6">
+                  <h3 className="text-lg font-bold text-white">{q}</h3>
+                  <p className="mt-2 text-sm text-[#B7C0CB]">{a}</p>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* How It Works */}
-        <section className="py-20 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              How It Works
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {HOW_IT_WORKS.map((item, idx) => (
-                <div key={idx} className="relative">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mb-4"
-                    style={{
-                      background: '#39FF14',
-                      color: '#050505',
-                    }}
-                  >
-                    {item.step}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p style={{ color: '#A0A0A0' }}>{item.description}</p>
-                  {idx < HOW_IT_WORKS.length - 1 && (
-                    <div
-                      className="hidden md:block absolute top-12 left-16 w-16 h-px"
-                      style={{ background: 'rgba(57, 255, 20, 0.2)' }}
-                    />
-                  )}
-                </div>
-              ))}
+        {/* CTA */}
+        <section className="px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0066FF]/15 to-[#00AAFF]/5 p-8 text-center sm:p-12">
+              <h2 className="text-3xl font-black text-white">Ready to Build?</h2>
+              <p className="mt-3 text-base leading-7 text-gray-300">Choose your consulting path and let's start building your AI-powered future.</p>
+              <div className="mt-6 flex flex-wrap justify-center gap-4">
+                <Link href="/audit" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#0094FF] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#0066FF] focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                  Start Audit
+                  <ArrowRight size={16} />
+                </Link>
+                <Link href="/pricing" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#0094FF] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#0094FF] transition hover:bg-[#0094FF]/10 focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                  View All Services
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="py-20 px-6 border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              Frequently Asked
-            </h2>
-            <div className="space-y-4">
-              {FAQ.map((item, idx) => (
-                <details
-                  key={idx}
-                  className="group p-6 rounded-xl cursor-pointer transition-all duration-200"
-                  style={{
-                    background: 'linear-gradient(135deg, #1A1A1A, #0F0F0F)',
-                    border: '1px solid rgba(57, 255, 20, 0.2)',
-                  }}
-                >
-                  <summary className="text-lg font-bold flex items-center justify-between" style={{ color: '#39FF14' }}>
-                    {item.q}
-                    <span className="text-2xl group-open:rotate-180 transition-transform duration-200">›</span>
-                  </summary>
-                  <p className="mt-4" style={{ color: '#A0A0A0' }}>
-                    {item.a}
-                  </p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 px-6 text-center border-t" style={{ borderColor: 'rgba(57, 255, 20, 0.15)' }}>
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
-              Ready to Build?
-            </h2>
-            <p className="text-xl mb-10" style={{ color: '#8D98A5' }}>
-              Choose your consulting path and let's start building your future.
-            </p>
-            <Link
-              href="/intake"
-              className="inline-block px-12 py-6 rounded-xl font-black text-lg transition-all duration-200"
-              style={{
-                background: '#39FF14',
-                color: '#050505',
-                boxShadow: '0 0 25px rgba(57, 255, 20, 0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 35px rgba(57, 255, 20, 0.5)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 25px rgba(57, 255, 20, 0.3)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              Start Your Audit Today →
-            </Link>
           </div>
         </section>
       </main>
-
       <Footer />
     </>
   );
