@@ -102,6 +102,12 @@
   }
 }
 
+@media (max-width: 639px) {
+  [data-wise-imp] {
+    display: none !important;
+  }
+}
+
 /* Website-specific styles */
 
 /* Hero gradient background */
@@ -205,9 +211,9 @@
   box-shadow: 0 0 20px rgba(255, 0, 64, 0.1);
 }
 
-/* Gradient text */
+/* Solid accent text retained for legacy class names. */
 .gradient-text {
-  @apply bg-gradient-to-r from-[#C7FF2E] to-[#B36BFF] bg-clip-text text-transparent;
+  color: var(--wise-info);
 }
 
 /* ============================================================================
@@ -481,10 +487,6 @@ html {
 /* High DPI optimizations */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   /* Subtle enhancements for high-res displays */
-  .gradient-text {
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
 }
 
 /* ============================================================================
