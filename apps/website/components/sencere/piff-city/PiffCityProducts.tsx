@@ -3,12 +3,12 @@
 import Link from 'next/link';
 
 const PIFF_CITY_PRODUCTS = [
-  { id: 1, name: 'City Flagship Tee', price: '$32.99', category: 'Apparel' },
-  { id: 2, name: 'Culture Hoodie', price: '$72.99', category: 'Apparel' },
-  { id: 3, name: 'Future Jacket', price: '$95.99', category: 'Outerwear' },
-  { id: 4, name: 'Movement Cap', price: '$28.99', category: 'Accessories' },
-  { id: 5, name: 'Lifestyle Joggers', price: '$65.99', category: 'Apparel' },
-  { id: 6, name: 'Signature Tee', price: '$34.99', category: 'Apparel' },
+  { id: 1, name: 'Flagship Tee - Gold', price: '$32.99', category: 'Apparel' },
+  { id: 2, name: 'Culture Movement Hoodie', price: '$72.99', category: 'Apparel' },
+  { id: 3, name: 'Future Capsule Jacket', price: '$95.99', category: 'Outerwear' },
+  { id: 4, name: 'City Lifestyle Cap', price: '$28.99', category: 'Accessories' },
+  { id: 5, name: 'Movement Joggers', price: '$65.99', category: 'Apparel' },
+  { id: 6, name: 'Signature Crew Tee', price: '$34.99', category: 'Apparel' },
 ];
 
 export function PiffCityProducts() {

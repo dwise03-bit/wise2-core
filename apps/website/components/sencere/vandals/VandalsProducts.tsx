@@ -3,12 +3,12 @@
 import Link from 'next/link';
 
 const VANDALS_PRODUCTS = [
-  { id: 1, name: 'Rebellion Tee', price: '$29.99', category: 'Apparel' },
-  { id: 2, name: 'Underground Hoodie', price: '$68.99', category: 'Apparel' },
-  { id: 3, name: 'Vandal Jacket', price: '$92.99', category: 'Outerwear' },
-  { id: 4, name: 'Anarchist Cap', price: '$26.99', category: 'Accessories' },
-  { id: 5, name: 'Rebellion Cargo', price: '$62.99', category: 'Apparel' },
-  { id: 6, name: 'Art Collector Tee', price: '$31.99', category: 'Apparel' },
+  { id: 1, name: 'Rebellion Tee - Purple', price: '$29.99', category: 'Apparel' },
+  { id: 2, name: 'Underground Statement Hoodie', price: '$68.99', category: 'Apparel' },
+  { id: 3, name: 'Anarchist Oversized Jacket', price: '$92.99', category: 'Outerwear' },
+  { id: 4, name: 'Urban Vandal Cap', price: '$26.99', category: 'Accessories' },
+  { id: 5, name: 'Rebel Cargo Pants', price: '$62.99', category: 'Apparel' },
+  { id: 6, name: 'Art Rebellion Tee', price: '$31.99', category: 'Apparel' },
 ];
 
 export function VandalsProducts() {
