@@ -101,7 +101,7 @@ function CheckboxGroup({ options, selected, onChange }: { options: { value: stri
   return (
     <div className="grid grid-cols-2 gap-3">
       {options.map((opt) => (
-        <button key={opt.value} type="button" onClick={() => toggle(opt.value)} className={`px-4 py-3 rounded-lg text-sm font-semibold text-left transition-all ${selected.includes(opt.value) ? 'bg-[#0094FF]/20 border-2 border-[#0094FF] text-white' : 'bg-[#111] border-2 border-[#1a1a1a] text-gray-400 hover:border-[#0094FF]/40'}`}>
+        <button key={opt.value} type="button" onClick={() => toggle(opt.value)} className={`px-4 py-3 rounded-lg text-sm font-semibold text-left transition-all ${selected.includes(opt.value) ? 'bg-[#39FF14]/20 border-2 border-[#39FF14] text-white' : 'bg-[#111] border-2 border-[#1a1a1a] text-gray-400 hover:border-[#39FF14]/40'}`}>
           {opt.label}
         </button>
       ))}
@@ -113,7 +113,7 @@ function RadioGroup({ options, value, onChange }: { options: { value: string; la
   return (
     <div className="grid grid-cols-2 gap-3">
       {options.map((opt) => (
-        <button key={opt.value} type="button" onClick={() => onChange(opt.value)} className={`px-4 py-3 rounded-lg text-sm font-semibold text-left transition-all ${value === opt.value ? 'bg-[#0094FF]/20 border-2 border-[#0094FF] text-white' : 'bg-[#111] border-2 border-[#1a1a1a] text-gray-400 hover:border-[#0094FF]/40'}`}>
+        <button key={opt.value} type="button" onClick={() => onChange(opt.value)} className={`px-4 py-3 rounded-lg text-sm font-semibold text-left transition-all ${value === opt.value ? 'bg-[#39FF14]/20 border-2 border-[#39FF14] text-white' : 'bg-[#111] border-2 border-[#1a1a1a] text-gray-400 hover:border-[#39FF14]/40'}`}>
           {opt.label}
         </button>
       ))}
@@ -125,7 +125,7 @@ function ScoreRing({ score }: { score: number }) {
   const r = 54;
   const circ = 2 * Math.PI * r;
   const offset = circ - (score / 100) * circ;
-  const color = score >= 80 ? '#0094FF' : score >= 60 ? '#A63CFF' : '#F2B632';
+  const color = score >= 80 ? '#39FF14' : score >= 60 ? '#39FF14' : '#F2B632';
 
   return (
     <div className="relative w-36 h-36 mx-auto">
@@ -211,12 +211,12 @@ export default function AuditPage() {
               <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
               <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
                 <div className="max-w-3xl">
-                  <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Free AI Audit — 3 Minutes</p>
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#39FF14]">Free AI Audit — 3 Minutes</p>
                   <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">Your AI Opportunity Score</h1>
                   <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
                     Discover exactly how much time and revenue you're leaving on the table. See your AI automation potential and get a personalized 90-day roadmap.
                   </p>
-                  <button onClick={() => setStep(1)} className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-[#DCE7EF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                  <button onClick={() => setStep(1)} className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 bg-[#39FF14] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:ring-offset-2 focus:ring-offset-[#050607]">
                     Take the Audit
                     <ArrowRight size={16} />
                   </button>
@@ -230,17 +230,17 @@ export default function AuditPage() {
                 <h2 className="text-3xl font-black leading-tight sm:text-5xl">What You'll Discover</h2>
                 <div className="mt-12 grid gap-8 md:grid-cols-3">
                   <div className="rounded-xl border border-white/10 bg-[#090C10] p-6">
-                    <BarChart3 className="h-6 w-6 text-[#8EDBFF]" />
+                    <BarChart3 className="h-6 w-6 text-[#39FF14]" />
                     <h3 className="mt-4 text-xl font-bold">AI Opportunity Score</h3>
                     <p className="mt-2 text-sm text-[#B7C0CB]">A personalized score (0–100) showing your potential for automation and growth.</p>
                   </div>
                   <div className="rounded-xl border border-white/10 bg-[#090C10] p-6">
-                    <Zap className="h-6 w-6 text-[#8EDBFF]" />
+                    <Zap className="h-6 w-6 text-[#39FF14]" />
                     <h3 className="mt-4 text-xl font-bold">Automation Opportunities</h3>
                     <p className="mt-2 text-sm text-[#B7C0CB]">Specific workflows you can automate, ranked by impact and time savings.</p>
                   </div>
                   <div className="rounded-xl border border-white/10 bg-[#090C10] p-6">
-                    <Clock className="h-6 w-6 text-[#8EDBFF]" />
+                    <Clock className="h-6 w-6 text-[#39FF14]" />
                     <h3 className="mt-4 text-xl font-bold">90-Day Roadmap</h3>
                     <p className="mt-2 text-sm text-[#B7C0CB]">A clear plan to implement quick wins and build long-term systems.</p>
                   </div>
@@ -260,7 +260,7 @@ export default function AuditPage() {
                     { n: '4', title: 'Consult (Optional)', desc: 'Book a free call to discuss implementation.' },
                   ].map(({ n, title, desc }) => (
                     <div key={n} className="rounded-xl border border-white/10 bg-[#0A0E12] p-6">
-                      <div className="text-3xl font-black text-[#8EDBFF]">{n}</div>
+                      <div className="text-3xl font-black text-[#39FF14]">{n}</div>
                       <h3 className="mt-3 text-lg font-bold">{title}</h3>
                       <p className="mt-2 text-sm text-[#B7C0CB]">{desc}</p>
                     </div>
@@ -293,10 +293,10 @@ export default function AuditPage() {
             {/* CTA */}
             <section className="px-4 py-16 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-3xl">
-                <div className="rounded-2xl border border-white/10 bg-[#DCE7EF] p-8 text-center text-[#050607] sm:p-12">
+                <div className="rounded-2xl border border-white/10 bg-[#39FF14] p-8 text-center text-[#050607] sm:p-12">
                   <h2 className="text-3xl font-black">Ready to see your score?</h2>
                   <p className="mt-3 text-base leading-7">3 minutes. One number. A clear path forward.</p>
-                  <button onClick={() => setStep(1)} className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 bg-[#050607] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#111A22] focus:outline-none focus:ring-2 focus:ring-[#050607] focus:ring-offset-2 focus:ring-offset-[#DCE7EF]">
+                  <button onClick={() => setStep(1)} className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 bg-[#050607] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#111A22] focus:outline-none focus:ring-2 focus:ring-[#050607] focus:ring-offset-2 focus:ring-offset-[#39FF14]">
                     Start Audit
                     <ArrowRight size={16} />
                   </button>
@@ -316,7 +316,7 @@ export default function AuditPage() {
                 <span>{STEPS[step - 1]?.label}</span>
               </div>
               <div className="h-1.5 bg-[#111] rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress + 20}%`, background: 'linear-gradient(90deg, #0066FF, #0094FF)' }} />
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress + 20}%`, background: 'linear-gradient(90deg, #39FF14, #39FF14)' }} />
               </div>
             </div>
 
@@ -328,7 +328,7 @@ export default function AuditPage() {
                   <h2 className="text-2xl font-bold">Tell us about your business</h2>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">What type of business do you run?</label>
-                    <input type="text" placeholder="e.g. Auto detailing, consulting, real estate, e-commerce..." value={data.businessType} onChange={(e) => set('businessType', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <input type="text" placeholder="e.g. Auto detailing, consulting, real estate, e-commerce..." value={data.businessType} onChange={(e) => set('businessType', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">How many people work in your business?</label>
@@ -340,7 +340,7 @@ export default function AuditPage() {
                   </div>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">What is your biggest business challenge right now?</label>
-                    <textarea placeholder="e.g. I spend too much time on follow-up and can't scale..." value={data.primaryChallenge} onChange={(e) => set('primaryChallenge', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 h-24 focus:outline-none focus:border-[#0094FF] resize-none" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <textarea placeholder="e.g. I spend too much time on follow-up and can't scale..." value={data.primaryChallenge} onChange={(e) => set('primaryChallenge', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 h-24 focus:outline-none focus:border-[#39FF14] resize-none" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                 </div>
               )}
@@ -372,7 +372,7 @@ export default function AuditPage() {
                   </div>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">What is your single biggest operational bottleneck?</label>
-                    <textarea placeholder="e.g. We lose leads because nobody follows up fast enough..." value={data.biggestBottleneck} onChange={(e) => set('biggestBottleneck', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 h-20 focus:outline-none focus:border-[#0094FF] resize-none" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <textarea placeholder="e.g. We lose leads because nobody follows up fast enough..." value={data.biggestBottleneck} onChange={(e) => set('biggestBottleneck', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 h-20 focus:outline-none focus:border-[#39FF14] resize-none" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                 </div>
               )}
@@ -446,15 +446,15 @@ export default function AuditPage() {
                   <p className="text-gray-400 text-sm">Your results are ready. We'll email them to you and a consultant will follow up if you'd like to discuss.</p>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">Your name</label>
-                    <input type="text" placeholder="First and last name" value={data.name} onChange={(e) => set('name', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <input type="text" placeholder="First and last name" value={data.name} onChange={(e) => set('name', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">Email address</label>
-                    <input type="email" placeholder="you@yourbusiness.com" value={data.email} onChange={(e) => set('email', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <input type="email" placeholder="you@yourbusiness.com" value={data.email} onChange={(e) => set('email', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">Phone (optional — for consultation scheduling)</label>
-                    <input type="tel" placeholder="(555) 000-0000" value={data.phone} onChange={(e) => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#0094FF]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
+                    <input type="tel" placeholder="(555) 000-0000" value={data.phone} onChange={(e) => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]" style={{ background: '#111', border: '2px solid #1a1a1a' }} />
                   </div>
                   <p className="text-xs text-gray-600">By submitting, you agree to receive your audit results and information about WISE². No spam. Unsubscribe anytime.</p>
                 </div>
@@ -468,7 +468,7 @@ export default function AuditPage() {
                   ← Back
                 </button>
               )}
-              <button onClick={step === 5 ? handleSubmit : () => setStep((s) => s + 1)} disabled={!canProceed() || submitting} className="flex-1 py-3 rounded-lg font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed" style={{ background: canProceed() && !submitting ? 'linear-gradient(135deg, #0066FF 0%, #0094FF 100%)' : '#1a1a1a', color: '#fff', boxShadow: canProceed() ? '0 0 20px rgba(0,148,255,0.3)' : 'none' }}>
+              <button onClick={step === 5 ? handleSubmit : () => setStep((s) => s + 1)} disabled={!canProceed() || submitting} className="flex-1 py-3 rounded-lg font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed" style={{ background: canProceed() && !submitting ? 'linear-gradient(135deg, #39FF14 0%, #39FF14 100%)' : '#1a1a1a', color: '#fff', boxShadow: canProceed() ? '0 0 20px rgba(0,148,255,0.3)' : 'none' }}>
                 {submitting ? 'Analyzing your business...' : step === 5 ? 'GET MY AI AUDIT RESULTS' : 'Continue →'}
               </button>
             </div>
@@ -480,7 +480,7 @@ export default function AuditPage() {
           <div className="max-w-3xl mx-auto px-6 py-12">
             {/* Score */}
             <div className="rounded-2xl p-8 md:p-12 mb-8 text-center" style={{ background: 'linear-gradient(135deg, rgba(0,102,255,0.1) 0%, rgba(0,148,255,0.05) 100%)', border: '1px solid rgba(0,148,255,0.25)' }}>
-              <p className="text-sm text-[#0094FF] font-bold tracking-widest mb-2">YOUR AI OPPORTUNITY SCORE</p>
+              <p className="text-sm text-[#39FF14] font-bold tracking-widest mb-2">YOUR AI OPPORTUNITY SCORE</p>
               <ScoreRing score={result.score} />
               <p className="text-gray-400 mt-4 text-sm max-w-sm mx-auto">
                 {result.score >= 80 ? 'High opportunity — significant automation and acquisition gains available' : result.score >= 60 ? 'Strong opportunity — multiple high-value improvements identified' : 'Solid foundation — targeted AI investments will drive real results'}
@@ -490,25 +490,25 @@ export default function AuditPage() {
             {/* Opportunities */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <div className="rounded-xl p-6" style={{ background: '#0d0d0d', border: '1px solid #1a1a1a' }}>
-                <h3 className="font-bold text-[#0094FF] mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-[#39FF14] mb-4 flex items-center gap-2">
                   <span>⚡</span> AUTOMATION OPPORTUNITIES
                 </h3>
                 <ul className="space-y-3">
                   {result.automationOps.map((op, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                      <span className="text-[#0094FF] mt-0.5 flex-shrink-0">✓</span> {op}
+                      <span className="text-[#39FF14] mt-0.5 flex-shrink-0">✓</span> {op}
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d0d0d', border: '1px solid #1a1a1a' }}>
-                <h3 className="font-bold text-[#A63CFF] mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-[#39FF14] mb-4 flex items-center gap-2">
                   <span>🎯</span> ACQUISITION OPPORTUNITIES
                 </h3>
                 <ul className="space-y-3">
                   {result.acquisitionOps.map((op, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                      <span className="text-[#A63CFF] mt-0.5 flex-shrink-0">✓</span> {op}
+                      <span className="text-[#39FF14] mt-0.5 flex-shrink-0">✓</span> {op}
                     </li>
                   ))}
                 </ul>
@@ -519,28 +519,28 @@ export default function AuditPage() {
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="rounded-xl p-5 text-center" style={{ background: '#0d0d0d', border: '1px solid #1a1a1a' }}>
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Time Savings</p>
-                <p className="text-lg font-bold text-[#0094FF]">{result.timeSavings}</p>
+                <p className="text-lg font-bold text-[#39FF14]">{result.timeSavings}</p>
               </div>
               <div className="rounded-xl p-5 text-center" style={{ background: '#0d0d0d', border: '1px solid #1a1a1a' }}>
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Revenue Potential</p>
-                <p className="text-sm font-bold text-[#A63CFF]">{result.revenuePotential}</p>
+                <p className="text-sm font-bold text-[#39FF14]">{result.revenuePotential}</p>
               </div>
             </div>
 
             {/* Package */}
             <div className="rounded-2xl p-8 mb-8" style={{ background: 'linear-gradient(135deg, rgba(0,102,255,0.15), rgba(166,60,255,0.05))', border: '2px solid rgba(0,148,255,0.3)' }}>
-              <p className="text-xs text-[#0094FF] font-bold tracking-widest mb-2">RECOMMENDED FOR {data.name.split(' ')[0].toUpperCase()}</p>
+              <p className="text-xs text-[#39FF14] font-bold tracking-widest mb-2">RECOMMENDED FOR {data.name.split(' ')[0].toUpperCase()}</p>
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div>
                   <h3 className="text-2xl font-black mb-1">WISE² {result.recommendedPackage}</h3>
-                  <p className="text-[#0094FF] font-bold text-lg">{result.packagePrice}</p>
+                  <p className="text-[#39FF14] font-bold text-lg">{result.packagePrice}</p>
                   <p className="text-gray-400 text-sm mt-2">Based on your {data.businessType} operation and identified opportunities.</p>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <Link href="/consulting" className="px-6 py-3 rounded-lg font-bold text-white text-center transition-all" style={{ background: 'linear-gradient(135deg, #0066FF, #0094FF)', boxShadow: '0 0 20px rgba(0,148,255,0.3)', minWidth: 200 }}>
+                  <Link href="/consulting" className="px-6 py-3 rounded-lg font-bold text-white text-center transition-all" style={{ background: 'linear-gradient(135deg, #39FF14, #39FF14)', boxShadow: '0 0 20px rgba(0,148,255,0.3)', minWidth: 200 }}>
                     BOOK CONSULTATION
                   </Link>
-                  <Link href="/pricing" className="px-6 py-3 rounded-lg font-semibold text-center transition-all" style={{ background: 'rgba(0,148,255,0.1)', border: '1px solid rgba(0,148,255,0.3)', color: '#0094FF' }}>
+                  <Link href="/pricing" className="px-6 py-3 rounded-lg font-semibold text-center transition-all" style={{ background: 'rgba(0,148,255,0.1)', border: '1px solid rgba(0,148,255,0.3)', color: '#39FF14' }}>
                     View All Plans →
                   </Link>
                 </div>
@@ -558,7 +558,7 @@ export default function AuditPage() {
                   { n: 4, text: 'We get to work — most implementations are live within 2 weeks' },
                 ].map(({ n, text }) => (
                   <div key={n} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: 'rgba(0,148,255,0.2)', color: '#0094FF' }}>
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5" style={{ background: 'rgba(0,148,255,0.2)', color: '#39FF14' }}>
                       {n}
                     </div>
                     <p className="text-gray-300 text-sm">{text}</p>

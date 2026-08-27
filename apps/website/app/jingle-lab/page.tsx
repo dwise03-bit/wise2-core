@@ -20,7 +20,7 @@ function StatsSection() {
         <div className="grid gap-8 md:grid-cols-3">
           {stats.map((stat, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="text-center">
-              <p className="text-4xl font-black text-[#0094FF] sm:text-5xl">{stat.n}</p>
+              <p className="text-4xl font-black text-[#39FF14] sm:text-5xl">{stat.n}</p>
               <p className="mt-2 text-sm text-gray-400">{stat.label}</p>
             </motion.div>
           ))}
@@ -35,7 +35,7 @@ function StatsSection() {
 function FeatureCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="rounded-xl border border-white/10 bg-[#090C10] p-6">
-      <div className="h-6 w-6 text-[#8EDBFF]">{children}</div>
+      <div className="h-6 w-6 text-[#39FF14]">{children}</div>
       <h3 className="mt-4 text-lg font-bold text-white">{title}</h3>
       <p className="mt-2 text-sm text-[#B7C0CB]">{description}</p>
     </motion.div>
@@ -61,19 +61,19 @@ function PricingCard({ tier, price, description, features, cta, highlighted }: {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl p-8 transition-all ${highlighted ? 'border-2 border-[#0094FF] bg-[#0d1218] ring-2 ring-[#0094FF]/20' : 'border border-white/10 bg-[#090C10]'}`}
+      className={`rounded-2xl p-8 transition-all ${highlighted ? 'border-2 border-[#39FF14] bg-[#0d1218] ring-2 ring-[#39FF14]/20' : 'border border-white/10 bg-[#090C10]'}`}
     >
       <h3 className="text-2xl font-black text-white">{tier}</h3>
       <p className="mt-2 text-sm text-gray-400">{description}</p>
-      <p className="mt-4 text-3xl font-black text-[#0094FF]">
+      <p className="mt-4 text-3xl font-black text-[#39FF14]">
         {price}
         <span className="text-xs text-gray-400 ml-1">/month</span>
       </p>
-      <button className={`mt-6 w-full py-3 rounded-lg font-bold transition-all ${highlighted ? 'bg-[#0094FF] text-white hover:bg-[#0066FF]' : 'bg-[#111] text-gray-300 hover:bg-[#1a1a1a]'}`}>{cta}</button>
+      <button className={`mt-6 w-full py-3 rounded-lg font-bold transition-all ${highlighted ? 'bg-[#39FF14] text-white hover:bg-[#39FF14]' : 'bg-[#111] text-gray-300 hover:bg-[#1a1a1a]'}`}>{cta}</button>
       <ul className="mt-8 space-y-3">
         {features.map((f, i) => (
           <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
-            <CheckCircle2 size={16} className="text-[#0094FF] flex-shrink-0" />
+            <CheckCircle2 size={16} className="text-[#39FF14] flex-shrink-0" />
             {f}
           </li>
         ))}
@@ -93,17 +93,17 @@ export default function JingleLab() {
           <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
           <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
             <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Professional Audio Branding</p>
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#39FF14]">Professional Audio Branding</p>
               <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">Create Broadcast-Quality Jingles in Minutes</h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
                 WISE² Jingle Lab generates custom jingles, audio logos, and sonic branding for your business. AI-powered creation. Studio-quality audio. Zero production experience needed.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <Link href="/studio" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#DCE7EF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                <Link href="/studio" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#39FF14] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:ring-offset-2 focus:ring-offset-[#050607]">
                   Launch Studio
                   <ArrowRight size={16} />
                 </Link>
-                <Link href="#how-it-works" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#0094FF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#0094FF] transition duration-200 hover:bg-[#0094FF]/10 focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                <Link href="#how-it-works" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#39FF14] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#39FF14] transition duration-200 hover:bg-[#39FF14]/10 focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:ring-offset-2 focus:ring-offset-[#050607]">
                   See How It Works
                   <ArrowRight size={16} />
                 </Link>
@@ -145,7 +145,7 @@ export default function JingleLab() {
               ].map(({ n, title, desc }, i) => (
                 <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex gap-6 md:gap-12">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, rgba(0,102,255,0.2), rgba(0,148,255,0.1))' }}>
-                    <span className="text-2xl font-black text-[#0094FF]">{n}</span>
+                    <span className="text-2xl font-black text-[#39FF14]">{n}</span>
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-white">{title}</h3>
@@ -303,15 +303,15 @@ export default function JingleLab() {
         {/* FINAL CTA */}
         <section className="px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl">
-            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0066FF]/15 to-[#00AAFF]/5 p-8 text-center sm:p-12">
+            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#39FF14]/15 to-[#00AAFF]/5 p-8 text-center sm:p-12">
               <h2 className="text-3xl font-black text-white">Create Your First Jingle Today</h2>
               <p className="mt-3 text-base leading-7 text-gray-300">Try free for 7 days. No credit card. Full access to all features and templates.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
-                <Link href="/studio" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#0094FF] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#0066FF] focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                <Link href="/studio" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#39FF14] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#39FF14] focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:ring-offset-2 focus:ring-offset-[#050607]">
                   Launch Studio
                   <ArrowRight size={16} />
                 </Link>
-                <Link href="/consulting" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#0094FF] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#0094FF] transition hover:bg-[#0094FF]/10 focus:outline-none focus:ring-2 focus:ring-[#0094FF] focus:ring-offset-2 focus:ring-offset-[#050607]">
+                <Link href="/consulting" className="inline-flex min-h-12 items-center justify-center gap-2 border-2 border-[#39FF14] px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#39FF14] transition hover:bg-[#39FF14]/10 focus:outline-none focus:ring-2 focus:ring-[#39FF14] focus:ring-offset-2 focus:ring-offset-[#050607]">
                   Book Demo
                 </Link>
               </div>
