@@ -31,6 +31,7 @@ struct WISE2App: App {
         }
       }
       .preferredColorScheme(.dark)
+      .id(authManager.isAuthenticated) // Force view refresh on auth state change
     }
   }
 }
