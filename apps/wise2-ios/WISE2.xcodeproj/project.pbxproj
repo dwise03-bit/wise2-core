@@ -3,40 +3,292 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
-		3FA1001001 = {isa = PBXBuildFile; fileRef = 3FA1001002; };
-		3FA1001002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/App/WISE2App.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001003 = {isa = PBXBuildFile; fileRef = 3FA1001004; };
-		3FA1001004 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Core/Authentication/KeychainManager.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001005 = {isa = PBXBuildFile; fileRef = 3FA1001006; };
-		3FA1001006 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Core/Authentication/AuthManager.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001007 = {isa = PBXBuildFile; fileRef = 3FA1001008; };
-		3FA1001008 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Core/Networking/APIClient.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001009 = {isa = PBXBuildFile; fileRef = 3FA100100A; };
-		3FA100100A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Core/AppState.swift"; sourceTree = SOURCE_ROOT; };
-		3FA100100B = {isa = PBXBuildFile; fileRef = 3FA100100C; };
-		3FA100100C = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Views/Navigation/MainTabView.swift"; sourceTree = SOURCE_ROOT; };
-		3FA100100D = {isa = PBXBuildFile; fileRef = 3FA100100E; };
-		3FA100100E = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Views/Auth/AuthGate.swift"; sourceTree = SOURCE_ROOT; };
-		3FA100100F = {isa = PBXBuildFile; fileRef = 3FA1001010; };
-		3FA1001010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Views/Home/HomeScreen.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001011 = {isa = PBXBuildFile; fileRef = 3FA1001012; };
-		3FA1001012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WISE2/Views/DesignSystem/Colors.swift"; sourceTree = SOURCE_ROOT; };
-		3FA1001014 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WISE2/Info.plist"; sourceTree = SOURCE_ROOT; };
-		3FA1001015 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3FA1001016 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		3FA1001017 = {isa = PBXGroup; children = (3FA1001002, 3FA1001004, 3FA1001006, 3FA1001008, 3FA100100A, 3FA100100C, 3FA100100E, 3FA1001010, 3FA1001012, 3FA1001014); path = WISE2; sourceTree = SOURCE_ROOT; };
-		3FA1001018 = {isa = PBXGroup; children = (3FA1001015); name = Products; sourceTree = "<group>"; };
-		3FA1001019 = {isa = PBXNativeTarget; buildConfigurationList = 3FA100101A; buildPhases = (3FA100101B, 3FA1001016, 3FA100101C); buildRules = (); dependencies = (); name = WISE2; productName = WISE2; productReference = 3FA1001015; productType = "com.apple.product-type.application"; };
-		3FA100101A = {isa = XCConfigurationList; buildConfigurations = (3FA100101D, 3FA100101E); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		3FA100101B = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (3FA1001001, 3FA1001003, 3FA1001005, 3FA1001007, 3FA1001009, 3FA100100B, 3FA100100D, 3FA100100F, 3FA1001011); runOnlyForDeploymentPostprocessing = 0; };
-		3FA100101C = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		3FA100101D = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_IDENTITY = "iPhone Developer"; CODE_SIGN_STYLE = Automatic; CODE_SIGNING_REQUIRED = YES; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; EXECUTABLE_NAME = WISE2; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "WISE2/Info.plist"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Debug; };
-		3FA100101E = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CLANG_ENABLE_OBJC_ARC = YES; CODE_SIGN_IDENTITY = "iPhone Developer"; CODE_SIGN_STYLE = Automatic; CODE_SIGNING_REQUIRED = YES; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; EXECUTABLE_NAME = WISE2; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = "WISE2/Info.plist"; IPHONEOS_DEPLOYMENT_TARGET = 15.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; }; name = Release; };
-		3FA100101F = {isa = XCConfigurationList; buildConfigurations = (3FA100101D, 3FA100101E); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		3FA1001020 = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1520; LastUpgradeCheck = 1520; TargetAttributes = {3FA1001019 = {CreatedOnToolsVersion = 15.2; };};}; buildConfigurationList = 3FA100101F; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = 3FA1001021; productRefGroup = 3FA1001018; projectDirPath = ""; projectRoot = ""; targets = (3FA1001019); };
-		3FA1001021 = {isa = PBXGroup; children = (3FA1001017, 3FA1001018); sourceTree = "<group>"; };
+
+/* Begin PBXBuildFile section */
+		3FA1001001 /* WISE2/App/WISE2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001002 /* WISE2/App/WISE2App.swift */; };
+		3FA1001003 /* WISE2/Core/Authentication/KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */; };
+		3FA1001005 /* WISE2/Core/Authentication/AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */; };
+		3FA1001007 /* WISE2/Core/Networking/APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001008 /* WISE2/Core/Networking/APIClient.swift */; };
+		3FA1001009 /* WISE2/Core/AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100A /* WISE2/Core/AppState.swift */; };
+		3FA100100B /* WISE2/Views/Navigation/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */; };
+		3FA100100D /* WISE2/Views/Auth/AuthGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100E /* WISE2/Views/Auth/AuthGate.swift */; };
+		3FA100100F /* WISE2/Views/Home/HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */; };
+		3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */; };
+		3FA1001026 /* WISE2/Views/AIScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */; };
+		3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001029 /* WISE2/Views/AIScreen.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3FA1001002 /* WISE2/App/WISE2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/App/WISE2App.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Authentication/KeychainManager.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Authentication/AuthManager.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001008 /* WISE2/Core/Networking/APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Networking/APIClient.swift; sourceTree = SOURCE_ROOT; };
+		3FA100100A /* WISE2/Core/AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/AppState.swift; sourceTree = SOURCE_ROOT; };
+		3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Navigation/MainTabView.swift; sourceTree = SOURCE_ROOT; };
+		3FA100100E /* WISE2/Views/Auth/AuthGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Auth/AuthGate.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Home/HomeScreen.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/DesignSystem/Colors.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001014 /* WISE2/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WISE2/Info.plist; sourceTree = SOURCE_ROOT; };
+		3FA1001015 /* WISE2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
+		3FA1001029 /* WISE2/Views/AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreen.swift; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3FA1001016 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3FA1001017 /* WISE2 */ = {
+			isa = PBXGroup;
+			children = (
+				3FA1001002 /* WISE2/App/WISE2App.swift */,
+				3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */,
+				3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */,
+				3FA1001008 /* WISE2/Core/Networking/APIClient.swift */,
+				3FA100100A /* WISE2/Core/AppState.swift */,
+				3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */,
+				3FA100100E /* WISE2/Views/Auth/AuthGate.swift */,
+				3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */,
+				3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */,
+				3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */,
+				3FA1001029 /* WISE2/Views/AIScreen.swift */,
+				3FA1001014 /* WISE2/Info.plist */,
+			);
+			path = WISE2;
+			sourceTree = SOURCE_ROOT;
+		};
+		3FA1001018 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3FA1001015 /* WISE2.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3FA1001021 = {
+			isa = PBXGroup;
+			children = (
+				3FA1001017 /* WISE2 */,
+				3FA1001018 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3FA1001019 /* WISE2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FA100101A /* Build configuration list for PBXNativeTarget "WISE2" */;
+			buildPhases = (
+				3FA100101B /* Sources */,
+				3FA1001016 /* Frameworks */,
+				3FA100101C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WISE2;
+			productName = WISE2;
+			productReference = 3FA1001015 /* WISE2.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3FA1001020 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					3FA1001019 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 3FA100101F /* Build configuration list for PBXProject "WISE2" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3FA1001021;
+			productRefGroup = 3FA1001018 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3FA1001019 /* WISE2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3FA100101C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3FA100101B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FA1001001 /* WISE2/App/WISE2App.swift in Sources */,
+				3FA1001003 /* WISE2/Core/Authentication/KeychainManager.swift in Sources */,
+				3FA1001005 /* WISE2/Core/Authentication/AuthManager.swift in Sources */,
+				3FA1001007 /* WISE2/Core/Networking/APIClient.swift in Sources */,
+				3FA1001009 /* WISE2/Core/AppState.swift in Sources */,
+				3FA100100B /* WISE2/Views/Navigation/MainTabView.swift in Sources */,
+				3FA100100D /* WISE2/Views/Auth/AuthGate.swift in Sources */,
+				3FA100100F /* WISE2/Views/Home/HomeScreen.swift in Sources */,
+				3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */,
+				3FA1001026 /* WISE2/Views/AI/AIScreenViewModel.swift in Sources */,
+				3FA1001028 /* WISE2/Views/AI/AIScreen.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3FA100101D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXECUTABLE_NAME = WISE2;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WISE2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		3FA100101E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				EXECUTABLE_NAME = WISE2;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WISE2/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3FA100101A /* Build configuration list for PBXNativeTarget "WISE2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FA100101D /* Debug */,
+				3FA100101E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3FA100101F /* Build configuration list for PBXProject "WISE2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FA100101D /* Debug */,
+				3FA100101E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
 	};
-	rootObject = 3FA1001020;
+	rootObject = 3FA1001020 /* Project object */;
 }

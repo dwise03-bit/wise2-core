@@ -60,7 +60,7 @@ actor APIClient {
 
   func chat(prompt: String) async throws -> String {
     if mockMode {
-      try await Task.sleep(for: .seconds(1))
+      try await Task.sleep(nanoseconds: 1_000_000_000)
       return "This is a mock response to: \"\(prompt)\". In production, this would connect to the WISE² AI backend."
     }
 
