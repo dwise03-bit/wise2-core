@@ -12,11 +12,9 @@ struct WISE2App: App {
   var body: some Scene {
     WindowGroup {
       ZStack {
-        // Background
         Color.wise2Background
           .ignoresSafeArea()
 
-        // Authentication Gate
         if authManager.isAuthenticated {
           MainTabView()
             .environmentObject(authManager)
