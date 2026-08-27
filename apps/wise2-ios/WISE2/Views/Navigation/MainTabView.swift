@@ -44,7 +44,7 @@ struct MainTabView: View {
             }
 
           // MORE Tab
-          MorePlaceholder()
+          MoreScreen()
             .tag(4)
             .tabItem {
               Label("More", systemImage: "ellipsis")
