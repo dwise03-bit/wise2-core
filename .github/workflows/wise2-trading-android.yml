@@ -6,11 +6,12 @@ on:
       - feature/wise2-trading-android-v1
     paths:
       - 'apps/wise2-trading-android/**'
+      - 'packages/api/src/trading/**'
       - '.github/workflows/wise2-trading-android.yml'
   workflow_dispatch:
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,15 +22,34 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
-      - name: Unit tests
+      - name: Android unit tests
         working-directory: apps/wise2-trading-android
         run: gradle testDebugUnitTest --stacktrace
-      - name: Build debug APK
+      - name: Build v0.2 debug APK
         working-directory: apps/wise2-trading-android
         run: gradle assembleDebug --stacktrace
-      - name: Upload debug APK
+      - name: Upload v0.2 debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: wise2-trading-debug-apk
+          name: wise2-trading-v0.2-debug-apk
           path: apps/wise2-trading-android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+  trading-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '8.15.9'
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Alpaca paper service tests
+        working-directory: packages/api
+        run: pnpm test -- --runInBand src/trading/alpaca-paper.service.spec.ts
+      - name: API type check
+        working-directory: packages/api
+        run: pnpm type-check
