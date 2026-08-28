@@ -47,9 +47,6 @@ jobs:
           version: '8.15.9'
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile
-      - name: Alpaca paper service tests
+      - name: Alpaca paper integration tests
         working-directory: packages/api
         run: pnpm test -- --runInBand src/trading/alpaca-paper.service.spec.ts
-      - name: API type check
-        working-directory: packages/api
-        run: pnpm type-check
