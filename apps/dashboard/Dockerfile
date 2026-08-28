@@ -7,7 +7,7 @@ COPY packages ./packages
 COPY apps/website ./apps/website
 COPY apps/dashboard ./apps/dashboard
 
-RUN npm install -g pnpm && pnpm install --frozen-lockfile --recursive
+RUN npm install -g pnpm@8.15.9 && pnpm install --frozen-lockfile --recursive
 
 WORKDIR /app/apps/dashboard
 # NEXT_PUBLIC_* vars inline into the client bundle at build time.
