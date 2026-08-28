@@ -275,7 +275,7 @@ services:
     environment:
       NODE_ENV: production
       WISE2_CONTROL_TOKEN: ${WISE2_CONTROL_TOKEN}
-      WISE2_CONTROL_HOST: 0.0.0.0
+      WISE2_CONTROL_HOST: 127.0.0.1
       WISE2_CONTROL_PORT: 3099
       WISE2_REPO_DIR: /workspace
       WISE2_COMPOSE_FILE: /workspace/docker-compose.production.yml
