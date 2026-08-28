@@ -36,8 +36,7 @@
     "apps/studio",
     "apps/website",
     "apps/wise-hvac-demo",
-    "packages/*",
-    "services/*"
+    "packages/*"
   ],
   "devDependencies": {
     "pnpm": "^8.15.9",
