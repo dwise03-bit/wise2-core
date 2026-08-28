@@ -1,0 +1,30 @@
+services:
+  control-bridge:
+    build:
+      context: .
+      dockerfile: services/control-bridge/Dockerfile
+    container_name: wise2-control-bridge
+    environment:
+      NODE_ENV: production
+      CONTROL_AUTH_TOKEN: ${CONTROL_AUTH_TOKEN:?CONTROL_AUTH_TOKEN is required}
+      CONTROL_PORT: 8787
+      CONTROL_REPO_PATH: /workspace
+      CONTROL_COMPOSE_FILE: /workspace/docker-compose.production.yml
+      CONTROL_AUDIT_FILE: /data/audit.jsonl
+      CONTROL_OLLAMA_URL: http://ollama:11434/api/tags
+      CONTROL_HERMES_URL: ${CONTROL_HERMES_URL:-http://host.docker.internal:8642/health}
+      CONTROL_WISE2_URL: https://wise2.net
+      CONTROL_WRITE_ENABLED: ${CONTROL_WRITE_ENABLED:-false}
+      CONTROL_ALLOWED_SERVICES: ${CONTROL_ALLOWED_SERVICES:-api,website,dashboard,admin,studio,command-center,worker,ollama,open-webui}
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - .:/workspace:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - control_bridge_data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  control_bridge_data:
