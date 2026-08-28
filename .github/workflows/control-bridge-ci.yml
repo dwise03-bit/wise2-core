@@ -13,52 +13,32 @@ on:
       - '.github/workflows/control-bridge-ci.yml'
       - 'scripts/control-health-local.sh'
       - 'scripts/health-check-comprehensive.sh'
-      - 'pnpm-workspace.yaml'
 
 jobs:
   control-bridge:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/control-bridge
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
         with:
-          version: 8.15.9
+          submodules: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Detect control bridge package
-        id: detect
-        shell: bash
-        run: |
-          if [ -f services/control-bridge/package.json ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install control bridge dependencies only
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm --filter @wise2/control-bridge install --frozen-lockfile=false
+      - name: Run tests
+        run: npm test
 
-      - name: Run control bridge tests
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm --filter @wise2/control-bridge test
-
-      - name: Build control bridge
-        if: steps.detect.outputs.present == 'true'
-        run: pnpm --filter @wise2/control-bridge build
+      - name: Build
+        run: npm run build
 
       - name: Validate production Compose
-        if: steps.detect.outputs.present == 'true'
+        working-directory: .
         run: docker compose -f docker-compose.production.yml config >/dev/null
-
-      - name: Await first TDD test commit
-        if: steps.detect.outputs.present != 'true'
-        run: |
-          echo "Control bridge package not created yet; CI bootstrap is active."
-          exit 0
