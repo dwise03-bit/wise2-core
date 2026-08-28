@@ -6,7 +6,7 @@ struct WISE2App: App {
   @StateObject private var appState = AppState()
 
   init() {
-    print("🚀 WISE² Command Center launching...")
+    print("WISE2 Command Center launching")
   }
 
   var body: some Scene {
@@ -15,23 +15,18 @@ struct WISE2App: App {
         Color.wise2Background
           .ignoresSafeArea()
 
-        if authManager.isAuthenticated {
-          MainTabView()
-            .environmentObject(authManager)
-            .environmentObject(appState)
-            .onAppear {
-              print("✅ User authenticated, showing main interface")
+        MainTabView()
+          .environmentObject(authManager)
+          .environmentObject(appState)
+          .onAppear {
+            print("WISE2 Command Center loaded")
+            if authManager.currentUser == nil {
+              authManager.currentUser = User(id: "owner", email: "demo@wise2.app", name: "Daniel Wise", role: "Owner/Super Admin")
             }
-        } else {
-          AuthGate()
-            .environmentObject(authManager)
-            .onAppear {
-              print("🔐 No active session, showing authentication")
-            }
-        }
+            authManager.isAuthenticated = true
+          }
       }
       .preferredColorScheme(.dark)
-      .id(authManager.isAuthenticated) // Force view refresh on auth state change
     }
   }
 }

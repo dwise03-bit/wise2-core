@@ -24,6 +24,7 @@
 		3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001037 /* WISE2/Views/SystemsScreen.swift */; };
 		3FA1001038 /* WISE2/Views/MoreScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */; };
 		3FA100103A /* WISE2/Views/MoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100103B /* WISE2/Views/MoreScreen.swift */; };
+		3FA100103C /* WISE2/Views/Wealth/WealthExperience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100103D /* WISE2/Views/Wealth/WealthExperience.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		3FA1001037 /* WISE2/Views/SystemsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/SystemsScreen.swift; sourceTree = SOURCE_ROOT; };
 		3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/MoreScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
 		3FA100103B /* WISE2/Views/MoreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/MoreScreen.swift; sourceTree = SOURCE_ROOT; };
+		3FA100103D /* WISE2/Views/Wealth/WealthExperience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Wealth/WealthExperience.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 				3FA1001037 /* WISE2/Views/SystemsScreen.swift */,
 				3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */,
 				3FA100103B /* WISE2/Views/MoreScreen.swift */,
+				3FA100103D /* WISE2/Views/Wealth/WealthExperience.swift */,
 				3FA1001014 /* WISE2/Info.plist */,
 			);
 			path = WISE2;
@@ -184,6 +187,7 @@
 				3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */,
 				3FA1001038 /* WISE2/Views/MoreScreenViewModel.swift in Sources */,
 				3FA100103A /* WISE2/Views/MoreScreen.swift in Sources */,
+				3FA100103C /* WISE2/Views/Wealth/WealthExperience.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +220,7 @@
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -229,10 +234,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WISE2/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0.0;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dwise954.wise2.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -267,6 +272,7 @@
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				EXECUTABLE_NAME = WISE2;
@@ -279,9 +285,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WISE2/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dwise954.wise2.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

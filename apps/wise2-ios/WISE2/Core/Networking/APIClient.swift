@@ -16,12 +16,22 @@ actor APIClient {
     config.waitsForConnectivity = true
 
     self.session = URLSession(configuration: config)
-    self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3000/v1") ?? URL(fileURLWithPath: "/")
+
+    // Production backend
+    let apiURL = ProcessInfo.processInfo.environment["API_URL"] ??
+                 ProcessInfo.processInfo.environment["WISE2_API_URL"] ??
+                 "https://wise2.net/api/v1"
+
+    self.baseURL = URL(string: apiURL) ?? URL(fileURLWithPath: "/")
 
     #if DEBUG
     mockMode = ProcessInfo.processInfo.environment["MOCK_API"] != "false"
-    print("📡 API Client in \(mockMode ? "MOCK" : "LIVE") mode")
+    #else
+    mockMode = false
     #endif
+
+    print("API client initialized for \(self.baseURL.host ?? "unknown host")")
+    print("API mode: \(mockMode ? "MOCK" : "LIVE")")
   }
 
   // MARK: - Authentication Endpoints

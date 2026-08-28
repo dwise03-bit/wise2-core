@@ -1,159 +1,152 @@
 import SwiftUI
 
+enum CommandTab: Int, CaseIterable {
+  case home
+  case ai
+  case work
+  case systems
+  case more
+
+  var title: String {
+    switch self {
+    case .home: return "Home"
+    case .ai: return "AI"
+    case .work: return "Work"
+    case .systems: return "Systems"
+    case .more: return "More"
+    }
+  }
+
+  var symbol: String {
+    switch self {
+    case .home: return "house.fill"
+    case .ai: return "sparkles"
+    case .work: return "briefcase.fill"
+    case .systems: return "server.rack"
+    case .more: return "ellipsis.circle.fill"
+    }
+  }
+}
+
 struct MainTabView: View {
   @EnvironmentObject var authManager: AuthManager
   @EnvironmentObject var appState: AppState
+  @State private var selectedTab: CommandTab = .home
+  @State private var selectedBusiness = "ALL BUSINESSES"
 
-  @State private var selectedTab: Int = 0
+  var body: some View {
+    TabView(selection: $selectedTab) {
+      NavigationStack {
+        HomeScreen(selectedBusiness: $selectedBusiness, selectedTab: $selectedTab)
+      }
+      .tabItem { Label(CommandTab.home.title, systemImage: CommandTab.home.symbol) }
+      .tag(CommandTab.home)
+
+      NavigationStack {
+        AIScreen(selectedBusiness: selectedBusiness)
+      }
+      .tabItem { Label(CommandTab.ai.title, systemImage: CommandTab.ai.symbol) }
+      .tag(CommandTab.ai)
+
+      NavigationStack {
+        WorkScreen(selectedBusiness: selectedBusiness)
+      }
+      .tabItem { Label(CommandTab.work.title, systemImage: CommandTab.work.symbol) }
+      .tag(CommandTab.work)
+
+      NavigationStack {
+        SystemsScreen(selectedBusiness: selectedBusiness)
+      }
+      .tabItem { Label(CommandTab.systems.title, systemImage: CommandTab.systems.symbol) }
+      .tag(CommandTab.systems)
+
+      NavigationStack {
+        MoreScreen(selectedBusiness: selectedBusiness)
+      }
+      .tabItem { Label(CommandTab.more.title, systemImage: CommandTab.more.symbol) }
+      .tag(CommandTab.more)
+    }
+    .tint(.wise2Primary)
+    .preferredColorScheme(.dark)
+    .onAppear {
+      UITabBar.appearance().backgroundColor = UIColor(Color.wise2Surface)
+      UITabBar.appearance().unselectedItemTintColor = UIColor(Color.wise2TextMuted)
+      Task { await appState.loadDashboard() }
+    }
+  }
+}
+
+struct CommandSurface<Content: View>: View {
+  let title: String
+  let subtitle: String
+  let selectedBusiness: String
+  @ViewBuilder var content: Content
 
   var body: some View {
     ZStack {
-      // Background
-      Color.wise2Background
-        .ignoresSafeArea()
+      Color.wise2Background.ignoresSafeArea()
 
-      VStack(spacing: 0) {
-        // Tab Content
-        TabView(selection: $selectedTab) {
-          // HOME Tab
-          HomeScreen()
-            .tag(0)
-            .tabItem {
-              Label("Home", systemImage: "house.fill")
+      ScrollView(showsIndicators: false) {
+        VStack(alignment: .leading, spacing: 18) {
+          HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 5) {
+              Text(title)
+                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                .foregroundColor(.wise2TextPrimary)
+                .accessibilityAddTraits(.isHeader)
+              Text(subtitle)
+                .font(.subheadline)
+                .foregroundColor(.wise2TextSecondary)
+              Text(selectedBusiness)
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.wise2Primary)
+                .padding(.top, 2)
             }
+            Spacer()
+          }
 
-          // AI Tab
-          AIScreen()
-            .tag(1)
-            .tabItem {
-              Label("AI", systemImage: "sparkles")
-            }
-
-          // WORK Tab
-          WorkScreen()
-            .tag(2)
-            .tabItem {
-              Label("Work", systemImage: "briefcase.fill")
-            }
-
-          // SYSTEMS Tab
-          SystemsScreen()
-            .tag(3)
-            .tabItem {
-              Label("Systems", systemImage: "server.rack")
-            }
-
-          // MORE Tab
-          MoreScreen()
-            .tag(4)
-            .tabItem {
-              Label("More", systemImage: "ellipsis")
-            }
+          content
         }
-        .tabViewStyle(.automatic)
+        .padding(.horizontal, 18)
+        .padding(.top, 14)
+        .padding(.bottom, 120)
       }
     }
-    .preferredColorScheme(.dark)
-    .onAppear {
-      print("📱 MainTabView appeared")
-      Task {
-        await appState.loadDashboard()
-      }
+    .safeAreaInset(edge: .bottom) {
+      Color.clear.frame(height: 82)
     }
+    .toolbar(.hidden, for: .navigationBar)
   }
 }
 
-// MARK: - Placeholder Views (for Phase 1 structure)
+struct CommandCard<Content: View>: View {
+  @ViewBuilder var content: Content
 
-struct AIPlaceholder: View {
   var body: some View {
-    VStack(spacing: 16) {
-      Text("WISE² AI")
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .foregroundColor(.wise2TextPrimary)
-
-      Text("AI Operating Layer")
-        .foregroundColor(.wise2TextSecondary)
-
-      Spacer()
-
-      Text("Coming in Phase 2")
-        .foregroundColor(.wise2TextMuted)
-
-      Spacer()
+    VStack(alignment: .leading, spacing: 12) {
+      content
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.wise2Background)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(14)
+    .background(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .fill(Color.wise2Surface)
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .stroke(Color.wise2BorderMedium, lineWidth: 1)
+        )
+    )
   }
 }
 
-struct WorkPlaceholder: View {
+struct SectionLabel: View {
+  let title: String
+
   var body: some View {
-    VStack(spacing: 16) {
-      Text("WORK")
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .foregroundColor(.wise2TextPrimary)
-
-      Text("CRM, Projects, Tasks")
-        .foregroundColor(.wise2TextSecondary)
-
-      Spacer()
-
-      Text("Coming in Phase 3")
-        .foregroundColor(.wise2TextMuted)
-
-      Spacer()
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.wise2Background)
-  }
-}
-
-struct SystemsPlaceholder: View {
-  var body: some View {
-    VStack(spacing: 16) {
-      Text("SYSTEMS")
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .foregroundColor(.wise2TextPrimary)
-
-      Text("Infrastructure Command Center")
-        .foregroundColor(.wise2TextSecondary)
-
-      Spacer()
-
-      Text("Coming in Phase 4")
-        .foregroundColor(.wise2TextMuted)
-
-      Spacer()
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.wise2Background)
-  }
-}
-
-struct MorePlaceholder: View {
-  var body: some View {
-    VStack(spacing: 16) {
-      Text("MORE")
-        .font(.largeTitle)
-        .fontWeight(.bold)
-        .foregroundColor(.wise2TextPrimary)
-
-      Text("Billing, Analytics, Files, Settings")
-        .foregroundColor(.wise2TextSecondary)
-
-      Spacer()
-
-      Text("Coming in Phase 5")
-        .foregroundColor(.wise2TextMuted)
-
-      Spacer()
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(Color.wise2Background)
+    Text(title.uppercased())
+      .font(.caption.weight(.bold))
+      .foregroundColor(.wise2TextSecondary)
+      .accessibilityAddTraits(.isHeader)
   }
 }
 

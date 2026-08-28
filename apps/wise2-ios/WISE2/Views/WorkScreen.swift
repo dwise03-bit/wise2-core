@@ -2,161 +2,156 @@ import SwiftUI
 
 struct WorkScreen: View {
   @StateObject private var viewModel = WorkScreenViewModel()
+  let selectedBusiness: String
 
   var body: some View {
-    ZStack {
-      Color.wise2Background.ignoresSafeArea()
-
-      VStack(spacing: 0) {
-        // Header
-        VStack(alignment: .leading, spacing: 8) {
-          Text("WORK")
-            .font(.largeTitle)
-            .fontWeight(.bold)
-            .foregroundColor(.wise2TextPrimary)
-
-          Text("CRM, Projects, Tasks")
-            .foregroundColor(.wise2TextSecondary)
-            .font(.subheadline)
+    CommandSurface(title: "Work", subtitle: "CRM, clients, projects, tasks, documents", selectedBusiness: selectedBusiness) {
+      Picker("Work area", selection: $viewModel.selectedTab) {
+        ForEach(WorkScreenViewModel.WorkTab.allCases, id: \.self) { tab in
+          Text(tab.title).tag(tab)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(Color.wise2Surface)
+      }
+      .pickerStyle(.segmented)
+      .accessibilityIdentifier("work-area-picker")
 
-        // Tab Selector
-        HStack(spacing: 0) {
-          ForEach([WorkScreenViewModel.WorkTab.projects, .tasks], id: \.self) { tab in
-            Button(action: { viewModel.selectedTab = tab }) {
-              Text(tab == .projects ? "Projects" : "Tasks")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .foregroundColor(
-                  viewModel.selectedTab == tab ? .wise2Primary : .wise2TextSecondary
-                )
-                .background(
-                  viewModel.selectedTab == tab
-                    ? Color.wise2Primary.opacity(0.1)
-                    : Color.clear
-                )
-            }
-          }
-        }
-        .background(Color.wise2Surface)
+      CommandCard {
+        Text(selectedBusiness == "ALL BUSINESSES" ? "All-business aggregation" : "Scoped to \(selectedBusiness)")
+          .font(.headline)
+          .foregroundColor(.wise2TextPrimary)
+        Text("Backend membership and capabilities remain authoritative for every record and action.")
+          .font(.caption)
+          .foregroundColor(.wise2TextSecondary)
+      }
 
-        // Content
-        if viewModel.isLoading {
-          VStack(spacing: 12) {
-            ProgressView()
-              .tint(.wise2Primary)
-            Text("Loading work items...")
-              .foregroundColor(.wise2TextSecondary)
-          }
-          .frame(maxHeight: .infinity)
-        } else if let error = viewModel.errorMessage {
-          VStack(spacing: 12) {
-            Image(systemName: "exclamationmark.circle")
-              .font(.system(size: 40))
-              .foregroundColor(.wise2Danger)
-            Text("Error")
-              .font(.headline)
-              .foregroundColor(.wise2TextPrimary)
-            Text(error)
-              .font(.caption)
-              .foregroundColor(.wise2TextSecondary)
-              .multilineTextAlignment(.center)
-          }
-          .frame(maxHeight: .infinity)
-          .padding(16)
-        } else {
-          ScrollView {
-            VStack(spacing: 12) {
-              if viewModel.selectedTab == .projects {
-                ForEach(viewModel.projects) { project in
-                  ProjectCard(project: project)
-                }
-              } else {
-                ForEach(viewModel.tasks) { task in
-                  TaskCard(task: task, onStatusChange: { status in
-                    viewModel.updateTaskStatus(task.id, status: status)
-                  })
-                }
-              }
-            }
-            .padding(16)
-          }
-        }
+      switch viewModel.selectedTab {
+      case .crm:
+        crmSection
+      case .projects:
+        projectsSection
+      case .tasks:
+        tasksSection
+      case .activity:
+        activitySection
       }
     }
     .preferredColorScheme(.dark)
+  }
+
+  private var crmSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "CRM")
+      ForEach(viewModel.crmItems) { item in
+        NavigationLink {
+          DetailScreen(title: item.title, rows: item.details)
+        } label: {
+          WorkNavRow(icon: item.icon, title: item.title, detail: item.subtitle, badge: item.badge)
+        }
+        .buttonStyle(.plain)
+      }
+    }
+  }
+
+  private var projectsSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Projects")
+      ForEach(viewModel.projects) { project in
+        NavigationLink {
+          DetailScreen(title: project.name, rows: ["Status: \(project.status)", "Progress: \(project.progress)%", "Team: \(project.teamSize)", "Due: \(project.dueDate)", "Notes and documents attached"])
+        } label: {
+          ProjectCard(project: project)
+        }
+        .buttonStyle(.plain)
+      }
+    }
+  }
+
+  private var tasksSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Tasks")
+      ForEach(viewModel.tasks) { task in
+        NavigationLink {
+          DetailScreen(title: task.title, rows: ["Project: \(task.project)", "Assignee: \(task.assignee)", "Priority: \(task.priority)", "Due: \(task.dueDate)", "Status: \(task.status)"])
+        } label: {
+          TaskCard(task: task) { status in
+            viewModel.updateTaskStatus(task.id, status: status)
+          }
+        }
+        .buttonStyle(.plain)
+      }
+    }
+  }
+
+  private var activitySection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Activity History")
+      ForEach(viewModel.activityItems, id: \.self) { item in
+        CommandCard {
+          Text(item)
+            .font(.subheadline)
+            .foregroundColor(.wise2TextPrimary)
+          Text("Audit scoped to \(selectedBusiness)")
+            .font(.caption)
+            .foregroundColor(.wise2TextMuted)
+        }
+      }
+    }
+  }
+}
+
+struct WorkNavRow: View {
+  let icon: String
+  let title: String
+  let detail: String
+  let badge: String
+
+  var body: some View {
+    CommandCard {
+      HStack(spacing: 12) {
+        Image(systemName: icon)
+          .foregroundColor(.wise2Primary)
+          .frame(width: 28)
+        VStack(alignment: .leading, spacing: 4) {
+          Text(title)
+            .font(.headline)
+            .foregroundColor(.wise2TextPrimary)
+          Text(detail)
+            .font(.caption)
+            .foregroundColor(.wise2TextSecondary)
+        }
+        Spacer()
+        Text(badge)
+          .font(.caption.weight(.bold))
+          .foregroundColor(.wise2Primary)
+        Image(systemName: "chevron.right")
+          .font(.caption)
+          .foregroundColor(.wise2TextMuted)
+      }
+    }
   }
 }
 
 struct ProjectCard: View {
   let project: Project
 
-  var statusColor: Color {
-    switch project.status {
-    case "In Progress": return .wise2Warning
-    case "In Review": return .wise2Primary
-    case "Planning": return .wise2TextSecondary
-    case "Done": return .wise2Success
-    default: return .wise2TextSecondary
-    }
-  }
-
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
+    CommandCard {
       HStack {
         VStack(alignment: .leading, spacing: 4) {
           Text(project.name)
             .font(.headline)
             .foregroundColor(.wise2TextPrimary)
-          Text(project.status)
+          Text("\(project.status) · \(project.teamSize) people · due \(project.dueDate)")
             .font(.caption)
-            .foregroundColor(statusColor)
-            .fontWeight(.semibold)
+            .foregroundColor(.wise2TextSecondary)
         }
         Spacer()
-        VStack(alignment: .trailing, spacing: 4) {
-          Text("\(project.teamSize) members")
-            .font(.caption)
-            .foregroundColor(.wise2TextSecondary)
-          Text(project.dueDate)
-            .font(.caption)
-            .foregroundColor(.wise2TextMuted)
-        }
+        Text("\(project.progress)%")
+          .font(.caption.weight(.bold))
+          .foregroundColor(.wise2Primary)
       }
-
-      // Progress bar
-      VStack(alignment: .leading, spacing: 4) {
-        HStack {
-          Text("Progress")
-            .font(.caption)
-            .foregroundColor(.wise2TextSecondary)
-          Spacer()
-          Text("\(project.progress)%")
-            .font(.caption)
-            .fontWeight(.semibold)
-            .foregroundColor(.wise2Primary)
-        }
-        GeometryReader { geometry in
-          ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 4)
-              .fill(Color.wise2Primary.opacity(0.1))
-
-            RoundedRectangle(cornerRadius: 4)
-              .fill(Color.wise2Primary)
-              .frame(width: geometry.size.width * CGFloat(project.progress) / 100)
-          }
-        }
-        .frame(height: 6)
-      }
+      ProgressView(value: Double(project.progress), total: 100)
+        .tint(.wise2Primary)
     }
-    .padding(12)
-    .background(Color.wise2Surface)
-    .cornerRadius(8)
   }
 }
 
@@ -164,92 +159,33 @@ struct TaskCard: View {
   let task: WorkTask
   let onStatusChange: (String) -> Void
 
-  var statusColor: Color {
-    switch task.status {
-    case "Done": return .wise2Success
-    case "In Progress": return .wise2Warning
-    case "In Review": return .wise2Primary
-    default: return .wise2TextSecondary
-    }
-  }
-
-  var priorityColor: Color {
-    switch task.priority {
-    case "High": return .wise2Danger
-    case "Medium": return .wise2Warning
-    default: return .wise2TextSecondary
-    }
-  }
-
-  @State private var showStatusMenu = false
-
   var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack {
+    CommandCard {
+      HStack(alignment: .top) {
         VStack(alignment: .leading, spacing: 4) {
           Text(task.title)
             .font(.headline)
             .foregroundColor(.wise2TextPrimary)
-          Text(task.project)
+          Text("\(task.project) · \(task.assignee) · \(task.dueDate)")
             .font(.caption)
             .foregroundColor(.wise2TextSecondary)
         }
         Spacer()
-        Menu {
-          Button("To Do") { onStatusChange("To Do") }
-          Button("In Progress") { onStatusChange("In Progress") }
-          Button("In Review") { onStatusChange("In Review") }
-          Button("Done") { onStatusChange("Done") }
-        } label: {
-          Text(task.status)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .foregroundColor(statusColor)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(statusColor.opacity(0.1))
-            .cornerRadius(4)
+        Menu(task.status) {
+          ForEach(["To Do", "In Progress", "In Review", "Done"], id: \.self) { status in
+            Button(status) { onStatusChange(status) }
+          }
         }
+        .font(.caption.weight(.semibold))
+        .foregroundColor(.wise2Primary)
       }
-
-      HStack(spacing: 16) {
-        HStack(spacing: 4) {
-          Image(systemName: "person.fill")
-            .font(.caption)
-            .foregroundColor(.wise2TextSecondary)
-          Text(task.assignee)
-            .font(.caption)
-            .foregroundColor(.wise2TextSecondary)
-        }
-
-        HStack(spacing: 4) {
-          Image(systemName: "flag.fill")
-            .font(.caption)
-            .foregroundColor(priorityColor)
-          Text(task.priority)
-            .font(.caption)
-            .foregroundColor(priorityColor)
-        }
-
-        Spacer()
-
-        HStack(spacing: 4) {
-          Image(systemName: "calendar")
-            .font(.caption)
-            .foregroundColor(.wise2TextMuted)
-          Text(task.dueDate)
-            .font(.caption)
-            .foregroundColor(.wise2TextMuted)
-        }
-      }
+      Label(task.priority, systemImage: "flag.fill")
+        .font(.caption)
+        .foregroundColor(task.priority == "High" ? .wise2Danger : .wise2Warning)
     }
-    .padding(12)
-    .background(Color.wise2Surface)
-    .cornerRadius(8)
   }
 }
 
 #Preview {
-  WorkScreen()
-    .environmentObject(AppState())
+  WorkScreen(selectedBusiness: "ALL BUSINESSES")
 }
