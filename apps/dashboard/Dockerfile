@@ -29,14 +29,14 @@ COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/apps/dashboard/package.json ./package.json
 COPY --from=builder /app/apps/dashboard/next.config.js ./next.config.js
 
-# Create startup script
-RUN cat > /app/apps/dashboard/start.sh << 'EOF'
-#!/bin/sh
-set -e
-echo "Starting Next.js server..."
-exec node ./node_modules/next/dist/bin/next start -p 3000 -H 0.0.0.0
-EOF
-chmod +x /app/apps/dashboard/start.sh
+# Create startup script without relying on Dockerfile heredoc parsing.
+RUN printf '%s\n' \
+  '#!/bin/sh' \
+  'set -e' \
+  'echo "Starting Next.js server..."' \
+  'exec node ./node_modules/next/dist/bin/next start -p 3000 -H 0.0.0.0' \
+  > /app/apps/dashboard/start.sh \
+  && chmod +x /app/apps/dashboard/start.sh
 
 EXPOSE 3000
 
