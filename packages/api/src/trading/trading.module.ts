@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '../prisma/prisma.module';
 import { TradingController } from './trading.controller';
 import { TradingService } from './trading.service';
@@ -15,13 +15,12 @@ import { AlpacaPaperService, AxiosAlpacaTransport } from './alpaca-paper.service
   controllers: [TradingController],
   providers: [
     TradingService,
-    AlpacaPaperService,
     AxiosAlpacaTransport,
-    { provide: 'ALPACA_TRANSPORT', useExisting: AxiosAlpacaTransport },
     {
       provide: AlpacaPaperService,
-      useFactory: (config, transport) => new AlpacaPaperService(config, transport),
-      inject: [require('@nestjs/config').ConfigService, 'ALPACA_TRANSPORT'],
+      useFactory: (config: ConfigService, transport: AxiosAlpacaTransport) =>
+        new AlpacaPaperService(config, transport),
+      inject: [ConfigService, AxiosAlpacaTransport],
     },
   ],
 })
