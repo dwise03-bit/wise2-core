@@ -10,7 +10,7 @@ describe('runCommand', () => {
 
   it('times out long commands', async () => {
     await expect(
-      runCommand('/usr/bin/sleep', ['2'], { timeoutMs: 50 }),
+      runCommand('/bin/sleep', ['2'], { timeoutMs: 50 }),
     ).rejects.toMatchObject({ code: 'COMMAND_TIMEOUT' });
   });
 });
