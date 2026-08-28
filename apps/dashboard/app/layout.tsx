@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AuthProvider } from '@/lib/auth-context';
+import { AuthProvider, TenantProvider } from '@/contexts';
 
 export const metadata: Metadata = {
   title: 'WISE² Dashboard',
@@ -22,7 +22,9 @@ export default function RootLayout({
       </head>
       <body className="bg-black text-white font-sans">
         <AuthProvider>
-          {children}
+          <TenantProvider>
+            {children}
+          </TenantProvider>
         </AuthProvider>
       </body>
     </html>

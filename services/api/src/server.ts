@@ -39,6 +39,7 @@ import communicationsRouter from './routes/communications';
 import reportsRouter from './routes/reports';
 import mobileRouter from './routes/mobile';
 import claudeApiRouter from './routes/claude-api';
+import businessIntelligenceRouter from './routes/business-intelligence';
 
 export async function createServer(): Promise<Express> {
   const app = express();
@@ -164,6 +165,9 @@ export async function createServer(): Promise<Express> {
 
   // AI Advisor routes (Phase 18)
   app.use('/api/v1/crm', aiAdvisorRouter);
+
+  // Business Intelligence routes (Phase 3 - Hermes Integration)
+  app.use('/api/v1/crm', businessIntelligenceRouter);
 
   // Communications routes (Phase 7)
   app.use('/api/v1/crm', communicationsRouter);
