@@ -3,7 +3,7 @@
   "appName": "WISE Field Tech",
   "webDir": "out",
   "server": {
-    "url": "http://192.168.8.114:3024",
+    "url": "http://192.168.8.114:3024/wise-hvac-demo/field-tech",
     "androidScheme": "https",
     "allowNavigation": ["https://wise2.net", "https://*.wise2.net", "https://accounts.google.com"]
   },
