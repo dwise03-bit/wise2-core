@@ -9,54 +9,70 @@ struct AuthGate: View {
       Color.wise2Background
         .ignoresSafeArea()
 
-      VStack(spacing: 0) {
-        // Header
-        VStack(spacing: 12) {
+      if authManager.isBootstrapping {
+        VStack(spacing: 16) {
           Text("WISE²")
-            .font(.system(size: 48, weight: .bold, design: .default))
+            .font(.system(size: 40, weight: .bold))
             .foregroundColor(.wise2Primary)
-
-          Text("Command Center")
-            .font(.system(size: 16, weight: .regular))
+          ProgressView("Restoring session…")
+            .tint(.wise2Primary)
             .foregroundColor(.wise2TextSecondary)
         }
-        .padding(.top, 64)
-        .padding(.bottom, 48)
-
-        Spacer()
-
-        // Content
-        if isLogin {
-          LoginView(isLoading: authManager.isLoading, error: authManager.errorMessage) { email, password in
-            Task {
-              await authManager.login(email: email, password: password)
-            }
-          }
-        } else {
-          SignupView(isLoading: authManager.isLoading, error: authManager.errorMessage) { email, password, name in
-            Task {
-              await authManager.signup(email: email, password: password, name: name)
-            }
-          }
-        }
-
-        Spacer()
-
-        // Toggle
-        HStack(spacing: 4) {
-          Text(isLogin ? "No account?" : "Have an account?")
-            .foregroundColor(.wise2TextSecondary)
-
-          Button(action: { isLogin.toggle() }) {
-            Text(isLogin ? "Sign up" : "Log in")
+      } else {
+        VStack(spacing: 0) {
+          // Header
+          VStack(spacing: 12) {
+            Text("WISE²")
+              .font(.system(size: 48, weight: .bold, design: .default))
               .foregroundColor(.wise2Primary)
-              .fontWeight(.semibold)
+
+            Text("Command Center")
+              .font(.system(size: 16, weight: .regular))
+              .foregroundColor(.wise2TextSecondary)
           }
+          .padding(.top, 64)
+          .padding(.bottom, 48)
+
+          Spacer()
+
+          // Content
+          if isLogin {
+            LoginView(
+              isLoading: authManager.isLoading,
+              error: authManager.errorMessage,
+              onLogin: { email, password in
+                await authManager.login(email: email, password: password)
+              },
+              onOperatorPreview: {
+                await authManager.enterOperatorPreview()
+              }
+            )
+          } else {
+            SignupView(isLoading: authManager.isLoading, error: authManager.errorMessage) { email, password, name in
+              Task {
+                await authManager.signup(email: email, password: password, name: name)
+              }
+            }
+          }
+
+          Spacer()
+
+          // Toggle
+          HStack(spacing: 4) {
+            Text(isLogin ? "No account?" : "Have an account?")
+              .foregroundColor(.wise2TextSecondary)
+
+            Button(action: { isLogin.toggle() }) {
+              Text(isLogin ? "Sign up" : "Log in")
+                .foregroundColor(.wise2Primary)
+                .fontWeight(.semibold)
+            }
+          }
+          .font(.system(size: 14))
+          .padding(.bottom, 48)
         }
-        .font(.system(size: 14))
-        .padding(.bottom, 48)
+        .padding(24)
       }
-      .padding(24)
     }
     .preferredColorScheme(.dark)
   }
@@ -65,12 +81,13 @@ struct AuthGate: View {
 // MARK: - Login View
 
 struct LoginView: View {
-  @State private var email = ""
+  @State private var email = "dwise03@gmail.com"
   @State private var password = ""
 
   let isLoading: Bool
   let error: String?
   let onLogin: (String, String) async -> Void
+  var onOperatorPreview: (() async -> Void)? = nil
 
   var body: some View {
     VStack(spacing: 20) {
@@ -133,6 +150,31 @@ struct LoginView: View {
         .foregroundColor(.wise2TextPrimary)
       }
       .disabled(isLoading || email.isEmpty || password.isEmpty)
+
+      #if DEBUG
+      if let onOperatorPreview {
+        Button {
+          Task { await onOperatorPreview() }
+        } label: {
+          Text("Continue as Operator (Debug)")
+            .fontWeight(.semibold)
+            .frame(maxWidth: .infinity)
+            .padding(12)
+            .background(Color.wise2SurfaceSecondary)
+            .foregroundColor(.wise2Accent)
+            .overlay(
+              RoundedRectangle(cornerRadius: 0)
+                .stroke(Color.wise2Accent.opacity(0.4), lineWidth: 1)
+            )
+        }
+        .disabled(isLoading)
+
+        Text("Opens Command Center with local business-ops fixtures. Use Sign in for live Nest auth.")
+          .font(.system(size: 11))
+          .foregroundColor(.wise2TextMuted)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
+      #endif
     }
   }
 }

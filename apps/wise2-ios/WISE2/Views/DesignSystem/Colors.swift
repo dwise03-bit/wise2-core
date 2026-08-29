@@ -18,6 +18,8 @@ extension Color {
   static let wise2PrimaryHover = Color(red: 0.20, green: 0.66, blue: 1.00)    // #32A8FF
   static let wise2PrimaryActive = Color(red: 0.00, green: 0.46, blue: 0.80)   // #0075CC
   static let wise2PrimaryLight = Color(red: 0.10, green: 0.66, blue: 1.00)    // #1AA8FF
+  /// Legacy Wealth shell accent (maps to success green).
+  static let wise2Accent = Color(red: 0.40, green: 1.00, blue: 0.47)           // #66FF78
 
   // Semantic Colors
   static let wise2Success = Color(red: 0.13, green: 0.77, blue: 0.37)         // #22C55E

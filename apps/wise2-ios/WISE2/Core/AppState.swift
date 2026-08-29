@@ -11,34 +11,37 @@ class AppState: ObservableObject {
   private let apiClient = APIClient.shared
 
   init() {
-    print("🎯 AppState initializing...")
     startMonitoringNetwork()
   }
 
-  // MARK: - Dashboard Loading
+  func reset() {
+    dashboardMetrics = nil
+    errorMessage = nil
+    isLoading = false
+  }
 
   func loadDashboard() async {
     isLoading = true
     errorMessage = nil
 
     do {
-      print("📊 Loading dashboard metrics...")
-      dashboardMetrics = try await apiClient.getDashboardMetrics()
-      print("✅ Dashboard loaded")
+      let metrics = try await apiClient.getDashboardMetrics()
+      dashboardMetrics = metrics
+      errorMessage = nil
+      isOnline = true
     } catch {
-      errorMessage = error.localizedDescription
-      print("❌ Failed to load dashboard: \(error)")
+      if dashboardMetrics == nil {
+        errorMessage = error.localizedDescription
+      }
+      if case APIError.networkError = error {
+        isOnline = false
+      }
     }
 
     isLoading = false
   }
 
-  // MARK: - Network Monitoring
-
   private func startMonitoringNetwork() {
-    print("📡 Starting network monitoring...")
-    // In Phase 2, integrate NetworkMonitor for real reachability detection
-    // For now, assume online
     isOnline = true
   }
 }

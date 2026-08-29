@@ -35,6 +35,7 @@ import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
 import { CjaysModule } from './cjays/cjays.module';
+import { BusinessOsModule } from './v1/business-os/business-os.module';
 
 @Module({
   imports: [
@@ -128,6 +129,7 @@ import { CjaysModule } from './cjays/cjays.module';
     TradingModule,
     FieldtechModule,
     CjaysModule,
+    BusinessOsModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

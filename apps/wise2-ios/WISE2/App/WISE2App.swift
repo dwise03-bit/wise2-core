@@ -11,32 +11,36 @@ struct WISE2App: App {
 
   var body: some Scene {
     WindowGroup {
-      ZStack {
-        // Background
-        Color.wise2Background
-          .ignoresSafeArea()
-
-        // Authentication Gate
+      Group {
         if authManager.isAuthenticated {
           MainTabView()
-            .environmentObject(authManager)
-            .environmentObject(appState)
-            .onAppear {
-              print("✅ User authenticated, showing main interface")
-            }
         } else {
           AuthGate()
-            .environmentObject(authManager)
-            .onAppear {
-              print("🔐 No active session, showing authentication")
-            }
         }
       }
+      .environmentObject(authManager)
+      .environmentObject(appState)
       .preferredColorScheme(.dark)
+      .task(id: authManager.isAuthenticated) {
+        guard authManager.isAuthenticated else {
+          appState.reset()
+          return
+        }
+        await appState.loadDashboard()
+      }
     }
   }
 }
 
-#Preview {
-  WISE2App()
+#if DEBUG
+#Preview("Authenticated") {
+  MainTabView()
+    .environmentObject(AuthManager())
+    .environmentObject(AppState())
 }
+
+#Preview("Auth gate") {
+  AuthGate()
+    .environmentObject(AuthManager())
+}
+#endif

@@ -7,110 +7,146 @@ class AuthManager: ObservableObject {
   @Published var currentUser: User?
   @Published var isLoading = false
   @Published var errorMessage: String?
+  @Published var isOperatorPreview = false
+  @Published var isBootstrapping = true
 
   private let keychainManager = KeychainManager()
   private let apiClient = APIClient.shared
 
   init() {
-    print("🔐 AuthManager initializing...")
-    Task {
-      await verifySession()
-    }
+    Task { await bootstrap() }
   }
 
-  // MARK: - Authentication Methods
+  /// Restore a live JWT session from Keychain when possible; otherwise stay on AuthGate.
+  func bootstrap() async {
+    isBootstrapping = true
+    errorMessage = nil
+    await apiClient.setOperatorPreviewMode(false)
+
+    guard (try? keychainManager.getToken()) != nil else {
+      clearSession()
+      isBootstrapping = false
+      return
+    }
+
+    await verifySession()
+    isBootstrapping = false
+  }
 
   func login(email: String, password: String) async {
     isLoading = true
     errorMessage = nil
-
     do {
-      print("📝 Attempting login: \(email)")
+      await apiClient.setOperatorPreviewMode(false)
       let response = try await apiClient.login(email: email, password: password)
-
-      // Save token securely
-      try keychainManager.saveToken(response.token)
-
-      // Set authenticated state
+      try persist(response)
       currentUser = response.user
       isAuthenticated = true
-
-      print("✅ Login successful for \(email)")
+      isOperatorPreview = false
     } catch {
       errorMessage = error.localizedDescription
-      print("❌ Login failed: \(error)")
     }
-
     isLoading = false
   }
 
   func signup(email: String, password: String, name: String) async {
     isLoading = true
     errorMessage = nil
-
     do {
-      print("📝 Attempting signup: \(email)")
+      await apiClient.setOperatorPreviewMode(false)
       let response = try await apiClient.signup(email: email, password: password, name: name)
-
-      try keychainManager.saveToken(response.token)
+      try persist(response)
       currentUser = response.user
       isAuthenticated = true
-
-      print("✅ Signup successful for \(email)")
+      isOperatorPreview = false
     } catch {
       errorMessage = error.localizedDescription
-      print("❌ Signup failed: \(error)")
     }
+    isLoading = false
+  }
 
+  /// DEBUG escape hatch: local business-ops fixtures without a production JWT.
+  func enterOperatorPreview() async {
+    isLoading = true
+    errorMessage = nil
+    await apiClient.setOperatorPreviewMode(true)
+    currentUser = User(
+      id: "operator-preview",
+      email: "dwise03@gmail.com",
+      name: "Daniel Wise",
+      role: "FOUNDER"
+    )
+    isOperatorPreview = true
+    isAuthenticated = true
     isLoading = false
   }
 
   func logout() {
-    print("🚪 Logging out...")
-    do {
-      try keychainManager.deleteToken()
-      currentUser = nil
-      isAuthenticated = false
-      print("✅ Logout complete")
-    } catch {
-      errorMessage = "Failed to logout: \(error.localizedDescription)"
-      print("❌ Logout failed: \(error)")
+    Task {
+      if !isOperatorPreview {
+        try? await apiClient.logout()
+      }
+      await apiClient.setOperatorPreviewMode(false)
+      clearSession()
     }
   }
 
-  // MARK: - Session Management
-
   func verifySession() async {
-    print("🔍 Verifying session...")
-
-    guard let token = try? keychainManager.getToken() else {
-      print("⚠️ No token in keychain")
-      isAuthenticated = false
+    guard (try? keychainManager.getToken()) != nil else {
+      clearSession()
       return
     }
 
+    await apiClient.setOperatorPreviewMode(false)
+
     do {
-      let user = try await apiClient.verifySession()
-      currentUser = user
+      currentUser = try await apiClient.verifySession()
       isAuthenticated = true
-      print("✅ Session verified for \(user.email)")
+      isOperatorPreview = false
+    } catch APIError.unauthorized {
+      if await attemptRefresh() {
+        do {
+          currentUser = try await apiClient.verifySession()
+          isAuthenticated = true
+          isOperatorPreview = false
+          return
+        } catch {
+          clearSession()
+        }
+      } else {
+        clearSession()
+      }
     } catch {
-      print("❌ Session verification failed: \(error)")
-      try? keychainManager.deleteToken()
-      isAuthenticated = false
+      clearSession()
     }
   }
 
   func refreshToken() async {
-    print("🔄 Refreshing authentication token...")
+    _ = await attemptRefresh()
+  }
 
+  private func attemptRefresh() async -> Bool {
     do {
       let newToken = try await apiClient.refreshToken()
       try keychainManager.saveToken(newToken)
-      print("✅ Token refreshed")
+      return true
     } catch {
-      print("❌ Token refresh failed: \(error)")
-      await logout()
+      clearSession()
+      return false
     }
+  }
+
+  private func persist(_ response: AuthResponse) throws {
+    try keychainManager.saveToken(response.token)
+    if let refresh = response.refreshToken {
+      try keychainManager.saveRefreshToken(refresh)
+    }
+  }
+
+  private func clearSession() {
+    try? keychainManager.deleteToken()
+    currentUser = nil
+    isAuthenticated = false
+    isOperatorPreview = false
   }
 }

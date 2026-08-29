@@ -1,22 +1,15 @@
 # WISE² Business OS — Agent Takeover Handoff
 
-**Locked:** 2026-08-29
-**Repo:** `dwise03-bit/wise2-core`
-**Primary app:** `apps/wise2-ios`
-**Architecture spec:** `docs/superpowers/specs/2026-08-29-wise2-business-os-design.md`
+**Locked:** 2026-08-29  
+**Repo:** `dwise03-bit/wise2-core`  
+**Branch:** `feat/wise2-business-os`  
+**Primary app:** `apps/wise2-ios`  
+**Architecture spec:** `docs/superpowers/specs/2026-08-29-wise2-business-os-design.md`  
 **Implementation plan:** `docs/superpowers/plans/2026-08-29-wise2-business-os.md`
 
 ## Mission
 
 Finish the WISE² iOS Business OS as the secure native command center for running WISE². Do not redesign the architecture from scratch. Preserve working iOS/auth/networking and Control Bridge code and execute the approved vertical slices.
-
-## Required reading
-
-1. `docs/superpowers/specs/2026-08-29-wise2-business-os-design.md`
-2. `docs/superpowers/specs/2026-08-27-wise2-control-bridge-design.md`
-3. `docs/superpowers/specs/2026-08-28-wise2-cloud-design.md`
-4. `docs/superpowers/plans/2026-08-29-wise2-business-os.md`
-5. this file
 
 ## Locked navigation
 
@@ -24,62 +17,49 @@ Finish the WISE² iOS Business OS as the secure native command center for runnin
 
 `More`: Phone, Clients, Cloud, Studio, Money, Academy, Trading, Settings.
 
-## Locked technical rules
+## Session status — 2026-08-29 (Cursor takeover)
 
-- iOS is the control plane, never the authoritative database.
-- `wise2-core` owns business logic/state.
-- Mobile facade is `/api/v1/business-os`.
-- Privileged infrastructure mutations are named capabilities through the Control Bridge.
-- No arbitrary SSH/shell execution from iOS.
-- Sensitive production/destructive actions require explicit confirmation and LocalAuthentication where appropriate.
-- RBAC/capability authorization is server-side.
-- Preserve Keychain/JWT auth.
-- Trading is separately permissioned.
-- Customers are dynamic API records, never hard-coded Swift modules.
+Branch: `feat/wise2-business-os`  
+Current commit: `426f65169dcfaf2685f71dc968b2ddd596390569` (pre-session); new commits pending for Task 1 hardening + backend facade  
+Current slice: Task 1 complete; Task 2 backend facade added; Task 3 Command UI foundation present  
 
-## Credit-saver mode
+Completed:
+- Repaired corrupted `WISE2.xcodeproj` (missing `Debug`/`Release` config names caused xcodebuild assertion failure).
+- Added `WISE2Tests` target with 8 passing unit tests (models, client paths, CommandStore states).
+- Exposed reusable authenticated transport on `APIClient` (`authenticatedGet` / `authenticatedPost`) without duplicating auth logic.
+- Added injectable `BusinessOSAPITransport` for test doubles in `BusinessOSClient`.
+- Restored locked five-tab Business OS shell (`Command | CRM | Work | AI | More`) and More module launcher.
+- Added NestJS Business OS module at `packages/api/src/v1/business-os` with:
+  - `GET /api/v1/business-os/dashboard` (zeros until authoritative providers wired)
+  - `POST /api/v1/business-os/command` (allowlisted intents; rejects `shell`/`ssh`/etc.)
 
-Inspect before generating. Make targeted edits. Preserve working components. Run focused tests first. Do not repeat visual analysis without a UI defect. Prefer local/GPU assistance for routine work and premium model passes for hard blockers.
+Files changed:
+- `apps/wise2-ios/WISE2.xcodeproj/project.pbxproj`
+- `apps/wise2-ios/WISE2.xcodeproj/xcshareddata/xcschemes/WISE2.xcscheme`
+- `apps/wise2-ios/WISE2/Core/Networking/APIClient.swift`
+- `apps/wise2-ios/WISE2/Core/Networking/BusinessOSClient.swift`
+- `apps/wise2-ios/WISE2Tests/BusinessOSModelsTests.swift`
+- `apps/wise2-ios/WISE2Tests/BusinessOSClientTests.swift`
+- `apps/wise2-ios/WISE2Tests/CommandStoreTests.swift`
+- `packages/api/src/v1/business-os/*`
+- `packages/api/src/app.module.ts`
 
-## Current implementation status — 2026-08-29
-
-- Branch: `feat/wise2-business-os`
-- Locked design commit: `2b5bcff02eb6d4dfd2549b96bd5135086dc3f17b`
-- Current slice: Task 1 / Task 3 foundation — Business OS shell, contracts, and Command UI.
-- Added `WISE2/Core/Models/BusinessOSModels.swift` with dashboard/module/operation contracts.
-- Updated `APIClient.swift` with reusable authenticated GET/POST transport while preserving Keychain bearer auth.
-- Added `WISE2/Core/Networking/BusinessOSClient.swift` targeting `/business-os/dashboard` and `/business-os/command` relative to the existing `/v1` API base.
-- Added `WISE2/Features/Command/CommandStore.swift`.
-- Added `WISE2/Features/Command/CommandScreen.swift` with live-state metric cards and command composer; it contains no fake production metrics.
-- Updated `MainTabView.swift` to the locked `Command | CRM | Work | AI | More` shell and module launcher.
-- Updated the Xcode project source list to include the new Business OS Swift files.
-- Backend discovery: primary API source exists under `apps/api/src`; existing route directory currently contains `apps/api/src/routes/trading.ts`. Inspect app bootstrap/package conventions before mounting Business OS routes.
-
-## Verification status / blocker
-
-The ChatGPT execution container cannot resolve `github.com`, so an isolated local checkout and `xcodebuild` verification could not be performed in this session. Do **not** claim the current branch builds until it is checked on a Mac/Xcode runner. Repository writes were made through the authenticated GitHub connector. The repo has GitHub workflows, but no iOS build result has yet been verified for this branch.
-
-Before adding more vertical slices, run on a Mac checkout:
-
+Tests run:
 ```bash
-git fetch origin
-git checkout feat/wise2-business-os
-xcodebuild -project apps/wise2-ios/WISE2.xcodeproj -scheme WISE2 -destination 'generic/platform=iOS Simulator' build
+xcodebuild build -project apps/wise2-ios/WISE2.xcodeproj -scheme WISE2 -destination 'generic/platform=iOS Simulator'
+xcodebuild test -project apps/wise2-ios/WISE2.xcodeproj -scheme WISE2 -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 ```
 
-If the project file needs repair, preserve the new Swift source files and regenerate/fix only project references. Then add an iOS test target if still absent and execute Task 1 tests from the implementation plan.
+Test results:
+- iOS build: **PASS**
+- iOS unit tests: **8/8 PASS** (`BusinessOSModelsTests`, `BusinessOSClientTests`, `CommandStoreTests`)
+- Backend Jest: **BLOCKED** — local `ts-jest` install incomplete (`Preset ts-jest not found` / missing `dist/index.js`). Spec files added at `packages/api/src/v1/business-os/*.spec.ts`.
 
-## Next exact actions for Cursor / Claude Code
+Known blockers:
+- Workspace has unrelated staged iOS/main-branch files in the index from a prior merge attempt; keep Business OS commits scoped to Business OS paths only.
+- `packages/api` Jest runner needs dependency repair before backend specs can execute locally.
+- Global WISE² Command Orb (`CommandOrb.swift`) not yet implemented (Task 3).
+- CRM slice (Task 4) not started.
 
-1. Checkout `feat/wise2-business-os`.
-2. Build the iOS target immediately and fix compile/project-reference errors before feature expansion.
-3. Add/verify XCTest target and BusinessOS model/client tests from Task 1.
-4. Inspect `apps/api` bootstrap/package files and existing auth middleware.
-5. Implement authenticated `GET /api/v1/business-os/dashboard` and `POST /api/v1/business-os/command` with negative tests rejecting `shell`/`exec` capabilities.
-6. Run focused backend and iOS tests.
-7. Continue Task 4 CRM only after Command slice is green.
-8. Update this file with exact test output, blockers, changed files, current commit, and next task before stopping.
-
-## Copy/paste takeover prompt
-
-You are taking over WISE² Business OS in `dwise03-bit/wise2-core` on branch `feat/wise2-business-os`. Work in credit-saver mode. Read the locked Business OS spec, Control Bridge spec, Cloud spec, implementation plan, and this handoff before editing. Do not redesign the architecture. First run the iOS build and repair only concrete failures. Then finish Task 1 tests and the Business OS backend dashboard/command facade. Never expose arbitrary shell/SSH. Privileged actions must be named, allowlisted, authenticated, server-authorized, audited, idempotent where retriable, and confirmation-gated when sensitive. Preserve existing working modules. Continue vertical slices in plan order only after tests are green. Before stopping, update this handoff with branch/commit, changed files, exact tests/results, blockers, and next exact task.
+Next exact task:
+Implement `CommandOrb.swift` and mount it globally across authenticated tabs in `MainTabView.swift`, then write failing `CommandOrb` visibility tests and wire POST `/api/v1/business-os/command` end-to-end against a running Nest API with JWT auth negative tests.

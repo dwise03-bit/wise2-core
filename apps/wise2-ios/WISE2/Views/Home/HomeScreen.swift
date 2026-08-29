@@ -3,297 +3,527 @@ import SwiftUI
 struct HomeScreen: View {
   @EnvironmentObject var authManager: AuthManager
   @EnvironmentObject var appState: AppState
-  @State private var isRefreshing = false
+  @Binding var selectedBusiness: String
+  @Binding var selectedTab: CommandTab
+
+  private let businesses = BusinessScope.options
 
   var body: some View {
     ZStack {
-      Color.wise2Background
-        .ignoresSafeArea()
+      Color.wise2Background.ignoresSafeArea()
 
-      ScrollView {
-        VStack(spacing: 20) {
-          // Header
-          HStack {
-            VStack(alignment: .leading, spacing: 4) {
-              Text("WISE²")
-                .font(.system(size: 28, weight: .bold))
-                .foregroundColor(.wise2TextPrimary)
-
-              if let user = authManager.currentUser {
-                Text(user.email)
-                  .font(.system(size: 12))
-                  .foregroundColor(.wise2TextMuted)
-              }
-            }
-
-            Spacer()
-
-            // Notifications + Menu
-            HStack(spacing: 12) {
-              Button(action: {}) {
-                Image(systemName: "bell.fill")
-                  .font(.system(size: 18))
-                  .foregroundColor(.wise2TextPrimary)
-              }
-
-              Menu {
-                Button("Settings") {}
-                Button("Logout") {
-                  authManager.logout()
-                }
-              } label: {
-                Image(systemName: "person.circle.fill")
-                  .font(.system(size: 18))
-                  .foregroundColor(.wise2TextPrimary)
-              }
-            }
+      ScrollView(showsIndicators: false) {
+        VStack(alignment: .leading, spacing: 18) {
+          header
+          if let error = appState.errorMessage, appState.dashboardMetrics == nil {
+            liveErrorBanner(error)
           }
-          .padding(16)
-
-          // Ask WISE² Command Bar
-          Button(action: {}) {
-            HStack(spacing: 12) {
-              Image(systemName: "sparkles")
-                .font(.system(size: 14))
-              Text("Ask WISE²...")
-                .font(.system(size: 14))
-              Spacer()
-              Image(systemName: "chevron.right")
-                .font(.system(size: 12))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(12)
-            .background(Color.wise2Surface)
-            .border(Color.wise2BorderMedium, width: 1)
-            .foregroundColor(.wise2TextSecondary)
-          }
-          .padding(.horizontal, 16)
-
-          if appState.isLoading {
-            // Loading State
-            VStack(spacing: 20) {
-              SkeletonView()
-              SkeletonView()
-              SkeletonView()
-            }
-            .padding(16)
-          } else if let metrics = appState.dashboardMetrics {
-            // Dashboard Content
-
-            // Business Pulse
-            VStack(spacing: 12) {
-              Text("BUSINESS PULSE")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.wise2TextMuted)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-              HStack(spacing: 12) {
-                MetricCard(
-                  label: "Revenue",
-                  value: String(format: "$%.0f", metrics.revenue),
-                  icon: "dollarsign.circle.fill"
-                )
-
-                MetricCard(
-                  label: "Clients",
-                  value: String(metrics.activeClients),
-                  icon: "person.3.fill"
-                )
-              }
-
-              HStack(spacing: 12) {
-                MetricCard(
-                  label: "Projects",
-                  value: String(metrics.activeProjects),
-                  icon: "briefcase.fill"
-                )
-
-                MetricCard(
-                  label: "Tasks",
-                  value: String(metrics.outstandingTasks),
-                  icon: "checkmark.circle.fill"
-                )
-              }
-            }
-            .padding(16)
-
-            // Alerts
-            if !metrics.alerts.isEmpty {
-              VStack(spacing: 12) {
-                Text("ALERTS")
-                  .font(.system(size: 12, weight: .semibold))
-                  .foregroundColor(.wise2TextMuted)
-                  .frame(maxWidth: .infinity, alignment: .leading)
-
-                ForEach(metrics.alerts) { alert in
-                  AlertCard(alert: alert)
-                }
-              }
-              .padding(16)
-            }
-
-            // System Health
-            VStack(spacing: 12) {
-              Text("SYSTEM HEALTH")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.wise2TextMuted)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-              HStack(spacing: 12) {
-                HStack(spacing: 8) {
-                  Circle()
-                    .fill(Color.wise2Success)
-                    .frame(width: 8, height: 8)
-
-                  Text("All Systems")
-                    .font(.system(size: 14))
-                    .foregroundColor(.wise2TextPrimary)
-
-                  Spacer()
-
-                  Text(metrics.systemHealth)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.wise2Success)
-                }
-                .padding(12)
-                .background(Color.wise2Surface)
-                .border(Color.wise2BorderMedium, width: 1)
-              }
-            }
-            .padding(16)
-          } else if let error = appState.errorMessage {
-            // Error State
-            VStack(spacing: 12) {
-              Image(systemName: "exclamationmark.circle.fill")
-                .font(.system(size: 32))
-                .foregroundColor(.wise2Danger)
-
-              Text("Failed to load dashboard")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.wise2TextPrimary)
-
-              Text(error)
-                .font(.system(size: 12))
-                .foregroundColor(.wise2TextMuted)
-                .multilineTextAlignment(.center)
-
-              Button(action: {
-                Task {
-                  await appState.loadDashboard()
-                }
-              }) {
-                Text("Try Again")
-                  .padding(10)
-                  .background(Color.wise2Primary)
-                  .foregroundColor(.white)
-                  .cornerRadius(4)
-              }
-            }
-            .padding(32)
-          }
-
-          Spacer(minLength: 20)
+          metrics
+          aiCommand
+          businessesSection
+          attentionSection
+          activeWorkSection
+          systemHealthSection
         }
-        .padding(.vertical)
+        .padding(.horizontal, 18)
+        .padding(.top, 12)
+        .padding(.bottom, 120)
       }
       .refreshable {
         await appState.loadDashboard()
       }
     }
-    .preferredColorScheme(.dark)
+    .safeAreaInset(edge: .bottom) {
+      Color.clear.frame(height: 82)
+    }
+    .toolbar(.hidden, for: .navigationBar)
+  }
+
+  private var operatorName: String {
+    let raw = authManager.currentUser?.name?.trimmingCharacters(in: .whitespacesAndNewlines)
+    if let raw, !raw.isEmpty {
+      return raw.split(separator: " ").first.map(String.init) ?? raw
+    }
+    return "Operator"
+  }
+
+  private var greeting: String {
+    let hour = Calendar.current.component(.hour, from: Date())
+    let period: String
+    switch hour {
+    case 5..<12: period = "Good morning"
+    case 12..<17: period = "Good afternoon"
+    case 17..<22: period = "Good evening"
+    default: period = "Working late"
+    }
+    return "\(period), \(operatorName)"
+  }
+
+  private var notificationRows: [String] {
+    if let alerts = appState.dashboardMetrics?.alerts, !alerts.isEmpty {
+      return alerts.map { "\($0.severity.uppercased()) · \($0.message)" }
+    }
+    return [
+      authManager.isOperatorPreview
+        ? "Operator preview · fixture brief active"
+        : "No open alerts from Hermes brief",
+    ]
+  }
+
+  private var profileRows: [String] {
+    let user = authManager.currentUser
+    return [
+      user?.role ?? "FOUNDER",
+      user?.email ?? "—",
+      authManager.isOperatorPreview ? "Operator preview session" : "Live session",
+      "Face ID required for critical actions",
+    ]
+  }
+
+  private var header: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 3) {
+          Text("WISE²")
+            .font(.system(size: 28, weight: .bold, design: .rounded))
+            .foregroundColor(.wise2TextPrimary)
+          Text("COMMAND CENTER")
+            .font(.caption.weight(.bold))
+            .foregroundColor(.wise2Primary)
+        }
+        Spacer()
+        NavigationLink {
+          DetailScreen(title: "Notifications", rows: notificationRows)
+        } label: {
+          Image(systemName: "bell.badge.fill")
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundColor(.wise2TextPrimary)
+            .frame(width: 44, height: 44)
+        }
+        .accessibilityLabel("Notifications")
+
+        NavigationLink {
+          DetailScreen(
+            title: authManager.currentUser?.name ?? "Operator",
+            rows: profileRows
+          )
+        } label: {
+          Image(systemName: "person.crop.circle.fill")
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundColor(.wise2TextPrimary)
+            .frame(width: 44, height: 44)
+        }
+        .accessibilityLabel("Operator profile")
+      }
+
+      VStack(alignment: .leading, spacing: 10) {
+        Text(greeting)
+          .font(.title2.weight(.semibold))
+          .foregroundColor(.wise2TextPrimary)
+        Picker("Business scope", selection: $selectedBusiness) {
+          ForEach(businesses, id: \.self) { Text($0).tag($0) }
+        }
+        .pickerStyle(.menu)
+        .tint(.wise2Primary)
+        .accessibilityIdentifier("business-switcher")
+        Text(BusinessScope.scopeCaption)
+          .font(.caption2)
+          .foregroundColor(.wise2TextMuted)
+      }
+    }
+  }
+
+  private func liveErrorBanner(_ message: String) -> some View {
+    HStack(alignment: .top, spacing: 10) {
+      Image(systemName: "exclamationmark.triangle.fill")
+        .foregroundColor(.wise2Warning)
+      VStack(alignment: .leading, spacing: 4) {
+        Text("Live dashboard unavailable")
+          .font(.subheadline.weight(.semibold))
+          .foregroundColor(.wise2TextPrimary)
+        Text(message)
+          .font(.caption)
+          .foregroundColor(.wise2TextSecondary)
+      }
+      Spacer()
+      if appState.isLoading {
+        ProgressView()
+      }
+    }
+    .padding(14)
+    .background(Color.wise2Warning.opacity(0.12))
+    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.wise2Warning.opacity(0.35), lineWidth: 1))
+    .clipShape(RoundedRectangle(cornerRadius: 12))
+  }
+
+  private var metrics: some View {
+    let live = appState.dashboardMetrics
+    let revenue = live.map { formatCurrency($0.revenue) } ?? "—"
+    let clients = live.map { "\($0.activeClients)" } ?? "—"
+    let tasks = live.map { "\($0.outstandingTasks)" } ?? "—"
+    let projects = live.map { "\($0.activeProjects)" } ?? "—"
+
+    return VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Executive Metrics")
+      if appState.isLoading && live == nil {
+        ProgressView("Loading live metrics…")
+          .tint(.wise2Primary)
+          .foregroundColor(.wise2TextSecondary)
+      }
+      LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        MetricTile(label: "Revenue", value: revenue, trend: live == nil ? "Awaiting Hermes brief" : "Monthly recurring", icon: "chart.line.uptrend.xyaxis")
+        MetricTile(label: "Active Clients", value: clients, trend: live == nil ? "Live API" : "From customers", icon: "person.3.fill")
+        MetricTile(label: "Open Tasks", value: tasks, trend: live == nil ? "Live API" : "Hermes approvals", icon: "checklist")
+        MetricTile(label: "Active Projects", value: projects, trend: live == nil ? "Live API" : "From daily brief", icon: "briefcase.fill")
+      }
+      CommandCard {
+        HStack {
+          VStack(alignment: .leading, spacing: 4) {
+            Text("Portfolio Pulse")
+              .font(.headline)
+              .foregroundColor(.wise2TextPrimary)
+            Text(live?.systemHealth ?? "No live status yet")
+              .font(.caption)
+              .foregroundColor(.wise2TextMuted)
+          }
+          Spacer()
+          Text(live?.systemHealth ?? "—")
+            .font(.headline.weight(.bold))
+            .foregroundColor(.wise2Success)
+        }
+        RevenueSparkline()
+          .frame(height: 72)
+          .accessibilityLabel("Revenue trend chart")
+      }
+    }
+  }
+
+  private var aiCommand: some View {
+    CommandCard {
+      HStack {
+        VStack(alignment: .leading, spacing: 4) {
+          Text("WISE² AI")
+            .font(.title3.weight(.bold))
+            .foregroundColor(.wise2TextPrimary)
+          Text("What should I handle next?")
+            .font(.subheadline)
+            .foregroundColor(.wise2TextSecondary)
+        }
+        Spacer()
+        Image(systemName: "sparkles")
+          .foregroundColor(.wise2Primary)
+      }
+
+      HStack(spacing: 8) {
+        QuickAction(title: "Follow up leads") { selectedTab = .ai }
+        QuickAction(title: "Create invoice") { selectedTab = .ai }
+        QuickAction(title: "Review operations") { selectedTab = .ai }
+      }
+    }
+  }
+
+  private var businessesSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Operating Scopes")
+      ForEach(BusinessScope.options.filter { $0 != "ALL BUSINESSES" }, id: \.self) { scope in
+        NavigationLink {
+          DetailScreen(
+            title: scope,
+            rows: [
+              "Hermes mode: \(BusinessScope.hermesMode(for: scope))",
+              "Uses live customers, prospects, Hermes actions, and health APIs",
+              BusinessScope.scopeCaption,
+            ]
+          )
+        } label: {
+          BusinessRow(name: scope, status: "Mode · \(BusinessScope.hermesMode(for: scope))")
+        }
+        .buttonStyle(.plain)
+      }
+    }
+  }
+
+  private var activeWorkSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Today / Active Work")
+      if let work = appState.dashboardMetrics?.activeWork, !work.isEmpty {
+        ForEach(work) { item in
+          NavigationLink {
+            DetailScreen(
+              title: item.title,
+              rows: ["Status: \(item.status)", "Owner: \(item.owner)", "Updated: \(item.due)"]
+            )
+          } label: {
+            WorkSummaryRow(
+              title: item.title,
+              owner: item.owner,
+              due: item.due,
+              status: item.status,
+              progress: item.progress
+            )
+          }
+          .buttonStyle(.plain)
+        }
+      } else {
+        CommandCard {
+          Text(appState.isLoading ? "Loading live work…" : "No live projects in today's Hermes brief yet.")
+            .font(.subheadline)
+            .foregroundColor(.wise2TextSecondary)
+        }
+      }
+    }
+  }
+
+  private var attentionSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "Needs Attention")
+      if let alerts = appState.dashboardMetrics?.alerts, !alerts.isEmpty {
+        ForEach(alerts) { alert in
+          AttentionRow(
+            title: alert.message,
+            detail: "Live · \(alert.severity)",
+            severity: alert.severity.lowercased() == "warning" ? .warning : (alert.severity.lowercased() == "success" ? .success : .info)
+          )
+        }
+      } else if appState.dashboardMetrics != nil {
+        AttentionRow(title: "No open alerts", detail: "Hermes daily brief is clear", severity: .success)
+      } else {
+        AttentionRow(title: "Waiting for live feed", detail: "Pull to refresh after sign-in", severity: .info)
+      }
+    }
+  }
+
+  private var systemHealthSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      SectionLabel(title: "System Health")
+      NavigationLink {
+        DetailScreen(
+          title: "System Health",
+          rows: [
+            appState.dashboardMetrics.map { "Status · \($0.systemHealth)" } ?? "Status · unavailable",
+            "Open Systems tab for live service inventory",
+          ]
+        )
+      } label: {
+        HStack {
+          Image(systemName: "server.rack")
+            .foregroundColor(.wise2Primary)
+          VStack(alignment: .leading, spacing: 2) {
+            Text(appState.dashboardMetrics?.systemHealth ?? "Unavailable")
+              .font(.headline)
+              .foregroundColor(.wise2TextPrimary)
+            Text("From Hermes daily brief")
+              .font(.caption)
+              .foregroundColor(.wise2TextMuted)
+          }
+          Spacer()
+          Image(systemName: "chevron.right")
+            .foregroundColor(.wise2TextMuted)
+        }
+        .padding(14)
+        .background(Color.wise2Card)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+      }
+      .buttonStyle(.plain)
+    }
+  }
+
+  private func formatCurrency(_ value: Double) -> String {
+    if value >= 1000 {
+      return String(format: "$%.1fK", value / 1000)
+    }
+    return String(format: "$%.0f", value)
   }
 }
 
-// MARK: - Components
-
-struct MetricCard: View {
+struct MetricTile: View {
   let label: String
   let value: String
+  let trend: String
   let icon: String
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      HStack(spacing: 8) {
-        Image(systemName: icon)
-          .font(.system(size: 14))
-          .foregroundColor(.wise2Primary)
-
-        Text(label)
-          .font(.system(size: 12))
-          .foregroundColor(.wise2TextMuted)
-
-        Spacer()
-      }
-
+    CommandCard {
+      Image(systemName: icon)
+        .foregroundColor(.wise2Primary)
       Text(value)
-        .font(.system(size: 20, weight: .bold))
+        .font(.title2.weight(.bold))
         .foregroundColor(.wise2TextPrimary)
+        .minimumScaleFactor(0.75)
+      Text(label)
+        .font(.caption)
+        .foregroundColor(.wise2TextSecondary)
+      Text(trend)
+        .font(.caption2.weight(.semibold))
+        .foregroundColor(.wise2Success)
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(12)
-    .background(Color.wise2Surface)
-    .border(Color.wise2BorderMedium, width: 1)
   }
 }
 
-struct AlertCard: View {
-  let alert: DashboardMetrics.Alert
+struct QuickAction: View {
+  let title: String
+  let action: () -> Void
 
   var body: some View {
-    HStack(spacing: 12) {
-      Image(systemName: "exclamationmark.circle.fill")
-        .font(.system(size: 16))
-        .foregroundColor(alert.severity == "critical" ? .wise2Danger : .wise2Warning)
-
-      VStack(alignment: .leading, spacing: 2) {
-        Text(alert.severity.uppercased())
-          .font(.system(size: 10, weight: .bold))
-          .foregroundColor(alert.severity == "critical" ? .wise2Danger : .wise2Warning)
-
-        Text(alert.message)
-          .font(.system(size: 13))
-          .foregroundColor(.wise2TextPrimary)
+    Button(action: action) {
+      HStack {
+        Text(title)
+          .font(.caption.weight(.semibold))
+          .lineLimit(1)
+          .minimumScaleFactor(0.8)
+        Image(systemName: "arrow.up.right")
+          .font(.caption2.weight(.bold))
       }
-
-      Spacer()
-
-      Image(systemName: "chevron.right")
-        .font(.system(size: 12))
-        .foregroundColor(.wise2TextMuted)
+      .frame(maxWidth: .infinity)
+      .padding(.vertical, 11)
+      .padding(.horizontal, 10)
+      .foregroundColor(.wise2TextPrimary)
+      .background(Color.wise2Primary.opacity(0.16))
+      .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
     }
-    .padding(12)
-    .background(Color.wise2Surface)
-    .border(Color.wise2BorderMedium, width: 1)
+    .accessibilityIdentifier("quick-action-\(title)")
   }
 }
 
-struct SkeletonView: View {
+struct BusinessRow: View {
+  let name: String
+  let status: String
+
   var body: some View {
-    HStack(spacing: 12) {
-      RoundedRectangle(cornerRadius: 4)
-        .fill(Color.wise2Surface)
-        .frame(width: 40, height: 40)
-
-      VStack(alignment: .leading, spacing: 6) {
-        RoundedRectangle(cornerRadius: 4)
-          .fill(Color.wise2Surface)
-          .frame(height: 12)
-
-        RoundedRectangle(cornerRadius: 4)
-          .fill(Color.wise2Surface)
-          .frame(height: 18)
+    CommandCard {
+      HStack {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(name)
+            .font(.headline)
+            .foregroundColor(.wise2TextPrimary)
+          Text(status)
+            .font(.caption)
+            .foregroundColor(.wise2TextSecondary)
+        }
+        Spacer()
+        Image(systemName: "chevron.right")
+          .foregroundColor(.wise2TextMuted)
       }
-
-      Spacer()
     }
-    .padding(12)
-    .background(Color.wise2Surface)
-    .border(Color.wise2BorderMedium, width: 1)
+  }
+}
+
+enum AttentionSeverity {
+  case success
+  case warning
+  case info
+
+  var color: Color {
+    switch self {
+    case .success: return .wise2Success
+    case .warning: return .wise2Warning
+    case .info: return .wise2Primary
+    }
+  }
+}
+
+struct AttentionRow: View {
+  let title: String
+  let detail: String
+  let severity: AttentionSeverity
+
+  var body: some View {
+    NavigationLink {
+      DetailScreen(title: title, rows: [detail, "Audit trail available", "Owner approval required before mutation"])
+    } label: {
+      CommandCard {
+        HStack(alignment: .top, spacing: 10) {
+          Circle()
+            .fill(severity.color)
+            .frame(width: 10, height: 10)
+            .padding(.top, 5)
+          VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+              .font(.headline)
+              .foregroundColor(.wise2TextPrimary)
+            Text(detail)
+              .font(.caption)
+              .foregroundColor(.wise2TextSecondary)
+          }
+          Spacer()
+          Image(systemName: "chevron.right")
+            .foregroundColor(.wise2TextMuted)
+        }
+      }
+    }
+    .buttonStyle(.plain)
+  }
+}
+
+struct WorkSummaryRow: View {
+  let title: String
+  let owner: String
+  let due: String
+  let status: String
+  let progress: Double
+
+  var body: some View {
+    CommandCard {
+      HStack {
+        VStack(alignment: .leading, spacing: 5) {
+          Text(title)
+            .font(.headline)
+            .foregroundColor(.wise2TextPrimary)
+          Text("\(owner) · \(due) · \(status)")
+            .font(.caption)
+            .foregroundColor(.wise2TextSecondary)
+        }
+        Spacer()
+        Text("\(Int(progress * 100))%")
+          .font(.caption.weight(.bold))
+          .foregroundColor(.wise2Primary)
+      }
+      ProgressView(value: progress)
+        .tint(.wise2Primary)
+        .accessibilityLabel("\(title) progress")
+    }
+  }
+}
+
+struct RevenueSparkline: View {
+  private let points: [CGFloat] = [0.55, 0.48, 0.58, 0.52, 0.66, 0.62, 0.74, 0.82]
+
+  var body: some View {
+    GeometryReader { proxy in
+      Path { path in
+        for index in points.indices {
+          let x = proxy.size.width * CGFloat(index) / CGFloat(points.count - 1)
+          let y = proxy.size.height * (1 - points[index])
+          if index == 0 {
+            path.move(to: CGPoint(x: x, y: y))
+          } else {
+            path.addLine(to: CGPoint(x: x, y: y))
+          }
+        }
+      }
+      .stroke(Color.wise2Primary, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+    }
+  }
+}
+
+struct DetailScreen: View {
+  let title: String
+  let rows: [String]
+
+  var body: some View {
+    CommandSurface(title: title, subtitle: "WISE² Command Center", selectedBusiness: "Scoped access") {
+      ForEach(rows, id: \.self) { row in
+        CommandCard {
+          Text(row)
+            .foregroundColor(.wise2TextPrimary)
+        }
+      }
+    }
   }
 }
 
 #Preview {
-  HomeScreen()
+  HomeScreen(selectedBusiness: .constant("ALL BUSINESSES"), selectedTab: .constant(.home))
     .environmentObject(AuthManager())
     .environmentObject(AppState())
 }
