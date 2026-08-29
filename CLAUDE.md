@@ -203,13 +203,22 @@ Base System Prompt
 
 Standard commands live in `.claude/commands/`. Users invoke with `/<command-name>`.
 
-**Standard Commands** (to be implemented):
+**Standard Commands**:
+- `/wise2-start` — Boot context: CLAUDE.md, Executive, daily log, ADRs, blockers, git state
 - `/daily-sync` — Morning briefing: status, blockers, priorities
 - `/live-stream-redesign` — Design review → code → launch (multi-agent)
 - `/deploy` — Full deployment workflow with checks
 - `/status` — System health: git status, docker status, recent deploys
 - `/research <topic>` — Deep research with citation tracking
 - `/decision <topic>` — Log a decision with ADR format
+
+### Claude Code Project Setup
+
+- Shared project settings live in `.claude/settings.json`.
+- Personal approvals and machine-specific permissions live in `.claude/settings.local.json` and stay out of git.
+- Claude slash-command prompts live in `.claude/commands/*.md`; use them for repeatable WISE² workflows.
+- Claude-native project subagents live in `.claude/agents/*.md` and mirror PromptOS specialists.
+- Keep secrets in environment managers or deployment hosts, never in Claude prompts, command files, or tracked documentation.
 
 ---
 

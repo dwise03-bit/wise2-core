@@ -29,6 +29,14 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 
+private val vinPattern = Regex("[A-HJ-NPR-Z0-9]{17}")
+
+/** Extracts a VIN from raw barcode text, including CJAYS QR payloads and URLs. */
+internal fun extractVin(rawValue: String?): String? {
+    val normalized = rawValue?.uppercase()?.replace("%3A", ":") ?: return null
+    return vinPattern.find(normalized)?.value
+}
+
 @Composable
 fun BarcodeScannerView(onDetected: (String) -> Unit, onManual: () -> Unit) {
     val context = LocalContext.current
@@ -48,7 +56,12 @@ fun BarcodeScannerView(onDetected: (String) -> Unit, onManual: () -> Unit) {
     }
 
     val executor = remember { Executors.newSingleThreadExecutor() }
-    DisposableEffect(Unit) { onDispose { executor.shutdown() } }
+    val scanner = remember {
+        val options = BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_CODE_39, Barcode.FORMAT_CODE_128, Barcode.FORMAT_QR_CODE, Barcode.FORMAT_DATA_MATRIX).build()
+        BarcodeScanning.getClient(options)
+    }
+    var lastDetected by remember { mutableStateOf<String?>(null) }
+    DisposableEffect(Unit) { onDispose { scanner.close(); executor.shutdown() } }
     Box(Modifier.fillMaxWidth().height(220.dp).border(BorderStroke(2.dp, Color(0xFF0878F9)), RoundedCornerShape(14.dp))) {
         AndroidView(factory = { ctx ->
             PreviewView(ctx).apply {
@@ -57,16 +70,17 @@ fun BarcodeScannerView(onDetected: (String) -> Unit, onManual: () -> Unit) {
                 providerFuture.addListener({
                     val provider = providerFuture.get()
                     val preview = Preview.Builder().build().also { it.surfaceProvider = surfaceProvider }
-                    val options = BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_CODE_39, Barcode.FORMAT_CODE_128, Barcode.FORMAT_QR_CODE, Barcode.FORMAT_DATA_MATRIX).build()
-                    val scanner = BarcodeScanning.getClient(options)
                     val analysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
                     analysis.setAnalyzer(executor) { proxy ->
                         val image = proxy.image
                         if (image == null) { proxy.close(); return@setAnalyzer }
                         scanner.process(InputImage.fromMediaImage(image, proxy.imageInfo.rotationDegrees))
                             .addOnSuccessListener { codes ->
-                                val value = codes.firstNotNullOfOrNull { it.rawValue }?.uppercase()?.filter { it.isLetterOrDigit() }
-                                if (value != null && value.length == 17) onDetected(value)
+                                val value = codes.firstNotNullOfOrNull { extractVin(it.rawValue) }
+                                if (value != null && value != lastDetected) {
+                                    lastDetected = value
+                                    onDetected(value)
+                                }
                             }
                             .addOnCompleteListener { proxy.close() }
                     }

@@ -1,7 +1,9 @@
 package com.wise2.fieldtech.ui.screens.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,11 +33,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wise2.fieldtech.domain.model.Job
@@ -45,7 +49,14 @@ import com.wise2.fieldtech.ui.components.StatusPill
 import com.wise2.fieldtech.ui.components.WiseCard
 import com.wise2.fieldtech.ui.components.color
 import com.wise2.fieldtech.ui.components.label
+import com.wise2.fieldtech.ui.theme.ChromeSilver
 import com.wise2.fieldtech.ui.theme.ElectricBlue
+import com.wise2.fieldtech.ui.theme.FrostWhite
+import com.wise2.fieldtech.ui.theme.JetBlack
+import com.wise2.fieldtech.ui.theme.MutedSteel
+import com.wise2.fieldtech.ui.theme.OxideBlack
+import com.wise2.fieldtech.ui.theme.PanelSteel
+import com.wise2.fieldtech.ui.theme.StatusAmber
 import com.wise2.fieldtech.ui.util.ClickDebouncer
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -89,20 +100,21 @@ fun HomeScreen(
             )
         },
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(Brush.verticalGradient(listOf(OxideBlack, JetBlack)))
+                .padding(padding),
+        ) {
             ConnectivityBanner(isOnline = state.isOnline, pendingSyncCount = state.pendingSyncCount)
 
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item {
-                    Text("Good Morning, ${state.technicianName}", style = MaterialTheme.typography.headlineMedium)
-                }
+                item { CommandHeader(state.technicianName, state.jobs.size, state.pendingSyncCount, state.isOnline) }
 
-                item {
-                    Text("TODAY'S JOBS (${state.jobs.size})", style = MaterialTheme.typography.labelLarge, color = ElectricBlue)
-                }
+                item { Text("TODAY'S JOBS (${state.jobs.size})", style = MaterialTheme.typography.labelLarge, color = ElectricBlue) }
 
                 items(state.jobs, key = { it.id }) { job ->
                     JobRow(
@@ -165,7 +177,8 @@ fun HomeScreen(
                                 onNewJob()
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        modifier = Modifier.fillMaxWidth().height(58.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = ElectricBlue, contentColor = JetBlack),
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = null)
                         Spacer(Modifier.height(0.dp))
@@ -173,6 +186,31 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CommandHeader(technicianName: String, jobCount: Int, pendingSyncCount: Int, isOnline: Boolean) {
+    WiseCard {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("FIELD COMMAND", style = MaterialTheme.typography.labelLarge, color = ElectricBlue)
+            Text(technicianName.ifBlank { "Technician" }, style = MaterialTheme.typography.headlineMedium, color = FrostWhite)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                HeaderStat("JOBS", jobCount.toString(), Modifier.weight(1f))
+                HeaderStat("SYNC", if (pendingSyncCount == 0) "CLEAR" else pendingSyncCount.toString(), Modifier.weight(1f))
+                HeaderStat("LINK", if (isOnline) "ONLINE" else "LOCAL", Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun HeaderStat(label: String, value: String, modifier: Modifier = Modifier) {
+    Box(modifier.background(PanelSteel, MaterialTheme.shapes.medium).padding(10.dp)) {
+        Column {
+            Text(label, style = MaterialTheme.typography.labelMedium, color = MutedSteel)
+            Text(value, style = MaterialTheme.typography.titleMedium, color = if (value == "LOCAL") StatusAmber else ChromeSilver)
         }
     }
 }
@@ -197,8 +235,8 @@ private fun JobRow(job: Job, onClick: () -> Unit) {
                 StatusPill(text = job.status.label().uppercase(), color = job.status.color())
             }
             Spacer(Modifier.height(4.dp))
-            Text(job.customerName, style = MaterialTheme.typography.titleMedium)
-            Text(job.address, style = MaterialTheme.typography.bodyMedium)
+            Text(job.customerName, style = MaterialTheme.typography.titleMedium, color = FrostWhite)
+            Text(job.address, style = MaterialTheme.typography.bodyMedium, color = MutedSteel)
             if (job.isDemoData) {
                 Spacer(Modifier.height(6.dp))
                 DemoDataBadge()
@@ -222,8 +260,8 @@ private fun ModuleTile(title: String, subtitle: String, icon: androidx.compose.u
         Column {
             Icon(icon, contentDescription = null, tint = if (enabled) ElectricBlue else MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(subtitle, style = MaterialTheme.typography.bodyMedium)
+            Text(title, style = MaterialTheme.typography.titleMedium, color = if (enabled) FrostWhite else MutedSteel)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MutedSteel)
         }
     }
 }

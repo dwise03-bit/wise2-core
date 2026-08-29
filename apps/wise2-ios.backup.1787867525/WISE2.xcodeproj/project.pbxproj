@@ -1,0 +1,395 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+/* Begin PBXBuildFile section */
+		3FD5A2FE2C772EAD005A8F1A /* WISE2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A2FD2C772EAD005A8F1A /* WISE2App.swift */; };
+		3FD5A2FF2C772EAD005A8F1A /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3002C772EAD005A8F1A /* AuthManager.swift */; };
+		3FD5A3012C772EAD005A8F1A /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3022C772EAD005A8F1A /* AppState.swift */; };
+		3FD5A3032C772EAD005A8F1A /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3042C772EAD005A8F1A /* APIClient.swift */; };
+		3FD5A3052C772EAD005A8F1A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3062C772EAD005A8F1A /* Models.swift */; };
+		3FD5A3072C772EAD005A8F1A /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3082C772EAD005A8F1A /* KeychainManager.swift */; };
+		3FD5A3092C772EAD005A8F1A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A30A2C772EAD005A8F1A /* LoginView.swift */; };
+		3FD5A30B2C772EAD005A8F1A /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A30C2C772EAD005A8F1A /* MainTabView.swift */; };
+		3FD5A30D2C772EAD005A8F1A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A30E2C772EAD005A8F1A /* DashboardView.swift */; };
+		3FD5A30F2C772EAD005A8F1A /* FieldTechView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3102C772EAD005A8F1A /* FieldTechView.swift */; };
+		3FD5A3112C772EAD005A8F1A /* AutomationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3122C772EAD005A8F1A /* AutomationView.swift */; };
+		3FD5A3132C772EAD005A8F1A /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3142C772EAD005A8F1A /* AnalyticsView.swift */; };
+		3FD5A3152C772EAD005A8F1A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD5A3162C772EAD005A8F1A /* SettingsView.swift */; };
+		3FD5A3192C772EAE005A8F1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FD5A3502C772EAD005A8F1A /* Assets.xcassets */; };
+		3FD5A31A2C772EAE005A8F1A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FD5A3512C772EAD005A8F1A /* Preview Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		3FD5A2FD2C772EAD005A8F1A /* WISE2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/WISE2App.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3002C772EAD005A8F1A /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/AuthManager.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3022C772EAD005A8F1A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/AppState.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3042C772EAD005A8F1A /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/APIClient.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3062C772EAD005A8F1A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Models.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3082C772EAD005A8F1A /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/KeychainManager.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A30A2C772EAD005A8F1A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/LoginView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A30C2C772EAD005A8F1A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/MainTabView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A30E2C772EAD005A8F1A /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/DashboardView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3102C772EAD005A8F1A /* FieldTechView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/FieldTechView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3122C772EAD005A8F1A /* AutomationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/AutomationView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3142C772EAD005A8F1A /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/AnalyticsView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3162C772EAD005A8F1A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		3FD5A3182C772EAD005A8F1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WISE2/Info.plist; sourceTree = SOURCE_ROOT; };
+		3FD5A31E2C772EAD005A8F1A /* WISE2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FD5A3502C772EAD005A8F1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		3FD5A3512C772EAD005A8F1A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3FD5A31B2C772EAD005A8F1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3FD5A2D82C772EAD005A8F1A /* WISE2 */ = {
+			isa = PBXGroup;
+			children = (
+				3FD5A2FD2C772EAD005A8F1A /* WISE2App.swift */,
+				3FD5A3002C772EAD005A8F1A /* AuthManager.swift */,
+				3FD5A3022C772EAD005A8F1A /* AppState.swift */,
+				3FD5A3042C772EAD005A8F1A /* APIClient.swift */,
+				3FD5A3062C772EAD005A8F1A /* Models.swift */,
+				3FD5A3082C772EAD005A8F1A /* KeychainManager.swift */,
+				3FD5A30A2C772EAD005A8F1A /* LoginView.swift */,
+				3FD5A30C2C772EAD005A8F1A /* MainTabView.swift */,
+				3FD5A30E2C772EAD005A8F1A /* DashboardView.swift */,
+				3FD5A3102C772EAD005A8F1A /* FieldTechView.swift */,
+				3FD5A3122C772EAD005A8F1A /* AutomationView.swift */,
+				3FD5A3142C772EAD005A8F1A /* AnalyticsView.swift */,
+				3FD5A3162C772EAD005A8F1A /* SettingsView.swift */,
+				3FD5A3182C772EAD005A8F1A /* Info.plist */,
+				3FD5A3502C772EAD005A8F1A /* Assets.xcassets */,
+				3FD5A3512C772EAD005A8F1A /* Preview Assets.xcassets */,
+			);
+			path = .;
+			sourceTree = SOURCE_ROOT;
+		};
+		3FD5A31F2C772EAD005A8F1A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3FD5A31E2C772EAD005A8F1A /* WISE2.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3FD5A31D2C772EAD005A8F1A /* WISE2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FD5A34E2C772EAE005A8F1A /* Build configuration list for PBXNativeTarget "WISE2" */;
+			buildPhases = (
+				3FD5A31A2C772EAD005A8F1A /* Sources */,
+				3FD5A31B2C772EAD005A8F1A /* Frameworks */,
+				3FD5A31C2C772EAD005A8F1A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WISE2;
+			productName = WISE2;
+			productReference = 3FD5A31E2C772EAD005A8F1A /* WISE2.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3FD5A2D42C772EAD005A8F1A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 1520;
+				ORGANIZATIONNAME = "WISE2";
+				TargetAttributes = {
+					3FD5A31D2C772EAD005A8F1A = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 3FD5A2D72C772EAD005A8F1A /* Build configuration list for PBXProject "WISE2" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3FD5A2D82C772EAD005A8F1A /* WISE2 */;
+			productRefGroup = 3FD5A31F2C772EAD005A8F1A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3FD5A31D2C772EAD005A8F1A /* WISE2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3FD5A31C2C772EAD005A8F1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FD5A31A2C772EAE005A8F1A /* Preview Assets.xcassets in Resources */,
+				3FD5A3192C772EAE005A8F1A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3FD5A31A2C772EAD005A8F1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FD5A2FE2C772EAD005A8F1A /* WISE2App.swift in Sources */,
+				3FD5A2FF2C772EAD005A8F1A /* AuthManager.swift in Sources */,
+				3FD5A3012C772EAD005A8F1A /* AppState.swift in Sources */,
+				3FD5A3032C772EAD005A8F1A /* APIClient.swift in Sources */,
+				3FD5A3052C772EAD005A8F1A /* Models.swift in Sources */,
+				3FD5A3072C772EAD005A8F1A /* KeychainManager.swift in Sources */,
+				3FD5A3092C772EAD005A8F1A /* LoginView.swift in Sources */,
+				3FD5A30B2C772EAD005A8F1A /* MainTabView.swift in Sources */,
+				3FD5A30D2C772EAD005A8F1A /* DashboardView.swift in Sources */,
+				3FD5A30F2C772EAD005A8F1A /* FieldTechView.swift in Sources */,
+				3FD5A3112C772EAD005A8F1A /* AutomationView.swift in Sources */,
+				3FD5A3132C772EAD005A8F1A /* AnalyticsView.swift in Sources */,
+				3FD5A3152C772EAD005A8F1A /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3FD5A34C2C772EAE005A8F1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_ABOUT_UNINITIALIZED_VARS = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3FD5A34D2C772EAE005A8F1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_ABOUT_UNINITIALIZED_VARS = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3FD5A34E2C772EAE005A8F1A /* Build configuration list for PBXNativeTarget "WISE2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FD5A34F2C772EAE005A8F1A /* Debug */,
+				3FD5A3502C772EAE005A8F1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3FD5A34F2C772EAE005A8F1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_REQUIRED = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				EXECUTABLE_NAME = WISE2;
+				GENERATE_INFOPLIST_FILE = NO;
+				GENERATE_PKGINFO_FILE = NO;
+				INFOPLIST_FILE = WISE2/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = WISE2;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		3FD5A3502C772EAE005A8F1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_REQUIRED = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				EXECUTABLE_NAME = WISE2;
+				GENERATE_INFOPLIST_FILE = NO;
+				GENERATE_PKGINFO_FILE = NO;
+				INFOPLIST_FILE = WISE2/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = WISE2;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		3FD5A2D72C772EAD005A8F1A /* Build configuration list for PBXProject "WISE2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FD5A34C2C772EAE005A8F1A /* Debug */,
+				3FD5A34D2C772EAE005A8F1A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCBuildConfiguration section */
+	};
+	rootObject = 3FD5A2D42C772EAD005A8F1A /* Project object */;
+}

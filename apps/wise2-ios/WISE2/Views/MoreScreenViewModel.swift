@@ -13,6 +13,7 @@ class MoreScreenViewModel: ObservableObject {
     case billing
     case analytics
     case files
+    case media
     case settings
   }
 

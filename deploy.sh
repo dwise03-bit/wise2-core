@@ -23,8 +23,6 @@ required_vars=(
   "STRIPE_STARTER_PRICE_ID"
   "STRIPE_PRO_PRICE_ID"
   "STRIPE_WEBHOOK_SECRET"
-  "SENDGRID_API_KEY"
-  "SENDGRID_FROM_EMAIL"
   "DATABASE_URL"
   "APP_URL"
   "API_BASE_URL"
@@ -46,6 +44,9 @@ if [ ${#missing_vars[@]} -gt 0 ]; then
 fi
 
 echo "✅ All environment variables present"
+if [ -z "${SENDGRID_API_KEY:-}" ] || [ -z "${SENDGRID_FROM_EMAIL:-}" ]; then
+  echo "⚠️  SENDGRID_API_KEY/SENDGRID_FROM_EMAIL not set - transactional emails will be disabled"
+fi
 echo ""
 
 # ============================================================================

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(sed *)",
+      "Bash(pwd)",
+      "Bash(date *)",
+      "Bash(pnpm --version)",
+      "Bash(node --version)",
+      "Bash(npm --version)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./**/*secret*)",
+      "Read(./**/*credential*)",
+      "Read(./**/*token*)",
+      "Bash(git reset --hard *)",
+      "Bash(git checkout -- *)",
+      "Bash(git clean *)",
+      "Bash(rm -rf *)",
+      "Bash(sudo rm *)",
+      "Bash(chmod 777 *)"
+    ]
+  },
+  "env": {
+    "WISE2_PROJECT": "wise2-core",
+    "WISE2_PROMPTOS_ROOT": "promptos"
+  }
+}

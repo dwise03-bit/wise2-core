@@ -14,13 +14,16 @@ extension Color {
   static let wise2TextMuted = Color(red: 0.55, green: 0.60, blue: 0.65)       // #8D98A5
 
   // Primary Brand
-  static let wise2Primary = Color(red: 0.00, green: 0.58, blue: 1.00)         // #0094FF
+  static let wise2Primary = Color(red: 0.00, green: 0.58, blue: 1.00)         // #0094FF - Electric Blue
   static let wise2PrimaryHover = Color(red: 0.20, green: 0.66, blue: 1.00)    // #32A8FF
   static let wise2PrimaryActive = Color(red: 0.00, green: 0.46, blue: 0.80)   // #0075CC
   static let wise2PrimaryLight = Color(red: 0.10, green: 0.66, blue: 1.00)    // #1AA8FF
 
+  // Accent Brand Color
+  static let wise2Accent = Color(red: 0.22, green: 1.00, blue: 0.08)          // #39FF14 - Neon Green
+
   // Semantic Colors
-  static let wise2Success = Color(red: 0.13, green: 0.77, blue: 0.37)         // #22C55E
+  static let wise2Success = Color(red: 0.22, green: 1.00, blue: 0.08)         // #39FF14 - Neon Green
   static let wise2Warning = Color(red: 0.96, green: 0.62, blue: 0.07)         // #F59E0B
   static let wise2Danger = Color(red: 0.90, green: 0.22, blue: 0.21)          // #E53935
   static let wise2Info = Color(red: 0.00, green: 0.58, blue: 1.00)            // #0094FF

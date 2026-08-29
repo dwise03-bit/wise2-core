@@ -86,6 +86,9 @@ coverage/
 *.pem
 *.crt
 *.cer
+*.p12
+*.mobileprovision
+*.provisionprofile
 
 # Secrets (never commit)
 secrets/
@@ -93,6 +96,9 @@ secrets/
 private/
 
 # Build artifacts
+*.ipa
+*.xcarchive
+*.xcresult
 *.o
 *.a
 *.so
@@ -118,6 +124,7 @@ npm-debug.log
 dist/
 build/
 .claude/settings.local.json
+.claude/settings.local.backup-*.json
 
 # Next.js
 .next/

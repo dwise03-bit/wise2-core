@@ -6,6 +6,10 @@ Native Android application for vehicle scanning, customer records, jobs, checkli
 
 Scan a Code 39/128, QR, or Data Matrix VIN label (or enter it manually), decode new VINs through NHTSA vPIC, find/create the vehicle and customer, start a job, capture before photos, complete the service checklist, add work notes, capture after photos, record payment, and complete the job. Operational records and original photos persist locally when the network is unavailable.
 
+The job workspace also creates a branded PDF invoice through the Android share sheet and includes a Wise² AI copilot for quality review, job summaries, customer follow-up drafts, and checklist recommendations. AI output is grounded in the tenant's synced job record and always requires human approval.
+
+The current hosted APK is a beta build. Photos are durable on the device, but cross-device photo upload still requires the planned CJAYS media API and object-storage pipeline.
+
 ## Build
 
 ```bash
