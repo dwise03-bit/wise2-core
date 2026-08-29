@@ -40,8 +40,10 @@ body:has(.imp-app-root) {
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
-  min-height: 100svh;
+  height: 100dvh;
+  height: 100svh;
+  max-height: 100dvh;
+  max-height: 100svh;
   max-width: 480px;
   margin: 0 auto;
   background:
@@ -53,7 +55,6 @@ body:has(.imp-app-root) {
 @media (min-width: 768px) {
   .imp-phone-shell {
     max-width: 430px;
-    min-height: 100dvh;
     border-left: 1px solid var(--imp-border);
     border-right: 1px solid var(--imp-border);
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);

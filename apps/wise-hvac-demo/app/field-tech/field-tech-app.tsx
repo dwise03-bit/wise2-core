@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Bluetooth, Check, CheckCircle2, ClipboardCheck, FileCheck2,
   Loader2, MapPin, Navigation, Phone, Radio, RefreshCw,
@@ -89,6 +89,7 @@ export function FieldTechApp() {
     photos: false,
     approval: false,
   });
+  const autoDiagnoseRef = useRef(false);
   const selected = useMemo(
     () => jobs.find((job) => job.id === selectedId) || jobs[0],
     [jobs, selectedId],
@@ -128,6 +129,15 @@ export function FieldTechApp() {
     setMessage('');
     setReportOpen(false);
   }, [selected?.id]);
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') return;
+    if (typeof window === 'undefined' || autoDiagnoseRef.current) return;
+    if (new URLSearchParams(window.location.search).get('autodiagnose') !== '1') return;
+    if (!selected?.id || !symptoms.trim() || analyzing || diagnosis) return;
+    autoDiagnoseRef.current = true;
+    void runDiagnosis();
+  }, [selected?.id, symptoms, analyzing, diagnosis]);
 
   function changeTab(next: FieldTechTab) {
     setTab(next);

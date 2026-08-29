@@ -42,7 +42,7 @@ const demoJob: FieldJob = {
   address: '1840 West Market Street, Greensboro, NC',
   appointmentAt: new Date().toISOString(),
   complaint:
-    'Rooftop unit not cooling. HIGH HEAD PRESSURE 248.7 PSIG, low subcooling 8.6°F, normal superheat 11.2°F, ΔT 17°F. Frosting on the liquid line drier.',
+    'Rooftop unit not cooling. HIGH HEAD PRESSURE 248.7 PSIG, low subcooling 8.6°F, normal superheat 11.2°F, normal ΔT 17°F. Frosting on the liquid line drier.',
   status: 'IN_PROGRESS',
   priority: 'HIGH',
   notes: '',
