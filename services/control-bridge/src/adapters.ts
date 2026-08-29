@@ -73,17 +73,20 @@ export async function dockerServices(ctx: AdapterContext): Promise<string[]> {
 
 export async function dockerPs(ctx: AdapterContext): Promise<string> {
   const result = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'ps', '--format', 'json'], { timeoutMs: 10_000, maxOutputBytes: 64_000, cwd: ctx.config.repoDir });
+  if (result.code !== 0) throw Object.assign(new Error(redactText(result.stderr, secretList(ctx.config))), { code: 'DOCKER_PS_FAILED' });
   return redactText(result.stdout, secretList(ctx.config));
 }
 
 export async function dockerStats(ctx: AdapterContext): Promise<string> {
   const result = await runner(ctx)(ctx.config.dockerBinary, ['stats', '--no-stream', '--format', 'json'], { timeoutMs: 10_000, maxOutputBytes: 64_000 });
+  if (result.code !== 0) throw Object.assign(new Error(redactText(result.stderr, secretList(ctx.config))), { code: 'DOCKER_STATS_FAILED' });
   return redactText(result.stdout, secretList(ctx.config));
 }
 
 export async function dockerLogs(ctx: AdapterContext, service: string, lines: number): Promise<string> {
   validateName(service, ctx.config.allowedServices);
   const result = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'logs', '--no-color', '--tail', String(lines), service], { timeoutMs: 10_000, maxOutputBytes: 96_000, cwd: ctx.config.repoDir });
+  if (result.code !== 0) throw Object.assign(new Error(redactText(result.stderr, secretList(ctx.config))), { code: 'DOCKER_LOGS_FAILED' });
   return redactText(result.stdout + result.stderr, secretList(ctx.config));
 }
 
@@ -94,13 +97,15 @@ export async function restartService(ctx: AdapterContext, service: string): Prom
 }
 
 export async function gitRevision(ctx: AdapterContext): Promise<Record<string, string>> {
-  const branch = await runner(ctx)(ctx.config.gitBinary, ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: ctx.config.repoDir });
-  const commit = await runner(ctx)(ctx.config.gitBinary, ['rev-parse', 'HEAD'], { cwd: ctx.config.repoDir });
+  const branch = await runner(ctx)(ctx.config.gitBinary, ['-c', `safe.directory=${ctx.config.repoDir}`, 'rev-parse', '--abbrev-ref', 'HEAD'], { cwd: ctx.config.repoDir });
+  const commit = await runner(ctx)(ctx.config.gitBinary, ['-c', `safe.directory=${ctx.config.repoDir}`, 'rev-parse', 'HEAD'], { cwd: ctx.config.repoDir });
+  if (branch.code !== 0 || commit.code !== 0) throw Object.assign(new Error(branch.stderr || commit.stderr), { code: 'GIT_REVISION_FAILED' });
   return { branch: branch.stdout.trim(), commit: commit.stdout.trim() };
 }
 
 export async function gitStatus(ctx: AdapterContext): Promise<Record<string, unknown>> {
-  const result = await runner(ctx)(ctx.config.gitBinary, ['status', '--porcelain=v1'], { cwd: ctx.config.repoDir, maxOutputBytes: 64_000 });
+  const result = await runner(ctx)(ctx.config.gitBinary, ['-c', `safe.directory=${ctx.config.repoDir}`, 'status', '--porcelain=v1'], { cwd: ctx.config.repoDir, maxOutputBytes: 64_000 });
+  if (result.code !== 0) throw Object.assign(new Error(result.stderr), { code: 'GIT_STATUS_FAILED' });
   return { clean: result.stdout.trim().length === 0, porcelain: result.stdout.trim().split('\n').filter(Boolean) };
 }
 

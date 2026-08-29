@@ -13,7 +13,7 @@ RUN npm run build && npm prune --omit=dev
 FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-RUN apk add --no-cache docker-cli git curl coreutils && addgroup -S control && adduser -S control -G control
+RUN apk add --no-cache docker-cli docker-cli-compose git curl coreutils && addgroup -S control && adduser -S control -G control
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist

@@ -288,6 +288,8 @@ services:
       WISE2_PUBLIC_URL: https://wise2.net
       WISE2_API_HEALTH_URL: http://127.0.0.1:3010/api/health
     network_mode: host
+    group_add:
+      - "${DOCKER_GID:-985}"
     volumes:
       - ./:/workspace:ro
       - ./data/control-bridge:/data/control-bridge
