@@ -1,71 +1,52 @@
-# WISE² HVAC Field Tech — Cloudflare Tunnel Deployment
+# WISE² HVAC Field Tech — Public Deployment
 
-Public target: `https://hvac.wise2.net/field-tech`  
-Local service: `http://127.0.0.1:3024`  
-Internal path: `/wise-hvac-demo/field-tech`
+**Live now (VPS + Tailscale):**
+- https://wise2.net/field-tech
+- https://wise2.net/wise-hvac-demo/field-tech
 
-## Verified local state
+**Pending DNS (hvac subdomain):**
+- https://hvac.wise2.net/field-tech — nginx ready on VPS; add IONOS A record then run `./scripts/finish-hvac-dns-ssl.sh`
 
-| Check | Status |
-|-------|--------|
-| Next.js 14 app on port 3024 | Running via PM2 (`wise-hvac-demo`) |
-| Field tech page | `curl -I http://127.0.0.1:3024/wise-hvac-demo/field-tech` → 200 |
-| Clean URL redirect | `curl -IL http://127.0.0.1:3024/field-tech` → 307 → 200 |
-| Health endpoint | `curl http://127.0.0.1:3024/wise-hvac-demo/api/health` → `{"status":"ok"}` |
-| cloudflared installed | Homebrew `2026.8.2` |
-| Cloudflare tunnel auth | **Pending** — requires browser login or `CLOUDFLARE_TUNNEL_TOKEN` |
-
-## DNS note
-
-`wise2.net` uses **IONOS** nameservers (`ui-dns.*`), not Cloudflare NS. After creating the tunnel, add this CNAME in IONOS:
+## Architecture (active)
 
 ```
-hvac.wise2.net  CNAME  <tunnel-id>.cfargotunnel.com
+Internet → VPS nginx (173.208.147.165, TLS) → Tailscale → Mac (100.64.72.14:3024) → wise-hvac-demo
 ```
 
-`cloudflared tunnel route dns` only works if the zone uses Cloudflare nameservers.
+Port 3024 is not exposed publicly. Tailscale carries traffic VPS → WISE² Mac.
 
-## One-time setup
+## Local service
 
-1. Ensure the app is running:
+| Check | Command |
+|-------|---------|
+| Field tech | `curl -I http://127.0.0.1:3024/wise-hvac-demo/field-tech` |
+| Clean path | `curl -IL http://127.0.0.1:3024/field-tech` |
+| Health | `curl http://127.0.0.1:3024/wise-hvac-demo/api/health` |
+| PM2 | `pm2 list` (app: `wise-hvac-demo`) |
+
+## Finish hvac.wise2.net
+
+1. In IONOS DNS for `wise2.net`, add:
+   ```
+   Type: A
+   Host: hvac
+   Points to: 173.208.147.165
+   ```
+2. Run:
    ```bash
-   cd apps/wise-hvac-demo
-   pm2 start ecosystem.config.cjs
-   pm2 save
+   chmod +x scripts/finish-hvac-dns-ssl.sh
+   ./scripts/finish-hvac-dns-ssl.sh
    ```
 
-2. Authenticate cloudflared (pick one):
-   - **Interactive:** `cloudflared tunnel login` (select `wise2.net` zone)
-   - **Token:** Create a tunnel in Cloudflare Zero Trust → copy token → `export CLOUDFLARE_TUNNEL_TOKEN='...'`
+Optional: set `IONOS_API_KEY` on the VPS and run `scripts/add-hvac-ionos-dns.sh` to automate step 1.
 
-3. Run the setup script:
-   ```bash
-   ./scripts/setup-hvac-cloudflare-tunnel.sh
-   ```
+## Cloudflare Tunnel (alternative)
 
-4. If using IONOS DNS, add the CNAME record manually (see above).
-
-5. Verify:
-   ```bash
-   curl -IL https://hvac.wise2.net/field-tech
-   curl https://hvac.wise2.net/wise-hvac-demo/api/health
-   ```
-
-## Architecture
-
-```
-Internet → Cloudflare (TLS) → cloudflared tunnel → 127.0.0.1:3024 → Next.js wise-hvac-demo
-```
-
-Clean URL `/field-tech` redirects (307) to `/wise-hvac-demo/field-tech` via `next.config.js` redirects.
+Files remain in `infra/cloudflare/hvac/` if you prefer Cloudflare Tunnel later:
+`./scripts/setup-hvac-cloudflare-tunnel.sh` (requires `cloudflared tunnel login` or `CLOUDFLARE_TUNNEL_TOKEN`).
 
 ## Security
 
-- Port 3024 stays on localhost; only the tunnel is public.
-- Demo mode is on (`WISE_HVAC_DEMO_MODE` not `false`); auth middleware is bypassed.
-- No `.env`, tokens, or credentials are committed.
+- Demo mode is on; auth middleware is bypassed.
+- Do not expose port 3024 on the public internet.
 
-## Persistence
-
-- **App:** `pm2 save` + `pm2 startup` (run the command PM2 prints)
-- **Tunnel:** `cloudflared service install` (run by setup script after login)
