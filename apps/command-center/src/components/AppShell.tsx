@@ -13,20 +13,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
   useEffect(() => setMobileMenuOpen(false), [pathname]);
 
   if (pathname === '/login') return <>{children}</>;
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-wise-black flex items-center justify-center">
-        <div className="text-wise-electric text-lg font-bold tracking-wider animate-pulse">WISE²</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-wise-black text-text-primary">

@@ -34,6 +34,7 @@ function LoginForm() {
       const token = data.accessToken || data.access_token || data.token;
       if (token) {
         localStorage.setItem('auth_token', token);
+        localStorage.setItem('authToken', token);
       }
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));

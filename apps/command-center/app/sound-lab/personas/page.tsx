@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../../src/contexts/AuthContext';
-import { getSoundLabToken } from '../../../src/lib/sound-lab/api';
+import { getSoundLabApiBase, getSoundLabToken } from '../../../src/lib/sound-lab/api';
 
 interface Persona {
   id: string;
@@ -31,7 +31,7 @@ export default function PersonasPage() {
     if (!user?.id) return;
     const token = getSoundLabToken();
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api'}/v1/gallery?userId=${user.id}&sourceModule=sound-lab-persona`,
+      `${getSoundLabApiBase()}/v1/gallery?userId=${user.id}&sourceModule=sound-lab-persona`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
     if (res.ok) {
@@ -60,7 +60,7 @@ export default function PersonasPage() {
       permittedUses: uses,
       status: 'authorized',
     }));
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api'}/v1/gallery/upload`, {
+    const res = await fetch(`${getSoundLabApiBase()}/v1/gallery/upload`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: form,

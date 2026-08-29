@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerApiUrl } from '../../../../src/lib/server-api';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('authToken')?.value;
@@ -12,33 +11,45 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
+  const API_URL = getServerApiUrl();
+
   try {
     const res = await fetch(`${API_URL}/v1/billing/subscription`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!res.ok) {
-      return NextResponse.json({ authenticated: true, token, user: null, subscription: null });
+    let subscription = null;
+    if (res.ok) {
+      subscription = await res.json();
     }
-
-    const subscription = await res.json();
 
     const payload = JSON.parse(atob(token.split('.')[1]));
 
     return NextResponse.json({
       authenticated: true,
       token,
-      user: { id: payload.sub, email: payload.email, role: payload.role },
+      user: {
+        id: payload.sub,
+        email: payload.email,
+        role: payload.role,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      },
       subscription,
     });
   } catch {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return NextResponse.json({
-      authenticated: true,
-      token,
-      user: { id: payload.sub, email: payload.email, role: payload.role },
-      subscription: null,
-    });
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return NextResponse.json({
+        authenticated: true,
+        token,
+        user: { id: payload.sub, email: payload.email, role: payload.role },
+        subscription: null,
+        apiReachable: false,
+      });
+    } catch {
+      return NextResponse.json({ authenticated: false }, { status: 401 });
+    }
   }
 }
 

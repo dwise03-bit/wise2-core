@@ -27,6 +27,8 @@ import {
   CreateCommentDto,
   SetApprovalDto,
   AttachAssetDto,
+  ClientReviewCommentDto,
+  ClientReviewApprovalDto,
 } from './dto';
 
 @Controller('v1/sound-labs')
@@ -395,5 +397,68 @@ export class SoundLabsController {
     res.setHeader('Cache-Control', 'private, max-age=3600');
     const buf = Buffer.from(await upstream.arrayBuffer());
     res.send(buf);
+  }
+
+  @Post('me/projects/:projectId/review-link')
+  @UseGuards(JwtAuthGuard)
+  async createReviewLink(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const link = await this.soundLabsService.createReviewLink(projectId, req.user.id);
+    return { success: true, ...link };
+  }
+
+  @Get('review/:token')
+  async getReviewProject(@Param('token') token: string) {
+    const project = await this.soundLabsService.getProjectForReview(token);
+    return { success: true, project };
+  }
+
+  @Get('review/:token/comments')
+  async listReviewComments(@Param('token') token: string) {
+    const comments = await this.soundLabsService.listReviewComments(token);
+    return { comments };
+  }
+
+  @Post('review/:token/comments')
+  async addReviewComment(
+    @Param('token') token: string,
+    @Body() dto: ClientReviewCommentDto,
+  ) {
+    const comment = await this.soundLabsService.addClientReviewComment(
+      token,
+      dto.content,
+      dto.authorName,
+      dto.timestamp,
+    );
+    return { success: true, comment };
+  }
+
+  @Post('review/:token/approval')
+  async setReviewApproval(
+    @Param('token') token: string,
+    @Body() dto: ClientReviewApprovalDto,
+  ) {
+    const project = await this.soundLabsService.setClientReviewApproval(
+      token,
+      dto.status,
+      dto.note,
+      dto.authorName,
+    );
+    return { success: true, project };
+  }
+
+  @Get('review/:token/recordings/:recordingId/audio')
+  async streamReviewRecording(
+    @Param('token') token: string,
+    @Param('recordingId') recordingId: string,
+    @Res() res: Response,
+  ) {
+    const { buffer, mimeType } = await this.soundLabsService.streamReviewRecording(token, recordingId);
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    res.send(buffer);
   }
 }

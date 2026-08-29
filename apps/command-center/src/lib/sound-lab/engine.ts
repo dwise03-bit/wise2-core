@@ -12,7 +12,7 @@ import {
 } from './types';
 import { computePeaks } from './waveform';
 import { encodeWav } from './wav';
-import { resolveMediaUrl } from './api';
+import { fetchAudioArrayBuffer } from './api';
 
 export interface EngineMeters {
   master: number;
@@ -139,8 +139,7 @@ export function useSoundLabEngine() {
   const loadBuffer = useCallback(async (url: string) => {
     if (bufferCache.current.has(url)) return bufferCache.current.get(url)!;
     const ctx = await ensureContext();
-    const res = await fetch(resolveMediaUrl(url));
-    const arr = await res.arrayBuffer();
+    const arr = await fetchAudioArrayBuffer(url);
     const buf = await ctx.decodeAudioData(arr.slice(0));
     bufferCache.current.set(url, buf);
     return buf;

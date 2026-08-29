@@ -6,16 +6,22 @@ import { useSoundLabEngine } from '../../lib/sound-lab/engine';
 import {
   attachGalleryAsset,
   addComment,
+  addReviewComment,
   canGenerate,
+  createReviewLink,
   createVersion,
   generateMusic,
   getProject,
+  getReviewProject,
   listComments,
   listGalleryAudio,
+  listReviewComments,
   listVersions,
   restoreVersion,
+  reviewRecordingUrl,
   saveMixerState,
   setApproval,
+  setReviewApproval,
   uploadRecording,
 } from '../../lib/sound-lab/api';
 import { proposeProduction, masteringProposal, MASTERING_PRESETS, ProducerProposal } from '../../lib/sound-lab/ai-producer';
@@ -48,11 +54,15 @@ function barsBeats(time: number, bpm: number, beatsPerBar: number) {
 
 export default function StudioWorkspace({
   projectId,
+  shareToken,
   clientMode = false,
 }: {
-  projectId: string;
+  projectId?: string;
+  shareToken?: string;
   clientMode?: boolean;
 }) {
+  const isShareReview = Boolean(shareToken);
+  const resolvedProjectId = projectId || '';
   const { user } = useAuth();
   const engine = useSoundLabEngine();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -72,6 +82,29 @@ export default function StudioWorkspace({
   const [midiNotes, setMidiNotes] = useState<string[]>([]);
   const [midiSupported, setMidiSupported] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [clientName, setClientName] = useState('');
+  const [reviewLink, setReviewLink] = useState<string | null>(null);
+
+  const rewriteMixForShare = useCallback((mix: ReturnType<typeof normalizeMixerState>, recordings: Array<{ id: string; s3Url: string }>) => {
+    if (!shareToken) return mix;
+    const byRecording = new Map(recordings.map((r) => [r.id, r]));
+    return {
+      ...mix,
+      tracks: mix.tracks.map((track) => ({
+        ...track,
+        clips: track.clips.map((clip) => {
+          if (clip.recordingId && byRecording.has(clip.recordingId)) {
+            return { ...clip, url: reviewRecordingUrl(shareToken, clip.recordingId) };
+          }
+          if (clip.url?.startsWith('/api/v1/sound-labs/audio/')) {
+            const rec = recordings.find((r) => r.s3Url === clip.url);
+            if (rec) return { ...clip, url: reviewRecordingUrl(shareToken, rec.id), recordingId: rec.id };
+          }
+          return clip;
+        }),
+      })),
+    };
+  }, [shareToken]);
 
   const px = engine.zoom;
   const selectedTrack = engine.state.tracks.find((t) => t.id === engine.selectedTrackId) || engine.state.tracks[0];
@@ -79,7 +112,44 @@ export default function StudioWorkspace({
   const load = useCallback(async () => {
     try {
       setStatus('Opening project…');
-      const project = await getProject(projectId);
+      if (isShareReview && shareToken) {
+        const project = await getReviewProject(shareToken);
+        setName(project.name);
+        const recordings = project.recordings || [];
+        let mix = normalizeMixerState(project.mixerState);
+        if (!mix.tracks.length && recordings.length) {
+          const track = createTrack('instrumental', 'IMPORTS');
+          mix.tracks = [track];
+          for (const rec of recordings) {
+            track.clips.push({
+              id: `rec-${rec.id}`,
+              trackId: track.id,
+              name: rec.name,
+              url: reviewRecordingUrl(shareToken, rec.id),
+              recordingId: rec.id,
+              startTime: 0,
+              duration: rec.duration || 0,
+              displayStart: 0,
+              displayEnd: rec.duration || 8,
+              fadeIn: 0,
+              fadeOut: 0.02,
+              source: 'imported',
+            });
+          }
+        } else {
+          mix = rewriteMixForShare(mix, recordings);
+        }
+        engine.hydrate(mix);
+        setComments(await listReviewComments(shareToken));
+        setStatus('Ready');
+        return;
+      }
+
+      if (!resolvedProjectId) {
+        throw new Error('Project id missing');
+      }
+
+      const project = await getProject(resolvedProjectId);
       setName(project.name);
       const mix = normalizeMixerState(project.mixerState);
       if (!mix.tracks.length && (project.recordings || []).length) {
@@ -106,8 +176,8 @@ export default function StudioWorkspace({
       const [g, live, v, c] = await Promise.all([
         user?.id ? listGalleryAudio(user.id) : { assets: [] },
         user?.id ? listGalleryAudio(user.id, 'live-studio') : { assets: [] },
-        listVersions(projectId).catch(() => []),
-        listComments(projectId).catch(() => []),
+        listVersions(resolvedProjectId).catch(() => []),
+        listComments(resolvedProjectId).catch(() => []),
       ]);
       setGallery(g.assets || []);
       setLiveAssets(live.assets || []);
@@ -118,16 +188,16 @@ export default function StudioWorkspace({
       setError(err instanceof Error ? err.message : 'Failed to open project');
       setStatus('Error');
     }
-  }, [projectId, user?.id]);
+  }, [isShareReview, shareToken, resolvedProjectId, user?.id, engine, rewriteMixForShare]);
 
   useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
-    if (!engine.dirty || clientMode) return;
+    if (!engine.dirty || clientMode || isShareReview || !resolvedProjectId) return;
     const t = setTimeout(async () => {
       try {
         setSaving(true);
-        await saveMixerState(projectId, engine.state);
+        await saveMixerState(resolvedProjectId, engine.state);
         engine.setDirty(false);
         setStatus('Saved');
       } catch (err) {
@@ -137,7 +207,7 @@ export default function StudioWorkspace({
       }
     }, 1200);
     return () => clearTimeout(t);
-  }, [engine.dirty, engine.state, projectId, clientMode]);
+  }, [engine.dirty, engine.state, resolvedProjectId, clientMode, isShareReview]);
 
   useEffect(() => {
     const onKey = async (e: KeyboardEvent) => {
@@ -149,14 +219,15 @@ export default function StudioWorkspace({
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') { e.preventDefault(); engine.undo(); }
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
-        await saveMixerState(projectId, engine.state);
+        if (!resolvedProjectId || isShareReview) return;
+        await saveMixerState(resolvedProjectId, engine.state);
         engine.setDirty(false);
         setStatus('Saved');
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [engine, projectId]);
+  }, [engine, resolvedProjectId, isShareReview]);
 
   useEffect(() => {
     setMidiSupported(typeof navigator !== 'undefined' && 'requestMIDIAccess' in navigator);
@@ -176,7 +247,9 @@ export default function StudioWorkspace({
     engine.rememberObjectUrl(url);
     await engine.importUrl(url, file.name, 'imported');
     try {
-      await uploadRecording(projectId, file, file.name);
+      if (!isShareReview && resolvedProjectId) {
+        await uploadRecording(resolvedProjectId, file, file.name);
+      }
       setStatus(`Imported ${file.name}`);
     } catch (err) {
       setStatus(`Local clip added. Upload: ${err instanceof Error ? err.message : 'failed'}`);
@@ -191,7 +264,9 @@ export default function StudioWorkspace({
         engine.rememberObjectUrl(url);
         await engine.importUrl(url, `Take ${new Date().toLocaleTimeString()}`, 'recorded', 'vocal');
         try {
-          await uploadRecording(projectId, blob, `Take ${Date.now()}`);
+          if (!isShareReview && resolvedProjectId) {
+            await uploadRecording(resolvedProjectId, blob, `Take ${Date.now()}`);
+          }
         setStatus('Take stored');
       } catch (err) {
         setStatus(err instanceof Error ? err.message : 'Take stored locally only');
@@ -285,26 +360,51 @@ export default function StudioWorkspace({
         <span style={{ color: engine.dirty ? '#F2B632' : '#39FF14' }}>
           {saving ? 'SAVING' : engine.dirty ? 'UNSAVED' : 'SAVED'}
         </span>
-        {!clientMode && (
+        {!clientMode && !isShareReview && (
           <>
             <button className="sl-btn" onClick={engine.undo} disabled={!engine.canUndo}>UNDO</button>
             <button className="sl-btn" onClick={engine.redo} disabled={!engine.canRedo}>REDO</button>
             <button className="sl-btn" onClick={async () => {
               const label = window.prompt('Version name', 'Mix V2') || 'Snapshot';
-              await saveMixerState(projectId, engine.state);
-              await createVersion(projectId, label);
-              setVersions(await listVersions(projectId));
+              await saveMixerState(resolvedProjectId, engine.state);
+              await createVersion(resolvedProjectId, label);
+              setVersions(await listVersions(resolvedProjectId));
               setStatus(`Version: ${label}`);
             }}>VERSION</button>
+            <button className="sl-btn" onClick={async () => {
+              try {
+                const data = await createReviewLink(resolvedProjectId);
+                const path = data.path || `/sound-lab/share/${data.token}`;
+                const url = `${window.location.origin}${path}`;
+                setReviewLink(url);
+                await navigator.clipboard.writeText(url);
+                setStatus('Client review link copied');
+              } catch (err) {
+                setStatus(err instanceof Error ? err.message : 'Share link failed');
+              }
+            }}>SHARE</button>
           </>
         )}
         <span className="ml-auto" style={{ color: '#8D98A5' }}>CPU {cpuLabel}</span>
         {engine.latencyMs != null && <span>LAT {engine.latencyMs}ms</span>}
-        <span>{user?.email}</span>
+        {!isShareReview && <span>{user?.email}</span>}
         <button className="sl-btn sl-btn-primary" onClick={() => setExportOpen(true)}>EXPORT</button>
       </div>
+      {reviewLink && !clientMode && !isShareReview && (
+        <div className="px-3 py-1 text-[10px] text-wise-electric">Review link: {reviewLink}</div>
+      )}
 
-      {!clientMode && (
+      {(clientMode || isShareReview) && (
+        <div className="sl-transport">
+          <button className="sl-btn sl-btn-primary" onClick={() => engine.playing ? engine.pause() : engine.play()}>
+            {engine.playing ? 'PAUSE' : 'PLAY'}
+          </button>
+          <button className="sl-btn" onClick={engine.stop}>STOP</button>
+          <span className="font-mono">{fmtTime(engine.playhead)}</span>
+        </div>
+      )}
+
+      {!clientMode && !isShareReview && (
         <div className="sl-transport">
           <button className="sl-btn" onClick={() => engine.setPlayhead(0)}>⏮</button>
           <button className="sl-btn" onClick={() => engine.setPlayhead(Math.max(0, engine.playhead - 2))}>◀</button>
@@ -332,7 +432,7 @@ export default function StudioWorkspace({
       )}
 
       <div className="sl-body">
-        {!clientMode && (
+        {!clientMode && !isShareReview && (
           <aside className="sl-side">
             <h3 className="sl-kicker">Project</h3>
             <button className="sl-btn sl-btn-primary w-full mb-2" onClick={() => fileRef.current?.click()}>IMPORT AUDIO</button>
@@ -349,7 +449,7 @@ export default function StudioWorkspace({
               <button key={a.id} className="sl-btn w-full text-left mb-1" onClick={async () => {
                 const url = a.url || `/api/v1/gallery/file/${a.filename}`;
                 await engine.importUrl(url, a.originalName || a.filename, 'imported');
-                await attachGalleryAsset(projectId, a.id, a.originalName).catch(() => null);
+                await attachGalleryAsset(resolvedProjectId, a.id, a.originalName).catch(() => null);
               }}>{a.originalName || a.filename}</button>
             ))}
             <h3 className="sl-kicker mt-4">Live Studio</h3>
@@ -358,7 +458,7 @@ export default function StudioWorkspace({
               <button key={a.id} className="sl-btn w-full text-left mb-1" onClick={async () => {
                 const url = a.url || `/api/v1/gallery/file/${a.filename}`;
                 await engine.importUrl(url, a.originalName, 'live-studio');
-                await attachGalleryAsset(projectId, a.id, a.originalName).catch(() => null);
+                await attachGalleryAsset(resolvedProjectId, a.id, a.originalName).catch(() => null);
               }}>{a.originalName}</button>
             ))}
           </aside>
@@ -425,7 +525,7 @@ export default function StudioWorkspace({
 
         <aside className="sl-ai">
           <h3 className="sl-kicker">AI Producer</h3>
-          {!clientMode && (
+          {!clientMode && !isShareReview && (
             <>
               <textarea className="wise-input w-full h-20 text-xs" value={prompt} onChange={(e) => setPrompt(e.target.value)}
                 placeholder='“Clean this vocal.” “Master this for streaming.”' />
@@ -458,7 +558,7 @@ export default function StudioWorkspace({
                     const eligibility = await canGenerate();
                     if (!eligibility.allowed) { setStatus(eligibility.reason || 'Generation locked'); return; }
                     setStatus('Generating…');
-                    const data = await generateMusic(projectId, { prompt: genPrompt, tempo: engine.state.bpm });
+                    const data = await generateMusic(resolvedProjectId, { prompt: genPrompt, tempo: engine.state.bpm });
                     const url = data.project?.generatedAudioUrl;
                     if (url) await engine.importUrl(url, genPrompt.slice(0, 40), 'generated', 'beat');
                     setStatus('Generation complete');
@@ -471,6 +571,14 @@ export default function StudioWorkspace({
           )}
           <div className="mt-4">
             <h3 className="sl-kicker">Comments</h3>
+            {(clientMode || isShareReview) && (
+              <input
+                className="wise-input text-xs w-full mb-2"
+                placeholder="Your name (optional)"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+              />
+            )}
             {comments.map((c) => (
               <p key={c.id} className="text-xs text-text-secondary mb-1">{c.content}{c.timestamp != null ? ` @ ${fmtTime(c.timestamp)}` : ''}</p>
             ))}
@@ -478,35 +586,59 @@ export default function StudioWorkspace({
               <input className="wise-input text-xs" value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Timestamp comment" />
               <button className="sl-btn" onClick={async () => {
                 if (!commentText.trim()) return;
-                await addComment(projectId, commentText, engine.playhead, engine.selectedTrackId || undefined);
+                if (isShareReview && shareToken) {
+                  await addReviewComment(shareToken, commentText, clientName || undefined, engine.playhead);
+                  setComments(await listReviewComments(shareToken));
+                } else if (resolvedProjectId) {
+                  await addComment(resolvedProjectId, commentText, engine.playhead, engine.selectedTrackId || undefined);
+                  setComments(await listComments(resolvedProjectId));
+                }
                 setCommentText('');
-                setComments(await listComments(projectId));
               }}>POST</button>
             </div>
           </div>
+          {!isShareReview && (
           <div className="mt-4">
             <h3 className="sl-kicker">Versions</h3>
             {versions.map((v) => (
               <button key={v.id} className="sl-btn w-full text-left mb-1" onClick={async () => {
                 if (clientMode) return;
-                const data = await restoreVersion(projectId, v.id);
+                const data = await restoreVersion(resolvedProjectId, v.id);
                 engine.hydrate(data.project?.mixerState);
                 setStatus(`Restored ${v.label}`);
               }}>{v.label}</button>
             ))}
           </div>
+          )}
           <div className="mt-4">
             <h3 className="sl-kicker">Approval</h3>
             <p className="text-xs mb-2">{engine.state.approval?.status || 'draft'}</p>
             <div className="flex gap-1">
-              <button className="sl-btn sl-btn-primary" onClick={async () => { await setApproval(projectId, 'approved'); setStatus('Approved'); }}>APPROVE</button>
-              <button className="sl-btn" onClick={async () => { await setApproval(projectId, 'revision', commentText); }}>REVISION</button>
+              <button className="sl-btn sl-btn-primary" onClick={async () => {
+                if (isShareReview && shareToken) {
+                  const data = await setReviewApproval(shareToken, 'approved', undefined, clientName || undefined);
+                  engine.hydrate(data.project?.mixerState);
+                } else if (resolvedProjectId) {
+                  const data = await setApproval(resolvedProjectId, 'approved');
+                  engine.hydrate(data.project?.mixerState);
+                }
+                setStatus('Approved');
+              }}>APPROVE</button>
+              <button className="sl-btn" onClick={async () => {
+                if (isShareReview && shareToken) {
+                  const data = await setReviewApproval(shareToken, 'revision', commentText, clientName || undefined);
+                  engine.hydrate(data.project?.mixerState);
+                } else if (resolvedProjectId) {
+                  await setApproval(resolvedProjectId, 'revision', commentText);
+                }
+                setStatus('Revision requested');
+              }}>REVISION</button>
             </div>
           </div>
         </aside>
       </div>
 
-      {!clientMode && (
+      {!clientMode && !isShareReview && (
         <div className="sl-mixer">
           <button className="sl-btn" onClick={() => engine.addTrack('vocal')}>+ TRACK</button>
           <select className="wise-input w-28" onChange={(e) => engine.addTrack(e.target.value as TrackType)} value="">

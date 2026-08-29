@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../src/contexts/AuthContext';
-import { createProject, deleteProject, listProjects } from '../../../src/lib/sound-lab/api';
+import { createProject, deleteProject, listProjects, createReviewLink } from '../../../src/lib/sound-lab/api';
 import { SoundLabsProject } from '../../../src/lib/sound-lab/types';
 
 export default function SoundLabProjectsPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const [projects, setProjects] = useState<SoundLabsProject[]>([]);
   const [name, setName] = useState('');
@@ -26,6 +26,20 @@ export default function SoundLabProjectsPage() {
   useEffect(() => { if (user?.id) load(); }, [user?.id, load]);
 
   if (isLoading) return <div className="p-8 sl-kicker">Loading…</div>;
+
+  if (!isAuthenticated) {
+    return (
+      <div className="p-6">
+        <div className="sl-card">
+          <h1 className="sl-title" style={{ fontSize: 32 }}>Productions</h1>
+          <p className="text-sm text-text-secondary mt-2">
+            Sign in to manage Sound Lab projects.{' '}
+            <Link href="/login?redirect=/sound-lab/projects" className="text-wise-electric hover:underline">Log in</Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
@@ -54,6 +68,11 @@ export default function SoundLabProjectsPage() {
             <div className="flex gap-2">
               <Link href={`/sound-lab/projects/${p.id}`} className="sl-btn">OPEN</Link>
               <Link href={`/sound-lab/projects/${p.id}/review`} className="sl-btn">CLIENT</Link>
+              <button className="sl-btn" onClick={async () => {
+                const data = await createReviewLink(p.id);
+                const path = data.path || `/sound-lab/share/${data.token}`;
+                await navigator.clipboard.writeText(`${window.location.origin}${path}`);
+              }}>SHARE</button>
               <button className="sl-btn" onClick={async () => { await deleteProject(p.id); load(); }}>DELETE</button>
             </div>
           </div>

@@ -9,7 +9,7 @@ import { SoundLabsProject } from '../../src/lib/sound-lab/types';
 import '../../src/styles/sound-lab.css';
 
 export default function SoundLabCommandCenterPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
   const [projects, setProjects] = useState<SoundLabsProject[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +33,10 @@ export default function SoundLabCommandCenterPage() {
   }, [user?.id, load]);
 
   const startNew = async () => {
+    if (!isAuthenticated) {
+      router.push('/login?redirect=/sound-lab');
+      return;
+    }
     setCreating(true);
     try {
       const project = await createProject(`Production ${new Date().toLocaleDateString()}`, 'Sound Lab session');
@@ -48,6 +52,12 @@ export default function SoundLabCommandCenterPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      {!isAuthenticated && (
+        <div className="sl-card mb-4 text-sm">
+          Sign in to create productions and save to your account.{' '}
+          <Link href="/login?redirect=/sound-lab" className="text-wise-electric hover:underline">Log in</Link>
+        </div>
+      )}
       <section className="sl-hero">
         <div className="sl-kicker">WISE²</div>
         <h1 className="sl-title">SOUND LAB</h1>
@@ -56,7 +66,7 @@ export default function SoundLabCommandCenterPage() {
           Recording, editing, mixing, mastering, voice, MIDI, and delivery — native to the WISE² production console.
         </p>
         <div className="sl-actions">
-          <button className="sl-btn sl-btn-primary" onClick={startNew} disabled={creating}>{creating ? 'CREATING…' : 'NEW PROJECT'}</button>
+          <button className="sl-btn sl-btn-primary" onClick={startNew} disabled={creating || !isAuthenticated}>{creating ? 'CREATING…' : 'NEW PROJECT'}</button>
           <Link href="/sound-lab/projects" className="sl-btn">OPEN PROJECT</Link>
           <Link href="/sound-lab/projects" className="sl-btn">IMPORT AUDIO</Link>
           <Link href="/sound-lab/projects" className="sl-btn">RECORD</Link>

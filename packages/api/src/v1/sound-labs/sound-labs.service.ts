@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { randomBytes } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EntitlementsService } from '../billing/entitlements.service';
 import { GalleryService, UploadedFileData } from '../gallery/gallery.service';
@@ -532,5 +533,191 @@ export class SoundLabsService {
       throw new ForbiddenException('Generated audio not found or not owned by you');
     }
     return fetchMusicGenAudio(generationId);
+  }
+
+  private static readonly CLIENT_REVIEW_EMAIL = 'client-review@share.wise2';
+
+  private async resolveReviewInvite(token: string) {
+    const invite = await this.prisma.projectInvite.findUnique({
+      where: { token },
+      include: {
+        project: { include: { recordings: true } },
+      },
+    });
+    if (!invite) {
+      throw new NotFoundException('Review link invalid or expired');
+    }
+    if (invite.expiresAt && invite.expiresAt < new Date()) {
+      throw new ForbiddenException('Review link expired');
+    }
+    return invite;
+  }
+
+  async createReviewLink(projectId: string, userId: string) {
+    await this.getUserProject(projectId, userId);
+    const existing = await this.prisma.projectInvite.findFirst({
+      where: {
+        projectId,
+        invitedBy: userId,
+        role: 'VIEWER',
+        invitedEmail: SoundLabsService.CLIENT_REVIEW_EMAIL,
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (existing) {
+      return {
+        token: existing.token,
+        expiresAt: existing.expiresAt,
+        path: `/sound-lab/share/${existing.token}`,
+      };
+    }
+
+    const token = randomBytes(24).toString('hex');
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const invite = await this.prisma.projectInvite.create({
+      data: {
+        projectId,
+        invitedBy: userId,
+        invitedEmail: SoundLabsService.CLIENT_REVIEW_EMAIL,
+        token,
+        role: 'VIEWER',
+        expiresAt,
+      },
+    });
+
+    await this.prisma.activityLog.create({
+      data: {
+        projectId,
+        userId,
+        action: 'review_link_created',
+        entityType: 'invite',
+        entityId: invite.id,
+        details: { expiresAt: expiresAt.toISOString() },
+      },
+    });
+
+    return {
+      token: invite.token,
+      expiresAt: invite.expiresAt,
+      path: `/sound-lab/share/${invite.token}`,
+    };
+  }
+
+  async getProjectForReview(token: string) {
+    const invite = await this.resolveReviewInvite(token);
+    const project = invite.project;
+    const mixerState = (project.mixerState as Record<string, unknown>) || {};
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      mixerState: project.mixerState,
+      recordings: (project.recordings || []).map((r) => ({
+        id: r.id,
+        name: r.name,
+        s3Url: r.s3Url,
+        duration: r.duration,
+        fileSize: r.fileSize,
+      })),
+      approval: mixerState.approval || { status: 'draft' },
+    };
+  }
+
+  async listReviewComments(token: string) {
+    const invite = await this.resolveReviewInvite(token);
+    return this.prisma.projectComment.findMany({
+      where: { projectId: invite.projectId },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async addClientReviewComment(
+    token: string,
+    content: string,
+    authorName?: string,
+    timestamp?: number,
+  ) {
+    const invite = await this.resolveReviewInvite(token);
+    const body = authorName ? `[${authorName}] ${content}` : `[Client] ${content}`;
+    const comment = await this.prisma.projectComment.create({
+      data: {
+        projectId: invite.projectId,
+        userId: invite.project.userId,
+        content: body,
+        timestamp: timestamp ?? null,
+      },
+    });
+    await this.prisma.activityLog.create({
+      data: {
+        projectId: invite.projectId,
+        userId: invite.project.userId,
+        action: 'client_comment_added',
+        entityType: 'comment',
+        entityId: comment.id,
+        details: { authorName: authorName || 'Client' },
+      },
+    });
+    return comment;
+  }
+
+  async setClientReviewApproval(
+    token: string,
+    status: 'approved' | 'revision',
+    note?: string,
+    authorName?: string,
+  ) {
+    const invite = await this.resolveReviewInvite(token);
+    const project = invite.project;
+    const mixerState = {
+      ...((project.mixerState as Record<string, unknown>) || {}),
+      approval: {
+        status,
+        note: note || null,
+        by: authorName ? `client:${authorName}` : 'client',
+        at: new Date().toISOString(),
+      },
+    };
+    await this.prisma.soundLabsProject.update({
+      where: { id: project.id },
+      data: { mixerState: mixerState as any },
+    });
+    await this.prisma.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: project.userId,
+        action: `client_approval_${status}`,
+        entityType: 'approval',
+        details: { note: note || null, authorName: authorName || 'Client' },
+      },
+    });
+    return this.getProjectForReview(token);
+  }
+
+  async streamReviewRecording(
+    token: string,
+    recordingId: string,
+  ): Promise<{ buffer: Buffer; mimeType: string }> {
+    const invite = await this.resolveReviewInvite(token);
+    const recording = invite.project.recordings.find((r) => r.id === recordingId);
+    if (!recording) {
+      throw new NotFoundException('Recording not found on this project');
+    }
+
+    if (recording.s3Url?.includes('/sound-labs/audio/')) {
+      const generationId = recording.s3Key || recording.s3Url.split('/').pop();
+      if (!generationId) throw new NotFoundException('Generated audio unavailable');
+      const upstream = await fetchMusicGenAudio(generationId);
+      if (!upstream?.body) throw new NotFoundException('Generated audio unavailable');
+      return {
+        buffer: Buffer.from(await upstream.arrayBuffer()),
+        mimeType: upstream.headers.get('content-type') || 'audio/wav',
+      };
+    }
+
+    const filename = recording.s3Key || recording.s3Url?.split('/').pop();
+    if (!filename) throw new NotFoundException('Recording file missing');
+    const { buffer, mimeType } = await this.galleryService.getFileBuffer(filename);
+    return { buffer, mimeType };
   }
 }

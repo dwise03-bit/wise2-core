@@ -106,3 +106,29 @@ export class AttachAssetDto {
   @IsString()
   name?: string;
 }
+
+export class ClientReviewCommentDto {
+  @IsString()
+  content!: string;
+
+  @IsOptional()
+  @IsString()
+  authorName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  timestamp?: number;
+}
+
+export class ClientReviewApprovalDto {
+  @IsString()
+  status!: 'approved' | 'revision';
+
+  @IsOptional()
+  @IsString()
+  note?: string;
+
+  @IsOptional()
+  @IsString()
+  authorName?: string;
+}
