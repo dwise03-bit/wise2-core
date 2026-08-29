@@ -54,7 +54,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function BlakkhailLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`${oswald.variable} ${inter.variable} antialiased`} style={{ fontFamily: 'var(--font-body)' }}>
+    <div
+      className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
+      style={{ fontFamily: 'var(--font-body)', backgroundColor: '#0A0A0A', color: '#A8A8A8' }}
+    >
       {children}
     </div>
   );

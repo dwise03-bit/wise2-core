@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
+import { BlakkhailSectionHeading } from './BlakkhailSectionHeading';
 
 export function BlakkhailShopScroll() {
   const photos = BLAKKHAIL_LEGACY.assets.shopPhotos;
@@ -13,9 +14,14 @@ export function BlakkhailShopScroll() {
       className={`${BLAKKHAIL_LAYOUT.section} ${BLAKKHAIL_LAYOUT.sectionY}`}
       style={{ backgroundColor: BLAKKHAIL.jetBlack }}
     >
+      <BlakkhailSectionHeading eyebrow="Featured Apparel" title="Shop" />
       <div
         className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:gap-6 sm:px-6 lg:px-8"
-        style={{ scrollbarWidth: 'thin', scrollbarColor: `${BLAKKHAIL.darkGold} ${BLAKKHAIL.jetBlack}` }}
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: `${BLAKKHAIL.darkGold} ${BLAKKHAIL.jetBlack}`,
+          overscrollBehaviorX: 'contain',
+        }}
       >
         {photos.map((src, index) => (
           <div
@@ -32,7 +38,7 @@ export function BlakkhailShopScroll() {
               alt={`Blakk Hail apparel ${index + 1}`}
               fill
               sizes="(max-width: 768px) 88vw, 560px"
-              className="object-contain p-3 sm:p-5"
+              className="object-cover"
             />
           </div>
         ))}

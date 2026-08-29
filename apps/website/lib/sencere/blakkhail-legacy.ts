@@ -5,7 +5,7 @@ export const BLAKKHAIL_LEGACY = {
   social: {
     facebook: 'https://www.facebook.com/blakk.hail',
     twitter: 'https://twitter.com/blakkhail',
-    instagram: 'https://www.instagram.com/blakkhail',
+    instagram: 'https://www.instagram.com/blakkhail/',
     youtube: 'https://www.youtube.com/watch?v=dDsoB8msubk',
   },
   video: {
@@ -14,12 +14,11 @@ export const BLAKKHAIL_LEGACY = {
   },
   nav: [
     { label: 'Home', href: '#home' },
+    { label: 'Shop', href: '#shop' },
     { label: 'About Us', href: '#about' },
-    { label: 'Collection', href: '#collection' },
     { label: 'Look Book', href: '#look-book' },
     { label: 'Video', href: '#video' },
-    { label: 'Shop', href: '#shop' },
-    { label: 'Photo Shoot', href: '#photo-shoot' },
+    { label: 'Collection', href: '#collection' },
     { label: 'Contact Us', href: '#contact' },
   ],
   assets: {
@@ -50,5 +49,5 @@ export const BLAKKHAIL_PRODUCT_IMAGES: Record<string, string> = {
   '2cans-bwb': BLAKKHAIL_LEGACY.assets.shopPhotos[2],
   'alien-alliance-gray': BLAKKHAIL_LEGACY.assets.shopPhotos[3],
   'alien-alliance-black': BLAKKHAIL_LEGACY.assets.shopPhotos[4],
-  'alien-alliance-white': BLAKKHAIL_LEGACY.assets.shopPhotos[6],
+  'alien-alliance-white': BLAKKHAIL_LEGACY.assets.shopPhotos[5],
 };

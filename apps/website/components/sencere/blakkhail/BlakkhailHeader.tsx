@@ -1,25 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
+import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { blakkhailBrand } from './config';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
-import { checkoutPath, homePath, isBlackhailHost } from '@/lib/site-domains';
+import { checkoutPath, isBlackhailHost } from '@/lib/site-domains';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 
 export function BlakkhailHeader() {
   const [host, setHost] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setHost(window.location.hostname);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   const onBlackhailDomain = host ? isBlackhailHost(host) : false;
-  const homeHref = host ? homePath(host) : '/';
   const parentHref = onBlackhailDomain
     ? `${blakkhailBrand.parentSiteUrl}${blakkhailBrand.parentPath}`
     : blakkhailBrand.parentPath;
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header
@@ -27,65 +36,103 @@ export function BlakkhailHeader() {
       style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}
     >
       <div
-        className={`${BLAKKHAIL_LAYOUT.container} flex min-h-11 flex-wrap items-center justify-between gap-2 py-2 text-[11px] uppercase tracking-[0.18em] sm:text-xs sm:tracking-[0.22em]`}
-        style={{ backgroundColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+        className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-2 py-2 sm:gap-3`}
+        style={{ backgroundColor: BLAKKHAIL.gunmetal }}
       >
-        <span className="max-w-[70%] leading-snug sm:max-w-none">{blakkhailBrand.tagline}</span>
-        <span className="hidden sm:inline" style={{ color: BLAKKHAIL.gold }}>
-          {blakkhailBrand.motto}
-        </span>
-      </div>
-
-      <div className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-4 py-4 sm:py-5`}>
         <Link
           href={parentHref}
-          className="hidden shrink-0 text-xs font-bold uppercase tracking-wider hover:opacity-80 md:block lg:text-sm"
-          style={{ color: BLAKKHAIL.steel }}
+          className="truncate text-[11px] font-semibold uppercase tracking-[0.14em] hover:opacity-80 sm:text-xs sm:tracking-[0.2em]"
+          style={{ color: BLAKKHAIL.gold }}
         >
           {blakkhailBrand.legalName}
         </Link>
 
-        <Link href={homeHref} className="min-w-0 flex-1 text-center md:flex-none">
-          <p className="text-[10px] uppercase tracking-[0.3em] sm:text-xs" style={{ color: BLAKKHAIL.gold }}>
-            {blakkhailBrand.legalName}
-          </p>
-          <h1
-            className="text-4xl font-black uppercase tracking-[0.1em] sm:text-5xl lg:text-6xl"
-            style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
-          >
-            {blakkhailBrand.name}
-          </h1>
-        </Link>
+        <span
+          className="hidden text-center text-[10px] uppercase tracking-[0.16em] sm:inline sm:text-xs"
+          style={{ color: BLAKKHAIL.steel }}
+        >
+          {blakkhailBrand.tagline}
+        </span>
 
-        {host ? (
-          <Link
-            href={checkoutPath(host)}
-            className="flex shrink-0 items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition-opacity hover:opacity-90 sm:px-5 sm:py-3 sm:text-sm"
-            style={{ backgroundColor: BLAKKHAIL.gold }}
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            className="flex min-h-11 items-center justify-center gap-2 rounded-sm border px-3 md:hidden"
+            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold, backgroundColor: BLAKKHAIL.jetBlack }}
+            aria-expanded={menuOpen}
+            aria-controls="blakkhail-mobile-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen((open) => !open)}
           >
-            <ShoppingCart size={18} />
-            <span className="hidden sm:inline">View Cart</span>
-            <span className="sm:hidden">Cart</span>
-          </Link>
-        ) : (
-          <div className="w-[88px] shrink-0 sm:w-[120px]" aria-hidden />
-        )}
+            {menuOpen ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}
+            <span className="text-xs font-bold uppercase tracking-[0.14em]">
+              {menuOpen ? 'Close' : 'Menu'}
+            </span>
+          </button>
+
+          {host ? (
+            <Link
+              href={checkoutPath(host)}
+              className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 px-3 py-2 text-sm font-bold uppercase tracking-wide text-black sm:gap-2 sm:px-4"
+              style={{ backgroundColor: BLAKKHAIL.gold }}
+            >
+              <ShoppingCart size={18} aria-hidden />
+              <span className="hidden sm:inline">Cart</span>
+              <span className="sr-only sm:hidden">Cart</span>
+            </Link>
+          ) : (
+            <span className="w-11" aria-hidden />
+          )}
+        </div>
       </div>
 
-      <nav className="border-t" style={{ borderColor: BLAKKHAIL.gunmetal, backgroundColor: BLAKKHAIL.gunmetal }}>
+      {/* Desktop nav */}
+      <nav
+        className="hidden border-t md:block"
+        style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}
+        aria-label="Main navigation"
+      >
         <ul
-          className={`${BLAKKHAIL_LAYOUT.container} flex gap-6 overflow-x-auto py-3 text-sm font-bold uppercase tracking-[0.12em] sm:gap-8 sm:py-4 sm:text-base`}
-          style={{ color: BLAKKHAIL.steel, scrollbarWidth: 'none' }}
+          className={`${BLAKKHAIL_LAYOUT.container} flex flex-wrap items-center justify-center gap-x-6 gap-y-1 py-3 lg:gap-x-8`}
         >
           {BLAKKHAIL_LEGACY.nav.map((item) => (
-            <li key={item.href} className="shrink-0">
-              <Link href={item.href} className="whitespace-nowrap hover:text-[#D6A331]">
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                className="flex min-h-11 items-center text-sm font-bold uppercase tracking-[0.12em] hover:opacity-90 lg:text-base"
+                style={{ color: BLAKKHAIL.gold }}
+              >
                 {item.label}
               </Link>
             </li>
           ))}
         </ul>
       </nav>
+
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <nav
+          id="blakkhail-mobile-menu"
+          className="border-t md:hidden"
+          style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}
+          aria-label="Mobile navigation"
+        >
+          <ul className={`${BLAKKHAIL_LAYOUT.container} flex flex-col py-2`}>
+            {BLAKKHAIL_LEGACY.nav.map((item) => (
+              <li key={item.href} className="border-b" style={{ borderColor: BLAKKHAIL.gunmetal }}>
+                <Link
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="flex min-h-12 items-center text-base font-bold uppercase tracking-[0.14em]"
+                  style={{ color: BLAKKHAIL.gold }}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }

@@ -1,0 +1,141 @@
+/* Blakk Hail cinematic experience animations */
+
+@keyframes bhFlicker {
+  0%, 100% { opacity: 1; }
+  4% { opacity: 0.55; }
+  8% { opacity: 0.92; }
+  12% { opacity: 0.48; }
+  20% { opacity: 1; }
+  28% { opacity: 0.62; }
+  36% { opacity: 0.95; }
+  44% { opacity: 0.5; }
+  52% { opacity: 1; }
+  60% { opacity: 0.7; }
+  68% { opacity: 0.4; }
+  76% { opacity: 0.88; }
+  84% { opacity: 0.58; }
+  92% { opacity: 1; }
+}
+
+@keyframes bhBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.008); }
+}
+
+@keyframes bhSteamRise {
+  0% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+  50% { opacity: 0.25; }
+  100% { transform: translateY(-120px) scaleX(1.4); opacity: 0; }
+}
+
+@keyframes bhArrowPulse {
+  0%, 100% { opacity: 0.6; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(6px); }
+}
+
+@keyframes bhDoorSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(105%); }
+}
+
+@keyframes bhProductGlide {
+  0% { transform: translateY(80px) scale(0.85); opacity: 0; filter: blur(4px); }
+  40% { opacity: 1; filter: blur(0); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes bhSteamProduct {
+  0%, 100% { opacity: 0.6; transform: translateY(0) scale(1); }
+  50% { opacity: 0.2; transform: translateY(-20px) scale(1.1); }
+}
+
+@keyframes bhSpinShot {
+  0% { transform: perspective(800px) rotateY(0deg) scale(1); }
+  25% { transform: perspective(800px) rotateY(90deg) scale(1.05); }
+  50% { transform: perspective(800px) rotateY(180deg) scale(1); }
+  75% { transform: perspective(800px) rotateY(270deg) scale(1.05); }
+  100% { transform: perspective(800px) rotateY(360deg) scale(1); }
+}
+
+@keyframes bhLogoSmash {
+  0% { transform: scale(3.5); opacity: 0; filter: blur(12px); }
+  15% { transform: scale(1.15); opacity: 1; filter: blur(0); }
+  25% { transform: scale(0.95); }
+  35% { transform: scale(1.05); }
+  50% { transform: scale(1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bhChorusFlash {
+  0% { opacity: 0; transform: scale(0.9); }
+  15% { opacity: 1; transform: scale(1); }
+  85% { opacity: 1; }
+  100% { opacity: 0.3; transform: scale(1.02); }
+}
+
+@keyframes bhLightsDie {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes bhLockRelease {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-8px); opacity: 0.5; }
+  100% { transform: translateY(12px); opacity: 0; }
+}
+
+.flickerLight {
+  animation: bhFlicker 3.2s ease-in-out infinite;
+}
+
+.hallwayBreathe {
+  animation: bhBreathe 6s ease-in-out infinite;
+}
+
+.steamWisp {
+  animation: bhSteamRise 4s ease-out infinite;
+}
+
+.steamWisp2 {
+  animation: bhSteamRise 5.5s ease-out infinite 1.2s;
+}
+
+.steamWisp3 {
+  animation: bhSteamRise 4.8s ease-out infinite 2.4s;
+}
+
+.arrowDownHall {
+  animation: bhArrowPulse 2s ease-in-out infinite;
+}
+
+.doorPanelLeft {
+  animation: bhDoorSlide 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.doorPanelRight {
+  animation: bhDoorSlide 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards reverse;
+}
+
+.productGlide {
+  animation: bhProductGlide 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.productSteam {
+  animation: bhSteamProduct 2.5s ease-in-out infinite;
+}
+
+.spinShot {
+  animation: bhSpinShot 3s ease-in-out;
+}
+
+.logoSmash {
+  animation: bhLogoSmash 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.lightsOutOverlay {
+  animation: bhLightsDie 0.65s ease-in forwards;
+}
+
+.lockRelease {
+  animation: bhLockRelease 0.8s ease-out forwards;
+}

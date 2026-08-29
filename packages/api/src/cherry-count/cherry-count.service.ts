@@ -17,6 +17,16 @@ import {
   UpdatePackingInput,
 } from './cherry-count.types';
 import { randomBytes } from 'crypto';
+import { CherryCountEventInventory, CherryCountProductVariant, Prisma } from '@prisma/client';
+
+type SaleLineItem = {
+  variant: CherryCountProductVariant & {
+    product: Prisma.CherryCountProductGetPayload<object>;
+  };
+  item: CreateSaleInput['items'][number];
+  lineTotal: number;
+  unitCost: number;
+};
 
 @Injectable()
 export class CherryCountService {
@@ -246,7 +256,7 @@ export class CherryCountService {
     });
     if (!event) throw new NotFoundException('Event not found');
 
-    const results = [];
+    const results: CherryCountEventInventory[] = [];
     for (const item of items) {
       const result = await this.prisma.cherryCountEventInventory.upsert({
         where: { eventId_variantId: { eventId, variantId: item.variantId } },
@@ -270,7 +280,7 @@ export class CherryCountService {
     updates: UpdatePackingInput[],
   ) {
     this.assertWrite(role);
-    const results = [];
+    const results: CherryCountEventInventory[] = [];
     for (const u of updates) {
       const result = await this.prisma.cherryCountEventInventory.update({
         where: { eventId_variantId: { eventId, variantId: u.variantId } },
@@ -333,7 +343,7 @@ export class CherryCountService {
     this.assertWrite(role);
     if (!input.items.length) throw new BadRequestException('Sale must have items');
 
-    const lineItems = [];
+    const lineItems: SaleLineItem[] = [];
     let subtotal = 0;
     let costTotal = 0;
 

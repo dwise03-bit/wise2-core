@@ -1,13 +1,13 @@
 # Cherry Count™ — Implementation Status
 
 **Last updated:** 2026-08-29  
-**Phase:** 1 — Foundation (in progress)
+**Phase:** 1 — Foundation (substantially complete, MVP UI with demo data)
 
 ---
 
 ## Summary
 
-Cherry Count is a **greenfield WISE² client vertical**. No prior code existed in the repository. Discovery is complete. Foundation implementation is underway.
+Cherry Count is a **greenfield WISE² client vertical**. Discovery is complete. Foundation implementation is in place: docs, Prisma models, API module, branded app, and 15-slide client presentation. App UI currently uses realistic demo data; API endpoints are implemented and type-checked but require DB migration + auth wiring for live use.
 
 ---
 
@@ -32,13 +32,13 @@ Cherry Count is a **greenfield WISE² client vertical**. No prior code existed i
 | Component | Path | Status |
 |-----------|------|--------|
 | Product docs | `docs/cherry-count/` | WORKING |
-| Prisma models | `packages/db/prisma/schema.prisma` | IN PROGRESS |
-| API module | `packages/api/src/cherry-count/` | IN PROGRESS |
-| Cherry Count app | `apps/cherry-count/` | IN PROGRESS |
-| Client presentation | `client-presentation/cherry-count/` | IN PROGRESS |
-| Brand tokens | `apps/cherry-count/lib/brand-tokens.ts` | IN PROGRESS |
-| Demo seed data | — | PLANNED |
-| Deployment config | — | PLANNED |
+| Prisma models | `packages/db/prisma/schema.prisma` | WORKING (migration pending) |
+| API module | `packages/api/src/cherry-count/` | WORKING (type-checked) |
+| Cherry Count app | `apps/cherry-count/` | WORKING (build verified) |
+| Client presentation | `client-presentation/cherry-count/` + `/presentation` | WORKING |
+| Brand tokens | `apps/cherry-count/lib/brand-tokens.ts` | WORKING |
+| Demo seed data | `apps/cherry-count/lib/demo-data.ts` | WORKING (UI only) |
+| Deployment config | WORKING — live at wise2.net/cherry-count |
 
 ---
 
@@ -46,21 +46,21 @@ Cherry Count is a **greenfield WISE² client vertical**. No prior code existed i
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Authentication | PARTIAL | Reuses WISE² JWT; app auth wiring in progress |
-| Tenant isolation | PARTIAL | Guard pattern implemented |
-| Dashboard | IN PROGRESS | Mobile-first UI scaffold |
-| Inventory CRUD | IN PROGRESS | API + UI |
-| Product variants | IN PROGRESS | Prisma model defined |
-| Storage locations | IN PROGRESS | Container model |
-| Inventory adjustments | IN PROGRESS | Transaction audit trail |
-| Pop-up events | IN PROGRESS | Event + event inventory models |
-| Packing workflow | PLANNED | UI scaffold |
-| Sales tracking | IN PROGRESS | Manual entry MVP |
-| Customer CRM | IN PROGRESS | Basic CRUD |
-| Analytics | MOCKED | Dashboard charts with demo data |
-| QR system | PARTIAL | QR code generation; scan UI planned |
-| Barcode | PLANNED | Field exists, no scanner integration |
-| Cherry AI | PARTIAL | Read-only insights endpoint |
+| Authentication | PARTIAL | API guard ready; app uses demo mode |
+| Tenant isolation | WORKING | CherryCountTenantGuard implemented |
+| Dashboard | WORKING | Demo data, build verified |
+| Inventory CRUD | PARTIAL | API complete; UI uses demo data |
+| Product variants | WORKING | Prisma + API |
+| Storage locations | PARTIAL | Container model + API; UI demo |
+| Inventory adjustments | WORKING | Audited transaction trail in API |
+| Pop-up events | PARTIAL | API + UI demo |
+| Packing workflow | MOCKED | UI checklist with demo data |
+| Sales tracking | PARTIAL | API complete; manual entry UI |
+| Customer CRM | PARTIAL | API + demo UI |
+| Analytics | MOCKED | Charts with demo data |
+| QR system | PARTIAL | QR generation in API; scan UI placeholder |
+| Barcode | PLANNED | Field exists, no scanner |
+| Cherry AI | PARTIAL | Read-only insights API |
 | Offline mode | PLANNED | Not implemented |
 | Payment integrations | PLANNED | Architecture allows; no APIs connected |
 
@@ -70,17 +70,17 @@ Cherry Count is a **greenfield WISE² client vertical**. No prior code existed i
 
 ### P0 — Unblocked Now
 1. ✅ Discovery docs
-2. 🔄 Prisma models + API module registration
-3. 🔄 App scaffold with brand system
-4. 🔄 Dashboard MVP
-5. 🔄 Client presentation deck
+2. ✅ Prisma models + API module registration
+3. ✅ App scaffold with brand system
+4. ✅ Dashboard MVP
+5. ✅ Client presentation deck
 
 ### P1 — Next
-6. Inventory pages (list, detail, add)
-7. Pop-up event pages
-8. Sales recording
-9. Customer CRM pages
-10. Demo seed data
+6. Run Prisma migration for Cherry Count tables
+7. Wire app auth to WISE² JWT API
+8. Connect UI to live API (replace demo data)
+9. Demo seed script for tenant provisioning
+10. QR scan workflow (camera integration)
 
 ### P2 — After MVP
 11. QR scan workflow

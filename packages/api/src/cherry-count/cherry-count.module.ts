@@ -5,11 +5,12 @@ import { CherryCountController, CherryCountPublicController } from './cherry-cou
 import { CherryCountService } from './cherry-count.service';
 import { CherryCountTenantGuard } from './cherry-count-tenant.guard';
 import { CherryCountAiService } from './cherry-count-ai.service';
+import { CherryCountSeedService } from './cherry-count-seed.service';
 
 @Module({
   imports: [PrismaModule, AuthModule],
   controllers: [CherryCountController, CherryCountPublicController],
-  providers: [CherryCountService, CherryCountTenantGuard, CherryCountAiService],
+  providers: [CherryCountService, CherryCountTenantGuard, CherryCountAiService, CherryCountSeedService],
   exports: [CherryCountService],
 })
 export class CherryCountModule {}

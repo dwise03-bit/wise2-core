@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { Facebook, Instagram, Youtube } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { blakkhailBrand } from './config';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 import { company } from '@/lib/sencere/config';
+import { isBlackhailHost } from '@/lib/site-domains';
 
 function TwitterIcon({ size = 20 }: { size?: number }) {
   return (
@@ -16,6 +18,16 @@ function TwitterIcon({ size = 20 }: { size?: number }) {
 
 export function BlakkhailFooter() {
   const { social } = blakkhailBrand;
+  const [parentHref, setParentHref] = useState(blakkhailBrand.parentPath);
+
+  useEffect(() => {
+    const onBlackhailDomain = isBlackhailHost(window.location.hostname);
+    setParentHref(
+      onBlackhailDomain
+        ? `${blakkhailBrand.parentSiteUrl}${blakkhailBrand.parentPath}`
+        : blakkhailBrand.parentPath
+    );
+  }, []);
 
   return (
     <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack }}>
@@ -46,13 +58,13 @@ export function BlakkhailFooter() {
               Email Us
             </a>
             <a
-              href={social.facebook}
+              href={social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="border px-6 py-3 text-xs font-bold uppercase tracking-[0.2em] sm:text-sm"
               style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
             >
-              Follow Us
+              Follow @blakkhail
             </a>
           </div>
         </div>
@@ -60,20 +72,12 @@ export function BlakkhailFooter() {
 
       <div className={`${BLAKKHAIL_LAYOUT.container} py-10 sm:py-12`}>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
+          <div className="sm:col-span-2">
             <h3 className="text-base font-black uppercase tracking-wider sm:text-lg" style={{ color: BLAKKHAIL.gold }}>
               {blakkhailBrand.name}
             </h3>
             <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.steel }}>
               Original fashion est. {blakkhailBrand.established} • {blakkhailBrand.location}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-wider sm:text-sm" style={{ color: BLAKKHAIL.gold }}>
-              Phone
-            </p>
-            <p className="mt-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
-              {blakkhailBrand.phone}
             </p>
           </div>
           <div>
@@ -92,7 +96,7 @@ export function BlakkhailFooter() {
             <p className="text-xs uppercase tracking-wider sm:text-sm" style={{ color: BLAKKHAIL.gold }}>
               Parent Company
             </p>
-            <Link href={blakkhailBrand.parentPath} className="mt-2 block text-sm hover:opacity-80 sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+            <Link href={parentHref} className="mt-2 block text-sm hover:opacity-80 sm:text-base" style={{ color: BLAKKHAIL.steel }}>
               {blakkhailBrand.legalName}
             </Link>
             <a href={blakkhailBrand.parentSiteUrl} className="mt-1 block text-sm hover:opacity-80 sm:text-base" style={{ color: BLAKKHAIL.steel }}>
@@ -101,10 +105,19 @@ export function BlakkhailFooter() {
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-5 lg:justify-start">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-5 lg:justify-start">
+          <a
+            href={social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 items-center gap-2 rounded-sm border px-4 py-2 text-sm font-bold uppercase tracking-wide hover:opacity-90"
+            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+          >
+            <Instagram size={20} aria-hidden />
+            @blakkhail
+          </a>
           <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="hover:opacity-80" style={{ color: BLAKKHAIL.steel }} aria-label="Facebook"><Facebook size={20} /></a>
           <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="hover:opacity-80" style={{ color: BLAKKHAIL.steel }} aria-label="Twitter"><TwitterIcon /></a>
-          <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="hover:opacity-80" style={{ color: BLAKKHAIL.steel }} aria-label="Instagram"><Instagram size={20} /></a>
           <a href={social.youtube} target="_blank" rel="noopener noreferrer" className="hover:opacity-80" style={{ color: BLAKKHAIL.steel }} aria-label="YouTube"><Youtube size={20} /></a>
         </div>
 

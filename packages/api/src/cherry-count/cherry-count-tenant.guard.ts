@@ -27,7 +27,11 @@ export class CherryCountTenantGuard implements CanActivate {
         : undefined;
 
     const membership = await this.prisma.tenantMembership.findFirst({
-      where: { userId, ...(requested ? { tenantId: requested } : {}) },
+      where: {
+        userId,
+        tenant: { state: 'ACTIVE', vertical: 'retail_popup' },
+        ...(requested ? { tenantId: requested } : {}),
+      },
       include: {
         tenant: {
           select: { id: true, state: true, vertical: true, enabledModules: true },

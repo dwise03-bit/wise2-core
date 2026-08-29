@@ -1,24 +1,18 @@
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
-import { BlakkhailHero } from '@/components/sencere/blakkhail/BlakkhailHero';
-import { BlakkhailShopScroll } from '@/components/sencere/blakkhail/BlakkhailShopScroll';
-import { BlakkhailMission } from '@/components/sencere/blakkhail/BlakkhailMission';
-import { BlakkhailMedia } from '@/components/sencere/blakkhail/BlakkhailMedia';
-import { BlakkhailProducts } from '@/components/sencere/blakkhail/BlakkhailProducts';
+import { BlakkhailStorefront } from '@/components/sencere/blakkhail/BlakkhailStorefront';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
+import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
 import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
 
 export default function BlakkhailPage() {
   return (
-    <div className={BLAKKHAIL_LAYOUT.page}>
+    <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`}>
       <BlakkhailHeader />
       <main>
-        <BlakkhailHero />
-        <BlakkhailShopScroll />
-        <BlakkhailMission />
-        <BlakkhailMedia />
-        <BlakkhailProducts />
+        <BlakkhailStorefront />
       </main>
       <BlakkhailFooter />
+      <BlakkhailMobileShopBar />
     </div>
   );
 }

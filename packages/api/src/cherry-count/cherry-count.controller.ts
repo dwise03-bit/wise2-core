@@ -4,12 +4,15 @@ import {
   Get,
   Param,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { PrismaService } from '../prisma/prisma.service';
 import { CherryCountService } from './cherry-count.service';
 import { CherryCountAiService, CherryAiInsightType } from './cherry-count-ai.service';
+import { CherryCountSeedService } from './cherry-count-seed.service';
 import { CherryCountTenant } from './cherry-count-tenant.decorator';
 import { CherryCountRequestTenant, CherryCountTenantGuard } from './cherry-count-tenant.guard';
 import {
@@ -22,14 +25,37 @@ import {
   CreateSaleInput,
   UpdatePackingInput,
 } from './cherry-count.types';
-import { Request } from '@nestjs/common';
 
 @ApiTags('Cherry Count')
 @Controller('v1/cherry-count')
 export class CherryCountPublicController {
+  constructor(private readonly prisma: PrismaService) {}
+
   @Get('health')
   health() {
     return { status: 'ok', service: 'cherry-count', timestamp: new Date().toISOString() };
+  }
+
+  @Get('workspaces')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async workspaces(@Request() req: { user: { id: string } }) {
+    const memberships = await this.prisma.tenantMembership.findMany({
+      where: {
+        userId: req.user.id,
+        tenant: { state: 'ACTIVE', vertical: 'retail_popup' },
+      },
+      include: {
+        tenant: { select: { id: true, name: true, slug: true, vertical: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return memberships.map((membership) => ({
+      tenantId: membership.tenantId,
+      role: membership.role,
+      tenant: membership.tenant,
+    }));
   }
 }
 
@@ -41,6 +67,7 @@ export class CherryCountController {
   constructor(
     private readonly cherryCount: CherryCountService,
     private readonly ai: CherryCountAiService,
+    private readonly seed: CherryCountSeedService,
   ) {}
 
   @Get('bootstrap')
@@ -168,5 +195,11 @@ export class CherryCountController {
     @Body() body: { type: CherryAiInsightType },
   ) {
     return this.ai.getInsights(tenant.tenantId, body.type ?? 'daily');
+  }
+
+  @Post('seed')
+  seedDemo(@CherryCountTenant() tenant: CherryCountRequestTenant) {
+    this.seed.assertOwner(tenant.role);
+    return this.seed.seedDemo(tenant.tenantId);
   }
 }
