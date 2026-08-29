@@ -1,59 +1,91 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { blakkhailBrand } from './config';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { checkoutPath, homePath, isBlackhailHost } from '@/lib/site-domains';
+import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 
 export function BlakkhailHeader() {
+  const [host, setHost] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHost(window.location.hostname);
+  }, []);
+
+  const onBlackhailDomain = host ? isBlackhailHost(host) : false;
+  const homeHref = host ? homePath(host) : '/';
+  const parentHref = onBlackhailDomain
+    ? `${blakkhailBrand.parentSiteUrl}${blakkhailBrand.parentPath}`
+    : blakkhailBrand.parentPath;
+
   return (
-    <div className="sticky top-0 z-50 bg-[#2a2a2a]">
-      {/* Utility Bar */}
-      <div className="flex h-8 items-center justify-between border-b border-[#D4842F] bg-[#1a1a1a] px-4 text-[11px] text-[#D4D4D4]">
-        <div>EST. 1994 • ORIGINAL FASHION</div>
-        <div className="flex gap-4">
-          <span>Customer Service</span>
-          <span>Track Order</span>
-        </div>
+    <header
+      className="sticky top-0 z-50 border-b"
+      style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}
+    >
+      <div
+        className={`${BLAKKHAIL_LAYOUT.container} flex min-h-11 flex-wrap items-center justify-between gap-2 py-2 text-[11px] uppercase tracking-[0.18em] sm:text-xs sm:tracking-[0.22em]`}
+        style={{ backgroundColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+      >
+        <span className="max-w-[70%] leading-snug sm:max-w-none">{blakkhailBrand.tagline}</span>
+        <span className="hidden sm:inline" style={{ color: BLAKKHAIL.gold }}>
+          {blakkhailBrand.motto}
+        </span>
       </div>
 
-      {/* Main Header */}
-      <div className="border-b border-[#D4842F] bg-[#E8D4B8] px-6 py-4">
-        <div className="mx-auto max-w-[1536px]">
-          <div className="flex items-center justify-between">
-            {/* Logo & Brand */}
-            <div className="flex items-center gap-8">
-              <Link href="/sencere" className="flex items-center gap-2 text-[#2a2a2a] hover:opacity-70">
-                <ArrowLeft size={20} />
-                <span className="text-[11px] font-bold uppercase tracking-wider">Back to SenCere</span>
+      <div className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-4 py-4 sm:py-5`}>
+        <Link
+          href={parentHref}
+          className="hidden shrink-0 text-xs font-bold uppercase tracking-wider hover:opacity-80 md:block lg:text-sm"
+          style={{ color: BLAKKHAIL.steel }}
+        >
+          {blakkhailBrand.legalName}
+        </Link>
+
+        <Link href={homeHref} className="min-w-0 flex-1 text-center md:flex-none">
+          <p className="text-[10px] uppercase tracking-[0.3em] sm:text-xs" style={{ color: BLAKKHAIL.gold }}>
+            {blakkhailBrand.legalName}
+          </p>
+          <h1
+            className="text-4xl font-black uppercase tracking-[0.1em] sm:text-5xl lg:text-6xl"
+            style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+          >
+            {blakkhailBrand.name}
+          </h1>
+        </Link>
+
+        {host ? (
+          <Link
+            href={checkoutPath(host)}
+            className="flex shrink-0 items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition-opacity hover:opacity-90 sm:px-5 sm:py-3 sm:text-sm"
+            style={{ backgroundColor: BLAKKHAIL.gold }}
+          >
+            <ShoppingCart size={18} />
+            <span className="hidden sm:inline">View Cart</span>
+            <span className="sm:hidden">Cart</span>
+          </Link>
+        ) : (
+          <div className="w-[88px] shrink-0 sm:w-[120px]" aria-hidden />
+        )}
+      </div>
+
+      <nav className="border-t" style={{ borderColor: BLAKKHAIL.gunmetal, backgroundColor: BLAKKHAIL.gunmetal }}>
+        <ul
+          className={`${BLAKKHAIL_LAYOUT.container} flex gap-6 overflow-x-auto py-3 text-sm font-bold uppercase tracking-[0.12em] sm:gap-8 sm:py-4 sm:text-base`}
+          style={{ color: BLAKKHAIL.steel, scrollbarWidth: 'none' }}
+        >
+          {BLAKKHAIL_LEGACY.nav.map((item) => (
+            <li key={item.href} className="shrink-0">
+              <Link href={item.href} className="whitespace-nowrap hover:text-[#D6A331]">
+                {item.label}
               </Link>
-              <div className="border-l border-[#8B6914] pl-8">
-                <h1 className="text-[32px] font-black uppercase tracking-widest text-[#2a2a2a]" style={{ fontFamily: 'var(--font-headers)' }}>
-                  BLAKK HAIL
-                </h1>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-[#8B6914]">1994 Original Fashion</p>
-              </div>
-            </div>
-
-            {/* Cart */}
-            <button className="flex items-center gap-2 rounded-sm bg-[#D4842F] px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:bg-[#C56F24]">
-              <ShoppingCart size={16} />
-              View Cart
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="bg-[#2a2a2a] px-6">
-        <div className="mx-auto max-w-[1536px]">
-          <ul className="flex gap-8 py-3 text-[11px] font-bold uppercase tracking-wider text-[#D4D4D4]">
-            <li><Link href="#products" className="hover:text-[#D4842F]">Collection</Link></li>
-            <li><Link href="#story" className="hover:text-[#D4842F]">Our Story</Link></li>
-            <li><Link href="#" className="hover:text-[#D4842F]">Contact</Link></li>
-            <li><Link href="#" className="hover:text-[#D4842F]">Look Book</Link></li>
-            <li><Link href="#" className="hover:text-[#D4842F]">Video</Link></li>
-          </ul>
-        </div>
+            </li>
+          ))}
+        </ul>
       </nav>
-    </div>
+    </header>
   );
 }

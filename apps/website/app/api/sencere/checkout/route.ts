@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { CartItem } from '@/lib/sencere-cart';
+import { getRequestSiteUrl } from '@/lib/site-url';
+import { isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16',
@@ -40,12 +42,17 @@ export async function POST(request: NextRequest) {
       quantity: item.quantity,
     }));
 
+    const siteUrl = getRequestSiteUrl();
+    const host = normalizeHost(request.headers.get('host'));
+    const orderPath = isBlackhailHost(host) ? '/order-confirmation' : '/sencere/order-confirmation';
+    const cancelPath = isBlackhailHost(host) ? '/checkout' : '/sencere/checkout';
+
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/sencere/order-confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/sencere/checkout`,
+      success_url: `${siteUrl}${orderPath}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${siteUrl}${cancelPath}`,
       metadata: {
         cart_items: JSON.stringify(items),
       },

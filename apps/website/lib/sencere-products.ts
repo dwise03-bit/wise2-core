@@ -1,6 +1,8 @@
 // SenCere Creative LLC - Product Catalog
 // Custom apparel, printing, fabrication, and creative services
 
+import { BLAKKHAIL_PRODUCT_IMAGES } from '@/lib/sencere/blakkhail-legacy';
+
 export interface ProductVariant {
   id: string;
   name: string;
@@ -14,6 +16,7 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
+  brand?: 'blakkhail' | 'sencere';
   category: 'apparel' | 'printing' | 'fabrication' | 'service' | 'design';
   description: string;
   longDescription: string;
@@ -255,10 +258,150 @@ export const SENCERE_PRODUCTS: Product[] = [
     available: true,
     badge: 'Creator Favorite',
   },
+  {
+    id: 'chain-gang-black',
+    name: 'Chain Gang - Black',
+    slug: 'chain-gang-black',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Blakk Hail signature tee — Chain Gang edition in black',
+    longDescription:
+      'Original Blakk Hail graphic tee. Premium cotton, gold-accent print, built for the culture since 1994.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['chain-gang-black'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['chain-gang-black']],
+    features: ['Premium cotton', 'Blakk Hail original art', 'Unisex fit'],
+    variants: [
+      {
+        id: 'chain-gang-black-tee',
+        name: 'Chain Gang Tee',
+        price: 24.99,
+        options: {
+          size: ['S', 'M', 'L', 'XL', '2XL'],
+        },
+      },
+    ],
+    available: true,
+    badge: 'Legacy',
+  },
+  {
+    id: '2cans-rwg',
+    name: '2Cans - Red/White/Gold',
+    slug: '2cans-rwg',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: '2Cans colorway — red, white, and gold',
+    longDescription: 'Limited Blakk Hail 2Cans colorway with heritage palette styling.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['2cans-rwg'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['2cans-rwg']],
+    features: ['Heritage colorway', 'Soft-hand print', 'Limited run'],
+    variants: [
+      {
+        id: '2cans-rwg-tee',
+        name: '2Cans Tee',
+        price: 24.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: '2cans-bwb',
+    name: '2Cans - Blue/White/Black',
+    slug: '2cans-bwb',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: '2Cans colorway — blue, white, and black',
+    longDescription: 'Street-ready 2Cans edition in blue, white, and black.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['2cans-bwb'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['2cans-bwb']],
+    features: ['Contrast color blocking', 'Original artwork', 'Unisex fit'],
+    variants: [
+      {
+        id: '2cans-bwb-tee',
+        name: '2Cans Tee',
+        price: 24.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-gray',
+    name: 'Alien Alliance - Gray',
+    slug: 'alien-alliance-gray',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in heather gray',
+    longDescription: 'Blakk Hail Alien Alliance graphic on premium heather gray.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-gray'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-gray']],
+    features: ['Heather gray base', 'Oversized graphic', 'Collector piece'],
+    variants: [
+      {
+        id: 'alien-alliance-gray-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-black',
+    name: 'Alien Alliance - Black',
+    slug: 'alien-alliance-black',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in black',
+    longDescription: 'Core black colorway of the Alien Alliance Blakk Hail drop.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-black'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-black']],
+    features: ['Jet black base', 'Gold-accent print', 'Legacy fit'],
+    variants: [
+      {
+        id: 'alien-alliance-black-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-white',
+    name: 'Alien Alliance - White',
+    slug: 'alien-alliance-white',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in white',
+    longDescription: 'Clean white base with Blakk Hail Alien Alliance artwork.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-white'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-white']],
+    features: ['Crisp white base', 'High-contrast art', 'Summer staple'],
+    variants: [
+      {
+        id: 'alien-alliance-white-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
 ];
 
 export function getProductBySlug(slug: string): Product | undefined {
   return SENCERE_PRODUCTS.find((p) => p.slug === slug);
+}
+
+export function getBlakkhailProducts(): Product[] {
+  return SENCERE_PRODUCTS.filter((p) => p.brand === 'blakkhail');
 }
 
 export function getProductsByCategory(

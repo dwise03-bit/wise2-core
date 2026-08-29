@@ -113,7 +113,7 @@ export default function ProjectsPage() {
           <div className="text-4xl mb-4">&#128193;</div>
           <h3 className="text-lg font-semibold text-text-primary mb-2">No Projects Yet</h3>
           <p className="text-sm text-text-muted mb-6">Create projects in Sound Labs, Live Studio, or DTF Print Studio.</p>
-          <Link href="/dashboard/sound-labs">
+          <Link href="/sound-lab">
             <Button variant="primary">Go to Sound Labs</Button>
           </Link>
         </Card>

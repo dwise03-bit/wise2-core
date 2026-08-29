@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
+import { isBlackhailBrand } from '@/lib/site-domains';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -47,6 +49,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const siteBrand = headers().get('x-site-brand');
+  const skipSiteChrome = isBlackhailBrand(siteBrand);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -56,7 +61,7 @@ export default function RootLayout({
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <ToastProvider>
-          <SiteChrome>{children}</SiteChrome>
+          {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
         </ToastProvider>
       </body>
     </html>

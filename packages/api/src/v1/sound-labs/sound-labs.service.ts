@@ -1,14 +1,16 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EntitlementsService } from '../billing/entitlements.service';
+import { GalleryService, UploadedFileData } from '../gallery/gallery.service';
 import { CreateProjectDto, UpdateProjectDto, GenerateMusicDto } from './dto';
-import { generateMusic, MusicGenServiceError } from './musicgen-client';
+import { generateMusic, fetchMusicGenAudio, MusicGenServiceError } from './musicgen-client';
 
 @Injectable()
 export class SoundLabsService {
   constructor(
     private prisma: PrismaService,
     private entitlementsService: EntitlementsService,
+    private galleryService: GalleryService,
   ) {}
 
   /**
@@ -291,5 +293,244 @@ export class SoundLabsService {
     await this.recordGeneration(userId, projectId);
 
     return this.getUserProject(projectId, userId);
+  }
+
+  private static readonly AUDIO_MIMES = new Set([
+    'audio/wav',
+    'audio/x-wav',
+    'audio/wave',
+    'audio/mpeg',
+    'audio/mp3',
+    'audio/ogg',
+    'audio/webm',
+    'audio/flac',
+    'audio/mp4',
+    'audio/aac',
+    'audio/x-m4a',
+  ]);
+
+  async uploadRecording(
+    projectId: string,
+    userId: string,
+    file: UploadedFileData,
+    name?: string,
+  ) {
+    await this.getUserProject(projectId, userId);
+    if (!SoundLabsService.AUDIO_MIMES.has(file.mimetype)) {
+      throw new BadRequestException(
+        `Unsupported audio type: ${file.mimetype}. Use WAV, MP3, OGG, WebM, or FLAC.`,
+      );
+    }
+
+    const asset = await this.galleryService.upload(
+      file,
+      userId,
+      'sound-lab',
+      projectId,
+      { kind: 'recording', originalName: file.originalname },
+    );
+
+    const recording = await this.prisma.soundLabsRecording.create({
+      data: {
+        projectId,
+        name: (name || file.originalname || 'Recording').slice(0, 120),
+        s3Url: asset.url || `/api/v1/gallery/file/${asset.filename}`,
+        s3Key: asset.filename,
+        fileSize: file.size,
+        duration: null,
+        uploadStatus: 'COMPLETED',
+        uploadProgress: 100,
+      },
+    });
+
+    await this.prisma.activityLog.create({
+      data: {
+        projectId,
+        userId,
+        action: 'recording_uploaded',
+        entityType: 'recording',
+        entityId: recording.id,
+        details: { galleryAssetId: asset.id, mimeType: file.mimetype },
+      },
+    });
+
+    return { recording, asset };
+  }
+
+  async attachGalleryAsset(
+    projectId: string,
+    userId: string,
+    galleryAssetId: string,
+    name?: string,
+  ) {
+    await this.getUserProject(projectId, userId);
+    const asset = await this.galleryService.findOne(galleryAssetId);
+    if (asset.userId !== userId) {
+      throw new ForbiddenException('You do not own that gallery asset');
+    }
+    if (asset.assetType !== 'AUDIO' && !asset.mimeType.startsWith('audio/')) {
+      throw new BadRequestException('Only audio gallery assets can be attached to a Sound Lab project');
+    }
+
+    const recording = await this.prisma.soundLabsRecording.create({
+      data: {
+        projectId,
+        name: (name || asset.originalName || 'Imported audio').slice(0, 120),
+        s3Url: asset.url || `/api/v1/gallery/file/${asset.filename}`,
+        s3Key: asset.filename,
+        fileSize: asset.size,
+        uploadStatus: 'COMPLETED',
+        uploadProgress: 100,
+      },
+    });
+
+    await this.prisma.activityLog.create({
+      data: {
+        projectId,
+        userId,
+        action: 'gallery_asset_attached',
+        entityType: 'recording',
+        entityId: recording.id,
+        details: { galleryAssetId: asset.id },
+      },
+    });
+
+    return { recording, asset };
+  }
+
+  async createVersion(
+    projectId: string,
+    userId: string,
+    label?: string,
+    changeLog?: string,
+  ) {
+    const project = await this.getUserProject(projectId, userId);
+    return this.prisma.versionHistory.create({
+      data: {
+        projectId,
+        userId,
+        snapshot: {
+          mixerState: project.mixerState,
+          lyrics: project.lyrics,
+          lyricsTitle: project.lyricsTitle,
+          generatedAudioUrl: project.generatedAudioUrl,
+          generationStatus: project.generationStatus,
+        } as any,
+        label: label || `Snapshot ${new Date().toISOString()}`,
+        changeLog: changeLog || null,
+      },
+    });
+  }
+
+  async listVersions(projectId: string, userId: string) {
+    await this.getUserProject(projectId, userId);
+    return this.prisma.versionHistory.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        label: true,
+        changeLog: true,
+        createdAt: true,
+        userId: true,
+      },
+    });
+  }
+
+  async restoreVersion(projectId: string, userId: string, versionId: string) {
+    await this.getUserProject(projectId, userId);
+    const version = await this.prisma.versionHistory.findFirst({
+      where: { id: versionId, projectId },
+    });
+    if (!version) throw new NotFoundException('Version not found');
+    const snapshot = (version.snapshot || {}) as Record<string, unknown>;
+    await this.prisma.soundLabsProject.update({
+      where: { id: projectId },
+      data: {
+        mixerState: (snapshot.mixerState as any) || {},
+        lyrics: (snapshot.lyrics as string) ?? undefined,
+        lyricsTitle: (snapshot.lyricsTitle as string) ?? undefined,
+      },
+    });
+    await this.prisma.activityLog.create({
+      data: {
+        projectId,
+        userId,
+        action: 'version_restored',
+        entityType: 'version',
+        entityId: versionId,
+        details: { label: version.label },
+      },
+    });
+    return this.getUserProject(projectId, userId);
+  }
+
+  async addComment(
+    projectId: string,
+    userId: string,
+    content: string,
+    timestamp?: number,
+    trackId?: string,
+  ) {
+    await this.getUserProject(projectId, userId);
+    return this.prisma.projectComment.create({
+      data: {
+        projectId,
+        userId,
+        content,
+        timestamp: timestamp ?? null,
+        trackId: trackId || null,
+      },
+    });
+  }
+
+  async listComments(projectId: string, userId: string) {
+    await this.getUserProject(projectId, userId);
+    return this.prisma.projectComment.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async setApproval(
+    projectId: string,
+    userId: string,
+    status: 'pending' | 'approved' | 'revision',
+    note?: string,
+  ) {
+    const project = await this.getUserProject(projectId, userId);
+    const mixerState = {
+      ...((project.mixerState as Record<string, unknown>) || {}),
+      approval: {
+        status,
+        note: note || null,
+        by: userId,
+        at: new Date().toISOString(),
+      },
+    };
+    await this.prisma.soundLabsProject.update({
+      where: { id: projectId },
+      data: { mixerState: mixerState as any },
+    });
+    await this.prisma.activityLog.create({
+      data: {
+        projectId,
+        userId,
+        action: `approval_${status}`,
+        entityType: 'approval',
+        details: { note: note || null },
+      },
+    });
+    return this.getUserProject(projectId, userId);
+  }
+
+  async getOwnedGenerationAudio(generationId: string, userId: string) {
+    const project = await this.prisma.soundLabsProject.findFirst({
+      where: { generationJobId: generationId, userId },
+    });
+    if (!project) {
+      throw new ForbiddenException('Generated audio not found or not owned by you');
+    }
+    return fetchMusicGenAudio(generationId);
   }
 }

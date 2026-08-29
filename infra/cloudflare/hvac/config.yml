@@ -1,0 +1,13 @@
+# Cloudflare Tunnel config for WISE² HVAC Field Tech
+# Install: scripts/setup-hvac-cloudflare-tunnel.sh
+#
+# Routes public https://hvac.wise2.net -> Next.js on 127.0.0.1:3024
+# Preferred clean URL /field-tech uses a Cloudflare redirect rule (see setup script)
+
+tunnel: wise2-hvac
+credentials-file: ~/.cloudflared/wise2-hvac.json
+
+ingress:
+  - hostname: hvac.wise2.net
+    service: http://127.0.0.1:3024
+  - service: http_status:404

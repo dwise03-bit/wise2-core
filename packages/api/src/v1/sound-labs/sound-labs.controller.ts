@@ -8,13 +8,26 @@ import {
   Param,
   UseGuards,
   Req,
+  Res,
+  UseInterceptors,
+  UploadedFile,
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request, Response } from 'express';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { SoundLabsService } from './sound-labs.service';
-import { CreateProjectDto, UpdateProjectDto, GenerateMusicDto } from './dto';
+import { UploadedFileData } from '../gallery/gallery.service';
+import {
+  CreateProjectDto,
+  UpdateProjectDto,
+  GenerateMusicDto,
+  CreateVersionDto,
+  CreateCommentDto,
+  SetApprovalDto,
+  AttachAssetDto,
+} from './dto';
 
 @Controller('v1/sound-labs')
 export class SoundLabsController {
@@ -241,5 +254,146 @@ export class SoundLabsController {
         error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Failed to check eligibility: ${message}`);
     }
+  }
+
+  @Post('me/projects/:projectId/recordings')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 100 * 1024 * 1024 } }))
+  async uploadRecording(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @UploadedFile() file: UploadedFileData,
+    @Body('name') name?: string,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    if (!file) throw new BadRequestException('No audio file provided');
+    return this.soundLabsService.uploadRecording(projectId, req.user.id, file, name);
+  }
+
+  @Post('me/projects/:projectId/assets')
+  @UseGuards(JwtAuthGuard)
+  async attachAsset(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Body() dto: AttachAssetDto,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    return this.soundLabsService.attachGalleryAsset(
+      projectId,
+      req.user.id,
+      dto.galleryAssetId,
+      dto.name,
+    );
+  }
+
+  @Get('me/projects/:projectId/versions')
+  @UseGuards(JwtAuthGuard)
+  async listVersions(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const versions = await this.soundLabsService.listVersions(projectId, req.user.id);
+    return { versions };
+  }
+
+  @Post('me/projects/:projectId/versions')
+  @UseGuards(JwtAuthGuard)
+  async createVersion(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Body() dto: CreateVersionDto,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const version = await this.soundLabsService.createVersion(
+      projectId,
+      req.user.id,
+      dto.label,
+      dto.changeLog,
+    );
+    return { success: true, version };
+  }
+
+  @Post('me/projects/:projectId/versions/:versionId/restore')
+  @UseGuards(JwtAuthGuard)
+  async restoreVersion(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Param('versionId') versionId: string,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const project = await this.soundLabsService.restoreVersion(
+      projectId,
+      req.user.id,
+      versionId,
+    );
+    return { success: true, project };
+  }
+
+  @Get('me/projects/:projectId/comments')
+  @UseGuards(JwtAuthGuard)
+  async listComments(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const comments = await this.soundLabsService.listComments(projectId, req.user.id);
+    return { comments };
+  }
+
+  @Post('me/projects/:projectId/comments')
+  @UseGuards(JwtAuthGuard)
+  async addComment(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Body() dto: CreateCommentDto,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const comment = await this.soundLabsService.addComment(
+      projectId,
+      req.user.id,
+      dto.content,
+      dto.timestamp,
+      dto.trackId,
+    );
+    return { success: true, comment };
+  }
+
+  @Post('me/projects/:projectId/approval')
+  @UseGuards(JwtAuthGuard)
+  async setApproval(
+    @Req() req: Request & { user: any },
+    @Param('projectId') projectId: string,
+    @Body() dto: SetApprovalDto,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const project = await this.soundLabsService.setApproval(
+      projectId,
+      req.user.id,
+      dto.status,
+      dto.note,
+    );
+    return { success: true, project };
+  }
+
+  @Get('audio/:generationId')
+  @UseGuards(JwtAuthGuard)
+  async streamGeneratedAudio(
+    @Req() req: Request & { user: any },
+    @Param('generationId') generationId: string,
+    @Res() res: Response,
+  ) {
+    if (!req.user?.id) throw new UnauthorizedException('User not authenticated');
+    const upstream = await this.soundLabsService.getOwnedGenerationAudio(
+      generationId,
+      req.user.id,
+    );
+    if (!upstream || !upstream.body) {
+      throw new BadRequestException('Generated audio not found or expired');
+    }
+    res.setHeader('Content-Type', upstream.headers.get('content-type') || 'audio/wav');
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    const buf = Buffer.from(await upstream.arrayBuffer());
+    res.send(buf);
   }
 }

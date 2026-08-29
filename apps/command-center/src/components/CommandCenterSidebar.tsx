@@ -100,9 +100,10 @@ const NAV_SECTIONS: NavSection[] = [
     id: 'create',
     title: 'Create',
     items: [
-      { id: 'sound-labs', label: 'Sound Labs', href: '/dashboard/sound-labs', icon: 'music' },
-      { id: 'sound-labs-jingle-lab', label: 'Jingle Lab', href: '/dashboard/sound-labs/jingle-lab', icon: 'waveform' },
-      { id: 'sound-labs-library', label: 'Audio Library', href: '/dashboard/sound-labs/library', icon: 'book' },
+      { id: 'sound-lab', label: 'Sound Lab', href: '/sound-lab', icon: 'music' },
+      { id: 'sound-lab-projects', label: 'Productions', href: '/sound-lab/projects', icon: 'waveform' },
+      { id: 'sound-lab-jingle', label: 'Jingle Production', href: '/sound-lab/jingle', icon: 'waveform' },
+      { id: 'sound-lab-releases', label: 'Releases', href: '/sound-lab/releases', icon: 'book' },
       { id: 'gallery', label: 'Gallery', href: '/dashboard/gallery', icon: 'image' },
       { id: 'print-on-demand', label: 'Print Shop', href: '/dashboard/print-on-demand', icon: 'printer' },
     ],

@@ -1,8 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { PublicNav, PublicFooter } from '@/components/navigation';
 import { WiseImp } from '@/components/wise-imp/WiseImp';
+import { isBlackhailHost } from '@/lib/site-domains';
 
 /**
  * Routes that own a fully custom header/footer and must not receive the
@@ -12,9 +14,17 @@ const CUSTOM_SHELL_ROUTES = ['/soundlab', '/sencere'];
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hasCustomShell = CUSTOM_SHELL_ROUTES.some(
-    (route) => pathname === route || pathname?.startsWith(`${route}/`)
-  );
+  const [blackhailHost, setBlackhailHost] = useState(false);
+
+  useEffect(() => {
+    setBlackhailHost(isBlackhailHost(window.location.hostname));
+  }, []);
+
+  const hasCustomShell =
+    blackhailHost ||
+    CUSTOM_SHELL_ROUTES.some(
+      (route) => pathname === route || pathname?.startsWith(`${route}/`)
+    );
 
   if (hasCustomShell) {
     return <>{children}</>;

@@ -4,6 +4,26 @@ const nextConfig = {
   basePath: '/wise-hvac-demo',
   output: 'standalone',
   trailingSlash: false,
+  redirects: async () => [
+    {
+      source: '/field-tech',
+      destination: '/wise-hvac-demo/field-tech',
+      permanent: false,
+      basePath: false,
+    },
+    {
+      source: '/field-tech/:path*',
+      destination: '/wise-hvac-demo/field-tech/:path*',
+      permanent: false,
+      basePath: false,
+    },
+    {
+      source: '/health',
+      destination: '/wise-hvac-demo/api/health',
+      permanent: false,
+      basePath: false,
+    },
+  ],
   rewrites: async () => {
     return {
       beforeFiles: [

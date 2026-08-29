@@ -244,6 +244,19 @@ export default function DashboardPage() {
           </Card>
         </section>
 
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-text-primary">Sound Lab</h2>
+            <Link href="/sound-lab" className="text-xs text-wise-electric hover:underline">Open studio →</Link>
+          </div>
+          <Card className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Link href="/sound-lab/projects" className="text-sm">Active productions</Link>
+            <Link href="/sound-lab/releases" className="text-sm">Client approvals / releases</Link>
+            <Link href="/dashboard/live-studio" className="text-sm">Live Studio recordings</Link>
+            <Link href="/sound-lab/plugins" className="text-sm">AI jobs / processors</Link>
+          </Card>
+        </section>
+
         {/* Navigation Sections */}
         <section className="space-y-6 pt-4">
           <NavigationSection
@@ -258,7 +271,7 @@ export default function DashboardPage() {
           <NavigationSection
             title="Creative"
             items={[
-              { label: 'Sound Labs', href: '/dashboard/sound-labs', icon: '🎵' },
+              { label: 'Sound Lab', href: '/sound-lab', icon: '🎵' },
               { label: 'Gallery', href: '/dashboard/gallery', icon: '🖼️' },
               { label: 'Live Studio', href: '/dashboard/live-studio', icon: '📹' },
               { label: 'Print Studio', href: '/dashboard/print-on-demand', icon: '🖨️' },
