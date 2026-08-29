@@ -9,6 +9,7 @@ Last verified: 2026-08-24
 - CRM/customer records are blank until a real work order is assigned; demo records are explicitly labeled.
 - Fieldpiece SM480V pressure/line-temperature advertisement decoding is physically verified.
 - Fieldpiece JL3PC pipe clamps 8792 (high/liquid) and 8791 (low/suction) are physically verified.
+- Diagnose and IMP consume saved or live Fieldpiece readings from the Android tool path; missing values stay `—` / Not available.
 - Fluke 902 FC discovery, GATT connection, battery read, and the physically verified capacitance channel are implemented.
 - Unknown or unverified measurement modes remain null; the app never fabricates readings.
 - The web field workspace is deployed at `https://wise2.net/wise-hvac-demo/field-tech`.

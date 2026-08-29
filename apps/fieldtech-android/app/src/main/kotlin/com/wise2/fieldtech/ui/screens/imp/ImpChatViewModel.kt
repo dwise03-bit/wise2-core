@@ -7,13 +7,15 @@ import com.wise2.fieldtech.data.repository.EquipmentRepository
 import com.wise2.fieldtech.data.repository.ImpRepository
 import com.wise2.fieldtech.data.repository.JobRepository
 import com.wise2.fieldtech.data.repository.ReadingRepository
+import com.wise2.fieldtech.domain.diagnose.FieldpieceEvidence
+import com.wise2.fieldtech.domain.diagnose.FieldpieceEvidenceMapper
 import com.wise2.fieldtech.domain.model.ImpMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -31,6 +33,10 @@ class ImpChatViewModel(
 
     private val _isSending = MutableStateFlow(false)
     val isSending: StateFlow<Boolean> = _isSending.asStateFlow()
+
+    val fieldpieceEvidence: StateFlow<FieldpieceEvidence?> = readingRepository.observeForJob(jobId)
+        .map { FieldpieceEvidenceMapper.fromReading(it.firstOrNull(), System.currentTimeMillis()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     fun ask(question: String) {
         if (question.isBlank()) return
@@ -55,9 +61,7 @@ class ImpChatViewModel(
             appendLine("CUSTOMER: ${job?.customerName ?: "unknown"}")
             appendLine("COMPLAINT: ${job?.complaint ?: "unknown"}")
             equipment?.let { appendLine("EQUIPMENT: ${it.manufacturer} ${it.model}, ${it.refrigerant}, ${it.tonnage ?: "?"} ton") }
-            latestReading?.let {
-                appendLine("LATEST READING: low=${it.lowSidePsig} psig high=${it.highSidePsig} psig suctionLine=${it.suctionLineTempF}F suctionSat=${it.suctionSaturationF}F liquidLine=${it.liquidLineTempF}F liquidSat=${it.liquidSaturationF}F")
-            }
+            appendLine(FieldpieceEvidenceMapper.contextLines(latestReading, System.currentTimeMillis()))
             diagnosticSession?.let {
                 appendLine("DIAGNOSTIC CATEGORY: ${it.category}")
                 appendLine("CURRENT STEP: ${it.currentStepId}, complete=${it.isComplete}")

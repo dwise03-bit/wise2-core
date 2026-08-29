@@ -110,8 +110,24 @@ fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
             arguments = listOf(navArgument(Destination.ARG_JOB_ID) { type = NavType.StringType }),
         ) { backStackEntry ->
             val jobId = backStackEntry.arguments?.getString(Destination.ARG_JOB_ID)!!
-            val vm: DiagnoseViewModel = viewModel(factory = viewModelFactory { initializer { DiagnoseViewModel(container.diagnosticRepository, jobId) } })
-            DiagnoseScreen(vm, onBack = { navController.popBackStack() }, onFinished = { navController.navigate(Destination.JobReport.path(jobId)) })
+            val vm: DiagnoseViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer {
+                        DiagnoseViewModel(
+                            container.diagnosticRepository,
+                            container.readingRepository,
+                            container.toolManager,
+                            jobId,
+                        )
+                    }
+                },
+            )
+            DiagnoseScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
+                onFinished = { navController.navigate(Destination.JobReport.path(jobId)) },
+                onOpenLiveReadings = { navController.navigate(Destination.LiveReadings.path(jobId)) },
+            )
         }
 
         composable(
