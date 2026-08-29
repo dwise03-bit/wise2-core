@@ -279,6 +279,7 @@ services:
       WISE2_CONTROL_PORT: 3099
       WISE2_REPO_DIR: /workspace
       WISE2_COMPOSE_FILE: /workspace/docker-compose.production.yml
+      WISE2_COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-wise2-core}
       WISE2_AUDIT_FILE: /data/control-bridge/audit.jsonl
       WISE2_DEPLOYMENT_FILE: /data/control-bridge/deployments.jsonl
       WISE2_ALLOWED_SERVICES: postgres,redis,mongodb,api,ollama,open-webui,website,dashboard,admin,studio,command-center,worker,prometheus,grafana

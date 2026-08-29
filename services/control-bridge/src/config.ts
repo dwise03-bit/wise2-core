@@ -29,6 +29,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
     actor: env.WISE2_CONTROL_ACTOR ?? 'chatgpt',
     repoDir: env.WISE2_REPO_DIR ?? '/home/dwise/wise2-core',
     composeFile: env.WISE2_COMPOSE_FILE ?? '/home/dwise/wise2-core/docker-compose.production.yml',
+    composeProjectName: env.WISE2_COMPOSE_PROJECT_NAME ?? env.COMPOSE_PROJECT_NAME ?? 'wise2-core',
     auditFile: env.WISE2_AUDIT_FILE ?? '/data/control-bridge/audit.jsonl',
     deploymentFile: env.WISE2_DEPLOYMENT_FILE ?? '/data/control-bridge/deployments.jsonl',
     dockerBinary: env.WISE2_DOCKER_BINARY ?? '/usr/bin/docker',

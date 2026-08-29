@@ -24,6 +24,10 @@ function fetcher(ctx: AdapterContext): typeof globalThis.fetch {
   return ctx.fetch ?? globalThis.fetch;
 }
 
+function composeArgs(ctx: AdapterContext, args: string[]): string[] {
+  return ['compose', '-p', ctx.config.composeProjectName, '-f', ctx.config.composeFile, ...args];
+}
+
 function secretList(config: ControlConfig): string[] {
   return [config.token, process.env.WISE2_CONTROL_TOKEN ?? ''].filter(Boolean);
 }
@@ -63,7 +67,7 @@ export async function gpuMetrics(ctx: AdapterContext): Promise<ComponentState> {
 
 export async function dockerServices(ctx: AdapterContext): Promise<string[]> {
   try {
-    const configured = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'config', '--services'], { timeoutMs: 10_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
+    const configured = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['config', '--services']), { timeoutMs: 10_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
     if (configured.code !== 0) return ctx.config.allowedServices;
     return configured.stdout.trim().split('\n').filter(name => ctx.config.allowedServices.includes(name));
   } catch {
@@ -72,7 +76,7 @@ export async function dockerServices(ctx: AdapterContext): Promise<string[]> {
 }
 
 export async function dockerPs(ctx: AdapterContext): Promise<string> {
-  const result = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'ps', '--format', 'json'], { timeoutMs: 10_000, maxOutputBytes: 64_000, cwd: ctx.config.repoDir });
+  const result = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['ps', '--format', 'json']), { timeoutMs: 10_000, maxOutputBytes: 64_000, cwd: ctx.config.repoDir });
   if (result.code !== 0) throw Object.assign(new Error(redactText(result.stderr, secretList(ctx.config))), { code: 'DOCKER_PS_FAILED' });
   return redactText(result.stdout, secretList(ctx.config));
 }
@@ -85,14 +89,14 @@ export async function dockerStats(ctx: AdapterContext): Promise<string> {
 
 export async function dockerLogs(ctx: AdapterContext, service: string, lines: number): Promise<string> {
   validateName(service, ctx.config.allowedServices);
-  const result = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'logs', '--no-color', '--tail', String(lines), service], { timeoutMs: 10_000, maxOutputBytes: 96_000, cwd: ctx.config.repoDir });
+  const result = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['logs', '--no-color', '--tail', String(lines), service]), { timeoutMs: 10_000, maxOutputBytes: 96_000, cwd: ctx.config.repoDir });
   if (result.code !== 0) throw Object.assign(new Error(redactText(result.stderr, secretList(ctx.config))), { code: 'DOCKER_LOGS_FAILED' });
   return redactText(result.stdout + result.stderr, secretList(ctx.config));
 }
 
 export async function restartService(ctx: AdapterContext, service: string): Promise<CommandResult> {
   validateName(service, ctx.config.allowedServices);
-  const result = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'restart', service], { timeoutMs: 30_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
+  const result = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['restart', service]), { timeoutMs: 30_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
   return { ...result, stdout: redactText(result.stdout, secretList(ctx.config)), stderr: redactText(result.stderr, secretList(ctx.config)) };
 }
 

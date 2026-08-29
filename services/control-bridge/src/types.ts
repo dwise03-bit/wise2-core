@@ -6,6 +6,7 @@ export type ControlConfig = {
   actor: string;
   repoDir: string;
   composeFile: string;
+  composeProjectName: string;
   auditFile: string;
   deploymentFile: string;
   dockerBinary: string;

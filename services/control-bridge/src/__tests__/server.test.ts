@@ -16,6 +16,7 @@ function config(overrides: Partial<ControlConfig> = {}): ControlConfig {
     actor: 'vitest',
     repoDir: '/repo',
     composeFile: '/repo/docker-compose.production.yml',
+    composeProjectName: 'wise2-core',
     auditFile: join(tmpdir(), `audit-${crypto.randomUUID()}.jsonl`),
     deploymentFile: join(tmpdir(), `deploy-${crypto.randomUUID()}.jsonl`),
     dockerBinary: '/usr/bin/docker',
@@ -69,7 +70,7 @@ describe('control bridge server', () => {
     const app = await buildServer(cfg, { run: async (_binary, args) => { calls.push(args); return ok('restarted'); } });
     const res = await app.inject({ method: 'POST', url: '/v1/control/docker/api/restart', headers: { authorization: `Bearer ${cfg.token}` } });
     expect(res.statusCode).toBe(200);
-    expect(calls[0]).toEqual(['compose', '-f', cfg.composeFile, 'restart', 'api']);
+    expect(calls[0]).toEqual(['compose', '-p', cfg.composeProjectName, '-f', cfg.composeFile, 'restart', 'api']);
     const audit = await readFile(cfg.auditFile, 'utf8');
     expect(audit).toContain('docker.restart');
     expect(audit).not.toContain(cfg.token);
