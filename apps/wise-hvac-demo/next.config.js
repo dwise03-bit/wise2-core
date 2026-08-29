@@ -6,6 +6,18 @@ const nextConfig = {
   trailingSlash: false,
   redirects: async () => [
     {
+      source: '/ft',
+      destination: '/wise-hvac-demo/field-tech',
+      permanent: false,
+      basePath: false,
+    },
+    {
+      source: '/hvac',
+      destination: '/wise-hvac-demo/field-tech',
+      permanent: false,
+      basePath: false,
+    },
+    {
       source: '/field-tech',
       destination: '/wise-hvac-demo/field-tech',
       permanent: false,
