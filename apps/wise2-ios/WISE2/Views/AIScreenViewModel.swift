@@ -37,8 +37,8 @@ class AIScreenViewModel: ObservableObject {
     messages.append(
       ChatMessage(
         id: UUID().uuidString,
-        role: .user,
         content: prompt,
+        role: .user,
         timestamp: Date(),
         source: scope
       )
@@ -52,14 +52,14 @@ class AIScreenViewModel: ObservableObject {
 
     isLoading = true
     do {
-      let response = try await apiClient.chat(prompt: prompt)
+      let response = try await apiClient.chat(prompt: prompt, scope: scope)
       messages.append(
         ChatMessage(
-          id: UUID().uuidString,
-          role: .assistant,
-          content: response,
-          timestamp: Date(),
-          source: "WISE² AI · Level 1 read"
+          id: response.id,
+          content: response.content,
+          role: response.role,
+          timestamp: response.timestamp,
+          source: response.source ?? "WISE² AI · Level 1 read"
         )
       )
       actionHistory.append("Read request completed: \(prompt)")
@@ -68,8 +68,8 @@ class AIScreenViewModel: ObservableObject {
       messages.append(
         ChatMessage(
           id: UUID().uuidString,
-          role: .assistant,
           content: fallback,
+          role: .assistant,
           timestamp: Date(),
           source: "Offline fallback · no backend mutation"
         )
@@ -87,8 +87,8 @@ class AIScreenViewModel: ObservableObject {
     messages.append(
       ChatMessage(
         id: UUID().uuidString,
-        role: .assistant,
         content: "Approved preview recorded. The app will only report execution after a backend-confirmed command endpoint is available.",
+        role: .assistant,
         timestamp: Date(),
         source: "Approval policy · \(action.level)"
       )
@@ -103,8 +103,8 @@ class AIScreenViewModel: ObservableObject {
     messages.append(
       ChatMessage(
         id: UUID().uuidString,
-        role: .assistant,
         content: "Rejected. No change was sent, queued, or retried.",
+        role: .assistant,
         timestamp: Date(),
         source: "Approval policy · \(action.level)"
       )
@@ -144,11 +144,13 @@ class AIScreenViewModel: ObservableObject {
     let lowered = prompt.lowercased()
     if lowered.contains("invoice") || lowered.contains("follow up") {
       proposedAction = AIProposedAction(
+        id: UUID().uuidString,
         title: lowered.contains("invoice") ? "Create invoice draft" : "Create lead follow-up task",
-        level: "Level 2 · Create/Modify",
         exactMutation: lowered.contains("invoice")
           ? "Draft invoice for \(scope); no payment request will be sent until owner approval."
           : "Create one CRM task in \(scope) assigned to Daniel with today as the due date.",
+        level: "Level 2 · Create/Modify",
+        isCritical: false,
         auditRows: ["Actor: Daniel Wise", "Scope: \(scope)", "Mutation: draft only", "External visibility: none"]
       )
       actionHistory.append("Prepared Level 2 preview: \(prompt)")
@@ -157,9 +159,11 @@ class AIScreenViewModel: ObservableObject {
 
     if lowered.contains("deploy") || lowered.contains("restart") || lowered.contains("permission") || lowered.contains("payment") {
       proposedAction = AIProposedAction(
+        id: UUID().uuidString,
         title: "Critical operation preview",
-        level: "Level 3 · Critical",
         exactMutation: "Prepare a critical action request for \(scope). Execution is blocked pending explicit approval, Face ID, and server authorization.",
+        level: "Level 3 · Critical",
+        isCritical: true,
         auditRows: ["Actor: Daniel Wise", "Scope: \(scope)", "Requires: explicit approval + Face ID", "Server enforcement: required"]
       )
       actionHistory.append("Prepared Level 3 preview: \(prompt)")
@@ -170,27 +174,3 @@ class AIScreenViewModel: ObservableObject {
   }
 }
 
-struct ChatMessage: Identifiable {
-  let id: String
-  let role: MessageRole
-  let content: String
-  let timestamp: Date
-  let source: String?
-
-  enum MessageRole {
-    case user
-    case assistant
-  }
-}
-
-struct AIProposedAction: Identifiable {
-  let id = UUID().uuidString
-  let title: String
-  let level: String
-  let exactMutation: String
-  let auditRows: [String]
-
-  var isCritical: Bool {
-    level.contains("Level 3")
-  }
-}

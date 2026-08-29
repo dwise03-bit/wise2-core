@@ -7,6 +7,10 @@ class WorkScreenViewModel: ObservableObject {
   @Published var selectedTab: WorkTab = .crm
   @Published var isLoading = false
   @Published var errorMessage: String?
+  @Published var crmItems: [CRMItem] = []
+  @Published var activityItems: [String] = []
+
+  private let apiClient = APIClient.shared
 
   enum WorkTab: CaseIterable {
     case crm
@@ -24,71 +28,70 @@ class WorkScreenViewModel: ObservableObject {
     }
   }
 
-  let crmItems: [WorkAreaItem] = [
-    WorkAreaItem(icon: "person.text.rectangle.fill", title: "Leads", subtitle: "New demand, follow-ups, qualification", badge: "12", details: ["3 hot leads", "5 follow-ups due", "4 need qualification"]),
-    WorkAreaItem(icon: "person.2.fill", title: "Contacts", subtitle: "People, roles, notes, consent", badge: "418", details: ["Daniel-owned records", "Business membership required", "Activity history visible"]),
-    WorkAreaItem(icon: "building.2.fill", title: "Companies", subtitle: "Accounts, brands, clients, vendors", badge: "76", details: ["WISE Defense", "WISE² HVAC", "WISE² Trading", "Client Brands"]),
-    WorkAreaItem(icon: "chart.bar.xaxis", title: "Pipeline", subtitle: "Stages, value, next action", badge: "$86K", details: ["Discovery", "Proposal", "Verbal", "Won/Lost"]),
-    WorkAreaItem(icon: "folder.fill", title: "Documents", subtitle: "Files, approvals, proposals", badge: "31", details: ["Scoped files", "Approval queue", "No raw secret storage"])
-  ]
-
-  let activityItems = [
-    "Daniel updated Command Center launch task",
-    "WISE² AI prepared invoice draft preview",
-    "Client Brands website approval moved to in review",
-    "Automation incident acknowledged"
-  ]
-
   init() {
-    loadData()
+    Task {
+      await loadData()
+    }
   }
 
-  func loadData() {
-    isLoading = false
-    projects = [
-      Project(id: "proj_001", name: "WISE² Command Center", status: "In Progress", progress: 82, teamSize: 4, dueDate: "Today"),
-      Project(id: "proj_002", name: "Client Brands Website", status: "In Review", progress: 64, teamSize: 2, dueDate: "Tomorrow"),
-      Project(id: "proj_003", name: "WISE Defense Systems Map", status: "Planning", progress: 25, teamSize: 3, dueDate: "Sep 4")
+  func loadData() async {
+    isLoading = true
+    errorMessage = nil
+
+    async let crmLoad = loadCRM()
+    async let projLoad = loadProjects()
+    async let taskLoad = loadTasks()
+
+    await crmLoad
+    await projLoad
+    await taskLoad
+
+    activityItems = [
+      "Command Center iOS · Daniel · 2h ago · Phase 1 completed",
+      "Website approval · Daniel · 4h ago · Sent for review",
+      "Lead list cleanup · WISE² AI · 6h ago · 23 duplicates removed",
+      "Invoice generated · System · 1d ago · Client Brands invoice #2847",
+      "Meeting scheduled · Darrin · 2d ago · Q3 planning session"
     ]
 
-    tasks = [
-      WorkTask(id: "task_001", title: "Finish iPhone safe-area verification", project: "WISE² Command Center", assignee: "Daniel", priority: "High", dueDate: "Today", status: "In Progress"),
-      WorkTask(id: "task_002", title: "Approve homepage copy", project: "Client Brands Website", assignee: "Daniel", priority: "Medium", dueDate: "Tomorrow", status: "In Review"),
-      WorkTask(id: "task_003", title: "Follow up HVAC leads", project: "WISE² HVAC", assignee: "WISE² AI", priority: "High", dueDate: "4:30 PM", status: "To Do")
-    ]
+    isLoading = false
+  }
+
+  private func loadCRM() async {
+    do {
+      crmItems = try await apiClient.getCRMData()
+    } catch {
+      errorMessage = "Failed to load CRM: \(error.localizedDescription)"
+    }
+  }
+
+  private func loadProjects() async {
+    do {
+      projects = try await apiClient.getProjects()
+    } catch {
+      errorMessage = "Failed to load projects: \(error.localizedDescription)"
+    }
+  }
+
+  private func loadTasks() async {
+    do {
+      tasks = try await apiClient.getTasks()
+    } catch {
+      errorMessage = "Failed to load tasks: \(error.localizedDescription)"
+    }
   }
 
   func updateTaskStatus(_ taskId: String, status: String) {
-    if let index = tasks.firstIndex(where: { $0.id == taskId }) {
-      tasks[index].status = status
+    Task {
+      do {
+        try await apiClient.updateTaskStatus(taskId, status: status)
+        if let index = tasks.firstIndex(where: { $0.id == taskId }) {
+          tasks[index].status = status
+        }
+      } catch {
+        errorMessage = "Failed to update task: \(error.localizedDescription)"
+      }
     }
   }
 }
 
-struct WorkAreaItem: Identifiable {
-  let id = UUID().uuidString
-  let icon: String
-  let title: String
-  let subtitle: String
-  let badge: String
-  let details: [String]
-}
-
-struct Project: Identifiable {
-  let id: String
-  let name: String
-  let status: String
-  let progress: Int
-  let teamSize: Int
-  let dueDate: String
-}
-
-struct WorkTask: Identifiable {
-  let id: String
-  let title: String
-  let project: String
-  let assignee: String
-  let priority: String
-  var dueDate: String
-  var status: String
-}

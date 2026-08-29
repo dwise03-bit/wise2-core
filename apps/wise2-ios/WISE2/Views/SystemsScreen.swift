@@ -50,7 +50,7 @@ struct SystemsScreen: View {
       }
     }
     .refreshable {
-      viewModel.refreshData()
+      await viewModel.refreshData()
     }
     .preferredColorScheme(.dark)
   }
