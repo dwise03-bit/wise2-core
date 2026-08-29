@@ -39,6 +39,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
     allowedApps: csv(env.WISE2_ALLOWED_APPS, DEFAULT_APPS),
     ollamaUrl: env.WISE2_OLLAMA_URL ?? 'http://127.0.0.1:11434/api/tags',
     hermesUrl: env.WISE2_HERMES_URL ?? 'http://127.0.0.1:3012/api/health',
+    hermesImageUrl: env.WISE2_HERMES_IMAGE_URL ?? 'http://127.0.0.1:3010/v1/hermes/image',
+    hermesBearerToken: env.WISE2_HERMES_BEARER_TOKEN?.trim() ?? '',
     wise2Url: env.WISE2_PUBLIC_URL ?? 'https://wise2.net',
     apiHealthUrl: env.WISE2_API_HEALTH_URL ?? 'http://127.0.0.1:3010/api/health',
     rateLimitMax: numberValue(env.WISE2_CONTROL_RATE_LIMIT_MAX, 60),
