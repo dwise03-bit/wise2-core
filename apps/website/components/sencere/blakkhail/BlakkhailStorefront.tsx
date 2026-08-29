@@ -8,6 +8,7 @@ import { BlakkhailPiffCityEndCard } from './BlakkhailPiffCityEndCard';
 import { BlakkhailVaultReveal } from './BlakkhailVaultReveal';
 import { BlakkhailShopScroll } from './BlakkhailShopScroll';
 import { BlakkhailMission } from './BlakkhailMission';
+import { BlakkhailServices } from './BlakkhailServices';
 import { BlakkhailLookBook, BlakkhailVideo } from './BlakkhailMedia';
 import { BlakkhailProducts } from './BlakkhailProducts';
 import {
@@ -112,6 +113,7 @@ export function BlakkhailStorefront() {
       />
       <BlakkhailShopScroll />
       <BlakkhailMission />
+      <BlakkhailServices />
       <BlakkhailProducts category={category} showVaultInline={cinematicPhase === 'complete'} />
       <BlakkhailLookBook />
       <BlakkhailVideo />
