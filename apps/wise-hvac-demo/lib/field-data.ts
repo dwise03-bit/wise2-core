@@ -32,8 +32,36 @@ export type FieldJob = {
   updatedAt: string;
 };
 
-// Production starts empty. Work orders must arrive from an authenticated dispatch source.
-const initialJobs: FieldJob[] = [];
+// Production stays empty unless demo mode is on. Work orders otherwise arrive from dispatch.
+const demoJob: FieldJob = {
+  id: 'job-rtu-1a',
+  technicianId: 'tech-daniel',
+  customerName: 'Riverside Medical Plaza',
+  customerPhone: '3365550148',
+  customerEmail: 'facilities@riverside-demo.example',
+  address: '1840 West Market Street, Greensboro, NC',
+  appointmentAt: new Date().toISOString(),
+  complaint:
+    'Rooftop unit not cooling. HIGH HEAD PRESSURE 248.7 PSIG, low subcooling 8.6°F, normal superheat 11.2°F, ΔT 17°F. Frosting on the liquid line drier.',
+  status: 'IN_PROGRESS',
+  priority: 'HIGH',
+  notes: '',
+  accessNotes: 'Roof hatch on the east stairwell. Badge required after 6pm.',
+  equipment: {
+    manufacturer: 'Carrier',
+    model: '48TCED16A2A5',
+    serial: 'RTU-1A',
+    tonnage: 15,
+    installedAt: '2019-04-12T00:00:00.000Z',
+    warranty: 'Parts warranty expired. Labor warranty not in force.',
+  },
+  serviceHistory: [
+    { date: '2025-08-14T00:00:00.000Z', type: 'Maintenance', summary: 'Filter change and condenser wash.' },
+  ],
+  updatedAt: new Date().toISOString(),
+};
+
+const initialJobs: FieldJob[] = process.env.WISE_HVAC_DEMO_MODE === 'false' ? [] : [demoJob];
 
 declare global {
   // eslint-disable-next-line no-var
