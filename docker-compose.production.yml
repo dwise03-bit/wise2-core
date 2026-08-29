@@ -283,18 +283,15 @@ services:
       WISE2_DEPLOYMENT_FILE: /data/control-bridge/deployments.jsonl
       WISE2_ALLOWED_SERVICES: postgres,redis,mongodb,api,ollama,open-webui,website,dashboard,admin,studio,command-center,worker,prometheus,grafana
       WISE2_ALLOWED_APPS: website,dashboard,admin,studio,command-center,api,worker
-      WISE2_OLLAMA_URL: http://host.docker.internal:11434/api/tags
-      WISE2_HERMES_URL: http://host.docker.internal:3012/api/health
+      WISE2_OLLAMA_URL: http://127.0.0.1:11434/api/tags
+      WISE2_HERMES_URL: http://127.0.0.1:3012/api/health
       WISE2_PUBLIC_URL: https://wise2.net
-      WISE2_API_HEALTH_URL: http://host.docker.internal:3010/api/health
-    ports:
-      - "127.0.0.1:3099:3099"
+      WISE2_API_HEALTH_URL: http://127.0.0.1:3010/api/health
+    network_mode: host
     volumes:
       - ./:/workspace:ro
       - ./data/control-bridge:/data/control-bridge
       - /var/run/docker.sock:/var/run/docker.sock
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3099/v1/control/health"]
