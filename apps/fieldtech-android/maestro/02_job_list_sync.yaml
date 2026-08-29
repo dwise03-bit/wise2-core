@@ -1,0 +1,17 @@
+# Flow 2: Job List + Offline Sync
+# Verifies the job/diagnostic list loads and pull-to-refresh triggers a sync
+# without crashing (covers DiagnosticRepository sync path).
+appId: com.wise2.fieldtech
+---
+- launchApp
+- assertVisible:
+    text: ".*Job.*|.*Diagnostic.*"
+- swipe:
+    direction: DOWN
+    duration: 500
+- extendedWaitUntil:
+    visible: ".*Job.*|.*Diagnostic.*"
+    timeout: 10000
+- takeScreenshot: 02_job_list_loaded
+- scroll
+- takeScreenshot: 02_job_list_scrolled

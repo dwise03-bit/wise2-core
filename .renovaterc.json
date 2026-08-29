@@ -1,0 +1,113 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":disableRateLimiting"
+  ],
+  "timezone": "America/Chicago",
+  "schedule": ["after 10pm every weekday", "every weekend"],
+  "labels": ["dependencies", "renovate"],
+  "rangeStrategy": "bump",
+  "packageManager": "pnpm",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "postUpdateOptions": ["pnpmDedupe"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.gradle/**",
+    "CJAYS/mobile-app/.gradle/**",
+    "apps/*/build/**",
+    "apps/*-android/.gradle/**"
+  ],
+  "packageRules": [
+    {
+      "description": "Monorepo-wide: 28 workspaces under apps/* and packages/* share a lockfile",
+      "matchFileNames": ["apps/**", "packages/**", "package.json"],
+      "groupName": "workspace dependencies"
+    },
+    {
+      "description": "Group all production dependency updates per workspace",
+      "matchDepTypes": ["dependencies"],
+      "groupName": "{{parentDir}} dependencies",
+      "groupSlug": "{{parentDir}}-deps"
+    },
+    {
+      "description": "Group all devDependency updates per workspace",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "{{parentDir}} devDependencies",
+      "groupSlug": "{{parentDir}}-dev-deps"
+    },
+    {
+      "description": "Group pnpm itself + pnpm-lock maintenance separately",
+      "matchPackageNames": ["pnpm"],
+      "matchDepTypes": ["packageManager"],
+      "groupName": "pnpm toolchain",
+      "groupSlug": "pnpm-toolchain",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Auto-merge minor + patch updates once CI passes",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Major updates: weekly PR only, no auto-merge, requires manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "labels": ["dependencies", "renovate", "major-update", "needs-review"],
+      "prBodyNotes": [
+        "This is a MAJOR version bump. Review CHANGELOG for breaking changes before merging.",
+        "Run the affected workspace's full test suite locally before approving."
+      ]
+    },
+    {
+      "description": "Native mobile toolchains (Gradle/Kotlin/Swift) — never auto-merge, low frequency",
+      "matchFileNames": [
+        "apps/fieldtech-android/**",
+        "apps/wise2-ios/**",
+        "CJAYS/mobile-app/**"
+      ],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "groupName": "mobile toolchain updates"
+    },
+    {
+      "description": "Docker base images — grouped, no auto-merge (verify healthchecks manually)",
+      "matchDatasources": ["docker"],
+      "groupName": "docker base images",
+      "automerge": false
+    },
+    {
+      "description": "Pin GitHub Actions to commit SHA for supply-chain safety",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
+    {
+      "description": "Security/vulnerability patches jump the queue regardless of schedule",
+      "matchUpdateTypes": ["patch"],
+      "vulnerabilityAlerts": true,
+      "schedule": ["at any time"],
+      "automerge": true,
+      "labels": ["dependencies", "renovate", "security"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "dependencyDashboardTitle": "WISE² Renovate Dependency Dashboard",
+  "commitMessagePrefix": "chore(deps):",
+  "semanticCommits": "enabled"
+}

@@ -1,0 +1,26 @@
+# WISE² FieldTech iOS — Maestro E2E entry point (Phase 4 OSS Toolkit)
+#
+# ** PATH MISMATCH NOTE **
+# This file was generated at the path requested by the task (apps/fieldtech-ios/maestro.yml),
+# but the actual native FieldTech iOS project lives at:
+#   apps/wise-hvac-demo/ios/App/App.xcodeproj  (bundle id: com.wisedefense.fieldtech)
+# There is no apps/fieldtech-ios directory in this repo as of 2026-08-28 (only
+# apps/fieldtech-android exists as a sibling native app; apps/wise2-ios is the
+# separate Command Center app, bundle id com.dwise954.wise2.app).
+#
+# Before running this suite, either:
+#   (a) move this file (and the sub-flows below) into apps/wise-hvac-demo/ios/, or
+#   (b) create apps/fieldtech-ios as the canonical path and move the Xcode project there.
+# appId below is set to the REAL bundle id (com.wisedefense.fieldtech) so the flow
+# is correct once the file is relocated to run against the real .app build.
+#
+# Run all 3 flows (after relocating per above):
+#   maestro test apps/fieldtech-ios/maestro.yml
+# Run one flow in isolation:
+#   maestro test apps/fieldtech-ios/maestro/02_job_map_view.yaml
+
+appId: com.wisedefense.fieldtech
+---
+- runFlow: maestro/01_login_auth.yaml
+- runFlow: maestro/02_job_map_view.yaml
+- runFlow: maestro/03_ai_notes_capture.yaml

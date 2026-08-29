@@ -1,0 +1,18 @@
+# Flow 3: Job detail -> Hermes AI-drafted technician notes (evidence-status badge)
+# Covers POST /v1/hermes/chat integration from the job detail view.
+appId: com.wisedefense.fieldtech
+---
+- launchApp
+- assertVisible:
+    text: ".*Job.*|.*Dispatch.*"
+- tapOn:
+    index: 0
+    text: ".*"
+    optional: true
+- tapOn:
+    text: ".*Notes.*|.*AI.*|.*Draft.*"
+    optional: true
+- assertVisible:
+    text: ".*evidence.*|.*verified.*|.*unverified.*"
+    optional: true
+- takeScreenshot: 03_ai_notes_capture

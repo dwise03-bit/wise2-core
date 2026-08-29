@@ -1,0 +1,17 @@
+# Flow 1: Login / Authentication
+# Verifies a technician can authenticate and land on the job list.
+appId: com.wise2.fieldtech
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Email"
+- tapOn: "Email"
+- inputText: "${MAESTRO_TEST_EMAIL}"
+- tapOn: "Password"
+- inputText: "${MAESTRO_TEST_PASSWORD}"
+- tapOn: "Sign In"
+- assertNotVisible: "Sign In"
+- assertVisible:
+    text: ".*Job.*|.*Dashboard.*"
+    optional: false
+- takeScreenshot: 01_login_success

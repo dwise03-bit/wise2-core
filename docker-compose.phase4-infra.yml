@@ -1,0 +1,44 @@
+# WISE² OSS Toolkit — Phase 4: Container Management UI
+# Portainer CE — visual management for all wise2-* Docker Compose stacks.
+# Maestro (mobile E2E), SwiftLint, ktlint, and Ansible/Tailscale are NOT containers —
+# see apps/*/maestro.yml, .swiftlint.yml, ktlint.editorconfig, and docs/TOOLKIT-DEPLOYMENT.md
+# for those pieces of Phase 4.
+#
+# Deploy standalone:
+#   docker compose -f docker-compose.phase4-infra.yml up -d
+#
+# SECURITY NOTE: Portainer is mounted with access to the host Docker socket, which is
+# equivalent to root on the host. Bind to 127.0.0.1 only and reach it via an
+# authenticated reverse-proxy path (or Tailscale, see Phase 4 Ansible/Tailscale notes
+# in docs/TOOLKIT-DEPLOYMENT.md) — never expose port 9000 directly to the public internet.
+
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: wise2-portainer
+    restart: unless-stopped
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer_data:/data
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9000/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  portainer_data:
+    driver: local
+
+networks:
+  wise2-toolkit:
+    driver: bridge
+    name: wise2-toolkit

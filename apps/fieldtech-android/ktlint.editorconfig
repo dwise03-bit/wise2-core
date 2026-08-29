@@ -1,0 +1,38 @@
+# WISE² ktlint rules — Phase 4 OSS Toolkit
+#
+# ktlint reads Kotlin-specific rules from an .editorconfig file, not an arbitrarily
+# named file — it does NOT auto-discover "ktlint.editorconfig". To activate these
+# rules, either:
+#   (a) merge the [*.{kt,kts}] section below into apps/fieldtech-android/.editorconfig
+#       (no root .editorconfig currently exists in this module — see
+#       services/edge-appliance/.editorconfig for the repo's existing style baseline), or
+#   (b) point ktlint at this file explicitly:
+#       ktlint --editorconfig=apps/fieldtech-android/ktlint.editorconfig "app/src/**/*.kt"
+#
+# Kept as a separate file (rather than overwriting a shared root .editorconfig) so it
+# doesn't collide with the TypeScript/JSON/Markdown rules already used elsewhere in
+# the monorepo (see services/edge-appliance/.editorconfig).
+
+root = false
+
+[*.{kt,kts}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+max_line_length = 140
+
+# ktlint-specific rule toggles (ktlint_official ruleset baseline)
+ktlint_code_style = ktlint_official
+ktlint_standard_no-wildcard-imports = enabled
+ktlint_standard_import-ordering = enabled
+ktlint_standard_final-newline = enabled
+ktlint_standard_no-consecutive-blank-lines = enabled
+ktlint_standard_no-trailing-spaces = enabled
+ktlint_standard_indent = enabled
+ktlint_standard_max-line-length = enabled
+# Compose functions are PascalCase by convention — do not flag as a function-naming violation
+ktlint_standard_function-naming = disabled
+ktlint_standard_filename = enabled

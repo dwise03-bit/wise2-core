@@ -1,0 +1,13 @@
+# Flow 2: Job List + MapKit view (CLGeocoder-based pins colored by priority)
+appId: com.wisedefense.fieldtech
+---
+- launchApp
+- assertVisible:
+    text: ".*Job.*|.*Dispatch.*"
+- tapOn:
+    text: ".*Map.*"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Job.*|.*Map.*"
+    timeout: 10000
+- takeScreenshot: 02_job_map_loaded

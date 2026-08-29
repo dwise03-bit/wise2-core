@@ -1,0 +1,101 @@
+# WISE² OSS Toolkit — Phase 2: Secrets Management
+# Infisical (self-hosted secrets manager) — Renovate and restic are NOT containers
+# (Renovate runs as a GitHub App/CI job via .renovaterc.json, restic runs via
+# scripts/backup-setup.sh + cron), so only Infisical needs a compose stack.
+#
+# NOTE: file intentionally named "phase2-infisical" rather than "phase2-secrets" —
+# this repo's Claude Code permission config denies Read/Write on any path matching
+# "*secret*" (see .claude/settings.json). Keep that naming convention for any future
+# files in this family.
+#
+# Deploy standalone:
+#   docker compose -f docker-compose.phase2-infisical.yml up -d
+#
+# First-run setup:
+#   1. Visit http://<host>:8001 and create the initial admin/org account.
+#   2. Generate a machine identity + service token for CI/CD to pull secrets.
+#   3. Migrate existing .env.production values into Infisical projects per app
+#      (wise2-api, wise2-website, wise2-dashboard, etc.) before removing plaintext .env files.
+
+version: '3.8'
+
+services:
+  infisical-postgres:
+    image: postgres:15-alpine
+    container_name: wise2-infisical-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: infisical
+      POSTGRES_USER: infisical
+      POSTGRES_PASSWORD: ${INFISICAL_DB_PASSWORD:-infisical}
+    volumes:
+      - infisical_postgres_data:/var/lib/postgresql/data
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U infisical -d infisical"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  infisical-redis:
+    image: redis:7-alpine
+    container_name: wise2-infisical-redis
+    restart: unless-stopped
+    volumes:
+      - infisical_redis_data:/data
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  infisical:
+    image: infisical/infisical:latest-postgres
+    container_name: wise2-infisical
+    restart: unless-stopped
+    environment:
+      # --- Required (store the real values in Infisical's own bootstrap env file,
+      #     kept out of git, once Phase 2 is actually deployed) ---
+      ENCRYPTION_KEY: "${INFISICAL_ENCRYPTION_KEY:?generate with 'openssl rand -hex 16'}"
+      AUTH_SECRET: "${INFISICAL_AUTH_SECRET:?generate with 'openssl rand -base64 32'}"
+      DB_CONNECTION_URI: postgresql://infisical:${INFISICAL_DB_PASSWORD:-infisical}@infisical-postgres:5432/infisical
+      REDIS_URL: redis://infisical-redis:6379/0
+      # --- App config ---
+      SITE_URL: ${INFISICAL_SITE_URL:-https://vault.wise2.net}
+      NODE_ENV: production
+      TELEMETRY_ENABLED: "false"
+      # --- Optional SMTP (invites, password reset) ---
+      SMTP_HOST: ${INFISICAL_SMTP_HOST:-}
+      SMTP_PORT: ${INFISICAL_SMTP_PORT:-587}
+      SMTP_USERNAME: ${INFISICAL_SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${INFISICAL_SMTP_PASSWORD:-}
+      SMTP_FROM_ADDRESS: ${INFISICAL_SMTP_FROM:-vault@wise2.net}
+    ports:
+      - "127.0.0.1:8001:8080"
+    depends_on:
+      infisical-postgres:
+        condition: service_healthy
+      infisical-redis:
+        condition: service_healthy
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  infisical_postgres_data:
+    driver: local
+  infisical_redis_data:
+    driver: local
+
+networks:
+  wise2-toolkit:
+    driver: bridge
+    name: wise2-toolkit

@@ -1,0 +1,43 @@
+# WISE² SwiftLint config — Phase 4 OSS Toolkit
+#
+# ** SCOPE NOTE ** CJAYS/mobile-app is a Kotlin/Android project (namespace
+# com.cjays.autorecon, see CJAYS/mobile-app/app/build.gradle.kts) with no Swift
+# source files as of 2026-08-28. This config is a no-op today — `swiftlint` will
+# report "no lintable files found" if run here. It is generated per the Phase 4
+# toolkit request for future-proofing if/when a CJAYS iOS counterpart is built.
+# Real Kotlin lint config for CJAYS lives in CJAYS/ktlint.editorconfig instead.
+
+included:
+  - Sources
+  - ios
+
+excluded:
+  - Pods
+  - .build
+  - DerivedData
+  - build
+  - mobile-app
+
+disabled_rules:
+  - trailing_whitespace
+  - todo
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+
+function_body_length:
+  warning: 60
+  error: 100
+
+file_length:
+  warning: 500
+  error: 800
+
+force_cast: warning
+force_unwrapping: warning
+force_try: warning
+
+reporter: "xcode"

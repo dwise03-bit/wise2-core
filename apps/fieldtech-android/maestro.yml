@@ -1,0 +1,23 @@
+# WISE² FieldTech Android — Maestro E2E entry point (Phase 4 OSS Toolkit)
+#
+# Maestro flow files are single-flow YAML documents; this file is the ENTRY POINT
+# that chains the 3 core flows below via `runFlow` so `maestro test maestro.yml`
+# exercises the full critical path in one run. Each sub-flow also runs standalone
+# for targeted debugging.
+#
+# Run all 3 flows:
+#   maestro test apps/fieldtech-android/maestro.yml
+# Run one flow in isolation:
+#   maestro test apps/fieldtech-android/maestro/02_job_list_sync.yaml
+#
+# appId verified from apps/fieldtech-android/app/build.gradle.kts (applicationId).
+# Selectors below use visible text where known from
+# apps/fieldtech-android/app/src/main/kotlin/com/wise2/fieldtech/ui/components/SharedComponents.kt
+# and DiagnosticRepository.kt — VERIFY against the running app before first CI run,
+# since text may have changed since this file was generated (see daily log 2026-08-28).
+
+appId: com.wise2.fieldtech
+---
+- runFlow: maestro/01_login_auth.yaml
+- runFlow: maestro/02_job_list_sync.yaml
+- runFlow: maestro/03_diagnostic_capture.yaml

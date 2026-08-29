@@ -1,0 +1,15 @@
+# Flow 3: Diagnostic Capture (barcode scan + record creation)
+# Covers BarcodeScanner.kt entry point and diagnostic record creation path.
+appId: com.wise2.fieldtech
+---
+- launchApp
+- assertVisible:
+    text: ".*Job.*|.*Diagnostic.*"
+- tapOn:
+    text: ".*Scan.*|.*Add.*|.*New.*"
+    optional: true
+- assertVisible:
+    text: ".*Scan.*|.*Camera.*|.*Diagnostic.*"
+    optional: true
+- pressKey: Back
+- takeScreenshot: 03_diagnostic_flow

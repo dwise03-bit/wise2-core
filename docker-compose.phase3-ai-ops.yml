@@ -1,0 +1,93 @@
+# WISE² OSS Toolkit — Phase 3: AI Observability + Eval + Vector Store
+# Langfuse (LLM tracing/observability) + Chroma (vector DB).
+# Promptfoo is NOT a long-running service — it runs as a CLI job in CI
+# (see scripts/promptfoo-tests.yml), so it has no entry here.
+#
+# Deploy standalone:
+#   docker compose -f docker-compose.phase3-ai-ops.yml up -d
+#
+# Integration: packages/api/src/langfuse.integration.ts expects
+# LANGFUSE_HOST=http://localhost:3002 (or https://langfuse.wise2.net in prod),
+# LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY generated from the Langfuse UI
+# after first login.
+
+version: '3.8'
+
+services:
+  langfuse-postgres:
+    image: postgres:15-alpine
+    container_name: wise2-langfuse-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: langfuse
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: ${LANGFUSE_DB_PASSWORD:-langfuse}
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  langfuse-web:
+    image: langfuse/langfuse:2
+    container_name: wise2-langfuse-web
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://langfuse:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse
+      NEXTAUTH_SECRET: "${LANGFUSE_NEXTAUTH_SECRET:?generate with 'openssl rand -base64 32'}"
+      SALT: "${LANGFUSE_SALT:?generate with 'openssl rand -base64 32'}"
+      NEXTAUTH_URL: ${LANGFUSE_PUBLIC_URL:-http://localhost:3002}
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+      NEXT_PUBLIC_SIGN_UP_DISABLED: "false"
+    ports:
+      - "127.0.0.1:3002:3000"
+    depends_on:
+      langfuse-postgres:
+        condition: service_healthy
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/api/public/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: wise2-chroma
+    restart: unless-stopped
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+      CHROMA_SERVER_AUTHN_CREDENTIALS: ${CHROMA_AUTH_TOKEN:-}
+      CHROMA_SERVER_AUTHN_PROVIDER: ${CHROMA_AUTH_PROVIDER:-}
+    volumes:
+      - chroma_data:/chroma/chroma
+    ports:
+      - "127.0.0.1:8003:8000"
+    networks:
+      - wise2-toolkit
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/api/v1/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  langfuse_postgres_data:
+    driver: local
+  chroma_data:
+    driver: local
+
+networks:
+  wise2-toolkit:
+    driver: bridge
+    name: wise2-toolkit

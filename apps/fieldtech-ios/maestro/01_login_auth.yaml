@@ -1,0 +1,24 @@
+# Flow 1: Login / Authentication (Keychain-backed JWT, session persistence)
+# Mirrors packages/api/src/auth POST /v1/auth/login contract per daily log 2026-08-28.
+appId: com.wisedefense.fieldtech
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Sign In"
+- tapOn:
+    id: "loginEmailField"
+    optional: true
+- tapOn:
+    text: "Email"
+    optional: true
+- inputText: "${MAESTRO_TEST_EMAIL}"
+- tapOn:
+    id: "loginPasswordField"
+    optional: true
+- tapOn:
+    text: "Password"
+    optional: true
+- inputText: "${MAESTRO_TEST_PASSWORD}"
+- tapOn: "Sign In"
+- assertNotVisible: "Sign In"
+- takeScreenshot: 01_login_success
