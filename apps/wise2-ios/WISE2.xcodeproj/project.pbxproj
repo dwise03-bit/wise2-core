@@ -17,6 +17,7 @@
 		3F000100F /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001010 /* HomeScreen.swift */; };
 		3F0001011 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001012 /* Colors.swift */; };
 		3F0001013 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3F0001014 /* Info.plist */; };
+		3F0001070 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F0001071 /* Assets.xcassets */; };
 		3F0001022 /* BusinessOSModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001023 /* BusinessOSModels.swift */; };
 		3F0001024 /* BusinessOSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001025 /* BusinessOSClient.swift */; };
 		3F0001026 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001027 /* CommandStore.swift */; };
@@ -78,6 +79,7 @@
 		3F0001010 /* HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Home/HomeScreen.swift; sourceTree = SOURCE_ROOT; };
 		3F0001012 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/DesignSystem/Colors.swift; sourceTree = SOURCE_ROOT; };
 		3F0001014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WISE2/Info.plist; sourceTree = SOURCE_ROOT; };
+		3F0001071 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = WISE2/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		3F0001015 /* WISE2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F0001023 /* BusinessOSModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Models/BusinessOSModels.swift; sourceTree = SOURCE_ROOT; };
 		3F0001025 /* BusinessOSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Networking/BusinessOSClient.swift; sourceTree = SOURCE_ROOT; };
@@ -177,6 +179,7 @@
 				3F0002014 /* FinanceScreen.swift */,
 				3F0002015 /* CapabilityStore.swift */,
 				3F0002016 /* MoreScreen.swift */,
+				3F0001071 /* Assets.xcassets */,
 				3F0001014 /* Info.plist */,
 			);
 			path = WISE2;
@@ -296,6 +299,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F0001070 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,15 +391,17 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_NAME = WISE2;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WISE2/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.3;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.commandcenter.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -412,16 +418,21 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
 				EXECUTABLE_NAME = WISE2;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WISE2/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.commandcenter.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
