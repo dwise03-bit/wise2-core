@@ -4,87 +4,82 @@
 **Repo:** `dwise03-bit/wise2-core`
 **Primary app:** `apps/wise2-ios`
 **Architecture spec:** `docs/superpowers/specs/2026-08-29-wise2-business-os-design.md`
+**Implementation plan:** `docs/superpowers/plans/2026-08-29-wise2-business-os.md`
 
 ## Mission
 
-Finish the WISE² iOS Business OS as the secure native command center for running WISE². Do not redesign the architecture from scratch. Preserve existing working iOS/auth/networking and Control Bridge code, then implement the approved vertical slices.
+Finish the WISE² iOS Business OS as the secure native command center for running WISE². Do not redesign the architecture from scratch. Preserve working iOS/auth/networking and Control Bridge code and execute the approved vertical slices.
 
-## Required reading before edits
+## Required reading
 
 1. `docs/superpowers/specs/2026-08-29-wise2-business-os-design.md`
 2. `docs/superpowers/specs/2026-08-27-wise2-control-bridge-design.md`
 3. `docs/superpowers/specs/2026-08-28-wise2-cloud-design.md`
-4. `docs/superpowers/plans/2026-08-29-wise2-business-os.md` once present
+4. `docs/superpowers/plans/2026-08-29-wise2-business-os.md`
 5. this file
 
-## Known existing iOS foundation
-
-The project already has a SwiftUI application foundation with WISE² design colors, Keychain/JWT authentication, `APIClient`, `AppState`, a five-tab navigation shell, auth flow, and initial home/dashboard concepts. Inspect current source before changing anything.
-
-## Locked product navigation
+## Locked navigation
 
 `Command | CRM | Work | AI | More`
 
-Global WISE² Command Orb available across the authenticated app.
-
-`More` contains Phone, Clients, Cloud, Studio, Money, Academy, Trading, Settings.
+`More`: Phone, Clients, Cloud, Studio, Money, Academy, Trading, Settings.
 
 ## Locked technical rules
 
-- iOS is a control plane, not the authoritative database.
-- `wise2-core` owns business logic and authoritative business state.
-- Use a versioned `/api/v1/business-os` facade.
-- Privileged infrastructure actions use named capabilities through the Control Bridge.
-- Never expose arbitrary SSH/shell execution in iOS.
-- Sensitive production/destructive actions require confirmation and LocalAuthentication where appropriate.
-- Server-side RBAC/capability checks are mandatory.
-- Preserve Keychain/JWT auth unless tests prove replacement is necessary.
-- Keep Trading separately permissioned.
-- Do not hard-code customers.
-- Offline mutations are limited to safe capture workflows until server acknowledgment is possible.
+- iOS is the control plane, never the authoritative database.
+- `wise2-core` owns business logic/state.
+- Mobile facade is `/api/v1/business-os`.
+- Privileged infrastructure mutations are named capabilities through the Control Bridge.
+- No arbitrary SSH/shell execution from iOS.
+- Sensitive production/destructive actions require explicit confirmation and LocalAuthentication where appropriate.
+- RBAC/capability authorization is server-side.
+- Preserve Keychain/JWT auth.
+- Trading is separately permissioned.
+- Customers are dynamic API records, never hard-coded Swift modules.
 
-## Vertical slice order
+## Credit-saver mode
 
-1. Business OS shell + shared contracts
-2. Command dashboard + universal command entry
-3. CRM/revenue
-4. Clients + projects/work
-5. AI workforce + approvals
-6. Phone/comms
-7. Cloud/deployments
-8. HVAC workspace
-9. Studio/growth
-10. Finance/admin
-11. Trading entry/capability gate
+Inspect before generating. Make targeted edits. Preserve working components. Run focused tests first. Do not repeat visual analysis without a UI defect. Prefer local/GPU assistance for routine work and premium model passes for hard blockers.
 
-Do not attempt all slices in one giant rewrite.
+## Current implementation status — 2026-08-29
 
-## Credit-saver operating mode
-
-- Inspect before generating.
-- Make targeted edits.
-- Do not rebuild working components.
-- Use focused tests first.
-- Avoid repeated screenshots/visual analysis unless needed for a UI defect.
-- Use local/GPU models for routine assistance when practical.
-- Escalate to premium model reasoning only for difficult blockers.
-
-## Mandatory end-of-session update
-
-Before handing off, replace the status section below with current facts.
-
-### Status
-
-- Branch: `main` at handoff creation; verify before work.
+- Branch: `feat/wise2-business-os`
 - Locked design commit: `2b5bcff02eb6d4dfd2549b96bd5135086dc3f17b`
-- Current slice: implementation planning
-- Implementation changes: none made by this handoff
-- Tests: not run by this handoff; no implementation was changed
-- Blockers: implementation plan must be created/read before coding
-- Next exact action: read the locked spec, create/read `docs/superpowers/plans/2026-08-29-wise2-business-os.md`, then execute Task 1 with tests before implementation.
+- Current slice: Task 1 / Task 3 foundation — Business OS shell, contracts, and Command UI.
+- Added `WISE2/Core/Models/BusinessOSModels.swift` with dashboard/module/operation contracts.
+- Updated `APIClient.swift` with reusable authenticated GET/POST transport while preserving Keychain bearer auth.
+- Added `WISE2/Core/Networking/BusinessOSClient.swift` targeting `/business-os/dashboard` and `/business-os/command` relative to the existing `/v1` API base.
+- Added `WISE2/Features/Command/CommandStore.swift`.
+- Added `WISE2/Features/Command/CommandScreen.swift` with live-state metric cards and command composer; it contains no fake production metrics.
+- Updated `MainTabView.swift` to the locked `Command | CRM | Work | AI | More` shell and module launcher.
+- Updated the Xcode project source list to include the new Business OS Swift files.
+- Backend discovery: primary API source exists under `apps/api/src`; existing route directory currently contains `apps/api/src/routes/trading.ts`. Inspect app bootstrap/package conventions before mounting Business OS routes.
 
-## Takeover prompt
+## Verification status / blocker
 
-You are taking over the WISE² Business OS implementation in `dwise03-bit/wise2-core`.
+The ChatGPT execution container cannot resolve `github.com`, so an isolated local checkout and `xcodebuild` verification could not be performed in this session. Do **not** claim the current branch builds until it is checked on a Mac/Xcode runner. Repository writes were made through the authenticated GitHub connector. The repo has GitHub workflows, but no iOS build result has yet been verified for this branch.
 
-Do not start by redesigning or asking broad product questions. Read the required files above, inspect `apps/wise2-ios`, inspect the existing Control Bridge, and report the current branch/commit plus the first implementation task. Follow the implementation plan task-by-task using test-driven development. Preserve working code. Do not expose arbitrary remote shell execution. Keep privileged operations named, allowlisted, authenticated, audited, and server-authorized. Update this handoff before stopping so the next Cursor/Claude/Codex session can continue without chat history.
+Before adding more vertical slices, run on a Mac checkout:
+
+```bash
+git fetch origin
+git checkout feat/wise2-business-os
+xcodebuild -project apps/wise2-ios/WISE2.xcodeproj -scheme WISE2 -destination 'generic/platform=iOS Simulator' build
+```
+
+If the project file needs repair, preserve the new Swift source files and regenerate/fix only project references. Then add an iOS test target if still absent and execute Task 1 tests from the implementation plan.
+
+## Next exact actions for Cursor / Claude Code
+
+1. Checkout `feat/wise2-business-os`.
+2. Build the iOS target immediately and fix compile/project-reference errors before feature expansion.
+3. Add/verify XCTest target and BusinessOS model/client tests from Task 1.
+4. Inspect `apps/api` bootstrap/package files and existing auth middleware.
+5. Implement authenticated `GET /api/v1/business-os/dashboard` and `POST /api/v1/business-os/command` with negative tests rejecting `shell`/`exec` capabilities.
+6. Run focused backend and iOS tests.
+7. Continue Task 4 CRM only after Command slice is green.
+8. Update this file with exact test output, blockers, changed files, current commit, and next task before stopping.
+
+## Copy/paste takeover prompt
+
+You are taking over WISE² Business OS in `dwise03-bit/wise2-core` on branch `feat/wise2-business-os`. Work in credit-saver mode. Read the locked Business OS spec, Control Bridge spec, Cloud spec, implementation plan, and this handoff before editing. Do not redesign the architecture. First run the iOS build and repair only concrete failures. Then finish Task 1 tests and the Business OS backend dashboard/command facade. Never expose arbitrary shell/SSH. Privileged actions must be named, allowlisted, authenticated, server-authorized, audited, idempotent where retriable, and confirmation-gated when sensitive. Preserve existing working modules. Continue vertical slices in plan order only after tests are green. Before stopping, update this handoff with branch/commit, changed files, exact tests/results, blockers, and next exact task.
