@@ -62,9 +62,13 @@ export async function gpuMetrics(ctx: AdapterContext): Promise<ComponentState> {
 }
 
 export async function dockerServices(ctx: AdapterContext): Promise<string[]> {
-  const configured = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'config', '--services'], { timeoutMs: 10_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
-  if (configured.code !== 0) return ctx.config.allowedServices;
-  return configured.stdout.trim().split('\n').filter(name => ctx.config.allowedServices.includes(name));
+  try {
+    const configured = await runner(ctx)(ctx.config.dockerBinary, ['compose', '-f', ctx.config.composeFile, 'config', '--services'], { timeoutMs: 10_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
+    if (configured.code !== 0) return ctx.config.allowedServices;
+    return configured.stdout.trim().split('\n').filter(name => ctx.config.allowedServices.includes(name));
+  } catch {
+    return ctx.config.allowedServices;
+  }
 }
 
 export async function dockerPs(ctx: AdapterContext): Promise<string> {
@@ -166,4 +170,3 @@ export async function rollbackApp(ctx: AdapterContext, app: string): Promise<Dep
   await appendDeployment(ctx.config.deploymentFile, record);
   return record;
 }
-
