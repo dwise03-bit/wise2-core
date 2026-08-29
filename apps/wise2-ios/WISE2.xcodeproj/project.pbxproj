@@ -21,6 +21,7 @@
 		3F0001024 /* BusinessOSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001025 /* BusinessOSClient.swift */; };
 		3F0001026 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001027 /* CommandStore.swift */; };
 		3F0001028 /* CommandScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001029 /* CommandScreen.swift */; };
+		3F0001062 /* CommandOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001063 /* CommandOrb.swift */; };
 		3F0001050 /* BusinessOSModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001051 /* BusinessOSModelsTests.swift */; };
 		3F0001052 /* BusinessOSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001053 /* BusinessOSClientTests.swift */; };
 		3F0001054 /* CommandStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001055 /* CommandStoreTests.swift */; };
@@ -52,6 +53,7 @@
 		3F0001025 /* BusinessOSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Networking/BusinessOSClient.swift; sourceTree = SOURCE_ROOT; };
 		3F0001027 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Command/CommandStore.swift; sourceTree = SOURCE_ROOT; };
 		3F0001029 /* CommandScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Command/CommandScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0001063 /* CommandOrb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Command/CommandOrb.swift; sourceTree = SOURCE_ROOT; };
 		3F0001044 /* WISE2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WISE2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F0001051 /* BusinessOSModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessOSModelsTests.swift; sourceTree = "<group>"; };
 		3F0001053 /* BusinessOSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessOSClientTests.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				3F0001025 /* BusinessOSClient.swift */,
 				3F0001027 /* CommandStore.swift */,
 				3F0001029 /* CommandScreen.swift */,
+				3F0001063 /* CommandOrb.swift */,
 				3F0001014 /* Info.plist */,
 			);
 			path = WISE2;
@@ -234,6 +237,7 @@
 				3F0001024 /* BusinessOSClient.swift in Sources */,
 				3F0001026 /* CommandStore.swift in Sources */,
 				3F0001028 /* CommandScreen.swift in Sources */,
+				3F0001062 /* CommandOrb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

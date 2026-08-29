@@ -6,6 +6,7 @@ final class CommandStore: ObservableObject {
   @Published private(set) var isLoading = false
   @Published private(set) var errorMessage: String?
   @Published private(set) var lastCommandResult: CommandResult?
+  @Published private(set) var lastOperation: BusinessOperation<CommandResult>?
   @Published private(set) var isSubmitting = false
 
   private let service: BusinessOSServing
@@ -33,8 +34,13 @@ final class CommandStore: ObservableObject {
     defer { isSubmitting = false }
     do {
       let operation = try await service.submitCommand(trimmed)
+      lastOperation = operation
       lastCommandResult = operation.result
+      if operation.result == nil, !operation.message.isEmpty {
+        errorMessage = nil
+      }
     } catch {
+      lastOperation = nil
       errorMessage = error.localizedDescription
     }
   }

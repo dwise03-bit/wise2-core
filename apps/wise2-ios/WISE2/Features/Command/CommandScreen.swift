@@ -1,29 +1,56 @@
 import SwiftUI
 
 struct CommandScreen: View {
-  @StateObject private var store = CommandStore()
+  @ObservedObject var store: CommandStore
+  var showsNavigationChrome = true
   @State private var commandText = ""
+  @FocusState private var commandFieldFocused: Bool
 
   private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
+  init(store: CommandStore, showsNavigationChrome: Bool = true) {
+    self.store = store
+    self.showsNavigationChrome = showsNavigationChrome
+  }
+
   var body: some View {
-    NavigationView {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 20) {
-          header
-          if store.isLoading && store.dashboard == nil { ProgressView("Syncing WISE²…") }
-          if let dashboard = store.dashboard { metrics(dashboard) }
-          if let error = store.errorMessage { statusCard(title: "Needs attention", value: error) }
-          if let result = store.lastCommandResult { statusCard(title: "WISE²", value: result.summary) }
-          commandComposer
-        }
-        .padding()
+    Group {
+      if showsNavigationChrome {
+        NavigationView { screenContent }
+      } else {
+        screenContent
       }
-      .background(Color.wise2Background.ignoresSafeArea())
-      .navigationBarHidden(true)
-      .task { await store.load() }
-      .refreshable { await store.load() }
     }
+  }
+
+  private var screenContent: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 20) {
+        header
+        if store.isLoading && store.dashboard == nil {
+          ProgressView("Syncing WISE²…")
+        }
+        if let dashboard = store.dashboard {
+          metrics(dashboard)
+        }
+        if let error = store.errorMessage {
+          statusCard(title: "Needs attention", value: error, tone: .warning)
+        }
+        if let operation = store.lastOperation {
+          statusCard(
+            title: operationTitle(operation),
+            value: operationSummary(operation),
+            tone: operation.status == "completed" ? .success : .neutral
+          )
+        }
+        commandComposer
+      }
+      .padding()
+    }
+    .background(Color.wise2Background.ignoresSafeArea())
+    .navigationBarHidden(showsNavigationChrome)
+    .task { await store.load() }
+    .refreshable { await store.load() }
   }
 
   private var header: some View {
@@ -67,31 +94,55 @@ struct CommandScreen: View {
       Text("ASK WISE²").font(.caption.bold()).foregroundColor(.wise2Primary)
       HStack {
         TextField("Show hot leads…", text: $commandText)
+          .focused($commandFieldFocused)
           .textInputAutocapitalization(.sentences)
+          .submitLabel(.send)
+          .onSubmit { submitCommand() }
           .padding(12)
           .background(Color.wise2Surface)
           .cornerRadius(14)
-        Button {
-          let text = commandText
-          commandText = ""
-          Task { await store.submit(text) }
-        } label: {
+        Button(action: submitCommand) {
           Image(systemName: store.isSubmitting ? "hourglass" : "arrow.up.circle.fill")
             .font(.title)
         }
         .disabled(store.isSubmitting || commandText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
       }
+      Text("Try: show hot leads · business summary · health check")
+        .font(.caption2)
+        .foregroundColor(.wise2TextMuted)
     }
   }
 
-  private func statusCard(title: String, value: String) -> some View {
+  private func submitCommand() {
+    let text = commandText
+    guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+    commandText = ""
+    Task { await store.submit(text) }
+  }
+
+  private enum StatusTone {
+    case neutral, success, warning
+  }
+
+  private func statusCard(title: String, value: String, tone: StatusTone = .neutral) -> some View {
     VStack(alignment: .leading, spacing: 6) {
       Text(title).font(.caption.bold()).foregroundColor(.wise2Primary)
-      Text(value).foregroundColor(.wise2TextPrimary)
+      Text(value).foregroundColor(tone == .warning ? .wise2Warning : .wise2TextPrimary)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(Color.wise2Surface)
     .cornerRadius(16)
+  }
+
+  private func operationTitle(_ operation: BusinessOperation<CommandResult>) -> String {
+    "WISE² · \(operation.status.capitalized)"
+  }
+
+  private func operationSummary(_ operation: BusinessOperation<CommandResult>) -> String {
+    if let summary = operation.result?.summary, !summary.isEmpty {
+      return summary
+    }
+    return operation.message
   }
 }

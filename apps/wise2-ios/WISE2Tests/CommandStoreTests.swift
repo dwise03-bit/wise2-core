@@ -68,6 +68,8 @@ final class CommandStoreTests: XCTestCase {
     await store.submit("show hot leads")
 
     XCTAssertEqual(store.lastCommandResult?.summary, "Hot leads ready")
+    XCTAssertEqual(store.lastOperation?.status, "completed")
+    XCTAssertEqual(store.lastOperation?.operationId, "op-1")
     XCTAssertFalse(store.isSubmitting)
   }
 }
