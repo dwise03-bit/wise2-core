@@ -83,7 +83,7 @@ class AuthManager: ObservableObject {
   func verifySession() async {
     print("🔍 Verifying session...")
 
-    guard let token = try? keychainManager.getToken() else {
+    guard (try? keychainManager.getToken()) != nil else {
       print("⚠️ No token in keychain")
       isAuthenticated = false
       return
@@ -110,7 +110,7 @@ class AuthManager: ObservableObject {
       print("✅ Token refreshed")
     } catch {
       print("❌ Token refresh failed: \(error)")
-      await logout()
+      logout()
     }
   }
 }

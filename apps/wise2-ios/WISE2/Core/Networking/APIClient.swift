@@ -91,7 +91,7 @@ actor APIClient {
     if mockMode { return }
     struct UpdateRequest: Codable { let status: String }
     let request = UpdateRequest(status: status)
-    try await post("/work/tasks/\(taskId)", body: request) as EmptyResponse
+    let _: EmptyResponse = try await post("/work/tasks/\(taskId)", body: request)
   }
 
   // MARK: - AI Endpoints
