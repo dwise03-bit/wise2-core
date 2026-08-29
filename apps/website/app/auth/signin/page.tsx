@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { FormEvent, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { validateEmail, validatePassword } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
 import { apiClient } from '@/lib/api-client';
@@ -15,6 +16,7 @@ interface FormErrors {
 
 export default function LoginPage() {
   const { setAuth } = useStore();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +31,22 @@ export default function LoginPage() {
   useEffect(() => {
     analytics.track('page_view', { page: 'login' });
   }, []);
+
+  useEffect(() => {
+    const oauthError = searchParams.get('error');
+    if (!oauthError) return;
+
+    const messages: Record<string, string> = {
+      oauth_failed: 'Sign-in failed. Please try again or use email login.',
+      google_rejected: 'Google sign-in was cancelled.',
+      user_rejected: 'Discord sign-in was cancelled.',
+      discord_not_configured: 'Discord sign-in is not configured yet.',
+      state_mismatch: 'Sign-in session expired. Please try again.',
+      no_code: 'Sign-in did not complete. Please try again.',
+    };
+
+    setSubmitError(messages[oauthError] || 'Sign-in failed. Please try again.');
+  }, [searchParams]);
 
   const validateField = (field: string, value: string): string | null => {
     switch (field) {
@@ -302,54 +320,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-wise-subtle space-y-3">
-          {process.env.NODE_ENV !== 'production' && (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  devLogin('Developer', 'dev@wise2.local');
-                }}
-                className="w-full py-2 bg-wise-surface hover:bg-wise-surface/80 border border-wise-primary text-wise-primary rounded-md transition-colors flex items-center justify-center gap-2 font-semibold"
-              >
-                <span>🚀</span>
-                Dev Login (Testing)
-              </button>
-              <div className="text-center text-xs text-wise-muted/60">or</div>
-            </>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              analytics.track('discord_signin_click');
-              window.location.href = '/api/auth/discord/authorize';
-            }}
-            className="w-full py-2 border border-wise-subtle hover:border-wise-primary text-wise-primary rounded-md transition-colors hover:bg-wise-surface flex items-center justify-center gap-2"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515a.074.074 0 00-.079.037c-.211.375-.445.864-.607 1.25a18.27 18.27 0 00-5.487 0c-.162-.386-.395-.875-.607-1.25a.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03a.078.078 0 00.084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892a.077.077 0 01-.008-.128c.126-.094.252-.192.372-.292a.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.009c.12.1.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892a.077.077 0 00-.041.107c.36.699.77 1.364 1.225 1.994a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03a.077.077 0 00.032-.054c.5-4.467-.838-8.343-3.554-11.761a.07.07 0 00-.031-.028zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419c0-1.334.969-2.419 2.157-2.419c1.188 0 2.157 1.085 2.157 2.42c0 1.333-.969 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.334.969-2.419 2.157-2.419c1.188 0 2.157 1.085 2.157 2.42c0 1.333-.969 2.419-2.157 2.419z" />
-            </svg>
-            Continue with Discord
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              analytics.track('google_signin_click');
-              window.location.href = '/auth/google/authorize';
-            }}
-            className="w-full py-2 border border-wise-subtle hover:border-wise-primary text-wise-primary rounded-md transition-colors hover:bg-wise-surface flex items-center justify-center gap-2"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            Continue with Google
-          </button>
-        </div>
-
-        <div className="mt-4 text-center text-xs text-wise-muted">
+        <div className="mt-8 pt-6 border-t border-wise-subtle text-center text-xs text-wise-muted">
           <a href="/" className="hover:text-wise-primary">← Back to home</a>
         </div>
       </div>

@@ -48,6 +48,14 @@ export class GoogleLoginDto {
   idToken!: string;
 }
 
+export class OAuthCodeExchangeDto {
+  @IsString({ message: 'Authorization code must be a string' })
+  code!: string;
+
+  @IsString({ message: 'Redirect URI must be a string' })
+  redirectUri!: string;
+}
+
 /**
  * DTO for token refresh
  */

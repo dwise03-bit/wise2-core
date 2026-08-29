@@ -48,7 +48,19 @@ export class AuthService {
     return this.prismaAuthService.getGoogleAuthUrl();
   }
 
-  async handleGoogleCallback(code: string) {
-    return this.prismaAuthService.handleGoogleCallback(code);
+  async handleGoogleCallback(code: string, redirectUri?: string) {
+    return this.prismaAuthService.handleGoogleCallback(code, redirectUri);
+  }
+
+  async loginWithGoogle(idToken: string) {
+    return this.prismaAuthService.loginWithGoogle(idToken);
+  }
+
+  async exchangeGoogleCode(code: string, redirectUri: string) {
+    return this.prismaAuthService.exchangeGoogleCode(code, redirectUri);
+  }
+
+  async exchangeDiscordCode(code: string, redirectUri: string) {
+    return this.prismaAuthService.exchangeDiscordCode(code, redirectUri);
   }
 }

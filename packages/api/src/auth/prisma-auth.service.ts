@@ -100,6 +100,36 @@ export class PrismaAuthService {
     };
   }
 
+  private issueAuthTokens(user: {
+    id: string;
+    email: string;
+    name: string | null;
+    role: string;
+  }) {
+    const accessToken = this.jwt.sign(
+      { sub: user.id, email: user.email, role: user.role },
+      { expiresIn: '15m' },
+    );
+    const refreshToken = this.jwt.sign(
+      { sub: user.id, type: 'refresh' },
+      { expiresIn: '7d' },
+    );
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        firstName: user.name?.split(' ')[0] || '',
+        lastName: user.name?.split(' ').slice(1).join(' ') || '',
+      },
+      accessToken,
+      refreshToken,
+      expiresIn: 900,
+    };
+  }
+
   async loginWithGoogle(idToken: string) {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     if (!clientId) {
@@ -143,21 +173,160 @@ export class PrismaAuthService {
       },
     });
 
-    const accessToken = this.jwt.sign(
-      { sub: user.id, email: user.email, role: user.role },
-      { expiresIn: '15m' },
-    );
-    const refreshToken = this.jwt.sign(
-      { sub: user.id, type: 'refresh' },
-      { expiresIn: '7d' },
-    );
+    return this.issueAuthTokens(user);
+  }
 
-    return {
-      user: { id: user.id, email: user.email, name: user.name, role: user.role },
-      accessToken,
-      refreshToken,
-      expiresIn: 900,
+  async exchangeGoogleCode(code: string, redirectUri: string) {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      throw new UnauthorizedException('Google sign-in is not configured');
+    }
+
+    const oauthClient = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+
+    let tokens;
+    try {
+      ({ tokens } = await oauthClient.getToken(code));
+    } catch (error) {
+      throw new UnauthorizedException('Google token exchange failed');
+    }
+
+    if (!tokens.id_token) {
+      throw new UnauthorizedException('Google did not return an ID token');
+    }
+
+    const ticket = await oauthClient.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: clientId,
+    });
+    const payload = ticket.getPayload();
+    const providerAccountId = payload?.sub;
+
+    const auth = await this.loginWithGoogle(tokens.id_token);
+
+    if (providerAccountId) {
+      await this.prisma.account.updateMany({
+        where: {
+          provider: 'google',
+          providerAccountId,
+        },
+        data: {
+          access_token: tokens.access_token || undefined,
+          refresh_token: tokens.refresh_token || undefined,
+          expires_at: tokens.expiry_date
+            ? Math.floor(tokens.expiry_date / 1000)
+            : undefined,
+          id_token: tokens.id_token,
+        },
+      });
+    }
+
+    return auth;
+  }
+
+  async exchangeDiscordCode(code: string, redirectUri: string) {
+    const clientId = process.env.DISCORD_OAUTH_CLIENT_ID || process.env.DISCORD_CLIENT_ID;
+    const clientSecret =
+      process.env.DISCORD_OAUTH_CLIENT_SECRET || process.env.DISCORD_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      throw new UnauthorizedException('Discord sign-in is not configured');
+    }
+
+    const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: redirectUri,
+      }).toString(),
+    });
+
+    if (!tokenResponse.ok) {
+      throw new UnauthorizedException('Discord token exchange failed');
+    }
+
+    const tokenData = (await tokenResponse.json()) as {
+      access_token?: string;
+      refresh_token?: string;
+      expires_in?: number;
     };
+    const accessToken = tokenData.access_token;
+    const refreshToken = tokenData.refresh_token;
+    const expiresIn = tokenData.expires_in;
+
+    if (!accessToken) {
+      throw new UnauthorizedException('Discord did not return an access token');
+    }
+
+    const userResponse = await fetch('https://discord.com/api/users/@me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!userResponse.ok) {
+      throw new UnauthorizedException('Failed to fetch Discord profile');
+    }
+
+    const profile = (await userResponse.json()) as {
+      id: string | number;
+      email?: string;
+      username?: string;
+      global_name?: string;
+    };
+    const providerAccountId = String(profile.id);
+    const email =
+      typeof profile.email === 'string' && profile.email.length > 0
+        ? profile.email
+        : `discord-${providerAccountId}@users.wise2.net`;
+    const displayName =
+      profile.global_name ||
+      profile.username ||
+      `Discord User ${providerAccountId}`;
+
+    const generatedPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const user = await this.prisma.user.upsert({
+      where: { email },
+      update: { name: displayName },
+      create: {
+        email,
+        name: displayName,
+        passwordHash: generatedPasswordHash,
+        role: 'CUSTOMER',
+      },
+    });
+
+    await this.prisma.account.upsert({
+      where: {
+        provider_providerAccountId: {
+          provider: 'discord',
+          providerAccountId,
+        },
+      },
+      update: {
+        userId: user.id,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_at: expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : undefined,
+        token_type: 'Bearer',
+        scope: 'identify email guilds',
+      },
+      create: {
+        userId: user.id,
+        type: 'oauth',
+        provider: 'discord',
+        providerAccountId,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_at: expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : undefined,
+        token_type: 'Bearer',
+        scope: 'identify email guilds',
+      },
+    });
+
+    return this.issueAuthTokens(user);
   }
 
   async getCurrentUser(userId: string) {
@@ -287,12 +456,32 @@ export class PrismaAuthService {
     return { message: 'Password changed successfully' };
   }
 
-  // OAuth stub methods (not fully implemented yet)
   getGoogleAuthUrl() {
-    return { url: 'https://accounts.google.com/o/oauth2/v2/auth?...' };
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const redirectUri =
+      process.env.GOOGLE_CALLBACK_URL ||
+      `${process.env.API_BASE_URL || 'https://api.wise2.net'}/api/v1/auth/google/callback`;
+
+    if (!clientId) {
+      throw new UnauthorizedException('Google sign-in is not configured');
+    }
+
+    const oauthClient = new google.auth.OAuth2(clientId, undefined, redirectUri);
+    const url = oauthClient.generateAuthUrl({
+      access_type: 'offline',
+      prompt: 'consent',
+      scope: ['openid', 'email', 'profile'],
+    });
+
+    return { url };
   }
 
-  async handleGoogleCallback(code: string) {
-    return { message: 'OAuth not yet implemented' };
+  async handleGoogleCallback(code: string, redirectUri?: string) {
+    const callbackUri =
+      redirectUri ||
+      process.env.GOOGLE_CALLBACK_URL ||
+      `${process.env.API_BASE_URL || 'https://api.wise2.net'}/api/v1/auth/google/callback`;
+
+    return this.exchangeGoogleCode(code, callbackUri);
   }
 }
