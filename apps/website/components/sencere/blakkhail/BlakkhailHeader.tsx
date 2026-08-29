@@ -48,7 +48,7 @@ export function BlakkhailHeader() {
         </Link>
 
         <span
-          className="hidden text-center text-[10px] uppercase tracking-[0.16em] sm:inline sm:text-xs"
+          className="text-center text-[9px] uppercase tracking-[0.14em] sm:text-[10px] sm:tracking-[0.18em]"
           style={{ color: BLAKKHAIL.steel }}
         >
           {blakkhailBrand.tagline}
