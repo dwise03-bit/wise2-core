@@ -2,6 +2,11 @@ import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { authOptions } from '@/lib/auth';
 import { getFieldJob } from '@/lib/field-data';
+import type { Measurement } from '@/lib/measurements';
+import {
+  buildStructuredDiagnosis,
+  structuredToApiFields,
+} from '@/lib/imp-structured';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,7 +86,37 @@ function isDiagnosticResult(value: unknown): value is DiagnosticResult {
     && typeof result.customerSummary === 'string';
 }
 
-async function diagnoseWithAi(symptoms: string, complaint: string, equipment: string): Promise<DiagnosticResult | null> {
+function sanitizeMeasurements(value: unknown): Measurement[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== 'object') return [];
+    const row = item as Record<string, unknown>;
+    if (typeof row.key !== 'string' || typeof row.label !== 'string' || typeof row.unit !== 'string') return [];
+    const numeric = typeof row.value === 'number' && Number.isFinite(row.value) ? row.value : null;
+    return [{
+      key: row.key,
+      label: row.label,
+      value: numeric,
+      unit: row.unit,
+      source: row.source === 'live_tool' || row.source === 'manual' || row.source === 'calculated' || row.source === 'imported'
+        ? row.source
+        : 'manual',
+      status: row.status === 'valid' || row.status === 'stale' || row.status === 'unavailable' || row.status === 'unstable' || row.status === 'disconnected'
+        ? row.status
+        : numeric === null ? 'unavailable' : 'valid',
+      timestamp: typeof row.timestamp === 'string' ? row.timestamp : null,
+      deviceId: typeof row.deviceId === 'string' ? row.deviceId : undefined,
+      simulated: row.simulated === true,
+    }];
+  });
+}
+
+async function diagnoseWithAi(
+  symptoms: string,
+  complaint: string,
+  equipment: string,
+  measurements: Measurement[],
+): Promise<DiagnosticResult | null> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey || Date.now() < aiUnavailableUntil) return null;
 
@@ -99,9 +134,17 @@ async function diagnoseWithAi(symptoms: string, complaint: string, equipment: st
         messages: [
           {
             role: 'system',
-            content: 'You are an HVAC field diagnostic copilot. Never invent measurements. Separate likely causes from verified facts. Prioritize electrical safety, lockout/tagout, airflow verification before refrigerant conclusions, and manufacturer procedures. Return only JSON with keys likelyCause, confidence (0-100), reasoning, checks (string array), parts (string array), safety, customerSummary.',
+            content: 'You are an HVAC field diagnostic copilot. Never invent measurements, equipment data, or work-order facts. Never treat missing, stale, demo, or calculated values as live tool readings. If data is insufficient, say INSUFFICIENT DATA and recommend the next measurement. Separate supporting evidence from contradicting evidence. Return only JSON with keys likelyCause, confidence (0-100), reasoning, checks (string array), parts (string array), safety, customerSummary.',
           },
-          { role: 'user', content: JSON.stringify({ equipment, complaint, observedSymptomsAndMeasurements: symptoms }) },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              equipment,
+              complaint,
+              observedSymptomsAndMeasurements: symptoms,
+              verifiedMeasurements: measurements.filter((item) => item.value !== null),
+            }),
+          },
         ],
       }),
     });
@@ -129,26 +172,57 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { jobId, symptoms } = (await request.json()) as { jobId?: string; symptoms?: string };
-    if (!jobId || !symptoms?.trim()) {
+    const body = (await request.json()) as {
+      jobId?: string;
+      symptoms?: string;
+      measurements?: unknown;
+      refrigerant?: string;
+      unstable?: boolean;
+    };
+    if (!jobIdOk(body.jobId) || !body.symptoms?.trim()) {
       return NextResponse.json({ error: 'Job and symptoms are required' }, { status: 400 });
     }
-    if (symptoms.length > 3000) {
+    if (body.symptoms.length > 3000) {
       return NextResponse.json({ error: 'Symptoms must be under 3,000 characters' }, { status: 400 });
     }
-    const job = getFieldJob(jobId);
+    const job = getFieldJob(body.jobId!);
     if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 });
 
-    const equipment = `${job.equipment.manufacturer} ${job.equipment.model}`;
-    const aiResult = await diagnoseWithAi(symptoms, job.complaint, equipment);
+    const measurements = sanitizeMeasurements(body.measurements);
+    const structured = buildStructuredDiagnosis({
+      complaint: job.complaint,
+      symptoms: body.symptoms,
+      measurements,
+      refrigerantKnown: Boolean(body.refrigerant || job.equipment.refrigerant),
+    });
+    const structuredFields = structuredToApiFields(structured);
+
+    const equipment = `${job.equipment.manufacturer} ${job.equipment.model}`.trim() || 'Equipment not identified';
+    const aiResult = await diagnoseWithAi(body.symptoms, job.complaint, equipment, measurements);
+    const fallback = diagnose(body.symptoms, job.complaint);
+    const narrative = aiResult || (structured.insufficientData ? fallback : {
+      ...fallback,
+      likelyCause: structured.primaryFinding,
+      confidence: structuredFields.confidence,
+      reasoning: structured.recommendedAction || fallback.reasoning,
+      checks: structuredFields.checks.length ? structuredFields.checks : fallback.checks,
+    });
+
     return NextResponse.json({
-      ...(aiResult || diagnose(symptoms, job.complaint)),
+      ...narrative,
+      ...structuredFields,
+      likelyCause: structured.insufficientData ? 'INSUFFICIENT DATA' : (aiResult?.likelyCause || structured.primaryFinding),
       generatedAt: new Date().toISOString(),
       equipment,
       aiProvider: aiResult ? 'openai' : 'verified-fallback',
-      disclaimer: 'AI guidance supports—not replaces—licensed technician judgment and manufacturer procedures.',
+      disclaimer: 'AI guidance supports—not replaces—licensed technician judgment and manufacturer procedures. Calculated and demo values are not live tool readings.',
+      severity: structured.insufficientData ? 'INSUFFICIENT_DATA' : undefined,
     });
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
+}
+
+function jobIdOk(jobId?: string) {
+  return Boolean(jobId && jobId.trim());
 }

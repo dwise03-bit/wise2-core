@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
   try {
     const body = (await request.json()) as { status?: JobStatus; notes?: string };
-    if (body.status && !['DISPATCHED', 'IN_PROGRESS', 'COMPLETED'].includes(body.status)) {
+    if (body.status && !['DISPATCHED', 'EN_ROUTE', 'ON_SITE', 'IN_PROGRESS', 'AWAITING_APPROVAL', 'COMPLETED'].includes(body.status)) {
       return NextResponse.json({ error: 'Invalid job status' }, { status: 400 });
     }
     if (typeof body.notes === 'string' && body.notes.length > 2000) {

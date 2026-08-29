@@ -1,16 +1,17 @@
 'use client';
 
 import { Activity, ClipboardList, Cpu, House, MoreHorizontal } from 'lucide-react';
+import { PRIMARY_NAV, type FieldTechTab } from '@/lib/field-tech-nav';
 
-export type FieldTechTab = 'dashboard' | 'jobs' | 'tools' | 'imp' | 'more';
+export type { FieldTechTab };
 
-const TABS: Array<{ id: FieldTechTab; label: string; icon: typeof House }> = [
-  { id: 'dashboard', label: 'Dashboard', icon: House },
-  { id: 'jobs', label: 'Jobs', icon: ClipboardList },
-  { id: 'tools', label: 'Tools', icon: Activity },
-  { id: 'imp', label: 'IMP Tech', icon: Cpu },
-  { id: 'more', label: 'More', icon: MoreHorizontal },
-];
+const ICONS: Record<FieldTechTab, typeof House> = {
+  dashboard: House,
+  jobs: ClipboardList,
+  tools: Activity,
+  imp: Cpu,
+  more: MoreHorizontal,
+};
 
 export function FieldTechBottomNav({
   active,
@@ -21,8 +22,8 @@ export function FieldTechBottomNav({
 }) {
   return (
     <nav className="imp-bottom-nav" aria-label="Field Tech">
-      {TABS.map((tab) => {
-        const Icon = tab.icon;
+      {PRIMARY_NAV.map((tab) => {
+        const Icon = ICONS[tab.id];
         const isActive = tab.id === active;
         return (
           <button

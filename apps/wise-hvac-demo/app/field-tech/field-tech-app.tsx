@@ -1,14 +1,8 @@
 'use client';
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Bluetooth, Check, CheckCircle2, ClipboardCheck, FileCheck2,
-  Loader2, MapPin, Navigation, Phone, Radio, RefreshCw,
-  Save, Thermometer, Wifi, Zap, Sparkles,
-} from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   DiagnosticApiResult,
-  FieldJobLike,
   formatReportTitle,
   formatShareText,
   toImpDiagnosticViewModel,
@@ -16,73 +10,92 @@ import {
 import {
   addServiceVisit,
   createBaselineReadings,
-  getServiceHistoryStats,
   loadCustomerMessages,
   loadServiceHistory,
-  LiveReadingSnapshot,
   sendCustomerMessage,
   ServiceVisitRecord,
   tickSimulatedReadings,
   CustomerChatMessage,
 } from '@/lib/field-tech-local';
-import { DiagnosticHeader } from './components/DiagnosticHeader';
+import { FieldJob, JobStatus } from '@/lib/field-data';
+import {
+  FieldTechBottomNav,
+} from './components/FieldTechBottomNav';
 import { DiagnosticFullReport } from './components/DiagnosticFullReport';
-import { FieldTechBottomNav, FieldTechTab } from './components/FieldTechBottomNav';
-import { ImpDiagnosticLoadingState, ImpDiagnosticResultsScreen } from './components/ImpDiagnosticResultsScreen';
+import { TechnicianDashboard } from './components/TechnicianDashboard';
+import { ActiveWorkOrder } from './components/ActiveWorkOrder';
+import { SmartToolsPane } from './components/SmartToolsPane';
+import { ImpWorkspace } from './components/ImpWorkspace';
+import { CloseoutPane } from './components/CloseoutPane';
+import { StatusStrip, WorkflowRail } from './components/FieldChrome';
+import {
+  FieldTechTab,
+  hashForTab,
+  impViewFromHash,
+  moreViewFromHash,
+  tabFromHash,
+  toolsViewFromHash,
+  type ImpView,
+  type MoreView,
+  type ToolsView,
+} from '@/lib/field-tech-nav';
+import {
+  TOOL_ROLES,
+  appendSample,
+  deriveMeasurements,
+  emptyMeasurement,
+  markStale,
+  snapshotToRaw,
+  type Measurement,
+  type MeasurementSample,
+  type ToolCard,
+} from '@/lib/measurements';
+import { applyStabilityToMeasurements, assessStability } from '@/lib/stability';
+import {
+  captureSnapshot,
+  emptySession,
+  loadSession,
+  saveSession,
+  type AttachmentRecord,
+  type FieldSessionState,
+  type RepairKind,
+  type RepairVerification,
+} from '@/lib/field-session';
+import { buildStructuredDiagnosis, type ImpDiagnosticResult } from '@/lib/imp-structured';
+import { generateServiceNotes, generateServiceReport } from '@/lib/service-notes';
+import type { GuidedTestRecord } from '@/lib/guided-tests';
 import './imp-diagnostics.css';
 
-type JobStatus = 'DISPATCHED' | 'IN_PROGRESS' | 'COMPLETED';
-type Job = FieldJobLike & {
-  id: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string;
-  address: string;
-  appointmentAt: string;
-  complaint: string;
-  status: JobStatus;
-  priority: 'NORMAL' | 'HIGH';
-  notes: string;
-  accessNotes: string;
-  updatedAt: string;
-  equipment: {
-    manufacturer: string;
-    model: string;
-    serial: string;
-    tonnage: number;
-    installedAt: string;
-    warranty: string;
-  };
-  serviceHistory: Array<{ date: string; type: string; summary: string; amount?: number }>;
-};
-
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/wise-hvac-demo';
-const statusLabels: Record<JobStatus, string> = {
-  DISPATCHED: 'Dispatched',
-  IN_PROGRESS: 'In progress',
-  COMPLETED: 'Completed',
-};
-const HASH_TO_TAB: Record<string, FieldTechTab> = {
-  'work-order': 'jobs',
-  jobs: 'jobs',
-  instruments: 'tools',
-  tools: 'tools',
-  crm: 'more',
-  closeout: 'more',
-  more: 'more',
-  diagnostics: 'imp',
-  imp: 'imp',
-  dashboard: 'dashboard',
-};
 
-function tabFromHash(): FieldTechTab {
-  if (typeof window === 'undefined') return 'imp';
-  const key = window.location.hash.replace('#', '');
-  return HASH_TO_TAB[key] || 'imp';
+function toolsFromMeasurements(measurements: Record<string, Measurement>, streaming: boolean): ToolCard[] {
+  return TOOL_ROLES.map((role) => {
+    const reading = measurements[role.measurementKey];
+    const connected = streaming && reading?.simulated
+      ? 'demo_stream'
+      : reading?.source === 'manual'
+        ? 'manual'
+        : reading?.value != null
+          ? 'disconnected'
+          : 'disconnected';
+    return {
+      id: role.role,
+      role: role.role,
+      type: role.type,
+      deviceName: streaming && reading?.simulated ? `Demo ${role.assignedRole}` : `${role.assignedRole} — not connected`,
+      assignedRole: role.assignedRole,
+      connection: connected,
+      signalQuality: streaming && reading?.simulated ? 'fair' : '—',
+      battery: streaming && reading?.simulated ? 72 : null,
+      liveValue: reading?.value ?? null,
+      unit: role.unit,
+      lastUpdate: reading?.timestamp || null,
+    };
+  });
 }
 
 export function FieldTechApp() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<FieldJob[]>([]);
   const [selectedId, setSelectedId] = useState('');
   const [notes, setNotes] = useState('');
   const [symptoms, setSymptoms] = useState('');
@@ -92,7 +105,10 @@ export function FieldTechApp() {
   const [analyzing, setAnalyzing] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [tab, setTab] = useState<FieldTechTab>('imp');
+  const [tab, setTab] = useState<FieldTechTab>('dashboard');
+  const [toolsView, setToolsView] = useState<ToolsView>('discover');
+  const [moreView, setMoreView] = useState<MoreView>('job-closeout');
+  const [impView, setImpView] = useState<ImpView>('capture');
   const [reportOpen, setReportOpen] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
   const [reportChecks, setReportChecks] = useState({
@@ -104,22 +120,81 @@ export function FieldTechApp() {
   const [serviceHistory, setServiceHistory] = useState<ServiceVisitRecord[]>([]);
   const [chatMessages, setChatMessages] = useState<CustomerChatMessage[]>([]);
   const [chatDraft, setChatDraft] = useState('');
+  const [online, setOnline] = useState(true);
+  const [impAvailable, setImpAvailable] = useState(true);
+  const [streaming, setStreaming] = useState(false);
+  const [scanOpen, setScanOpen] = useState(false);
+  const [scanMessage, setScanMessage] = useState('');
+  const [toolScanMessage, setToolScanMessage] = useState('');
+  const [session, setSession] = useState<FieldSessionState>(emptySession(''));
+  const [generatedNotes, setGeneratedNotes] = useState('');
+  const [generatedReport, setGeneratedReport] = useState('');
   const autoDiagnoseRef = useRef(false);
   const selected = useMemo(
     () => jobs.find((job) => job.id === selectedId) || jobs[0],
     [jobs, selectedId],
   );
+  const refrigerant = session.equipmentDraft.refrigerant || selected?.equipment.refrigerant || '';
+  const measurements = useMemo(
+    () => applyStabilityToMeasurements(
+      markStale(deriveMeasurements(session.measurements, refrigerant || null)),
+      assessStability(session.history, Object.keys(session.measurements), Date.now(), streaming),
+    ),
+    [session.measurements, session.history, refrigerant, streaming],
+  );
+  const stability = useMemo(
+    () => assessStability(
+      session.history,
+      (streaming || session.history.length > 0)
+        ? ['suction_pressure', 'liquid_pressure', 'suction_line_temp', 'liquid_line_temp']
+        : [],
+      Date.now(),
+      streaming,
+    ),
+    [session.history, streaming],
+  );
+  const tools = useMemo(() => toolsFromMeasurements(measurements, streaming), [measurements, streaming]);
+  const structured: ImpDiagnosticResult | null = diagnosis
+    ? buildStructuredDiagnosis({
+      complaint: selected?.complaint,
+      symptoms,
+      measurements: Object.values(measurements),
+      refrigerantKnown: Boolean(refrigerant),
+    })
+    : session.diagnosis;
   const viewModel = useMemo(
     () => toImpDiagnosticViewModel(diagnosis, selected, { symptoms }),
     [diagnosis, selected, symptoms],
   );
+  const toolsLabel = streaming ? 'DEMO STREAM' : Object.values(measurements).some((item) => item.source === 'manual' && item.value != null)
+    ? 'MANUAL'
+    : 'NO TOOLS';
+  const workflowCompleted = {
+    equipment: Boolean(selected?.equipment.serial || selected?.equipment.model || session.equipmentDraft.serial),
+    connected: Object.values(measurements).some((item) => item.value != null),
+    stabilized: stability.state === 'STABLE',
+    diagnose: Boolean(diagnosis),
+    repair: Boolean(session.repair?.savedAt),
+    verify: Boolean(session.verification),
+  };
+  const workflowActive = !workflowCompleted.equipment
+    ? 'equipment'
+    : !workflowCompleted.connected
+      ? 'connected'
+      : !workflowCompleted.stabilized
+        ? 'stabilized'
+        : !workflowCompleted.diagnose
+          ? 'diagnose'
+          : !workflowCompleted.repair
+            ? 'repair'
+            : 'verify';
 
   async function loadJobs() {
     setError('');
     try {
       const response = await fetch(`${basePath}/api/field/jobs`, { cache: 'no-store' });
       if (!response.ok) throw new Error('Could not sync the job queue.');
-      const data = (await response.json()) as Job[];
+      const data = (await response.json()) as FieldJob[];
       setJobs(data);
       setSelectedId((current) => current || data[0]?.id || '');
     } catch (caught) {
@@ -132,10 +207,28 @@ export function FieldTechApp() {
   useEffect(() => {
     loadJobs();
     setServiceHistory(loadServiceHistory());
-    setTab(tabFromHash());
-    const onHash = () => setTab(tabFromHash());
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    setTab(tabFromHash(hash));
+    setToolsView(toolsViewFromHash(hash));
+    setMoreView(moreViewFromHash(hash));
+    setImpView(impViewFromHash(hash));
+    const onHash = () => {
+      const next = window.location.hash;
+      setTab(tabFromHash(next));
+      setToolsView(toolsViewFromHash(next));
+      setMoreView(moreViewFromHash(next));
+      setImpView(impViewFromHash(next));
+    };
+    const syncOnline = () => setOnline(navigator.onLine);
+    syncOnline();
     window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    window.addEventListener('online', syncOnline);
+    window.addEventListener('offline', syncOnline);
+    return () => {
+      window.removeEventListener('hashchange', onHash);
+      window.removeEventListener('online', syncOnline);
+      window.removeEventListener('offline', syncOnline);
+    };
   }, []);
 
   useEffect(() => {
@@ -146,6 +239,11 @@ export function FieldTechApp() {
     setReportOpen(false);
     setChatDraft('');
     setChatMessages(selected?.id ? loadCustomerMessages(selected.id) : []);
+    const loaded = selected?.id ? loadSession(selected.id) : emptySession('');
+    setSession(loaded);
+    setGeneratedNotes(loaded.notes.text);
+    setGeneratedReport(loaded.report.text);
+    setStreaming(false);
   }, [selected?.id]);
 
   useEffect(() => {
@@ -157,10 +255,47 @@ export function FieldTechApp() {
     void runDiagnosis();
   }, [selected?.id, symptoms, analyzing, diagnosis]);
 
-  function changeTab(next: FieldTechTab) {
+  const demoRef = useRef(createBaselineReadings());
+
+  useEffect(() => {
+    if (!streaming) return undefined;
+    demoRef.current = createBaselineReadings();
+    const timer = window.setInterval(() => {
+      demoRef.current = tickSimulatedReadings(demoRef.current);
+      const snapshot = demoRef.current;
+      setSession((current) => {
+        const raw = snapshotToRaw(snapshot);
+        let history: MeasurementSample[] = current.history;
+        for (const item of Object.values(raw)) {
+          if (item.value !== null) history = appendSample(history, item.key, item.value);
+        }
+        return saveSession({
+          ...current,
+          measurements: { ...current.measurements, ...raw },
+          history,
+        });
+      });
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [streaming]);
+
+  function persist(next: FieldSessionState) {
+    const saved = saveSession(next);
+    setSession(saved);
+    return saved;
+  }
+
+  function changeTab(next: FieldTechTab, hash?: string) {
     setTab(next);
-    const hash = next === 'imp' ? 'diagnostics' : next === 'jobs' ? 'work-order' : next === 'tools' ? 'instruments' : next;
-    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${hash}`);
+    if (hash === 'live') setToolsView('live');
+    if (hash === 'trends') setToolsView('trends');
+    if (hash === 'repair') setMoreView('repair');
+    if (hash === 'notes') setMoreView('notes');
+    if (hash === 'report') setMoreView('report');
+    if (hash === 'test') setImpView('next-test');
+    if (hash === 'guided') setImpView('guided');
+    const resolved = hash || hashForTab(next);
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${resolved}`);
   }
 
   async function updateJob(updates: { status?: JobStatus; notes?: string }, success: string) {
@@ -175,7 +310,7 @@ export function FieldTechApp() {
         body: JSON.stringify(updates),
       });
       if (!response.ok) throw new Error('Update could not be saved.');
-      const updated = (await response.json()) as Job;
+      const updated = (await response.json()) as FieldJob;
       setJobs((current) => current.map((job) => (job.id === updated.id ? updated : job)));
       setNotes(updated.notes);
       if (updates.status === 'COMPLETED') {
@@ -188,6 +323,7 @@ export function FieldTechApp() {
           customerRating: null,
         });
         setServiceHistory((current) => [visit, ...current]);
+        persist({ ...session, report: { ...session.report, finalized: true, updatedAt: new Date().toISOString() } });
       }
       setMessage(success);
     } catch (caught) {
@@ -213,10 +349,29 @@ export function FieldTechApp() {
       const response = await fetch(`${basePath}/api/field/diagnose`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jobId: selected.id, symptoms }),
+        body: JSON.stringify({
+          jobId: selected.id,
+          symptoms,
+          refrigerant,
+          measurements: Object.values(measurements),
+          unstable: stability.state !== 'STABLE',
+        }),
       });
-      if (!response.ok) throw new Error('AI diagnosis could not be generated.');
-      setDiagnosis((await response.json()) as DiagnosticApiResult);
+      if (!response.ok) {
+        setImpAvailable(false);
+        throw new Error(online ? 'IMP unavailable.' : 'Offline — IMP cannot run until a connection returns.');
+      }
+      const payload = (await response.json()) as DiagnosticApiResult;
+      setDiagnosis(payload);
+      setImpAvailable(true);
+      const nextStructured = buildStructuredDiagnosis({
+        complaint: selected.complaint,
+        symptoms,
+        measurements: Object.values(measurements),
+        refrigerantKnown: Boolean(refrigerant),
+      });
+      persist({ ...session, diagnosis: nextStructured, startedAt: session.startedAt || new Date().toISOString() });
+      setImpView('results');
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'AI diagnosis could not be generated.');
     } finally {
@@ -247,64 +402,245 @@ export function FieldTechApp() {
     }
   }
 
-  const activeCount = jobs.filter((job) => job.status !== 'COMPLETED').length;
-  const completedCount = jobs.filter((job) => job.status === 'COMPLETED').length;
+  function startDiagnostic() {
+    if (!selected) return;
+    persist({ ...session, startedAt: session.startedAt || new Date().toISOString() });
+    void updateJob({ status: 'IN_PROGRESS' }, 'Diagnostic started.');
+    changeTab('imp', 'diagnostics');
+  }
+
+  function resolveToken(token: string) {
+    const value = token.trim();
+    if (!value) {
+      setScanMessage('Enter a record token.');
+      return;
+    }
+    const match = jobs.find((job) => job.id === value || job.equipment.serial === value || job.equipment.assetId === value);
+    if (match) {
+      setSelectedId(match.id);
+      setScanMessage(`Resolved work order ${match.id}.`);
+      setScanOpen(false);
+      return;
+    }
+    setScanMessage('No matching WISE² record. Token was not used to create a fake job.');
+  }
+
+  function addPhoto(file: File) {
+    if (!selected) return;
+    if (file.size > 400_000) {
+      setError('Photo is too large to store locally. Attach a smaller still or use the native app.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const attachment: AttachmentRecord = {
+        id: crypto.randomUUID(),
+        kind: 'photo',
+        name: file.name,
+        associatedWith: 'work_order',
+        dataUrl: typeof reader.result === 'string' ? reader.result : undefined,
+        createdAt: new Date().toISOString(),
+        syncState: 'SAVED LOCALLY',
+      };
+      persist({ ...session, attachments: [attachment, ...session.attachments] });
+      setMessage('Photo saved locally.');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function addVoice() {
+    if (!selected) return;
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+      setError('Voice capture is not available in this browser. Original audio cannot be recorded here.');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) chunks.push(event.data);
+      };
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        const reader = new FileReader();
+        reader.onload = () => {
+          const attachment: AttachmentRecord = {
+            id: crypto.randomUUID(),
+            kind: 'voice',
+            name: `voice-${Date.now()}.webm`,
+            associatedWith: 'diagnostic',
+            dataUrl: typeof reader.result === 'string' ? reader.result : undefined,
+            transcript: '',
+            createdAt: new Date().toISOString(),
+            syncState: 'SAVED LOCALLY',
+          };
+          persist({ ...session, attachments: [attachment, ...session.attachments] });
+          setMessage('Voice note saved locally. Add a reviewed transcript in notes if needed. Original audio is kept.');
+        };
+        reader.readAsDataURL(blob);
+      };
+      recorder.start();
+      window.setTimeout(() => recorder.stop(), 4000);
+      setMessage('Recording a 4-second voice note…');
+    } catch {
+      setError('Microphone permission was not granted.');
+    }
+  }
+
+  function saveManual(key: string, value: number) {
+    const reading: Measurement = {
+      ...emptyMeasurement(key, new Date().toISOString()),
+      value,
+      source: 'manual',
+      status: 'valid',
+    };
+    persist({
+      ...session,
+      measurements: { ...session.measurements, [key]: reading },
+      history: appendSample(session.history, key, value),
+    });
+  }
+
+  const equipmentLabel = [selected?.equipment.manufacturer, selected?.equipment.model].filter(Boolean).join(' ') || 'Not identified';
 
   return (
     <div className="imp-app-root">
-      <div className="imp-phone-shell">
-        {tab === 'imp' && analyzing ? <ImpDiagnosticLoadingState systemId={viewModel.systemId} /> : null}
-        {tab === 'imp' && !analyzing && diagnosis ? (
-          <ImpDiagnosticResultsScreen
-            model={viewModel}
-            onViewReport={() => setReportOpen(true)}
-            onShareReport={shareReport}
-            shareLoading={shareLoading}
-            onRunAgain={() => {
-              setDiagnosis(null);
-              setReportOpen(false);
-            }}
-          />
-        ) : null}
-        {tab === 'imp' && !analyzing && !diagnosis ? (
-          <ImpCapturePane
-            selected={selected}
-            symptoms={symptoms}
-            setSymptoms={setSymptoms}
-            analyzing={analyzing}
-            onRun={runDiagnosis}
-            systemId={viewModel.systemId}
-            error={error}
+      <div className="imp-phone-shell" data-dense={tab === 'tools' || tab === 'imp'}>
+        {!online ? <div className="imp-offline">OFFLINE — notes, measurements, and photos stay SAVED LOCALLY until sync is available.</div> : null}
+        <StatusStrip online={online} toolsLabel={toolsLabel} impAvailable={impAvailable} syncState={session.syncState} />
+        {selected ? (
+          <WorkflowRail
+            activeId={workflowActive}
+            completed={workflowCompleted}
+            onSelect={changeTab}
           />
         ) : null}
 
         {tab === 'dashboard' ? (
-          <DashboardPane
+          <TechnicianDashboard
             jobs={jobs}
             loading={loading}
-            activeCount={activeCount}
-            completedCount={completedCount}
             selected={selected}
+            startedAt={session.startedAt}
+            toolsLabel={toolsLabel}
+            impAvailable={impAvailable}
+            online={online}
             onOpenJob={() => changeTab('jobs')}
+            onResume={() => changeTab('imp')}
             onRefresh={loadJobs}
+            onQuick={(action) => {
+              if (action === 'scan') { setScanOpen(true); changeTab('jobs'); }
+              if (action === 'tools') changeTab('tools');
+              if (action === 'diagnostic') startDiagnostic();
+              if (action === 'equipment') changeTab('jobs');
+              if (action === 'imp') changeTab('imp');
+            }}
           />
         ) : null}
 
         {tab === 'jobs' ? (
-          <JobsPane
+          <ActiveWorkOrder
             jobs={jobs}
             selected={selected}
             loading={loading}
             saving={saving}
+            equipmentDraft={session.equipmentDraft}
+            attachments={session.attachments}
+            scanOpen={scanOpen}
+            scanMessage={scanMessage}
             onSelect={setSelectedId}
             onUpdate={updateJob}
+            onStartDiagnostic={startDiagnostic}
+            onScan={() => { setScanOpen(true); setScanMessage(''); }}
+            onCloseScan={() => setScanOpen(false)}
+            onResolveToken={resolveToken}
+            onEquipmentField={(key, value) => persist({ ...session, equipmentDraft: { ...session.equipmentDraft, [key]: value } })}
+            onAddPhoto={addPhoto}
+            onAddVoice={() => void addVoice()}
+            onCall={() => undefined}
           />
         ) : null}
 
-        {tab === 'tools' ? <ToolsPane /> : null}
+        {tab === 'tools' ? (
+          <SmartToolsPane
+            view={toolsView}
+            onView={(next) => { setToolsView(next); changeTab('tools', next === 'discover' ? 'instruments' : next); }}
+            tools={tools}
+            measurements={measurements}
+            history={session.history}
+            stability={stability}
+            streaming={streaming}
+            scanMessage={toolScanMessage}
+            onScan={() => setToolScanMessage('No Fieldpiece SDK on this web client. Use the native Field Tech app or enter a manual reading.')}
+            onConnectKit={() => {
+              setStreaming((value) => {
+                if (value) {
+                  persist({
+                    ...session,
+                    measurements: Object.fromEntries(
+                      Object.entries(session.measurements).map(([key, item]) => [key, item.simulated ? emptyMeasurement(key) : item]),
+                    ),
+                  });
+                }
+                return !value;
+              });
+            }}
+            onDisconnect={() => {
+              setStreaming(false);
+              persist({
+                ...session,
+                measurements: Object.fromEntries(
+                  Object.entries(session.measurements).map(([key, item]) => [key, item.simulated ? emptyMeasurement(key) : item]),
+                ),
+              });
+            }}
+            onManual={saveManual}
+          />
+        ) : null}
+
+        {tab === 'imp' ? (
+          <ImpWorkspace
+            view={diagnosis && impView === 'capture' ? 'results' : impView}
+            onView={(next) => { setImpView(next); changeTab('imp', next === 'next-test' ? 'test' : next === 'guided' ? 'guided' : 'diagnostics'); }}
+            selected={selected}
+            symptoms={symptoms}
+            setSymptoms={setSymptoms}
+            analyzing={analyzing}
+            error={error}
+            systemId={viewModel.systemId}
+            diagnosis={diagnosis}
+            viewModel={viewModel}
+            structured={structured}
+            measurements={measurements}
+            guidedTests={session.guidedTests}
+            stabilityReduced={stability.state !== 'STABLE' && stability.state !== 'WAITING'}
+            onRun={runDiagnosis}
+            onViewReport={() => setReportOpen(true)}
+            onShareReport={shareReport}
+            shareLoading={shareLoading}
+            onClear={() => { setDiagnosis(null); setImpView('capture'); }}
+            onSaveTest={(record: GuidedTestRecord) => persist({ ...session, guidedTests: [record, ...session.guidedTests] })}
+            onStartGuided={(id) => {
+              setImpView('guided');
+              changeTab('imp', 'guided');
+              persist(session);
+              void id;
+            }}
+            onSaveFinding={() => {
+              if (!structured) return;
+              persist({ ...session, diagnosis: structured });
+              setMessage('Finding saved locally.');
+              changeTab('imp', 'test');
+            }}
+          />
+        ) : null}
 
         {tab === 'more' ? (
-          <MorePane
+          <CloseoutPane
+            view={moreView}
+            onView={(next) => { setMoreView(next); changeTab('more', next === 'job-closeout' ? 'more' : next); }}
             selected={selected}
             notes={notes}
             setNotes={setNotes}
@@ -320,10 +656,59 @@ export function FieldTechApp() {
             chatDraft={chatDraft}
             setChatDraft={setChatDraft}
             onSendChat={handleSendChat}
+            session={session}
+            generatedNotes={generatedNotes}
+            generatedReport={generatedReport}
+            onCaptureTestIn={() => persist({ ...session, testIn: captureSnapshot(measurements) })}
+            onCaptureTestOut={() => persist({ ...session, testOut: captureSnapshot(measurements) })}
+            onRepair={(kind: RepairKind, summary, repairNotes) => persist({
+              ...session,
+              repair: { kind, summary, notes: repairNotes, savedAt: new Date().toISOString() },
+              testIn: session.testIn || captureSnapshot(measurements),
+            })}
+            onVerification={(value: RepairVerification) => persist({ ...session, verification: value })}
+            onAcceptNotes={(text) => {
+              persist({ ...session, notes: { text, accepted: true, updatedAt: new Date().toISOString() } });
+              setGeneratedNotes(text);
+              setMessage('Notes accepted by technician.');
+            }}
+            onEditNotes={(text) => {
+              setGeneratedNotes(text);
+              persist({ ...session, notes: { text, accepted: false, updatedAt: new Date().toISOString() } });
+            }}
+            onReviewReport={() => persist({ ...session, report: { ...session.report, reviewed: true, updatedAt: new Date().toISOString() } })}
+            onGenerateReport={() => {
+              const draftNotes = generatedNotes || generateServiceNotes({
+                customerName: selected?.customerName,
+                address: selected?.address,
+                complaint: selected?.complaint,
+                equipmentLabel,
+                measurements,
+                session,
+              });
+              const report = generateServiceReport({
+                customerName: selected?.customerName,
+                address: selected?.address,
+                contact: selected?.customerPhone,
+                workOrder: selected?.id,
+                complaint: selected?.complaint,
+                equipmentLabel,
+                notes: draftNotes,
+                session,
+              });
+              setGeneratedNotes(draftNotes);
+              setGeneratedReport(report);
+              persist({
+                ...session,
+                notes: { text: draftNotes, accepted: session.notes.accepted, updatedAt: new Date().toISOString() },
+                report: { text: report, reviewed: false, finalized: false, updatedAt: new Date().toISOString() },
+              });
+              setMoreView('report');
+            }}
           />
         ) : null}
 
-        <FieldTechBottomNav active={tab} onChange={changeTab} />
+        <FieldTechBottomNav active={tab} onChange={(next) => changeTab(next)} />
         {reportOpen ? (
           <DiagnosticFullReport
             model={viewModel}
@@ -333,495 +718,5 @@ export function FieldTechApp() {
         ) : null}
       </div>
     </div>
-  );
-}
-
-function ImpCapturePane({
-  selected,
-  symptoms,
-  setSymptoms,
-  analyzing,
-  onRun,
-  systemId,
-  error,
-}: {
-  selected?: Job;
-  symptoms: string;
-  setSymptoms: (value: string) => void;
-  analyzing: boolean;
-  onRun: () => void;
-  systemId: string;
-  error: string;
-}) {
-  return (
-    <>
-      <DiagnosticHeader systemId={systemId} />
-      <div className="imp-scroll">
-        <div className="imp-scroll-inner">
-          <section className="imp-panel imp-form">
-            <h2>FIELD OBSERVATIONS</h2>
-            <p className="imp-empty" style={{ textAlign: 'left', marginBottom: 10 }}>
-              {selected
-                ? `Describe verified readings and symptoms for ${selected.customerName}.`
-                : 'No work order is assigned. IMP can still format the results screen once a job is available.'}
-            </p>
-            <label htmlFor="symptoms" className="sr-only">Observed symptoms and measurements</label>
-            <textarea
-              id="symptoms"
-              value={symptoms}
-              onChange={(event) => setSymptoms(event.target.value)}
-              placeholder="Enter observed symptoms and verified measurements. Example: HIGH HEAD PRESSURE 248.7 PSIG, low subcooling 8.6°F."
-            />
-            <button
-              type="button"
-              className="imp-primary"
-              onClick={onRun}
-              disabled={analyzing || !selected || !symptoms.trim()}
-              aria-busy={analyzing}
-            >
-              {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {analyzing ? 'ANALYZING SYSTEM' : 'RUN AI DIAGNOSIS'}
-            </button>
-          </section>
-          {error ? <div className="imp-alert" role="alert">{error}</div> : null}
-          <div className="imp-panel">
-            <p className="imp-empty">
-              Results stay bound to the diagnostic engine. Missing values display as — or Not available.
-            </p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function DashboardPane({
-  jobs,
-  loading,
-  activeCount,
-  completedCount,
-  selected,
-  onOpenJob,
-  onRefresh,
-}: {
-  jobs: Job[];
-  loading: boolean;
-  activeCount: number;
-  completedCount: number;
-  selected?: Job;
-  onOpenJob: () => void;
-  onRefresh: () => void;
-}) {
-  return (
-    <>
-      <header className="imp-header">
-        <div className="imp-wordmark">
-          <strong>WISE²</strong>
-          <span>IMP TECH</span>
-        </div>
-        <div className="imp-header-title">
-          <strong>DASHBOARD</strong>
-          <span>FIELD COMMAND</span>
-        </div>
-        <div className="imp-system-id">
-          <span>QUEUE</span>
-          <strong>{jobs.length}</strong>
-        </div>
-      </header>
-      <div className="imp-scroll">
-        <div className="imp-scroll-inner">
-          <div className="imp-evidence-grid">
-            <DashStat icon={ClipboardCheck} value={jobs.length} label="Assigned" />
-            <DashStat icon={Zap} value={activeCount} label="Active" />
-            <DashStat icon={CheckCircle2} value={completedCount} label="Complete" />
-            <DashStat icon={Wifi} value={loading ? '…' : 'Live'} label="Sync" />
-          </div>
-          {selected ? (
-            <button type="button" className="imp-job-btn" onClick={onOpenJob}>
-              <small style={{ color: '#66FF78', letterSpacing: '0.14em', fontSize: 10, fontWeight: 800 }}>ACTIVE JOB</small>
-              <strong style={{ display: 'block', marginTop: 6, fontSize: 16 }}>{selected.customerName}</strong>
-              <p style={{ margin: '6px 0 0', color: '#98A2AC', fontSize: 12 }}>{selected.complaint}</p>
-            </button>
-          ) : (
-            <div className="imp-panel">
-              <p className="imp-empty">No work orders assigned. Check dispatch when a job is released.</p>
-              <button type="button" className="imp-primary" onClick={onRefresh}>
-                <RefreshCw className="h-4 w-4" />CHECK DISPATCH
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
-
-function DashStat({ icon: Icon, value, label }: { icon: typeof ClipboardCheck; value: string | number; label: string }) {
-  return (
-    <div className="imp-metric-card">
-      <Icon className="h-4 w-4" />
-      <small>{label}</small>
-      <div className="imp-metric-value"><strong>{value}</strong></div>
-    </div>
-  );
-}
-
-function JobsPane({
-  jobs,
-  selected,
-  loading,
-  saving,
-  onSelect,
-  onUpdate,
-}: {
-  jobs: Job[];
-  selected?: Job;
-  loading: boolean;
-  saving: boolean;
-  onSelect: (id: string) => void;
-  onUpdate: (updates: { status?: JobStatus; notes?: string }, success: string) => void;
-}) {
-  return (
-    <>
-      <header className="imp-header">
-        <div className="imp-wordmark">
-          <strong>WISE²</strong>
-          <span>IMP TECH</span>
-        </div>
-        <div className="imp-header-title">
-          <strong>JOBS</strong>
-          <span>WORK ORDERS</span>
-        </div>
-        <div className="imp-system-id">
-          <span>TODAY</span>
-          <strong>{jobs.length}</strong>
-        </div>
-      </header>
-      <div className="imp-scroll">
-        <div className="imp-scroll-inner">
-          {loading ? <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#66FF78]" /> : null}
-          {jobs.map((job) => (
-            <button
-              type="button"
-              key={job.id}
-              className="imp-job-btn"
-              data-active={selected?.id === job.id}
-              onClick={() => onSelect(job.id)}
-            >
-              <strong style={{ display: 'block' }}>{job.customerName}</strong>
-              <p style={{ margin: '6px 0 0', color: '#98A2AC', fontSize: 12 }}>{job.complaint}</p>
-              <small style={{ display: 'block', marginTop: 8, color: '#66717A' }}>{statusLabels[job.status]}</small>
-            </button>
-          ))}
-          {selected ? (
-            <section className="imp-panel" id="work-order">
-              <h2>WORK ORDER</h2>
-              <p style={{ color: '#F4F7F8', fontWeight: 700 }}>{selected.customerName}</p>
-              <p>{selected.address || 'Address not provided'}</p>
-              <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
-                {(['DISPATCHED', 'IN_PROGRESS', 'COMPLETED'] as JobStatus[]).map((status) => (
-                  <button
-                    key={status}
-                    type="button"
-                    className="imp-ghost-btn"
-                    disabled={saving || selected.status === status}
-                    onClick={() => onUpdate({ status }, `Job marked ${statusLabels[status].toLowerCase()}.`)}
-                  >
-                    {selected.status === status && <Check className="mr-2 inline h-4 w-4" />}
-                    {statusLabels[status]}
-                  </button>
-                ))}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12 }}>
-                {selected.customerPhone ? (
-                  <a className="imp-ghost-btn" href={`tel:${selected.customerPhone}`}><Phone className="h-4 w-4" /> Call</a>
-                ) : (
-                  <button className="imp-ghost-btn" type="button" disabled><Phone className="h-4 w-4" /> No phone</button>
-                )}
-                {selected.address ? (
-                  <a className="imp-ghost-btn" href={`https://maps.google.com/?q=${encodeURIComponent(selected.address)}`} target="_blank" rel="noreferrer"><Navigation className="h-4 w-4" /> Route</a>
-                ) : (
-                  <button className="imp-ghost-btn" type="button" disabled><MapPin className="h-4 w-4" /> No address</button>
-                )}
-              </div>
-            </section>
-          ) : (
-            <div className="imp-panel"><p className="imp-empty">No work orders assigned.</p></div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
-
-function ToolsPane() {
-  const [streaming, setStreaming] = useState(false);
-  const [readings, setReadings] = useState<LiveReadingSnapshot>(createBaselineReadings);
-
-  useEffect(() => {
-    if (!streaming) return undefined;
-    const timer = window.setInterval(() => {
-      setReadings((current) => tickSimulatedReadings(current));
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [streaming]);
-
-  return (
-    <>
-      <header className="imp-header">
-        <div className="imp-wordmark">
-          <strong>WISE²</strong>
-          <span>IMP TECH</span>
-        </div>
-        <div className="imp-header-title">
-          <strong>TOOLS</strong>
-          <span>FIELD INSTRUMENTS</span>
-        </div>
-        <div className="imp-system-id">
-          <span>BRIDGE</span>
-          <strong>{streaming ? 'SIM' : 'OFF'}</strong>
-        </div>
-      </header>
-      <div className="imp-scroll">
-        <div className="imp-scroll-inner" id="instruments">
-          <section className="imp-panel">
-            <h2><Radio className="mr-2 inline h-4 w-4" />LIVE READINGS</h2>
-            <p className="imp-empty" style={{ textAlign: 'left' }}>
-              Bluetooth capture runs in the native field app. Use the labeled demo stream only to preview gauge layout — values are not field measurements.
-            </p>
-            <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
-              <button
-                type="button"
-                className="imp-primary"
-                onClick={() => setStreaming((value) => !value)}
-              >
-                <Wifi className="h-4 w-4" />
-                {streaming ? 'STOP DEMO STREAM' : 'START DEMO STREAM'}
-              </button>
-              <a href={`${basePath}/download`} className="imp-ghost-btn">
-                <Bluetooth className="h-4 w-4" />OPEN FIELD APP
-              </a>
-            </div>
-            {streaming ? (
-              <p style={{ marginTop: 10, color: '#66FF78', fontSize: 12 }}>
-                Simulated · updated {new Date(readings.updatedAt).toLocaleTimeString()}
-              </p>
-            ) : null}
-          </section>
-          <div className="imp-evidence-grid">
-            <InstrumentCard label="LOW SIDE" value={streaming ? readings.pressureLow.toFixed(1) : '—'} unit="PSIG" />
-            <InstrumentCard label="HIGH SIDE" value={streaming ? readings.pressureHigh.toFixed(1) : '—'} unit="PSIG" />
-            <InstrumentCard label="SUCTION LINE" value={streaming ? readings.tempEvap.toFixed(1) : '—'} unit="°F" />
-            <InstrumentCard label="LIQUID LINE" value={streaming ? readings.tempCond.toFixed(1) : '—'} unit="°F" />
-            <InstrumentCard label="VOLTAGE" value={streaming ? readings.voltage.toFixed(1) : '—'} unit="VAC" />
-            <InstrumentCard label="CURRENT" value={streaming ? readings.current.toFixed(2) : '—'} unit="AAC" />
-            <InstrumentCard label="SUPERHEAT" value={streaming ? readings.superheat.toFixed(1) : '—'} unit="°F" />
-            <InstrumentCard label="SUBCOOLING" value={streaming ? readings.subcooling.toFixed(1) : '—'} unit="°F" />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function InstrumentCard({ label, value, unit }: { label: string; value: string; unit: string }) {
-  return (
-    <div className="imp-metric-card">
-      <Thermometer className="h-4 w-4" />
-      <small>{label}</small>
-      <div className="imp-metric-value"><strong>{value}</strong><span>{unit}</span></div>
-    </div>
-  );
-}
-
-function MorePane({
-  selected,
-  notes,
-  setNotes,
-  saving,
-  reportChecks,
-  setReportChecks,
-  onSaveNotes,
-  onFinalize,
-  message,
-  error,
-  serviceHistory,
-  chatMessages,
-  chatDraft,
-  setChatDraft,
-  onSendChat,
-}: {
-  selected?: Job;
-  notes: string;
-  setNotes: (value: string) => void;
-  saving: boolean;
-  reportChecks: { readings: boolean; notes: boolean; photos: boolean; approval: boolean };
-  setReportChecks: Dispatch<SetStateAction<{ readings: boolean; notes: boolean; photos: boolean; approval: boolean }>>;
-  onSaveNotes: () => void;
-  onFinalize: () => void;
-  message: string;
-  error: string;
-  serviceHistory: ServiceVisitRecord[];
-  chatMessages: CustomerChatMessage[];
-  chatDraft: string;
-  setChatDraft: (value: string) => void;
-  onSendChat: () => void;
-}) {
-  const stats = getServiceHistoryStats(serviceHistory);
-  const jobHistory = selected
-    ? serviceHistory.filter((row) => row.jobId === selected.id)
-    : [];
-
-  return (
-    <>
-      <header className="imp-header">
-        <div className="imp-wordmark">
-          <strong>WISE²</strong>
-          <span>IMP TECH</span>
-        </div>
-        <div className="imp-header-title">
-          <strong>MORE</strong>
-          <span>CRM / CLOSEOUT</span>
-        </div>
-        <div className="imp-system-id">
-          <span>RECORD</span>
-          <strong>{selected ? 'OPEN' : '—'}</strong>
-        </div>
-      </header>
-      <div className="imp-scroll">
-        <div className="imp-scroll-inner">
-          {(error || message) ? <div className="imp-alert" data-tone={error ? undefined : 'ok'}>{error || message}</div> : null}
-          <section className="imp-panel">
-            <h2>TECH ANALYTICS</h2>
-            <div className="imp-evidence-grid" style={{ marginTop: 8 }}>
-              <InstrumentCard label="VISITS" value={String(stats.totalJobs)} unit="" />
-              <InstrumentCard label="AVG RATING" value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'} unit="" />
-              <InstrumentCard label="REVENUE" value={stats.totalRevenue ? `$${Math.round(stats.totalRevenue)}` : '—'} unit="" />
-            </div>
-          </section>
-          <section className="imp-panel" id="crm">
-            <h2>CUSTOMER 360</h2>
-            {selected ? (
-              <>
-                <p>{selected.customerPhone || 'No phone'}</p>
-                <p>{selected.customerEmail || 'No email'}</p>
-                <p style={{ marginTop: 8 }}>{selected.accessNotes || 'No access notes provided.'}</p>
-                <div style={{ marginTop: 12 }}>
-                  {(selected.serviceHistory || []).map((event) => (
-                    <p key={`${event.date}-${event.type}`} style={{ fontSize: 12, color: '#98A2AC' }}>
-                      {event.type} · {new Date(event.date).toLocaleDateString()}
-                    </p>
-                  ))}
-                  {jobHistory.map((event) => (
-                    <p key={event.id} style={{ fontSize: 12, color: '#66FF78' }}>
-                      Local visit · {new Date(event.date).toLocaleDateString()} · {event.diagnosis}
-                    </p>
-                  ))}
-                </div>
-                <label htmlFor="job-notes" className="sr-only">Technician notes</label>
-                <textarea
-                  id="job-notes"
-                  className="wise-input mt-3 min-h-28"
-                  value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                  placeholder="Record verified readings, work performed, parts used, and customer authorization."
-                />
-                <button type="button" className="imp-primary" onClick={onSaveNotes} disabled={saving || notes === selected.notes}>
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  SAVE CRM NOTES
-                </button>
-              </>
-            ) : <p className="imp-empty">No customer record until dispatch assigns a job.</p>}
-          </section>
-          {selected ? (
-            <section className="imp-panel">
-              <h2>CUSTOMER MESSAGES</h2>
-              <p className="imp-empty" style={{ textAlign: 'left' }}>
-                Local-only thread until a messaging API ships. Use Call / SMS for real contact.
-              </p>
-              <div style={{ display: 'grid', gap: 8, marginTop: 10, maxHeight: 180, overflow: 'auto' }}>
-                {chatMessages.length === 0 ? (
-                  <p style={{ color: '#98A2AC', fontSize: 12 }}>No messages yet.</p>
-                ) : (
-                  chatMessages.map((entry) => (
-                    <div
-                      key={entry.id}
-                      style={{
-                        padding: '8px 10px',
-                        borderRadius: 8,
-                        background: entry.isFromTech ? 'rgba(102,255,120,0.12)' : 'rgba(255,255,255,0.06)',
-                        fontSize: 12,
-                      }}
-                    >
-                      <strong>{entry.isFromTech ? 'Tech' : 'Customer'}</strong>
-                      <p style={{ margin: '4px 0 0' }}>{entry.message}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, marginTop: 10 }}>
-                <input
-                  className="wise-input"
-                  value={chatDraft}
-                  onChange={(event) => setChatDraft(event.target.value)}
-                  placeholder="Update the customer…"
-                />
-                <button type="button" className="imp-primary" onClick={onSendChat} disabled={!chatDraft.trim()}>
-                  Send
-                </button>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
-                {selected.customerPhone ? (
-                  <a className="imp-ghost-btn" href={`tel:${selected.customerPhone}`}><Phone className="h-4 w-4" /> Call</a>
-                ) : (
-                  <button className="imp-ghost-btn" type="button" disabled><Phone className="h-4 w-4" /> No phone</button>
-                )}
-                {selected.customerPhone ? (
-                  <a className="imp-ghost-btn" href={`sms:${selected.customerPhone}`}><Zap className="h-4 w-4" /> SMS</a>
-                ) : (
-                  <button className="imp-ghost-btn" type="button" disabled><Zap className="h-4 w-4" /> No SMS</button>
-                )}
-              </div>
-            </section>
-          ) : null}
-          {selected ? (
-            <section className="imp-panel">
-              <h2>EQUIPMENT</h2>
-              <p>{selected.equipment.manufacturer} {selected.equipment.model}</p>
-              <p>Serial {selected.equipment.serial || '—'}</p>
-              <p>{selected.equipment.warranty}</p>
-            </section>
-          ) : null}
-          <section className="imp-panel" id="closeout">
-            <h2>CLOSEOUT</h2>
-            {([
-              ['readings', 'Verified readings attached'],
-              ['notes', 'Work performed documented'],
-              ['photos', 'Before and after photos'],
-              ['approval', 'Customer approval captured'],
-            ] as const).map(([key, title]) => (
-              <label key={key} className="closeout-check" style={{ marginTop: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={reportChecks[key]}
-                  onChange={(event) => setReportChecks((current) => ({ ...current, [key]: event.target.checked }))}
-                />
-                <span className="closeout-checkmark"><Check className="h-4 w-4" /></span>
-                <span><strong>{title}</strong></span>
-              </label>
-            ))}
-            <button
-              type="button"
-              className="imp-primary"
-              onClick={onFinalize}
-              disabled={saving || !Object.values(reportChecks).every(Boolean)}
-            >
-              <FileCheck2 className="h-4 w-4" />FINALIZE REPORT
-            </button>
-          </section>
-          <a className="imp-ghost-btn" href={`${basePath}/`}>Return to WISE² HVAC</a>
-        </div>
-      </div>
-    </>
   );
 }

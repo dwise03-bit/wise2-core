@@ -1,4 +1,28 @@
-export type JobStatus = 'DISPATCHED' | 'IN_PROGRESS' | 'COMPLETED';
+export type JobStatus =
+  | 'DISPATCHED'
+  | 'EN_ROUTE'
+  | 'ON_SITE'
+  | 'IN_PROGRESS'
+  | 'AWAITING_APPROVAL'
+  | 'COMPLETED';
+
+export const JOB_STATUSES: JobStatus[] = [
+  'DISPATCHED',
+  'EN_ROUTE',
+  'ON_SITE',
+  'IN_PROGRESS',
+  'AWAITING_APPROVAL',
+  'COMPLETED',
+];
+
+export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
+  DISPATCHED: 'Scheduled',
+  EN_ROUTE: 'En route',
+  ON_SITE: 'On site',
+  IN_PROGRESS: 'Diagnosing',
+  AWAITING_APPROVAL: 'Awaiting approval',
+  COMPLETED: 'Completed',
+};
 
 export type ServiceEvent = {
   date: string;
@@ -20,6 +44,7 @@ export type FieldJob = {
   priority: 'NORMAL' | 'HIGH';
   notes: string;
   accessNotes: string;
+  dispatchNotes?: string;
   equipment: {
     manufacturer: string;
     model: string;
@@ -27,6 +52,13 @@ export type FieldJob = {
     tonnage: number;
     installedAt: string;
     warranty: string;
+    equipmentType?: string;
+    refrigerant?: string;
+    voltage?: string;
+    phase?: string;
+    location?: string;
+    assetId?: string;
+    nominalCapacity?: string;
   };
   serviceHistory: ServiceEvent[];
   updatedAt: string;
@@ -46,6 +78,7 @@ const demoJob: FieldJob = {
   status: 'IN_PROGRESS',
   priority: 'HIGH',
   notes: '',
+  dispatchNotes: 'Priority comfort complaint. Confirm rooftop access with facilities before climbing.',
   accessNotes: 'Roof hatch on the east stairwell. Badge required after 6pm.',
   equipment: {
     manufacturer: 'Carrier',

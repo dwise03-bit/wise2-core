@@ -55,6 +55,22 @@ export type DiagnosticApiResult = {
   faultTitle?: string;
   rootCause?: string;
   explanation?: string;
+  primaryFinding?: string;
+  confidenceBand?: 'high' | 'moderate' | 'low';
+  supportingEvidence?: Array<{ label: string; detail: string; key?: string }>;
+  contradictingEvidence?: Array<{ label: string; detail: string; key?: string }>;
+  probableCauses?: Array<{ cause: string; likelihood: string; why: string }>;
+  nextBestTest?: {
+    id?: string;
+    test: string;
+    why: string;
+    tools: string;
+    placement: string;
+    expected: string;
+    safety?: string;
+  };
+  recommendedAction?: string;
+  insufficientData?: boolean;
 };
 
 export type FieldEquipmentLike = {

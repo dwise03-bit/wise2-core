@@ -7,6 +7,7 @@ import { ConfidencePanel } from './ConfidencePanel';
 import { RecommendedActionsPanel } from './RecommendedActionRow';
 import { DiagnosticReportActions } from './DiagnosticReportActions';
 import type { ImpDiagnosticViewModel, RecommendedActionModel } from '@/lib/imp-diagnostics';
+import type { ReactNode } from 'react';
 
 export function ImpDiagnosticResultsScreen({
   model,
@@ -16,6 +17,7 @@ export function ImpDiagnosticResultsScreen({
   onRunAgain,
   viewLoading,
   shareLoading,
+  children,
 }: {
   model: ImpDiagnosticViewModel;
   onViewReport: () => void;
@@ -24,6 +26,7 @@ export function ImpDiagnosticResultsScreen({
   onRunAgain?: () => void;
   viewLoading?: boolean;
   shareLoading?: boolean;
+  children?: ReactNode;
 }) {
   return (
     <>
@@ -63,6 +66,7 @@ export function ImpDiagnosticResultsScreen({
               RUN NEW ANALYSIS
             </button>
           ) : null}
+          {children}
         </div>
       </div>
     </>

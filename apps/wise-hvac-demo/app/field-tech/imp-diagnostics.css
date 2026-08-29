@@ -54,10 +54,13 @@ body:has(.imp-app-root) {
 
 @media (min-width: 768px) {
   .imp-phone-shell {
-    max-width: 430px;
+    max-width: 720px;
     border-left: 1px solid var(--imp-border);
     border-right: 1px solid var(--imp-border);
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+  }
+  .imp-phone-shell[data-dense='true'] {
+    max-width: 960px;
   }
 }
 
@@ -778,9 +781,9 @@ body:has(.imp-app-root) {
   border: 0;
   background: transparent;
   color: var(--imp-text-muted);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
 }
 
 .imp-nav-item svg {
@@ -995,3 +998,181 @@ body:has(.imp-app-root) {
     transition: none !important;
   }
 }
+
+.imp-status-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 12px 8px;
+  position: relative;
+  z-index: 30;
+}
+
+.imp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--imp-border);
+  background: rgba(8, 13, 16, 0.9);
+  color: var(--imp-text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.imp-chip[data-ok='true'] { color: var(--imp-green); border-color: rgba(102, 255, 120, 0.28); }
+.imp-chip[data-warn='true'] { color: var(--imp-amber); border-color: rgba(255, 181, 71, 0.35); }
+.imp-chip[data-bad='true'] { color: var(--imp-fault); border-color: rgba(255, 86, 76, 0.35); }
+
+.imp-workflow-rail {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 12px 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--imp-border);
+  background: rgba(8, 13, 16, 0.92);
+  position: relative;
+  z-index: 30;
+}
+
+.imp-workflow-rail button {
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 0;
+  background: transparent;
+  color: var(--imp-text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.imp-workflow-rail [data-done='true'] { color: var(--imp-green); }
+.imp-workflow-rail [data-active='true'] { color: var(--imp-blue); }
+
+.imp-subnav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.imp-subnav[data-cols='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.imp-subnav button {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--imp-border);
+  background: var(--imp-surface-raised);
+  color: var(--imp-text-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.imp-subnav button[data-active='true'] {
+  color: var(--imp-text);
+  border-color: rgba(73, 149, 255, 0.45);
+}
+
+.imp-quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.imp-kv {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--imp-text-secondary);
+}
+
+.imp-kv strong { color: var(--imp-text); font-weight: 700; }
+
+.imp-source {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--imp-text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.imp-tool-card,
+.imp-measure-card {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--imp-border);
+  background: var(--imp-surface);
+}
+
+.imp-measure-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--imp-text);
+}
+
+.imp-measure-card small,
+.imp-tool-card small {
+  display: block;
+  color: var(--imp-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.imp-compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.imp-compare th,
+.imp-compare td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--imp-border);
+  text-align: left;
+}
+
+.imp-offline {
+  margin: 0 12px 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 181, 71, 0.35);
+  color: var(--imp-amber);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.imp-trend {
+  width: 100%;
+  height: 92px;
+  display: block;
+}
+
+.imp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.imp-legend button {
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--imp-border);
+  background: transparent;
+  color: var(--imp-text-secondary);
+  font-size: 11px;
+}
+
+.imp-legend button[data-on='true'] { color: var(--imp-text); border-color: var(--imp-blue); }
