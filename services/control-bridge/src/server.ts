@@ -1,14 +1,30 @@
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
 import { loadConfig } from './config.js';
 import { buildAuthHook } from './auth.js';
 import { appendAudit, readAudit } from './lib/audit.js';
 import { clampLines, validateName } from './guards.js';
-import type { ControlConfig, Envelope } from './types.js';
+import { boundedText, redactText } from './lib/redact.js';
+import type { ControlConfig, Envelope, HermesImageRequest } from './types.js';
 import { createDeployment, diskMetrics, dockerLogs, dockerPs, dockerServices, dockerStats, getDeployment, gitRevision, gitStatus, gpuMetrics, hostMetrics, ollamaModels, restartService, rollbackApp, urlHealth, wise2Web, type AdapterContext, type Runner } from './adapters.js';
 
 type BuildOptions = { run?: Runner; fetch?: typeof globalThis.fetch };
+
+const hermesImageSchema = z.object({
+  instruction: z.string().trim().min(1).max(4000),
+  references: z.array(z.object({
+    id: z.string().trim().min(1).max(200),
+    url: z.string().url().max(2048),
+    role: z.enum(['LOCKED', 'EDITABLE', 'NEW']).optional(),
+    kind: z.enum(['person', 'logo', 'hardware', 'screenshot', 'approved-art', 'other']).optional(),
+    label: z.string().max(200).optional(),
+  }).strip()).max(20).optional(),
+  deliverToDiscord: z.boolean().optional(),
+  discordChannel: z.enum(['builds', 'alerts', 'decisions', 'images']).optional(),
+  aspectRatio: z.enum(['1:1', '4:5', '16:9', '9:16']).optional(),
+}).strip();
 
 function ok<T>(requestId: string, action: string, data: T, target?: string): Envelope<T> {
   return { ok: true, requestId, action, target, timestamp: new Date().toISOString(), data };
@@ -25,6 +41,7 @@ function codeOf(error: unknown): string {
 export async function buildServer(config: ControlConfig = loadConfig(), options: BuildOptions = {}) {
   const app = Fastify({ logger: false, genReqId: req => String(req.headers['x-request-id'] ?? randomUUID()) });
   const ctx: AdapterContext = { config, run: options.run, fetch: options.fetch };
+  const doFetch = options.fetch ?? globalThis.fetch;
   await app.register(rateLimit, { max: config.rateLimitMax, timeWindow: config.rateLimitWindowMs });
   app.addHook('preHandler', buildAuthHook(config));
 
@@ -51,6 +68,39 @@ export async function buildServer(config: ControlConfig = loadConfig(), options:
   app.get('/v1/control/ollama/status', async request => ok(request.id, 'ollama.status', await urlHealth(ctx, config.ollamaUrl)));
   app.get('/v1/control/ollama/models', async request => ok(request.id, 'ollama.models', await ollamaModels(ctx)));
   app.get('/v1/control/hermes/status', async request => ok(request.id, 'hermes.status', await urlHealth(ctx, config.hermesUrl)));
+  app.post('/v1/control/hermes/image', async (request, reply) => {
+    const startedAt = new Date().toISOString();
+    const action = 'hermes.image.submit';
+    const secrets = [config.token, config.hermesBearerToken].filter(Boolean);
+    if (!config.hermesBearerToken) {
+      await appendAudit(config.auditFile, { requestId: request.id, actor: config.actor, action, target: 'hermes', source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: false, errorCode: 'HERMES_NOT_CONFIGURED' }, secrets);
+      return reply.code(503).send(err(request.id, action, 'HERMES_NOT_CONFIGURED', 'Hermes image submission is not configured', undefined, 'hermes'));
+    }
+    const parsed = hermesImageSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send(err(request.id, action, 'INVALID_HERMES_REQUEST', 'Hermes image request is invalid', undefined, 'hermes'));
+    }
+    try {
+      const response = await doFetch(config.hermesImageUrl, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${config.hermesBearerToken}`, 'content-type': 'application/json', 'x-request-id': request.id },
+        body: JSON.stringify(parsed.data satisfies HermesImageRequest),
+        signal: AbortSignal.timeout(120_000),
+      });
+      if (!response.ok) {
+        const detail = redactText(boundedText(await response.text(), 1000), secrets);
+        await appendAudit(config.auditFile, { requestId: request.id, actor: config.actor, action, target: 'hermes', source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: false, errorCode: 'HERMES_UPSTREAM_FAILED' }, secrets);
+        return reply.code(502).send(err(request.id, action, 'HERMES_UPSTREAM_FAILED', 'Hermes rejected the image request', detail, 'hermes'));
+      }
+      const data = await response.json() as Record<string, unknown>;
+      await appendAudit(config.auditFile, { requestId: request.id, actor: config.actor, action, target: 'hermes', source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: true }, secrets);
+      return ok(request.id, action, data, 'hermes');
+    } catch (error) {
+      const detail = redactText(boundedText((error as Error).message, 1000), secrets);
+      await appendAudit(config.auditFile, { requestId: request.id, actor: config.actor, action, target: 'hermes', source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: false, errorCode: 'HERMES_UPSTREAM_UNAVAILABLE' }, secrets);
+      return reply.code(502).send(err(request.id, action, 'HERMES_UPSTREAM_UNAVAILABLE', 'Hermes image submission failed', detail, 'hermes'));
+    }
+  });
   app.get('/v1/control/web/wise2', async request => ok(request.id, 'web.wise2', await wise2Web(ctx)));
   app.post('/v1/control/deploy/:app', async request => {
     const target = validateName((request.params as { app: string }).app, config.allowedApps);
