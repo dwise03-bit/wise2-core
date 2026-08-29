@@ -4,6 +4,7 @@ import SwiftUI
 struct WISE2App: App {
   @StateObject private var authManager = AuthManager()
   @StateObject private var appState = AppState()
+  @StateObject private var toolHub = ToolHubStore()
 
   init() {
     print("🚀 WISE² Command Center launching...")
@@ -12,15 +13,13 @@ struct WISE2App: App {
   var body: some Scene {
     WindowGroup {
       ZStack {
-        // Background
-        Color.wise2Background
-          .ignoresSafeArea()
+        Color.wise2Background.ignoresSafeArea()
 
-        // Authentication Gate
         if authManager.isAuthenticated {
           MainTabView()
             .environmentObject(authManager)
             .environmentObject(appState)
+            .environmentObject(toolHub)
             .onAppear {
               print("✅ User authenticated, showing main interface")
             }
