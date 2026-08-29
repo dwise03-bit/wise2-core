@@ -20,7 +20,7 @@ CREATE TABLE "cherry_count_products" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "cherry_count_products_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_products_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "cherry_count_products_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE UNIQUE INDEX "cherry_count_products_tenant_id_sku_key" ON "cherry_count_products"("tenant_id", "sku");
@@ -49,7 +49,7 @@ CREATE TABLE "cherry_count_variants" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "cherry_count_variants_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_variants_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "cherry_count_variants_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_variants_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "cherry_count_products"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -68,7 +68,7 @@ CREATE TABLE "cherry_count_containers" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "cherry_count_containers_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_containers_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "cherry_count_containers_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "cherry_count_containers_tenant_id_type_idx" ON "cherry_count_containers"("tenant_id", "type");
@@ -86,7 +86,7 @@ CREATE TABLE "cherry_count_inventory_txns" (
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "cherry_count_inventory_txns_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_inventory_txns_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "cherry_count_inventory_txns_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_inventory_txns_variant_id_fkey" FOREIGN KEY ("variant_id") REFERENCES "cherry_count_variants"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -109,7 +109,7 @@ CREATE TABLE "cherry_count_events" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "cherry_count_events_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_events_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "cherry_count_events_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "cherry_count_events_tenant_id_status_idx" ON "cherry_count_events"("tenant_id", "status");
@@ -133,7 +133,7 @@ CREATE TABLE "cherry_count_customers" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "cherry_count_customers_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_customers_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "cherry_count_customers_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX "cherry_count_customers_tenant_id_name_idx" ON "cherry_count_customers"("tenant_id", "name");
@@ -149,7 +149,7 @@ CREATE TABLE "cherry_count_event_inventory" (
     "quantity_returned" INTEGER NOT NULL DEFAULT 0,
     "packing_status" TEXT NOT NULL DEFAULT 'NOT_PACKED',
     CONSTRAINT "cherry_count_event_inventory_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_event_inventory_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "cherry_count_event_inventory_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_event_inventory_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "cherry_count_events"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_event_inventory_variant_id_fkey" FOREIGN KEY ("variant_id") REFERENCES "cherry_count_variants"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -171,7 +171,7 @@ CREATE TABLE "cherry_count_sales" (
     "notes" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "cherry_count_sales_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "cherry_count_sales_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "cherry_count_sales_tenant_id_fkey" FOREIGN KEY ("tenant_id") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_sales_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "cherry_count_events"("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "cherry_count_sales_customer_id_fkey" FOREIGN KEY ("customer_id") REFERENCES "cherry_count_customers"("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
