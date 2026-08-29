@@ -36,6 +36,7 @@ import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
 import { CjaysModule } from './cjays/cjays.module';
 import { BusinessOsModule } from './v1/business-os/business-os.module';
+import { CherryCountModule } from './cherry-count/cherry-count.module';
 
 @Module({
   imports: [
@@ -130,6 +131,7 @@ import { BusinessOsModule } from './v1/business-os/business-os.module';
     FieldtechModule,
     CjaysModule,
     BusinessOsModule,
+    CherryCountModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

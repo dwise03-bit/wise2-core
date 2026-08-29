@@ -41,8 +41,10 @@ export function BrandSection({ brand }: BrandSectionProps) {
                   </p>
                 </div>
               </div>
-              <button className="flex items-center gap-2 rounded-sm px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white transition-all"
-                style={{ backgroundColor: brand.accentColor, color: isDark ? '#F5E6D3' : '#fff' }}>
+              <button
+                className="flex items-center gap-2 rounded-sm px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-white transition-all min-h-[44px] min-w-[12rem] hover:opacity-90 focus:ring-2 focus:ring-offset-2 active:scale-95"
+                style={{ backgroundColor: brand.accentColor, color: isDark ? '#F5E6D3' : '#fff', focusRingColor: brand.accentColor }}
+                aria-label={`Shop ${brand.name}`}>
                 <span>🛍</span> SHOP NOW
               </button>
             </div>
@@ -66,12 +68,16 @@ export function BrandSection({ brand }: BrandSectionProps) {
                 {brand.description}
               </p>
               <div className="mt-8 flex gap-4">
-                <button className="px-6 py-3 text-sm font-black uppercase tracking-wide transition"
-                  style={{ backgroundColor: brand.accentColor, color: '#1a1a1a' }}>
+                <button
+                  className="px-6 py-3 text-sm font-black uppercase tracking-wide transition min-h-[44px] hover:opacity-90 focus:ring-2 focus:ring-offset-2 active:scale-95 rounded"
+                  style={{ backgroundColor: brand.accentColor, color: '#1a1a1a' }}
+                  aria-label={`Shop ${brand.name}`}>
                   SHOP {brand.name.split(' ')[0]}
                 </button>
-                <button className="border-2 px-6 py-3 text-sm font-black uppercase tracking-wide transition"
-                  style={{ borderColor: brand.accentColor, color: brand.accentColor }}>
+                <button
+                  className="border-2 px-6 py-3 text-sm font-black uppercase tracking-wide transition min-h-[44px] hover:opacity-80 focus:ring-2 focus:ring-offset-2 active:scale-95 rounded"
+                  style={{ borderColor: brand.accentColor, color: brand.accentColor }}
+                  aria-label={`Explore ${brand.name}`}>
                   EXPLORE
                 </button>
               </div>
@@ -125,8 +131,10 @@ export function BrandSection({ brand }: BrandSectionProps) {
                   <p className="mt-3 text-[12px] font-bold" style={{ color: brand.accentColor }}>
                     {product.price}
                   </p>
-                  <button className="mt-4 w-full border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all"
-                    style={{ borderColor: brand.accentColor, color: brand.accentColor }}>
+                  <button
+                    className="mt-4 w-full border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all hover:opacity-80 focus:ring-2 focus:ring-offset-1 active:scale-95 min-h-[44px] flex items-center justify-center"
+                    style={{ borderColor: brand.accentColor, color: brand.accentColor }}
+                    aria-label={`Get access to ${product.name}`}>
                     GET ACCESS
                   </button>
                 </div>

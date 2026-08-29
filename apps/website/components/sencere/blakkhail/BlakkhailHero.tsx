@@ -11,20 +11,18 @@ export function BlakkhailHero() {
       className={`${BLAKKHAIL_LAYOUT.section} relative overflow-hidden`}
       style={{ backgroundColor: BLAKKHAIL.jetBlack }}
     >
-      <div className={`${BLAKKHAIL_LAYOUT.container} py-6 sm:py-8 lg:py-10`}>
-        <div
-          className={`${BLAKKHAIL_LAYOUT.frame} w-full`}
-          style={{ borderColor: BLAKKHAIL.darkGold }}
-        >
-          <Image
-            src={BLAKKHAIL_LEGACY.assets.logo}
-            alt="Blakk Hail — original fashion since 1994"
-            width={1200}
-            height={270}
-            priority
-            className="h-auto w-full object-contain"
-          />
-        </div>
+      <div
+        className={`${BLAKKHAIL_LAYOUT.frame} w-full`}
+        style={{ borderColor: BLAKKHAIL.darkGold }}
+      >
+        <Image
+          src={BLAKKHAIL_LEGACY.assets.logo}
+          alt="Blakk Hail — original fashion since 1994"
+          width={1200}
+          height={270}
+          priority
+          className="h-auto w-full object-contain"
+        />
       </div>
 
       <div id="photo-shoot" className={`${BLAKKHAIL_LAYOUT.section} flex flex-col gap-4 sm:gap-6`}>
