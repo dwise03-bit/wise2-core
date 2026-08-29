@@ -10,7 +10,7 @@
  *   3. Inject LangfuseService into HermesService (packages/api/src/hermes/hermes.service.ts)
  *      and wrap the body of `chat()` (line ~345) with `withTrace(...)` as shown below.
  *   4. Set env vars in .env.production:
- *        LANGFUSE_HOST=https://langfuse.wise2.net   (or http://localhost:3002 locally)
+ *        LANGFUSE_HOST=https://langfuse.wise2.net   (or http://localhost:3007 locally)
  *        LANGFUSE_PUBLIC_KEY=pk-lf-...
  *        LANGFUSE_SECRET_KEY=sk-lf-...
  *      (generate keys from the Langfuse UI after docker-compose.phase3-ai-ops.yml is deployed)
@@ -84,9 +84,9 @@ export class LangfuseService {
       this.client = new Langfuse({
         publicKey: process.env.LANGFUSE_PUBLIC_KEY,
         secretKey: process.env.LANGFUSE_SECRET_KEY,
-        baseUrl: process.env.LANGFUSE_HOST || 'http://localhost:3002',
+        baseUrl: process.env.LANGFUSE_HOST || 'http://localhost:3007',
       });
-      this.logger.log(`Langfuse client initialized (host: ${process.env.LANGFUSE_HOST || 'http://localhost:3002'})`);
+      this.logger.log(`Langfuse client initialized (host: ${process.env.LANGFUSE_HOST || 'http://localhost:3007'})`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`Failed to initialize Langfuse client — falling back to unobserved mode: ${message}`);

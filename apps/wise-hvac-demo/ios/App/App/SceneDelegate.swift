@@ -5,6 +5,11 @@ import CoreLocation
 import Combine
 import Network
 import Security
+import CoreBluetooth
+import AVFoundation
+import PhotosUI
+import ARKit
+import PencilKit
 
 // MARK: - Scene Delegate
 
@@ -2101,11 +2106,12 @@ struct RootView: View {
 
 struct ToolsView: View {
     @EnvironmentObject var viewModel: FieldTechViewModel
-    @State private var selectedMetric = "voltage"
+    @StateObject private var fieldpiece = FieldpieceManager()
     @State private var voltage: Double = 120.4
     @State private var current: Double = 7.63
-    @State private var recordingTime = "00:02:45"
-    @State private var isRecording = true
+    @State private var meterTimer: Timer?
+    @State private var recordingTime = "00:00:00"
+    @State private var isRecording = false
 
     var body: some View {
         ZStack {
@@ -2118,20 +2124,20 @@ struct ToolsView: View {
                         Text("LIVE MEASUREMENTS").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
                     }
 
-                    // Tabs
-                    HStack(spacing: WISESpacing.md) {
-                        ForEach(["LIVE", "TREND", "HOLD", "SETTINGS"], id: \.self) { tab in
-                            Text(tab).font(WISETypography.caption)
-                                .foregroundColor(tab == "LIVE" ? WISEColor.wiseGreen : WISEColor.textSecondary)
-                                .padding(.vertical, WISESpacing.sm)
-                                .padding(.horizontal, WISESpacing.md)
-                                .background(tab == "LIVE" ? WISEColor.wiseGreen.opacity(0.2) : Color.clear)
-                                .cornerRadius(WISECornerRadius.sm)
-                        }
+                    // Fieldpiece Status
+                    HStack(spacing: WISESpacing.sm) {
+                        Image(systemName: "link.circle.fill").foregroundColor(fieldpiece.devices.isEmpty ? WISEColor.faultRed : WISEColor.wiseGreen)
+                        Text(fieldpiece.connectionStatus).font(WISETypography.body).foregroundColor(WISEColor.textSecondary)
                         Spacer()
+                        Button(action: { fieldpiece.scanDevices() }) {
+                            Text(fieldpiece.isScanning ? "Scanning..." : "Scan").font(WISETypography.captionSmall).foregroundColor(WISEColor.wiseGreen)
+                        }
                     }
+                    .padding(WISESpacing.md)
+                    .background(WISEColor.surfacePrimary)
+                    .cornerRadius(WISECornerRadius.md)
 
-                    // Dual Meters
+                    // Dual Meters (LIVE)
                     HStack(spacing: WISESpacing.lg) {
                         VStack(spacing: WISESpacing.md) {
                             Text(String(format: "%.1f", voltage)).font(WISETypography.measurementLarge).foregroundColor(WISEColor.electricBlue).monospacedDigit()
@@ -2154,12 +2160,12 @@ struct ToolsView: View {
                         .cornerRadius(WISECornerRadius.md)
                     }
 
-                    // Waveform Visualization
+                    // Waveform
                     Canvas { context, size in
                         var path = Path()
                         for i in 0..<Int(size.width / 4) {
                             let x = CGFloat(i) * 4
-                            let y = size.height / 2 + sin(CGFloat(i) * 0.1) * (size.height / 3)
+                            let y = size.height / 2 + sin(CGFloat(i) * 0.1 + Date().timeIntervalSince1970) * (size.height / 3)
                             if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
                             else { path.addLine(to: CGPoint(x: x, y: y)) }
                         }
@@ -2168,36 +2174,62 @@ struct ToolsView: View {
                     .frame(height: 120)
                     .background(WISEColor.surfacePrimary)
                     .cornerRadius(WISECornerRadius.md)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: WISECornerRadius.md).stroke(WISEColor.electricBlue.opacity(0.2), lineWidth: 1)
-                    )
 
                     // Stats
                     VStack(spacing: WISESpacing.md) {
-                        HStack { Text("MIN").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text("118.7").font(WISETypography.body).foregroundColor(WISEColor.textSecondary) }
-                        HStack { Text("MAX").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text("122.1").font(WISETypography.body).foregroundColor(WISEColor.textSecondary) }
-                        HStack { Text("POWER").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text("0.87 kW").font(WISETypography.body).foregroundColor(WISEColor.wiseGreen) }
+                        HStack { Text("MIN").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text(String(format: "%.1f", voltage - 2)).font(WISETypography.body).foregroundColor(WISEColor.textSecondary) }
+                        HStack { Text("MAX").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text(String(format: "%.1f", voltage + 2)).font(WISETypography.body).foregroundColor(WISEColor.textSecondary) }
+                        HStack { Text("POWER").font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted); Spacer(); Text(String(format: "%.2f", voltage * current / 1000)).font(WISETypography.body).foregroundColor(WISEColor.wiseGreen) }
                     }
                     .padding(WISESpacing.md)
                     .background(WISEColor.surfacePrimary)
                     .cornerRadius(WISECornerRadius.md)
 
-                    // Recording
-                    HStack {
-                        if isRecording {
-                            Circle().fill(WISEColor.faultRed).frame(width: 8, height: 8)
-                            Text(recordingTime).font(WISETypography.diagnostic).foregroundColor(WISEColor.textPrimary).monospacedDigit()
+                    // Recording Status
+                    Button(action: { toggleRecording() }) {
+                        HStack {
+                            Circle().fill(isRecording ? WISEColor.faultRed : WISEColor.wiseGreen).frame(width: 8, height: 8)
+                            Text(isRecording ? "RECORDING \(recordingTime)" : "START LOG").font(WISETypography.body).foregroundColor(WISEColor.textPrimary).monospacedDigit()
+                            Spacer()
+                            Text(fieldpiece.devices.count > 0 ? "Job Link Connected" : "No devices").font(WISETypography.captionSmall).foregroundColor(fieldpiece.devices.count > 0 ? WISEColor.wiseGreen : WISEColor.faultRed)
                         }
-                        Spacer()
-                        Text("Job Link Probes Connected").font(WISETypography.captionSmall).foregroundColor(WISEColor.wiseGreen)
+                        .padding(WISESpacing.md)
+                        .background(WISEColor.surfacePrimary)
+                        .cornerRadius(WISECornerRadius.md)
                     }
-                    .padding(WISESpacing.md)
-                    .background(WISEColor.surfacePrimary)
-                    .cornerRadius(WISECornerRadius.md)
 
                     Spacer(minLength: WISESpacing.xl)
                 }
                 .padding(WISESpacing.lg)
+            }
+        }
+        .onAppear {
+            startMeterUpdates()
+            fieldpiece.scanDevices()
+        }
+        .onDisappear {
+            meterTimer?.invalidate()
+        }
+    }
+
+    private func startMeterUpdates() {
+        meterTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            voltage = Double.random(in: 118...122)
+            current = Double.random(in: 7...8)
+        }
+    }
+
+    private func toggleRecording() {
+        isRecording.toggle()
+        if isRecording {
+            var seconds = 0
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                seconds += 1
+                let h = seconds / 3600
+                let m = (seconds % 3600) / 60
+                let s = seconds % 60
+                recordingTime = String(format: "%02d:%02d:%02d", h, m, s)
+                if !isRecording { timer.invalidate() }
             }
         }
     }
@@ -2507,23 +2539,636 @@ struct FieldpieceDevice: Identifiable, Codable {
     let unit: String
 }
 
-class FieldpieceManager: NSObject, ObservableObject {
+class FieldpieceManager: NSObject, ObservableObject, CBCentralManagerDelegate {
     @Published var devices: [FieldpieceDevice] = []
     @Published var isScanning = false
     @Published var connectionStatus = "Ready"
+    @Published var lastSyncTime: Date?
+
+    private var centralManager: CBCentralManager?
+
+    override init() {
+        super.init()
+        centralManager = CBCentralManager(delegate: self, queue: .main)
+    }
 
     func scanDevices() {
         isScanning = true
-        // Simulate Job Link device discovery
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.devices = [
-                FieldpieceDevice(id: "JL001", name: "Pressure Probe 1", type: "pressure", isConnected: true, batteryLevel: 95, lastReading: 68.4, unit: "PSIG"),
-                FieldpieceDevice(id: "JL002", name: "Pressure Probe 2", type: "pressure", isConnected: true, batteryLevel: 92, lastReading: 248.7, unit: "PSIG"),
-                FieldpieceDevice(id: "JL003", name: "Temperature Probe", type: "temperature", isConnected: true, batteryLevel: 88, lastReading: 85.0, unit: "°F"),
-                FieldpieceDevice(id: "JL004", name: "Digital Multimeter", type: "multimeter", isConnected: true, batteryLevel: 100, lastReading: 120.4, unit: "VAC")
-            ]
-            self.connectionStatus = "4 devices connected"
+        if let cm = centralManager, cm.state == .poweredOn {
+            cm.scanForPeripherals(withServices: [CBUUID(string: "180A")], options: nil)
+            connectionStatus = "Scanning for Job Link devices..."
+        } else {
+            simulateDevices()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             self.isScanning = false
+        }
+    }
+
+    private func simulateDevices() {
+        self.devices = [
+            FieldpieceDevice(id: "JL001", name: "Pressure Probe 1", type: "pressure", isConnected: true, batteryLevel: 95, lastReading: 68.4, unit: "PSIG"),
+            FieldpieceDevice(id: "JL002", name: "Pressure Probe 2", type: "pressure", isConnected: true, batteryLevel: 92, lastReading: 248.7, unit: "PSIG"),
+            FieldpieceDevice(id: "JL003", name: "Temperature Probe", type: "temperature", isConnected: true, batteryLevel: 88, lastReading: 85.0, unit: "°F"),
+            FieldpieceDevice(id: "JL004", name: "Digital Multimeter", type: "multimeter", isConnected: true, batteryLevel: 100, lastReading: 120.4, unit: "VAC")
+        ]
+        self.connectionStatus = "4 devices connected"
+        self.lastSyncTime = Date()
+    }
+
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        DispatchQueue.main.async {
+            if central.state == .poweredOn {
+                self.connectionStatus = "Bluetooth ready"
+            } else {
+                self.connectionStatus = "Bluetooth unavailable"
+                self.simulateDevices()
+            }
+        }
+    }
+}
+
+// MARK: - Offline Data Store (Field Resilience)
+
+final class OfflineDataStore {
+    static let shared = OfflineDataStore()
+    private let userDefaults = UserDefaults(suiteName: "group.com.wisedefense.fieldtech")
+
+    struct JobSnapshot: Codable {
+        let id: String
+        let complaint: String
+        let readings: [String: Double]
+        let photos: [String]
+        let notes: String
+        let timestamp: Date
+        let synced: Bool
+    }
+
+    func save(_ snapshot: JobSnapshot) {
+        if let data = try? JSONEncoder().encode(snapshot) {
+            userDefaults?.set(data, forKey: "job_\(snapshot.id)")
+        }
+    }
+
+    func load(jobId: String) -> JobSnapshot? {
+        guard let data = userDefaults?.data(forKey: "job_\(jobId)") else { return nil }
+        return try? JSONDecoder().decode(JobSnapshot.self, from: data)
+    }
+
+    func getAllPendingSync() -> [JobSnapshot] {
+        let defaults = userDefaults ?? UserDefaults.standard
+        return defaults.dictionaryRepresentation()
+            .filter { $0.key.hasPrefix("job_") }
+            .compactMap { _, value in
+                guard let data = value as? Data else { return nil }
+                return try? JSONDecoder().decode(JobSnapshot.self, from: data)
+            }
+            .filter { !$0.synced }
+    }
+}
+
+// MARK: - Photo & Signature Capture (Infield Documentation)
+
+final class MediaCapture: NSObject, ObservableObject {
+    @Published var selectedPhoto: UIImage?
+    @Published var isCapturingPhoto = false
+
+    private var imagePickerDelegate: ImagePickerDelegate?
+
+    func capturePhoto(from controller: UIViewController) {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.allowsEditing = false
+        imagePickerDelegate = ImagePickerDelegate { [weak self] image in
+            self?.selectedPhoto = image
+        }
+        picker.delegate = imagePickerDelegate
+        controller.present(picker, animated: true)
+    }
+
+    func pickFromLibrary(from controller: UIViewController) {
+        let picker = UIImagePickerController()
+        picker.sourceType = .photoLibrary
+        imagePickerDelegate = ImagePickerDelegate { [weak self] image in
+            self?.selectedPhoto = image
+        }
+        picker.delegate = imagePickerDelegate
+        controller.present(picker, animated: true)
+    }
+}
+
+final class ImagePickerDelegate: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    let completion: (UIImage) -> Void
+
+    init(completion: @escaping (UIImage) -> Void) {
+        self.completion = completion
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            completion(image)
+        }
+        picker.dismiss(animated: true)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+}
+
+// MARK: - Voice Recognition (Speech-to-Text)
+
+import Speech
+
+final class VoiceRecorder: NSObject, ObservableObject {
+    @Published var isRecording = false
+    @Published var recognizedText = ""
+    @Published var error: String?
+
+    private let speechRecognizer = SFSpeechRecognizer()
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private let audioEngine = AVAudioEngine()
+
+    override init() {
+        super.init()
+        requestMicrophonePermission()
+    }
+
+    private func requestMicrophonePermission() {
+        let audioSession = AVAudioSession.sharedInstance()
+        audioSession.requestRecordPermission { granted in
+            if !granted {
+                DispatchQueue.main.async {
+                    self.error = "Microphone access required for voice notes"
+                }
+            }
+        }
+    }
+
+    func startRecording() {
+        guard !isRecording else { return }
+        recognizedText = ""
+        error = nil
+
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            self.error = "Audio session error"
+            return
+        }
+
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest = recognitionRequest else { return }
+
+        let inputNode = audioEngine.inputNode
+        recognitionRequest.shouldReportPartialResults = true
+
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+            var isFinal = false
+            if let result = result {
+                DispatchQueue.main.async {
+                    self?.recognizedText = result.bestTranscription.formattedString
+                    isFinal = result.isFinal
+                }
+            }
+            if error != nil || isFinal {
+                self?.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                self?.recognitionRequest = nil
+                self?.recognitionTask = nil
+                DispatchQueue.main.async {
+                    self?.isRecording = false
+                }
+            }
+        }
+
+        do {
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+                recognitionRequest.append(buffer)
+            }
+            audioEngine.prepare()
+            try audioEngine.start()
+            isRecording = true
+        } catch {
+            self.error = "Audio engine error"
+        }
+    }
+
+    func stopRecording() {
+        audioEngine.stop()
+        recognitionRequest?.endAudio()
+        isRecording = false
+    }
+}
+
+// MARK: - Signature Canvas
+
+struct SignatureCanvas: UIViewRepresentable {
+    @Binding var signatureImage: UIImage?
+
+    func makeUIView(context: Context) -> SignaturePad {
+        return SignaturePad()
+    }
+
+    func updateUIView(_ uiView: SignaturePad, context: Context) {
+        uiView.onSignatureCapture = { image in
+            signatureImage = image
+        }
+    }
+}
+
+class SignaturePad: UIView {
+    var onSignatureCapture: ((UIImage) -> Void)?
+    private var currentPath: UIBezierPath?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = UIColor(WISEColor.bgPrimary)
+        isUserInteractionEnabled = true
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        currentPath = UIBezierPath()
+        currentPath?.move(to: touch.location(in: self))
+    }
+
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first, let path = currentPath else { return }
+        path.addLine(to: touch.location(in: self))
+        setNeedsDisplay()
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let path = currentPath else { return }
+        setNeedsDisplay()
+    }
+
+    override func draw(_ rect: CGRect) {
+        UIColor(WISEColor.wiseGreen).setStroke()
+        currentPath?.lineWidth = 3
+        currentPath?.lineCapStyle = .round
+        currentPath?.lineJoinStyle = .round
+        currentPath?.stroke()
+    }
+
+    func clearSignature() {
+        currentPath = nil
+        setNeedsDisplay()
+    }
+
+    func captureSignature() -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        let image = renderer.image { _ in
+            UIColor(WISEColor.bgPrimary).setFill()
+            UIRectFill(bounds)
+            UIColor(WISEColor.wiseGreen).setStroke()
+            currentPath?.lineWidth = 3
+            currentPath?.stroke()
+        }
+        return image
+    }
+}
+
+// MARK: - ServiceTitan & Jobber Integration
+
+struct ServiceTitanJob: Codable {
+    let id: String
+    let customerId: String
+    let customerName: String
+    let address: String
+    let notes: String
+    let status: String
+}
+
+struct JobberJob: Codable {
+    let id: String
+    let customerId: String
+    let customerName: String
+    let address: String
+    let description: String
+    let status: String
+}
+
+final class ThirdPartyDispatchIntegration {
+    static let shared = ThirdPartyDispatchIntegration()
+
+    // ServiceTitan API
+    func fetchServiceTitanJobs(businessId: String, apiKey: String) async throws -> [ServiceTitanJob] {
+        guard let url = URL(string: "https://api.servicetitan.com/v2/jm/jobs") else { throw APIError.badURL }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let data = try await URLSession.shared.data(for: request).0
+        return try JSONDecoder().decode([ServiceTitanJob].self, from: data)
+    }
+
+    func updateServiceTitanJob(_ jobId: String, status: String, notes: String, apiKey: String) async throws {
+        guard let url = URL(string: "https://api.servicetitan.com/v2/jm/jobs/\(jobId)") else { throw APIError.badURL }
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(["status": status, "notes": notes])
+
+        _ = try await URLSession.shared.data(for: request)
+    }
+
+    // Jobber API
+    func fetchJobberJobs(businessId: String, apiKey: String) async throws -> [JobberJob] {
+        guard let url = URL(string: "https://api.getjobber.com/graphql") else { throw APIError.badURL }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(apiKey, forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let query = """
+        {
+          jobs(first: 50, filter: { status: ASSIGNED }) {
+            edges {
+              node {
+                id
+                title
+                clientName
+                jobAddress { address }
+                description
+                status
+              }
+            }
+          }
+        }
+        """
+        request.httpBody = try JSONEncoder().encode(["query": query])
+
+        let data = try await URLSession.shared.data(for: request).0
+        // Parse GraphQL response
+        return []
+    }
+}
+
+// MARK: - Document Generator (Job Report)
+
+final class DocumentGenerator {
+    static func generateJobReport(
+        jobId: String,
+        customerName: String,
+        address: String,
+        complaint: String,
+        readings: [String: Double],
+        photos: [UIImage],
+        signature: UIImage?,
+        notes: String
+    ) -> String {
+        var pdf = ""
+        pdf += "═══════════════════════════════════════════════\n"
+        pdf += "       WISE² FIELD TECH SERVICE REPORT\n"
+        pdf += "═══════════════════════════════════════════════\n\n"
+
+        pdf += "JOB ID: #\(jobId)\n"
+        pdf += "DATE: \(ISO8601DateFormatter().string(from: Date()))\n\n"
+
+        pdf += "CUSTOMER INFORMATION\n"
+        pdf += "─────────────────────────────────────────────\n"
+        pdf += "Name: \(customerName)\n"
+        pdf += "Address: \(address)\n\n"
+
+        pdf += "COMPLAINT\n"
+        pdf += "─────────────────────────────────────────────\n"
+        pdf += complaint + "\n\n"
+
+        pdf += "MEASUREMENTS CAPTURED\n"
+        pdf += "─────────────────────────────────────────────\n"
+        for (key, value) in readings.sorted(by: { $0.key < $1.key }) {
+            pdf += "\(key): \(String(format: "%.2f", value))\n"
+        }
+        pdf += "\n"
+
+        pdf += "SERVICE NOTES\n"
+        pdf += "─────────────────────────────────────────────\n"
+        pdf += notes + "\n\n"
+
+        pdf += "PHOTOS ATTACHED: \(photos.count) image(s)\n"
+        if signature != nil {
+            pdf += "✓ Customer signature captured\n"
+        }
+
+        pdf += "\n═══════════════════════════════════════════════\n"
+        pdf += "Generated by WISE² Field Tech Copilot\n"
+
+        return pdf
+    }
+
+    static func exportAsText(_ report: String) -> URL? {
+        let filename = "fieldtech_report_\(ISO8601DateFormatter().string(from: Date()).prefix(10)).txt"
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let docDir = paths[0]
+        let fileURL = docDir.appendingPathComponent(filename)
+
+        do {
+            try report.write(to: fileURL, atomically: true, encoding: .utf8)
+            return fileURL
+        } catch {
+            return nil
+        }
+    }
+}
+
+// MARK: - AR Distance Measurement (Measure-Inspired)
+
+class ARMeasurementManager: NSObject, ObservableObject {
+    @Published var isARSupported = ARWorldTrackingConfiguration.isSupported
+    @Published var measurements: [String] = []
+    @Published var lastMeasurement = "0.00 m"
+
+    func measureDistance(_ distance: Float) {
+        let meters = distance
+        lastMeasurement = String(format: "%.2f m", meters)
+        measurements.append("Ductwork: \(lastMeasurement)")
+    }
+}
+
+struct ARMeasurementView: UIViewControllerRepresentable {
+    @ObservedObject var manager = ARMeasurementManager()
+
+    func makeUIViewController(context: Context) -> ARViewController {
+        return ARViewController(manager: manager)
+    }
+
+    func updateUIViewController(_ uiViewController: ARViewController, context: Context) {}
+}
+
+class ARViewController: UIViewController, ARSessionDelegate {
+    var arSession = ARSession()
+    var manager: ARMeasurementManager
+
+    init(manager: ARMeasurementManager) {
+        self.manager = manager
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = UIColor(WISEColor.bgPrimary)
+
+        let label = UILabel()
+        label.text = "AR Distance Measurement\nTap to measure ductwork & equipment"
+        label.textColor = UIColor(WISEColor.textPrimary)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.font = UIFont.systemFont(ofSize: 18)
+        view.addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            label.widthAnchor.constraint(equalToConstant: 300)
+        ])
+
+        let config = ARWorldTrackingConfiguration()
+        if ARWorldTrackingConfiguration.isSupported {
+            arSession.run(config)
+        }
+    }
+}
+
+// MARK: - Screenshot Markup Tool (Grab-Inspired)
+
+struct MarkupCanvas: UIViewRepresentable {
+    @Binding var canvas: PKCanvasView
+
+    func makeUIView(context: Context) -> PKCanvasView {
+        canvas.drawing = PKDrawing()
+        canvas.tool = PKInkingTool(.pen, color: UIColor(WISEColor.wiseGreen), width: 2)
+        return canvas
+    }
+
+    func updateUIView(_ uiView: PKCanvasView, context: Context) {}
+}
+
+struct ScreenshotMarkupView: View {
+    @State private var screenshot: UIImage?
+    @State private var canvas = PKCanvasView()
+    @State private var showingMarkupTools = false
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        ZStack {
+            WISEColor.bgPrimary.ignoresSafeArea()
+
+            VStack(spacing: WISESpacing.lg) {
+                // Header
+                HStack {
+                    Text("MARK DIAGNOSTIC").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
+                    Spacer()
+                    Button("Done") { dismiss() }.font(WISETypography.bodyLarge).foregroundColor(WISEColor.wiseGreen)
+                }
+                .padding(WISESpacing.lg)
+
+                // Markup Canvas
+                if let img = screenshot {
+                    ZStack {
+                        Image(uiImage: img).resizable().scaledToFit()
+                        MarkupCanvas(canvas: $canvas)
+                            .frame(height: 400)
+                    }
+                    .background(WISEColor.surfacePrimary)
+                    .cornerRadius(WISECornerRadius.lg)
+                } else {
+                    Text("No screenshot to annotate").font(WISETypography.body).foregroundColor(WISEColor.textMuted)
+                }
+
+                // Tool Buttons
+                HStack(spacing: WISESpacing.md) {
+                    Button(action: { canvas.drawing = PKDrawing() }) {
+                        Label("Clear", systemImage: "trash.fill").foregroundColor(WISEColor.faultRed)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(WISESpacing.md)
+                    .background(WISEColor.faultRed.opacity(0.1))
+                    .cornerRadius(WISECornerRadius.md)
+
+                    Button(action: { shareMarkup() }) {
+                        Label("Share", systemImage: "square.and.arrow.up").foregroundColor(WISEColor.wiseGreen)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(WISESpacing.md)
+                    .background(WISEColor.wiseGreen.opacity(0.1))
+                    .cornerRadius(WISECornerRadius.md)
+                }
+
+                Spacer()
+            }
+            .padding(WISESpacing.lg)
+        }
+    }
+
+    private func shareMarkup() {
+        let image = canvas.drawing.image(from: canvas.bounds, scale: 1.0)
+        let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        UIApplication.shared.connectedScenes.first { $0 is UIWindowScene }.flatMap { $0 as? UIWindowScene }?.windows.first?.rootViewController?.present(vc, animated: true)
+    }
+}
+
+// MARK: - Quick Capture Panel (Grab-Style Floating)
+
+struct QuickCapturePanel: View {
+    @State private var showingCapture = false
+    @State private var capturedImage: UIImage?
+
+    var body: some View {
+        VStack(alignment: .trailing, spacing: WISESpacing.md) {
+            if showingCapture, let image = capturedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 120)
+                    .cornerRadius(WISECornerRadius.lg)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: WISECornerRadius.lg)
+                            .stroke(WISEColor.wiseGreen, lineWidth: 2)
+                    )
+            }
+
+            HStack(spacing: WISESpacing.sm) {
+                Button(action: { captureScreenshot() }) {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(WISEColor.bgPrimary)
+                        .frame(width: 48, height: 48)
+                        .background(WISEColor.wiseGreen)
+                        .cornerRadius(24)
+                }
+
+                Button(action: { showingCapture.toggle() }) {
+                    Image(systemName: "arrowshape.up.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(WISEColor.bgPrimary)
+                        .frame(width: 48, height: 48)
+                        .background(WISEColor.electricBlue)
+                        .cornerRadius(24)
+                }
+            }
+        }
+        .padding(WISESpacing.lg)
+    }
+
+    private func captureScreenshot() {
+        if let window = UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }).flatMap({ $0 as? UIWindowScene })?.windows.first {
+            let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
+            capturedImage = renderer.image { ctx in
+                window.drawHierarchy(in: window.bounds, afterScreenUpdates: false)
+            }
         }
     }
 }
@@ -2546,13 +3191,343 @@ struct EquipmentView: View {
 
 struct MoreView: View {
     @EnvironmentObject var viewModel: FieldTechViewModel
+    @StateObject private var mediaCapture = MediaCapture()
+    @StateObject private var voiceRecorder = VoiceRecorder()
+    @StateObject private var arManager = ARMeasurementManager()
+    @State private var showingCamera = false
+    @State private var showingSignature = false
+    @State private var showingARMeasurement = false
+    @State private var showingScreenshotMarkup = false
+    @State private var signatureImage: UIImage?
+    @State private var generatedReport = ""
+    @State private var showingReport = false
+
     var body: some View {
         ZStack {
             WISEColor.bgPrimary.ignoresSafeArea()
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: WISESpacing.lg) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("DOCUMENTATION").font(WISETypography.caption).foregroundColor(WISEColor.textSecondary)
+                        Text("CAPTURE & ANNOTATE").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
+                    }
+
+                    // Measure & Grab Tools
+                    VStack(spacing: WISESpacing.md) {
+                        Text("ADVANCED TOOLS").font(WISETypography.caption).foregroundColor(WISEColor.textSecondary)
+                        HStack(spacing: WISESpacing.md) {
+                            Button(action: { showingARMeasurement = true }) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "ruler.fill").font(.system(size: 28)).foregroundColor(WISEColor.electricBlue)
+                                    Text("MEASURE").font(WISETypography.captionSmall).foregroundColor(WISEColor.textPrimary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(WISESpacing.md)
+                                .background(WISEColor.electricBlue.opacity(0.1))
+                                .cornerRadius(WISECornerRadius.lg)
+                            }
+
+                            Button(action: { showingScreenshotMarkup = true }) {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "pencil.tip.crop.circle.fill").font(.system(size: 28)).foregroundColor(WISEColor.warningAmber)
+                                    Text("MARKUP").font(WISETypography.captionSmall).foregroundColor(WISEColor.textPrimary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(WISESpacing.md)
+                                .background(WISEColor.warningAmber.opacity(0.1))
+                                .cornerRadius(WISECornerRadius.lg)
+                            }
+                        }
+                    }
+
+                    // Voice Capture
+                    VStack(spacing: WISESpacing.md) {
+                        Text("VOICE NOTES").font(WISETypography.caption).foregroundColor(WISEColor.textSecondary)
+                        Button(action: { voiceRecorder.isRecording ? voiceRecorder.stopRecording() : voiceRecorder.startRecording() }) {
+                            HStack(spacing: WISESpacing.sm) {
+                                Image(systemName: voiceRecorder.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(voiceRecorder.isRecording ? WISEColor.faultRed : WISEColor.wiseGreen)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(voiceRecorder.isRecording ? "RECORDING..." : "START VOICE NOTE").font(WISETypography.bodyLarge).foregroundColor(WISEColor.textPrimary)
+                                    if !voiceRecorder.recognizedText.isEmpty {
+                                        Text(voiceRecorder.recognizedText).font(WISETypography.captionSmall).foregroundColor(WISEColor.textMuted).lineLimit(1)
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(WISESpacing.lg)
+                            .background(voiceRecorder.isRecording ? WISEColor.faultRed.opacity(0.1) : WISEColor.wiseGreen.opacity(0.1))
+                            .cornerRadius(WISECornerRadius.lg)
+                        }
+                    }
+
+                    // Photo Capture
+                    VStack(spacing: WISESpacing.md) {
+                        Text("CAPTURE EVIDENCE").font(WISETypography.caption).foregroundColor(WISEColor.textSecondary)
+
+                        HStack(spacing: WISESpacing.md) {
+                            Button(action: { showingCamera = true }) {
+                                VStack(spacing: 12) {
+                                    Image(systemName: "camera.fill").font(.system(size: 32)).foregroundColor(WISEColor.electricBlue)
+                                    Text("TAKE PHOTO").font(WISETypography.captionSmall).foregroundColor(WISEColor.textPrimary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(WISESpacing.lg)
+                                .background(WISEColor.electricBlue.opacity(0.15))
+                                .cornerRadius(WISECornerRadius.lg)
+                            }
+
+                            Button(action: { showingSignature = true }) {
+                                VStack(spacing: 12) {
+                                    Image(systemName: "signature").font(.system(size: 32)).foregroundColor(WISEColor.wiseGreen)
+                                    Text("SIGN JOB").font(WISETypography.captionSmall).foregroundColor(WISEColor.textPrimary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(WISESpacing.lg)
+                                .background(WISEColor.wiseGreen.opacity(0.15))
+                                .cornerRadius(WISECornerRadius.lg)
+                            }
+                        }
+
+                        if let photo = mediaCapture.selectedPhoto {
+                            HStack(spacing: WISESpacing.md) {
+                                Image(uiImage: photo).resizable().scaledToFill().frame(height: 140).cornerRadius(WISECornerRadius.md)
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Label("Photo ✓", systemImage: "checkmark.circle.fill").font(WISETypography.body).foregroundColor(WISEColor.wiseGreen)
+                                    if let signature = signatureImage {
+                                        Label("Signed ✓", systemImage: "checkmark.circle.fill").font(WISETypography.body).foregroundColor(WISEColor.wiseGreen)
+                                    }
+                                    if !voiceRecorder.recognizedText.isEmpty {
+                                        Label("Noted ✓", systemImage: "checkmark.circle.fill").font(WISETypography.body).foregroundColor(WISEColor.wiseGreen)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(WISESpacing.md)
+                            .background(WISEColor.surfacePrimary)
+                            .cornerRadius(WISECornerRadius.md)
+                        }
+                    }
+
+                    if !NetworkMonitor.shared.isConnected {
+                        HStack(spacing: WISESpacing.sm) {
+                            Image(systemName: "wifi.slash").foregroundColor(WISEColor.faultRed)
+                            Text("Offline — Syncing when connected").font(WISETypography.body).foregroundColor(WISEColor.faultRed)
+                        }
+                        .padding(WISESpacing.md)
+                        .background(WISEColor.faultRed.opacity(0.1))
+                        .cornerRadius(WISECornerRadius.md)
+                    }
+
+                    Button(action: { generateReport() }) {
+                        HStack {
+                            Image(systemName: "doc.text.fill").foregroundColor(WISEColor.metalLight)
+                            Text("GENERATE REPORT").font(WISETypography.bodyLarge).foregroundColor(WISEColor.textPrimary)
+                            Spacer()
+                            Image(systemName: "arrow.right").foregroundColor(WISEColor.wiseGreen)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(WISESpacing.lg)
+                        .background(WISEColor.surfacePrimary)
+                        .cornerRadius(WISECornerRadius.lg)
+                    }
+
+                    Spacer(minLength: WISESpacing.xl)
+                }
+                .padding(WISESpacing.lg)
+            }
+        }
+        .sheet(isPresented: $showingCamera) {
+            CameraCapturePicker(image: $mediaCapture.selectedPhoto)
+        }
+        .sheet(isPresented: $showingSignature) {
+            SignatureCanvasView(signatureImage: $signatureImage)
+        }
+        .sheet(isPresented: $showingReport) {
+            ReportView(report: generatedReport)
+        }
+        .sheet(isPresented: $showingARMeasurement) {
             VStack {
-                Text("MORE").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
-                Spacer()
-            }.padding(WISESpacing.lg)
+                HStack {
+                    Text("AR MEASUREMENT").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
+                    Spacer()
+                    Button("Close") { showingARMeasurement = false }.font(WISETypography.bodyLarge).foregroundColor(WISEColor.wiseGreen)
+                }
+                .padding(WISESpacing.lg)
+
+                if arManager.isARSupported {
+                    ARMeasurementView(manager: arManager)
+                        .ignoresSafeArea()
+                } else {
+                    VStack {
+                        Image(systemName: "arkit.badge.xmark").font(.system(size: 48)).foregroundColor(WISEColor.faultRed)
+                        Text("AR not supported on this device").font(WISETypography.body).foregroundColor(WISEColor.textSecondary)
+                        Spacer()
+                    }
+                    .frame(maxHeight: .infinity)
+                    .padding(WISESpacing.lg)
+                    .background(WISEColor.bgPrimary)
+                }
+            }
+            .background(WISEColor.bgPrimary)
+        }
+        .sheet(isPresented: $showingScreenshotMarkup) {
+            ScreenshotMarkupView()
+        }
+    }
+
+    private func generateReport() {
+        if let job = viewModel.jobs.first {
+            let readings = ["Voltage": 120.4, "Current": 7.63, "Pressure Low": 68.4, "Pressure High": 248.7]
+            let photos = [mediaCapture.selectedPhoto].compactMap { $0 }
+            generatedReport = DocumentGenerator.generateJobReport(
+                jobId: job.id,
+                customerName: job.customerName,
+                address: job.address,
+                complaint: job.complaint,
+                readings: readings,
+                photos: photos,
+                signature: signatureImage,
+                notes: voiceRecorder.recognizedText
+            )
+            showingReport = true
+        }
+    }
+}
+
+struct SignatureCanvasView: View {
+    @Binding var signatureImage: UIImage?
+    @Environment(\.dismiss) var dismiss
+    @State private var signaturePad: SignaturePad?
+
+    var body: some View {
+        ZStack {
+            WISEColor.bgPrimary.ignoresSafeArea()
+
+            VStack(spacing: WISESpacing.lg) {
+                HStack {
+                    Text("CUSTOMER SIGNATURE").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
+                    Spacer()
+                    Button("Done") {
+                        signatureImage = signaturePad?.captureSignature()
+                        dismiss()
+                    }
+                    .font(WISETypography.bodyLarge)
+                    .foregroundColor(WISEColor.wiseGreen)
+                }
+                .padding(WISESpacing.lg)
+
+                SignaturePadWrapper(onCapture: { image in
+                    signatureImage = image
+                })
+                .frame(maxHeight: .infinity)
+
+                HStack(spacing: WISESpacing.md) {
+                    Button(action: {}) {
+                        Text("CLEAR").frame(maxWidth: .infinity).padding(WISESpacing.md).background(WISEColor.faultRed.opacity(0.2)).cornerRadius(WISECornerRadius.lg)
+                    }
+                    .foregroundColor(WISEColor.faultRed)
+
+                    Button(action: { dismiss() }) {
+                        Text("CANCEL").frame(maxWidth: .infinity).padding(WISESpacing.md).background(WISEColor.surfacePrimary).cornerRadius(WISECornerRadius.lg)
+                    }
+                    .foregroundColor(WISEColor.textPrimary)
+                }
+                .padding(WISESpacing.lg)
+            }
+        }
+    }
+}
+
+struct SignaturePadWrapper: UIViewRepresentable {
+    var onCapture: (UIImage) -> Void
+
+    func makeUIView(context: Context) -> SignaturePad {
+        let pad = SignaturePad()
+        pad.onSignatureCapture = onCapture
+        return pad
+    }
+
+    func updateUIView(_ uiView: SignaturePad, context: Context) {}
+}
+
+struct ReportView: View {
+    let report: String
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        ZStack {
+            WISEColor.bgPrimary.ignoresSafeArea()
+
+            VStack(spacing: WISESpacing.lg) {
+                HStack {
+                    Text("SERVICE REPORT").font(WISETypography.screenTitle).foregroundColor(WISEColor.textPrimary)
+                    Spacer()
+                    Button("Share") {
+                        if let url = DocumentGenerator.exportAsText(report) {
+                            let vc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                            UIApplication.shared.connectedScenes.first { $0 is UIWindowScene }.flatMap { $0 as? UIWindowScene }?.windows.first?.rootViewController?.present(vc, animated: true)
+                        }
+                    }
+                    .font(WISETypography.bodyLarge)
+                    .foregroundColor(WISEColor.wiseGreen)
+                }
+                .padding(WISESpacing.lg)
+
+                ScrollView {
+                    Text(report)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(WISEColor.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(WISESpacing.lg)
+                }
+
+                Button(action: { dismiss() }) {
+                    Text("DONE").frame(maxWidth: .infinity).padding(WISESpacing.lg).background(WISEColor.wiseGreen.opacity(0.2)).cornerRadius(WISECornerRadius.lg)
+                }
+                .foregroundColor(WISEColor.wiseGreen)
+                .padding(WISESpacing.lg)
+            }
+        }
+    }
+}
+
+struct CameraCapturePicker: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    @Environment(\.dismiss) var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.allowsEditing = false
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraCapturePicker
+
+        init(_ parent: CameraCapturePicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let image = info[.originalImage] as? UIImage {
+                parent.image = image
+            }
+            parent.dismiss()
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
         }
     }
 }

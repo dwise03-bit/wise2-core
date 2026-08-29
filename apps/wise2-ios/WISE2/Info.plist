@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WISE2</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.dwise954.wise2.app</string>
+	<string>com.wise2.commandcenter</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -46,6 +46,16 @@
 		<string>_http._tcp</string>
 		<string>_https._tcp</string>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>wise2icon</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIcons~ipad</key>
 	<dict>
 		<key>CFBundlePrimaryIcon</key>

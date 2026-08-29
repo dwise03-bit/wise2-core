@@ -68,5 +68,13 @@
 	<string>WISE Field Tech uses your camera to capture job site photos for service reports.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>WISE Field Tech needs access to your photo library to attach existing photos to job reports.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>WISE Field Tech connects to Fieldpiece Job Link wireless tools to capture live measurements.</string>
+	<key>NSBluetoothAlwaysAndWhenInUseUsageDescription</key>
+	<string>WISE Field Tech connects to Fieldpiece Job Link wireless tools to capture live measurements.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>WISE Field Tech uses your microphone to capture voice notes and measurements during service calls.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>WISE Field Tech uses speech recognition to convert voice notes into job documentation.</string>
 </dict>
 </plist>

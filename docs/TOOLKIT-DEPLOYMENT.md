@@ -11,14 +11,17 @@ of `docker-compose.prod.yml` — bringing a phase up or down never touches exist
 
 ## Before you deploy anything
 
-1. **Port conflict check** — ports 3001, 3002, and 8000 are already bound by other
-   compose files on this host (`docker-compose.mvp.yml`, `docker-compose.yml`,
-   `docker-compose.pi.yml`, `docker-compose.prod.yml`'s `prompt-shop` service). Run:
+1. **Port conflict check** — ports 3001 and 3002 are already used elsewhere in this
+   monorepo's other compose files (`docker-compose.mvp.yml`, `docker-compose.yml`,
+   `docker-compose.pi.yml`, `docker-compose.prod.yml`'s `prompt-shop` service), so
+   the toolkit remaps around them: **Uptime Kuma → 3006** (container port 3001),
+   **Langfuse → 3007** (container port 3000). Run before every deploy:
    ```bash
-   docker ps --format '{{.Names}}\t{{.Ports}}' | grep -E ':(3001|3002|8000|8001|8003|9000)->'
+   docker ps --format '{{.Names}}\t{{.Ports}}' | grep -E ':(3006|3007|8000|8001|8003|9000)->'
    ```
-   If any of those ports are already bound by a container you need to keep running,
-   edit the `ports:` line in the relevant `docker-compose.phaseN-*.yml` before `up -d`.
+   If any of those host ports are already bound by a container you need to keep
+   running, edit the `ports:` line in the relevant `docker-compose.phaseN-*.yml`
+   before `up -d`.
 2. **DNS/nginx** — none of these services get a public hostname automatically. Add
    an nginx server block + Let's Encrypt cert per service before exposing publicly
    (pattern: see `nginx.conf` for existing subdomain routing, e.g. `signal.wise2.net`).
@@ -39,12 +42,12 @@ docker compose -f docker-compose.phase1-monitoring.yml logs -f glitchtip-web
 
 **Verify**:
 ```bash
-curl -I http://127.0.0.1:3001/          # Uptime Kuma → expect 200
+curl -I http://127.0.0.1:3006/          # Uptime Kuma → expect 200
 curl -sf http://127.0.0.1:8000/_health/ # GlitchTip → expect healthy JSON
 ```
 
 **First-run setup**:
-1. Visit Uptime Kuma at `:3001`, create the admin account, add monitors for every
+1. Visit Uptime Kuma at `:3006`, create the admin account, add monitors for every
    production URL (`https://wise2.net`, `https://api.wise2.net/health`,
    `https://signal.wise2.net`, `https://api.signal.wise2.net/health`,
    `https://wisedefensellc.com`, etc.).
@@ -130,11 +133,11 @@ docker compose -f docker-compose.phase3-ai-ops.yml up -d
 
 **Verify**:
 ```bash
-curl -sf http://127.0.0.1:3002/api/public/health
-curl -sf http://127.0.0.1:8003/api/v1/heartbeat
+curl -sf http://127.0.0.1:3007/api/public/health
+curl -sf http://127.0.0.1:8003/api/v2/heartbeat   # chromadb/chroma:latest deprecated the v1 API
 ```
 
-**First-run setup**: visit Langfuse at `:3002`, create the admin account + a
+**First-run setup**: visit Langfuse at `:3007`, create the admin account + a
 project, generate a public/secret API key pair.
 
 **Environment variables**:
@@ -165,8 +168,9 @@ project, generate a public/secret API key pair.
 ## Phase 4 — Portainer + Maestro + SwiftLint/ktlint + Ansible/Tailscale
 
 **Files**: `docker-compose.phase4-infra.yml`, `apps/fieldtech-android/maestro.yml`
-(+ 3 flow files under `apps/fieldtech-android/maestro/`), `apps/fieldtech-ios/maestro.yml`
-(+ 3 flow files under `apps/fieldtech-ios/maestro/`), `apps/fieldtech-ios/.swiftlint.yml`,
+(+ 3 flow files under `apps/fieldtech-android/maestro/`),
+`apps/wise-hvac-demo/ios/Maestro/maestro.yml` (+ 3 flow files under
+`apps/wise-hvac-demo/ios/Maestro/maestro/`), `apps/fieldtech-ios/.swiftlint.yml`,
 `CJAYS/.swiftlint.yml`, `apps/fieldtech-android/ktlint.editorconfig`,
 `CJAYS/ktlint.editorconfig`.
 
@@ -183,19 +187,20 @@ curl -sf http://127.0.0.1:9000/api/status
 socket, which is root-equivalent. Never bind port 9000 to `0.0.0.0` or expose it
 without an authenticating reverse proxy or Tailscale in front of it.
 
-**Path mismatch to resolve before Maestro/SwiftLint are useful for iOS**: the real
-FieldTech iOS project is at `apps/wise-hvac-demo/ios/App` (bundle id
-`com.wisedefense.fieldtech`), not `apps/fieldtech-ios`. Either move the project or
-relocate the generated `apps/fieldtech-ios/maestro.yml`,
-`apps/fieldtech-ios/maestro/*.yaml`, and `apps/fieldtech-ios/.swiftlint.yml` files
-into `apps/wise-hvac-demo/ios/`. The Android equivalents are correct as-is —
-`apps/fieldtech-android` is the real project (package `com.wise2.fieldtech`).
+**Path mismatch resolved 2026-08-28**: the real FieldTech iOS project is at
+`apps/wise-hvac-demo/ios/App` (bundle id `com.wisedefense.fieldtech`). The Maestro
+entry point and its 3 sub-flows were relocated from `apps/fieldtech-ios/` to
+`apps/wise-hvac-demo/ios/Maestro/`. `apps/fieldtech-ios/.swiftlint.yml` remains at
+its original generated path (not relocated — SwiftLint config is resolved by
+`--config` flag, not by proximity to the Xcode project). The Android equivalents
+are correct as-is — `apps/fieldtech-android` is the real project (package
+`com.wise2.fieldtech`).
 
 **Maestro**: install the CLI (`curl -Ls "https://get.maestro.mobile.dev" | bash`),
 then:
 ```bash
-maestro test apps/fieldtech-android/maestro.yml   # requires a running emulator/device
-maestro test apps/fieldtech-ios/maestro.yml       # after relocating, see note above
+maestro test apps/fieldtech-android/maestro.yml             # requires a running emulator/device
+maestro test apps/wise-hvac-demo/ios/Maestro/maestro.yml    # requires a running iOS simulator
 ```
 Both entry-point files chain 3 sub-flows via `runFlow`; each sub-flow also runs
 standalone for targeted debugging. UI text selectors in the flows are best-effort

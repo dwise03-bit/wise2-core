@@ -7,7 +7,7 @@
 #   docker compose -f docker-compose.phase3-ai-ops.yml up -d
 #
 # Integration: packages/api/src/langfuse.integration.ts expects
-# LANGFUSE_HOST=http://localhost:3002 (or https://langfuse.wise2.net in prod),
+# LANGFUSE_HOST=http://localhost:3007 (or https://langfuse.wise2.net in prod),
 # LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY generated from the Langfuse UI
 # after first login.
 
@@ -40,19 +40,23 @@ services:
       DATABASE_URL: postgresql://langfuse:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/langfuse
       NEXTAUTH_SECRET: "${LANGFUSE_NEXTAUTH_SECRET:?generate with 'openssl rand -base64 32'}"
       SALT: "${LANGFUSE_SALT:?generate with 'openssl rand -base64 32'}"
-      NEXTAUTH_URL: ${LANGFUSE_PUBLIC_URL:-http://localhost:3002}
+      NEXTAUTH_URL: ${LANGFUSE_PUBLIC_URL:-http://localhost:3007}
       TELEMETRY_ENABLED: "false"
       LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
       NEXT_PUBLIC_SIGN_UP_DISABLED: "false"
+      # Without this, Next.js binds only to the container's bridge IP (not 127.0.0.1/0.0.0.0),
+      # which breaks in-container healthchecks and any future intra-network calls (e.g. from the API).
+      HOSTNAME: "0.0.0.0"
     ports:
-      - "127.0.0.1:3002:3000"
+      - "127.0.0.1:3007:3000"
     depends_on:
       langfuse-postgres:
         condition: service_healthy
     networks:
       - wise2-toolkit
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/api/public/health || exit 1"]
+      # langfuse/langfuse:2 has neither curl nor wget; use node's built-in http client
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/public/health', r => process.exit(r.statusCode===200?0:1)).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -75,7 +79,8 @@ services:
     networks:
       - wise2-toolkit
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/api/v1/heartbeat || exit 1"]
+      # chromadb/chroma:latest (Debian slim) has no curl/wget/python; use bash's /dev/tcp
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8000 && echo -e \"GET /api/v2/heartbeat HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && head -1 <&3 | grep -q \"200 OK\"'"]
       interval: 30s
       timeout: 10s
       retries: 3
