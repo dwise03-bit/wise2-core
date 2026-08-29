@@ -1,10 +1,17 @@
 'use client';
 
-import { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PublicFooter } from '@/components/navigation';
 import { getDigitalTwinPackage } from '@/lib/digital-twin';
+
+const servicePlans = {
+  SERVICE_QUICK_START: { name: 'WISE² Quick Start', price: 99, description: 'Business audit, action plan, and project intake.', billingCycle: 'one_time' },
+  SERVICE_LAUNCH: { name: 'WISE² Launch', price: 299, description: 'Premium one-page website, mobile optimization, and lead capture.', billingCycle: 'one_time' },
+  SERVICE_BUSINESS_BUILD: { name: 'WISE² Business Build', price: 799, description: 'Website, branding, automation/AI, and business-system setup.', billingCycle: 'one_time' },
+  SERVICE_CARE: { name: 'WISE² Care', price: 49, description: 'Ongoing site care and essential support.', billingCycle: 'monthly' },
+  SERVICE_GROWTH: { name: 'WISE² Growth', price: 99, description: 'Ongoing optimization, automation support, and growth improvements.', billingCycle: 'monthly' },
+} as const;
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
@@ -16,200 +23,50 @@ function CheckoutContent() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const isDigitalTwin = product === 'digital-twin';
+  const isService = product === 'service';
   const twinPlan = getDigitalTwinPackage(planId);
-  const plan = isDigitalTwin
-    ? {
-        name: twinPlan.name,
-        price: twinPlan.price ?? 'Custom',
-        description: twinPlan.description,
-      }
-    : {
-        name: 'Professional',
-        price: 99,
-        description: 'For growing businesses',
-      };
+  const servicePlan = servicePlans[planId as keyof typeof servicePlans];
+  const plan = isService && servicePlan
+    ? servicePlan
+    : isDigitalTwin
+      ? { name: twinPlan.name, price: twinPlan.price ?? 'Custom', description: twinPlan.description, billingCycle: 'monthly' }
+      : { name: 'Professional', price: 99, description: 'For growing businesses', billingCycle: 'monthly' };
+  const isOneTime = plan.billingCycle === 'one_time';
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
-      if (!email || !fullName) {
-        throw new Error('Please fill in all fields');
-      }
-
+      if (!email || !fullName) throw new Error('Please fill in all fields');
+      if (isService && !servicePlan) throw new Error('This service package is not available.');
       const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          planId,
-          product,
-          email,
-          fullName,
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId, product, email, fullName, billingCycle: plan.billingCycle,
           successUrl: `${window.location.origin}/checkout/success?product=${product}&plan=${planId}`,
-          cancelUrl: `${window.location.origin}/checkout/cancel`,
-        }),
+          cancelUrl: `${window.location.origin}/checkout/cancel` }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create checkout session');
-      }
-
-      const { url } = await response.json();
-      if (url) {
-        window.location.href = url;
-      } else {
-        throw new Error('No checkout URL returned');
-      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || data.error || 'Failed to create checkout session');
+      if (!data.url) throw new Error('No checkout URL returned');
+      window.location.href = data.url;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setLoading(false);
     }
   };
 
-  return (
-    <div>
-      <main className="bg-[#050505] min-h-screen pb-20 text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {/* Form Section */}
-            <div>
-              <h1 className="text-4xl font-black uppercase tracking-[0.08em] text-white mb-2">
-                {isDigitalTwin ? 'Build Your Digital Twin' : 'Complete Your Build'}
-              </h1>
-              <p className="text-[#B7BDC8] mb-8">
-                {isDigitalTwin
-                  ? 'Enter your details to launch tenant setup, onboarding, and the approval-controlled Digital Twin workflow.'
-                  : 'Enter your details to continue into the WISE² system.'}
-              </p>
-
-              <form onSubmit={handleCheckout} className="space-y-6">
-                {error && (
-                  <div className="p-4 bg-red-500/20 border border-red-500 rounded-lg">
-                    <p className="text-red-300">{error}</p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-white font-semibold mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
-                    disabled={loading}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white font-semibold mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-white font-semibold">
-                    By proceeding, you agree to our terms
-                  </label>
-                  <p className="text-sm text-gray-300">
-                    {isDigitalTwin
-                      ? 'You’ll be taken to our secure payment processor. After payment, your Digital Twin onboarding and tenant-linked build flow begin.'
-                      : 'You&apos;ll be taken to our secure payment processor to complete your build.'}
-                  </p>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 bg-[#C7FF2E] text-black rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Processing...' : 'Continue to Payment'}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => router.back()}
-                  className="w-full py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 text-[#C7FF2E] rounded-lg font-semibold hover:border-[#C7FF2E]/60 transition-all"
-                  disabled={loading}
-                >
-                  Back to Pricing
-                </button>
-              </form>
-            </div>
-
-            {/* Order Summary */}
-            <div>
-              <div className="sticky top-32 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-3xl p-8">
-                <h2 className="text-2xl font-bold text-white mb-8">Order Summary</h2>
-
-                <div className="border-b border-[#C7FF2E]/20 pb-8 mb-8">
-                  <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-                  <p className="text-[#B7BDC8] text-sm mb-4">{plan.description}</p>
-
-                  <div className="flex justify-between items-baseline mb-4">
-                    <span className="text-gray-300">Plan Price:</span>
-                    {typeof plan.price === 'number' ? (
-                      <span className="text-2xl font-bold text-[#C7FF2E]">
-                        ${plan.price}
-                        <span className="text-lg text-gray-300">/mo</span>
-                      </span>
-                    ) : (
-                      <span className="text-2xl font-bold text-[#C7FF2E]">Custom</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-3 mb-8">
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">Billing Cycle:</span>
-                    <span className="text-white font-semibold">Monthly</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-300">First Charge:</span>
-                    <span className="text-white font-semibold">
-                      {typeof plan.price === 'number' ? `$${plan.price}` : 'Contact us'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-[#C7FF2E]/10 border border-[#C7FF2E]/30 rounded-lg p-4 text-sm text-gray-300">
-                  {isDigitalTwin ? (
-                    <>
-                      ✓ Tenant-linked onboarding
-                      <br />✓ Approval-aware activation path
-                      <br />✓ Revenue OS integration readiness
-                    </>
-                  ) : (
-                    <>
-                      ✓ 14-day free trial included
-                      <br />✓ Cancel anytime
-                      <br />✓ No hidden fees
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-      <PublicFooter />
-    </div>
-  );
+  return <div><main className="min-h-screen bg-[#050607] pb-20 pt-16 text-white"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><div className="grid gap-12 md:grid-cols-2">
+    <div><p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Secure WISE² Checkout</p><h1 className="mb-3 text-4xl font-black uppercase tracking-[0.05em]">{isService ? 'Start Your WISE² Build' : isDigitalTwin ? 'Build Your Digital Twin' : 'Complete Your Build'}</h1><p className="mb-8 text-[#B7C0CB]">Enter your details and continue to secure payment. Your WISE² onboarding begins after payment.</p>
+    <form onSubmit={handleCheckout} className="space-y-6">{error && <div className="border border-red-500 bg-red-500/15 p-4 text-red-200">{error}</div>}
+      <label className="block font-semibold">Full Name<input value={fullName} onChange={e=>setFullName(e.target.value)} className="mt-2 w-full border border-white/15 bg-white/[0.04] px-4 py-3 text-white outline-none focus:border-[#8EDBFF]" placeholder="Your name" disabled={loading}/></label>
+      <label className="block font-semibold">Email Address<input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full border border-white/15 bg-white/[0.04] px-4 py-3 text-white outline-none focus:border-[#8EDBFF]" placeholder="you@example.com" disabled={loading}/></label>
+      <p className="text-sm leading-6 text-[#8FA0AE]">You’ll be sent to our secure payment processor. WISE² will use these details to start your project onboarding.</p>
+      <button disabled={loading} className="w-full bg-[#DCE7EF] px-5 py-4 font-bold uppercase tracking-[0.12em] text-[#050607] hover:bg-white disabled:opacity-50">{loading ? 'Processing...' : 'Continue to Payment'}</button>
+      <button type="button" onClick={()=>router.back()} disabled={loading} className="w-full border border-[#8EDBFF]/40 px-5 py-3 font-semibold text-[#8EDBFF]">Back</button>
+    </form></div>
+    <div><div className="sticky top-28 border border-white/12 bg-[#090C10] p-8"><p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#8EDBFF]">Order Summary</p><h2 className="mt-5 text-2xl font-black">{plan.name}</h2><p className="mt-3 text-sm leading-7 text-[#B7C0CB]">{plan.description}</p><div className="my-8 border-y border-white/10 py-6"><div className="flex items-end justify-between"><span className="text-[#8FA0AE]">Price</span><span className="text-3xl font-black text-[#DCE7EF]">{typeof plan.price === 'number' ? `$${plan.price}` : plan.price}{!isOneTime && typeof plan.price === 'number' && <span className="text-base font-medium text-[#8FA0AE]">/mo</span>}</span></div></div><div className="flex justify-between text-sm"><span className="text-[#8FA0AE]">Billing</span><span className="font-semibold">{isOneTime ? 'One-time' : 'Monthly'}</span></div><div className="mt-6 border border-[#8EDBFF]/25 bg-[#8EDBFF]/5 p-4 text-sm leading-6 text-[#B7C0CB]">✓ Secure checkout<br/>✓ WISE² project onboarding<br/>{isOneTime ? '✓ No recurring charge for this package' : '✓ Recurring WISE² support'}</div></div></div>
+  </div></div></main><PublicFooter /></div>;
 }
 
-export default function CheckoutPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-wise-bg-primary" />}>
-      <CheckoutContent />
-    </Suspense>
-  );
-}
+export default function CheckoutPage() { return <Suspense fallback={<div className="min-h-screen bg-[#050607]"/>}><CheckoutContent /></Suspense>; }
