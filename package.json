@@ -1,7 +1,7 @@
 {
   "name": "wise2-enterprise",
   "version": "0.1.0",
-  "description": "WISE\u00b2 Enterprise - AI-powered business operating system",
+  "description": "WISE² Enterprise - AI-powered business operating system",
   "private": true,
   "packageManager": "pnpm@8.15.9",
   "engines": {

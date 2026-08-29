@@ -1,0 +1,22 @@
+{
+  "name": "@wise2/control-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "tsx": "^4.23.12",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@fastify/rate-limit": "^11.2.0",
+    "fastify": "^5.12.1",
+    "zod": "^4.4.3"
+  }
+}
