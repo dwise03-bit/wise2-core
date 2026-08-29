@@ -27,12 +27,10 @@ services:
       - portainer_data:/data
     networks:
       - wise2-toolkit
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9000/api/status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+    # portainer/portainer-ce:latest ships a distroless image with no shell and no
+    # wget/curl — there is no in-container way to run a CMD-SHELL healthcheck.
+    # Verify externally instead: curl -sf http://127.0.0.1:9000/api/status
+    # (and/or add it as an Uptime Kuma monitor from docker-compose.phase1-monitoring.yml).
 
 volumes:
   portainer_data:

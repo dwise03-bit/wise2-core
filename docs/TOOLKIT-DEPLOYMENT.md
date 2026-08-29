@@ -182,6 +182,9 @@ docker compose -f docker-compose.phase4-infra.yml up -d
 ```bash
 curl -sf http://127.0.0.1:9000/api/status
 ```
+Note: `portainer/portainer-ce:latest` ships distroless with no shell/curl/wget, so
+there is no in-container `HEALTHCHECK` — this compose service intentionally has
+none. Verify externally via the curl above, or add it as an Uptime Kuma monitor.
 
 **Security**: Portainer's container gets read-only access to the host Docker
 socket, which is root-equivalent. Never bind port 9000 to `0.0.0.0` or expose it
