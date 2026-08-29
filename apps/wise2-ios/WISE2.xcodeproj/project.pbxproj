@@ -25,6 +25,36 @@
 		3F0001050 /* BusinessOSModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001051 /* BusinessOSModelsTests.swift */; };
 		3F0001052 /* BusinessOSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001053 /* BusinessOSClientTests.swift */; };
 		3F0001054 /* CommandStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0001055 /* CommandStoreTests.swift */; };
+		/* Feature source files */
+		3F0002101 /* CRMStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002001 /* CRMStore.swift */; };
+		3F0002102 /* CRMScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002002 /* CRMScreen.swift */; };
+		3F0002103 /* WorkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002003 /* WorkStore.swift */; };
+		3F0002104 /* WorkScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002004 /* WorkScreen.swift */; };
+		3F0002105 /* ClientsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002005 /* ClientsStore.swift */; };
+		3F0002106 /* ClientsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002006 /* ClientsScreen.swift */; };
+		3F0002107 /* AIWorkforceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002007 /* AIWorkforceStore.swift */; };
+		3F0002108 /* AIWorkforceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002008 /* AIWorkforceScreen.swift */; };
+		3F0002109 /* CommsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002009 /* CommsStore.swift */; };
+		3F000210A /* CommsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200A /* CommsScreen.swift */; };
+		3F000210B /* SensitiveActionAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200B /* SensitiveActionAuthorizer.swift */; };
+		3F000210C /* CloudStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200C /* CloudStore.swift */; };
+		3F000210D /* CloudScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200D /* CloudScreen.swift */; };
+		3F000210E /* HVACDraftQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200E /* HVACDraftQueue.swift */; };
+		3F000210F /* HVACStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000200F /* HVACStore.swift */; };
+		3F0002110 /* HVACScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002010 /* HVACScreen.swift */; };
+		3F0002111 /* StudioStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002011 /* StudioStore.swift */; };
+		3F0002112 /* StudioScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002012 /* StudioScreen.swift */; };
+		3F0002113 /* FinanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002013 /* FinanceStore.swift */; };
+		3F0002114 /* FinanceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002014 /* FinanceScreen.swift */; };
+		3F0002115 /* CapabilityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002015 /* CapabilityStore.swift */; };
+		3F0002116 /* MoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0002016 /* MoreScreen.swift */; };
+		/* Test source files */
+		3F0003101 /* FakeBusinessOSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003001 /* FakeBusinessOSService.swift */; };
+		3F0003102 /* CRMStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003002 /* CRMStoreTests.swift */; };
+		3F0003103 /* CloudStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003003 /* CloudStoreTests.swift */; };
+		3F0003104 /* CapabilityStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003004 /* CapabilityStoreTests.swift */; };
+		3F0003105 /* HVACDraftQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003005 /* HVACDraftQueueTests.swift */; };
+		3F0003106 /* NavigationSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0003006 /* NavigationSmokeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +88,36 @@
 		3F0001051 /* BusinessOSModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessOSModelsTests.swift; sourceTree = "<group>"; };
 		3F0001053 /* BusinessOSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessOSClientTests.swift; sourceTree = "<group>"; };
 		3F0001055 /* CommandStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStoreTests.swift; sourceTree = "<group>"; };
+		/* Feature file references */
+		3F0002001 /* CRMStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/CRM/CRMStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002002 /* CRMScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/CRM/CRMScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002003 /* WorkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Work/WorkStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002004 /* WorkScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Work/WorkScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002005 /* ClientsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Clients/ClientsStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002006 /* ClientsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Clients/ClientsScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002007 /* AIWorkforceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/AI/AIWorkforceStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002008 /* AIWorkforceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/AI/AIWorkforceScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002009 /* CommsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Comms/CommsStore.swift; sourceTree = SOURCE_ROOT; };
+		3F000200A /* CommsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Comms/CommsScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F000200B /* SensitiveActionAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Cloud/SensitiveActionAuthorizer.swift; sourceTree = SOURCE_ROOT; };
+		3F000200C /* CloudStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Cloud/CloudStore.swift; sourceTree = SOURCE_ROOT; };
+		3F000200D /* CloudScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Cloud/CloudScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F000200E /* HVACDraftQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/HVAC/HVACDraftQueue.swift; sourceTree = SOURCE_ROOT; };
+		3F000200F /* HVACStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/HVAC/HVACStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002010 /* HVACScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/HVAC/HVACScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002011 /* StudioStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Studio/StudioStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002012 /* StudioScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Studio/StudioScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002013 /* FinanceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Finance/FinanceStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002014 /* FinanceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/Finance/FinanceScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0002015 /* CapabilityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/More/CapabilityStore.swift; sourceTree = SOURCE_ROOT; };
+		3F0002016 /* MoreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Features/More/MoreScreen.swift; sourceTree = SOURCE_ROOT; };
+		/* Test file references */
+		3F0003001 /* FakeBusinessOSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeBusinessOSService.swift; sourceTree = "<group>"; };
+		3F0003002 /* CRMStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMStoreTests.swift; sourceTree = "<group>"; };
+		3F0003003 /* CloudStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudStoreTests.swift; sourceTree = "<group>"; };
+		3F0003004 /* CapabilityStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityStoreTests.swift; sourceTree = "<group>"; };
+		3F0003005 /* HVACDraftQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HVACDraftQueueTests.swift; sourceTree = "<group>"; };
+		3F0003006 /* NavigationSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationSmokeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +155,28 @@
 				3F0001027 /* CommandStore.swift */,
 				3F0001029 /* CommandScreen.swift */,
 				3F0001063 /* CommandOrb.swift */,
+				3F0002001 /* CRMStore.swift */,
+				3F0002002 /* CRMScreen.swift */,
+				3F0002003 /* WorkStore.swift */,
+				3F0002004 /* WorkScreen.swift */,
+				3F0002005 /* ClientsStore.swift */,
+				3F0002006 /* ClientsScreen.swift */,
+				3F0002007 /* AIWorkforceStore.swift */,
+				3F0002008 /* AIWorkforceScreen.swift */,
+				3F0002009 /* CommsStore.swift */,
+				3F000200A /* CommsScreen.swift */,
+				3F000200B /* SensitiveActionAuthorizer.swift */,
+				3F000200C /* CloudStore.swift */,
+				3F000200D /* CloudScreen.swift */,
+				3F000200E /* HVACDraftQueue.swift */,
+				3F000200F /* HVACStore.swift */,
+				3F0002010 /* HVACScreen.swift */,
+				3F0002011 /* StudioStore.swift */,
+				3F0002012 /* StudioScreen.swift */,
+				3F0002013 /* FinanceStore.swift */,
+				3F0002014 /* FinanceScreen.swift */,
+				3F0002015 /* CapabilityStore.swift */,
+				3F0002016 /* MoreScreen.swift */,
 				3F0001014 /* Info.plist */,
 			);
 			path = WISE2;
@@ -106,6 +188,12 @@
 				3F0001051 /* BusinessOSModelsTests.swift */,
 				3F0001053 /* BusinessOSClientTests.swift */,
 				3F0001055 /* CommandStoreTests.swift */,
+				3F0003001 /* FakeBusinessOSService.swift */,
+				3F0003002 /* CRMStoreTests.swift */,
+				3F0003003 /* CloudStoreTests.swift */,
+				3F0003004 /* CapabilityStoreTests.swift */,
+				3F0003005 /* HVACDraftQueueTests.swift */,
+				3F0003006 /* NavigationSmokeTests.swift */,
 			);
 			path = WISE2Tests;
 			sourceTree = SOURCE_ROOT;
@@ -238,6 +326,28 @@
 				3F0001026 /* CommandStore.swift in Sources */,
 				3F0001028 /* CommandScreen.swift in Sources */,
 				3F0001062 /* CommandOrb.swift in Sources */,
+				3F0002101 /* CRMStore.swift in Sources */,
+				3F0002102 /* CRMScreen.swift in Sources */,
+				3F0002103 /* WorkStore.swift in Sources */,
+				3F0002104 /* WorkScreen.swift in Sources */,
+				3F0002105 /* ClientsStore.swift in Sources */,
+				3F0002106 /* ClientsScreen.swift in Sources */,
+				3F0002107 /* AIWorkforceStore.swift in Sources */,
+				3F0002108 /* AIWorkforceScreen.swift in Sources */,
+				3F0002109 /* CommsStore.swift in Sources */,
+				3F000210A /* CommsScreen.swift in Sources */,
+				3F000210B /* SensitiveActionAuthorizer.swift in Sources */,
+				3F000210C /* CloudStore.swift in Sources */,
+				3F000210D /* CloudScreen.swift in Sources */,
+				3F000210E /* HVACDraftQueue.swift in Sources */,
+				3F000210F /* HVACStore.swift in Sources */,
+				3F0002110 /* HVACScreen.swift in Sources */,
+				3F0002111 /* StudioStore.swift in Sources */,
+				3F0002112 /* StudioScreen.swift in Sources */,
+				3F0002113 /* FinanceStore.swift in Sources */,
+				3F0002114 /* FinanceScreen.swift in Sources */,
+				3F0002115 /* CapabilityStore.swift in Sources */,
+				3F0002116 /* MoreScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +358,12 @@
 				3F0001050 /* BusinessOSModelsTests.swift in Sources */,
 				3F0001052 /* BusinessOSClientTests.swift in Sources */,
 				3F0001054 /* CommandStoreTests.swift in Sources */,
+				3F0003101 /* FakeBusinessOSService.swift in Sources */,
+				3F0003102 /* CRMStoreTests.swift in Sources */,
+				3F0003103 /* CloudStoreTests.swift in Sources */,
+				3F0003104 /* CapabilityStoreTests.swift in Sources */,
+				3F0003105 /* HVACDraftQueueTests.swift in Sources */,
+				3F0003106 /* NavigationSmokeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -764,6 +764,15 @@ model Prospect {
   @@index([estimatedOpportunity])
 }
 
+model BusinessOsLeadClaim {
+  id        String   @id @default(cuid())
+  leadId    String   @unique
+  claimedBy String
+  claimedAt DateTime @default(now())
+
+  @@index([claimedBy])
+}
+
 enum ProspectStatus {
   NEW
   CONTACTED

@@ -2,9 +2,11 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as jwt from 'jsonwebtoken';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AuthModule } from '../../auth/auth.module';
-import { BusinessOsModule } from './business-os.module';
+import { BusinessOsController } from './business-os.controller';
+import { BusinessOsMobileService } from './business-os.mobile.service';
+import { BusinessOsService } from './business-os.service';
 
 describe('BusinessOsController auth', () => {
   let app: INestApplication;
@@ -14,11 +16,9 @@ describe('BusinessOsController auth', () => {
     process.env.JWT_SECRET = jwtSecret;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        AuthModule,
-        BusinessOsModule,
-      ],
+      imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule],
+      controllers: [BusinessOsController],
+      providers: [BusinessOsService, BusinessOsMobileService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -34,7 +34,7 @@ describe('BusinessOsController auth', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    await app?.close();
   });
 
   function authHeader() {
@@ -92,7 +92,7 @@ describe('BusinessOsController auth', () => {
       .set('Authorization', authHeader())
       .expect(200);
 
-    expect(response.body).toEqual({
+    expect(response.body).toMatchObject({
       revenueToday: 0,
       revenueMonth: 0,
       hotLeadCount: 0,
@@ -100,5 +100,27 @@ describe('BusinessOsController auth', () => {
       unpaidInvoiceCount: 0,
       criticalAlertCount: 0,
     });
+  });
+
+  it('GET /api/v1/business-os/capabilities returns mobile gate for FOUNDER', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/v1/business-os/capabilities')
+      .set('Authorization', authHeader())
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      trading: true,
+      hvac: true,
+    });
+  });
+
+  it('POST /api/v1/business-os/cloud/operations rejects shell capability', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/v1/business-os/cloud/operations')
+      .set('Authorization', authHeader())
+      .send({ operation: 'shell', target: 'prod' })
+      .expect(400);
+
+    expect(response.body.message).toContain('Blocked capability');
   });
 });

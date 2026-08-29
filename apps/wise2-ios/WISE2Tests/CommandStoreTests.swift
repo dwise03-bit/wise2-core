@@ -23,12 +23,48 @@ private final class MockBusinessOSService: BusinessOSServing {
     )
   )
 
-  func dashboard() async throws -> BusinessDashboard {
-    try dashboardResult.get()
-  }
+  func dashboard() async throws -> BusinessDashboard { try dashboardResult.get() }
+  func submitCommand(_ text: String) async throws -> BusinessOperation<CommandResult> { try commandResult.get() }
 
-  func submitCommand(_ text: String) async throws -> BusinessOperation<CommandResult> {
-    try commandResult.get()
+  // Stubs for the expanded protocol
+  func capabilities() async throws -> BusinessCapabilities { BusinessCapabilities(trading: false, cloud: false, hvac: false) }
+  func leads(stage: CrmStage?) async throws -> [BusinessLead] { [] }
+  func opportunities() async throws -> [BusinessOpportunity] { [] }
+  func claimLead(_ id: String) async throws -> LeadClaimResult {
+    LeadClaimResult(leadId: id, claimedBy: "", claimedAt: "", status: "claimed")
+  }
+  func customers() async throws -> [BusinessCustomer] { [] }
+  func projects() async throws -> [BusinessProject] { [] }
+  func jobs() async throws -> [BusinessJob] { [] }
+  func agentJobs(status: String?) async throws -> [AgentJob] { [] }
+  func approveAgentJob(_ id: String) async throws -> BusinessOperation<AgentJob> {
+    BusinessOperation(operationId: "op", status: "completed", message: "ok", auditEventId: nil, result: nil)
+  }
+  func rejectAgentJob(_ id: String, note: String?) async throws -> BusinessOperation<AgentJob> {
+    BusinessOperation(operationId: "op", status: "completed", message: "ok", auditEventId: nil, result: nil)
+  }
+  func conversations() async throws -> [BusinessConversation] { [] }
+  func cloudInventory() async throws -> CloudInventory {
+    CloudInventory(apps: [], services: [], controlBridgeConfigured: false)
+  }
+  func cloudHealth() async throws -> CloudHealth {
+    CloudHealth(status: "unknown", components: [])
+  }
+  func cloudOperation(_ operation: String, target: String?) async throws -> BusinessOperation<CloudOperationResult> {
+    BusinessOperation(operationId: "op", status: "queued", message: "queued", auditEventId: nil,
+                      result: CloudOperationResult(operation: operation, target: target))
+  }
+  func hvacJobs() async throws -> [HvacJob] { [] }
+  func hvacDrafts() async throws -> [HvacDraft] { [] }
+  func saveHvacDraft(_ request: HvacDraftRequest) async throws -> HvacDraft {
+    HvacDraft(id: "d", idempotencyKey: request.idempotencyKey, customerId: nil,
+              notes: request.notes, synced: true, createdAt: "")
+  }
+  func studioSummary() async throws -> StudioSummary {
+    StudioSummary(campaigns: 0, attributedLeads: 0, attributedRevenue: 0, providerAvailable: false)
+  }
+  func financeSummary() async throws -> FinanceSummary {
+    FinanceSummary(revenueToday: 0, revenueMonth: 0, unpaidInvoiceCount: 0, providerAvailable: false, message: nil)
   }
 }
 

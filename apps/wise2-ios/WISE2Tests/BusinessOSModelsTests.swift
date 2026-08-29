@@ -51,6 +51,7 @@ final class BusinessOSModelsTests: XCTestCase {
   func testBusinessOSModuleRawValues() {
     XCTAssertEqual(BusinessOSModule.command.rawValue, "command")
     XCTAssertEqual(BusinessOSModule.settings.rawValue, "settings")
-    XCTAssertEqual(BusinessOSModule.allCases.count, 12)
+    XCTAssertEqual(BusinessOSModule.hvac.rawValue, "hvac")
+    XCTAssertEqual(BusinessOSModule.allCases.count, 13)
   }
 }
