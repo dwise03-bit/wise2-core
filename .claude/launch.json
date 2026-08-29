@@ -2,10 +2,22 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "wise-hvac-demo",
+      "name": "api",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "apps/wise-hvac-demo", "run", "dev"],
-      "port": 3024
+      "runtimeArgs": ["--prefix", "packages/api", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "website",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/website", "run", "dev"],
+      "port": 3001
+    },
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/dashboard", "run", "dev"],
+      "port": 3005
     },
     {
       "name": "studio",
@@ -14,10 +26,10 @@
       "port": 3005
     },
     {
-      "name": "website",
+      "name": "wise-hvac-demo",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "apps/website", "run", "dev"],
-      "port": 3001
+      "runtimeArgs": ["--prefix", "apps/wise-hvac-demo", "run", "dev"],
+      "port": 3024
     },
     {
       "name": "getdown-demo",
