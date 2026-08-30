@@ -35,7 +35,7 @@ bash scripts/deploy-command-center.sh    # rebuilds PWA-enabled Command Center
 In Discord Developer Portal / channel settings:
 
 - Delete webhooks exposed in the old `services/bot/.env.webhooks` and `apps/website/.env.production`
-- Regenerate via `node services/bot/create-webhooks.js --rotate` on a trusted machine
+- Regenerate via `node services/bot/rotate-webhooks-rest.js` (preferred; REST only) or `node services/bot/create-webhooks.js --rotate` on a trusted machine
 - Save URLs only to `services/bot/.env.webhooks` (gitignored)
 
 ### 3. JWT
