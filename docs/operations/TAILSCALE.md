@@ -48,8 +48,14 @@ Add to environment secrets (not Git):
 
 | Secret | Value |
 |--------|-------|
-| `TS_AUTHKEY` | Reusable or ephemeral auth key, tag `tag:ephemeral` optional |
+| `TS_AUTHKEY` | Auth key (`tskey-auth-...`) for nodes joining the tailnet |
+| `TS_API_KEY` | API key (`tskey-api-...`) for device inventory / automation |
 | `WISE2_TAILSCALE_HOSTNAME` | `wise2-cloud-agent` |
+
+```bash
+export TS_API_KEY="tskey-api-..."   # never commit
+bash scripts/tailscale-api-inventory.sh
+```
 
 Install runs in environment `install` script or manually:
 
