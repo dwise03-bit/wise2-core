@@ -65,8 +65,17 @@ docker exec -e PGPASSWORD="$OLD_PG" "$PG_CONTAINER" \
   -c "ALTER USER ${PG_USER} WITH PASSWORD '${NEW_PG}';"
 
 echo "Rotating Redis password in $REDIS_CONTAINER..."
-docker exec "$REDIS_CONTAINER" redis-cli -a "$OLD_REDIS" CONFIG SET requirepass "$NEW_REDIS" >/dev/null
-docker exec "$REDIS_CONTAINER" redis-cli -a "$NEW_REDIS" PING >/dev/null
+if docker exec "$REDIS_CONTAINER" redis-cli -a "$OLD_REDIS" CONFIG SET requirepass "$NEW_REDIS" >/dev/null 2>&1; then
+  docker exec "$REDIS_CONTAINER" redis-cli -a "$NEW_REDIS" PING >/dev/null
+else
+  echo "Redis CONFIG SET failed; recreating redis container..."
+  docker stop "$REDIS_CONTAINER" 2>/dev/null || true
+  docker rm "$REDIS_CONTAINER" 2>/dev/null || true
+  export REDIS_PASSWORD="$NEW_REDIS"
+  docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps redis
+  sleep 3
+  docker exec wise2-redis redis-cli -a "$NEW_REDIS" PING >/dev/null
+fi
 
 upsert() {
   local key="$1" val="$2"
@@ -84,13 +93,23 @@ upsert REDIS_PASSWORD "$NEW_REDIS"
 upsert JWT_SECRET "$NEW_JWT"
 grep -q '^AUTH_SECRET=' "$ENV_FILE" && upsert AUTH_SECRET "$NEW_JWT"
 
-# Rebuild DATABASE_URL and REDIS_URL if present
-if grep -q '^DATABASE_URL=' "$ENV_FILE"; then
-  upsert DATABASE_URL "postgresql://${PG_USER}:${NEW_PG}@postgres:5432/${PG_DB}"
-fi
-if grep -q '^REDIS_URL=' "$ENV_FILE"; then
-  upsert REDIS_URL "redis://:${NEW_REDIS}@redis:6379/0"
-fi
+python3 - "$ENV_FILE" "$PG_USER" "$PG_DB" "$NEW_PG" "$NEW_REDIS" << 'PY'
+import re, sys, pathlib, urllib.parse
+path, user, db, pg, redis = sys.argv[1:6]
+text = pathlib.Path(path).read_text()
+enc_pg = urllib.parse.quote(pg, safe="")
+enc_redis = urllib.parse.quote(redis, safe="")
+ups = {
+    "DATABASE_URL": f"postgresql://{user}:{enc_pg}@postgres:5432/{db}",
+    "REDIS_URL": f"redis://:{enc_redis}@redis:6379/0",
+}
+for key, val in ups.items():
+    if re.search(rf"^{key}=", text, re.M):
+        text = re.sub(rf"^{key}=.*$", f"{key}={val}", text, count=1, flags=re.M)
+    else:
+        text += f"\n{key}={val}\n"
+pathlib.Path(path).write_text(text)
+PY
 
 chmod 600 "$ENV_FILE"
 echo "Updated $ENV_FILE (values not printed)."
@@ -99,8 +118,8 @@ export DATABASE_PASSWORD="$NEW_PG"
 export REDIS_PASSWORD="$NEW_REDIS"
 export JWT_SECRET="$NEW_JWT"
 
-echo "Recreating api and redis containers..."
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --force-recreate api redis
+echo "Recreating api container (postgres unchanged, redis password updated in place)..."
+docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps --force-recreate api
 
 sleep 10
 if curl -sf http://127.0.0.1:3010/api/health >/dev/null; then
