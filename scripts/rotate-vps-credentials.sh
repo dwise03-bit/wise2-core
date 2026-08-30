@@ -52,9 +52,9 @@ if [[ -z "$OLD_REDIS" ]]; then
   OLD_REDIS="$(grep -m1 '^REDIS_PASSWORD=' "$ENV_FILE" | cut -d= -f2- || true)"
 fi
 
-NEW_PG="$(openssl rand -base64 32)"
-NEW_REDIS="$(openssl rand -base64 32)"
-NEW_JWT="$(openssl rand -base64 48)"
+NEW_PG="$(openssl rand -hex 32)"
+NEW_REDIS="$(openssl rand -hex 32)"
+NEW_JWT="$(openssl rand -hex 48)"
 
 PG_USER="$(grep -m1 '^POSTGRES_USER=' "$ENV_FILE" | cut -d= -f2- || echo wise2)"
 PG_DB="$(grep -m1 '^POSTGRES_DB=' "$ENV_FILE" | cut -d= -f2- || echo wise2_prod)"
