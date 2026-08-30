@@ -1,7 +1,16 @@
 'use client';
 
+import Link from 'next/link';
+
 export function ImpsEcosystem() {
-  const units = [
+  const units: Array<{
+    number: string;
+    name: string;
+    role: string;
+    description: string;
+    highlight?: boolean;
+    href?: string;
+  }> = [
     {
       number: '01',
       name: 'BYTE MINI',
@@ -32,6 +41,13 @@ export function ImpsEcosystem() {
       name: 'BIG BLIMP NODE',
       role: 'The Heavy Hitter',
       description: 'Edge AI, vision, storage, dashboards, and orchestration. Maximum capabilities.',
+    },
+    {
+      number: '06',
+      name: 'WISE IMP DESKTOP',
+      role: 'The Companion',
+      description: 'Live desktop pet for operator and client machines. Same locked identity. Try it now on wise2.net.',
+      href: '/products/imp',
     },
   ];
 
@@ -83,11 +99,15 @@ export function ImpsEcosystem() {
                   <p className="text-base text-gray-400 leading-relaxed">
                     {unit.description}
                   </p>
-                  {unit.highlight && (
+                  {unit.href ? (
+                    <Link href={unit.href} className="pt-4 inline-flex items-center gap-2 text-sm text-blue-400 font-semibold">
+                      Open WISE Imp →
+                    </Link>
+                  ) : unit.highlight ? (
                     <div className="pt-4 flex items-center gap-2 text-sm text-blue-400 font-semibold">
                       <span>→ Featured on this page</span>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>

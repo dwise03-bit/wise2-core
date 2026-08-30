@@ -27,6 +27,14 @@ const projects = [
     image: '/wise-defense/instructors/AC400CE5-BD5C-4598-B24B-B1820CB8ACC2_1_105_c.jpeg',
     href: '/wise-defense',
   },
+  {
+    title: 'WISE Imp desktop companion',
+    category: 'Product',
+    description:
+      'Live browser companion and Windows desktop pet. Locked glossy black/cyan identity. No account.',
+    image: '/products/wise-imp.png',
+    href: '/products/imp',
+  },
 ];
 
 export default function WorkPage() {
@@ -59,7 +67,11 @@ export default function WorkPage() {
                   src={project.image}
                   alt={`${project.title} project artifact`}
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  className={
+                    project.href === '/products/imp'
+                      ? 'object-contain p-8'
+                      : 'object-cover transition duration-500 group-hover:scale-[1.03]'
+                  }
                   sizes="(max-width: 1024px) 100vw, 33vw"
                 />
               </div>

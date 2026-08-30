@@ -1,5 +1,6 @@
 packages:
   - 'apps/*'
+  - '!apps/wise-imp-desktop'
   - 'packages/*'
 
 shared-workspace-lockfile: true

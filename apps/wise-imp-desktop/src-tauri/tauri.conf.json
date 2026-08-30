@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "WISE Imp Desktop",
+  "version": "0.1.0",
+  "identifier": "net.wise2.imp",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "WISE Imp",
+        "width": 300,
+        "height": 300,
+        "minWidth": 180,
+        "minHeight": 180,
+        "maxWidth": 420,
+        "maxHeight": 420,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "skipTaskbar": true,
+        "shadow": false,
+        "visible": false,
+        "center": true,
+        "focus": false,
+        "focusable": true,
+        "acceptFirstMouse": true,
+        "maximizable": false,
+        "minimizable": false,
+        "fullscreen": false,
+        "backgroundColor": "#00000000"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/256x256.png",
+      "icons/512x512.png",
+      "icons/icon.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ],
+    "windows": {
+      "wix": { "language": "en-US" },
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      }
+    }
+  }
+}

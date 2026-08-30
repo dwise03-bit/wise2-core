@@ -1,0 +1,14 @@
+LOCKED CHARACTER: glossy black WISE Imp, cyan glowing eyes, curved horns, pointed ears, black W² hoodie, black pants/shoes, spade-tip tail.
+
+public/assets/idle_hover.png  - default/hover state
+public/assets/fly_left.png    - leftward movement
+public/assets/fly_right.png   - rightward movement
+public/assets/land_perch.png  - landing transition
+public/assets/sit.png         - idle sitting
+public/assets/sleep.png       - sleep state
+public/assets/click_react.png - click reaction
+public/assets/drag_dangle.png - mouse-drag state
+
+reference/locked_character_sheet.png       - primary visual lock
+reference/locked_sprite_sheet.png          - source sprite sheet
+reference/original_sound_lab_reference.png - original brand context
