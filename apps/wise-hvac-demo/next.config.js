@@ -47,9 +47,9 @@ const nextConfig = {
     };
   },
   env: {
-    NEXT_PUBLIC_DEMO_MODE: 'true',
+    NEXT_PUBLIC_DEMO_MODE: process.env.NEXT_PUBLIC_DEMO_MODE || 'false',
     NEXT_PUBLIC_BASE_PATH: '/wise-hvac-demo',
-    WISE_HVAC_DEMO_MODE: 'true',
+    WISE_HVAC_DEMO_MODE: process.env.WISE_HVAC_DEMO_MODE || 'false',
   },
 };
 

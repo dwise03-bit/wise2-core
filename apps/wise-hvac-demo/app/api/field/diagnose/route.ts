@@ -1,7 +1,6 @@
-import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { authOptions } from '@/lib/auth';
-import { getFieldJob } from '@/lib/field-data';
+import { getWise2AccessToken } from '@/lib/session';
+import { getJobForSession } from '@/lib/field-jobs-server';
 import type { Measurement } from '@/lib/measurements';
 import {
   buildStructuredDiagnosis,
@@ -166,9 +165,11 @@ async function diagnoseWithAi(
 }
 
 export async function POST(request: NextRequest) {
-  if (process.env.WISE_HVAC_DEMO_MODE === 'false') {
-    const session = await getServerSession(authOptions);
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (process.env.WISE_HVAC_DEMO_MODE !== 'true') {
+    const accessToken = await getWise2AccessToken();
+    if (!accessToken) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
   }
 
   try {
@@ -185,7 +186,11 @@ export async function POST(request: NextRequest) {
     if (body.symptoms.length > 3000) {
       return NextResponse.json({ error: 'Symptoms must be under 3,000 characters' }, { status: 400 });
     }
-    const job = getFieldJob(body.jobId!);
+    const resolved = await getJobForSession(body.jobId!);
+    if (resolved.error) {
+      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    }
+    const job = resolved.job;
     if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 });
 
     const measurements = sanitizeMeasurements(body.measurements);

@@ -35,7 +35,7 @@ export function TechnicianDashboard({
   toolsLabel: string;
   impAvailable: boolean;
   online: boolean;
-  onOpenJob: () => void;
+  onOpenJob: (jobId?: string) => void;
   onResume: () => void;
   onRefresh: () => void;
   onQuick: (action: 'scan' | 'tools' | 'diagnostic' | 'equipment' | 'imp') => void;
@@ -67,7 +67,7 @@ export function TechnicianDashboard({
               <div className="imp-kv"><span>Arrival</span><UnknownLine value={JOB_STATUS_LABELS[selected.status]} /></div>
               <div className="imp-kv"><span>Diagnostic time</span><UnknownLine value={elapsedLabel(startedAt)} /></div>
               <button type="button" className="imp-primary" onClick={onResume}>RESUME DIAGNOSTIC</button>
-              <button type="button" className="imp-ghost-btn" onClick={onOpenJob}>OPEN JOB</button>
+              <button type="button" className="imp-ghost-btn" onClick={() => onOpenJob(selected.id)}>OPEN JOB</button>
             </section>
           ) : (
             <section className="imp-panel">
@@ -93,7 +93,7 @@ export function TechnicianDashboard({
               })}
             </div>
             {jobs.map((job) => (
-              <button key={job.id} type="button" className="imp-job-btn" data-active={selected?.id === job.id} onClick={onOpenJob}>
+              <button key={job.id} type="button" className="imp-job-btn" data-active={selected?.id === job.id} onClick={() => onOpenJob(job.id)}>
                 <strong style={{ display: 'block' }}>{job.customerName}</strong>
                 <p style={{ margin: '6px 0 0', color: '#98A2AC', fontSize: 12 }}>{job.complaint || 'Complaint not provided'}</p>
                 <small style={{ display: 'block', marginTop: 8, color: '#66717A' }}>{JOB_STATUS_LABELS[job.status]}</small>

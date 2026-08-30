@@ -47,6 +47,8 @@ Files remain in `infra/cloudflare/hvac/` if you prefer Cloudflare Tunnel later:
 
 ## Security
 
-- Demo mode is on; auth middleware is bypassed.
+- Production mode requires Google sign-in (`WISE_HVAC_DEMO_MODE=false`).
+- OAuth callback: `https://hvac.wise2.net/wise-hvac-demo/api/auth/google/callback`
+- Smoke test: `./scripts/smoke-hvac-oauth.sh`
 - Do not expose port 3024 on the public internet.
 

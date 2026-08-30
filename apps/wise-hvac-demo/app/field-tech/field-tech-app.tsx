@@ -192,7 +192,7 @@ export function FieldTechApp() {
   async function loadJobs() {
     setError('');
     try {
-      const response = await fetch(`${basePath}/api/field/jobs`, { cache: 'no-store' });
+      const response = await fetch(`${basePath}/api/field/jobs`, { cache: 'no-store', credentials: 'include' });
       if (!response.ok) throw new Error('Could not sync the job queue.');
       const data = (await response.json()) as FieldJob[];
       setJobs(data);
@@ -307,6 +307,7 @@ export function FieldTechApp() {
       const response = await fetch(`${basePath}/api/field/jobs/${selected.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(updates),
       });
       if (!response.ok) throw new Error('Update could not be saved.');
@@ -349,6 +350,7 @@ export function FieldTechApp() {
       const response = await fetch(`${basePath}/api/field/diagnose`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           jobId: selected.id,
           symptoms,
@@ -527,7 +529,10 @@ export function FieldTechApp() {
             toolsLabel={toolsLabel}
             impAvailable={impAvailable}
             online={online}
-            onOpenJob={() => changeTab('jobs')}
+            onOpenJob={(jobId) => {
+              if (jobId) setSelectedId(jobId);
+              changeTab('jobs');
+            }}
             onResume={() => changeTab('imp')}
             onRefresh={loadJobs}
             onQuick={(action) => {

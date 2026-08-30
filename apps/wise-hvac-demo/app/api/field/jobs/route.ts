@@ -1,30 +1,21 @@
-import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
-import { authOptions } from '@/lib/auth';
-import { listFieldJobs } from '@/lib/field-data';
+import { listJobsForSession } from '@/lib/field-jobs-server';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/field/jobs
- * List jobs assigned to the authenticated technician
- * TODO: Add proper authentication when NextAuth is configured
+ * List jobs assigned to the authenticated technician from WISE² Fieldtech API.
  */
 export async function GET() {
   try {
-    if (process.env.WISE_HVAC_DEMO_MODE === 'false') {
-      const session = await getServerSession(authOptions);
-      if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
+    const result = await listJobsForSession();
+    if (result.error) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
-
-    return NextResponse.json(listFieldJobs());
+    return NextResponse.json(result.jobs);
   } catch (error) {
     console.error('Field jobs API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
