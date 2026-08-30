@@ -3,6 +3,7 @@ import Foundation
 protocol BusinessOSAPITransport {
   func authenticatedGet<T: Decodable>(_ endpoint: String) async throws -> T
   func authenticatedPost<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R
+  func authenticatedPatch<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R
 }
 
 extension APIClient: BusinessOSAPITransport {}
@@ -29,6 +30,8 @@ protocol BusinessOSServing {
   func rejectAgentJob(_ id: String, note: String?) async throws -> BusinessOperation<AgentJob>
 
   func conversations() async throws -> [BusinessConversation]
+  func phoneDashboard() async throws -> AiPhoneDashboard
+  func updatePhoneConfig(_ update: AiPhoneConfigUpdate) async throws -> AiPhoneConfig
 
   func cloudInventory() async throws -> CloudInventory
   func cloudHealth() async throws -> CloudHealth
@@ -40,6 +43,7 @@ protocol BusinessOSServing {
 
   func studioSummary() async throws -> StudioSummary
   func financeSummary() async throws -> FinanceSummary
+  func analyticsDashboard() async throws -> AnalyticsDashboard
 }
 
 final class BusinessOSClient: BusinessOSServing {
@@ -119,6 +123,18 @@ final class BusinessOSClient: BusinessOSServing {
     try await transport.authenticatedGet("/business-os/comms/conversations")
   }
 
+  func phoneDashboard() async throws -> AiPhoneDashboard {
+    try await transport.authenticatedGet("/business-os/phone")
+  }
+
+  func updatePhoneConfig(_ update: AiPhoneConfigUpdate) async throws -> AiPhoneConfig {
+    let response: AiPhoneConfigResponse = try await transport.authenticatedPatch(
+      "/business-os/phone",
+      body: update
+    )
+    return response.config
+  }
+
   func cloudInventory() async throws -> CloudInventory {
     try await transport.authenticatedGet("/business-os/cloud/inventory")
   }
@@ -159,5 +175,9 @@ final class BusinessOSClient: BusinessOSServing {
 
   func financeSummary() async throws -> FinanceSummary {
     try await transport.authenticatedGet("/business-os/finance/summary")
+  }
+
+  func analyticsDashboard() async throws -> AnalyticsDashboard {
+    try await transport.authenticatedGet("/analytics/dashboard")
   }
 }

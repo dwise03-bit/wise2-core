@@ -1,10 +1,14 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CherryCountRequestTenant } from './cherry-count-tenant.guard';
+import { CherryCountPhoneService } from './cherry-count-phone.service';
 
 @Injectable()
 export class CherryCountSeedService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly phone: CherryCountPhoneService,
+  ) {}
 
   async seedDemo(tenantId: string) {
     const existing = await this.prisma.cherryCountProduct.count({ where: { tenantId } });
@@ -90,6 +94,9 @@ export class CherryCountSeedService {
         items: { create: [{ variantId: hoodM.id, quantity: 18, unitPrice: 70, unitCost: 28, lineTotal: 1260 }] },
       },
     });
+
+    await this.phone.ensureConfig(tenantId);
+    await this.phone.seedDemoCalls(tenantId);
 
     return { status: 'seeded', productCount: 3, eventId: event.id };
   }

@@ -123,6 +123,84 @@ export const DEMO_AI_INSIGHT = {
   poweredBy: 'WISE² Intelligence',
 };
 
+export const DEMO_PHONE_CONFIG = {
+  enabled: true,
+  phoneNumber: '(404) 867-2446',
+  greeting:
+    "Hey love! Thanks for calling Brianna's Boutique. I'm Cherry, Brianna's AI assistant. I can help with sizes, our next pop-up, or hold an item for you.",
+  afterHoursMessage:
+    "We're closed right now, but I can take a message or text you when we're back.",
+  transferNumber: '(404) 555-0182',
+  smsEnabled: true,
+  voicemailEnabled: true,
+  aiPersona: 'Cherry',
+  businessHours: {
+    mon: { open: '10:00', close: '19:00' },
+    tue: { open: '10:00', close: '19:00' },
+    wed: { open: '10:00', close: '19:00' },
+    thu: { open: '10:00', close: '19:00' },
+    fri: { open: '10:00', close: '21:00' },
+    sat: { open: '11:00', close: '21:00' },
+    sun: { closed: true },
+  },
+};
+
+export const DEMO_PHONE_STATS = {
+  callsToday: 3,
+  totalCalls: 47,
+  avgDurationSeconds: 118,
+  leadsCaptured: 12,
+  aiActive: true,
+};
+
+export const DEMO_PHONE_CALLS = [
+  {
+    id: 'call-1',
+    callerNumber: '(404) 555-0142',
+    callerName: 'Sarah M.',
+    direction: 'INBOUND',
+    status: 'COMPLETED',
+    durationSeconds: 134,
+    intent: 'Product availability',
+    outcome: 'HOLD_PLACED',
+    summary: 'Cherry Bomb Hoodie (M) hold placed for Downtown Night Market.',
+    startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'call-2',
+    callerNumber: '(678) 555-0298',
+    callerName: 'Imani L.',
+    direction: 'INBOUND',
+    status: 'COMPLETED',
+    durationSeconds: 182,
+    intent: 'Sizing help',
+    outcome: 'SMS_SENT',
+    summary: 'Sent Lavender Crop Top size chart and Instagram link.',
+    startedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'call-3',
+    callerNumber: '(770) 555-0311',
+    callerName: 'Unknown',
+    direction: 'INBOUND',
+    status: 'COMPLETED',
+    durationSeconds: 105,
+    intent: 'Pop-up info',
+    outcome: 'TRANSFERRED',
+    summary: 'Transferred to Brianna for booth details.',
+    startedAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+  },
+];
+
+export const DEMO_PHONE_CAPABILITIES = [
+  'Answer sizing and availability questions',
+  'Share next pop-up date, time, and location',
+  'Hold items and capture customer requests',
+  'Send SMS follow-ups with Instagram links',
+  'Transfer urgent calls to Brianna',
+  'Take after-hours voicemails',
+];
+
 export const DEMO_PACKING = [
   { item: 'Cherry Bomb Hoodie (M)', bin: 'Pink Bin #2', qty: 6, status: 'PACKED' },
   { item: 'Cherry Bomb Hoodie (L)', bin: 'Pink Bin #2', qty: 4, status: 'PACKED' },

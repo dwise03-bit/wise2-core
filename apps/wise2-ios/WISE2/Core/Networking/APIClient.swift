@@ -509,9 +509,21 @@ actor APIClient {
   }
 
   func authenticatedPost<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+    try await authenticatedWrite("POST", endpoint: endpoint, body: body)
+  }
+
+  func authenticatedPatch<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+    try await authenticatedWrite("PATCH", endpoint: endpoint, body: body)
+  }
+
+  private func authenticatedWrite<T: Encodable, R: Decodable>(
+    _ method: String,
+    endpoint: String,
+    body: T
+  ) async throws -> R {
     let normalized = endpoint.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     var request = URLRequest(url: endpointURL(normalized))
-    request.httpMethod = "POST"
+    request.httpMethod = method
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpBody = try JSONEncoder().encode(body)
     try injectAuthHeader(&request)

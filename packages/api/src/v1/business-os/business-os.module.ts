@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../../auth/auth.module';
 import { HermesModule } from '../../hermes/hermes.module';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { AiPhoneModule } from '../../ai-phone/ai-phone.module';
 import { CustomersModule } from '../customers/customers.module';
 import { ProspectsModule } from '../prospects/prospects.module';
 import { BusinessOsControlBridgeClient } from './business-os-control-bridge.client';
@@ -17,6 +18,7 @@ import { BusinessOsService } from './business-os.service';
     ProspectsModule,
     CustomersModule,
     HermesModule,
+    AiPhoneModule,
   ],
   controllers: [BusinessOsController],
   providers: [

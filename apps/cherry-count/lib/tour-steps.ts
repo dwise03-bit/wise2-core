@@ -65,6 +65,14 @@ export const CHERRY_TOUR_STEPS: CherryTourStep[] = [
     anchor: 'ai-briefing',
   },
   {
+    id: 'phone',
+    route: '/phone',
+    title: 'AI Phone Service',
+    body: 'Cherry answers your boutique line 24/7 — sizing, pop-up info, holds, SMS follow-ups, and transfers to you when it matters.',
+    tip: 'Your AI number is (404) 867-2446. Every call syncs to CRM automatically.',
+    anchor: 'phone-hero',
+  },
+  {
     id: 'finish',
     route: '/dashboard',
     title: 'You\'re Ready',

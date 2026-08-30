@@ -5,7 +5,7 @@ import { CRMMock } from './crm-mock';
 import { SchedulerMock } from './scheduler-mock';
 import { ToolRegistry } from './tool-registry';
 import { VoiceOrchestrator } from './voice-orchestrator';
-import { VoiceModelMock } from './voice-model-mock';
+import { createVoiceModel } from './openai-realtime-provider';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -15,7 +15,7 @@ const crm = new CRMMock();
 const scheduler = new SchedulerMock();
 const sessionManager = new CallSessionManager();
 const toolRegistry = new ToolRegistry(crm, scheduler);
-const voiceModel = new VoiceModelMock();
+const voiceModel = createVoiceModel();
 const orchestrator = new VoiceOrchestrator(voiceModel, sessionManager, toolRegistry);
 
 // Middleware

@@ -40,6 +40,32 @@ final class FakeBusinessOSService: BusinessOSServing {
     BusinessOperation(operationId: "op", status: "completed", message: "ok", auditEventId: nil, result: nil)
   }
   func conversations() async throws -> [BusinessConversation] { [] }
+  func phoneDashboard() async throws -> AiPhoneDashboard {
+    AiPhoneDashboard(
+      config: AiPhoneConfig(
+        enabled: true,
+        phoneNumber: "+14045550100",
+        greeting: "Thanks for calling.",
+        afterHoursMessage: nil,
+        transferNumber: nil,
+        smsEnabled: true,
+        voicemailEnabled: true,
+        recordingEnabled: true,
+        aiPersona: "WISE²",
+        timezone: "America/New_York"
+      ),
+      stats: AiPhoneStats(callsToday: 0, totalCalls: 0, avgDurationSeconds: 0, leadsCaptured: 0, aiActive: true),
+      recentCalls: [],
+      capabilities: ["Answer inbound calls 24/7 with a custom greeting"],
+      poweredBy: "WISE² AI Phone"
+    )
+  }
+  func updatePhoneConfig(_ update: AiPhoneConfigUpdate) async throws -> AiPhoneConfig {
+    var config = try await phoneDashboard().config
+    if let enabled = update.enabled { config.enabled = enabled }
+    if let greeting = update.greeting { config.greeting = greeting }
+    return config
+  }
   func cloudInventory() async throws -> CloudInventory {
     CloudInventory(apps: [], services: [], controlBridgeConfigured: false)
   }
@@ -59,5 +85,8 @@ final class FakeBusinessOSService: BusinessOSServing {
   }
   func financeSummary() async throws -> FinanceSummary {
     FinanceSummary(revenueToday: 0, revenueMonth: 0, unpaidInvoiceCount: 0, providerAvailable: false, message: nil)
+  }
+  func analyticsDashboard() async throws -> AnalyticsDashboard {
+    AnalyticsDashboard(totalUsers: 0, activeUsers: 0, totalProjects: 0, totalExports: 0, mrr: 0, churnRate: 0)
   }
 }

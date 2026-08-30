@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -12,6 +13,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { PrismaService } from '../prisma/prisma.service';
 import { CherryCountService } from './cherry-count.service';
 import { CherryCountAiService, CherryAiInsightType } from './cherry-count-ai.service';
+import { CherryCountPhoneService } from './cherry-count-phone.service';
 import { CherryCountSeedService } from './cherry-count-seed.service';
 import { CherryCountTenant } from './cherry-count-tenant.decorator';
 import { CherryCountRequestTenant, CherryCountTenantGuard } from './cherry-count-tenant.guard';
@@ -24,6 +26,7 @@ import {
   CreateProductInput,
   CreateSaleInput,
   UpdatePackingInput,
+  UpdatePhoneConfigInput,
 } from './cherry-count.types';
 
 @ApiTags('Cherry Count')
@@ -67,6 +70,7 @@ export class CherryCountController {
   constructor(
     private readonly cherryCount: CherryCountService,
     private readonly ai: CherryCountAiService,
+    private readonly phone: CherryCountPhoneService,
     private readonly seed: CherryCountSeedService,
   ) {}
 
@@ -195,6 +199,19 @@ export class CherryCountController {
     @Body() body: { type: CherryAiInsightType },
   ) {
     return this.ai.getInsights(tenant.tenantId, body.type ?? 'daily');
+  }
+
+  @Get('phone')
+  phoneDashboard(@CherryCountTenant() tenant: CherryCountRequestTenant) {
+    return this.phone.getDashboard(tenant.tenantId);
+  }
+
+  @Patch('phone')
+  updatePhone(
+    @CherryCountTenant() tenant: CherryCountRequestTenant,
+    @Body() body: UpdatePhoneConfigInput,
+  ) {
+    return this.phone.updateConfig(tenant.tenantId, tenant.role, body);
   }
 
   @Post('seed')

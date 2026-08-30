@@ -13,6 +13,7 @@ import { ProspectsService } from '../prospects/prospects.service';
 import { BusinessOsControlBridgeClient } from './business-os-control-bridge.client';
 import { BusinessOsLeadClaimStore } from './business-os-lead-claim.store';
 import { BusinessOsService } from './business-os.service';
+import { AiPhoneService } from '../../ai-phone/ai-phone.service';
 import {
   BLOCKED_COMMAND_CAPABILITIES,
   BusinessOperationDto,
@@ -54,6 +55,7 @@ export class BusinessOsMobileService {
     @Optional() private readonly hermes?: HermesService,
     @Optional() private readonly leadClaimStore?: BusinessOsLeadClaimStore,
     @Optional() private readonly controlBridge?: BusinessOsControlBridgeClient,
+    @Optional() private readonly aiPhone?: AiPhoneService,
   ) {}
 
   getMobileCapabilities(user?: { role?: string }): MobileBusinessCapabilitiesDto {
@@ -222,8 +224,11 @@ export class BusinessOsMobileService {
     };
   }
 
-  getMobileConversations(): MobileConversationDto[] {
-    return [];
+  async getMobileConversations(userId?: string): Promise<MobileConversationDto[]> {
+    if (!this.aiPhone || !userId) return [];
+    const tenantId = await this.aiPhone.resolveTenantId(userId);
+    if (!tenantId) return [];
+    return this.aiPhone.listConversations(tenantId);
   }
 
   async getMobileCloudInventory(): Promise<MobileCloudInventoryDto> {

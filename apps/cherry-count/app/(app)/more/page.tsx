@@ -6,6 +6,7 @@ import {
   Bot,
   ChevronRight,
   FileText,
+  Phone,
   Settings,
   Sparkles,
   Users,
@@ -15,6 +16,7 @@ import { CHERRY_LAYOUT } from '@/lib/brand-tokens';
 import { useCherryTour } from '@/contexts/TourContext';
 
 const MORE_LINKS = [
+  { href: '/phone', label: 'AI Phone', icon: Phone, desc: '24/7 call answering & lead capture' },
   { href: '/sales', label: 'Sales', icon: BarChart3, desc: 'Track revenue & profit' },
   { href: '/customers', label: 'Customers', icon: Users, desc: 'CRM & demand signals' },
   { href: '/analytics', label: 'Analytics', icon: BarChart3, desc: 'Growth insights' },

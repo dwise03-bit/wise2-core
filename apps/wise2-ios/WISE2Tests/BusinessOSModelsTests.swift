@@ -52,6 +52,41 @@ final class BusinessOSModelsTests: XCTestCase {
     XCTAssertEqual(BusinessOSModule.command.rawValue, "command")
     XCTAssertEqual(BusinessOSModule.settings.rawValue, "settings")
     XCTAssertEqual(BusinessOSModule.hvac.rawValue, "hvac")
-    XCTAssertEqual(BusinessOSModule.allCases.count, 13)
+    XCTAssertEqual(BusinessOSModule.phone.title, "AI Phone")
+    XCTAssertEqual(BusinessOSModule.allCases.count, 16)
+  }
+
+  func testDecodesAiPhoneDashboard() throws {
+    let json = """
+    {
+      "config": {
+        "enabled": true,
+        "phoneNumber": "+14045550100",
+        "greeting": "Thanks for calling.",
+        "afterHoursMessage": null,
+        "transferNumber": null,
+        "smsEnabled": true,
+        "voicemailEnabled": true,
+        "recordingEnabled": true,
+        "aiPersona": "WISE²",
+        "timezone": "America/New_York"
+      },
+      "stats": {
+        "callsToday": 3,
+        "totalCalls": 12,
+        "avgDurationSeconds": 88,
+        "leadsCaptured": 4,
+        "aiActive": true
+      },
+      "recentCalls": [],
+      "capabilities": ["Answer inbound calls 24/7 with a custom greeting"],
+      "poweredBy": "WISE² AI Phone"
+    }
+    """.data(using: .utf8)!
+
+    let dashboard = try JSONDecoder().decode(AiPhoneDashboard.self, from: json)
+    XCTAssertEqual(dashboard.stats.callsToday, 3)
+    XCTAssertEqual(dashboard.config.aiPersona, "WISE²")
+    XCTAssertEqual(dashboard.poweredBy, "WISE² AI Phone")
   }
 }

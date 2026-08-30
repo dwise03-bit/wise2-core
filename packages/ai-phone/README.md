@@ -249,16 +249,16 @@ curl -X POST http://localhost:3001/test/conversation \
 - [x] Call recording and transcription
 
 ### Phase 3: Production Features
-- [ ] Real OpenAI voice integration
-- [ ] Multi-tenant isolation
-- [ ] Analytics and reporting
-- [ ] Agent dashboard
+- [x] Real OpenAI voice integration (chat + Whisper + TTS; mock fallback)
+- [x] Multi-tenant isolation
+- [x] Analytics and reporting
+- [x] Agent dashboard (Business OS + iOS)
 
 ### Phase 4: Advanced Capabilities
 - [ ] Outbound dialer
-- [ ] Conversation recording
+- [x] Conversation recording
 - [ ] Custom model fine-tuning
-- [ ] Advanced transfer logic
+- [x] Advanced transfer logic
 
 ## Telephony Providers
 

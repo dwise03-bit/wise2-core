@@ -105,10 +105,60 @@ export async function cherryListCustomers() {
   >('/v1/cherry-count/customers');
 }
 
-export async function cherryAiInsight(type: 'daily' | 'inventory' | 'sales' = 'daily') {
+export async function cherryAiInsight(
+  type: 'daily' | 'inventory' | 'sales' | 'packing' | 'restock' = 'daily',
+) {
   return apiFetch('/v1/cherry-count/ai/insights', {
     method: 'POST',
     body: JSON.stringify({ type }),
+  });
+}
+
+export interface CherryPhoneCall {
+  id: string;
+  callerNumber: string;
+  callerName: string | null;
+  direction: string;
+  status: string;
+  durationSeconds: number | null;
+  intent: string | null;
+  outcome: string | null;
+  summary: string | null;
+  startedAt: string;
+}
+
+export interface CherryPhoneDashboard {
+  config: {
+    enabled: boolean;
+    phoneNumber: string | null;
+    greeting: string;
+    afterHoursMessage: string | null;
+    businessHours: Record<string, { open?: string; close?: string; closed?: boolean }>;
+    transferNumber: string | null;
+    smsEnabled: boolean;
+    voicemailEnabled: boolean;
+    aiPersona: string;
+  };
+  stats: {
+    callsToday: number;
+    totalCalls: number;
+    avgDurationSeconds: number;
+    leadsCaptured: number;
+    aiActive: boolean;
+  };
+  recentCalls: CherryPhoneCall[];
+  capabilities: string[];
+  poweredBy: string;
+}
+
+export async function cherryPhoneDashboard() {
+  return apiFetch<CherryPhoneDashboard>('/v1/cherry-count/phone');
+}
+
+export async function cherryUpdatePhoneConfig(input: Partial<CherryPhoneDashboard['config']>) {
+  return apiFetch<{ config: CherryPhoneDashboard['config'] }>('/v1/cherry-count/phone', {
+    method: 'PATCH',
+    body: JSON.stringify(input),
   });
 }
 

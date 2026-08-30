@@ -86,3 +86,13 @@ export interface CreateCustomerInput {
   favoriteColors?: string[];
   notes?: string;
 }
+
+export interface UpdatePhoneConfigInput {
+  enabled?: boolean;
+  greeting?: string;
+  afterHoursMessage?: string;
+  businessHours?: Record<string, { open?: string; close?: string; closed?: boolean }>;
+  transferNumber?: string;
+  smsEnabled?: boolean;
+  voicemailEnabled?: boolean;
+}

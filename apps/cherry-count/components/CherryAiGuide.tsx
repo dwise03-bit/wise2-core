@@ -9,8 +9,8 @@ import { DEMO_AI_INSIGHT } from '@/lib/demo-data';
 const QUICK_ASKS = [
   'What should I pack?',
   'What is low stock?',
+  'How does AI Phone work?',
   'Who is my top customer?',
-  'How does Pop-Up Mode work?',
 ];
 
 const QUICK_ANSWERS: Record<string, string> = {
@@ -22,6 +22,8 @@ const QUICK_ANSWERS: Record<string, string> = {
     'Brianna R. is VIP with $1,240 lifetime value. She needs a Medium — flag that for the next event.',
   'how does pop-up mode work?':
     'Pop-Up Mode is live selling on the floor: quick checkout, bin lookup, and a packing checklist so nothing gets left behind.',
+  'how does ai phone work?':
+    'Cherry answers (404) 867-2446 24/7 — sizing, pop-up dates, item holds, and SMS follow-ups. Urgent calls transfer to you. Open AI Phone from More to see recent calls.',
 };
 
 function answerQuestion(question: string): string {

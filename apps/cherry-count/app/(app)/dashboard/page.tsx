@@ -1,18 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { Calendar, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
+import { Calendar, ChevronRight, Phone, Sparkles, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GlassCard, SectionHeader, StatCard } from '@/components/ui';
 import { DemoModeBanner } from '@/components/DemoModeBanner';
 import { CHERRY_LAYOUT } from '@/lib/brand-tokens';
-import { cherryAiInsight, cherryBootstrap } from '@/lib/api';
+import { cherryAiInsight, cherryBootstrap, cherryPhoneDashboard } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   DEMO_AI_INSIGHT,
   DEMO_BEST_SELLERS,
   DEMO_NEXT_EVENT,
   DEMO_PACKING,
+  DEMO_PHONE_STATS,
   DEMO_SALES_TREND,
   DEMO_STATS,
 } from '@/lib/demo-data';
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(DEMO_STATS);
   const [nextEvent, setNextEvent] = useState(DEMO_NEXT_EVENT);
   const [aiTip, setAiTip] = useState(DEMO_AI_INSIGHT.tip);
+  const [phoneStats, setPhoneStats] = useState(DEMO_PHONE_STATS);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,8 +41,9 @@ export default function DashboardPage() {
     Promise.all([
       cherryBootstrap().catch(() => null),
       cherryAiInsight('daily').catch(() => null),
+      cherryPhoneDashboard().catch(() => null),
     ])
-      .then(([bootstrap, ai]) => {
+      .then(([bootstrap, ai, phone]) => {
         if (bootstrap) {
           setStats({
             todaySales: Number(bootstrap.stats.todaySales) || 0,
@@ -63,6 +66,7 @@ export default function DashboardPage() {
         if (ai && typeof ai === 'object' && 'tips' in ai && Array.isArray((ai as { tips: string[] }).tips)) {
           setAiTip((ai as { tips: string[] }).tips[0] || DEMO_AI_INSIGHT.tip);
         }
+        if (phone?.stats) setPhoneStats(phone.stats);
       })
       .finally(() => setLoading(false));
   }, [isAuthenticated]);
@@ -109,6 +113,22 @@ export default function DashboardPage() {
           </Link>
         </div>
       </GlassCard>
+
+      <Link href="/phone" className="mb-6 block" data-tour="dashboard-phone">
+        <GlassCard className="flex items-center gap-4 border-cherry-royal/25 py-4 transition hover:border-cherry-hot/40" glow>
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cherry-royal/25">
+            <Phone className="h-5 w-5 text-cherry-lavender" />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs uppercase tracking-wider text-white/50">AI Phone</p>
+            <p className="font-semibold">
+              {phoneStats.callsToday} calls today · {phoneStats.leadsCaptured} leads captured
+            </p>
+            <p className="text-xs text-cherry-lavender/80">Cherry is answering for Brianna&apos;s Boutique</p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-cherry-hot" />
+        </GlassCard>
+      </Link>
 
       <SectionHeader title="Top Selling Items" action={<Link href="/analytics" className="text-xs text-cherry-hot">View all</Link>} />
       <div className="mb-6 space-y-2">

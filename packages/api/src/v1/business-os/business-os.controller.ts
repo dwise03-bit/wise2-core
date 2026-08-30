@@ -1,19 +1,24 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  Headers,
   HttpCode,
   HttpException,
   HttpStatus,
+  Optional,
   Param,
+  Patch,
   Post,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { IsString, MinLength, IsOptional, IsInt, Min, Max } from 'class-validator';
+import { IsString, MinLength, IsOptional, IsInt, Min, Max, IsBoolean, IsArray, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
 import { JwtAuthGuard } from '../../auth/jwt.guard';
+import { AiPhoneService } from '../../ai-phone/ai-phone.service';
 import { BusinessOsService } from './business-os.service';
 import { BusinessOsMobileService } from './business-os.mobile.service';
 import type { CloudDeployDto, CloudRestartDto, CloudRollbackDto } from './business-os.types';
@@ -119,12 +124,69 @@ class AgentDecisionDto {
   note?: string;
 }
 
+class UpdatePhoneConfigDto {
+  @IsOptional()
+  @IsBoolean()
+  enabled?: boolean;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  greeting?: string;
+
+  @IsOptional()
+  @IsString()
+  afterHoursMessage?: string;
+
+  @IsOptional()
+  @IsObject()
+  businessHours?: Record<string, { open?: string; close?: string; closed?: boolean }>;
+
+  @IsOptional()
+  @IsString()
+  timezone?: string;
+
+  @IsOptional()
+  @IsString()
+  transferNumber?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  smsEnabled?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  voicemailEnabled?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  recordingEnabled?: boolean;
+
+  @IsOptional()
+  @IsString()
+  aiPersona?: string;
+}
+
+class SimulatePhoneDto {
+  @IsOptional()
+  @IsString()
+  fromNumber?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  messages!: string[];
+}
+
 @Controller('v1/business-os')
 @UseGuards(JwtAuthGuard)
 export class BusinessOsController {
   constructor(
     private readonly businessOsService: BusinessOsService,
     private readonly mobileService: BusinessOsMobileService,
+    @Optional() private readonly aiPhone?: AiPhoneService,
   ) {}
 
   @Get('dashboard')
@@ -252,8 +314,41 @@ export class BusinessOsController {
 
   @Get('comms/conversations')
   @HttpCode(200)
-  getMobileConversations() {
-    return this.mobileService.getMobileConversations();
+  async getMobileConversations(@Req() req: { user: { id: string } }) {
+    return this.mobileService.getMobileConversations(req.user.id);
+  }
+
+  @Get('phone')
+  @HttpCode(200)
+  async getPhoneDashboard(
+    @Req() req: { user: { id: string } },
+    @Headers('x-tenant-id') tenantHeader?: string,
+  ) {
+    const tenantId = await this.requirePhoneTenant(req.user.id, tenantHeader);
+    return this.aiPhone!.getDashboard(tenantId);
+  }
+
+  @Patch('phone')
+  @HttpCode(200)
+  async updatePhoneConfig(
+    @Req() req: { user: { id: string; role?: string } },
+    @Body() body: UpdatePhoneConfigDto,
+    @Headers('x-tenant-id') tenantHeader?: string,
+  ) {
+    const tenantId = await this.requirePhoneTenant(req.user.id, tenantHeader);
+    const role = (await this.aiPhone!.membershipRole(req.user.id, tenantId)) ?? req.user.role;
+    return this.aiPhone!.updateConfig(tenantId, role, body);
+  }
+
+  @Post('phone/simulate')
+  @HttpCode(200)
+  async simulatePhoneCall(
+    @Req() req: { user: { id: string } },
+    @Body() body: SimulatePhoneDto,
+    @Headers('x-tenant-id') tenantHeader?: string,
+  ) {
+    const tenantId = await this.requirePhoneTenant(req.user.id, tenantHeader);
+    return this.aiPhone!.simulate(tenantId, body);
   }
 
   @Get('cloud/health')
@@ -329,5 +424,16 @@ export class BusinessOsController {
   @HttpCode(200)
   getFinanceSnapshot() {
     return this.businessOsService.getFinanceSnapshot();
+  }
+
+  private async requirePhoneTenant(userId: string, tenantHeader?: string): Promise<string> {
+    if (!this.aiPhone) {
+      throw new ForbiddenException('AI Phone is not available');
+    }
+    const tenantId = await this.aiPhone.resolveTenantId(userId, tenantHeader);
+    if (!tenantId) {
+      throw new ForbiddenException('No active workspace is available for AI Phone');
+    }
+    return tenantId;
   }
 }

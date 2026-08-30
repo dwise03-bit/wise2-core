@@ -26,10 +26,11 @@ struct CommandResult: Codable, Equatable {
   let module: BusinessOSModule?
 }
 
-// MARK: - Module registry (13 modules including hvac)
+// MARK: - Module registry (16 modules)
 
 enum BusinessOSModule: String, CaseIterable, Codable, Identifiable {
-  case command, crm, work, ai, phone, clients, cloud, studio, money, academy, trading, hvac, settings
+  case command, crm, work, ai, sales, inventory, analytics
+  case phone, clients, cloud, studio, money, academy, trading, hvac, settings
 
   var id: String { rawValue }
 
@@ -39,7 +40,10 @@ enum BusinessOSModule: String, CaseIterable, Codable, Identifiable {
     case .crm: return "CRM"
     case .work: return "Work"
     case .ai: return "AI Workforce"
-    case .phone: return "Phone"
+    case .sales: return "Sales"
+    case .inventory: return "Inventory"
+    case .analytics: return "Analytics"
+    case .phone: return "AI Phone"
     case .clients: return "Clients"
     case .cloud: return "WISE² Cloud"
     case .studio: return "Studio + Growth"
@@ -57,6 +61,9 @@ enum BusinessOSModule: String, CaseIterable, Codable, Identifiable {
     case .crm: return "person.2.fill"
     case .work: return "briefcase.fill"
     case .ai: return "sparkles"
+    case .sales: return "cart.fill"
+    case .inventory: return "shippingbox.fill"
+    case .analytics: return "chart.bar.fill"
     case .phone: return "phone.fill"
     case .clients: return "building.2.fill"
     case .cloud: return "server.rack"
@@ -171,6 +178,63 @@ struct BusinessConversation: Codable, Equatable, Identifiable {
   let humanTakeover: Bool
 }
 
+struct AiPhoneConfig: Codable, Equatable {
+  var enabled: Bool
+  var phoneNumber: String?
+  var greeting: String
+  var afterHoursMessage: String?
+  var transferNumber: String?
+  var smsEnabled: Bool
+  var voicemailEnabled: Bool
+  var recordingEnabled: Bool
+  var aiPersona: String
+  var timezone: String
+}
+
+struct AiPhoneStats: Codable, Equatable {
+  var callsToday: Int
+  var totalCalls: Int
+  var avgDurationSeconds: Int
+  var leadsCaptured: Int
+  var aiActive: Bool
+}
+
+struct AiPhoneCall: Codable, Equatable, Identifiable {
+  let id: String
+  let callerNumber: String
+  let callerName: String?
+  let inboundNumber: String?
+  let direction: String
+  let status: String
+  let durationSeconds: Int?
+  let intent: String?
+  let outcome: String?
+  let summary: String?
+  let startedAt: String
+}
+
+struct AiPhoneDashboard: Codable, Equatable {
+  var config: AiPhoneConfig
+  var stats: AiPhoneStats
+  var recentCalls: [AiPhoneCall]
+  var capabilities: [String]
+  var poweredBy: String
+}
+
+struct AiPhoneConfigUpdate: Encodable {
+  var enabled: Bool?
+  var greeting: String?
+  var afterHoursMessage: String?
+  var transferNumber: String?
+  var smsEnabled: Bool?
+  var voicemailEnabled: Bool?
+  var recordingEnabled: Bool?
+}
+
+struct AiPhoneConfigResponse: Codable, Equatable {
+  var config: AiPhoneConfig
+}
+
 // MARK: - Cloud
 
 struct CloudInventory: Codable, Equatable {
@@ -235,4 +299,42 @@ struct FinanceSummary: Codable, Equatable {
   let unpaidInvoiceCount: Int
   let providerAvailable: Bool
   let message: String?
+}
+
+// MARK: - Analytics (GET /v1/analytics/dashboard)
+
+struct AnalyticsDashboard: Codable, Equatable {
+  let totalUsers: Int
+  let activeUsers: Int
+  let totalProjects: Int
+  let totalExports: Int
+  let mrr: Double
+  let churnRate: Double
+
+  enum CodingKeys: String, CodingKey {
+    case totalUsers = "total_users"
+    case activeUsers = "active_users"
+    case totalProjects = "total_projects"
+    case totalExports = "total_exports"
+    case mrr
+    case churnRate = "churn_rate"
+  }
+}
+
+// MARK: - Sales pipeline snapshot (future: revenue-os/dashboard/pipeline)
+
+struct SalesPipelineSnapshot: Codable, Equatable {
+  let openOpportunities: Int
+  let pipelineValue: Double
+  let wonThisMonth: Int
+  let averageDealSize: Double
+}
+
+// MARK: - Inventory snapshot (future: cherry-count / print-shop)
+
+struct InventorySnapshot: Codable, Equatable {
+  let skuCount: Int
+  let lowStockCount: Int
+  let pendingOrders: Int
+  let lastSyncedAt: String?
 }

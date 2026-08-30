@@ -1,7 +1,10 @@
 'use client';
 
+import Link from 'next/link';
+import { Phone } from 'lucide-react';
 import { GlassCard, SectionHeader } from '@/components/ui';
 import { CHERRY_LAYOUT } from '@/lib/brand-tokens';
+import { DEMO_PHONE_CONFIG } from '@/lib/demo-data';
 
 export default function SettingsPage() {
   return (
@@ -46,6 +49,23 @@ export default function SettingsPage() {
       </GlassCard>
 
       <SectionHeader title="Integrations" />
+      <GlassCard className="mb-6">
+        <Link href="/phone" className="flex items-center justify-between gap-3">
+          <div>
+            <p className="flex items-center gap-2 font-medium">
+              <Phone className="h-4 w-4 text-cherry-lavender" />
+              WISE² AI Phone
+            </p>
+            <p className="mt-1 text-sm text-white/50">
+              {DEMO_PHONE_CONFIG.phoneNumber} · Cherry answers calls & captures leads
+            </p>
+          </div>
+          <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-[10px] font-bold uppercase text-emerald-300">
+            Live
+          </span>
+        </Link>
+      </GlassCard>
+
       <GlassCard>
         <p className="text-sm text-white/70">Square · Shopify · QuickBooks</p>
         <p className="mt-2 text-xs text-white/40">Payment and accounting integrations — coming next</p>

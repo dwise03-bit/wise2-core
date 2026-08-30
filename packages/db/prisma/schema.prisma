@@ -2595,6 +2595,12 @@ model Tenant {
   cherryCountEventInventory      CherryCountEventInventory[]
   cherryCountSales               CherryCountSale[]
   cherryCountCustomers           CherryCountCustomer[]
+  cherryCountPhoneConfig         CherryCountPhoneConfig?
+  cherryCountPhoneCalls          CherryCountPhoneCall[]
+
+  // WISE² AI Phone — tenant-scoped receptionist
+  aiPhoneConfig                  AiPhoneConfig?
+  aiPhoneCalls                   AiPhoneCall[]
 
   // WISE Defense Safety Radar + Comms Grid
   wiseDefenseMemberships WiseDefenseMembership[]
@@ -6007,4 +6013,99 @@ model CherryCountCustomer {
 
   @@index([tenantId, name])
   @@map("cherry_count_customers")
+}
+
+model CherryCountPhoneConfig {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique @map("tenant_id")
+  enabled            Boolean  @default(true)
+  phoneNumber        String?  @map("phone_number")
+  greeting           String   @default("Hey love! Thanks for calling. I'm Cherry, your AI boutique assistant.") @db.Text
+  afterHoursMessage  String?  @map("after_hours_message") @db.Text
+  businessHours      Json     @default("{}") @map("business_hours")
+  transferNumber     String?  @map("transfer_number")
+  smsEnabled         Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
+  aiPersona          String   @default("Cherry") @map("ai_persona")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("cherry_count_phone_configs")
+}
+
+model CherryCountPhoneCall {
+  id              String   @id @default(cuid())
+  tenantId        String   @map("tenant_id")
+  callerNumber    String   @map("caller_number")
+  callerName      String?  @map("caller_name")
+  direction       String   @default("INBOUND")
+  status          String   @default("COMPLETED")
+  durationSeconds Int?     @map("duration_seconds")
+  intent          String?
+  outcome         String?
+  summary         String?  @db.Text
+  transcript      String?  @db.Text
+  customerId      String?  @map("customer_id")
+  startedAt       DateTime @default(now()) @map("started_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, startedAt])
+  @@map("cherry_count_phone_calls")
+}
+
+model AiPhoneConfig {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique @map("tenant_id")
+  enabled            Boolean  @default(true)
+  phoneNumber        String?  @map("phone_number")
+  greeting           String   @default("Thanks for calling. I'm the WISE² assistant. I can look up your account, book a visit, or take a message. How can I help you today?") @db.Text
+  afterHoursMessage  String?  @map("after_hours_message") @db.Text
+  businessHours      Json     @default("{}") @map("business_hours")
+  timezone           String   @default("America/New_York")
+  transferNumber     String?  @map("transfer_number")
+  smsEnabled         Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
+  recordingEnabled   Boolean  @default(true) @map("recording_enabled")
+  aiPersona          String   @default("WISE²") @map("ai_persona")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([phoneNumber])
+  @@map("ai_phone_configs")
+}
+
+model AiPhoneCall {
+  id              String    @id @default(cuid())
+  tenantId        String    @map("tenant_id")
+  callSid         String?   @unique @map("call_sid")
+  sessionId       String?   @map("session_id")
+  callerNumber    String    @map("caller_number")
+  callerName      String?   @map("caller_name")
+  inboundNumber   String?   @map("inbound_number")
+  direction       String    @default("INBOUND")
+  status          String    @default("IN_PROGRESS")
+  durationSeconds Int?      @map("duration_seconds")
+  intent          String?
+  outcome         String?
+  summary         String?   @db.Text
+  transcript      String?   @db.Text
+  customerId      String?   @map("customer_id")
+  leadId          String?   @map("lead_id")
+  conversationId  String?   @map("conversation_id")
+  startedAt       DateTime  @default(now()) @map("started_at")
+  endedAt         DateTime? @map("ended_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, startedAt])
+  @@index([tenantId, callerNumber])
+  @@map("ai_phone_calls")
 }

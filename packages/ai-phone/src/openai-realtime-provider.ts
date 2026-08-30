@@ -1,19 +1,26 @@
+import OpenAI, { toFile } from 'openai';
 import { VoiceModelProvider, ChatMessage, AIResponse, ToolDefinition } from './types';
+import { VoiceModelMock } from './voice-model-mock';
 
 interface OpenAIRealtimeConfig {
   apiKey: string;
   model?: string;
   temperature?: number;
+  ttsVoice?: string;
 }
 
 export class OpenAIRealtimeProvider implements VoiceModelProvider {
-  readonly name = 'OpenAI Realtime';
-  private config: OpenAIRealtimeConfig;
+  readonly name = 'OpenAI';
+  private client: OpenAI;
   private model: string;
+  private temperature: number;
+  private ttsVoice: string;
 
   constructor(config: OpenAIRealtimeConfig) {
-    this.config = config;
-    this.model = config.model || 'gpt-4-realtime-preview-20241217';
+    this.client = new OpenAI({ apiKey: config.apiKey });
+    this.model = config.model || process.env.OPENAI_PHONE_MODEL || 'gpt-4o-mini';
+    this.temperature = config.temperature ?? 0.4;
+    this.ttsVoice = config.ttsVoice || 'alloy';
   }
 
   async chat(
@@ -22,148 +29,79 @@ export class OpenAIRealtimeProvider implements VoiceModelProvider {
     messageHistory: ChatMessage[],
     tools: ToolDefinition[]
   ): Promise<AIResponse> {
-    // Build messages for API call
-    const messages = [
-      {
-        role: 'system' as const,
-        content: systemPrompt,
-      },
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      { role: 'system', content: systemPrompt },
       ...messageHistory.map((m) => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
     ];
 
-    // Build tool definitions for function calling
-    const toolDefinitions = tools.map((tool) => ({
-      type: 'function' as const,
+    const toolDefinitions: OpenAI.Chat.ChatCompletionTool[] = tools.map((tool) => ({
+      type: 'function',
       function: {
         name: tool.name,
         description: tool.description,
-        parameters: tool.inputSchema,
+        parameters: tool.inputSchema as OpenAI.FunctionParameters,
       },
     }));
 
-    try {
-      // In production, this would make an actual API call to OpenAI
-      // using the Realtime API for streaming responses
-      const response = await this.callOpenAIRealtime(
-        messages,
-        toolDefinitions,
-        sessionId
-      );
+    const response = await this.client.chat.completions.create({
+      model: this.model,
+      temperature: this.temperature,
+      messages,
+      tools: toolDefinitions.length > 0 ? toolDefinitions : undefined,
+      user: sessionId,
+    });
 
-      return response;
-    } catch (error) {
-      throw new Error(
-        `OpenAI API error: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
-  async transcribe(audioBuffer: Buffer): Promise<string> {
-    try {
-      // In production, use OpenAI's Whisper API for transcription
-      // const formData = new FormData();
-      // formData.append('file', new Blob([audioBuffer]), 'audio.wav');
-      // formData.append('model', 'whisper-1');
-
-      // const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      //   method: 'POST',
-      //   headers: { 'Authorization': `Bearer ${this.config.apiKey}` },
-      //   body: formData,
-      // });
-
-      // const data = await response.json();
-      // return data.text;
-
-      return 'Mock transcription of audio';
-    } catch (error) {
-      throw new Error(
-        `Transcription error: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
-  async synthesize(text: string): Promise<Buffer> {
-    try {
-      // In production, use OpenAI's TTS API
-      // const response = await fetch('https://api.openai.com/v1/audio/speech', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${this.config.apiKey}`,
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     model: 'tts-1-hd',
-      //     input: text,
-      //     voice: 'alloy',
-      //   }),
-      // });
-
-      // return Buffer.from(await response.arrayBuffer());
-
-      return Buffer.from('mock audio data');
-    } catch (error) {
-      throw new Error(
-        `Speech synthesis error: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
-  private async callOpenAIRealtime(
-    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
-    tools: Array<{ type: 'function'; function: any }>,
-    sessionId: string
-  ): Promise<AIResponse> {
-    // Mock implementation for Phase 2
-    // In production, this connects to OpenAI Realtime API via WebSocket
-
-    const lastMessage = messages[messages.length - 1]?.content || '';
-
-    // Simulate AI decision-making based on message content
-    let toolCalls: Array<{ id: string; name: string; input: Record<string, unknown> }> = [];
-    let responseText = '';
-
-    if (lastMessage.includes('book') || lastMessage.includes('appointment')) {
-      responseText = 'I can help you book an appointment. Let me check availability.';
-      toolCalls = [
-        {
-          id: 'call_' + Math.random().toString(36).substr(2, 9),
-          name: 'check_availability',
-          input: {
-            serviceType: 'general_consultation',
-            date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-          },
-        },
-      ];
-    } else if (lastMessage.includes('agent') || lastMessage.includes('transfer')) {
-      responseText = 'I can transfer you to a human agent.';
-      toolCalls = [
-        {
-          id: 'call_' + Math.random().toString(36).substr(2, 9),
-          name: 'request_transfer',
-          input: { reason: 'Customer requested human agent' },
-        },
-      ];
-    } else if (lastMessage.includes('phone') || lastMessage.includes('account')) {
-      responseText = 'Let me look up your account.';
-      toolCalls = [
-        {
-          id: 'call_' + Math.random().toString(36).substr(2, 9),
-          name: 'identify_customer',
-          input: { phone: '+15551234567' },
-        },
-      ];
-    } else {
-      responseText = 'How can I assist you today?';
-    }
+    const choice = response.choices[0];
+    const toolCalls = (choice?.message?.tool_calls ?? [])
+      .filter((call) => call.type === 'function')
+      .map((call) => {
+        let input: Record<string, unknown> = {};
+        try {
+          input = JSON.parse(call.function.arguments || '{}') as Record<string, unknown>;
+        } catch {
+          input = {};
+        }
+        return {
+          id: call.id,
+          name: call.function.name,
+          input,
+        };
+      });
 
     return {
-      text: responseText,
+      text: choice?.message?.content?.trim() || (toolCalls.length > 0 ? '' : 'How can I help you today?'),
       toolCalls,
-      confidence: 0.92,
+      confidence: 0.9,
       stopReason: toolCalls.length > 0 ? 'tool_use' : 'stop_sequence',
     };
   }
+
+  async transcribe(audioBuffer: Buffer): Promise<string> {
+    const file = await toFile(audioBuffer, 'caller.wav');
+    const result = await this.client.audio.transcriptions.create({
+      file,
+      model: 'whisper-1',
+    });
+    return result.text;
+  }
+
+  async synthesize(text: string): Promise<Buffer> {
+    const response = await this.client.audio.speech.create({
+      model: 'tts-1',
+      voice: this.ttsVoice as 'alloy',
+      input: text,
+    });
+    return Buffer.from(await response.arrayBuffer());
+  }
+}
+
+export function createVoiceModel(apiKey?: string): VoiceModelProvider {
+  const key = apiKey ?? process.env.OPENAI_API_KEY;
+  if (key) {
+    return new OpenAIRealtimeProvider({ apiKey: key });
+  }
+  return new VoiceModelMock();
 }

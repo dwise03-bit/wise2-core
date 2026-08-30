@@ -28,8 +28,8 @@ describe('BusinessOsMobileService', () => {
     expect(service.getMobileCapabilities({ role: 'VIEWER' }).trading).toBe(false);
   });
 
-  it('returns empty conversations until providers are wired', () => {
-    expect(service.getMobileConversations()).toEqual([]);
+  it('returns empty conversations until a tenant phone line is wired', async () => {
+    await expect(service.getMobileConversations()).resolves.toEqual([]);
   });
 
   it('deduplicates HVAC drafts by idempotency key', () => {
