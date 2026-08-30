@@ -21,6 +21,15 @@ docker compose -f docker-compose.prod.yml up -d --force-recreate api postgres re
 
 Also rotate MongoDB password if used (`MONGODB_PASSWORD`).
 
+### Automated rotation script (VPS)
+
+From the repo on the VPS, after merge:
+
+```bash
+bash scripts/rotate-vps-credentials.sh   # requires typing ROTATE twice
+bash scripts/deploy-command-center.sh    # rebuilds PWA-enabled Command Center
+```
+
 ### 2. Discord webhooks
 
 In Discord Developer Portal / channel settings:

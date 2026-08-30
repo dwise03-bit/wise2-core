@@ -1,5 +1,5 @@
 const CACHE = 'wise2-command-center-v1';
-const PRECACHE = ['/', '/dashboard', '/manifest.webmanifest', '/icons/icon.svg'];
+const PRECACHE = ['/', '/dashboard', '/offline.html', '/manifest.webmanifest', '/icons/icon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -19,6 +19,13 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/offline.html')),
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

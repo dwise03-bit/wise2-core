@@ -48,3 +48,6 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Secret pattern scan (tracked source)
+        run: bash scripts/check-no-secrets.sh
