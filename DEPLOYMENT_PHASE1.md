@@ -195,20 +195,20 @@ For issues, check:
 ## Environment Variables Reference
 
 ```bash
-# Security
-JWT_SECRET=fb034b9d3cf0b6532a98985d440299141e279c526af5d5a21791be102a49ac5a
+# Security — generate on the server: openssl rand -hex 32 (JWT) or openssl rand -base64 32
+JWT_SECRET=<generate-with-openssl-rand-hex-32>
 CORS_ORIGIN=https://wise2.net,https://www.wise2.net,https://dashboard.wise2.net
 
 # Database
 DB_USER=wise2_prod_user
-DB_PASSWORD=M1vonuuwzyeNmiEN7Z4FpXsH17+so/nQ
+DB_PASSWORD=<generate-with-openssl-rand-base64-32>
 DB_NAME=wise2_core_prod
 
 # Redis
-REDIS_PASSWORD=0LicvPUf6P23GnrQ2QG4Y9vjUQiBHzb+
+REDIS_PASSWORD=<generate-with-openssl-rand-base64-32>
 
 # Monitoring
-GRAFANA_PASSWORD=5m29MRWL1GA5NChJ7twAdA==
+GRAFANA_PASSWORD=<generate-with-openssl-rand-base64-24>
 GRAFANA_ADMIN_USER=admin
 
 # APIs

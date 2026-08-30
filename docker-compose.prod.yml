@@ -12,7 +12,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_DB: wise2_prod
       POSTGRES_USER: wise2
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-wise2}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
@@ -38,8 +38,8 @@ services:
       NODE_ENV: production
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgresql://wise2:${DATABASE_PASSWORD:-wise2}@postgres:5432/wise2_prod
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/0
+      DATABASE_URL: postgresql://wise2:${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}@postgres:5432/wise2_prod
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD is required}@redis:6379/0
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       STRIPE_STARTER_PRICE_ID: ${STRIPE_STARTER_PRICE_ID}
@@ -132,7 +132,7 @@ services:
       JOBBER_ACCESS_TOKEN: ${JOBBER_ACCESS_TOKEN:-}
       JOBBER_SYNC_INTERVAL: ${JOBBER_SYNC_INTERVAL:-15}
     ports:
-      - "3020:3020"
+      - "127.0.0.1:3020:3020"
     networks:
       - wise2
     healthcheck:
@@ -150,7 +150,7 @@ services:
       NEXT_PUBLIC_API_URL: ${API_BASE_URL}
       NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     ports:
-      - "3005:3005"
+      - "127.0.0.1:3005:3005"
     depends_on:
       - api
     networks:
@@ -218,7 +218,7 @@ services:
     image: redis:7-alpine
     container_name: wise2-redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis123}
+    command: redis-server --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
@@ -236,8 +236,8 @@ services:
     image: nginx:alpine
     container_name: wise2-nginx
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "127.0.0.1:8080:80"
+      - "127.0.0.1:8443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

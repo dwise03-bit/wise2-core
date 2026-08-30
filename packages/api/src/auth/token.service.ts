@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './session.entity';
 import { UserRole } from './user.entity';
 import * as crypto from 'crypto';
+import { resolveJwtSecret } from '../common/jwt-secret';
 
 export interface TokenPayload {
   sub: string;
@@ -23,7 +24,7 @@ export interface TokenPayload {
 export class TokenService {
   private readonly accessTokenExpiry = '15m';
   private readonly refreshTokenExpiry = '7d';
-  private readonly jwtSecret = this.configService.get<string>('JWT_SECRET') || 'dev-secret';
+  private readonly jwtSecret = resolveJwtSecret(this.configService);
   private readonly algorithm = 'HS256';
 
   constructor(

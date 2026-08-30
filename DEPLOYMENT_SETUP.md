@@ -175,18 +175,18 @@ mkdir -p ~/backups
 ### Initialize Environment Files
 
 ```bash
-# Create production .env file
-cat > ~/.env.production << 'EOF'
-# Database
-POSTGRES_ADMIN_PASSWORD=lOk8jv7si/gh5JG8QdweC29ujgBe3tywupKPr9V81bo=
-POSTGRES_APP_PASSWORD=9XAMMWLkk9iz3Ri0obLoVrj7bXnbYTeIrvqWWE3KnU0=
-MONGODB_PASSWORD=kLwy8Ap6VA/KGtBGF1ZuIcnfijGXj86yPtAUO9e+xH4=
-REDIS_PASSWORD=fx9yaArb2dwwkpRFoYWyVuY67gtRYVzxNNE7TiShn8c=
+# Create production .env file — generate secrets on the server, never commit them
+cat > ~/.env.production << EOF
+# Database (generate each with: openssl rand -base64 32)
+POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)
+POSTGRES_APP_PASSWORD=$(openssl rand -base64 32)
+MONGODB_PASSWORD=$(openssl rand -base64 32)
+REDIS_PASSWORD=$(openssl rand -base64 32)
 
 # Security
-JWT_SECRET=tiBT249wJnxzWVFaIICxXXEbxs8dwE1CBdwJhIRzts4=
-OPEN_WEBUI_SECRET_KEY=uf8ADxoAE4X9NUCedN0HBiR8s16vZduzf4lvhyhKED8=
-GRAFANA_PASSWORD=jJy+D5XhmeBihckj4wqmp2VxQgMxyyGcR9dhoQQOp7Q=
+JWT_SECRET=$(openssl rand -base64 48)
+OPEN_WEBUI_SECRET_KEY=$(openssl rand -base64 32)
+GRAFANA_PASSWORD=$(openssl rand -base64 24)
 
 # URLs
 NEXT_PUBLIC_API_URL=https://api.wise2.net

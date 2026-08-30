@@ -23,6 +23,7 @@ import { DashboardController } from './controllers/dashboard.controller';
 import { KnowledgeController } from './controllers/knowledge.controller';
 import { WorkflowController } from './controllers/workflow.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { resolveJwtSecret } from '../common/jwt-secret';
 import { User, UserSchema } from './schemas/user.schema';
 import { Workspace, WorkspaceSchema } from './schemas/workspace.schema';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
@@ -54,7 +55,7 @@ import { WorkflowExecution, WorkflowExecutionSchema } from './schemas/workflow-e
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET') || 'your-secret-key-change-in-production',
+        secret: resolveJwtSecret(configService),
         signOptions: { algorithm: 'HS256' },
       }),
     }),
