@@ -4,13 +4,13 @@
  * Creates webhooks in all bot channels and saves URLs to .env.webhooks
  */
 
-require("dotenv").config();
+require("./load-env");
 const { Client, GatewayIntentBits } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
 
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const GUILD_ID = process.env.DISCORD_GUILD_ID;
+const GUILD_ID = process.env.DISCORD_GUILD_ID || "1512093487145680926";
 
 const CHANNELS_TO_CREATE = [
   "deployments",

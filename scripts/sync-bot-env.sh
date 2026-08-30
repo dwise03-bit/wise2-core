@@ -63,4 +63,11 @@ if is_placeholder "$(get_val DISCORD_GUILD_ID "$bot_env")"; then
   echo "  set DISCORD_GUILD_ID"
 fi
 
+if is_placeholder "$(get_val COMFYUI_API_URL "$bot_env")"; then
+  grep -v "^COMFYUI_API_URL=" "$bot_env" > "${bot_env}.tmp" || true
+  echo "COMFYUI_API_URL=http://100.68.145.5:8188" >> "${bot_env}.tmp"
+  mv "${bot_env}.tmp" "$bot_env"
+  echo "  set COMFYUI_API_URL (Tailscale default)"
+fi
+
 echo "Bot env: ${bot_env}"

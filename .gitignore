@@ -162,6 +162,7 @@ Build/
 
 # generated STL exports
 stl_output/
+comfyui-output/
 
 # sliced output
 print_ready/*.gcode

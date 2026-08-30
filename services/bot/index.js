@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("./load-env");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -19,6 +19,7 @@ const cron = require("node-cron");
 const { exec, execFile } = require("child_process");
 const webhookHandler = require("./webhook-handler");
 const { initializeScheduledTasks } = require("./scheduled-tasks");
+const comfyui = require("./lib/comfyui");
 const execFileAsync = promisify(execFile);
 
 const client = new Client({
@@ -30,20 +31,24 @@ const client = new Client({
   ],
 });
 
-// Express webhook server
-const app = express();
-const WEBHOOK_PORT = process.env.WEBHOOK_PORT || 3002;
-app.use(express.json());
-app.use("/webhooks", webhookHandler);
+// Express webhook server (skip in deploy-only mode)
+const DEPLOY_ONLY = process.env.WISE2_DISCORD_DEPLOY_ONLY === "1";
+let server;
+if (!DEPLOY_ONLY) {
+  const app = express();
+  const WEBHOOK_PORT = process.env.WEBHOOK_PORT || 3002;
+  app.use(express.json());
+  app.use("/webhooks", webhookHandler);
 
-const server = app.listen(WEBHOOK_PORT, () => {
-  console.log(`🌐 Webhook server running on port ${WEBHOOK_PORT}`);
-});
+  server = app.listen(WEBHOOK_PORT, () => {
+    console.log(`🌐 Webhook server running on port ${WEBHOOK_PORT}`);
+  });
+}
 
 // Configuration
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const CLIENT_ID = process.env.DISCORD_CLIENT_ID;
-const GUILD_ID = process.env.DISCORD_GUILD_ID;
+const CLIENT_ID = process.env.DISCORD_CLIENT_ID || "1512638268225622147";
+const GUILD_ID = process.env.DISCORD_GUILD_ID || "1512093487145680926";
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "../../data");
 const REPO_ROOT = path.join(__dirname, "../..");
 const ADS_SCHEDULES_PATH = path.join(DATA_DIR, "ads-schedules.json");
@@ -1934,16 +1939,16 @@ ${description}
       description: "Schedule recurring WISE² ad drops",
       options: [
         {
-          name: "name",
-          description: "Schedule name",
-          type: 3,
-          required: false,
-        },
-        {
           name: "cron",
           description: "Cron expression, e.g. 0 9 * * 1-5",
           type: 3,
           required: true,
+        },
+        {
+          name: "name",
+          description: "Schedule name",
+          type: 3,
+          required: false,
         },
         {
           name: "timezone",
@@ -4528,6 +4533,118 @@ DISCORD_WEBHOOK_STATUS=${results.webhooks.status || "https://discord.com/api/web
       await interaction.reply({ embeds: [embed] });
     },
   },
+
+  "generate-image": {
+    data: {
+      name: "generate-image",
+      description: "Generate a WISE² branded SDXL image via ComfyUI GPU",
+      options: [
+        {
+          name: "prompt",
+          description: "What to generate",
+          type: 3,
+          required: true,
+        },
+        {
+          name: "width",
+          description: "Width (default 1024)",
+          type: 4,
+          required: false,
+        },
+        {
+          name: "height",
+          description: "Height (default 1024)",
+          type: 4,
+          required: false,
+        },
+      ],
+    },
+    async execute(interaction) {
+      const prompt = interaction.options.getString("prompt");
+      const width = interaction.options.getInteger("width") || 1024;
+      const height = interaction.options.getInteger("height") || 1024;
+
+      await interaction.deferReply();
+
+      if (!(await comfyui.healthCheck())) {
+        return interaction.editReply({
+          embeds: [{
+            color: 0xff5535,
+            title: "ComfyUI offline",
+            description: `GPU engine unreachable at ${comfyui.COMFYUI_API_URL}. Start ComfyUI on gpu-nmls-1.`,
+          }],
+        });
+      }
+
+      try {
+        const { promptId, images } = await comfyui.generateImage(prompt, {
+          width,
+          height,
+          prefix: "wise2-discord",
+        });
+        const files = images.map((img) =>
+          new AttachmentBuilder(img.buffer, { name: img.filename })
+        );
+        await interaction.editReply({
+          content: `Generated \`${promptId}\` via ComfyUI`,
+          files,
+        });
+      } catch (error) {
+        await interaction.editReply({
+          embeds: [{
+            color: 0xff0000,
+            title: "Generation failed",
+            description: error.message,
+          }],
+        });
+      }
+    },
+  },
+
+  "generate-campaign": {
+    data: {
+      name: "generate-campaign",
+      description: "Run PIFF CITY × WISE² 5-post Instagram batch on GPU",
+    },
+    async execute(interaction) {
+      await interaction.deferReply();
+      if (!(await comfyui.healthCheck())) {
+        return interaction.editReply("ComfyUI offline — cannot run campaign batch.");
+      }
+      try {
+        const script = path.join(REPO_ROOT, "scripts/piff-city-generator.py");
+        await execFileAsync("python3", [script], {
+          cwd: REPO_ROOT,
+          env: { ...process.env, COMFYUI_API_URL: comfyui.COMFYUI_API_URL },
+          timeout: 600000,
+        });
+        await interaction.editReply(
+          "Campaign batch submitted. Images save to `instagram_posts/` on the host running the bot."
+        );
+      } catch (error) {
+        await interaction.editReply(`Campaign failed: ${error.message}`);
+      }
+    },
+  },
+
+  "comfyui-status": {
+    data: {
+      name: "comfyui-status",
+      description: "Check ComfyUI GPU engine health",
+    },
+    async execute(interaction) {
+      const ok = await comfyui.healthCheck();
+      await interaction.reply({
+        embeds: [{
+          color: ok ? 0x39ff14 : 0xff5535,
+          title: ok ? "ComfyUI online" : "ComfyUI offline",
+          description: `Engine: ${comfyui.COMFYUI_API_URL}`,
+          footer: { text: "WISE² GPU · SDXL 1.0 · gpu-nmls-1" },
+          timestamp: new Date(),
+        }],
+      });
+    },
+  },
 };
 
 // Register commands
@@ -4555,8 +4672,7 @@ async function deployCommands() {
       `✅ Successfully reloaded ${data.length} application (/) commands.`
     );
   } catch (error) {
-    console.error("Failed to deploy commands:", error);
-    process.exit(1);
+    console.error("Failed to deploy commands:", error.message || error);
   }
 }
 
@@ -4671,20 +4787,41 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// Login
-client.login(BOT_TOKEN).catch((error) => {
-  console.error("Failed to login:", error);
-  process.exit(1);
-});
+// Login (or REST-only command deploy)
+if (DEPLOY_ONLY) {
+  deployCommands()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+} else {
+  client.login(BOT_TOKEN).catch((error) => {
+    const msg = String(error.message || error);
+    console.error("Failed to login:", msg);
+    if (msg.includes("sessions remaining")) {
+      const reset = msg.match(/resets at ([0-9TZ.:-]+)/i);
+      console.error(
+        reset
+          ? `Discord session limit — resets at ${reset[1]}. Run: bash scripts/start-discord-bot-when-ready.sh`
+          : "Discord session limit — run: bash scripts/start-discord-bot-when-ready.sh"
+      );
+    }
+    const finish = () => process.exit(0);
+    if (server) server.close(finish);
+    else finish();
+  });
+}
 
 // Graceful shutdown
 process.on("SIGINT", () => {
   console.log("Shutting down...");
   client.destroy();
-  server.close(() => {
-    console.log("Webhook server closed");
+  if (server) {
+    server.close(() => {
+      console.log("Webhook server closed");
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 // ============================================================================

@@ -140,7 +140,7 @@ def generate_post(post_data: dict) -> bool:
     try:
         # Submit generation
         response = requests.post(
-            f"{COMFY_API}/api/prompt",
+            f"{COMFY_API}/prompt",
             json=payload,
             timeout=30,
         )
