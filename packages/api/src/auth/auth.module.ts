@@ -9,6 +9,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { EmailModule } from '../email/email.module';
 import { EventsModule } from '../analytics/events.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { resolveJwtSecret } from '../common/jwt-secret';
 
 @Module({
   imports: [
@@ -19,9 +20,7 @@ import { PrismaModule } from '../prisma/prisma.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret:
-          configService.get<string>('JWT_SECRET') ||
-          'dev-secret-change-in-production',
+        secret: resolveJwtSecret(configService),
         signOptions: { expiresIn: '86400s' },
       }),
     }),

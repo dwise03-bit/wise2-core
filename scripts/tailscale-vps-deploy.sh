@@ -1,6 +1,6 @@
 #!/bin/bash
 # VPS Tailscale + Google Voice Deployment
-# Run on VPS: ssh dwise@173.208.147.165
+# Run on VPS via Tailscale: ssh dwise@gpu-nmls-1.tail44396d.ts.net
 
 set -e
 

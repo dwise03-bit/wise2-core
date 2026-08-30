@@ -23,10 +23,17 @@ interface User {
 }
 
 export class AuthMiddleware {
-  private jwtSecret: string = process.env.JWT_SECRET || 'your-secret-key';
+  private jwtSecret: string;
   private apiKeys: Map<string, User> = new Map();
 
   constructor() {
+    this.jwtSecret = process.env.JWT_SECRET?.length
+      ? process.env.JWT_SECRET
+      : process.env.NODE_ENV === 'production'
+        ? (() => {
+            throw new Error('JWT_SECRET must be set in production');
+          })()
+        : 'dev-secret-local-only';
     this.loadApiKeys();
   }
 

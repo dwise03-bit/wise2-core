@@ -1,0 +1,50 @@
+# WISE² SSH over Tailscale — copy to ~/.ssh/config
+# Usage: ssh wise2-vps
+
+Host wise2-vps gpu-nmls gpu-nmls-1
+  HostName gpu-nmls-1.tail44396d.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+
+Host wise2-mac daniels-macbook
+  HostName daniels-macbook-pro.tail44396d.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-iphone
+  HostName iphone175.tail44396d.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-android razr
+  HostName motorola-razr-2025-xt2553v.tail44396d.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-byte byte-mini big-byte
+  HostName big-byte.tail44396d.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-router
+  HostName gl-mt3600be.tail44396d.ts.net
+  User root
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-darrin darrin
+  HostName darrinwisejr.tail1dc3bd.ts.net
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+
+Host wise2-cloud-agent
+  HostName wise2-cloud-agent.tail44396d.ts.net
+  User ubuntu
+  IdentityFile ~/.ssh/id_ed25519
+
+# Prefer Tailscale; fall back to public IP only when mesh is down
+Host wise2-vps-public
+  HostName 173.208.147.165
+  User dwise
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes

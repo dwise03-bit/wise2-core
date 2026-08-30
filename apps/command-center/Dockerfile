@@ -43,6 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf 
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/command-center/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/command-center/.next/static ./apps/command-center/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/command-center/public ./apps/command-center/public
 
 USER nextjs
 

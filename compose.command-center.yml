@@ -34,3 +34,8 @@ services:
       - "127.0.0.1:3004:3000"
     networks:
       - wise2
+
+networks:
+  wise2:
+    external: true
+    name: wise2-core_wise2

@@ -134,7 +134,7 @@ For each channel, create a webhook:
 5. Click "Copy Webhook URL"
 
 The webhook URL looks like:
-https://discord.com/api/webhooks/123456789/abcdef...
+https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
   `);
 
   const webhooks = {};

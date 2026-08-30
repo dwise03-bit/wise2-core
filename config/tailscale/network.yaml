@@ -1,0 +1,75 @@
+# WISE² Tailscale network registry
+# MagicDNS: <hostname>.<tailnet>
+# Do not store auth keys or secrets in this file.
+
+tailnet:
+  primary: tail44396d.ts.net
+  # Darrin may appear on a linked tailnet until node sharing is configured
+  linked:
+    - tail1dc3bd.ts.net
+
+ssh:
+  default_user: dwise
+  key_type: ed25519
+  password_auth: false
+
+devices:
+  vps_gpu:
+    hostname: gpu-nmls-1
+    fqdn: gpu-nmls-1.tail44396d.ts.net
+    public_ip: 173.208.147.165
+    owner: dwise
+    roles: [ai-engine, docker, production]
+    ssh_user: dwise
+    services:
+      - { name: api, port: 3010, check: http://127.0.0.1:3010/api/health }
+      - { name: command-center, port: 3004, check: http://127.0.0.1:3004/login }
+      - { name: ollama, port: 11434, check: http://127.0.0.1:11434/api/tags }
+      - { name: open-webui, port: 3020, check: http://127.0.0.1:3020 }
+
+  macbook:
+    hostname: daniels-macbook-pro
+    fqdn: daniels-macbook-pro.tail44396d.ts.net
+    owner: dwise
+    roles: [dev, deploy, cursor]
+
+  iphone:
+    hostname: iphone175
+    fqdn: iphone175.tail44396d.ts.net
+    owner: dwise
+    roles: [mobile, pwa, approvals]
+
+  android:
+    hostname: motorola-razr-2025-xt2553v
+    fqdn: motorola-razr-2025-xt2553v.tail44396d.ts.net
+    owner: dwise
+    roles: [mobile, fieldtech, termux]
+
+  byte_mini:
+    hostname: big-byte
+    fqdn: big-byte.tail44396d.ts.net
+    owner: dwise
+    roles: [edge, esp32, voice]
+
+  router:
+    hostname: gl-mt3600be
+    fqdn: gl-mt3600be.tail44396d.ts.net
+    roles: [network, failover]
+
+  darrin:
+    hostname: darrinwisejr
+    fqdn: darrinwisejr.tail1dc3bd.ts.net
+    owner: darrinwisejr@gmail.com
+    roles: [owner, mobile, audit]
+    note: Invite/share from primary tailnet or join same tailnet in admin console
+
+  cloud_agent:
+    hostname: wise2-cloud-agent
+    fqdn: wise2-cloud-agent.tail44396d.ts.net
+    roles: [ci, automation]
+    note: Ephemeral node for Cursor Cloud Agents; set TS_AUTHKEY in environment secrets
+
+public_urls:
+  command_center: https://command.wise2.net
+  api: https://api.wise2.net
+  website: https://wise2.net

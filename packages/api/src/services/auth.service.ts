@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { resolveJwtSecret } from '../common/jwt-secret';
 
 /**
  * Authentication Service
  * JWT generation, validation, and user session management
  */
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-change-in-production';
+const JWT_SECRET = resolveJwtSecret();
 const JWT_EXPIRY = '7d';
 
 export interface AuthToken {

@@ -21,6 +21,8 @@ const CHANNELS_TO_CREATE = [
   "status",
 ];
 
+const ROTATE = process.argv.includes("--rotate");
+
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildWebhooks],
 });
@@ -72,9 +74,17 @@ async function createWebhooks() {
           console.log(`✅ Channel #${channelName} created`);
         }
 
-        // Check if webhook already exists
         const existingWebhooks = await channel.fetchWebhooks();
-        let webhook = existingWebhooks.find((wh) => wh.name === "WISE² Bot");
+        const existing = existingWebhooks.filter((wh) => wh.name === "WISE² Bot");
+
+        if (ROTATE && existing.length > 0) {
+          for (const wh of existing) {
+            await wh.delete("WISE² credential rotation");
+            console.log(`🗑️  #${channelName}: Deleted old webhook`);
+          }
+        }
+
+        let webhook = ROTATE ? null : existing[0];
 
         if (webhook) {
           console.log(`📌 #${channelName}: Webhook exists (reusing)`);

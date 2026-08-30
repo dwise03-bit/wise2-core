@@ -3,7 +3,7 @@
  * Setup Consulting Products in Stripe & Database
  *
  * Usage:
- *   export STRIPE_SECRET_KEY=sk_live_xxxxx
+ *   export STRIPE_SECRET_KEY=<your-stripe-secret-key>
  *   export DATABASE_URL=postgresql://...
  *   node scripts/setup-consulting-stripe.js
  */
