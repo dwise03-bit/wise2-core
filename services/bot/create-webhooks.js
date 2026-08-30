@@ -99,7 +99,29 @@ async function createWebhooks() {
       }
     }
 
-    // Save webhooks to file
+    // Save webhooks to file (preserve existing URLs on failure)
+    const envPath = path.join(__dirname, ".env.webhooks");
+    const existing = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8") : "";
+    const prev = {};
+    for (const line of existing.split("\n")) {
+      const m = line.match(/^DISCORD_WEBHOOK_([A-Z_]+)=(.+)$/);
+      if (m && !m[2].startsWith("ERROR:")) prev[m[1].toLowerCase().replace(/_/g, "-")] = m[2].trim();
+    }
+    const keyMap = {
+      deployments: "DEPLOYMENTS",
+      alerts: "ALERTS",
+      builds: "BUILDS",
+      decisions: "DECISIONS",
+      "daily-sync": "DAILY_SYNC",
+      status: "STATUS",
+    };
+    for (const [ch, envKey] of Object.entries(keyMap)) {
+      const val = webhooks[ch];
+      if (!val || String(val).startsWith("ERROR:")) {
+        if (prev[ch]) webhooks[ch] = prev[ch];
+      }
+    }
+
     const envContent = `# Generated webhooks (copy to .env)
 DISCORD_WEBHOOK_DEPLOYMENTS=${webhooks.deployments || "https://discord.com/api/webhooks/..."}
 DISCORD_WEBHOOK_ALERTS=${webhooks.alerts || "https://discord.com/api/webhooks/..."}
@@ -109,7 +131,6 @@ DISCORD_WEBHOOK_DAILY_SYNC=${webhooks["daily-sync"] || "https://discord.com/api/
 DISCORD_WEBHOOK_STATUS=${webhooks.status || "https://discord.com/api/webhooks/..."}
 `;
 
-    const envPath = path.join(__dirname, ".env.webhooks");
     fs.writeFileSync(envPath, envContent);
     console.log("\n✅ Webhooks saved to .env.webhooks");
 
