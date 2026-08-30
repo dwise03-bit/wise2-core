@@ -4,7 +4,7 @@ Secrets were removed from the repository in this change set. **Production creden
 
 ## Rotate immediately (Red — confirm before running on VPS)
 
-SSH to `gpu-nmls-1.tail44396d.ts.net` as `dwise`, then:
+SSH via Tailscale to `gpu-nmls-1.tail44396d.ts.net` as `dwise`, then:
 
 ### 1. Database and cache
 

@@ -91,10 +91,7 @@ mkdir -p ~/wise2-scripts
 # VPS access script
 cat > ~/wise2-scripts/connect-vps.sh << 'EOF'
 #!/bin/bash
-echo "What is the VPS Tailscale IP? (format: 100.64.x.x)"
-read VPS_IP
-echo "Connecting to VPS at $VPS_IP..."
-ssh dwise@$VPS_IP
+ssh dwise@gpu-nmls-1.tail44396d.ts.net
 EOF
 chmod +x ~/wise2-scripts/connect-vps.sh
 
@@ -115,8 +112,7 @@ echo "=== WISE² Health Check via Tailscale ==="
 echo ""
 
 echo "VPS Status:"
-read -p "Enter VPS Tailscale IP: " VPS_IP
-curl -s http://$VPS_IP:3001/webhooks/google-voice/health 2>/dev/null && echo "" && echo "✓ VPS OK" || echo "✗ VPS Unreachable"
+curl -s --connect-timeout 5 http://gpu-nmls-1.tail44396d.ts.net:3010/api/health 2>/dev/null && echo "" && echo "✓ VPS API OK" || echo "✗ VPS API unreachable (try: ssh dwise@gpu-nmls-1.tail44396d.ts.net)"
 
 echo ""
 echo "Raspberry Pi Status:"
@@ -129,7 +125,7 @@ tailscale status
 EOF
 chmod +x ~/wise2-scripts/health-check.sh
 
-echo -e "${GREEN}✓ Scripts created in ~/wise2-scripts/{{NC}}"
+echo -e "${GREEN}✓ Scripts created in ~/wise2-scripts/${NC}"
 echo ""
 echo "Available scripts:"
 echo "  • ~/wise2-scripts/connect-vps.sh      # SSH to VPS"

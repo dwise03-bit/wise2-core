@@ -1,6 +1,26 @@
 # Tailscale Setup Guide for WISE² Multi-Device Network
 
-Complete Tailscale configuration for VPS, Raspberry Pi, Android, and local machines.
+> **Updated 2026-08-30** — Use `docs/operations/TAILSCALE.md` for the quick reference and `config/tailscale/network.yaml` for the canonical device list.
+
+Complete Tailscale configuration for VPS, Raspberry Pi, Android, Mac, and cloud agents.
+
+## WISE² device hostnames (MagicDNS)
+
+| Device | FQDN | SSH user |
+|--------|------|----------|
+| VPS / GPU AI | `gpu-nmls-1.tail44396d.ts.net` | `dwise` |
+| Daniel MacBook | `daniels-macbook-pro.tail44396d.ts.net` | `dwise` |
+| iPhone | `iphone175.tail44396d.ts.net` | — |
+| Android | `motorola-razr-2025-xt2553v.tail44396d.ts.net` | — |
+| BYTE MINI | `big-byte.tail44396d.ts.net` | `dwise` |
+| Router | `gl-mt3600be.tail44396d.ts.net` | `root` |
+| Darrin | `darrinwisejr.tail1dc3bd.ts.net` | `dwise` |
+
+**One-command setup:** `bash scripts/tailscale-setup.sh` (set `TS_AUTHKEY` first on headless nodes)
+
+**Verify mesh:** `bash scripts/tailscale-verify.sh`
+
+---
 
 ## Overview
 
@@ -43,9 +63,11 @@ Android/Mobile (Tailscale IP: 100.x.x.4)
 
 ### **2a. VPS (173.208.147.165)**
 
-SSH to the VPS:
+SSH to the VPS via Tailscale:
+
 ```bash
-ssh dwise@173.208.147.165
+ssh dwise@gpu-nmls-1.tail44396d.ts.net
+```
 
 # Download and run Tailscale setup script
 cd ~/wise2-core
