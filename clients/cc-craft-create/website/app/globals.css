@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Poppins:wght@400;600;700&family=Great+Vibes&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +7,6 @@
   --font-poppins: 'Poppins', sans-serif;
   --font-script: 'Great Vibes', cursive;
 
-  /* CC Brand Colors */
   --cc-purple: #6D2DBD;
   --cc-lavender: #B785D3;
   --cc-lilac: #F3E8FF;
@@ -18,9 +16,11 @@
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -28,6 +28,7 @@ body {
   color: #29233D;
   font-family: var(--font-poppins);
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -35,26 +36,58 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 
-/* Utility classes for brand colors */
-.bg-cc-purple { background-color: #6D2DBD; }
-.bg-cc-lavender { background-color: #B785D3; }
-.bg-cc-lilac { background-color: #F3E8FF; }
-.bg-cc-gold { background-color: #D4AF37; }
-.bg-cc-dark { background-color: #29233D; }
-.bg-cc-white { background-color: #FFFFFF; }
+.font-script {
+  font-family: var(--font-script);
+}
 
-.text-cc-purple { color: #6D2DBD; }
-.text-cc-lavender { color: #B785D3; }
-.text-cc-lilac { color: #F3E8FF; }
-.text-cc-gold { color: #D4AF37; }
-.text-cc-dark { color: #29233D; }
-.text-cc-white { color: #FFFFFF; }
+.cc-card {
+  background: #ffffff;
+  border: 1px solid #B785D3;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(41, 35, 61, 0.06);
+  transition: all 0.3s ease;
+}
 
-.border-cc-purple { border-color: #6D2DBD; }
-.border-cc-lavender { border-color: #B785D3; }
-.border-cc-lilac { border-color: #F3E8FF; }
-.border-cc-gold { border-color: #D4AF37; }
-.border-cc-dark { border-color: #29233D; }
-.border-cc-white { border-color: #FFFFFF; }
+.cc-card:hover {
+  box-shadow: 0 8px 24px rgba(109, 45, 189, 0.12);
+  border-color: rgba(109, 45, 189, 0.4);
+}
 
-/* Card styling removed - using Tailwind classes instead */
+.cc-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #B785D3;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #29233D;
+}
+
+.cc-input::placeholder {
+  color: rgba(41, 35, 61, 0.4);
+}
+
+.cc-input:focus {
+  outline: none;
+  border-color: #6D2DBD;
+  box-shadow: 0 0 0 3px rgba(109, 45, 189, 0.15);
+}
+
+.cc-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  background: #F3E8FF;
+  color: #6D2DBD;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -1,50 +1,93 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { Button } from '@/components/Button';
+import { PageHero } from '@/components/PageHero';
+import { useCart } from '@/contexts/CartContext';
+import {
+  getCartShipping,
+  getCartSubtotal,
+  getCartTax,
+  getCartTotal,
+} from '@/lib/cart-utils';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const [cart, setCart] = useState<any[]>([]);
+  const { items, isReady, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [customer, setCustomer] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    notes: '',
+  });
 
   useEffect(() => {
-    const cartData = localStorage.getItem('cart');
-    if (cartData) {
-      try {
-        setCart(JSON.parse(cartData));
-      } catch {
-        setCart([]);
-      }
+    if (isReady && items.length === 0) {
+      router.replace('/cart');
     }
-  }, []);
+  }, [isReady, items.length, router]);
 
-  const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-  const tax = subtotal * 0.08;
-  const total = subtotal + tax;
+  const subtotal = getCartSubtotal(items);
+  const shipping = getCartShipping(items);
+  const tax = getCartTax(subtotal);
+  const total = getCartTotal(items);
 
-  const handleCheckout = async () => {
-    if (cart.length === 0) {
-      setError('Cart is empty');
-      return;
-    }
+  const handleCheckout = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (items.length === 0) return;
 
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/checkout', {
+      const orderItems = items.map((item) => ({
+        product_id: item.product_id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        category: item.category,
+      }));
+
+      const orderResponse = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart }),
+        body: JSON.stringify({
+          customer: {
+            name: customer.name,
+            email: customer.email,
+            phone: customer.phone,
+            address: 'Local pickup / delivery',
+            city: '',
+            state: '',
+            zip: '',
+          },
+          items: orderItems,
+          notes: customer.notes,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
+      if (!orderResponse.ok) {
+        throw new Error('Failed to create order');
       }
 
-      const data = await response.json();
+      const checkoutResponse = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: orderItems }),
+      });
+
+      if (!checkoutResponse.ok) {
+        throw new Error('Failed to start checkout');
+      }
+
+      const data = await checkoutResponse.json();
+      clearCart();
       if (data.url) {
         window.location.href = data.url;
       }
@@ -54,210 +97,114 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleRemoveItem = (index: number) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
-  };
+  if (!isReady) {
+    return <div className="min-h-screen bg-cc-lilac" />;
+  }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F3E8FF', padding: '40px 20px' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '40px' }}>
-          <h1 style={{
-            fontSize: '36px',
-            fontWeight: 'bold',
-            color: '#6D2DBD',
-            marginBottom: '10px',
-            fontFamily: 'Lora, serif',
-          }}>
-            Order Review
-          </h1>
-          <p style={{ color: '#666', fontSize: '16px' }}>
-            Review your items and complete payment
-          </p>
-        </div>
+    <>
+      <Header />
+      <main className="flex-1">
+        <PageHero title="Checkout" subtitle="Review your order and complete your purchase." />
 
-        {error && (
-          <div style={{
-            backgroundColor: '#fee',
-            border: '1px solid #fcc',
-            color: '#c33',
-            padding: '15px',
-            borderRadius: '8px',
-            marginBottom: '20px',
-          }}>
-            {error}
-          </div>
-        )}
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {error ? (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3">
+              {error}
+            </div>
+          ) : null}
 
-        {cart.length === 0 ? (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '40px',
-            borderRadius: '12px',
-            textAlign: 'center',
-          }}>
-            <p style={{ fontSize: '18px', color: '#666', marginBottom: '20px' }}>
-              Your cart is empty
-            </p>
-            <button
-              onClick={() => router.push('/')}
-              style={{
-                backgroundColor: '#6D2DBD',
-                color: 'white',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '6px',
-                fontSize: '16px',
-                cursor: 'pointer',
-              }}
-            >
-              Continue Shopping
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '20px' }}>
-            {/* Cart Items */}
-            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '12px' }}>
-              <h2 style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color: '#6D2DBD',
-                marginBottom: '20px',
-              }}>
-                Cart Items ({cart.length})
-              </h2>
-
-              {cart.map((item, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingBottom: '15px',
-                    borderBottom: '1px solid #eee',
-                    marginBottom: '15px',
-                  }}
-                >
+          <form onSubmit={handleCheckout} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <section className="cc-card p-6">
+                <h2 className="text-xl font-lora font-bold text-cc-dark mb-4">Your Details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Full Name</label>
+                    <input
+                      className="cc-input"
+                      value={customer.name}
+                      onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                      required
+                    />
+                  </div>
                   <div>
-                    <div style={{ fontWeight: '600', color: '#29233D' }}>
-                      {item.name}
-                    </div>
-                    <div style={{
-                      fontSize: '14px',
-                      color: '#666',
-                      marginTop: '5px',
-                    }}>
-                      Qty: {item.quantity || 1} × ${item.price.toFixed(2)}
-                    </div>
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Email</label>
+                    <input
+                      type="email"
+                      className="cc-input"
+                      value={customer.email}
+                      onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                      required
+                    />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <div style={{
-                      fontSize: '18px',
-                      fontWeight: 'bold',
-                      color: '#D4AF37',
-                      minWidth: '80px',
-                      textAlign: 'right',
-                    }}>
-                      ${(item.price * (item.quantity || 1)).toFixed(2)}
-                    </div>
-                    <button
-                      onClick={() => handleRemoveItem(idx)}
-                      style={{
-                        backgroundColor: '#fee',
-                        color: '#c33',
-                        border: 'none',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                      }}
-                    >
-                      Remove
-                    </button>
+                  <div>
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Phone</label>
+                    <input
+                      type="tel"
+                      className="cc-input"
+                      value={customer.phone}
+                      onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Order Notes</label>
+                    <textarea
+                      className="cc-input resize-none"
+                      rows={4}
+                      placeholder="Event date, colors, names, or customization details..."
+                      value={customer.notes}
+                      onChange={(e) => setCustomer({ ...customer, notes: e.target.value })}
+                    />
                   </div>
                 </div>
-              ))}
+              </section>
+
+              <section className="cc-card p-6">
+                <h2 className="text-xl font-lora font-bold text-cc-dark mb-4">
+                  Cart Items ({items.length})
+                </h2>
+                <div className="space-y-4">
+                  {items.map((item) => (
+                    <div key={item.product_id} className="flex justify-between gap-4 border-b border-cc-lavender/40 pb-4 last:border-0 last:pb-0">
+                      <div>
+                        <p className="font-semibold text-cc-dark">{item.name}</p>
+                        <p className="text-sm text-cc-dark/60">Qty {item.quantity}</p>
+                      </div>
+                      <p className="font-bold text-cc-gold">${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
 
-            {/* Order Summary */}
-            <div style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '12px',
-              height: 'fit-content',
-            }}>
-              <h3 style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: '#6D2DBD',
-                marginBottom: '20px',
-              }}>
-                Order Summary
-              </h3>
-
-              <div style={{ marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #eee' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                  <span style={{ color: '#666' }}>Subtotal</span>
-                  <span style={{ fontWeight: '600' }}>${subtotal.toFixed(2)}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#666' }}>Tax (8%)</span>
-                  <span style={{ fontWeight: '600' }}>${tax.toFixed(2)}</span>
-                </div>
+            <aside className="bg-cc-lilac rounded-xl p-6 h-fit lg:sticky lg:top-24">
+              <h3 className="text-xl font-lora font-bold text-cc-dark mb-4">Order Summary</h3>
+              <div className="space-y-3 text-cc-dark mb-6 pb-6 border-b border-cc-lavender">
+                <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Shipping</span><span>${shipping.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Tax (8%)</span><span>${tax.toFixed(2)}</span></div>
               </div>
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '20px',
-              }}>
-                <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#29233D' }}>
-                  Total
-                </span>
-                <span style={{
-                  fontSize: '24px',
-                  fontWeight: 'bold',
-                  color: '#D4AF37',
-                }}>
-                  ${total.toFixed(2)}
-                </span>
+              <div className="flex justify-between text-lg font-bold mb-6">
+                <span>Total</span>
+                <span className="text-cc-gold">${total.toFixed(2)}</span>
               </div>
-
-              <button
-                onClick={handleCheckout}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  backgroundColor: loading ? '#999' : '#6D2DBD',
-                  color: 'white',
-                  border: 'none',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                }}
-              >
+              <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Processing...' : 'Complete Purchase'}
-              </button>
-
-              <p style={{
-                fontSize: '12px',
-                color: '#999',
-                marginTop: '15px',
-                textAlign: 'center',
-              }}>
-                💳 Powered by Stripe
+              </Button>
+              <p className="text-xs text-cc-dark/60 text-center mt-4">
+                {process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+                  ? 'Demo checkout — no payment processed'
+                  : 'Secure checkout powered by Stripe'}
               </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+              <Link href="/cart" className="block mt-4 text-center text-sm text-cc-purple hover:underline">
+                Back to cart
+              </Link>
+            </aside>
+          </form>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }

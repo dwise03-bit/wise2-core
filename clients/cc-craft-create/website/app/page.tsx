@@ -1,669 +1,254 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { useState } from 'react';
+import { Button } from '@/components/Button';
+import { SectionHeading } from '@/components/SectionHeading';
+import { ProductCard } from '@/components/ProductCard';
+import { Toast } from '@/components/Toast';
+import { useCart } from '@/contexts/CartContext';
+import {
+  DEMO_ORDER_PROCESS,
+  DEMO_OCCASIONS,
+  DEMO_STATS,
+  DEMO_TESTIMONIALS,
+} from '@/lib/demo-data';
+import type { Product } from '@/lib/types';
+
+const VALUE_PROPS = [
+  { icon: '🖨️', title: 'High-Quality Printing', desc: 'Vibrant colors and sharp details on every order.' },
+  { icon: '⚡', title: 'Fast Turnaround', desc: 'Quick delivery without sacrificing quality.' },
+  { icon: '❤️', title: 'Made with Love', desc: 'Every detail designed with care and purpose.' },
+  { icon: '📍', title: 'Local & Community Driven', desc: 'Pickup, delivery, and bulk orders available.' },
+];
+
+const SPECIALTIES = [
+  'Custom Party Packages',
+  'Personalized Drink Labels',
+  'Chip Bags & Candy Wrappers',
+  'Water Bottle Labels',
+  'Memorial & Keepsake Items',
+  'Business & Brand Products',
+  'Church & Community Event Products',
+  'Teacher & Nurse Appreciation Gifts',
+];
 
 export default function Home() {
-  const router = useRouter();
-  const [cart, setCart] = useState<any[]>([]);
+  const { addItem } = useCart();
+  const [featured, setFeatured] = useState<Product[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
 
-  const handleShopNow = () => router.push('/#products');
-  const handleLearnMore = () => router.push('/#about');
-  const handleContactMe = () => router.push('/#contact');
-  const handleShopCollections = () => router.push('/#products');
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          setFeatured(data.data.slice(0, 4));
+        }
+      })
+      .catch(() => setFeatured([]));
+  }, []);
 
-  const handleAddToCart = (productName: string, price: string | number) => {
-    const priceNum = typeof price === 'string' ? parseFloat(price.replace('$', '')) : price;
-    const newItem = { id: Math.random(), name: productName, price: priceNum, quantity: 1 };
-    const updated = [...cart, newItem];
-    setCart(updated);
-    localStorage.setItem('cart', JSON.stringify(updated));
-
-    const proceed = confirm(`✅ ${productName} ($${priceNum.toFixed(2)}) added to cart!\n\nProceed to checkout?`);
-    if (proceed) {
-      router.push('/checkout');
-    }
+  const handleAddToCart = (product: Product) => {
+    const price = typeof product.price === 'number' ? product.price : parseFloat(product.price);
+    addItem({
+      product_id: product.id,
+      name: product.name,
+      price,
+      category: product.category,
+    });
+    setToast(`${product.name} added to cart`);
   };
 
   return (
     <>
       <Header />
-      <main className="flex flex-col flex-1" style={{ background: '#FFFFFF' }}>
-        {/* HERO - CC Photo + Value Prop */}
-        <section style={{
-          background: 'linear-gradient(135deg, #F3E8FF 0%, #FFFFFF 100%)',
-          padding: '4rem 2rem',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '4rem',
-            alignItems: 'center'
-          }}>
-            {/* Left: CC Photo */}
-            <div style={{ textAlign: 'center' }}>
-              <img
-                src="/images/cc-photo.webp"
-                alt="CC - Founder of CC Craft & Create Studio"
-                style={{
-                  width: '100%',
-                  maxWidth: '450px',
-                  borderRadius: '20px',
-                  border: '4px solid #D4AF37',
-                  boxShadow: '0 20px 60px rgba(109, 45, 189, 0.15)',
-                  objectFit: 'contain',
-                  objectPosition: 'center'
-                }}
-              />
-            </div>
-
-            {/* Right: Value Prop */}
-            <div>
-              <h1 style={{
-                fontSize: '3.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                color: '#6D2DBD',
-                marginBottom: '1rem',
-                lineHeight: '1.2'
-              }}>
-                Celebrate Every Moment
+      <main className="flex-1">
+        <section className="bg-gradient-to-br from-cc-lilac via-white to-white px-4 py-12 md:py-20">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="order-2 lg:order-1 text-center lg:text-left">
+              <p className="text-xs md:text-sm font-poppins font-bold uppercase tracking-[0.2em] text-cc-purple mb-3">
+                THE MATHIS: C + C = WISE
+              </p>
+              <p className="text-sm text-cc-dark/70 mb-4">
+                When It Comes to Crafting and Creating
+              </p>
+              <h1 className="text-3xl md:text-5xl font-lora font-bold text-cc-purple leading-tight mb-4">
+                Crafted for the Moment. Created for the Memory.
               </h1>
-
-              <p style={{
-                fontSize: '1.3rem',
-                color: '#D4AF37',
-                fontWeight: '600',
-                marginBottom: '1.5rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}>
-                Custom Personalized Gifts & Favors
+              <p className="font-script text-2xl md:text-3xl text-cc-gold mb-4">
+                You Dream It. I&apos;ll Create It!
               </p>
-
-              <p style={{
-                fontSize: '1.1rem',
-                color: '#29233D',
-                lineHeight: '1.8',
-                marginBottom: '2rem'
-              }}>
-                From birthdays to memorials, I create custom products that transform special occasions into unforgettable memories. Every detail is crafted with love and precision.
+              <p className="text-base md:text-lg text-cc-dark/90 mb-8 max-w-xl mx-auto lg:mx-0">
+                Custom products for every occasion, every person, every purpose. Every detail is
+                designed with love, care, and purpose — because every moment deserves to be special.
               </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Link href="/shop">
+                  <Button size="lg" className="w-full sm:w-auto">
+                    Order Yours Today
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                    About CC
+                  </Button>
+                </Link>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-cc-gold/40">
+                <div>
+                  <p className="text-2xl md:text-3xl font-bold text-cc-purple">{DEMO_STATS.happyCustomers}+</p>
+                  <p className="text-xs md:text-sm font-semibold text-cc-dark">Happy Customers</p>
+                </div>
+                <div>
+                  <p className="text-2xl md:text-3xl font-bold text-cc-purple">{DEMO_STATS.productsOffered}</p>
+                  <p className="text-xs md:text-sm font-semibold text-cc-dark">Product Lines</p>
+                </div>
+                <div>
+                  <p className="text-2xl md:text-3xl font-bold text-cc-purple">{DEMO_STATS.avgTurnaroundDays}d</p>
+                  <p className="text-xs md:text-sm font-semibold text-cc-dark">Avg Turnaround</p>
+                </div>
+              </div>
+            </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-                <button onClick={handleShopNow} style={{
-                  background: '#6D2DBD',
-                  color: 'white',
-                  border: 'none',
-                  padding: '1rem 2rem',
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  boxShadow: '0 10px 30px rgba(109, 45, 189, 0.3)',
-                  transition: 'all 0.3s ease'
-                }} onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#8B5A9E';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }} onMouseOut={(e) => {
-                  e.currentTarget.style.background = '#6D2DBD';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}>
+            <div className="order-1 lg:order-2 flex justify-center">
+              <div className="relative w-full max-w-md aspect-[4/5] rounded-3xl border-4 border-cc-gold bg-gradient-to-br from-cc-purple via-cc-lavender to-cc-lilac shadow-2xl flex flex-col items-center justify-center text-white p-8">
+                <span className="text-7xl font-lora font-bold mb-4">CC</span>
+                <p className="font-script text-3xl text-cc-gold text-center">Craft & Create Studio</p>
+                <p className="text-sm text-center mt-4 text-white/90">
+                  Nurse. Entrepreneur. Creator. Purpose Driven.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading eyebrow="Featured" title="Best-Selling Collections" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featured.map((product) => (
+                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} compact />
+              ))}
+            </div>
+            <div className="text-center mt-10">
+              <Link href="/shop">
+                <Button variant="secondary">Shop All Products</Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-gradient-to-br from-cc-purple to-purple-800 text-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading
+              title="Why Choose CC Craft & Create?"
+              subtitle="Professional custom products made with care, quality, and attention to every detail."
+              light
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {VALUE_PROPS.map((item) => (
+                <div key={item.title} className="text-center p-4">
+                  <p className="text-4xl mb-3" aria-hidden>{item.icon}</p>
+                  <h3 className="text-lg font-lora font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-cc-lilac">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading eyebrow="How It Works" title="Simple 5-Step Process" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              {DEMO_ORDER_PROCESS.map((step) => (
+                <div key={step.step} className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-cc-gold text-cc-dark flex items-center justify-center text-xl font-bold shadow-md">
+                    {step.step}
+                  </div>
+                  <h3 className="font-lora font-bold text-cc-dark mb-2">{step.title}</h3>
+                  <p className="text-sm text-cc-dark/70">{step.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-cc-lilac">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading title="Shop by Occasion" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {DEMO_OCCASIONS.map((occasion) => (
+                <Link
+                  key={occasion.slug}
+                  href={`/shop?occasion=${encodeURIComponent(occasion.title)}`}
+                  className="cc-card p-5 text-center hover:-translate-y-1"
+                >
+                  <p className="text-3xl mb-2" aria-hidden>{occasion.emoji}</p>
+                  <p className="text-sm font-semibold text-cc-dark">{occasion.title}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading title="What We Specialize In" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-cc-lilac rounded-2xl border border-cc-lavender p-6 md:p-8">
+              {SPECIALTIES.map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <span className="text-cc-gold font-bold text-xl" aria-hidden>✓</span>
+                  <span className="font-semibold text-cc-dark">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-white border-t border-cc-lavender/30">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeading title="Happy Customers" subtitle="Real celebrations. Real memories." />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {DEMO_TESTIMONIALS.map((review) => (
+                <blockquote key={review.name} className="cc-card p-6">
+                  <p className="text-cc-dark/90 mb-4">&ldquo;{review.quote}&rdquo;</p>
+                  <footer className="text-sm">
+                    <p className="font-bold text-cc-purple">{review.name}</p>
+                    <p className="text-cc-dark/60">{review.occasion}</p>
+                  </footer>
+                </blockquote>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 py-14 md:py-20 bg-gradient-to-br from-cc-dark to-cc-purple text-white text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-lora font-bold mb-4">
+              Your Dream. Our Creation.
+            </h2>
+            <p className="text-cc-lilac text-lg mb-8">
+              Start your custom order today — personalized just for you, made with love.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/contact">
+                <Button size="lg" className="w-full sm:w-auto">Start Your Order</Button>
+              </Link>
+              <Link href="/shop">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto border-cc-gold text-white hover:bg-white/10">
                   Shop Now
-                </button>
-                <button onClick={handleLearnMore} style={{
-                  background: 'white',
-                  color: '#6D2DBD',
-                  border: '2px solid #6D2DBD',
-                  padding: '1rem 2rem',
-                  fontSize: '1rem',
-                  fontWeight: '700',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }} onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#F3E8FF';
-                }} onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'white';
-                }}>
-                  Learn More
-                </button>
-              </div>
-
-              {/* Trust Signals */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '1.5rem',
-                paddingTop: '2rem',
-                borderTop: '2px solid #D4AF37'
-              }}>
-                <div>
-                  <p style={{
-                    fontSize: '1.8rem',
-                    fontWeight: '700',
-                    color: '#6D2DBD',
-                    margin: '0 0 0.5rem 0'
-                  }}>500+</p>
-                  <p style={{
-                    fontSize: '0.9rem',
-                    color: '#29233D',
-                    margin: 0,
-                    fontWeight: '600'
-                  }}>Happy Customers</p>
-                </div>
-                <div>
-                  <p style={{
-                    fontSize: '1.8rem',
-                    fontWeight: '700',
-                    color: '#6D2DBD',
-                    margin: '0 0 0.5rem 0'
-                  }}>7+ Years</p>
-                  <p style={{
-                    fontSize: '0.9rem',
-                    color: '#29233D',
-                    margin: 0,
-                    fontWeight: '600'
-                  }}>Crafting Joy</p>
-                </div>
-                <div>
-                  <p style={{
-                    fontSize: '1.8rem',
-                    fontWeight: '700',
-                    color: '#6D2DBD',
-                    margin: '0 0 0.5rem 0'
-                  }}>100%</p>
-                  <p style={{
-                    fontSize: '0.9rem',
-                    color: '#29233D',
-                    margin: 0,
-                    fontWeight: '600'
-                  }}>Handmade Care</p>
-                </div>
-              </div>
+                </Button>
+              </Link>
             </div>
           </div>
-        </section>
-
-        {/* FEATURED PRODUCTS */}
-        <section style={{
-          background: 'white',
-          padding: '4rem 2rem',
-          borderTop: '1px solid #E8D5F2'
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '3rem'
-            }}>
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#D4AF37',
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                margin: '0 0 0.5rem 0'
-              }}>Featured</p>
-              <h2 style={{
-                fontSize: '2.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                color: '#29233D',
-                margin: 0
-              }}>Best-Selling Collections</h2>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '2rem'
-            }}>
-              {[
-                { name: 'Graduation Combo', image: '/images/product-graduation.webp', price: '$34.99', desc: 'Celebrate achievements with custom graduation gifts' },
-                { name: 'Nurse Appreciation Set', image: '/images/product-nurse.webp', price: '$28.99', desc: 'Honor healthcare heroes with personalized appreciation gifts' },
-                { name: 'Memorial Keepsake Box', image: '/images/product-memorial.webp', price: '$44.99', desc: 'Preserve cherished memories with elegant memorial items' },
-                { name: 'Holiday Cheer Pack', image: '/images/product-holiday.webp', price: '$39.99', desc: 'Spread joy with custom holiday-themed collections' }
-              ].map((product, i) => (
-                <div key={i} style={{
-                  background: 'white',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  border: '1px solid #E8D5F2',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)'
-                }} onMouseOver={(e) => {
-                  e.currentTarget.style.boxShadow = '0 15px 40px rgba(109, 45, 189, 0.15)';
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                }} onMouseOut={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.05)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{
-                      width: '100%',
-                      height: '320px',
-                      objectFit: 'contain',
-                      objectPosition: 'top',
-                      background: '#F3E8FF'
-                    }}
-                  />
-                  <div style={{
-                    padding: '2rem'
-                  }}>
-                    <h3 style={{
-                      fontSize: '1.3rem',
-                      fontFamily: 'Lora',
-                      fontWeight: '700',
-                      color: '#29233D',
-                      margin: '0 0 0.5rem 0'
-                    }}>{product.name}</h3>
-                    <p style={{
-                      fontSize: '0.95rem',
-                      color: '#666',
-                      marginBottom: '1rem',
-                      lineHeight: '1.5'
-                    }}>{product.desc}</p>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span style={{
-                        fontSize: '1.5rem',
-                        fontWeight: '700',
-                        color: '#D4AF37'
-                      }}>{product.price}</span>
-                      <button onClick={() => handleAddToCart(product.name, product.price)} style={{
-                        background: '#6D2DBD',
-                        color: 'white',
-                        border: 'none',
-                        padding: '0.7rem 1.5rem',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontWeight: '600',
-                        fontSize: '0.9rem',
-                        transition: 'all 0.3s ease'
-                      }} onMouseOver={(e) => {
-                        e.currentTarget.style.background = '#8B5A9E';
-                      }} onMouseOut={(e) => {
-                        e.currentTarget.style.background = '#6D2DBD';
-                      }}>
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* WHY CHOOSE CC */}
-        <section style={{
-          background: 'linear-gradient(135deg, #6D2DBD 0%, #8B5A9E 100%)',
-          color: 'white',
-          padding: '4rem 2rem'
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '3rem'
-            }}>
-              <h2 style={{
-                fontSize: '2.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                margin: '0 0 1rem 0'
-              }}>Why Choose CC Craft & Create?</h2>
-              <p style={{
-                fontSize: '1.1rem',
-                color: '#E8D5F2',
-                margin: 0,
-                lineHeight: '1.6'
-              }}>Professional custom products made with care, quality, and attention to every detail</p>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '2rem'
-            }}>
-              {[
-                { icon: '✨', title: 'Custom Designs', desc: 'Every product personalized just for you' },
-                { icon: '⭐', title: 'Premium Quality', desc: 'High-grade materials & professional printing' },
-                { icon: '❤️', title: 'Made with Love', desc: 'Handcrafted with passion & attention' },
-                { icon: '🚚', title: 'Fast Delivery', desc: 'Quick turnaround on custom orders' }
-              ].map((item, i) => (
-                <div key={i} style={{
-                  textAlign: 'center',
-                  padding: '1.5rem'
-                }}>
-                  <p style={{
-                    fontSize: '2.5rem',
-                    margin: '0 0 1rem 0'
-                  }}>{item.icon}</p>
-                  <h3 style={{
-                    fontSize: '1.2rem',
-                    fontWeight: '700',
-                    margin: '0 0 0.5rem 0'
-                  }}>{item.title}</h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: '#E8D5F2',
-                    margin: 0,
-                    lineHeight: '1.5'
-                  }}>{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* OUR PROCESS */}
-        <section style={{
-          background: 'white',
-          padding: '4rem 2rem',
-          borderTop: '1px solid #E8D5F2'
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '3rem'
-            }}>
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#D4AF37',
-                fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                margin: '0 0 0.5rem 0'
-              }}>How It Works</p>
-              <h2 style={{
-                fontSize: '2.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                color: '#29233D',
-                margin: 0
-              }}>Simple, Simple Process</h2>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '2rem'
-            }}>
-              {[
-                { title: 'You Dream It', emoji: '💭', desc: 'Tell us your vision' },
-                { title: 'We Design It', emoji: '✏️', desc: 'Custom design mockup' },
-                { title: 'We Create It', emoji: '🛠️', desc: 'Handcrafted with care' },
-                { title: 'You Enjoy It', emoji: '❤️', desc: 'Delivered & loved' }
-              ].map((item, i) => (
-                <div key={i} style={{
-                  textAlign: 'center'
-                }}>
-                  <div style={{
-                    background: 'linear-gradient(135deg, #D4AF37, #E5C158)',
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.5rem',
-                    fontSize: '2rem',
-                    boxShadow: '0 10px 30px rgba(212, 175, 55, 0.3)',
-                    color: 'white'
-                  }}>
-                    {item.emoji}
-                  </div>
-                  <h3 style={{
-                    fontSize: '1.2rem',
-                    fontFamily: 'Lora',
-                    fontWeight: '700',
-                    color: '#29233D',
-                    margin: '0 0 0.5rem 0'
-                  }}>{item.title}</h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: '#666',
-                    margin: 0
-                  }}>{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* PRODUCT CATEGORIES */}
-        <section style={{
-          background: '#F3E8FF',
-          padding: '4rem 2rem'
-        }}>
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '3rem'
-            }}>
-              <h2 style={{
-                fontSize: '2.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                color: '#29233D',
-                margin: 0
-              }}>Shop by Occasion</h2>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '1.5rem'
-            }}>
-              {[
-                { emoji: '🎂', name: 'Birthdays' },
-                { emoji: '👶', name: 'Baby Showers' },
-                { emoji: '🎓', name: 'Graduations' },
-                { emoji: '🕯️', name: 'Memorials' },
-                { emoji: '🎄', name: 'Holidays' },
-                { emoji: '⚕️', name: 'Appreciation' },
-                { emoji: '💼', name: 'Business' },
-                { emoji: '👥', name: 'Community' }
-              ].map((item, i) => (
-                <div key={i} style={{
-                  background: 'white',
-                  padding: '2rem',
-                  borderRadius: '12px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  border: '1px solid #E8D5F2'
-                }} onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(109, 45, 189, 0.1)';
-                }} onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}>
-                  <p style={{
-                    fontSize: '2.5rem',
-                    margin: '0 0 0.5rem 0'
-                  }}>{item.emoji}</p>
-                  <p style={{
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    color: '#29233D',
-                    margin: 0
-                  }}>{item.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA SECTION */}
-        <section style={{
-          background: 'linear-gradient(135deg, #29233D 0%, #6D2DBD 100%)',
-          color: 'white',
-          padding: '4rem 2rem',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            maxWidth: '800px',
-            margin: '0 auto'
-          }}>
-            <h2 style={{
-              fontSize: '2.5rem',
-              fontFamily: 'Lora',
-              fontWeight: '700',
-              margin: '0 0 1rem 0'
-            }}>Ready to Create Something Special?</h2>
-            <p style={{
-              fontSize: '1.2rem',
-              color: '#E8D5F2',
-              marginBottom: '2rem',
-              lineHeight: '1.6'
-            }}>Get in touch today and let's turn your vision into a beautiful, personalized product.</p>
-            <div style={{
-              display: 'flex',
-              gap: '1rem',
-              justifyContent: 'center'
-            }}>
-              <button onClick={handleContactMe} style={{
-                background: '#D4AF37',
-                color: '#29233D',
-                border: 'none',
-                padding: '1rem 2.5rem',
-                fontSize: '1rem',
-                fontWeight: '700',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }} onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-              }} onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-              }}>
-                Contact Me
-              </button>
-              <button onClick={handleShopCollections} style={{
-                background: 'transparent',
-                color: 'white',
-                border: '2px solid #D4AF37',
-                padding: '1rem 2.5rem',
-                fontSize: '1rem',
-                fontWeight: '700',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }} onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(212, 175, 55, 0.1)';
-              }} onMouseOut={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}>
-                Shop Collections
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* SPECIALTIES */}
-        <section style={{
-          background: 'white',
-          padding: '4rem 2rem',
-          borderTop: '1px solid #E8D5F2'
-        }}>
-          <div style={{
-            maxWidth: '1200px',
-            margin: '0 auto'
-          }}>
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '3rem'
-            }}>
-              <h2 style={{
-                fontSize: '2.5rem',
-                fontFamily: 'Lora',
-                fontWeight: '700',
-                color: '#29233D',
-                margin: 0
-              }}>What We Specialize In</h2>
-            </div>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '2rem',
-              background: 'linear-gradient(135deg, #F3E8FF, #FFFFFF)',
-              padding: '2rem',
-              borderRadius: '12px',
-              border: '1px solid #E8D5F2'
-            }}>
-              {[
-                'Custom Party Packages',
-                'Personalized Drink Labels',
-                'Chip Bags & Candy Wrappers',
-                'Water Bottle Labels',
-                'Memorial & Keepsake Items',
-                'Business & Brand Products',
-                'Gift Boxes & Packaging',
-                'Custom T-Shirts & Apparel'
-              ].map((item, i) => (
-                <div key={i} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem'
-                }}>
-                  <span style={{
-                    color: '#D4AF37',
-                    fontSize: '1.5rem',
-                    fontWeight: '700'
-                  }}>✓</span>
-                  <span style={{
-                    fontSize: '1rem',
-                    color: '#29233D',
-                    fontWeight: '600'
-                  }}>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FOOTER */}
-        <section style={{
-          background: '#29233D',
-          color: 'white',
-          padding: '2rem',
-          textAlign: 'center'
-        }}>
-          <p style={{
-            fontSize: '1.1rem',
-            fontWeight: '500',
-            letterSpacing: '0.1em'
-          }}>
-            ❤️ CRAFTED LOCALLY. ❤️ MADE WITH LOVE. ❤️ CREATED JUST FOR YOU. ❤️
-          </p>
         </section>
       </main>
       <Footer />
+      {toast ? <Toast message={toast} onClose={() => setToast(null)} /> : null}
     </>
   );
 }

@@ -1,280 +1,229 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { PageHero } from '@/components/PageHero';
+import { ProductCard } from '@/components/ProductCard';
+import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
-import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
+import type { Product } from '@/lib/types';
+import { DEMO_CATEGORIES, DEMO_OCCASION_FILTERS } from '@/lib/demo-data';
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  occasion: string;
-  image: string;
-  description: string;
-}
+function ShopContent() {
+  const searchParams = useSearchParams();
+  const { addItem } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [toast, setToast] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-const mockProducts: Product[] = [
-  {
-    id: 1,
-    name: 'Personalized Drink Labels',
-    price: 24.99,
-    category: 'Labels',
-    occasion: 'Birthday',
-    image: '🥤',
-    description: 'Custom drink labels for any celebration',
-  },
-  {
-    id: 2,
-    name: 'Chip Bags & Candy Wrappers',
-    price: 19.99,
-    category: 'Wrappers',
-    occasion: 'Birthday',
-    image: '🍿',
-    description: 'Personalized snack packaging',
-  },
-  {
-    id: 3,
-    name: 'Water Bottle Labels',
-    price: 16.99,
-    category: 'Labels',
-    occasion: 'Events',
-    image: '💧',
-    description: 'Hydration labels for guests',
-  },
-  {
-    id: 4,
-    name: 'Custom Party Package',
-    price: 89.99,
-    category: 'Packages',
-    occasion: 'Birthday',
-    image: '🎁',
-    description: 'Complete party package with multiple items',
-  },
-  {
-    id: 5,
-    name: 'Memorial Bookmarks',
-    price: 12.99,
-    category: 'Keepsakes',
-    occasion: 'Memorials',
-    image: '📖',
-    description: 'Lasting memories',
-  },
-  {
-    id: 6,
-    name: 'Graduation Certificates',
-    price: 34.99,
-    category: 'Certificates',
-    occasion: 'Graduations',
-    image: '🎓',
-    description: 'Personalized achievement certificates',
-  },
-  {
-    id: 7,
-    name: 'Holiday Gift Tags',
-    price: 14.99,
-    category: 'Tags',
-    occasion: 'Holidays',
-    image: '🎄',
-    description: 'Custom holiday tags',
-  },
-  {
-    id: 8,
-    name: 'Shower Invitation Set',
-    price: 44.99,
-    category: 'Invitations',
-    occasion: 'Baby Shower',
-    image: '👶',
-    description: 'Complete invitation suite',
-  },
-];
-
-export default function ShopPage() {
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedOccasion, setSelectedOccasion] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'name'>('name');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const categories = ['Labels', 'Wrappers', 'Packages', 'Keepsakes', 'Certificates', 'Tags', 'Invitations'];
-  const occasions = ['Birthday', 'Baby Shower', 'Graduations', 'Memorials', 'Holidays', 'Events'];
+  useEffect(() => {
+    const occasion = searchParams.get('occasion');
+    const category = searchParams.get('category');
+    if (occasion) setSelectedOccasion(occasion);
+    if (category) setSelectedCategory(category);
+  }, [searchParams]);
 
-  // Filter and sort
-  const handleFilter = () => {
-    let results = mockProducts;
+  const loadProducts = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const params = new URLSearchParams();
+      if (selectedCategory) params.set('category', selectedCategory);
+      if (selectedOccasion) params.set('occasion', selectedOccasion);
+      if (searchTerm) params.set('search', searchTerm);
 
-    if (selectedCategory) {
-      results = results.filter((p) => p.category === selectedCategory);
+      const response = await fetch(`/api/products?${params.toString()}`);
+      const data = await response.json();
+      if (!data.success) throw new Error('Failed to load products');
+      setProducts(data.data);
+    } catch {
+      setError('Unable to load products right now.');
+      setProducts([]);
+    } finally {
+      setLoading(false);
     }
+  }, [selectedCategory, selectedOccasion, searchTerm]);
 
-    if (selectedOccasion) {
-      results = results.filter((p) => p.occasion === selectedOccasion);
-    }
+  useEffect(() => {
+    const timer = window.setTimeout(loadProducts, searchTerm ? 250 : 0);
+    return () => window.clearTimeout(timer);
+  }, [loadProducts, searchTerm]);
 
-    if (searchTerm) {
-      results = results.filter((p) =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  const categories = DEMO_CATEGORIES;
+  const occasions = DEMO_OCCASION_FILTERS;
 
-    // Sort
+  const sortedProducts = useMemo(() => {
+    const list = [...products];
     if (sortBy === 'price-low') {
-      results.sort((a, b) => a.price - b.price);
+      list.sort((a, b) => Number(a.price) - Number(b.price));
     } else if (sortBy === 'price-high') {
-      results.sort((a, b) => b.price - a.price);
+      list.sort((a, b) => Number(b.price) - Number(a.price));
     } else {
-      results.sort((a, b) => a.name.localeCompare(b.name));
+      list.sort((a, b) => a.name.localeCompare(b.name));
     }
+    return list;
+  }, [products, sortBy]);
 
-    setFilteredProducts(results);
+  const handleAddToCart = (product: Product) => {
+    const price = typeof product.price === 'number' ? product.price : parseFloat(product.price);
+    addItem({
+      product_id: product.id,
+      name: product.name,
+      price,
+      category: product.category,
+    });
+    setToast(`${product.name} added to cart`);
   };
 
-  // Trigger filter on any change
-  const handleCategoryChange = (category: string) => {
-    const newCategory = selectedCategory === category ? null : category;
-    setSelectedCategory(newCategory);
-    setFilteredProducts(
-      mockProducts.filter((p) => {
-        const categoryMatch = !newCategory || p.category === newCategory;
-        const occasionMatch = !selectedOccasion || p.occasion === selectedOccasion;
-        const searchMatch = !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return categoryMatch && occasionMatch && searchMatch;
-      })
-    );
-  };
+  const filterPanel = (
+    <aside className="bg-cc-lilac rounded-xl p-5 md:p-6 h-fit space-y-6">
+      <div>
+        <label className="block text-sm font-bold text-cc-dark mb-2">Search</label>
+        <input
+          type="search"
+          placeholder="Search products..."
+          className="cc-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
-  const handleOccasionChange = (occasion: string) => {
-    const newOccasion = selectedOccasion === occasion ? null : occasion;
-    setSelectedOccasion(newOccasion);
-    setFilteredProducts(
-      mockProducts.filter((p) => {
-        const categoryMatch = !selectedCategory || p.category === selectedCategory;
-        const occasionMatch = !newOccasion || p.occasion === newOccasion;
-        const searchMatch = !searchTerm || p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return categoryMatch && occasionMatch && searchMatch;
-      })
-    );
-  };
+      <div>
+        <h3 className="font-bold text-cc-dark mb-3">Category</h3>
+        <ul className="space-y-2">
+          {categories.map((cat) => (
+            <li key={cat}>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="radio"
+                  name="category"
+                  checked={selectedCategory === cat}
+                  onChange={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
+                />
+                <span>{cat}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="font-bold text-cc-dark mb-3">Occasion</h3>
+        <ul className="space-y-2">
+          {occasions.map((occ) => (
+            <li key={occ}>
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="radio"
+                  name="occasion"
+                  checked={selectedOccasion === occ}
+                  onChange={() => setSelectedOccasion(selectedOccasion === occ ? null : occ)}
+                />
+                <span>{occ}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <label className="block text-sm font-bold text-cc-dark mb-2">Sort By</label>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+          className="cc-input"
+        >
+          <option value="name">Name (A-Z)</option>
+          <option value="price-low">Price (Low to High)</option>
+          <option value="price-high">Price (High to Low)</option>
+        </select>
+      </div>
+
+      {(selectedCategory || selectedOccasion || searchTerm) ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => {
+            setSelectedCategory(null);
+            setSelectedOccasion(null);
+            setSearchTerm('');
+          }}
+        >
+          Clear Filters
+        </Button>
+      ) : null}
+    </aside>
+  );
 
   return (
     <>
       <Header />
       <main className="flex-1">
-        {/* Page Header */}
-        <section className="bg-cc-lilac py-8 px-4">
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-4xl font-lora font-bold text-cc-dark mb-2">Shop All Products</h1>
-            <p className="text-cc-dark">Browse our complete collection of personalized products</p>
-          </div>
-        </section>
+        <PageHero
+          title="Shop All Products"
+          subtitle="Browse our complete collection of personalized products for every occasion."
+        />
 
-        {/* Shop Layout */}
         <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="md:hidden mb-4">
+            <Button variant="outline" className="w-full" onClick={() => setFiltersOpen((v) => !v)}>
+              {filtersOpen ? 'Hide Filters' : 'Show Filters'}
+            </Button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Sidebar */}
-            <aside className="bg-cc-lilac rounded-lg p-6 h-fit">
-              {/* Search */}
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-cc-dark mb-2">Search</label>
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full px-3 py-2 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    handleFilter();
-                  }}
-                />
-              </div>
+            <div className={`${filtersOpen ? 'block' : 'hidden'} md:block`}>{filterPanel}</div>
 
-              {/* Category Filter */}
-              <div className="mb-6">
-                <h3 className="font-bold text-cc-dark mb-3">Category</h3>
-                <ul className="space-y-2">
-                  {categories.map((cat) => (
-                    <li key={cat}>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedCategory === cat}
-                          onChange={() => handleCategoryChange(cat)}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm text-cc-dark">{cat}</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Occasion Filter */}
-              <div className="mb-6">
-                <h3 className="font-bold text-cc-dark mb-3">Occasion</h3>
-                <ul className="space-y-2">
-                  {occasions.map((occ) => (
-                    <li key={occ}>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedOccasion === occ}
-                          onChange={() => handleOccasionChange(occ)}
-                          className="w-4 h-4"
-                        />
-                        <span className="text-sm text-cc-dark">{occ}</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Sort */}
-              <div>
-                <label className="block text-sm font-bold text-cc-dark mb-2">Sort By</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => {
-                    setSortBy(e.target.value as any);
-                    handleFilter();
-                  }}
-                  className="w-full px-3 py-2 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                >
-                  <option value="name">Name (A-Z)</option>
-                  <option value="price-low">Price (Low to High)</option>
-                  <option value="price-high">Price (High to Low)</option>
-                </select>
-              </div>
-            </aside>
-
-            {/* Products Grid */}
             <div className="md:col-span-3">
-              <div className="mb-4 text-sm text-cc-dark">
-                Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <div key={product.id} className="card">
-                    <div className="text-6xl text-center mb-4">{product.image}</div>
-                    <h3 className="text-lg font-lora font-bold text-cc-dark mb-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-cc-lavender mb-2">{product.category}</p>
-                    <p className="text-sm text-cc-dark mb-4">{product.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-cc-gold font-bold text-lg">${product.price}</span>
-                      <Button variant="primary" className="text-sm">
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <p className="text-sm text-cc-dark">
+                  Showing {sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''}
+                </p>
+                {selectedOccasion ? <span className="cc-badge">{selectedOccasion}</span> : null}
+                {selectedCategory ? <span className="cc-badge">{selectedCategory}</span> : null}
               </div>
 
-              {filteredProducts.length === 0 && (
+              {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="cc-card h-72 animate-pulse bg-cc-lilac/60" />
+                  ))}
+                </div>
+              ) : error ? (
                 <div className="text-center py-12">
-                  <p className="text-cc-dark text-lg">No products found matching your criteria.</p>
+                  <p className="text-cc-dark mb-4">{error}</p>
+                  <Button onClick={loadProducts}>Try Again</Button>
+                </div>
+              ) : sortedProducts.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-lg text-cc-dark mb-4">No products found matching your criteria.</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setSelectedOccasion(null);
+                      setSearchTerm('');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sortedProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+                  ))}
                 </div>
               )}
             </div>
@@ -282,6 +231,15 @@ export default function ShopPage() {
         </div>
       </main>
       <Footer />
+      {toast ? <Toast message={toast} onClose={() => setToast(null)} /> : null}
     </>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-cc-lilac" />}>
+      <ShopContent />
+    </Suspense>
   );
 }

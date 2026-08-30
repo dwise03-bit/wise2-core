@@ -1,24 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query, getClient } from '@/lib/db';
-import { Order, OrderRequest, Customer } from '@/lib/types';
+import { createDemoOrder } from '@/lib/demo-data';
+import { useDemoData } from '@/lib/demo';
+import { Order, OrderRequest } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
+  const body = (await request.json()) as OrderRequest;
+  const { customer: customerData, items, notes } = body;
+
+  if (!customerData || !items || items.length === 0) {
+    return NextResponse.json(
+      { success: false, error: 'Missing required fields' },
+      { status: 400 }
+    );
+  }
+
+  if (useDemoData()) {
+    const order = createDemoOrder(items);
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...order,
+        customer_name: customerData.name,
+        customer_email: customerData.email,
+        notes: notes ?? null,
+      },
+      message: 'Demo order created successfully',
+      demo: true,
+    });
+  }
+
   const client = await getClient();
   try {
-    const body = await request.json() as OrderRequest;
-    const { customer: customerData, items, notes, stripe_payment_id } = body;
-
-    // Validate required fields
-    if (!customerData || !items || items.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
+    const { stripe_payment_id } = body;
 
     await client.query('BEGIN');
 
-    // Create or get customer
     let customerId: number;
     const customerResult = await client.query(
       'SELECT id FROM customers WHERE email = $1',
@@ -45,13 +62,11 @@ export async function POST(request: NextRequest) {
       customerId = insertCustomerResult.rows[0].id;
     }
 
-    // Calculate totals
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const shipping = 5.00;
+    const shipping = 5.0;
     const tax = subtotal * 0.08;
     const total = subtotal + shipping + tax;
 
-    // Create order
     const orderNumber = `CC-${Date.now()}`;
     const itemsJson = JSON.stringify(items);
 
@@ -75,7 +90,6 @@ export async function POST(request: NextRequest) {
 
     const order = orderResult.rows[0];
 
-    // Create order items
     for (const item of items) {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, quantity, price)
@@ -111,17 +125,26 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const customerId = searchParams.get('customerId');
+
+  if (!customerId) {
+    return NextResponse.json(
+      { success: false, error: 'Customer ID required' },
+      { status: 400 }
+    );
+  }
+
+  if (useDemoData()) {
+    return NextResponse.json({
+      success: true,
+      data: [],
+      count: 0,
+      demo: true,
+    });
+  }
+
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const customerId = searchParams.get('customerId');
-
-    if (!customerId) {
-      return NextResponse.json(
-        { success: false, error: 'Customer ID required' },
-        { status: 400 }
-      );
-    }
-
     const result = await query<Order>(
       `SELECT o.*, json_agg(json_build_object(
         'product_id', oi.product_id,

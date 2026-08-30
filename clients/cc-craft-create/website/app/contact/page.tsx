@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
+import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/Button';
-import { useState } from 'react';
+import { PageHero } from '@/components/PageHero';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -12,111 +14,126 @@ export default function ContactPage() {
     subject: '',
     message: '',
   });
-
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate form submission
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+      setSubmitted(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
-      setSubmitted(false);
-    }, 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Header />
       <main className="flex-1">
-        <section className="bg-cc-lilac py-12 px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl font-lora font-bold text-cc-dark mb-2">Contact Us</h1>
-            <p className="text-cc-dark">Have questions? We'd love to hear from you!</p>
-          </div>
-        </section>
+        <PageHero
+          title="Contact CC"
+          subtitle="Tell us about your event, vision, or custom order — we'd love to create something special."
+        />
 
-        <section className="max-w-4xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-            <div className="text-center">
-              <div className="text-4xl mb-3">📧</div>
+        <section className="max-w-5xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="cc-card p-6 text-center">
+              <p className="text-3xl mb-3" aria-hidden>📧</p>
               <h3 className="font-bold text-cc-dark mb-2">Email</h3>
-              <a href="mailto:cc@craftandcreate.com" className="text-cc-purple hover:text-cc-gold">
-                cc@craftandcreate.com
+              <a href="mailto:hello@ccraftandcreate.com" className="text-cc-purple hover:text-cc-gold text-sm">
+                hello@ccraftandcreate.com
               </a>
             </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">📱</div>
-              <h3 className="font-bold text-cc-dark mb-2">Phone</h3>
-              <a href="tel:+1234567890" className="text-cc-purple hover:text-cc-gold">
-                (123) 456-7890
+            <div className="cc-card p-6 text-center">
+              <p className="text-3xl mb-3" aria-hidden>📸</p>
+              <h3 className="font-bold text-cc-dark mb-2">Instagram</h3>
+              <a
+                href="https://instagram.com/cc.craftandcreate"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cc-purple hover:text-cc-gold text-sm"
+              >
+                @cc.craftandcreate
               </a>
             </div>
-            <div className="text-center">
-              <div className="text-4xl mb-3">📍</div>
-              <h3 className="font-bold text-cc-dark mb-2">Hours</h3>
-              <p className="text-cc-dark text-sm">
-                Mon-Fri: 9am-6pm<br />
-                Sat-Sun: 10am-4pm
-              </p>
+            <div className="cc-card p-6 text-center">
+              <p className="text-3xl mb-3" aria-hidden>📍</p>
+              <h3 className="font-bold text-cc-dark mb-2">Service Area</h3>
+              <p className="text-sm text-cc-dark/80">Local pickup & delivery available</p>
             </div>
           </div>
 
-          <div className="bg-cc-lilac rounded-lg p-8">
-            <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">Send us a Message</h2>
+          <div className="cc-card p-6 md:p-8">
+            <h2 className="text-2xl font-lora font-bold text-cc-dark mb-6">Start Your Custom Order</h2>
 
             {submitted ? (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-                ✓ Thank you! We'll get back to you soon.
+              <div className="rounded-lg border border-green-200 bg-green-50 text-green-800 px-4 py-4">
+                Thank you! Your message was received. CC will respond within 1-2 business days.
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-cc-dark mb-2">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                    required
-                  />
-                </div>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {error ? (
+                  <div className="rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">
+                    {error}
+                  </div>
+                ) : null}
 
-                <div>
-                  <label className="block text-sm font-bold text-cc-dark mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
-                    required
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="cc-input"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-cc-dark mb-2">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      className="cc-input"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-cc-dark mb-2">Subject</label>
                   <select
                     name="subject"
+                    className="cc-input"
                     value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple"
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     required
                   >
                     <option value="">Select a subject</option>
-                    <option value="general">General Inquiry</option>
                     <option value="custom">Custom Order</option>
                     <option value="bulk">Bulk Order</option>
+                    <option value="business">Business Branding</option>
                     <option value="support">Order Support</option>
+                    <option value="general">General Inquiry</option>
                   </select>
                 </div>
 
@@ -124,20 +141,28 @@ export default function ContactPage() {
                   <label className="block text-sm font-bold text-cc-dark mb-2">Message</label>
                   <textarea
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
                     rows={6}
-                    className="w-full px-4 py-3 border border-cc-lavender rounded-lg focus:outline-none focus:border-cc-purple resize-none"
+                    className="cc-input resize-none"
+                    placeholder="Tell us about your event, colors, quantities, and timeline..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Send Message
+                <Button type="submit" className="w-full md:w-auto" disabled={loading}>
+                  {loading ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             )}
           </div>
+
+          <p className="text-center text-sm text-cc-dark/60 mt-8">
+            Prefer to browse first?{' '}
+            <Link href="/shop" className="text-cc-purple font-semibold hover:underline">
+              Shop our collections
+            </Link>
+          </p>
         </section>
       </main>
       <Footer />

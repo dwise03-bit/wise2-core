@@ -56,7 +56,8 @@ export interface CartItem {
   name: string;
   price: number;
   quantity: number;
-  category: string;
+  category?: string;
+  emoji?: string;
 }
 
 export interface OrderRequest {
