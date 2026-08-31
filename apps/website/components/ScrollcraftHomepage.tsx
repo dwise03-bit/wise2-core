@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, ChevronDown, Cloud, Database, Globe2, LockKeyhole, Server, ShieldCheck, Sparkles, Users, Wifi } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
-const services = [['WEB HOSTING', Globe2], ['RESELLER HOSTING', Users], ['VPS SERVERS', Server], ['DOMAINS', Globe2], ['BUSINESS EMAIL', Wifi], ['SSL & SECURITY', LockKeyhole], ['DAILY BACKUPS', Cloud], ['MANAGED HOSTING', ShieldCheck]] as const;
+const services = [['WEB HOSTING', Globe2], ['BUSINESS PACKAGES', Users], ['VPS SERVERS', Server], ['DOMAINS', Globe2], ['BUSINESS EMAIL', Wifi], ['SSL & SECURITY', LockKeyhole], ['DAILY BACKUPS', Cloud], ['MANAGED HOSTING', ShieldCheck]] as const;
 const plans = [['LAUNCH', '$4.99', 'Perfect for getting started'], ['GROW', '$9.99', 'Built for growing businesses'], ['SCALE', '$19.99', 'For established businesses'], ['PERFORMANCE', '$39.99', 'Maximum power & speed']] as const;
 function Fade({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) { return <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .55, delay }}>{children}</motion.div>; }
 function Panel({ children }: { children: React.ReactNode }) { return <div className="wise-panel">{children}</div>; }
