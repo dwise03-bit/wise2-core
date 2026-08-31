@@ -7,6 +7,17 @@
 
 ---
 
+## 🎯 YOUR VPS TARGET
+
+**Hostname**: `gpu-nmls-1.tail44396d.ts.net`  
+**Domain**: `wise2.net`  
+**User**: `ubuntu`  
+**SSH Command**: `ssh ubuntu@gpu-nmls-1.tail44396d.ts.net`  
+**Phone Number**: (336) 485-8421  
+**Status**: 🟢 Ready for deployment
+
+---
+
 ## CURRENT STATE
 
 ### What's Complete
@@ -46,8 +57,8 @@
 ### Your Job: Execute This
 
 ```bash
-# 1. SSH to VPS (user provides IP)
-ssh ubuntu@<VPS_IP>
+# 1. SSH to VPS
+ssh ubuntu@gpu-nmls-1.tail44396d.ts.net
 
 # 2. Clone repository (if not already done)
 git clone https://github.com/dwise03-bit/wise2-core.git
