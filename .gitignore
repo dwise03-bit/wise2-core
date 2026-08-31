@@ -168,3 +168,4 @@ comfyui-output/
 print_ready/*.gcode
 .vercel
 .env*
+/tools/ghostty/release/

@@ -24,7 +24,10 @@
     "prompt-shop:test": "npm --prefix apps/prompt-shop run test",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "migration:run": "npm --prefix packages/api run migration:run",
-    "migration:revert": "npm --prefix packages/api run migration:revert"
+    "migration:revert": "npm --prefix packages/api run migration:revert",
+    "wise:build": "pnpm --dir tools/ghostty build",
+    "wise:test": "pnpm --dir tools/ghostty test",
+    "wise:doctor": "pnpm --dir tools/ghostty dev -- doctor"
   },
   "workspaces": [
     "apps/admin",
