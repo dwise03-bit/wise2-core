@@ -1,0 +1,44 @@
+name: WISE2 Control Bridge CI
+
+on:
+  push:
+    branches:
+      - 'feat/wise2-control-bridge'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'services/control-bridge/**'
+      - 'docker-compose.production.yml'
+      - '.github/workflows/control-bridge-ci.yml'
+      - 'scripts/control-health-local.sh'
+      - 'scripts/health-check-comprehensive.sh'
+
+jobs:
+  control-bridge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/control-bridge
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate production Compose
+        working-directory: .
+        run: docker compose -f docker-compose.production.yml config >/dev/null
