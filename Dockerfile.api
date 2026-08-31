@@ -16,6 +16,8 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 # Copy monorepo workspace packages
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
+COPY packages/ai-phone/package.json ./packages/ai-phone/
+COPY packages/agent-framework/package.json ./packages/agent-framework/
 COPY packages/db/prisma ./packages/db/prisma
 
 # Install dependencies with pnpm (monorepo needs full install for transitive deps)
@@ -27,6 +29,8 @@ RUN cd packages/db && npx prisma generate || true
 # Copy API source and build it
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
+COPY packages/ai-phone/dist ./packages/ai-phone/dist
+COPY packages/agent-framework/dist ./packages/agent-framework/dist
 RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc --build
 
 EXPOSE 3000
