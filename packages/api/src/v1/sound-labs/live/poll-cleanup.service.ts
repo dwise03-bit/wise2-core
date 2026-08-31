@@ -9,7 +9,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class PollCleanupService implements OnModuleInit, OnModuleDestroy {
-  private timer: NodeJS.Timeout;
+  private timer!: NodeJS.Timeout;
 
   constructor(private prisma: PrismaService) {}
 
@@ -71,7 +71,10 @@ export class PollCleanupService implements OnModuleInit, OnModuleDestroy {
         // WebSocket gateway will emit 'poll.closed' event when polls are queried
       }
     } catch (error) {
-      console.error('[Live] Poll cleanup failed:', error.message);
+      console.error(
+        '[Live] Poll cleanup failed:',
+        error instanceof Error ? error.message : String(error)
+      );
     }
   }
 }

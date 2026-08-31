@@ -7,7 +7,7 @@ import { Injectable } from '@nestjs/common';
  * In production, this would use Redis
  */
 
-interface UserPresence {
+export interface UserPresence {
   userId: string;
   userName: string;
   isSpeaking: boolean;

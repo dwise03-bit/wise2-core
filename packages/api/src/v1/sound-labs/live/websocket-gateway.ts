@@ -28,7 +28,7 @@ export class LiveWebSocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   constructor(
     private sessionService: LiveSessionService,
@@ -62,7 +62,10 @@ export class LiveWebSocketGateway
 
       console.log(`[Live] User ${session.userId} connected`);
     } catch (error) {
-      console.error('[Live] Connection auth failed:', error.message);
+      console.error(
+        '[Live] Connection auth failed:',
+        error instanceof Error ? error.message : String(error)
+      );
       client.disconnect();
     }
   }
@@ -141,8 +144,9 @@ export class LiveWebSocketGateway
 
       return { success: true, presence };
     } catch (error) {
-      console.error('[Live] Join failed:', error.message);
-      return { error: error.message };
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Join failed:', message);
+      return { error: message };
     }
   }
 
@@ -208,8 +212,9 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      console.error('[Live] Chat failed:', error.message);
-      return { error: error.message };
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Chat failed:', message);
+      return { error: message };
     }
   }
 
@@ -262,7 +267,7 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      return { error: error.message };
+      return { error: error instanceof Error ? error.message : String(error) };
     }
   }
 
@@ -290,7 +295,7 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      return { error: error.message };
+      return { error: error instanceof Error ? error.message : String(error) };
     }
   }
 
