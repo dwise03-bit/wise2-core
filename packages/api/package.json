@@ -51,6 +51,7 @@
     "dotenv": "^16.4.0",
     "googleapis": "^133.0.0",
     "jsonwebtoken": "^9.0.0",
+    "agora-access-token": "^2.0.12",
     "mongoose": "^8.0.0",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",

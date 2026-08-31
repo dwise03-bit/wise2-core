@@ -434,6 +434,30 @@ export class LiveRoomsService {
   }
 
   /**
+   * Update room (Phase 2.2 - Video)
+   */
+  async updateRoom(roomId: string, data: any): Promise<any> {
+    return await this.prisma.liveRoom.update({
+      where: { id: roomId },
+      data,
+      include: {
+        creator: { select: { id: true, email: true, name: true } },
+        members: { include: { user: { select: { id: true, email: true, name: true } } } },
+      },
+    });
+  }
+
+  /**
+   * Get room members (Phase 2.2 - Video)
+   */
+  async getRoomMembers(roomId: string): Promise<any[]> {
+    return await this.prisma.liveRoomMember.findMany({
+      where: { roomId },
+      include: { user: { select: { id: true, email: true, name: true } } },
+    });
+  }
+
+  /**
    * Get permissions bitmap for a role
    */
   private getPermissionsForRole(role: LiveRoomRole | string): number {
