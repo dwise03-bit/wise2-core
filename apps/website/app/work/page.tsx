@@ -9,6 +9,7 @@ const projects = [
     description:
       'A visual storefront and brand surface for custom apparel, vinyl, sublimation, and product work.',
     image: '/sencere/portfolio/work-01-apparel-group.png',
+    fit: 'object-cover object-center',
     href: '/sencere',
   },
   {
@@ -17,6 +18,7 @@ const projects = [
     description:
       'A technician workflow for equipment records, job context, diagnostics, and mobile deployment.',
     image: '/brand/wise2-hero-united-mobile.webp',
+    fit: 'object-cover object-center',
     href: '/fieldtech',
   },
   {
@@ -25,6 +27,7 @@ const projects = [
     description:
       'A darker WISE² division for training, specialized systems, and edge-intelligence presentation.',
     image: '/wise-defense/instructors/AC400CE5-BD5C-4598-B24B-B1820CB8ACC2_1_105_c.jpeg',
+    fit: 'object-contain object-center p-3',
     href: '/wise-defense',
   },
   {
@@ -33,6 +36,7 @@ const projects = [
     description:
       'Live browser companion and Windows desktop pet. Locked glossy black/cyan identity. No account.',
     image: '/products/wise-imp.png',
+    fit: 'object-contain p-8',
     href: '/products/imp',
   },
 ];
@@ -67,11 +71,7 @@ export default function WorkPage() {
                   src={project.image}
                   alt={`${project.title} project artifact`}
                   fill
-                  className={
-                    project.href === '/products/imp'
-                      ? 'object-contain p-8'
-                      : 'object-cover transition duration-500 group-hover:scale-[1.03]'
-                  }
+                  className={`${project.fit} transition duration-500 group-hover:scale-[1.03]`}
                   sizes="(max-width: 1024px) 100vw, 33vw"
                 />
               </div>
