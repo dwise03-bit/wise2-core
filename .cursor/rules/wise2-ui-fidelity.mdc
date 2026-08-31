@@ -1,0 +1,20 @@
+---
+description: WISE2 approved-reference visual fidelity and anti-drift rules
+alwaysApply: true
+---
+
+# WISE² UI Fidelity
+
+For landing pages, dashboards, iOS/Android UI, and other visual work, read and obey `docs/design/WISE2_UI_CONSTITUTION.md` before implementation.
+
+Approved visual references are authoritative. Do not redesign or generically reinterpret them.
+
+Mandatory loop:
+
+REFERENCE -> INSPECT -> BUILD -> RUN -> SCREENSHOT -> COMPARE -> CORRECT -> REPEAT -> VERIFY
+
+Preserve identity-locked portraits, logos, mascots, products, devices, vehicles, and artwork. Search for actual assets before creating substitutes.
+
+Do not declare visual work complete based only on compilation or tests. Verify desktop and mobile renders against the approved reference and report remaining differences.
+
+When a screen becomes approved, record its lock using `docs/design/VISUAL_REFERENCE_TEMPLATE.md`.
