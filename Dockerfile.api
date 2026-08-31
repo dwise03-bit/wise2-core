@@ -29,8 +29,11 @@ RUN cd packages/db && npx prisma generate || true
 # Copy API source and build it
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
-COPY packages/ai-phone/dist ./packages/ai-phone/dist
-COPY packages/agent-framework/dist ./packages/agent-framework/dist
+COPY packages/ai-phone/src ./packages/ai-phone/src
+COPY packages/ai-phone/tsconfig.json ./packages/ai-phone/
+COPY packages/agent-framework/src ./packages/agent-framework/src
+COPY packages/agent-framework/tsconfig.json ./packages/agent-framework/
+RUN pnpm --filter @wise2/agent-framework build && pnpm --filter @wise2/ai-phone build
 RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc --build
 
 EXPOSE 3000
