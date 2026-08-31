@@ -2,7 +2,6 @@ import SwiftUI
 
 struct WorkScreen: View {
   @StateObject private var viewModel = WorkScreenViewModel()
-  @StateObject private var fieldpieceService = FieldpieceService()
 
   var body: some View {
     ZStack {
@@ -26,10 +25,9 @@ struct WorkScreen: View {
 
         // Tab Selector
         HStack(spacing: 0) {
-          ForEach([WorkScreenViewModel.WorkTab.projects, .tasks, .diagnostics], id: \.self) { tab in
+          ForEach([WorkScreenViewModel.WorkTab.projects, .tasks], id: \.self) { tab in
             Button(action: { viewModel.selectedTab = tab }) {
-              let tabLabel = tab == .projects ? "Projects" : (tab == .tasks ? "Tasks" : "Tools")
-              Text(tabLabel)
+              Text(tab == .projects ? "Projects" : "Tasks")
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
@@ -48,14 +46,7 @@ struct WorkScreen: View {
         .background(Color.wise2Surface)
 
         // Content
-        if viewModel.selectedTab == .diagnostics {
-          ScrollView {
-            VStack(spacing: 16) {
-              DiagnosticsPanel(fieldpieceService: fieldpieceService)
-            }
-            .padding(16)
-          }
-        } else if viewModel.isLoading {
+        if viewModel.isLoading {
           VStack(spacing: 12) {
             ProgressView()
               .tint(.wise2Primary)

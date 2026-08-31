@@ -6,7 +6,8 @@ struct HomeScreen: View {
   @Binding var selectedBusiness: String
   // @Binding var selectedTab: CommandTab
 
-  private let businesses = BusinessScope.options
+  // private let businesses = BusinessScope.options
+  private let businesses = ["ALL BUSINESSES"]
 
   var body: some View {
     ZStack {

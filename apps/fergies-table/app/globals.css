@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --fergie-black: #0a0a0a;
+  --fergie-gold: #ffd700;
+  --fergie-royal: #6a22e2;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+html {
+  background: var(--fergie-black);
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-fergie-black text-white antialiased;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.glass-panel {
+  @apply rounded-fergie border border-fergie-gold/20 bg-fergie-charcoal/70 backdrop-blur-xl;
+}
+
+.glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: -24%;
+  background: radial-gradient(circle, rgba(106, 34, 226, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.gold-glow::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.16) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.smoke-bg {
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(106, 34, 226, 0.35), transparent 55%),
+    radial-gradient(ellipse at 90% 80%, rgba(58, 13, 110, 0.55), transparent 45%),
+    #0a0a0a;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+::-webkit-scrollbar-thumb {
+  background: #6a22e2;
+  border-radius: 3px;
+}
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@keyframes cloche-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cloche-spin {
+  animation: cloche-spin 2.4s linear infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.55s ease-out both;
+}
+
+@keyframes voice-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+  }
+}
+
+.voice-pulse {
+  animation: voice-pulse 1.4s ease-out infinite;
+}

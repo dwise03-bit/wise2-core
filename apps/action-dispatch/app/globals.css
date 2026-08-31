@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+html {
+  background: #050505;
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-carbon text-snow antialiased;
+}
+
+.glass {
+  background: rgba(16, 18, 20, 0.78);
+  border: 1px solid rgba(201, 208, 214, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+:focus-visible {
+  outline: 2px solid #27c7ff;
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #101214;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a424a;
+  border-radius: 999px;
+}

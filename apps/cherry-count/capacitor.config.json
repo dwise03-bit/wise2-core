@@ -1,0 +1,32 @@
+{
+  "appId": "com.wise2.cherrycount",
+  "appName": "Cherry Count",
+  "webDir": "public",
+  "server": {
+    "url": "https://wise2.net/cherry-count/dashboard",
+    "androidScheme": "https",
+    "cleartext": false,
+    "allowNavigation": [
+      "https://wise2.net",
+      "https://*.wise2.net",
+      "https://api.wise2.net",
+      "https://accounts.google.com",
+      "https://discord.com"
+    ]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "limitsNavigationsToAppBoundDomains": false,
+    "backgroundColor": "#050505"
+  },
+  "android": {
+    "backgroundColor": "#050505"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#050505"
+    }
+  }
+}

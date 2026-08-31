@@ -1,0 +1,27 @@
+{
+  "appId": "com.wise2.fergiestable",
+  "appName": "Fergie's Table",
+  "webDir": "public",
+  "server": {
+    "url": "https://wise2.net/fergies-table/business",
+    "androidScheme": "https",
+    "cleartext": false,
+    "allowNavigation": [
+      "https://wise2.net",
+      "https://*.wise2.net"
+    ]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "limitsNavigationsToAppBoundDomains": false,
+    "backgroundColor": "#0A0A0A",
+    "scheme": "Fergies Table"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1800,
+      "backgroundColor": "#0A0A0A"
+    }
+  }
+}
