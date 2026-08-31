@@ -2,8 +2,7 @@ import { VoiceModelProvider, ChatMessage, AIResponse, ToolCall } from './types';
 import { CallSessionManager } from './call-session';
 import { ToolRegistry } from './tool-registry';
 
-export class VoiceOrchestrator {
-  private systemPrompt = `You are a helpful AI assistant for a service business. Your role is to:
+const DEFAULT_SYSTEM_PROMPT = `You are a helpful AI assistant for a service business. Your role is to:
 
 1. Greet customers warmly
 2. Identify if they're existing customers (use identify_customer tool)
@@ -14,17 +13,27 @@ export class VoiceOrchestrator {
 7. Transfer to a human agent if needed for complex issues
 
 Guidelines:
-- Be concise and professional
+- Be concise and professional — this is a live phone call, keep replies under 3 sentences
 - Ask clarifying questions to understand needs
 - Suggest specific appointment times from available slots
 - Always record consent before booking
 - Offer to transfer to an agent if customer seems frustrated`;
 
+export class VoiceOrchestrator {
+  private systemPrompt: string;
+
   constructor(
     private voiceModel: VoiceModelProvider,
     private sessionManager: CallSessionManager,
-    private toolRegistry: ToolRegistry
-  ) {}
+    private toolRegistry: ToolRegistry,
+    options?: { systemPrompt?: string }
+  ) {
+    this.systemPrompt = options?.systemPrompt || DEFAULT_SYSTEM_PROMPT;
+  }
+
+  setSystemPrompt(prompt: string): void {
+    this.systemPrompt = prompt;
+  }
 
   async handleConversationTurn(
     sessionId: string,

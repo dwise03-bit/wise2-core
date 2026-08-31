@@ -1,86 +1,250 @@
 'use client';
 
 import Link from 'next/link';
-import { Twitter, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Phone, Mail, Globe } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { blakkhailBrand } from './config';
+import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
+import { company } from '@/lib/sencere/config';
+import { isBlackhailHost } from '@/lib/site-domains';
+
+function TikTokIcon({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.78a4.85 4.85 0 01-1.01-.09z" />
+    </svg>
+  );
+}
 
 export function BlakkhailFooter() {
+  const { social } = blakkhailBrand;
+  const [parentHref, setParentHref] = useState(blakkhailBrand.parentPath);
+
+  useEffect(() => {
+    const onBlackhailDomain = isBlackhailHost(window.location.hostname);
+    setParentHref(
+      onBlackhailDomain
+        ? `${blakkhailBrand.parentSiteUrl}${blakkhailBrand.parentPath}`
+        : blakkhailBrand.parentPath
+    );
+  }, []);
+
   return (
-    <footer className="bg-[#0f0f0f] py-12">
-      <div className="mx-auto max-w-[1536px] px-6">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-          {/* Brand Info */}
+    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack }}>
+
+      {/* ── LEGENDARY CTA STRIP ─────────────────────────── */}
+      <div
+        className="border-y"
+        style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}
+      >
+        <div
+          className={`${BLAKKHAIL_LAYOUT.container} grid gap-6 py-10 sm:py-12 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-10`}
+        >
           <div>
-            <h3 className="text-[14px] font-black uppercase tracking-wider text-[#D4842F]">
-              BLAKK HAIL
+            <p
+              className="text-[10px] font-bold uppercase tracking-[0.35em] sm:text-xs"
+              style={{ color: BLAKKHAIL.steel }}
+            >
+              Ready to work?
+            </p>
+            <h2
+              className="mt-2 text-2xl font-black uppercase tracking-[0.06em] sm:text-3xl lg:text-4xl"
+              style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+            >
+              Let&apos;s Build Something Legendary
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={`mailto:${blakkhailBrand.email}?subject=Quote%20Request`}
+              className="min-h-12 px-7 py-3 text-sm font-black uppercase tracking-[0.18em] text-black sm:text-base"
+              style={{ backgroundColor: BLAKKHAIL.gold }}
+            >
+              Get a Quote
+            </a>
+            <a
+              href={`tel:${company.phone.replace(/\D/g, '')}`}
+              className="min-h-12 border px-7 py-3 text-sm font-black uppercase tracking-[0.18em] sm:text-base"
+              style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+            >
+              Book a Call
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FOOTER BODY ──────────────────────────────────── */}
+      <div className={`${BLAKKHAIL_LAYOUT.container} py-10 sm:py-12`}>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+
+          {/* Brand column */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h3
+              className="text-base font-black uppercase tracking-wider sm:text-lg"
+              style={{ color: BLAKKHAIL.gold }}
+            >
+              {blakkhailBrand.name}
             </h3>
-            <p className="mt-4 text-[11px] leading-relaxed text-[#D4D4D4]">
-              Original fashion since 1994. Defining culture through authentic style and heritage.
+            <p
+              className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
+              style={{ color: BLAKKHAIL.steel }}
+            >
+              {blakkhailBrand.legalName}
+            </p>
+            <p
+              className="mt-3 text-sm leading-relaxed sm:text-base"
+              style={{ color: BLAKKHAIL.steel }}
+            >
+              Original fashion est. {blakkhailBrand.established}
             </p>
           </div>
 
-          {/* Links */}
+          {/* Contact column */}
           <div>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#D4842F]">Shop</h4>
-            <ul className="mt-4 space-y-2 text-[11px] text-[#D4D4D4]">
-              <li><Link href="#" className="hover:text-[#D4842F]">New Arrivals</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Apparel</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Accessories</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Sale</Link></li>
+            <p
+              className="text-xs uppercase tracking-wider sm:text-sm"
+              style={{ color: BLAKKHAIL.gold }}
+            >
+              Contact
+            </p>
+            <ul className="mt-3 flex flex-col gap-2">
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+                <Phone size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
+                <a href={`tel:${company.phone.replace(/\D/g, '')}`} className="hover:opacity-80">
+                  {company.phone}
+                </a>
+              </li>
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+                <Mail size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
+                <a href={`mailto:${blakkhailBrand.email}`} className="hover:opacity-80 break-all">
+                  {blakkhailBrand.email}
+                </a>
+              </li>
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+                <Globe size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
+                <a
+                  href={blakkhailBrand.parentSiteUrl}
+                  className="hover:opacity-80"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {company.website}
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Location column */}
           <div>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#D4842F]">Support</h4>
-            <ul className="mt-4 space-y-2 text-[11px] text-[#D4D4D4]">
-              <li><Link href="#" className="hover:text-[#D4842F]">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Shipping Info</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Returns</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">FAQ</Link></li>
-            </ul>
+            <p
+              className="text-xs uppercase tracking-wider sm:text-sm"
+              style={{ color: BLAKKHAIL.gold }}
+            >
+              Location
+            </p>
+            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+              {company.location}
+            </p>
+            <Link
+              href={parentHref}
+              className="mt-3 block text-sm hover:opacity-80 sm:text-base"
+              style={{ color: BLAKKHAIL.steel }}
+            >
+              {blakkhailBrand.legalName}
+            </Link>
           </div>
 
-          {/* About */}
-          <div>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#D4842F]">About</h4>
-            <ul className="mt-4 space-y-2 text-[11px] text-[#D4D4D4]">
-              <li><Link href="#" className="hover:text-[#D4842F]">Our Story</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Heritage</Link></li>
-              <li><Link href="/sencere" className="hover:text-[#D4842F]">SenCere Creative</Link></li>
-              <li><Link href="#" className="hover:text-[#D4842F]">Press</Link></li>
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div>
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#D4842F]">Follow</h4>
-            <div className="mt-4 flex gap-4">
-              <a href="#" className="text-[#D4D4D4] hover:text-[#D4842F] transition-colors">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="text-[#D4D4D4] hover:text-[#D4842F] transition-colors">
-                <Facebook size={18} />
-              </a>
-              <a href="#" className="text-[#D4D4D4] hover:text-[#D4842F] transition-colors">
-                <Instagram size={18} />
-              </a>
-              <a href="#" className="text-[#D4D4D4] hover:text-[#D4842F] transition-colors">
-                <Youtube size={18} />
-              </a>
+          {/* POWERED BY WISE² column */}
+          <div className="flex flex-col gap-3">
+            <p
+              className="text-xs uppercase tracking-wider sm:text-sm"
+              style={{ color: BLAKKHAIL.gold }}
+            >
+              {blakkhailBrand.wise2.poweredByLabel}
+            </p>
+            <div className="flex items-center gap-2">
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-sm font-black"
+                style={{ backgroundColor: BLAKKHAIL.gold, color: BLAKKHAIL.jetBlack }}
+              >
+                W
+              </div>
+              <span
+                className="text-xl font-black tracking-[0.06em]"
+                style={{ color: BLAKKHAIL.gold }}
+              >
+                WISE²
+              </span>
             </div>
+            <p
+              className="text-[10px] font-bold uppercase leading-5 tracking-[0.18em] sm:text-xs"
+              style={{ color: BLAKKHAIL.steel }}
+            >
+              Smart Systems.
+              <br />
+              Stronger Businesses.
+              <br />
+              Scalable Growth.
+            </p>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 border-t border-[#D4842F] pt-8">
-          <div className="flex flex-col items-center justify-between gap-4 text-[10px] text-[#D4D4D4] lg:flex-row">
-            <p>© 1994-2026 BLAKK HAIL. All rights reserved.</p>
-            <div className="flex gap-6">
-              <Link href="#" className="hover:text-[#D4842F]">Privacy Policy</Link>
-              <Link href="#" className="hover:text-[#D4842F]">Terms of Service</Link>
-              <Link href="#" className="hover:text-[#D4842F]">Cookie Settings</Link>
-            </div>
-          </div>
+        {/* Social icons */}
+        <div className="mt-8 flex flex-wrap items-center gap-4">
+          <a
+            href={social.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 items-center gap-2 rounded-sm border px-4 py-2 text-sm font-bold uppercase tracking-wide hover:opacity-90"
+            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+          >
+            <Instagram size={18} aria-hidden />
+            @blakkhail
+          </a>
+          <a
+            href={social.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
+            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            aria-label="Facebook"
+          >
+            <Facebook size={20} />
+          </a>
+          <a
+            href={social.twitter ?? '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
+            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            aria-label="TikTok"
+          >
+            <TikTokIcon size={20} />
+          </a>
+          <a
+            href={social.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
+            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            aria-label="YouTube"
+          >
+            <Youtube size={20} />
+          </a>
+        </div>
+
+        {/* Bottom bar */}
+        <div
+          className="mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs sm:flex-row sm:text-sm"
+          style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+        >
+          <p>
+            © {new Date().getFullYear()} {blakkhailBrand.legalName} •{' '}
+            {blakkhailBrand.name} • {company.location}
+          </p>
+          <p style={{ color: BLAKKHAIL.darkGold }}>
+            {blakkhailBrand.wise2.poweredByLabel} WISE²
+          </p>
         </div>
       </div>
     </footer>

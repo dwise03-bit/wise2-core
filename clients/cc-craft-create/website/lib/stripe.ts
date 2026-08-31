@@ -1,12 +1,5 @@
 import Stripe from 'stripe';
-
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is required');
-}
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  typescript: true,
-});
+import { isDemoMode } from './demo';
 
 export const PRODUCTS = [
   {
@@ -38,3 +31,16 @@ export const PRODUCTS = [
     desc: 'Spread joy with custom holiday-themed collections',
   },
 ] as const;
+
+function createStripeClient(): Stripe | null {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    if (isDemoMode()) return null;
+    throw new Error('STRIPE_SECRET_KEY environment variable is required');
+  }
+
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    typescript: true,
+  });
+}
+
+export const stripe = createStripeClient();

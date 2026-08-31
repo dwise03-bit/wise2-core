@@ -68,10 +68,22 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = getBrowserAuthToken();
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const refresh = params.get('refresh');
+
+    if (token) {
+      localStorage.setItem('auth_token', token);
+      if (refresh) {
+        localStorage.setItem('refresh_token', refresh);
+      }
+      window.history.replaceState({}, '', '/dashboard');
+    }
+
+    const sessionToken = getBrowserAuthToken();
     const sessionUser = getBrowserAuthUser();
 
-    if (!token) {
+    if (!sessionToken) {
       router.push('/login');
       return;
     }

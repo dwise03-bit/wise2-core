@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { wise2ApiBaseUrl } from '@/lib/wise2-api';
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,22 +9,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    // Mock authentication - accept any email/password combo for demo
-    const accessToken = Buffer.from(`${email}:${Date.now()}`).toString('base64');
-    const refreshToken = Buffer.from(`refresh:${email}:${Date.now()}`).toString('base64');
-
-    return NextResponse.json({
-      accessToken,
-      refreshToken,
-      user: {
-        id: Buffer.from(email).toString('base64').slice(0, 8),
-        email,
-        firstName: email.split('@')[0],
-        lastName: 'Tech',
-        role: 'TECHNICIAN',
-      },
+    const response = await fetch(`${wise2ApiBaseUrl()}/v1/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      cache: 'no-store',
     });
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: payload.message || payload.error || 'Login failed' },
+        { status: response.status },
+      );
+    }
+
+    return NextResponse.json(payload);
   } catch (error) {
+    console.error('Login proxy error:', error);
     return NextResponse.json({ error: 'Login failed' }, { status: 500 });
   }
 }

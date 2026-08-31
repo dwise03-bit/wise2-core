@@ -35,6 +35,9 @@ import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
 import { CjaysModule } from './cjays/cjays.module';
+import { BusinessOsModule } from './v1/business-os/business-os.module';
+import { CherryCountModule } from './cherry-count/cherry-count.module';
+import { AiPhoneModule } from './ai-phone/ai-phone.module';
 
 @Module({
   imports: [
@@ -128,6 +131,9 @@ import { CjaysModule } from './cjays/cjays.module';
     TradingModule,
     FieldtechModule,
     CjaysModule,
+    BusinessOsModule,
+    CherryCountModule,
+    AiPhoneModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],

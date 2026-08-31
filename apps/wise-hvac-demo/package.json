@@ -8,14 +8,12 @@
     "build": "next build",
     "start": "next start -p 3024",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "node --test lib/*.test.ts"
   },
   "dependencies": {
-    "@auth/core": "^0.41.3",
-    "@auth/nextjs": "0.0.0-380f8d56",
     "lucide-react": "^0.408.0",
     "next": "14.2.35",
-    "next-auth": "4.24.15",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

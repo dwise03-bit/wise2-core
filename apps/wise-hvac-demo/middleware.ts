@@ -1,18 +1,19 @@
-import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  if (process.env.WISE_HVAC_DEMO_MODE !== 'false') {
+  if (process.env.WISE_HVAC_DEMO_MODE === 'true') {
     return NextResponse.next();
   }
 
-  const session = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-  if (session) return NextResponse.next();
+  const token = request.cookies.get('wise2_access_token')?.value;
+  if (token) return NextResponse.next();
 
-  const canonicalUrl = process.env.NEXTAUTH_URL || request.nextUrl.origin;
-  return NextResponse.redirect(new URL('/wise-hvac-demo/signin', canonicalUrl));
+  const signinUrl = request.nextUrl.clone();
+  signinUrl.pathname = '/signin';
+  signinUrl.search = '';
+  return NextResponse.redirect(signinUrl);
 }
 
 export const config = {
-  matcher: ['/field-tech/:path*'],
+  matcher: ['/wise-hvac-demo/field-tech/:path*', '/field-tech/:path*'],
 };

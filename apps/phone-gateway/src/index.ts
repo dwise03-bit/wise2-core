@@ -12,6 +12,7 @@ import CallOrchestrator from './conversation/call-orchestrator';
 import STTService from './services/stt.service';
 import LLMService from './services/llm.service';
 import TTSService from './services/tts.service';
+import CRMClient from './crm/crm-client';
 import {
   getTwilioClient,
   createTwilioWebhookValidator,
@@ -44,8 +45,13 @@ const tts = new TTSService(
   process.env.PIPER_URL || 'http://localhost:8080/api/tts'
 );
 
+// CRM client (tenant-specific)
+const tenantId = process.env.TENANT_ID || 'default-workspace';
+const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+const crm = new CRMClient(tenantId, apiBaseUrl);
+
 // Call orchestrator
-const orchestrator = new CallOrchestrator(stt, llm, tts);
+const orchestrator = new CallOrchestrator(stt, llm, tts, crm);
 
 // Asterisk ARI (optional - would be initialized when connecting to real PBX)
 let asterisk: AsteriskARIClient | null = null;

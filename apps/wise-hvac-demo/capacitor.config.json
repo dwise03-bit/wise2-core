@@ -3,9 +3,20 @@
   "appName": "WISE Field Tech",
   "webDir": "out",
   "server": {
-    "url": "http://192.168.8.114:3024",
+    "url": "https://hvac.wise2.net",
     "androidScheme": "https",
-    "allowNavigation": ["https://wise2.net", "https://*.wise2.net", "https://accounts.google.com"]
+    "cleartext": false,
+    "allowNavigation": [
+      "https://hvac.wise2.net",
+      "https://wise2.net",
+      "https://*.wise2.net",
+      "https://accounts.google.com"
+    ]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "limitsNavigationsToAppBoundDomains": false
   },
   "android": {
     "buildOptions": {

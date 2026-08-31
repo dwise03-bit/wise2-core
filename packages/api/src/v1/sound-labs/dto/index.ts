@@ -65,3 +65,70 @@ export class GenerateMusicDto {
   @IsNumber()
   seed?: number;
 }
+
+export class CreateVersionDto {
+  @IsOptional()
+  @IsString()
+  label?: string;
+
+  @IsOptional()
+  @IsString()
+  changeLog?: string;
+}
+
+export class CreateCommentDto {
+  @IsString()
+  content!: string;
+
+  @IsOptional()
+  @IsNumber()
+  timestamp?: number;
+
+  @IsOptional()
+  @IsString()
+  trackId?: string;
+}
+
+export class SetApprovalDto {
+  @IsString()
+  status!: 'pending' | 'approved' | 'revision';
+
+  @IsOptional()
+  @IsString()
+  note?: string;
+}
+
+export class AttachAssetDto {
+  @IsString()
+  galleryAssetId!: string;
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+}
+
+export class ClientReviewCommentDto {
+  @IsString()
+  content!: string;
+
+  @IsOptional()
+  @IsString()
+  authorName?: string;
+
+  @IsOptional()
+  @IsNumber()
+  timestamp?: number;
+}
+
+export class ClientReviewApprovalDto {
+  @IsString()
+  status!: 'approved' | 'revision';
+
+  @IsOptional()
+  @IsString()
+  note?: string;
+
+  @IsOptional()
+  @IsString()
+  authorName?: string;
+}

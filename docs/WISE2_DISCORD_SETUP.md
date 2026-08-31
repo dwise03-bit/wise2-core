@@ -99,3 +99,25 @@ After deploying env changes:
 - Rotate any Discord token or webhook URL that was ever pasted into chat or logs.
 - The dashboard surfaces live setup status from `/v1/discord/setup`.
 - Slash commands are registered when the API boots and the bot connects.
+
+## Mac bot (Content Bot) — operations
+
+**Guild ID:** `1512093487145680926`  
+**Client ID:** `1512638268225622147`  
+**Invite:** `https://discord.com/oauth2/authorize?client_id=1512638268225622147&permissions=2147551232&scope=bot%20applications.commands`
+
+Run **one** bot instance (Mac **or** VPS, not both).
+
+```bash
+bash scripts/fix-discord.sh              # stop duplicates, deploy commands, start when gateway allows
+bash scripts/start-discord-bot.sh        # start now (gateway must be open)
+bash scripts/discord-gateway-probe.js    # READY or RESET_AT=…
+bash scripts/test-discord-e2e.sh         # full validation
+pm2 logs wise2-bot --lines 30            # live logs
+```
+
+**Gateway session limit:** Discord caps daily gateway logins. If you see `sessions remaining`, wait for `RESET_AT` — do not poll login in a loop (each attempt can burn quota). The bot exits cleanly on login failure so pm2 does not restart-loop.
+
+**ComfyUI from Discord:** `/comfyui-status`, `/generate-image`, `/generate-campaign` (GPU at `100.68.145.5:8188` via Tailscale on Mac).
+
+**Webhooks:** `cd services/bot && node create-webhooks.js` — bot needs **Manage Webhooks** on target channels. Existing URLs live in `services/bot/.env.webhooks`.

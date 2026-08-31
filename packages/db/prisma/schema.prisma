@@ -47,6 +47,13 @@ model User {
   // WISE² Trading relationships
   tradingAccount TradingAccount? @relation("tradingAccount")
 
+  // SoundLabs Live relationships
+  liveRoomsCreated LiveRoom[] @relation("liveRoomCreator")
+  liveRoomMembers  LiveRoomMember[] @relation("liveRoomMembers")
+  liveRoomChat     LiveChatMessage[] @relation("liveRoomChat")
+  audienceSuggestions AudienceSuggestion[] @relation("audienceSuggestions")
+  liveRoomVotes    LivePollVote[] @relation("liveRoomVotes")
+
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
@@ -762,6 +769,15 @@ model Prospect {
   @@index([email])
   @@index([createdAt])
   @@index([estimatedOpportunity])
+}
+
+model BusinessOsLeadClaim {
+  id        String   @id @default(cuid())
+  leadId    String   @unique
+  claimedBy String
+  claimedAt DateTime @default(now())
+
+  @@index([claimedBy])
 }
 
 enum ProspectStatus {
@@ -2576,6 +2592,22 @@ model Tenant {
   cjaysVehicles     CjaysVehicle[]
   cjaysJobs         CjaysJob[]
   cjaysSyncEvents   CjaysSyncEvent[]
+
+  // Cherry Count — mobile pop-up retail OS
+  cherryCountProducts            CherryCountProduct[]
+  cherryCountVariants            CherryCountProductVariant[]
+  cherryCountContainers          CherryCountContainer[]
+  cherryCountInventoryTxns       CherryCountInventoryTransaction[]
+  cherryCountEvents              CherryCountPopupEvent[]
+  cherryCountEventInventory      CherryCountEventInventory[]
+  cherryCountSales               CherryCountSale[]
+  cherryCountCustomers           CherryCountCustomer[]
+  cherryCountPhoneConfig         CherryCountPhoneConfig?
+  cherryCountPhoneCalls          CherryCountPhoneCall[]
+
+  // WISE² AI Phone — tenant-scoped receptionist
+  aiPhoneConfig                  AiPhoneConfig?
+  aiPhoneCalls                   AiPhoneCall[]
 
   // WISE Defense Safety Radar + Comms Grid
   wiseDefenseMemberships WiseDefenseMembership[]
@@ -5775,4 +5807,438 @@ model CjaysSyncEvent {
   @@unique([tenantId, requestId])
   @@index([tenantId, createdAt])
   @@map("cjays_sync_events")
+}
+
+// ─── Cherry Count™ — Mobile Pop-Up Retail OS ───────────────────────────────
+
+model CherryCountProduct {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  description String?  @db.Text
+  sku         String
+  barcode     String?
+  qrCode      String?  @map("qr_code")
+  category    String?
+  collection  String?
+  vendor      String?
+  cost        Decimal? @db.Decimal(10, 2)
+  retailPrice Decimal  @db.Decimal(10, 2) @map("retail_price")
+  salePrice   Decimal? @db.Decimal(10, 2) @map("sale_price")
+  images      Json     @default("[]")
+  status      String   @default("ACTIVE")
+  tags        String[] @default([])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant    Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  variants  CherryCountProductVariant[]
+
+  @@unique([tenantId, sku])
+  @@index([tenantId, status])
+  @@map("cherry_count_products")
+}
+
+model CherryCountProductVariant {
+  id               String  @id @default(cuid())
+  tenantId         String  @map("tenant_id")
+  productId        String  @map("product_id")
+  size             String?
+  color            String?
+  material         String?
+  edition          String?
+  quantity         Int     @default(0)
+  reservedQuantity Int     @default(0) @map("reserved_quantity")
+  damagedQuantity  Int     @default(0) @map("damaged_quantity")
+  minimumStock     Int     @default(0) @map("minimum_stock")
+  reorderPoint     Int     @default(0) @map("reorder_point")
+  bin              String?
+  rack             String?
+  shelf            String?
+  tote             String?
+  vehicle          String?
+  storageLocation  String? @map("storage_location")
+  qrCode           String? @map("qr_code")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  tenant       Tenant                            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product      CherryCountProduct                @relation(fields: [productId], references: [id], onDelete: Cascade)
+  transactions CherryCountInventoryTransaction[]
+  eventItems   CherryCountEventInventory[]
+  saleItems    CherryCountSaleLineItem[]
+
+  @@index([tenantId, productId])
+  @@index([tenantId, quantity])
+  @@map("cherry_count_variants")
+}
+
+model CherryCountContainer {
+  id          String   @id @default(cuid())
+  tenantId    String   @map("tenant_id")
+  name        String
+  type        String   @default("BIN")
+  color       String?
+  qrCode      String?  @map("qr_code")
+  description String?
+  location    String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+  @@map("cherry_count_containers")
+}
+
+model CherryCountInventoryTransaction {
+  id             String   @id @default(cuid())
+  tenantId       String   @map("tenant_id")
+  variantId      String   @map("variant_id")
+  type           String
+  quantityDelta  Int      @map("quantity_delta")
+  quantityBefore Int      @map("quantity_before")
+  quantityAfter  Int      @map("quantity_after")
+  reason         String?
+  referenceId    String?  @map("reference_id")
+  userId         String   @map("user_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  tenant  Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  variant CherryCountProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, variantId])
+  @@index([tenantId, createdAt])
+  @@map("cherry_count_inventory_txns")
+}
+
+model CherryCountPopupEvent {
+  id                 String    @id @default(cuid())
+  tenantId           String    @map("tenant_id")
+  name               String
+  date               DateTime
+  venue              String
+  address            String?
+  arrivalTime        DateTime? @map("arrival_time")
+  setupTime          DateTime? @map("setup_time")
+  notes              String?   @db.Text
+  expectedAttendance Int?      @map("expected_attendance")
+  revenueGoal        Decimal?  @db.Decimal(10, 2) @map("revenue_goal")
+  status             String    @default("PLANNED")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  tenant    Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  inventory CherryCountEventInventory[]
+  sales     CherryCountSale[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, date])
+  @@map("cherry_count_events")
+}
+
+model CherryCountEventInventory {
+  id               String @id @default(cuid())
+  tenantId         String @map("tenant_id")
+  eventId          String @map("event_id")
+  variantId        String @map("variant_id")
+  quantityAssigned Int    @default(0) @map("quantity_assigned")
+  quantityPacked   Int    @default(0) @map("quantity_packed")
+  quantitySold     Int    @default(0) @map("quantity_sold")
+  quantityReturned Int    @default(0) @map("quantity_returned")
+  packingStatus    String @default("NOT_PACKED") @map("packing_status")
+
+  tenant  Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  event   CherryCountPopupEvent     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  variant CherryCountProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, variantId])
+  @@index([tenantId, eventId])
+  @@map("cherry_count_event_inventory")
+}
+
+model CherryCountSale {
+  id            String   @id @default(cuid())
+  tenantId      String   @map("tenant_id")
+  eventId       String?  @map("event_id")
+  customerId    String?  @map("customer_id")
+  paymentMethod String   @map("payment_method")
+  subtotal      Decimal  @db.Decimal(10, 2)
+  tax           Decimal  @default(0) @db.Decimal(10, 2)
+  total         Decimal  @db.Decimal(10, 2)
+  costTotal     Decimal? @db.Decimal(10, 2) @map("cost_total")
+  profit        Decimal? @db.Decimal(10, 2)
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  tenant   Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  event    CherryCountPopupEvent?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  customer CherryCountCustomer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items    CherryCountSaleLineItem[]
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, eventId])
+  @@map("cherry_count_sales")
+}
+
+model CherryCountSaleLineItem {
+  id        String  @id @default(cuid())
+  saleId    String  @map("sale_id")
+  variantId String  @map("variant_id")
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2) @map("unit_price")
+  unitCost  Decimal? @db.Decimal(10, 2) @map("unit_cost")
+  lineTotal Decimal @db.Decimal(10, 2) @map("line_total")
+
+  sale    CherryCountSale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  variant CherryCountProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([saleId])
+  @@map("cherry_count_sale_line_items")
+}
+
+model CherryCountCustomer {
+  id              String   @id @default(cuid())
+  tenantId        String   @map("tenant_id")
+  name            String
+  phone           String?
+  email           String?
+  instagram       String?
+  birthday        DateTime?
+  preferredSize   String?  @map("preferred_size")
+  favoriteColors  String[] @default([]) @map("favorite_colors")
+  favoriteProducts String[] @default([]) @map("favorite_products")
+  wishlist        Json     @default("[]")
+  vipStatus       Boolean  @default(false) @map("vip_status")
+  lifetimeValue   Decimal  @default(0) @db.Decimal(10, 2) @map("lifetime_value")
+  notes           String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sales  CherryCountSale[]
+
+  @@index([tenantId, name])
+  @@map("cherry_count_customers")
+}
+
+model CherryCountPhoneConfig {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique @map("tenant_id")
+  enabled            Boolean  @default(true)
+  phoneNumber        String?  @map("phone_number")
+  greeting           String   @default("Hey love! Thanks for calling. I'm Cherry, your AI boutique assistant.") @db.Text
+  afterHoursMessage  String?  @map("after_hours_message") @db.Text
+  businessHours      Json     @default("{}") @map("business_hours")
+  transferNumber     String?  @map("transfer_number")
+  smsEnabled         Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
+  aiPersona          String   @default("Cherry") @map("ai_persona")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("cherry_count_phone_configs")
+}
+
+model CherryCountPhoneCall {
+  id              String   @id @default(cuid())
+  tenantId        String   @map("tenant_id")
+  callerNumber    String   @map("caller_number")
+  callerName      String?  @map("caller_name")
+  direction       String   @default("INBOUND")
+  status          String   @default("COMPLETED")
+  durationSeconds Int?     @map("duration_seconds")
+  intent          String?
+  outcome         String?
+  summary         String?  @db.Text
+  transcript      String?  @db.Text
+  customerId      String?  @map("customer_id")
+  startedAt       DateTime @default(now()) @map("started_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, startedAt])
+  @@map("cherry_count_phone_calls")
+}
+
+model AiPhoneConfig {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique @map("tenant_id")
+  enabled            Boolean  @default(true)
+  phoneNumber        String?  @map("phone_number")
+  greeting           String   @default("Thanks for calling. I'm the WISE² assistant. I can look up your account, book a visit, or take a message. How can I help you today?") @db.Text
+  afterHoursMessage  String?  @map("after_hours_message") @db.Text
+  businessHours      Json     @default("{}") @map("business_hours")
+  timezone           String   @default("America/New_York")
+  transferNumber     String?  @map("transfer_number")
+  smsEnabled         Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
+  recordingEnabled   Boolean  @default(true) @map("recording_enabled")
+  aiPersona          String   @default("WISE²") @map("ai_persona")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([phoneNumber])
+  @@map("ai_phone_configs")
+}
+
+model AiPhoneCall {
+  id              String    @id @default(cuid())
+  tenantId        String    @map("tenant_id")
+  callSid         String?   @unique @map("call_sid")
+  sessionId       String?   @map("session_id")
+  callerNumber    String    @map("caller_number")
+  callerName      String?   @map("caller_name")
+  inboundNumber   String?   @map("inbound_number")
+  direction       String    @default("INBOUND")
+  status          String    @default("IN_PROGRESS")
+  durationSeconds Int?      @map("duration_seconds")
+  intent          String?
+  outcome         String?
+  summary         String?   @db.Text
+  transcript      String?   @db.Text
+  customerId      String?   @map("customer_id")
+  leadId          String?   @map("lead_id")
+  conversationId  String?   @map("conversation_id")
+  startedAt       DateTime  @default(now()) @map("started_at")
+  endedAt         DateTime? @map("ended_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, startedAt])
+  @@index([tenantId, callerNumber])
+  @@map("ai_phone_calls")
+}
+
+// SoundLabs Live - Live Rooms
+model LiveRoom {
+  id                   String   @id @default(cuid()) @map("id")
+  name                 String   @map("name")
+  slug                 String   @unique @map("slug")
+  creatorId            String   @map("creator_id")
+  creator              User     @relation("liveRoomCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  status               String   @default("draft") @map("status") // draft, live, ended
+  startedAt            DateTime? @map("started_at")
+  endedAt              DateTime? @map("ended_at")
+  maxConcurrentViewers Int      @default(10000) @map("max_concurrent_viewers")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  members              LiveRoomMember[] @relation("liveRoomMembers")
+  chatMessages         LiveChatMessage[] @relation("liveRoomChat")
+  suggestions          AudienceSuggestion[] @relation("liveRoomSuggestions")
+  polls                LivePoll[] @relation("liveRoomPolls")
+
+  @@index([creatorId])
+  @@index([slug])
+  @@index([status])
+  @@index([createdAt])
+  @@map("live_rooms")
+}
+
+model LiveRoomMember {
+  id         String   @id @default(cuid()) @map("id")
+  roomId     String   @map("room_id")
+  userId     String   @map("user_id")
+  role       String   @default("viewer") @map("role") // creator, cohost, guest, viewer
+  permissions Int     @default(0) @map("permissions") // Bitmap: can_speak, can_chat, can_suggest, can_moderate
+  joinedAt   DateTime @default(now()) @map("joined_at")
+  leftAt     DateTime? @map("left_at")
+
+  // Relationships
+  room       LiveRoom @relation("liveRoomMembers", fields: [roomId], references: [id], onDelete: Cascade)
+  user       User     @relation("liveRoomMembers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+  @@map("live_room_members")
+}
+
+model LiveChatMessage {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  message   String   @db.Text @map("message")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomChat", fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation("liveRoomChat", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([createdAt])
+  @@map("live_chat_messages")
+}
+
+model AudienceSuggestion {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  suggestion String  @db.Text @map("suggestion")
+  votes     Int      @default(0) @map("votes")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomSuggestions", fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation("audienceSuggestions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([votes])
+  @@index([createdAt])
+  @@map("audience_suggestions")
+}
+
+model LivePoll {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  question  String   @db.Text @map("question")
+  status    String   @default("active") @map("status") // active, closed
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomPolls", fields: [roomId], references: [id], onDelete: Cascade)
+  options   LivePollOption[] @relation("pollOptions")
+
+  @@index([roomId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("live_polls")
+}
+
+model LivePollOption {
+  id      String   @id @default(cuid()) @map("id")
+  pollId  String   @map("poll_id")
+  text    String   @map("text")
+  votes   Int      @default(0) @map("votes")
+
+  // Relationships
+  poll    LivePoll @relation("pollOptions", fields: [pollId], references: [id], onDelete: Cascade)
+  pollVotes LivePollVote[] @relation("optionVotes")
+
+  @@index([pollId])
+  @@map("live_poll_options")
+}
+
+model LivePollVote {
+  id       String   @id @default(cuid()) @map("id")
+  optionId String   @map("option_id")
+  userId   String   @map("user_id")
+
+  // Relationships
+  option   LivePollOption @relation("optionVotes", fields: [optionId], references: [id], onDelete: Cascade)
+  user     User    @relation("liveRoomVotes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([optionId, userId])
+  @@index([userId])
+  @@map("live_poll_votes")
 }

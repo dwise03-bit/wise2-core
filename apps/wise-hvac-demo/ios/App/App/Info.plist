@@ -66,5 +66,15 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>WISE² Field Tech uses the camera to capture equipment nameplates, job photos, and QR tokens.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>WISE² Field Tech records technician voice notes for the active work order. Original audio is kept on device.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>WISE² Field Tech saves job photos to this device when you choose to attach them.</string>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 </dict>
 </plist>

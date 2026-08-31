@@ -1,4 +1,28 @@
-export type JobStatus = 'DISPATCHED' | 'IN_PROGRESS' | 'COMPLETED';
+export type JobStatus =
+  | 'DISPATCHED'
+  | 'EN_ROUTE'
+  | 'ON_SITE'
+  | 'IN_PROGRESS'
+  | 'AWAITING_APPROVAL'
+  | 'COMPLETED';
+
+export const JOB_STATUSES: JobStatus[] = [
+  'DISPATCHED',
+  'EN_ROUTE',
+  'ON_SITE',
+  'IN_PROGRESS',
+  'AWAITING_APPROVAL',
+  'COMPLETED',
+];
+
+export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
+  DISPATCHED: 'Scheduled',
+  EN_ROUTE: 'En route',
+  ON_SITE: 'On site',
+  IN_PROGRESS: 'Diagnosing',
+  AWAITING_APPROVAL: 'Awaiting approval',
+  COMPLETED: 'Completed',
+};
 
 export type ServiceEvent = {
   date: string;
@@ -20,6 +44,7 @@ export type FieldJob = {
   priority: 'NORMAL' | 'HIGH';
   notes: string;
   accessNotes: string;
+  dispatchNotes?: string;
   equipment: {
     manufacturer: string;
     model: string;
@@ -27,22 +52,27 @@ export type FieldJob = {
     tonnage: number;
     installedAt: string;
     warranty: string;
+    equipmentType?: string;
+    refrigerant?: string;
+    voltage?: string;
+    phase?: string;
+    location?: string;
+    assetId?: string;
+    nominalCapacity?: string;
   };
   serviceHistory: ServiceEvent[];
   updatedAt: string;
 };
-
-// Production starts empty. Work orders must arrive from an authenticated dispatch source.
-const initialJobs: FieldJob[] = [];
 
 declare global {
   // eslint-disable-next-line no-var
   var wiseHvacFieldJobs: FieldJob[] | undefined;
 }
 
-const jobs = globalThis.wiseHvacFieldJobs ?? structuredClone(initialJobs);
+const jobs = globalThis.wiseHvacFieldJobs ?? [];
 globalThis.wiseHvacFieldJobs = jobs;
 
+/** Explicit demo mode only — production uses WISE² Fieldtech API. */
 export function listFieldJobs() {
   return jobs.map((job) => structuredClone(job));
 }
@@ -58,8 +88,7 @@ export function updateFieldJob(id: string, updates: { status?: JobStatus; notes?
 
   jobs[index] = {
     ...jobs[index],
-    ...(updates.status ? { status: updates.status } : {}),
-    ...(typeof updates.notes === 'string' ? { notes: updates.notes.trim() } : {}),
+    ...updates,
     updatedAt: new Date().toISOString(),
   };
   return structuredClone(jobs[index]);

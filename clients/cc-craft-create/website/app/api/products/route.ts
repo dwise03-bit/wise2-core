@@ -1,33 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { filterDemoProducts } from '@/lib/demo-data';
+import { useDemoData } from '@/lib/demo';
 import { Product } from '@/lib/types';
 
 export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const category = searchParams.get('category');
-    const occasion = searchParams.get('occasion');
-    const search = searchParams.get('search');
+  const searchParams = request.nextUrl.searchParams;
+  const category = searchParams.get('category');
+  const occasion = searchParams.get('occasion');
+  const search = searchParams.get('search');
 
+  if (useDemoData()) {
+    const data = filterDemoProducts({ category, occasion, search });
+    return NextResponse.json({
+      success: true,
+      data,
+      count: data.length,
+      demo: true,
+    });
+  }
+
+  try {
     let queryText = 'SELECT * FROM products WHERE in_stock = true';
-    const params: any[] = [];
+    const params: unknown[] = [];
     let paramIndex = 1;
 
-    // Add category filter
     if (category) {
       queryText += ` AND LOWER(category) = LOWER($${paramIndex})`;
       params.push(category);
       paramIndex++;
     }
 
-    // Add occasion filter
     if (occasion) {
       queryText += ` AND LOWER(occasion) = LOWER($${paramIndex})`;
       params.push(occasion);
       paramIndex++;
     }
 
-    // Add search filter
     if (search) {
       queryText += ` AND (LOWER(name) LIKE LOWER($${paramIndex}) OR LOWER(description) LIKE LOWER($${paramIndex}))`;
       const searchTerm = `%${search}%`;
@@ -46,9 +55,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching products:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch products' },
-      { status: 500 }
-    );
+    const data = filterDemoProducts({ category, occasion, search });
+    return NextResponse.json({
+      success: true,
+      data,
+      count: data.length,
+      demo: true,
+      fallback: true,
+    });
   }
 }

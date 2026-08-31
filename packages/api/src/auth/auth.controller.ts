@@ -22,6 +22,7 @@ import { PrismaAuthService } from './prisma-auth.service';
 import { SignupDto } from './dto/index';
 import { LoginDto } from './dto/index';
 import { GoogleLoginDto } from './dto/index';
+import { OAuthCodeExchangeDto } from './dto/index';
 import { VerifyEmailDto } from './dto/index';
 import { RefreshTokenDto } from './dto/index';
 import { PasswordResetRequestDto } from './dto/index';
@@ -135,6 +136,24 @@ export class AuthController {
   @ApiOperation({ summary: 'Authenticate with a Google ID token' })
   async googleLogin(@Body() dto: GoogleLoginDto): Promise<any> {
     return this.authService.loginWithGoogle(dto.idToken);
+  }
+
+  @Post('oauth/google/exchange')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 900000 } })
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Exchange a Google OAuth code for WISE² tokens' })
+  async exchangeGoogle(@Body() dto: OAuthCodeExchangeDto): Promise<any> {
+    return this.authService.exchangeGoogleCode(dto.code, dto.redirectUri);
+  }
+
+  @Post('oauth/discord/exchange')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 900000 } })
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Exchange a Discord OAuth code for WISE² tokens' })
+  async exchangeDiscord(@Body() dto: OAuthCodeExchangeDto): Promise<any> {
+    return this.authService.exchangeDiscordCode(dto.code, dto.redirectUri);
   }
 
   /**
@@ -311,17 +330,30 @@ export class AuthController {
   async googleCallback(
     @Query('code') code: string,
     @Query('state') state: string,
+    @Query('redirect_uri') redirectUri: string,
+    @Query('error') oauthError: string,
     @Res() res: Response,
   ): Promise<void> {
+    const appUrl = (process.env.APP_URL || 'https://wise2.net').replace(/\/$/, '');
+    const dashboardUrl = (
+      process.env.NEXT_PUBLIC_DASHBOARD_URL || `${appUrl}/dashboard`
+    ).replace(/\/$/, '');
+
+    if (oauthError) {
+      res.redirect(`${appUrl}/auth/signin?error=${encodeURIComponent(oauthError)}`);
+      return;
+    }
+
     try {
-      await this.authService.handleGoogleCallback(code);
-      res.redirect(
-        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?oauth=success`,
-      );
+      const auth = await this.authService.handleGoogleCallback(code, redirectUri);
+      const destination = new URL(dashboardUrl);
+      destination.searchParams.set('token', auth.accessToken);
+      if (auth.refreshToken) {
+        destination.searchParams.set('refresh', auth.refreshToken);
+      }
+      res.redirect(destination.toString());
     } catch (error) {
-      res.redirect(
-        `${process.env.NEXT_PUBLIC_DASHBOARD_URL}?error=oauth_failed`,
-      );
+      res.redirect(`${appUrl}/auth/signin?error=oauth_failed`);
     }
   }
 }

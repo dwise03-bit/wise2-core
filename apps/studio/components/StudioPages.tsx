@@ -4,6 +4,7 @@ import React from 'react';
 import { useCreativeStudioStore } from '@/lib/creativeStudioStore';
 import { WaveformEditor, MeterLED, SpectrumBars, HorizontalMeter, SmoothWave } from './CanvasPrimitives';
 import { SoundLabEnhanced } from './SoundLab/SoundLabEnhanced';
+import { ComfyUIImagePanel } from "./ImageGeneration/ComfyUIImagePanel";
 import { useState } from 'react';
 
 // Command Center
@@ -301,10 +302,11 @@ export function VoiceLabPage() {
 
 // Content Factory
 export function ContentFactoryPage() {
-  // Use exact same structure as CommandCenterPage to debug rendering issue
   return (
     <div className="space-y-6">
       <h1 className="text-4xl font-display font-black">Content Factory</h1>
+
+      <ComfyUIImagePanel />
 
       <div className="grid grid-cols-2 gap-4">
         {[

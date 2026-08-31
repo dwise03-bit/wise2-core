@@ -24,20 +24,22 @@ import { SunoGenerationQueue } from './SunoGenerationQueue';
 import { Mixer, type ChannelStrip } from './Mixer';
 import type { SunoGeneration, SunoGenerationParams, SunoQueueItem } from '@/types/suno';
 
-const TEST_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbXQ1ODQ3b2EwMDAwYWUzMmZ2Ymthc3prIiwiZW1haWwiOiJkd2lzZTAzQGdtYWlsLmNvbSIsInJvbGUiOiJGT1VOREVSIiwiaWF0IjoxNzg3NDYyNzU2LCJleHAiOjE3ODc0NjYzNTZ9.WQTzGcAyz98GCilgNeTHbXdxC4jrSPxkj0eFJPW8T9o';
-const TEST_PROJECT_ID = 'cmt5d6dhw00014ak3wimhgk7y';
-const API_BASE_URL = 'http://localhost:3010';
+function getAuthToken(): string {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem('auth_token') || localStorage.getItem('authToken') || '';
+}
 
 type TabType = 'timeline' | 'generation' | 'mixer' | 'effects';
 
 interface SoundLabEnhancedProps {
   onStatusUpdate?: (status: string) => void;
+  projectId?: string;
 }
 
 /**
  * Main Sound Lab Enhanced component
  */
-export function SoundLabEnhanced({ onStatusUpdate }: SoundLabEnhancedProps) {
+export function SoundLabEnhanced({ onStatusUpdate, projectId }: SoundLabEnhancedProps) {
   // Tab management
   const [activeTab, setActiveTab] = useState<TabType>('timeline');
 
@@ -128,13 +130,18 @@ export function SoundLabEnhanced({ onStatusUpdate }: SoundLabEnhancedProps) {
         setIsGenerating(true);
         onStatusUpdate?.('Sending generation request...');
 
+        const token = getAuthToken();
+        if (!token || !projectId) {
+          throw new Error('Sign in and open a Sound Lab project before generating.');
+        }
+
         const response = await fetch(
-          `${API_BASE_URL}/api/v1/sound-labs/me/projects/${TEST_PROJECT_ID}/generate`,
+          `/api/v1/sound-labs/me/projects/${projectId}/generate`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${TEST_JWT}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               prompt: params.prompt,
@@ -181,7 +188,7 @@ export function SoundLabEnhanced({ onStatusUpdate }: SoundLabEnhancedProps) {
         setIsGenerating(false);
       }
     },
-    [queue, onStatusUpdate]
+    [queue, onStatusUpdate, projectId]
   );
 
   /**

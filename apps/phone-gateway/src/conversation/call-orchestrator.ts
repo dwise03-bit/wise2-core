@@ -9,6 +9,7 @@ import { logger } from '../logger';
 import { STTService } from '../services/stt.service';
 import { LLMService } from '../services/llm.service';
 import { TTSService } from '../services/tts.service';
+import { CRMClient, CRMCustomer } from '../crm/crm-client';
 
 export interface CallState {
   callId: string;
@@ -52,22 +53,31 @@ export class CallOrchestrator extends EventEmitter {
   private stt: STTService;
   private llm: LLMService;
   private tts: TTSService;
+  private crm: CRMClient;
+  private callContext: Map<string, { customer?: CRMCustomer; leadId?: string }> =
+    new Map();
 
-  constructor(stt: STTService, llm: LLMService, tts: TTSService) {
+  constructor(
+    stt: STTService,
+    llm: LLMService,
+    tts: TTSService,
+    crm: CRMClient,
+  ) {
     super();
     this.stt = stt;
     this.llm = llm;
     this.tts = tts;
+    this.crm = crm;
   }
 
   /**
-   * Start a new call session
+   * Start a new call session and lookup customer
    */
-  initializeCall(
+  async initializeCall(
     channelId: string,
     callerId: string,
     context?: Record<string, any>
-  ): CallState {
+  ): Promise<CallState> {
     const callId = uuid();
     const state: CallState = {
       callId,
@@ -82,6 +92,17 @@ export class CallOrchestrator extends EventEmitter {
 
     this.callState.set(callId, state);
     logger.info(`Call initialized: ${callId} on ${channelId} from ${callerId}`);
+
+    // Lookup or create customer
+    try {
+      let customer = await this.crm.lookupCustomer(callerId);
+      if (!customer) {
+        logger.info(`Customer not found for ${callerId}, will create on first intent`);
+      }
+      this.callContext.set(callId, { customer: customer || undefined });
+    } catch (error: any) {
+      logger.error(`Failed to lookup customer: ${error.message}`);
+    }
 
     this.emit('call-initialized', { callId, callerId, context });
     return state;
@@ -455,18 +476,108 @@ Current context:
   // Tool execution stubs (would connect to CRM/scheduling)
 
   private async executeTool_CreateLead(args: any): Promise<any> {
-    logger.info(`Tool: Creating lead: ${JSON.stringify(args)}`);
-    return { leadId: uuid(), status: 'created' };
+    try {
+      logger.info(`Tool: Creating lead: ${JSON.stringify(args)}`);
+      const callIds = Array.from(this.callState.keys());
+      const callId = callIds[callIds.length - 1];
+      const context = this.callContext.get(callId);
+
+      const lead = await this.crm.createLead({
+        customerId: context?.customer?.id,
+        intent: args.intent || 'Inbound phone call',
+        sourceCallId: callId,
+      });
+
+      if (callId) {
+        this.callContext.set(callId, {
+          ...context,
+          leadId: lead.id,
+        });
+      }
+
+      return {
+        leadId: lead.id,
+        status: 'created',
+        customerId: context?.customer?.id,
+      };
+    } catch (error: any) {
+      logger.error(`Tool: CreateLead failed: ${error.message}`);
+      return { error: error.message, status: 'failed' };
+    }
   }
 
   private async executeTool_ScheduleAppointment(args: any): Promise<any> {
-    logger.info(`Tool: Scheduling appointment: ${JSON.stringify(args)}`);
-    return { appointmentId: uuid(), scheduled: true };
+    try {
+      logger.info(`Tool: Scheduling appointment: ${JSON.stringify(args)}`);
+      const callIds = Array.from(this.callState.keys());
+      const callId = callIds[callIds.length - 1];
+      const context = this.callContext.get(callId);
+
+      if (!context?.customer?.id) {
+        return {
+          error: 'Customer not found',
+          status: 'failed',
+        };
+      }
+
+      const startAt = new Date(args.startTime || Date.now());
+      const endAt = new Date(startAt.getTime() + (args.duration || 60) * 60000);
+
+      const booking = await this.crm.createBooking({
+        customerId: context.customer.id,
+        serviceType: args.serviceType || 'hvac-service',
+        startAt,
+        endAt,
+        sourceCallId: callId,
+      });
+
+      return {
+        appointmentId: booking.id,
+        confirmationNumber: booking.confirmationNumber,
+        status: 'scheduled',
+        startTime: booking.startAt,
+        endTime: booking.endAt,
+      };
+    } catch (error: any) {
+      logger.error(`Tool: ScheduleAppointment failed: ${error.message}`);
+      return { error: error.message, status: 'failed' };
+    }
   }
 
   private async executeTool_CreateWorkOrder(args: any): Promise<any> {
-    logger.info(`Tool: Creating work order: ${JSON.stringify(args)}`);
-    return { workOrderId: uuid(), status: 'created' };
+    try {
+      logger.info(`Tool: Creating work order: ${JSON.stringify(args)}`);
+      const callIds = Array.from(this.callState.keys());
+      const callId = callIds[callIds.length - 1];
+      const context = this.callContext.get(callId);
+
+      if (!context?.customer?.id) {
+        return {
+          error: 'Customer not found',
+          status: 'failed',
+        };
+      }
+
+      const startAt = new Date(args.startTime || Date.now());
+      const endAt = new Date(startAt.getTime() + (args.duration || 120) * 60000);
+
+      const booking = await this.crm.createBooking({
+        customerId: context.customer.id,
+        serviceType: args.serviceType || 'hvac-work-order',
+        startAt,
+        endAt,
+        sourceCallId: callId,
+      });
+
+      return {
+        workOrderId: booking.id,
+        status: 'created',
+        customerId: context.customer.id,
+      };
+    } catch (error: any) {
+      logger.error(`Tool: CreateWorkOrder failed: ${error.message}`);
+      return { error: error.message, status: 'failed' };
+    }
   }
 
   private async executeTool_TransferToHuman(
@@ -479,6 +590,33 @@ Current context:
       state.status = 'transferred';
     }
     return { transferred: true };
+  }
+
+  /**
+   * Ensure customer exists for call
+   */
+  async ensureCustomer(
+    callId: string,
+    phone: string,
+    name: string = 'Caller',
+  ): Promise<CRMCustomer> {
+    const context = this.callContext.get(callId);
+    if (context?.customer) {
+      return context.customer;
+    }
+
+    try {
+      logger.info(`Creating customer: ${name} (${phone})`);
+      const customer = await this.crm.createCustomer({
+        fullName: name,
+        phone,
+      });
+      this.callContext.set(callId, { ...context, customer });
+      return customer;
+    } catch (error: any) {
+      logger.error(`Failed to create customer: ${error.message}`);
+      throw error;
+    }
   }
 
   /**

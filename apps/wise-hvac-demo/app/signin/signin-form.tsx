@@ -1,24 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, LockKeyhole } from 'lucide-react';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  oauth_failed: 'Google sign-in could not be completed. Check that your account is authorized.',
+  google_rejected: 'Google sign-in was cancelled or denied.',
+  oauth_state: 'Sign-in session expired. Please try again.',
+  google_not_configured: 'Google sign-in is not configured on this server yet.',
+};
+
 export default function SignInForm() {
   const searchParams = useSearchParams();
+  const errorCode = searchParams?.get('error') ?? '';
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(searchParams?.get('error') ? 'Sign-in could not be completed. Please try again.' : '');
+  const [error, setError] = useState(
+    errorCode ? ERROR_MESSAGES[errorCode] ?? 'Sign-in could not be completed. Please try again.' : '',
+  );
 
-  async function handleGoogleSignIn() {
+  function handleGoogleSignIn() {
     setLoading(true);
     setError('');
-    try {
-      await signIn('google', { redirect: true, callbackUrl: '/wise-hvac-demo/field-tech' });
-    } catch {
-      setError('Google sign-in could not be started. Please try again.');
-      setLoading(false);
-    }
+    window.location.href = '/wise-hvac-demo/api/auth/google/authorize';
   }
 
   return (
@@ -32,7 +36,9 @@ export default function SignInForm() {
         <button type="button" onClick={handleGoogleSignIn} disabled={loading} className="wise-button-blue mt-6 min-h-12 w-full disabled:cursor-not-allowed disabled:opacity-50" aria-busy={loading}>
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LockKeyhole className="h-4 w-4" />}{loading ? 'Opening Google…' : 'Continue with Google'}
         </button>
-        <a href="/wise-hvac-demo/field-tech" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-wise-cyan/40 bg-wise-cyan/10 px-4 text-sm font-bold text-wise-cyan transition hover:bg-wise-cyan/20">Demo Access</a>
+        {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ? (
+          <a href="/wise-hvac-demo/field-tech" className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-wise-cyan/40 bg-wise-cyan/10 px-4 text-sm font-bold text-wise-cyan transition hover:bg-wise-cyan/20">Demo Access</a>
+        ) : null}
         <a href="/wise-hvac-demo/" className="mt-4 inline-flex min-h-11 items-center justify-center px-4 text-sm font-bold text-wise-mute transition hover:text-white">Return to website</a>
         <p className="mt-4 text-xs leading-5 text-wise-mute">Secure access for authorized WISE² technicians.</p>
       </section>

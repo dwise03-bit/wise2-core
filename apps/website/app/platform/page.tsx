@@ -60,7 +60,7 @@ export default function PlatformPage() {
         <div className="border border-white/10 bg-[#DCE7EF] p-8 text-[#050607] lg:p-10">
           <h2 className="text-3xl font-black">Designed for connected divisions, not isolated demos.</h2>
           <p className="mt-4 max-w-3xl text-base leading-7 text-[#26313A]">
-            HVAC, Defense, SoundLab, client storefronts, and automation systems share the same operating discipline: capture the facts, analyze the work, and ship a usable outcome.
+            HVAC, Defense, SoundLab, WISE Imp, client storefronts, and automation systems share the same operating discipline: capture the facts, analyze the work, and ship a usable outcome.
           </p>
           <Link
             href="/start-your-build"

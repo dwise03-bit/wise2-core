@@ -7,6 +7,8 @@ const footerSections = [
     title: 'Products',
     links: [
       { href: '/platform', label: 'WISE² Core' },
+      { href: '/products/imp', label: 'WISE Imp' },
+      { href: '/products/imps', label: 'IMPS BYTE MINI' },
       { href: '/fieldtech', label: 'WISE² HVAC' },
       { href: '/wise-defense', label: 'WISE Defense' },
       { href: '/soundlab', label: 'SoundLab' },

@@ -1,63 +1,69 @@
+import Link from 'next/link';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/Button';
-import Link from 'next/link';
+import { PageHero } from '@/components/PageHero';
+import { SectionHeading } from '@/components/SectionHeading';
 
 export default function AboutPage() {
   return (
     <>
       <Header />
       <main className="flex-1">
-        <section className="bg-cc-lilac py-12 px-4">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl font-lora font-bold text-cc-dark mb-4">About CC Craft & Create</h1>
-          </div>
-        </section>
+        <PageHero
+          title="About CC"
+          subtitle="Nurse. Entrepreneur. Creator. Purpose Driven."
+        />
 
-        <section className="max-w-4xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-12">
-            <div className="text-6xl text-center">👩‍⚕️</div>
+        <section className="max-w-5xl mx-auto px-4 py-12 md:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-14">
+            <div className="rounded-3xl border-4 border-cc-gold bg-gradient-to-br from-cc-purple via-cc-lavender to-cc-lilac aspect-[4/5] max-w-sm mx-auto w-full flex flex-col items-center justify-center text-white p-8 shadow-xl">
+              <span className="text-7xl font-lora font-bold mb-3">CC</span>
+              <p className="font-script text-3xl text-cc-gold text-center">Craft & Create</p>
+            </div>
             <div>
               <h2 className="text-3xl font-lora font-bold text-cc-dark mb-4">
                 Nurse. Entrepreneur. Creator.
               </h2>
-              <p className="text-lg text-cc-dark mb-4">
-                CC is a nurse by day, and a creative visionary by heart. With over a decade of experience bringing ideas to life through custom design and printing, CC has mastered the art of creating memorable moments.
+              <p className="text-cc-dark/90 mb-4 leading-relaxed">
+                CC is a nurse, entrepreneur, and creative at heart. She specializes in custom products
+                for every occasion, business, and community event.
               </p>
-              <p className="text-lg text-cc-dark mb-4">
-                Every product is crafted with meticulous attention to detail, because CC believes that every moment deserves to be special. From intimate gatherings to grand celebrations, CC's work transforms ordinary events into unforgettable memories.
+              <p className="text-cc-dark/90 mb-4 leading-relaxed">
+                Every detail is designed with love, care, and purpose — because every moment deserves
+                to be special. From intimate gatherings to grand celebrations, CC brings your vision to
+                life with quality, creativity, and reliability.
               </p>
-              <p className="text-lg text-cc-dark">
-                Whether it's personalized party labels, custom memorial keepsakes, or complete event packages, CC brings your vision to life with quality, care, and creativity.
+              <p className="font-script text-2xl text-cc-gold">
+                You Dream It. I&apos;ll Create It!
               </p>
             </div>
           </div>
 
-          <div className="bg-cc-lilac rounded-lg p-8 mb-12">
-            <h3 className="text-2xl font-lora font-bold text-cc-dark mb-6">Our Values</h3>
+          <div className="bg-cc-lilac rounded-2xl p-8 mb-12">
+            <SectionHeading title="Our Values" align="left" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <h4 className="font-bold text-cc-purple mb-2">Quality</h4>
-                <p className="text-cc-dark">Every detail is designed with precision and care to ensure the highest quality.</p>
+                <p className="text-cc-dark/80 text-sm">High-quality printing with vibrant colors and sharp details.</p>
               </div>
               <div>
                 <h4 className="font-bold text-cc-purple mb-2">Creativity</h4>
-                <p className="text-cc-dark">Innovation and artistic vision guide every project, making each creation unique.</p>
+                <p className="text-cc-dark/80 text-sm">Custom designs tailored to your vision and occasion.</p>
               </div>
               <div>
-                <h4 className="font-bold text-cc-purple mb-2">Connection</h4>
-                <p className="text-cc-dark">We create products that bring people together and create lasting memories.</p>
+                <h4 className="font-bold text-cc-purple mb-2">Community</h4>
+                <p className="text-cc-dark/80 text-sm">Local, community-minded, and built on trust.</p>
               </div>
             </div>
           </div>
 
           <div className="text-center">
-            <h3 className="text-2xl font-lora font-bold text-cc-dark mb-6">Ready to Create Something Special?</h3>
-            <Link href="/shop">
-              <Button variant="primary" className="text-lg">
-                Start Shopping
-              </Button>
-            </Link>
+            <h3 className="text-2xl font-lora font-bold text-cc-dark mb-4">Ready to Create Something Special?</h3>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/shop"><Button>Start Shopping</Button></Link>
+              <Link href="/contact"><Button variant="outline">Contact CC</Button></Link>
+            </div>
           </div>
         </section>
       </main>

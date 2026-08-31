@@ -13,7 +13,7 @@ const REDIRECT_URI =
   process.env.GOOGLE_CALLBACK_URL ||
   'https://command.wise2.net/api/auth/google/callback';
 const LOGIN_URL = '/login';
-const APP_URL = (process.env.APP_URL || 'https://command.wise2.net').replace(/\/$/, '');
+const APP_URL = (process.env.APP_URL || 'http://localhost:3004').replace(/\/$/, '');
 
 /**
  * Starts Google sign-in for the Command Center.

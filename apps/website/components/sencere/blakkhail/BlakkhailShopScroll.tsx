@@ -1,0 +1,48 @@
+'use client';
+
+import Image from 'next/image';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
+import { BlakkhailSectionHeading } from './BlakkhailSectionHeading';
+
+export function BlakkhailShopScroll() {
+  const photos = BLAKKHAIL_LEGACY.assets.shopPhotos;
+
+  return (
+    <section
+      id="shop"
+      className={`${BLAKKHAIL_LAYOUT.section} ${BLAKKHAIL_LAYOUT.sectionY}`}
+      style={{ backgroundColor: BLAKKHAIL.jetBlack }}
+    >
+      <BlakkhailSectionHeading eyebrow="Featured Apparel" title="Shop" />
+      <div
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:gap-6 sm:px-6 lg:px-8"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: `${BLAKKHAIL.darkGold} ${BLAKKHAIL.jetBlack}`,
+          overscrollBehaviorX: 'contain',
+        }}
+      >
+        {photos.map((src, index) => (
+          <div
+            key={src}
+            className={`${BLAKKHAIL_LAYOUT.frame} relative shrink-0 snap-center`}
+            style={{
+              borderColor: BLAKKHAIL.darkGold,
+              width: 'min(88vw, 560px)',
+              aspectRatio: '4 / 5',
+            }}
+          >
+            <Image
+              src={src}
+              alt={`Blakk Hail apparel ${index + 1}`}
+              fill
+              sizes="(max-width: 768px) 88vw, 560px"
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

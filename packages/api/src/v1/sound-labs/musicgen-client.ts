@@ -92,3 +92,20 @@ export async function generateMusic(
     downloadPath: data.download_url,
   };
 }
+
+export async function fetchMusicGenAudio(
+  generationId: string,
+): Promise<Response | null> {
+  const res = await fetch(
+    `${MUSICGEN_API_URL}/api/v1/download/${encodeURIComponent(generationId)}`,
+    { signal: AbortSignal.timeout(30_000) },
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new MusicGenServiceError(
+      `MusicGen service returned ${res.status} for download`,
+      res.status,
+    );
+  }
+  return res;
+}

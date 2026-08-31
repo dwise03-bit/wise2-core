@@ -6,6 +6,7 @@ import { getProductBySlug, SENCERE_PRODUCTS } from '@/lib/sencere-products';
 import { ProductDetail } from '@/components/sencere/ProductDetail';
 import { CartItem } from '@/lib/sencere-cart';
 import { ProductGrid } from '@/components/sencere/ProductGrid';
+import { BlakkhailProductPage } from '@/components/sencere/blakkhail/BlakkhailProductPage';
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -31,6 +32,10 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
         </div>
       </div>
     );
+  }
+
+  if (product.brand === 'blakkhail') {
+    return <BlakkhailProductPage product={product} />;
   }
 
   const handleAddToCart = (item: CartItem) => {

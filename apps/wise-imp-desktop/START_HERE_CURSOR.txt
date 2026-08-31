@@ -1,0 +1,15 @@
+CURSOR START HERE
+
+This prototype now lives in the WISE² monorepo at:
+
+  apps/wise-imp-desktop
+
+1. Open that folder, or work from the repo root scoped to it.
+2. Read CURSOR_HANDOFF.md completely.
+3. Then read README.md and CODEX_HANDOFF.md for project context.
+4. From apps/wise-imp-desktop run:
+   npm install
+   npm run desktop:dev
+5. Complete P0 in CURSOR_HANDOFF.md before P1/P2.
+6. Preserve the locked mascot and Tauri 2 architecture.
+7. Build the Windows installer when P0 passes (`npm run desktop:build` on Windows).

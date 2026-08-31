@@ -1,0 +1,42 @@
+{
+  "model": "claude-haiku-4-5-20251001",
+  "modelOverrides": {
+    "architecture": "claude-sonnet-5-20250514",
+    "deploy": "claude-sonnet-5-20250514",
+    "review": "claude-opus-5-20250514",
+    "debug": "claude-sonnet-5-20250514",
+    "research": "claude-sonnet-5-20250514"
+  },
+  "enableAllProjectMcpServers": true,
+  "enableWorkflows": true,
+  "theme": "dark",
+  "fastMode": true,
+  "statusLine": {
+    "type": "command",
+    "command": "cd /Users/danielwise/Projects/wise2-core && git branch --show-current"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(npm *)",
+      "Bash(git *)",
+      "Bash(docker *)",
+      "Bash(node *)",
+      "Bash(ssh *)",
+      "Bash(curl *)",
+      "Bash(grep *)",
+      "Bash(find *)"
+    ]
+  },
+  "hooks": {
+    "onSessionStart": "cat /Users/danielwise/Projects/wise2-core/CLAUDE.md | head -50",
+    "before-deploy": "git status && git log --oneline -5"
+  },
+  "workflowOptions": {
+    "sizeGuideline": "medium",
+    "defaultEffort": "high"
+  },
+  "skipWorkflowUsageWarning": true,
+  "agentPushNotifEnabled": true,
+  "inputNeededNotifEnabled": true
+}

@@ -35,7 +35,7 @@ const CANON = [
 ];
 
 const PAGE_VARIANTS: Array<[string, string]> = [
-  ['sound-labs', 'gold headphones round the neck'],
+  ['sound-lab', 'gold headphones round the neck'],
   ['live-studio', 'chrome microphone'],
   ['ai', 'holographic orb on an open palm'],
   ['workflows', 'floating gold gear'],

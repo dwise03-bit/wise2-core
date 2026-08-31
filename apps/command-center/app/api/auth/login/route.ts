@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerApiUrl } from '../../../../src/lib/server-api';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,32 +10,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const API_URL = process.env.API_URL || 'http://localhost:3011/api';
+    const API_URL = getServerApiUrl();
     const res = await fetch(`${API_URL}/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: err.message || 'Invalid email or password' },
-        { status: res.status },
-      );
+      const message =
+        data.message ||
+        data.error?.message ||
+        (typeof data.error === 'string' ? data.error : null) ||
+        'Invalid email or password';
+      return NextResponse.json({ error: message }, { status: res.status });
     }
 
-    const data = await res.json();
-    const token = data.access_token || data.accessToken;
-
+    const token = data.accessToken || data.access_token;
     if (!token) {
       return NextResponse.json({ error: 'No token in response' }, { status: 502 });
     }
 
     const response = NextResponse.json({
       user: data.user,
-      subscription: data.subscription,
+      subscription: data.subscription ?? null,
       token,
+      accessToken: token,
     });
 
     response.cookies.set('authToken', token, {
@@ -47,6 +50,12 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch {
-    return NextResponse.json({ error: 'Authentication service unavailable' }, { status: 502 });
+    return NextResponse.json(
+      {
+        error:
+          'Authentication service unavailable. Start the Nest API (pnpm --filter @wise2/platform-api dev, port 3010).',
+      },
+      { status: 502 },
+    );
   }
 }

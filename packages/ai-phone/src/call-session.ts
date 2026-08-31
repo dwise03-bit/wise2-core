@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 export class CallSessionManager {
   private sessions = new Map<string, CallSession>();
+  private callIdIndex = new Map<string, string>();
 
   createSession(
     callId: string,
@@ -35,11 +36,17 @@ export class CallSessionManager {
     };
 
     this.sessions.set(sessionId, session);
+    this.callIdIndex.set(callId, sessionId);
     return session;
   }
 
   getSession(sessionId: string): CallSession | undefined {
     return this.sessions.get(sessionId);
+  }
+
+  getSessionByCallId(callId: string): CallSession | undefined {
+    const sessionId = this.callIdIndex.get(callId);
+    return sessionId ? this.sessions.get(sessionId) : undefined;
   }
 
   updateState(sessionId: string, newState: CallState): boolean {
@@ -153,6 +160,8 @@ export class CallSessionManager {
   }
 
   deleteSession(sessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (session) this.callIdIndex.delete(session.callId);
     this.sessions.delete(sessionId);
   }
 

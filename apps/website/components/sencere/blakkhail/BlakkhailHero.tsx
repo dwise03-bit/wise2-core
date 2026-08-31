@@ -1,58 +1,64 @@
 'use client';
 
+import Link from 'next/link';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
+
 export function BlakkhailHero() {
   return (
-    <section className="relative bg-[#1a1a1a] py-12">
-      <div className="mx-auto max-w-[1536px] px-6">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Sidebar Navigation */}
-          <div className="flex flex-col gap-8 text-center lg:text-left">
-            <div>
-              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[#D4842F]" style={{ fontFamily: 'var(--font-headers)' }}>
-                Photo Shoot
-              </h2>
-              <p className="mt-2 text-[12px] leading-relaxed text-[#D4D4D4]">
-                Curated collection from our latest shoots
-              </p>
-            </div>
-            <div>
-              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[#D4842F]" style={{ fontFamily: 'var(--font-headers)' }}>
-                Videos
-              </h2>
-              <p className="mt-2 text-[12px] leading-relaxed text-[#D4D4D4]">
-                Behind the scenes and brand films
-              </p>
-            </div>
-          </div>
+    <section id="home" className="w-full" style={{ backgroundColor: BLAKKHAIL.jetBlack }}>
+      {/* Legacy iWeb was ~1000px — cap logo so it scales cleanly without crop */}
+      <div className={`${BLAKKHAIL_LAYOUT.container} max-w-[1000px] py-0`}>
+        <img
+          src={BLAKKHAIL_LEGACY.assets.logo}
+          alt="Blakk Hail — original fashion since 1994"
+          width={675}
+          height={152}
+          decoding="async"
+          fetchPriority="high"
+          className="block h-auto w-full"
+          style={{ aspectRatio: '675 / 152' }}
+        />
+      </div>
 
-          {/* Hero Image & Featured Products */}
-          <div className="lg:col-span-2">
-            <div className="relative overflow-hidden border-4 border-[#D4842F]">
-              {/* Placeholder for hero image - would show product photography */}
-              <div className="aspect-video bg-gradient-to-br from-[#2a2a2a] via-[#1a1a1a] to-[#0f0f0f] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-[64px] font-black text-[#D4842F] opacity-20">BLAKK HAIL</div>
-                  <p className="mt-4 text-[14px] uppercase tracking-wider text-[#D4D4D4]">
-                    Featured Collection
-                  </p>
-                </div>
-              </div>
-            </div>
+      <div
+        className={`${BLAKKHAIL_LAYOUT.container} flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:gap-4 sm:py-5`}
+      >
+        <Link
+          href="#collection"
+          className="min-h-11 px-8 py-3 text-sm font-bold uppercase tracking-[0.14em] text-black sm:text-base"
+          style={{ backgroundColor: BLAKKHAIL.gold }}
+        >
+          Shop Collection
+        </Link>
+        <Link
+          href="#shop"
+          className="min-h-11 border px-8 py-3 text-sm font-bold uppercase tracking-[0.14em] sm:text-base"
+          style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+        >
+          Featured Apparel
+        </Link>
+      </div>
 
-            {/* Featured Product Grid Below */}
-            <div className="mt-8 grid grid-cols-3 gap-4">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="relative overflow-hidden border-2 border-[#D4842F]">
-                  <div className="aspect-square bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-[32px] font-black text-[#D4842F] opacity-30">Product {item}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div id="photo-shoot" className="mx-auto flex w-full max-w-[1000px] flex-col">
+        {BLAKKHAIL_LEGACY.assets.heroPhotos.map((src, index) => (
+          <div
+            key={src}
+            className="w-full border-t-[3px]"
+            style={{ borderColor: BLAKKHAIL.darkGold }}
+          >
+            <img
+              src={src}
+              alt={index === 0 ? 'Blakk Hail photo shoot' : 'Blakk Hail editorial'}
+              width={646}
+              height={484}
+              decoding={index === 0 ? 'sync' : 'async'}
+              fetchPriority={index === 0 ? 'high' : 'auto'}
+              className="block h-auto w-full"
+              style={{ aspectRatio: '646 / 484' }}
+            />
           </div>
-        </div>
+        ))}
       </div>
     </section>
   );

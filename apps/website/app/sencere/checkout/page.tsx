@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CartItem, calculateCartTotals, formatPrice, getPriceInCents } from '@/lib/sencere-cart';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import { isBlackhailHost } from '@/lib/site-domains';
+import { BlakkhailCheckout } from '@/components/sencere/blakkhail/BlakkhailCheckout';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const [isBlakkhail, setIsBlakkhail] = useState<boolean | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,6 +26,7 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
+    setIsBlakkhail(isBlackhailHost(window.location.hostname));
     const stored = sessionStorage.getItem('sencere_cart');
     if (stored) {
       try {
@@ -40,6 +44,14 @@ export default function CheckoutPage() {
       setEmail(user.email);
     }
   }, []);
+
+  if (isBlakkhail === null) {
+    return null;
+  }
+
+  if (isBlakkhail) {
+    return <BlakkhailCheckout />;
+  }
 
   if (cartItems.length === 0) {
     return (

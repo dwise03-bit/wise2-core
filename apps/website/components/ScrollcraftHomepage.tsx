@@ -278,6 +278,47 @@ export function ScrollcraftHomepage() {
         </div>
       </section>
 
+      {/* Products */}
+      <section className="border-b border-white/10 bg-[#050607] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <RevealText className="max-w-3xl mb-12">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+              Products
+            </p>
+            <h2 className="mt-4 text-3xl font-black leading-tight sm:text-5xl">
+              WISE Imp is live on the desk.
+            </h2>
+          </RevealText>
+          <Link
+            href="/products/imp"
+            className="group grid overflow-hidden border border-white/10 bg-[#090C10] transition hover:border-[#8EDBFF]/40 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] lg:grid-cols-[1.1fr_0.9fr]"
+          >
+            <div className="p-6 sm:p-10">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8EDBFF]">
+                Alpha 0.1 · Desktop companion
+              </p>
+              <h3 className="mt-4 text-3xl font-black text-white">WISE Imp</h3>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-[#B7C0CB]">
+                Always-on companion for operators and client machines. Try it in the browser, then install the Windows pet.
+              </p>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#DCE7EF]">
+                Open product
+                <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
+              </span>
+            </div>
+            <div className="relative min-h-56 bg-black">
+              <Image
+                src="/products/wise-imp.png"
+                alt="WISE Imp desktop companion"
+                fill
+                className="object-contain p-8"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+              />
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* CTA Footer */}
       <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="grid gap-8 border border-white/10 bg-[#DCE7EF] p-6 text-[#050607] sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">

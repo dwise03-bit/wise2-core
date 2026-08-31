@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerApiUrl } from '../../../../../src/lib/server-api';
 
 export const dynamic = 'force-dynamic';
 
-const API_URL = process.env.API_URL || 'http://api:3000/api';
-/**
- * Public base for post-login redirects.
- *
- * Never derive this from request.nextUrl.origin: behind the proxy Next
- * resolves that to its own listening address (HOSTNAME=0.0.0.0, PORT=3000),
- * so users were sent to https://0.0.0.0:3000 — a URL that exists only inside
- * the container. The sign-in itself succeeded; only the destination was wrong.
- */
-const APP_URL = (process.env.APP_URL || 'https://command.wise2.net').replace(/\/$/, '');
+const APP_URL = (process.env.APP_URL || 'http://localhost:3004').replace(/\/$/, '');
 const LOGIN_URL = '/login';
 const SUCCESS_URL = '/revenue-os';
 
@@ -49,7 +41,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const upstream = await fetch(
-      `${API_URL}/v1/auth/google/callback?code=${encodeURIComponent(code)}`,
+      `${getServerApiUrl()}/v1/auth/google/callback?code=${encodeURIComponent(code)}`,
       // Do not follow: the token lives in the Location header and following it
       // would leak the token into a browser-visible URL.
       { redirect: 'manual' },

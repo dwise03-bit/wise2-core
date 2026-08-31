@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: 'WISE² HVAC Solutions',
   description: 'Heating, cooling, maintenance, and field service from WISE² HVAC Solutions.',
   viewport: 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes',
+  icons: {
+    icon: '/icon.png',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -13,20 +13,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
   useEffect(() => setMobileMenuOpen(false), [pathname]);
 
   if (pathname === '/login') return <>{children}</>;
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-wise-black flex items-center justify-center">
-        <div className="text-wise-electric text-lg font-bold tracking-wider animate-pulse">WISE²</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-wise-black text-text-primary">
@@ -66,7 +56,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         )}
 
         <main id="main-content" role="main" className="flex-1 min-w-0 overflow-y-auto">
-          <div className="p-4 lg:p-6 max-w-[1600px]">
+          <div className={pathname?.startsWith('/sound-lab') ? '' : 'p-4 lg:p-6 max-w-[1600px]'}>
             {children}
           </div>
         </main>

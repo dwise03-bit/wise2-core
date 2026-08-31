@@ -1,20 +1,18 @@
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
-import { BlakkhailHero } from '@/components/sencere/blakkhail/BlakkhailHero';
-import { BlakkhailProducts } from '@/components/sencere/blakkhail/BlakkhailProducts';
+import { BlakkhailStorefront } from '@/components/sencere/blakkhail/BlakkhailStorefront';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
-
-export const metadata = {
-  title: 'BLAKK HAIL | Original Fashion since 1994 | SenCere Creative',
-  description: 'Discover BLAKK HAIL - the legacy brand defining culture through authentic style and heritage. Part of the SenCere Creative ecosystem.',
-};
+import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
+import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
 
 export default function BlakkhailPage() {
   return (
-    <div className="min-h-screen bg-[#0f0f0f]">
+    <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`}>
       <BlakkhailHeader />
-      <BlakkhailHero />
-      <BlakkhailProducts />
+      <main>
+        <BlakkhailStorefront />
+      </main>
       <BlakkhailFooter />
+      <BlakkhailMobileShopBar />
     </div>
   );
 }

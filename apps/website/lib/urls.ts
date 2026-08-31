@@ -10,4 +10,4 @@
  * inlined into the client bundle during `next build`).
  */
 export const DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.wise2.net';
+  process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://wise2.net/dashboard';
