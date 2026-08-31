@@ -4,8 +4,8 @@
 
 set -e
 
-VPS="gpu-nmls-1.tail44396d.ts.net"
-USER="ubuntu"
+VPS="173.208.147.165"
+USER="dwise"
 
 echo "🚀 Deploying WISE² AI Phone to $VPS"
 echo ""
@@ -18,7 +18,7 @@ echo ""
 
 # Step 2: Execute deployment
 echo "[2/3] Running deployment on VPS (5-10 minutes)..."
-ssh -o StrictHostKeyChecking=no $USER@$VPS "cd wise2-core && bash /tmp/deploy-vps.sh"
+ssh -t -o StrictHostKeyChecking=no $USER@$VPS "cd wise2-core && sudo bash /tmp/deploy-vps.sh"
 DEPLOY_STATUS=$?
 echo ""
 

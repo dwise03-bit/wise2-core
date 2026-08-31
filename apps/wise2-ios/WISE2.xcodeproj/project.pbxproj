@@ -7,55 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3FA1001001 /* WISE2/App/WISE2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001002 /* WISE2/App/WISE2App.swift */; };
-		3FA1001003 /* WISE2/Core/Authentication/KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */; };
-		3FA1001005 /* WISE2/Core/Authentication/AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */; };
-		3FA1001007 /* WISE2/Core/Networking/APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001008 /* WISE2/Core/Networking/APIClient.swift */; };
-		3FA1001009 /* WISE2/Core/AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100A /* WISE2/Core/AppState.swift */; };
-		3FA100100B /* WISE2/Views/Navigation/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */; };
-		3FA100100D /* WISE2/Views/Auth/AuthGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100100E /* WISE2/Views/Auth/AuthGate.swift */; };
-		3FA100100F /* WISE2/Views/Home/HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */; };
-		3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */; };
-		3FA1001026 /* WISE2/Views/AIScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */; };
-		3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001029 /* WISE2/Views/AIScreen.swift */; };
-		3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */; };
-		3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001033 /* WISE2/Views/WorkScreen.swift */; };
-		3FA1001034 /* WISE2/Views/SystemsScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */; };
-		3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001037 /* WISE2/Views/SystemsScreen.swift */; };
-		3FA1001038 /* WISE2/Views/MoreScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */; };
-		3FA100103A /* WISE2/Views/MoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA100103B /* WISE2/Views/MoreScreen.swift */; };
-		3F0004124 /* SenCereAIAssistantScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004040 /* SenCereAIAssistantScreen.swift */; };
-		3F0004125 /* AIAssistantService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004041 /* AIAssistantService.swift */; };
-
+		3F000403C /* SenCere/Design/SenCereColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000403D /* SenCere/Design/SenCereColors.swift */; };
+		3F0004020 /* SenCere/Views/SenCereDashboardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004021 /* SenCere/Views/SenCereDashboardScreen.swift */; };
+		3F0004022 /* SenCere/Views/SenCereProjectsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004023 /* SenCere/Views/SenCereProjectsScreen.swift */; };
+		3F0004024 /* SenCere/Views/SenCereMessagesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004025 /* SenCere/Views/SenCereMessagesScreen.swift */; };
+		3F0004026 /* SenCere/Views/SenCereProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004027 /* SenCere/Views/SenCereProfileScreen.swift */; };
+		3F0004028 /* SenCere/Views/SenCereAddScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004029 /* SenCere/Views/SenCereAddScreen.swift */; };
+		3F000402A /* SenCere/Views/ProjectDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000402B /* SenCere/Views/ProjectDetailScreen.swift */; };
+		3F000402C /* SenCere/Views/SenCereTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000402D /* SenCere/Views/SenCereTabView.swift */; };
+		3F000402E /* SenCere/Models/SenCereModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000402F /* SenCere/Models/SenCereModels.swift */; };
+		3F0004030 /* SenCere/Services/SenCereAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004031 /* SenCere/Services/SenCereAPIService.swift */; };
+		3F0004032 /* SenCere/Views/SenCereAIAssistantScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004033 /* SenCere/Views/SenCereAIAssistantScreen.swift */; };
+		3F0004034 /* SenCere/Services/AIAssistantService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004035 /* SenCere/Services/AIAssistantService.swift */; };
+		3F0004036 /* SenCere/SenCereApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004037 /* SenCere/SenCereApp.swift */; };
+		3F0004038 /* SenCere/Core/AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004039 /* SenCere/Core/AuthManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3FA1001002 /* WISE2/App/WISE2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/App/WISE2App.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Authentication/KeychainManager.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Authentication/AuthManager.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001008 /* WISE2/Core/Networking/APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/Networking/APIClient.swift; sourceTree = SOURCE_ROOT; };
-		3FA100100A /* WISE2/Core/AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Core/AppState.swift; sourceTree = SOURCE_ROOT; };
-		3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Navigation/MainTabView.swift; sourceTree = SOURCE_ROOT; };
-		3FA100100E /* WISE2/Views/Auth/AuthGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Auth/AuthGate.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/Home/HomeScreen.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/DesignSystem/Colors.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001014 /* WISE2/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WISE2/Info.plist; sourceTree = SOURCE_ROOT; };
-		3FA1001015 /* WISE2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001029 /* WISE2/Views/AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/AIScreen.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001033 /* WISE2/Views/WorkScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/WorkScreen.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/SystemsScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001037 /* WISE2/Views/SystemsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/SystemsScreen.swift; sourceTree = SOURCE_ROOT; };
-		3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/MoreScreenViewModel.swift; sourceTree = SOURCE_ROOT; };
-		3FA100103B /* WISE2/Views/MoreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2/Views/MoreScreen.swift; sourceTree = SOURCE_ROOT; };
-		3F0004040 /* SenCereAIAssistantScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereAIAssistantScreen.swift; sourceTree = SOURCE_ROOT; };
-		3F0004041 /* AIAssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Services/AIAssistantService.swift; sourceTree = SOURCE_ROOT; };
-
+		3F000403D /* SenCere/Design/SenCereColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Design/SenCereColors.swift; sourceTree = SOURCE_ROOT; };
+		3F0004021 /* SenCere/Views/SenCereDashboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereDashboardScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0004023 /* SenCere/Views/SenCereProjectsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereProjectsScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0004025 /* SenCere/Views/SenCereMessagesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereMessagesScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0004027 /* SenCere/Views/SenCereProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereProfileScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0004029 /* SenCere/Views/SenCereAddScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereAddScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F000402B /* SenCere/Views/ProjectDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/ProjectDetailScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F000402D /* SenCere/Views/SenCereTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereTabView.swift; sourceTree = SOURCE_ROOT; };
+		3F000402F /* SenCere/Models/SenCereModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Models/SenCereModels.swift; sourceTree = SOURCE_ROOT; };
+		3F0004031 /* SenCere/Services/SenCereAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Services/SenCereAPIService.swift; sourceTree = SOURCE_ROOT; };
+		3F0004033 /* SenCere/Views/SenCereAIAssistantScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereAIAssistantScreen.swift; sourceTree = SOURCE_ROOT; };
+		3F0004035 /* SenCere/Services/AIAssistantService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Services/AIAssistantService.swift; sourceTree = SOURCE_ROOT; };
+		3F0004037 /* SenCere/SenCereApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/SenCereApp.swift; sourceTree = SOURCE_ROOT; };
+		3F0004039 /* SenCere/Core/AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Core/AuthManager.swift; sourceTree = SOURCE_ROOT; };
+		3F000403A /* SenCere.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SenCere.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3FA1001016 /* Frameworks */ = {
+		3F000403B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -65,101 +52,97 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3FA1001017 /* WISE2 */ = {
+		3F000403C /* SenCere */ = {
 			isa = PBXGroup;
 			children = (
-				3FA1001002 /* WISE2/App/WISE2App.swift */,
-				3FA1001004 /* WISE2/Core/Authentication/KeychainManager.swift */,
-				3FA1001006 /* WISE2/Core/Authentication/AuthManager.swift */,
-				3FA1001008 /* WISE2/Core/Networking/APIClient.swift */,
-				3FA100100A /* WISE2/Core/AppState.swift */,
-				3FA100100C /* WISE2/Views/Navigation/MainTabView.swift */,
-				3FA100100E /* WISE2/Views/Auth/AuthGate.swift */,
-				3FA1001010 /* WISE2/Views/Home/HomeScreen.swift */,
-				3FA1001012 /* WISE2/Views/DesignSystem/Colors.swift */,
-				3FA1001027 /* WISE2/Views/AIScreenViewModel.swift */,
-				3FA1001029 /* WISE2/Views/AIScreen.swift */,
-				3FA1001031 /* WISE2/Views/WorkScreenViewModel.swift */,
-				3FA1001033 /* WISE2/Views/WorkScreen.swift */,
-				3FA1001035 /* WISE2/Views/SystemsScreenViewModel.swift */,
-				3FA1001037 /* WISE2/Views/SystemsScreen.swift */,
-				3FA1001039 /* WISE2/Views/MoreScreenViewModel.swift */,
-				3FA100103B /* WISE2/Views/MoreScreen.swift */,
-				3FA1001014 /* WISE2/Info.plist */,
+				3F0004037 /* SenCere/SenCereApp.swift */,
+				3F000403D /* SenCere/Design/SenCereColors.swift */,
+				3F0004021 /* SenCere/Views/SenCereDashboardScreen.swift */,
+				3F0004023 /* SenCere/Views/SenCereProjectsScreen.swift */,
+				3F0004025 /* SenCere/Views/SenCereMessagesScreen.swift */,
+				3F0004027 /* SenCere/Views/SenCereProfileScreen.swift */,
+				3F0004029 /* SenCere/Views/SenCereAddScreen.swift */,
+				3F000402B /* SenCere/Views/ProjectDetailScreen.swift */,
+				3F000402D /* SenCere/Views/SenCereTabView.swift */,
+				3F000402F /* SenCere/Models/SenCereModels.swift */,
+				3F0004031 /* SenCere/Services/SenCereAPIService.swift */,
+				3F0004033 /* SenCere/Views/SenCereAIAssistantScreen.swift */,
+				3F0004035 /* SenCere/Services/AIAssistantService.swift */,
+				3F0004039 /* SenCere/Core/AuthManager.swift */,
 			);
-			path = WISE2;
+			path = SenCere;
 			sourceTree = SOURCE_ROOT;
 		};
-		3FA1001018 /* Products */ = {
+		3F000403D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3FA1001015 /* WISE2.app */,
+				3F000403A /* SenCere.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3FA1001021 = {
+		3F000403E = {
 			isa = PBXGroup;
 			children = (
-				3FA1001017 /* WISE2 */,
-				3FA1001018 /* Products */,
+				3F000403C /* SenCere */,
+				3F000403D /* Products */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3FA1001019 /* WISE2 */ = {
+		3F0004019 /* SenCere */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3FA100101A /* Build configuration list for PBXNativeTarget "WISE2" */;
+			buildConfigurationList = 3F000403F /* Build configuration list for PBXNativeTarget "SenCere" */;
 			buildPhases = (
-				3FA100101B /* Sources */,
-				3FA1001016 /* Frameworks */,
-				3FA100101C /* Resources */,
+				3F0004040 /* Sources */,
+				3F000403B /* Frameworks */,
+				3F0004041 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = WISE2;
-			productName = WISE2;
-			productReference = 3FA1001015 /* WISE2.app */;
+			name = SenCere;
+			productName = SenCere;
+			productReference = 3F000403A /* SenCere.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		3FA1001020 /* Project object */ = {
+		3F0004042 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 2660;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					3FA1001019 = {
+					3F0004019 = {
 						CreatedOnToolsVersion = 15.2;
 					};
 				};
 			};
-			buildConfigurationList = 3FA100101F /* Build configuration list for PBXProject "WISE2" */;
+			buildConfigurationList = 3F0004043 /* Build configuration list for PBXProject "WISE2" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 3FA1001021;
-			productRefGroup = 3FA1001018 /* Products */;
+			mainGroup = 3F000403E;
+			productRefGroup = 3F000403D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3FA1001019 /* WISE2 */,
+				3F0004019 /* SenCere */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3FA100101C /* Resources */ = {
+		3F0004041 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -169,94 +152,87 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3FA100101B /* Sources */ = {
+		3F0004040 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FA1001001 /* WISE2/App/WISE2App.swift in Sources */,
-				3FA1001003 /* WISE2/Core/Authentication/KeychainManager.swift in Sources */,
-				3FA1001005 /* WISE2/Core/Authentication/AuthManager.swift in Sources */,
-				3FA1001007 /* WISE2/Core/Networking/APIClient.swift in Sources */,
-				3FA1001009 /* WISE2/Core/AppState.swift in Sources */,
-				3FA100100B /* WISE2/Views/Navigation/MainTabView.swift in Sources */,
-				3FA100100D /* WISE2/Views/Auth/AuthGate.swift in Sources */,
-				3FA100100F /* WISE2/Views/Home/HomeScreen.swift in Sources */,
-				3FA1001011 /* WISE2/Views/DesignSystem/Colors.swift in Sources */,
-				3FA1001026 /* WISE2/Views/AIScreenViewModel.swift in Sources */,
-				3FA1001028 /* WISE2/Views/AIScreen.swift in Sources */,
-				3FA1001030 /* WISE2/Views/WorkScreenViewModel.swift in Sources */,
-				3FA1001032 /* WISE2/Views/WorkScreen.swift in Sources */,
-				3FA1001034 /* WISE2/Views/SystemsScreenViewModel.swift in Sources */,
-				3FA1001036 /* WISE2/Views/SystemsScreen.swift in Sources */,
-				3FA1001038 /* WISE2/Views/MoreScreenViewModel.swift in Sources */,
-				3FA100103A /* WISE2/Views/MoreScreen.swift in Sources */,
+				3F000403C /* SenCere/Design/SenCereColors.swift in Sources */,
+				3F0004036 /* SenCere/SenCereApp.swift in Sources */,
+				3F0004020 /* SenCere/Views/SenCereDashboardScreen.swift in Sources */,
+				3F0004022 /* SenCere/Views/SenCereProjectsScreen.swift in Sources */,
+				3F0004024 /* SenCere/Views/SenCereMessagesScreen.swift in Sources */,
+				3F0004026 /* SenCere/Views/SenCereProfileScreen.swift in Sources */,
+				3F0004028 /* SenCere/Views/SenCereAddScreen.swift in Sources */,
+				3F000402A /* SenCere/Views/ProjectDetailScreen.swift in Sources */,
+				3F000402C /* SenCere/Views/SenCereTabView.swift in Sources */,
+				3F000402E /* SenCere/Models/SenCereModels.swift in Sources */,
+				3F0004030 /* SenCere/Services/SenCereAPIService.swift in Sources */,
+				3F0004032 /* SenCere/Views/SenCereAIAssistantScreen.swift in Sources */,
+				3F0004034 /* SenCere/Services/AIAssistantService.swift in Sources */,
+				3F0004038 /* SenCere/Core/AuthManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		3FA100101D /* Debug */ = {
+		3F0004044 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				EXECUTABLE_NAME = WISE2;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WISE2/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				EXECUTABLE_NAME = SenCere;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0.0;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sencerecreative.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
-		3FA100101E /* Release */ = {
+		3F0004045 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				EXECUTABLE_NAME = SenCere;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sencerecreative.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		3F0004046 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -264,61 +240,118 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_REQUIRED = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				EXECUTABLE_NAME = WISE2;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_LEVEL = c99;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = WISE2/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3F0004047 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_LEVEL = c99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3FA100101A /* Build configuration list for PBXNativeTarget "WISE2" */ = {
+		3F000403F /* Build configuration list for PBXNativeTarget "SenCere" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3FA100101D /* Debug */,
-				3FA100101E /* Release */,
+				3F0004044 /* Debug */,
+				3F0004045 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3FA100101F /* Build configuration list for PBXProject "WISE2" */ = {
+		3F0004043 /* Build configuration list for PBXProject "WISE2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3FA100101D /* Debug */,
-				3FA100101E /* Release */,
+				3F0004046 /* Debug */,
+				3F0004047 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 3FA1001020 /* Project object */;
+	rootObject = 3F0004042 /* Project object */;
 }

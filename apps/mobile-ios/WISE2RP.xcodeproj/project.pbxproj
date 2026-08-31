@@ -1,0 +1,202 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D4 /* WISE2RPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4 /* WISE2RPApp.swift */; };
+		A1B2C3D5 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E5 /* Models.swift */; };
+		A1B2C3D6 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E6 /* GameViewModel.swift */; };
+		A1B2C3D7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E7 /* OnboardingView.swift */; };
+		A1B2C3D8 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E8 /* MainTabView.swift */; };
+		A1B2C3D9 /* JobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E9 /* JobsView.swift */; };
+		A1B2C3DA /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3EA /* ProfileView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B1C2D3E4 /* WISE2RPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WISE2RPApp.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3E5 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3E6 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3E7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3E8 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3E9 /* JobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsView.swift; sourceTree = SOURCE_ROOT; };
+		B1C2D3EA /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = SOURCE_ROOT; };
+		C1D2E3F4 /* WISE2RP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WISE2RP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1E2F3F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E1F2A3F6 = {
+			isa = PBXGroup;
+			children = (
+				F1A2B3F7 /* Products */,
+				F1A2B3F8,
+			);
+			sourceTree = "<group>";
+		};
+		F1A2B3F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1D2E3F4 /* WISE2RP.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F1A2B3F8 = {
+			isa = PBXGroup;
+			children = (
+				B1C2D3E4 /* WISE2RPApp.swift */,
+				B1C2D3E5 /* Models.swift */,
+				B1C2D3E6 /* GameViewModel.swift */,
+				B1C2D3E7 /* OnboardingView.swift */,
+				B1C2D3E8 /* MainTabView.swift */,
+				B1C2D3E9 /* JobsView.swift */,
+				B1C2D3EA /* ProfileView.swift */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3F9 /* WISE2RP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3FA /* Build configuration list for PBXNativeTarget "WISE2RP" */;
+			buildPhases = (
+				A1B2C3FB /* Sources */,
+				D1E2F3F5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WISE2RP;
+			productName = WISE2RP;
+			productReference = C1D2E3F4 /* WISE2RP.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B1C2D3FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = B1C2D3FD /* Build configuration list for PBXProject "WISE2RP" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E1F2A3F6;
+			productRefGroup = F1A2B3F7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3F9 /* WISE2RP */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4 /* WISE2RPApp.swift in Sources */,
+				A1B2C3D5 /* Models.swift in Sources */,
+				A1B2C3D6 /* GameViewModel.swift in Sources */,
+				A1B2C3D7 /* OnboardingView.swift in Sources */,
+				A1B2C3D8 /* MainTabView.swift in Sources */,
+				A1B2C3D9 /* JobsView.swift in Sources */,
+				A1B2C3DA /* ProfileView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		A1B2C3FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		B1C2D3FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B1C2D3FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3FA /* Build configuration list for PBXNativeTarget "WISE2RP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1C2D3FE /* Debug */,
+				B1C2D3FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1C2D3FD /* Build configuration list for PBXProject "WISE2RP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3FE /* Debug */,
+				A1B2C3FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B1C2D3FC /* Project object */;
+}

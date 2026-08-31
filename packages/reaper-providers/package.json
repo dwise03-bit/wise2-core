@@ -1,0 +1,15 @@
+{
+  "name": "@wise2/reaper-providers",
+  "version": "0.1.0",
+  "description": "REAPER V1 provider interfaces and fixture implementations",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
