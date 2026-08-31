@@ -42,15 +42,20 @@ export function BlakkhailProductDetail({ product, onAddToCart }: BlakkhailProduc
     <div className="grid grid-cols-1 gap-8 py-8 sm:py-12 lg:grid-cols-2 lg:gap-12">
       <div
         className={`${BLAKKHAIL_LAYOUT.frame} relative aspect-[4/5] w-full`}
-        style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}
+        style={{
+          borderColor: BLAKKHAIL.darkGold,
+          background: 'radial-gradient(circle at 50% 35%, #3a3a3a 0%, #2A2A2A 48%, #0A0A0A 100%)',
+          boxShadow: '0 0 70px rgba(214, 163, 49, 0.12), inset 0 0 60px rgba(0,0,0,0.55)',
+        }}
       >
+        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/35 via-transparent to-white/[0.03]" />
         <Image
           src={product.image}
           alt={product.name}
           fill
           priority
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain p-6 sm:p-8"
+          className="object-contain p-6 transition-transform duration-700 hover:scale-[1.025] sm:p-8"
         />
       </div>
 
@@ -158,12 +163,15 @@ export function BlakkhailProductDetail({ product, onAddToCart }: BlakkhailProduc
 
         <div className="border-t pt-6" style={{ borderColor: BLAKKHAIL.darkGold }}>
           <h3 className="mb-3 text-lg font-bold uppercase tracking-wider" style={{ color: BLAKKHAIL.gold }}>
-            Details
+            The story
           </h3>
           <p className="text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.steel }}>
             {product.longDescription}
           </p>
-          <ul className="mt-4 space-y-2">
+          <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: BLAKKHAIL.gold }}>
+            Product notes
+          </p>
+          <ul className="mt-2 space-y-2">
             {product.features.map((feature) => (
               <li key={feature} className="flex items-start gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
                 <span style={{ color: BLAKKHAIL.gold }}>•</span>
