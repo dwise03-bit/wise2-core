@@ -109,6 +109,13 @@
 .wise-cloud .wise-feature h3 { margin-top: 14px; font-size: 12px; font-weight: 800; letter-spacing: .08em; }
 .wise-cloud .wise-feature p { margin-top: 8px; color: rgba(255,255,255,.62); font-size: 12px; line-height: 1.5; }
 
+/* Shared shell theme: keeps every public route in the Cloud visual language. */
+nav.fixed.left-0.right-0.top-0.z-50.h-16 {
+  border-color: rgba(185,255,0,.35) !important;
+  background-color: rgba(0,0,0,.92) !important;
+}
+nav.fixed.left-0.right-0.top-0.z-50.h-16 a:hover { color: #b9ff00 !important; }
+
 @media (max-width: 639px) {
   [data-wise-imp] {
     display: none !important;
