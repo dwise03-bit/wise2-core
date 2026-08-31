@@ -1,162 +1,309 @@
-# Google Voice Deployment Checklist
+# WISE² AI Phone — Final Deployment Checklist
 
-Complete step-by-step deployment checklist for production environment.
+**Status**: ✅ **READY FOR PRODUCTION DEPLOYMENT**
 
-## Quick Start
+**Your Phone**: (336) 485-8421  
+**Telnyx API Key**: ✅ **VALIDATED**  
+**Estimated Timeline**: 2-3 hours to live calls
 
-```bash
-# Phase 1: Install gcloud CLI locally
-# Phase 2: Run automated setup (or manual steps)
-# Phase 3: Extract credentials
-# Phase 4: Deploy to production server
-# Phase 5: Test and verify
-```
+---
 
-## Phase 1: Prerequisites
+## Phase 1: Pre-Deployment (You Do This)
 
-- [ ] Google Cloud account with billing enabled
-- [ ] gcloud CLI installed
-- [ ] Access to production server (173.208.147.165)
-- [ ] Docker installed on server
+### VPS Provisioning (30 minutes)
 
-## Phase 2: Google Cloud Setup
+- [ ] Create Ubuntu 22.04 LTS instance on:
+  - DigitalOcean ($6–12/mo)
+  - Linode ($5–30/mo)
+  - Vultr ($6–24/mo)
+  - AWS EC2 ($10–50/mo)
 
-```bash
-# Set variables
-export PROJECT_NAME="wise2-phone-prod"
-export SA_NAME="wise2-phone-prod"
+- [ ] Specifications:
+  - [ ] CPU: 4+ cores
+  - [ ] RAM: 8+ GB
+  - [ ] Disk: 100+ GB SSD
+  - [ ] Network: Static public IP
+  - [ ] SSH: Add your public key
 
-# Create project
-gcloud projects create $PROJECT_NAME --name="WISE² Phone Production"
-gcloud config set project $PROJECT_NAME
+- [ ] Note VPS details:
+  ```
+  VPS IP: ___________________
+  SSH User: ubuntu
+  SSH Key: ~/.ssh/id_rsa
+  ```
 
-# Enable APIs
-gcloud services enable communication.googleapis.com speech.googleapis.com \
-  storage-component.googleapis.com logging.googleapis.com pubsub.googleapis.com
+### Telnyx Configuration (30 minutes)
 
-# Create service account
-SA_EMAIL="${SA_NAME}@${PROJECT_NAME}.iam.gserviceaccount.com"
-gcloud iam service-accounts create $SA_NAME --display-name="WISE² Phone Production"
+- [ ] Account created at **telnyx.com**
+- [ ] Telnyx API key obtained: ✅ Already provided
+- [ ] SIP credentials created:
+  ```
+  SIP Server: sip.telnyx.com
+  SIP Username: ___________________
+  SIP Password: ___________________
+  ```
 
-# Create key
-gcloud iam service-accounts keys create ~/wise2-phone-key.json --iam-account=$SA_EMAIL
+---
 
-# Grant roles
-gcloud projects add-iam-policy-binding $PROJECT_NAME \
-  --member=serviceAccount:$SA_EMAIL --role=roles/communication.admin
-gcloud projects add-iam-policy-binding $PROJECT_NAME \
-  --member=serviceAccount:$SA_EMAIL --role=roles/storage.admin
-gcloud projects add-iam-policy-binding $PROJECT_NAME \
-  --member=serviceAccount:$SA_EMAIL --role=roles/logging.logWriter
+## Phase 2: Automated Deployment (5 minutes)
 
-# Create storage bucket
-gsutil mb -l us-central1 -b on gs://wise2-recordings-prod
+### Execute VPS Deployment
 
-# Create Pub/Sub topic
-gcloud pubsub topics create wise2-phone-events
-gcloud pubsub subscriptions create wise2-phone-events-sub \
-  --topic=wise2-phone-events \
-  --push-endpoint=https://wise2.net/webhooks/google-voice/events \
-  --push-auth-service-account=$SA_EMAIL
-```
-
-## Phase 3: Extract Credentials
+Run this single command from your Mac/laptop:
 
 ```bash
-python3 << 'PYTHON'
-import json, os
-with open(os.path.expanduser('~/wise2-phone-key.json')) as f:
-    c = json.load(f)
-for k in ['project_id', 'private_key_id', 'client_email', 'client_id', 'client_x509_cert_url']:
-    print(f"{k.upper().replace('_', '_GOOGLE_')}={c[k]}")
-print(f"GOOGLE_PRIVATE_KEY={repr(c['private_key'])}")
-PYTHON
-
-# Save to file
-cat > ~/.wise2-google-voice-creds.env << 'EOF'
-# Paste output from above
-EOF
-chmod 600 ~/.wise2-google-voice-creds.env
+bash deploy-final.sh <VPS_IP> <SIP_USERNAME> <SIP_PASSWORD> sip.telnyx.com
 ```
 
-## Phase 4: Deploy to Production
+**Example:**
+```bash
+bash deploy-final.sh 192.168.1.100 my_telnyx_user my_telnyx_pass sip.telnyx.com
+```
+
+Script handles automatically:
+- [ ] SSH connection verification
+- [ ] System updates
+- [ ] Docker + Docker Compose installation
+- [ ] Repository clone
+- [ ] .env configuration with credentials
+- [ ] Firewall setup (SIP/RTP/API ports)
+- [ ] Docker Compose startup
+- [ ] Health check validation
+
+---
+
+## Phase 3: SIP Provider Configuration (20 minutes)
+
+### Telnyx Portal Setup
+
+1. Log into **telnyx.com**
+2. Connections → Credentials
+3. Create/verify SIP user with credentials from Phase 1
+4. Note your SIP phone number: ___________________
+
+### Telnyx Routing
+
+1. Connections → Outbound Routes
+2. Create new route:
+   - [ ] Origination Type: **IP**
+   - [ ] Origination IP: **Your VPS public IP** (from Phase 2)
+   - [ ] Origination Port: **5060**
+   - [ ] Protocol: **UDP**
+   - [ ] Destination: **Your SIP user**
+
+3. Test inbound routing:
+   - [ ] Call your Telnyx number
+   - [ ] Should reach Asterisk on VPS
+   - [ ] Verify in docker logs: `docker-compose logs asterisk`
+
+---
+
+## Phase 4: Google Voice Setup (5 minutes)
+
+1. Go to **google.com/voice**
+2. Settings → Forwarding phones
+3. Add phone number:
+   - [ ] Enter your **Telnyx SIP phone number**
+   - [ ] Confirm verification call
+   - [ ] Enable forwarding
+
+---
+
+## Phase 5: Verification (5 minutes)
+
+### Make Test Call
 
 ```bash
-# SSH to server
-ssh dwise@173.208.147.165
+# Call from ANY phone (mobile, landline, etc.)
+Call: (336) 485-8421
 
-# Pull latest code
-cd ~/wise2-core
-git fetch origin main && git checkout main
-
-# Copy credentials
-scp ~/.wise2-google-voice-creds.env dwise@173.208.147.165:~/
-
-# Add to .env.production
-cat ~/wise2-google-voice-creds.env >> ~/.wise2-core/.env.production
-chmod 600 ~/.wise2-core/.env.production
-
-# Build Docker image
-docker build -f packages/ai-phone/Dockerfile -t wise2/ai-phone:latest .
-
-# Deploy services
-source ~/.wise2-core/.env.production
-docker-compose -f docker-compose.prod.yml up -d ai-phone api
-
-# Verify
-curl http://localhost:3001/webhooks/google-voice/health
-docker-compose logs -f ai-phone
+# Expected:
+# ✓ Rings immediately (< 2 seconds)
+# ✓ Greeting plays: "Hello! Welcome to WISE²..."
+# ✓ You can speak and hear responses
+# ✓ Lead created in CRM
 ```
 
-## Phase 5: Verify & Test
+### Verify on VPS
 
 ```bash
-# Check deployment
-docker ps | grep ai-phone
+# SSH to VPS
+ssh ubuntu@<VPS_IP>
 
-# Test webhook
-curl -X POST http://localhost:3001/webhooks/google-voice/events \
-  -H "Content-Type: application/json" \
-  -d '{"type":"INCOMING_CALL","callId":"test-001","googleCallId":"gv-123","from":"+1-555-9999","to":"+1-555-0123","timestamp":"2026-08-23T17:00:00Z"}'
+# Check service health
+curl http://localhost:3001/health | jq .
 
-# Expected: {"success":true,"callId":"test-001"}
+# Expected output:
+# {
+#   "status": "healthy",
+#   "services": {
+#     "stt": "online",
+#     "llm": "online",
+#     "tts": "online"
+#   }
+# }
 
-# Check logs
-docker-compose logs ai-phone | grep "INCOMING_CALL"
+# View call logs
+docker-compose logs -f phone-gateway | grep -i "call initialized"
 
-# Monitor recordings
-gsutil ls -r gs://wise2-recordings-prod
-
-# View Google Cloud logs
-gcloud logging read "logName:projects/wise2-phone-prod/logs/wise2-phone" --limit=20
+# Verify SIP registration
+docker-compose exec asterisk asterisk -rx "pjsip show registration"
+# Should show: Registered
 ```
+
+### Check CRM Integration
+
+```bash
+# Verify lead was created
+curl http://localhost:3001/crm/leads \
+  -H "X-Tenant-ID: default-workspace" | jq .
+
+# Expected: Lead with caller info, timestamp, transcript
+```
+
+---
+
+## Deployment Command Summary
+
+```bash
+# 1. Provision VPS (manual) — 30 min
+# 2. Get Telnyx credentials (manual) — 30 min
+
+# 3. Deploy to VPS (automated) — 5 min
+bash deploy-final.sh 192.168.1.100 my_user my_pass sip.telnyx.com
+
+# 4. Configure Telnyx routing (manual) — 20 min
+# 5. Enable GV forwarding (manual) — 5 min
+# 6. Test call (manual) — 5 min
+
+# Total: ~2–3 hours
+```
+
+---
+
+## Post-Deployment Tasks
+
+### Day 1 (Verification)
+- [ ] Make 5+ test calls
+- [ ] Verify audio quality
+- [ ] Check CRM lead creation
+- [ ] Review call transcripts
+
+### Day 2 (Optimization)
+- [ ] Set up monitoring: `watch curl http://localhost:3001/health`
+- [ ] Enable call logging/analytics
+- [ ] Configure backup: `docker-compose exec postgres pg_dump -U wise2 wise2_prod > backup.sql`
+- [ ] Load test: `bash scripts/test-phone-e2e.sh`
+
+### Week 1 (Scale)
+- [ ] Train custom voice model (optional)
+- [ ] Build call dashboard
+- [ ] Enable outbound calling
+- [ ] Integrate with Field Tech app
+
+---
+
+## Cost & Savings
+
+| Component | Cost/Month | Total |
+|-----------|-----------|-------|
+| VPS (DigitalOcean) | $6–12 | |
+| Telnyx DID | $1.50 | |
+| Telnyx usage (200 calls) | $3–10 | |
+| **Total** | **$10–22** | **per month** |
+
+**vs. Competitors**:
+- Vapi: $200–600/month
+- Retell: $150–500/month
+- Twilio Studio: $100–300/month
+
+**Your savings: 90–95%** ✓
+
+---
+
+## Quick Reference Commands
+
+```bash
+# View all logs
+docker-compose logs -f
+
+# View specific service
+docker-compose logs -f phone-gateway
+
+# Check service status
+docker ps
+
+# Health check
+curl http://localhost:3001/health | jq .
+
+# Restart services
+docker-compose restart
+
+# Stop all
+docker-compose down
+
+# View database
+docker-compose exec postgres psql -U wise2 -d wise2_prod
+
+# Test CRM
+curl -X POST http://localhost:3001/crm/lead \
+  -H "X-Tenant-ID: default-workspace" \
+  -d '{"intent":"test"}'
+```
+
+---
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| gcloud not found | Install Google Cloud SDK |
-| Project creation fails | Check billing account is enabled |
-| Service account creation fails | Check IAM permissions |
-| Bucket creation fails | Project doesn't have billing enabled |
-| Docker build fails | Check Node/npm versions |
-| Service won't start | Check .env.production variables |
-| Webhook not receiving calls | Verify Pub/Sub subscription URL |
+| Issue | Check | Fix |
+|-------|-------|-----|
+| Call goes to voicemail | GV forwarding enabled? | Enable in google.com/voice |
+| No audio | Firewall open? | `sudo ufw status` |
+| Asterisk can't register | SIP credentials correct? | Verify in .env + Telnyx portal |
+| Slow response | CPU/RAM? | Scale VPS instance |
+| No CRM leads | API running? | `curl http://localhost:3000/health` |
 
-## Files Generated
+---
 
-- `GOOGLE_VOICE_DEPLOYMENT.md` - Complete deployment guide
-- `DEPLOYMENT_CHECKLIST.md` - This file
-- `scripts/deploy-google-voice.sh` - Automated setup script
-- `packages/ai-phone/GOOGLE_VOICE_INTEGRATION.md` - Integration guide
-- `.env.production.example` - Environment template
+## Files & Docs Reference
 
-## Next Steps
+**Deployment Scripts**
+- `deploy-final.sh` — One-command VPS deployment
+- `deploy-phone.sh` — Local Docker setup
+- `scripts/test-phone-e2e.sh` — Full test suite
+- `scripts/test-telnyx.sh` — Verify Telnyx API key ✅ Done
 
-1. Follow phases above in order
-2. Verify all checks pass
-3. Test with incoming call
-4. Monitor production logs
-5. Configure monitoring alerts
+**Documentation**
+- `START_HERE.md` — Decision tree
+- `DEPLOY_NOW.md` — Execution checklist
+- `VPS_DEPLOYMENT_GUIDE.md` — Full reference
+- `ACTIVATION_PHONE.md` — Local testing guide
 
-All components ready for production deployment! 🚀
+**Code**
+- `apps/phone-gateway/` — Call orchestration
+- `packages/api/src/ai-phone/` — Webhook handlers
+- `docker-compose.phone.yml` — Service definitions
+
+---
+
+## Final Status
+
+| Component | Status |
+|-----------|--------|
+| Code | ✅ Complete & Tested |
+| Deployment Scripts | ✅ Ready |
+| Documentation | ✅ Complete |
+| Telnyx API Key | ✅ Validated |
+| System Architecture | ✅ Production-Ready |
+
+**You are ready to deploy.** Proceed with VPS provisioning.
+
+---
+
+**Your AI Phone System**  
+**Number**: (336) 485-8421  
+**Cost**: ~$15/month  
+**Timeline**: 2-3 hours  
+**Status**: 🟢 Ready to Launch
+
+🚀
