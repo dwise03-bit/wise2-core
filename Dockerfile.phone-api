@@ -20,7 +20,7 @@ COPY tsconfig*.json ./
 COPY pnpm-workspace.yaml .
 
 # Install all dependencies at root level
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Create audio directory
 RUN mkdir -p /tmp/wise2-phone-audio
