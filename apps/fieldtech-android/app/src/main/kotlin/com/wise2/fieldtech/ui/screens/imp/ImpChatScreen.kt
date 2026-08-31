@@ -43,6 +43,7 @@ import com.wise2.fieldtech.ui.theme.Gunmetal
 fun ImpChatScreen(viewModel: ImpChatViewModel, onBack: () -> Unit) {
     val messages by viewModel.messages.collectAsState()
     val isSending by viewModel.isSending.collectAsState()
+    val fieldpiece by viewModel.fieldpieceEvidence.collectAsState()
     var draft by remember { mutableStateOf("") }
 
     Scaffold(
@@ -79,6 +80,21 @@ fun ImpChatScreen(viewModel: ImpChatViewModel, onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize().padding(top = padding.calculateTopPadding()),
         ) {
+            item {
+                Text(
+                    if (fieldpiece == null) {
+                        "Fieldpiece: no captured reading. Save one from Live Readings on this Android app."
+                    } else {
+                        val demo = if (fieldpiece!!.isDemoData) " · DEMO" else ""
+                        "Fieldpiece ${fieldpiece!!.sourceDeviceName}$demo · " +
+                            fieldpiece!!.cards.joinToString("  ") { card ->
+                                "${card.label} ${if (card.available) card.value else "—"}"
+                            }
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = ElectricBlue,
+                )
+            }
             items(messages) { message -> ChatBubble(message) }
         }
     }

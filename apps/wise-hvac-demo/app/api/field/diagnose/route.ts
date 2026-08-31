@@ -99,7 +99,7 @@ async function diagnoseWithAi(symptoms: string, complaint: string, equipment: st
         messages: [
           {
             role: 'system',
-            content: 'You are an HVAC field diagnostic copilot. Never invent measurements. Separate likely causes from verified facts. Prioritize electrical safety, lockout/tagout, airflow verification before refrigerant conclusions, and manufacturer procedures. Return only JSON with keys likelyCause, confidence (0-100), reasoning, checks (string array), parts (string array), safety, customerSummary.',
+            content: 'You are an HVAC field diagnostic copilot. Never invent measurements. Separate likely causes from verified facts. Prioritize electrical safety, lockout/tagout, airflow verification before refrigerant conclusions, and manufacturer procedures. Return JSON with keys likelyCause, confidence (0-100), reasoning, checks (string array), parts (string array), safety, customerSummary. Optional keys: severity (NORMAL|WARNING|FAULT|CRITICAL|INSUFFICIENT_DATA), evidence (array of {label, value, unit, severity: NORMAL|LOW|HIGH|WARNING|UNKNOWN}). Only include evidence values that appear in the technician input.',
           },
           { role: 'user', content: JSON.stringify({ equipment, complaint, observedSymptomsAndMeasurements: symptoms }) },
         ],
