@@ -1,14 +1,18 @@
-import { Controller, Get, Header, HttpCode, Logger, Post, Query, Req, Res } from '@nestjs/common';
+import { Controller, Get, Header, HttpCode, Logger, Post, Query, Req, Res, Body } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AiPhoneService } from './ai-phone.service';
 import { validateTwilioSignature } from './ai-phone.twilio-signature';
 import { recordVoicemailTwiml, sayGatherTwiml, sayHangupTwiml, transferTwiml } from './ai-phone.twiml';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('v1/ai-phone')
 export class AiPhoneWebhookController {
   private readonly logger = new Logger(AiPhoneWebhookController.name);
 
-  constructor(private readonly phone: AiPhoneService) {}
+  constructor(
+    private readonly phone: AiPhoneService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Get('health')
   health() {
@@ -139,6 +143,163 @@ export class AiPhoneWebhookController {
     return res.status(204).send();
   }
 
+  // CRM API Endpoints for phone gateway
+
+  @Post('customer/lookup')
+  async lookupCustomer(
+    @Req() req: Request,
+    @Body('phone') phone: string,
+  ) {
+    const tenantId = this.extractTenantId(req);
+    if (!tenantId) return { error: 'Missing tenant' };
+
+    const customer = await this.prisma.revenueCustomer.findFirst({
+      where: { tenantId, phone },
+    });
+
+    if (!customer) return null;
+    return {
+      id: customer.id,
+      fullName: [customer.firstName, customer.lastName].filter(Boolean).join(' '),
+      primaryPhone: customer.phone,
+      email: customer.email,
+    };
+  }
+
+  @Post('customer')
+  async createCustomer(
+    @Req() req: Request,
+    @Body() body: { fullName: string; primaryPhone: string; email?: string },
+  ) {
+    const tenantId = this.extractTenantId(req);
+    if (!tenantId) return { error: 'Missing tenant' };
+
+    const parts = body.fullName.split(' ');
+    const customer = await this.prisma.revenueCustomer.create({
+      data: {
+        tenantId,
+        firstName: parts[0],
+        lastName: parts.slice(1).join(' ') || null,
+        phone: body.primaryPhone,
+        email: body.email || null,
+      },
+    });
+
+    return {
+      id: customer.id,
+      fullName: body.fullName,
+      primaryPhone: customer.phone,
+      email: customer.email,
+    };
+  }
+
+  @Post('lead')
+  async createLead(
+    @Req() req: Request,
+    @Body() body: { customerId?: string; source: string; intent: string; sourceCallId: string },
+  ) {
+    const tenantId = this.extractTenantId(req);
+    if (!tenantId) return { error: 'Missing tenant' };
+
+    const lead = await this.prisma.lead.create({
+      data: {
+        tenantId,
+        customerId: body.customerId,
+        source: body.source || 'ai-phone',
+        summary: body.intent || 'Inbound phone call',
+        serviceCategory: body.intent,
+        status: 'NEW',
+      },
+    });
+
+    return {
+      id: lead.id,
+      customerId: lead.customerId,
+      source: lead.source,
+      intent: body.intent,
+      stage: 'new',
+    };
+  }
+
+  @Post('booking')
+  async createBooking(
+    @Req() req: Request,
+    @Body()
+    body: {
+      customerId: string;
+      serviceType: string;
+      startAt: string;
+      endAt: string;
+      sourceCallId: string;
+    },
+  ) {
+    const tenantId = this.extractTenantId(req);
+    if (!tenantId) return { error: 'Missing tenant' };
+
+    const job = await this.prisma.serviceJob.create({
+      data: {
+        tenantId,
+        customerId: body.customerId,
+        serviceType: body.serviceType,
+        scheduledStart: new Date(body.startAt),
+        scheduledEnd: new Date(body.endAt),
+        status: 'SCHEDULED',
+        notes: `Booked via WISE² AI Phone (call ${body.sourceCallId})`,
+        sourceAttribution: 'ai-phone',
+      },
+    });
+
+    return {
+      id: job.id,
+      customerId: job.customerId,
+      serviceType: job.serviceType,
+      startAt: job.scheduledStart,
+      endAt: job.scheduledEnd,
+      confirmationNumber: job.id.slice(-8).toUpperCase(),
+      status: 'confirmed',
+    };
+  }
+
+  @Post('call-event')
+  async recordCallEvent(
+    @Req() req: Request,
+    @Body()
+    body: {
+      callSid: string;
+      leadId?: string;
+      customerId?: string;
+      transcript: string;
+      summary: string;
+      duration: number;
+      disposition: string;
+    },
+  ) {
+    const tenantId = this.extractTenantId(req);
+    if (!tenantId) return { error: 'Missing tenant' };
+
+    const call = await this.prisma.aiPhoneCall.create({
+      data: {
+        tenantId,
+        callSid: body.callSid,
+        callerNumber: '',
+        inboundNumber: '',
+        direction: 'INBOUND',
+        status: body.disposition === 'completed' ? 'COMPLETED' : 'IN_PROGRESS',
+        summary: body.summary,
+        customerId: body.customerId,
+        leadId: body.leadId,
+        startedAt: new Date(),
+        endedAt: body.disposition === 'completed' ? new Date() : undefined,
+      },
+    });
+
+    return {
+      id: call.id,
+      callSid: call.callSid,
+      status: call.status,
+    };
+  }
+
   private webhookBase(): string {
     const root = (
       process.env.TWILIO_WEBHOOK_BASE_URL ||
@@ -172,5 +333,11 @@ export class AiPhoneWebhookController {
 
   private async fallbackTenantId(): Promise<string | null> {
     return this.phone.firstConfiguredTenantId();
+  }
+
+  private extractTenantId(req: Request): string | null {
+    const header = req.headers['x-tenant-id'];
+    if (typeof header === 'string') return header;
+    return null;
   }
 }
