@@ -80,6 +80,9 @@ module.exports = {
         script: ['cursive'],
         luxury: ['Bodoni Moda', 'serif'],
         jost: ['Jost', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
+        'roboto-slab': ['Roboto Slab', 'serif'],
+        prestige: ['Prestige', 'serif'],
       },
       boxShadow: {
         // Electric Blue glows (WISE²)
