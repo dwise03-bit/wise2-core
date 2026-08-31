@@ -116,7 +116,7 @@ export function ImpsByteMiniHero() {
                     width={288}
                     height={384}
                     priority
-                    className="w-full h-full object-cover relative z-10"
+                    className="w-full h-full object-contain relative z-10"
                   />
 
                   {/* Refined overlay gradient */}

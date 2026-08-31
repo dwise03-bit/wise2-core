@@ -39,7 +39,7 @@ export default function PiffCityPage() {
                 src="/images/piff-city-rabbit.png"
                 alt="PIFF CITY - Steampunk Rabbit Logo"
                 fill
-                className="object-cover"
+                className="object-contain object-center p-4"
                 priority
               />
             </div>

@@ -36,7 +36,7 @@ export default function PoweredBusinessesPage() {
                     alt="PIFF CITY Logo"
                     width={64}
                     height={64}
-                    className="object-cover rounded"
+                    className="object-contain rounded"
                   />
                 </div>
                 <h2 className="text-3xl font-black text-white mb-3">PIFF CITY</h2>
