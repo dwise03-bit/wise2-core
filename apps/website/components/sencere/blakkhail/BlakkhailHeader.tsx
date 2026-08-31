@@ -31,21 +31,21 @@ export function BlakkhailHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white" style={{ borderColor: BLAKKHAIL.black }}>
+    <header className="sticky top-0 z-50 border-b" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}>
       <div
         className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-2 py-4 sm:py-5`}
       >
         <Link
           href={parentHref}
           className="text-xl font-semibold uppercase tracking-[-0.05em] hover:opacity-60 sm:text-2xl"
-          style={{ color: BLAKKHAIL.black }}
+          style={{ color: BLAKKHAIL.gold }}
         >
           Blakk Hail
         </Link>
 
         <span
           className="hidden text-[10px] uppercase tracking-[0.3em] md:block"
-          style={{ color: BLAKKHAIL.neutral600 }}
+          style={{ color: BLAKKHAIL.steel }}
         >
           Original fashion · since {blakkhailBrand.established}
         </span>
@@ -54,7 +54,7 @@ export function BlakkhailHeader() {
           <button
             type="button"
             className="flex min-h-10 items-center justify-center gap-2 border px-3 md:hidden"
-            style={{ borderColor: BLAKKHAIL.black, color: BLAKKHAIL.black }}
+            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
             aria-expanded={menuOpen}
             aria-controls="blakkhail-mobile-menu"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -67,7 +67,7 @@ export function BlakkhailHeader() {
             <Link
               href={checkoutPath(host)}
               className="flex min-h-10 min-w-10 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider border"
-              style={{ borderColor: BLAKKHAIL.black, color: BLAKKHAIL.black }}
+              style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
             >
               <ShoppingCart size={16} aria-hidden />
               <span className="hidden sm:inline">Cart</span>
@@ -81,7 +81,7 @@ export function BlakkhailHeader() {
       {/* Desktop nav */}
       <nav
         className="hidden border-t md:block"
-        style={{ borderColor: BLAKKHAIL.neutral200 }}
+        style={{ borderColor: BLAKKHAIL.darkGold }}
         aria-label="Main navigation"
       >
         <ul
@@ -92,7 +92,7 @@ export function BlakkhailHeader() {
               <Link
                 href={item.href}
                 className="flex min-h-10 items-center text-sm font-semibold uppercase tracking-wide hover:text-opacity-60 transition-opacity"
-                style={{ color: BLAKKHAIL.black }}
+                style={{ color: BLAKKHAIL.steel }}
               >
                 {item.label}
               </Link>

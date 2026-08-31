@@ -30,12 +30,12 @@ export function BlakkhailFooter() {
   }, []);
 
   return (
-    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.neutral100 }}>
+    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack, color: BLAKKHAIL.steel }}>
 
       {/* ── CTA STRIP ─────────────────────────── */}
       <div
         className="border-y"
-        style={{ borderColor: BLAKKHAIL.neutral200, backgroundColor: BLAKKHAIL.white }}
+        style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}
       >
         <div
           className={`${BLAKKHAIL_LAYOUT.container} grid gap-6 py-10 sm:py-12 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-10`}
