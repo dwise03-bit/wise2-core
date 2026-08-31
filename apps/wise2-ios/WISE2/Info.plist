@@ -50,5 +50,9 @@
 		<string>_http._tcp</string>
 		<string>_https._tcp</string>
 	</array>
+	<key>NSBluetoothAlwaysAndWhenInUseUsageDescription</key>
+	<string>WISE² needs Bluetooth access to connect to Fieldpiece smart tools for diagnostic measurements and readings.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>WISE² needs Bluetooth access to connect to Fieldpiece smart tools for diagnostic measurements and readings.</string>
 </dict>
 </plist>

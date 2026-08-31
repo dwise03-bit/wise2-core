@@ -5,6 +5,7 @@ struct MainTabView: View {
   @EnvironmentObject var appState: AppState
 
   @State private var selectedTab: Int = 0
+  @State private var selectedBusiness: String = "ALL BUSINESSES"
 
   var body: some View {
     ZStack {
@@ -16,7 +17,7 @@ struct MainTabView: View {
         // Tab Content
         TabView(selection: $selectedTab) {
           // HOME Tab
-          HomeScreen()
+          HomeScreen(selectedBusiness: $selectedBusiness)
             .tag(0)
             .tabItem {
               Label("Home", systemImage: "house.fill")

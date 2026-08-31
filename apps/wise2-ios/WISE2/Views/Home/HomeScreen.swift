@@ -4,7 +4,7 @@ struct HomeScreen: View {
   @EnvironmentObject var authManager: AuthManager
   @EnvironmentObject var appState: AppState
   @Binding var selectedBusiness: String
-  @Binding var selectedTab: CommandTab
+  // @Binding var selectedTab: CommandTab
 
   private let businesses = BusinessScope.options
 
@@ -215,9 +215,9 @@ struct HomeScreen: View {
       }
 
       HStack(spacing: 8) {
-        QuickAction(title: "Follow up leads") { selectedTab = .ai }
-        QuickAction(title: "Create invoice") { selectedTab = .ai }
-        QuickAction(title: "Review operations") { selectedTab = .ai }
+        QuickAction(title: "Follow up leads") { }
+        QuickAction(title: "Create invoice") { }
+        QuickAction(title: "Review operations") { }
       }
     }
   }
@@ -523,7 +523,7 @@ struct DetailScreen: View {
 }
 
 #Preview {
-  HomeScreen(selectedBusiness: .constant("ALL BUSINESSES"), selectedTab: .constant(.home))
+  HomeScreen(selectedBusiness: .constant("ALL BUSINESSES"))
     .environmentObject(AuthManager())
     .environmentObject(AppState())
 }

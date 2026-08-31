@@ -10,9 +10,10 @@ class WorkScreenViewModel: ObservableObject {
 
   private let apiClient = APIClient.shared
 
-  enum WorkTab {
+  enum WorkTab: CaseIterable {
     case projects
     case tasks
+    case diagnostics
   }
 
   init() {
