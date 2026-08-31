@@ -27,6 +27,16 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "3F0004019"
+            BuildableName = "SenCere.app"
+            BlueprintName = "SenCere"
+            ReferencedContainer = "container:WISE2.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

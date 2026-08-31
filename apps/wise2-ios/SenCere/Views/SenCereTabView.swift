@@ -17,10 +17,10 @@ struct SenCereTabView: View {
           Label("Projects", systemImage: "folder.fill")
         }
 
-      // Add Tab
-      SenCereAddScreen()
+      // AI Assistant Tab
+      SenCereAIAssistantScreen()
         .tabItem {
-          Label("Add", systemImage: "plus.circle.fill")
+          Label("Assistant", systemImage: "sparkles")
         }
 
       // Messages Tab

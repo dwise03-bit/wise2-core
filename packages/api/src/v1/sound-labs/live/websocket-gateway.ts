@@ -28,7 +28,7 @@ export class LiveWebSocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   constructor(
     private sessionService: LiveSessionService,
@@ -62,7 +62,8 @@ export class LiveWebSocketGateway
 
       console.log(`[Live] User ${session.userId} connected`);
     } catch (error) {
-      console.error('[Live] Connection auth failed:', error.message);
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Connection auth failed:', msg);
       client.disconnect();
     }
   }
@@ -97,7 +98,7 @@ export class LiveWebSocketGateway
   async onPresenceJoin(
     client: Socket,
     payload: { roomId: string; name?: string }
-  ) {
+  ): Promise<{ success?: boolean; presence?: any; error?: string }> {
     const session = (client as any).liveSession;
     if (!session) {
       return { error: 'Unauthorized' };
@@ -141,8 +142,9 @@ export class LiveWebSocketGateway
 
       return { success: true, presence };
     } catch (error) {
-      console.error('[Live] Join failed:', error.message);
-      return { error: error.message };
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Join failed:', msg);
+      return { error: msg };
     }
   }
 
@@ -208,8 +210,9 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      console.error('[Live] Chat failed:', error.message);
-      return { error: error.message };
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Chat failed:', msg);
+      return { error: msg };
     }
   }
 
@@ -262,7 +265,8 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      return { error: error.message };
+      const msg = error instanceof Error ? error.message : String(error);
+      return { error: msg };
     }
   }
 
@@ -290,7 +294,8 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      return { error: error.message };
+      const msg = error instanceof Error ? error.message : String(error);
+      return { error: msg };
     }
   }
 

@@ -36,6 +36,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@wise2/getdown-demo", "dev"],
       "port": 3020
+    },
+    {
+      "name": "wise2-command-center",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "wise2-command-center", "run", "dev"],
+      "port": 3006
     }
   ]
 }
