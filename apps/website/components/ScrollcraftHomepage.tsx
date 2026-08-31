@@ -67,35 +67,38 @@ export function ScrollcraftHomepage() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <main className="overflow-hidden bg-[#050607] text-white">
+    <main className="wise2-empire overflow-hidden bg-[#07080A] text-white">
       {/* Hero Section */}
-      <section className="relative border-b border-white/10 bg-[#050607]">
-        <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(142,219,255,0.14),rgba(242,182,50,0.07)_34%,rgba(5,6,7,0)_66%)]" />
-        <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(220,231,239,0.65)_1px,transparent_1px),linear-gradient(90deg,rgba(220,231,239,0.65)_1px,transparent_1px)] [background-size:72px_72px]" />
+      <section className="relative border-b border-[#14161C] bg-[#07080A]">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,8,10,0.98)_0%,rgba(7,8,10,0.88)_42%,rgba(7,8,10,0.28)_100%)]" />
+        <div className="absolute inset-0 bg-[url('/brand/wise2-hero-united.webp')] bg-cover bg-center opacity-60" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,8,10,0.1),rgba(7,8,10,0.92))]" />
         <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
           <RevealText className="max-w-3xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-              Real Business. Real Results.
+              BUILDING EMPIRES · CHANGING CULTURE
             </p>
             <h1 className="text-5xl font-black leading-[0.93] text-white sm:text-6xl lg:text-7xl">
-              WISE² Powers Service Businesses.
+              One System.<br />
+              Three Powered Businesses.<br />
+              Four Leaders.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-[#D4DAE2] sm:text-lg">
-              From pressure washing to HVAC to creative brands—WISE² gives service businesses the tools to scale. Field diagnostics, AI assistance, customer management, and automation all in one system.
+              The AI-native business operating system for builders who ship, not theorize. Build, sell, deploy, monitor, automate, recover, and scale from one command center.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/platform"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#DCE7EF] px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-[#050607] transition duration-200 hover:-translate-y-0.5 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]"
               >
-                Explore WISE²
+                START BUILDING
                 <ArrowRight size={16} aria-hidden="true" />
               </Link>
               <Link
                 href="/work"
                 className="inline-flex min-h-12 items-center justify-center gap-2 border border-white/20 bg-white/5 px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition duration-200 hover:-translate-y-0.5 hover:border-[#8EDBFF]/70 hover:bg-[#8EDBFF]/10 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] focus:ring-offset-2 focus:ring-offset-[#050607]"
               >
-                See Built Work
+                SEE THE EMPIRE
               </Link>
             </div>
           </RevealText>
