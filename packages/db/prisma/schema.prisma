@@ -47,6 +47,13 @@ model User {
   // WISE² Trading relationships
   tradingAccount TradingAccount? @relation("tradingAccount")
 
+  // SoundLabs Live relationships
+  liveRoomsCreated LiveRoom[] @relation("liveRoomCreator")
+  liveRoomMembers  LiveRoomMember[] @relation("liveRoomMembers")
+  liveRoomChat     LiveChatMessage[] @relation("liveRoomChat")
+  audienceSuggestions AudienceSuggestion[] @relation("audienceSuggestions")
+  liveRoomVotes    LivePollVote[] @relation("liveRoomVotes")
+
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
@@ -6108,4 +6115,130 @@ model AiPhoneCall {
   @@index([tenantId, startedAt])
   @@index([tenantId, callerNumber])
   @@map("ai_phone_calls")
+}
+
+// SoundLabs Live - Live Rooms
+model LiveRoom {
+  id                   String   @id @default(cuid()) @map("id")
+  name                 String   @map("name")
+  slug                 String   @unique @map("slug")
+  creatorId            String   @map("creator_id")
+  creator              User     @relation("liveRoomCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  status               String   @default("draft") @map("status") // draft, live, ended
+  startedAt            DateTime? @map("started_at")
+  endedAt              DateTime? @map("ended_at")
+  maxConcurrentViewers Int      @default(10000) @map("max_concurrent_viewers")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  members              LiveRoomMember[] @relation("liveRoomMembers")
+  chatMessages         LiveChatMessage[] @relation("liveRoomChat")
+  suggestions          AudienceSuggestion[] @relation("liveRoomSuggestions")
+  polls                LivePoll[] @relation("liveRoomPolls")
+
+  @@index([creatorId])
+  @@index([slug])
+  @@index([status])
+  @@index([createdAt])
+  @@map("live_rooms")
+}
+
+model LiveRoomMember {
+  id         String   @id @default(cuid()) @map("id")
+  roomId     String   @map("room_id")
+  userId     String   @map("user_id")
+  role       String   @default("viewer") @map("role") // creator, cohost, guest, viewer
+  permissions Int     @default(0) @map("permissions") // Bitmap: can_speak, can_chat, can_suggest, can_moderate
+  joinedAt   DateTime @default(now()) @map("joined_at")
+  leftAt     DateTime? @map("left_at")
+
+  // Relationships
+  room       LiveRoom @relation("liveRoomMembers", fields: [roomId], references: [id], onDelete: Cascade)
+  user       User     @relation("liveRoomMembers", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+  @@map("live_room_members")
+}
+
+model LiveChatMessage {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  message   String   @db.Text @map("message")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomChat", fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation("liveRoomChat", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([createdAt])
+  @@map("live_chat_messages")
+}
+
+model AudienceSuggestion {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  suggestion String  @db.Text @map("suggestion")
+  votes     Int      @default(0) @map("votes")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomSuggestions", fields: [roomId], references: [id], onDelete: Cascade)
+  user      User     @relation("audienceSuggestions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([votes])
+  @@index([createdAt])
+  @@map("audience_suggestions")
+}
+
+model LivePoll {
+  id        String   @id @default(cuid()) @map("id")
+  roomId    String   @map("room_id")
+  question  String   @db.Text @map("question")
+  status    String   @default("active") @map("status") // active, closed
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  room      LiveRoom @relation("liveRoomPolls", fields: [roomId], references: [id], onDelete: Cascade)
+  options   LivePollOption[] @relation("pollOptions")
+
+  @@index([roomId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("live_polls")
+}
+
+model LivePollOption {
+  id      String   @id @default(cuid()) @map("id")
+  pollId  String   @map("poll_id")
+  text    String   @map("text")
+  votes   Int      @default(0) @map("votes")
+
+  // Relationships
+  poll    LivePoll @relation("pollOptions", fields: [pollId], references: [id], onDelete: Cascade)
+  pollVotes LivePollVote[] @relation("optionVotes")
+
+  @@index([pollId])
+  @@map("live_poll_options")
+}
+
+model LivePollVote {
+  id       String   @id @default(cuid()) @map("id")
+  optionId String   @map("option_id")
+  userId   String   @map("user_id")
+
+  // Relationships
+  option   LivePollOption @relation("optionVotes", fields: [optionId], references: [id], onDelete: Cascade)
+  user     User    @relation("liveRoomVotes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([optionId, userId])
+  @@index([userId])
+  @@map("live_poll_votes")
 }
