@@ -1,122 +1,24 @@
 'use client';
-
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { getBlakkhailProducts } from '@/lib/sencere-products';
-import { BlakkhailExperience } from './BlakkhailExperience';
-import { BlakkhailMechanicalChorus } from './BlakkhailMechanicalChorus';
-import { BlakkhailPiffCityEndCard } from './BlakkhailPiffCityEndCard';
-import { BlakkhailVaultReveal } from './BlakkhailVaultReveal';
-import { BlakkhailShopScroll } from './BlakkhailShopScroll';
-import { BlakkhailMission } from './BlakkhailMission';
-import { BlakkhailServices } from './BlakkhailServices';
-import { BlakkhailLookBook, BlakkhailVideo } from './BlakkhailMedia';
-import { BlakkhailProducts } from './BlakkhailProducts';
-import {
-  CINEMATIC_TIMING,
-  CATEGORY_COMING_SOON,
-  type BlakkhailCategory,
-  type CinematicPhase,
-} from './blakkhail-experience';
-import styles from './blakkhail-cinematic.module.css';
+import { productPath } from '@/lib/site-domains';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 
 export function BlakkhailStorefront() {
-  const [category, setCategory] = useState<BlakkhailCategory | null>(null);
-  const [cinematicPhase, setCinematicPhase] = useState<CinematicPhase>('idle');
   const [host, setHost] = useState<string | null>(null);
-  const [pendingCategory, setPendingCategory] = useState<BlakkhailCategory | null>(null);
-
-  useEffect(() => {
-    setHost(window.location.hostname);
-  }, []);
-
-  const allProducts = getBlakkhailProducts();
-  const vaultProduct = useMemo(() => {
-    if (!pendingCategory) return null;
-    if (pendingCategory === 'tees') return allProducts[0] ?? null;
-    return null;
-  }, [allProducts, pendingCategory]);
-
-  const finishCinematic = useCallback(() => {
-    if (pendingCategory) {
-      setCategory(pendingCategory);
-      setPendingCategory(null);
-    }
-    setCinematicPhase('complete');
-    window.setTimeout(() => {
-      document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
-  }, [pendingCategory]);
-
-  const handleSelectCategory = useCallback((next: BlakkhailCategory) => {
-    setPendingCategory(next);
-    setCinematicPhase('lights-out');
-
-    window.setTimeout(() => {
-      setCinematicPhase('chorus');
-    }, CINEMATIC_TIMING.lightsOutMs);
-  }, []);
-
-  const handleChorusComplete = useCallback(() => {
-    setCinematicPhase('vault');
-  }, []);
-
-  const handleVaultComplete = useCallback(() => {
-    setCinematicPhase('end-card');
-  }, []);
-
-  const handleEndCardComplete = useCallback(() => {
-    finishCinematic();
-  }, [finishCinematic]);
-
-  useEffect(() => {
-    if (cinematicPhase !== 'end-card') return;
-    const timer = window.setTimeout(handleEndCardComplete, CINEMATIC_TIMING.endCardMs);
-    return () => window.clearTimeout(timer);
-  }, [cinematicPhase, handleEndCardComplete]);
-
-  return (
-    <>
-      {/* Lights die overlay */}
-      {cinematicPhase === 'lights-out' && (
-        <div
-          className={`fixed inset-0 z-[90] ${styles.lightsOutOverlay}`}
-          style={{ backgroundColor: '#000' }}
-          aria-hidden
-        />
-      )}
-
-      {cinematicPhase === 'chorus' && (
-        <BlakkhailMechanicalChorus onComplete={handleChorusComplete} />
-      )}
-
-      {cinematicPhase === 'vault' && pendingCategory && (
-        <BlakkhailVaultReveal
-          product={vaultProduct}
-          category={pendingCategory}
-          host={host}
-          comingSoonMessage={
-            pendingCategory !== 'tees' ? CATEGORY_COMING_SOON[pendingCategory] : undefined
-          }
-          fullscreen
-          onComplete={handleVaultComplete}
-        />
-      )}
-
-      {cinematicPhase === 'end-card' && (
-        <BlakkhailPiffCityEndCard onComplete={handleEndCardComplete} />
-      )}
-
-      <BlakkhailExperience
-        activeCategory={category}
-        cinematicPhase={cinematicPhase}
-        onSelectCategory={handleSelectCategory}
-      />
-      <BlakkhailShopScroll />
-      <BlakkhailMission />
-      <BlakkhailServices />
-      <BlakkhailProducts category={category} showVaultInline={cinematicPhase === 'complete'} />
-      <BlakkhailLookBook />
-      <BlakkhailVideo />
-    </>
-  );
+  const products = getBlakkhailProducts();
+  const hero = BLAKKHAIL_LEGACY.assets.heroPhotos;
+  const shop = BLAKKHAIL_LEGACY.assets.shopPhotos;
+  useEffect(() => setHost(window.location.hostname), []);
+  return <>
+    <section id="home" className="border-b" style={{ borderColor: BLAKKHAIL.neutral200 }}><div className="relative min-h-[72vh] overflow-hidden bg-neutral-100 md:min-h-[84vh]"><Image src={hero[0]} alt="Blakk Hail collection" fill priority sizes="100vw" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" /><div className="absolute inset-x-0 bottom-0 mx-auto flex w-full max-w-[1400px] items-end justify-between px-5 pb-8 text-white sm:px-8 sm:pb-12 lg:px-12"><div><p className="mb-3 text-[10px] uppercase tracking-[0.38em] text-white/75">New collection · 2026</p><h1 className="text-5xl font-medium uppercase leading-[.9] tracking-[-.045em] sm:text-7xl lg:text-[9rem]" style={{ fontFamily: 'var(--font-display)' }}>Blakk Hail</h1></div><a href="#shop" className="hidden items-center gap-2 border-b border-white pb-1 text-xs uppercase tracking-[0.2em] sm:flex">Explore collection <ArrowUpRight size={15} /></a></div></div></section>
+    <section className="border-b py-16 sm:py-24" style={{ borderColor: BLAKKHAIL.neutral200 }}><div className={`${BLAKKHAIL_LAYOUT.container} grid gap-8 md:grid-cols-[1fr_1.5fr] md:gap-20`}><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.neutral600 }}>01 / The brand</p><div><h2 className="max-w-3xl text-3xl font-medium uppercase leading-[.95] tracking-[-.035em] sm:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>Original fashion for people who move differently.</h2><p className="mt-8 max-w-xl text-sm leading-7" style={{ color: BLAKKHAIL.neutral600 }}>Blakk Hail is independent streetwear rooted in self-expression, design, and the everyday uniform. Made in the city. Worn everywhere.</p><a href="#about" className="mt-8 inline-flex items-center gap-2 border-b pb-1 text-xs uppercase tracking-[0.18em]">Read our story <ArrowUpRight size={14} /></a></div></div></section>
+    <section id="shop" className={`${BLAKKHAIL_LAYOUT.container} py-14 sm:py-20`}><div className="mb-8 flex items-end justify-between border-b pb-4" style={{ borderColor: BLAKKHAIL.black }}><div><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.neutral600 }}>02 / Shop</p><h2 className="mt-3 text-3xl uppercase tracking-[-.03em] sm:text-5xl" style={{ fontFamily: 'var(--font-display)' }}>The essentials</h2></div><span className="hidden text-xs uppercase tracking-[0.18em] sm:block">{products.length} pieces</span></div><div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-6 lg:grid-cols-3">{products.map((product, index) => <Link key={product.id} href={productPath(product.slug, host)} className="group"><div className="relative aspect-[4/5] overflow-hidden bg-[#f2f2f0]"><Image src={product.image || shop[index % shop.length]} alt={product.name} fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.035]" /></div><div className="flex items-start justify-between gap-3 pt-3 text-xs uppercase tracking-[0.08em]"><span>{product.name}</span><span>${product.basePrice.toFixed(2)}</span></div></Link>)}</div></section>
+    <section id="look-book" className="border-y bg-[#f2f2f0]" style={{ borderColor: BLAKKHAIL.neutral200 }}><div className="grid md:grid-cols-2"><div className="relative min-h-[55vh]"><Image src={hero[1]} alt="Blakk Hail look book" fill sizes="50vw" className="object-cover" /></div><div className="flex flex-col justify-between p-6 sm:p-12 lg:p-20"><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.neutral600 }}>03 / Look book</p><h2 className="max-w-md text-5xl uppercase leading-[.9] tracking-[-.04em] sm:text-7xl" style={{ fontFamily: 'var(--font-display)' }}>Take control.<br />No apologies.</h2><a href="#contact" className="mt-12 flex items-center justify-between border-b border-black pb-3 text-xs uppercase tracking-[0.18em]">Connect with Blakk Hail <ArrowUpRight size={15} /></a></div></div></section>
+    <section id="about" className="py-16 sm:py-24"><div className={`${BLAKKHAIL_LAYOUT.container} text-center`}><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.neutral600 }}>Blakk Hail / SenCere Creative</p><h2 className="mx-auto mt-6 max-w-4xl text-4xl uppercase leading-[.92] tracking-[-.04em] sm:text-7xl" style={{ fontFamily: 'var(--font-display)' }}>Design. Create.<br />Produce. Deliver.</h2></div></section>
+  </>;
 }

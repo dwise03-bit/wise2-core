@@ -31,26 +31,23 @@ export function BlakkhailHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b"
-      style={{ borderColor: BLAKKHAIL.neutral200, backgroundColor: BLAKKHAIL.white }}
-    >
+    <header className="sticky top-0 z-50 border-b bg-white" style={{ borderColor: BLAKKHAIL.black }}>
       <div
-        className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-2 py-3 sm:gap-3 sm:py-4`}
+        className={`${BLAKKHAIL_LAYOUT.container} flex items-center justify-between gap-2 py-4 sm:py-5`}
       >
         <Link
           href={parentHref}
-          className="truncate text-sm font-semibold uppercase tracking-wider hover:opacity-75"
+          className="text-xl font-semibold uppercase tracking-[-0.05em] hover:opacity-60 sm:text-2xl"
           style={{ color: BLAKKHAIL.black }}
         >
-          {blakkhailBrand.legalName}
+          Blakk Hail
         </Link>
 
         <span
-          className="text-center text-xs uppercase tracking-wider"
+          className="hidden text-[10px] uppercase tracking-[0.3em] md:block"
           style={{ color: BLAKKHAIL.neutral600 }}
         >
-          {blakkhailBrand.tagline}
+          Original fashion · since {blakkhailBrand.established}
         </span>
 
         <div className="flex shrink-0 items-center gap-3">
