@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { blakkhailBrand } from './config';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { checkoutPath, isBlackhailHost } from '@/lib/site-domains';
@@ -11,6 +12,7 @@ import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 export function BlakkhailHeader() {
   const [host, setHost] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setHost(window.location.hostname);
@@ -29,6 +31,8 @@ export function BlakkhailHeader() {
     : blakkhailBrand.parentPath;
 
   const closeMenu = () => setMenuOpen(false);
+  const storefrontPath = host ? (isBlackhailHost(host) ? '/' : '/sencere/blakkhail') : '/sencere/blakkhail';
+  const isProductPage = pathname.includes('/products/');
 
   return (
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}>
@@ -89,8 +93,8 @@ export function BlakkhailHeader() {
         >
           {BLAKKHAIL_LEGACY.nav.map((item) => (
             <li key={item.href}>
-              <Link
-                href={item.href}
+                <Link
+                href={isProductPage && item.href.startsWith('#') ? `${storefrontPath}${item.href}` : item.href}
                 className="flex min-h-10 items-center text-sm font-semibold uppercase tracking-wide hover:text-opacity-60 transition-opacity"
                 style={{ color: BLAKKHAIL.steel }}
               >
@@ -113,7 +117,7 @@ export function BlakkhailHeader() {
             {BLAKKHAIL_LEGACY.nav.map((item) => (
               <li key={item.href} className="border-b" style={{ borderColor: BLAKKHAIL.neutral200 }}>
                 <Link
-                  href={item.href}
+                  href={isProductPage && item.href.startsWith('#') ? `${storefrontPath}${item.href}` : item.href}
                   onClick={closeMenu}
                   className="flex min-h-12 items-center text-base font-semibold uppercase tracking-wide"
                   style={{ color: BLAKKHAIL.black }}
