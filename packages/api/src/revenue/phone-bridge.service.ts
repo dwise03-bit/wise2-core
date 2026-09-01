@@ -191,7 +191,7 @@ export class PhoneBridgeService {
         console.log(`Scheduled follow-ups for lead ${lead.id}`);
       }
     } catch (error) {
-      console.error(`Error scheduling follow-ups: ${error.message}`);
+      console.error(`Error scheduling follow-ups: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     // 5. Log call activity

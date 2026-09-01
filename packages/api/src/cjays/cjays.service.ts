@@ -30,7 +30,7 @@ export class CjaysService {
       }
       for (const vehicle of input.vehicles) {
         if (!vehicle.id || !vehicle.vin) throw new BadRequestException('Vehicle id and VIN are required');
-        await tx.cjaysVehicle.upsert({ where: { tenantId_clientId: { tenantId, clientId: vehicle.id } }, create: { tenantId, clientId: vehicle.id, customerClientId: vehicle.customerId || null, vin: vehicle.vin, year: vehicle.year ?? '', make: vehicle.make ?? '', model: vehicle.model ?? '', color: vehicle.color ?? '' }, update: { customerClientId: vehicle.customerId || null, vin: vehicle.vin, year: vehicle.year ?? '', make: vehicle.make ?? '', model: vehicle.model ?? '', color: vehicle.color ?? '', serverVersion: { increment: 1 } } });
+        await tx.cjaysVehicle.upsert({ where: { tenantId_clientId: { tenantId, clientId: vehicle.id } }, create: { tenantId, clientId: vehicle.id, customerClientId: vehicle.customerId || null, vin: vehicle.vin, year: vehicle.year ?? '', make: vehicle.make ?? '', model: vehicle.model ?? '', color: vehicle.color ?? '', qrTagId: '' }, update: { customerClientId: vehicle.customerId || null, vin: vehicle.vin, year: vehicle.year ?? '', make: vehicle.make ?? '', model: vehicle.model ?? '', color: vehicle.color ?? '', serverVersion: { increment: 1 } } });
       }
       for (const job of input.jobs) {
         if (!job.id || !job.vehicleId || !job.service) throw new BadRequestException('Job id, vehicle id, and service are required');
