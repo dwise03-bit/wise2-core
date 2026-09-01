@@ -63,7 +63,7 @@ export function WiseImp() {
         ...(tourStop
           ? { top: tourStop.top, left: tourStop.left, bottom: 'auto', right: 'auto' }
           : {
-              bottom: 'max(20px, calc(20px + env(safe-area-inset-bottom)))',
+              bottom: 'max(84px, calc(84px + env(safe-area-inset-bottom)))',
               right: 'max(20px, calc(20px + env(safe-area-inset-right)))',
             }),
         transition: 'top 900ms ease, left 900ms ease',
@@ -216,18 +216,19 @@ export function WiseImp() {
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
         className="wise-imp-launcher"
         style={{
-          width: 'auto',
-          minWidth: 64,
-          height: 64,
-          borderRadius: '50%',
-          background: 'rgba(13, 17, 23, 0.85)',
-          border: `1px solid ${GLOW_HEX[state.glowColor]}59`,
+          width: 104,
+          minWidth: 104,
+          height: 116,
+          borderRadius: 18,
+          background: 'linear-gradient(180deg, rgba(13,17,23,.96), rgba(5,5,5,.88))',
+          border: `1px solid ${GLOW_HEX[state.glowColor]}80`,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '4px 10px 4px 4px',
-          gap: 8,
+          padding: 6,
+          gap: 0,
+          flexDirection: 'column',
           transition: 'border-color 400ms ease, box-shadow 400ms ease',
           '--wimp-color-33': `${GLOW_HEX[state.glowColor]}33`,
           '--wimp-color-55': `${GLOW_HEX[state.glowColor]}55`,
@@ -238,10 +239,10 @@ export function WiseImp() {
         <WiseImpMascot
           glowColor={state.glowColor}
           mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
-          size={52}
+          size={82}
           breathing={!state.open}
         />
-        {!state.open && <span style={{ color: '#D6A331', fontSize: 10, fontWeight: 800, letterSpacing: '0.16em' }}>ASK IMP</span>}
+        {!state.open && <span style={{ color: '#D6A331', fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', lineHeight: '16px' }}>ASK IMP</span>}
       </button>
     </div>
   );
