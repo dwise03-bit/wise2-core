@@ -145,13 +145,13 @@ export class AttributionService {
       'CLOSING',
       'WON',
       'LOST',
-    ];
+    ] as const;
 
     const metrics: PipelineMetrics[] = [];
 
     for (const stage of stages) {
       const deals = await this.prisma.deal.findMany({
-        where: { stage },
+        where: { stage: stage as any },
       });
 
       const totalValue = deals.reduce(
@@ -187,14 +187,14 @@ export class AttributionService {
 
     for (const stage of stages) {
       const count = await this.prisma.deal.count({
-        where: { stage },
+        where: { stage: stage as any },
       });
       stageCounts.set(stage, count);
     }
 
     // Calculate conversion rates
     const discovery = stageCounts.get('DISCOVERY') || 1;
-    const funnel = [];
+    const funnel: any[] = [];
 
     for (let i = 0; i < stages.length; i++) {
       const stage = stages[i];

@@ -106,7 +106,7 @@ export class AICloserService {
     } catch (error) {
       result.reason = 'QUOTE_GENERATION_FAILED';
       result.escalationRequired = true;
-      result.escalationReason = `Failed to generate quote: ${error.message}`;
+      result.escalationReason = `Failed to generate quote: ${error instanceof Error ? error.message : String(error)}`;
       return result;
     }
   }
@@ -193,8 +193,8 @@ export class AICloserService {
 
     // Calculate discount if applicable
     const discountAmount = this.calculateDiscount(
-      dealValue,
-      context.offer.discountCeiling,
+      Number(dealValue),
+      Number(context.offer.discountCeiling),
     );
 
     const finalPrice = Number(dealValue) - discountAmount;
@@ -287,7 +287,7 @@ export class AICloserService {
         },
       });
     } catch (error) {
-      console.error(`Error logging closing event: ${error.message}`);
+      console.error(`Error logging closing event: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
