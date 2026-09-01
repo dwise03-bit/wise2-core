@@ -22,8 +22,9 @@ async function bootstrap() {
     logger.log('NestJS application created successfully');
 
     // Enable WebSocket support for real-time collaboration
-    logger.log('Enabling WebSocket support for collaboration features');
-    app.useWebSocketAdapter(new IoAdapter(app));
+    // DISABLED: IoAdapter may be blocking app.listen() - testing without
+    // logger.log('Enabling WebSocket support for collaboration features');
+    // app.useWebSocketAdapter(new IoAdapter(app));
 
     // Enable CORS
     app.enableCors({
