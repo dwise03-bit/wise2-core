@@ -2,10 +2,10 @@
   "name": "@wise2/brand-lock",
   "version": "1.0.0",
   "description": "WISE² Brand Lock System — Immutable registry of authentic brand assets with SHA-256 integrity protection",
-  "main": "use-locked-assets.ts",
-  "types": "use-locked-assets.ts",
+  "main": "index.ts",
+  "types": "index.ts",
   "exports": {
-    ".": "./use-locked-assets.ts",
+    ".": "./index.ts",
     "./use-locked-assets": "./use-locked-assets.ts",
     "./registry": "./registry/authenticated-assets.json"
   },

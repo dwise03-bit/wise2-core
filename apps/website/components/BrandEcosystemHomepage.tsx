@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useLockedAssets } from '@wise2/brand-lock/use-locked-assets';
+import { useLockedAssets } from '@wise2/brand-lock';
 
 function Fade({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
