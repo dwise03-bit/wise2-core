@@ -24,7 +24,7 @@ export { GLOW_HEX };
 export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = true, breathing = false }: WiseImpMascotProps) {
   // The VPS desktop IMP is the canonical approved character for branded embeds.
   // Use its idle frame here instead of the older one-use web mascot.
-  const src = mascotState === 'idle' ? '/wise-imp/vps-idle.png' : `/wise-imp/${mascotState}-${glowColor}.webp`;
+  const src = mascotState === 'idle' ? '/wise-imp/vps-idle.png?v=3' : `/wise-imp/${mascotState}-${glowColor}.webp`;
   const [prevSrc, setPrevSrc] = useState(src);
   const [transitioning, setTransitioning] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
