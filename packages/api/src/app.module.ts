@@ -38,7 +38,7 @@ import { CjaysModule } from './cjays/cjays.module';
 import { BusinessOsModule } from './v1/business-os/business-os.module';
 import { CherryCountModule } from './cherry-count/cherry-count.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
-// import { RevenueModule } from './revenue/revenue.module'; // TEMPORARILY DISABLED - needs Prisma schema alignment
+import { RevenueModule } from './revenue/revenue.module';
 
 @Module({
   imports: [
@@ -135,7 +135,7 @@ import { AiPhoneModule } from './ai-phone/ai-phone.module';
     BusinessOsModule,
     CherryCountModule,
     AiPhoneModule,
-    // RevenueModule, // TEMPORARILY DISABLED - needs Prisma schema alignment
+    RevenueModule,
     // AuditsModule, // DEFERRED
   ],
   controllers: [AppController, APIStatusController],
