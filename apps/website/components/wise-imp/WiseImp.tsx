@@ -216,20 +216,20 @@ export function WiseImp() {
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
         className="wise-imp-launcher"
         style={{
-          width: 104,
-          minWidth: 104,
-          height: 116,
-          borderRadius: 18,
-          background: 'linear-gradient(180deg, rgba(13,17,23,.96), rgba(5,5,5,.88))',
-          border: `1px solid ${GLOW_HEX[state.glowColor]}80`,
+          width: 300,
+          minWidth: 300,
+          height: 300,
+          borderRadius: 0,
+          background: 'transparent',
+          border: '0',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 6,
+          padding: 0,
           gap: 0,
           flexDirection: 'column',
-          transition: 'border-color 400ms ease, box-shadow 400ms ease',
+          transition: 'filter 400ms ease',
           '--wimp-color-33': `${GLOW_HEX[state.glowColor]}33`,
           '--wimp-color-55': `${GLOW_HEX[state.glowColor]}55`,
           '--wimp-color-11': `${GLOW_HEX[state.glowColor]}11`,
@@ -239,10 +239,9 @@ export function WiseImp() {
         <WiseImpMascot
           glowColor={state.glowColor}
           mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
-          size={82}
+          size={300}
           breathing={!state.open}
         />
-        {!state.open && <span style={{ color: '#D6A331', fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', lineHeight: '16px' }}>ASK IMP</span>}
       </button>
     </div>
   );
