@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -44,7 +45,8 @@ export function BlakkhailHeader() {
           className="text-xl font-semibold uppercase tracking-[-0.05em] hover:opacity-60 sm:text-2xl"
           style={{ color: BLAKKHAIL.gold }}
         >
-          Blakk Hail
+          <Image src={BLAKKHAIL_LEGACY.assets.logo} alt="SenCere Creative rabbit logo" width={42} height={44} className="h-10 w-10 object-contain" priority />
+          <span>Blakk Hail</span>
         </Link>
 
         <span
@@ -120,7 +122,7 @@ export function BlakkhailHeader() {
                   href={isProductPage && item.href.startsWith('#') ? `${storefrontPath}${item.href}` : item.href}
                   onClick={closeMenu}
                   className="flex min-h-12 items-center text-base font-semibold uppercase tracking-wide"
-                  style={{ color: BLAKKHAIL.black }}
+                  style={{ color: BLAKKHAIL.steel }}
                 >
                   {item.label}
                 </Link>
