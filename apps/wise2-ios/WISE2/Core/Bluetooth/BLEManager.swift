@@ -64,20 +64,23 @@ class BLEManager: NSObject, ObservableObject {
   private func identifyFieldpieceRole(_ name: String) -> FieldpieceToolRole {
     let upper = name.uppercased()
 
-    if upper.contains("JL3PR") || upper.contains("PRESS") || upper.contains("LOW") {
-      if upper.contains("HIGH") || upper.contains("RED") {
+    // Pressure probes (JL3PR)
+    if upper.contains("JL3PR") || upper.contains("PRESS") {
+      if upper.contains("HIGH") || upper.contains("RED") || upper.contains("LIQ") {
         return .highSidePressure
       }
       return .lowSidePressure
     }
 
-    if upper.contains("JL3PC") || upper.contains("PIPE") || upper.contains("CLAMP") || upper.contains("TEMP") {
+    // Pipe clamps & temperature probes (JL3PC)
+    if upper.contains("JL3PC") || upper.contains("PIPE") || upper.contains("CLAMP") {
       if upper.contains("LIQ") || upper.contains("HIGH") || upper.contains("RED") {
         return .liquidLineTemp
       }
       return .suctionLineTemp
     }
 
+    // Psychrometers (JL3RH)
     if upper.contains("JL3RH") || upper.contains("PSYCH") || upper.contains("HUMID") {
       if upper.contains("SUP") || upper.contains("OUT") {
         return .supplyPsychrometer
@@ -85,12 +88,39 @@ class BLEManager: NSObject, ObservableObject {
       return .returnPsychrometer
     }
 
-    if upper.contains("SC4") || upper.contains("SC6") || upper.contains("METER") || upper.contains("AMP") {
+    // Clamp meters (SC480/SC680)
+    if upper.contains("SC4") || upper.contains("SC6") || upper.contains("CLAMP") || upper.contains("AMP") {
       return .multimeter
     }
 
+    // Current clamps (JL3AA)
+    if upper.contains("JL3AA") || upper.contains("CURRENT") {
+      return .currentClamp
+    }
+
+    // Manometers (SM480V)
     if upper.contains("SM4") || upper.contains("SMAN") || upper.contains("MANOMETER") {
       return .staticPressure
+    }
+
+    // Liquid probes (JL3PT)
+    if upper.contains("JL3PT") || upper.contains("LIQUID") && upper.contains("PROBE") {
+      return .liquidProbe
+    }
+
+    // Refrigerant probes (JL3GR)
+    if upper.contains("JL3GR") || upper.contains("REFRIG") {
+      return .refrigerantProbe
+    }
+
+    // Wireless probes (DL3WB)
+    if upper.contains("DL3WB") || upper.contains("WIRELESS") || upper.contains("REMOTE") {
+      return .wirelessProbe
+    }
+
+    // Pressure transducers
+    if upper.contains("TRANSDUCER") || upper.contains("XDCR") {
+      return .pressureTransducer
     }
 
     return .unknown

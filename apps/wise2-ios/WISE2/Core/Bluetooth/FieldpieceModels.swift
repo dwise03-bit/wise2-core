@@ -11,6 +11,11 @@ enum FieldpieceToolRole: String, Codable, CaseIterable {
   case returnPsychrometer = "return_psychrometer"
   case multimeter = "multimeter"
   case staticPressure = "static_pressure"
+  case currentClamp = "current_clamp"
+  case liquidProbe = "liquid_probe"
+  case refrigerantProbe = "refrigerant_probe"
+  case wirelessProbe = "wireless_probe"
+  case pressureTransducer = "pressure_transducer"
   case unknown = "unknown"
 
   var displayName: String {
@@ -23,15 +28,23 @@ enum FieldpieceToolRole: String, Codable, CaseIterable {
     case .returnPsychrometer: "Return Psychrometer"
     case .multimeter: "Multimeter"
     case .staticPressure: "Static Pressure"
+    case .currentClamp: "Current Clamp"
+    case .liquidProbe: "Liquid Probe"
+    case .refrigerantProbe: "Refrigerant Probe"
+    case .wirelessProbe: "Wireless Probe"
+    case .pressureTransducer: "Pressure Transducer"
     case .unknown: "Unknown Tool"
     }
   }
 
   var unit: String {
     switch self {
-    case .highSidePressure, .lowSidePressure, .staticPressure: "PSIG"
+    case .highSidePressure, .lowSidePressure, .pressureTransducer: "PSIG"
+    case .staticPressure: "in. wc"
     case .liquidLineTemp, .suctionLineTemp, .supplyPsychrometer, .returnPsychrometer: "°F"
-    case .multimeter: "AAC"
+    case .multimeter, .currentClamp: "AAC"
+    case .liquidProbe, .refrigerantProbe: "°F"
+    case .wirelessProbe: "–"
     case .unknown: "–"
     }
   }
@@ -46,17 +59,24 @@ enum FieldpieceToolRole: String, Codable, CaseIterable {
     case .returnPsychrometer: "return_db"
     case .multimeter: "amperage"
     case .staticPressure: "tesp"
+    case .currentClamp: "current_clamp"
+    case .liquidProbe: "liquid_probe_temp"
+    case .refrigerantProbe: "refrigerant_temp"
+    case .wirelessProbe: "wireless_reading"
+    case .pressureTransducer: "transducer_pressure"
     case .unknown: "unknown"
     }
   }
 
   var icon: String {
     switch self {
-    case .highSidePressure, .lowSidePressure: "gauge"
-    case .liquidLineTemp, .suctionLineTemp: "thermometer"
+    case .highSidePressure, .lowSidePressure, .pressureTransducer: "gauge"
+    case .liquidLineTemp, .suctionLineTemp, .liquidProbe, .refrigerantProbe: "thermometer"
     case .supplyPsychrometer, .returnPsychrometer: "humidity"
     case .multimeter: "waveform.circle"
+    case .currentClamp: "bolt.circle"
     case .staticPressure: "speedometer"
+    case .wirelessProbe: "wifi"
     case .unknown: "sensor"
     }
   }
