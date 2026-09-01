@@ -34,7 +34,7 @@ import { PrintShopModule } from './v1/print-shop/print-shop.module';
 import { HermesModule } from './hermes/hermes.module';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
-import { CjaysModule } from './cjays/cjays.module';
+// import { CjaysModule } from './cjays/cjays.module'; // DISABLED: Docker build issues, re-enable after build fixes
 import { BusinessOsModule } from './v1/business-os/business-os.module';
 import { CherryCountModule } from './cherry-count/cherry-count.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
@@ -131,7 +131,7 @@ import { RevenueModule } from './revenue/revenue.module';
     HermesModule,
     TradingModule,
     FieldtechModule,
-    CjaysModule,
+    // CjaysModule, // DISABLED: Docker build issues, re-enable after build fixes
     BusinessOsModule,
     CherryCountModule,
     AiPhoneModule,
