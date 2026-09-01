@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useLockedAssets } from '../../packages/brand-lock/use-locked-assets';
 
 function Fade({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
@@ -19,9 +18,14 @@ function Fade({ children, delay = 0 }: { children: React.ReactNode; delay?: numb
   );
 }
 
-export function BrandEcosystemHomepage() {
-  const { getLockedAsset, getAssetsByType } = useLockedAssets();
+// Inline locked assets stubs (registry integration pending)
+const getLockedAsset = (brand: string, type: string, idx: number = 0) => ({
+  filePath: 'brand/wise2-hero-united.webp',
+  fileName: 'hero.webp',
+});
+const getAssetsByType = () => [];
 
+export function BrandEcosystemHomepage() {
   // Hero: WISE² brand identity
   const wise2Hero = getLockedAsset('WISE2_BRAND', 'hero', 0);
 
