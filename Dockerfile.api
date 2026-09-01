@@ -34,8 +34,10 @@ COPY packages/ai-phone/tsconfig.json ./packages/ai-phone/
 COPY packages/agent-framework/src ./packages/agent-framework/src
 COPY packages/agent-framework/tsconfig.json ./packages/agent-framework/
 RUN pnpm --filter @wise2/agent-framework build && pnpm --filter @wise2/ai-phone build
-RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc --build
+RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc
 
 EXPOSE 3000
 
+# Explicitly set entrypoint and cmd to avoid shell interpretation issues
+ENTRYPOINT []
 CMD ["node", "packages/api/dist/main.js"]
