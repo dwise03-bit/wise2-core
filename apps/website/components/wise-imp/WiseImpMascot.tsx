@@ -78,7 +78,7 @@ export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = tr
           fill
           sizes={`${size}px`}
           style={{
-            objectFit: 'contain',
+            objectFit: prevSrc.includes('vps-idle') ? 'fill' : 'contain',
             opacity: 0,
             transition: 'opacity 300ms ease-out',
           }}
@@ -92,7 +92,7 @@ export function WiseImpMascot({ glowColor, mascotState, size = 72, animated = tr
         fill
         sizes={`${size}px`}
         style={{
-          objectFit: 'contain',
+          objectFit: src.includes('vps-idle') ? 'fill' : 'contain',
           opacity: transitioning ? 0 : 1,
           transition: 'opacity 300ms ease-in',
         }}
