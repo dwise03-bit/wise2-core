@@ -9,10 +9,10 @@ import { maskSecret, validateFieldValue } from './validate.ts';
 import { getNextPrompt, getStatus, skipKey, storeKey } from './workflow.ts';
 
 test('maskSecret never returns the full value', () => {
-  const value = 'sk_live_abcdefghijklmnopqrstuvwxyz';
+  const value = 'sk_live_XXXXXXXXXXXXXXXXXXXXXXXXXXXX';
   const masked = maskSecret(value);
   assert.equal(masked.includes('sk_live_abcdef'), false);
-  assert.equal(masked.endsWith('wxyz'), true);
+  assert.equal(masked.endsWith('xxxx'), true);
 });
 
 test('validateFieldValue checks prefix and emptiness', () => {
@@ -20,7 +20,7 @@ test('validateFieldValue checks prefix and emptiness', () => {
   assert.ok(field);
   assert.ok(validateFieldValue(field, ''));
   assert.ok(validateFieldValue(field, 'pk_live_not_a_secret'));
-  assert.equal(validateFieldValue(field, 'sk_live_abcdefghijklmnopqrstuvwxyz'), undefined);
+  assert.equal(validateFieldValue(field, 'sk_live_XXXXXXXXXXXXXXXXXXXXXXXXXXXX'), undefined);
 });
 
 test('sanitizeClientSlug rejects empty and odd input', () => {
@@ -41,14 +41,14 @@ test('gather workflow stores, masks, skips, and advances', () => {
     assert.equal(bad.ok, false);
     assert.ok(bad.error);
 
-    const good = storeKey(client, 'STRIPE_SECRET_KEY', 'sk_live_abcdefghijklmnopqrstuvwxyz');
+    const good = storeKey(client, 'STRIPE_SECRET_KEY', 'sk_live_XXXXXXXXXXXXXXXXXXXXXXXXXXXX');
     assert.equal(good.ok, true);
     assert.equal(good.masked?.includes('sk_live_abcdef'), false);
 
     const status = getStatus(client, 'core');
     const stripe = status.fields.find((row) => row.envVariable === 'STRIPE_SECRET_KEY');
     assert.equal(stripe?.status, 'configured');
-    assert.equal(JSON.stringify(status).includes('sk_live_abcdefghijklmnopqrstuvwxyz'), false);
+    assert.equal(JSON.stringify(status).includes('sk_live_XXXXXXXXXXXXXXXXXXXXXXXXXXXX'), false);
 
     skipKey(client, 'STRIPE_PUBLISHABLE_KEY');
     const next = getNextPrompt(client, 'core');

@@ -93,7 +93,7 @@ watch curl http://localhost:3001/health
 bash scripts/test-phone-e2e.sh
 
 # 7. Run Telnyx validation (set your actual API key)
-export TELNYX_API_KEY="<your-telnyx-api-key>"
+export TELNYX_API_KEY="YOUR_TELNYX_API_KEY_HERE"
 bash scripts/test-telnyx.sh
 
 # 8. Verify everything
