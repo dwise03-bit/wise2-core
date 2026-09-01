@@ -32,6 +32,8 @@ services:
       context: .
       dockerfile: Dockerfile.api
     image: wise2-core-api:latest
+    # Explicitly clear stale entrypoints inherited by previously built API images.
+    entrypoint: []
     container_name: wise2-api
     restart: unless-stopped
     environment:
