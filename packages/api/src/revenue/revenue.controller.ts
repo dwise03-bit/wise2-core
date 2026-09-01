@@ -5,7 +5,8 @@ import { AICloserService, ClosingContext } from './ai-closer.service';
 import { FollowUpService } from './followup.service';
 import { PhoneBridgeService, CallInitiatedEvent } from './phone-bridge.service';
 import { AttributionService } from './attribution.service';
-import { LeadScore, Offer, Deal } from '@prisma/client';
+// TODO: Prisma schema missing LeadScore, Offer, Deal models - re-enable when models are available
+// import { LeadScore, Offer, Deal } from '@prisma/client';
 
 @Controller('revenue')
 export class RevenueController {
@@ -23,7 +24,7 @@ export class RevenueController {
    * Calculate or recalculate lead score
    */
   @Post('leads/:leadId/score')
-  async calculateLeadScore(@Param('leadId') leadId: string): Promise<LeadScore> {
+  async calculateLeadScore(@Param('leadId') leadId: string): Promise<any> {
     return this.scoringService.calculateLeadScore(leadId);
   }
 
@@ -43,7 +44,7 @@ export class RevenueController {
   @Post('leads/batch-recalculate')
   async batchRecalculateScores(
     @Query('limit') limit: string = '100',
-  ): Promise<LeadScore[]> {
+  ): Promise<any[]> {
     return this.scoringService.batchRecalculateScores(parseInt(limit));
   }
 
@@ -80,7 +81,7 @@ export class RevenueController {
   async listOffers(
     @Query('aiClosable') aiClosable?: string,
     @Query('industry') industry?: string,
-  ): Promise<Offer[]> {
+  ): Promise<any[]> {
     const where: any = { isActive: true };
 
     if (aiClosable === 'true') {
@@ -99,7 +100,7 @@ export class RevenueController {
    * Get offer details
    */
   @Get('offers/:offerId')
-  async getOfferDetails(@Param('offerId') offerId: string): Promise<Offer | null> {
+  async getOfferDetails(@Param('offerId') offerId: string): Promise<any | null> {
     return this.recommendationService.getOfferDetails(offerId);
   }
 
