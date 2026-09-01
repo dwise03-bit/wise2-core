@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 import { AppModule } from './app.module';
 
 const logger = new Logger('Bootstrap');
@@ -22,6 +23,7 @@ async function bootstrap() {
 
     // Enable WebSocket support for real-time collaboration
     logger.log('Enabling WebSocket support for collaboration features');
+    app.useWebSocketAdapter(new IoAdapter(app));
 
     // Enable CORS
     app.enableCors({
