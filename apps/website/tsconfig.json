@@ -38,6 +38,12 @@
       ],
       "@wise2/types": [
         "../../packages/types/src"
+      ],
+      "@wise2/brand-lock": [
+        "../../packages/brand-lock"
+      ],
+      "@wise2/brand-lock/*": [
+        "../../packages/brand-lock/*"
       ]
     },
     "plugins": [
