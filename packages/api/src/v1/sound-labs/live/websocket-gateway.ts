@@ -62,8 +62,10 @@ export class LiveWebSocketGateway
 
       console.log(`[Live] User ${session.userId} connected`);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error('[Live] Connection auth failed:', msg);
+      console.error(
+        '[Live] Connection auth failed:',
+        error instanceof Error ? error.message : String(error)
+      );
       client.disconnect();
     }
   }
@@ -98,7 +100,7 @@ export class LiveWebSocketGateway
   async onPresenceJoin(
     client: Socket,
     payload: { roomId: string; name?: string }
-  ): Promise<{ success?: boolean; presence?: any; error?: string }> {
+  ) {
     const session = (client as any).liveSession;
     if (!session) {
       return { error: 'Unauthorized' };
@@ -142,9 +144,9 @@ export class LiveWebSocketGateway
 
       return { success: true, presence };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error('[Live] Join failed:', msg);
-      return { error: msg };
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Join failed:', message);
+      return { error: message };
     }
   }
 
@@ -210,9 +212,9 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error('[Live] Chat failed:', msg);
-      return { error: msg };
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[Live] Chat failed:', message);
+      return { error: message };
     }
   }
 
@@ -265,8 +267,7 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      return { error: msg };
+      return { error: error instanceof Error ? error.message : String(error) };
     }
   }
 
@@ -294,8 +295,7 @@ export class LiveWebSocketGateway
 
       return { success: true };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      return { error: msg };
+      return { error: error instanceof Error ? error.message : String(error) };
     }
   }
 

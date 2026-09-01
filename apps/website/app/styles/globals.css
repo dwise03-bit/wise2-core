@@ -102,6 +102,28 @@
   }
 }
 
+.wise-cloud .wise-panel { border: 1px solid rgba(185,255,0,.38); background: linear-gradient(145deg,rgba(12,20,10,.94),rgba(2,5,3,.96)); padding: 16px; box-shadow: inset 0 0 28px rgba(185,255,0,.035),0 0 20px rgba(0,0,0,.35); }
+.wise-cloud .section-title,.wise-cloud .panel-title { color: #b9ff00; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.wise-cloud .wise-feature { min-height: 170px; border: 1px solid rgba(185,255,0,.35); background: linear-gradient(145deg,#101710,#050805); padding: 18px; transition: transform .25s ease,border-color .25s ease,box-shadow .25s ease; }
+.wise-cloud .wise-feature:hover { transform: translateY(-3px); border-color: #b9ff00; box-shadow: 0 0 22px rgba(185,255,0,.12); }
+.wise-cloud .wise-feature h3 { margin-top: 14px; font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+.wise-cloud .wise-feature p { margin-top: 8px; color: rgba(255,255,255,.62); font-size: 12px; line-height: 1.5; }
+.wise-cloud .wise-panel { animation: wise-panel-breathe 6s ease-in-out infinite; }
+.wise-cloud .wise-feature { position: relative; overflow: hidden; }
+.wise-cloud .wise-feature::after { content: ''; position: absolute; inset: -45% auto auto -35%; width: 70%; height: 180%; transform: rotate(24deg) translateX(-140%); background: linear-gradient(90deg, transparent, rgba(185,255,0,.12), transparent); pointer-events: none; animation: wise-scan 7s ease-in-out infinite; }
+.wise-cloud header a:first-child span:first-child { text-shadow: 0 0 18px rgba(185,255,0,.28); }
+.wise-cloud h1 { text-shadow: 0 0 30px rgba(0,0,0,.8); }
+@keyframes wise-panel-breathe { 0%,100% { box-shadow: inset 0 0 28px rgba(185,255,0,.035),0 0 20px rgba(0,0,0,.35); } 50% { box-shadow: inset 0 0 34px rgba(185,255,0,.08),0 0 26px rgba(185,255,0,.07); } }
+@keyframes wise-scan { 0%,45% { transform: rotate(24deg) translateX(-140%); opacity: 0; } 58% { opacity: 1; } 75%,100% { transform: rotate(24deg) translateX(260%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .wise-cloud .wise-panel, .wise-cloud .wise-feature::after { animation: none; } }
+
+/* Shared shell theme: keeps every public route in the Cloud visual language. */
+nav.fixed.left-0.right-0.top-0.z-50.h-16 {
+  border-color: rgba(185,255,0,.35) !important;
+  background-color: rgba(0,0,0,.92) !important;
+}
+nav.fixed.left-0.right-0.top-0.z-50.h-16 a:hover { color: #b9ff00 !important; }
+
 @media (max-width: 639px) {
   [data-wise-imp] {
     display: none !important;

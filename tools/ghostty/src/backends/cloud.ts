@@ -1,0 +1,1 @@
+import {spawn} from 'node:child_process'; export function handoffWithLauncher(tool:'claude'|'codex',cwd:string,launch=spawn):Promise<number>{process.stderr.write(`WISE² cloud handoff: ${tool.toUpperCase()}\n`); return new Promise(resolve=>{const p=launch(tool,[],{cwd,stdio:'inherit',shell:false});p.on('exit',code=>resolve(code??1));p.on('error',()=>resolve(1));});}

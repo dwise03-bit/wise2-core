@@ -71,8 +71,10 @@ export class PollCleanupService implements OnModuleInit, OnModuleDestroy {
         // WebSocket gateway will emit 'poll.closed' event when polls are queried
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error('[Live] Poll cleanup failed:', msg);
+      console.error(
+        '[Live] Poll cleanup failed:',
+        error instanceof Error ? error.message : String(error)
+      );
     }
   }
 }

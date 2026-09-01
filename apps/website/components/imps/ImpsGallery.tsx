@@ -61,7 +61,7 @@ export function ImpsGallery() {
                 alt={item.title}
                 width={400}
                 height={400}
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                className="w-full h-full object-contain group-hover:scale-105 transition duration-500"
               />
 
               {/* Enhanced Gradient Overlay */}
@@ -105,7 +105,7 @@ export function ImpsGallery() {
                     width={1024}
                     height={576}
                     priority
-                    className="w-full h-full object-cover relative z-10"
+                    className="w-full h-full object-contain relative z-10"
                   />
                 </div>
 

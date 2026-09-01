@@ -6,7 +6,7 @@ import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
 
 export default function BlakkhailPage() {
   return (
-    <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`}>
+    <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <BlakkhailHeader />
       <main>
         <BlakkhailStorefront />

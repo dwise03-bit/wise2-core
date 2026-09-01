@@ -38,7 +38,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: postgresql://wise2:${DATABASE_PASSWORD:-wise2}@postgres:5432/wise2_prod
+      DATABASE_URL: ${DATABASE_URL:-postgresql://wise2:wise2@postgres:5432/wise2_prod}
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/0
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}

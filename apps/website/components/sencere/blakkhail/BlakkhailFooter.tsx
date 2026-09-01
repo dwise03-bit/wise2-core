@@ -30,9 +30,9 @@ export function BlakkhailFooter() {
   }, []);
 
   return (
-    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack }}>
+    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack, color: BLAKKHAIL.steel }}>
 
-      {/* ── LEGENDARY CTA STRIP ─────────────────────────── */}
+      {/* ── CTA STRIP ─────────────────────────── */}
       <div
         className="border-y"
         style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}
@@ -42,14 +42,14 @@ export function BlakkhailFooter() {
         >
           <div>
             <p
-              className="text-[10px] font-bold uppercase tracking-[0.35em] sm:text-xs"
-              style={{ color: BLAKKHAIL.steel }}
+              className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: BLAKKHAIL.neutral600 }}
             >
               Ready to work?
             </p>
             <h2
-              className="mt-2 text-2xl font-black uppercase tracking-[0.06em] sm:text-3xl lg:text-4xl"
-              style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+              className="mt-2 text-2xl font-bold uppercase tracking-wide sm:text-3xl lg:text-4xl"
+              style={{ color: BLAKKHAIL.accentBrown }}
             >
               Let&apos;s Build Something Legendary
             </h2>
@@ -57,15 +57,15 @@ export function BlakkhailFooter() {
           <div className="flex flex-wrap gap-3">
             <a
               href={`mailto:${blakkhailBrand.email}?subject=Quote%20Request`}
-              className="min-h-12 px-7 py-3 text-sm font-black uppercase tracking-[0.18em] text-black sm:text-base"
-              style={{ backgroundColor: BLAKKHAIL.gold }}
+              className="min-h-10 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide"
+              style={{ backgroundColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.white }}
             >
               Get a Quote
             </a>
             <a
               href={`tel:${company.phone.replace(/\D/g, '')}`}
-              className="min-h-12 border px-7 py-3 text-sm font-black uppercase tracking-[0.18em] sm:text-base"
-              style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+              className="min-h-10 border px-6 py-2.5 text-sm font-semibold uppercase tracking-wide"
+              style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
             >
               Book a Call
             </a>
@@ -80,20 +80,20 @@ export function BlakkhailFooter() {
           {/* Brand column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <h3
-              className="text-base font-black uppercase tracking-wider sm:text-lg"
-              style={{ color: BLAKKHAIL.gold }}
+              className="text-base font-semibold uppercase tracking-wider sm:text-lg"
+              style={{ color: BLAKKHAIL.accentBrown }}
             >
               {blakkhailBrand.name}
             </h3>
             <p
-              className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] sm:text-xs"
-              style={{ color: BLAKKHAIL.steel }}
+              className="mt-1 text-xs font-semibold uppercase tracking-wide"
+              style={{ color: BLAKKHAIL.neutral600 }}
             >
               {blakkhailBrand.legalName}
             </p>
             <p
               className="mt-3 text-sm leading-relaxed sm:text-base"
-              style={{ color: BLAKKHAIL.steel }}
+              style={{ color: BLAKKHAIL.neutral600 }}
             >
               Original fashion est. {blakkhailBrand.established}
             </p>
@@ -102,29 +102,29 @@ export function BlakkhailFooter() {
           {/* Contact column */}
           <div>
             <p
-              className="text-xs uppercase tracking-wider sm:text-sm"
-              style={{ color: BLAKKHAIL.gold }}
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: BLAKKHAIL.accentBrown }}
             >
               Contact
             </p>
             <ul className="mt-3 flex flex-col gap-2">
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
-                <Phone size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
-                <a href={`tel:${company.phone.replace(/\D/g, '')}`} className="hover:opacity-80">
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
+                <Phone size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
+                <a href={`tel:${company.phone.replace(/\D/g, '')}`} className="hover:opacity-75">
                   {company.phone}
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
-                <Mail size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
-                <a href={`mailto:${blakkhailBrand.email}`} className="hover:opacity-80 break-all">
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
+                <Mail size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
+                <a href={`mailto:${blakkhailBrand.email}`} className="hover:opacity-75 break-all">
                   {blakkhailBrand.email}
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.steel }}>
-                <Globe size={14} style={{ color: BLAKKHAIL.darkGold }} aria-hidden />
+              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
+                <Globe size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
                 <a
                   href={blakkhailBrand.parentSiteUrl}
-                  className="hover:opacity-80"
+                  className="hover:opacity-75"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -137,18 +137,18 @@ export function BlakkhailFooter() {
           {/* Location column */}
           <div>
             <p
-              className="text-xs uppercase tracking-wider sm:text-sm"
-              style={{ color: BLAKKHAIL.gold }}
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: BLAKKHAIL.accentBrown }}
             >
               Location
             </p>
-            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.steel }}>
+            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.neutral600 }}>
               {company.location}
             </p>
             <Link
               href={parentHref}
-              className="mt-3 block text-sm hover:opacity-80 sm:text-base"
-              style={{ color: BLAKKHAIL.steel }}
+              className="mt-3 block text-sm hover:opacity-75 sm:text-base"
+              style={{ color: BLAKKHAIL.neutral600 }}
             >
               {blakkhailBrand.legalName}
             </Link>
@@ -157,28 +157,28 @@ export function BlakkhailFooter() {
           {/* POWERED BY WISE² column */}
           <div className="flex flex-col gap-3">
             <p
-              className="text-xs uppercase tracking-wider sm:text-sm"
-              style={{ color: BLAKKHAIL.gold }}
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: BLAKKHAIL.accentBrown }}
             >
               {blakkhailBrand.wise2.poweredByLabel}
             </p>
             <div className="flex items-center gap-2">
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm text-sm font-black"
-                style={{ backgroundColor: BLAKKHAIL.gold, color: BLAKKHAIL.jetBlack }}
+                className="flex h-8 w-8 shrink-0 items-center justify-center border text-sm font-bold"
+                style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
               >
                 W
               </div>
               <span
-                className="text-xl font-black tracking-[0.06em]"
-                style={{ color: BLAKKHAIL.gold }}
+                className="text-lg font-bold tracking-wide"
+                style={{ color: BLAKKHAIL.accentBrown }}
               >
                 WISE²
               </span>
             </div>
             <p
-              className="text-[10px] font-bold uppercase leading-5 tracking-[0.18em] sm:text-xs"
-              style={{ color: BLAKKHAIL.steel }}
+              className="text-xs font-semibold leading-5 tracking-wide"
+              style={{ color: BLAKKHAIL.neutral600 }}
             >
               Smart Systems.
               <br />
@@ -190,59 +190,59 @@ export function BlakkhailFooter() {
         </div>
 
         {/* Social icons */}
-        <div className="mt-8 flex flex-wrap items-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
             href={social.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center gap-2 rounded-sm border px-4 py-2 text-sm font-bold uppercase tracking-wide hover:opacity-90"
-            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+            className="flex min-h-10 items-center gap-2 border px-4 py-2 text-xs font-semibold uppercase tracking-wide hover:opacity-75"
+            style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
           >
-            <Instagram size={18} aria-hidden />
+            <Instagram size={16} aria-hidden />
             @blakkhail
           </a>
           <a
             href={social.facebook}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
-            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
+            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
             aria-label="Facebook"
           >
-            <Facebook size={20} />
+            <Facebook size={18} />
           </a>
           <a
             href={social.twitter ?? '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
-            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
+            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
             aria-label="TikTok"
           >
-            <TikTokIcon size={20} />
+            <TikTokIcon size={18} />
           </a>
           <a
             href={social.youtube}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-center rounded-sm border p-2.5 hover:opacity-90"
-            style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
+            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
             aria-label="YouTube"
           >
-            <Youtube size={20} />
+            <Youtube size={18} />
           </a>
         </div>
 
         {/* Bottom bar */}
         <div
           className="mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs sm:flex-row sm:text-sm"
-          style={{ borderColor: BLAKKHAIL.gunmetal, color: BLAKKHAIL.steel }}
+          style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
         >
           <p>
             © {new Date().getFullYear()} {blakkhailBrand.legalName} •{' '}
             {blakkhailBrand.name} • {company.location}
           </p>
-          <p style={{ color: BLAKKHAIL.darkGold }}>
+          <p style={{ color: BLAKKHAIL.accentBrown }}>
             {blakkhailBrand.wise2.poweredByLabel} WISE²
           </p>
         </div>

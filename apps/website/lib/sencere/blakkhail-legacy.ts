@@ -22,7 +22,10 @@ export const BLAKKHAIL_LEGACY = {
     { label: 'Contact Us', href: '#contact' },
   ],
   assets: {
-    logo: '/sencere-assets/legacy-blakkhail/home/droppedImage_1.png',
+    logo: '/sencere-assets/blakkhail/sencere-rabbit-logo.png',
+    wordmark: '/sencere-assets/blakkhail/blakkhail-wordmark.png',
+    skull: '/sencere-assets/blakkhail/piff-city-skull.png',
+    dropAd: '/sencere-assets/blakkhail/blakkhail-drop-ad.png',
     heroPhotos: [
       '/sencere-assets/legacy-blakkhail/home/P7210319.jpg',
       '/sencere-assets/legacy-blakkhail/home/P3190168.jpg',

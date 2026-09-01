@@ -1,0 +1,665 @@
+{
+  "PAIGE": {
+    "brand": "PAIGE",
+    "assets": [
+      {
+        "id": "paige-paige_brand_portrait_product-7ebb8864",
+        "brand": "PAIGE",
+        "type": "hero",
+        "filePath": ".tmp/petals-handoff/extracted/Petals_and_Potions_Partner_Handoff/02_PAIGE/paige_brand_portrait_product.png",
+        "fileName": "paige_brand_portrait_product.png",
+        "sha256": "7ebb88640727d440267add943ef091df24e827f2fbe3bb2b4c9f09ca745bac97",
+        "fileSize": 2571350,
+        "dateImported": "2026-09-01T01:42:14.927Z",
+        "source": "client-handoff",
+        "locked": true
+      },
+      {
+        "id": "paige-paige_client_handoff_outdoor-26d36838",
+        "brand": "PAIGE",
+        "type": "photography",
+        "filePath": ".tmp/petals-handoff/extracted/Petals_and_Potions_Partner_Handoff/02_PAIGE/paige_client_handoff_outdoor.png",
+        "fileName": "paige_client_handoff_outdoor.png",
+        "sha256": "26d3683861677def5d261b56fe8a3197b80d02deb578bba3966c41fc092db225",
+        "fileSize": 2439514,
+        "dateImported": "2026-09-01T01:42:14.934Z",
+        "source": "client-handoff",
+        "locked": true
+      },
+      {
+        "id": "paige-paige_reference_01-bff91a79",
+        "brand": "PAIGE",
+        "type": "reference",
+        "filePath": ".tmp/petals-handoff/extracted/Petals_and_Potions_Partner_Handoff/02_PAIGE/paige_reference_01.jpg",
+        "fileName": "paige_reference_01.jpg",
+        "sha256": "bff91a79e19e8eedfc005bbc64f60a1c03206fd97cbd48cc8997f2f58550ac85",
+        "fileSize": 46551,
+        "dateImported": "2026-09-01T01:42:14.934Z",
+        "source": "client-handoff",
+        "locked": true
+      },
+      {
+        "id": "paige-paige_reference_02-30e0e135",
+        "brand": "PAIGE",
+        "type": "reference",
+        "filePath": ".tmp/petals-handoff/extracted/Petals_and_Potions_Partner_Handoff/02_PAIGE/paige_reference_02.jpg",
+        "fileName": "paige_reference_02.jpg",
+        "sha256": "30e0e135688fc246908b76bef2f378c52d68f447a0cb36dc3e690bf6ff323696",
+        "fileSize": 64034,
+        "dateImported": "2026-09-01T01:42:14.935Z",
+        "source": "client-handoff",
+        "locked": true
+      },
+      {
+        "id": "paige-brand_board_paige-565bb497",
+        "brand": "PAIGE",
+        "type": "reference",
+        "filePath": ".tmp/petals-handoff/extracted/Petals_and_Potions_Partner_Handoff/01_BRAND/brand_board_paige.png",
+        "fileName": "brand_board_paige.png",
+        "sha256": "565bb49710fb311ead13e75d3e4279ff694766d122a62a30bfb3d5e5145a9c39",
+        "fileSize": 2609070,
+        "dateImported": "2026-09-01T01:42:14.937Z",
+        "source": "client-handoff",
+        "locked": true
+      }
+    ],
+    "totalAssets": 5,
+    "lastUpdated": "2026-09-01T01:42:14.938Z"
+  },
+  "CJAYS": {
+    "brand": "CJAYS",
+    "assets": [
+      {
+        "id": "cjays-cjays_rekon_icon-1b108dfe",
+        "brand": "CJAYS",
+        "type": "icon",
+        "filePath": "CJAYS/mobile-app/app/src/main/res/drawable/cjays_rekon_icon.png",
+        "fileName": "cjays_rekon_icon.png",
+        "sha256": "1b108dfe8c84dbb92f81ec4853f54339110a0b5043c28c4ba3172ef4f7f03166",
+        "fileSize": 1755460,
+        "dateImported": "2026-09-01T01:42:14.939Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 1,
+    "lastUpdated": "2026-09-01T01:42:14.940Z"
+  },
+  "LEXIS_INKS": {
+    "brand": "LEXIS_INKS",
+    "assets": [
+      {
+        "id": "lexis_inks-hero-reference-5f9df0b9",
+        "brand": "LEXIS_INKS",
+        "type": "hero",
+        "filePath": "apps/lexis-inks-demo/public/hero-reference.jpg",
+        "fileName": "hero-reference.jpg",
+        "sha256": "5f9df0b975bc4c721f4dd6c07357b6d1781f40c5a3bc6e19eabb58fa4e83f7c7",
+        "fileSize": 103674,
+        "dateImported": "2026-09-01T01:42:14.940Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-shop-reference-618a562c",
+        "brand": "LEXIS_INKS",
+        "type": "reference",
+        "filePath": "apps/lexis-inks-demo/public/shop-reference.jpg",
+        "fileName": "shop-reference.jpg",
+        "sha256": "618a562cb8066bf6a3235e14302ccfb6ea3857daac41f36359d0e244ec3b2b77",
+        "fileSize": 52209,
+        "dateImported": "2026-09-01T01:42:14.941Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-story-reference-5409ee7b",
+        "brand": "LEXIS_INKS",
+        "type": "reference",
+        "filePath": "apps/lexis-inks-demo/public/story-reference.jpg",
+        "fileName": "story-reference.jpg",
+        "sha256": "5409ee7bdbaeed1d1411a4ec179d50da19fb70846470679c0bb01cbb763b686e",
+        "fileSize": 61573,
+        "dateImported": "2026-09-01T01:42:14.941Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-lexis-inks-memorial-3063d4b5",
+        "brand": "LEXIS_INKS",
+        "type": "photography",
+        "filePath": "apps/lexis-inks-demo/public/lexis-inks-memorial.jpg",
+        "fileName": "lexis-inks-memorial.jpg",
+        "sha256": "3063d4b593abce6f91e3bfdc84f1a54efd2e98cdff5c754418f5a7c4abc337b5",
+        "fileSize": 295567,
+        "dateImported": "2026-09-01T01:42:14.942Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-sheila-702104ef",
+        "brand": "LEXIS_INKS",
+        "type": "photography",
+        "filePath": "apps/lexis-inks-demo/public/sheila.jpg",
+        "fileName": "sheila.jpg",
+        "sha256": "702104efa9d34de6badebd7a4723ce3dc72ba485750b4f88b5d511265a7ddf16",
+        "fileSize": 9650,
+        "dateImported": "2026-09-01T01:42:14.942Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-pen-white-c9f37c5b",
+        "brand": "LEXIS_INKS",
+        "type": "product",
+        "filePath": "apps/lexis-inks-demo/public/pen-white.jpg",
+        "fileName": "pen-white.jpg",
+        "sha256": "c9f37c5b9fe003e83946274e4bd3d79b2091e27bfe22bd93718585939c382c6b",
+        "fileSize": 6305,
+        "dateImported": "2026-09-01T01:42:14.942Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-pen-red-e80a86ae",
+        "brand": "LEXIS_INKS",
+        "type": "product",
+        "filePath": "apps/lexis-inks-demo/public/pen-red.jpg",
+        "fileName": "pen-red.jpg",
+        "sha256": "e80a86aea64a26c6d06ffa95b1ee5da42f25763ee4ff2a53700ccd4dee7d7e4b",
+        "fileSize": 5731,
+        "dateImported": "2026-09-01T01:42:14.942Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-pen-pink-5dde58e8",
+        "brand": "LEXIS_INKS",
+        "type": "product",
+        "filePath": "apps/lexis-inks-demo/public/pen-pink.jpg",
+        "fileName": "pen-pink.jpg",
+        "sha256": "5dde58e8a858ddeaedb718c9459e2187a3e4bb3bf44814d276c2d3475197bf14",
+        "fileSize": 6778,
+        "dateImported": "2026-09-01T01:42:14.942Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "lexis_inks-pen-blue-a24b578a",
+        "brand": "LEXIS_INKS",
+        "type": "product",
+        "filePath": "apps/lexis-inks-demo/public/pen-blue.jpg",
+        "fileName": "pen-blue.jpg",
+        "sha256": "a24b578a1ae74def82a803d062158cad61fe0defee37bc81cf2c97c5ed75495e",
+        "fileSize": 6738,
+        "dateImported": "2026-09-01T01:42:14.943Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 9,
+    "lastUpdated": "2026-09-01T01:42:14.943Z"
+  },
+  "WISE_IMP": {
+    "brand": "WISE_IMP",
+    "assets": [
+      {
+        "id": "wise_imp-idle-gold-f4339446",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/idle-gold.png",
+        "fileName": "idle-gold.png",
+        "sha256": "f4339446bfb3e2bb7182cab0ad4037368ae7b2883b6068463ec5cd6812856a7d",
+        "fileSize": 605286,
+        "dateImported": "2026-09-01T01:42:14.943Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-idle-green-f5c5389f",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/idle-green.png",
+        "fileName": "idle-green.png",
+        "sha256": "f5c5389f5100fe243aaa529525798c2b908f90e4d405bce39be22faf48064a4d",
+        "fileSize": 574514,
+        "dateImported": "2026-09-01T01:42:14.944Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-idle-magenta-5bcfbf95",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/idle-magenta.png",
+        "fileName": "idle-magenta.png",
+        "sha256": "5bcfbf95e77da7ba8ca3d1367096c3e33e2217bdac7a85334026932d6db89f84",
+        "fileSize": 578594,
+        "dateImported": "2026-09-01T01:42:14.945Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-wave-gold-4aa446a1",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/wave-gold.png",
+        "fileName": "wave-gold.png",
+        "sha256": "4aa446a181414a2b9d35223a6a9e1af64b4f49b0f8ca42ddf920f37c9b97758e",
+        "fileSize": 654520,
+        "dateImported": "2026-09-01T01:42:14.946Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-wave-magenta-cc474e7e",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/wave-magenta.png",
+        "fileName": "wave-magenta.png",
+        "sha256": "cc474e7e08fb8776ed1b9c184c8a0935d7792ba6d9177303b0853bb8c959eb7d",
+        "fileSize": 446814,
+        "dateImported": "2026-09-01T01:42:14.946Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-thinking-gold-8a016cf1",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/thinking-gold.png",
+        "fileName": "thinking-gold.png",
+        "sha256": "8a016cf109122f026713f0b7fbe3f643e770aaf6bad31e3bd6a8588e92d0f6dd",
+        "fileSize": 483893,
+        "dateImported": "2026-09-01T01:42:14.947Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-thinking-magenta-d5723ceb",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/thinking-magenta.png",
+        "fileName": "thinking-magenta.png",
+        "sha256": "d5723cebe4d4b475a0699396632234b3fa98fe23a3aeafc1ad8e8c67df9ab0e5",
+        "fileSize": 497212,
+        "dateImported": "2026-09-01T01:42:14.948Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-thinking-green-2fa3e630",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/thinking-green.png",
+        "fileName": "thinking-green.png",
+        "sha256": "2fa3e630e653483774da06cf39f06122d5eaa79a1da8e2e7e35fe1ab397e1bee",
+        "fileSize": 459215,
+        "dateImported": "2026-09-01T01:42:14.948Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-celebrate-gold-8e148e2f",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/celebrate-gold.png",
+        "fileName": "celebrate-gold.png",
+        "sha256": "8e148e2f0e63a02a9246da1761afe467dab1d864c76f45e15a318b5676bd3ec3",
+        "fileSize": 740643,
+        "dateImported": "2026-09-01T01:42:14.950Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise_imp-celebrate-blue-a92749ff",
+        "brand": "WISE_IMP",
+        "type": "animation",
+        "filePath": "apps/website/public/wise-imp/celebrate-blue.png",
+        "fileName": "celebrate-blue.png",
+        "sha256": "a92749ff99085594896aa23e80131f4487c4244074fed4444fb46b1a1769b1dd",
+        "fileSize": 652775,
+        "dateImported": "2026-09-01T01:42:14.950Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 10,
+    "lastUpdated": "2026-09-01T01:42:14.950Z"
+  },
+  "SENCERE_PIFF_CITY": {
+    "brand": "SENCERE_PIFF_CITY",
+    "assets": [
+      {
+        "id": "sencere_piff_city-piff-city-rabbit-hero-039f9072",
+        "brand": "SENCERE_PIFF_CITY",
+        "type": "hero",
+        "filePath": "apps/website/public/sencere-assets/piff-city-rabbit-hero.png",
+        "fileName": "piff-city-rabbit-hero.png",
+        "sha256": "039f907294833e507469851bf8d44f2a7c2e3fbf7d92d53f1e5b1b3d5e677efd",
+        "fileSize": 2744769,
+        "dateImported": "2026-09-01T01:42:14.953Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 1,
+    "lastUpdated": "2026-09-01T01:42:14.953Z"
+  },
+  "SENCERE_BLAKKHAIL": {
+    "brand": "SENCERE_BLAKKHAIL",
+    "assets": [
+      {
+        "id": "sencere_blakkhail-blakkhail-brand-board-616add28",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "reference",
+        "filePath": "apps/website/public/sencere-assets/blakkhail-brand-board.jpg",
+        "fileName": "blakkhail-brand-board.jpg",
+        "sha256": "616add280138bce364ad179bb0988b50c2990c97cb5d4f7de5f3a9a12898e245",
+        "fileSize": 209080,
+        "dateImported": "2026-09-01T01:42:14.954Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-sencere-rabbit-logo-97f10763",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "logo",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/sencere-rabbit-logo.png",
+        "fileName": "sencere-rabbit-logo.png",
+        "sha256": "97f1076302b322524c60d273f056d6e6951bb485851b2d445e546a45227afa46",
+        "fileSize": 2419384,
+        "dateImported": "2026-09-01T01:42:14.957Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-blakkhail-wordmark-db4636bc",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "logo",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/blakkhail-wordmark.png",
+        "fileName": "blakkhail-wordmark.png",
+        "sha256": "db4636bc07f757628d1caa5057d8f11771269003bc6033b5214ffc111ee4b9d3",
+        "fileSize": 1462811,
+        "dateImported": "2026-09-01T01:42:14.958Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-blakkhail-wordmark-gold-03899700",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "logo",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/blakkhail-wordmark-gold.jpg",
+        "fileName": "blakkhail-wordmark-gold.jpg",
+        "sha256": "03899700c25ad1065703b25a472ee43496eb61c66a8acc9aec5c9725226ba047",
+        "fileSize": 100054,
+        "dateImported": "2026-09-01T01:42:14.958Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-sencere-emblem-706c5465",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "icon",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/sencere-emblem.jpg",
+        "fileName": "sencere-emblem.jpg",
+        "sha256": "706c5465c1df7d94f71576dbc685e5673567752d617be40967188380e43bb60f",
+        "fileSize": 354692,
+        "dateImported": "2026-09-01T01:42:14.959Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-piff-city-skull-901478d3",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "icon",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/piff-city-skull.png",
+        "fileName": "piff-city-skull.png",
+        "sha256": "901478d36e3e611b07e407affc9c0ec3d20200dafca7671a6eb9d88f41d5a3de",
+        "fileSize": 2671240,
+        "dateImported": "2026-09-01T01:42:14.961Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-piff-city-skull-550211a9",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "icon",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/piff-city-skull.jpg",
+        "fileName": "piff-city-skull.jpg",
+        "sha256": "550211a93620f3cc080a0ee3df7efc43d97ac3c61ce8cc0fbde8dae88172411c",
+        "fileSize": 233253,
+        "dateImported": "2026-09-01T01:42:14.961Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "sencere_blakkhail-blakkhail-drop-ad-77229365",
+        "brand": "SENCERE_BLAKKHAIL",
+        "type": "hero",
+        "filePath": "apps/website/public/sencere-assets/blakkhail/blakkhail-drop-ad.png",
+        "fileName": "blakkhail-drop-ad.png",
+        "sha256": "77229365c2ad1c9a74a48e2fc139e95947845201387c8f3bcee257cf55370d8e",
+        "fileSize": 3004250,
+        "dateImported": "2026-09-01T01:42:14.964Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 8,
+    "lastUpdated": "2026-09-01T01:42:14.964Z"
+  },
+  "SENCERE_LEGACY_BLAKKHAIL": {
+    "brand": "SENCERE_LEGACY_BLAKKHAIL",
+    "assets": [
+      {
+        "id": "sencere_legacy_blakkhail-P3190168-48fda3f5",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "photography",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/home/P3190168.jpg",
+        "fileName": "P3190168.jpg",
+        "sha256": "48fda3f54d42df2de7f2485d150d677b22ec186aa096b607a590bc50ec376110",
+        "fileSize": 111257,
+        "dateImported": "2026-09-01T01:42:14.964Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210319-44633c12",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "photography",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/home/P7210319.jpg",
+        "fileName": "P7210319.jpg",
+        "sha256": "44633c12cc537e2bf3280a4ff4225efe693baf2c9dc6eeb14f4055bdc526244c",
+        "fileSize": 132433,
+        "dateImported": "2026-09-01T01:42:14.964Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210354-4feac7c9",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210354.jpg",
+        "fileName": "P7210354.jpg",
+        "sha256": "4feac7c995f6cc14f19b9c445d74b9612a407f0ecaa828ce03e34904b8d03721",
+        "fileSize": 27749,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210356-2fb1c7b8",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210356.jpg",
+        "fileName": "P7210356.jpg",
+        "sha256": "2fb1c7b8fe9ab6a11a79c0cd531608b2ab88ecb93abfc0b2bc4ee53f25b15e72",
+        "fileSize": 27799,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210350-7a640d94",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210350.jpg",
+        "fileName": "P7210350.jpg",
+        "sha256": "7a640d94902eb14249fcc47cb4285b90eec29f4b09e29d60a0d92a5f8c84b9a0",
+        "fileSize": 27397,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210351-9b98f59d",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210351.jpg",
+        "fileName": "P7210351.jpg",
+        "sha256": "9b98f59dd2e8753cd2265e8c70383403c45a4107f5f790db92965022ef7a6a1d",
+        "fileSize": 25777,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210321-6201c99d",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210321.jpg",
+        "fileName": "P7210321.jpg",
+        "sha256": "6201c99dc45d3c792855d25d6fa12277d9bbfb121cc8e02267dff874488c7f55",
+        "fileSize": 29481,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210348-f77b3942",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210348.jpg",
+        "fileName": "P7210348.jpg",
+        "sha256": "f77b39429351c95251f152e7e509065c9e4ae8d4780d25a4a2e5b10d051b782c",
+        "fileSize": 26514,
+        "dateImported": "2026-09-01T01:42:14.965Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210360-ee0cb7b6",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210360.jpg",
+        "fileName": "P7210360.jpg",
+        "sha256": "ee0cb7b6a66e8a5d8d8ba7a413e43ecec4038d62d9a09b933e3040bd60024c42",
+        "fileSize": 27654,
+        "dateImported": "2026-09-01T01:42:14.966Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210362-c0923649",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210362.jpg",
+        "fileName": "P7210362.jpg",
+        "sha256": "c09236494c29ea0c1da8cac65544c42d087c7e3320f5af73ae19e9848f6be0fd",
+        "fileSize": 25635,
+        "dateImported": "2026-09-01T01:42:14.966Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P7210358-e54f3e57",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "product",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/shop/P7210358.jpg",
+        "fileName": "P7210358.jpg",
+        "sha256": "e54f3e57aff0b3b6bb2c664ec93da6b6f691ea68f9ade287492ffe1dd59f5049",
+        "fileSize": 27189,
+        "dateImported": "2026-09-01T01:42:14.966Z",
+        "source": "legacy-archive",
+        "locked": true
+      },
+      {
+        "id": "sencere_legacy_blakkhail-P3190167-9741a7db",
+        "brand": "SENCERE_LEGACY_BLAKKHAIL",
+        "type": "photography",
+        "filePath": "apps/website/public/sencere-assets/legacy-blakkhail/look-book/P3190167.jpg",
+        "fileName": "P3190167.jpg",
+        "sha256": "9741a7db81bf5215265eead0f3805c83b1e43647f16ddadd8267fac8a7abfd66",
+        "fileSize": 118735,
+        "dateImported": "2026-09-01T01:42:14.966Z",
+        "source": "legacy-archive",
+        "locked": true
+      }
+    ],
+    "totalAssets": 12,
+    "lastUpdated": "2026-09-01T01:42:14.966Z"
+  },
+  "WISE2_LEADERSHIP": {
+    "brand": "WISE2_LEADERSHIP",
+    "assets": [
+      {
+        "id": "wise2_leadership-daniel-real-6852b731",
+        "brand": "WISE2_LEADERSHIP",
+        "type": "photography",
+        "filePath": "apps/website/public/uploads/daniel-real.jpg",
+        "fileName": "daniel-real.jpg",
+        "sha256": "6852b731de5cc36ea0e73eaca90dc017cfcf9bbe02cb6dce3af085a85333166b",
+        "fileSize": 308977,
+        "dateImported": "2026-09-01T01:42:14.967Z",
+        "source": "team-uploads",
+        "locked": true
+      },
+      {
+        "id": "wise2_leadership-darrin-real-39738a23",
+        "brand": "WISE2_LEADERSHIP",
+        "type": "photography",
+        "filePath": "apps/website/public/uploads/darrin-real.jpg",
+        "fileName": "darrin-real.jpg",
+        "sha256": "39738a23c2dd9ac8a5221512727ed950a392cbcdbceb1a6e9a5098733bb9504f",
+        "fileSize": 367141,
+        "dateImported": "2026-09-01T01:42:14.968Z",
+        "source": "team-uploads",
+        "locked": true
+      }
+    ],
+    "totalAssets": 2,
+    "lastUpdated": "2026-09-01T01:42:14.968Z"
+  },
+  "WISE2_BRAND": {
+    "brand": "WISE2_BRAND",
+    "assets": [
+      {
+        "id": "wise2_brand-wise2-brand-identity-c2ee1390",
+        "brand": "WISE2_BRAND",
+        "type": "reference",
+        "filePath": "apps/website/public/brand/wise2-brand-identity.png",
+        "fileName": "wise2-brand-identity.png",
+        "sha256": "c2ee139089c2b22a4a838160acbd602d8b9c76d9116a2753a7fa19e713e880aa",
+        "fileSize": 2368416,
+        "dateImported": "2026-09-01T01:42:14.970Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "wise2_brand-wise2-hero-united-source-c2ee1390",
+        "brand": "WISE2_BRAND",
+        "type": "hero",
+        "filePath": "apps/website/public/brand/wise2-hero-united-source.png",
+        "fileName": "wise2-hero-united-source.png",
+        "sha256": "c2ee139089c2b22a4a838160acbd602d8b9c76d9116a2753a7fa19e713e880aa",
+        "fileSize": 2368416,
+        "dateImported": "2026-09-01T01:42:14.972Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 2,
+    "lastUpdated": "2026-09-01T01:42:14.972Z"
+  }
+}

@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const onBlackhailDomain = isBlackhailHost(host);
 
   return {
-    title: `${blakkhailBrand.name} | Original Fashion since ${blakkhailBrand.established}`,
+    title: `SenCere Creative LLC | ${blakkhailBrand.name}`,
     description:
       'Blakk Hail — legacy streetwear and original fashion from SenCere Creative LLC. Design. Create. Produce. Deliver.',
     metadataBase: onBlackhailDomain ? new URL(blakkhailBrand.siteUrl) : undefined,
@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ? { canonical: `${blakkhailBrand.siteUrl}/sencere` }
       : undefined,
     openGraph: {
-      title: `${blakkhailBrand.name} | SenCere Creative LLC`,
+      title: `SenCere Creative LLC | ${blakkhailBrand.name}`,
       description:
         'Legacy streetwear and original fashion. Take control. No apologies.',
       url: onBlackhailDomain ? `${blakkhailBrand.siteUrl}/sencere` : undefined,
@@ -56,7 +56,7 @@ export default function BlakkhailLayout({ children }: { children: React.ReactNod
   return (
     <div
       className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
-      style={{ fontFamily: 'var(--font-body)', backgroundColor: '#0A0A0A', color: '#A8A8A8' }}
+      style={{ fontFamily: 'Arial, Helvetica, sans-serif', backgroundColor: '#0A0A0A', color: '#A8A8A8' }}
     >
       {children}
     </div>
