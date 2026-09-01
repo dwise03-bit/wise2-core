@@ -16,7 +16,10 @@ actor APIClient {
     config.waitsForConnectivity = true
 
     self.session = URLSession(configuration: config)
-    self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3000/v1") ?? URL(fileURLWithPath: "/")
+    // 🚀 Production: Connect to VPS API (or user-configured endpoint)
+    let savedURL = UserDefaults.standard.string(forKey: "API_BASE_URL")
+    let defaultURL = "http://173.208.147.165:3010/v1"
+    self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? (savedURL ?? defaultURL)) ?? URL(fileURLWithPath: "/")
 
     #if DEBUG
     mockMode = ProcessInfo.processInfo.environment["MOCK_API"] != "false"

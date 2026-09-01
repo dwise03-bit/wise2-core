@@ -18,6 +18,7 @@
     "MANIFEST.md"
   ],
   "scripts": {
+    "build": "echo 'brand-lock is pre-built'",
     "import": "node import-assets.js",
     "verify": "node verify-registry.js"
   }
