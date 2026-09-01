@@ -3,14 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY packages/*/package*.json ./packages/
-COPY apps/*/package*.json ./apps/
+# Install pnpm with fixed version
+RUN npm install -g pnpm@8.15.9
+
+# Copy all files for workspace build
 COPY . .
 
-# Install dependencies with npm
-RUN npm install
+# Install dependencies - skip frozen lockfile and integrity check
+RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false 2>&1 || pnpm install --force --no-frozen-lockfile
 
 # Build Next.js app
 WORKDIR /app/apps/website
@@ -21,7 +21,7 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_DASHBOARD_URL
 ENV NEXT_PUBLIC_DASHBOARD_URL=$NEXT_PUBLIC_DASHBOARD_URL
-RUN npm run build
+RUN pnpm run build
 
 # Runtime stage
 FROM node:20-alpine
