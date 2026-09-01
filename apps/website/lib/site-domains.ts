@@ -1,6 +1,11 @@
-export const BLACKHAIL_HOSTS = new Set(['blackhail.store', 'www.blackhail.store']);
+export const BLACKHAIL_HOSTS = new Set([
+  'blackhail.store',
+  'www.blackhail.store',
+  'blakkhail.com',
+  'www.blakkhail.com',
+]);
 
-export const BLACKHAIL_SITE_URL = 'https://blackhail.store';
+export const BLACKHAIL_SITE_URL = 'https://blakkhail.com';
 export const WISE2_SITE_URL = 'https://wise2.net';
 
 export function normalizeHost(host: string | null | undefined): string | null {
