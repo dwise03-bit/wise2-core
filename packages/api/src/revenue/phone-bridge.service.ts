@@ -311,7 +311,7 @@ export class PhoneBridgeService {
         taskId,
       };
     } catch (error) {
-      console.error(`Error scheduling callback: ${error.message}`);
+      console.error(`Error scheduling callback: ${error instanceof Error ? error.message : String(error)}`);
       return { callbackScheduled: false };
     }
   }

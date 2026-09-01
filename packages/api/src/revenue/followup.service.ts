@@ -95,7 +95,7 @@ export class FollowUpService {
           task.delay,
         );
       } catch (error) {
-        console.error(`Error scheduling follow-up: ${error.message}`);
+        console.error(`Error scheduling follow-up: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
   }
@@ -147,7 +147,7 @@ export class FollowUpService {
           msg.delay,
         );
       } catch (error) {
-        console.error(`Error scheduling reactivation: ${error.message}`);
+        console.error(`Error scheduling reactivation: ${error instanceof Error ? error.message : String(error)}`);
       }
     }
   }
@@ -174,7 +174,7 @@ export class FollowUpService {
         await this.sendFollowUp(task);
       } catch (error) {
         console.error(
-          `Error sending follow-up ${task.id}: ${error.message}`,
+          `Error sending follow-up ${task.id}: ${error instanceof Error ? error.message : String(error)}`,
         );
 
         // Mark as failed
