@@ -3,7 +3,6 @@ import { BlakkhailStorefront } from '@/components/sencere/blakkhail/BlakkhailSto
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
 import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
 import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
-import { WiseImp } from '@/components/wise-imp/WiseImp';
 
 export default function BlakkhailPage() {
   return (
@@ -14,7 +13,6 @@ export default function BlakkhailPage() {
       </main>
       <BlakkhailFooter />
       <BlakkhailMobileShopBar />
-      <WiseImp />
     </div>
   );
 }
