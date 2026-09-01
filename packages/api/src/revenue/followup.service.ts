@@ -155,7 +155,7 @@ export class FollowUpService {
   /**
    * Process pending follow-ups (runs every 5 minutes)
    */
-  // @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async processPendingFollowUps(): Promise<void> {
     const now = new Date();
 
