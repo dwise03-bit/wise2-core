@@ -3,10 +3,49 @@ import SwiftUI
 struct SettingsView: View {
   @State private var apiURL = UserDefaults.standard.string(forKey: "API_BASE_URL") ?? "http://173.208.147.165:3010/v1"
   @State private var showSaved = false
+  @StateObject private var updateManager = OTAUpdateManager()
+  @State private var checkingUpdates = false
+
+  var appVersion: String {
+    if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+      return version
+    }
+    return "Unknown"
+  }
 
   var body: some View {
     NavigationStack {
       Form {
+        Section("App Information") {
+          HStack {
+            Text("Version")
+            Spacer()
+            Text(appVersion)
+              .foregroundColor(.wise2TextSecondary)
+              .fontWeight(.semibold)
+          }
+
+          Button(action: checkForUpdates) {
+            HStack {
+              if checkingUpdates {
+                ProgressView()
+                  .scaleEffect(0.8, anchor: .center)
+              } else {
+                Image(systemName: "arrow.down.circle")
+              }
+              Text("Check for Updates")
+              Spacer()
+              if updateManager.updateAvailable {
+                Text("Update available")
+                  .font(.caption)
+                  .foregroundColor(.green)
+              }
+            }
+            .foregroundColor(.wise2Primary)
+          }
+          .disabled(checkingUpdates)
+        }
+
         Section("API Configuration") {
           TextField("API Base URL", text: $apiURL)
             .textContentType(.URL)
@@ -76,6 +115,14 @@ struct SettingsView: View {
   func saveAndRestart() {
     UserDefaults.standard.set(apiURL, forKey: "API_BASE_URL")
     showSaved = true
+  }
+
+  func checkForUpdates() {
+    checkingUpdates = true
+    Task {
+      await updateManager.checkForUpdates()
+      checkingUpdates = false
+    }
   }
 }
 

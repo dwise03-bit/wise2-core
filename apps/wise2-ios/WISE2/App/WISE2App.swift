@@ -29,6 +29,9 @@ struct WISE2App: App {
               print("🔐 No active session, showing authentication")
             }
         }
+
+        // OTA Update overlay
+        OTAUpdateView()
       }
       .preferredColorScheme(.dark)
       .id(authManager.isAuthenticated) // Force view refresh on auth state change
