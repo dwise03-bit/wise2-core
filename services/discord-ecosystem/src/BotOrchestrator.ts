@@ -15,6 +15,7 @@ import { AnalyticsBot } from './bots/AnalyticsBot';
 import { KnowledgeBot } from './bots/KnowledgeBot';
 import { VoiceBot } from './bots/VoiceBot';
 import { EmergencyBot } from './bots/EmergencyBot';
+import { ReaperBot } from './bots/ReaperBot';
 import Logger from './utils/Logger';
 
 export class BotOrchestrator {
@@ -72,6 +73,7 @@ export class BotOrchestrator {
       { name: 'knowledge-bot', class: KnowledgeBot },
       { name: 'voice-bot', class: VoiceBot },
       { name: 'emergency-bot', class: EmergencyBot },
+      { name: 'reaper-bot', class: ReaperBot },
     ];
 
     for (const { name, class: BotClass } of botClasses) {

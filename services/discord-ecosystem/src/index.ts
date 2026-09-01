@@ -170,6 +170,22 @@ async function main(): Promise<void> {
           color: '#c0392b',
         },
       },
+      {
+        name: 'reaper-bot',
+        config: {
+          name: 'Reaper Bot',
+          token: process.env.REAPER_BOT_TOKEN || '',
+          clientId: process.env.REAPER_CLIENT_ID || '',
+          guildId: process.env.GUILD_ID || '',
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+          ],
+          description: 'WISE² REAPER studio control and automation',
+          color: '#e74c3c',
+        },
+      },
     ];
 
     // Validate configurations
