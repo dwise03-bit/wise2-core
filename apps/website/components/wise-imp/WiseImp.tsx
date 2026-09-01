@@ -216,7 +216,8 @@ export function WiseImp() {
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
         className="wise-imp-launcher"
         style={{
-          width: 64,
+          width: 'auto',
+          minWidth: 64,
           height: 64,
           borderRadius: '50%',
           background: 'rgba(13, 17, 23, 0.85)',
@@ -225,7 +226,8 @@ export function WiseImp() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 4,
+          padding: '4px 10px 4px 4px',
+          gap: 8,
           transition: 'border-color 400ms ease, box-shadow 400ms ease',
           '--wimp-color-33': `${GLOW_HEX[state.glowColor]}33`,
           '--wimp-color-55': `${GLOW_HEX[state.glowColor]}55`,
@@ -239,6 +241,7 @@ export function WiseImp() {
           size={52}
           breathing={!state.open}
         />
+        {!state.open && <span style={{ color: '#D6A331', fontSize: 10, fontWeight: 800, letterSpacing: '0.16em' }}>ASK IMP</span>}
       </button>
     </div>
   );
