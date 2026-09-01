@@ -48,6 +48,14 @@ if ! command -v docker &> /dev/null; then
 fi
 echo -e "${GREEN}✓ Docker installed${NC}"
 
+# Step 2.5: Install Git
+echo -e "${YELLOW}[2.5/8] Installing Git...${NC}"
+if ! command -v git &> /dev/null; then
+  apt-get install -y -qq git
+fi
+echo -e "${GREEN}✓ Git installed${NC}"
+echo ""
+
 # Step 3: Install Docker Compose
 echo -e "${YELLOW}[3/8] Installing Docker Compose...${NC}"
 if ! command -v docker-compose &> /dev/null; then
@@ -65,14 +73,10 @@ echo ""
 
 # Step 5: Clone repository
 echo -e "${YELLOW}[5/8] Cloning WISE² Core repository...${NC}"
-if [ ! -d /opt/wise2-core ]; then
-  git clone https://github.com/dwise03-bit/wise2-core.git /opt/wise2-core
-  cd /opt/wise2-core
-  git checkout main
-else
-  cd /opt/wise2-core
-  git pull origin main
-fi
+rm -rf /opt/wise2-core
+sudo -u root bash -c 'git clone https://github.com/dwise03-bit/wise2-core.git /opt/wise2-core'
+cd /opt/wise2-core
+git checkout main
 echo -e "${GREEN}✓ Repository ready${NC}"
 echo ""
 

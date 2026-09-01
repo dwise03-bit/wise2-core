@@ -54,14 +54,14 @@ model User {
   audienceSuggestions AudienceSuggestion[] @relation("audienceSuggestions")
   liveRoomVotes       LivePollVote[]       @relation("liveRoomVotes")
 
+  // REAPER relationships
+  reaperOrganization            ReaperOrganization?
+  reaperOrganizationMemberships ReaperOrganizationMember[]
+
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
   passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
-
-  // Revenue relationships
-  dealsOwned       Deal[] @relation("dealOwner")
-  dealsEscalatedTo Deal[] @relation("dealEscalations")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -829,9 +829,6 @@ model Customer {
   smsMessages    SMSMessage[]
   callbackTasks  CallbackTask[]
   consentRecords Consent[]
-
-  // Revenue relationships
-  deals Deal[]
 
   @@index([status])
   @@index([email])
@@ -2595,6 +2592,10 @@ model Tenant {
   digitalTwins      DigitalTwin[]
   twinKnowledge     DigitalTwinKnowledgeItem[]
   twinConsents      DigitalTwinConsent[]
+  cjaysCustomers    CjaysCustomer[]
+  cjaysVehicles     CjaysVehicle[]
+  cjaysJobs         CjaysJob[]
+  cjaysSyncEvents   CjaysSyncEvent[]
 
   // Cherry Count — mobile pop-up retail OS
   cherryCountProducts       CherryCountProduct[]
@@ -3210,11 +3211,6 @@ model Lead {
   serviceJobs   ServiceJob[]
   estimates     Estimate[]
   safetyEvents  SafetyEvent[]
-
-  // Revenue relationships
-  score         LeadScore?
-  followUpTasks FollowUpTask[]
-  Deal          Deal?
 
   @@index([tenantId])
   @@index([tenantId, status])
@@ -5744,7 +5740,7 @@ model OptOut {
 // CJAYS Auto Recon Solutions — Wise² client vertical
 model CjaysCustomer {
   id            String   @id @default(cuid())
-  tenantId      String   @map("tenant_id") @db.Uuid
+  tenantId      String   @map("tenant_id")
   clientId      String   @map("client_id")
   name          String
   phone         String
@@ -5752,6 +5748,7 @@ model CjaysCustomer {
   serverVersion Int      @default(1) @map("server_version")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, clientId])
   @@index([tenantId, phone])
@@ -5760,9 +5757,8 @@ model CjaysCustomer {
 
 model CjaysVehicle {
   id               String   @id @default(cuid())
-  tenantId         String   @map("tenant_id") @db.Uuid
+  tenantId         String   @map("tenant_id")
   clientId         String   @map("client_id")
-  qrTagId          String   @map("qr_tag_id")
   customerClientId String?  @map("customer_client_id")
   vin              String
   year             String   @default("")
@@ -5772,35 +5768,31 @@ model CjaysVehicle {
   serverVersion    Int      @default(1) @map("server_version")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
+  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, clientId])
   @@unique([tenantId, vin])
-  @@unique([tenantId, qrTagId])
   @@map("cjays_vehicles")
 }
 
 model CjaysJob {
-  id                      String   @id @default(cuid())
-  tenantId                String   @map("tenant_id") @db.Uuid
-  clientId                String   @map("client_id")
-  vehicleClientId         String   @map("vehicle_client_id")
-  service                 String
-  status                  String   @default("In Progress")
-  price                   String   @default("")
-  checklist               Json     @default("[]")
-  notes                   String   @default("") @db.Text
-  paymentMethod           String   @default("") @map("payment_method")
-  paidAmount              String   @default("") @map("paid_amount")
-  paymentStatus           String   @default("unpaid") @map("payment_status")
-  stripeCheckoutSessionId String?  @unique @map("stripe_checkout_session_id")
-  stripePaymentIntentId   String?  @map("stripe_payment_intent_id")
-  receiptUrl              String   @default("") @map("receipt_url")
-  invoiceNumber           String   @default("") @map("invoice_number")
-  beforePhotos            Json     @default("[]") @map("before_photos")
-  afterPhotos             Json     @default("[]") @map("after_photos")
-  serverVersion           Int      @default(1) @map("server_version")
-  createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(cuid())
+  tenantId        String   @map("tenant_id")
+  clientId        String   @map("client_id")
+  vehicleClientId String   @map("vehicle_client_id")
+  service         String
+  status          String   @default("In Progress")
+  price           String   @default("")
+  checklist       Json     @default("[]")
+  notes           String   @default("") @db.Text
+  paymentMethod   String   @default("") @map("payment_method")
+  paidAmount      String   @default("") @map("paid_amount")
+  beforePhotos    Json     @default("[]") @map("before_photos")
+  afterPhotos     Json     @default("[]") @map("after_photos")
+  serverVersion   Int      @default(1) @map("server_version")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, clientId])
   @@index([tenantId, status])
@@ -5809,11 +5801,12 @@ model CjaysJob {
 
 model CjaysSyncEvent {
   id           String   @id @default(cuid())
-  tenantId     String   @map("tenant_id") @db.Uuid
+  tenantId     String   @map("tenant_id")
   requestId    String   @map("request_id")
   userId       String   @map("user_id")
   recordCounts Json     @map("record_counts")
   createdAt    DateTime @default(now()) @map("created_at")
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, requestId])
   @@index([tenantId, createdAt])
@@ -6254,326 +6247,355 @@ model LivePollVote {
   @@map("live_poll_votes")
 }
 
-// ===== WISE² REVENUE COMMAND CENTER =====
+// ============================================================
+// REAPER V1 — M0 FOUNDATION
+// ============================================================
 
-// Offer: Standardized, AI-closable service offerings
-model Offer {
-  id String @id @default(cuid())
+// Organizations (multi-tenant root)
+model ReaperOrganization {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name   String
+  slug   String @unique
 
-  // Identity & Display
-  name        String  @unique
-  description String? @db.Text
-  sku         String? @unique
+  // Organization data
+  prospects  ReaperProspect[]
+  businesses ReaperBusiness[]
+  websites   ReaperWebsite[]
+  auditRuns  ReaperAuditRun[]
+  scores     ReaperScore[]
+  members    ReaperOrganizationMember[]
+  evidence   ReaperEvidence[]
+  findings   ReaperFinding[]
 
-  // Pricing
-  basePrice       Decimal @db.Decimal(12, 2)
-  minimumPrice    Decimal @db.Decimal(12, 2)
-  discountCeiling Decimal @default(0.20) @db.Decimal(5, 2) // Max discount %
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // Setup
-  setupFee Decimal @default(0) @db.Decimal(12, 2)
+  @@index([userId])
+  @@map("reaper_organizations")
+}
 
-  // Recurring
-  isRecurring    Boolean  @default(false)
-  recurringPrice Decimal? @db.Decimal(12, 2)
-  billingCycle   String? // monthly, annual
+model ReaperOrganizationMember {
+  id             String @id @default(cuid())
+  organizationId String
+  userId         String
+  role           String @default("MEMBER") // OWNER, ADMIN, MEMBER
 
-  // Features & Scope
-  includedFeatures String[] @default([])
-  excludedFeatures String[] @default([])
+  organization ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Terms
-  paymentTerms         String? // net30, net60, upfront
-  standardDeliveryDays Int?
+  createdAt DateTime @default(now())
 
-  // AI Closer Permission
-  aiClosable      Boolean @default(false)
-  aiClosingPrompt String? @db.Text // Instructions for closer
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("reaper_organization_members")
+}
 
-  // Qualification Rules
-  allowedIndustries String[] @default([])
-  minBudget         Decimal? @db.Decimal(12, 2)
-  maxBudget         Decimal? @db.Decimal(12, 2)
+// Core: Prospect (inbound opportunity)
+model ReaperProspect {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  // Escalation
-  escalationThreshold Decimal @default(10000) @db.Decimal(12, 2)
-
-  // Compliance
-  requiredDisclosures String[] @default([])
-  termsUrl            String?
+  // Prospect info
+  sourceUrl    String?
+  companyName  String
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
 
   // Status
-  isActive Boolean @default(true)
+  status String @default("DISCOVERY") // DISCOVERY, QUALIFIED, CONTACTED, INTERVIEWED, CONVERTED, DECLINED, LOST
+
+  // Relationships
+  business  ReaperBusiness?
+  auditRuns ReaperAuditRun[]
+  notes     ReaperNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  deals                    Deal[]
-  quotes                   Quote[]
-  leadScoreRecommendations LeadScore[] @relation("recommendedOffer")
-
-  @@index([aiClosable])
-  @@index([isActive])
-  @@map("offers")
+  @@index([organizationId])
+  @@index([status])
+  @@index([companyName])
+  @@map("reaper_prospects")
 }
 
-// Deal: Individual sales opportunities
-model Deal {
-  id String @id @default(cuid())
+// Core: Business (normalized business entity)
+model ReaperBusiness {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  // Identity
-  leadId String? @unique
-  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  prospectId String?         @unique
+  prospect   ReaperProspect? @relation(fields: [prospectId], references: [id], onDelete: SetNull)
 
-  customerId String?
-  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  // Business info
+  name            String
+  industry        String?
+  description     String? @db.Text
+  annualRevenue   Int?
+  employeeCount   Int?
+  yearsInBusiness Int?
 
-  // Value & Stage
-  value    Decimal? @db.Decimal(12, 2)
-  currency String   @default("USD")
+  // Contact info
+  website String?
+  phone   String?
+  email   String?
+  address String?
 
-  stage  DealStage  @default(DISCOVERY)
-  status DealStatus @default(OPEN)
+  // Relationships
+  locations ReaperBusinessLocation[]
+  websites  ReaperWebsite[]
+  auditRuns ReaperAuditRun[]
+  scores    ReaperScore[]
 
-  // Details
-  serviceType String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([name])
+  @@map("reaper_businesses")
+}
+
+model ReaperBusinessLocation {
+  id         String         @id @default(cuid())
+  businessId String
+  business   ReaperBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  address    String
+  city       String
+  state      String?
+  postalCode String?
+  country    String?
+  latitude   Float?
+  longitude  Float?
+
+  createdAt DateTime @default(now())
+
+  @@index([businessId])
+  @@map("reaper_business_locations")
+}
+
+// Core: Website
+model ReaperWebsite {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessId String?
+  business   ReaperBusiness? @relation(fields: [businessId], references: [id], onDelete: SetNull)
+
+  url         String  @unique
+  domain      String
+  title       String?
   description String? @db.Text
 
-  // Owner
-  ownerId String?
-  owner   User?   @relation("dealOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  // Crawl metadata
+  lastCrawledAt DateTime?
+  httpStatus    Int?
+  isAccessible  Boolean   @default(true)
 
-  // Dates
-  discoveredAt DateTime  @default(now())
-  quotedAt     DateTime?
-  closedAt     DateTime?
+  // Screenshots
+  desktopScreenshot String?
+  mobileScreenshot  String?
 
-  // AI Closer Eligibility
-  aiClosableOfferId String?
-  aiClosableOffer   Offer?  @relation(fields: [aiClosableOfferId], references: [id], onDelete: SetNull)
-
-  // Escalation
-  escalationReason   String?
-  escalatedToHumanAt DateTime?
-  escalatedToHumanId String?
-  escalatedToHuman   User?     @relation("dealEscalations", fields: [escalatedToHumanId], references: [id], onDelete: SetNull)
-
-  // Tracking
-  source   String? // call, sms, email, web, referral
-  campaign String?
+  // Relationships
+  pages     ReaperWebsitePage[]
+  scores    ReaperScore[]
+  auditRuns ReaperAuditRun[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  events     DealEvent[]
-  activities DealActivity[]
-  quotes     Quote[]
-
-  @@index([ownerId])
-  @@index([stage])
-  @@index([status])
-  @@index([value])
-  @@index([createdAt])
-  @@map("deals")
+  @@index([organizationId])
+  @@index([businessId])
+  @@index([domain])
+  @@map("reaper_websites")
 }
 
-enum DealStage {
-  DISCOVERY
-  QUALIFICATION
-  PROPOSAL
-  NEGOTIATION
-  CLOSING
-  WON
-  LOST
-}
+model ReaperWebsitePage {
+  id        String        @id @default(cuid())
+  websiteId String
+  website   ReaperWebsite @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
-enum DealStatus {
-  OPEN
-  STALLED
-  ESCALATED
-  CLOSED
-}
+  path           String
+  title          String?
+  description    String? @db.Text
+  h1             String?
+  contentPreview String? @db.Text
 
-// LeadScore: Real-time lead scoring (0-700 scale)
-model LeadScore {
-  id String @id @default(cuid())
+  // Analysis
+  hasContactForm  Boolean @default(false)
+  hasPhoneNumber  Boolean @default(false)
+  hasEmailAddress Boolean @default(false)
+  ctas            String? @db.Text // JSON array of CTAs
 
-  leadId String @unique
-  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
-
-  // Individual Components (0-100 each)
-  fitScore        Int @default(0) // Service fit
-  urgencyScore    Int @default(0) // Timeline urgency
-  budgetScore     Int @default(0) // Budget alignment
-  authorityScore  Int @default(0) // Decision-maker
-  timelineScore   Int @default(0) // Buying timeline
-  intentScore     Int @default(0) // Buying signals
-  engagementScore Int @default(0) // Prior interactions
-
-  // Composite
-  totalScore Int            @default(0) // 0-700
-  level      LeadScoreLevel @default(COLD)
-
-  // Recommendation
-  recommendedAction  String? // call_now, send_offer, nurture
-  recommendedOfferId String?
-  recommendedOffer   Offer?  @relation("recommendedOffer", fields: [recommendedOfferId], references: [id], onDelete: SetNull)
-
-  // Calculation Info
-  lastCalculatedAt DateTime @default(now())
-  formula          String?  @db.Text // For auditing
+  // Relationships
+  evidence ReaperEvidence[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  @@index([leadId])
-  @@index([level])
-  @@index([totalScore])
-  @@map("lead_scores")
+  @@unique([websiteId, path])
+  @@index([websiteId])
+  @@map("reaper_website_pages")
 }
 
-enum LeadScoreLevel {
-  COLD // 0-150
-  WARM // 151-350
-  HOT // 351-550
-  CLOSING_READY // 551-700
-}
+// Core: Audit Run (long-running job)
+model ReaperAuditRun {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-// Quote: Formal proposals/quotes
-model Quote {
-  id String @id @default(cuid())
+  prospectId String?
+  prospect   ReaperProspect? @relation(fields: [prospectId], references: [id], onDelete: SetNull)
 
-  dealId String
-  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  businessId String?
+  business   ReaperBusiness? @relation(fields: [businessId], references: [id], onDelete: SetNull)
 
-  offerId String
-  offer   Offer  @relation(fields: [offerId], references: [id], onDelete: Restrict)
-
-  // Numbers
-  basePrice      Decimal @db.Decimal(12, 2)
-  discountAmount Decimal @default(0) @db.Decimal(12, 2)
-  finalPrice     Decimal @db.Decimal(12, 2)
-
-  // Validity
-  validUntil DateTime
+  websiteId String?
+  website   ReaperWebsite? @relation(fields: [websiteId], references: [id], onDelete: SetNull)
 
   // Status
-  status QuoteStatus @default(DRAFT)
+  status    String @default("PENDING") // PENDING, RUNNING, COMPLETED, FAILED
+  auditType String // WEBSITE, SOCIAL, REPUTATION, FULL, etc.
 
-  // Timeline
-  sentAt     DateTime?
-  viewedAt   DateTime?
-  acceptedAt DateTime?
+  // Progress
+  startedAt    DateTime?
+  completedAt  DateTime?
+  errorMessage String?   @db.Text
 
-  // Payment
-  paymentLink String?
-  invoiceLink String?
+  // Relationships
+  jobs     ReaperAuditJob[]
+  evidence ReaperEvidence[]
+  findings ReaperFinding[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([dealId])
+  @@index([organizationId])
   @@index([status])
-  @@index([validUntil])
-  @@map("quotes")
+  @@index([auditType])
+  @@map("reaper_audit_runs")
 }
 
-// DealEvent: Audit trail of deal changes
-model DealEvent {
-  id String @id @default(cuid())
+model ReaperAuditJob {
+  id         String         @id @default(cuid())
+  auditRunId String
+  auditRun   ReaperAuditRun @relation(fields: [auditRunId], references: [id], onDelete: Cascade)
 
-  dealId String
-  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  jobType String // WEBSITE_CRAWL, SOCIAL_DISCOVERY, etc.
+  status  String @default("PENDING")
 
-  eventType   String // stage_changed, offer_sent, escalated, closed, etc.
-  description String? @db.Text
-  details     Json?
-
-  performedBy String? // User ID or "AI_AGENT"
+  evidence ReaperEvidence[]
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([dealId])
-  @@index([eventType])
-  @@index([createdAt])
-  @@map("deal_events")
-}
-
-// DealActivity: CRM interactions (calls, SMS, notes)
-model DealActivity {
-  id String @id @default(cuid())
-
-  dealId String
-  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
-
-  activityType String // call, sms, email, note
-  channel      String? // phone, sms, email, discord
-
-  summary String  @db.Text
-  notes   String? @db.Text
-
-  // Scheduling
-  scheduledFor DateTime?
-  completedAt  DateTime?
-
-  createdBy String?
-
-  createdAt DateTime @default(now())
-
-  @@index([dealId])
-  @@index([activityType])
-  @@map("deal_activities")
-}
-
-// RevenueEvent: Dashboard & attribution tracking
-model RevenueEvent {
-  id String @id @default(cuid())
-
-  eventType String // deal_won, deal_lost, quote_sent, payment_received, etc.
-
-  dealId     String?
-  quoteId    String?
-  customerId String?
-
-  value    Decimal? @db.Decimal(12, 2)
-  currency String   @default("USD")
-
-  details Json?
-
-  createdAt DateTime @default(now())
-
-  @@index([eventType])
-  @@index([createdAt])
-  @@map("revenue_events")
-}
-
-// FollowUpTask: Scheduled follow-ups (SMS, email, calls)
-model FollowUpTask {
-  id String @id @default(cuid())
-
-  leadId String
-  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
-
-  // Scheduling
-  scheduledFor DateTime
-  sentAt       DateTime?
-  completedAt  DateTime?
-
-  // Content
-  channel  String // sms, email, call
-  message  String? @db.Text
-  template String? // Template name/ID
-
-  // Status (PENDING, SENT, DELIVERED, FAILED, CANCELLED)
-  status String @default("PENDING")
-
-  // Compliance
-  optOut Boolean @default(false)
-
-  createdAt DateTime @default(now())
-
-  @@index([leadId])
+  @@index([auditRunId])
   @@index([status])
-  @@index([scheduledFor])
-  @@map("follow_up_tasks")
+  @@map("reaper_audit_jobs")
+}
+
+// Evidence (raw observations)
+model ReaperEvidence {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  auditRunId String?
+  auditRun   ReaperAuditRun? @relation(fields: [auditRunId], references: [id], onDelete: SetNull)
+
+  auditJobId String?
+  auditJob   ReaperAuditJob? @relation(fields: [auditJobId], references: [id], onDelete: SetNull)
+
+  websitePageId String?
+  websitePage   ReaperWebsitePage? @relation(fields: [websitePageId], references: [id], onDelete: SetNull)
+
+  // Evidence
+  sourceType  String // PAGE_CONTENT, HTML_STRUCTURE, PERFORMANCE_METRIC, etc.
+  sourceValue String @db.Text
+  observation String @db.Text
+  confidence  Int    @default(100) // 0-100
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([auditRunId])
+  @@map("reaper_evidence")
+}
+
+// Findings (normalized insights)
+model ReaperFinding {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  auditRunId String
+  auditRun   ReaperAuditRun @relation(fields: [auditRunId], references: [id], onDelete: Cascade)
+
+  // Finding
+  category       String // UX, MOBILE, CONVERSION, SEO, etc.
+  severity       String  @default("INFO") // INFO, WARNING, CRITICAL
+  title          String
+  description    String  @db.Text
+  recommendation String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([auditRunId])
+  @@index([category])
+  @@map("reaper_findings")
+}
+
+// Scores (calculated metrics with versions)
+model ReaperScore {
+  id             String             @id @default(cuid())
+  organizationId String
+  organization   ReaperOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  businessId String?
+  business   ReaperBusiness? @relation(fields: [businessId], references: [id], onDelete: SetNull)
+
+  websiteId String?
+  website   ReaperWebsite? @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+
+  // Score info
+  scoreType String // WEBSITE, BRAND, SEO, SOCIAL, REPUTATION, CONVERSION, BUSINESS_HEALTH, DIGITAL_EXECUTION, GROWTH_POTENTIAL, REAPER_OPPORTUNITY
+  version   Int    @default(1)
+
+  // Score values
+  rawScore   Float
+  confidence Int    @default(60) // 0-100
+  components String @db.Text // JSON components breakdown
+  reasoning  String @db.Text // Why this score
+
+  // Timestamps
+  calculatedAt DateTime  @default(now())
+  validUntil   DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@unique([organizationId, businessId, websiteId, scoreType, version])
+  @@index([organizationId])
+  @@index([businessId])
+  @@index([scoreType])
+  @@map("reaper_scores")
+}
+
+// Notes (human annotations)
+model ReaperNote {
+  id         String         @id @default(cuid())
+  prospectId String
+  prospect   ReaperProspect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([prospectId])
+  @@map("reaper_notes")
 }

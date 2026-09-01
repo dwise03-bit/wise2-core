@@ -1,0 +1,20 @@
+{
+  "name": "@wise2/reaper-intelligence",
+  "version": "0.1.0",
+  "description": "REAPER V1 intelligence engine - crawling, evidence, rules",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@wise2/reaper-domain": "workspace:*",
+    "playwright": "^1.40.0",
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

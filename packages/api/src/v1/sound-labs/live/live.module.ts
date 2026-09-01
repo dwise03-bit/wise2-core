@@ -7,20 +7,26 @@ import { VersionStackService } from './version-stack.service';
 import { PresenceService } from './presence.service';
 import { LiveWebSocketGateway } from './websocket-gateway';
 import { PollCleanupService } from './poll-cleanup.service';
+import { LiveAuthController } from './live-auth.controller';
+import { LiveAuthService } from './live-auth.service';
+import { LiveVideoController } from './live-video.controller';
+import { AgoraVideoService } from './agora-video.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 
 @Module({
-  controllers: [LiveRoomsController],
+  controllers: [LiveRoomsController, LiveAuthController, LiveVideoController],
   providers: [
     LiveRoomsService,
     LiveSessionService,
+    LiveAuthService,
+    AgoraVideoService,
     VersionStackService,
     PresenceService,
     LiveWebSocketGateway,
     PollCleanupService,
     PrismaService,
   ],
-  exports: [LiveRoomsService, LiveSessionService, VersionStackService, PresenceService],
+  exports: [LiveRoomsService, LiveSessionService, LiveAuthService, AgoraVideoService, VersionStackService, PresenceService],
 })
 export class LiveModule {
   configure(consumer: MiddlewareConsumer) {
