@@ -155,7 +155,9 @@ export class RevenueController {
     const offer =
       body.offerId && body.offerId !== 'auto'
         ? await prisma.offer.findUnique({ where: { id: body.offerId } })
-        : deal.aiClosableOffer;
+        : deal.aiClosableOfferId
+        ? await prisma.offer.findUnique({ where: { id: deal.aiClosableOfferId } })
+        : null;
 
     if (!offer) {
       throw new Error('Offer not specified or not found');
@@ -193,7 +195,9 @@ export class RevenueController {
 
     const offer = body.offerId
       ? await prisma.offer.findUnique({ where: { id: body.offerId } })
-      : deal.aiClosableOffer;
+      : deal.aiClosableOfferId
+      ? await prisma.offer.findUnique({ where: { id: deal.aiClosableOfferId } })
+      : null;
 
     if (!offer) {
       throw new Error('Offer not found');

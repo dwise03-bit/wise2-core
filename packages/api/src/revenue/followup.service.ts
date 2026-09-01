@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../db/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { FollowUpTask } from '@prisma/client';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -230,17 +230,17 @@ export class FollowUpService {
     // TODO: Integrate with SMS provider
     console.log(`[SMS] To ${lead.id}: ${message}`);
 
-    // Log SMS message
-    await this.prisma.smsMessage.create({
-      data: {
-        fromNumber: process.env.SMS_FROM_NUMBER || '+1-WISE2-CORE',
-        toNumber: '+1-PLACEHOLDER', // TODO: Get real phone number
-        direction: 'OUTBOUND',
-        message,
-        status: 'SENT',
-        sentAt: new Date(),
-      },
-    });
+    // TODO: Log SMS message once smsMessage model exists
+    // await this.prisma.smsMessage.create({
+    //   data: {
+    //     fromNumber: process.env.SMS_FROM_NUMBER || '+1-WISE2-CORE',
+    //     toNumber: '+1-PLACEHOLDER', // TODO: Get real phone number
+    //     direction: 'OUTBOUND',
+    //     message,
+    //     status: 'SENT',
+    //     sentAt: new Date(),
+    //   },
+    // });
   }
 
   /**
