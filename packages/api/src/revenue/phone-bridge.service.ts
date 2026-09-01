@@ -175,7 +175,7 @@ export class PhoneBridgeService {
         }
       }
     } catch (error) {
-      console.error(`Error scoring lead: ${error.message}`);
+      console.error(`Error scoring lead: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     // 4. Schedule follow-ups
