@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma';
 import { Deal, Offer, LeadScore, Quote } from '@prisma/client';
 
 export interface ClosingContext {

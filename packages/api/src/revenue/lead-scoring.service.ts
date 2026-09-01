@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma';
 import { CallTranscript, Lead, LeadScore, Call } from '@prisma/client';
 
 export interface ScoringResult {

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { PrismaService } from '@shared/prisma/prisma.service';
+import { PrismaService } from '@shared/prisma';
 import { LeadScoringService } from './lead-scoring.service';
 import { OfferRecommendationService } from './offer-recommendation.service';
 import { AICloserService } from './ai-closer.service';
