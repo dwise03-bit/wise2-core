@@ -19,6 +19,7 @@ const cron = require("node-cron");
 const { exec, execFile } = require("child_process");
 const webhookHandler = require("./webhook-handler");
 const { initializeScheduledTasks } = require("./scheduled-tasks");
+const { ringCallSiren } = require("./call-siren");
 const comfyui = require("./lib/comfyui");
 const execFileAsync = promisify(execFile);
 
@@ -39,6 +40,14 @@ if (!DEPLOY_ONLY) {
   const WEBHOOK_PORT = process.env.WEBHOOK_PORT || 3002;
   app.use(express.json());
   app.use("/webhooks", webhookHandler);
+  app.post("/webhooks/telnyx/calls", async (req, res) => {
+    if (process.env.TELNYX_WEBHOOK_SECRET && req.headers.authorization !== `Bearer ${process.env.TELNYX_WEBHOOK_SECRET}`) {
+      return res.status(401).send("Unauthorized");
+    }
+    if ((req.body.event_type || req.body.data?.event_type) !== "call.initiated") return res.json({ received: true });
+    try { await ringCallSiren(client); res.json({ received: true, siren: true }); }
+    catch (error) { console.error("Call siren error:", error.message); res.status(500).json({ error: "Siren unavailable" }); }
+  });
 
   server = app.listen(WEBHOOK_PORT, () => {
     console.log(`🌐 Webhook server running on port ${WEBHOOK_PORT}`);
@@ -4645,6 +4654,63 @@ DISCORD_WEBHOOK_STATUS=${results.webhooks.status || "https://discord.com/api/web
       });
     },
   },
+
+  // ===== REVENUE COMMAND CENTER =====
+
+  lead: {
+    data: {
+      name: "lead",
+      description: "Lead management - search, score, claim leads",
+    },
+    async execute(interaction) {
+      const revenueCommands = require('./revenue-commands');
+      await revenueCommands.handlers.lead(interaction);
+    },
+  },
+
+  deal: {
+    data: {
+      name: "deal",
+      description: "Deal management - create, track, update deals",
+    },
+    async execute(interaction) {
+      const revenueCommands = require('./revenue-commands');
+      await revenueCommands.handlers.deal(interaction);
+    },
+  },
+
+  close: {
+    data: {
+      name: "close",
+      description: "Close operations - send offers, quotes, payments",
+    },
+    async execute(interaction) {
+      const revenueCommands = require('./revenue-commands');
+      await revenueCommands.handlers.close(interaction);
+    },
+  },
+
+  follow: {
+    data: {
+      name: "follow",
+      description: "Follow-up automation - schedule SMS, email, calls",
+    },
+    async execute(interaction) {
+      const revenueCommands = require('./revenue-commands');
+      await revenueCommands.handlers.follow(interaction);
+    },
+  },
+
+  revenue: {
+    data: {
+      name: "revenue",
+      description: "Revenue dashboard - daily report, pipeline, top leads",
+    },
+    async execute(interaction) {
+      const revenueCommands = require('./revenue-commands');
+      await revenueCommands.handlers.revenue(interaction);
+    },
+  },
 };
 
 // Register commands
@@ -4655,7 +4721,26 @@ Object.entries(commands).forEach(([key, command]) => {
 // Deploy slash commands
 async function deployCommands() {
   const rest = new REST({ version: "10" }).setToken(BOT_TOKEN);
-  const commandData = Object.values(commands).map((cmd) => cmd.data);
+
+  // Get command data from main commands object
+  let commandData = Object.values(commands).map((cmd) => {
+    // Handle both simple objects and SlashCommandBuilder instances
+    if (cmd.data.toJSON) {
+      return cmd.data.toJSON();
+    }
+    return cmd.data;
+  });
+
+  // Add revenue commands from revenue-commands.js
+  try {
+    const revenueCommands = require('./revenue-commands');
+    if (revenueCommands.commands && Array.isArray(revenueCommands.commands)) {
+      const revenueCommandData = revenueCommands.commands.map((cmd) => cmd.toJSON());
+      commandData = [...commandData, ...revenueCommandData];
+    }
+  } catch (error) {
+    console.warn('Warning: Could not load revenue commands:', error.message);
+  }
 
   try {
     console.log(

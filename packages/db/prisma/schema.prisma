@@ -48,16 +48,20 @@ model User {
   tradingAccount TradingAccount? @relation("tradingAccount")
 
   // SoundLabs Live relationships
-  liveRoomsCreated LiveRoom[] @relation("liveRoomCreator")
-  liveRoomMembers  LiveRoomMember[] @relation("liveRoomMembers")
-  liveRoomChat     LiveChatMessage[] @relation("liveRoomChat")
+  liveRoomsCreated    LiveRoom[]           @relation("liveRoomCreator")
+  liveRoomMembers     LiveRoomMember[]     @relation("liveRoomMembers")
+  liveRoomChat        LiveChatMessage[]    @relation("liveRoomChat")
   audienceSuggestions AudienceSuggestion[] @relation("audienceSuggestions")
-  liveRoomVotes    LivePollVote[] @relation("liveRoomVotes")
+  liveRoomVotes       LivePollVote[]       @relation("liveRoomVotes")
 
   // Auth relationships
   sessions            Session[]
   accounts            Account[]            @relation("accounts")
   passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
+
+  // Revenue relationships
+  dealsOwned       Deal[] @relation("dealOwner")
+  dealsEscalatedTo Deal[] @relation("dealEscalations")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -825,6 +829,9 @@ model Customer {
   smsMessages    SMSMessage[]
   callbackTasks  CallbackTask[]
   consentRecords Consent[]
+
+  // Revenue relationships
+  deals Deal[]
 
   @@index([status])
   @@index([email])
@@ -1674,16 +1681,16 @@ model ConsultingPlanPhase {
 // ===== SENCERE ECOMMERCE CUSTOMER SYSTEM =====
 
 model SenCereCustomer {
-  id       String @id @default(cuid())
-  userId   String @unique
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Profile
-  firstName  String
-  lastName   String
-  email      String @unique
-  phone      String?
-  company    String?
+  firstName String
+  lastName  String
+  email     String  @unique
+  phone     String?
+  company   String?
 
   // Shipping/Billing Address
   addressLine1 String?
@@ -1694,8 +1701,8 @@ model SenCereCustomer {
   country      String?
 
   // Preferences
-  newsletter     Boolean @default(false)
-  communicationPreference String @default("email")
+  newsletter              Boolean @default(false)
+  communicationPreference String  @default("email")
 
   // Stripe
   stripeCustomerId String? @unique
@@ -1715,18 +1722,18 @@ model SenCereOrder {
   id String @id @default(cuid())
 
   // Customer reference
-  customerId   String
-  customer     SenCereCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   SenCereCustomer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   // Order details
-  orderNumber String @unique
+  orderNumber String             @unique
   status      SenCereOrderStatus @default(PENDING)
 
   // Pricing
-  subtotal      Float @default(0)
-  taxAmount     Float @default(0)
-  shippingCost  Float @default(0)
-  totalAmount   Float @default(0)
+  subtotal     Float @default(0)
+  taxAmount    Float @default(0)
+  shippingCost Float @default(0)
+  totalAmount  Float @default(0)
 
   // Stripe
   stripeCheckoutSessionId String? @unique
@@ -1777,13 +1784,13 @@ model SenCereOrderItem {
   order   SenCereOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   // Product details
-  productId     String
-  productName   String
-  variantId     String
-  variantName   String
-  quantity      Int
-  unitPrice     Float
-  totalPrice    Float
+  productId   String
+  productName String
+  variantId   String
+  variantName String
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
 
   // Selected options (stored as JSON)
   // e.g. { "size": "M", "color": "Black" }
@@ -2588,26 +2595,22 @@ model Tenant {
   digitalTwins      DigitalTwin[]
   twinKnowledge     DigitalTwinKnowledgeItem[]
   twinConsents      DigitalTwinConsent[]
-  cjaysCustomers    CjaysCustomer[]
-  cjaysVehicles     CjaysVehicle[]
-  cjaysJobs         CjaysJob[]
-  cjaysSyncEvents   CjaysSyncEvent[]
 
   // Cherry Count — mobile pop-up retail OS
-  cherryCountProducts            CherryCountProduct[]
-  cherryCountVariants            CherryCountProductVariant[]
-  cherryCountContainers          CherryCountContainer[]
-  cherryCountInventoryTxns       CherryCountInventoryTransaction[]
-  cherryCountEvents              CherryCountPopupEvent[]
-  cherryCountEventInventory      CherryCountEventInventory[]
-  cherryCountSales               CherryCountSale[]
-  cherryCountCustomers           CherryCountCustomer[]
-  cherryCountPhoneConfig         CherryCountPhoneConfig?
-  cherryCountPhoneCalls          CherryCountPhoneCall[]
+  cherryCountProducts       CherryCountProduct[]
+  cherryCountVariants       CherryCountProductVariant[]
+  cherryCountContainers     CherryCountContainer[]
+  cherryCountInventoryTxns  CherryCountInventoryTransaction[]
+  cherryCountEvents         CherryCountPopupEvent[]
+  cherryCountEventInventory CherryCountEventInventory[]
+  cherryCountSales          CherryCountSale[]
+  cherryCountCustomers      CherryCountCustomer[]
+  cherryCountPhoneConfig    CherryCountPhoneConfig?
+  cherryCountPhoneCalls     CherryCountPhoneCall[]
 
   // WISE² AI Phone — tenant-scoped receptionist
-  aiPhoneConfig                  AiPhoneConfig?
-  aiPhoneCalls                   AiPhoneCall[]
+  aiPhoneConfig AiPhoneConfig?
+  aiPhoneCalls  AiPhoneCall[]
 
   // WISE Defense Safety Radar + Comms Grid
   wiseDefenseMemberships WiseDefenseMembership[]
@@ -3207,6 +3210,11 @@ model Lead {
   serviceJobs   ServiceJob[]
   estimates     Estimate[]
   safetyEvents  SafetyEvent[]
+
+  // Revenue relationships
+  score         LeadScore?
+  followUpTasks FollowUpTask[]
+  Deal          Deal?
 
   @@index([tenantId])
   @@index([tenantId, status])
@@ -4256,37 +4264,37 @@ model K10Analytics {
 
 // TradingAccount: Per-user trading account configuration
 model TradingAccount {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  user              User     @relation("tradingAccount", fields: [userId], references: [id], onDelete: Cascade)
-  
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation("tradingAccount", fields: [userId], references: [id], onDelete: Cascade)
+
   // Account settings
-  accountName       String?
-  accountType       String   @default("DEMO") // DEMO, PAPER, SHADOW, LIVE
-  riskPerTrade      Float    @default(1.0) // Risk as % of equity
-  maxDailyLoss      Float    @default(500.0)
-  maxConsecutiveLosses Int   @default(3)
-  maxOpenPositions  Int      @default(5)
-  maxCorrelation    Float    @default(0.7)
-  
+  accountName          String?
+  accountType          String  @default("DEMO") // DEMO, PAPER, SHADOW, LIVE
+  riskPerTrade         Float   @default(1.0) // Risk as % of equity
+  maxDailyLoss         Float   @default(500.0)
+  maxConsecutiveLosses Int     @default(3)
+  maxOpenPositions     Int     @default(5)
+  maxCorrelation       Float   @default(0.7)
+
   // Status
-  isActive          Boolean  @default(true)
-  paperEquity       Float    @default(10000.0)
-  realEquity        Float?
-  
+  isActive    Boolean @default(true)
+  paperEquity Float   @default(10000.0)
+  realEquity  Float?
+
   // Relationships
-  watchlists        Watchlist[]
-  positions         Position[]
-  trades            Trade[]
-  strategies        Strategy[]
-  backtestRuns      BacktestRun[]
-  riskPolicies      RiskPolicy[]
-  journalEntries    JournalEntry[]
-  alerts            Alert[]
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  watchlists     Watchlist[]
+  positions      Position[]
+  trades         Trade[]
+  strategies     Strategy[]
+  backtestRuns   BacktestRun[]
+  riskPolicies   RiskPolicy[]
+  journalEntries JournalEntry[]
+  alerts         Alert[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
   @@index([accountType])
 }
@@ -4295,40 +4303,40 @@ model TradingAccount {
 
 // Watchlist: Tracked symbols
 model Watchlist {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  name              String
-  symbol            String
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  name   String
+  symbol String
+
   // Latest snapshot
-  price             Float?
-  bid               Float?
-  ask               Float?
-  volume            Float?
-  volatility        Float?
-  
+  price      Float?
+  bid        Float?
+  ask        Float?
+  volume     Float?
+  volatility Float?
+
   // Session data (cached)
-  asiaHigh          Float?
-  asiaLow           Float?
-  asiaMidpoint      Float?
-  londonHigh        Float?
-  londonLow         Float?
-  currentRegime     String? // BULLISH, BEARISH, NEUTRAL, RANGING, TRENDING
-  
+  asiaHigh      Float?
+  asiaLow       Float?
+  asiaMidpoint  Float?
+  londonHigh    Float?
+  londonLow     Float?
+  currentRegime String? // BULLISH, BEARISH, NEUTRAL, RANGING, TRENDING
+
   // Fibonacci levels (cached)
-  fib0              Float?
-  fib236            Float?
-  fib382            Float?
-  fib50             Float?
-  fib618            Float?
-  fib100            Float?
-  fib162            Float?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  fib0   Float?
+  fib236 Float?
+  fib382 Float?
+  fib50  Float?
+  fib618 Float?
+  fib100 Float?
+  fib162 Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([accountId, symbol])
   @@index([accountId])
   @@index([symbol])
@@ -4336,24 +4344,24 @@ model Watchlist {
 
 // MarketRegime: Classify current market state
 model MarketRegime {
-  id                String   @id @default(cuid())
-  symbol            String
-  timeframe         String   @default("4H")
-  
+  id        String @id @default(cuid())
+  symbol    String
+  timeframe String @default("4H")
+
   // Regime classification
-  regime            String   // TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE, EXPANSION, COMPRESSION
-  confidence        Float    // 0-1 probability
-  
+  regime     String // TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE, EXPANSION, COMPRESSION
+  confidence Float // 0-1 probability
+
   // Supporting metrics
-  rsiValue          Float?
-  rsiTrend          String?  // RISING, FALLING, NEUTRAL
-  volatilityLevel   String?  // LOW, MODERATE, HIGH, EXTREME
-  lastHigher        Float?
-  lastLower         Float?
-  
-  detectedAt        DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  rsiValue        Float?
+  rsiTrend        String? // RISING, FALLING, NEUTRAL
+  volatilityLevel String? // LOW, MODERATE, HIGH, EXTREME
+  lastHigher      Float?
+  lastLower       Float?
+
+  detectedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
   @@index([symbol])
   @@index([timeframe])
   @@index([detectedAt])
@@ -4361,45 +4369,45 @@ model MarketRegime {
 
 // Setup: Trade setup detection log
 model Setup {
-  id                String   @id @default(cuid())
-  symbol            String
-  
+  id     String @id @default(cuid())
+  symbol String
+
   // Setup identification
-  setupType         String   // LIQUIDITY_SWEEP_BULLISH, LIQUIDITY_SWEEP_BEARISH, RANGE_BREAKOUT, etc.
-  direction         String   // LONG, SHORT
-  confidence        Float    // 0-1 setup score
-  
+  setupType  String // LIQUIDITY_SWEEP_BULLISH, LIQUIDITY_SWEEP_BEARISH, RANGE_BREAKOUT, etc.
+  direction  String // LONG, SHORT
+  confidence Float // 0-1 setup score
+
   // Structural data
-  impulseHigh       Float?
-  impulseLow        Float?
-  impulseStart      DateTime?
-  impulseEnd        DateTime?
-  
+  impulseHigh  Float?
+  impulseLow   Float?
+  impulseStart DateTime?
+  impulseEnd   DateTime?
+
   // Fibonacci zone
-  entryZone         String   // "0.382-0.618", "0.236-0.382", etc.
-  entryZoneStart    Float?
-  entryZoneEnd      Float?
-  
+  entryZone      String // "0.382-0.618", "0.236-0.382", etc.
+  entryZoneStart Float?
+  entryZoneEnd   Float?
+
   // Liquidity
-  liquidityLevel    Float?
-  sweepMagnitude    Float?
-  sweepDuration     Int?     // seconds
-  
+  liquidityLevel Float?
+  sweepMagnitude Float?
+  sweepDuration  Int? // seconds
+
   // RSI state
-  rsiValue          Float?
-  rsiDivergence     String?  // BULLISH, BEARISH, NONE
-  
+  rsiValue      Float?
+  rsiDivergence String? // BULLISH, BEARISH, NONE
+
   // Market regime
-  regime            String?
-  bias4H            String?  // BULLISH, BEARISH, NEUTRAL
-  
+  regime String?
+  bias4H String? // BULLISH, BEARISH, NEUTRAL
+
   // Status
-  isValid           Boolean  @default(true) // Invalidated if price breaks structure
-  wasTraded         Boolean  @default(false) // Did we enter this setup?
-  
-  detectedAt        DateTime @default(now())
-  invalidatedAt     DateTime?
-  
+  isValid   Boolean @default(true) // Invalidated if price breaks structure
+  wasTraded Boolean @default(false) // Did we enter this setup?
+
+  detectedAt    DateTime  @default(now())
+  invalidatedAt DateTime?
+
   @@index([symbol])
   @@index([setupType])
   @@index([direction])
@@ -4409,40 +4417,40 @@ model Setup {
 
 // Signal: Active trading signal
 model Signal {
-  id                String   @id @default(cuid())
-  setupId           String?
-  symbol            String
-  
+  id      String  @id @default(cuid())
+  setupId String?
+  symbol  String
+
   // Signal definition
-  signalType        String   // ENTRY, STOP_HIT, TARGET_HIT, INVALIDATION
-  direction         String   // LONG, SHORT
-  confidence        Float    // 0-1
-  
+  signalType String // ENTRY, STOP_HIT, TARGET_HIT, INVALIDATION
+  direction  String // LONG, SHORT
+  confidence Float // 0-1
+
   // Entry zone
-  suggestedEntry    Float
-  entryRangeStart   Float?
-  entryRangeEnd     Float?
-  
+  suggestedEntry  Float
+  entryRangeStart Float?
+  entryRangeEnd   Float?
+
   // Risk/Reward
-  suggestedStop     Float
-  suggestedTarget1  Float
-  suggestedTarget2  Float?
-  suggestedTarget3  Float?
-  
-  riskRewardRatio   Float?
+  suggestedStop    Float
+  suggestedTarget1 Float
+  suggestedTarget2 Float?
+  suggestedTarget3 Float?
+
+  riskRewardRatio    Float?
   expectedRiskRewInK Float? // Expected R multiple
-  
+
   // Metadata
-  explanation       String?  // Why this signal?
-  sessionContext    String?  // ASIA, LONDON, NEWYORK
-  
+  explanation    String? // Why this signal?
+  sessionContext String? // ASIA, LONDON, NEWYORK
+
   // Status
-  status            String   @default("ACTIVE") // ACTIVE, ACCEPTED, REJECTED, EXPIRED, FILLED
-  expiresAt         DateTime?
-  
-  createdAt         DateTime @default(now())
-  filledAt          DateTime?
-  
+  status    String    @default("ACTIVE") // ACTIVE, ACCEPTED, REJECTED, EXPIRED, FILLED
+  expiresAt DateTime?
+
+  createdAt DateTime  @default(now())
+  filledAt  DateTime?
+
   @@index([symbol])
   @@index([direction])
   @@index([status])
@@ -4452,49 +4460,49 @@ model Signal {
 
 // Position: Active or closed trade position
 model Position {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  symbol            String
-  direction         String   // LONG, SHORT
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  symbol    String
+  direction String // LONG, SHORT
+
   // Entry
-  entryPrice        Float
-  entryTime         DateTime @default(now())
-  quantity          Float
-  
+  entryPrice Float
+  entryTime  DateTime @default(now())
+  quantity   Float
+
   // Stop & Targets
-  stopPrice         Float
-  target1           Float?
-  target2           Float?
-  target3           Float?
-  
+  stopPrice Float
+  target1   Float?
+  target2   Float?
+  target3   Float?
+
   // Risk management
-  initialRisk       Float    // Dollars at risk
-  riskPercentage    Float    // % of account equity
-  
+  initialRisk    Float // Dollars at risk
+  riskPercentage Float // % of account equity
+
   // Current state
   currentPrice      Float?
-  currentPnL        Float?   // Unrealized P&L
+  currentPnL        Float? // Unrealized P&L
   currentPnLPercent Float?
-  
+
   // Closure
-  exitPrice         Float?
-  exitTime          DateTime?
-  realizedPnL       Float?
-  realizedR         Float?   // Realized R multiple
-  
+  exitPrice   Float?
+  exitTime    DateTime?
+  realizedPnL Float?
+  realizedR   Float? // Realized R multiple
+
   // Metadata
-  setupType         String?
-  sessionContext    String?
-  notes             String?
-  
-  status            String   @default("OPEN") // OPEN, CLOSED, CANCELLED
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  setupType      String?
+  sessionContext String?
+  notes          String?
+
+  status String @default("OPEN") // OPEN, CLOSED, CANCELLED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([accountId])
   @@index([symbol])
   @@index([direction])
@@ -4504,29 +4512,29 @@ model Position {
 
 // Trade: Historical trade log (same as closed Position, but immutable)
 model Trade {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  symbol            String
-  direction         String
-  entryPrice        Float
-  exitPrice         Float
-  quantity          Float
-  
-  entryTime         DateTime
-  exitTime          DateTime
-  duration          Int      // minutes
-  
-  pnl               Float
-  pnlPercent        Float
-  rMultiple         Float?
-  
-  setupType         String?
-  sessionContext    String?
-  
-  createdAt         DateTime @default(now())
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  symbol     String
+  direction  String
+  entryPrice Float
+  exitPrice  Float
+  quantity   Float
+
+  entryTime DateTime
+  exitTime  DateTime
+  duration  Int // minutes
+
+  pnl        Float
+  pnlPercent Float
+  rMultiple  Float?
+
+  setupType      String?
+  sessionContext String?
+
+  createdAt DateTime @default(now())
+
   @@index([accountId])
   @@index([symbol])
   @@index([direction])
@@ -4535,89 +4543,89 @@ model Trade {
 
 // Strategy: Trading strategy definition
 model Strategy {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  name              String
-  description       String?
-  version           Int      @default(1)
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  version     Int     @default(1)
+
   // Strategy parameters
-  rsiPeriod         Int      @default(14)
-  rsiOverbought     Int      @default(70)
-  rsiOversold       Int      @default(30)
-  
-  atrPeriod         Int      @default(14)
-  atrMultiplier     Float    @default(1.5)
-  
-  fibonacciLevels   String   @default("0,0.236,0.382,0.50,0.618,1.0,1.618")
-  
-  entryConfidence   Float    @default(0.65) // Minimum confidence to trade
-  sweepThreshold    Float    @default(1.2)  // ATR multiplier for sweep detection
-  
+  rsiPeriod     Int @default(14)
+  rsiOverbought Int @default(70)
+  rsiOversold   Int @default(30)
+
+  atrPeriod     Int   @default(14)
+  atrMultiplier Float @default(1.5)
+
+  fibonacciLevels String @default("0,0.236,0.382,0.50,0.618,1.0,1.618")
+
+  entryConfidence Float @default(0.65) // Minimum confidence to trade
+  sweepThreshold  Float @default(1.2) // ATR multiplier for sweep detection
+
   // Session filtering
-  enableAsia        Boolean  @default(true)
-  enableLondon      Boolean  @default(true)
-  enableNewYork     Boolean  @default(true)
-  
+  enableAsia    Boolean @default(true)
+  enableLondon  Boolean @default(true)
+  enableNewYork Boolean @default(true)
+
   // Risk settings
-  riskPerTrade      Float    @default(1.0)
-  maxPositionSize   Float?
-  
+  riskPerTrade    Float  @default(1.0)
+  maxPositionSize Float?
+
   // Status
-  isActive          Boolean  @default(true)
-  isBacktested      Boolean  @default(false)
-  
-  backtestRuns      BacktestRun[]
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  isActive     Boolean @default(true)
+  isBacktested Boolean @default(false)
+
+  backtestRuns BacktestRun[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([accountId])
   @@index([isActive])
 }
 
 // BacktestRun: Historical backtest result
 model BacktestRun {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  strategyId        String
-  strategy          Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  strategyId String
+  strategy   Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+
   // Backtest window
-  startDate         DateTime
-  endDate           DateTime
-  dataType          String   @default("HISTORICAL") // HISTORICAL, WALK_FORWARD, MONTE_CARLO
-  
+  startDate DateTime
+  endDate   DateTime
+  dataType  String   @default("HISTORICAL") // HISTORICAL, WALK_FORWARD, MONTE_CARLO
+
   // Results
-  totalTrades       Int      @default(0)
-  winningTrades     Int      @default(0)
-  losingTrades      Int      @default(0)
-  winRate           Float?   // percentage
-  profitFactor      Float?   // gross profit / gross loss
-  expectancy        Float?   // avg win * win% - avg loss * loss%
-  
-  totalPnL          Float    @default(0.0)
-  maxDrawdown       Float?
-  sharpeRatio       Float?
-  sortino           Float?
-  
-  avgWin            Float?
-  avgLoss           Float?
-  avgR              Float?
-  
-  maxWinningStreak  Int?
-  maxLosingStreak   Int?
-  
+  totalTrades   Int    @default(0)
+  winningTrades Int    @default(0)
+  losingTrades  Int    @default(0)
+  winRate       Float? // percentage
+  profitFactor  Float? // gross profit / gross loss
+  expectancy    Float? // avg win * win% - avg loss * loss%
+
+  totalPnL    Float  @default(0.0)
+  maxDrawdown Float?
+  sharpeRatio Float?
+  sortino     Float?
+
+  avgWin  Float?
+  avgLoss Float?
+  avgR    Float?
+
+  maxWinningStreak Int?
+  maxLosingStreak  Int?
+
   // Additional metrics
-  notes             String?
-  parametersUsed    String?  // JSON string of params
-  
-  createdAt         DateTime @default(now())
-  
+  notes          String?
+  parametersUsed String? // JSON string of params
+
+  createdAt DateTime @default(now())
+
   @@index([accountId])
   @@index([strategyId])
   @@index([dataType])
@@ -4627,44 +4635,44 @@ model BacktestRun {
 
 // RiskPolicy: Account-level risk rules
 model RiskPolicy {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
   // Daily limits
-  maxDailyLoss      Float
+  maxDailyLoss         Float
   maxConsecutiveLosses Int
-  maxOpenPositions  Int
-  maxCorrelation    Float    // Max corr between open positions
-  
+  maxOpenPositions     Int
+  maxCorrelation       Float // Max corr between open positions
+
   // Per-trade limits
-  maxRiskPerTrade   Float
-  minRiskReward     Float    @default(1.0)
-  
+  maxRiskPerTrade Float
+  minRiskReward   Float @default(1.0)
+
   // Status
-  isActive          Boolean  @default(true)
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([accountId])
 }
 
 // RiskEvent: Log of risk rule violations
 model RiskEvent {
-  id                String   @id @default(cuid())
-  accountId         String
-  
-  eventType         String   // DAILY_LOSS_LIMIT, CONSECUTIVE_LOSSES, MAX_POSITIONS, etc.
-  severity          String   @default("WARNING") // WARNING, ALERT, SHUTDOWN
-  
-  message           String
-  metadata          String?  // JSON with context
-  
-  blockedTrade      Boolean  @default(false)
-  
-  createdAt         DateTime @default(now())
-  
+  id        String @id @default(cuid())
+  accountId String
+
+  eventType String // DAILY_LOSS_LIMIT, CONSECUTIVE_LOSSES, MAX_POSITIONS, etc.
+  severity  String @default("WARNING") // WARNING, ALERT, SHUTDOWN
+
+  message  String
+  metadata String? // JSON with context
+
+  blockedTrade Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
   @@index([accountId])
   @@index([eventType])
   @@index([createdAt])
@@ -4672,40 +4680,40 @@ model RiskEvent {
 
 // JournalEntry: Trade review & reflection
 model JournalEntry {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
   // Trade reference
-  symbol            String
-  tradeDate         DateTime
-  
+  symbol    String
+  tradeDate DateTime
+
   // Setup details
-  setupType         String?
-  setupQuality      String?  // A_TIER, B_TIER, C_TIER
-  priceAction       String?
-  
+  setupType    String?
+  setupQuality String? // A_TIER, B_TIER, C_TIER
+  priceAction  String?
+
   // Outcome
-  result            String   // WIN, LOSS, BREAKEVEN
-  pnl               Float?
-  rMultiple         Float?
-  
+  result    String // WIN, LOSS, BREAKEVEN
+  pnl       Float?
+  rMultiple Float?
+
   // Reflection
-  whatWentWell      String?
-  whatWentWrong     String?
-  lessonsLearned    String?
-  nextTime          String?
-  
+  whatWentWell   String?
+  whatWentWrong  String?
+  lessonsLearned String?
+  nextTime       String?
+
   // Emotions
-  emotionalState    String?  // CALM, ANXIOUS, OVERCONFIDENT, FRUSTRATED
-  disciplineRating  Int?     // 1-10
-  
+  emotionalState   String? // CALM, ANXIOUS, OVERCONFIDENT, FRUSTRATED
+  disciplineRating Int? // 1-10
+
   // Tags
-  tags              String?  // comma-separated
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  tags String? // comma-separated
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([accountId])
   @@index([tradeDate])
   @@index([result])
@@ -4714,23 +4722,23 @@ model JournalEntry {
 
 // Alert: User notifications
 model Alert {
-  id                String   @id @default(cuid())
-  accountId         String
-  account           TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  
-  alertType         String   // SIGNAL, RISK, PRICE, SETUP, etc.
-  title             String
-  message           String
-  
-  symbol            String?
-  priority          String   @default("INFO") // INFO, WARNING, CRITICAL
-  
-  isRead            Boolean  @default(false)
-  actionUrl         String?  // Link to related data
-  
-  createdAt         DateTime @default(now())
-  readAt            DateTime?
-  
+  id        String         @id @default(cuid())
+  accountId String
+  account   TradingAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  alertType String // SIGNAL, RISK, PRICE, SETUP, etc.
+  title     String
+  message   String
+
+  symbol   String?
+  priority String  @default("INFO") // INFO, WARNING, CRITICAL
+
+  isRead    Boolean @default(false)
+  actionUrl String? // Link to related data
+
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+
   @@index([accountId])
   @@index([alertType])
   @@index([isRead])
@@ -4739,23 +4747,23 @@ model Alert {
 
 // PriceSnapshot: Historical price data for backtesting
 model PriceSnapshot {
-  id                String   @id @default(cuid())
-  symbol            String
-  timeframe         String   @default("1H")
-  
-  openTime          DateTime
-  open              Float
-  high              Float
-  low               Float
-  close             Float
-  volume            Float?
-  
+  id        String @id @default(cuid())
+  symbol    String
+  timeframe String @default("1H")
+
+  openTime DateTime
+  open     Float
+  high     Float
+  low      Float
+  close    Float
+  volume   Float?
+
   // Technical indicators (pre-calculated for performance)
-  rsi               Float?
-  atr               Float?
-  
-  createdAt         DateTime @default(now())
-  
+  rsi Float?
+  atr Float?
+
+  createdAt DateTime @default(now())
+
   @@unique([symbol, timeframe, openTime])
   @@index([symbol])
   @@index([timeframe])
@@ -4793,24 +4801,24 @@ enum FieldTechReportStatus {
 }
 
 model FieldTechJob {
-  id              String               @id @default(cuid())
-  technicianId    String
-  customerName    String
-  customerPhone   String
-  address         String
-  appointmentAt   DateTime
-  complaint       String               @db.Text
-  equipmentId     String?
-  equipment       FieldTechEquipment?  @relation(fields: [equipmentId], references: [id])
-  status          FieldTechJobStatus   @default(SCHEDULED)
-  priority        FieldTechJobPriority @default(NORMAL)
-  notes           String               @default("") @db.Text
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  id            String               @id @default(cuid())
+  technicianId  String
+  customerName  String
+  customerPhone String
+  address       String
+  appointmentAt DateTime
+  complaint     String               @db.Text
+  equipmentId   String?
+  equipment     FieldTechEquipment?  @relation(fields: [equipmentId], references: [id])
+  status        FieldTechJobStatus   @default(SCHEDULED)
+  priority      FieldTechJobPriority @default(NORMAL)
+  notes         String               @default("") @db.Text
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
 
-  readings        FieldTechReading[]
-  serviceHistory  FieldTechServiceHistory[]
-  report          FieldTechReport?
+  readings       FieldTechReading[]
+  serviceHistory FieldTechServiceHistory[]
+  report         FieldTechReport?
 
   @@index([technicianId])
   @@index([status])
@@ -4818,25 +4826,25 @@ model FieldTechJob {
 }
 
 model FieldTechEquipment {
-  id                     String    @id @default(cuid())
-  customerName           String
-  manufacturer           String
-  equipmentType          String
-  model                  String
-  serial                 String
-  refrigerant            String
-  voltage                String
-  phase                  String
-  tonnage                Float?
-  installationDate       DateTime?
-  location               String
-  filterSize             String?
-  technicianNotes        String    @default("") @db.Text
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  customerName     String
+  manufacturer     String
+  equipmentType    String
+  model            String
+  serial           String
+  refrigerant      String
+  voltage          String
+  phase            String
+  tonnage          Float?
+  installationDate DateTime?
+  location         String
+  filterSize       String?
+  technicianNotes  String    @default("") @db.Text
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  jobs                   FieldTechJob[]
-  serviceHistory         FieldTechServiceHistory[]
+  jobs           FieldTechJob[]
+  serviceHistory FieldTechServiceHistory[]
 
   @@index([serial])
 }
@@ -4856,55 +4864,55 @@ model FieldTechServiceHistory {
 }
 
 model FieldTechReading {
-  id                String   @id @default(cuid())
-  jobId             String
-  job               FieldTechJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  sourceDeviceName  String
-  capturedAt        DateTime
+  id               String       @id @default(cuid())
+  jobId            String
+  job              FieldTechJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  sourceDeviceName String
+  capturedAt       DateTime
 
-  lowSidePsig       Float?
-  highSidePsig      Float?
+  lowSidePsig        Float?
+  highSidePsig       Float?
   suctionSaturationF Float?
-  liquidSaturationF Float?
-  suctionLineTempF  Float?
-  liquidLineTempF   Float?
-  dischargeTempF    Float?
-  outdoorAmbientF   Float?
+  liquidSaturationF  Float?
+  suctionLineTempF   Float?
+  liquidLineTempF    Float?
+  dischargeTempF     Float?
+  outdoorAmbientF    Float?
 
-  voltageL1         Float?
-  voltageL2         Float?
-  voltageL3         Float?
-  currentL1         Float?
-  currentL2         Float?
-  currentL3         Float?
-  frequencyHz       Float?
-  capacitanceMfd    Float?
-  resistanceOhms    Float?
-  continuityOk      Boolean?
+  voltageL1      Float?
+  voltageL2      Float?
+  voltageL3      Float?
+  currentL1      Float?
+  currentL2      Float?
+  currentL3      Float?
+  frequencyHz    Float?
+  capacitanceMfd Float?
+  resistanceOhms Float?
+  continuityOk   Boolean?
 
-  returnTempF       Float?
-  supplyTempF       Float?
+  returnTempF        Float?
+  supplyTempF        Float?
   staticPressureInWc Float?
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([jobId])
 }
 
 model FieldTechReport {
-  jobId               String                 @id
-  job                 FieldTechJob           @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  jobSummary          String                 @default("") @db.Text
-  systemInfo          String                 @default("") @db.Text
-  customerComplaint   String                 @default("") @db.Text
-  diagnosis           String                 @default("") @db.Text
-  workPerformed       String[]               @default([])
-  materials           Json                   @default("[]")
-  recommendations     String                 @default("") @db.Text
-  technicianNotes     String                 @default("") @db.Text
+  jobId                String                @id
+  job                  FieldTechJob          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  jobSummary           String                @default("") @db.Text
+  systemInfo           String                @default("") @db.Text
+  customerComplaint    String                @default("") @db.Text
+  diagnosis            String                @default("") @db.Text
+  workPerformed        String[]              @default([])
+  materials            Json                  @default("[]")
+  recommendations      String                @default("") @db.Text
+  technicianNotes      String                @default("") @db.Text
   customerApprovalName String?
-  status              FieldTechReportStatus  @default(DRAFT)
-  updatedAt           DateTime               @updatedAt
+  status               FieldTechReportStatus @default(DRAFT)
+  updatedAt            DateTime              @updatedAt
 }
 
 model FieldTechRelease {
@@ -4924,20 +4932,20 @@ model FieldTechRelease {
 
 // Technician: HVAC service technicians
 model Technician {
-  id            String   @id @default(cuid())
-  firstName     String
-  lastName      String
-  email         String   @unique
-  phone         String
+  id             String   @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String   @unique
+  phone          String
   specialization String[] @default([]) // ["cooling", "heating", "electrical", "refrigerant"]
-  licenseNumber String?
+  licenseNumber  String?
   certifications String[] @default([])
-  isActive      Boolean  @default(true)
+  isActive       Boolean  @default(true)
 
   // Relationships
-  calls         Call[]
-  workOrders    WorkOrder[]
-  appointments  Appointment[]
+  calls        Call[]
+  workOrders   WorkOrder[]
+  appointments Appointment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4948,38 +4956,38 @@ model Technician {
 
 // HVACProperty: Customer property/address with HVAC equipment
 model HVACProperty {
-  id            String   @id @default(cuid())
-  customerId    String
-  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   // Property details
-  address       String
-  city          String
-  state         String
-  zipCode       String
-  coordinates   String? // JSON: {lat, lng}
-  propertyType  String  // residential, commercial, multi-unit
-  squareFeet    Int?
+  address      String
+  city         String
+  state        String
+  zipCode      String
+  coordinates  String? // JSON: {lat, lng}
+  propertyType String // residential, commercial, multi-unit
+  squareFeet   Int?
 
   // HVAC system info
-  heatingType   String? // furnace, heat_pump, boiler
-  coolingType   String? // ac, heat_pump, other
-  age           Int?    // years
+  heatingType String? // furnace, heat_pump, boiler
+  coolingType String? // ac, heat_pump, other
+  age         Int? // years
 
   // Contact
-  phonePrimary  String?
-  phoneSecondary String?
+  phonePrimary     String?
+  phoneSecondary   String?
   preferredContact String? // phone, email, sms
 
   // Service info
-  serviceArea   String?
+  serviceArea     String?
   maintenancePlan String? // bronze, silver, gold
 
   // Relationships
-  equipment     HVACEquipment[]
-  workOrders    WorkOrder[]
-  appointments  Appointment[]
-  calls         Call[]
+  equipment    HVACEquipment[]
+  workOrders   WorkOrder[]
+  appointments Appointment[]
+  calls        Call[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4991,25 +4999,25 @@ model HVACProperty {
 
 // HVACEquipment: Specific HVAC equipment at a property
 model HVACEquipment {
-  id            String   @id @default(cuid())
-  propertyId    String
-  property      HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id         String       @id @default(cuid())
+  propertyId String
+  property   HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   // Equipment identity
-  equipmentType String  // ac_unit, heat_pump, furnace, air_handler, thermostat, etc.
+  equipmentType String // ac_unit, heat_pump, furnace, air_handler, thermostat, etc.
   manufacturer  String
   model         String
-  serial        String  @unique
+  serial        String @unique
 
   // Specifications
-  tonnage       Float?  // cooling capacity
-  voltage       String?
-  phase         String?
-  refrigerant   String?
+  tonnage     Float? // cooling capacity
+  voltage     String?
+  phase       String?
+  refrigerant String?
 
   // Lifecycle
-  installDate   DateTime?
-  warrantyEnd   DateTime?
+  installDate     DateTime?
+  warrantyEnd     DateTime?
   lastServiceDate DateTime?
 
   // Photos/documentation
@@ -5017,7 +5025,7 @@ model HVACEquipment {
   locationPhotoUrl  String? @db.Text
 
   // Notes
-  techniciamNotes   String? @db.Text
+  techniciamNotes String? @db.Text
 
   // Relationships
   diagnosticReadings DiagnosticReading[]
@@ -5033,50 +5041,50 @@ model HVACEquipment {
 
 // DiagnosticReading: HVAC measurements (suction/liquid pressure, temps, electrical, etc.)
 model DiagnosticReading {
-  id            String   @id @default(cuid())
-  equipmentId   String
-  equipment     HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  id          String        @id @default(cuid())
+  equipmentId String
+  equipment   HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
   // Refrigeration measurements
-  suctionPsig   Float?
-  liquidPsig    Float?
+  suctionPsig     Float?
+  liquidPsig      Float?
   suctionSatTempF Float?
-  liquidSatTempF Float?
-  suctionTempF  Float?
-  liquidTempF   Float?
-  superheat     Float?
-  subcooling    Float?
+  liquidSatTempF  Float?
+  suctionTempF    Float?
+  liquidTempF     Float?
+  superheat       Float?
+  subcooling      Float?
 
   // Temperatures
-  returnTempF   Float?
-  supplyTempF   Float?
-  outdoorTempF  Float?
-  deltaTempF    Float?
+  returnTempF  Float?
+  supplyTempF  Float?
+  outdoorTempF Float?
+  deltaTempF   Float?
 
   // Airflow/static pressure
   staticPressure Float?
 
   // Electrical
-  voltageL1     Float?
-  voltageL2     Float?
-  voltageL3     Float?
-  currentL1     Float?
-  currentL2     Float?
-  currentL3     Float?
-  frequencyHz   Float?
+  voltageL1   Float?
+  voltageL2   Float?
+  voltageL3   Float?
+  currentL1   Float?
+  currentL2   Float?
+  currentL3   Float?
+  frequencyHz Float?
 
   // Continuity/resistance
-  continuityOk  Boolean?
+  continuityOk   Boolean?
   resistanceOhms Float?
 
   // Context
-  workOrderId   String?
-  workOrder     WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
 
   // Metadata
-  capturedAt    DateTime @default(now())
-  verifiedBy    String?  // Technician name
-  notes         String? @db.Text
+  capturedAt DateTime @default(now())
+  verifiedBy String? // Technician name
+  notes      String?  @db.Text
 
   @@index([equipmentId])
   @@index([workOrderId])
@@ -5085,20 +5093,20 @@ model DiagnosticReading {
 
 // EquipmentServiceHistory: Log of maintenance/repairs
 model EquipmentServiceHistory {
-  id            String   @id @default(cuid())
-  equipmentId   String
-  equipment     HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  id          String        @id @default(cuid())
+  equipmentId String
+  equipment   HVACEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
 
-  serviceType   String  // maintenance, repair, installation, inspection
-  summary       String  @db.Text
-  partsReplaced String[] @default([])
+  serviceType    String // maintenance, repair, installation, inspection
+  summary        String   @db.Text
+  partsReplaced  String[] @default([])
   technicianName String
 
-  workOrderId   String?
-  workOrder     WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+  workOrderId String?
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
 
-  serviceDate   DateTime
-  createdAt     DateTime @default(now())
+  serviceDate DateTime
+  createdAt   DateTime @default(now())
 
   @@index([equipmentId])
   @@index([serviceDate])
@@ -5108,27 +5116,27 @@ model EquipmentServiceHistory {
 
 // PhoneProvider: Carrier configuration
 model PhoneProvider {
-  id              String   @id @default(cuid())
-  providerName    String   @unique // twilio, telnyx, signalwire
-  isConfigured    Boolean  @default(false)
-  isConnected     Boolean  @default(false)
+  id           String  @id @default(cuid())
+  providerName String  @unique // twilio, telnyx, signalwire
+  isConfigured Boolean @default(false)
+  isConnected  Boolean @default(false)
 
   // Configuration
-  accountId       String?
-  apiKey          String?  // Encrypted
-  authToken       String?  // Encrypted
+  accountId String?
+  apiKey    String? // Encrypted
+  authToken String? // Encrypted
 
   // Webhook
-  webhookUrl      String?
-  webhookSecret   String?  // Encrypted
+  webhookUrl    String?
+  webhookSecret String? // Encrypted
 
   // Phone number
-  inboundNumber   String?
-  outboundNumber  String?
+  inboundNumber  String?
+  outboundNumber String?
 
   // Status
-  lastTestedAt    DateTime?
-  lastError       String?
+  lastTestedAt DateTime?
+  lastError    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5136,53 +5144,53 @@ model PhoneProvider {
 
 // PhoneConfiguration: System settings
 model PhoneConfiguration {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Company info
-  businessName      String  @default("WISE² HVAC Solutions")
-  businessPhone     String?
-  greeting          String? @db.Text
+  businessName  String  @default("WISE² HVAC Solutions")
+  businessPhone String?
+  greeting      String? @db.Text
 
   // Hours
-  timezone          String  @default("UTC")
-  businessHours     Json?   // {mon: {open: "09:00", close: "17:00"}, ...}
+  timezone      String @default("UTC")
+  businessHours Json? // {mon: {open: "09:00", close: "17:00"}, ...}
 
   // Routing
-  officePhoneNumber String?
-  dispatchPhoneNumber String?
+  officePhoneNumber    String?
+  dispatchPhoneNumber  String?
   emergencyPhoneNumber String?
 
   // AI Settings
-  aiEnabled         Boolean @default(true)
-  aiModel           String  @default("hermes")
-  aiTimeout         Int     @default(30000) // milliseconds
+  aiEnabled Boolean @default(true)
+  aiModel   String  @default("hermes")
+  aiTimeout Int     @default(30000) // milliseconds
 
   // Recording
-  recordingEnabled  Boolean @default(true)
-  recordingNotice   String? @db.Text // Legal disclosure
-  recordingRetentionDays Int? @default(90)
+  recordingEnabled       Boolean @default(true)
+  recordingNotice        String? @db.Text // Legal disclosure
+  recordingRetentionDays Int?    @default(90)
 
   // Costs
-  dailyBudget       Float?  // dollars
-  monthlyBudget     Float?
-  alertThreshold    Float?  // percentage of budget
+  dailyBudget    Float? // dollars
+  monthlyBudget  Float?
+  alertThreshold Float? // percentage of budget
 
   // SMS
-  smsEnabled        Boolean @default(false)
-  smsOptInRequired  Boolean @default(true)
+  smsEnabled       Boolean @default(false)
+  smsOptInRequired Boolean @default(true)
 
   updatedAt DateTime @updatedAt
 }
 
 // PhoneNumber: Track inbound numbers used for this system
 model PhoneNumber {
-  id            String   @id @default(cuid())
-  number        String   @unique
-  provider      String   // twilio, telnyx, etc.
+  id               String  @id @default(cuid())
+  number           String  @unique
+  provider         String // twilio, telnyx, etc.
   providerNumberId String?
 
-  isActive      Boolean  @default(true)
-  isPrimary     Boolean  @default(false)
+  isActive  Boolean @default(true)
+  isPrimary Boolean @default(false)
 
   // Capacity
   maxConcurrentCalls Int? @default(5)
@@ -5200,57 +5208,57 @@ model PhoneNumber {
 
 // Call: Phone call log
 model Call {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Identifiers
-  callSid           String?  @unique // Provider's call ID
+  callSid String? @unique // Provider's call ID
 
   // Parties
-  inboundNumber     String
-  callerNumber      String
-  customerId        String?
-  customer          Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  inboundNumber String
+  callerNumber  String
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  propertyId        String?
-  property          HVACProperty? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  propertyId String?
+  property   HVACProperty? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
 
-  technicianId      String?
-  technician        Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  technicianId String?
+  technician   Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
 
   // Call state
-  status            CallStatus @default(INITIATED)
-  direction         CallDirection @default(INBOUND)
+  status    CallStatus    @default(INITIATED)
+  direction CallDirection @default(INBOUND)
 
   // Timing
-  startedAt         DateTime
-  answeredAt        DateTime?
-  endedAt           DateTime?
-  durationSeconds   Int?
+  startedAt       DateTime
+  answeredAt      DateTime?
+  endedAt         DateTime?
+  durationSeconds Int?
 
   // Recording
-  recordingUrl      String? @db.Text
-  recordingConsent  RecordingConsent @default(NOT_REQUIRED)
+  recordingUrl     String?          @db.Text
+  recordingConsent RecordingConsent @default(NOT_REQUIRED)
 
   // Transcript
-  transcript        CallTranscript?
+  transcript CallTranscript?
 
   // Summary
-  summary           CallSummary?
+  summary CallSummary?
 
   // Outcome
-  disposition       CallDisposition @default(UNKNOWN)
+  disposition CallDisposition @default(UNKNOWN)
 
   // A call may create a work order (one-to-one relationship)
   // Don't store reference here; WorkOrder will reference back to this call if needed
 
-  appointmentId     String?
-  appointment       Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
 
   // Compliance (check customer's consent record by type)
-  optOut            Boolean @default(false)
+  optOut Boolean @default(false)
 
   // Events
-  events            CallEvent[]
+  events CallEvent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5298,13 +5306,13 @@ enum RecordingConsent {
 
 // CallEvent: State transitions during a call
 model CallEvent {
-  id            String   @id @default(cuid())
-  callId        String
-  call          Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  callId String
+  call   Call   @relation(fields: [callId], references: [id], onDelete: Cascade)
 
-  eventType     String   // answered, transferred, held, disconnected
-  timestamp     DateTime @default(now())
-  details       Json?
+  eventType String // answered, transferred, held, disconnected
+  timestamp DateTime @default(now())
+  details   Json?
 
   @@index([callId])
   @@index([timestamp])
@@ -5316,20 +5324,20 @@ model CallEvent {
 
 // CallTranscript: STT output
 model CallTranscript {
-  id            String   @id @default(cuid())
-  callId        String   @unique
-  call          Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  callId String @unique
+  call   Call   @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   // Transcript content
-  segments      TranscriptSegment[]
+  segments TranscriptSegment[]
 
   // Metadata
-  language      String  @default("en-US")
-  confidence    Float?  // Overall confidence 0-100
+  language   String @default("en-US")
+  confidence Float? // Overall confidence 0-100
 
   // Status
-  status        TranscriptionStatus @default(PENDING)
-  errorMessage  String?
+  status       TranscriptionStatus @default(PENDING)
+  errorMessage String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5340,15 +5348,15 @@ model CallTranscript {
 
 // TranscriptSegment: Individual speaker turn
 model TranscriptSegment {
-  id            String   @id @default(cuid())
-  transcriptId  String
-  transcript    CallTranscript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  id           String         @id @default(cuid())
+  transcriptId String
+  transcript   CallTranscript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
 
-  speaker       String  // "customer" or "agent"
-  text          String  @db.Text
-  startMs       Int
-  endMs         Int
-  confidence    Float?  // Speaker confidence 0-100
+  speaker    String // "customer" or "agent"
+  text       String @db.Text
+  startMs    Int
+  endMs      Int
+  confidence Float? // Speaker confidence 0-100
 
   createdAt DateTime @default(now())
 
@@ -5360,22 +5368,22 @@ model TranscriptSegment {
 
 // CallSummary: AI-generated summary
 model CallSummary {
-  id              String   @id @default(cuid())
-  callId          String   @unique
-  call            Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  callId String @unique
+  call   Call   @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   // Summary content
-  reason          String  @db.Text   // Why customer called
-  symptoms        String[] @default([]) // HVAC issues
-  urgency         CallUrgency @default(ROUTINE)
-  equipmentType   String?
+  reason        String      @db.Text // Why customer called
+  symptoms      String[]    @default([]) // HVAC issues
+  urgency       CallUrgency @default(ROUTINE)
+  equipmentType String?
 
   // Actions proposed
-  actions         String[] @default([])
+  actions String[] @default([])
 
   // Follow-up
-  needsFollowUp   Boolean @default(false)
-  followUpDate    DateTime?
+  needsFollowUp Boolean   @default(false)
+  followUpDate  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5395,33 +5403,33 @@ enum CallUrgency {
 
 // Appointment: Service appointments
 model Appointment {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  propertyId      String
-  property        HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
-  technicianId    String?
-  technician      Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  technicianId String?
+  technician   Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
 
   // Scheduling
-  scheduledAt     DateTime
-  duration        Int      @default(60) // minutes
-  status          AppointmentStatus @default(SCHEDULED)
+  scheduledAt DateTime
+  duration    Int               @default(60) // minutes
+  status      AppointmentStatus @default(SCHEDULED)
 
   // Type
-  appointmentType String  // service_call, maintenance, inspection, estimate
+  appointmentType String // service_call, maintenance, inspection, estimate
 
   // Notes
-  notes           String? @db.Text
+  notes String? @db.Text
 
   // Relationship
-  workOrderId     String?    @unique
-  workOrder       WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
+  workOrderId String?    @unique
+  workOrder   WorkOrder? @relation(fields: [workOrderId], references: [id], onDelete: SetNull)
 
-  calls           Call[]
+  calls Call[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5447,57 +5455,57 @@ enum AppointmentStatus {
 
 // WorkOrder: Service jobs
 model WorkOrder {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Reference
-  workOrderNumber String  @unique
+  workOrderNumber String @unique
 
   // Customer
-  customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  propertyId      String
-  property        HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   HVACProperty @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   // Technician
-  technicianId    String?
-  technician      Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  technicianId String?
+  technician   Technician? @relation(fields: [technicianId], references: [id], onDelete: SetNull)
 
   // Service details
-  description     String  @db.Text
-  serviceType     String  // cooling, heating, electrical, maintenance, emergency
-  urgency         WorkOrderUrgency @default(ROUTINE)
+  description String           @db.Text
+  serviceType String // cooling, heating, electrical, maintenance, emergency
+  urgency     WorkOrderUrgency @default(ROUTINE)
 
   // Status
-  status          WorkOrderStatus @default(CREATED)
+  status WorkOrderStatus @default(CREATED)
 
   // Source
-  sourceType      String  @default("PHONE")  // PHONE, WEBSITE, WALK_IN, REFERRAL
-  sourceCallId    String?  // Reference to originating phone call
+  sourceType   String  @default("PHONE") // PHONE, WEBSITE, WALK_IN, REFERRAL
+  sourceCallId String? // Reference to originating phone call
 
   // Timing
-  createdAt       DateTime @default(now())
-  scheduledAt     DateTime?
-  startedAt       DateTime?
-  completedAt     DateTime?
+  createdAt   DateTime  @default(now())
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
 
   // Photos/documents
-  photosBefore    String[] @default([]) // Array of URLs
-  photosAfter     String[] @default([])
+  photosBefore String[] @default([]) // Array of URLs
+  photosAfter  String[] @default([])
 
   // Parts/materials
-  materialsUsed   Json    @default("[]")
+  materialsUsed Json @default("[]")
 
   // Diagnostics
   diagnosticReadings DiagnosticReading[]
   serviceHistory     EquipmentServiceHistory[]
 
   // Follow-up
-  needsFollowUp   Boolean @default(false)
-  followUpDate    DateTime?
+  needsFollowUp Boolean   @default(false)
+  followUpDate  DateTime?
 
   // Related
-  appointment     Appointment?
+  appointment Appointment?
 
   updatedAt DateTime @updatedAt
 
@@ -5536,37 +5544,37 @@ enum WorkOrderUrgency {
 
 // SMSMessage: Outbound and inbound SMS
 model SMSMessage {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Identifiers
-  smsId           String?  @unique // Provider ID
+  smsId String? @unique // Provider ID
 
   // Parties
-  fromNumber      String
-  toNumber        String
-  customerId      String?
-  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  fromNumber String
+  toNumber   String
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   // Message
-  direction       String  @default("OUTBOUND") // INBOUND, OUTBOUND
-  message         String  @db.Text
-  status          SMSStatus @default(SENT)
+  direction String    @default("OUTBOUND") // INBOUND, OUTBOUND
+  message   String    @db.Text
+  status    SMSStatus @default(SENT)
 
   // Campaign
-  campaignId      String?
-  campaign        OutboundCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  campaignId String?
+  campaign   OutboundCampaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
 
   // Metadata
-  templateId      String?
-  variables       Json?   // Template variable values
+  templateId String?
+  variables  Json? // Template variable values
 
   // Tracking
-  sentAt          DateTime?
-  deliveredAt     DateTime?
-  failureReason   String?
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  failureReason String?
 
   // Compliance (check customer's consent record separately)
-  optOut          Boolean @default(false)
+  optOut Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5588,33 +5596,33 @@ enum SMSStatus {
 
 // OutboundCampaign: Automated SMS campaigns
 model OutboundCampaign {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  name            String
-  campaignType    String  // reminder, follow_up, maintenance, survey, other
-  description     String? @db.Text
+  name         String
+  campaignType String // reminder, follow_up, maintenance, survey, other
+  description  String? @db.Text
 
   // Content
-  templateText    String  @db.Text
-  variables       String[] @default([])
+  templateText String   @db.Text
+  variables    String[] @default([])
 
   // Scheduling
-  status          CampaignStatus @default(DRAFT)
-  scheduledAt     DateTime?
-  startAt         DateTime?
-  endAt           DateTime?
+  status      CampaignStatus @default(DRAFT)
+  scheduledAt DateTime?
+  startAt     DateTime?
+  endAt       DateTime?
 
   // Targeting
-  targetAudience  String  // all, customers, new_customers, at_risk
-  filters         Json?   // Filter criteria
+  targetAudience String // all, customers, new_customers, at_risk
+  filters        Json? // Filter criteria
 
   // Execution
-  messagesSent    Int @default(0)
+  messagesSent      Int @default(0)
   messagesDelivered Int @default(0)
-  messagesFailed  Int @default(0)
+  messagesFailed    Int @default(0)
 
   // Relationship
-  messages        SMSMessage[]
+  messages SMSMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5634,22 +5642,22 @@ enum CampaignStatus {
 
 // CallbackTask: Missed call automation
 model CallbackTask {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  callId          String?  // Original missed call
-  customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  callId     String? // Original missed call
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   // Retry strategy
-  attempts        Int @default(0)
-  maxAttempts     Int @default(3)
-  nextAttempt     DateTime?
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(3)
+  nextAttempt DateTime?
 
   // Status
-  status          CallbackStatus @default(PENDING)
+  status CallbackStatus @default(PENDING)
 
   // Method
-  method          String  @default("CALL") // CALL, SMS
+  method String @default("CALL") // CALL, SMS
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5671,29 +5679,29 @@ enum CallbackStatus {
 
 // Consent: Opt-in/compliance records
 model Consent {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  customerId      String
-  customer        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  phoneNumber     String?
+  phoneNumber String?
 
   // Consent type
-  consentType     String  // call_recording, sms_marketing, call_marketing, email_marketing
+  consentType String // call_recording, sms_marketing, call_marketing, email_marketing
 
   // State
-  isGiven         Boolean @default(false)
-  consentDate     DateTime?
-  consentMethod   String? // voice, written, email, checkbox, etc.
-  consentChannel  String? // phone_call, in_app, email, paper
+  isGiven        Boolean   @default(false)
+  consentDate    DateTime?
+  consentMethod  String? // voice, written, email, checkbox, etc.
+  consentChannel String? // phone_call, in_app, email, paper
 
   // Documentation
-  notes           String? @db.Text
-  documentUrl     String? @db.Text
+  notes       String? @db.Text
+  documentUrl String? @db.Text
 
   // Compliance
-  revokedAt       DateTime?
-  revokeMethod    String?
+  revokedAt    DateTime?
+  revokeMethod String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5706,16 +5714,16 @@ model Consent {
 
 // OptOut: Do-not-call / do-not-SMS lists
 model OptOut {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  phoneNumber     String   @unique
-  type            String   @default("CALL")  // CALL, SMS, EMAIL
+  phoneNumber String @unique
+  type        String @default("CALL") // CALL, SMS, EMAIL
 
-  reason          String?
-  optOutDate      DateTime @default(now())
+  reason     String?
+  optOutDate DateTime @default(now())
 
   // Reversal
-  optInDate       DateTime?
+  optInDate DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -5736,7 +5744,7 @@ model OptOut {
 // CJAYS Auto Recon Solutions — Wise² client vertical
 model CjaysCustomer {
   id            String   @id @default(cuid())
-  tenantId      String   @map("tenant_id")
+  tenantId      String   @map("tenant_id") @db.Uuid
   clientId      String   @map("client_id")
   name          String
   phone         String
@@ -5744,7 +5752,6 @@ model CjaysCustomer {
   serverVersion Int      @default(1) @map("server_version")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
-  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, clientId])
   @@index([tenantId, phone])
@@ -5753,8 +5760,9 @@ model CjaysCustomer {
 
 model CjaysVehicle {
   id               String   @id @default(cuid())
-  tenantId         String   @map("tenant_id")
+  tenantId         String   @map("tenant_id") @db.Uuid
   clientId         String   @map("client_id")
+  qrTagId          String   @map("qr_tag_id")
   customerClientId String?  @map("customer_client_id")
   vin              String
   year             String   @default("")
@@ -5764,31 +5772,35 @@ model CjaysVehicle {
   serverVersion    Int      @default(1) @map("server_version")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
-  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, clientId])
   @@unique([tenantId, vin])
+  @@unique([tenantId, qrTagId])
   @@map("cjays_vehicles")
 }
 
 model CjaysJob {
-  id              String   @id @default(cuid())
-  tenantId        String   @map("tenant_id")
-  clientId        String   @map("client_id")
-  vehicleClientId String   @map("vehicle_client_id")
-  service         String
-  status          String   @default("In Progress")
-  price           String   @default("")
-  checklist       Json     @default("[]")
-  notes           String   @default("") @db.Text
-  paymentMethod   String   @default("") @map("payment_method")
-  paidAmount      String   @default("") @map("paid_amount")
-  beforePhotos    Json     @default("[]") @map("before_photos")
-  afterPhotos     Json     @default("[]") @map("after_photos")
-  serverVersion   Int      @default(1) @map("server_version")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  tenant           Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  id                      String   @id @default(cuid())
+  tenantId                String   @map("tenant_id") @db.Uuid
+  clientId                String   @map("client_id")
+  vehicleClientId         String   @map("vehicle_client_id")
+  service                 String
+  status                  String   @default("In Progress")
+  price                   String   @default("")
+  checklist               Json     @default("[]")
+  notes                   String   @default("") @db.Text
+  paymentMethod           String   @default("") @map("payment_method")
+  paidAmount              String   @default("") @map("paid_amount")
+  paymentStatus           String   @default("unpaid") @map("payment_status")
+  stripeCheckoutSessionId String?  @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId   String?  @map("stripe_payment_intent_id")
+  receiptUrl              String   @default("") @map("receipt_url")
+  invoiceNumber           String   @default("") @map("invoice_number")
+  beforePhotos            Json     @default("[]") @map("before_photos")
+  afterPhotos             Json     @default("[]") @map("after_photos")
+  serverVersion           Int      @default(1) @map("server_version")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
 
   @@unique([tenantId, clientId])
   @@index([tenantId, status])
@@ -5797,12 +5809,11 @@ model CjaysJob {
 
 model CjaysSyncEvent {
   id           String   @id @default(cuid())
-  tenantId     String   @map("tenant_id")
+  tenantId     String   @map("tenant_id") @db.Uuid
   requestId    String   @map("request_id")
   userId       String   @map("user_id")
   recordCounts Json     @map("record_counts")
   createdAt    DateTime @default(now()) @map("created_at")
-  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, requestId])
   @@index([tenantId, createdAt])
@@ -5823,16 +5834,16 @@ model CherryCountProduct {
   collection  String?
   vendor      String?
   cost        Decimal? @db.Decimal(10, 2)
-  retailPrice Decimal  @db.Decimal(10, 2) @map("retail_price")
-  salePrice   Decimal? @db.Decimal(10, 2) @map("sale_price")
+  retailPrice Decimal  @map("retail_price") @db.Decimal(10, 2)
+  salePrice   Decimal? @map("sale_price") @db.Decimal(10, 2)
   images      Json     @default("[]")
   status      String   @default("ACTIVE")
   tags        String[] @default([])
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  tenant    Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  variants  CherryCountProductVariant[]
+  tenant   Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  variants CherryCountProductVariant[]
 
   @@unique([tenantId, sku])
   @@index([tenantId, status])
@@ -5840,25 +5851,25 @@ model CherryCountProduct {
 }
 
 model CherryCountProductVariant {
-  id               String  @id @default(cuid())
-  tenantId         String  @map("tenant_id")
-  productId        String  @map("product_id")
+  id               String   @id @default(cuid())
+  tenantId         String   @map("tenant_id")
+  productId        String   @map("product_id")
   size             String?
   color            String?
   material         String?
   edition          String?
-  quantity         Int     @default(0)
-  reservedQuantity Int     @default(0) @map("reserved_quantity")
-  damagedQuantity  Int     @default(0) @map("damaged_quantity")
-  minimumStock     Int     @default(0) @map("minimum_stock")
-  reorderPoint     Int     @default(0) @map("reorder_point")
+  quantity         Int      @default(0)
+  reservedQuantity Int      @default(0) @map("reserved_quantity")
+  damagedQuantity  Int      @default(0) @map("damaged_quantity")
+  minimumStock     Int      @default(0) @map("minimum_stock")
+  reorderPoint     Int      @default(0) @map("reorder_point")
   bin              String?
   rack             String?
   shelf            String?
   tote             String?
   vehicle          String?
-  storageLocation  String? @map("storage_location")
-  qrCode           String? @map("qr_code")
+  storageLocation  String?  @map("storage_location")
+  qrCode           String?  @map("qr_code")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
@@ -5923,7 +5934,7 @@ model CherryCountPopupEvent {
   setupTime          DateTime? @map("setup_time")
   notes              String?   @db.Text
   expectedAttendance Int?      @map("expected_attendance")
-  revenueGoal        Decimal?  @db.Decimal(10, 2) @map("revenue_goal")
+  revenueGoal        Decimal?  @map("revenue_goal") @db.Decimal(10, 2)
   status             String    @default("PLANNED")
   createdAt          DateTime  @default(now()) @map("created_at")
   updatedAt          DateTime  @updatedAt @map("updated_at")
@@ -5966,7 +5977,7 @@ model CherryCountSale {
   subtotal      Decimal  @db.Decimal(10, 2)
   tax           Decimal  @default(0) @db.Decimal(10, 2)
   total         Decimal  @db.Decimal(10, 2)
-  costTotal     Decimal? @db.Decimal(10, 2) @map("cost_total")
+  costTotal     Decimal? @map("cost_total") @db.Decimal(10, 2)
   profit        Decimal? @db.Decimal(10, 2)
   notes         String?
   createdAt     DateTime @default(now()) @map("created_at")
@@ -5982,13 +5993,13 @@ model CherryCountSale {
 }
 
 model CherryCountSaleLineItem {
-  id        String  @id @default(cuid())
-  saleId    String  @map("sale_id")
-  variantId String  @map("variant_id")
+  id        String   @id @default(cuid())
+  saleId    String   @map("sale_id")
+  variantId String   @map("variant_id")
   quantity  Int
-  unitPrice Decimal @db.Decimal(10, 2) @map("unit_price")
-  unitCost  Decimal? @db.Decimal(10, 2) @map("unit_cost")
-  lineTotal Decimal @db.Decimal(10, 2) @map("line_total")
+  unitPrice Decimal  @map("unit_price") @db.Decimal(10, 2)
+  unitCost  Decimal? @map("unit_cost") @db.Decimal(10, 2)
+  lineTotal Decimal  @map("line_total") @db.Decimal(10, 2)
 
   sale    CherryCountSale           @relation(fields: [saleId], references: [id], onDelete: Cascade)
   variant CherryCountProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
@@ -5998,22 +6009,22 @@ model CherryCountSaleLineItem {
 }
 
 model CherryCountCustomer {
-  id              String   @id @default(cuid())
-  tenantId        String   @map("tenant_id")
-  name            String
-  phone           String?
-  email           String?
-  instagram       String?
-  birthday        DateTime?
-  preferredSize   String?  @map("preferred_size")
-  favoriteColors  String[] @default([]) @map("favorite_colors")
-  favoriteProducts String[] @default([]) @map("favorite_products")
-  wishlist        Json     @default("[]")
-  vipStatus       Boolean  @default(false) @map("vip_status")
-  lifetimeValue   Decimal  @default(0) @db.Decimal(10, 2) @map("lifetime_value")
-  notes           String?  @db.Text
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id               String    @id @default(cuid())
+  tenantId         String    @map("tenant_id")
+  name             String
+  phone            String?
+  email            String?
+  instagram        String?
+  birthday         DateTime?
+  preferredSize    String?   @map("preferred_size")
+  favoriteColors   String[]  @default([]) @map("favorite_colors")
+  favoriteProducts String[]  @default([]) @map("favorite_products")
+  wishlist         Json      @default("[]")
+  vipStatus        Boolean   @default(false) @map("vip_status")
+  lifetimeValue    Decimal   @default(0) @map("lifetime_value") @db.Decimal(10, 2)
+  notes            String?   @db.Text
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   tenant Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sales  CherryCountSale[]
@@ -6023,19 +6034,19 @@ model CherryCountCustomer {
 }
 
 model CherryCountPhoneConfig {
-  id                 String   @id @default(cuid())
-  tenantId           String   @unique @map("tenant_id")
-  enabled            Boolean  @default(true)
-  phoneNumber        String?  @map("phone_number")
-  greeting           String   @default("Hey love! Thanks for calling. I'm Cherry, your AI boutique assistant.") @db.Text
-  afterHoursMessage  String?  @map("after_hours_message") @db.Text
-  businessHours      Json     @default("{}") @map("business_hours")
-  transferNumber     String?  @map("transfer_number")
-  smsEnabled         Boolean  @default(true) @map("sms_enabled")
-  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
-  aiPersona          String   @default("Cherry") @map("ai_persona")
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  id                String   @id @default(cuid())
+  tenantId          String   @unique @map("tenant_id")
+  enabled           Boolean  @default(true)
+  phoneNumber       String?  @map("phone_number")
+  greeting          String   @default("Hey love! Thanks for calling. I'm Cherry, your AI boutique assistant.") @db.Text
+  afterHoursMessage String?  @map("after_hours_message") @db.Text
+  businessHours     Json     @default("{}") @map("business_hours")
+  transferNumber    String?  @map("transfer_number")
+  smsEnabled        Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled  Boolean  @default(true) @map("voicemail_enabled")
+  aiPersona         String   @default("Cherry") @map("ai_persona")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -6065,21 +6076,21 @@ model CherryCountPhoneCall {
 }
 
 model AiPhoneConfig {
-  id                 String   @id @default(cuid())
-  tenantId           String   @unique @map("tenant_id")
-  enabled            Boolean  @default(true)
-  phoneNumber        String?  @map("phone_number")
-  greeting           String   @default("Thanks for calling. I'm the WISE² assistant. I can look up your account, book a visit, or take a message. How can I help you today?") @db.Text
-  afterHoursMessage  String?  @map("after_hours_message") @db.Text
-  businessHours      Json     @default("{}") @map("business_hours")
-  timezone           String   @default("America/New_York")
-  transferNumber     String?  @map("transfer_number")
-  smsEnabled         Boolean  @default(true) @map("sms_enabled")
-  voicemailEnabled   Boolean  @default(true) @map("voicemail_enabled")
-  recordingEnabled   Boolean  @default(true) @map("recording_enabled")
-  aiPersona          String   @default("WISE²") @map("ai_persona")
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  id                String   @id @default(cuid())
+  tenantId          String   @unique @map("tenant_id")
+  enabled           Boolean  @default(true)
+  phoneNumber       String?  @map("phone_number")
+  greeting          String   @default("Thanks for calling. I'm the WISE² assistant. I can look up your account, book a visit, or take a message. How can I help you today?") @db.Text
+  afterHoursMessage String?  @map("after_hours_message") @db.Text
+  businessHours     Json     @default("{}") @map("business_hours")
+  timezone          String   @default("America/New_York")
+  transferNumber    String?  @map("transfer_number")
+  smsEnabled        Boolean  @default(true) @map("sms_enabled")
+  voicemailEnabled  Boolean  @default(true) @map("voicemail_enabled")
+  recordingEnabled  Boolean  @default(true) @map("recording_enabled")
+  aiPersona         String   @default("WISE²") @map("ai_persona")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -6119,23 +6130,23 @@ model AiPhoneCall {
 
 // SoundLabs Live - Live Rooms
 model LiveRoom {
-  id                   String   @id @default(cuid()) @map("id")
-  name                 String   @map("name")
-  slug                 String   @unique @map("slug")
-  creatorId            String   @map("creator_id")
-  creator              User     @relation("liveRoomCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  status               String   @default("draft") @map("status") // draft, live, ended
+  id                   String    @id @default(cuid()) @map("id")
+  name                 String    @map("name")
+  slug                 String    @unique @map("slug")
+  creatorId            String    @map("creator_id")
+  creator              User      @relation("liveRoomCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  status               String    @default("draft") @map("status") // draft, live, ended
   startedAt            DateTime? @map("started_at")
   endedAt              DateTime? @map("ended_at")
-  maxConcurrentViewers Int      @default(10000) @map("max_concurrent_viewers")
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
+  maxConcurrentViewers Int       @default(10000) @map("max_concurrent_viewers")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
 
   // Relationships
-  members              LiveRoomMember[] @relation("liveRoomMembers")
-  chatMessages         LiveChatMessage[] @relation("liveRoomChat")
-  suggestions          AudienceSuggestion[] @relation("liveRoomSuggestions")
-  polls                LivePoll[] @relation("liveRoomPolls")
+  members      LiveRoomMember[]     @relation("liveRoomMembers")
+  chatMessages LiveChatMessage[]    @relation("liveRoomChat")
+  suggestions  AudienceSuggestion[] @relation("liveRoomSuggestions")
+  polls        LivePoll[]           @relation("liveRoomPolls")
 
   @@index([creatorId])
   @@index([slug])
@@ -6145,17 +6156,17 @@ model LiveRoom {
 }
 
 model LiveRoomMember {
-  id         String   @id @default(cuid()) @map("id")
-  roomId     String   @map("room_id")
-  userId     String   @map("user_id")
-  role       String   @default("viewer") @map("role") // creator, cohost, guest, viewer
-  permissions Int     @default(0) @map("permissions") // Bitmap: can_speak, can_chat, can_suggest, can_moderate
-  joinedAt   DateTime @default(now()) @map("joined_at")
-  leftAt     DateTime? @map("left_at")
+  id          String    @id @default(cuid()) @map("id")
+  roomId      String    @map("room_id")
+  userId      String    @map("user_id")
+  role        String    @default("viewer") @map("role") // creator, cohost, guest, viewer
+  permissions Int       @default(0) @map("permissions") // Bitmap: can_speak, can_chat, can_suggest, can_moderate
+  joinedAt    DateTime  @default(now()) @map("joined_at")
+  leftAt      DateTime? @map("left_at")
 
   // Relationships
-  room       LiveRoom @relation("liveRoomMembers", fields: [roomId], references: [id], onDelete: Cascade)
-  user       User     @relation("liveRoomMembers", fields: [userId], references: [id], onDelete: Cascade)
+  room LiveRoom @relation("liveRoomMembers", fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation("liveRoomMembers", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, userId])
   @@index([roomId])
@@ -6167,12 +6178,12 @@ model LiveChatMessage {
   id        String   @id @default(cuid()) @map("id")
   roomId    String   @map("room_id")
   userId    String   @map("user_id")
-  message   String   @db.Text @map("message")
+  message   String   @map("message") @db.Text
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relationships
-  room      LiveRoom @relation("liveRoomChat", fields: [roomId], references: [id], onDelete: Cascade)
-  user      User     @relation("liveRoomChat", fields: [userId], references: [id], onDelete: Cascade)
+  room LiveRoom @relation("liveRoomChat", fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation("liveRoomChat", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([roomId])
   @@index([createdAt])
@@ -6180,16 +6191,16 @@ model LiveChatMessage {
 }
 
 model AudienceSuggestion {
-  id        String   @id @default(cuid()) @map("id")
-  roomId    String   @map("room_id")
-  userId    String   @map("user_id")
-  suggestion String  @db.Text @map("suggestion")
-  votes     Int      @default(0) @map("votes")
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(cuid()) @map("id")
+  roomId     String   @map("room_id")
+  userId     String   @map("user_id")
+  suggestion String   @map("suggestion") @db.Text
+  votes      Int      @default(0) @map("votes")
+  createdAt  DateTime @default(now()) @map("created_at")
 
   // Relationships
-  room      LiveRoom @relation("liveRoomSuggestions", fields: [roomId], references: [id], onDelete: Cascade)
-  user      User     @relation("audienceSuggestions", fields: [userId], references: [id], onDelete: Cascade)
+  room LiveRoom @relation("liveRoomSuggestions", fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation("audienceSuggestions", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([roomId])
   @@index([votes])
@@ -6200,14 +6211,14 @@ model AudienceSuggestion {
 model LivePoll {
   id        String   @id @default(cuid()) @map("id")
   roomId    String   @map("room_id")
-  question  String   @db.Text @map("question")
+  question  String   @map("question") @db.Text
   status    String   @default("active") @map("status") // active, closed
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
 
   // Relationships
-  room      LiveRoom @relation("liveRoomPolls", fields: [roomId], references: [id], onDelete: Cascade)
-  options   LivePollOption[] @relation("pollOptions")
+  room    LiveRoom         @relation("liveRoomPolls", fields: [roomId], references: [id], onDelete: Cascade)
+  options LivePollOption[] @relation("pollOptions")
 
   @@index([roomId])
   @@index([status])
@@ -6216,13 +6227,13 @@ model LivePoll {
 }
 
 model LivePollOption {
-  id      String   @id @default(cuid()) @map("id")
-  pollId  String   @map("poll_id")
-  text    String   @map("text")
-  votes   Int      @default(0) @map("votes")
+  id     String @id @default(cuid()) @map("id")
+  pollId String @map("poll_id")
+  text   String @map("text")
+  votes  Int    @default(0) @map("votes")
 
   // Relationships
-  poll    LivePoll @relation("pollOptions", fields: [pollId], references: [id], onDelete: Cascade)
+  poll      LivePoll       @relation("pollOptions", fields: [pollId], references: [id], onDelete: Cascade)
   pollVotes LivePollVote[] @relation("optionVotes")
 
   @@index([pollId])
@@ -6230,15 +6241,339 @@ model LivePollOption {
 }
 
 model LivePollVote {
-  id       String   @id @default(cuid()) @map("id")
-  optionId String   @map("option_id")
-  userId   String   @map("user_id")
+  id       String @id @default(cuid()) @map("id")
+  optionId String @map("option_id")
+  userId   String @map("user_id")
 
   // Relationships
-  option   LivePollOption @relation("optionVotes", fields: [optionId], references: [id], onDelete: Cascade)
-  user     User    @relation("liveRoomVotes", fields: [userId], references: [id], onDelete: Cascade)
+  option LivePollOption @relation("optionVotes", fields: [optionId], references: [id], onDelete: Cascade)
+  user   User           @relation("liveRoomVotes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([optionId, userId])
   @@index([userId])
   @@map("live_poll_votes")
+}
+
+// ===== WISE² REVENUE COMMAND CENTER =====
+
+// Offer: Standardized, AI-closable service offerings
+model Offer {
+  id String @id @default(cuid())
+
+  // Identity & Display
+  name        String  @unique
+  description String? @db.Text
+  sku         String? @unique
+
+  // Pricing
+  basePrice       Decimal @db.Decimal(12, 2)
+  minimumPrice    Decimal @db.Decimal(12, 2)
+  discountCeiling Decimal @default(0.20) @db.Decimal(5, 2) // Max discount %
+
+  // Setup
+  setupFee Decimal @default(0) @db.Decimal(12, 2)
+
+  // Recurring
+  isRecurring    Boolean  @default(false)
+  recurringPrice Decimal? @db.Decimal(12, 2)
+  billingCycle   String? // monthly, annual
+
+  // Features & Scope
+  includedFeatures String[] @default([])
+  excludedFeatures String[] @default([])
+
+  // Terms
+  paymentTerms         String? // net30, net60, upfront
+  standardDeliveryDays Int?
+
+  // AI Closer Permission
+  aiClosable      Boolean @default(false)
+  aiClosingPrompt String? @db.Text // Instructions for closer
+
+  // Qualification Rules
+  allowedIndustries String[] @default([])
+  minBudget         Decimal? @db.Decimal(12, 2)
+  maxBudget         Decimal? @db.Decimal(12, 2)
+
+  // Escalation
+  escalationThreshold Decimal @default(10000) @db.Decimal(12, 2)
+
+  // Compliance
+  requiredDisclosures String[] @default([])
+  termsUrl            String?
+
+  // Status
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deals                    Deal[]
+  quotes                   Quote[]
+  leadScoreRecommendations LeadScore[] @relation("recommendedOffer")
+
+  @@index([aiClosable])
+  @@index([isActive])
+  @@map("offers")
+}
+
+// Deal: Individual sales opportunities
+model Deal {
+  id String @id @default(cuid())
+
+  // Identity
+  leadId String? @unique
+  lead   Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  // Value & Stage
+  value    Decimal? @db.Decimal(12, 2)
+  currency String   @default("USD")
+
+  stage  DealStage  @default(DISCOVERY)
+  status DealStatus @default(OPEN)
+
+  // Details
+  serviceType String?
+  description String? @db.Text
+
+  // Owner
+  ownerId String?
+  owner   User?   @relation("dealOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  // Dates
+  discoveredAt DateTime  @default(now())
+  quotedAt     DateTime?
+  closedAt     DateTime?
+
+  // AI Closer Eligibility
+  aiClosableOfferId String?
+  aiClosableOffer   Offer?  @relation(fields: [aiClosableOfferId], references: [id], onDelete: SetNull)
+
+  // Escalation
+  escalationReason   String?
+  escalatedToHumanAt DateTime?
+  escalatedToHumanId String?
+  escalatedToHuman   User?     @relation("dealEscalations", fields: [escalatedToHumanId], references: [id], onDelete: SetNull)
+
+  // Tracking
+  source   String? // call, sms, email, web, referral
+  campaign String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events     DealEvent[]
+  activities DealActivity[]
+  quotes     Quote[]
+
+  @@index([ownerId])
+  @@index([stage])
+  @@index([status])
+  @@index([value])
+  @@index([createdAt])
+  @@map("deals")
+}
+
+enum DealStage {
+  DISCOVERY
+  QUALIFICATION
+  PROPOSAL
+  NEGOTIATION
+  CLOSING
+  WON
+  LOST
+}
+
+enum DealStatus {
+  OPEN
+  STALLED
+  ESCALATED
+  CLOSED
+}
+
+// LeadScore: Real-time lead scoring (0-700 scale)
+model LeadScore {
+  id String @id @default(cuid())
+
+  leadId String @unique
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  // Individual Components (0-100 each)
+  fitScore        Int @default(0) // Service fit
+  urgencyScore    Int @default(0) // Timeline urgency
+  budgetScore     Int @default(0) // Budget alignment
+  authorityScore  Int @default(0) // Decision-maker
+  timelineScore   Int @default(0) // Buying timeline
+  intentScore     Int @default(0) // Buying signals
+  engagementScore Int @default(0) // Prior interactions
+
+  // Composite
+  totalScore Int            @default(0) // 0-700
+  level      LeadScoreLevel @default(COLD)
+
+  // Recommendation
+  recommendedAction  String? // call_now, send_offer, nurture
+  recommendedOfferId String?
+  recommendedOffer   Offer?  @relation("recommendedOffer", fields: [recommendedOfferId], references: [id], onDelete: SetNull)
+
+  // Calculation Info
+  lastCalculatedAt DateTime @default(now())
+  formula          String?  @db.Text // For auditing
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([level])
+  @@index([totalScore])
+  @@map("lead_scores")
+}
+
+enum LeadScoreLevel {
+  COLD // 0-150
+  WARM // 151-350
+  HOT // 351-550
+  CLOSING_READY // 551-700
+}
+
+// Quote: Formal proposals/quotes
+model Quote {
+  id String @id @default(cuid())
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  offerId String
+  offer   Offer  @relation(fields: [offerId], references: [id], onDelete: Restrict)
+
+  // Numbers
+  basePrice      Decimal @db.Decimal(12, 2)
+  discountAmount Decimal @default(0) @db.Decimal(12, 2)
+  finalPrice     Decimal @db.Decimal(12, 2)
+
+  // Validity
+  validUntil DateTime
+
+  // Status
+  status QuoteStatus @default(DRAFT)
+
+  // Timeline
+  sentAt     DateTime?
+  viewedAt   DateTime?
+  acceptedAt DateTime?
+
+  // Payment
+  paymentLink String?
+  invoiceLink String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealId])
+  @@index([status])
+  @@index([validUntil])
+  @@map("quotes")
+}
+
+// DealEvent: Audit trail of deal changes
+model DealEvent {
+  id String @id @default(cuid())
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  eventType   String // stage_changed, offer_sent, escalated, closed, etc.
+  description String? @db.Text
+  details     Json?
+
+  performedBy String? // User ID or "AI_AGENT"
+
+  createdAt DateTime @default(now())
+
+  @@index([dealId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("deal_events")
+}
+
+// DealActivity: CRM interactions (calls, SMS, notes)
+model DealActivity {
+  id String @id @default(cuid())
+
+  dealId String
+  deal   Deal   @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  activityType String // call, sms, email, note
+  channel      String? // phone, sms, email, discord
+
+  summary String  @db.Text
+  notes   String? @db.Text
+
+  // Scheduling
+  scheduledFor DateTime?
+  completedAt  DateTime?
+
+  createdBy String?
+
+  createdAt DateTime @default(now())
+
+  @@index([dealId])
+  @@index([activityType])
+  @@map("deal_activities")
+}
+
+// RevenueEvent: Dashboard & attribution tracking
+model RevenueEvent {
+  id String @id @default(cuid())
+
+  eventType String // deal_won, deal_lost, quote_sent, payment_received, etc.
+
+  dealId     String?
+  quoteId    String?
+  customerId String?
+
+  value    Decimal? @db.Decimal(12, 2)
+  currency String   @default("USD")
+
+  details Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("revenue_events")
+}
+
+// FollowUpTask: Scheduled follow-ups (SMS, email, calls)
+model FollowUpTask {
+  id String @id @default(cuid())
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  // Scheduling
+  scheduledFor DateTime
+  sentAt       DateTime?
+  completedAt  DateTime?
+
+  // Content
+  channel  String // sms, email, call
+  message  String? @db.Text
+  template String? // Template name/ID
+
+  // Status (PENDING, SENT, DELIVERED, FAILED, CANCELLED)
+  status String @default("PENDING")
+
+  // Compliance
+  optOut Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([leadId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("follow_up_tasks")
 }
