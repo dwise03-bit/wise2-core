@@ -64,8 +64,20 @@ class BLEManager: NSObject, ObservableObject {
   private func identifyFieldpieceRole(_ name: String) -> FieldpieceToolRole {
     let upper = name.uppercased()
 
+    // Check most specific patterns first (avoid conflicts with generic keywords)
+
+    // Current clamps (JL3AA)
+    if upper.contains("JL3AA") || (upper.contains("CURRENT") && upper.contains("CLAMP")) {
+      return .currentClamp
+    }
+
+    // Pressure transducers (XDCR)
+    if upper.contains("TRANSDUCER") || upper.contains("XDCR") {
+      return .pressureTransducer
+    }
+
     // Pressure probes (JL3PR)
-    if upper.contains("JL3PR") || upper.contains("PRESS") {
+    if upper.contains("JL3PR") {
       if upper.contains("HIGH") || upper.contains("RED") || upper.contains("LIQ") {
         return .highSidePressure
       }
@@ -73,7 +85,7 @@ class BLEManager: NSObject, ObservableObject {
     }
 
     // Pipe clamps & temperature probes (JL3PC)
-    if upper.contains("JL3PC") || upper.contains("PIPE") || upper.contains("CLAMP") {
+    if upper.contains("JL3PC") || upper.contains("PIPE") {
       if upper.contains("LIQ") || upper.contains("HIGH") || upper.contains("RED") {
         return .liquidLineTemp
       }
@@ -89,13 +101,8 @@ class BLEManager: NSObject, ObservableObject {
     }
 
     // Clamp meters (SC480/SC680)
-    if upper.contains("SC4") || upper.contains("SC6") || upper.contains("CLAMP") || upper.contains("AMP") {
+    if upper.contains("SC4") || upper.contains("SC6") || upper.contains("METER") || upper.contains("AMP") {
       return .multimeter
-    }
-
-    // Current clamps (JL3AA)
-    if upper.contains("JL3AA") || upper.contains("CURRENT") {
-      return .currentClamp
     }
 
     // Manometers (SM480V)
@@ -104,7 +111,7 @@ class BLEManager: NSObject, ObservableObject {
     }
 
     // Liquid probes (JL3PT)
-    if upper.contains("JL3PT") || upper.contains("LIQUID") && upper.contains("PROBE") {
+    if upper.contains("JL3PT") || (upper.contains("LIQUID") && upper.contains("PROBE")) {
       return .liquidProbe
     }
 
@@ -116,11 +123,6 @@ class BLEManager: NSObject, ObservableObject {
     // Wireless probes (DL3WB)
     if upper.contains("DL3WB") || upper.contains("WIRELESS") || upper.contains("REMOTE") {
       return .wirelessProbe
-    }
-
-    // Pressure transducers
-    if upper.contains("TRANSDUCER") || upper.contains("XDCR") {
-      return .pressureTransducer
     }
 
     return .unknown
