@@ -3212,6 +3212,10 @@ model Lead {
   estimates     Estimate[]
   safetyEvents  SafetyEvent[]
 
+  // Revenue system relationships
+  deal      Deal?
+  leadScore LeadScore?
+
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([tenantId, createdAt])
@@ -6605,7 +6609,7 @@ model ReaperNote {
 // Deals - Sales pipeline management
 model Deal {
   id                String   @id @default(cuid())
-  leadId            String?
+  leadId            String?  @unique
   customerId        String?
   value             Decimal  @db.Decimal(12, 2)
   currency          String   @default("USD")
@@ -6627,8 +6631,9 @@ model Deal {
   updatedAt         DateTime @updatedAt
 
   // Relationships
-  events       DealEvent[]
-  activities   DealActivity[]
+  lead          Lead?       @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  events        DealEvent[]
+  activities    DealActivity[]
   revenueEvents RevenueEvent[]
 
   @@index([createdAt])
@@ -6659,6 +6664,7 @@ model LeadScore {
   updatedAt          DateTime @updatedAt
 
   // Relationships
+  lead             Lead?  @relation(fields: [leadId], references: [id], onDelete: Cascade)
   recommendedOffer Offer? @relation(fields: [recommendedOfferId], references: [id], onDelete: SetNull)
 
   @@index([leadId])
@@ -6682,6 +6688,7 @@ model Offer {
   billingCycle       String?  // monthly, annual
   includedFeatures   String[] @default([])
   excludedFeatures   String[] @default([])
+  allowedIndustries  String[] @default([])
   paymentTerms       String?
   standardDeliveryDays Int?
   aiClosable         Boolean  @default(false)
