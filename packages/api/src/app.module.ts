@@ -57,27 +57,27 @@ import { CommandCenterModule } from './command-center/command-center.module';
     //     return { uri: mongoUri };
     //   },
     // }),
-    // DISABLED: TypeORM blocking startup. Using Prisma for database access instead.
+    // TypeORM disabled - using Prisma for all database access
     // TypeOrmModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
     //   useFactory: (configService: ConfigService) => {
-    //     // Parse DATABASE_URL if provided and valid, otherwise use individual DB_* variables
-    //     const databaseUrl = configService.get('DATABASE_URL');
-    //     let dbConfig: any;
-    //
-    //     if (databaseUrl) {
-    //       // Parse DATABASE_URL format: postgresql://user:password@host:port/database
-    //       try {
-    //         const url = new URL(databaseUrl);
-    //         dbConfig = {
-    //           type: 'postgres',
-    //           host: url.hostname,
-    //           port: url.port ? parseInt(url.port, 10) : 5432,
-    //           username: url.username,
-    //           password: url.password,
-    //           database: url.pathname.replace('/', ''),
-    //         };
+        // Parse DATABASE_URL if provided and valid, otherwise use individual DB_* variables
+        const databaseUrl = configService.get('DATABASE_URL');
+        let dbConfig: any;
+
+        if (databaseUrl) {
+          // Parse DATABASE_URL format: postgresql://user:password@host:port/database
+          try {
+            const url = new URL(databaseUrl);
+            dbConfig = {
+              type: 'postgres',
+              host: url.hostname,
+              port: url.port ? parseInt(url.port, 10) : 5432,
+              username: url.username,
+              password: url.password,
+              database: url.pathname.replace('/', ''),
+            };
           } catch (error) {
             // Fall back to individual DB_* variables if DATABASE_URL parsing fails
             console.warn('DATABASE_URL invalid, using individual DB_* variables:', error instanceof Error ? error.message : String(error));
@@ -102,13 +102,13 @@ import { CommandCenterModule } from './command-center/command-center.module';
           };
         }
 
-    //     return {
-    //       ...dbConfig,
-    //       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    //       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-    //       migrationsRun: false,
-    //       synchronize: false,
-    //       logging: false,
+        return {
+          ...dbConfig,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+          migrationsRun: false,
+          synchronize: false,
+          logging: false,
     //     };
     //   },
     // }),
