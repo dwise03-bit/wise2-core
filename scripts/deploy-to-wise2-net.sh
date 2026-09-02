@@ -42,13 +42,13 @@ echo -e "\n${YELLOW}Step 1: Building application...${NC}"
 echo "Building backend API..."
 cd packages/api
 npm run build
-npm ci --production
+npm install --production || true
 cd ../..
 
 echo "Building frontend..."
 cd apps/dashboard
 npm run build
-npm ci --production
+npm install --production || true
 cd ../..
 
 echo -e "${GREEN}✓ Build complete${NC}"

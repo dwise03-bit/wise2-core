@@ -18,7 +18,7 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "@wise2/dashboard-shell": ["../../packages/dashboard-shell/src"],
       "@wise2/*": ["../../packages/*"]
     },
