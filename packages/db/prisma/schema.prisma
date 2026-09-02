@@ -6680,9 +6680,12 @@ model Offer {
   sku                String?  @unique
   basePrice          Decimal  @db.Decimal(12, 2)
   minimumPrice       Decimal  @db.Decimal(12, 2)
+  minBudget          Decimal  @default(1000) @db.Decimal(12, 2)
+  maxBudget          Decimal  @default(100000) @db.Decimal(12, 2)
   discountCeiling    Decimal  @default(0.20) @db.Decimal(5, 2)
   setupFee           Decimal  @default(0) @db.Decimal(12, 2)
   isRecurring        Boolean  @default(false)
+  isActive           Boolean  @default(true)
   recurringPrice     Decimal? @db.Decimal(12, 2)
   billingCycle       String?  // monthly, annual
   includedFeatures   String[] @default([])
@@ -6690,6 +6693,7 @@ model Offer {
   allowedIndustries  String[] @default([])
   paymentTerms       String?
   standardDeliveryDays Int?
+  escalationThreshold Int    @default(5)
   aiClosable         Boolean  @default(false)
   aiClosingPrompt    String?  @db.Text
   createdAt          DateTime @default(now())
@@ -6737,12 +6741,13 @@ model DealEvent {
 
 // Deal Activities - Activity tracking
 model DealActivity {
-  id          String   @id @default(cuid())
-  dealId      String
-  type        String
-  description String?  @db.Text
-  actor       String?
-  createdAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  dealId       String
+  type         String
+  activityType String   @default("update")  // update, note, call, email
+  description  String?  @db.Text
+  actor        String?
+  createdAt    DateTime @default(now())
 
   // Relationships
   deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
