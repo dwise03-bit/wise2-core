@@ -37,6 +37,7 @@ import { FieldtechModule } from './fieldtech/fieldtech.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
+import { CommandCenterModule } from './command-center/command-center.module';
 // import { AiPhoneModule } from './ai-phone/ai-phone.module'; // DISABLED: CallSessionManager type mismatches
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 
@@ -141,6 +142,7 @@ import { CherryCountModule } from './cherry-count/cherry-count.module';
     // CjaysModule, // DISABLED: depends on HermesModule
     // BusinessOsModule, // DISABLED: depends on HermesModule + AiPhoneModule
     CherryCountModule,
+    CommandCenterModule,
     // AiPhoneModule, // DISABLED: CallSessionManager type mismatches
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
