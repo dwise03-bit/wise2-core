@@ -3,38 +3,52 @@ import SwiftUI
 struct SenCereTabView: View {
   @EnvironmentObject var authManager: AuthManager
 
+  var brandConfig: BrandConfig {
+    authManager.currentBrandConfig
+  }
+
   var body: some View {
-    TabView {
-      // Home Tab
-      SenCereDashboardScreen()
-        .tabItem {
-          Label("Home", systemImage: "house.fill")
-        }
+    VStack(spacing: 0) {
+      // Brand Switcher
+      BrandSwitcher(
+        authManager: authManager,
+        config: brandConfig
+      )
 
-      // Projects Tab
-      SenCereProjectsScreen()
-        .tabItem {
-          Label("Projects", systemImage: "folder.fill")
-        }
+      // Main Tab View
+      TabView {
+        // Home Tab
+        SenCereDashboardScreen()
+          .tabItem {
+            Label("Home", systemImage: "house.fill")
+          }
 
-      // AI Assistant Tab
-      SenCereAIAssistantScreen()
-        .tabItem {
-          Label("Assistant", systemImage: "sparkles")
-        }
+        // Projects Tab
+        SenCereProjectsScreen()
+          .tabItem {
+            Label("Projects", systemImage: "folder.fill")
+          }
 
-      // Messages Tab
-      SenCereMessagesScreen()
-        .tabItem {
-          Label("Messages", systemImage: "message.fill")
-        }
+        // AI Assistant Tab
+        SenCereAIAssistantScreen()
+          .tabItem {
+            Label("Assistant", systemImage: "sparkles")
+          }
 
-      // Account Tab
-      SenCereProfileScreen()
-        .tabItem {
-          Label("Account", systemImage: "person.fill")
-        }
+        // Messages Tab
+        SenCereMessagesScreen()
+          .tabItem {
+            Label("Messages", systemImage: "message.fill")
+          }
+
+        // Account Tab
+        SenCereProfileScreen()
+          .tabItem {
+            Label("Account", systemImage: "person.fill")
+          }
+      }
+      .tint(brandConfig.primaryColor)
     }
-    .tint(.sencereGold)
+    .background(Color.black)
   }
 }

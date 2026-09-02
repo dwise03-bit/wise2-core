@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3F000403C /* SenCere/Design/SenCereColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000403D /* SenCere/Design/SenCereColors.swift */; };
+		3F000403E /* SenCere/Models/BrandConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F000403E /* SenCere/Models/BrandConfig.swift */; };
+		3F0004040 /* SenCere/Views/BrandSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004040 /* SenCere/Views/BrandSwitcher.swift */; };
 		3F0004020 /* SenCere/Views/SenCereDashboardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004021 /* SenCere/Views/SenCereDashboardScreen.swift */; };
 		3F0004022 /* SenCere/Views/SenCereProjectsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004023 /* SenCere/Views/SenCereProjectsScreen.swift */; };
 		3F0004024 /* SenCere/Views/SenCereMessagesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0004025 /* SenCere/Views/SenCereMessagesScreen.swift */; };
@@ -25,6 +27,8 @@
 
 /* Begin PBXFileReference section */
 		3F000403D /* SenCere/Design/SenCereColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Design/SenCereColors.swift; sourceTree = SOURCE_ROOT; };
+		3F000403E /* SenCere/Models/BrandConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Models/BrandConfig.swift; sourceTree = SOURCE_ROOT; };
+		3F0004040 /* SenCere/Views/BrandSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/BrandSwitcher.swift; sourceTree = SOURCE_ROOT; };
 		3F0004021 /* SenCere/Views/SenCereDashboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereDashboardScreen.swift; sourceTree = SOURCE_ROOT; };
 		3F0004023 /* SenCere/Views/SenCereProjectsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereProjectsScreen.swift; sourceTree = SOURCE_ROOT; };
 		3F0004025 /* SenCere/Views/SenCereMessagesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenCere/Views/SenCereMessagesScreen.swift; sourceTree = SOURCE_ROOT; };
@@ -52,7 +56,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3F0004048 /* SenCere */ = {
+		3F000403C /* SenCere */ = {
 			isa = PBXGroup;
 			children = (
 				3F0004037 /* SenCere/SenCereApp.swift */,
@@ -64,7 +68,9 @@
 				3F0004029 /* SenCere/Views/SenCereAddScreen.swift */,
 				3F000402B /* SenCere/Views/ProjectDetailScreen.swift */,
 				3F000402D /* SenCere/Views/SenCereTabView.swift */,
+				3F0004040 /* SenCere/Views/BrandSwitcher.swift */,
 				3F000402F /* SenCere/Models/SenCereModels.swift */,
+				3F000403E /* SenCere/Models/BrandConfig.swift */,
 				3F0004031 /* SenCere/Services/SenCereAPIService.swift */,
 				3F0004033 /* SenCere/Views/SenCereAIAssistantScreen.swift */,
 				3F0004035 /* SenCere/Services/AIAssistantService.swift */,
@@ -73,7 +79,7 @@
 			path = SenCere;
 			sourceTree = SOURCE_ROOT;
 		};
-		3F0004049 /* Products */ = {
+		3F000403D /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				3F000403A /* SenCere.app */,
@@ -84,8 +90,8 @@
 		3F000403E = {
 			isa = PBXGroup;
 			children = (
-				3F0004048 /* SenCere */,
-				3F0004049 /* Products */,
+				3F000403C /* SenCere */,
+				3F000403D /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,11 +100,11 @@
 /* Begin PBXNativeTarget section */
 		3F0004019 /* SenCere */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3F000403F /* Build configuration list for PBXNativeTarget "SenCere" */;
+			buildConfigurationList = 3F000403F;
 			buildPhases = (
-				3F0004040 /* Sources */,
+				3F0004042 /* Sources */,
 				3F000403B /* Frameworks */,
-				3F0004041 /* Resources */,
+				3F0004043 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -106,13 +112,13 @@
 			);
 			name = SenCere;
 			productName = SenCere;
-			productReference = 3F000403A /* SenCere.app */;
+			productReference = 3F000403A;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		3F0004042 /* Project object */ = {
+		3F0004044 = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
@@ -124,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3F0004043 /* Build configuration list for PBXProject "WISE2" */;
+			buildConfigurationList = 3F0004045;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -132,17 +138,17 @@
 				en,
 			);
 			mainGroup = 3F000403E;
-			productRefGroup = 3F0004049 /* Products */;
+			productRefGroup = 3F000403D;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3F0004019 /* SenCere */,
+				3F0004019,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3F0004041 /* Resources */ = {
+		3F0004043 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -152,11 +158,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3F0004040 /* Sources */ = {
+		3F0004042 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3F000403C /* SenCere/Design/SenCereColors.swift in Sources */,
+				3F000403E /* SenCere/Models/BrandConfig.swift in Sources */,
+				3F0004040 /* SenCere/Views/BrandSwitcher.swift in Sources */,
 				3F0004036 /* SenCere/SenCereApp.swift in Sources */,
 				3F0004020 /* SenCere/Views/SenCereDashboardScreen.swift in Sources */,
 				3F0004022 /* SenCere/Views/SenCereProjectsScreen.swift in Sources */,
@@ -176,7 +184,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		3F0004044 /* Debug */ = {
+		3F0004046 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -196,14 +204,13 @@
 			};
 			name = Debug;
 		};
-		3F0004045 /* Release */ = {
+		3F0004047 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9N5L62DHKJ;
 				EXECUTABLE_NAME = SenCere;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -216,12 +223,11 @@
 			};
 			name = Release;
 		};
-		3F0004046 /* Debug */ = {
+		3F0004048 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -276,12 +282,11 @@
 			};
 			name = Debug;
 		};
-		3F0004047 /* Release */ = {
+		3F0004049 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_DIALECT = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -336,22 +341,22 @@
 		3F000403F /* Build configuration list for PBXNativeTarget "SenCere" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3F0004044 /* Debug */,
-				3F0004045 /* Release */,
+				3F0004046,
+				3F0004047,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3F0004043 /* Build configuration list for PBXProject "WISE2" */ = {
+		3F0004045 /* Build configuration list for PBXProject "WISE2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3F0004046 /* Debug */,
-				3F0004047 /* Release */,
+				3F0004048,
+				3F0004049,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 3F0004042 /* Project object */;
+	rootObject = 3F0004044;
 }
