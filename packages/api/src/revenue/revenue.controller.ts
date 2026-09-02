@@ -146,11 +146,11 @@ export class RevenueController {
 
     const deal = await prisma.deal.findUnique({
       where: { id: dealId },
-      include: { lead: { include: { score: true } } },
+      include: { lead: { include: { leadScore: true } } },
     });
 
-    if (!deal || !deal.lead || !deal.lead.score) {
-      throw new Error('Deal, lead, or score not found');
+    if (!deal || !deal.lead || !deal.lead.leadScore) {
+      throw new Error('Deal, lead, or lead score not found');
     }
 
     const offer =
@@ -167,7 +167,7 @@ export class RevenueController {
     const context: ClosingContext = {
       deal,
       offer,
-      leadScore: deal.lead.score,
+      leadScore: deal.lead.leadScore!,
       customerId: deal.customerId || undefined,
     };
 
@@ -187,10 +187,10 @@ export class RevenueController {
 
     const deal = await prisma.deal.findUnique({
       where: { id: dealId },
-      include: { lead: { include: { score: true } } },
+      include: { lead: { include: { leadScore: true } } },
     });
 
-    if (!deal || !deal.lead || !deal.lead.score) {
+    if (!deal || !deal.lead || !deal.lead.leadScore) {
       throw new Error('Deal, lead, or score not found');
     }
 
@@ -207,7 +207,7 @@ export class RevenueController {
     const context: ClosingContext = {
       deal,
       offer,
-      leadScore: deal.lead.score,
+      leadScore: deal.lead.leadScore,
     };
 
     return this.closerService.handleObjection(context, body.objectionText);
@@ -237,10 +237,10 @@ export class RevenueController {
 
     const deal = await prisma.deal.findUnique({
       where: { id: dealId },
-      include: { lead: { include: { score: true } } },
+      include: { lead: { include: { leadScore: true } } },
     });
 
-    if (!deal || !deal.lead || !deal.lead.score) {
+    if (!deal || !deal.lead || !deal.lead.leadScore) {
       throw new Error('Deal, lead, or score not found');
     }
 
@@ -255,7 +255,7 @@ export class RevenueController {
     const context: ClosingContext = {
       deal,
       offer,
-      leadScore: deal.lead.score,
+      leadScore: deal.lead.leadScore,
     };
 
     return this.closerService.shouldEscalateTohuman(context);
@@ -524,7 +524,7 @@ export class RevenueController {
         revenue: totalRevenue._sum.value || 0,
       },
       topLeads: topLeads.map((sl) => ({
-        id: sl.lead.id,
+        id: sl.lead?.id || '',
         score: sl.totalScore,
         level: sl.level,
         recommended: sl.recommendedAction,
