@@ -17,7 +17,7 @@ import {
 } from 'discord.js';
 import { BotConfig, CommandHandler, EventHandler, PermissionContext, BotError } from './types';
 import Logger from './utils/Logger';
-import RateLimiter from './utils/RateLimiter';
+import { RateLimiter } from './utils/RateLimiter';
 import { Cache } from './utils/Cache';
 import { MessageQueue } from './queues/MessageQueue';
 import { AuditLogger } from './middleware/AuditLogger';

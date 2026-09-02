@@ -11,33 +11,21 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string>http://173.208.147.165/~dwise/apps/wise2-ios/WISE2.ipa</string>
-				</dict>
-				<dict>
-					<key>kind</key>
-					<string>display-image</string>
-					<key>url</key>
-					<string>http://173.208.147.165:3000/apps/wise2-ios/icon.png</string>
-				</dict>
-				<dict>
-					<key>kind</key>
-					<string>full-size-image</string>
-					<key>url</key>
-					<string>http://173.208.147.165:3000/apps/wise2-ios/icon-large.png</string>
+					<string>https://wisedefensellc.com/downloads/apps/wise2-ios/WISE2.ipa</string>
 				</dict>
 			</array>
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.wisedefense.fieldtech</string>
+				<string>com.sencerecreative.app</string>
 				<key>bundle-version</key>
-				<string>1.0.0</string>
+				<string>1</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>WISE² Field Tech</string>
+				<string>WISE²</string>
 				<key>release-notes</key>
 				<string>• Fieldpiece tool integration
 • Live diagnostics recording

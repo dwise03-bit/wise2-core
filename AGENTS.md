@@ -359,3 +359,6 @@ Every session should:
 ---
 
 **This kernel is the source of truth for WISE² operations. Update it when routing rules change, not during normal task execution.**
+# WISE² standard
+
+Before UI work, read `WISE2_UI_CONSTITUTION.md` and follow `WISE2_WORKFLOW_STANDARD.md`.

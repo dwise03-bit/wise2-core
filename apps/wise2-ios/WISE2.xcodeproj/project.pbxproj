@@ -52,7 +52,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3F000403C /* SenCere */ = {
+		3F0004048 /* SenCere */ = {
 			isa = PBXGroup;
 			children = (
 				3F0004037 /* SenCere/SenCereApp.swift */,
@@ -73,7 +73,7 @@
 			path = SenCere;
 			sourceTree = SOURCE_ROOT;
 		};
-		3F000403D /* Products */ = {
+		3F0004049 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				3F000403A /* SenCere.app */,
@@ -84,8 +84,8 @@
 		3F000403E = {
 			isa = PBXGroup;
 			children = (
-				3F000403C /* SenCere */,
-				3F000403D /* Products */,
+				3F0004048 /* SenCere */,
+				3F0004049 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,7 +132,7 @@
 				en,
 			);
 			mainGroup = 3F000403E;
-			productRefGroup = 3F000403D /* Products */;
+			productRefGroup = 3F0004049 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

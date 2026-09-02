@@ -10,6 +10,9 @@ import { BotOrchestrator } from './BotOrchestrator';
 import Logger from './utils/Logger';
 
 dotenv.config();
+// Reuse the existing WISE² root credential when a dedicated studio token is not configured.
+// The application ID must match the token's Discord application.
+dotenv.config({ path: '../../.env.production', override: false });
 
 const logger = Logger;
 
@@ -174,9 +177,9 @@ async function main(): Promise<void> {
         name: 'reaper-bot',
         config: {
           name: 'Reaper Bot',
-          token: process.env.REAPER_BOT_TOKEN || '',
-          clientId: process.env.REAPER_CLIENT_ID || '',
-          guildId: process.env.GUILD_ID || '',
+          token: process.env.REAPER_BOT_TOKEN || process.env.DISCORD_BOT_TOKEN || '',
+          clientId: process.env.REAPER_CLIENT_ID || process.env.DISCORD_CLIENT_ID || '',
+          guildId: process.env.GUILD_ID || process.env.DISCORD_GUILD_ID || '',
           intents: [
             GatewayIntentBits.Guilds,
             GatewayIntentBits.GuildMessages,
@@ -186,6 +189,8 @@ async function main(): Promise<void> {
           color: '#e74c3c',
         },
       },
+      { name: 'studio-session-bot', config: { name: 'Studio Session Bot', token: process.env.STUDIO_SESSION_BOT_TOKEN || '', clientId: process.env.STUDIO_SESSION_CLIENT_ID || '', guildId: process.env.GUILD_ID || '', intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages], description: 'Studio session lifecycle', color: '#7b2cbf' } },
+      { name: 'mix-review-bot', config: { name: 'Mix Review Bot', token: process.env.MIX_REVIEW_BOT_TOKEN || '', clientId: process.env.MIX_REVIEW_CLIENT_ID || '', guildId: process.env.GUILD_ID || '', intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages], description: 'Mix reviews and artifacts', color: '#4361ee' } },
     ];
 
     // Validate configurations
