@@ -78,30 +78,30 @@ import { CommandCenterModule } from './command-center/command-center.module';
     //           password: url.password,
     //           database: url.pathname.replace('/', ''),
     //         };
-          } catch (error) {
-            // Fall back to individual DB_* variables if DATABASE_URL parsing fails
-            console.warn('DATABASE_URL invalid, using individual DB_* variables:', error instanceof Error ? error.message : String(error));
-            dbConfig = {
-              type: 'postgres',
-              host: configService.get('DB_HOST') || 'localhost',
-              port: configService.get('DB_PORT') || 5432,
-              username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
-              password: configService.get('DB_PASSWORD') || 'wise2dev',
-              database: configService.get('DB_NAME') || 'wise2',
-            };
-          }
-        } else {
-          // Fallback to individual DB_* environment variables
-          dbConfig = {
-            type: 'postgres',
-            host: configService.get('DB_HOST') || 'localhost',
-            port: configService.get('DB_PORT') || 5432,
-            username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
-            password: configService.get('DB_PASSWORD') || 'wise2dev',
-            database: configService.get('DB_NAME') || 'wise2',
-          };
-        }
-
+    //       } catch (error) {
+    //         // Fall back to individual DB_* variables if DATABASE_URL parsing fails
+    //         console.warn('DATABASE_URL invalid, using individual DB_* variables:', error instanceof Error ? error.message : String(error));
+    //         dbConfig = {
+    //           type: 'postgres',
+    //           host: configService.get('DB_HOST') || 'localhost',
+    //           port: configService.get('DB_PORT') || 5432,
+    //           username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
+    //           password: configService.get('DB_PASSWORD') || 'wise2dev',
+    //           database: configService.get('DB_NAME') || 'wise2',
+    //         };
+    //       }
+    //     } else {
+    //       // Fallback to individual DB_* environment variables
+    //       dbConfig = {
+    //         type: 'postgres',
+    //         host: configService.get('DB_HOST') || 'localhost',
+    //         port: configService.get('DB_PORT') || 5432,
+    //         username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
+    //         password: configService.get('DB_PASSWORD') || 'wise2dev',
+    //         database: configService.get('DB_NAME') || 'wise2',
+    //       };
+    //     }
+    //
     //     return {
     //       ...dbConfig,
     //       entities: [__dirname + '/**/*.entity{.ts,.js}'],
