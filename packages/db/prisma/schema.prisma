@@ -6639,7 +6639,6 @@ model Deal {
   @@index([createdAt])
   @@index([ownerId])
   @@index([stage])
-  @@unique([leadId])
   @@map("deals")
 }
 
