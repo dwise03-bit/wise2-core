@@ -6738,6 +6738,9 @@ model DealActivity {
   actor       String?
   createdAt   DateTime @default(now())
 
+  // Relationships
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
   @@index([dealId])
   @@map("deal_activities")
 }
@@ -6753,6 +6756,9 @@ model RevenueEvent {
   currency  String   @default("USD")
   details   Json?
   createdAt DateTime @default(now())
+
+  // Relationships
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
 
   @@index([eventType])
   @@index([createdAt])
