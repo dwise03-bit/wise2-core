@@ -2,7 +2,7 @@
 
 ## Status
 
-Planning checkpoint created from the implementation handoff on 2026-09-01.
+Planning checkpoint created from the implementation handoff on 2026-09-01. A V1 scaffold was implemented and validated through APK installation on the connected Motorola device.
 
 The referenced approved design spec, `docs/superpowers/specs/2026-09-01-wise2-me-capture-android-design.md`, is not present in the current checkout. Implementation should not proceed past project scaffolding until that source of truth is restored or supplied.
 
@@ -35,9 +35,9 @@ adb install -r <APK confirmed by Gradle output>
 
 ## Current blockers
 
-- Approved design spec is missing from this checkout.
+- Approved design spec is missing from this checkout; the handoff was used as the functional source of truth.
 - `WISE2_UI_CONSTITUTION.md` and `WISE2_WORKFLOW_STANDARD.md` were not found during initial repository inspection.
-- No connected-device validation has been run yet.
+- Device launch/logcat smoke check passed; interactive capture/playback validation remains pending because the current scaffold still needs the CameraX recording pipeline.
 - The separate `wise2.net` repository is not present in this checkout, so its download page cannot be implemented from here without that repository/context.
 
 ## Decisions to preserve
