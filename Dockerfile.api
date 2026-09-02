@@ -23,8 +23,8 @@ COPY packages/db/prisma ./packages/db/prisma
 # Install dependencies with pnpm (monorepo needs full install for transitive deps)
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
-# Generate Prisma client for current environment (linux-musl on Alpine)
-RUN cd packages/db && npx prisma generate || true
+# Generate Prisma client for current environment (linux-musl)
+RUN cd packages/db && pnpm exec prisma generate
 
 # Copy API source and build it
 COPY packages/api/src ./packages/api/src
@@ -34,7 +34,7 @@ COPY packages/ai-phone/tsconfig.json ./packages/ai-phone/
 COPY packages/agent-framework/src ./packages/agent-framework/src
 COPY packages/agent-framework/tsconfig.json ./packages/agent-framework/
 RUN pnpm --filter @wise2/agent-framework build && pnpm --filter @wise2/ai-phone build
-RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc
+RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && pnpm exec tsc
 
 EXPOSE 3000
 
