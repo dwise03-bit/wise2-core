@@ -6793,3 +6793,201 @@ model FollowUpTask {
   @@index([scheduledFor])
   @@map("follow_up_tasks")
 }
+
+// ============================================================================
+// BLAKKHAIL ECOMMERCE BACKEND
+// ============================================================================
+
+// BLAKKHAIL Products
+model BlakkhailProduct {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  category    String   // t-shirt, hoodie, hat, etc.
+  basePrice   Decimal  @db.Decimal(10, 2)
+  image       String?
+  imageAlt    String?
+
+  // Inventory
+  stock           Int     @default(0)
+  lowStockAlert   Int     @default(10)
+  status          String  @default("ACTIVE") // ACTIVE, ARCHIVED, DISCONTINUED
+
+  // Metadata
+  brand           String  @default("BLAKKHAIL")
+  sizeGuideUrl    String?
+  careInstructions String? @db.Text
+
+  // Relationships
+  variants CartItem[] @relation("blakkhailProduct")
+  orders   BlakkhailOrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@map("blakkhail_products")
+}
+
+// BLAKKHAIL Shopping Cart
+model BlakkhailCart {
+  id          String   @id @default(cuid())
+  userId      String
+  sessionId   String?  // For guest checkout
+
+  items       CartItem[]
+  subtotal    Decimal  @db.Decimal(10, 2) @default(0)
+  tax         Decimal  @db.Decimal(10, 2) @default(0)
+  total       Decimal  @db.Decimal(10, 2) @default(0)
+
+  expiresAt   DateTime @default(dbgenerated("now() + interval '30 days'"))
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("blakkhail_carts")
+}
+
+// Cart Items
+model CartItem {
+  id          String   @id @default(cuid())
+  cartId      String
+  productId   String
+
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(10, 2)
+  size        String?  // XS, S, M, L, XL, XXL
+  color       String?  // Black, White, etc.
+
+  // Relationships
+  cart        BlakkhailCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     BlakkhailProduct @relation("blakkhailProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([cartId])
+  @@index([productId])
+  @@map("blakkhail_cart_items")
+}
+
+// BLAKKHAIL Orders
+model BlakkhailOrder {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  customerId      String?
+
+  // Customer Info
+  email           String
+  firstName       String
+  lastName        String
+  phone           String?
+
+  // Shipping Address
+  shippingAddress String   @db.Text
+  shippingCity    String
+  shippingState   String
+  shippingZip     String
+  shippingCountry String  @default("US")
+
+  // Billing Address
+  billingAddress  String?  @db.Text
+  billingCity     String?
+  billingState    String?
+  billingZip      String?
+  billingCountry  String?  @default("US")
+
+  // Order Details
+  items           BlakkhailOrderItem[]
+  subtotal        Decimal  @db.Decimal(10, 2)
+  tax             Decimal  @db.Decimal(10, 2)
+  shippingCost    Decimal  @db.Decimal(10, 2) @default(0)
+  total           Decimal  @db.Decimal(10, 2)
+
+  // Payment & Fulfillment
+  status          String   @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+  paymentStatus   String   @default("UNPAID") // UNPAID, PAID, REFUNDED
+  stripePaymentId String?  @unique
+
+  shippingTrackingNumber String?
+  shippingCarrier String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+
+  // Notes
+  notes           String?  @db.Text
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([paymentStatus])
+  @@map("blakkhail_orders")
+}
+
+model BlakkhailOrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+  size        String?
+  color       String?
+
+  // Relationships
+  order       BlakkhailOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     BlakkhailProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("blakkhail_order_items")
+}
+
+// Payment Processing
+model BlakkhailPayment {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+
+  stripePaymentIntentId String? @unique
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+
+  status          String   @default("PENDING") // PENDING, SUCCEEDED, FAILED, CANCELED
+  paymentMethod   String   // card, apple_pay, google_pay
+
+  metadata        Json?
+  errorMessage    String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@map("blakkhail_payments")
+}
+
+// Email Logs
+model BlakkhailEmailLog {
+  id          String   @id @default(cuid())
+  orderId     String?
+
+  recipientEmail String
+  subject     String
+  emailType   String   // order_confirmation, shipping_notification, refund
+
+  status      String   @default("SENT") // SENT, FAILED, BOUNCED
+  errorMessage String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([status])
+  @@map("blakkhail_email_logs")
+}
