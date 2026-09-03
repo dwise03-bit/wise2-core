@@ -49,6 +49,24 @@ async function fetchOllamaStatus(): Promise<{ status: string; count: number }> {
   }
 }
 
+// Fetch Codex remote status
+async function fetchCodexStatus(): Promise<string> {
+  try {
+    const response = await fetch('http://localhost:8080/api/health', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(5000), // 5 second timeout
+    });
+
+    if (!response.ok) return 'Offline';
+
+    const data = await response.json();
+    return data.status === 'healthy' ? 'Ready' : 'Offline';
+  } catch (error) {
+    return 'Offline';
+  }
+}
+
 // Fetch VPS status via API endpoint (will create this)
 async function fetchVpsStatus(): Promise<{
   docker: { healthy: number; total: number };
@@ -126,18 +144,19 @@ async function fetchTailscaleStatus(): Promise<string> {
 
 // Main function to fetch all system status
 export async function fetchSystemStatus(): Promise<SystemStatus> {
-  const [ollamaData, vpsData, gpuData, tailscaleStatus] = await Promise.all([
+  const [ollamaData, vpsData, gpuData, tailscaleStatus, codexStatus] = await Promise.all([
     fetchOllamaStatus(),
     fetchVpsStatus(),
     fetchGpuStatus(),
     fetchTailscaleStatus(),
+    fetchCodexStatus(),
   ]);
 
   return {
     wise2Core: {
       ollama: (ollamaData.status as any) || 'Unknown',
       hermes: 'Ready', // Will connect to actual service
-      codex: 'Ready', // Will connect to actual service
+      codex: (codexStatus as any) || 'Unknown',
       modelCount: ollamaData.count,
     },
     vpsOps: {
