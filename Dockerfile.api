@@ -25,12 +25,13 @@ RUN pnpm install --shamefully-hoist --recursive
 RUN cd packages/db && pnpm exec prisma generate
 
 # Copy API source
+COPY packages/ai-phone ./packages/ai-phone
 COPY packages/api ./packages/api
 COPY packages/db/prisma ./packages/db/prisma
 
 # Build with the package's canonical Nest compiler. This preserves decorator
 # metadata and fails the image build on actual TypeScript errors.
-RUN pnpm --filter @wise2/api build
+RUN pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
 
 EXPOSE 3000
 
