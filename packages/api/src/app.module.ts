@@ -1,6 +1,6 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm'; // DISABLED: using Prisma only
 // import { MongooseModule } from '@nestjs/mongoose'; // DEFERRED for Phase B
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -37,7 +37,9 @@ import { FieldtechModule } from './fieldtech/fieldtech.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
-// import { AiPhoneModule } from './ai-phone/ai-phone.module'; // DISABLED: CallSessionManager type mismatches
+import { CommandCenterModule } from './command-center/command-center.module';
+import { AiPhoneModule } from './ai-phone/ai-phone.module';
+import { CloudModule } from './v1/cloud/cloud.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 
 @Module({
@@ -56,60 +58,61 @@ import { CherryCountModule } from './cherry-count/cherry-count.module';
     //     return { uri: mongoUri };
     //   },
     // }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        // Parse DATABASE_URL if provided and valid, otherwise use individual DB_* variables
-        const databaseUrl = configService.get('DATABASE_URL');
-        let dbConfig: any;
-
-        if (databaseUrl) {
-          // Parse DATABASE_URL format: postgresql://user:password@host:port/database
-          try {
-            const url = new URL(databaseUrl);
-            dbConfig = {
-              type: 'postgres',
-              host: url.hostname,
-              port: url.port ? parseInt(url.port, 10) : 5432,
-              username: url.username,
-              password: url.password,
-              database: url.pathname.replace('/', ''),
-            };
-          } catch (error) {
-            // Fall back to individual DB_* variables if DATABASE_URL parsing fails
-            console.warn('DATABASE_URL invalid, using individual DB_* variables:', error instanceof Error ? error.message : String(error));
-            dbConfig = {
-              type: 'postgres',
-              host: configService.get('DB_HOST') || 'localhost',
-              port: configService.get('DB_PORT') || 5432,
-              username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
-              password: configService.get('DB_PASSWORD') || 'wise2dev',
-              database: configService.get('DB_NAME') || 'wise2',
-            };
-          }
-        } else {
-          // Fallback to individual DB_* environment variables
-          dbConfig = {
-            type: 'postgres',
-            host: configService.get('DB_HOST') || 'localhost',
-            port: configService.get('DB_PORT') || 5432,
-            username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
-            password: configService.get('DB_PASSWORD') || 'wise2dev',
-            database: configService.get('DB_NAME') || 'wise2',
-          };
-        }
-
-        return {
-          ...dbConfig,
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
-          migrationsRun: false,
-          synchronize: false,
-          logging: false,
-        };
-      },
-    }),
+    // DISABLED: TypeORM blocking startup. Using Prisma for database access instead.
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => {
+    //     // Parse DATABASE_URL if provided and valid, otherwise use individual DB_* variables
+    //     const databaseUrl = configService.get('DATABASE_URL');
+    //     let dbConfig: any;
+    //
+    //     if (databaseUrl) {
+    //       // Parse DATABASE_URL format: postgresql://user:password@host:port/database
+    //       try {
+    //         const url = new URL(databaseUrl);
+    //         dbConfig = {
+    //           type: 'postgres',
+    //           host: url.hostname,
+    //           port: url.port ? parseInt(url.port, 10) : 5432,
+    //           username: url.username,
+    //           password: url.password,
+    //           database: url.pathname.replace('/', ''),
+    //         };
+    //       } catch (error) {
+    //         // Fall back to individual DB_* variables if DATABASE_URL parsing fails
+    //         console.warn('DATABASE_URL invalid, using individual DB_* variables:', error instanceof Error ? error.message : String(error));
+    //         dbConfig = {
+    //           type: 'postgres',
+    //           host: configService.get('DB_HOST') || 'localhost',
+    //           port: configService.get('DB_PORT') || 5432,
+    //           username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
+    //           password: configService.get('DB_PASSWORD') || 'wise2dev',
+    //           database: configService.get('DB_NAME') || 'wise2',
+    //         };
+    //       }
+    //     } else {
+    //       // Fallback to individual DB_* environment variables
+    //       dbConfig = {
+    //         type: 'postgres',
+    //         host: configService.get('DB_HOST') || 'localhost',
+    //         port: configService.get('DB_PORT') || 5432,
+    //         username: configService.get('DB_USERNAME') || configService.get('DB_USER') || 'wise2',
+    //         password: configService.get('DB_PASSWORD') || 'wise2dev',
+    //         database: configService.get('DB_NAME') || 'wise2',
+    //       };
+    //     }
+    //
+    //     return {
+    //       ...dbConfig,
+    //       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    //       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+    //       migrationsRun: false,
+    //       synchronize: false,
+    //       logging: false,
+    //     };
+    //   },
+    // }),
     APIManagerModule,
     AuthModule,
     AdminModule,
@@ -141,7 +144,9 @@ import { CherryCountModule } from './cherry-count/cherry-count.module';
     // CjaysModule, // DISABLED: depends on HermesModule
     // BusinessOsModule, // DISABLED: depends on HermesModule + AiPhoneModule
     CherryCountModule,
-    // AiPhoneModule, // DISABLED: CallSessionManager type mismatches
+    CommandCenterModule,
+    AiPhoneModule,
+    CloudModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],

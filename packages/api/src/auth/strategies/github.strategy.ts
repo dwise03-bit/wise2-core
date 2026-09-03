@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-github2';
+import { Strategy } from 'passport-github2';
 import { ConfigService } from '@nestjs/config';
+
+type VerifyCallback = (error: unknown, user?: unknown) => void;
 
 interface GitHubProfile {
   id: number

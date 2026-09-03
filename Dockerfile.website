@@ -84,4 +84,4 @@ COPY --from=builder /app/apps/website/public ./apps/website/public
 
 EXPOSE 3001
 
-CMD ["node", "apps/website/server.js"]
+CMD ["sh", "-c", "HOSTNAME=0.0.0.0 node apps/website/server.js"]

@@ -26,6 +26,19 @@ export const BLAKKHAIL_LEGACY = {
     wordmark: '/sencere-assets/blakkhail/blakkhail-wordmark.png',
     skull: '/sencere-assets/blakkhail/piff-city-skull.png',
     dropAd: '/sencere-assets/blakkhail/blakkhail-drop-ad.png',
+    latestDrop: [
+      '/sencere-assets/blakkhail/latest-drop-01.jpg',
+      '/sencere-assets/blakkhail/latest-drop-02.jpg',
+      '/sencere-assets/blakkhail/latest-drop-03.jpg',
+    ],
+    productCutouts: {
+      strawberryFront: '/sencere-assets/blakkhail/latest-drop-01.jpg',
+      strawberryBack: '/sencere-assets/blakkhail/latest-drop-01.jpg',
+      berryFront: '/sencere-assets/blakkhail/latest-drop-02.jpg',
+      berryBack: '/sencere-assets/blakkhail/latest-drop-02.jpg',
+      peachFront: '/sencere-assets/blakkhail/latest-drop-03.jpg',
+      peachBack: '/sencere-assets/blakkhail/latest-drop-03.jpg',
+    },
     heroPhotos: [
       '/sencere-assets/legacy-blakkhail/home/P7210319.jpg',
       '/sencere-assets/legacy-blakkhail/home/P3190168.jpg',

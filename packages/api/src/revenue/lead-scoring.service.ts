@@ -433,7 +433,7 @@ export class LeadScoringService {
    */
   async getScoreSummary(
     leadId: string,
-  ): Promise<(LeadScore & { lead: Lead }) | null> {
+  ): Promise<(LeadScore & { lead: Lead | null }) | null> {
     return this.prisma.leadScore.findUnique({
       where: { leadId },
       include: { lead: true },

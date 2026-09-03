@@ -344,8 +344,7 @@ export class AICloserService {
     const deal = await this.prisma.deal.findUnique({
       where: { id: dealId },
       include: {
-        aiClosableOffer: true,
-        lead: { include: { score: true } },
+        lead: { include: { leadScore: true } },
       },
     });
 
@@ -357,10 +356,10 @@ export class AICloserService {
     let canClose = false;
     let nextAction = 'contact_prospect';
 
-    if (!deal.lead || !deal.lead.score) {
+    if (!deal.lead || !deal.lead.leadScore) {
       recommendations.push('No lead score - run scoring first');
-    } else if (deal.lead.score.level === 'CLOSING_READY') {
-      if (deal.aiClosableOffer) {
+    } else if (deal.lead.leadScore.level === 'CLOSING_READY') {
+      if (deal.aiClosableOfferId) {
         canClose = true;
         nextAction = 'send_offer';
         recommendations.push('Ready to send offer');
@@ -368,7 +367,7 @@ export class AICloserService {
         nextAction = 'assign_closer';
         recommendations.push('Lead ready but offer requires human closer');
       }
-    } else if (deal.lead.score.level === 'HOT') {
+    } else if (deal.lead.leadScore.level === 'HOT') {
       nextAction = 'follow_up';
       recommendations.push('Strong prospect - follow up with offer soon');
     } else {

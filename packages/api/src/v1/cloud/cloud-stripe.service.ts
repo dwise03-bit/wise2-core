@@ -8,7 +8,7 @@ export class CloudStripeService {
 
   constructor(private readonly configService: ConfigService) {
     this.stripe = new Stripe(this.configService.get<string>('STRIPE_SECRET_KEY') || '', {
-      apiVersion: '2023-10-16',
+      apiVersion: '2025-02-24.acacia',
       appInfo: {
         name: 'wise2-cloud',
         version: '1.0.0',

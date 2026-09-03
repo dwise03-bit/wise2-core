@@ -165,7 +165,6 @@ export class FollowUpService {
         scheduledFor: { lte: now },
         optOut: false,
       },
-      include: { lead: true },
       take: 50, // Process max 50 per run
     });
 

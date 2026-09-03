@@ -1,4 +1,4 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool, QueryResult, QueryResultRow } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -32,7 +32,7 @@ pool.on('connect', () => {
 /**
  * Execute query with connection pooling
  */
-export async function query<T = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+export async function query<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
   const start = Date.now();
   try {
     const result = await pool.query<T>(text, params);
@@ -48,7 +48,7 @@ export async function query<T = any>(text: string, params?: any[]): Promise<Quer
 /**
  * Get a single row
  */
-export async function getOne<T = any>(text: string, params?: any[]): Promise<T | null> {
+export async function getOne<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<T | null> {
   const result = await query<T>(text, params);
   return result.rows[0] || null;
 }
@@ -56,7 +56,7 @@ export async function getOne<T = any>(text: string, params?: any[]): Promise<T |
 /**
  * Get multiple rows
  */
-export async function getMany<T = any>(text: string, params?: any[]): Promise<T[]> {
+export async function getMany<T extends QueryResultRow = any>(text: string, params?: any[]): Promise<T[]> {
   const result = await query<T>(text, params);
   return result.rows;
 }
@@ -64,7 +64,7 @@ export async function getMany<T = any>(text: string, params?: any[]): Promise<T[
 /**
  * Insert a record
  */
-export async function insert<T = any>(table: string, data: Record<string, any>): Promise<T> {
+export async function insert<T extends QueryResultRow = any>(table: string, data: Record<string, any>): Promise<T> {
   const keys = Object.keys(data);
   const values = Object.values(data);
   const placeholders = keys.map((_, i) => `$${i + 1}`).join(',');
@@ -83,7 +83,7 @@ export async function insert<T = any>(table: string, data: Record<string, any>):
 /**
  * Update a record
  */
-export async function update<T = any>(
+export async function update<T extends QueryResultRow = any>(
   table: string,
   data: Record<string, any>,
   whereId: string,

@@ -3,14 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm with fixed version
+RUN npm install -g pnpm@8.15.9
 
 # Copy all files for workspace build
 COPY . .
 
-# Install dependencies with pnpm for workspace support
-RUN pnpm install --no-frozen-lockfile
+# Install dependencies - skip frozen lockfile and integrity check
+RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false 2>&1 || pnpm install --force --no-frozen-lockfile
 
 # Build Next.js app
 WORKDIR /app/apps/website

@@ -131,6 +131,7 @@ export class PhoneBridgeService {
       deal = await this.prisma.deal.create({
         data: {
           customerId: call.customerId,
+          value: 0, // Will be populated during qualification
           stage: 'DISCOVERY',
           status: 'OPEN',
           source: 'inbound_call',
@@ -198,10 +199,11 @@ export class PhoneBridgeService {
     await this.prisma.dealActivity.create({
       data: {
         dealId: deal.id,
+        type: 'call',
         activityType: 'call',
         channel: 'phone',
-        summary: event.summary || `Inbound call - ${event.duration}s`,
-        completedAt: new Date(),
+        description: event.summary || `Inbound call - ${event.duration}s`,
+        actor: 'PHONE_SYSTEM',
       },
     });
 

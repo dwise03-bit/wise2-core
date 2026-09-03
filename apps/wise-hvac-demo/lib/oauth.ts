@@ -206,3 +206,9 @@ export function clearAuthCookies(response: NextResponse) {
   response.cookies.delete('wise2_user');
   response.cookies.delete('google_oauth_state');
 }
+
+export function applyHandoffAuth(auth: WiseAuthResponse): NextResponse {
+  const response = NextResponse.redirect(getHvacAppUrl('/field-tech'));
+  applyAuthCookies(response, auth);
+  return response;
+}

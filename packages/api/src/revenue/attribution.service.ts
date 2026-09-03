@@ -96,13 +96,12 @@ export class AttributionService {
 
     const deals = await this.prisma.deal.findMany({
       where: startDate || endDate ? { closedAt: dateFilter } : {},
-      include: { owner: true },
     });
 
     const ownerMetrics = new Map<string, TeamMetrics>();
 
     for (const deal of deals) {
-      const ownerName = deal.owner?.name || deal.ownerId || 'Unassigned';
+      const ownerName = deal.ownerId || 'Unassigned';
 
       if (!ownerMetrics.has(ownerName)) {
         ownerMetrics.set(ownerName, {
@@ -259,15 +258,14 @@ export class AttributionService {
   async getTopDeals(limit: number = 10): Promise<any[]> {
     const deals = await this.prisma.deal.findMany({
       where: { stage: 'WON' },
-      include: { customer: true, owner: true },
       orderBy: { value: 'desc' },
       take: limit,
     });
 
     return deals.map((d) => ({
       id: d.id,
-      customer: d.customer?.businessName,
-      owner: d.owner?.name,
+      customerId: d.customerId,
+      ownerId: d.ownerId,
       value: d.value,
       stage: d.stage,
       closedAt: d.closedAt,

@@ -63,7 +63,7 @@ export function WiseImp() {
         ...(tourStop
           ? { top: tourStop.top, left: tourStop.left, bottom: 'auto', right: 'auto' }
           : {
-              bottom: 'max(20px, calc(20px + env(safe-area-inset-bottom)))',
+              bottom: 'max(84px, calc(84px + env(safe-area-inset-bottom)))',
               right: 'max(20px, calc(20px + env(safe-area-inset-right)))',
             }),
         transition: 'top 900ms ease, left 900ms ease',
@@ -216,17 +216,20 @@ export function WiseImp() {
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
         className="wise-imp-launcher"
         style={{
-          width: 64,
-          height: 64,
-          borderRadius: '50%',
-          background: 'rgba(13, 17, 23, 0.85)',
-          border: `1px solid ${GLOW_HEX[state.glowColor]}59`,
+          width: 300,
+          minWidth: 300,
+          height: 300,
+          borderRadius: 0,
+          background: 'transparent',
+          border: '0',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: 4,
-          transition: 'border-color 400ms ease, box-shadow 400ms ease',
+          padding: 0,
+          gap: 0,
+          flexDirection: 'column',
+          transition: 'filter 400ms ease',
           '--wimp-color-33': `${GLOW_HEX[state.glowColor]}33`,
           '--wimp-color-55': `${GLOW_HEX[state.glowColor]}55`,
           '--wimp-color-11': `${GLOW_HEX[state.glowColor]}11`,
@@ -236,7 +239,7 @@ export function WiseImp() {
         <WiseImpMascot
           glowColor={state.glowColor}
           mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
-          size={52}
+          size={300}
           breathing={!state.open}
         />
       </button>

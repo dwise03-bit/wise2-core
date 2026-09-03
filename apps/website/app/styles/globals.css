@@ -700,6 +700,14 @@ a.skip-link:focus {
 .wimp-float.wimp-think { animation: wimp-bob 3.2s ease-in-out infinite, wimp-think 1.2s ease-in-out infinite; }
 .wise-imp-launcher { animation: wimp-launcher-glow 2.8s ease-in-out infinite; }
 
+/* Keep the floating VPS companion fully visible on phone screens. */
+@media (max-width: 600px) {
+  .wise-imp-launcher {
+    transform: scale(0.58);
+    transform-origin: bottom right;
+  }
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .btn-glow-lime,

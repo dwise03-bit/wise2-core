@@ -3212,6 +3212,10 @@ model Lead {
   estimates     Estimate[]
   safetyEvents  SafetyEvent[]
 
+  // Revenue system relationships
+  deal      Deal?
+  leadScore LeadScore?
+
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([tenantId, createdAt])
@@ -6598,4 +6602,398 @@ model ReaperNote {
 
   @@index([prospectId])
   @@map("reaper_notes")
+}
+
+// ==================== REVENUE SYSTEM ====================
+
+// Deals - Sales pipeline management
+model Deal {
+  id                String   @id @default(cuid())
+  leadId            String?  @unique
+  customerId        String?
+  value             Decimal  @db.Decimal(12, 2)
+  currency          String   @default("USD")
+  stage             String   @default("DISCOVERY")  // DISCOVERY, QUALIFICATION, PROPOSAL, CLOSING, WON, LOST
+  status            String   @default("OPEN")
+  serviceType       String?
+  description       String?  @db.Text
+  ownerId           String?
+  discoveredAt      DateTime @default(now())
+  quotedAt          DateTime?
+  closedAt          DateTime?
+  aiClosableOfferId String?
+  escalationReason  String?
+  escalatedToHumanAt DateTime?
+  escalatedToHumanId String?
+  source            String?  // inbound, referral, campaign, direct
+  campaign          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relationships
+  lead          Lead?       @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  events        DealEvent[]
+  activities    DealActivity[]
+  revenueEvents RevenueEvent[]
+
+  @@index([createdAt])
+  @@index([ownerId])
+  @@index([stage])
+  @@map("deals")
+}
+
+// Lead Scoring - AI qualification
+model LeadScore {
+  id                 String   @id @default(cuid())
+  leadId             String   @unique
+  fitScore           Int      @default(0)
+  urgencyScore       Int      @default(0)
+  budgetScore        Int      @default(0)
+  authorityScore     Int      @default(0)
+  timelineScore      Int      @default(0)
+  intentScore        Int      @default(0)
+  engagementScore    Int      @default(0)
+  totalScore         Int      @default(0)
+  level              String   @default("COLD")  // COLD, WARM, HOT, CLOSING_READY
+  recommendedAction  String?
+  recommendedOfferId String?
+  lastCalculatedAt   DateTime @default(now())
+  formula            String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relationships
+  lead             Lead?  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  recommendedOffer Offer? @relation(fields: [recommendedOfferId], references: [id], onDelete: SetNull)
+
+  @@index([leadId])
+  @@index([level])
+  @@index([totalScore])
+  @@map("lead_scores")
+}
+
+// Offers - Service offerings
+model Offer {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  description        String?  @db.Text
+  sku                String?  @unique
+  basePrice          Decimal  @db.Decimal(12, 2)
+  minimumPrice       Decimal  @db.Decimal(12, 2)
+  minBudget          Decimal  @default(1000) @db.Decimal(12, 2)
+  maxBudget          Decimal  @default(100000) @db.Decimal(12, 2)
+  discountCeiling    Decimal  @default(0.20) @db.Decimal(5, 2)
+  setupFee           Decimal  @default(0) @db.Decimal(12, 2)
+  isRecurring        Boolean  @default(false)
+  isActive           Boolean  @default(true)
+  recurringPrice     Decimal? @db.Decimal(12, 2)
+  billingCycle       String?  // monthly, annual
+  includedFeatures   String[] @default([])
+  excludedFeatures   String[] @default([])
+  allowedIndustries  String[] @default([])
+  paymentTerms       String?
+  standardDeliveryDays Int?
+  escalationThreshold Int    @default(5)
+  aiClosable         Boolean  @default(false)
+  aiClosingPrompt    String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relationships
+  leadScoreRecommendations LeadScore[]
+
+  @@map("offers")
+}
+
+// Quotes - Formal proposals
+model Quote {
+  id              String   @id @default(cuid())
+  dealId          String?
+  offerId         String?
+  price           Decimal  @db.Decimal(12, 2)
+  basePrice       Decimal  @db.Decimal(12, 2)
+  discountAmount  Decimal  @default(0) @db.Decimal(12, 2)
+  finalPrice      Decimal  @db.Decimal(12, 2)
+  validUntil      DateTime
+  sentAt          DateTime?
+  status          String   @default("DRAFT")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([dealId])
+  @@map("quotes")
+}
+
+// Deal Events - Lifecycle audit trail
+model DealEvent {
+  id          String   @id @default(cuid())
+  dealId      String
+  eventType   String   // stage_changed, proposal_sent, deal_won, deal_lost, etc.
+  description String?  @db.Text
+  details     Json?
+  performedBy String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("deal_events")
+}
+
+// Deal Activities - Activity tracking
+model DealActivity {
+  id           String   @id @default(cuid())
+  dealId       String
+  type         String
+  activityType String   @default("update")  // update, note, call, email
+  channel      String?  // phone, email, sms, in-person
+  description  String?  @db.Text
+  actor        String?
+  createdAt    DateTime @default(now())
+
+  // Relationships
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@map("deal_activities")
+}
+
+// Revenue Events - Attribution tracking
+model RevenueEvent {
+  id        String   @id @default(cuid())
+  eventType String   // deal_won, deal_lost, deal_updated, etc.
+  dealId    String?
+  quoteId   String?
+  customerId String?
+  value     Decimal? @db.Decimal(12, 2)
+  currency  String   @default("USD")
+  details   Json?
+  createdAt DateTime @default(now())
+
+  // Relationships
+  deal Deal? @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("revenue_events")
+}
+
+// Follow-up Tasks - Automation scheduling
+model FollowUpTask {
+  id           String   @id @default(cuid())
+  leadId       String
+  channel      String   // sms, email, call
+  message      String?  @db.Text
+  scheduledFor DateTime
+  sentAt       DateTime?
+  status       String   @default("PENDING")
+  optOut       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([leadId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("follow_up_tasks")
+}
+
+// ============================================================================
+// BLAKKHAIL ECOMMERCE BACKEND
+// ============================================================================
+
+// BLAKKHAIL Products
+model BlakkhailProduct {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  category    String   // t-shirt, hoodie, hat, etc.
+  basePrice   Decimal  @db.Decimal(10, 2)
+  image       String?
+  imageAlt    String?
+
+  // Inventory
+  stock           Int     @default(0)
+  lowStockAlert   Int     @default(10)
+  status          String  @default("ACTIVE") // ACTIVE, ARCHIVED, DISCONTINUED
+
+  // Metadata
+  brand           String  @default("BLAKKHAIL")
+  sizeGuideUrl    String?
+  careInstructions String? @db.Text
+
+  // Relationships
+  variants CartItem[] @relation("blakkhailProduct")
+  orders   BlakkhailOrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@map("blakkhail_products")
+}
+
+// BLAKKHAIL Shopping Cart
+model BlakkhailCart {
+  id          String   @id @default(cuid())
+  userId      String
+  sessionId   String?  // For guest checkout
+
+  items       CartItem[]
+  subtotal    Decimal  @db.Decimal(10, 2) @default(0)
+  tax         Decimal  @db.Decimal(10, 2) @default(0)
+  total       Decimal  @db.Decimal(10, 2) @default(0)
+
+  expiresAt   DateTime @default(dbgenerated("now() + interval '30 days'"))
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([sessionId])
+  @@map("blakkhail_carts")
+}
+
+// Cart Items
+model CartItem {
+  id          String   @id @default(cuid())
+  cartId      String
+  productId   String
+
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(10, 2)
+  size        String?  // XS, S, M, L, XL, XXL
+  color       String?  // Black, White, etc.
+
+  // Relationships
+  cart        BlakkhailCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     BlakkhailProduct @relation("blakkhailProduct", fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([cartId])
+  @@index([productId])
+  @@map("blakkhail_cart_items")
+}
+
+// BLAKKHAIL Orders
+model BlakkhailOrder {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  customerId      String?
+
+  // Customer Info
+  email           String
+  firstName       String
+  lastName        String
+  phone           String?
+
+  // Shipping Address
+  shippingAddress String   @db.Text
+  shippingCity    String
+  shippingState   String
+  shippingZip     String
+  shippingCountry String  @default("US")
+
+  // Billing Address
+  billingAddress  String?  @db.Text
+  billingCity     String?
+  billingState    String?
+  billingZip      String?
+  billingCountry  String?  @default("US")
+
+  // Order Details
+  items           BlakkhailOrderItem[]
+  subtotal        Decimal  @db.Decimal(10, 2)
+  tax             Decimal  @db.Decimal(10, 2)
+  shippingCost    Decimal  @db.Decimal(10, 2) @default(0)
+  total           Decimal  @db.Decimal(10, 2)
+
+  // Payment & Fulfillment
+  status          String   @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+  paymentStatus   String   @default("UNPAID") // UNPAID, PAID, REFUNDED
+  stripePaymentId String?  @unique
+
+  shippingTrackingNumber String?
+  shippingCarrier String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+
+  // Notes
+  notes           String?  @db.Text
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([paymentStatus])
+  @@map("blakkhail_orders")
+}
+
+model BlakkhailOrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+  size        String?
+  color       String?
+
+  // Relationships
+  order       BlakkhailOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     BlakkhailProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("blakkhail_order_items")
+}
+
+// Payment Processing
+model BlakkhailPayment {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+
+  stripePaymentIntentId String? @unique
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD")
+
+  status          String   @default("PENDING") // PENDING, SUCCEEDED, FAILED, CANCELED
+  paymentMethod   String   // card, apple_pay, google_pay
+
+  metadata        Json?
+  errorMessage    String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@map("blakkhail_payments")
+}
+
+// Email Logs
+model BlakkhailEmailLog {
+  id          String   @id @default(cuid())
+  orderId     String?
+
+  recipientEmail String
+  subject     String
+  emailType   String   // order_confirmation, shipping_notification, refund
+
+  status      String   @default("SENT") // SENT, FAILED, BOUNCED
+  errorMessage String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([status])
+  @@map("blakkhail_email_logs")
 }

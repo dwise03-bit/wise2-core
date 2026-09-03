@@ -9,50 +9,56 @@ struct MainTabView: View {
 
   var body: some View {
     ZStack {
-      // Background
       Color.wise2Background
         .ignoresSafeArea()
 
-      VStack(spacing: 0) {
-        // Tab Content
-        TabView(selection: $selectedTab) {
-          // HOME Tab
+      TabView(selection: $selectedTab) {
+        // HOME Tab
+        NavigationStack {
           HomeScreen(selectedBusiness: $selectedBusiness)
-            .tag(0)
-            .tabItem {
-              Label("Home", systemImage: "house.fill")
-            }
-
-          // AI Tab
-          AIScreen()
-            .tag(1)
-            .tabItem {
-              Label("AI", systemImage: "sparkles")
-            }
-
-          // WORK Tab
-          WorkScreen()
-            .tag(2)
-            .tabItem {
-              Label("Work", systemImage: "briefcase.fill")
-            }
-
-          // SYSTEMS Tab
-          SystemsScreen()
-            .tag(3)
-            .tabItem {
-              Label("Systems", systemImage: "server.rack")
-            }
-
-          // MORE Tab
-          MoreScreen()
-            .tag(4)
-            .tabItem {
-              Label("More", systemImage: "ellipsis")
-            }
         }
-        .tabViewStyle(.automatic)
+        .tag(0)
+        .tabItem {
+          Label("Home", systemImage: "house.fill")
+        }
+
+        // AI Tab
+        NavigationStack {
+          AIScreen()
+        }
+        .tag(1)
+        .tabItem {
+          Label("AI", systemImage: "sparkles")
+        }
+
+        // WORK Tab
+        NavigationStack {
+          WorkScreen()
+        }
+        .tag(2)
+        .tabItem {
+          Label("Work", systemImage: "briefcase.fill")
+        }
+
+        // SYSTEMS Tab
+        NavigationStack {
+          SystemsScreen()
+        }
+        .tag(3)
+        .tabItem {
+          Label("Systems", systemImage: "server.rack")
+        }
+
+        // MORE Tab
+        NavigationStack {
+          MoreScreen()
+        }
+        .tag(4)
+        .tabItem {
+          Label("More", systemImage: "ellipsis")
+        }
       }
+      .tint(.wise2Primary)
     }
     .preferredColorScheme(.dark)
     .onAppear {

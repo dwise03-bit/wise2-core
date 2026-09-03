@@ -1,7 +1,5 @@
 # WISE² Customer Journey Compose (LEGACY — referenced by deploy.sh, deploy-prod, deploy-to-server)
 # The platform API architecture is defined in docker-compose.production.yml.
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:
@@ -32,6 +30,8 @@ services:
       context: .
       dockerfile: Dockerfile.api
     image: wise2-core-api:latest
+    # Explicitly clear stale entrypoints inherited by previously built API images.
+    entrypoint: []
     container_name: wise2-api
     restart: unless-stopped
     environment:
@@ -256,7 +256,7 @@ services:
     networks:
       - wise2
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3024/wise-hvac-demo/signin"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3024/wise-hvac-demo/signin"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -343,4 +343,7 @@ volumes:
 
 networks:
   wise2:
-    driver: bridge
+    # Production database/redis are managed on this shared network. Keeping
+    # it external prevents Compose project-name drift from isolating services.
+    external: true
+    name: wise2-net

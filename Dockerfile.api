@@ -1,6 +1,6 @@
 # NestJS API Dockerfile
 # Force rebuild: Discord module disabled 2026-08-27
-FROM node:18-slim
+FROM node:20-slim
 
 WORKDIR /app
 
@@ -10,32 +10,33 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -
 # Install pnpm
 RUN npm install -g pnpm@8.15.9
 
-# Copy package files and workspace config
+# Copy all package.json files for workspace resolution
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-
-# Copy monorepo workspace packages
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/ai-phone/package.json ./packages/ai-phone/
 COPY packages/agent-framework/package.json ./packages/agent-framework/
 COPY packages/db/prisma ./packages/db/prisma
 
-# Install dependencies with pnpm (monorepo needs full install for transitive deps)
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+# Install ALL workspace dependencies
+RUN pnpm install --shamefully-hoist --recursive
 
-# Generate Prisma client for current environment (linux-musl on Alpine)
-RUN cd packages/db && npx prisma generate || true
+# Generate Prisma client for current environment (linux-musl)
+RUN cd packages/db && pnpm exec prisma generate
 
-# Copy API source and build it
-COPY packages/api/src ./packages/api/src
-COPY packages/api/tsconfig.json ./packages/api/
-COPY packages/ai-phone/src ./packages/ai-phone/src
-COPY packages/ai-phone/tsconfig.json ./packages/ai-phone/
-COPY packages/agent-framework/src ./packages/agent-framework/src
-COPY packages/agent-framework/tsconfig.json ./packages/agent-framework/
-RUN pnpm --filter @wise2/agent-framework build && pnpm --filter @wise2/ai-phone build
-RUN rm -rf packages/api/dist packages/api/tsconfig.tsbuildinfo && cd packages/api && npx tsc --build
+# Copy API source
+COPY packages/ai-phone ./packages/ai-phone
+COPY packages/api ./packages/api
+COPY packages/db/prisma ./packages/db/prisma
+
+# Build with the package's canonical Nest compiler. This preserves decorator
+# metadata and fails the image build on actual TypeScript errors.
+RUN pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
 
 EXPOSE 3000
 
-CMD ["node", "packages/api/dist/main.js"]
+# Set NODE_PATH for dependency resolution and run compiled entry point
+ENV NODE_PATH=/app/node_modules
+WORKDIR /app
+ENTRYPOINT []
+CMD ["node", "--enable-source-maps", "packages/api/dist/main.js"]

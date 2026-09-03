@@ -1,7 +1,7 @@
 // SenCere Creative LLC - Product Catalog
 // Custom apparel, printing, fabrication, and creative services
 
-import { BLAKKHAIL_PRODUCT_IMAGES } from '@/lib/sencere/blakkhail-legacy';
+import { BLAKKHAIL_LEGACY, BLAKKHAIL_PRODUCT_IMAGES } from '@/lib/sencere/blakkhail-legacy';
 
 export interface ProductVariant {
   id: string;
@@ -257,6 +257,36 @@ export const SENCERE_PRODUCTS: Product[] = [
     ],
     available: true,
     badge: 'Creator Favorite',
+  },
+  {
+    id: 'strawberry-haze-hoodie',
+    name: 'Strawberry Haze Distressed Hoodie',
+    slug: 'strawberry-haze-hoodie',
+    brand: 'blakkhail', category: 'apparel',
+    description: 'Red distressed short-sleeve hoodie with custom cut-and-sew graphics.',
+    longDescription: 'A hand-finished Blakk Hail piece with raw edges, paint-wash texture, and a statement back graphic.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront, BLAKKHAIL_LEGACY.assets.productCutouts.strawberryBack],
+    features: ['Custom distressed finish', 'Front and back artwork', 'Unisex fit'],
+    variants: [{ id: 'strawberry-haze-hoodie-size', name: 'Strawberry Haze Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
+  },
+  {
+    id: 'berry-kush-hoodie', name: 'No Berry Kush Distressed Hoodie', slug: 'berry-kush-hoodie', brand: 'blakkhail', category: 'apparel',
+    description: 'Stone distressed hoodie with Piff City patchwork and rear skull graphic.',
+    longDescription: 'A raw, utility-minded layer built from a washed stone base and finished with sewn-on Piff City artwork.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.berryFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.berryFront, BLAKKHAIL_LEGACY.assets.productCutouts.berryBack],
+    features: ['Washed stone finish', 'Sewn patch details', 'Limited handmade run'],
+    variants: [{ id: 'berry-kush-hoodie-size', name: 'No Berry Kush Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
+  },
+  {
+    id: 'peach-control-hoodie', name: 'Peach Take Control Hoodie', slug: 'peach-control-hoodie', brand: 'blakkhail', category: 'apparel',
+    description: 'Peach wash short-sleeve hoodie with Piff City control graphic.',
+    longDescription: 'Soft peach pigment wash, oversized cut, and a bold back panel carrying the Blakk Hail command: Take Control.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.peachFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.peachFront, BLAKKHAIL_LEGACY.assets.productCutouts.peachBack],
+    features: ['Pigment-washed cotton', 'Oversized cut', 'Front pocket artwork'],
+    variants: [{ id: 'peach-control-hoodie-size', name: 'Peach Control Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
   },
   {
     id: 'chain-gang-black',
