@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@wise2/ai-phone": "workspace:*",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",

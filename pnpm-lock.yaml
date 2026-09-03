@@ -1071,6 +1071,9 @@ importers:
       '@prisma/client':
         specifier: ^5.0.0
         version: 5.22.0(prisma@5.22.0)
+      '@wise2/ai-phone':
+        specifier: workspace:*
+        version: link:../ai-phone
       agora-access-token:
         specifier: ^2.0.0
         version: 2.0.4
