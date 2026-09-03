@@ -16,10 +16,28 @@ export type ControlConfig = {
   allowedServices: string[];
   ollamaUrl: string;
   hermesUrl: string;
+  hermesImageUrl: string;
+  hermesBearerToken: string;
   wise2Url: string;
   apiHealthUrl: string;
   rateLimitMax: number;
   rateLimitWindowMs: number;
+};
+
+export type HermesImageReference = {
+  id: string;
+  url: string;
+  role?: 'LOCKED' | 'EDITABLE' | 'NEW';
+  kind?: 'person' | 'logo' | 'hardware' | 'screenshot' | 'approved-art' | 'other';
+  label?: string;
+};
+
+export type HermesImageRequest = {
+  instruction: string;
+  references?: HermesImageReference[];
+  deliverToDiscord?: boolean;
+  discordChannel?: 'builds' | 'alerts' | 'decisions' | 'images';
+  aspectRatio?: '1:1' | '4:5' | '16:9' | '9:16';
 };
 
 export type Envelope<T> = {
