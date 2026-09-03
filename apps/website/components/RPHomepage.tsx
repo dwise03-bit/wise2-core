@@ -289,6 +289,50 @@ export function RPHomepage() {
         </div>
       </section>
 
+      {/* Design Boards Gallery Section */}
+      <section className="relative px-6 py-24 lg:px-8 lg:py-32 bg-gradient-to-b from-[#0a0a0a] to-[#050505]">
+        <div className="mx-auto max-w-[1240px]">
+          <div className="mb-16">
+            <p className="mb-4 text-[10px] font-bold tracking-[.3em] text-[#0094FF]">DESIGN DIRECTION</p>
+            <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-[-.04em] md:text-6xl mb-6">
+              WISE² <span className="text-white/40">CHROMATIC</span>
+            </h2>
+            <p className="max-w-2xl text-white/70 text-lg">
+              Premium cinematic design system with iridescent materials, spectral metallics, and controlled neon accents.
+              Every visual locked to brand specification.
+            </p>
+          </div>
+
+          {/* Design Boards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              'a_hyper_detailed_full_bleed_ultra_crisp_neon_cy.png',
+              'cyberpunk_roleplay_legacy_dashboard.png',
+              'a_hyper_detailed_ultra_high_res_game_design_mast.png',
+              'a_highly_detailed_infographic_master_board_game.png',
+              'a_wide_high_detail_brand_visual_style_board_moodb.png',
+              'a_high_detail_ultra_clean_graphic_design_brand.png',
+              'a_high_detail_ultra_polished_branding_style_guide.png',
+              'a_high_detail_neon_cyber_ui_style_infographic_de.png',
+              'a_high_detail_infographic_poster_presentation_sl.png',
+            ].map((board, idx) => (
+              <div
+                key={board}
+                className="group relative overflow-hidden border border-white/10 aspect-video hover:border-[#0094FF]/50 transition-all duration-300"
+              >
+                <Image
+                  src={`/rp/${board}`}
+                  alt={`WISE² RP Design Board ${idx + 1}`}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative px-6 py-28 text-center lg:py-40 overflow-hidden">
         {/* Background Image */}
