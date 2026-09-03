@@ -1,4 +1,4 @@
-import { projects } from '@/data/projects';
+import { projects } from '@/lib/config/projects';
 import { Container, SectionHeading } from '@/components/wise';
 
 interface ProjectCardProps {

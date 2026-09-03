@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from './Button';
-import { wise2Content } from '@/data/wise2-content';
+import { wise2Content } from '@/lib/config/wise2-content';
 
 interface FormData {
   name: string;
