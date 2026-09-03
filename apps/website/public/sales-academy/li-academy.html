@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² Sales Academy - Long Island</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg-primary: #0A0E27;
+      --bg-secondary: #11152D;
+      --bg-tertiary: #1A1F3A;
+      --accent-green: #00FF41;
+      --accent-blue: #0080FF;
+      --text-primary: #E8E8E8;
+      --text-secondary: #A8A8C0;
+      --text-tertiary: #707090;
+      --border-color: #2A2F4A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 60px 40px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    h1 {
+      font-size: 48px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      color: var(--accent-green);
+    }
+
+    h2 {
+      font-size: 32px;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      color: var(--accent-green);
+    }
+
+    h3 {
+      font-size: 24px;
+      line-height: 1.3;
+      margin-bottom: 16px;
+      color: var(--accent-green);
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 40px 0;
+      margin-bottom: 60px;
+    }
+
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .location-badge {
+      display: inline-block;
+      background: var(--accent-blue);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .module-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 32px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent-green);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .module-card:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--accent-green);
+    }
+
+    .module-card:hover::before {
+      opacity: 1;
+    }
+
+    .module-number {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .module-title {
+      font-size: 20px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .module-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .module-topics {
+      list-style: none;
+      font-size: 13px;
+    }
+
+    .module-topics li {
+      padding: 6px 0;
+      color: var(--text-tertiary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .module-topics li:last-child {
+      border-bottom: none;
+    }
+
+    .key-points {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+
+    .key-points h4 {
+      color: var(--accent-blue);
+      margin-bottom: 16px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .key-points ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .key-points li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    .key-points li::before {
+      content: '→';
+      color: var(--accent-green);
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .lesson-block {
+      background: var(--bg-secondary);
+      border-left: 4px solid var(--accent-green);
+      border-radius: 8px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .lesson-block h3 {
+      color: var(--accent-green);
+      margin-bottom: 16px;
+    }
+
+    .hero {
+      margin-bottom: 60px;
+    }
+
+    .hero-content h1 {
+      color: var(--accent-green);
+      margin-bottom: 20px;
+    }
+
+    .hero-content p {
+      font-size: 18px;
+      max-width: 700px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 40px 24px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .header-content {
+        padding: 0 24px;
+      }
+
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="location-badge">🌊 Long Island Market</div>
+      <h1 style="margin-bottom: 12px; color: var(--accent-green);">WISE² Sales Academy</h1>
+      <p style="font-size: 16px; color: var(--text-secondary);">Master WISE² for Long Island's growing family businesses and service companies</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Welcome to WISE² Sales Academy</h1>
+        <p>Long Island is built on strong, family-owned businesses. Learn to sell WISE² to the owners and operators who are tired of spreadsheets, manual processes, and leaving money on the table. Help them scale smart, not just bigger.</p>
+      </div>
+    </section>
+
+    <div class="modules-grid">
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 1</div>
+        <h3 class="module-title">The WISE² Ecosystem</h3>
+        <p class="module-description">Navigate WISE²'s full offerings for Long Island businesses.</p>
+        <ul class="module-topics">
+          <li>Cloud & Infrastructure Services</li>
+          <li>Business OS & Automation</li>
+          <li>AI Phone & Virtual Assistants</li>
+          <li>Custom Solutions</li>
+        </ul>
+      </div>
+
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 2</div>
+        <h3 class="module-title">The Customer Journey</h3>
+        <p class="module-description">Long Island's proven sales path to bigger, faster deals.</p>
+        <ul class="module-topics">
+          <li>Greet & Build Rapport</li>
+          <li>Audit & Discover Needs</li>
+          <li>Review & Recommend</li>
+          <li>Plan & Close</li>
+        </ul>
+      </div>
+
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 3</div>
+        <h3 class="module-title">The Value Ladder</h3>
+        <p class="module-description">Five tiers for Long Island's business growth stage.</p>
+        <ul class="module-topics">
+          <li>Audit (Assessment)</li>
+          <li>Launch (Foundation)</li>
+          <li>Grow (Expansion)</li>
+          <li>Automate & Dominate</li>
+        </ul>
+      </div>
+
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 4</div>
+        <h3 class="module-title">Discovery Mastery</h3>
+        <p class="module-description">Ask the right questions for Long Island's business owners.</p>
+        <ul class="module-topics">
+          <li>Discovery Call Agenda</li>
+          <li>WISE² Audit Questionnaire</li>
+          <li>Pain Point Identification</li>
+          <li>ROI Calculation</li>
+        </ul>
+      </div>
+
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 5</div>
+        <h3 class="module-title">Demo & Proposal Mastery</h3>
+        <p class="module-description">Show solutions to Long Island's practical decision-makers.</p>
+        <ul class="module-topics">
+          <li>Product Demonstrations</li>
+          <li>Proposal Presentation Script</li>
+          <li>Business Case Framing</li>
+          <li>Scope Handoff</li>
+        </ul>
+      </div>
+
+      <div class="module-card" onclick="alert('Full Academy coming soon. View offer map and cheat sheet below.')">
+        <div class="module-number">Module 6</div>
+        <h3 class="module-title">Objection & Closing</h3>
+        <p class="module-description">Handle Long Island's budget and timeline concerns.</p>
+        <ul class="module-topics">
+          <li>Price Objections</li>
+          <li>Timing & Trust Issues</li>
+          <li>Competitive Responses</li>
+          <li>Closing Techniques</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lesson-block">
+      <h3>Long Island Market Reality</h3>
+      <p><strong>Long Island businesses are practical.</strong> They don't want flashy — they want results. They're bootstrapped or modest-growth companies. They know their numbers. They're skeptical of vendors who oversell. They respect evidence and references more than promises.</p>
+
+      <div class="key-points">
+        <h4>Key Long Island Dynamics</h4>
+        <ul>
+          <li>Mid-tier deal values ($8K–$35K typical, vs $15K–$75K in NYC)</li>
+          <li>Longer sales cycles (60–90 days, due diligence matters)</li>
+          <li>One or two decision-makers (owner + operator)</li>
+          <li>Emphasis on ROI and payback period (not just annual value)</li>
+          <li>References matter—they know people, they'll call them</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lesson-block">
+      <h3>Long Island Industries We Serve</h3>
+      <p>WISE² works with Nassau and Suffolk County businesses:</p>
+      <ul style="list-style: none; padding: 0;">
+        <li style="padding: 8px 0;">• <strong>HVAC, Plumbing, Electrical:</strong> Technician-dispatch companies that need scheduling, customer management, and dispatch optimization</li>
+        <li style="padding: 8px 0;">• <strong>Construction & Contracting:</strong> GCs and subs managing crews, jobs, and subcontractor payments</li>
+        <li style="padding: 8px 0;">• <strong>Retail & Local Businesses:</strong> Independent stores, restaurants, service shops needing POS + CRM + marketing</li>
+        <li style="padding: 8px 0;">• <strong>Professional Services:</strong> Dental, medical, accounting practices modernizing patient/client management</li>
+        <li style="padding: 8px 0;">• <strong>Family Businesses:</strong> Multi-generational operations ready to invest in systems and infrastructure</li>
+        <li style="padding: 8px 0;">• <strong>Automotive & Repair:</strong> Auto shops, body shops, collision centers managing work orders and customers</li>
+        <li style="padding: 8px 0;">• <strong>Real Estate & Property Mgmt:</strong> Local brokers and property managers scaling operations</li>
+      </ul>
+    </div>
+
+    <div class="lesson-block">
+      <h3>Long Island Pricing Reality</h3>
+      <p>Long Island customers are value-conscious but not cheap. They want to see the math. They'll invest if the ROI is clear.</p>
+
+      <div class="key-points">
+        <h4>Typical Long Island Deal Values</h4>
+        <ul>
+          <li>Audit: $3K–$5K (quick, focused assessment)</li>
+          <li>Launch: $8K–$15K (clean website + basic CRM)</li>
+          <li>Grow: $12K–$25K (marketing automation, lead nurture)</li>
+          <li>Automate: $20K–$50K (AI phone, workflows, integrations)</li>
+          <li>Dominate: $30K–$100K+ (custom, when business scales)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align: center; padding: 40px 0; border-top: 1px solid var(--border-color); margin-top: 60px;">
+      <h3 style="color: var(--accent-green); margin-bottom: 16px;">Ready to Sell on Long Island?</h3>
+      <p style="margin-bottom: 20px;">Full Academy coming soon. For now, access your Long Island tools:</p>
+      <a href="/sales-academy/li-offer-map.html" style="display: inline-block; background: var(--accent-green); color: var(--bg-primary); padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-right: 12px;">View Offer Map</a>
+      <a href="/sales-academy/li-cheat-sheet.html" style="display: inline-block; background: var(--accent-blue); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">Cheat Sheet</a>
+    </div>
+  </main>
+</body>
+</html>
