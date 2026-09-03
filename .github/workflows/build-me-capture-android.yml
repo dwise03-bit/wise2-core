@@ -13,7 +13,7 @@ on:
       - '.github/workflows/build-me-capture-android.yml'
 
 concurrency:
-  group: me-capture-android-${{ github.ref }}
+  group: me-capture-android-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
