@@ -31,6 +31,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/sencere', request.url));
   }
 
+  // Keep campaign links shareable while the storefront remains section-based.
+  if (pathname === '/latest-drop' || pathname === '/collection') {
+    return NextResponse.redirect(new URL('/sencere#latest-drop', request.url));
+  }
+
   if (
     pathname === '/sencere' ||
     pathname === '/sencere/' ||
