@@ -40,6 +40,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Configure Android SDK
+        run: printf 'sdk.dir=%s\n' "$ANDROID_HOME" > local.properties
+
       - name: Make wrapper executable
         run: chmod +x gradlew
 
