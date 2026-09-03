@@ -28,6 +28,12 @@ COPY --from=builder /app/apps/wise-hvac-demo/.next/standalone ./
 COPY --from=builder /app/apps/wise-hvac-demo/.next/static ./.next/static
 COPY --from=builder /app/apps/wise-hvac-demo/public ./public
 
+# pnpm workspace links are not portable across Docker stages. Install the
+# app's production dependencies so the standalone server can resolve Next.js
+# and its runtime packages in the final image.
+COPY --from=builder /app/apps/wise-hvac-demo/package.json ./package.json
+RUN npm install --omit=dev --ignore-scripts
+
 # Environment
 ENV NODE_ENV=production
 ENV PORT=3024
