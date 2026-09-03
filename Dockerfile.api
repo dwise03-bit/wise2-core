@@ -10,18 +10,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -
 # Install pnpm
 RUN npm install -g pnpm@8.15.9
 
-# Copy package files and workspace config
+# Copy all package.json files for workspace resolution
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-
-# Copy monorepo workspace packages
 COPY packages/api/package.json ./packages/api/
 COPY packages/db/package.json ./packages/db/
 COPY packages/ai-phone/package.json ./packages/ai-phone/
 COPY packages/agent-framework/package.json ./packages/agent-framework/
 COPY packages/db/prisma ./packages/db/prisma
 
-# Install dependencies with pnpm (monorepo needs full install for transitive deps)
-RUN pnpm install --shamefully-hoist
+# Install ALL workspace dependencies
+RUN pnpm install --shamefully-hoist --recursive
 
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
