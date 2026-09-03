@@ -20,6 +20,8 @@ REMOTE_HOST=dwise@host REMOTE_ROOT=/home/dwise/wise2-core \
 ## Ownership
 
 - `docker-compose.prod.yml` is the production service definition.
+- The production services use the external `wise2-net` network; never let
+  Compose create a project-scoped replacement network for production.
 - `apps/wise-hvac-demo/Dockerfile` owns the HVAC production image.
 - `infrastructure/nginx/` owns versioned nginx snippets and server blocks.
 - `/etc/nginx/sites-enabled/wise2.net` on the VPS is live edge configuration;

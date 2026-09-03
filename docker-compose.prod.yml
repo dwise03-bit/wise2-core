@@ -345,4 +345,7 @@ volumes:
 
 networks:
   wise2:
-    driver: bridge
+    # Production database/redis are managed on this shared network. Keeping
+    # it external prevents Compose project-name drift from isolating services.
+    external: true
+    name: wise2-net
