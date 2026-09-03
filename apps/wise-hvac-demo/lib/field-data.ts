@@ -77,6 +77,31 @@ export function listFieldJobs() {
   return jobs.map((job) => structuredClone(job));
 }
 
+const PERSISTED_JOBS_KEY = 'wise2_hvac_field_jobs';
+
+export function hydrateFieldJobs(nextJobs: FieldJob[]): FieldJob[] {
+  jobs.splice(0, jobs.length, ...nextJobs.map((job) => structuredClone(job)));
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(PERSISTED_JOBS_KEY, JSON.stringify(jobs));
+  }
+  return listFieldJobs();
+}
+
+export function loadPersistedFieldJobs(): FieldJob[] {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem(PERSISTED_JOBS_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as FieldJob[];
+        if (Array.isArray(parsed)) jobs.splice(0, jobs.length, ...parsed);
+      } catch {
+        window.localStorage.removeItem(PERSISTED_JOBS_KEY);
+      }
+    }
+  }
+  return listFieldJobs();
+}
+
 export function getFieldJob(id: string) {
   const job = jobs.find((item) => item.id === id);
   return job ? structuredClone(job) : null;
