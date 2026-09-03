@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-github2';
+import { Strategy } from 'passport-github2';
+import type { VerifyCallback } from 'passport';
 import { ConfigService } from '@nestjs/config';
 
 interface GitHubProfile {
