@@ -1,6 +1,6 @@
 # NestJS API Dockerfile
 # Force rebuild: Discord module disabled 2026-08-27
-FROM node:18-slim
+FROM node:20-slim
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ COPY packages/agent-framework/package.json ./packages/agent-framework/
 COPY packages/db/prisma ./packages/db/prisma
 
 # Install dependencies with pnpm (monorepo needs full install for transitive deps)
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm install --shamefully-hoist
 
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
