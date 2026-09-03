@@ -28,8 +28,9 @@ RUN cd packages/db && pnpm exec prisma generate
 COPY packages/api ./packages/api
 COPY packages/db/prisma ./packages/db/prisma
 
-# Build step: compile TypeScript with permissive settings
-RUN cd packages/api && npx tsc --target es2020 --module commonjs --moduleResolution node --skipLibCheck --noEmit false --declaration false --outDir dist --strict false src/main.ts src/**/*.ts 2>&1 | grep -v "error TS" || true
+# Build with the package's canonical Nest compiler. This preserves decorator
+# metadata and fails the image build on actual TypeScript errors.
+RUN pnpm --filter @wise2/api build
 
 EXPOSE 3000
 
