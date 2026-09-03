@@ -1,6 +1,6 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm'; // DISABLED: using Prisma only
 // import { MongooseModule } from '@nestjs/mongoose'; // DEFERRED for Phase B
 import { AuthModule } from './auth/auth.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -38,7 +38,7 @@ import { FieldtechModule } from './fieldtech/fieldtech.module';
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
 import { CommandCenterModule } from './command-center/command-center.module';
-// import { AiPhoneModule } from './ai-phone/ai-phone.module'; // DISABLED: CallSessionManager type mismatches
+import { AiPhoneModule } from './ai-phone/ai-phone.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 
 @Module({
@@ -144,7 +144,7 @@ import { CommandCenterModule } from './command-center/command-center.module';
     // BusinessOsModule, // DISABLED: depends on HermesModule + AiPhoneModule
     CherryCountModule,
     CommandCenterModule,
-    // AiPhoneModule, // DISABLED: CallSessionManager type mismatches
+    AiPhoneModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
