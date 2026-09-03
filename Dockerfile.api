@@ -24,19 +24,15 @@ RUN pnpm install --shamefully-hoist --recursive
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
 
-# Copy API source (skip TypeScript compilation - use ts-node at runtime)
+# Copy API source for compilation
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
-COPY packages/ai-phone/src ./packages/ai-phone/src
-COPY packages/ai-phone/tsconfig.json ./packages/ai-phone/
-COPY packages/agent-framework/src ./packages/agent-framework/src
-COPY packages/agent-framework/tsconfig.json ./packages/agent-framework/
 
-# Just ensure ts-node and ts-node-dev are available
-RUN npm install -g ts-node @types/node
+# Compile API with tsc (skip other packages to avoid type errors)
+RUN cd packages/api && npx tsc --skipLibCheck --noEmit false --outDir dist
 
 EXPOSE 3000
 
-# Run with ts-node to bypass TypeScript compilation issues
+# Run compiled API
 ENTRYPOINT []
-CMD ["node", "--loader=ts-node/esm", "--experimental-specifier-resolution=node", "packages/api/src/main.ts"]
+CMD ["node", "packages/api/dist/main.js"]
