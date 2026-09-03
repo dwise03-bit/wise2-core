@@ -8,7 +8,13 @@ class OTAUpdateManager: ObservableObject {
   @Published var isChecking = false
 
   private let manifestURL = URL(string: "http://173.208.147.165:3000/apps/wise2-ios/ota-manifest.plist")!
-  private let currentVersion = "1.0.0"
+
+  private var currentVersion: String {
+    if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+      return version
+    }
+    return "1.0.0"
+  }
 
   func checkForUpdates() async {
     DispatchQueue.main.async { self.isChecking = true }
@@ -46,8 +52,9 @@ class OTAUpdateManager: ObservableObject {
   func installUpdate() {
     guard let updateVersion = updateVersion else { return }
     let manifestURL = "http://173.208.147.165:3000/apps/wise2-ios/ota-manifest.plist"
+    let bundleID = Bundle.main.bundleIdentifier ?? "com.wise2.commandcenter.ios"
 
-    if let url = URL(string: "itms-services://?action=purchaseIntent&bundleId=com.wisedefense.fieldtech&url=\(manifestURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)") {
+    if let url = URL(string: "itms-services://?action=purchaseIntent&bundleId=\(bundleID)&url=\(manifestURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)") {
       UIApplication.shared.open(url) { success in
         print(success ? "✅ OTA install initiated" : "❌ Failed to open install link")
       }

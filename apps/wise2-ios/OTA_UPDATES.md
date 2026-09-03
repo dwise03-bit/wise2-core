@@ -77,7 +77,7 @@ Field technicians can install the update by:
 ## Installation Link Format
 
 ```
-itms-services://?action=purchaseIntent&bundleId=com.wisedefense.fieldtech&url=http://173.208.147.165:3000/apps/wise2-ios/ota-manifest.plist
+itms-services://?action=purchaseIntent&bundleId=com.wise2.commandcenter.ios&url=http://173.208.147.165:3000/apps/wise2-ios/ota-manifest.plist
 ```
 
 ---
@@ -125,7 +125,7 @@ To add background refresh:
 
 ### "Installation failed"
 - Check device has enough storage (app must fit uncompressed)
-- Verify bundle ID matches: `com.wisedefense.fieldtech`
+- Verify bundle ID matches: `com.wise2.commandcenter.ios`
 - Ensure device trusts your developer certificate
 
 ### "Manifest not found"
@@ -136,13 +136,15 @@ To add background refresh:
 
 ## Version Management
 
-Current version: `1.0.0` (defined in ota-manifest.plist)
+Current version: `1.0.3` (synced from CFBundleShortVersionString in Info.plist)
 
 Update process:
-1. Bump version in manifest
+1. Bump version in Xcode (Info.plist CFBundleShortVersionString)
 2. Build new IPA with same version
-3. Upload both files
-4. Technicians see "update available"
+3. Update bundle-version in ota-manifest.plist
+4. Upload both files
+5. App automatically detects newer version
+6. Technicians see "update available" prompt
 
 ---
 

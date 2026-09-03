@@ -42,7 +42,7 @@ if [ -f "$IOS_DIR/build/OTA/WISE2.ipa" ]; then
   echo "✅ OTA update published!"
   echo ""
   echo "🔗 Installation link:"
-echo "itms-services://?action=download-manifest&url=https://wisedefensellc.com/downloads/apps/wise2-ios/ota-manifest.plist"
+  echo "itms-services://?action=download-manifest&url=https://wisedefensellc.com/downloads/apps/wise2-ios/ota-manifest.plist"
 else
   echo "❌ Failed to build IPA"
   exit 1

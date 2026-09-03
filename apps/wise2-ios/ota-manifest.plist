@@ -17,15 +17,15 @@
 			<key>metadata</key>
 			<dict>
 				<key>bundle-identifier</key>
-				<string>com.sencerecreative.app</string>
+				<string>com.wise2.commandcenter.ios</string>
 				<key>bundle-version</key>
-				<string>1</string>
+				<string>1.0.3</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>WISE²</string>
+				<string>WISE² Command Center</string>
 				<key>release-notes</key>
 				<string>• Fieldpiece tool integration
 • Live diagnostics recording
