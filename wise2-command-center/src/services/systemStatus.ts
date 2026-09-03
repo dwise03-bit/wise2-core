@@ -52,11 +52,16 @@ async function fetchOllamaStatus(): Promise<{ status: string; count: number }> {
 // Fetch Codex remote status
 async function fetchCodexStatus(): Promise<string> {
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch('http://localhost:8080/api/health', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(5000), // 5 second timeout
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!response.ok) return 'Offline';
 
