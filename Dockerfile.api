@@ -33,6 +33,8 @@ RUN cd packages/api && npx tsc --target es2020 --module commonjs --moduleResolut
 
 EXPOSE 3000
 
-# Run compiled entry point
+# Set NODE_PATH for dependency resolution and run compiled entry point
+ENV NODE_PATH=/app/node_modules
+WORKDIR /app
 ENTRYPOINT []
-CMD ["node", "packages/api/dist/main.js"]
+CMD ["node", "--enable-source-maps", "packages/api/dist/main.js"]
