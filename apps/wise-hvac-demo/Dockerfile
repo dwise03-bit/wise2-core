@@ -9,7 +9,7 @@ COPY apps/wise-hvac-demo ./apps/wise-hvac-demo
 COPY packages ./packages
 
 # Install pnpm and dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN npm install -g pnpm@8.15.9 && pnpm install --frozen-lockfile
 
 # Build the app
 WORKDIR /app/apps/wise-hvac-demo
