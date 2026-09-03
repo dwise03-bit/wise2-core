@@ -39,6 +39,7 @@ import { FieldtechModule } from './fieldtech/fieldtech.module';
 import { CherryCountModule } from './cherry-count/cherry-count.module';
 import { CommandCenterModule } from './command-center/command-center.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
+import { CloudModule } from './v1/cloud/cloud.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 
 @Module({
@@ -145,6 +146,7 @@ import { AiPhoneModule } from './ai-phone/ai-phone.module';
     CherryCountModule,
     CommandCenterModule,
     AiPhoneModule,
+    CloudModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
