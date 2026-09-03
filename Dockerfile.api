@@ -33,6 +33,10 @@ RUN npm install -g ts-node typescript
 
 EXPOSE 3000
 
-# Run with ts-node - handles TypeScript at runtime with proper module resolution
+# Set NODE_PATH to find hoisted node_modules and run from root
+ENV NODE_PATH=/app/node_modules
+WORKDIR /app
+
+# Run with ts-node from root so modules resolve correctly
 ENTRYPOINT []
-CMD ["ts-node", "--transpile-only", "--project", "packages/api/tsconfig.json", "packages/api/src/main.ts"]
+CMD ["ts-node", "--transpile-only", "--skip-project", "packages/api/src/main.ts"]
