@@ -24,15 +24,15 @@ RUN pnpm install --shamefully-hoist --recursive
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
 
-# Copy API source
-COPY packages/api/src ./packages/api/src
-COPY packages/api/tsconfig.json ./packages/api/
+# Copy all source files (minimal)
+COPY packages/api ./packages/api
+COPY packages/db/prisma ./packages/db/prisma
 
-# Install tsx for type-safe execution without compilation
-RUN npm install -g tsx
+# Install ts-node globally for direct TypeScript execution
+RUN npm install -g ts-node typescript
 
 EXPOSE 3000
 
-# Run API directly with tsx (no compilation needed)
+# Run with ts-node - handles TypeScript at runtime with proper module resolution
 ENTRYPOINT []
-CMD ["tsx", "packages/api/src/main.ts"]
+CMD ["ts-node", "--transpile-only", "--project", "packages/api/tsconfig.json", "packages/api/src/main.ts"]
