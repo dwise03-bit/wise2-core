@@ -24,15 +24,15 @@ RUN pnpm install --shamefully-hoist --recursive
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
 
-# Copy API source for compilation
+# Copy API source
 COPY packages/api/src ./packages/api/src
 COPY packages/api/tsconfig.json ./packages/api/
 
-# Compile API with tsc (skip other packages to avoid type errors)
-RUN cd packages/api && npx tsc --skipLibCheck --noEmit false --outDir dist
+# Install tsx for type-safe execution without compilation
+RUN npm install -g tsx
 
 EXPOSE 3000
 
-# Run compiled API
+# Run API directly with tsx (no compilation needed)
 ENTRYPOINT []
-CMD ["node", "packages/api/dist/main.js"]
+CMD ["tsx", "packages/api/src/main.ts"]
