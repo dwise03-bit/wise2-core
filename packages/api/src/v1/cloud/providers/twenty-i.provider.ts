@@ -17,10 +17,6 @@ interface TwentyIPackageResponse {
   status?: string;
 }
 
-interface TwentyIProvisionResponse {
-  result?: number | string;
-}
-
 @Injectable()
 export class TwentyIProvider implements HostingProvider {
   private readonly logger = new Logger(TwentyIProvider.name);
@@ -62,18 +58,16 @@ export class TwentyIProvider implements HostingProvider {
     const body: Record<string, unknown> = {
       type: input.packageTypeId,
       domain_name: input.domainName,
+      label: input.label ?? input.domainName,
+      documentRoots: { [input.domainName]: 'public_html' },
     };
-
-    if (input.label) {
-      body.label = input.label;
-    }
 
     if (input.stackUserRef) {
       body.stackUser = input.stackUserRef;
     }
 
-    const response = await this.requireClient().post<TwentyIProvisionResponse>('/reseller/*/addWeb', body);
-    const externalId = String(response?.result ?? '');
+    const response = await this.requireClient().post<number | string>('/reseller/*/addWeb', body);
+    const externalId = String(response ?? '');
     if (!externalId) {
       throw new Error('20i provision response did not include a package id');
     }
