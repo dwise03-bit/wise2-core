@@ -1445,6 +1445,15 @@ importers:
         specifier: ^5.3.0
         version: 5.9.3
 
+  packages/wos-foundation:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+      vitest:
+        specifier: ^0.34.0
+        version: 0.34.6
+
   services/reaper-bridge:
     devDependencies:
       '@types/node':
@@ -5720,7 +5729,7 @@ packages:
   /@vitest/snapshot@0.34.6:
     resolution: {integrity: sha512-B3OZqYn6k4VaN011D+ve+AA4whM4QkcwcrwaKwAbyyvS/NB1hCWjFIBQxAQQSQir9/RtyAAGuq+4RJmbn2dH4w==}
     dependencies:
-      magic-string: 0.30.8
+      magic-string: 0.30.21
       pathe: 1.1.2
       pretty-format: 29.7.0
     dev: true
