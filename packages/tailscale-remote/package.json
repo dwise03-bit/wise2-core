@@ -15,7 +15,6 @@
     "@wise2/shared": "*",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "tailscale": "^1.0.0",
     "axios": "^1.4.0",
     "zod": "^3.22.0"
   },
