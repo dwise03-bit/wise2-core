@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Zap, Users, Layers, Trophy } from 'lucide-react';
 
@@ -67,11 +68,20 @@ export function RPHomepage() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-end justify-center pt-[74px] overflow-hidden">
-        {/* Animated background gradient */}
+        {/* Background Image */}
+        <Image
+          src="/rp/Build your empire in neon lights(1).png"
+          alt="Neon city skyline - build your empire"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+
+        {/* Animated gradient overlay */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0094FF]/20 via-[#0a0a0a] to-[#FF1493]/20 animate-pulse" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,148,255,0.1),rgba(10,10,10,0))]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_120%,rgba(255,20,147,0.1),rgba(10,10,10,0))]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a]/80 via-[#0a0a0a]/70 to-[#0a0a0a]/60" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,148,255,0.15),rgba(10,10,10,0))]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_120%,rgba(255,20,147,0.12),rgba(10,10,10,0))]" />
         </div>
 
         {/* Content */}
@@ -117,7 +127,18 @@ export function RPHomepage() {
       </section>
 
       {/* Progression Section */}
-      <section id="progression" className="relative border-y border-white/5 bg-[#050505] px-6 py-24 lg:px-8 lg:py-32">
+      <section id="progression" className="relative border-y border-white/5 px-6 py-24 lg:px-8 lg:py-32 overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/rp/Neon city at dusk with vibe(1).png"
+          alt="Neon city progression"
+          fill
+          className="object-cover object-center -z-10"
+        />
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#050505]/95 via-[#050505]/85 to-[#050505]/75 -z-10" />
+
         <div className="mx-auto max-w-[1240px]">
           <div className="mb-16">
             <p className="mb-4 text-[10px] font-bold tracking-[.3em] text-[#0094FF]">MULTI-DIMENSIONAL GROWTH</p>
@@ -180,7 +201,18 @@ export function RPHomepage() {
       </section>
 
       {/* Archetypes Section */}
-      <section id="archetypes" className="relative px-6 py-24 lg:px-8 lg:py-32">
+      <section id="archetypes" className="relative px-6 py-24 lg:px-8 lg:py-32 overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/rp/Vice City grand opening extravaganza(1).png"
+          alt="Vice City archetypes showcase"
+          fill
+          className="object-cover object-center -z-10"
+        />
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-l from-[#0a0a0a]/95 via-[#0a0a0a]/85 to-[#0a0a0a]/70 -z-10" />
+
         <div className="mx-auto max-w-[1240px]">
           <div className="mb-16">
             <p className="mb-4 text-[10px] font-bold tracking-[.3em] text-[#FF1493]">PLAYER ARCHETYPES</p>
@@ -258,9 +290,19 @@ export function RPHomepage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative px-6 py-28 text-center lg:py-40">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,148,255,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(255,20,147,0.08),transparent_60%)]" />
+      <section className="relative px-6 py-28 text-center lg:py-40 overflow-hidden">
+        {/* Background Image */}
+        <Image
+          src="/rp/Answer the call join the elite.png"
+          alt="Join the elite - call to action"
+          fill
+          className="object-cover object-center -z-10"
+        />
+
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/80 to-transparent -z-10" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,148,255,0.12),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(255,20,147,0.1),transparent_60%)]" />
 
         <div className="relative mx-auto max-w-3xl">
           <p className="mb-5 text-[10px] font-bold tracking-[.32em] text-[#0094FF]">READY TO RISE</p>
