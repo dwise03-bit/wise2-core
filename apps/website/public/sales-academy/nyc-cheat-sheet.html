@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² NYC Call Cheat Sheet</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg-primary: #0A0E27;
+      --bg-secondary: #11152D;
+      --bg-tertiary: #1A1F3A;
+      --accent-green: #00FF41;
+      --accent-blue: #0080FF;
+      --text-primary: #E8E8E8;
+      --text-secondary: #A8A8C0;
+      --text-tertiary: #707090;
+      --border-color: #2A2F4A;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent-green);
+      margin-bottom: 8px;
+    }
+
+    .header {
+      text-align: center;
+      border-bottom: 2px solid var(--accent-green);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .location-badge {
+      display: inline-block;
+      background: var(--accent-blue);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .subheader {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .section h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-blue);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .step {
+      background: var(--bg-tertiary);
+      border-left: 3px solid var(--accent-green);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .step-label {
+      font-weight: 700;
+      color: var(--accent-green);
+      margin-bottom: 2px;
+    }
+
+    .step-text {
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    .objection {
+      background: var(--bg-tertiary);
+      border-left: 3px solid #FF6B6B;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .objection-q {
+      font-weight: 700;
+      color: #FF6B6B;
+      margin-bottom: 4px;
+    }
+
+    .objection-a {
+      color: var(--text-secondary);
+      padding-left: 8px;
+      border-left: 2px solid var(--accent-green);
+    }
+
+    .script {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .quick-ref {
+      background: var(--bg-tertiary);
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+
+    .quick-ref strong {
+      color: var(--accent-green);
+    }
+
+    .cta-section {
+      background: var(--bg-secondary);
+      border: 2px solid var(--accent-green);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .cta-section h3 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-green);
+      margin-bottom: 8px;
+    }
+
+    .cta-list {
+      list-style: none;
+      font-size: 11px;
+    }
+
+    .cta-list li {
+      padding: 4px 0;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cta-list li:last-child {
+      border-bottom: none;
+    }
+
+    .cta-list li::before {
+      content: '✓ ';
+      color: var(--accent-green);
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="location-badge">🗽 New York City</div>
+      <h1>WISE² SALES CHEAT SHEET</h1>
+      <div class="subheader">NYC Market • Print & Reference During Calls</div>
+    </div>
+
+    <div class="cta-section">
+      <h3>📞 BEFORE EVERY CALL</h3>
+      <ul class="cta-list">
+        <li>Research company on LinkedIn (funding stage, growth trajectory, team size)</li>
+        <li>Identify decision-maker (usually CEO/COO in startups, CFO in enterprises)</li>
+        <li>Update CRM with contact info BEFORE dialing</li>
+        <li>Have this cheat sheet open + offer map visible</li>
+        <li>Sound confident. NYC people smell hesitation.</li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <!-- LEFT: CALL FLOW -->
+      <div>
+        <div class="section">
+          <h3>⏱️ Discovery Call Flow (45 min for NYC)</h3>
+
+          <div class="step">
+            <div class="step-label">0-3 min: GREET</div>
+            <div class="step-text">"Hi [name], this is [you] from WISE². I work with [industry] companies in NYC on [specific outcome]. Quick question: are you dealing with [specific problem] right now?"</div>
+          </div>
+
+          <div class="step">
+            <div class="step-label">3-20 min: AUDIT</div>
+            <div class="step-text">"Tell me about your current situation. What's working? What's costing you time or money? If you could snap your fingers and fix one thing, what would it be?"</div>
+          </div>
+
+          <div class="step">
+            <div class="step-label">20-35 min: REVIEW</div>
+            <div class="step-text">"Based on what you've told me, most [industry] companies face [problem]. I've worked with companies like [similar company] who solved this in [timeframe]. Here's how:"</div>
+          </div>
+
+          <div class="step">
+            <div class="step-label">35-45 min: CLOSE</div>
+            <div class="step-text">"For your situation, I'd recommend starting with [Phase]. This would position you to [specific outcome]. Are you open to exploring this further?"</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>🎯 NYC Elevator Pitches</h3>
+
+          <div class="quick-ref"><strong>15 sec:</strong> "WISE² helps NYC companies automate their back-office and close more deals. We save time and money—predictably."</div>
+
+          <div class="quick-ref"><strong>30 sec:</strong> "We work with startups and agencies in NYC who are growing fast but can't keep up administratively. Most lose 30% of sales leads to slow response. WISE² fixes that—your team responds in 2 hours instead of 2 days."</div>
+
+          <div class="quick-ref"><strong>60 sec:</strong> "I'll give you an example: a Series B fintech company was losing deal momentum because their response time was 48+ hours. We implemented CRM + AI phone. They cut response time to 4 hours, doubled conversion rate in 90 days. $3M revenue impact in year one. Same story across agencies, consulting firms, real estate. I'm thinking there's probably a fit for your business."</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: OBJECTIONS -->
+      <div>
+        <div class="section">
+          <h3>🚧 NYC Objection Responses</h3>
+
+          <div class="objection">
+            <div class="objection-q">"We're already using [Salesforce/HubSpot/other]"</div>
+            <div class="objection-a">"Totally fair. Here's what I hear from companies like yours: they have the tool, but the workflow isn't optimized for your specific operation. We specialize in taking that tool and building the automation + intelligence layer that makes it actually work for your team. Want to see how that works?"</div>
+          </div>
+
+          <div class="objection">
+            <div class="objection-q">"Price is too high / We don't have budget"</div>
+            <div class="objection-a">"I understand. Let me ask: if we could save your team 15+ hours per week on admin work—what's that worth? At $75/hr loaded cost, that's $1,200/week, $60K/year. Most of our clients recoup investment in first project. Sound reasonable?"</div>
+          </div>
+
+          <div class="objection">
+            <div class="objection-q">"This is too complex / Our business is too unique"</div>
+            <div class="objection-a">"That's actually why we exist. Off-the-shelf tools don't work for companies like yours. That's the whole point of the 'Dominate' tier—we build custom systems. We've done this with [similar company]. Let's explore what's actually needed."</div>
+          </div>
+
+          <div class="objection">
+            <div class="objection-q">"Let me think about it / We'll get back to you"</div>
+            <div class="objection-a">"Of course. What specifically do you want to think through? [Listen]. Here's the thing: for every month you delay, you're leaving $[calculate monthly impact] on the table. How about we schedule a follow-up for [specific day] to discuss further?"</div>
+          </div>
+
+          <div class="objection">
+            <div class="objection-q">"Can you send me information?"</div>
+            <div class="objection-a">"Happy to. But here's what usually happens: you read it, it makes sense, and then it sits in your inbox. What if instead, I send it to you, and we hop on a call [specific time] so I can answer your questions directly?"</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>⚡ NYC Sales Rules</h3>
+
+          <div class="quick-ref">✓ <strong>Move fast:</strong> NYC people respect speed. If you say "next Friday," be ready Tuesday.</div>
+
+          <div class="quick-ref">✗ <strong>Never BS:</strong> They'll catch it. Admit what you don't know, offer to get back to them.</div>
+
+          <div class="quick-ref">✓ <strong>Show ROI math:</strong> They want to see the calculation, not a feeling.</div>
+
+          <div class="quick-ref">✗ <strong>Don't oversell:</strong> Start small (Audit), prove it, then grow.</div>
+
+          <div class="quick-ref">✓ <strong>Log EVERYTHING:</strong> CRM is law. Especially in NYC where deals move fast.</div>
+
+          <div class="quick-ref">✗ <strong>Don't invent scope:</strong> Escalate custom asks to Daniel. Now.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Print this sheet. Keep it at your desk. Update as you learn what works in NYC.
+    </div>
+  </div>
+</body>
+</html>

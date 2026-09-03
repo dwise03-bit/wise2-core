@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² Sales Training Hub</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg-primary: #0A0E27;
+      --bg-secondary: #11152D;
+      --bg-tertiary: #1A1F3A;
+      --accent-green: #00FF41;
+      --accent-blue: #0080FF;
+      --text-primary: #E8E8E8;
+      --text-secondary: #A8A8C0;
+      --text-tertiary: #707090;
+      --border-color: #2A2F4A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 60px 40px; }
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 700; color: var(--accent-green); margin-bottom: 12px; }
+    .tagline { font-size: 20px; color: var(--text-secondary); margin-bottom: 24px; }
+    .market-selector { display: flex; gap: 12px; margin-bottom: 40px; justify-content: center; flex-wrap: wrap; }
+    .market-btn { background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .market-btn.active { background: var(--accent-green); color: var(--bg-primary); border-color: var(--accent-green); }
+    .market-btn:hover { border-color: var(--accent-green); }
+    .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 60px; }
+    .card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 32px; transition: all 0.3s; display: flex; flex-direction: column; }
+    .card:hover { border-color: var(--accent-green); transform: translateY(-4px); }
+    .card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--accent-green); margin-bottom: 12px; }
+    .card p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 20px; flex: 1; }
+    .card-link { display: inline-block; background: var(--accent-green); color: var(--bg-primary); padding: 10px 20px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 13px; text-transform: uppercase; cursor: pointer; border: none; font-family: 'Inter', sans-serif; }
+    .card-link:hover { background: var(--accent-blue); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h1>WISE² Sales Training Hub</h1>
+      <p class="tagline">Select your market:</p>
+      <div class="market-selector">
+        <button class="market-btn active" onclick="loadMarket('nc')">🏠 North Carolina</button>
+        <button class="market-btn" onclick="loadMarket('nyc')">🗽 New York City</button>
+        <button class="market-btn" onclick="loadMarket('li')">🌊 Long Island</button>
+      </div>
+    </div>
+
+    <div id="market-content"></div>
+  </div>
+
+  <script>
+    const markets = {
+      nc: { name: 'North Carolina', modules: [
+        { title: 'Sales Academy', icon: '🎓', href: '/sales-academy/nc-academy.html' },
+        { title: 'Offer Map', icon: '💰', href: '/sales-academy/nc-offer-map.html' },
+        { title: 'Cheat Sheet', icon: '📋', href: '/sales-academy/nc-cheat-sheet.html' },
+        { title: 'Service Playbook', icon: '📚', href: '/sales-academy/nc-playbook.html' },
+        { title: 'Operations Toolkit', icon: '⚙️', href: '/sales-academy/nc-toolkit.html' },
+        { title: 'Role-Plays & Cert', icon: '🎯', href: '/sales-academy/nc-roleplay.html' }
+      ]},
+      nyc: { name: 'New York City', modules: [
+        { title: 'Sales Academy', icon: '🎓', href: '/sales-academy/nyc-academy.html' },
+        { title: 'Offer Map', icon: '💰', href: '/sales-academy/nyc-offer-map.html' },
+        { title: 'Cheat Sheet', icon: '📋', href: '/sales-academy/nyc-cheat-sheet.html' }
+      ]},
+      li: { name: 'Long Island', modules: [
+        { title: 'Sales Academy', icon: '🎓', href: '/sales-academy/li-academy.html' },
+        { title: 'Offer Map', icon: '💰', href: '/sales-academy/li-offer-map.html' },
+        { title: 'Cheat Sheet', icon: '📋', href: '/sales-academy/li-cheat-sheet.html' }
+      ]}
+    };
+
+    function loadMarket(market) {
+      document.querySelectorAll('.market-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      const m = markets[market];
+      const html = `<h2 style="color: var(--accent-green); margin-bottom: 24px;">${m.name} Training Materials</h2>
+        <div class="hub-grid">
+          ${m.modules.map(mod => `
+            <div class="card">
+              <div style="font-size: 36px; margin-bottom: 12px;">${mod.icon}</div>
+              <h2>${mod.title}</h2>
+              <p>Click to access ${mod.title.toLowerCase()} for ${m.name}</p>
+              <a href="${mod.href}" class="card-link">Open Now</a>
+            </div>
+          `).join('')}
+        </div>`;
+      document.getElementById('market-content').innerHTML = html;
+    }
+
+    loadMarket('nc');
+  </script>
+</body>
+</html>
