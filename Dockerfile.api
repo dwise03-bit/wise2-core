@@ -35,8 +35,10 @@ EXPOSE 3000
 
 # Set NODE_PATH to find hoisted node_modules and run from root
 ENV NODE_PATH=/app/node_modules
+ENV TS_NODE_TRANSPILE_ONLY=true
+ENV TS_NODE_SKIP_PROJECT=true
 WORKDIR /app
 
-# Run with ts-node from root so modules resolve correctly
+# Run with ts-node with transpile-only to skip type checking
 ENTRYPOINT []
-CMD ["ts-node", "--transpile-only", "--skip-project", "packages/api/src/main.ts"]
+CMD ["ts-node", "--transpile-only", "packages/api/src/main.ts"]
