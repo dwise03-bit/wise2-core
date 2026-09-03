@@ -1,11 +1,4 @@
-/**
- * OBS WebSocket API Client
- * Integration with OBS (Open Broadcaster Software) for stream control
- *
- * This module provides a typed client for interacting with OBS via WebSocket.
- * It handles scene management, source control, and streaming control.
- */
-
+import OBSWebSocket from 'obs-websocket-js';
 import { ObsScene, ObsSource, ObsStreamStats } from '@/types/api';
 
 export interface ObsConfig {
@@ -13,166 +6,68 @@ export interface ObsConfig {
   port: number;
   password?: string;
   timeout?: number;
+  secure?: boolean;
 }
 
-/**
- * OBS WebSocket API Client
- * Manages all interactions with OBS
- */
+export class ObsError extends Error {
+  constructor(message: string, public code: string) {
+    super(message);
+    this.name = 'ObsError';
+  }
+}
+
 export class ObsClient {
-  private host: string;
-  private port: number;
-  private password?: string;
-  private timeout: number;
-  private ws: WebSocket | null = null;
+  private readonly obs = new OBSWebSocket();
   private connected = false;
-  private messageId = 0;
-  private pendingRequests = new Map<number, {
-    resolve: (value: any) => void;
-    reject: (error: Error) => void;
-    timeout: NodeJS.Timeout;
-  }>();
+  private connecting: Promise<void> | null = null;
 
-  constructor(config: ObsConfig) {
-    this.host = config.host;
-    this.port = config.port;
-    this.password = config.password;
-    this.timeout = config.timeout || 10000;
-  }
+  constructor(private readonly config: ObsConfig) {}
 
-  /**
-   * Connect to OBS WebSocket
-   */
   async connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    if (this.connected) return;
+    if (this.connecting) return this.connecting;
+
+    this.connecting = (async () => {
+      const protocol = this.config.secure ? 'wss' : 'ws';
+      const url = `${protocol}://${this.config.host}:${this.config.port}`;
       try {
-        const url = `ws://${this.host}:${this.port}`;
-        this.ws = new WebSocket(url);
-
-        this.ws.onopen = () => {
-          this.connected = true;
-          resolve();
-        };
-
-        this.ws.onmessage = (event) => {
-          this.handleMessage(event.data);
-        };
-
-        this.ws.onerror = (error) => {
-          this.connected = false;
-          reject(new ObsError('WebSocket connection error', 'CONNECTION_ERROR'));
-        };
-
-        this.ws.onclose = () => {
-          this.connected = false;
-        };
-
-        // Set connection timeout
-        const timeoutId = setTimeout(() => {
-          if (!this.connected) {
-            reject(new ObsError('Connection timeout', 'CONNECTION_TIMEOUT'));
-          }
-        }, this.timeout);
+        await this.obs.connect(url, this.config.password, { rpcVersion: 1 });
+        this.connected = true;
       } catch (error) {
-        reject(error);
+        this.connected = false;
+        throw new ObsError(
+          error instanceof Error ? error.message : 'Unable to connect to OBS',
+          'CONNECTION_ERROR',
+        );
+      } finally {
+        this.connecting = null;
       }
-    });
+    })();
+
+    return this.connecting;
   }
 
-  /**
-   * Disconnect from OBS
-   */
   disconnect(): void {
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
-    }
+    this.obs.disconnect();
     this.connected = false;
-    this.pendingRequests.clear();
   }
 
-  /**
-   * Send a request to OBS
-   */
-  private async sendRequest<T>(
-    requestType: string,
-    requestData?: any
-  ): Promise<T> {
-    if (!this.connected || !this.ws) {
-      throw new ObsError('Not connected to OBS', 'NOT_CONNECTED');
-    }
-
-    const messageId = ++this.messageId;
-    const message = {
-      d: {
-        requestType,
-        requestId: String(messageId),
-        requestData: requestData || {},
-      },
-    };
-
-    return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        this.pendingRequests.delete(messageId);
-        reject(new ObsError('Request timeout', 'REQUEST_TIMEOUT'));
-      }, this.timeout);
-
-      this.pendingRequests.set(messageId, {
-        resolve,
-        reject,
-        timeout: timeoutId,
-      });
-
-      try {
-        this.ws!.send(JSON.stringify(message));
-      } catch (error) {
-        this.pendingRequests.delete(messageId);
-        clearTimeout(timeoutId);
-        reject(error);
-      }
-    });
-  }
-
-  /**
-   * Handle WebSocket messages
-   */
-  private handleMessage(data: string): void {
+  private async call<T = Record<string, unknown>>(requestType: any, requestData?: any): Promise<T> {
+    await this.connect();
     try {
-      const message = JSON.parse(data);
-
-      if (message.d?.requestId) {
-        const messageId = parseInt(message.d.requestId);
-        const pending = this.pendingRequests.get(messageId);
-
-        if (pending) {
-          clearTimeout(pending.timeout);
-          this.pendingRequests.delete(messageId);
-
-          if (message.d.requestStatus?.result) {
-            pending.resolve(message.d.responseData || {});
-          } else {
-            pending.reject(
-              new ObsError(
-                message.d.requestStatus?.comment || 'Unknown error',
-                message.d.requestStatus?.code || 'UNKNOWN_ERROR'
-              )
-            );
-          }
-        }
-      }
+      return (await this.obs.call(requestType, requestData)) as T;
     } catch (error) {
-      console.error('Failed to parse WebSocket message:', error);
+      throw new ObsError(
+        error instanceof Error ? error.message : `OBS request ${requestType} failed`,
+        'REQUEST_FAILED',
+      );
     }
   }
 
-  /**
-   * Get all scenes
-   */
   async getScenes(): Promise<ObsScene[]> {
-    const response: any = await this.sendRequest('GetSceneList');
-
+    const response: any = await this.call('GetSceneList');
     return (response.scenes || []).map((scene: any, index: number) => ({
-      id: scene.sceneName.toLowerCase().replace(/\s+/g, '_'),
+      id: scene.sceneName,
       name: scene.sceneName,
       order: index,
       createdAt: new Date().toISOString(),
@@ -180,74 +75,42 @@ export class ObsClient {
     }));
   }
 
-  /**
-   * Get current scene
-   */
   async getCurrentScene(): Promise<string> {
-    const response: any = await this.sendRequest('GetCurrentProgramScene');
+    const response: any = await this.call('GetCurrentProgramScene');
     return response.currentProgramSceneName;
   }
 
-  /**
-   * Set active scene
-   */
   async setScene(sceneName: string): Promise<void> {
-    await this.sendRequest('SetCurrentProgramScene', {
-      sceneName,
-    });
+    await this.call('SetCurrentProgramScene', { sceneName });
   }
 
-  /**
-   * Create a new scene
-   */
   async createScene(sceneName: string): Promise<ObsScene> {
-    await this.sendRequest('CreateScene', {
-      sceneName,
-    });
-
-    const scenes = await this.getScenes();
-    const newScene = scenes.find(s => s.name === sceneName);
-
-    if (!newScene) {
-      throw new ObsError('Failed to create scene', 'SCENE_CREATE_FAILED');
-    }
-
-    return newScene;
+    await this.call('CreateScene', { sceneName });
+    return {
+      id: sceneName,
+      name: sceneName,
+      order: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   }
 
-  /**
-   * Delete a scene
-   */
   async deleteScene(sceneName: string): Promise<void> {
-    await this.sendRequest('RemoveScene', {
-      sceneName,
-    });
+    await this.call('RemoveScene', { sceneName });
   }
 
-  /**
-   * Rename a scene
-   */
   async renameScene(oldName: string, newName: string): Promise<void> {
-    await this.sendRequest('SetSceneName', {
-      sceneName: oldName,
-      newSceneName: newName,
-    });
+    await this.call('SetSceneName', { sceneName: oldName, newSceneName: newName });
   }
 
-  /**
-   * Get sources in a scene
-   */
   async getSceneSources(sceneName: string): Promise<ObsSource[]> {
-    const response: any = await this.sendRequest('GetSceneItemList', {
-      sceneName,
-    });
-
+    const response: any = await this.call('GetSceneItemList', { sceneName });
     return (response.sceneItems || []).map((item: any) => ({
       id: String(item.sceneItemId),
-      sceneId: sceneName.toLowerCase().replace(/\s+/g, '_'),
+      sceneId: sceneName,
       name: item.sourceName,
-      type: item.sourceType || 'custom',
-      settings: item.sourceSettings || {},
+      type: item.inputKind || item.sourceType || 'custom',
+      settings: {},
       enabled: item.sceneItemEnabled !== false,
       order: item.sceneItemIndex || 0,
       createdAt: new Date().toISOString(),
@@ -255,27 +118,20 @@ export class ObsClient {
     }));
   }
 
-  /**
-   * Add source to scene
-   */
-  async addSourceToScene(
-    sceneName: string,
-    sourceName: string,
-    sourceType: string,
-    settings?: any
-  ): Promise<ObsSource> {
-    const response: any = await this.sendRequest('CreateSceneItem', {
+  async addSourceToScene(sceneName: string, sourceName: string, sourceType: string, settings: any = {}): Promise<ObsSource> {
+    const input: any = await this.call('CreateInput', {
       sceneName,
-      sourceName,
+      inputName: sourceName,
+      inputKind: sourceType,
+      inputSettings: settings,
       sceneItemEnabled: true,
     });
-
     return {
-      id: String(response.sceneItemId),
-      sceneId: sceneName.toLowerCase().replace(/\s+/g, '_'),
+      id: String(input.sceneItemId),
+      sceneId: sceneName,
       name: sourceName,
       type: sourceType,
-      settings: settings || {},
+      settings,
       enabled: true,
       order: 0,
       createdAt: new Date().toISOString(),
@@ -283,149 +139,68 @@ export class ObsClient {
     };
   }
 
-  /**
-   * Remove source from scene
-   */
-  async removeSourceFromScene(
-    sceneName: string,
-    sceneItemId: number
-  ): Promise<void> {
-    await this.sendRequest('RemoveSceneItem', {
-      sceneName,
-      sceneItemId,
-    });
+  async removeSourceFromScene(sceneName: string, sceneItemId: number): Promise<void> {
+    await this.call('RemoveSceneItem', { sceneName, sceneItemId });
   }
 
-  /**
-   * Start streaming
-   */
-  async startStreaming(settings?: {
-    service?: string;
-    serviceUrl?: string;
-    streamKey?: string;
-  }): Promise<{ success: boolean }> {
-    // Set stream settings if provided
-    if (settings?.serviceUrl && settings?.streamKey) {
-      await this.setStreamSettings(settings.serviceUrl, settings.streamKey);
+  async startStreaming(settings?: { serviceUrl?: string; streamKey?: string }): Promise<{ success: boolean }> {
+    if (settings?.serviceUrl && settings.streamKey) {
+      await this.call('SetStreamServiceSettings', {
+        streamServiceType: 'rtmp_custom',
+        streamServiceSettings: { server: settings.serviceUrl, key: settings.streamKey },
+      });
     }
-
-    await this.sendRequest('StartStream');
-
+    await this.call('StartStream');
     return { success: true };
   }
 
-  /**
-   * Stop streaming
-   */
   async stopStreaming(): Promise<{ success: boolean }> {
-    await this.sendRequest('StopStream');
+    await this.call('StopStream');
     return { success: true };
   }
 
-  /**
-   * Get streaming status
-   */
-  async getStreamingStatus(): Promise<{
-    outputActive: boolean;
-    outputDuration: number;
-    outputTotalFrames: number;
-    outputTotalBytes: number;
-    outputDroppedFrames: number;
-    outputRenderTotalFrames: number;
-    outputRenderMissedFrames: number;
-  }> {
-    return this.sendRequest('GetStreamStatus');
+  async getStreamingStatus(): Promise<any> {
+    return this.call('GetStreamStatus');
   }
 
-  /**
-   * Set stream settings
-   */
-  private async setStreamSettings(
-    rtmpUrl: string,
-    streamKey: string
-  ): Promise<void> {
-    // Get current settings
-    const settings: any = await this.sendRequest('GetStreamServiceSettings');
-
-    // Update with new values
-    const updatedSettings = {
-      ...settings.streamServiceSettings,
-      'server': rtmpUrl,
-      'key': streamKey,
-    };
-
-    await this.sendRequest('SetStreamServiceSettings', {
-      streamServiceSettings: updatedSettings,
-    });
-  }
-
-  /**
-   * Get output statistics
-   */
   async getStats(): Promise<ObsStreamStats> {
-    const status = await this.getStreamingStatus();
-
+    const [status, stats]: any[] = await Promise.all([
+      this.getStreamingStatus(),
+      this.call('GetStats'),
+    ]);
+    const durationMs = Number(status.outputDuration || 0);
+    const totalFrames = Number(status.outputTotalFrames || 0);
     return {
       status: status.outputActive ? 'active' : 'inactive',
-      streamId: status.outputActive ? 'stream_' + Date.now() : undefined,
-      duration: status.outputActive ? Math.floor(status.outputDuration / 1000) : undefined,
-      fps: status.outputActive ? Math.floor(status.outputTotalFrames / (status.outputDuration / 1000)) : undefined,
-      droppedFrames: status.outputDroppedFrames || 0,
-      totalFrames: status.outputTotalFrames || 0,
-      bytesTransferred: status.outputTotalBytes || 0,
-      cpuUsage: 0, // Would need separate stats API call
-      memoryUsage: 0, // Would need separate stats API call
+      streamId: status.outputActive ? 'obs-live' : undefined,
+      duration: status.outputActive ? Math.floor(durationMs / 1000) : undefined,
+      bitrate: status.outputActive ? Math.round(Number(status.outputBytes || 0) * 8 / Math.max(durationMs, 1)) : undefined,
+      fps: Number(stats.activeFps || 0),
+      droppedFrames: Number(status.outputSkippedFrames || 0),
+      totalFrames,
+      bytesTransferred: Number(status.outputBytes || 0),
+      cpuUsage: Number(stats.cpuUsage || 0),
+      memoryUsage: Number(stats.memoryUsage || 0),
       updatedAt: new Date().toISOString(),
     };
   }
 
-  /**
-   * Check if connected
-   */
-  isConnected(): boolean {
-    return this.connected;
-  }
+  isConnected(): boolean { return this.connected; }
 }
 
-/**
- * Custom error class for OBS API errors
- */
-export class ObsError extends Error {
-  constructor(
-    message: string,
-    public code: string
-  ) {
-    super(message);
-    this.name = 'ObsError';
-  }
-}
-
-/**
- * Create and export a singleton OBS client
- * Initialize with OBS_HOST and OBS_PORT environment variables
- */
 let obsClient: ObsClient | null = null;
 
 export function initObsClient(config?: Partial<ObsConfig>): ObsClient {
   if (!obsClient) {
-    const host = config?.host || process.env.OBS_HOST || 'localhost';
-    const port = config?.port || parseInt(process.env.OBS_PORT || '4444');
-    const password = config?.password || process.env.OBS_PASSWORD;
-
     obsClient = new ObsClient({
-      host,
-      port,
-      password,
-      ...config,
+      host: config?.host || process.env.OBS_HOST || 'localhost',
+      port: config?.port || parseInt(process.env.OBS_PORT || '4455', 10),
+      password: config?.password || process.env.OBS_PASSWORD,
+      secure: config?.secure ?? process.env.OBS_SECURE === 'true',
+      timeout: config?.timeout || 10000,
     });
   }
-
   return obsClient;
 }
 
-export function getObsClient(): ObsClient {
-  if (!obsClient) {
-    return initObsClient();
-  }
-  return obsClient;
-}
+export function getObsClient(): ObsClient { return obsClient || initObsClient(); }

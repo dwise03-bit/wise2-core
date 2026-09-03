@@ -1,112 +1,45 @@
-/**
- * POST /api/obs/stream/start
- * Begin streaming
- *
- * Request body:
- * - sceneId?: string - Scene ID to start streaming with
- * - serviceUrl?: string - RTMP service URL
- * - streamKey?: string - Stream key/token
- *
- * Response: ObsStreamStartResponse
- */
-
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  withMiddleware,
-  requireAuth,
-  createdResponse,
-  validateRequest,
-  ApiException,
-  ValidationSchema,
-} from '@/lib/api-middleware';
-import { ObsStreamStartRequest, ObsStreamStartResponse } from '@/types/api';
+import { withMiddleware, requireAuth, createdResponse, validateRequest, ApiException, ValidationSchema } from '@/lib/api-middleware';
 import { UserContext } from '@/types/api';
+import { getObsClient, ObsError } from '@/lib/obs-client';
 
-// Validation schema for stream start
 const streamStartSchema: ValidationSchema = {
-  sceneId: {
-    type: 'string',
-    required: false,
-    minLength: 1,
-  },
-  serviceUrl: {
-    type: 'string',
-    required: false,
-    minLength: 10,
-  },
-  streamKey: {
-    type: 'string',
-    required: false,
-    minLength: 1,
-  },
+  sceneId: { type: 'string', required: false, minLength: 1 },
+  serviceUrl: { type: 'string', required: false, minLength: 10 },
+  streamKey: { type: 'string', required: false, minLength: 1 },
 };
 
-/**
- * Start streaming
- * Requires authentication
- */
-async function startStream(
-  request: NextRequest,
-  user: UserContext | null
-): Promise<NextResponse> {
-  // Require authentication
-  if (!requireAuth(user)) {
-    throw new ApiException(401, 'UNAUTHORIZED', 'Authentication required');
-  }
-
-  // Parse request body
-  const body = (await request.json()) as Record<string, unknown>;
-
-  // Validate request
+async function startStream(request: NextRequest, user: UserContext | null): Promise<NextResponse> {
+  if (!requireAuth(user)) throw new ApiException(401, 'UNAUTHORIZED', 'Authentication required');
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const { valid, errors } = validateRequest(body, streamStartSchema);
-  if (!valid) {
-    throw new ApiException(400, 'VALIDATION_ERROR', 'Invalid request data', {
-      errors,
+  if (!valid) throw new ApiException(400, 'VALIDATION_ERROR', 'Invalid request data', { errors });
+
+  try {
+    const obs = getObsClient();
+    if (body.sceneId) await obs.setScene(String(body.sceneId));
+    await obs.startStreaming({
+      serviceUrl: body.serviceUrl as string | undefined,
+      streamKey: body.streamKey as string | undefined,
     });
+    const stats = await obs.getStats();
+    if (stats.status !== 'active') throw new ApiException(502, 'OBS_NOT_ACTIVE', 'OBS did not confirm an active stream');
+    return createdResponse({ status: 'active', streamId: stats.streamId, startedAt: new Date().toISOString() });
+  } catch (error) {
+    if (error instanceof ApiException) throw error;
+    if (error instanceof ObsError) throw new ApiException(503, 'OBS_UNAVAILABLE', error.message);
+    throw error;
   }
-
-  const payload: ObsStreamStartRequest = {
-    sceneId: body.sceneId as any,
-    serviceUrl: body.serviceUrl as any,
-    streamKey: body.streamKey as any,
-  };
-
-  // TODO: Connect to OBS and start streaming
-  // const stream = await obsClient.startStreaming({
-  //   scene: payload.sceneId,
-  //   rtmpUrl: payload.serviceUrl,
-  //   streamKey: payload.streamKey
-  // });
-
-  // Mock response
-  const response: ObsStreamStartResponse = {
-    status: 'active',
-    streamId: `stream_${Date.now()}`,
-    startedAt: new Date().toISOString(),
-    rtmpUrl: payload.serviceUrl,
-  };
-
-  return createdResponse(response);
 }
 
-export async function POST(
-  request: NextRequest,
-  context: any = {}
-) {
+export async function POST(request: NextRequest, context: any = {}) {
   const { params = {} } = context;
   return withMiddleware(startStream)(request, { params: params as Record<string, string> });
 }
 
-/**
- * Handle preflight requests
- */
 export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return new NextResponse(null, { status: 204, headers: {
+    'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  }});
 }
