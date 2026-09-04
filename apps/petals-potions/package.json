@@ -1,0 +1,20 @@
+{
+  "name": "petals-and-potions",
+  "version": "1.0.0",
+  "description": "Petals & Potions - AI-Native Luxury Wellness Brand",
+  "private": true,
+  "workspaces": [
+    "web",
+    "admin"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web & npm run dev -w admin",
+    "build": "npm run build -w web && npm run build -w admin",
+    "start": "npm start -w web",
+    "type-check": "npm run type-check -w web && npm run type-check -w admin",
+    "lint": "npm run lint -w web && npm run lint -w admin"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
