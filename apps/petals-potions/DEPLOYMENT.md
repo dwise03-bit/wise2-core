@@ -6,7 +6,7 @@ Petals & Potions is deployed to **173.208.147.165** (dwise VPS) as a containeriz
 
 - **Application Port**: 3003
 - **Service Name**: `petals-potions-web`
-- **Domain**: petals-potions.wise2.io (routed via nginx)
+- **Domain**: petals-potions.wise2.net (routed via nginx)
 - **Environment**: Production-ready with health checks
 
 ## Port Allocation
@@ -77,7 +77,7 @@ sudo systemctl reload nginx
 curl http://localhost:3003/health
 
 # Test via nginx proxy
-curl http://petals-potions.wise2.io/
+curl http://petals-potions.wise2.net/
 
 # Check container logs
 docker logs petals-potions-web
@@ -89,7 +89,7 @@ Set these in your deployment environment:
 
 ```env
 NODE_ENV=production
-NEXT_PUBLIC_API_URL=https://petals-potions.wise2.io/api
+NEXT_PUBLIC_API_URL=https://petals-potions.wise2.net/api
 NEXT_PUBLIC_STRIPE_KEY=pk_live_xxxxx
 PORT=3003
 ```
@@ -116,7 +116,7 @@ For production, configure SSL:
 
 1. Obtain certificate (Let's Encrypt recommended):
 ```bash
-sudo certbot certonly --standalone -d petals-potions.wise2.io
+sudo certbot certonly --standalone -d petals-potions.wise2.net
 ```
 
 2. Uncomment HTTPS section in `petals-potions.conf`
@@ -191,7 +191,7 @@ sudo systemctl reload nginx
 curl http://localhost:3003/
 
 # Test full domain
-curl -H "Host: petals-potions.wise2.io" http://localhost/
+curl -H "Host: petals-potions.wise2.net" http://localhost/
 ```
 
 ### Health Check Failing

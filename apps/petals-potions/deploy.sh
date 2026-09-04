@@ -85,7 +85,7 @@ echo -e "${GREEN}✓ Nginx reloaded${NC}"
 
 # Verify deployment
 echo -e "${YELLOW}▸ Verifying deployment...${NC}"
-if ssh "$DEPLOY_USER@$DEPLOY_HOST" "curl -s -H 'Host: petals-potions.wise2.io' http://localhost/ | head -20 > /dev/null 2>&1"; then
+if ssh "$DEPLOY_USER@$DEPLOY_HOST" "curl -s -H 'Host: petals-potions.wise2.net' http://localhost/ | head -20 > /dev/null 2>&1"; then
     echo -e "${GREEN}✓ Deployment verified${NC}"
 else
     echo -e "${YELLOW}⚠ Could not verify via nginx, but service is running${NC}"
@@ -98,12 +98,12 @@ echo -e "${GREEN}✓ Petals & Potions Deployment Complete!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 echo "Service Details:"
-echo "  Domain: petals-potions.wise2.io"
+echo "  Domain: petals-potions.wise2.net"
 echo "  Port: $SERVICE_PORT (internal)"
 echo "  Status: Running"
 echo ""
 echo "Verify deployment:"
-echo "  curl http://petals-potions.wise2.io/"
+echo "  curl http://petals-potions.wise2.net/"
 echo "  docker logs $SERVICE_NAME"
 echo ""
 echo "SSH to server:"
