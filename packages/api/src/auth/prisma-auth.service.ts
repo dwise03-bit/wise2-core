@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { google } from 'googleapis';
+import { roleForEmail } from './master-account';
 
 @Injectable()
 export class PrismaAuthService {
@@ -145,14 +146,20 @@ export class PrismaAuthService {
     }
 
     const generatedPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const role = roleForEmail(payload.email);
+    // Only ever promote on update: a non-master user may have been granted an
+    // elevated role by hand, and re-authenticating must not demote them.
     const user = await this.prisma.user.upsert({
       where: { email: payload.email },
-      update: { name: payload.name || undefined },
+      update: {
+        name: payload.name || undefined,
+        ...(role === 'FOUNDER' ? { role } : {}),
+      },
       create: {
         email: payload.email,
         name: payload.name || payload.email,
         passwordHash: generatedPasswordHash,
-        role: 'CUSTOMER',
+        role,
       },
     });
 
@@ -287,14 +294,19 @@ export class PrismaAuthService {
       `Discord User ${providerAccountId}`;
 
     const generatedPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+    const role = roleForEmail(email);
+    // Promote-only on update; see loginWithGoogle for the rationale.
     const user = await this.prisma.user.upsert({
       where: { email },
-      update: { name: displayName },
+      update: {
+        name: displayName,
+        ...(role === 'FOUNDER' ? { role } : {}),
+      },
       create: {
         email,
         name: displayName,
         passwordHash: generatedPasswordHash,
-        role: 'CUSTOMER',
+        role,
       },
     });
 
