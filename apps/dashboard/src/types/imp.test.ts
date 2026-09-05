@@ -261,7 +261,7 @@ describe('IMP Type System', () => {
 
     it('should default to webp format', () => {
       const path = getImpImagePath('idle', 'blue');
-      expect(path).toEndWith('.webp');
+      expect(path.endsWith('.webp')).toBe(true);
     });
 
     it('should default to blue variant', () => {
@@ -316,7 +316,7 @@ describe('IMP Type System', () => {
       const formats = ['webp', 'png', 'svg'] as const;
       formats.forEach(format => {
         const path = getImpImagePath('idle', 'blue', format);
-        expect(path).toEndWith(`.${format}`);
+        expect(path.endsWith(`.${format}`)).toBe(true);
       });
     });
 

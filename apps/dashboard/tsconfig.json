@@ -18,21 +18,33 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@wise2/dashboard-shell": ["../../packages/dashboard-shell/src"],
-      "@wise2/*": ["../../packages/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@wise2/dashboard-shell": [
+        "../../packages/dashboard-shell/src"
+      ],
+      "@wise2/*": [
+        "../../packages/*"
+      ]
     },
     "plugins": [
       {
         "name": "next"
       }
+    ],
+    "types": [
+      "@testing-library/jest-dom",
+      "vitest/globals"
     ]
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "vitest.config.ts",
+    "vitest.setup.ts"
   ],
   "exclude": [
     "node_modules"
