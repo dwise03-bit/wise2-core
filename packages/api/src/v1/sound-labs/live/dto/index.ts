@@ -1,6 +1,7 @@
 export interface CreateLiveRoomDto {
   name: string;
-  slug: string;
+  slug?: string;
+  description?: string;
   maxConcurrentViewers?: number;
 }
 

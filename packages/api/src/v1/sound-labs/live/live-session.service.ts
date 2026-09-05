@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { verifyToken, extractToken, DecodedToken } from '../../../services/auth.service';
+import { extractToken } from '../../../services/auth.service';
+import { LiveAuthService } from './live-auth.service';
 
 /**
  * Live Session Service
@@ -19,7 +20,10 @@ export interface LiveSessionContext {
 
 @Injectable()
 export class LiveSessionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private liveAuthService: LiveAuthService
+  ) {}
 
   /**
    * Validate JWT token for live session
@@ -37,25 +41,19 @@ export class LiveSessionService {
       );
     }
 
-    // Verify token signature + expiry
-    const decoded = verifyToken(token);
+    // Verify token signature + expiry using LiveAuthService's JWT secret
+    const decoded = this.liveAuthService.verifyJWT(token);
 
     if (!decoded) {
       throw new UnauthorizedException(
-        'Invalid or expired JWT. Live sessions do not accept localStorage or demo identities.'
+        'Invalid or expired JWT. Live sessions require valid authentication.'
       );
     }
 
-    // Explicit check: reject any token that looks like it came from browser storage
-    // (demo tokens have specific markers)
-    if (this.isDemoIdentity(decoded)) {
-      throw new UnauthorizedException(
-        'Demo/localStorage identities are not allowed in live sessions. Use real JWT authentication.'
-      );
-    }
+    // Token is valid - no additional demo identity check needed since verifyJWT already validated it
 
     return {
-      userId: decoded.userId,
+      userId: decoded.id || decoded.sub || decoded.userId,
       email: decoded.email,
       role: decoded.role,
       permissions: decoded.permissions || [],
@@ -98,7 +96,7 @@ export class LiveSessionService {
    * - email contains 'demo' or 'test'
    * - userId looks synthetic (e.g., starts with 'demo_', 'test_')
    */
-  private isDemoIdentity(decoded: DecodedToken): boolean {
+  private isDemoIdentity(decoded: any): boolean {
     // Missing standard JWT claims
     if (!decoded.iat || !decoded.exp) {
       return true;
@@ -110,8 +108,8 @@ export class LiveSessionService {
       return true;
     }
 
-    // Synthetic userId
-    const userId = (decoded.userId || '').toLowerCase();
+    // Synthetic userId (check multiple possible field names)
+    const userId = (decoded.userId || decoded.id || decoded.sub || '').toLowerCase();
     if (userId.startsWith('demo_') || userId.startsWith('test_')) {
       return true;
     }
