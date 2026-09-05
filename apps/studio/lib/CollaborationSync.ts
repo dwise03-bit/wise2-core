@@ -283,7 +283,7 @@ export class CollaborationSync extends EventEmitter {
   /**
    * Register a message handler
    */
-  on(eventName: MessageType | string, handler: MessageHandler): void {
+  on(eventName: MessageType | string, handler: MessageHandler): this {
     if (eventName === 'connected' || eventName === 'disconnected' || eventName === 'error') {
       super.on(eventName, handler);
     } else {
@@ -291,6 +291,7 @@ export class CollaborationSync extends EventEmitter {
       handlers.push(handler);
       this.messageHandlers.set(eventName as MessageType, handlers);
     }
+    return this;
   }
 
   /**

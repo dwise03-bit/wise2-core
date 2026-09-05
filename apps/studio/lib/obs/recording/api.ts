@@ -287,10 +287,23 @@ export async function handleArchiveRecording(
   params: { id: string }
 ): Promise<NextResponse> {
   try {
+    // Read first: the archive path is derived from the existing row, so it
+    // cannot be referenced from inside the update() that defines `recording`.
+    const existing = await prisma.localStreamRecording.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Recording not found' },
+        { status: 404 }
+      );
+    }
+
     const recording = await prisma.localStreamRecording.update({
       where: { id: params.id },
       data: {
-        filePath: `/archive/${recording.title}/${recording.id}`,
+        filePath: `/archive/${existing.title}/${existing.id}`,
       },
     });
 

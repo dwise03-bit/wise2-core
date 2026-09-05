@@ -31,8 +31,8 @@ export interface LoudnessData {
  */
 export class AnalyzerEffect extends BaseEffect {
   private analyser: AnalyserNode;
-  private spectralData: Uint8Array;
-  private timeData: Uint8Array;
+  private spectralData: Uint8Array<ArrayBuffer>;
+  private timeData: Uint8Array<ArrayBuffer>;
   private peakLevel: number = -Infinity;
   private peakHoldTime: number = 1000; // ms
   private peakHoldStartTime: number = 0;

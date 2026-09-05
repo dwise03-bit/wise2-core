@@ -12,13 +12,20 @@ import React from 'react';
  * Returns device type and viewport dimensions
  */
 export const useResponsive = () => {
-  const [viewport, setViewport] = React.useState({
+  const [viewport, setViewport] = React.useState<{
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    width: number;
+    height: number;
+    orientation: 'landscape' | 'portrait';
+  }>({
     isMobile: false,
     isTablet: false,
     isDesktop: true,
     width: 1024,
     height: 768,
-    orientation: 'landscape' as const,
+    orientation: 'landscape',
   });
 
   React.useEffect(() => {

@@ -38,7 +38,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: ${DATABASE_URL:-postgresql://wise2:wise2@postgres:5432/wise2_prod}
+      DATABASE_URL: postgresql://wise2:wise2@postgres:5432/wise2_prod
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/0
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
@@ -60,6 +60,7 @@ services:
       SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
       APP_URL: ${APP_URL}
       API_BASE_URL: ${API_BASE_URL}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://api.wise2.net,https://cloud.wise2.net}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL_API:-https://api.wise2.net/api/v1/auth/google/callback}

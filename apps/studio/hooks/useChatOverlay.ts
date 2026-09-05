@@ -122,7 +122,8 @@ export function useChatOverlay(
     setConnectionStatus('connecting');
 
     try {
-      const platformsToConnect = activePlatforms.length > 0 ? activePlatforms : ['mock'];
+      const platformsToConnect: ChatPlatform[] =
+        activePlatforms.length > 0 ? activePlatforms : ['mock'];
 
       for (const platform of platformsToConnect) {
         let connector = connectorsRef.current.get(platform);

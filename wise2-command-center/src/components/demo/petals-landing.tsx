@@ -19,7 +19,7 @@ export function PetalsLanding() {
         <nav aria-label="Primary navigation">
           <a href="#apothecary">APOTHECARY</a><a href="#ritual">YOUR RITUAL</a><a href="#paige">PAIGE</a><a href="#journal">JOURNAL</a>
         </nav>
-        <a className="petals-nav-cta" href="#ritual">BUILD MY RITUAL <span>↗</span></a>
+        <a className="petals-nav-cta" href="/petals-and-potions/ritual">BUILD MY RITUAL <span>↗</span></a>
       </header>
 
       <section id="top" className="petals-hero">
@@ -27,7 +27,7 @@ export function PetalsLanding() {
           <p className="petals-kicker">BOTANICAL WELLNESS · HEART · MIND · BODY · SOUL</p>
           <h1>Your Ritual.<br /><em>Your Blend.</em><br />Your Wellness.</h1>
           <p className="petals-lede">Personalized botanical teas, body care and mindful rituals created to make everyday wellness feel beautiful, intentional and yours.</p>
-          <div className="petals-actions"><a className="petals-button" href="#ritual">BUILD MY RITUAL <span>↗</span></a><a className="petals-text-link" href="#apothecary">EXPLORE THE APOTHECARY <span>↓</span></a></div>
+          <div className="petals-actions"><a className="petals-button" href="/petals-and-potions/ritual">BUILD MY RITUAL <span>↗</span></a><a className="petals-text-link" href="#apothecary">EXPLORE THE APOTHECARY <span>↓</span></a></div>
         </div>
         <div className="petals-hero-image"><Image src="/petals/paige-outdoor.png" alt="Paige creating a custom Petals & Potions blend" fill priority sizes="(max-width: 900px) 100vw, 58vw" /></div>
       </section>
@@ -38,7 +38,7 @@ export function PetalsLanding() {
 
       <section id="paige" className="petals-founder"><div className="petals-founder-image"><Image src="/petals/paige-brand.png" alt="Paige, founder of Petals & Potions" fill sizes="(max-width: 900px) 100vw, 42vw" /></div><div><p className="petals-kicker">THE FOUNDER</p><h2>Meet Paige.</h2><p>Petals & Potions grew from Paige&apos;s passion for herbs, handcrafted body care and helping people reconnect with intentional everyday wellness.</p><a className="petals-text-link" href="#journal">READ PAIGE&apos;S STORY <span>↗</span></a></div></section>
 
-      <section id="ritual" className="petals-ritual"><div><p className="petals-kicker">PERSONALIZED WELLNESS</p><h2>Custom tea.<br /><em>Custom you.</em></h2><p>Start with a wellness profile, choose your ritual direction and receive a recurring box designed around your preferences.</p><a className="petals-button" href="#apothecary">START MY PROFILE <span>↗</span></a></div><div className="petals-ritual-card"><span>YOUR RITUAL</span><strong>HEART<br />MIND<br />BODY<br />SOUL</strong><small>Personalized by Petals & Potions</small></div></section>
+      <section id="ritual" className="petals-ritual"><div><p className="petals-kicker">PERSONALIZED WELLNESS</p><h2>Custom tea.<br /><em>Custom you.</em></h2><p>Start with a wellness profile, choose your ritual direction and receive a recurring box designed around your preferences.</p><a className="petals-button" href="/petals-and-potions/ritual">START MY PROFILE <span>↗</span></a></div><div className="petals-ritual-card"><span>YOUR RITUAL</span><strong>HEART<br />MIND<br />BODY<br />SOUL</strong><small>Personalized by Petals & Potions</small></div></section>
 
       <footer id="journal" className="petals-footer"><div><a className="petals-logo" href="#top">PETALS <span>&</span> POTIONS</a><p>Your Ritual. Your Blend. Your Wellness.</p></div><p>© 2026 PETALS & POTIONS · BOTANICAL WELLNESS, INTENTIONALLY.</p></footer>
     </main>

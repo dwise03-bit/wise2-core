@@ -51,21 +51,21 @@ export default function TradingPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-950">
+    <div className="flex h-screen bg-[#070812]">
       {/* Sidebar */}
       <motion.div
         animate={{ width: sidebarOpen ? 280 : 80 }}
-        className="bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300"
+        className="bg-[#0b0d1c] border-r border-violet-400/15 flex flex-col transition-all duration-300"
       >
-        <div className="p-4 flex items-center justify-between border-b border-slate-800">
+        <div className="p-4 flex items-center justify-between border-b border-violet-400/15">
           {sidebarOpen && (
             <h2 className="font-bold text-white">WISE² Trading</h2>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-slate-800 rounded transition"
+            className="p-2 hover:bg-violet-400/10 rounded transition"
           >
-            <Menu className="w-4 h-4 text-slate-400" />
+            <Menu className="w-4 h-4 text-cyan-300" />
           </button>
         </div>
 
@@ -76,8 +76,8 @@ export default function TradingPage() {
               onClick={() => setCurrentPage(item.id)}
               whileHover={{ backgroundColor: 'rgba(15, 23, 42, 0.8)' }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${currentPage === item.id
-                  ? 'bg-emerald-600/20 border border-emerald-500/30 text-emerald-400'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-violet-500/15 border border-violet-300/35 text-violet-200 shadow-[0_0_22px_rgba(139,92,246,0.16)]'
+                  : 'text-slate-400 hover:text-cyan-100'
                 }`}
             >
               {item.icon}
@@ -86,8 +86,8 @@ export default function TradingPage() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white transition">
+        <div className="p-4 border-t border-violet-400/15">
+          <button className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-cyan-100 transition">
             <LogOut className="w-5 h-5" />
             {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
           </button>
@@ -116,10 +116,10 @@ export default function TradingPage() {
 
 function TradingSettings() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#070812] via-[#101329] to-[#070812] p-6">
       <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
-      <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 backdrop-blur">
-        <p className="text-slate-400">Settings coming soon...</p>
+      <div className="bg-violet-950/20 border border-violet-300/20 rounded-lg p-6 backdrop-blur">
+        <p className="text-cyan-200/70">Settings coming soon...</p>
       </div>
     </div>
   );

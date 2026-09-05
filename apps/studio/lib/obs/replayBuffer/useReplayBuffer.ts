@@ -163,7 +163,7 @@ export function useReplayBuffer(options: UseReplayBufferOptions = {}) {
   /**
    * Add video frame to buffer (call from encoding pipeline)
    */
-  const addFrame = useCallback((frameData: Uint8Array, isKeyFrame?: boolean, duration?: number) => {
+  const addFrame = useCallback((frameData: Uint8Array<ArrayBuffer>, isKeyFrame?: boolean, duration?: number) => {
     if (!bufferRef.current) return;
 
     try {
@@ -177,7 +177,7 @@ export function useReplayBuffer(options: UseReplayBufferOptions = {}) {
   /**
    * Add audio chunk to buffer (call from audio pipeline)
    */
-  const addAudioChunk = useCallback((audioData: Float32Array, sampleRate?: number) => {
+  const addAudioChunk = useCallback((audioData: Float32Array<ArrayBuffer>, sampleRate?: number) => {
     if (!bufferRef.current) return;
 
     try {

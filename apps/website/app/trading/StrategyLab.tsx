@@ -50,7 +50,7 @@ export default function StrategyLab() {
   const currentStrategy = strategies.find(s => s.id === selectedStrategy);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#070812] via-[#101329] to-[#070812] p-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

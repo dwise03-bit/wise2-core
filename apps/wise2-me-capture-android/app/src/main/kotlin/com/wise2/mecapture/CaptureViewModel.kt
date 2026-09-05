@@ -21,6 +21,9 @@ class CaptureViewModel(app: Application) : AndroidViewModel(app) {
     var elapsed by mutableStateOf(0)
     var clips by mutableStateOf(load())
     fun updateLabel(value: String) { label = value }
+    fun startTimer() { if (!recording) { recording = true; elapsed = 0; viewModelScope.launch { while (isActive && recording) { delay(1000); elapsed++ } } } }
+    fun stopTimer() { recording = false }
+    fun finishRecording(path: String) { val duration = elapsed; stopTimer(); clips = listOf(Clip(System.currentTimeMillis(), mode, label, System.currentTimeMillis(), duration, "RAW")) + clips; persist() }
     fun toggleRecording() { if (recording) { recording = false; clips = listOf(Clip(System.currentTimeMillis(), mode, label, System.currentTimeMillis(), elapsed, "RAW")) + clips; persist(); elapsed = 0 } else { recording = true; elapsed = 0; viewModelScope.launch { while (isActive && recording) { delay(1000); elapsed++ } } } }
     fun approve(id: Long) { clips = clips.map { if (it.id == id) it.copy(status = "APPROVED") else it }; persist() }
     fun reject(id: Long) { clips = clips.map { if (it.id == id) it.copy(status = "REJECTED") else it }; persist() }

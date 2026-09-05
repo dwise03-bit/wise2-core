@@ -150,7 +150,7 @@ export function TradingLandingExperience() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.6 }}
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:flex-wrap"
           >
             <Link
               href="/start-your-build"
@@ -164,6 +164,13 @@ export function TradingLandingExperience() {
             >
               View Platform
             </Link>
+            <a
+              href="/downloads/apps/wise2-reaper.apk"
+              download
+              className="inline-flex min-w-[220px] items-center justify-center rounded-full border border-[#c58cff]/35 bg-[#c58cff]/10 px-7 py-3 text-sm font-black uppercase tracking-[0.22em] text-[#e7ceff] transition-transform duration-300 hover:-translate-y-0.5 hover:border-[#c58cff]/70 hover:bg-[#c58cff]/20"
+            >
+              Download Android APK
+            </a>
           </motion.div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">

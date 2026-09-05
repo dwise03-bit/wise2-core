@@ -1,0 +1,61 @@
+{
+  "name": "wise2-enterprise",
+  "version": "0.1.0",
+  "description": "WISE² Enterprise - AI-powered business operating system",
+  "private": true,
+  "packageManager": "pnpm@8.15.9",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "prebuild": "pnpm --filter @wise2/db prisma:generate",
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "test": "turbo run test -- --passWithNoTests",
+    "type-check": "turbo run type-check",
+    "wise2:start": "bash scripts/wise2-affordable.sh start",
+    "wise2:stop": "bash scripts/wise2-affordable.sh stop",
+    "wise2:status": "bash scripts/wise2-affordable.sh status",
+    "prompt-shop:dev": "npm --prefix apps/prompt-shop run dev",
+    "prompt-shop:build": "npm --prefix apps/prompt-shop run build",
+    "prompt-shop:start": "npm --prefix apps/prompt-shop run start",
+    "prompt-shop:test": "npm --prefix apps/prompt-shop run test",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "migration:run": "npm --prefix packages/api run migration:run",
+    "migration:revert": "npm --prefix packages/api run migration:revert",
+    "wise:build": "pnpm --dir tools/ghostty build",
+    "wise:test": "pnpm --dir tools/ghostty test",
+    "wise:doctor": "pnpm --dir tools/ghostty dev -- doctor"
+  },
+  "workspaces": [
+    "apps/admin",
+    "apps/command-center",
+    "apps/dashboard",
+    "apps/getdown-demo",
+    "apps/jo-credit-os-demo",
+    "apps/podcast-music",
+    "apps/studio",
+    "apps/website",
+    "apps/wise-hvac-demo",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "pnpm": "^8.15.9",
+    "turbo": "^1.10.16"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "^5.3.0",
+      "@types/react": "18.3.31",
+      "@types/react-dom": "18.3.7"
+    }
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0",
+    "pg": "8.11.3",
+    "stripe": "^22.5.0"
+  }
+}

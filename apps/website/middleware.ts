@@ -27,6 +27,13 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Preserve the original Blakk Hail campaign URL. The extension means this
+  // path is intentionally excluded from the catch-all matcher below, so it
+  // needs an explicit compatibility redirect.
+  if (pathname.toLowerCase() === '/blakkhail/home.html') {
+    return NextResponse.redirect(new URL('/sencere', request.url));
+  }
+
   if (pathname === '/') {
     return NextResponse.redirect(new URL('/sencere', request.url));
   }
@@ -66,5 +73,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+  matcher: ['/blakkhail/Home.html', '/blakkhail/home.html', '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
 };

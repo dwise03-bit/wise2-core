@@ -11,22 +11,26 @@ import type { StreamStats, HealthStatus, StreamGraph } from './streamingTypes';
 
 // Mock data generator for realistic streaming stats
 function generateMockStats(): StreamStats {
-  const base = {
-    bitrate: 5000 + Math.random() * 500,
-    fps: Math.random() > 0.95 ? 59 : 60,
-    droppedFrames: Math.random() > 0.9 ? Math.floor(Math.random() * 3) : 0,
-    encodingLag: 40 + Math.random() * 20,
-    networkLag: 25 + Math.random() * 15,
-    renderingLag: 3 + Math.random() * 3,
-    cpuUsage: 40 + Math.random() * 20,
-    gpuUsage: 60 + Math.random() * 15,
-    downBandwidth: 0.3 + Math.random() * 0.3,
-    upBandwidth: 5.0 + Math.random() * 1.0,
-  };
+  const droppedFrames = Math.random() > 0.9 ? Math.floor(Math.random() * 3) : 0;
+  const frameRateTarget = 60;
 
   return {
-    viewers: Math.max(100, Math.floor(1000 + Math.random() * 500 + Math.sin(Date.now() / 5000) * 300)),
-    ...base,
+    viewerCount: Math.max(
+      100,
+      Math.floor(1000 + Math.random() * 500 + Math.sin(Date.now() / 5000) * 300),
+    ),
+    bitrateCurrent: 5000 + Math.random() * 500,
+    bitrateAverage: 5200,
+    frameRateCurrent: Math.random() > 0.95 ? 59 : frameRateTarget,
+    frameRateTarget,
+    droppedFrames,
+    droppedFramePercentage: (droppedFrames / frameRateTarget) * 100,
+    encodingLag: 40 + Math.random() * 20,
+    networkLatency: 25 + Math.random() * 15,
+    cpuUsage: 40 + Math.random() * 20,
+    gpuUsage: 60 + Math.random() * 15,
+    reconnectCount: 0,
+    uptime: Math.floor(Date.now() / 1000) % 86400,
   };
 }
 
@@ -199,17 +203,7 @@ export function StreamStatsExample() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Stats Panel (2/3 width on large screens) */}
           <div className="lg:col-span-2 bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <StreamStats
-              isLive={isLive}
-              stats={currentStats}
-              onReconnect={handleReconnect}
-              sessionHistory={mockSessions}
-              reconnectAttempts={reconnectAttempts}
-              reconnectCountdown={reconnectCountdown}
-              isReconnecting={isReconnecting}
-              autoUpdate={false} // We're manually updating
-              updateInterval={500}
-            />
+            <StreamStatsComponent isLive={isLive} stats={currentStats} />
           </div>
 
           {/* Info Panel */}

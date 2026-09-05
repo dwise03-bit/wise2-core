@@ -69,8 +69,8 @@ export class MultistreamEngine extends EventEmitter {
     memoryUsage: 0,
   };
 
-  private metricsTimer: NodeJS.Timer | null = null;
-  private healthCheckTimer: NodeJS.Timer | null = null;
+  private metricsTimer: NodeJS.Timeout | null = null;
+  private healthCheckTimer: NodeJS.Timeout | null = null;
 
   constructor() {
     super();
@@ -143,10 +143,15 @@ export class MultistreamEngine extends EventEmitter {
       this.startMetricsCollection();
       this.startHealthCheck();
 
-      this.emit('started', {
-        sessionId: this.sessionId,
-        platforms: Array.from(this.connections.keys()),
-      } as MultistreamEvent);
+      const startedEvent: MultistreamEvent = {
+        type: 'started',
+        timestamp: new Date(),
+        data: {
+          sessionId: this.sessionId,
+          platforms: Array.from(this.connections.keys()),
+        },
+      };
+      this.emit('started', startedEvent);
     } catch (error) {
       this.isRunning = false;
       this.status.isActive = false;
@@ -186,10 +191,12 @@ export class MultistreamEngine extends EventEmitter {
     // Create session record
     const session = this.createSessionRecord();
 
-    this.emit('stopped', {
-      sessionId: this.sessionId,
-      duration: session.duration,
-    } as MultistreamEvent);
+    const stoppedEvent: MultistreamEvent = {
+      type: 'stopped',
+      timestamp: new Date(),
+      data: { sessionId: this.sessionId, duration: session.duration },
+    };
+    this.emit('stopped', stoppedEvent);
 
     return session;
   }
@@ -246,10 +253,13 @@ export class MultistreamEngine extends EventEmitter {
         connectedAt: new Date(),
       });
 
-      this.emit('platform-connected', {
+      const connectedEvent: MultistreamEvent = {
+        type: 'platform-connected',
         platform: platform.platform,
-        streamId: connection.streamId,
-      } as MultistreamEvent);
+        timestamp: new Date(),
+        data: { streamId: connection.streamId },
+      };
+      this.emit('platform-connected', connectedEvent);
     } catch (error) {
       this.handlePlatformError(platform.platform, error as Error);
     }
@@ -272,10 +282,13 @@ export class MultistreamEngine extends EventEmitter {
         disconnectedAt: new Date(),
       });
 
-      this.emit('platform-disconnected', {
+      const disconnectedEvent: MultistreamEvent = {
+        type: 'platform-disconnected',
         platform,
-        uptime: this.calculateUptime(platform),
-      } as MultistreamEvent);
+        timestamp: new Date(),
+        data: { uptime: this.calculateUptime(platform) },
+      };
+      this.emit('platform-disconnected', disconnectedEvent);
     } catch (error) {
       console.error(`Error disconnecting from ${platform}:`, error);
     } finally {
@@ -322,7 +335,10 @@ export class MultistreamEngine extends EventEmitter {
       if (connection.buffer.length > 30) {
         connection.buffer.shift();
         this.encodingStats.framesDropped++;
-        this.updatePlatformStats(connection.platform, { frameDrops: 1 });
+        const platformStats = this.sessionStats.get(connection.platform);
+        this.updatePlatformStats(connection.platform, {
+          droppedFrames: (platformStats?.droppedFrames ?? 0) + 1,
+        });
       }
     } else {
       // Send immediately if socket available
@@ -387,10 +403,13 @@ export class MultistreamEngine extends EventEmitter {
       }
     }
 
-    this.emit('platform-error', {
+    const errorEvent: MultistreamEvent = {
+      type: 'platform-error',
       platform,
+      timestamp: new Date(),
       error: error.message,
-    } as MultistreamEvent);
+    };
+    this.emit('platform-error', errorEvent);
   }
 
   /**
@@ -406,10 +425,13 @@ export class MultistreamEngine extends EventEmitter {
       if (platformConfig) {
         try {
           await this.connectPlatform(platformConfig);
-          this.emit('failover', {
+          const failoverEvent: MultistreamEvent = {
+            type: 'failover',
             platform,
-            type: 'reconnected',
-          } as MultistreamEvent);
+            timestamp: new Date(),
+            data: { reason: 'reconnected' },
+          };
+          this.emit('failover', failoverEvent);
         } catch (error) {
           console.error(`Failover reconnect failed for ${platform}:`, error);
         }
@@ -445,9 +467,12 @@ export class MultistreamEngine extends EventEmitter {
       (c) => c.connected,
     ).length;
 
-    this.emit('metrics-update', {
-      status: this.status,
-    } as MultistreamEvent);
+    const metricsEvent: MultistreamEvent = {
+      type: 'metrics-update',
+      timestamp: new Date(),
+      data: { status: this.status },
+    };
+    this.emit('metrics-update', metricsEvent);
   }
 
   /**
