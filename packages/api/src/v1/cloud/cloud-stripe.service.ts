@@ -7,13 +7,13 @@ export class CloudStripeService {
   private readonly stripe: Stripe;
 
   constructor(private readonly configService: ConfigService) {
-    this.stripe = new Stripe(this.configService.get<string>('STRIPE_SECRET_KEY') || '', {
-      apiVersion: '2025-02-24.acacia',
-      appInfo: {
-        name: 'wise2-cloud',
-        version: '1.0.0',
-      },
-    });
+    const key = this.configService.get<string>('STRIPE_SECRET_KEY');
+    this.stripe = key
+      ? new Stripe(key, {
+          apiVersion: '2025-02-24.acacia',
+          appInfo: { name: 'wise2-cloud', version: '1.0.0' },
+        })
+      : (new Proxy({}, { get: () => { throw new Error('Stripe is not configured'); } }) as Stripe);
   }
 
   get client(): Stripe {

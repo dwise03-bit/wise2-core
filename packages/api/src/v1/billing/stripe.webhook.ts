@@ -21,7 +21,10 @@ export class StripeWebhookHandler {
     private prisma: PrismaService,
     private billingService: BillingService,
   ) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+    const key = process.env.STRIPE_SECRET_KEY;
+    this.stripe = key
+      ? new Stripe(key)
+      : (new Proxy({}, { get: () => { throw new Error('Stripe is not configured'); } }) as Stripe);
     this.webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
   }
 

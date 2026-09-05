@@ -139,6 +139,13 @@ export class AiPhoneService {
     return this.prisma.aiPhoneCall.findUnique({ where: { callSid } });
   }
 
+  async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
+    // Telnyx delivery is acknowledged here until provider-specific call mapping
+    // is wired to the canonical call lifecycle. Keep this handler side-effect free
+    // for unsupported events so webhook retries do not create duplicate records.
+    return { accepted: true, eventType: input.eventType };
+  }
+
   async firstConfiguredTenantId(): Promise<string | null> {
     const first = await this.prisma.aiPhoneConfig.findFirst({
       orderBy: { createdAt: 'asc' },

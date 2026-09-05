@@ -31,6 +31,8 @@ COPY packages/db/prisma ./packages/db/prisma
 
 # Build with the package's canonical Nest compiler. This preserves decorator
 # metadata and fails the image build on actual TypeScript errors.
+ENV NODE_OPTIONS=--max-old-space-size=4096 \
+    PORT=3000
 RUN pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
 
 EXPOSE 3000
