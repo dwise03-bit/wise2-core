@@ -54,6 +54,14 @@ const capabilities = [
 
 const deployments = [
   {
+    label: "WISE² IMP SYSTEMS",
+    title: "WISE IMPS",
+    copy: "Voice, edge intelligence, and AI automation built for real life.",
+    image: "/wise-imp/imps-product.png",
+    href: "/products/imp",
+    tone: "cyan",
+  },
+  {
     label: "FIELD OPERATIONS",
     title: "HVAC intelligence",
     copy: "Diagnostics, dispatch, maintenance, and customer history in one field-ready flow.",
@@ -76,6 +84,14 @@ const deployments = [
     image: "/brand/wise2-hero-united-source.png",
     href: "/platform",
     tone: "white",
+  },
+  {
+    label: "CONTRACTOR OPERATIONS",
+    title: "Contractor OS",
+    copy: "CRM, estimates, scheduling, dispatch, and field work in one system.",
+    image: "/brand/wise2-command-center.jpg",
+    href: "/fieldtech",
+    tone: "gold",
   },
 ];
 

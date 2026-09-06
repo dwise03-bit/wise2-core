@@ -624,6 +624,128 @@
     display: none;
   }
 }
+
+/* WISE² United reference composition: compact command-center density and cyan chrome. */
+.wise-home {
+  --wise-united-cyan: #00c8ff;
+  --wise-united-blue: #0076ff;
+  --wise-united-panel: #07131f;
+  --wise-united-line: rgba(0, 200, 255, 0.45);
+}
+.wise-home .wise-topline {
+  color: rgba(196, 237, 255, 0.7);
+  border-color: var(--wise-united-line);
+}
+.wise-home .wise-header {
+  border-color: var(--wise-united-line) !important;
+  background: rgba(2, 9, 16, 0.94) !important;
+}
+.wise-home .wise-header a:hover,
+.wise-home .wise-kicker,
+.wise-home .wise-display span,
+.wise-home .wise-heading span,
+.wise-home .wise-method span,
+.wise-home .wise-layer-label span {
+  color: var(--wise-united-cyan) !important;
+}
+.wise-home .wise-button {
+  background: linear-gradient(
+    105deg,
+    var(--wise-united-cyan),
+    #0096ff
+  ) !important;
+  box-shadow: 0 0 22px rgba(0, 200, 255, 0.18);
+}
+.wise-home .wise-hero {
+  min-height: 720px;
+  border-bottom: 1px solid var(--wise-united-line);
+}
+.wise-home .wise-hero-grid {
+  background-image:
+    linear-gradient(rgba(0, 200, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 255, 0.09) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.wise-home .wise-status-panel,
+.wise-home .wise-project,
+.wise-home .wise-capability,
+.wise-home .wise-layer-label,
+.wise-home .wise-method,
+.wise-home .wise-proof > div > div:last-child {
+  background: linear-gradient(
+    145deg,
+    rgba(7, 19, 31, 0.98),
+    rgba(3, 9, 16, 0.98)
+  ) !important;
+  border-color: var(--wise-united-line) !important;
+}
+.wise-home .wise-meter i,
+.wise-home .wise-status-panel::before {
+  background: var(--wise-united-cyan);
+  box-shadow: 0 0 14px rgba(0, 200, 255, 0.75);
+}
+.wise-home .wise-metric {
+  background: #06111d !important;
+  border-color: var(--wise-united-line);
+}
+.wise-home .wise-metric p:first-child {
+  color: var(--wise-united-cyan) !important;
+}
+.wise-home .wise-work {
+  padding-block: 64px;
+  background: #020a12 !important;
+  border-color: var(--wise-united-line) !important;
+}
+.wise-home .wise-work > div > div:last-child {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.wise-home .wise-project {
+  border-radius: 8px;
+}
+.wise-home .wise-project h3 {
+  font-size: clamp(1.25rem, 2vw, 2rem);
+}
+.wise-home .wise-project:hover {
+  border-color: var(--wise-united-cyan) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 200, 255, 0.25),
+    0 18px 40px rgba(0, 0, 0, 0.5);
+}
+.wise-home .wise-method {
+  min-height: 180px;
+  padding: 24px;
+  border: 1px solid var(--wise-united-line);
+}
+.wise-home .wise-cta-orbit {
+  background:
+    radial-gradient(circle at center, rgba(0, 200, 255, 0.12), transparent 22%),
+    radial-gradient(
+      circle at center,
+      transparent 29%,
+      rgba(0, 200, 255, 0.1) 29.2%,
+      transparent 29.7%
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 46%,
+      rgba(0, 118, 255, 0.08) 46.2%,
+      transparent 46.6%
+    );
+}
+@media (max-width: 1023px) {
+  .wise-home .wise-work > div > div:last-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 639px) {
+  .wise-home .wise-work > div > div:last-child {
+    grid-template-columns: 1fr;
+  }
+  .wise-home .wise-hero {
+    min-height: 760px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .wise-status-panel,
   .wise-cta-orbit {
