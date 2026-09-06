@@ -17,6 +17,13 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 
 const metrics = [
   ["01", "connected operating layer", "Everything speaks to everything."],
@@ -93,10 +100,53 @@ const deployments = [
     href: "/fieldtech",
     tone: "gold",
   },
+  {
+    label: "WISE DEFENSE",
+    title: "Nightwing",
+    copy: "Train. Protect. Connect. Security systems for the real world.",
+    image: "/brand/wise2-command-center.jpg",
+    href: "/wise-defense",
+    tone: "red",
+  },
+  {
+    label: "CREATIVE OPERATIONS",
+    title: "SoundLab",
+    copy: "Create, launch, and grow modern sound and media operations.",
+    image: "/brand/wise2-brand-identity.png",
+    href: "/soundlab",
+    tone: "cyan",
+  },
+  {
+    label: "MARKET OPERATIONS",
+    title: "WISE Trading",
+    copy: "Scan markets, model opportunity, and move with disciplined signals.",
+    image: "/brand/wise2-hero-united-source.png",
+    href: "/trading",
+    tone: "green",
+  },
+  {
+    label: "WISE SHINE",
+    title: "Wise Shine",
+    copy: "Premium detailing and growth systems built around real operators.",
+    image: "/brand/wise2-brand-identity.png",
+    href: "/wise-shine",
+    tone: "gold",
+  },
 ];
 
 export function BrandEcosystemHomepage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const pointerX = useSpring(useMotionValue(0), { stiffness: 70, damping: 20 });
+  const pointerY = useSpring(useMotionValue(0), { stiffness: 70, damping: 20 });
+  const artworkX = useTransform(pointerX, [-0.5, 0.5], [-14, 14]);
+  const artworkY = useTransform(pointerY, [-0.5, 0.5], [-10, 10]);
+  const reveal = reduceMotion
+    ? undefined
+    : { opacity: 1, y: 0, filter: "blur(0px)" };
+  const initialReveal = reduceMotion
+    ? undefined
+    : { opacity: 0, y: 28, filter: "blur(8px)" };
   return (
     <main className="wise-home overflow-hidden bg-[#050505] text-[#f5f7f2]">
       <div className="wise-topline">
@@ -180,20 +230,46 @@ export function BrandEcosystemHomepage() {
         )}
       </header>
 
-      <section className="wise-hero relative flex min-h-[890px] items-end pt-[110px] lg:min-h-[980px]">
-        <Image
-          src="/brand/wise2-hero-united-source.png"
-          alt="WISE² team and business operating system brand artwork"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+      <section
+        className="wise-hero relative flex min-h-[890px] items-end pt-[110px] lg:min-h-[980px]"
+        onMouseMove={(event) => {
+          if (reduceMotion) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
+          pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
+        }}
+        onMouseLeave={() => {
+          pointerX.set(0);
+          pointerY.set(0);
+        }}
+      >
+        <motion.div
+          initial={reduceMotion ? false : { scale: 1.08 }}
+          animate={reduceMotion ? undefined : { scale: 1 }}
+          transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+          style={reduceMotion ? undefined : { x: artworkX, y: artworkY }}
+          className="absolute inset-0"
+        >
+          <Image
+            src="/brand/wise2-hero-united-source.png"
+            alt="WISE² team and business operating system brand artwork"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </motion.div>
         <div className="wise-hero-grid absolute inset-0" />
         <div className="wise-hero-shade wise-hero-shade-horizontal absolute inset-0" />
         <div className="wise-hero-shade wise-hero-shade-vertical absolute inset-0" />
         <div className="relative mx-auto grid w-full max-w-[1320px] gap-14 px-6 pb-16 lg:grid-cols-[1fr_330px] lg:items-end lg:px-10 lg:pb-24">
-          <div className="max-w-[760px]">
+          <motion.div
+            initial={initialReveal}
+            whileInView={reveal}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-[760px]"
+          >
             <p className="wise-kicker mb-7">
               WISE² · BUSINESS OPERATING SYSTEM
             </p>
@@ -227,8 +303,14 @@ export function BrandEcosystemHomepage() {
               <ArrowDown size={15} className="text-[#b9ff00]" /> SCROLL TO
               EXPLORE THE OPERATING LAYER
             </div>
-          </div>
-          <div className="wise-status-panel hidden border border-white/15 bg-black/45 p-5 backdrop-blur-md lg:block">
+          </motion.div>
+          <motion.div
+            initial={initialReveal}
+            whileInView={reveal}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ delay: 0.18, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="wise-status-panel hidden border border-white/15 bg-black/45 p-5 backdrop-blur-md lg:block"
+          >
             <div className="flex items-center justify-between border-b border-white/10 pb-4 text-[10px] font-bold tracking-[.16em] text-white/50">
               <span>LIVE SYSTEM READOUT</span>
               <span className="flex items-center gap-2 text-[#b9ff00]">
@@ -267,7 +349,7 @@ export function BrandEcosystemHomepage() {
             <div className="mt-6 border-t border-white/10 pt-4 text-[10px] leading-5 text-white/40">
               A practical intelligence layer for the work that cannot wait.
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -329,8 +411,16 @@ export function BrandEcosystemHomepage() {
         </div>
         <div className="mt-10 grid gap-px bg-white/10 sm:grid-cols-2">
           {capabilities.map(({ icon: Icon, number, title, copy }) => (
-            <article
+            <motion.article
               key={title}
+              initial={initialReveal}
+              whileInView={reveal}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.65,
+                delay: Number(number) * 0.05,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="wise-capability group bg-[#0b0d0b] p-8 lg:p-10"
             >
               <div className="flex items-start justify-between">
@@ -346,7 +436,7 @@ export function BrandEcosystemHomepage() {
                 {copy}
               </p>
               <div className="mt-8 h-px w-0 bg-[#b9ff00] transition-all duration-500 group-hover:w-full" />
-            </article>
+            </motion.article>
           ))}
         </div>
       </section>
