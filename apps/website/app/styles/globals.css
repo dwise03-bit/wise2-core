@@ -1648,6 +1648,23 @@ a.skip-link:focus {
   isolation: isolate;
   background: #07080a;
 }
+.wise-home .wise-hero-shade-horizontal {
+  background: linear-gradient(
+    90deg,
+    rgba(7, 8, 10, 0.96) 0%,
+    rgba(7, 8, 10, 0.7) 32%,
+    rgba(7, 8, 10, 0.12) 78%,
+    rgba(7, 8, 10, 0.72) 100%
+  );
+}
+.wise-home .wise-hero-shade-vertical {
+  background: linear-gradient(
+    0deg,
+    #07080a 0%,
+    rgba(7, 8, 10, 0.08) 48%,
+    rgba(7, 8, 10, 0.32) 100%
+  );
+}
 .wise-home .wise-hero > img,
 .wise-home .wise-project img {
   image-rendering: auto;
@@ -1834,5 +1851,27 @@ a.skip-link:focus {
   .wise-home .wise-layer-label::before,
   .wise-home .wise-method::before {
     transition: none;
+  }
+}
+@media (max-width: 767px) {
+  .wise-home .wise-hero > img {
+    opacity: 0.72;
+    object-position: 58% center;
+  }
+  .wise-home .wise-hero-shade-horizontal {
+    background: linear-gradient(
+      90deg,
+      rgba(7, 8, 10, 0.76) 0%,
+      rgba(7, 8, 10, 0.22) 58%,
+      rgba(7, 8, 10, 0.5) 100%
+    );
+  }
+  .wise-home .wise-hero-shade-vertical {
+    background: linear-gradient(
+      0deg,
+      #07080a 0%,
+      rgba(7, 8, 10, 0.12) 44%,
+      rgba(7, 8, 10, 0.22) 100%
+    );
   }
 }

@@ -174,8 +174,8 @@ export function BrandEcosystemHomepage() {
           className="object-cover object-center"
         />
         <div className="wise-hero-grid absolute inset-0" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,#050505_0%,rgba(5,5,5,.86)_30%,rgba(5,5,5,.18)_76%,#050505_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,#050505_0%,rgba(5,5,5,.06)_53%,rgba(5,5,5,.45)_100%)]" />
+        <div className="wise-hero-shade wise-hero-shade-horizontal absolute inset-0" />
+        <div className="wise-hero-shade wise-hero-shade-vertical absolute inset-0" />
         <div className="relative mx-auto grid w-full max-w-[1320px] gap-14 px-6 pb-16 lg:grid-cols-[1fr_330px] lg:items-end lg:px-10 lg:pb-24">
           <div className="max-w-[760px]">
             <p className="wise-kicker mb-7">
