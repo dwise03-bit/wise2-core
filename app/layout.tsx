@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Starter Project",
-  description: "A clean starting point for building your site.",
-  other: {
-    "codex-preview": "development",
-  },
+  title: "WISE² — Ideas Become Systems",
+  description: "WISE² connects strategy, design, technology, content, automation and growth to turn raw ideas into working systems.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
