@@ -12,7 +12,16 @@ const nextConfig = {
   headers: async () => {
     return [
       {
-        source: '/:path*',
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
+      {
+        source: '/:path((?!api(?:/|$)).*)',
         headers: [
           {
             key: 'Cache-Control',

@@ -24,13 +24,19 @@ type EdgePayload = {
 
 const unavailable = (detail: string, status = 503) =>
   NextResponse.json(
-    { gateway: 'BIG BYTE', state: 'OFFLINE', detail, checkedAt: new Date().toISOString() },
+    {
+      product: 'KNIGHT WING',
+      gateway: 'BIG BYTE',
+      state: 'OFFLINE',
+      detail,
+      checkedAt: new Date().toISOString(),
+    },
     { status, headers: { 'Cache-Control': 'no-store' } },
   );
 
 export async function GET() {
   const edgeUrl = process.env.WISE_DEFENSE_EDGE_URL;
-  if (!edgeUrl) return unavailable('Edge gateway URL is not configured.');
+  if (!edgeUrl) return unavailable('Knight Wing edge gateway URL is not configured.');
 
   try {
     const response = await fetch(`${edgeUrl.replace(/\/$/, '')}/api/status`, {
@@ -42,6 +48,7 @@ export async function GET() {
     const payload = (await response.json()) as EdgePayload;
     return NextResponse.json(
       {
+        product: 'KNIGHT WING',
         gateway: 'BIG BYTE',
         state: payload.core === 'ONLINE' ? 'ACTIVE' : 'DEGRADED',
         demoMode: payload.demoMode === true,
@@ -64,6 +71,6 @@ export async function GET() {
       { headers: { 'Cache-Control': 'no-store' } },
     );
   } catch {
-    return unavailable('Edge gateway did not respond before the health-check timeout.');
+    return unavailable('Knight Wing edge gateway did not respond before the health-check timeout.');
   }
 }
