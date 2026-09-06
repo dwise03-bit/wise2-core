@@ -16,6 +16,7 @@ export {
 // Components
 export { GoogleSignInButton } from './components/GoogleSignInButton';
 export { UserProfile } from './components/UserProfile';
+export { SessionProvider } from './SessionProvider';
 
 // Middleware
 export { middleware } from './middleware';

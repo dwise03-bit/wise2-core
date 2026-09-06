@@ -4,6 +4,7 @@ import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 import { isBlackhailBrand } from '@/lib/site-domains';
+import { SessionProvider, auth } from '@wise2/auth';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -44,11 +45,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await auth();
   const siteBrand = headers().get('x-site-brand');
   const skipSiteChrome = isBlackhailBrand(siteBrand);
 
@@ -60,9 +62,11 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
-        <ToastProvider>
-          {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
-        </ToastProvider>
+        <SessionProvider session={session}>
+          <ToastProvider>
+            {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );
