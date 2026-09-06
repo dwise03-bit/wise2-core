@@ -660,6 +660,19 @@
   min-height: 720px;
   border-bottom: 1px solid var(--wise-united-line);
 }
+.wise-home #system {
+  display: none;
+}
+.wise-home .wise-metrics {
+  padding-block: 10px;
+  background: #020b14 !important;
+}
+.wise-home .wise-metrics .wise-metric {
+  padding-block: 16px;
+}
+.wise-home .wise-method {
+  min-height: 132px;
+}
 .wise-home .wise-hero-grid {
   background-image:
     linear-gradient(rgba(0, 200, 255, 0.09) 1px, transparent 1px),

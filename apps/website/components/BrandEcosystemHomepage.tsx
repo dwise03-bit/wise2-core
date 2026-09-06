@@ -352,7 +352,7 @@ export function BrandEcosystemHomepage() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-[#0b0d0b] px-6 py-5 lg:px-10">
+      <section className="wise-metrics border-y border-white/10 bg-[#0b0d0b] px-6 py-5 lg:px-10">
         <div className="mx-auto grid max-w-[1320px] gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map(([value, label, copy]) => (
             <div
@@ -448,7 +448,7 @@ export function BrandEcosystemHomepage() {
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <p className="wise-kicker mb-5 text-[#5c7900]">
-                BUILT IN THE REAL WORLD
+                REAL BUSINESSES. REAL RESULTS.
               </p>
               <h2 className="wise-heading max-w-2xl">Proof over promises.</h2>
             </div>
@@ -548,6 +548,28 @@ export function BrandEcosystemHomepage() {
                 Measure what matters, document the system, and keep improving
                 from the field.
               </p>
+            </div>
+            <div className="wise-method">
+              <span>04</span>
+              <h3>INTEGRATE</h3>
+              <p>Connect the systems your people already use every day.</p>
+            </div>
+            <div className="wise-method">
+              <span>05</span>
+              <h3>DEPLOY</h3>
+              <p>Launch the operating layer and train the people who run it.</p>
+            </div>
+            <div className="wise-method">
+              <span>06</span>
+              <h3>VERIFY</h3>
+              <p>
+                Measure what works and make the next decision with evidence.
+              </p>
+            </div>
+            <div className="wise-method">
+              <span>07</span>
+              <h3>DOMINATE</h3>
+              <p>Scale the system into a stronger, more durable business.</p>
             </div>
           </div>
         </div>
