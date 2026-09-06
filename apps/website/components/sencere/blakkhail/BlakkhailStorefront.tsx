@@ -18,7 +18,12 @@ export function BlakkhailStorefront() {
   return <>
     <section id="home" className="border-b" style={{ borderColor: BLAKKHAIL.neutral200 }}>
       {/* Art Gallery Hero with Tagline */}
-      <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] min-h-[70vh] md:min-h-[80vh] bg-[#050505]">
+      <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] min-h-[70vh] md:min-h-[80vh] bg-[#050505] relative overflow-hidden">
+        {/* Vaulted background effect */}
+        <div className="absolute inset-0 opacity-30 pointer-events-none" style={{
+          backgroundImage: `radial-gradient(ellipse 80% 40% at 50% 0%, rgba(214, 163, 49, 0.1) 0%, transparent 70%)`,
+        }} />
+
         {/* Left: Hero Image */}
         <div className="relative overflow-hidden order-2 md:order-1">
           <Image
@@ -31,10 +36,18 @@ export function BlakkhailStorefront() {
           />
           <div className={`absolute inset-0 bg-[#D6A331]/[.06] mix-blend-screen ${cinematic.flickerLight}`} />
           <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+          {/* Vaulted arch overlay */}
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: `radial-gradient(ellipse 100% 80% at 50% -10%, rgba(214, 163, 49, 0.15) 0%, transparent 60%)`,
+          }} />
         </div>
 
         {/* Right: Tagline Gallery */}
-        <div className="relative flex flex-col justify-center items-start p-6 sm:p-10 lg:p-16 order-1 md:order-2 bg-gradient-to-b from-black/40 to-black/20">
+        <div className="relative flex flex-col justify-center items-start p-6 sm:p-10 lg:p-16 order-1 md:order-2 bg-gradient-to-b from-black/40 to-black/20 overflow-hidden">
+          {/* Vaulted corner accent */}
+          <div className="absolute top-0 right-0 w-full h-40 opacity-30 pointer-events-none" style={{
+            backgroundImage: `radial-gradient(ellipse 60% 100% at 100% 0%, rgba(214, 163, 49, 0.1) 0%, transparent 60%)`,
+          }} />
           <div className="relative z-10 w-full">
             {/* Logo Mark */}
             <Image
@@ -95,7 +108,12 @@ export function BlakkhailStorefront() {
           }
         }
       `}</style></section>
-    <section id="look-book" className="border-y" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}><div className="grid md:grid-cols-2"><div className="relative min-h-[55vh]"><Image src={hero[1]} alt="Blakk Hail look book" fill sizes="50vw" className="object-cover" /></div><div className="flex flex-col justify-between p-6 sm:p-12 lg:p-20"><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.steel }}>03 / Look book</p><h2 className="max-w-md text-5xl uppercase leading-[.9] tracking-[-.04em] sm:text-7xl" style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}>Take control.<br />No apologies.</h2><a href="#contact" className="mt-12 flex items-center justify-between border-b pb-3 text-xs uppercase tracking-[0.18em]" style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.steel }}>Connect with Blakk Hail <ArrowUpRight size={15} /></a></div></div></section>
+    <section id="look-book" className="border-y relative overflow-hidden" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}>
+      {/* Vaulted background effect */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
+        backgroundImage: `radial-gradient(ellipse 120% 60% at 50% -20%, rgba(214, 163, 49, 0.1) 0%, transparent 70%)`,
+      }} />
+      <div className="grid md:grid-cols-2 relative z-10"><div className="relative min-h-[55vh]"><Image src={hero[1]} alt="Blakk Hail look book" fill sizes="50vw" className="object-cover" /></div><div className="flex flex-col justify-between p-6 sm:p-12 lg:p-20"><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.steel }}>03 / Look book</p><h2 className="max-w-md text-5xl uppercase leading-[.9] tracking-[-.04em] sm:text-7xl" style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}>Take control.<br />No apologies.</h2><a href="#contact" className="mt-12 flex items-center justify-between border-b pb-3 text-xs uppercase tracking-[0.18em]" style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.steel }}>Connect with Blakk Hail <ArrowUpRight size={15} /></a></div></div></div></section>
     <section id="drop" className={`${BLAKKHAIL_LAYOUT.container} py-14 sm:py-20`}><div className="grid items-center gap-8 border-y py-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:gap-14 sm:py-12" style={{ borderColor: BLAKKHAIL.darkGold }}><div><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.steel }}>04 / The new drop</p><h2 className="mt-4 max-w-md text-4xl uppercase leading-[.9] tracking-[-.04em] sm:text-6xl" style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}>Built for the ones who move different.</h2><p className="mt-6 max-w-md text-sm leading-7" style={{ color: BLAKKHAIL.neutral600 }}>A limited Blakk Hail release from SenCere Creative LLC. No apologies. No restocks promised.</p><a href="#shop" className="mt-8 inline-flex items-center gap-2 border-b pb-2 text-xs uppercase tracking-[0.18em]" style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}>Shop the drop <ArrowUpRight size={14} /></a></div><div className="relative mx-auto w-full max-w-md overflow-hidden bg-[#050505]"><Image src={BLAKKHAIL_LEGACY.assets.dropAd} alt="Blakk Hail new drop campaign" width={1003} height={1568} className="h-auto w-full object-cover" /></div></div></section>
     <section id="about" className="py-16 sm:py-24"><div className={`${BLAKKHAIL_LAYOUT.container} text-center`}><p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.neutral600 }}>Blakk Hail · A SenCere Creative LLC brand</p><h2 className="mx-auto mt-6 max-w-4xl text-4xl uppercase leading-[.92] tracking-[-.04em] sm:text-7xl" style={{ fontFamily: 'var(--font-display)' }}>Design. Create.<br />Produce. Deliver.</h2></div></section>
   </>;
