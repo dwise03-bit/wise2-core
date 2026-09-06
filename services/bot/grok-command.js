@@ -1,51 +1,55 @@
-const { SlashCommandBuilder } = require("discord.js");
-const { askGrok, configured, XAI_MODEL } = require("./lib/grok");
+const { grokHealth } = require('./lib/ai-router');
+const { askAI } = require('./lib/ai-router');
 
-function chunkDiscord(text, max = 1900) {
+const cooldowns = new Map();
+const MEMORY_TTL_MS = 30 * 60 * 1000;
+const memory = new Map();
+const MAX_PROMPT = 6000;
+
+function splitMessage(text, max = 1900) {
   const chunks = [];
-  let remaining = String(text || "");
-  while (remaining.length > max) {
-    let cut = remaining.lastIndexOf("\n", max);
-    if (cut < max * 0.5) cut = max;
-    chunks.push(remaining.slice(0, cut));
-    remaining = remaining.slice(cut).trimStart();
-  }
-  if (remaining) chunks.push(remaining);
-  return chunks;
+  for (let i = 0; i < text.length; i += max) chunks.push(text.slice(i, i + max));
+  return chunks.length ? chunks : [''];
 }
 
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("grok")
-    .setDescription("Ask WISE² Grok")
-    .addStringOption((option) =>
-      option
-        .setName("prompt")
-        .setDescription("What should WISE² Grok work on?")
-        .setRequired(true)
-    ),
+function key(interaction) { return `${interaction.guildId || 'dm'}:${interaction.user.id}:${interaction.channelId || 'unknown'}`; }
+function canUse(interaction) {
+  const id = interaction.user.id;
+  const until = cooldowns.get(id) || 0;
+  if (until > Date.now()) return false;
+  cooldowns.set(id, Date.now() + 8000);
+  return true;
+}
 
+const command = {
+  data: {
+    name: 'grok', description: 'Ask WISE² Grok for operational intelligence',
+    options: [
+      { name: 'prompt', description: 'Your question or request', type: 3, required: false },
+      { name: 'reset', description: 'Clear your recent Grok conversation', type: 5, required: false },
+    ],
+  },
   async execute(interaction) {
-    if (!configured()) {
-      return interaction.reply({
-        content: "WISE² Grok is installed but XAI_API_KEY has not been configured on this host.",
-        ephemeral: true,
-      });
+    const reset = interaction.options.getBoolean('reset') || false;
+    if (reset) {
+      memory.delete(key(interaction));
+      return interaction.reply({ content: '✅ WISE² Grok conversation reset.', ephemeral: true });
     }
-
+    const prompt = interaction.options.getString('prompt')?.trim();
+    if (!prompt) return interaction.reply({ content: 'Provide a prompt, or set reset:true.', ephemeral: true });
+    if (prompt.length > MAX_PROMPT) return interaction.reply({ content: `Prompt is too long (maximum ${MAX_PROMPT} characters).`, ephemeral: true });
+    if (!canUse(interaction)) return interaction.reply({ content: 'Please wait a few seconds before asking Grok again.', ephemeral: true });
     await interaction.deferReply();
     try {
-      const prompt = interaction.options.getString("prompt", true);
-      const result = await askGrok(prompt);
-      const chunks = chunkDiscord(result.content);
-      await interaction.editReply(`**WISE² GROK** · ${result.model || XAI_MODEL}\n\n${chunks.shift() || "No response."}`);
-      for (const chunk of chunks) await interaction.followUp(chunk);
-    } catch (error) {
-      console.error("WISE² Grok command failed:", error.response?.data || error.message);
-      const message = error.response?.status === 401
-        ? "xAI rejected the configured API key."
-        : "WISE² Grok could not complete that request. Check the bot logs for details.";
-      await interaction.editReply(message);
-    }
+      const saved = memory.get(key(interaction));
+      const history = saved && saved.expiresAt > Date.now() ? saved.messages.slice(-6) : [];
+      const result = await askAI({ provider: 'grok', messages: [...history, { role: 'user', content: prompt }] });
+      memory.set(key(interaction), { messages: [...history, { role: 'user', content: prompt }, { role: 'assistant', content: result.text }].slice(-8), expiresAt: Date.now() + MEMORY_TTL_MS });
+      const chunks = splitMessage(`**WISE² GROK**\n${result.text}\n\n*Provider: ${result.provider} · WISE² Intelligence Layer*`);
+      await interaction.editReply({ content: chunks[0] });
+      for (const chunk of chunks.slice(1)) await interaction.followUp({ content: chunk });
+    } catch (error) { await interaction.editReply({ content: `**WISE² GROK**\n${error.message}` }); }
   },
 };
+
+module.exports = { command, splitMessage, grokHealth, _resetForTests: () => { cooldowns.clear(); memory.clear(); } };
