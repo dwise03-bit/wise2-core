@@ -22,6 +22,7 @@ const { initializeScheduledTasks } = require("./scheduled-tasks");
 const { ringCallSiren } = require("./call-siren");
 const comfyui = require("./lib/comfyui");
 const execFileAsync = promisify(execFile);
+const grokCommand = require('./grok-command');
 
 const client = new Client({
   intents: [
@@ -40,6 +41,7 @@ if (!DEPLOY_ONLY) {
   const WEBHOOK_PORT = process.env.WEBHOOK_PORT || 3002;
   app.use(express.json());
   app.use("/webhooks", webhookHandler);
+  app.get("/health/grok", (_req, res) => res.json(grokCommand.grokHealth()));
   app.post("/webhooks/telnyx/calls", async (req, res) => {
     if (process.env.TELNYX_WEBHOOK_SECRET && req.headers.authorization !== `Bearer ${process.env.TELNYX_WEBHOOK_SECRET}`) {
       return res.status(401).send("Unauthorized");
@@ -1204,6 +1206,7 @@ const WISE2_COLORS = {
 
 // Command Definitions
 const commands = {
+  grok: grokCommand.command,
   status: {
     data: {
       name: "status",
