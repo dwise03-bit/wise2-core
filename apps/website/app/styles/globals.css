@@ -1647,6 +1647,9 @@ a.skip-link:focus {
 .wise-home .wise-hero {
   isolation: isolate;
   background: #07080a;
+  background-image: url("/brand/wise2-hero-united-source.png");
+  background-position: center;
+  background-size: cover;
 }
 .wise-home .wise-hero-shade-horizontal {
   background: linear-gradient(
@@ -1854,8 +1857,12 @@ a.skip-link:focus {
   }
 }
 @media (max-width: 767px) {
+  .wise-home .wise-hero {
+    background-image: url("/brand/wise2-hero-united-mobile.webp");
+    background-position: 58% center;
+  }
   .wise-home .wise-hero > img {
-    opacity: 0.72;
+    opacity: 0.22;
     object-position: 58% center;
   }
   .wise-home .wise-hero-shade-horizontal {
