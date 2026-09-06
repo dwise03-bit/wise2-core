@@ -746,6 +746,56 @@
     min-height: 760px;
   }
 }
+
+/* United reference lock: compact, image-led hero and dense ecosystem rhythm. */
+.wise-home .wise-hero {
+  min-height: 650px;
+}
+.wise-home .wise-display {
+  max-width: 760px;
+  font-size: clamp(3.5rem, 7vw, 7rem);
+  line-height: 0.88;
+  letter-spacing: 0.015em;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.65);
+}
+.wise-home .wise-display span {
+  color: #00c8ff !important;
+}
+.wise-home .wise-hero .wise-kicker {
+  color: #00c8ff !important;
+}
+.wise-home .wise-work {
+  padding-top: 36px;
+  padding-bottom: 36px;
+}
+.wise-home .wise-work > div > div:last-child {
+  margin-top: 28px;
+}
+.wise-home .wise-project .aspect-\[4\/3\] {
+  aspect-ratio: 16 / 9;
+}
+.wise-home .wise-project .p-7 {
+  padding: 18px;
+}
+.wise-home .wise-project h3 {
+  letter-spacing: -0.02em;
+}
+.wise-home .wise-method h3 {
+  margin-top: 28px;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.wise-home .wise-method p {
+  margin-top: 8px;
+}
+@media (max-width: 767px) {
+  .wise-home .wise-hero {
+    min-height: 700px;
+  }
+  .wise-home .wise-display {
+    font-size: clamp(3rem, 14vw, 5rem);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .wise-status-panel,
   .wise-cta-orbit {

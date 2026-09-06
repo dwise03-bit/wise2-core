@@ -150,7 +150,7 @@ export function BrandEcosystemHomepage() {
   return (
     <main className="wise-home overflow-hidden bg-[#050505] text-[#f5f7f2]">
       <div className="wise-topline">
-        <span>WISE² / FIELD-BUILT INTELLIGENCE</span>
+        <span>WISE² UNITED / ONE PLATFORM. REAL BUSINESSES.</span>
         <span className="hidden sm:inline">
           SYSTEM STATUS <i /> ALL SYSTEMS NOMINAL
         </span>
@@ -162,33 +162,33 @@ export function BrandEcosystemHomepage() {
               WISE<sup className="text-sm text-[#b9ff00]">²</sup>
             </span>
             <span className="mt-1 block text-[9px] font-bold tracking-[.38em] text-[#b9ff00]">
-              REAL-WORLD INTELLIGENCE
+              BUILT DIFFERENT
             </span>
           </Link>
           <nav className="hidden items-center gap-8 text-[11px] font-bold tracking-[.16em] text-white/65 lg:flex">
             <Link
-              href="#system"
+              href="#deployments"
               className="transition-colors hover:text-[#b9ff00]"
             >
-              SYSTEM
+              PRODUCTS
             </Link>
             <Link
               href="#deployments"
               className="transition-colors hover:text-[#b9ff00]"
             >
-              DEPLOYMENTS
+              SOLUTIONS
             </Link>
             <Link
               href="#method"
               className="transition-colors hover:text-[#b9ff00]"
             >
-              METHOD
+              INDUSTRIES
             </Link>
             <Link
               href="/about"
               className="transition-colors hover:text-[#b9ff00]"
             >
-              ABOUT
+              OUR WORK
             </Link>
           </nav>
           <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ export function BrandEcosystemHomepage() {
               href="/audit"
               className="inline-flex min-h-11 items-center gap-2 bg-[#b9ff00] px-4 py-3 text-[10px] font-black tracking-[.13em] text-black transition-transform hover:-translate-y-0.5"
             >
-              START WITH AN AUDIT <ArrowRight size={14} />
+              BOOK A BUSINESS AUDIT <ArrowRight size={14} />
             </Link>
             <button
               type="button"
@@ -271,32 +271,31 @@ export function BrandEcosystemHomepage() {
             className="max-w-[760px]"
           >
             <p className="wise-kicker mb-7">
-              WISE² · BUSINESS OPERATING SYSTEM
+              WISE² UNITED · BUSINESS OPERATING SYSTEM
             </p>
             <h1 className="wise-display">
-              Make the
+              Building empires.
               <br />
-              <span>whole thing</span>
+              <span>Changing culture.</span>
               <br />
-              move.
+              Together.
             </h1>
             <p className="mt-8 max-w-[540px] text-base leading-7 text-white/75 lg:text-lg">
-              WISE² connects the tools, people, intelligence, and infrastructure
-              behind real businesses—so good work stops getting lost between
-              systems.
+              One platform for software, automation, communications,
+              infrastructure, AI, and real-world results.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/platform"
                 className="wise-button inline-flex min-h-12 items-center gap-3 bg-[#b9ff00] px-6 py-4 text-xs font-black tracking-[.12em] text-black"
               >
-                ENTER THE SYSTEM <ArrowRight size={16} />
+                BOOK A BUSINESS AUDIT <ArrowRight size={16} />
               </Link>
               <Link
                 href="#system"
                 className="wise-button inline-flex min-h-12 items-center gap-3 border border-white/30 bg-black/20 px-6 py-4 text-xs font-bold tracking-[.12em] text-white"
               >
-                SEE HOW IT WORKS
+                EXPLORE WISE²
               </Link>
             </div>
             <div className="mt-16 flex items-center gap-3 text-[10px] font-bold tracking-[.2em] text-white/50">
