@@ -1,0 +1,11 @@
+:root{--display:"Arial Narrow","Avenir Next Condensed",Impact,sans-serif;--body:"Avenir Next","Helvetica Neue",Arial,sans-serif}
+body{font-family:var(--body)}
+h1,h2{font-family:var(--display);font-stretch:condensed;font-weight:900;letter-spacing:-.055em}
+.logo{font-family:var(--display);font-stretch:condensed}
+.about{padding:120px 0;display:grid;grid-template-columns:.72fr 1.28fr;gap:8vw;align-items:center;border-bottom:1px solid #ffffff17}
+.about-mark{aspect-ratio:1;position:relative;display:grid;place-items:center;border:1px solid var(--line);background:radial-gradient(circle,#416d7840,transparent 55%),repeating-radial-gradient(circle,transparent 0 54px,#b08d5730 55px 56px);clip-path:polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%)}
+.about-mark:before,.about-mark:after{content:"";position:absolute;background:var(--brass)}.about-mark:before{width:70%;height:1px}.about-mark:after{height:70%;width:1px}
+.about-mark span{font-family:var(--display);font-size:clamp(100px,15vw,220px);line-height:1;font-weight:900;letter-spacing:-.09em;color:var(--bone);z-index:1}.about-mark sup{position:absolute;z-index:2;right:21%;top:23%;color:var(--brass);font-size:clamp(28px,4vw,54px);font-weight:900}
+.about-copy h2{font-size:clamp(44px,5.7vw,84px)}.about-lede{font-size:clamp(18px,1.7vw,25px);line-height:1.55;max-width:780px;color:var(--bone);margin:34px 0}
+.mind-grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #ffffff26}.mind-grid article{padding:28px 28px 26px 0;border-bottom:1px solid #ffffff26}.mind-grid article+article{border-left:1px solid #ffffff26;padding-left:28px}.mind-grid b{color:var(--brass);font-size:13px}.mind-grid h3{font-family:var(--display);font-stretch:condensed;text-transform:uppercase;font-size:24px;letter-spacing:-.025em;margin:24px 0 10px}.mind-grid p,.about-close{font-size:16px;line-height:1.65;color:#f2efe8b5}.about-close{margin:25px 0 0;border-left:2px solid var(--brass);padding-left:20px}
+@media(max-width:900px){.about{grid-template-columns:1fr;padding:80px 0}.about-mark{width:min(78vw,430px);margin:auto}.mind-grid{grid-template-columns:1fr}.mind-grid article+article{border-left:0;padding-left:0}}
