@@ -8,9 +8,14 @@ import { productPath } from '@/lib/site-domains';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 
 export function CompleteTheFit() {
-  const outfits = getBlakkhailOutfits();
+  try {
+    const outfits = getBlakkhailOutfits();
 
-  return (
+    if (!outfits || outfits.length === 0) {
+      return null;
+    }
+
+    return (
     <section className="border-b py-16 sm:py-24" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: '#050505' }}>
       <div className={BLAKKHAIL_LAYOUT.container}>
         {/* Section Header */}
@@ -157,5 +162,8 @@ export function CompleteTheFit() {
         </div>
       </div>
     </section>
-  );
+    );
+  } catch {
+    return null;
+  }
 }
