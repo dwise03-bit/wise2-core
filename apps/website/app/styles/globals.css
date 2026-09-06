@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Raleway:wght@300;400;500;600;700;900&family=Bebas+Neue&family=Oswald:wght@400;700&family=Bodoni+Moda:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,21 +9,21 @@
 :root {
   /* ===== COLOR SYSTEM - UNITED PALETTE ===== */
   /* Foundation - Black & Steel */
-  --wise-black: #050505;
-  --wise-dark-steel: #0a0a0a;
-  --wise-steel-panel: #161616;
-  --wise-chrome: #e6e8ec;
-  --wise-muted-gray: #9ca3af;
-  --wise-white: #ffffff;
+  --wise-black: #07080a;
+  --wise-dark-steel: #0e1015;
+  --wise-steel-panel: #14161c;
+  --wise-chrome: #c8ccd4;
+  --wise-muted-gray: #6b7080;
+  --wise-white: #f0f0f2;
 
   /* Primary Accent - Neon Lime */
-  --wise-neon-green: #c7ff2e;
-  --wise-green-secondary: #e4ff79;
-  --wise-dark-green: #7daa00;
+  --wise-neon-green: #39ff14;
+  --wise-green-secondary: #b8ff9f;
+  --wise-dark-green: #1a8a0a;
 
   /* Secondary Accent - Studio Purple */
-  --wise-electric-blue: #b36bff;
-  --wise-hover-blue: #cc9cff;
+  --wise-electric-blue: #9333ea;
+  --wise-hover-blue: #c084fc;
 
   /* Status Colors */
   --wise-success: #22c55e;
@@ -34,8 +32,9 @@
   --wise-info: #0094ff;
 
   /* ===== TYPOGRAPHY SYSTEM ===== */
-  --font-headers: "Orbitron", sans-serif;
-  --font-body: "Raleway", sans-serif;
+  --font-headers: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "SF Mono", "Cascadia Code", "Fira Code", ui-monospace, monospace;
   /* Typography Scale */
   --text-display-xl: 48px;
   --text-display-l: 36px;
@@ -91,13 +90,13 @@
 
 @layer base {
   html {
-    background: #050505;
+    background: var(--wise-black);
   }
 
   body {
     margin: 0;
-    background: #050505;
-    color: #fff;
+    background: var(--wise-black);
+    color: var(--wise-chrome);
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
 }
@@ -211,6 +210,157 @@
   .wise-cloud .wise-feature::after {
     animation: none;
   }
+}
+
+/* Canonical WISE² homepage tokens: Void / Chrome / Empire Green. */
+.wise-home {
+  --wise-home-void: #07080a;
+  --wise-home-elevated: #0e1015;
+  --wise-home-border: #14161c;
+  --wise-home-chrome: #c8ccd4;
+  --wise-home-bright: #e8eaef;
+  --wise-home-dim: #6b7080;
+  --wise-home-white: #f0f0f2;
+  --wise-home-green: #39ff14;
+  --wise-home-green-dim: #1a8a0a;
+  font-family: var(--font-body);
+  color: var(--wise-home-chrome);
+  background: var(--wise-home-void) !important;
+}
+.wise-home .wise-topline,
+.wise-home .wise-header {
+  background: rgba(7, 8, 10, 0.94);
+  border-color: var(--wise-home-border);
+}
+.wise-home .wise-topline,
+.wise-home .wise-header,
+.wise-home .wise-header nav {
+  color: var(--wise-home-dim);
+}
+.wise-home .wise-header a:hover,
+.wise-home .wise-header a:focus-visible,
+.wise-home .wise-kicker,
+.wise-home .wise-display span,
+.wise-home .wise-heading span,
+.wise-home .wise-layer-label span,
+.wise-home .wise-method span,
+.wise-home .wise-topline i,
+.wise-home .wise-status-panel strong,
+.wise-home .wise-status-panel .text-\[\#b9ff00\] {
+  color: var(--wise-home-green) !important;
+}
+.wise-home .wise-topline i {
+  background: var(--wise-home-green);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.55);
+}
+.wise-home .wise-display,
+.wise-home .wise-heading,
+.wise-home h1,
+.wise-home h2,
+.wise-home h3,
+.wise-home strong {
+  color: var(--wise-home-bright);
+  font-family: var(--font-headers);
+  text-wrap: balance;
+}
+.wise-home .wise-display,
+.wise-home .wise-heading {
+  letter-spacing: 0.02em;
+}
+.wise-home p,
+.wise-home li {
+  color: var(--wise-home-chrome);
+}
+.wise-home .wise-button,
+.wise-home .wise-home-cta {
+  background: var(--wise-home-green) !important;
+  color: var(--wise-home-void) !important;
+}
+.wise-home .wise-button:hover {
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.15);
+}
+.wise-home .wise-button:focus-visible,
+.wise-home a:focus-visible,
+.wise-home button:focus-visible {
+  outline-color: var(--wise-home-green);
+}
+.wise-home .wise-hero-grid {
+  background-image:
+    linear-gradient(rgba(57, 255, 20, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.08) 1px, transparent 1px);
+}
+.wise-home .wise-status-panel,
+.wise-home .wise-capability,
+.wise-home .wise-layer-label,
+.wise-home .wise-method,
+.wise-home .wise-proof > div > div:last-child {
+  background: var(--wise-home-elevated);
+  border-color: var(--wise-home-border);
+}
+.wise-home .wise-meter i,
+.wise-home .wise-layer-label::after,
+.wise-home .wise-capability .group-hover\\:w-full {
+  background: var(--wise-home-green);
+  border-color: rgba(57, 255, 20, 0.4);
+}
+.wise-home .wise-metric,
+.wise-home .wise-layer-label,
+.wise-home .wise-method {
+  background-color: var(--wise-home-elevated);
+}
+.wise-home .wise-metric:hover,
+.wise-home .wise-capability:hover {
+  background: #11151a;
+}
+.wise-home .wise-work {
+  background: var(--wise-home-void) !important;
+  color: var(--wise-home-chrome) !important;
+  border-color: var(--wise-home-border);
+}
+.wise-home .wise-project {
+  background: var(--wise-home-elevated) !important;
+  border: 1px solid var(--wise-home-border);
+}
+.wise-home .wise-project .text-\[\#5c7900\] {
+  color: var(--wise-home-green) !important;
+}
+.wise-home .wise-project .text-\[\#7a42ad\] {
+  color: #c084fc !important;
+}
+.wise-home .wise-project .text-black\/45,
+.wise-home .wise-project .text-black\/60 {
+  color: var(--wise-home-chrome) !important;
+}
+.wise-home .wise-project h3,
+.wise-home .wise-project span,
+.wise-home .wise-project svg {
+  color: var(--wise-home-bright);
+}
+.wise-home .wise-proof,
+.wise-home .wise-cta {
+  border-color: var(--wise-home-border);
+}
+.wise-home .wise-cta-orbit {
+  background:
+    radial-gradient(circle at center, rgba(57, 255, 20, 0.1), transparent 22%),
+    radial-gradient(
+      circle at center,
+      transparent 29%,
+      rgba(57, 255, 20, 0.08) 29.2%,
+      transparent 29.7%
+    ),
+    radial-gradient(
+      circle at center,
+      transparent 46%,
+      rgba(57, 255, 20, 0.05) 46.2%,
+      transparent 46.6%
+    );
+}
+.wise-home footer {
+  border-color: var(--wise-home-border);
+}
+.wise-home footer .text-white {
+  color: var(--wise-home-white) !important;
 }
 
 /* Homepage art direction: editorial systems language with restrained instrumentation. */
