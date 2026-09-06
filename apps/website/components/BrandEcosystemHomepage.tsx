@@ -57,7 +57,7 @@ const deployments = [
     label: "FIELD OPERATIONS",
     title: "HVAC intelligence",
     copy: "Diagnostics, dispatch, maintenance, and customer history in one field-ready flow.",
-    image: "/brand/wise2-brand-identity.png",
+    image: "/brand/wise2-command-center.jpg",
     href: "/hvac",
     tone: "lime",
   },
@@ -65,7 +65,7 @@ const deployments = [
     label: "CREATIVE OPERATIONS",
     title: "Sound Labs",
     copy: "A production environment for turning ideas into finished assets, campaigns, and culture.",
-    image: "/brand/wise2-command-center.jpg",
+    image: "/brand/wise2-brand-identity.png",
     href: "/sound-labs",
     tone: "purple",
   },
@@ -73,7 +73,7 @@ const deployments = [
     label: "CLIENT OPERATIONS",
     title: "The client OS",
     copy: "A shared operating layer for keeping relationships, work, and momentum visible.",
-    image: "/brand/wise2-hero-united.webp",
+    image: "/brand/wise2-hero-united-source.png",
     href: "/platform",
     tone: "white",
   },
@@ -166,8 +166,8 @@ export function BrandEcosystemHomepage() {
 
       <section className="wise-hero relative flex min-h-[890px] items-end pt-[110px] lg:min-h-[980px]">
         <Image
-          src="/brand/wise2-command-center.jpg"
-          alt="WISE2 command center"
+          src="/brand/wise2-hero-united-source.png"
+          alt="WISE² team and business operating system brand artwork"
           fill
           priority
           sizes="100vw"
