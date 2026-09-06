@@ -1,8 +1,12 @@
 import { SignJWT } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
-);
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET must be configured with at least 32 characters');
+  }
+  return new TextEncoder().encode(secret);
+}
 
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
@@ -19,7 +23,7 @@ export async function createJWT(payload: JWTPayload): Promise<string> {
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime(JWT_EXPIRES_IN)
-      .sign(JWT_SECRET);
+      .sign(getJwtSecret());
 
     return token;
   } catch (error) {
@@ -33,12 +37,12 @@ export function parseExpiresIn(expiresIn: string): number {
   const value = parseInt(expiresIn.slice(0, -1), 10);
 
   const multipliers: Record<string, number> = {
-    's': 1,
-    'm': 60,
-    'h': 3600,
-    'd': 86400,
-    'w': 604800,
-    'y': 31536000,
+    s: 1,
+    m: 60,
+    h: 3600,
+    d: 86400,
+    w: 604800,
+    y: 31536000,
   };
 
   return (multipliers[units] || 1) * value;
