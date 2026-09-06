@@ -1,0 +1,6 @@
+export const projects = {
+  "pressure-washing-get-down": { title:"The Pressure Washing Get Down", category:"Brand system + campaign", promise:"We get down to the dirt.", summary:"A complete commercial identity built around a memorable Water Gorilla mascot, chrome-and-carbon visual language, campaign content, music and a conversion-ready digital presence.", outputs:["Brand identity","Mascot system","Website direction","Campaign visuals","Original music"] },
+  "wise2-os-reaper": { title:"WISE² OS + REAPER", category:"Business intelligence", promise:"Turn scattered signals into useful action.", summary:"A connected operating system and prospect-intelligence engine designed to capture context, audit opportunities, coordinate work and help WISE² move from conversation to execution.", outputs:["Context engine","Prospect discovery","Audit system","AI agents","Tool-neutral handoff"] },
+  "truck-wiser": { title:"TRUCK WISER", category:"Field operations platform", promise:"Routes remember. Drivers stay connected.", summary:"A commercial route and road-intelligence platform combining property memory, proof-of-work, dispatcher tools and WISE CB push-to-talk communication.", outputs:["Route builder","Property memory","Proof workflow","Road intelligence","WISE CB"] },
+} as const;
+export type ProjectSlug = keyof typeof projects;
