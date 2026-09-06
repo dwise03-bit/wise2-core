@@ -1,0 +1,17 @@
+.active-systems {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.active-systems span,
+.active-systems b {
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 10px;
+}
+.active-systems span { color: #b08d57; margin-right: 12px; }
+.active-systems b { border: 1px solid #ffffff24; padding: 11px 14px; font-weight: 600; color: #d7dfe0; }
