@@ -34,6 +34,7 @@ import { PrintShopModule } from './v1/print-shop/print-shop.module';
 import { HermesHealthController } from './hermes/hermes-health.controller';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
+import { HvacTelemetryModule } from './hvac-telemetry/hvac-telemetry.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
@@ -140,6 +141,7 @@ import { CloudModule } from './v1/cloud/cloud.module';
     PrintShopModule,
     TradingModule,
     FieldtechModule,
+    HvacTelemetryModule,
     // CjaysModule, // DISABLED: depends on HermesModule
     // BusinessOsModule, // DISABLED: depends on HermesModule + AiPhoneModule
     CherryCountModule,

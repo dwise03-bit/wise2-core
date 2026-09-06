@@ -7,10 +7,12 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "dev": "nest start --watch",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@wise2/ai-phone": "workspace:*",
+    "@wise2/hvac-contracts": "workspace:*",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",
