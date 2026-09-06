@@ -1,0 +1,7 @@
+{
+  "name": "WISE2.Tests.EditMode",
+  "references": ["WISE2.Core"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false
+}
