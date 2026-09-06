@@ -27,20 +27,15 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Preserve the original Blakk Hail campaign URL. The extension means this
-  // path is intentionally excluded from the catch-all matcher below, so it
-  // needs an explicit compatibility redirect.
-  if (pathname.toLowerCase() === '/blakkhail/home.html') {
-    return NextResponse.redirect(new URL('/sencere', request.url));
-  }
-
-  if (pathname === '/') {
-    return NextResponse.redirect(new URL('/sencere', request.url));
+  // Force all BLAKKHAIL requests to the new storefront design
+  // Disable any old legacy pages or cached content
+  if (pathname === '/' || pathname === '' || pathname.toLowerCase() === '/blakkhail/home.html') {
+    return rewriteTo(request, BLACKHAIL_PREFIX);
   }
 
   // Keep campaign links shareable while the storefront remains section-based.
   if (pathname === '/latest-drop' || pathname === '/collection') {
-    return NextResponse.redirect(new URL('/sencere#latest-drop', request.url));
+    return NextResponse.redirect(new URL('/#latest-drop', request.url));
   }
 
   if (
@@ -49,9 +44,6 @@ export function middleware(request: NextRequest) {
     pathname === '/sencere/blakkhail' ||
     pathname === '/sencere/blakkhail/'
   ) {
-    if (pathname.startsWith('/sencere/blakkhail')) {
-      return NextResponse.redirect(new URL('/sencere', request.url));
-    }
     return rewriteTo(request, BLACKHAIL_PREFIX);
   }
 
