@@ -1591,3 +1591,64 @@ a.skip-link:focus {
     transform: none !important;
   }
 }
+
+/* Final homepage brand pass: keep legacy utility styles from overriding WISE². */
+.wise-home {
+  background: #07080a !important;
+  color: #c8ccd4 !important;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif !important;
+}
+.wise-home .wise-work {
+  background: #07080a !important;
+  color: #c8ccd4 !important;
+  border-color: #14161c !important;
+}
+.wise-home .wise-project,
+.wise-home .wise-capability,
+.wise-home .wise-layer-label,
+.wise-home .wise-method,
+.wise-home .wise-proof > div > div:last-child {
+  background: #0e1015 !important;
+  border-color: #14161c !important;
+}
+.wise-home .wise-project h3,
+.wise-home .wise-project p,
+.wise-home .wise-project span,
+.wise-home .wise-project svg,
+.wise-home .wise-work h2,
+.wise-home .wise-work a {
+  color: #e8eaef !important;
+}
+.wise-home .wise-project .text-\\[\\#5c7900\\] {
+  color: #39ff14 !important;
+}
+.wise-home .wise-project .text-\\[\\#7a42ad\\] {
+  color: #c084fc !important;
+}
+.wise-home .wise-project .text-black\\/45,
+.wise-home .wise-project .text-black\\/60 {
+  color: #c8ccd4 !important;
+}
+.wise-home .wise-display,
+.wise-home .wise-heading,
+.wise-home h1,
+.wise-home h2,
+.wise-home h3 {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif !important;
+  color: #e8eaef;
+}
+.wise-home .wise-display span,
+.wise-home .wise-heading span,
+.wise-home .wise-kicker,
+.wise-home .wise-method span,
+.wise-home .wise-layer-label span {
+  color: #39ff14 !important;
+}
