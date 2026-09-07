@@ -1,20 +1,17 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
-import { SessionProvider, auth } from '@wise2/auth';
 
 export const metadata: Metadata = {
   title: 'WISE² Dashboard',
   description: 'WISE² Creator Dashboard',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth();
-
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
@@ -24,11 +21,9 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-black text-white font-sans">
-        <SessionProvider session={session}>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </SessionProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

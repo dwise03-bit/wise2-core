@@ -86,6 +86,7 @@ export function BusinessHealthPanel() {
   if (businessHealth.isLoading) return <CardLoading />;
   if (businessHealth.error) return <CardError error={businessHealth.error} />;
 
+  if (!businessHealth.data) return <CardLoading />;
   const data = businessHealth.data;
 
   return (
@@ -168,6 +169,7 @@ export function PermissionEnginePanel() {
   if (permissionEngine.isLoading) return <CardLoading />;
   if (permissionEngine.error) return <CardError error={permissionEngine.error} />;
 
+  if (!permissionEngine.data) return <CardLoading />;
   const permissions = permissionEngine.data;
 
   return (

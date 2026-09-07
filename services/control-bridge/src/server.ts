@@ -9,7 +9,7 @@ import { authorizeWrite, createJobNonceStore, releaseMatches, type Authorization
 import { clampLines, validateName } from './guards.js';
 import type { NonceStore } from '../../../packages/ops-protocol/src/index.js';
 import type { ControlConfig, Envelope } from './types.js';
-import { createDeployment, diskMetrics, dockerLogs, dockerPs, dockerServices, dockerStats, getDeployment, gitRevision, gitStatus, gpuMetrics, hostMetrics, ollamaModels, restartService, rollbackApp, urlHealth, wise2Web, type AdapterContext, type Runner } from './adapters.js';
+import { createDeployment, diagnose, diskMetrics, dockerLogs, dockerPs, dockerServices, dockerStats, emergencyStop, getDeployment, gitRevision, gitStatus, gpuMetrics, hostMetrics, ollamaModels, readMaintenance, restartService, rollbackApp, setMaintenance, urlHealth, wise2Web, type AdapterContext, type Runner } from './adapters.js';
 
 type BuildOptions = {
   run?: Runner;
@@ -116,6 +116,19 @@ export async function buildServer(config: ControlConfig = loadConfig(), options:
     if (gated.write) await ledger.record({ key: gated.write.idempotencyKey, jobId: gated.write.job.jobId, action: 'docker.restart', target: service, recordedAt: new Date().toISOString(), requestId: String(request.id) });
     return ok(request.id, 'docker.restart', result, service);
   });
+  app.get('/v1/control/diagnose/:profile', async (request, reply) => {
+    try {
+      const profile = (request.params as { profile: string }).profile;
+      return ok(request.id, 'diagnose', await diagnose(ctx, profile), profile);
+    } catch (error) {
+      // An unknown profile is a rejection, never a fallback to some other diagnostic.
+      if (codeOf(error) === 'DIAGNOSTIC_UNKNOWN') {
+        return reply.code(403).send(err(request.id, 'diagnose', 'DIAGNOSTIC_UNKNOWN', 'Diagnostic profile is not allowlisted'));
+      }
+      throw error;
+    }
+  });
+  app.get('/v1/control/maintenance', async request => ok(request.id, 'maintenance.status', await readMaintenance(ctx)));
   app.get('/v1/control/git/status', async request => ok(request.id, 'git.status', await gitStatus(ctx)));
   app.get('/v1/control/git/revision', async request => ok(request.id, 'git.revision', await gitRevision(ctx)));
   app.get('/v1/control/ollama/status', async request => ok(request.id, 'ollama.status', await urlHealth(ctx, config.ollamaUrl)));
@@ -162,6 +175,37 @@ export async function buildServer(config: ControlConfig = loadConfig(), options:
       return reply.code(404).send(err(request.id, 'rollback', codeOf(error), (error as Error).message));
     }
   });
+  app.post('/v1/control/maintenance/:state', async (request, reply) => {
+    const startedAt = new Date().toISOString();
+    const state = (request.params as { state: string }).state;
+    if (state !== 'on' && state !== 'off') {
+      return reply.code(400).send(err(request.id, 'maintenance', 'ARG_INVALID', 'Maintenance state must be on or off', state));
+    }
+    const gated = await gate(request, 'maintenance', 'maintenance', { state }, config.targetAlias);
+    if ('rejected' in gated) return reply.code(statusForFailure(gated.rejected)).send(err(request.id, 'maintenance', gated.rejected.code, gated.rejected.message, gated.rejected.detail));
+    if ('replayed' in gated) return ok(request.id, 'maintenance', { idempotent: true, previous: gated.replayed });
+
+    const record = await setMaintenance(ctx, state === 'on', gated.write?.job.actor.displayName, gated.write?.job.jobId);
+    await appendAudit(config.auditFile, { ...auditIdentity(config, gated.write), requestId: request.id, action: 'maintenance', target: state, source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: true }, [config.token]);
+    if (gated.write) await ledger.record({ key: gated.write.idempotencyKey, jobId: gated.write.job.jobId, action: 'maintenance', target: state, recordedAt: new Date().toISOString(), requestId: String(request.id) });
+    return ok(request.id, 'maintenance', record, state);
+  });
+
+  app.post('/v1/control/emergency/:service/stop', async (request, reply) => {
+    const startedAt = new Date().toISOString();
+    // Validated against the stoppable allowlist, which never contains a protected service.
+    const service = validateName((request.params as { service: string }).service, config.allowedStoppable);
+    const gated = await gate(request, 'emergency.stop', 'emergency-stop', { service }, service);
+    if ('rejected' in gated) return reply.code(statusForFailure(gated.rejected)).send(err(request.id, 'emergency.stop', gated.rejected.code, gated.rejected.message, gated.rejected.detail, service));
+    if ('replayed' in gated) return ok(request.id, 'emergency.stop', { idempotent: true, previous: gated.replayed }, service);
+
+    const result = await emergencyStop(ctx, service);
+    await appendAudit(config.auditFile, { ...auditIdentity(config, gated.write), requestId: request.id, action: 'emergency.stop', target: service, source: request.ip, startedAt, endedAt: new Date().toISOString(), ok: result.code === 0, exitCode: result.code }, [config.token]);
+    if (result.code !== 0) return reply.code(500).send(err(request.id, 'emergency.stop', 'STOP_FAILED', 'Service stop failed', result.stderr, service));
+    if (gated.write) await ledger.record({ key: gated.write.idempotencyKey, jobId: gated.write.job.jobId, action: 'emergency.stop', target: service, recordedAt: new Date().toISOString(), requestId: String(request.id) });
+    return ok(request.id, 'emergency.stop', result, service);
+  });
+
   app.get('/v1/control/status', async request => {
     const settle = async <T>(fn: () => Promise<T>) => fn().then(data => ({ status: 'healthy' as const, data })).catch(error => ({ status: 'degraded' as const, error: (error as Error).message }));
     return ok(request.id, 'status', {
@@ -171,6 +215,7 @@ export async function buildServer(config: ControlConfig = loadConfig(), options:
       web: await settle(() => wise2Web(ctx)),
       ollama: await urlHealth(ctx, config.ollamaUrl),
       hermes: await urlHealth(ctx, config.hermesUrl),
+      maintenance: await settle(() => readMaintenance(ctx)),
     });
   });
   app.setNotFoundHandler(async (request, reply) => reply.code(404).send(err(request.id, 'not_found', 'NOT_FOUND', 'Endpoint not found')));

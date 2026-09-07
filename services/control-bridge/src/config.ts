@@ -13,7 +13,12 @@ const DEFAULT_APPS = ['website', 'dashboard', 'admin', 'studio', 'command-center
  * deliberately absent until their adapters land (F5-OPS-03); a job naming them is
  * rejected as not-allowed-on-target rather than silently accepted.
  */
-const DEFAULT_PROFILES = ['status', 'services', 'logs', 'deploy-status', 'restart', 'deploy', 'rollback'];
+const DEFAULT_PROFILES = ['status', 'services', 'logs', 'diagnose', 'deploy-status', 'restart', 'deploy', 'rollback', 'maintenance', 'emergency-stop'];
+/**
+ * Services that may never be stopped by an operator action, whatever the configuration
+ * says. Stopping any of these takes the platform down rather than shedding load.
+ */
+const PROTECTED_SERVICES = ['postgres', 'redis', 'mongodb', 'api', 'control-bridge'];
 const ENVIRONMENTS: readonly Environment[] = ['development', 'staging', 'production'];
 
 function booleanValue(value: string | undefined, fallback: boolean): boolean {
@@ -62,6 +67,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
   const unknownProfile = allowedProfiles.find(profile => !profileIds().includes(profile));
   if (unknownProfile) throw new Error(`WISE2_ALLOWED_PROFILES contains an unknown profile: ${unknownProfile}`);
 
+  // Nothing is stoppable unless it is named explicitly, and a protected service can never
+  // be named — a typo in the environment must not become an outage.
+  const allowedStoppable = csv(env.WISE2_ALLOWED_STOPPABLE, []);
+  const protectedStoppable = allowedStoppable.find(service => PROTECTED_SERVICES.includes(service));
+  if (protectedStoppable) {
+    throw new Error(`WISE2_ALLOWED_STOPPABLE may not include the protected service: ${protectedStoppable}`);
+  }
+
   const signingKeys = parseSigningKeys(env.WISE2_OPS_SIGNING_KEYS);
   const requireSignedWrites = booleanValue(env.WISE2_REQUIRE_SIGNED_WRITES, true);
   // Fail closed: a bridge that demands signed writes but holds no key can never satisfy
@@ -98,5 +111,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
     signingKeys,
     requireSignedWrites,
     idempotencyFile: env.WISE2_IDEMPOTENCY_FILE ?? '/data/control-bridge/idempotency.jsonl',
+    maintenanceFile: env.WISE2_MAINTENANCE_FILE ?? '/data/control-bridge/maintenance.json',
+    allowedStoppable,
+    databaseService: env.WISE2_DATABASE_SERVICE ?? 'postgres',
+    workerService: env.WISE2_WORKER_SERVICE ?? 'worker',
+    proxyService: env.WISE2_PROXY_SERVICE ?? 'traefik',
   };
 }

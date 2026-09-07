@@ -5,11 +5,20 @@ interface RateLimit {
   resetTime: number;
 }
 
+/**
+ * Discriminated so callers can narrow on `allowed`: without the literal types
+ * the two branches widen to `allowed: boolean` and `retryAfter` stays
+ * optional even inside an `if (!limit.allowed)` guard.
+ */
+type RateLimitResult =
+  | { allowed: false; retryAfter: number }
+  | { allowed: true; remaining: number; resetTime: number };
+
 const rateLimits = new Map<string, RateLimit>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 100; // 100 requests per minute
 
-export function rateLimit(request: NextRequest) {
+export function rateLimit(request: NextRequest): RateLimitResult {
   const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
   const now = Date.now();
 

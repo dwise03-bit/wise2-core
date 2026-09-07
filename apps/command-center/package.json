@@ -1,7 +1,7 @@
 {
   "name": "@wise2/command-center",
   "version": "1.0.0",
-  "description": "WISE\u00b2 Command Center Dashboard",
+  "description": "WISE² Command Center Dashboard",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3004",
@@ -14,14 +14,18 @@
   },
   "dependencies": {
     "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "next": "^14.2.35",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
+    "@types/ws": "^8.5.10",
     "typescript": "^5.0.0",
     "vitest": "^3"
   }

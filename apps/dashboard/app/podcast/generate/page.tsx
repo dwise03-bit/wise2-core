@@ -12,7 +12,7 @@ import { TemplateCard, MoodCard, type Template, type Mood } from '../components/
 function PodcastGenerateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const projectId = searchParams.get('projectId');
+  const projectId = searchParams?.get('projectId') ?? null;
 
   const { user, isLoading: authLoading } = useAuth();
   const { project, isLoading: projectLoading } = useProject(projectId);

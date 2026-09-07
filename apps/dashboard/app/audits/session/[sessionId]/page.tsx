@@ -18,7 +18,7 @@ interface AuditSession {
 
 export default function AuditSessionPage() {
   const params = useParams();
-  const sessionId = params.sessionId as string;
+  const sessionId = params?.sessionId as string;
 
   const [session, setSession] = useState<AuditSession | null>(null);
   const [selectedRecording, setSelectedRecording] = useState<string | null>(null);

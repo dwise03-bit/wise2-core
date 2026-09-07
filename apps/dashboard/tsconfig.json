@@ -37,7 +37,8 @@
     "types": [
       "@testing-library/jest-dom",
       "vitest/globals"
-    ]
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",

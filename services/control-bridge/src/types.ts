@@ -34,6 +34,20 @@ export type ControlConfig = {
   /** When true (the default) a write without a valid signed job is refused. */
   requireSignedWrites: boolean;
   idempotencyFile: string;
+  /** Where the maintenance flag is recorded. Read by `status` and the diagnostics. */
+  maintenanceFile: string;
+  /** Services `emergency-stop` may stop. Empty by default; protected names are refused. */
+  allowedStoppable: string[];
+  databaseService: string;
+  workerService: string;
+  proxyService: string;
+};
+
+export type MaintenanceState = {
+  enabled: boolean;
+  changedAt: string;
+  changedBy?: string;
+  jobId?: string;
 };
 
 export type Envelope<T> = {

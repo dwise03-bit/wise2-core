@@ -15,149 +15,166 @@ export function CompleteTheFit() {
   }
 
   return (
-    <section className="border-b py-16 sm:py-24" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: '#050505' }}>
+    <section className="border-b bg-black py-20 sm:py-32" style={{ borderColor: BLAKKHAIL.darkGold }}>
       <div className={BLAKKHAIL_LAYOUT.container}>
         {/* Section Header */}
-        <div className="mb-12 flex items-end justify-between border-b pb-4" style={{ borderColor: BLAKKHAIL.darkGold }}>
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.steel }}>
-              05 / Complete the fit
-            </p>
-            <h2
-              className="mt-3 text-3xl uppercase tracking-[-.03em] sm:text-5xl"
-              style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
-            >
-              Your next street uniform
-            </h2>
-          </div>
-          <span className="hidden text-xs uppercase tracking-[0.18em] sm:block" style={{ color: BLAKKHAIL.steel }}>
-            {outfits.length} Fits
-          </span>
+        <div className="mb-16 md:mb-24 border-b pb-8" style={{ borderColor: BLAKKHAIL.darkGold }}>
+          <p className="text-[10px] uppercase tracking-[0.4em] mb-4" style={{ color: BLAKKHAIL.steel }}>
+            Curated Collections
+          </p>
+          <h2
+            className="text-5xl md:text-7xl uppercase tracking-tight leading-[0.9]"
+            style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+          >
+            Complete the fit
+          </h2>
+          <p className="mt-6 text-sm max-w-2xl" style={{ color: BLAKKHAIL.neutral600 }}>
+            Pre-styled outfit combinations. Each fit is curated to move as a complete uniform.
+          </p>
         </div>
 
-        {/* Outfit Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {outfits.map((outfit) => {
+        {/* Outfit Showcase - Alternating Layout */}
+        <div className="space-y-20 md:space-y-32">
+          {outfits.map((outfit, index) => {
             const outfitProducts = getOutfitProducts(outfit.id);
 
             return (
-              <Link
-                key={outfit.id}
-                href={`#shop`}
-                className="group relative overflow-hidden bg-black"
-              >
-                {/* Hero Image */}
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <Image
-                    src={outfit.image}
-                    alt={outfit.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  />
+              <Link key={outfit.id} href="#shop" className="group block">
+                {/* Alternate layout direction */}
+                {index % 2 === 0 ? (
+                  // Image on left
+                  <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-8 md:gap-12 lg:gap-20 items-center">
+                    <div className="relative aspect-[4/5] overflow-hidden order-2 md:order-1">
+                      <Image
+                        src={outfit.image}
+                        alt={outfit.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 60vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="flex flex-col justify-center order-1 md:order-2">
+                      <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: BLAKKHAIL.steel }}>
+                        {outfit.id}
+                      </p>
+                      <h3
+                        className="text-3xl md:text-4xl uppercase tracking-tight leading-[0.95] mb-4"
+                        style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+                      >
+                        {outfit.name}
+                      </h3>
+                      <p className="text-sm mb-6 leading-relaxed" style={{ color: BLAKKHAIL.neutral600 }}>
+                        {outfit.tagline}
+                      </p>
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                  {/* "Complete the Fit" Badge */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="px-4 py-2 border-2" style={{ borderColor: BLAKKHAIL.gold }}>
-                        <span
-                          className="text-xs font-black uppercase tracking-widest"
-                          style={{ color: BLAKKHAIL.gold }}
-                        >
-                          Complete The Fit
-                        </span>
+                      {/* Product Previews */}
+                      <div className="flex gap-3 mb-8">
+                        {outfitProducts.slice(0, 4).map((product) => (
+                          <div
+                            key={product.id}
+                            className="h-12 w-12 overflow-hidden border"
+                            style={{ borderColor: BLAKKHAIL.gold }}
+                          >
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={48}
+                              height={48}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ))}
                       </div>
-                      <button
-                        className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] hover:opacity-70 transition-opacity"
-                        style={{ color: BLAKKHAIL.gold }}
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        Explore <ArrowUpRight size={14} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Outfit Info */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 sm:p-6">
-                  <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: BLAKKHAIL.steel }}>
-                    {outfit.id}
-                  </p>
-                  <h3
-                    className="mt-2 text-lg font-bold uppercase tracking-tight"
-                    style={{ color: BLAKKHAIL.gold }}
-                  >
-                    {outfit.name}
-                  </h3>
-                  <p className="mt-1 text-xs leading-relaxed" style={{ color: BLAKKHAIL.neutral600 }}>
-                    {outfit.tagline}
-                  </p>
-
-                  {/* Product Previews */}
-                  <div className="mt-4 flex gap-2">
-                    {outfitProducts.slice(0, 3).map((product) => (
-                      <div
-                        key={product.id}
-                        className="h-10 w-10 overflow-hidden border"
-                        style={{ borderColor: BLAKKHAIL.steel }}
-                      >
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          width={40}
-                          height={40}
-                          className="h-full w-full object-cover"
-                        />
+                      {/* Price and CTA */}
+                      <div className="flex items-end justify-between pt-6 border-t" style={{ borderColor: BLAKKHAIL.darkGold }}>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.1em] mb-1" style={{ color: BLAKKHAIL.steel }}>
+                            Bundle price
+                          </p>
+                          <p className="text-lg" style={{ color: BLAKKHAIL.gold }}>
+                            ${outfit.bundlePrice.toFixed(2)}
+                          </p>
+                          {outfit.savings > 0 && (
+                            <p className="text-xs mt-1" style={{ color: BLAKKHAIL.steel }}>
+                              Save ${outfit.savings.toFixed(2)}
+                            </p>
+                          )}
+                        </div>
+                        <ArrowUpRight size={18} style={{ color: BLAKKHAIL.gold }} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                       </div>
-                    ))}
+                    </div>
                   </div>
+                ) : (
+                  // Image on right
+                  <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr] gap-8 md:gap-12 lg:gap-20 items-center">
+                    <div className="flex flex-col justify-center">
+                      <p className="text-[10px] uppercase tracking-[0.3em] mb-3" style={{ color: BLAKKHAIL.steel }}>
+                        {outfit.id}
+                      </p>
+                      <h3
+                        className="text-3xl md:text-4xl uppercase tracking-tight leading-[0.95] mb-4"
+                        style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-display)' }}
+                      >
+                        {outfit.name}
+                      </h3>
+                      <p className="text-sm mb-6 leading-relaxed" style={{ color: BLAKKHAIL.neutral600 }}>
+                        {outfit.tagline}
+                      </p>
 
-                  {/* Price */}
-                  <div className="mt-4 flex items-end justify-between gap-2">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.1em]" style={{ color: BLAKKHAIL.steel }}>
-                        Bundle price
-                      </p>
-                      <p
-                        className="text-lg font-bold"
-                        style={{ color: BLAKKHAIL.gold }}
-                      >
-                        ${outfit.bundlePrice.toFixed(2)}
-                      </p>
+                      {/* Product Previews */}
+                      <div className="flex gap-3 mb-8">
+                        {outfitProducts.slice(0, 4).map((product) => (
+                          <div
+                            key={product.id}
+                            className="h-12 w-12 overflow-hidden border"
+                            style={{ borderColor: BLAKKHAIL.gold }}
+                          >
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              width={48}
+                              height={48}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Price and CTA */}
+                      <div className="flex items-end justify-between pt-6 border-t" style={{ borderColor: BLAKKHAIL.darkGold }}>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.1em] mb-1" style={{ color: BLAKKHAIL.steel }}>
+                            Bundle price
+                          </p>
+                          <p className="text-lg" style={{ color: BLAKKHAIL.gold }}>
+                            ${outfit.bundlePrice.toFixed(2)}
+                          </p>
+                          {outfit.savings > 0 && (
+                            <p className="text-xs mt-1" style={{ color: BLAKKHAIL.steel }}>
+                              Save ${outfit.savings.toFixed(2)}
+                            </p>
+                          )}
+                        </div>
+                        <ArrowUpRight size={18} style={{ color: BLAKKHAIL.gold }} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] uppercase tracking-[0.1em]" style={{ color: BLAKKHAIL.steel }}>
-                        Save
-                      </p>
-                      <p
-                        className="text-lg font-bold"
-                        style={{ color: BLAKKHAIL.gold }}
-                      >
-                        ${outfit.savings.toFixed(2)}
-                      </p>
+                    <div className="relative aspect-[4/5] overflow-hidden">
+                      <Image
+                        src={outfit.image}
+                        alt={outfit.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 60vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
-                </div>
+                )}
               </Link>
             );
           })}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-12 flex items-center justify-between border-t pt-8" style={{ borderColor: BLAKKHAIL.darkGold }}>
-          <p className="max-w-xl text-sm leading-7" style={{ color: BLAKKHAIL.neutral600 }}>
-            Curated outfit combinations ready to ship. Mix and match from our collection to build your own complete fit.
-          </p>
-          <Link
-            href="#shop"
-            className="ml-6 flex shrink-0 items-center gap-2 border-b pb-1 text-xs uppercase tracking-[0.18em]"
-            style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
-          >
-            Shop all pieces <ArrowUpRight size={14} />
-          </Link>
         </div>
       </div>
     </section>

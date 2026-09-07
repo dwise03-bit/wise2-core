@@ -101,6 +101,22 @@ export interface WebsiteData {
   updatedAt: Date;
 }
 
+/**
+ * A single crawled page belonging to a WebsiteData record.
+ * Consumed by the crawler in @wise2/reaper-intelligence, which was importing
+ * this type before it existed here.
+ */
+export interface WebsitePage {
+  path: string;
+  title?: string;
+  description?: string;
+  h1?: string;
+  content?: string;
+  hasContactForm: boolean;
+  hasPhone: boolean;
+  hasEmail: boolean;
+}
+
 export interface AuditRunData {
   id: string;
   organizationId: string;

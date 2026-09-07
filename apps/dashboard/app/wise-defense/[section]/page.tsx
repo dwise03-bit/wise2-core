@@ -11,7 +11,7 @@ const apiBase = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_B
 type Data = { incidents?: any[]; meshNodes?: any[]; radios?: any[]; sdr?: any[]; alerts?: any[]; resiliency?: Record<string, string> };
 
 export default function WiseDefensePage() {
-  const { token, user, isLoading } = useAuth(); const params = useParams<{ section: string }>(); const section = params.section || 'dashboard';
+  const { token, user, isLoading } = useAuth(); const params = useParams<{ section: string }>(); const section = params?.section || 'dashboard';
   const [data, setData] = useState<Data>({}); const [status, setStatus] = useState<'loading'|'ready'|'unavailable'>('loading');
   useEffect(() => { if (!token) { if (!isLoading) setStatus('unavailable'); return; } fetch(`${apiBase}/wise-defense/dashboard`, { headers: { Authorization: `Bearer ${token}` } }).then(async r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => { setData(d); setStatus('ready'); }).catch(() => setStatus('unavailable')); }, [token, isLoading]);
   const incidents = data.incidents ?? []; const nodes = data.meshNodes ?? []; const active = nav.includes(section) || section === 'hardware' ? section : 'dashboard';
