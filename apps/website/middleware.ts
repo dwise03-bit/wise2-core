@@ -29,7 +29,11 @@ export function middleware(request: NextRequest) {
 
   // Force all BLAKKHAIL requests to the new storefront design
   // Disable any old legacy pages or cached content
-  if (pathname === '/' || pathname === '' || pathname.toLowerCase() === '/blakkhail/home.html') {
+  if (pathname.toLowerCase() === '/blakkhail/home.html') {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  if (pathname === '/' || pathname === '') {
     return rewriteTo(request, BLACKHAIL_PREFIX);
   }
 
