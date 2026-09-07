@@ -8,20 +8,13 @@ import { productPath } from '@/lib/site-domains';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 
 export function CompleteTheFit() {
-  try {
-    const outfits = getBlakkhailOutfits();
-    if (typeof window !== 'undefined') {
-      console.log('[CompleteTheFit] outfits:', outfits?.length || 0, outfits);
-    }
+  const outfits = getBlakkhailOutfits();
 
-    if (!outfits || outfits.length === 0) {
-      if (typeof window !== 'undefined') {
-        console.log('[CompleteTheFit] No outfits - returning null');
-      }
-      return null;
-    }
+  if (!outfits || outfits.length === 0) {
+    return null;
+  }
 
-    return (
+  return (
     <section className="border-b py-16 sm:py-24" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: '#050505' }}>
       <div className={BLAKKHAIL_LAYOUT.container}>
         {/* Section Header */}
@@ -168,11 +161,5 @@ export function CompleteTheFit() {
         </div>
       </div>
     </section>
-    );
-  } catch (e) {
-    if (typeof window !== 'undefined') {
-      console.error('[CompleteTheFit] Error:', e);
-    }
-    return null;
-  }
+  );
 }
