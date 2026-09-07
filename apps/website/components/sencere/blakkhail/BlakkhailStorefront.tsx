@@ -8,7 +8,7 @@ import { productPath } from '@/lib/site-domains';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 import cinematic from './blakkhail-cinematic.module.css';
-import { CompleteTheFit } from './CompleteTheFit';
+// import { CompleteTheFit } from './CompleteTheFit';
 
 export function BlakkhailStorefront() {
   const [host, setHost] = useState<string | null>(null);
@@ -139,7 +139,7 @@ export function BlakkhailStorefront() {
         <p className="max-w-2xl text-base leading-relaxed" style={{ color: BLAKKHAIL.neutral600 }}>Cut, rebuilt, and worn without permission. The Control Series is a study in power and movement—a collection designed for people who refuse the expected.</p>
       </div>
     </section>
-    <CompleteTheFit />
+    {/* <CompleteTheFit /> */}
     <section className="border-b py-20 sm:py-32 bg-black" style={{ borderColor: BLAKKHAIL.darkGold }}>
       <div className={`${BLAKKHAIL_LAYOUT.container} max-w-4xl`}>
         <p className="text-[10px] uppercase tracking-[0.4em] mb-8" style={{ color: BLAKKHAIL.steel }}>The Brand Story</p>
