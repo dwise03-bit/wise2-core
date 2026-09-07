@@ -135,11 +135,10 @@ dependencies {
 
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    // Meta Quest SDK
-    implementation("com.meta.openxr:openxr_api:50.0.0")
-    implementation("com.meta.openxr:openxr_loader:50.0.0")
-    implementation("com.meta.openxr:interactionprofiles:50.0.0")
-    implementation("com.meta.openxr:handtracking:50.0.0")
+    // Meta Quest SDK (optional - add when deploying to Quest)
+    // implementation("com.meta.openxr:openxr_api:50.0.0")
+    // implementation("com.meta.openxr:openxr_loader:50.0.0")
+    // Implementation requires Meta Quest SDK setup in build environment
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")

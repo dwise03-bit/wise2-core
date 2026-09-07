@@ -1,4 +1,3 @@
-'use strict';
 /** Minimal stand-ins for the Discord objects the /ops handlers touch. */
 
 function createInteraction(options = {}) {
@@ -45,4 +44,4 @@ function createRelayStub(options = {}) {
   };
 }
 
-module.exports = { createInteraction, createRelayStub };
+export { createInteraction, createRelayStub };

@@ -1,7 +1,9 @@
-'use strict';
-const { describe, expect, it, beforeAll } = require('vitest');
-const { createOpsContext, handleOpsCommand, handleOpsComponent, handleOpsModal } = require('../index.js');
-const { createInteraction, createRelayStub } = require('./fakes.js');
+import { describe, expect, it, beforeAll } from 'vitest';
+import opsModule from '../index.js';
+import rolesModule from '../roles.js';
+import protocolModule from '../protocol.js';
+const { createOpsContext, handleOpsCommand, handleOpsComponent, handleOpsModal } = opsModule;
+import { createInteraction, createRelayStub } from './fakes.mjs';
 
 const OWNER = '111111111111111111';
 const OPERATOR = '222222222222222222';
@@ -17,7 +19,7 @@ const env = {
 
 let protocol;
 beforeAll(async () => {
-  protocol = await require('../protocol.js').loadProtocol();
+  protocol = await protocolModule.loadProtocol();
 });
 
 function context(overrides = {}) {
@@ -57,7 +59,7 @@ describe('authorization', () => {
   });
 
   it('refuses everything when no owner is configured', async () => {
-    const { ctx, relay } = context({ roles: require('../roles.js').createRoleResolver({}) });
+    const { ctx, relay } = context({ roles: rolesModule.createRoleResolver({}) });
     const interaction = createInteraction({ subcommand: 'status', userId: OWNER, values: { target: 'wise2-core' } });
     await handleOpsCommand(interaction, ctx);
     expect(interaction.state.replies[0].content).toContain('not configured');

@@ -47,7 +47,8 @@ function createPendingStore(options = {}) {
      * still be live, and a production write must echo the environment back exactly.
      */
     confirm(jobId, input) {
-      sweep();
+      // Deliberately before sweep(): an expired entry must say so, rather than being
+      // swept away and reported as a job that never existed.
       const entry = entries.get(jobId);
       if (!entry) return { ok: false, code: 'JOB_UNKNOWN', message: 'That job has expired or does not exist' };
       if (entry.status === 'consumed') return { ok: false, code: 'JOB_ALREADY_RUN', message: 'That job has already been executed' };
@@ -55,6 +56,7 @@ function createPendingStore(options = {}) {
         entries.delete(jobId);
         return { ok: false, code: 'CONFIRMATION_EXPIRED', message: 'Confirmation expired; request the action again' };
       }
+      sweep();
       if (input.userId !== entry.actorId) {
         return { ok: false, code: 'CONFIRMATION_ACTOR_MISMATCH', message: 'Only the person who requested this action may confirm it' };
       }

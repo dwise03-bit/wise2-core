@@ -29,7 +29,10 @@ async function dispatchJob(input) {
   const profile = api.findProfile(entry.actionProfile);
   if (!profile) return { ok: false, code: 'PROFILE_UNKNOWN', message: `Unknown action profile: ${entry.actionProfile}` };
 
-  if (profile.kind === 'write' && entry.status !== 'ready') {
+  // The invariant is the confirmations themselves, not a status label: by the time a job
+  // is dispatched the store has already marked it consumed.
+  const required = profile.requiresConfirmation ? (profile.requiresDoubleConfirmation ? 2 : 1) : 0;
+  if (profile.kind === 'write' && entry.confirmations.length < required) {
     return { ok: false, code: 'CONFIRMATION_REQUIRED', message: 'This action is not confirmed; no action was taken' };
   }
 

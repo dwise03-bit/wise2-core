@@ -1,6 +1,6 @@
-'use strict';
-const { describe, expect, it } = require('vitest');
-const { createRoleResolver, parseIds } = require('../roles.js');
+import { describe, expect, it } from 'vitest';
+import roles from '../roles.js';
+const { createRoleResolver, parseIds } = roles;
 
 describe('createRoleResolver', () => {
   it('is fail-closed when nothing is configured', () => {

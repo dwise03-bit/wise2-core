@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Core permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Meta Quest XR/VR permissions -->
+    <uses-permission android:name="com.oculus.permission.USE_HAND_TRACKING" />
+    <uses-permission android:name="com.oculus.permission.USE_TRACKING" />
+    <uses-permission android:name="com.oculus.permission.USE_SCENE" />
 
     <!-- Bluetooth: legacy (<=30) needs location for scanning, modern (31+) uses scoped runtime perms -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
@@ -25,6 +31,12 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
 
+    <!-- Meta Quest VR features -->
+    <uses-feature android:name="android.hardware.vr.headtracking" android:required="false" />
+    <uses-feature android:name="com.oculus.feature.HAND_TRACKING" android:required="false" />
+    <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
+    <uses-feature android:name="android.software.vr.mode" android:required="false" />
+
     <application
         android:name=".WiseFieldTechApp"
         android:allowBackup="false"
@@ -36,7 +48,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WiseFieldTech"
         android:networkSecurityConfig="@xml/network_security_config"
-        tools:targetApi="34">
+        tools:targetApi="34"
+        android:requestLegacyExternalStorage="false">
+
+        <!-- Meta Quest specific metadata -->
+        <meta-data
+            android:name="com.oculus.vr.focusaware"
+            android:value="true" />
+        <meta-data
+            android:name="com.oculus.supportedDevices"
+            android:value="quest|quest2|quest3|quest3s" />
+        <meta-data
+            android:name="com.oculus.handtracking.version"
+            android:value="V2" />
 
         <activity
             android:name=".MainActivity"

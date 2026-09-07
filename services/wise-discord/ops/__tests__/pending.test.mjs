@@ -1,6 +1,6 @@
-'use strict';
-const { describe, expect, it } = require('vitest');
-const { createPendingStore } = require('../pending.js');
+import { describe, expect, it } from 'vitest';
+import pending from '../pending.js';
+const { createPendingStore } = pending;
 
 const OWNER = '111111111111111111';
 

@@ -9,7 +9,7 @@
     "start": "node bot.js",
     "dev": "node --watch bot.js",
     "register": "node register-commands.js",
-    "test": "vitest run --config vitest.config.js"
+    "test": "vitest run --config vitest.config.mjs"
   },
   "dependencies": {
     "discord.js": "^14.16.3",
