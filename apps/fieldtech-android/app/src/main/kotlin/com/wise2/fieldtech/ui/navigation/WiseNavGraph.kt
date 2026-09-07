@@ -102,7 +102,11 @@ fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
             val vm: LiveReadingsViewModel = viewModel(
                 factory = viewModelFactory { initializer { LiveReadingsViewModel(container.toolManager, container.readingRepository, jobId) } },
             )
-            LiveReadingsScreen(vm) { navController.popBackStack() }
+            LiveReadingsScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
+                onRunDiagnostic = { navController.navigate(Destination.Diagnose.path(jobId)) },
+            )
         }
 
         composable(
