@@ -28,6 +28,27 @@ export const PublicNav: React.FC = () => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileOpen(false);
+    };
+    const closeOnDesktop = () => {
+      if (window.innerWidth >= 1024) setMobileOpen(false);
+    };
+
+    document.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('resize', closeOnDesktop);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('resize', closeOnDesktop);
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
   if (!mounted) return null;
 
   return (
@@ -87,7 +108,7 @@ export const PublicNav: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="border-b border-white/10 bg-[#050607]/98 lg:hidden"
+            className="max-h-[calc(100vh-4rem)] overflow-y-auto border-b border-white/10 bg-[#050607]/98 lg:hidden"
           >
             <div className="mx-auto grid max-w-7xl gap-px bg-white/10 px-4 py-4 sm:px-6">
               {PRIMARY_LINKS.map((link) => (

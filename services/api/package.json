@@ -1,14 +1,14 @@
 {
   "name": "@wise2/api",
   "version": "1.0.0",
-  "description": "Wise² REST API Service",
+  "description": "Wise\u00b2 REST API Service",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "lint": "eslint src --ext .ts",

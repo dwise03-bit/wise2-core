@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WISE² Control Relay login agent.
+  Install:  cp scripts/ops/com.wise2.control-relay.plist ~/Library/LaunchAgents/
+            chmod 600 ~/Library/LaunchAgents/com.wise2.control-relay.plist
+            launchctl load ~/Library/LaunchAgents/com.wise2.control-relay.plist
+  Secrets live in this file, so it must not be world-readable and must never be committed
+  with real values. Rotate by editing here and reloading.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.wise2.control-relay</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/Users/danielwise/Projects/wise2-core/services/control-relay/dist/services/control-relay/src/server.js</string>
+  </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>NODE_ENV</key><string>production</string>
+    <!-- Bind localhost unless the Discord backend is remote; then use the MacBook's
+         tailnet address, never 0.0.0.0. -->
+    <key>WISE2_RELAY_HOST</key><string>127.0.0.1</string>
+    <key>WISE2_RELAY_PORT</key><string>4600</string>
+    <key>WISE2_RELAY_TARGETS_FILE</key><string>/Users/danielwise/.wise2/targets.json</string>
+    <key>WISE2_RELAY_AUDIT_FILE</key><string>/Users/danielwise/.wise2/relay-audit.jsonl</string>
+    <key>WISE2_RELAY_TOKEN</key><string>REPLACE_ME</string>
+    <key>WISE2_OPS_SIGNING_KEYS</key><string>relay-2026-09:REPLACE_ME</string>
+    <key>WISE2_BRIDGE_TOKEN_CORE</key><string>REPLACE_ME</string>
+  </dict>
+
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/Users/danielwise/.wise2/relay.log</string>
+  <key>StandardErrorPath</key><string>/Users/danielwise/.wise2/relay.err.log</string>
+</dict>
+</plist>

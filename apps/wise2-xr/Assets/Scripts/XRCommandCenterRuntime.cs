@@ -20,7 +20,9 @@ namespace Wise2.XR
 
         private void Start()
         {
-            RenderSettings.ambientLight = new Color(.025f, .04f, .03f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(.18f, .22f, .2f);
+            CreateKeyLight();
             CreateCamera();
             var view = Camera.main;
             if (view != null)
@@ -124,6 +126,27 @@ namespace Wise2.XR
             camera.fieldOfView = 70f;
             camera.nearClipPlane = .05f;
             camera.farClipPlane = 100f;
+
+            // Follow the headset pose. Without a driver the OpenXR camera renders
+            // from a fixed transform and ignores head movement.
+            if (cameraObject.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>() == null)
+            {
+                var driver = cameraObject.AddComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
+                driver.trackingType = UnityEngine.InputSystem.XR.TrackedPoseDriver.TrackingType.RotationAndPosition;
+                driver.updateType = UnityEngine.InputSystem.XR.TrackedPoseDriver.UpdateType.UpdateAndBeforeRender;
+
+                var posAction = new UnityEngine.InputSystem.InputAction(
+                    "XRHeadPosition", UnityEngine.InputSystem.InputActionType.Value, "<XRHMD>/centerEyePosition");
+                var rotAction = new UnityEngine.InputSystem.InputAction(
+                    "XRHeadRotation", UnityEngine.InputSystem.InputActionType.Value, "<XRHMD>/centerEyeRotation");
+                posAction.Enable();
+                rotAction.Enable();
+                driver.positionInput = new UnityEngine.InputSystem.InputActionProperty(posAction);
+                driver.rotationInput = new UnityEngine.InputSystem.InputActionProperty(rotAction);
+            }
+
+            if (cameraObject.GetComponent<AudioListener>() == null)
+                cameraObject.AddComponent<AudioListener>();
         }
 
         private void CreateFloor()
@@ -209,14 +232,51 @@ namespace Wise2.XR
         {
             var obj = new GameObject("Label"); obj.transform.SetParent(parent); obj.transform.localPosition = position; obj.transform.localRotation = Quaternion.identity;
             var text = obj.AddComponent<TextMesh>(); text.text = value; text.fontSize = 48; text.characterSize = size; text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center; text.color = new Color(.72f, 1f, .4f);
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            if (font != null)
+            {
+                text.font = font;
+                var renderer = obj.GetComponent<MeshRenderer>();
+                if (renderer != null) renderer.sharedMaterial = font.material;
+            }
             return text;
         }
 
+        private static void CreateKeyLight()
+        {
+            var existing = FindFirstObjectByType<Light>();
+            if (existing != null && existing.type == LightType.Directional) return;
+            var obj = new GameObject("WISE² Key Light");
+            obj.transform.rotation = Quaternion.Euler(52f, -34f, 0f);
+            var light = obj.AddComponent<Light>();
+            light.type = LightType.Directional;
+            light.color = new Color(.85f, 1f, .9f);
+            light.intensity = 1.15f;
+            light.shadows = LightShadows.None;
+        }
+
+        private static Material templateMaterial;
+
         private static Material Material(Color color)
         {
-            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Standard") ?? Shader.Find("Unlit/Color") ?? Shader.Find("UI/Default") ?? Shader.Find("Sprites/Default");
-            if (shader == null) return null;
-            return new Material(shader) { color = color };
+            if (templateMaterial == null)
+            {
+                // Shader.Find is unreliable in player builds; the default material
+                // on a runtime primitive is always included, so clone that shader.
+                var probe = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var probeRenderer = probe.GetComponent<Renderer>();
+                var source = probeRenderer != null ? probeRenderer.sharedMaterial : null;
+                var shader = source != null ? source.shader : null;
+                shader = shader
+                    ?? Shader.Find("Universal Render Pipeline/Lit")
+                    ?? Shader.Find("Standard")
+                    ?? Shader.Find("Legacy Shaders/Diffuse")
+                    ?? Shader.Find("Sprites/Default");
+                templateMaterial = new Material(shader);
+                Destroy(probe);
+            }
+
+            return new Material(templateMaterial) { color = color };
         }
     }
 }

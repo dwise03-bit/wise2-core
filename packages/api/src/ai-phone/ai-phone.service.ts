@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantCrmAdapter } from './ai-phone-crm.adapter';
@@ -20,6 +20,8 @@ const OWNER_ROLES = new Set(['OWNER', 'ADMIN', 'FOUNDER']);
 
 @Injectable()
 export class AiPhoneService {
+  private readonly logger = new Logger(AiPhoneService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly runtime: AiPhoneRuntimeService,
@@ -140,10 +142,49 @@ export class AiPhoneService {
   }
 
   async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
-    // Telnyx delivery is acknowledged here until provider-specific call mapping
-    // is wired to the canonical call lifecycle. Keep this handler side-effect free
-    // for unsupported events so webhook retries do not create duplicate records.
+    if (input.eventType === 'call.initiated') {
+      await this.notifyDiscordIncomingCall(input.payload);
+    }
     return { accepted: true, eventType: input.eventType };
+  }
+
+  private async notifyDiscordIncomingCall(payload: Record<string, unknown>): Promise<void> {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_CALLS || process.env.DISCORD_WEBHOOK_URL;
+    if (!webhookUrl) return;
+
+    const alertUserIds = (process.env.DISCORD_CALL_ALERT_USER_IDS || '')
+      .split(',').map((id) => id.trim()).filter(Boolean);
+    const mentions = alertUserIds.map((id) => `<@${id}>`).join(' ');
+    const from = String(payload.from || 'Unknown');
+    const to = String(payload.to || 'Unknown');
+    const callId = String(payload.call_control_id || payload.id || 'unknown');
+
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          username: 'WISE² Calls',
+          content: `🚨🚨🚨 ${mentions || '@everyone'} INCOMING WISE² CALL — ANSWER NOW 🚨🚨🚨`,
+          allowed_mentions: alertUserIds.length ? { users: alertUserIds } : { parse: ['everyone'] },
+          embeds: [{
+            title: '🚨📞 INCOMING CALL — LIVE',
+            description: 'Paige is answering now. Pick up if human help is needed.',
+            color: 0xff1f3d,
+            fields: [
+              { name: 'From', value: from, inline: true },
+              { name: 'To', value: to, inline: true },
+              { name: 'Call ID', value: callId, inline: false },
+            ],
+            timestamp: new Date().toISOString(),
+            footer: { text: 'Telnyx · WISE² customer care' },
+          }],
+        }),
+      });
+    } catch (error) {
+      // Discord must never prevent Telnyx from acknowledging the call.
+      this.logger.warn(`Discord call alert failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 
   async firstConfiguredTenantId(): Promise<string | null> {

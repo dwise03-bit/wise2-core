@@ -45,9 +45,15 @@ export class TelnyxWebhookController {
     const rawBody = (req as Request & { rawBody?: Buffer }).rawBody;
     if (!publicKey || typeof timestamp !== 'string' || typeof signatureHeader !== 'string' || !rawBody) return false;
     try {
-      const signatures = signatureHeader.split(' ').map((value) => Buffer.from(value, 'base64'));
-      const signedPayload = Buffer.concat([Buffer.from(`${timestamp}.`), rawBody]);
-      const key = createPublicKey({ key: Buffer.from(publicKey, 'base64'), format: 'der', type: 'spki' });
+      const signatures = signatureHeader
+        .split(/\s+/)
+        .map((value) => value.replace(/^v\d+,/, ''))
+        .filter(Boolean)
+        .map((value) => Buffer.from(value, 'base64'));
+      const signedPayload = Buffer.concat([Buffer.from(`${timestamp}|`), rawBody]);
+      const key = publicKey.includes('BEGIN')
+        ? createPublicKey(publicKey)
+        : createPublicKey({ key: Buffer.from(publicKey, 'base64'), format: 'der', type: 'spki' });
       return signatures.some((signature) => verify(null, signedPayload, key, signature));
     } catch (error) {
       this.logger.warn(`Telnyx signature check failed: ${error instanceof Error ? error.message : String(error)}`);

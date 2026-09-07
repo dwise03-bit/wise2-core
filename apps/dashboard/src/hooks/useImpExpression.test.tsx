@@ -63,16 +63,24 @@ describe('useImpExpression Hook', () => {
     });
 
     it('should update lastEventTime on valid transition', () => {
-      const { result } = renderHook(() => useImpExpression('idle'));
-      const beforeTime = result.current.state.lastEventTime;
+      vi.useFakeTimers();
+      try {
+        const { result } = renderHook(() => useImpExpression('idle'));
+        const beforeTime = result.current.state.lastEventTime;
 
-      act(() => {
-        result.current.setExpression('listening');
-      });
+        // Advance the clock so the two timestamps cannot share a millisecond.
+        vi.advanceTimersByTime(10);
 
-      expect(result.current.state.lastEventTime?.getTime()).toBeGreaterThan(
-        beforeTime?.getTime() ?? 0
-      );
+        act(() => {
+          result.current.setExpression('listening');
+        });
+
+        expect(result.current.state.lastEventTime?.getTime()).toBeGreaterThan(
+          beforeTime?.getTime() ?? 0
+        );
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should prevent invalid transitions', () => {
@@ -374,7 +382,7 @@ describe('useImpExpression Hook', () => {
 
       // Change expression before auto-transition occurs
       act(() => {
-        result.current.setExpression('curious');
+        result.current.setExpression('playful');
       });
 
       // Advance another 1000ms
@@ -382,8 +390,9 @@ describe('useImpExpression Hook', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // Should still be in curious (not auto-transitioned yet)
-      expect(result.current.state.expression).toBe('curious');
+      // Still playful: playful lasts 2500ms, and the happy timer that would
+      // have fired at 2000ms must have been cleared.
+      expect(result.current.state.expression).toBe('playful');
     });
   });
 
@@ -459,20 +468,25 @@ describe('useImpExpression Hook', () => {
     });
 
     it('should maintain state consistency across multiple calls', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useImpExpression('idle'));
       const initialTime = result.current.state.lastEventTime;
 
+      // Advance between transitions so each timestamp is distinct.
+      vi.advanceTimersByTime(10);
       act(() => {
         result.current.setExpression('listening');
       });
 
       const afterListeningTime = result.current.state.lastEventTime;
 
+      vi.advanceTimersByTime(10);
       act(() => {
         result.current.setExpression('thinking');
       });
 
       const afterThinkingTime = result.current.state.lastEventTime;
+      vi.useRealTimers();
 
       // Times should be monotonically increasing
       expect(afterListeningTime?.getTime()).toBeGreaterThan(

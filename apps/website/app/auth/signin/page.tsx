@@ -33,7 +33,7 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    const oauthError = searchParams.get('error');
+    const oauthError = searchParams?.get('error');
     if (!oauthError) return;
 
     const messages: Record<string, string> = {

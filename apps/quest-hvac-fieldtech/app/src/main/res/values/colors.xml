@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- WISE² Brand Colors -->
+  <color name="wise2_primary">#00D9FF</color>
+  <color name="wise2_secondary">#1A1A1A</color>
+  <color name="wise2_accent">#00FF41</color>
+
+  <!-- Status Colors -->
+  <color name="status_healthy">#00FF41</color>
+  <color name="status_caution">#FFB700</color>
+  <color name="status_critical">#FF0040</color>
+
+  <!-- Neutral -->
+  <color name="background_dark">#0A0A0A</color>
+  <color name="surface_dark">#1A1A1A</color>
+  <color name="text_primary">#FFFFFF</color>
+  <color name="text_secondary">#A0A0A0</color>
+
+  <!-- Shadows & Overlays -->
+  <color name="overlay_light">#26FFFFFF</color>
+  <color name="overlay_dark">#4D000000</color>
+</resources>

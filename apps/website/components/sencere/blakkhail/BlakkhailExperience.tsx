@@ -161,7 +161,7 @@ export function BlakkhailExperience({
         style={{
           borderColor: BLAKKHAIL.darkGold,
           backgroundColor: BLAKKHAIL.jetBlack,
-          opacity: lightsDimmed && cinematicPhase !== 'idle' ? 0.15 : 1,
+          opacity: lightsDimmed ? 0.15 : 1,
           transition: 'opacity 0.4s ease',
         }}
       >

@@ -7,7 +7,7 @@ import type {
   StoreResult,
   ClientStatus,
   NextPrompt,
-} from '../../../../../packages/api-keys/src/types';
+} from '../../../../../../packages/api-keys/src/types';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';

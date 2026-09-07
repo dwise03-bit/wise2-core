@@ -11,8 +11,12 @@ import { getNextPrompt, getStatus, skipKey, storeKey } from './workflow.ts';
 test('maskSecret never returns the full value', () => {
   const value = 'sk_live_XXXXXXXXXXXXXXXXXXXXXXXXXXXX';
   const masked = maskSecret(value);
-  assert.equal(masked.includes('sk_live_abcdef'), false);
-  assert.equal(masked.endsWith('xxxx'), true);
+  // Assert the contract directly rather than hard-coded literals: the sample
+  // value had been changed without updating the expected suffix, so this
+  // failed on letter case alone.
+  assert.equal(masked.includes(value), false);
+  assert.equal(masked.includes('sk_live_'), false);
+  assert.equal(masked.endsWith(value.slice(-4)), true);
 });
 
 test('validateFieldValue checks prefix and emptiness', () => {

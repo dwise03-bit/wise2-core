@@ -6,6 +6,7 @@ import { buildServer } from '../server.js';
 import type { CommandResult } from '../lib/exec.js';
 import type { ControlConfig } from '../types.js';
 import type { Runner } from '../adapters.js';
+import { SIGNING_KEY, signedWrite } from './signing.js';
 
 function config(overrides: Partial<ControlConfig> = {}): ControlConfig {
   return {
@@ -30,6 +31,12 @@ function config(overrides: Partial<ControlConfig> = {}): ControlConfig {
     apiHealthUrl: 'http://api.test/health',
     rateLimitMax: 100,
     rateLimitWindowMs: 60_000,
+    targetAlias: 'wise2-core',
+    targetEnvironment: 'production',
+    allowedProfiles: ['status', 'services', 'logs', 'deploy-status', 'restart', 'deploy', 'rollback'],
+    signingKeys: [SIGNING_KEY],
+    requireSignedWrites: true,
+    idempotencyFile: join(tmpdir(), `idempotency-${crypto.randomUUID()}.jsonl`),
     ...overrides,
   };
 }
@@ -57,7 +64,7 @@ describe('control bridge server', () => {
     const calls: string[][] = [];
     const app = await buildServer(config(), { run: async (_binary, args) => { calls.push(args); return ok(); } });
     for (const service of ['api;id', 'api && whoami', '../api', '$(id)', 'api|cat /etc/passwd']) {
-      const res = await app.inject({ method: 'POST', url: `/v1/control/docker/${encodeURIComponent(service)}/restart`, headers: { authorization: 'Bearer test-token-with-length' } });
+      const res = await app.inject({ method: 'POST', url: `/v1/control/docker/${encodeURIComponent(service)}/restart`, headers: { authorization: 'Bearer test-token-with-length' }, ...signedWrite('restart', { service }) });
       expect(res.statusCode).toBe(403);
     }
     expect(calls).toEqual([]);
@@ -68,7 +75,7 @@ describe('control bridge server', () => {
     const cfg = config({ auditFile: join(dir, 'audit.jsonl') });
     const calls: string[][] = [];
     const app = await buildServer(cfg, { run: async (_binary, args) => { calls.push(args); return ok('restarted'); } });
-    const res = await app.inject({ method: 'POST', url: '/v1/control/docker/api/restart', headers: { authorization: `Bearer ${cfg.token}` } });
+    const res = await app.inject({ method: 'POST', url: '/v1/control/docker/api/restart', headers: { authorization: `Bearer ${cfg.token}` }, ...signedWrite('restart', { service: 'api' }) });
     expect(res.statusCode).toBe(200);
     expect(calls[0]).toEqual(['compose', '-p', cfg.composeProjectName, '-f', cfg.composeFile, 'restart', 'api']);
     const audit = await readFile(cfg.auditFile, 'utf8');
@@ -78,7 +85,7 @@ describe('control bridge server', () => {
 
   it('surfaces restart failures', async () => {
     const app = await buildServer(config(), { run: async () => ({ code: 1, stdout: '', stderr: 'failed' }) });
-    const res = await app.inject({ method: 'POST', url: '/v1/control/docker/api/restart', headers: { authorization: 'Bearer test-token-with-length' } });
+    const res = await app.inject({ method: 'POST', url: '/v1/control/docker/api/restart', headers: { authorization: 'Bearer test-token-with-length' }, ...signedWrite('restart', { service: 'api' }) });
     expect(res.statusCode).toBe(500);
   });
 
@@ -141,7 +148,7 @@ describe('control bridge server', () => {
 
   it('rejects deployment targets outside the app allowlist', async () => {
     const app = await buildServer(config(), { run: async () => ok('main') });
-    const res = await app.inject({ method: 'POST', url: '/v1/control/deploy/postgres', headers: { authorization: 'Bearer test-token-with-length' } });
+    const res = await app.inject({ method: 'POST', url: '/v1/control/deploy/postgres', headers: { authorization: 'Bearer test-token-with-length' }, ...signedWrite('deploy', { app: 'postgres', releaseId: 'abc1234' }) });
     expect(res.statusCode).toBe(403);
   });
 
@@ -150,9 +157,9 @@ describe('control bridge server', () => {
     const cfg = config({ deploymentFile: join(dir, 'deployments.jsonl'), auditFile: join(dir, 'audit.jsonl') });
     const run: Runner = async (_binary, args) => ok(args.includes('HEAD') ? 'abc123\n' : 'main\n');
     const app = await buildServer(cfg, { run });
-    const deploy = await app.inject({ method: 'POST', url: '/v1/control/deploy/website', headers: { authorization: `Bearer ${cfg.token}` } });
+    const deploy = await app.inject({ method: 'POST', url: '/v1/control/deploy/website', headers: { authorization: `Bearer ${cfg.token}` }, ...signedWrite('deploy', { app: 'website', releaseId: 'abc123' }) });
     expect(deploy.statusCode).toBe(200);
-    const rollback = await app.inject({ method: 'POST', url: '/v1/control/rollback/website', headers: { authorization: `Bearer ${cfg.token}` } });
+    const rollback = await app.inject({ method: 'POST', url: '/v1/control/rollback/website', headers: { authorization: `Bearer ${cfg.token}` }, ...signedWrite('rollback', { app: 'website', releaseId: 'abc123' }) });
     expect(rollback.statusCode).toBe(200);
     expect(rollback.json().data.status).toBe('rolled_back');
   });
@@ -167,7 +174,7 @@ describe('control bridge server', () => {
   it('unknown endpoints do not execute commands', async () => {
     let called = false;
     const app = await buildServer(config(), { run: async () => { called = true; return ok(); } });
-    const res = await app.inject({ method: 'POST', url: '/v1/control/exec', headers: { authorization: 'Bearer test-token-with-length' } });
+    const res = await app.inject({ method: 'POST', url: '/v1/control/exec', headers: { authorization: 'Bearer test-token-with-length' }, payload: {} });
     expect(res.statusCode).toBe(404);
     expect(called).toBe(false);
   });

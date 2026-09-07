@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "jsx": "preserve",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "allowJs": true,
@@ -19,23 +23,54 @@
     "outDir": "./.next",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["./src/components/*"],
-      "@contexts/*": ["./src/contexts/*"],
-      "@widgets/*": ["./src/components/widgets/*"],
-      "@charts/*": ["./src/charts/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@lib/*": ["./src/lib/*"],
-      "@types/*": ["./src/types/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@contexts/*": [
+        "./src/contexts/*"
+      ],
+      "@widgets/*": [
+        "./src/components/widgets/*"
+      ],
+      "@charts/*": [
+        "./src/charts/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@types/*": [
+        "./src/types/*"
+      ],
+      "@styles/*": [
+        "./src/styles/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ]
     },
     "plugins": [
       {
         "name": "next"
       }
+    ],
+    "types": [
+      "vitest/globals"
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

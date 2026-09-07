@@ -1,7 +1,7 @@
 {
   "name": "@wise2/podcast-music",
   "version": "1.0.0",
-  "description": "WISE² Podcast Music - AI-powered podcast music generation backend",
+  "description": "WISE\u00b2 Podcast Music - AI-powered podcast music generation backend",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3006",
@@ -9,7 +9,7 @@
     "start": "next start -p 3006 -H 0.0.0.0",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"

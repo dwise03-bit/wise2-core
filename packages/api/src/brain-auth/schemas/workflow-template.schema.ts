@@ -79,7 +79,7 @@ export class WorkflowTemplate {
   @Prop({ default: true })
   enabled!: boolean;
 
-  @Prop()
+  @Prop({ type: Object })
   retryPolicy?: {
     maxRetries: number;
     backoffMs: number;

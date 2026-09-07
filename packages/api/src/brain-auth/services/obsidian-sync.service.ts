@@ -258,12 +258,14 @@ export class ObsidianSyncService {
     // Extract wikilinks from content: [[slug]] or [[slug|display text]]
     const wikiLinkRegex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
     const matches = entry.content.matchAll(wikiLinkRegex);
-    const backlinks: string[] = [];
+    const uniqueBacklinks = new Set<string>();
 
     for (const match of matches) {
       const linkedSlug = match[1].trim().toLowerCase().replace(/\s+/g, '-');
-      backlinks.push(linkedSlug);
+      uniqueBacklinks.add(linkedSlug);
     }
+
+    const backlinks: string[] = [...uniqueBacklinks];
 
     entry.backlinks = backlinks;
     await entry.save();

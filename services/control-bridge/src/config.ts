@@ -1,3 +1,6 @@
+import { profileIds } from '../../../packages/ops-protocol/src/index.js';
+import type { Environment } from '../../../packages/ops-protocol/src/index.js';
+import type { SigningKey } from '../../../packages/ops-protocol/src/signature.js';
 import type { ControlConfig } from './types.js';
 
 const DEFAULT_SERVICES = [
@@ -5,6 +8,36 @@ const DEFAULT_SERVICES = [
   'dashboard', 'admin', 'studio', 'command-center', 'worker', 'prometheus', 'grafana',
 ];
 const DEFAULT_APPS = ['website', 'dashboard', 'admin', 'studio', 'command-center', 'api', 'worker'];
+/**
+ * Profiles this bridge implements today. `maintenance` and `emergency-stop` are
+ * deliberately absent until their adapters land (F5-OPS-03); a job naming them is
+ * rejected as not-allowed-on-target rather than silently accepted.
+ */
+const DEFAULT_PROFILES = ['status', 'services', 'logs', 'deploy-status', 'restart', 'deploy', 'rollback'];
+const ENVIRONMENTS: readonly Environment[] = ['development', 'staging', 'production'];
+
+function booleanValue(value: string | undefined, fallback: boolean): boolean {
+  if (value === undefined || value.trim() === '') return fallback;
+  return !['0', 'false', 'no', 'off'].includes(value.trim().toLowerCase());
+}
+
+/**
+ * Parses `keyId:secret,keyId2:secret2`. Two keys may share an id only across a rotation,
+ * so duplicates are rejected rather than silently shadowing one another.
+ */
+export function parseSigningKeys(value: string | undefined): SigningKey[] {
+  const keys: SigningKey[] = [];
+  for (const pair of csv(value, [])) {
+    const separator = pair.indexOf(':');
+    if (separator <= 0) throw new Error('WISE2_OPS_SIGNING_KEYS entries must be formatted as keyId:secret');
+    const keyId = pair.slice(0, separator).trim();
+    const secret = pair.slice(separator + 1).trim();
+    if (!keyId || secret.length < 32) throw new Error('WISE2_OPS_SIGNING_KEYS secrets must be at least 32 characters');
+    if (keys.some(existing => existing.keyId === keyId)) throw new Error(`Duplicate signing key id: ${keyId}`);
+    keys.push({ keyId, secret });
+  }
+  return keys;
+}
 
 function csv(value: string | undefined, fallback: string[]): string[] {
   return (value ? value.split(',') : fallback).map(v => v.trim()).filter(Boolean);
@@ -21,6 +54,22 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
   if (env.NODE_ENV === 'production' && token.length < 16) {
     throw new Error('WISE2_CONTROL_TOKEN must be at least 16 characters in production');
   }
+  const targetAlias = env.WISE2_TARGET_ALIAS ?? 'wise2-core';
+  const targetEnvironment = (env.WISE2_TARGET_ENVIRONMENT ?? (env.NODE_ENV === 'production' ? 'production' : 'development')) as Environment;
+  if (!ENVIRONMENTS.includes(targetEnvironment)) throw new Error('WISE2_TARGET_ENVIRONMENT must be development, staging or production');
+
+  const allowedProfiles = csv(env.WISE2_ALLOWED_PROFILES, DEFAULT_PROFILES);
+  const unknownProfile = allowedProfiles.find(profile => !profileIds().includes(profile));
+  if (unknownProfile) throw new Error(`WISE2_ALLOWED_PROFILES contains an unknown profile: ${unknownProfile}`);
+
+  const signingKeys = parseSigningKeys(env.WISE2_OPS_SIGNING_KEYS);
+  const requireSignedWrites = booleanValue(env.WISE2_REQUIRE_SIGNED_WRITES, true);
+  // Fail closed: a bridge that demands signed writes but holds no key can never satisfy
+  // one, so refuse to start rather than reject every operator action at 03:00.
+  if (requireSignedWrites && signingKeys.length === 0) {
+    throw new Error('WISE2_OPS_SIGNING_KEYS is required when signed writes are enforced');
+  }
+
   return {
     host: env.WISE2_CONTROL_HOST ?? '127.0.0.1',
     port: numberValue(env.WISE2_CONTROL_PORT, 3099),
@@ -43,5 +92,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
     apiHealthUrl: env.WISE2_API_HEALTH_URL ?? 'http://127.0.0.1:3010/api/health',
     rateLimitMax: numberValue(env.WISE2_CONTROL_RATE_LIMIT_MAX, 60),
     rateLimitWindowMs: numberValue(env.WISE2_CONTROL_RATE_LIMIT_WINDOW_MS, 60_000),
+    targetAlias,
+    targetEnvironment,
+    allowedProfiles,
+    signingKeys,
+    requireSignedWrites,
+    idempotencyFile: env.WISE2_IDEMPOTENCY_FILE ?? '/data/control-bridge/idempotency.jsonl',
   };
 }

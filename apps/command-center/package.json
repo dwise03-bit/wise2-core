@@ -1,16 +1,19 @@
 {
   "name": "@wise2/command-center",
   "version": "1.0.0",
-  "description": "WISE² Command Center Dashboard",
+  "description": "WISE\u00b2 Command Center Dashboard",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3004",
     "build": "cd ../dashboard && npm run build",
     "start": "cd ../dashboard && npm start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "ioredis": "^6.0.0",
     "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -19,6 +22,7 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3"
   }
 }

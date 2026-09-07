@@ -19,7 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*"
+        "./src/*",
+        "./*"
       ],
       "@wise2/dashboard-shell": [
         "../../packages/dashboard-shell/src"

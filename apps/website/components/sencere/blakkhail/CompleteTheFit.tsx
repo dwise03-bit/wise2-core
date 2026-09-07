@@ -10,8 +10,14 @@ import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 export function CompleteTheFit() {
   try {
     const outfits = getBlakkhailOutfits();
+    if (typeof window !== 'undefined') {
+      console.log('[CompleteTheFit] outfits:', outfits?.length || 0, outfits);
+    }
 
     if (!outfits || outfits.length === 0) {
+      if (typeof window !== 'undefined') {
+        console.log('[CompleteTheFit] No outfits - returning null');
+      }
       return null;
     }
 
@@ -163,7 +169,10 @@ export function CompleteTheFit() {
       </div>
     </section>
     );
-  } catch {
+  } catch (e) {
+    if (typeof window !== 'undefined') {
+      console.error('[CompleteTheFit] Error:', e);
+    }
     return null;
   }
 }

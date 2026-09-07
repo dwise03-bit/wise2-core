@@ -600,7 +600,8 @@ function CalendarView({
   const daysInMonth = lastDay.getDate();
   const startingDayOfWeek = firstDay.getDay();
 
-  const days = [];
+  // leading nulls pad the grid to the first weekday
+  const days: (Date | null)[] = [];
   for (let i = 0; i < startingDayOfWeek; i++) {
     days.push(null);
   }

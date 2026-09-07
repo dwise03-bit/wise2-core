@@ -1,12 +1,12 @@
 'use client';
 
-import { jwtVerify, SignJWT } from 'jose';
+import { jwtVerify, SignJWT, type JWTPayload } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.NEXT_PUBLIC_JWT_SECRET || 'sencere-dev-secret-key-change-in-production'
 );
 
-export interface SenCereToken {
+export interface SenCereToken extends JWTPayload {
   userId: string;
   email: string;
   firstName: string;

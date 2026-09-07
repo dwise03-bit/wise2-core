@@ -43,7 +43,7 @@ export default function CloudOrderPage() {
 
     async function loadOrder() {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/v1/cloud/orders/${params.id}`);
+        const response = await fetch(`${getApiBaseUrl()}/v1/cloud/orders/${params?.id}`);
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.message || 'Order not found');

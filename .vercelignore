@@ -12,3 +12,25 @@ coverage
 dist
 build
 *.log
+
+# The website project only needs its own app and shared packages.
+apps/*
+!apps/website
+services
+clients
+products
+CJAYS
+wise2-command-center
+wise-os
+wise-touch
+archive
+comfyui-output
+print_ready
+voice-samples
+second-brain
+infrastructure
+discord-ecosystem
+play-store
+hermes-dropshipping-factory
+wise2_veo_batch.json
+wise2_veo_generate.py

@@ -102,8 +102,11 @@ describe('WorkflowService - Security & Performance Fixes', () => {
           workspaceId: new Types.ObjectId(mockWorkspaceId),
           name: 'Old Name',
           version: 1,
-          save: jest.fn().mockResolvedValue({ ...mockTemplate, name: 'New Name' }),
+          save: jest.fn(),
         };
+        // Attached after construction: the resolved value spreads mockTemplate,
+        // which cannot be referenced from inside its own initializer.
+        mockTemplate.save.mockResolvedValue({ ...mockTemplate, name: 'New Name' });
 
         mockTemplateModel.findOne.mockResolvedValue(mockTemplate);
 

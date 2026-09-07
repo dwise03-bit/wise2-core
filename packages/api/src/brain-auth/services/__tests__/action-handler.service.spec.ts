@@ -386,7 +386,7 @@ describe('ActionHandlerService - Extensibility & Type Safety', () => {
         variables: {},
       };
 
-      await service.executeHandler(WorkflowActionType.SEND_EMAIL, config, context);
+      await service.getHandler(WorkflowActionType.SEND_EMAIL).execute(config, context);
 
       expect(mockHandler.execute).toHaveBeenCalledWith(config, context);
     });

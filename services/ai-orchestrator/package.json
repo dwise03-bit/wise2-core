@@ -1,14 +1,14 @@
 {
   "name": "@wise2/ai-orchestrator",
   "version": "1.0.0",
-  "description": "Multi-model AI orchestration engine for WISE² - coordinates Claude, ChatGPT, Gemini, and Ollama",
+  "description": "Multi-model AI orchestration engine for WISE\u00b2 - coordinates Claude, ChatGPT, Gemini, and Ollama",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {

@@ -1,0 +1,49 @@
+// WISE² ops tailnet policy — paste into the Tailscale admin console (Access Controls).
+// Principle: the MacBook relay is the only device that may reach a control bridge, and
+// only on the control-bridge port. Nothing else in the tailnet gains ops access.
+{
+  "tagOwners": {
+    // Devices that run a control bridge and accept ops jobs.
+    "tag:ops-host":  ["autogroup:admin"],
+    // The MacBook relay. The only client permitted to reach tag:ops-host.
+    "tag:ops-relay": ["autogroup:admin"]
+  },
+
+  "acls": [
+    {
+      // The ops path itself: relay → bridge, on the bridge port only.
+      "action": "accept",
+      "src":    ["tag:ops-relay"],
+      "dst":    ["tag:ops-host:3099"]
+    },
+    {
+      // `tailscale serve` terminates TLS on 443 and proxies to 127.0.0.1:3099.
+      // Keep this rule if you use the serve ingress; drop it if you bind 3099 directly.
+      "action": "accept",
+      "src":    ["tag:ops-relay"],
+      "dst":    ["tag:ops-host:443"]
+    },
+    {
+      // Existing personal access. Narrow or remove once every service is tagged.
+      "action": "accept",
+      "src":    ["autogroup:member"],
+      "dst":    ["autogroup:self:*"]
+    }
+  ],
+
+  "ssh": [
+    {
+      // Tailscale SSH for break-glass administration only — never for ops actions.
+      // Ops actions go through the control bridge, which runs no arbitrary commands.
+      "action": "check",
+      "src":    ["autogroup:member"],
+      "dst":    ["tag:ops-host"],
+      "users":  ["dwise"],
+      "checkPeriod": "12h"
+    }
+  ],
+
+  "nodeAttrs": [
+    { "target": ["tag:ops-host"], "attr": ["funnel"] }
+  ]
+}

@@ -3,11 +3,11 @@ import Stripe from 'stripe';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface CjaysPaymentStatus {
-  status: string;
+  status: string | null;
   paidAmount: string;
   paymentMethod: string;
-  receiptUrl: string;
-  invoiceNumber: string;
+  receiptUrl: string | null;
+  invoiceNumber: string | null;
 }
 
 export function cjaysPriceToCents(value: string): number {
@@ -24,7 +24,7 @@ export class CjaysPaymentService {
 
   constructor(private readonly prisma: PrismaService) {
     const secret = process.env.STRIPE_SECRET_KEY;
-    this.stripe = secret ? new Stripe(secret, { apiVersion: '2023-10-16' }) : null;
+    this.stripe = secret ? new Stripe(secret, { apiVersion: '2025-02-24.acacia' }) : null;
   }
 
   private requireStripe(): Stripe {

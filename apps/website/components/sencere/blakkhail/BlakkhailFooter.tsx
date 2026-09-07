@@ -18,7 +18,7 @@ function TikTokIcon({ size = 20 }: { size?: number }) {
 
 export function BlakkhailFooter() {
   const { social } = blakkhailBrand;
-  const [parentHref, setParentHref] = useState(blakkhailBrand.parentPath);
+  const [parentHref, setParentHref] = useState<string>(blakkhailBrand.parentPath);
 
   useEffect(() => {
     const onBlackhailDomain = isBlackhailHost(window.location.hostname);

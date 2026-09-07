@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">HVAC FieldTech XR</string>
+  <string name="google_oauth_client_id">@string/google_oauth_client_id</string>
+
+  <!-- Login Screen -->
+  <string name="login_title">HVAC Field Technician</string>
+  <string name="login_subtitle">Expert Diagnostics in XR</string>
+  <string name="sign_in_with_google">Sign in with Google</string>
+  <string name="sign_in_with_wise2">Sign in with WISE²</string>
+  <string name="logging_in">Signing in…</string>
+  <string name="login_error">Login failed</string>
+
+  <!-- Job List Screen -->
+  <string name="jobs_title">Work Orders</string>
+  <string name="no_jobs">No jobs available</string>
+  <string name="pull_to_refresh">Pull to refresh</string>
+  <string name="job_priority_high">High Priority</string>
+  <string name="job_priority_normal">Normal</string>
+  <string name="job_status_open">Open</string>
+  <string name="job_status_in_progress">In Progress</string>
+  <string name="job_status_completed">Completed</string>
+
+  <!-- Diagnostics Screen -->
+  <string name="diagnostics_title">Diagnostics</string>
+  <string name="pressure_readings">Pressure Readings</string>
+  <string name="temperature_readings">Temperature Readings</string>
+  <string name="calculated_values">Calculated Values</string>
+  <string name="electrical_measurements">Electrical Measurements</string>
+  <string name="status_healthy">Healthy</string>
+  <string name="status_caution">Caution</string>
+  <string name="status_critical">Critical</string>
+  <string name="start_diagnostics">Start Diagnostics</string>
+  <string name="stop_diagnostics">Stop Diagnostics</string>
+
+  <!-- Live Tools Screen -->
+  <string name="live_tools_title">Live Tools</string>
+  <string name="passthrough_camera">Passthrough Camera</string>
+  <string name="tool_stream">Tool Stream</string>
+  <string name="voice_notes">Voice Notes</string>
+  <string name="add_note">Add Note</string>
+  <string name="start_recording">Record</string>
+  <string name="stop_recording">Stop Recording</string>
+
+  <!-- Common -->
+  <string name="loading">Loading…</string>
+  <string name="error">Error</string>
+  <string name="retry">Retry</string>
+  <string name="cancel">Cancel</string>
+  <string name="save">Save</string>
+  <string name="ok">OK</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+  <!-- Exclude token storage from automatic backup -->
+  <exclude domain="sharedpref" path="TokenStore.xml" />
+  <!-- Exclude cache from backup -->
+  <exclude domain="cache" />
+</full-backup-content>

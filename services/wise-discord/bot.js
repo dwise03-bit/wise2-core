@@ -3,6 +3,7 @@
 require('dotenv').config({ path: '/home/dwise/wise2-core/.env' });
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const jwt = require('jsonwebtoken');
+const { createOpsContext, opsCommand, handleOpsCommand, handleOpsComponent, handleOpsModal } = require('./ops');
 const fetch = require('node-fetch');
 
 // ── Config ────────────────────────────────────────────────────────────────────
@@ -810,6 +811,10 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
+// Direct infrastructure control. Fail-closed: with nothing configured, /ops refuses
+// every command rather than falling back to open access.
+const opsContext = createOpsContext();
+
 client.on('ready', async () => {
   console.log(`[discord] Logged in as ${client.user.tag}`);
   const guilds = Array.from(client.guilds.cache.values()).map((g) => `${g.name}(${g.id})`);
@@ -827,15 +832,23 @@ client.on('ready', async () => {
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
   try {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-      body: [wiseCommand.toJSON(), contentCommand.toJSON()],
+      body: [wiseCommand.toJSON(), contentCommand.toJSON(), opsCommand.toJSON()],
     });
-    console.log('[discord] Commands registered: /wise, /content');
+    console.log('[discord] Commands registered: /wise, /content, /ops');
+    for (const warning of opsContext.readiness) console.warn(`[discord][ops] ${warning}`);
   } catch (err) {
     console.error('[discord] Command registration failed:', err.message);
   }
 });
 
 client.on('interactionCreate', async (interaction) => {
+  // Ops confirmations arrive as button and modal interactions, not slash commands.
+  if (interaction.isButton() && interaction.customId.startsWith('ops:')) {
+    return handleOpsComponent(interaction, opsContext).catch((err) => console.error('[discord][ops] component error:', err));
+  }
+  if (interaction.isModalSubmit() && interaction.customId.startsWith('ops:')) {
+    return handleOpsModal(interaction, opsContext).catch((err) => console.error('[discord][ops] modal error:', err));
+  }
   if (!interaction.isChatInputCommand()) return;
 
   const cmd = interaction.commandName;
@@ -843,7 +856,9 @@ client.on('interactionCreate', async (interaction) => {
   console.log(`[discord] /${cmd} ${sub} from ${interaction.user.tag}(${interaction.user.id})`);
 
   try {
-    if (cmd === 'wise') {
+    if (cmd === 'ops') {
+      return handleOpsCommand(interaction, opsContext);
+    } else if (cmd === 'wise') {
       switch (sub) {
         case 'status':  return handleStatus(interaction);
         case 'health':  return handleHealth(interaction);

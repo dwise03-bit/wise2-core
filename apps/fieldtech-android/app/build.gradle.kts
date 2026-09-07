@@ -11,10 +11,10 @@ android {
 
     defaultConfig {
         applicationId = "com.wise2.fieldtech"
-        minSdk = 26
+        minSdk = 29  // Meta Quest requires API 29+
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.1.0-quest"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -134,6 +134,12 @@ dependencies {
     // Bluetooth Low Energy scanning support (AndroidX core provides BLE APIs directly; no extra artifact needed)
 
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Meta Quest SDK
+    implementation("com.meta.openxr:openxr_api:50.0.0")
+    implementation("com.meta.openxr:openxr_loader:50.0.0")
+    implementation("com.meta.openxr:interactionprofiles:50.0.0")
+    implementation("com.meta.openxr:handtracking:50.0.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")

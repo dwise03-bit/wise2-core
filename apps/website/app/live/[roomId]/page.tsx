@@ -20,7 +20,7 @@ import { CrowdMode } from '@/app/components/live/CrowdMode';
 export default function LiveRoomPage() {
   const params = useParams();
   const router = useRouter();
-  const roomId = params.roomId as string;
+  const roomId = params?.roomId as string;
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);

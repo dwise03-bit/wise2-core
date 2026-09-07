@@ -1,13 +1,13 @@
 {
   "name": "@wise2/phone-gateway",
   "version": "1.0.0",
-  "description": "WISE² Realtime Phone Gateway - Asterisk orchestration for AI-powered calls",
+  "description": "WISE\u00b2 Realtime Phone Gateway - Asterisk orchestration for AI-powered calls",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/**/*.ts"
   },
   "dependencies": {

@@ -165,7 +165,7 @@ export function TradingLandingExperience() {
               View Platform
             </Link>
             <a
-              href="/downloads/apps/wise2-reaper.apk"
+              href="/downloads/apps/wise2-trading.apk"
               download
               className="inline-flex min-w-[220px] items-center justify-center rounded-full border border-[#c58cff]/35 bg-[#c58cff]/10 px-7 py-3 text-sm font-black uppercase tracking-[0.22em] text-[#e7ceff] transition-transform duration-300 hover:-translate-y-0.5 hover:border-[#c58cff]/70 hover:bg-[#c58cff]/20"
             >

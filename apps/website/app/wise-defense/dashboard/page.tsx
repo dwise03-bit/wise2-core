@@ -26,10 +26,10 @@ export default function KnightWingDashboard() {
   const systemStatus = {
     internet: 'ONLINE',
     cellular: 'STANDBY',
-    meshtastic: data?.meshNodes?.length > 0 ? 'ONLINE' : 'UNKNOWN',
+    meshtastic: (data?.meshNodes?.length ?? 0) > 0 ? 'ONLINE' : 'UNKNOWN',
     gmrs: 'ONLINE',
     hamRadio: 'ONLINE',
-    sdrMonitor: data?.sdrSignals?.length > 0 ? 'ONLINE' : 'UNKNOWN',
+    sdrMonitor: (data?.sdrSignals?.length ?? 0) > 0 ? 'ONLINE' : 'UNKNOWN',
   };
 
   const navigationItems = [

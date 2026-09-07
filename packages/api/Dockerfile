@@ -24,7 +24,7 @@ RUN rm -f tsconfig.tsbuildinfo
 RUN cd /app/packages/db && npx prisma generate --schema=prisma/schema.prisma
 
 # Build the application
-RUN pnpm run build
+RUN pnpm --filter @wise2/ai-phone build && pnpm run build
 
 # Verify that JavaScript files were generated (not just .d.ts files)
 RUN if [ ! -f dist/main.js ]; then \
@@ -53,6 +53,7 @@ RUN cd packages/db && npx prisma generate --schema=prisma/schema.prisma
 
 # Copy compiled dist from builder
 COPY --from=builder /app/packages/api/dist ./packages/api/dist
+COPY --from=builder /app/packages/ai-phone/dist ./packages/ai-phone/dist
 
 EXPOSE 3001
 

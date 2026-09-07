@@ -50,7 +50,23 @@ export class LiveSessionService {
       );
     }
 
-    // Token is valid - no additional demo identity check needed since verifyJWT already validated it
+    // verifyJWT only checks the signature and expiry, so the demo-identity
+    // rejection promised above still has to happen here: a correctly signed
+    // token carrying a demo identity would otherwise be accepted.
+    const userId: string | undefined = decoded.id || decoded.sub || decoded.userId;
+    const email: string | undefined = decoded.email;
+
+    const looksLikeDemo =
+      (typeof email === 'string' && /(^|[@.])demo(@|\.|$)|^demo[._-]/i.test(email)) ||
+      (typeof userId === 'string' && /^demo[_-]/i.test(userId)) ||
+      decoded.iat === undefined ||
+      decoded.exp === undefined;
+
+    if (looksLikeDemo) {
+      throw new UnauthorizedException(
+        'Live sessions reject demo/localStorage identities. Sign in with a real account.'
+      );
+    }
 
     return {
       userId: decoded.id || decoded.sub || decoded.userId,

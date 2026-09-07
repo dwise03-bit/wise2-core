@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+  <application android:theme="@style/UnityThemeSelector">
+    <activity
+      android:name="com.unity3d.player.UnityPlayerActivity"
+      android:launchMode="singleTask"
+      android:exported="true"
+      android:hardwareAccelerated="true"
+      android:resizeableActivity="false"
+      android:screenOrientation="landscape"
+      android:configChanges="locale|fontScale|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
+      tools:replace="android:exported,android:hardwareAccelerated,android:resizeableActivity,android:screenOrientation">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="com.oculus.intent.category.VR" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="wise2" android:host="digital-twin" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="wise2" android:host="wise-defense-training" />
+      </intent-filter>
+      <meta-data android:name="com.oculus.supportedDevices" android:value="quest2|questpro|quest3|quest3s" />
+    </activity>
+  </application>
+</manifest>

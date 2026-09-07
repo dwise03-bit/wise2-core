@@ -2,18 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { LiveSessionService } from '../live-session.service';
 import { PrismaService } from '../../../../prisma/prisma.service';
+import { LiveAuthService } from '../live-auth.service';
 import * as jwt from 'jsonwebtoken';
 
 describe('Live Session Auth Tests', () => {
   let service: LiveSessionService;
   let prismaService: PrismaService;
 
-  const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key-change-in-production';
+  const JWT_SECRET = process.env.JWT_SECRET || 'live-secret-key';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LiveSessionService,
+        LiveAuthService,
         {
           provide: PrismaService,
           useValue: {

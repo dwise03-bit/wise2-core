@@ -29,21 +29,21 @@ fun CameraPreviewCard(enabled: Boolean, vm: CaptureViewModel) {
     var videoCapture by remember { mutableStateOf<VideoCapture<Recorder>?>(null) }
     var recording by remember { mutableStateOf<Recording?>(null) }
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF111416))) {
+    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF111329)), elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)) {
         Box(Modifier.fillMaxWidth().aspectRatio(0.78f).background(Color.Black)) {
             AndroidView(factory = { PreviewView(it).apply { layoutParams = ViewGroup.LayoutParams(-1, -1); previewView = this } }, modifier = Modifier.fillMaxSize()) { view ->
                 val future = ProcessCameraProvider.getInstance(context)
                 future.addListener({ runCatching { val provider = future.get(); provider.unbindAll(); val selector = CameraSelector.Builder().requireLensFacing(facing).build(); val recorder = Recorder.Builder().setQualitySelector(QualitySelector.from(Quality.HD)).build(); val capture = VideoCapture.withOutput(recorder); val preview = Preview.Builder().build().also { it.setSurfaceProvider(view.surfaceProvider) }; provider.bindToLifecycle(lifecycleOwner, selector, preview, capture); videoCapture = capture } }, ContextCompat.getMainExecutor(context))
             }
             Column(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                if (vm.recording) Text("●  RECORDING  ${vm.elapsed}s", color = Color(0xFFFF5C5C), style = MaterialTheme.typography.titleMedium)
+                if (vm.recording) Text("●  RECORDING  ${vm.elapsed}s", color = Color(0xFFFF6B7A), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
                     FilledTonalIconButton(enabled = enabled && recording == null, onClick = { facing = if (facing == CameraSelector.LENS_FACING_BACK) CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK }) { Icon(Icons.Default.Cameraswitch, "Switch camera") }
                     Button(enabled = enabled && videoCapture != null, onClick = {
                         val current = recording
                         if (current != null) { current.stop(); recording = null; vm.stopTimer() } else { val file = java.io.File(context.filesDir, "reaper-${System.currentTimeMillis()}.mp4"); recording = videoCapture!!.output.prepareRecording(context, FileOutputOptions.Builder(file).build()).withAudioEnabled().start(ContextCompat.getMainExecutor(context)) { event -> when (event) { is VideoRecordEvent.Start -> vm.startTimer(); is VideoRecordEvent.Finalize -> { recording = null; vm.finishRecording(file.absolutePath) } } } }
-                    }, shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = if (vm.recording) Color(0xFFFF5C5C) else Color(0xFFB6FF3B), contentColor = Color.Black), modifier = Modifier.height(56.dp).width(160.dp)) { Icon(if (vm.recording) Icons.Default.Stop else Icons.Default.FiberManualRecord, "Record"); Spacer(Modifier.width(8.dp)); Text(if (vm.recording) "STOP" else "RECORD") }
+                    }, shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = if (vm.recording) Color(0xFFFF6B7A) else Color(0xFFB8A1FF), contentColor = Color(0xFF070812)), modifier = Modifier.height(56.dp).width(160.dp)) { Icon(if (vm.recording) Icons.Default.Stop else Icons.Default.FiberManualRecord, "Record"); Spacer(Modifier.width(8.dp)); Text(if (vm.recording) "STOP" else "RECORD") }
                 }
             }
         }
