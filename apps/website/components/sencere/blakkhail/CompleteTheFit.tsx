@@ -21,7 +21,7 @@ export function CompleteTheFit() {
         <div className="mb-12 flex items-end justify-between border-b pb-4" style={{ borderColor: BLAKKHAIL.darkGold }}>
           <div>
             <p className="text-[10px] uppercase tracking-[0.3em]" style={{ color: BLAKKHAIL.steel }}>
-              05 / Complete the fit
+              ★ 05 / Complete the fit ★
             </p>
             <h2
               className="mt-3 text-3xl uppercase tracking-[-.03em] sm:text-5xl"
