@@ -1,7 +1,7 @@
 {
   "name": "@wise2/api",
   "version": "1.0.0",
-  "description": "WISE\u00b2 Command Center API",
+  "description": "WISE² Command Center API",
   "main": "dist/main.js",
   "scripts": {
     "build": "nest build",
@@ -9,7 +9,7 @@
     "dev": "nest start --watch",
     "test": "jest --passWithNoTests",
     "type-check": "tsc --noEmit -p tsconfig.json",
-    "test:e2e": "jest --testPathPattern='\\\\.e2e\\\\.spec\\\\.ts$' --runInBand"
+    "test:e2e": "jest --testPathPattern='\\.e2e\\.spec\\.ts$' --testPathIgnorePatterns='/node_modules/' --runInBand"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.0",
