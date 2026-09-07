@@ -29,11 +29,7 @@ export function middleware(request: NextRequest) {
 
   // Force all BLAKKHAIL requests to the new storefront design
   // Disable any old legacy pages or cached content
-  if (pathname.toLowerCase() === '/blakkhail/home.html') {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
-  if (pathname === '/' || pathname === '') {
+  if (pathname === '/' || pathname === '' || pathname.toLowerCase() === '/blakkhail/home.html') {
     return rewriteTo(request, BLACKHAIL_PREFIX);
   }
 
@@ -69,5 +65,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/blakkhail/Home.html', '/blakkhail/home.html', '/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
