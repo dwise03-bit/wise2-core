@@ -179,6 +179,12 @@ export function BrandEcosystemHomepage() {
               SOLUTIONS
             </Link>
             <Link
+              href="#sales-academy"
+              className="transition-colors hover:text-[#b9ff00]"
+            >
+              SALES ACADEMY
+            </Link>
+            <Link
               href="#method"
               className="transition-colors hover:text-[#b9ff00]"
             >
@@ -218,6 +224,9 @@ export function BrandEcosystemHomepage() {
               </Link>
               <Link href="#deployments" onClick={() => setMenuOpen(false)}>
                 DEPLOYMENTS
+              </Link>
+              <Link href="#sales-academy" onClick={() => setMenuOpen(false)}>
+                SALES ACADEMY
               </Link>
               <Link href="#method" onClick={() => setMenuOpen(false)}>
                 METHOD
@@ -602,6 +611,93 @@ export function BrandEcosystemHomepage() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="sales-academy"
+        className="wise-section border-y border-white/10 bg-[#0b0d0b] px-6 py-28 lg:px-10 lg:py-36"
+      >
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:items-end">
+            <div>
+              <p className="wise-kicker mb-5">SALES READINESS</p>
+              <h2 className="wise-heading">
+                Train your team to <span>sell WISE².</span>
+              </h2>
+            </div>
+            <p className="max-w-lg text-base leading-7 text-white/60">
+              Market-specific training, pricing guides, and proven call scripts for NC, NYC, and Long Island.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-5 lg:grid-cols-4">
+            <Link
+              href="/sales-academy/"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b9ff00] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-white/50">ENTRY POINT</span>
+                <ChevronRight size={16} className="text-[#b9ff00] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                Academy Index
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                Select your market and get started.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/nc-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b9ff00] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#b9ff00]">🏠 NC</span>
+                <ChevronRight size={16} className="text-[#b9ff00] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                North Carolina
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                HVAC, construction, trades.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/nyc-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b9ff00] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#b9ff00]">🗽 NYC</span>
+                <ChevronRight size={16} className="text-[#b9ff00] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                New York City
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                FinTech, startups, agencies.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/li-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b9ff00] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#b9ff00]">🌊 LI</span>
+                <ChevronRight size={16} className="text-[#b9ff00] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                Long Island
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                Family businesses, service ops.
+              </p>
+            </Link>
+          </div>
+          <div className="mt-10 grid gap-3 text-xs text-white/40">
+            <p>🎓 Each market includes: Training modules, value ladder pricing, objection scripts, call cheat sheets, and local case studies.</p>
           </div>
         </div>
       </section>
