@@ -11,7 +11,7 @@ export type ChatPlatform = 'twitch' | 'youtube' | 'facebook' | 'mock';
 /**
  * Connection status states
  */
-export type ChatConnectionStatus = 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error' | 'reconnecting';
+export type ChatConnectionStatus = 'idle' | 'connecting' | 'connected' | 'disconnecting' | 'disconnected' | 'error' | 'reconnecting';
 
 /**
  * User role/badge types

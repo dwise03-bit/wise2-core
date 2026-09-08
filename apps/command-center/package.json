@@ -8,17 +8,25 @@
     "build": "cd ../dashboard && npm run build",
     "start": "cd ../dashboard && npm start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "next": "^14.2.35",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "typescript": "^5.0.0"
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.0.0",
+    "vitest": "^3"
   }
 }

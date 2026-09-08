@@ -8,6 +8,8 @@ import com.wise2.fieldtech.bluetooth.model.ToolDevice
 import com.wise2.fieldtech.data.repository.ReadingRepository
 import com.wise2.fieldtech.domain.calc.CalculationResult
 import com.wise2.fieldtech.domain.calc.HvacCalculations
+import com.wise2.fieldtech.domain.diagnose.DiagnosticAssessment
+import com.wise2.fieldtech.domain.diagnose.DiagnosticRuleEngine
 import com.wise2.fieldtech.domain.model.ReadingSnapshot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ data class LiveReadingsUiState(
     val discoveredDevices: List<ToolDevice> = emptyList(),
     val latestReading: ReadingSnapshot? = null,
     val calculations: List<CalculationResult> = emptyList(),
+    val assessment: DiagnosticAssessment? = null,
     val brandName: String = "",
     val pressureHistory: List<Float> = emptyList(),
     val tempHistory: List<Float> = emptyList(),
@@ -71,6 +74,7 @@ class LiveReadingsViewModel(
                     _uiState.value = state.copy(
                         latestReading = reading,
                         calculations = HvacCalculations.allApplicable(reading, now),
+                        assessment = DiagnosticRuleEngine.assess(reading),
                         pressureHistory = pressureHistory,
                         tempHistory = tempHistory,
                         voltageHistory = voltageHistory,

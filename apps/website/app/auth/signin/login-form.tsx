@@ -30,7 +30,7 @@ export function SignInForm() {
   }, []);
 
   useEffect(() => {
-    const oauthError = searchParams.get('error');
+    const oauthError = searchParams?.get('error');
     if (!oauthError) return;
 
     const messages: Record<string, string> = {
@@ -149,7 +149,7 @@ export function SignInForm() {
       analytics.track('login_complete', { email });
       analytics.flush();
 
-      const requestedNext = searchParams.get('next');
+      const requestedNext = searchParams?.get('next');
       const safeNext =
         requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//')
           ? requestedNext

@@ -218,8 +218,11 @@ export function PreviewUI({
                       metrics={{
                         cpuUsage: 0,
                         gpuUsage: 0,
-                        renderTime: 0,
-                        encodeTime: 0,
+                        frameRate: 0,
+                        targetFrameRate: 60,
+                        bitrate: 0,
+                        encodingTime: 0,
+                        networkStatus: 'good',
                       }}
                     />
                   </div>

@@ -3,6 +3,13 @@
  * Complete OBS integration with RTMP, platform routing, scenes, and source capture
  */
 
+// `export { x } from '...'` re-exports without binding x locally, so the
+// factories used by ObsBackend's constructor below must also be imported.
+import { getRtmpServer } from './rtmpServer';
+import { getPlatformIntegration } from './platformIntegration';
+import { getStreamSessionManager } from './streamSession';
+import { getSceneManager } from './sceneManager';
+
 // RTMP Server
 export {
   RtmpServer,

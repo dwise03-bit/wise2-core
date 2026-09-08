@@ -180,7 +180,7 @@ const LoadingSkeleton = () => (
 export default function ServiceDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const serviceId = params.serviceId as string;
+  const serviceId = params?.serviceId as string;
 
   const [service, setService] = useState<ServiceDetail | null>(null);
   const [loading, setLoading] = useState(true);

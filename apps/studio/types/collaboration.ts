@@ -235,6 +235,10 @@ export type MessageType =
   | 'user_joined'
   | 'user_left'
   | 'permission_changed'
+  | 'invite_collaborator'
+  | 'remove_collaborator'
+  | 'version_created'
+  | 'activity_logged'
   | 'state_sync';
 
 export interface CollaborationMessage {

@@ -14,6 +14,7 @@ export function RevenueCard() {
   if (todayRevenue.isLoading) return <CardLoading />;
   if (todayRevenue.error) return <CardError error={todayRevenue.error} />;
 
+  if (!todayRevenue.data) return <CardLoading />;
   const data = todayRevenue.data;
   const isPositive = data.change >= 0;
 
@@ -38,6 +39,7 @@ export function JobsCard() {
   if (todayJobs.isLoading) return <CardLoading />;
   if (todayJobs.error) return <CardError error={todayJobs.error} />;
 
+  if (!todayJobs.data) return <CardLoading />;
   const data = todayJobs.data;
 
   return (
@@ -61,6 +63,7 @@ export function TechUtilizationCard() {
   if (techUtilization.isLoading) return <CardLoading />;
   if (techUtilization.error) return <CardError error={techUtilization.error} />;
 
+  if (!techUtilization.data) return <CardLoading />;
   const data = techUtilization.data;
 
   return (
@@ -88,6 +91,7 @@ export function OpenEstimatesCard() {
   if (openEstimates.isLoading) return <CardLoading />;
   if (openEstimates.error) return <CardError error={openEstimates.error} />;
 
+  if (!openEstimates.data) return <CardLoading />;
   const data = openEstimates.data;
 
   return (
@@ -110,6 +114,7 @@ export function OutstandingARCard() {
   if (outstandingAR.isLoading) return <CardLoading />;
   if (outstandingAR.error) return <CardError error={outstandingAR.error} />;
 
+  if (!outstandingAR.data) return <CardLoading />;
   const data = outstandingAR.data;
 
   return (
@@ -132,6 +137,7 @@ export function MarginAlertsCard() {
   if (marginAlerts.isLoading) return <CardLoading />;
   if (marginAlerts.error) return <CardError error={marginAlerts.error} />;
 
+  if (!marginAlerts.data) return <CardLoading />;
   const data = marginAlerts.data;
 
   return (

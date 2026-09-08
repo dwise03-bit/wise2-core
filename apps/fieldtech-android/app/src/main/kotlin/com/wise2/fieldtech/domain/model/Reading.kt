@@ -12,6 +12,7 @@ data class ReadingSnapshot(
     val isDemoData: Boolean,
 
     // Refrigerant
+    val refrigerant: String? = null,
     val lowSidePsig: Double? = null,
     val highSidePsig: Double? = null,
     val suctionSaturationF: Double? = null,

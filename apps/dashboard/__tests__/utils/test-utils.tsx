@@ -138,7 +138,7 @@ export const waitFor = (callback: () => void, options = {}) => {
 export const setupFetchMock = () => {
   return {
     mockResponse: (data: any, options = {}) => {
-      global.fetch = jest.fn(() =>
+      global.fetch = vi.fn(() =>
         Promise.resolve({
           ok: true,
           status: 200,
@@ -149,10 +149,10 @@ export const setupFetchMock = () => {
       );
     },
     mockError: (error: string) => {
-      global.fetch = jest.fn(() => Promise.reject(new Error(error)));
+      global.fetch = vi.fn(() => Promise.reject(new Error(error)));
     },
     mockStatus: (status: number, message: string) => {
-      global.fetch = jest.fn(() =>
+      global.fetch = vi.fn(() =>
         Promise.resolve({
           ok: status < 400,
           status,

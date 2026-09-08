@@ -48,7 +48,7 @@ const TIMEZONES = [
 ];
 
 const generateTimeOptions = () => {
-  const options = [];
+  const options: string[] = [];
   for (let i = 0; i < 24; i++) {
     const hour = String(i).padStart(2, '0');
     options.push(`${hour}:00`);

@@ -790,7 +790,7 @@ const PaymentStep = ({
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
-  const serviceId = params.serviceId as string;
+  const serviceId = params?.serviceId as string;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [service, setService] = useState<ServiceDetail | null>(null);

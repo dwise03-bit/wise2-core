@@ -63,16 +63,24 @@ describe('useImpExpression Hook', () => {
     });
 
     it('should update lastEventTime on valid transition', () => {
-      const { result } = renderHook(() => useImpExpression('idle'));
-      const beforeTime = result.current.state.lastEventTime;
+      vi.useFakeTimers();
+      try {
+        const { result } = renderHook(() => useImpExpression('idle'));
+        const beforeTime = result.current.state.lastEventTime;
 
-      act(() => {
-        result.current.setExpression('listening');
-      });
+        // Advance the clock so the two timestamps cannot share a millisecond.
+        vi.advanceTimersByTime(10);
 
-      expect(result.current.state.lastEventTime?.getTime()).toBeGreaterThan(
-        beforeTime?.getTime() ?? 0
-      );
+        act(() => {
+          result.current.setExpression('listening');
+        });
+
+        expect(result.current.state.lastEventTime?.getTime()).toBeGreaterThan(
+          beforeTime?.getTime() ?? 0
+        );
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should prevent invalid transitions', () => {
@@ -88,7 +96,7 @@ describe('useImpExpression Hook', () => {
     });
 
     it('should log warning on invalid transition', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const { result } = renderHook(() => useImpExpression('sleeping'));
 
       act(() => {
@@ -270,12 +278,12 @@ describe('useImpExpression Hook', () => {
 
   describe('Auto-transitions', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
-      jest.runOnlyPendingTimers();
-      jest.useRealTimers();
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers();
     });
 
     it('should auto-transition happy to idle after 2000ms', async () => {
@@ -288,7 +296,7 @@ describe('useImpExpression Hook', () => {
       expect(result.current.state.expression).toBe('happy');
 
       act(() => {
-        jest.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(2000);
       });
 
       expect(result.current.state.expression).toBe('idle');
@@ -302,7 +310,7 @@ describe('useImpExpression Hook', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(2500);
+        vi.advanceTimersByTime(2500);
       });
 
       expect(result.current.state.expression).toBe('idle');
@@ -316,7 +324,7 @@ describe('useImpExpression Hook', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(4000);
+        vi.advanceTimersByTime(4000);
       });
 
       expect(result.current.state.expression).toBe('idle');
@@ -326,7 +334,7 @@ describe('useImpExpression Hook', () => {
       const { result } = renderHook(() => useImpExpression('idle'));
 
       act(() => {
-        jest.advanceTimersByTime(10000);
+        vi.advanceTimersByTime(10000);
       });
 
       expect(result.current.state.expression).toBe('idle');
@@ -340,7 +348,7 @@ describe('useImpExpression Hook', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(10000);
+        vi.advanceTimersByTime(10000);
       });
 
       expect(result.current.state.expression).toBe('listening');
@@ -354,7 +362,7 @@ describe('useImpExpression Hook', () => {
       });
 
       act(() => {
-        jest.advanceTimersByTime(10000);
+        vi.advanceTimersByTime(10000);
       });
 
       expect(result.current.state.expression).toBe('thinking');
@@ -369,28 +377,29 @@ describe('useImpExpression Hook', () => {
 
       // Advance 1000ms (half of 2000ms for happy)
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
       // Change expression before auto-transition occurs
       act(() => {
-        result.current.setExpression('curious');
+        result.current.setExpression('playful');
       });
 
       // Advance another 1000ms
       act(() => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
       });
 
-      // Should still be in curious (not auto-transitioned yet)
-      expect(result.current.state.expression).toBe('curious');
+      // Still playful: playful lasts 2500ms, and the happy timer that would
+      // have fired at 2000ms must have been cleared.
+      expect(result.current.state.expression).toBe('playful');
     });
   });
 
   describe('Cleanup', () => {
     it('should cleanup timer on unmount', () => {
-      jest.useFakeTimers();
-      const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+      vi.useFakeTimers();
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
       const { unmount, result } = renderHook(() => useImpExpression('idle'));
 
@@ -402,7 +411,7 @@ describe('useImpExpression Hook', () => {
 
       expect(clearTimeoutSpy).toHaveBeenCalled();
       clearTimeoutSpy.mockRestore();
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('should not have memory leaks with multiple state changes', () => {
@@ -425,7 +434,7 @@ describe('useImpExpression Hook', () => {
   describe('Edge Cases', () => {
     it('should handle unknown expressions gracefully', () => {
       const { result } = renderHook(() => useImpExpression('idle'));
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       act(() => {
         // Try to set an invalid expression
@@ -459,20 +468,25 @@ describe('useImpExpression Hook', () => {
     });
 
     it('should maintain state consistency across multiple calls', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useImpExpression('idle'));
       const initialTime = result.current.state.lastEventTime;
 
+      // Advance between transitions so each timestamp is distinct.
+      vi.advanceTimersByTime(10);
       act(() => {
         result.current.setExpression('listening');
       });
 
       const afterListeningTime = result.current.state.lastEventTime;
 
+      vi.advanceTimersByTime(10);
       act(() => {
         result.current.setExpression('thinking');
       });
 
       const afterThinkingTime = result.current.state.lastEventTime;
+      vi.useRealTimers();
 
       // Times should be monotonically increasing
       expect(afterListeningTime?.getTime()).toBeGreaterThan(

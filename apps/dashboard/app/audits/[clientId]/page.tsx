@@ -7,7 +7,7 @@ import { ArrowLeft, BarChart3, Clock, AlertCircle, CheckCircle2, MapPin } from '
 
 export default function AuditClientPage() {
   const params = useParams();
-  const clientId = params.clientId as string;
+  const clientId = params?.clientId as string;
 
   const [client, setClient] = useState<any>(null);
   const [timeline, setTimeline] = useState<any[]>([]);

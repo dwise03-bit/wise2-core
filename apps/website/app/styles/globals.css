@@ -91,13 +91,22 @@
 @layer base {
   html {
     background: var(--wise-black);
+    overflow-x: hidden;
   }
 
   body {
     margin: 0;
+    max-width: 100%;
+    overflow-x: hidden;
     background: var(--wise-black);
     color: var(--wise-chrome);
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  img,
+  video,
+  canvas {
+    max-width: 100%;
   }
 }
 

@@ -145,6 +145,7 @@ export interface PlatformStats {
 
   // Quality metrics
   frameDropPercentage: number;
+  droppedFrames?: number;
   bufferUnderruns: number;
   reconnectCount: number;
 

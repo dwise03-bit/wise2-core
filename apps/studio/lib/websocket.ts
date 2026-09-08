@@ -225,9 +225,7 @@ export class StudioWebSocketServer extends EventEmitter {
         origin: string | string[];
         credentials?: boolean;
       };
-      transports?: string[];
-      reconnection?: boolean;
-      reconnectionDelay?: number;
+      transports?: ('polling' | 'websocket' | 'webtransport')[];
     }
   ): void {
     // Create HTTP server
@@ -240,8 +238,8 @@ export class StudioWebSocketServer extends EventEmitter {
         credentials: options?.cors?.credentials ?? true,
       },
       transports: options?.transports || ['websocket', 'polling'],
-      reconnection: options?.reconnection ?? true,
-      reconnectionDelay: options?.reconnectionDelay ?? 1000,
+      // reconnection / reconnectionDelay are client-side options; the server
+      // does not accept them.
       maxHttpBufferSize: 1e6, // 1MB max message size
       pingInterval: 25000,
       pingTimeout: 60000,

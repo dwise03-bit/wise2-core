@@ -43,7 +43,11 @@ export function BrandSection({ brand }: BrandSectionProps) {
               </div>
               <button
                 className="flex items-center gap-2 rounded-sm px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-white transition-all min-h-[44px] min-w-[12rem] hover:opacity-90 focus:ring-2 focus:ring-offset-2 active:scale-95"
-                style={{ backgroundColor: brand.accentColor, color: isDark ? '#F5E6D3' : '#fff', focusRingColor: brand.accentColor }}
+                style={{
+                  backgroundColor: brand.accentColor,
+                  color: isDark ? '#F5E6D3' : '#fff',
+                  ['--tw-ring-color' as string]: brand.accentColor,
+                } as React.CSSProperties}
                 aria-label={`Shop ${brand.name}`}>
                 <span>🛍</span> SHOP NOW
               </button>
@@ -112,8 +116,12 @@ export function BrandSection({ brand }: BrandSectionProps) {
               <Link key={product.id} href={`/sencere/products/${product.id}`}
                 className="group relative overflow-hidden border-2 transition-all duration-300"
                 style={{ borderColor: brand.accentColor }}>
-                <div className="aspect-square bg-gradient-to-br flex items-center justify-center"
-                  style={{ from: isDark ? '#2a1a3a' : '#2a2a2a', to: '#1a1a1a' }}>
+                <div className="aspect-square flex items-center justify-center"
+                  style={{
+                    backgroundImage: `linear-gradient(to bottom right, ${
+                      isDark ? '#2a1a3a' : '#2a2a2a'
+                    }, #1a1a1a)`,
+                  }}>
                   <div className="text-center">
                     <div className="text-[48px] font-black opacity-20 group-hover:opacity-30 transition-opacity"
                       style={{ color: brand.accentColor }}>

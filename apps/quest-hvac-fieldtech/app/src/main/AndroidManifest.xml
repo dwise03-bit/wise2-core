@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.wise2.quest.hvac.fieldtech">
+
+  <!-- Permissions for Quest and field service operations -->
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+  <!-- OpenXR / XR features -->
+  <uses-feature android:name="android.hardware.vr.headtracking" android:required="false" />
+  <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
+
+  <application
+    android:name="com.wise2.quest.QuestHvacApp"
+    android:allowBackup="true"
+    android:dataExtractionRules="@xml/data_extraction_rules"
+    android:fullBackupContent="@xml/backup_schemes"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.QuestHvacFieldtech"
+    android:usesCleartextTraffic="false">
+
+    <activity
+      android:name="com.wise2.quest.MainActivity"
+      android:exported="true"
+      android:launchMode="singleTask"
+      android:resizeableActivity="false"
+      android:screenOrientation="landscape"
+      android:theme="@style/Theme.QuestHvacFieldtech">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+
+    <!-- OAuth redirect activity for Google Sign-In -->
+    <activity
+      android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+      android:exported="false" />
+
+  </application>
+
+</manifest>

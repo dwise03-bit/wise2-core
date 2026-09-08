@@ -623,7 +623,7 @@ const ActionItemsSection: React.FC<{ items: ActionItem[] }> = ({ items }) => {
 export default function BookingDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const bookingId = params.bookingId as string;
+  const bookingId = params?.bookingId as string;
 
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [loading, setLoading] = useState(true);

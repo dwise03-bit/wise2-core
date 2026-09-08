@@ -9,8 +9,8 @@ import { getDigitalTwinPackage } from '@/lib/digital-twin';
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const product = searchParams.get('product') || 'platform';
-  const planId = searchParams.get('plan') || (product === 'digital-twin' ? 'GROWTH' : 'PRO');
+  const product = searchParams?.get('product') || 'platform';
+  const planId = searchParams?.get('plan') || (product === 'digital-twin' ? 'GROWTH' : 'PRO');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');

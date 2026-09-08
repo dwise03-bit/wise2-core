@@ -293,11 +293,16 @@ export class SunoClientEnhanced {
         });
 
         // Create a pending response
-        return {
+        const now = new Date().toISOString();
+        const pending: SunoGenerationResponse = {
           id: queuedId,
-          status: 'Queued',
-          progress: 0,
-        } as SunoGenerationResponse;
+          prompt: request.prompt,
+          style: request.style,
+          status: 'pending',
+          createdAt: now,
+          updatedAt: now,
+        };
+        return pending;
       }
 
       throw error;

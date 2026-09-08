@@ -12,9 +12,10 @@ export class BillingService {
     private prisma: PrismaService,
     private entitlementsService: EntitlementsService,
   ) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2025-02-24.acacia',
-    });
+    const key = process.env.STRIPE_SECRET_KEY;
+    this.stripe = key
+      ? new Stripe(key, { apiVersion: '2025-02-24.acacia' })
+      : (new Proxy({}, { get: () => { throw new Error('Stripe is not configured'); } }) as Stripe);
   }
 
   /**

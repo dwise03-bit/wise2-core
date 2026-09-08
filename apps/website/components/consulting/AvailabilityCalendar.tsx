@@ -92,7 +92,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
 
   // Generate next 14 days
   const dates = useMemo(() => {
-    const days = [];
+    const days: Date[] = [];
     const start = new Date(currentDate);
     start.setHours(0, 0, 0, 0);
 

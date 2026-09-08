@@ -388,7 +388,9 @@ export default function CrimeRadarMap({
             mapContainerClassName="w-full h-full"
             center={GREENSBORO_CENTER}
             zoom={DEFAULT_ZOOM}
-            onLoad={(map) => (mapRef.current = map)}
+            onLoad={(map) => {
+              mapRef.current = map;
+            }}
             onClick={handleMapClick}
             options={{
               styles: MAP_STYLES.DARK,
@@ -459,7 +461,7 @@ export default function CrimeRadarMap({
 
             {/* Heatmap Layer */}
             {visibleLayers.heatmap && heatmapData.length > 0 && (
-              <HeatmapLayer data={heatmapData} options={{ radius: 30, blur: 15 }} />
+              <HeatmapLayer data={heatmapData} options={{ radius: 30 }} />
             )}
 
             {/* Selected Signal Info */}

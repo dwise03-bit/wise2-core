@@ -27,13 +27,29 @@ export class LiveRoomsService {
   constructor(private prisma: PrismaService) {}
 
   /**
+   * Generate URL-friendly slug from room name
+   */
+  private generateSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .substring(0, 50) + '-' + Date.now().toString(36); // Add timestamp for uniqueness
+  }
+
+  /**
    * Create a new live room
    * Creator is automatically added as a member with full permissions
    */
   async createRoom(userId: string, dto: CreateLiveRoomDto): Promise<any> {
+    // Generate slug from name if not provided
+    const slug = dto.slug || this.generateSlug(dto.name);
+
     // Validate slug uniqueness
     const existing = await this.prisma.liveRoom.findUnique({
-      where: { slug: dto.slug },
+      where: { slug },
     });
 
     if (existing) {
@@ -44,7 +60,7 @@ export class LiveRoomsService {
     const room = await this.prisma.liveRoom.create({
       data: {
         name: dto.name,
-        slug: dto.slug,
+        slug,
         creatorId: userId,
         maxConcurrentViewers: dto.maxConcurrentViewers || 10000,
       },

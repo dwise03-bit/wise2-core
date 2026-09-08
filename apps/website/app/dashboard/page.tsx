@@ -96,7 +96,7 @@ export default function DashboardPage() {
           }
         : null
     );
-    fetchMetrics(token);
+    fetchMetrics(sessionToken);
   }, [router]);
 
   const fetchMetrics = async (token: string) => {

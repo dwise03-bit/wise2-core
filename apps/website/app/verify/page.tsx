@@ -8,7 +8,7 @@ import { analytics } from '@/lib/analytics';
 
 function VerifyContent() {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const token = searchParams?.get('token');
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);

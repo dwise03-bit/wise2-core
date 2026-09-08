@@ -26,11 +26,11 @@
 
 export {
   SunoClient,
-  SunoConfig,
   SunoError,
   initSunoClient,
   getSunoClient,
 } from './sunoClient';
+export type { SunoConfig } from './sunoClient';
 
 // ============================================================================
 // SUNO QUEUE EXPORTS
@@ -42,6 +42,10 @@ export {
   submitAndWaitForGeneration,
   submitGenerationBatch,
 } from './sunoQueue';
+
+// Bound locally as well: the helper functions further down call sunoQueue
+// directly, and a re-export does not introduce the name into this module.
+import { sunoQueue } from './sunoQueue';
 
 export type {
   QueuedGeneration,

@@ -50,17 +50,24 @@ export interface ImpState {
  * Expression transition rules
  * Defines which states can transition to which states
  */
+// Kept coherent with getExpressionForEvent() below: every expression that an
+// ImpEvent can map to must be reachable from the states that event can fire in.
+// The tool lifecycle (tool_start -> focused, then tool_success -> happy or
+// tool_error -> error) was previously unreachable, so tool activity was
+// rejected as an invalid transition and never rendered. device_offline is
+// asynchronous and is therefore permitted from every active online state
+// (sleeping is excluded: a sleeping device wakes to idle first).
 export const EXPRESSION_TRANSITIONS: Record<ImpExpression, ImpExpression[]> = {
-  idle: ['listening', 'thinking', 'sleeping', 'offline'],
-  listening: ['thinking', 'idle'],
-  thinking: ['speaking', 'happy', 'curious', 'warning', 'error', 'idle'],
-  speaking: ['happy', 'idle', 'playful'],
-  happy: ['idle', 'playful'],
-  curious: ['thinking', 'focused', 'idle'],
-  focused: ['thinking', 'idle'],
-  playful: ['happy', 'idle'],
-  warning: ['thinking', 'error', 'idle'],
-  error: ['warning', 'thinking', 'idle'],
+  idle: ['listening', 'thinking', 'focused', 'happy', 'sleeping', 'offline'],
+  listening: ['thinking', 'focused', 'idle', 'offline'],
+  thinking: ['speaking', 'focused', 'happy', 'curious', 'warning', 'error', 'idle', 'offline'],
+  speaking: ['happy', 'focused', 'idle', 'playful', 'offline'],
+  happy: ['idle', 'playful', 'offline'],
+  curious: ['thinking', 'focused', 'idle', 'offline'],
+  focused: ['thinking', 'speaking', 'happy', 'error', 'idle', 'offline'],
+  playful: ['happy', 'idle', 'offline'],
+  warning: ['thinking', 'error', 'idle', 'offline'],
+  error: ['warning', 'thinking', 'idle', 'offline'],
   sleeping: ['idle'],
   offline: ['idle'],
 };

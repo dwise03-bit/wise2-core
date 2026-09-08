@@ -80,7 +80,11 @@ export class ReplayBuffer {
   /**
    * Add a video frame to the replay buffer
    */
-  addFrame(frameData: Uint8Array, isKeyFrame: boolean = false, duration: number = 33): void {
+  addFrame(
+    frameData: Uint8Array<ArrayBuffer>,
+    isKeyFrame: boolean = false,
+    duration: number = 33,
+  ): void {
     if (!this.isRecording) return;
 
     const frame: ReplayFrame = {
@@ -104,7 +108,7 @@ export class ReplayBuffer {
   /**
    * Add audio chunk to the replay buffer
    */
-  addAudioChunk(audioData: Float32Array, sampleRate: number = 48000): void {
+  addAudioChunk(audioData: Float32Array<ArrayBuffer>, sampleRate: number = 48000): void {
     if (!this.isRecording) return;
 
     const chunk: ReplayAudioChunk = {

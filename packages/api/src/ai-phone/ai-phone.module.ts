@@ -4,10 +4,11 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { AiPhoneRuntimeService } from './ai-phone-runtime.service';
 import { AiPhoneWebhookController } from './ai-phone-webhook.controller';
 import { AiPhoneService } from './ai-phone.service';
+import { TelnyxWebhookController } from './telnyx-webhook.controller';
 
 @Module({
   imports: [PrismaModule, AuthModule],
-  controllers: [AiPhoneWebhookController],
+  controllers: [AiPhoneWebhookController, TelnyxWebhookController],
   providers: [AiPhoneService, AiPhoneRuntimeService],
   exports: [AiPhoneService],
 })

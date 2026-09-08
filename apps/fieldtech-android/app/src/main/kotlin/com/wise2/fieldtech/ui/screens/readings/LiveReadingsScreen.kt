@@ -39,13 +39,16 @@ import com.wise2.fieldtech.bluetooth.model.ToolConnectionState
 import com.wise2.fieldtech.ui.components.DemoDataBadge
 import com.wise2.fieldtech.ui.components.LineChart
 import com.wise2.fieldtech.ui.components.Meter
+import com.wise2.fieldtech.ui.components.DiagnosticAssessmentCard
+import com.wise2.fieldtech.ui.components.LiveSystemCenterCard
+import com.wise2.fieldtech.ui.components.ProbeStatusRail
 import com.wise2.fieldtech.ui.components.WiseCard
 import com.wise2.fieldtech.ui.theme.ElectricBlue
 import com.wise2.fieldtech.ui.theme.StatusGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
+fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit, onRunDiagnostic: () -> Unit = { viewModel.saveCurrentReading() }) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val bluetoothPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -96,6 +99,9 @@ fun LiveReadingsScreen(viewModel: LiveReadingsViewModel, onBack: () -> Unit) {
             }
 
             val reading = state.latestReading
+            item { ProbeStatusRail(reading) }
+            item { LiveSystemCenterCard(reading, onRunDiagnostic = onRunDiagnostic) }
+            item { DiagnosticAssessmentCard(state.assessment) }
             if (reading != null) {
                 item { if (reading.isDemoData) DemoDataBadge() }
 

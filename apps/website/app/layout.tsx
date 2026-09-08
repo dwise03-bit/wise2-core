@@ -4,6 +4,7 @@ import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 import { isBlackhailBrand } from '@/lib/site-domains';
+import { SessionProvider } from './providers';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -60,9 +61,11 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
-        <ToastProvider>
-          {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
-        </ToastProvider>
+        <SessionProvider session={undefined}>
+          <ToastProvider>
+            {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );

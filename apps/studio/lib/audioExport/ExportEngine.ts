@@ -91,7 +91,7 @@ class AudioBufferPool {
       return bufferList.pop()!;
     }
 
-    return context.createAudioBuffer({ numberOfChannels: channels, length, sampleRate });
+    return context.createBuffer(channels, length, sampleRate);
   }
 
   release(buffer: AudioBuffer): void {

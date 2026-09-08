@@ -223,7 +223,12 @@ export class SceneManager extends EventEmitter {
   /**
    * Add source to scene
    */
-  addSource(sceneId: string, source: Omit<SceneSource, 'id' | 'createdAt' | 'updatedAt'>): SceneSource {
+  addSource(
+    sceneId: string,
+    // sceneId is also omitted here: it comes from the first parameter and is
+    // set on the new source below, so callers must not supply it.
+    source: Omit<SceneSource, 'id' | 'sceneId' | 'createdAt' | 'updatedAt'>,
+  ): SceneSource {
     const scene = this.scenes.get(sceneId);
     if (!scene) {
       throw new SceneManagerError('Scene not found', 'SCENE_NOT_FOUND');

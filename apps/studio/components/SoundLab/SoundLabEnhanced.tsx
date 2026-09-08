@@ -163,8 +163,17 @@ export function SoundLabEnhanced({ onStatusUpdate, projectId }: SoundLabEnhanced
           status: data.project.generationStatus,
           audioUrl: data.project.generatedAudioUrl,
           params: params,
-          createdAt: new Date().toISOString(),
+          createdAt: new Date(),
           error: undefined,
+          // Populated once the generation completes; seeded here so the object
+          // satisfies SunoGeneration.
+          duration: params.duration ?? 0,
+          bitrate: '320kbps',
+          fileSize: '0 MB',
+          tags: [],
+          isFavorite: false,
+          playCount: 0,
+          exportedFormats: [],
         };
 
         const queueItem: SunoQueueItem = {

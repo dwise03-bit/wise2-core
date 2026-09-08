@@ -36,8 +36,8 @@ export default function BookingSuccessPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const bookingId = searchParams.get('bookingId');
-  const serviceId = params.serviceId as string;
+  const bookingId = searchParams?.get('bookingId');
+  const serviceId = params?.serviceId as string;
 
   const [booking, setBooking] = useState<BookingConfirmation | null>(null);
   const [loading, setLoading] = useState(true);

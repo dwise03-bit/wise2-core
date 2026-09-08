@@ -370,7 +370,7 @@ export class SunoGenerationQueue {
           // Update progress
           gen.progress = status.progress ?? 0;
 
-          if (status.status === 'completed' || status.status === 'Completed') {
+          if (status.status === 'completed') {
             gen.status = 'Completed';
             gen.completedAt = new Date();
             gen.progress = 100;
@@ -384,7 +384,7 @@ export class SunoGenerationQueue {
             return;
           }
 
-          if (status.status === 'failed' || status.status === 'Failed') {
+          if (status.status === 'failed') {
             gen.status = 'Failed';
             gen.error = status.errorMessage || 'Unknown API error';
             gen.completedAt = new Date();

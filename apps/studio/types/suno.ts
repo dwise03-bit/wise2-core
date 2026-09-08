@@ -25,7 +25,13 @@ export type SunoVoice =
 export type SunoKey = 'C' | 'C#' | 'D' | 'D#' | 'E' | 'F' | 'F#' | 'G' | 'G#' | 'A' | 'A#' | 'B';
 export type SunoScale = 'Major' | 'Minor';
 
-export type GenerationStatus = 'Queued' | 'Generating' | 'Completed' | 'Failed' | 'Cancelled';
+export type GenerationStatus =
+  | 'Queued'
+  | 'PendingOnline'
+  | 'Generating'
+  | 'Completed'
+  | 'Failed'
+  | 'Cancelled';
 export type VocalType = 'Vocal' | 'Instrumental';
 
 export interface SunoGenerationParams {

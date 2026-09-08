@@ -102,9 +102,13 @@ export function useSunoErrorHandling(
       setError(null);
       setCanRetry(false);
 
+      // Declared outside the try so the catch handler below can still
+      // identify which generation failed.
+      let generation: SunoGeneration | undefined;
+
       try {
         // Create generation object
-        const generation: SunoGeneration = {
+        generation = {
           id: `gen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           params,
           status: isOnline ? 'Queued' : 'PendingOnline',
@@ -285,7 +289,7 @@ export function useSunoErrorHandling(
         );
 
         // Download via URL-based fallback if needed
-        const downloadUrl = result.url || (result as any).download_url;
+        const downloadUrl = result.downloadUrl;
         if (downloadUrl) {
           const a = document.createElement('a');
           a.href = downloadUrl;

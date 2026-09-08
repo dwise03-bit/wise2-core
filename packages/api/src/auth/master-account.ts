@@ -1,7 +1,18 @@
-export const MASTER_ACCOUNT_EMAIL = 'dwise03@gmail.com';
+export const MASTER_ACCOUNT_EMAILS = [
+  'dwise03@gmail.com',
+  'darrinwisejr@gmail.com',
+] as const;
+
+/** Primary master account. Kept for callers that need a single canonical owner. */
+export const MASTER_ACCOUNT_EMAIL = MASTER_ACCOUNT_EMAILS[0];
+
+function normalizeEmail(email: string | null | undefined): string {
+  return (email ?? '').trim().toLowerCase();
+}
 
 export function isMasterAccountEmail(email: string | null | undefined): boolean {
-  return (email ?? '').trim().toLowerCase() === MASTER_ACCOUNT_EMAIL;
+  const normalized = normalizeEmail(email);
+  return MASTER_ACCOUNT_EMAILS.some((master) => master === normalized);
 }
 
 export function roleForEmail(email: string | null | undefined): 'FOUNDER' | 'CUSTOMER' {

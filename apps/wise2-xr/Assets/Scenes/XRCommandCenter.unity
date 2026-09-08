@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings: {serializedVersion: 2, smallestOccluder: 5, smallestHole: 0.25, backfaceTolerance: 100}
+  m_SceneGUID: 00000000000000000000000000000000
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 12
+  m_Fog: 0
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.48, b: 0.52, a: 1}
+  m_SkyboxMaterial: {fileID: 0}
+  m_HaloStrength: 0
+  m_FlareStrength: 0
+  m_ReflectionIntensity: 0
+  m_CustomReflection: {fileID: 0}
+--- !u!1 &1000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_Name: WISE2 XR Command Center
+  m_IsActive: 1
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1001}
+  - component: {fileID: 1002}
+  - component: {fileID: 1003}
+  m_Layer: 0
+  m_Name: WISE2 XR Command Center
+--- !u!4 &1001
+Transform:
+  m_ObjectHideFlags: 0
+  m_GameObject: {fileID: 1000}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+--- !u!114 &1002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_GameObject: {fileID: 1000}
+  m_Enabled: 1
+  m_Script: {fileID: 11500000, guid: 22222222222222222222222222222222, type: 3}
+--- !u!114 &1003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_GameObject: {fileID: 1000}
+  m_Enabled: 1
+  m_Script: {fileID: 11500000, guid: 55555555555555555555555555555555, type: 3}

@@ -35,7 +35,12 @@ export function SunoGeneratorWithErrorHandling() {
         prompt: 'Upbeat electronic dance music',
         genre: 'Electronic',
         mood: 'Energetic',
-        duration: 180,
+        tempo: 128,
+        duration: 60,
+        voice: 'Nova',
+        vocalType: 'Instrumental',
+        key: 'A',
+        scale: 'Minor',
       });
     } catch (err) {
       // Error automatically handled
@@ -133,7 +138,7 @@ export function ObsStreamingWithErrorHandling() {
 export function CreativeStudio() {
   return (
     <ErrorBoundary
-      fallback={(error, retry) => (
+      fallback={({ error, retry }) => (
         <div className="error-fallback">
           <h2>Error Occurred</h2>
           <p>{error.getUserMessage()}</p>

@@ -104,15 +104,21 @@ export class StreamingAudioMixer {
       const analyser = this.audioContext.createAnalyser();
       analyser.fftSize = 2048;
 
-      let sourceNode: MediaElementAudioSourceNode | MediaStreamAudioSourceNode;
+      // Each branch keeps its concrete node type so the source map below can be
+      // populated without re-narrowing a widened union.
+      let mediaElementNode: MediaElementAudioSourceNode | undefined;
+      let mediaStreamNode: MediaStreamAudioSourceNode | undefined;
 
       if (mediaElementOrStream instanceof HTMLMediaElement) {
         // Media element source (audio file, video)
-        sourceNode = this.audioContext.createMediaElementAudioSource(mediaElementOrStream);
+        mediaElementNode = this.audioContext.createMediaElementSource(mediaElementOrStream);
       } else {
         // Media stream source (microphone, system audio)
-        sourceNode = this.audioContext.createMediaStreamSource(mediaElementOrStream);
+        mediaStreamNode = this.audioContext.createMediaStreamSource(mediaElementOrStream);
       }
+
+      const sourceNode: MediaElementAudioSourceNode | MediaStreamAudioSourceNode =
+        mediaElementNode ?? mediaStreamNode!;
 
       // Connect source -> gain -> pan -> analyser -> master
       sourceNode.connect(gain);
@@ -124,8 +130,8 @@ export class StreamingAudioMixer {
         gain,
         pan,
         analyser,
-        mediaElementAudio: mediaElementOrStream instanceof HTMLMediaElement ? sourceNode : undefined,
-        source: mediaElementOrStream instanceof MediaStream ? sourceNode : undefined,
+        mediaElementAudio: mediaElementNode,
+        source: mediaStreamNode,
       });
 
       // Initialize meters

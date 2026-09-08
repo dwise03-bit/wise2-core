@@ -33,8 +33,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       <PublicNav />
-      <div className="min-h-screen flex flex-col pt-16">
-        <div className="flex-1">{children}</div>
+      <div className="flex min-h-screen flex-col overflow-x-hidden pt-16">
+        <div className="min-w-0 flex-1">{children}</div>
         {pathname !== '/' && pathname !== '/products/imp' && <WiseImp />}
         <PublicFooter />
       </div>

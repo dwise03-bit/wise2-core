@@ -38,6 +38,12 @@ Optional overrides:
 | `WISE2_COMPOSE_FILE` | `/home/dwise/wise2-core/docker-compose.production.yml` | Canonical compose file |
 | `WISE2_AUDIT_FILE` | `/data/control-bridge/audit.jsonl` | Audit log path |
 | `WISE2_DEPLOYMENT_FILE` | `/data/control-bridge/deployments.jsonl` | Deployment metadata path |
+| `WISE2_IDEMPOTENCY_FILE` | `/data/control-bridge/idempotency.jsonl` | Executed-write ledger (survives restarts) |
+| `WISE2_OPS_SIGNING_KEYS` | *(required)* | Job signing keyring as `keyId:secret[,keyId:secret]`; secrets ≥ 32 chars |
+| `WISE2_REQUIRE_SIGNED_WRITES` | `true` | When true, writes without a valid signed job are refused |
+| `WISE2_TARGET_ALIAS` | `wise2-core` | Registry alias this bridge answers to |
+| `WISE2_TARGET_ENVIRONMENT` | `production` in prod | Environment a signed job must name |
+| `WISE2_ALLOWED_PROFILES` | See `config.ts` | Action profiles this host accepts |
 | `WISE2_OLLAMA_URL` | `http://host.docker.internal:11434/api/tags` | Ollama health check |
 | `WISE2_HERMES_URL` | `http://host.docker.internal:3012/api/health` | Hermes health check |
 | `WISE2_PUBLIC_URL` | `https://wise2.net` | Public WISE² URL |
@@ -418,3 +424,45 @@ docker logs -f wise2-control-bridge-prod
 - Supported clients: ChatGPT via OpenAI plugin, WISE² iOS Command Center
 - Ingress: Tailscale private HTTPS or local reverse proxy only
 - SLA: None (community-supported MVP)
+
+
+## Signed writes (F5-OPS-02)
+
+Read endpoints are unchanged: bearer token only. **Write endpoints** (`restart`, `deploy`,
+`rollback`) additionally require a signed job envelope from `@wise2/ops-protocol`:
+
+```json
+{
+  "job": { "payload": { "jobId": "OPS-20260905-A1B2", "actor": {...}, "target": "wise2-core", "...": "..." },
+           "signature": "<hex hmac>", "keyId": "relay-2026-09" },
+  "confirmations": [ { "payload": { "jobId": "OPS-20260905-A1B2", "environmentEcho": "production", "...": "..." },
+                       "signature": "<hex hmac>", "keyId": "relay-2026-09" } ]
+}
+```
+
+What the bridge enforces, in order:
+
+1. **Signature** over the canonical payload, against the configured keyring.
+2. **Freshness** — 10-minute maximum lifetime, 30s clock-skew tolerance.
+3. **Target** — the job must name this host's alias *and* its environment.
+4. **Profile** — must be in `WISE2_ALLOWED_PROFILES`; `maintenance` and `emergency-stop` are absent until F5-OPS-03.
+5. **Role** — every write requires `owner`.
+6. **Arguments** — matched against the profile's allowlist, then cross-checked against the URL, so a signature for `restart api` cannot restart `website`.
+7. **Confirmation** — signed, bound to the job id and the same actor; production writes require `environmentEcho: "production"`.
+8. **Nonce** — single use, claimed only after every other check passes.
+9. **Idempotency** — a repeated `idempotencyKey` returns `{ "idempotent": true }` without executing. The ledger is on disk, so a bridge restart cannot turn a retry into a second execution.
+
+Deploy and rollback additionally verify that the host revision matches the confirmed
+`releaseId` (short ids match as a prefix), returning `409 RELEASE_MISMATCH` otherwise —
+the operator can never confirm one release and get another.
+
+Audit entries for signed actions carry the real `actor`, `actorId`, `actorRole`, `jobId`,
+`profile`, `environment`, and `idempotencyKey`. Rejected jobs are audited with their
+failure code. Signing secrets and the bearer token are redacted from all output.
+
+### Rollout note
+
+`WISE2_REQUIRE_SIGNED_WRITES` defaults to **true**, so any existing client that performs
+writes with the bearer token alone will receive `401 SIGNED_JOB_REQUIRED` after this
+change. Set it to `false` only as a temporary migration step — the bridge refuses to start
+when enforcement is on and no signing key is configured.

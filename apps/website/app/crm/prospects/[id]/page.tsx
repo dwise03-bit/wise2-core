@@ -40,7 +40,7 @@ const STATUSES = [
 export default function ProspectDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const prospectId = params.id as string;
+  const prospectId = params?.id as string;
 
   const [prospect, setProspect] = useState<Prospect | null>(null);
   const [loading, setLoading] = useState(true);

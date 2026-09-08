@@ -39,7 +39,7 @@ export interface EffectParams {
  * @param Q Quality factor
  */
 export function createEQNode(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   frequency: number,
   gain: number,
   Q: number = 1
@@ -55,7 +55,7 @@ export function createEQNode(
 /**
  * Create low-shelf EQ for bass
  */
-export function createLowShelfEQ(ctx: AudioContext, gain: number): BiquadFilterNode {
+export function createLowShelfEQ(ctx: BaseAudioContext, gain: number): BiquadFilterNode {
   const eq = ctx.createBiquadFilter();
   eq.type = 'lowshelf';
   eq.frequency.value = 200;
@@ -66,7 +66,7 @@ export function createLowShelfEQ(ctx: AudioContext, gain: number): BiquadFilterN
 /**
  * Create high-shelf EQ for treble
  */
-export function createHighShelfEQ(ctx: AudioContext, gain: number): BiquadFilterNode {
+export function createHighShelfEQ(ctx: BaseAudioContext, gain: number): BiquadFilterNode {
   const eq = ctx.createBiquadFilter();
   eq.type = 'highshelf';
   eq.frequency.value = 3000;
@@ -79,7 +79,7 @@ export function createHighShelfEQ(ctx: AudioContext, gain: number): BiquadFilter
  * Note: Full reverb requires impulse response file
  */
 export function createReverbNode(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   wet: number = 0.3
 ): { dry: GainNode; wet: GainNode; reverb: ConvolverNode; mix: GainNode } {
   const dryGain = ctx.createGain();
@@ -105,7 +105,7 @@ export function createReverbNode(
  * Create delay effect
  */
 export function createDelayNode(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   time: number = 0.5,
   feedback: number = 0.5,
   wet: number = 0.3
@@ -137,7 +137,7 @@ export function createDelayNode(
  * Create dynamic compressor
  */
 export function createCompressorNode(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   threshold: number = -20,
   ratio: number = 4,
   attack: number = 0.003,
@@ -156,7 +156,7 @@ export function createCompressorNode(
  * Create distortion effect
  */
 export function createDistortionNode(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   drive: number = 0.5
 ): { input: GainNode; output: GainNode; waveshaper: WaveShaperNode } {
   const input = ctx.createGain();
@@ -192,7 +192,7 @@ export function createDistortionNode(
  *   chain.output.connect(destinationNode);
  */
 export function createEffectsChain(
-  ctx: AudioContext,
+  ctx: BaseAudioContext,
   effects: Array<{
     type: 'eq' | 'reverb' | 'delay' | 'compression' | 'distortion';
     enabled: boolean;
@@ -216,7 +216,7 @@ export function createEffectsChain(
 
   // Build effect nodes
   const nodes: { [key: string]: any } = {};
-  let currentNode = input;
+  let currentNode: AudioNode = input;
 
   for (const effect of effects) {
     if (!effect.enabled) continue;
@@ -342,7 +342,7 @@ export function linearToDb(linear: number): number {
 /**
  * Utility: Create gain node from dB value
  */
-export function createGainNodeFromDb(ctx: AudioContext, db: number): GainNode {
+export function createGainNodeFromDb(ctx: BaseAudioContext, db: number): GainNode {
   const gain = ctx.createGain();
   gain.gain.value = dbToLinear(db);
   return gain;

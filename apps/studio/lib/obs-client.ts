@@ -261,7 +261,8 @@ export class ObsClient {
   async addSourceToScene(
     sceneName: string,
     sourceName: string,
-    sourceType: string,
+    // Narrowed from `string`: the value flows straight into ObsSource['type'].
+    sourceType: ObsSource['type'],
     settings?: any
   ): Promise<ObsSource> {
     const response: any = await this.sendRequest('CreateSceneItem', {

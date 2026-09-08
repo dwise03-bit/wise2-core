@@ -193,6 +193,13 @@ services:
       API_URL: http://api:3000
       ADMIN_ID: ${ADMIN_ID}
       BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      XAI_MODEL: ${XAI_MODEL:-grok-4.6}
+      XAI_BASE_URL: ${XAI_BASE_URL:-https://api.x.ai}
+      WISE2_GROK_ENABLED: ${WISE2_GROK_ENABLED:-true}
+      WISE2_GROK_TIMEOUT_MS: ${WISE2_GROK_TIMEOUT_MS:-30000}
+      WISE2_GROK_MAX_TOKENS: ${WISE2_GROK_MAX_TOKENS:-1200}
+      WISE2_GROK_TEMPERATURE: ${WISE2_GROK_TEMPERATURE:-0.2}
     depends_on:
       - redis
     networks:

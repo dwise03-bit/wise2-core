@@ -1,0 +1,10 @@
+{
+  "appId": "com.wise2.xrcommandcenter",
+  "versionName": "0.1.0",
+  "versionCode": 1,
+  "channel": "quest-production",
+  "apkUrl": "https://wise2.net/downloads/apps/wise2-xr/WISE2-XR.apk",
+  "sha256": "0a379480eb7994f11b716e40a2e5e22543a1919f0c6d62fdb07f6a651c7feab3",
+  "minQuest": "Quest 3 / Quest 3S",
+  "updatedAt": "2026-09-06T01:20:00Z"
+}

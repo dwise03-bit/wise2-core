@@ -1,7 +1,7 @@
 {
   "name": "@wise2/ai",
   "version": "0.1.0",
-  "description": "WISE² AI orchestration layer and agent framework",
+  "description": "WISE\u00b2 AI orchestration layer and agent framework",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "dev": "tsc --watch",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "type-check": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.28.0",

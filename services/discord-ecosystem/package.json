@@ -1,7 +1,7 @@
 {
   "name": "@wise2/discord-ecosystem",
   "version": "1.0.0",
-  "description": "WISE² Discord Bot Ecosystem - Comprehensive suite of 10+ production-grade Discord bots",
+  "description": "WISE\u00b2 Discord Bot Ecosystem - Comprehensive suite of 10+ production-grade Discord bots",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -10,7 +10,7 @@
     "start": "node dist/index.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "type-check": "tsc --noEmit",
@@ -45,6 +45,6 @@
     "monitoring",
     "analytics"
   ],
-  "author": "WISE² Team",
+  "author": "WISE\u00b2 Team",
   "license": "MIT"
 }

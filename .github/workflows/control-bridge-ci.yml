@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - 'services/control-bridge/**'
+      - 'packages/ops-protocol/**'
       - 'docker-compose.production.yml'
       - '.github/workflows/control-bridge-ci.yml'
       - 'scripts/control-health-local.sh'

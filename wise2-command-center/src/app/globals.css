@@ -112,6 +112,9 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@media (min-width:801px) { .petals-hero { min-height:calc(100vh - 88px); padding-top:56px; padding-bottom:56px; }.petals-hero h1 { font-size:clamp(52px,5.5vw,88px); }.petals-section h2,.petals-founder h2,.petals-ritual h2 { font-size:clamp(44px,5vw,70px); } }
+@media (max-width:800px) { .petals-hero h1 { font-size:clamp(46px,12vw,64px); }.petals-hero { padding-top:42px; } }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

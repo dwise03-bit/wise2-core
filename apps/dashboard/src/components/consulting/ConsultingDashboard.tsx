@@ -26,8 +26,10 @@ export default function ConsultingDashboard({
   clientId,
 }: ConsultingDashboardProps) {
   const [activeTab, setActiveTab] = useState('discovery');
-  const [auditData, setAuditData] = useState(null);
-  const [readinessScore, setReadinessScore] = useState(null);
+  const [auditData, setAuditData] = useState<{ industry: string } | null>(null);
+  const [readinessScore, setReadinessScore] = useState<
+    { score: number; assessment: string } | null
+  >(null);
   const [selectedIndustry, setSelectedIndustry] = useState('');
 
   const handleAuditComplete = (data: any) => {

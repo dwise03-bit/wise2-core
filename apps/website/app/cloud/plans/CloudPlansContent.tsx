@@ -36,7 +36,7 @@ function planCta(planId: CloudPlan['id']) {
 
 export default function CloudPlansContent() {
   const searchParams = useSearchParams();
-  const initialPlan = searchParams.get('plan');
+  const initialPlan = searchParams?.get('plan');
   const [plans, setPlans] = useState<CloudPlan[]>([]);
   const [launch, setLaunch] = useState<LaunchStatus | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<CloudPlan['id']>(

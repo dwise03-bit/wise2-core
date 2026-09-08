@@ -9,8 +9,8 @@ import { getDigitalTwinPackage } from '@/lib/digital-twin';
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
-  const product = searchParams.get('product') || 'platform';
-  const planId = searchParams.get('plan');
+  const product = searchParams?.get('product') || 'platform';
+  const planId = searchParams?.get('plan');
   const isDigitalTwin = product === 'digital-twin';
   const twinPlan = getDigitalTwinPackage(planId);
 

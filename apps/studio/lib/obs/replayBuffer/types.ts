@@ -4,7 +4,7 @@
 
 export interface ReplayBufferConfig {
   maxDurationSeconds: number; // 10-60, default 30
-  maxBufferSize: number; // bytes
+  maxBufferSize?: number; // bytes (derived from bitrate x duration when omitted)
   videoCodec: 'h264' | 'vp8' | 'vp9';
   audioCodec: 'aac' | 'opus';
   outputFormat: 'mp4' | 'webm' | 'mkv';
@@ -15,14 +15,14 @@ export interface ReplayBufferConfig {
 }
 
 export interface ReplayFrame {
-  data: Uint8Array; // video frame data
+  data: Uint8Array<ArrayBuffer>; // video frame data
   timestamp: number; // Unix timestamp in ms
   keyFrame: boolean; // Is this a keyframe?
   duration: number; // Frame duration in ms
 }
 
 export interface ReplayAudioChunk {
-  data: Float32Array;
+  data: Float32Array<ArrayBuffer>;
   timestamp: number;
   sampleRate: number;
 }

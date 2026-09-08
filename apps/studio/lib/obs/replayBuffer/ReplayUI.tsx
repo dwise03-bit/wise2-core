@@ -14,6 +14,8 @@ import React, { useState } from 'react';
 import { ReplayUIProps, ReplaySave } from './types';
 import { useReplayBuffer } from './useReplayBuffer';
 
+const MAX_REPLAY_DURATION_SECONDS = 60;
+
 interface ReplayUIExtendedProps extends ReplayUIProps {
   className?: string;
   showAdvanced?: boolean;
@@ -43,7 +45,9 @@ export function ReplayUI({
     formatDuration,
   } = useReplayBuffer({
     enabled: isStreaming,
-    config: { maxDurationSeconds: selectedDuration },
+    // The hook owns selectedDuration (default 30s); the buffer is sized to the
+    // largest offered option so any selection can be served from it.
+    config: { maxDurationSeconds: MAX_REPLAY_DURATION_SECONDS },
     onReplaySaved,
     onError,
   });

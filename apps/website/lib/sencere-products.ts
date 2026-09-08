@@ -443,3 +443,68 @@ export function getProductsByCategory(
 export function getAllProductCategories(): Product['category'][] {
   return Array.from(new Set(SENCERE_PRODUCTS.map((p) => p.category)));
 }
+
+// "Complete the Fit" outfit bundles
+export interface OutfitBundle {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  productIds: string[];
+  bundlePrice: number;
+  savings: number;
+  image: string;
+  featured?: boolean;
+}
+
+export const BLAKKHAIL_OUTFITS: OutfitBundle[] = [
+  {
+    id: 'peach-control-fit',
+    name: 'Take Control Fit',
+    tagline: 'Oversized confidence meets utility.',
+    description: 'Pair the Peach Control hoodie with classic tees for the complete Blakk Hail command aesthetic.',
+    productIds: ['peach-control-hoodie', 'chain-gang-black', '2cans-rwg'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.peachFront,
+    featured: true,
+  },
+  {
+    id: 'berry-stone-fit',
+    name: 'Stone Utility Fit',
+    tagline: 'Raw edges. Real attitude.',
+    description: 'The Berry Kush hoodie layered with contrasting tees for a street-ready complete look.',
+    productIds: ['berry-kush-hoodie', '2cans-bwb', 'alien-alliance-gray'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.berryFront,
+    featured: true,
+  },
+  {
+    id: 'strawberry-statement-fit',
+    name: 'Statement Drop Fit',
+    tagline: 'Bold color. Bolder moves.',
+    description: 'Red distressed hoodie with statement tees to complete your signature Blakk Hail look.',
+    productIds: ['strawberry-haze-hoodie', 'alien-alliance-black', 'alien-alliance-white'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront,
+    featured: true,
+  },
+];
+
+export function getBlakkhailOutfits(): OutfitBundle[] {
+  return BLAKKHAIL_OUTFITS;
+}
+
+export function getOutfitByBundleId(id: string): OutfitBundle | undefined {
+  return BLAKKHAIL_OUTFITS.find((o) => o.id === id);
+}
+
+export function getOutfitProducts(bundleId: string): Product[] {
+  const outfit = getOutfitByBundleId(bundleId);
+  if (!outfit) return [];
+  return outfit.productIds
+    .map((id) => SENCERE_PRODUCTS.find((p) => p.id === id))
+    .filter((p): p is Product => p !== undefined);
+}

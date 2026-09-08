@@ -64,7 +64,7 @@ export class WorkflowExecution {
   @Prop({ default: 0 })
   skippedCount!: number;
 
-  @Prop()
+  @Prop({ type: Object })
   error?: {
     message: string;
     code: string;

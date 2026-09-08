@@ -6,7 +6,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "dashboard": "node pi-ai-dashboard.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/*.test.js"
   },
   "keywords": [],
   "author": "",

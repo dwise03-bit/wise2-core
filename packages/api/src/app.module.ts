@@ -31,9 +31,10 @@ import { AppService } from './app.service';
 import { APIStatusController } from './config/api-status.controller';
 import { WiseDefenseModule } from './wise-defense/wise-defense.module';
 import { PrintShopModule } from './v1/print-shop/print-shop.module';
-// import { HermesModule } from './hermes/hermes.module'; // DISABLED: @nestjs/axios missing dependency
+import { HermesHealthController } from './hermes/hermes-health.controller';
 import { TradingModule } from './trading/trading.module';
 import { FieldtechModule } from './fieldtech/fieldtech.module';
+import { HvacTelemetryModule } from './hvac-telemetry/hvac-telemetry.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
@@ -138,9 +139,9 @@ import { CloudModule } from './v1/cloud/cloud.module';
     CustomersModule,
     GalleryModule,
     PrintShopModule,
-    // HermesModule, // DISABLED: @nestjs/axios missing dependency
     TradingModule,
     FieldtechModule,
+    HvacTelemetryModule,
     // CjaysModule, // DISABLED: depends on HermesModule
     // BusinessOsModule, // DISABLED: depends on HermesModule + AiPhoneModule
     CherryCountModule,
@@ -150,7 +151,7 @@ import { CloudModule } from './v1/cloud/cloud.module';
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
-  controllers: [AppController, APIStatusController],
+  controllers: [AppController, APIStatusController, HermesHealthController],
   providers: [AppService, TenantMiddleware],
 })
 export class AppModule implements NestModule {

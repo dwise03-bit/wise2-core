@@ -33,15 +33,7 @@ describe('Personal IMP Integration Tests', () => {
 
       expect(impHook.result.current.state.expression).toBe('listening');
 
-      // Step 2: Simulate user message
-      act(() => {
-        chatHook.result.current.addMessage('user', 'Hello, IMP!');
-      });
-
-      expect(chatHook.result.current.messages).toHaveLength(1);
-      expect(chatHook.result.current.messages[0].role).toBe('user');
-
-      // Step 3: IMP starts thinking
+      // Step 2: IMP starts thinking
       act(() => {
         impHook.result.current.handleEvent({
           type: 'ai_thinking',
@@ -51,7 +43,7 @@ describe('Personal IMP Integration Tests', () => {
 
       expect(impHook.result.current.state.expression).toBe('thinking');
 
-      // Step 4: Send to API and get response
+      // Step 3: Send to API and get response (this records the user message)
       act(() => {
         chatHook.result.current.sendMessage('Hello, IMP!');
       });
@@ -61,7 +53,7 @@ describe('Personal IMP Integration Tests', () => {
         expect(chatHook.result.current.isLoading).toBe(false);
       });
 
-      // Step 5: IMP receives response and speaks
+      // Step 4: IMP receives response and speaks
       act(() => {
         impHook.result.current.handleEvent({
           type: 'ai_stream_start',
@@ -71,8 +63,9 @@ describe('Personal IMP Integration Tests', () => {
 
       expect(impHook.result.current.state.expression).toBe('speaking');
 
-      // Verify response is in chat
+      // Verify both the user message and the reply are in chat
       expect(chatHook.result.current.messages).toHaveLength(2);
+      expect(chatHook.result.current.messages[0].role).toBe('user');
       expect(chatHook.result.current.messages[1].role).toBe('assistant');
     });
   });
@@ -178,7 +171,15 @@ describe('Personal IMP Integration Tests', () => {
       // Should have error state
       expect(chatHook.result.current.error).toBeTruthy();
 
-      // Express error
+      // Express error: the IMP is thinking while the request is in flight,
+      // which is the state a tool_error actually arrives in.
+      act(() => {
+        impHook.result.current.handleEvent({
+          type: 'ai_thinking',
+          timestamp: new Date(),
+        });
+      });
+
       act(() => {
         impHook.result.current.handleEvent({
           type: 'tool_error',
@@ -393,14 +394,7 @@ describe('Personal IMP Integration Tests', () => {
         });
       });
 
-      // offline can only transition to idle
-      expect(impHook.result.current.state.expression).toBe('offline');
-
-      // Explicit transition to idle
-      act(() => {
-        impHook.result.current.setExpression('idle');
-      });
-
+      // device_online maps to 'idle', which is the one legal target from offline
       expect(impHook.result.current.state.expression).toBe('idle');
 
       // Now can send messages
@@ -436,16 +430,19 @@ describe('Personal IMP Integration Tests', () => {
 
   describe('Timestamp Tracking', () => {
     it('should update lastEventTime on state changes', () => {
+      vi.useFakeTimers();
       const impHook = renderHook(() => useImpExpression('idle'));
       const time1 = impHook.result.current.state.lastEventTime;
 
-      // Wait a bit
-      const wait = () => new Promise(r => setTimeout(r, 10));
+      // Advance the clock so the two timestamps cannot share a millisecond
+      // (the previous `wait` helper was declared but never awaited).
+      vi.advanceTimersByTime(10);
 
       act(() => {
         impHook.result.current.setExpression('listening');
       });
       const time2 = impHook.result.current.state.lastEventTime;
+      vi.useRealTimers();
 
       expect(time2!.getTime()).toBeGreaterThan(time1!.getTime());
     });

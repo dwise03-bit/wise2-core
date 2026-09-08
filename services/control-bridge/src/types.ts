@@ -1,3 +1,6 @@
+import type { Environment } from '../../../packages/ops-protocol/src/index.js';
+import type { SigningKey } from '../../../packages/ops-protocol/src/signature.js';
+
 export type ControlConfig = {
   host: string;
   port: number;
@@ -20,6 +23,31 @@ export type ControlConfig = {
   apiHealthUrl: string;
   rateLimitMax: number;
   rateLimitWindowMs: number;
+  /** Registry alias this bridge answers to. Signed jobs must name it. */
+  targetAlias: string;
+  /** Environment this host is. A job for another environment is rejected. */
+  targetEnvironment: Environment;
+  /** Action profiles this host will accept. Intersected with the protocol registry. */
+  allowedProfiles: string[];
+  /** Keyring for signed job envelopes, parsed from `keyId:secret` pairs. */
+  signingKeys: SigningKey[];
+  /** When true (the default) a write without a valid signed job is refused. */
+  requireSignedWrites: boolean;
+  idempotencyFile: string;
+  /** Where the maintenance flag is recorded. Read by `status` and the diagnostics. */
+  maintenanceFile: string;
+  /** Services `emergency-stop` may stop. Empty by default; protected names are refused. */
+  allowedStoppable: string[];
+  databaseService: string;
+  workerService: string;
+  proxyService: string;
+};
+
+export type MaintenanceState = {
+  enabled: boolean;
+  changedAt: string;
+  changedBy?: string;
+  jobId?: string;
 };
 
 export type Envelope<T> = {
@@ -34,7 +62,17 @@ export type Envelope<T> = {
 
 export type AuditEntry = {
   requestId: string;
+  /** Human-readable actor. For signed jobs this is the real Discord display name. */
   actor: string;
+  /** Discord user id of the actor, present whenever the action came from a signed job. */
+  actorId?: string;
+  actorRole?: string;
+  jobId?: string;
+  profile?: string;
+  environment?: string;
+  idempotencyKey?: string;
+  /** True when the request matched a prior idempotency key and did not execute. */
+  replayed?: boolean;
   action: string;
   target?: string;
   source?: string;

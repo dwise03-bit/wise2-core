@@ -1,11 +1,11 @@
 import { randomUUID } from 'node:crypto';
-import { appendFile, mkdir, readFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { cpus, freemem, loadavg, totalmem, uptime } from 'node:os';
 import type { CommandResult } from './lib/exec.js';
 import { runCommand } from './lib/exec.js';
 import { boundedText, redactText } from './lib/redact.js';
-import type { ComponentState, ControlConfig, DeploymentRecord } from './types.js';
+import type { ComponentState, ControlConfig, DeploymentRecord, MaintenanceState } from './types.js';
 import { validateName } from './guards.js';
 
 export type Runner = (binary: string, args: string[], options?: { timeoutMs?: number; maxOutputBytes?: number; cwd?: string }) => Promise<CommandResult>;
@@ -178,4 +178,112 @@ export async function rollbackApp(ctx: AdapterContext, app: string): Promise<Dep
   const record: DeploymentRecord = { ...last, id: randomUUID(), status: 'rolled_back', targetRevision: last.previousRevision, createdAt: new Date().toISOString(), completedAt: new Date().toISOString() };
   await appendDeployment(ctx.config.deploymentFile, record);
   return record;
+}
+
+/* ── F5-OPS-03: diagnostics, maintenance mode, emergency stop ─────────────────────── */
+
+/** Container state for one compose service. Read-only; nothing is executed inside it. */
+async function serviceState(ctx: AdapterContext, service: string): Promise<ComponentState> {
+  if (!ctx.config.allowedServices.includes(service)) {
+    return { status: 'unavailable', error: `${service} is not an allowlisted service on this host` };
+  }
+  try {
+    const result = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['ps', '--format', 'json', service]), { timeoutMs: 10_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
+    if (result.code !== 0) return { status: 'unavailable', error: boundedText(redactText(result.stderr, secretList(ctx.config)), 1_000) };
+    const rows = result.stdout.trim().split('\n').filter(Boolean).map(line => {
+      try {
+        return JSON.parse(line) as Record<string, unknown>;
+      } catch {
+        return { raw: boundedText(line, 500) };
+      }
+    });
+    if (rows.length === 0) return { status: 'down', data: { service, containers: [] } };
+    const running = rows.some(row => String(row.State ?? '').toLowerCase() === 'running');
+    return { status: running ? 'healthy' : 'down', data: { service, containers: rows } };
+  } catch (error) {
+    return { status: 'unavailable', error: (error as Error).message };
+  }
+}
+
+async function dockerNetworks(ctx: AdapterContext): Promise<ComponentState> {
+  const result = await runner(ctx)(ctx.config.dockerBinary, ['network', 'ls', '--format', '{{.Name}} {{.Driver}} {{.Scope}}'], { timeoutMs: 10_000, maxOutputBytes: 16_000 });
+  if (result.code !== 0) return { status: 'unavailable', error: boundedText(redactText(result.stderr, secretList(ctx.config)), 1_000) };
+  return { status: 'healthy', data: { networks: result.stdout.trim().split('\n').filter(Boolean) } };
+}
+
+async function dockerDiskUsage(ctx: AdapterContext): Promise<ComponentState> {
+  const result = await runner(ctx)(ctx.config.dockerBinary, ['system', 'df', '--format', '{{.Type}} {{.TotalCount}} {{.Size}} {{.Reclaimable}}'], { timeoutMs: 15_000, maxOutputBytes: 16_000 });
+  if (result.code !== 0) return { status: 'unavailable', error: boundedText(redactText(result.stderr, secretList(ctx.config)), 1_000) };
+  return { status: 'healthy', data: { usage: result.stdout.trim().split('\n').filter(Boolean) } };
+}
+
+/**
+ * The diagnostic profiles. Each one is a fixed sequence of allowlisted reads — the profile
+ * name selects a branch, it never becomes part of a command.
+ */
+export async function diagnose(ctx: AdapterContext, profile: string): Promise<Record<string, unknown>> {
+  const settle = async (fn: () => Promise<ComponentState>): Promise<ComponentState> =>
+    fn().catch(error => ({ status: 'unavailable' as const, error: (error as Error).message }));
+
+  switch (profile) {
+    case 'health':
+      return {
+        profile,
+        host: { status: 'healthy', data: { metrics: await hostMetrics(), disk: await diskMetrics(ctx) } },
+        api: await settle(() => urlHealth(ctx, ctx.config.apiHealthUrl)),
+        maintenance: await readMaintenance(ctx),
+      };
+    case 'docker':
+      return { profile, services: await dockerServices(ctx), ps: await dockerPs(ctx), stats: await dockerStats(ctx) };
+    case 'disk':
+      return { profile, filesystem: await diskMetrics(ctx), docker: await settle(() => dockerDiskUsage(ctx)) };
+    case 'network':
+      return {
+        profile,
+        networks: await settle(() => dockerNetworks(ctx)),
+        api: await settle(() => urlHealth(ctx, ctx.config.apiHealthUrl)),
+        public: await settle(() => urlHealth(ctx, ctx.config.wise2Url)),
+      };
+    case 'database':
+      return { profile, service: await serviceState(ctx, ctx.config.databaseService) };
+    case 'worker':
+      return { profile, service: await serviceState(ctx, ctx.config.workerService) };
+    case 'traefik':
+      return { profile, service: await serviceState(ctx, ctx.config.proxyService) };
+    case 'ollama':
+      return { profile, status: await settle(() => urlHealth(ctx, ctx.config.ollamaUrl)), models: await settle(() => ollamaModels(ctx)) };
+    default:
+      throw Object.assign(new Error('Unknown diagnostic profile'), { code: 'DIAGNOSTIC_UNKNOWN' });
+  }
+}
+
+export async function readMaintenance(ctx: AdapterContext): Promise<MaintenanceState> {
+  try {
+    const parsed = JSON.parse(await readFile(ctx.config.maintenanceFile, 'utf8')) as MaintenanceState;
+    return { enabled: Boolean(parsed.enabled), changedAt: parsed.changedAt, changedBy: parsed.changedBy, jobId: parsed.jobId };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return { enabled: false, changedAt: new Date(0).toISOString() };
+    throw error;
+  }
+}
+
+/**
+ * Records the maintenance flag. This bridge only owns the flag; whatever serves traffic
+ * (nginx, the app) must read it to actually shed requests — see the operations doc.
+ */
+export async function setMaintenance(ctx: AdapterContext, enabled: boolean, actor?: string, jobId?: string): Promise<MaintenanceState> {
+  const state: MaintenanceState = { enabled, changedAt: new Date().toISOString(), changedBy: actor, jobId };
+  await mkdir(dirname(ctx.config.maintenanceFile), { recursive: true });
+  await writeFile(ctx.config.maintenanceFile, JSON.stringify(state), 'utf8');
+  return state;
+}
+
+/**
+ * Stops one explicitly designated non-critical service. The allowlist is separate from
+ * the restartable services and never contains a protected name (enforced in config).
+ */
+export async function emergencyStop(ctx: AdapterContext, service: string): Promise<CommandResult> {
+  validateName(service, ctx.config.allowedStoppable);
+  const result = await runner(ctx)(ctx.config.dockerBinary, composeArgs(ctx, ['stop', service]), { timeoutMs: 30_000, maxOutputBytes: 32_000, cwd: ctx.config.repoDir });
+  return { ...result, stdout: redactText(result.stdout, secretList(ctx.config)), stderr: redactText(result.stderr, secretList(ctx.config)) };
 }

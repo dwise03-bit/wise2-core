@@ -344,6 +344,8 @@ describe('ObsidianSyncService - Performance & N+1 Query Fixes', () => {
         slug: 'no-links',
         save: jest.fn().mockResolvedValue({}),
         previousVersions: [],
+        // assigned by updateLinks(); declared so the assertion below can read it
+        backlinks: [] as string[],
       };
 
       mockEntryModel.findById.mockResolvedValue(entry);

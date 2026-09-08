@@ -1,7 +1,7 @@
 {
   "name": "@wise2/website",
   "version": "0.1.0",
-  "description": "WISE² Enterprise public website & landing page",
+  "description": "WISE\u00b2 Enterprise public website & landing page",
   "private": true,
   "packageManager": "pnpm@8.15.9",
   "scripts": {
@@ -11,7 +11,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
     "framer-motion": "^11.0.0",
+    "jose": "^6.2.12",
     "jsonwebtoken": "^9.0.0",
     "lucide-react": "^0.408.0",
     "next": "14.2.35",

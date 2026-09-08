@@ -21,4 +21,6 @@ export {
   type StreamEncodingSettings,
 } from './StreamingAudioIntegration';
 
-export default StreamingAudioMixer;
+// Imported explicitly: the re-export above does not bind the name locally.
+import { StreamingAudioMixer as StreamingAudioMixerDefault } from './AudioMixing';
+export default StreamingAudioMixerDefault;

@@ -13,7 +13,7 @@ import { AudioPlayer } from '../components/AudioPlayer';
 function PodcastDownloadsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const projectId = searchParams.get('projectId');
+  const projectId = searchParams?.get('projectId') ?? null;
 
   const { user, isLoading: authLoading } = useAuth();
   const { project, isLoading } = useProject(projectId);

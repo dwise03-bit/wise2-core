@@ -22,6 +22,7 @@ describe('WorkflowController - Workspace Isolation & Security', () => {
 
   beforeEach(async () => {
     const mockWorkflowService = {
+      createTemplate: jest.fn(),
       getTemplate: jest.fn(),
       updateTemplate: jest.fn(),
       deleteTemplate: jest.fn(),
@@ -173,7 +174,9 @@ describe('WorkflowController - Workspace Isolation & Security', () => {
   describe('Input Validation', () => {
     describe('createTemplate', () => {
       it('should reject missing required fields', async () => {
-        await expect(controller.createTemplate(mockRequest, {})).rejects.toThrow(
+        // deliberately incomplete: this asserts the controller's own validation
+        const invalidPayload = {} as Parameters<typeof controller.createTemplate>[1];
+        await expect(controller.createTemplate(mockRequest, invalidPayload)).rejects.toThrow(
           BadRequestException,
         );
       });
@@ -182,7 +185,7 @@ describe('WorkflowController - Workspace Isolation & Security', () => {
         await expect(
           controller.createTemplate(mockRequest, {
             name: 'Test',
-          }),
+          } as Parameters<typeof controller.createTemplate>[1]),
         ).rejects.toThrow(BadRequestException);
       });
 

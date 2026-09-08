@@ -282,6 +282,12 @@ services:
       WISE2_COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME:-wise2-core}
       WISE2_AUDIT_FILE: /data/control-bridge/audit.jsonl
       WISE2_DEPLOYMENT_FILE: /data/control-bridge/deployments.jsonl
+      WISE2_IDEMPOTENCY_FILE: /data/control-bridge/idempotency.jsonl
+      # Signed-job enforcement (F5-OPS-02). Writes are refused without a valid signed job.
+      WISE2_OPS_SIGNING_KEYS: ${WISE2_OPS_SIGNING_KEYS}
+      WISE2_REQUIRE_SIGNED_WRITES: ${WISE2_REQUIRE_SIGNED_WRITES:-true}
+      WISE2_TARGET_ALIAS: ${WISE2_TARGET_ALIAS:-wise2-core}
+      WISE2_TARGET_ENVIRONMENT: ${WISE2_TARGET_ENVIRONMENT:-production}
       WISE2_ALLOWED_SERVICES: postgres,redis,mongodb,api,ollama,open-webui,website,dashboard,admin,studio,command-center,worker,prometheus,grafana
       WISE2_ALLOWED_APPS: website,dashboard,admin,studio,command-center,api,worker
       WISE2_OLLAMA_URL: http://127.0.0.1:11434/api/tags

@@ -129,7 +129,7 @@ export default function AnalyticsPage() {
     const utilizationRate = totalPossibleHours > 0 ? (totalActualHours / totalPossibleHours) * 100 : 0;
 
     // Weekly utilization trends
-    const utilizationTrends = [];
+    const utilizationTrends: { week: string; rate: number }[] = [];
     for (let i = 3; i >= 0; i--) {
       const weekStart = new Date(now);
       weekStart.setDate(weekStart.getDate() - i * 7);

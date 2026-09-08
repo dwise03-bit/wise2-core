@@ -6,7 +6,7 @@ import Stripe from 'stripe';
 import { CheckCircle } from 'lucide-react';
 
 const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || '', {
-  apiVersion: '2023-10-16',
+  apiVersion: '2023-08-16',
 });
 
 interface SessionData {
@@ -16,7 +16,7 @@ interface SessionData {
 
 export default function OrderConfirmationPage() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id');
+  const sessionId = searchParams?.get('session_id');
   const [session, setSession] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

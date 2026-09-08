@@ -3,11 +3,15 @@ package com.wise2.mecapture
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,25 +28,25 @@ import java.text.DateFormat
 import java.util.Date
 import com.wise2.mecapture.studio.*
 
-private val Black = Color(0xFF08090A); private val Panel = Color(0xFF171A1C); private val Green = Color(0xFFB6FF3B); private val Blue = Color(0xFF5CC8FF); private val Purple = Color(0xFFC58CFF)
+private val Black = Color(0xFF070812); private val Panel = Color(0xFF111329); private val PanelRaised = Color(0xFF181B3A); private val Green = Color(0xFFB8A1FF); private val Blue = Color(0xFF61E6FF); private val Purple = Color(0xFFFFC56B); private val TextMuted = Color(0xFF9AA4C4)
 
 class MainActivity : ComponentActivity() {
     private val permissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { }
-    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); permissions.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)); setContent { MeCaptureApp() } }
+    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false); permissions.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)); setContent { MeCaptureApp() } }
 }
 
 @Composable fun MeCaptureApp(vm: CaptureViewModel = viewModel()) {
     var tab by remember { mutableIntStateOf(0) }
-    MaterialTheme(colorScheme = darkColorScheme(background = Black, surface = Panel, primary = Green, secondary = Blue)) {
-        Scaffold(containerColor = Black, bottomBar = { NavigationBar(containerColor = Panel) { listOf("Capture" to Icons.Default.Videocam, "Library" to Icons.Default.VideoLibrary, "REAPER" to Icons.Default.GraphicEq, "Profile" to Icons.Default.Person).forEachIndexed { i, pair -> NavigationBarItem(selected = tab == i, onClick = { tab = i }, icon = { Icon(pair.second, null) }, label = { Text(pair.first) }) } } }) { pad -> Box(Modifier.padding(pad).fillMaxSize()) { when(tab) { 0 -> CaptureScreen(vm); 1 -> LibraryScreen(vm); 2 -> StudioScreen(); else -> ProfileScreen() } } }
+    MaterialTheme(colorScheme = darkColorScheme(background = Black, surface = Panel, surfaceVariant = PanelRaised, primary = Green, secondary = Blue, tertiary = Purple, onSurface = Color.White)) {
+        Scaffold(containerColor = Black, bottomBar = { NavigationBar(containerColor = Panel) { listOf("Capture" to Icons.Default.Videocam, "Library" to Icons.Default.VideoLibrary, "Studio" to Icons.Default.GraphicEq, "Profile" to Icons.Default.Person).forEachIndexed { i, pair -> NavigationBarItem(selected = tab == i, onClick = { tab = i }, icon = { Icon(pair.second, null) }, label = { Text(pair.first) }, colors = NavigationBarItemDefaults.colors(selectedIconColor = Black, selectedTextColor = Green, indicatorColor = Green, unselectedIconColor = TextMuted, unselectedTextColor = TextMuted)) } } }) { pad -> Box(Modifier.padding(pad).fillMaxSize()) { when(tab) { 0 -> CaptureScreen(vm); 1 -> LibraryScreen(vm); 2 -> StudioScreen(); else -> ProfileScreen() } } }
     }
 }
 
-@Composable private fun Header(title: String, subtitle: String) { Column(Modifier.padding(20.dp)) { Text("WISE²", color = Green, style = MaterialTheme.typography.labelLarge); Text(title, style = MaterialTheme.typography.headlineMedium); Text(subtitle, color = Color.Gray) } }
+@Composable private fun Header(title: String, subtitle: String) { Column(Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) { Row(verticalAlignment = Alignment.CenterVertically) { Text("WISE²", color = Green, style = MaterialTheme.typography.labelLarge); Spacer(Modifier.width(8.dp)); Text("/", color = TextMuted); Spacer(Modifier.width(8.dp)); Text("TRADING", color = Blue, style = MaterialTheme.typography.labelLarge) }; Text(title, style = MaterialTheme.typography.headlineMedium); Text(subtitle, color = TextMuted, style = MaterialTheme.typography.bodySmall) } }
 
-@Composable private fun CaptureScreen(vm: CaptureViewModel) { Header("ME CAPTURE", "OFFLINE-FIRST FIELD RECORDING"); var clientConsent by remember { mutableStateOf(false) }; Column(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) { ModeSelector(vm); Box(Modifier.fillMaxWidth().height(270.dp).background(Color(0xFF24292B), RoundedCornerShape(18.dp)), contentAlignment = Alignment.Center) { Text(if(vm.recording) "●  RECORDING ${vm.elapsed}s" else "CAMERA PREVIEW", color = if(vm.recording) Color.Red else Color.DarkGray) }; if(vm.mode == Mode.CLIENT && !clientConsent) { Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF31251C))) { Column(Modifier.padding(16.dp)) { Text("Recording consent required", color = Green); Text("Confirm the client has agreed to this recording and its stated use.", color = Color.LightGray); Button(onClick = { clientConsent = true }) { Text("I HAVE CONSENT") } } } }; Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) { OutlinedButton(onClick = {}, Modifier.weight(1f)) { Icon(Icons.Default.Cameraswitch, null); Spacer(Modifier.width(6.dp)); Text("FLIP") }; Button(onClick = { if(vm.mode != Mode.CLIENT || clientConsent) vm.toggleRecording() }, Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = if(vm.recording) Color.Red else Green, contentColor = Color.Black)) { Icon(if(vm.recording) Icons.Default.Stop else Icons.Default.FiberManualRecord, null); Spacer(Modifier.width(6.dp)); Text(if(vm.recording) "STOP" else "RECORD") } }; OutlinedTextField(value = vm.label, onValueChange = vm::updateLabel, label = { Text("Job / customer label (optional)") }, modifier = Modifier.fillMaxWidth()) } }
+@Composable private fun CaptureScreen(vm: CaptureViewModel) { Header("ME CAPTURE", "OFFLINE-FIRST FIELD RECORDING"); var clientConsent by remember { mutableStateOf(false) }; Column(Modifier.padding(horizontal = 20.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)) { ModeSelector(vm); CameraPreviewCard(enabled = vm.mode != Mode.CLIENT || clientConsent, vm = vm); if(vm.mode == Mode.CLIENT && !clientConsent) { Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF31251C))) { Column(Modifier.padding(16.dp)) { Text("Recording consent required", color = Green); Text("Confirm the client has agreed to this recording and its stated use.", color = Color.LightGray); Button(onClick = { clientConsent = true }) { Text("I HAVE CONSENT") } } } }; OutlinedTextField(value = vm.label, onValueChange = vm::updateLabel, label = { Text("Job / customer label (optional)") }, modifier = Modifier.fillMaxWidth()) } }
 
-@Composable private fun ModeSelector(vm: CaptureViewModel) { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) { Mode.entries.forEach { mode -> FilterChip(selected = vm.mode == mode, onClick = { vm.mode = mode }, label = { Text(mode.name) }) } } }
+@Composable private fun ModeSelector(vm: CaptureViewModel) { Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) { Mode.entries.forEach { mode -> FilterChip(selected = vm.mode == mode, onClick = { vm.mode = mode }, label = { Text(mode.name) }) } } }
 
 @Composable private fun LibraryScreen(vm: CaptureViewModel) { Header("LIBRARY", "${vm.clips.size} LOCAL RECORDINGS"); LazyColumn(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) { items(vm.clips) { clip -> Card(colors = CardDefaults.cardColors(containerColor = Panel)) { Column(Modifier.padding(16.dp)) { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(clip.mode.name, color = Green); Text(clip.status, color = Blue) }; Text(clip.label.ifBlank { "Untitled capture" }, style = MaterialTheme.typography.titleMedium); Text("${DateFormat.getDateTimeInstance().format(Date(clip.createdAt))}  •  ${clip.duration}s", color = Color.Gray); Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { TextButton(onClick = { vm.approve(clip.id) }) { Text("APPROVE FOR MY AI", color = Purple) }; TextButton(onClick = { vm.reject(clip.id) }) { Text("REJECT") } } } } } } }
 
