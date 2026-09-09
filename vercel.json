@@ -15,7 +15,7 @@
       ]
     }
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/website package.json pnpm-lock.yaml",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/website package.json pnpm-lock.yaml vercel.json",
   "outputDirectory": "apps/website/.next",
   "env": {
     "SKIP_ENV_VALIDATION": "true",
