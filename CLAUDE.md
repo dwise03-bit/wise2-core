@@ -321,8 +321,21 @@ Kernel Synthesizes A, B, C → User Response
 
 ---
 
+## Verification Before Completion (FOUNDATIONAL RULE)
+
+**Never say "done", "working", "fixed", "deployed", or "complete" — and never move to the next task — until the actual goal is verified as reached in reality.** Every task, every fix, every feature, every deployment. No exceptions.
+
+- ❌ NOT verification: "build succeeded", "no errors", "code committed", "process is online", "it should work"
+- ✅ Verification: ran the test and it passed, called the endpoint and got the expected response, opened the app in a browser and the feature works, reproduced the bug and it no longer occurs, screenshot proof attached
+- Paste the actual evidence in the reply. Test edge cases and confirm related features still work.
+- If verification is genuinely blocked (no server access, missing credentials), say so explicitly — "NOT verified because X" — never imply success.
+- Credit-saver mode permits skipping polishing, summaries, and rereads. It never permits skipping verification — a wrong "done" costs far more than one test run.
+
+---
+
 ## Anti-Patterns (Never Do This)
 
+- ❌ Claiming a task is complete without verifying the goal is reached in reality (see Verification Before Completion above)
 - ❌ One agent doing everything
 - ❌ Stateless sessions (always read `data/` at start)
 - ❌ Hardcoding credentials in agent files
@@ -343,6 +356,7 @@ Every session should:
 - [ ] Read `data/inbox/` for new tasks
 - [ ] Route request using Agent Registry
 - [ ] Log decisions to `data/decisions/`
+- [ ] Verify every task's goal is reached in reality before claiming it complete (see Verification Before Completion)
 - [ ] Update daily log at end of session
 - [ ] Write session reflection
 
