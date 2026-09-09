@@ -73,6 +73,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".vr.VRActivity"
+            android:exported="true"
+            android:theme="@style/Theme.WiseFieldTech"
+            android:screenOrientation="portrait"
+            android:resizeableActivity="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
