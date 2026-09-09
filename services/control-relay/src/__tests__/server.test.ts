@@ -293,3 +293,25 @@ describe('tailscale serve ingress', () => {
     expect(res.body).not.toContain('tail44396d');
   });
 });
+
+describe('fleet health endpoint', () => {
+  it('does not poll unless polling is explicitly enabled', async () => {
+    const { app } = await relay();
+    const res = await app.inject({ url: '/v1/relay/fleet', headers: auth });
+    expect(res.json().data.polling).toBe(false);
+    expect(res.json().data.targets.map((t: { alias: string; phase: string }) => [t.alias, t.phase]))
+      .toEqual([['wise2-core', 'unknown'], ['wise2-tunnel', 'unknown']]);
+  });
+
+  it('requires the relay token', async () => {
+    const { app } = await relay();
+    expect((await app.inject({ url: '/v1/relay/fleet' })).statusCode).toBe(401);
+  });
+
+  it('never exposes an address through the fleet view', async () => {
+    const { app } = await relay();
+    const res = await app.inject({ url: '/v1/relay/fleet', headers: auth });
+    expect(res.body).not.toContain('100.64.0.10');
+    expect(res.body).not.toContain('173.208.147.165');
+  });
+});

@@ -45,7 +45,9 @@ export class TwentyIProvider implements HostingProvider {
   }
 
   async listPackageTypes(): Promise<TwentyIPackageType[]> {
-    const response = await this.requireClient().get<TwentyIPackageType[]>('/reseller/*/packageTypes');
+    // Package types are exposed at the account-level endpoint. The wildcard
+    // reseller path is valid for addWeb, but 20i returns 404 for packageTypes.
+    const response = await this.requireClient().get<TwentyIPackageType[]>('/packageTypes');
     return Array.isArray(response) ? response : [];
   }
 

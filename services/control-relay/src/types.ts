@@ -16,6 +16,12 @@ export type RelayConfig = {
   rateLimitWindowMs: number;
   /** How long a finished job stays queryable for the result card. */
   jobRetentionMs: number;
+  /** Health polling. Disabled unless an interval and a webhook are configured. */
+  healthEnabled: boolean;
+  healthIntervalMs: number;
+  healthFailureThreshold: number;
+  /** Discord channel webhook for #fable5-activity. Alerts only; never commands. */
+  activityWebhookUrl?: string;
 };
 
 export type Envelope<T> = {

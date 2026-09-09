@@ -50,6 +50,50 @@ export function baseUrlFor(target: TargetRecord): string {
   return `http://${target.address}:${target.controlPort ?? 3099}`;
 }
 
+export type ProbeRequest = {
+  target: TargetRecord;
+  bridgeToken?: string;
+  timeoutMs: number;
+  fetchImpl?: typeof globalThis.fetch;
+};
+
+/**
+ * Read-only liveness probe for the health monitor. It calls the bridge's aggregate status
+ * and nothing else — there is no code path from here to a write.
+ */
+export async function probeHealth(request: ProbeRequest): Promise<{ ok: boolean; degraded?: boolean; detail?: string }> {
+  const fetchImpl = request.fetchImpl ?? globalThis.fetch;
+  const headers: Record<string, string> = { accept: 'application/json' };
+  if (request.bridgeToken) headers.authorization = `Bearer ${request.bridgeToken}`;
+
+  let response: Response;
+  try {
+    response = await fetchImpl(new URL('/v1/control/status', baseUrlFor(request.target)), {
+      method: 'GET',
+      headers,
+      signal: AbortSignal.timeout(request.timeoutMs),
+    });
+  } catch (error) {
+    return { ok: false, detail: `unreachable (${(error as Error).name})` };
+  }
+
+  const raw = boundedText(await response.text().catch(() => ''), 16_000);
+  const secrets = [request.bridgeToken ?? ''].filter(Boolean);
+  if (!response.ok) return { ok: false, detail: redactText(`control bridge returned HTTP ${response.status}`, secrets) };
+
+  try {
+    const body = JSON.parse(redactText(raw, secrets)) as { data?: Record<string, { status?: string }> };
+    const components = Object.entries(body.data ?? {});
+    const unhealthy = components.filter(([, value]) => value && typeof value === 'object' && 'status' in value && value.status !== 'healthy');
+    if (unhealthy.length > 0) {
+      return { ok: true, degraded: true, detail: `degraded components: ${unhealthy.map(([name]) => name).join(', ')}` };
+    }
+    return { ok: true, detail: 'all components healthy' };
+  } catch {
+    return { ok: true, detail: 'status returned an unparsable body' };
+  }
+}
+
 export async function dispatch(request: DispatchRequest): Promise<DispatchResult> {
   const route = routeFor(request.job);
   if (!route) return { ok: false, code: 'PROFILE_NOT_IMPLEMENTED', message: 'No control-bridge endpoint implements this profile yet', detail: request.job.actionProfile };

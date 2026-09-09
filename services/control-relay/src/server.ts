@@ -9,7 +9,9 @@ import { appendAudit, readAudit } from './audit.js';
 import { loadConfig } from './config.js';
 import { createProgressTracker, type ProgressTracker } from './progress.js';
 import { loadRegistry, RegistryError, type TargetRegistry } from './targets.js';
-import { dispatch } from './transport.js';
+import { dispatch, probeHealth } from './transport.js';
+import { createHealthMonitor, type HealthMonitor } from './health.js';
+import { createDiscordNotifier, type Notifier } from './notify.js';
 import type { Envelope, RelayConfig } from './types.js';
 
 export type BuildOptions = {
@@ -17,6 +19,8 @@ export type BuildOptions = {
   fetchImpl?: typeof globalThis.fetch;
   nonces?: NonceStore;
   progress?: ProgressTracker;
+  /** Overrides the Discord webhook notifier, for tests. */
+  notifier?: Notifier;
 };
 
 function ok<T>(requestId: string, action: string, data: T, target?: string, jobId?: string): Envelope<T> {
@@ -54,6 +58,42 @@ export async function buildServer(config: RelayConfig = loadConfig(), options: B
   const registry = options.registry ?? await loadRegistry(config.targetsFile);
   const secrets = [config.token, ...config.signingKeys.map(key => key.secret), ...registry.tokens.values()];
 
+  /**
+   * Health polling. The monitor is given a probe and a notifier and nothing else — it has
+   * no signing key and no route to the job path, so an alert can never remediate.
+   */
+  const notifier = options.notifier ?? createDiscordNotifier({
+    webhookUrl: config.activityWebhookUrl,
+    secrets,
+    fetchImpl: options.fetchImpl,
+  });
+  const health: HealthMonitor = createHealthMonitor({
+    targets: registry.targets,
+    intervalMs: config.healthIntervalMs,
+    failureThreshold: config.healthFailureThreshold,
+    probe: target => probeHealth({
+      target,
+      bridgeToken: registry.tokens.get(target.alias),
+      timeoutMs: config.requestTimeoutMs,
+      fetchImpl: options.fetchImpl,
+    }),
+    notify: async event => {
+      await appendAudit(config.auditFile, {
+        requestId: `health-${event.alias}-${event.at}`,
+        target: event.alias,
+        environment: event.environment,
+        actionProfile: 'health',
+        startedAt: event.at,
+        endedAt: event.at,
+        ok: event.to === 'healthy',
+        errorCode: event.to === 'healthy' ? undefined : `HEALTH_${event.to.toUpperCase()}`,
+      }, secrets);
+      await notifier(event);
+    },
+  });
+  if (config.healthEnabled) health.start();
+  app.addHook('onClose', async () => health.stop());
+
   await app.register(rateLimit, { max: config.rateLimitMax, timeWindow: config.rateLimitWindowMs });
 
   app.addHook('preHandler', async (request, reply) => {
@@ -69,6 +109,7 @@ export async function buildServer(config: RelayConfig = loadConfig(), options: B
   /** Aliases only — the registry's addresses and key references never leave this process. */
   app.get('/v1/relay/targets', async request => ok(request.id, 'targets', { targets: publicTargets(registry.targets) }));
   app.get('/v1/relay/jobs', async request => ok(request.id, 'jobs', { jobs: progress.list() }));
+  app.get('/v1/relay/fleet', async request => ok(request.id, 'fleet', { polling: health.running(), targets: health.states() }));
   app.get('/v1/relay/jobs/:jobId', async (request, reply) => {
     const found = progress.get((request.params as { jobId: string }).jobId);
     if (!found) return reply.code(404).send(fail(request.id, 'job.status', 'JOB_UNKNOWN', 'No such job'));
@@ -148,6 +189,7 @@ export async function buildServer(config: RelayConfig = loadConfig(), options: B
     await reply.code(500).send(fail(request.id, 'error', 'RELAY_ERROR', 'Request failed'));
   });
 
+  app.decorate('health', health);
   return app;
 }
 

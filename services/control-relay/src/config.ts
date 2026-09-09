@@ -47,5 +47,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): RelayConfig {
     rateLimitMax: numberValue(env.WISE2_RELAY_RATE_LIMIT_MAX, 60),
     rateLimitWindowMs: numberValue(env.WISE2_RELAY_RATE_LIMIT_WINDOW_MS, 60_000),
     jobRetentionMs: numberValue(env.WISE2_RELAY_JOB_RETENTION_MS, 60 * 60 * 1000),
+    // Polling stays off unless it is asked for: a relay that alerts without a destination
+    // is just wasted requests against production.
+    healthEnabled: (env.WISE2_RELAY_HEALTH_ENABLED ?? '').trim().toLowerCase() === 'true',
+    healthIntervalMs: numberValue(env.WISE2_RELAY_HEALTH_INTERVAL_MS, 60_000),
+    healthFailureThreshold: numberValue(env.WISE2_RELAY_HEALTH_FAILURE_THRESHOLD, 2),
+    activityWebhookUrl: env.WISE2_DISCORD_ACTIVITY_WEBHOOK?.trim() || undefined,
   };
 }
