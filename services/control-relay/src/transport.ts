@@ -30,9 +30,12 @@ export function routeFor(job: Job): Route | undefined {
     case 'services': return { method: 'GET', path: '/v1/control/docker/services' };
     case 'logs': return { method: 'GET', path: `/v1/control/docker/${args.service}/logs`, query: args.lines ? { lines: args.lines } : undefined };
     case 'deploy-status': return { method: 'GET', path: `/v1/control/deploy/${args.deploymentId}` };
+    case 'diagnose': return { method: 'GET', path: `/v1/control/diagnose/${args.profile}` };
     case 'restart': return { method: 'POST', path: `/v1/control/docker/${args.service}/restart` };
     case 'deploy': return { method: 'POST', path: `/v1/control/deploy/${args.app}` };
     case 'rollback': return { method: 'POST', path: `/v1/control/rollback/${args.app}` };
+    case 'maintenance': return { method: 'POST', path: `/v1/control/maintenance/${args.state}` };
+    case 'emergency-stop': return { method: 'POST', path: `/v1/control/emergency/${args.service}/stop` };
     default: return undefined;
   }
 }

@@ -8,7 +8,6 @@
  */
 
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
-const { renderResultCard, summariseArgs } = require('./card.js');
 const { dispatchJob } = require('./dispatch.js');
 const { loadProtocol } = require('./protocol.js');
 
@@ -111,12 +110,15 @@ async function resolveTarget(ctx, alias) {
 }
 
 async function runJob(ctx, entry, interaction) {
-  const dispatched = await dispatchJob({ entry, signingKey: ctx.signingKey, relay: ctx.relay, protocol: ctx.protocol });
+  const api = ctx.protocol || (await loadProtocol());
+  const { renderResultCard, summariseArgs } = api;
+  const dispatched = await dispatchJob({ entry, signingKey: ctx.signingKey, relay: ctx.relay, protocol: api });
   const finishedAt = new Date().toISOString();
   const base = {
     jobId: entry.jobId, actor: entry.actorName, target: entry.target, environment: entry.environment,
     actionProfile: entry.actionProfile, argsSummary: summariseArgs(entry.args),
     startedAt: new Date(entry.createdAt).toISOString(), finishedAt,
+    secrets: ctx.secrets || [],
   };
 
   if (!dispatched.ok) {
@@ -210,9 +212,9 @@ async function handleOpsCommand(interaction, ctx) {
   }
 
   return interaction.reply({
-    content: renderResultCard({
+    content: api.renderResultCard({
       jobId: entry.jobId, actor: actorName, target: target.alias, environment: target.environment,
-      actionProfile: profile.id, argsSummary: summariseArgs(args), status: 'awaiting-confirmation',
+      actionProfile: profile.id, args, status: 'awaiting-confirmation',
       startedAt: new Date(entry.createdAt).toISOString(),
     }),
     components: confirmationComponents(entry.jobId, entry.requiredConfirmations),
@@ -222,6 +224,7 @@ async function handleOpsCommand(interaction, ctx) {
 
 /** Shared by the Confirm button, the modal, and /ops confirm. */
 async function applyConfirmation(interaction, ctx, jobId, environmentEcho) {
+  const api = ctx.protocol || (await loadProtocol());
   const userId = interaction.user.id;
   const entry = ctx.pending.get(jobId);
   if (!entry) return interaction.reply(refusal('That job has expired or does not exist.'));
@@ -244,9 +247,9 @@ async function applyConfirmation(interaction, ctx, jobId, environmentEcho) {
 
   if (confirmed.remaining > 0) {
     return interaction.reply({
-      content: renderResultCard({
+      content: api.renderResultCard({
         jobId, actor: entry.actorName, target: entry.target, environment: entry.environment,
-        actionProfile: entry.actionProfile, argsSummary: summariseArgs(entry.args),
+        actionProfile: entry.actionProfile, args: entry.args,
         status: 'awaiting-confirmation', startedAt: new Date(entry.createdAt).toISOString(),
       }) + `\n\n⚠️ ${confirmed.remaining} further confirmation required.`,
       components: confirmationComponents(jobId, confirmed.remaining),

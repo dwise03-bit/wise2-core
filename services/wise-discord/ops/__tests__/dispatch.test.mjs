@@ -2,18 +2,20 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import dispatchModule from '../dispatch.js';
 import pendingModule from '../pending.js';
 import protocolModule from '../protocol.js';
-import cardModule from '../card.js';
 import { createRelayStub } from './fakes.mjs';
 
 const { dispatchJob, parseSigningKey } = dispatchModule;
 const { createPendingStore } = pendingModule;
-const { renderResultCard } = cardModule;
 
 const KEY = { keyId: 'discord-test', secret: 'a-signing-secret-of-at-least-32-chars' };
 const OWNER = '111111111111111111';
 
 let protocol;
-beforeAll(async () => { protocol = await protocolModule.loadProtocol(); });
+let renderResultCard;
+beforeAll(async () => {
+  protocol = await protocolModule.loadProtocol();
+  ({ renderResultCard } = protocol);
+});
 
 function entryFor(overrides = {}) {
   const store = createPendingStore();
@@ -92,5 +94,29 @@ describe('renderResultCard', () => {
   it('names an idempotent replay rather than implying a second execution', () => {
     const card = renderResultCard({ jobId: 'OPS-1', actor: 'Daniel', target: 'wise2-core', environment: 'production', actionProfile: 'restart', status: 'complete', result: { data: { idempotent: true } } });
     expect(card).toContain('Already executed');
+  });
+});
+
+
+describe('sanitized reporting', () => {
+  it('redacts a secret that a host leaked into its output', async () => {
+    const card = renderResultCard({
+      jobId: 'OPS-20260906-A1B2', actor: 'Daniel', target: 'wise2-core', environment: 'production',
+      actionProfile: 'logs', status: 'complete',
+      result: { data: { stdout: 'DATABASE_URL=postgres://wise2:hunter2@db:5432/prod\nWISE2_CONTROL_TOKEN=leaked-token' } },
+    });
+    expect(card).not.toContain('hunter2');
+    expect(card).not.toContain('leaked-token');
+    expect(card).toContain('[REDACTED]');
+  });
+
+  it('blanks the bot’s own relay token if it ever appears in a result', async () => {
+    const card = renderResultCard({
+      jobId: 'OPS-20260906-A1B2', actor: 'Daniel', target: 'wise2-core', environment: 'production',
+      actionProfile: 'status', status: 'complete',
+      result: { data: { stdout: 'relay responded with a-relay-token' } },
+      secrets: ['a-relay-token'],
+    });
+    expect(card).not.toContain('a-relay-token');
   });
 });

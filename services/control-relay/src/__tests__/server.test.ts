@@ -171,13 +171,30 @@ describe('transport', () => {
     expect(calls[0]!.method).toBe('GET');
   });
 
-  it('refuses a profile with no bridge endpoint rather than guessing one', async () => {
+  it('maps every profile the protocol defines to a bridge endpoint', async () => {
     const { app, calls } = await relay();
     const job = buildJob('diagnose', { profile: 'docker' });
-    const res = await app.inject({ method: 'POST', url: '/v1/relay/jobs', headers: auth, payload: payloadFor(job, []) });
-    expect(res.statusCode).toBe(501);
-    expect(res.json().error.code).toBe('PROFILE_NOT_IMPLEMENTED');
-    expect(calls).toHaveLength(0);
+    await app.inject({ method: 'POST', url: '/v1/relay/jobs', headers: auth, payload: payloadFor(job, []) });
+    expect(calls[0]!.url).toBe('http://100.64.0.10:3099/v1/control/diagnose/docker');
+  });
+
+  it('routes maintenance and emergency-stop to their bridge endpoints', async () => {
+    const targets = [{ ...CORE, allowedProfiles: [...CORE.allowedProfiles, 'maintenance', 'emergency-stop'] }];
+    const maintenance = await relay({ targets });
+    const maintenanceJob = buildJob('maintenance', { state: 'on' });
+    await maintenance.app.inject({ method: 'POST', url: '/v1/relay/jobs', headers: auth, payload: payloadFor(maintenanceJob) });
+    expect(maintenance.calls[0]!.url).toBe('http://100.64.0.10:3099/v1/control/maintenance/on');
+
+    const stop = await relay({ targets });
+    const stopJob = buildJob('emergency-stop', { service: 'studio' }, { jobId: 'OPS-20260905-D4E5' });
+    await stop.app.inject({ method: 'POST', url: '/v1/relay/jobs', headers: auth, payload: payloadFor(stopJob, [confirm(stopJob), confirm(stopJob, { sequence: 2 })]) });
+    expect(stop.calls[0]!.url).toBe('http://100.64.0.10:3099/v1/control/emergency/studio/stop');
+  });
+
+  it('refuses a profile with no bridge endpoint rather than guessing one', async () => {
+    const { routeFor } = await import('../transport.js');
+    const job = buildJob('services', {});
+    expect(routeFor({ ...job, actionProfile: 'not-a-profile' })).toBeUndefined();
   });
 });
 

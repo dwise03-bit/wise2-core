@@ -1,4 +1,5 @@
 export * from './types.js';
+export * from './card.js';
 export * from './profiles.js';
 export * from './redact.js';
 export * from './registry.js';

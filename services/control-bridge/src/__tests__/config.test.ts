@@ -40,9 +40,15 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ ...base, WISE2_ALLOWED_PROFILES: 'status,exec' })).toThrow('unknown profile: exec');
   });
 
-  it('does not expose maintenance or emergency-stop until their adapters exist', () => {
-    expect(loadConfig(base).allowedProfiles).not.toContain('maintenance');
-    expect(loadConfig(base).allowedProfiles).not.toContain('emergency-stop');
+  it('exposes the full profile set now that every adapter exists', () => {
+    const profiles = loadConfig(base).allowedProfiles;
+    expect(profiles).toContain('diagnose');
+    expect(profiles).toContain('maintenance');
+    expect(profiles).toContain('emergency-stop');
+  });
+
+  it('leaves emergency-stop inert until a service is explicitly designated stoppable', () => {
+    expect(loadConfig(base).allowedStoppable).toEqual([]);
   });
 });
 

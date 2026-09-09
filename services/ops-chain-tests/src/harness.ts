@@ -48,6 +48,10 @@ export type Chain = {
   ops: Record<string, unknown> & { pending: any; roles: any; relay: any };
   /** Every argv the bridge would have handed to a binary. Empty means nothing executed. */
   commands: string[][];
+  /** Health transitions the relay reported to #fable5-activity. */
+  alerts: any[];
+  /** Runs one health sweep. */
+  sweep: () => Promise<unknown>;
   bridgeConfig: ControlConfig;
   relayConfig: RelayConfig;
   dir: string;
@@ -60,6 +64,8 @@ export type ChainOptions = {
   relayOffline?: boolean;
   /** Makes the host emit this text from every command, to test sanitizing. */
   leakyOutput?: string;
+  /** Simulates the host being unreachable from the relay, for health alerting. */
+  bridgeOffline?: boolean;
   ownerIds?: string;
   operatorIds?: string;
 };
@@ -114,9 +120,13 @@ export async function buildChain(options: ChainOptions = {}): Promise<Chain> {
     rateLimitMax: 500, rateLimitWindowMs: 60_000, jobRetentionMs: 600_000,
   };
 
+  const alerts: any[] = [];
   const relay = await buildRelay(relayConfig, {
     registry: { targets: options.targets ?? [DEFAULT_TARGET], tokens: new Map([['wise2-core', BRIDGE_TOKEN]]) },
-    fetchImpl: injectFetch(bridge),
+    fetchImpl: options.bridgeOffline
+      ? ((async () => { throw Object.assign(new Error('down'), { name: 'TimeoutError' }); }) as unknown as typeof globalThis.fetch)
+      : injectFetch(bridge),
+    notifier: async (event: unknown) => { alerts.push(event); },
   });
 
   const relayFetch = options.relayOffline
@@ -141,7 +151,10 @@ export async function buildChain(options: ChainOptions = {}): Promise<Chain> {
     },
   );
 
-  return { bridge, relay, ops, commands, bridgeConfig, relayConfig, dir };
+  return {
+    bridge, relay, ops, commands, bridgeConfig, relayConfig, dir, alerts,
+    sweep: () => (relay as unknown as { health: { sweep: () => Promise<unknown> } }).health.sweep(),
+  };
 }
 
 export const handleOpsCommand = opsModule.handleOpsCommand;

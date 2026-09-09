@@ -511,3 +511,57 @@ describe('the authorized path works end to end', () => {
     expect(status.json().data.maintenance.data.enabled).toBe(true);
   });
 });
+
+/* ── Proof 10: health alerts report, they never remediate ─────────────────────────── */
+
+/** Any mutating docker verb that appeared in what the host was asked to run. */
+function writeVerbs(commands: string[][]): string[] {
+  const mutating = ['restart', 'stop', 'start', 'up', 'down', 'rm', 'kill', 'pull'];
+  return commands.flat().filter(argument => mutating.includes(argument));
+}
+
+describe('health alerts never trigger writes', () => {
+  it('posts exactly one alert for a sustained outage and runs nothing', async () => {
+    const chain = await buildChain({ bridgeOffline: true });
+
+    // First sweep establishes the state, three more confirm the outage persists.
+    for (let i = 0; i < 4; i += 1) await chain.sweep();
+
+    const outage = chain.alerts.filter((event: { to: string }) => event.to === 'down');
+    expect(outage).toHaveLength(1);
+    expect(outage[0]).toMatchObject({ alias: 'wise2-core', environment: 'production', to: 'down' });
+    // The whole point: an alert is not a remediation.
+    expect(chain.commands).toEqual([]);
+  });
+
+  it('stays silent while the fleet is healthy, and only ever reads', async () => {
+    const chain = await buildChain();
+    await chain.sweep();
+    await chain.sweep();
+    await chain.sweep();
+    expect(chain.alerts.filter((event: { from: string }) => event.from !== 'unknown')).toEqual([]);
+    // Probing runs read-only commands; it must never reach a mutating verb.
+    expect(writeVerbs(chain.commands)).toEqual([]);
+  });
+
+  it('records the transition in the relay audit log without executing anything', async () => {
+    const chain = await buildChain({ bridgeOffline: true });
+    await chain.sweep();
+    await chain.sweep();
+    const audit = await readFile(chain.relayConfig.auditFile, 'utf8');
+    expect(audit).toContain('HEALTH_DOWN');
+    expect(audit).toContain('wise2-core');
+    expect(chain.commands).toEqual([]);
+  });
+
+  it('does not restart, deploy or roll back even after repeated outage sweeps', async () => {
+    const chain = await buildChain({ bridgeOffline: true });
+    for (let i = 0; i < 10; i += 1) await chain.sweep();
+    expect(chain.commands).toEqual([]);
+    expect(writeVerbs(chain.commands)).toEqual([]);
+    const relayAudit = await readFile(chain.relayConfig.auditFile, 'utf8');
+    for (const write of ['restart', 'deploy', 'rollback', 'emergency']) {
+      expect(relayAudit).not.toContain(`"actionProfile":"${write}"`);
+    }
+  });
+});

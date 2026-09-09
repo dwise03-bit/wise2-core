@@ -171,7 +171,10 @@ export async function buildServer(config: RelayConfig = loadConfig(), options: B
     if (!result.ok) {
       progress.advance(job.jobId, result.code === 'TARGET_UNREACHABLE' ? 'failed' : 'blocked', { error: { code: result.code, message: result.message } });
       await audit({ ...identity, errorCode: result.code, status: result.status }, false);
-      return reply.code(statusForCode(result.code)).send(fail(request.id, job.actionProfile, result.code, result.message, result.detail, target.alias, job.jobId));
+      // The bridge already decided the right status for its own rejection; preserve it
+      // rather than flattening every host refusal to a generic 400.
+      const status = result.status ?? statusForCode(result.code);
+      return reply.code(status).send(fail(request.id, job.actionProfile, result.code, result.message, result.detail, target.alias, job.jobId));
     }
 
     progress.advance(job.jobId, 'complete', { evidence: result.data });

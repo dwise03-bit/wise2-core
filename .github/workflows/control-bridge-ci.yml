@@ -2,8 +2,12 @@ name: WISE2 Control Bridge CI
 
 on:
   push:
-    branches:
-      - 'feat/wise2-control-bridge'
+    branches: ['**']
+    paths:
+      - 'services/control-bridge/**'
+      - 'packages/ops-protocol/**'
+      - 'docker-compose.production.yml'
+      - '.github/workflows/control-bridge-ci.yml'
   pull_request:
     branches:
       - main
