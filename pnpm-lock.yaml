@@ -23,9 +23,12 @@ importers:
         specifier: 8.11.3
         version: 8.11.3
       stripe:
-        specifier: ^22.5.0
+        specifier: 22.5.0
         version: 22.5.0
     devDependencies:
+      next:
+        specifier: 14.2.35
+        version: 14.2.35(@babel/core@7.29.7)(react-dom@18.3.1)(react@18.3.1)
       pnpm:
         specifier: ^8.15.9
         version: 8.15.9
