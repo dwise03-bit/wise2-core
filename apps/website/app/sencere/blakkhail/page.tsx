@@ -1,5 +1,6 @@
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
 import { BlakkhailHero } from '@/components/sencere/blakkhail/BlakkhailHero';
+import { BlakkhailStory } from '@/components/sencere/blakkhail/BlakkhailStory';
 import { BlakkhailStorefront } from '@/components/sencere/blakkhail/BlakkhailStorefront';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
 import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
@@ -13,6 +14,7 @@ export default function BlakkhailPage() {
         <section id="home">
           <BlakkhailHero />
         </section>
+        <BlakkhailStory />
         <section id="shop">
           <BlakkhailStorefront />
         </section>
