@@ -1,7 +1,7 @@
 {
   "name": "wise2-enterprise",
   "version": "0.1.0",
-  "description": "WISE\u00b2 Enterprise - AI-powered business operating system",
+  "description": "WISE² Enterprise - AI-powered business operating system",
   "private": true,
   "packageManager": "pnpm@8.15.9",
   "engines": {
@@ -42,6 +42,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "next": "14.2.35",
     "pnpm": "^8.15.9",
     "turbo": "^1.10.16"
   },
@@ -56,6 +57,6 @@
     "@gsap/react": "^2.1.2",
     "gsap": "^3.15.0",
     "pg": "8.11.3",
-    "stripe": "^22.5.0"
+    "stripe": "22.5.0"
   }
 }
