@@ -1,64 +1,86 @@
 'use client';
 
-import Link from 'next/link';
+import Image from 'next/image';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
-import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
+import { BLAKKHAIL } from './brand-tokens';
 
 export function BlakkhailHero() {
+  // Get the first lookbook/editorial image from legacy assets
+  const heroImage = BLAKKHAIL_LEGACY.assets.shopPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
+
   return (
-    <section id="home" className="w-full" style={{ backgroundColor: BLAKKHAIL.jetBlack }}>
-      {/* Legacy iWeb was ~1000px — cap logo so it scales cleanly without crop */}
-      <div className={`${BLAKKHAIL_LAYOUT.container} max-w-[1000px] py-0`}>
-        <img
-          src={BLAKKHAIL_LEGACY.assets.logo}
-          alt="Blakk Hail — original fashion since 1994"
-          width={675}
-          height={152}
-          decoding="async"
-          fetchPriority="high"
-          className="block h-auto w-full"
-          style={{ aspectRatio: '675 / 152' }}
+    <section className="relative w-full min-h-[500px] sm:min-h-[600px] lg:min-h-[700px] overflow-hidden">
+      {/* Hero Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src={heroImage}
+          alt="Blakk Hail Heritage - Original Fashion Since 1994"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Dark overlay for text readability */}
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{ backgroundColor: BLAKKHAIL.jetBlack }}
         />
       </div>
 
-      <div
-        className={`${BLAKKHAIL_LAYOUT.container} flex flex-wrap items-center justify-center gap-3 px-4 py-4 sm:gap-4 sm:py-5`}
-      >
-        <Link
-          href="#collection"
-          className="min-h-11 px-8 py-3 text-sm font-bold uppercase tracking-[0.14em] text-black sm:text-base"
-          style={{ backgroundColor: BLAKKHAIL.gold }}
+      {/* Hero Content - Centered */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+        {/* Branded tagline */}
+        <p
+          className="text-[11px] font-bold uppercase tracking-widest mb-6"
+          style={{ color: BLAKKHAIL.gold }}
         >
-          Shop Collection
-        </Link>
-        <Link
-          href="#shop"
-          className="min-h-11 border px-8 py-3 text-sm font-bold uppercase tracking-[0.14em] sm:text-base"
-          style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
+          Original Fashion · Since 1994
+        </p>
+
+        {/* Main branding display */}
+        <div className="mb-12">
+          <h1
+            className="text-[56px] sm:text-[72px] lg:text-[96px] font-black uppercase tracking-wider leading-none"
+            style={{ color: BLAKKHAIL.gold, fontFamily: 'var(--font-headers)' }}
+          >
+            Blakk<br />Hail
+          </h1>
+        </div>
+
+        {/* Descriptive tagline */}
+        <p
+          className="text-[14px] sm:text-[16px] max-w-[600px] leading-relaxed"
+          style={{ color: BLAKKHAIL.steel }}
         >
-          Featured Apparel
-        </Link>
+          Heritage streetwear & original fashion. Designed for the culture. Built to last.
+        </p>
+
+        {/* CTA Button */}
+        <div className="mt-12 flex gap-4">
+          <a
+            href="#collection"
+            className="px-8 py-3 font-bold uppercase tracking-wider text-[12px] transition-all hover:opacity-80"
+            style={{
+              backgroundColor: BLAKKHAIL.gold,
+              color: BLAKKHAIL.jetBlack
+            }}
+          >
+            Shop Collection
+          </a>
+        </div>
       </div>
 
-      <div id="photo-shoot" className="mx-auto flex w-full max-w-[1000px] flex-col">
-        {BLAKKHAIL_LEGACY.assets.heroPhotos.map((src, index) => (
-          <div
-            key={src}
-            className="w-full border-t-[3px]"
-            style={{ borderColor: BLAKKHAIL.darkGold }}
-          >
-            <img
-              src={src}
-              alt={index === 0 ? 'Blakk Hail photo shoot' : 'Blakk Hail editorial'}
-              width={646}
-              height={484}
-              decoding={index === 0 ? 'sync' : 'async'}
-              fetchPriority={index === 0 ? 'high' : 'auto'}
-              className="block h-auto w-full"
-              style={{ aspectRatio: '646 / 484' }}
-            />
-          </div>
-        ))}
+      {/* Scroll indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 animate-bounce">
+        <svg
+          className="w-6 h-6"
+          style={{ color: BLAKKHAIL.gold }}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        </svg>
       </div>
     </section>
   );
