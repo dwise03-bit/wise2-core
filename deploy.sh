@@ -23,11 +23,15 @@ required_vars=(
   "STRIPE_STARTER_PRICE_ID"
   "STRIPE_PRO_PRICE_ID"
   "STRIPE_WEBHOOK_SECRET"
-  "SENDGRID_API_KEY"
-  "SENDGRID_FROM_EMAIL"
   "DATABASE_URL"
   "APP_URL"
   "API_BASE_URL"
+)
+
+# Optional: deploy proceeds without these, but email features are disabled.
+optional_vars=(
+  "SENDGRID_API_KEY"
+  "SENDGRID_FROM_EMAIL"
 )
 
 missing_vars=()
@@ -45,7 +49,13 @@ if [ ${#missing_vars[@]} -gt 0 ]; then
   exit 1
 fi
 
-echo "✅ All environment variables present"
+for var in "${optional_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    echo "⚠️  Optional variable $var not set — email features will be disabled"
+  fi
+done
+
+echo "✅ All required environment variables present"
 echo ""
 
 # ============================================================================
