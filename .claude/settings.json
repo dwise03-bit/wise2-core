@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat /Users/danielwise/Projects/wise2-core/CLAUDE.md | head -50"
+            "command": "cat \"$CLAUDE_PROJECT_DIR/CLAUDE.md\" | head -50"
           }
         ]
       }
