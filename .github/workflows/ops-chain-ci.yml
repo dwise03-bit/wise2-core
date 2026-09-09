@@ -1,0 +1,55 @@
+name: WISE2 Ops Chain CI
+
+# The security proofs for the Discord → relay → control-bridge path. Any change to a hop
+# or to the shared protocol must keep every proof green.
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'packages/ops-protocol/**'
+      - 'services/control-bridge/**'
+      - 'services/control-relay/**'
+      - 'services/wise-discord/**'
+      - 'services/ops-chain-tests/**'
+      - '.github/workflows/ops-chain-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/ops-protocol/**'
+      - 'services/control-bridge/**'
+      - 'services/control-relay/**'
+      - 'services/wise-discord/**'
+      - 'services/ops-chain-tests/**'
+      - '.github/workflows/ops-chain-ci.yml'
+
+jobs:
+  ops-chain:
+    name: Ops protocol, relay, bot and chain proofs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # The bot loads the protocol from dist/, so it must be built before anything runs.
+      - name: Build the shared ops protocol
+        working-directory: packages/ops-protocol
+        run: npm install --no-audit --no-fund && npm run build && npm test
+
+      - name: Control relay
+        working-directory: services/control-relay
+        run: npm install --no-audit --no-fund && npm test && npm run build
+
+      - name: Discord /ops surface
+        working-directory: services/wise-discord
+        run: npm install --no-audit --no-fund && npm test
+
+      - name: End-to-end security proofs
+        working-directory: services/ops-chain-tests
+        run: npm install --no-audit --no-fund && npm test

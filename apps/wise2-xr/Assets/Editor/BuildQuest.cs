@@ -27,6 +27,11 @@ namespace Wise2.XR.Editor
             if (!usbDev) defines = defines.Replace("WISE2_USB_DEV", string.Empty).Replace(";;", ";").Trim(';');
             PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, defines);
 
+            // Unity 6 + OpenXR/Quest requires the GameActivity application entry
+            // point. The legacy UnityPlayerActivity makes Horizon OS treat the app
+            // as a 2D window (passthrough / black view in the headset).
+            PlayerSettings.Android.applicationEntry = AndroidApplicationEntry.GameActivity;
+
             var outputDirectory = Environment.GetEnvironmentVariable("WISE2_XR_BUILD_DIR");
             if (string.IsNullOrWhiteSpace(outputDirectory)) outputDirectory = "Build";
             Directory.CreateDirectory(outputDirectory);

@@ -5,6 +5,7 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 UNITY_BIN="${UNITY_BIN:-/sdb-disk/unity/Hub/Editor/Editor/Unity}"
 [[ -x "$UNITY_BIN" ]] || { echo "Unity not found at $UNITY_BIN. Set UNITY_BIN to your Unity executable." >&2; exit 1; }
 BUILD_DIR="${WISE2_XR_BUILD_DIR:-/sdb-disk/unity/builds/wise2-xr}"
+export WISE2_XR_BUILD_DIR="$BUILD_DIR"
 LOG_DIR="${WISE2_XR_LOG_DIR:-/sdb-disk/unity/logs/wise2-xr}"
 mkdir -p "$BUILD_DIR" "$LOG_DIR"
 export TMPDIR="${TMPDIR:-/sdb-disk/unity/cache/tmp}"

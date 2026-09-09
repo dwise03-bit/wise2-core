@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
-  <application android:theme="@style/UnityThemeSelector">
-    <activity
-      android:name="com.unity3d.player.UnityPlayerActivity"
-      android:launchMode="singleTask"
-      android:exported="true"
-      android:hardwareAccelerated="true"
-      android:resizeableActivity="false"
-      android:screenOrientation="landscape"
-      android:configChanges="locale|fontScale|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen"
-      tools:replace="android:exported,android:hardwareAccelerated,android:resizeableActivity,android:screenOrientation">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+  <!-- Horizon OS reads this to launch the app immersively inside the headset
+       instead of as a flat 2D panel floating over passthrough. Without it the
+       Quest shows passthrough / black instead of the WISE2 scene. -->
+  <uses-feature android:name="android.hardware.vr.headtracking"
+                android:version="1"
+                android:required="true" />
+
+  <!-- Declare hand-tracking support so Horizon OS does not block launch with the
+       "controllers required" dialog when controllers are off. The scene is
+       usable with hands, controllers, or head gaze. -->
+  <uses-feature android:name="oculus.software.handtracking" android:required="false" />
+  <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
+
+  <application>
+    <!-- Unity 6 ships the GameActivity entry point; merge our launcher + VR +
+         deep-link intents onto it. GameActivity REQUIRES an AppCompat theme
+         (BaseUnityGameActivityTheme = Theme.AppCompat.Light.NoActionBar); without
+         it onCreateSurfaceView throws and the app crashes on launch. -->
+    <activity android:name="com.unity3d.player.UnityPlayerGameActivity"
+              android:theme="@style/BaseUnityGameActivityTheme"
+              tools:node="merge"
+              tools:replace="android:theme">
+
+      <!-- Immersive VR launcher entry (Quest app library). -->
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.DEFAULT" />
         <category android:name="com.oculus.intent.category.VR" />
       </intent-filter>
+
+      <!-- Deep links from wise2.net / wisedefensellc.com -->
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
@@ -31,7 +45,8 @@
         <category android:name="android.intent.category.BROWSABLE" />
         <data android:scheme="wise2" android:host="wise-defense-training" />
       </intent-filter>
-      <meta-data android:name="com.oculus.supportedDevices" android:value="quest2|questpro|quest3|quest3s" />
+
+      <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
     </activity>
   </application>
 </manifest>

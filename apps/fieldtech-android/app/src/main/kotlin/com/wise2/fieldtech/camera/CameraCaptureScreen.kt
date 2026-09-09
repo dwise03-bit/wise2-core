@@ -11,6 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Close
@@ -18,9 +21,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +53,10 @@ fun CameraCaptureScreen(jobId: String, onCaptured: (String) -> Unit, onClose: ()
     val lifecycleOwner = LocalLifecycleOwner.current
     val imageCapture = remember { ImageCapture.Builder().build() }
     val previewView = remember { PreviewView(context) }
+    var capturedPaths by remember { mutableStateOf<List<String>>(emptyList()) }
+    var step by remember { mutableStateOf(0) }
+    var reviewing by remember { mutableStateOf(false) }
+    val steps = listOf("RTU overview", "Data plate", "Electrical connections")
 
     DisposableEffect(Unit) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -59,18 +71,52 @@ fun CameraCaptureScreen(jobId: String, onCaptured: (String) -> Unit, onClose: ()
         onDispose {}
     }
 
+    if (reviewing) {
+        Box(Modifier.fillMaxSize().background(Color.Black).padding(24.dp)) {
+            Column {
+                Text("REVIEW RTU CAPTURE", color = Color.White, style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(12.dp))
+                Text("${capturedPaths.size} photos ready • saved locally to Job $jobId", color = Color.LightGray)
+                Spacer(Modifier.height(24.dp))
+                Text("Quality check: ${if (capturedPaths.size == steps.size) "PASS" else "INCOMPLETE"}", color = if (capturedPaths.size == steps.size) Color(0xFF65E6A5) else Color(0xFFFFC857))
+                Spacer(Modifier.height(24.dp))
+                Button(enabled = capturedPaths.size == steps.size, onClick = { capturedPaths.forEach(onCaptured); onClose() }) { Text("UPLOAD / QUEUE OFFLINE") }
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = { capturedPaths = emptyList(); step = 0; reviewing = false }) { Text("RETAKE ALL") }
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = onClose) { Text("CANCEL") }
+            }
+        }
+        return
+    }
+
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
+
+        Column(modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp)) {
+            Text("RAZR • XR CAPTURE", color = Color.White, style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
+            Text("${step + 1}/${steps.size}  ${steps[step]}", color = Color.White)
+            Text("Keep the RTU centered and well lit", color = Color.LightGray)
+        }
 
         IconButton(onClick = onClose, modifier = Modifier.align(Alignment.TopStart).padding(16.dp)) {
             Icon(Icons.Filled.Close, contentDescription = "Close camera", tint = Color.White)
         }
 
         FloatingActionButton(
-            onClick = { capturePhoto(context, jobId, imageCapture, onCaptured) },
+            onClick = {
+                capturePhoto(context, jobId, imageCapture) { path ->
+                    capturedPaths = capturedPaths + path
+                    if (step == steps.lastIndex) reviewing = true else step += 1
+                }
+            },
             modifier = Modifier.align(Alignment.BottomCenter).padding(32.dp),
         ) {
             Icon(Icons.Filled.Camera, contentDescription = "Capture")
+        }
+
+        if (capturedPaths.isNotEmpty()) {
+            Text("${capturedPaths.size} saved locally", color = Color.White, modifier = Modifier.align(Alignment.BottomStart).padding(24.dp))
         }
     }
 }

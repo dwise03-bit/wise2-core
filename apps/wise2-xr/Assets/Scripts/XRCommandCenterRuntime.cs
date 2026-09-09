@@ -29,7 +29,7 @@ namespace Wise2.XR
             {
                 var forward = Vector3.ProjectOnPlane(view.transform.forward, Vector3.up).normalized;
                 if (forward.sqrMagnitude < .01f) forward = Vector3.forward;
-                worldOffset = view.transform.position + forward * 2.4f - new Vector3(0f, 1.6f, 1.8f);
+                worldOffset = view.transform.position + forward * 4.2f - new Vector3(0f, 1.6f, 1.8f);
                 CreateClientHud(view.transform);
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
@@ -78,9 +78,10 @@ namespace Wise2.XR
             var hud = GameObject.CreatePrimitive(PrimitiveType.Cube);
             hud.name = "SOUND LABS CLIENT HUD";
             hud.transform.SetParent(cameraTransform, false);
-            hud.transform.localPosition = new Vector3(0f, .05f, -1.8f);
+            // Unity camera forward is negative local Z; keep the client HUD in front of the headset.
+            hud.transform.localPosition = new Vector3(0f, .05f, -3.2f);
             hud.transform.localRotation = Quaternion.identity;
-            hud.transform.localScale = new Vector3(1.8f, .85f, .04f);
+            hud.transform.localScale = new Vector3(2.4f, 1.05f, .04f);
             Destroy(hud.GetComponent<Collider>());
             hud.GetComponent<Renderer>().material = Material(new Color(.015f, .08f, .045f));
             Label(hud.transform, "WISE² SOUND LABS\nOFFLINE MIX · QUEST CLIENT READY", new Vector3(0f, 0f, -.03f), .1f);
@@ -145,8 +146,6 @@ namespace Wise2.XR
                 driver.rotationInput = new UnityEngine.InputSystem.InputActionProperty(rotAction);
             }
 
-            if (cameraObject.GetComponent<AudioListener>() == null)
-                cameraObject.AddComponent<AudioListener>();
         }
 
         private void CreateFloor()
@@ -167,12 +166,12 @@ namespace Wise2.XR
         {
             for (var i = 0; i < stations.Length; i++)
             {
-                var panel = GameObject.CreatePrimitive(PrimitiveType.Cube); panel.name = stations[i]; Destroy(panel.GetComponent<Collider>()); var row = i / 3; var col = i % 3;
-                panel.transform.position = Place(new Vector3((col - 1) * 1.25f, 1.45f - row * .9f, 1.7f)); panel.transform.localScale = new Vector3(1.05f, .64f, .08f);
+                var panel = GameObject.CreatePrimitive(PrimitiveType.Cube); panel.name = stations[i]; var row = i / 3; var col = i % 3;
+                panel.transform.position = Place(new Vector3((col - 1) * 1.85f, 1.55f - row * 1.05f, 1.7f)); panel.transform.localScale = new Vector3(1.35f, .72f, .08f);
                 var renderer = panel.GetComponent<Renderer>();
                 renderer.material = Material(new Color(.02f, .09f, .055f));
                 stationRenderers.Add(renderer);
-                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nSELECT TO INSPECT", new Vector3(0f, -.02f, -.02f), .1f));
+                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nGAZE + TRIGGER", new Vector3(0f, -.02f, -.02f), .065f));
             }
 
             if (wiseDefenseTrainingRequested) OpenWiseDefenseTraining();
@@ -231,7 +230,7 @@ namespace Wise2.XR
         private static TextMesh Label(Transform parent, string value, Vector3 position, float size)
         {
             var obj = new GameObject("Label"); obj.transform.SetParent(parent); obj.transform.localPosition = position; obj.transform.localRotation = Quaternion.identity;
-            var text = obj.AddComponent<TextMesh>(); text.text = value; text.fontSize = 48; text.characterSize = size; text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center; text.color = new Color(.72f, 1f, .4f);
+            var text = obj.AddComponent<TextMesh>(); text.text = value; text.fontSize = 48; text.characterSize = size * .55f; text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center; text.color = new Color(.72f, 1f, .4f);
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
             if (font != null)
             {
