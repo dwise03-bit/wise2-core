@@ -1,5 +1,7 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 
 const BLAKKHAIL_PRODUCTS = [
   {
@@ -29,6 +31,8 @@ const BLAKKHAIL_PRODUCTS = [
 ];
 
 export function BlakkhailStorefront() {
+  const shopPhotos = BLAKKHAIL_LEGACY.assets.shopPhotos;
+
   return (
     <section id="collection" className="bg-[#0a0a0a] py-16 lg:py-20">
       <div className="mx-auto max-w-[1200px] px-6">
@@ -47,21 +51,21 @@ export function BlakkhailStorefront() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {BLAKKHAIL_PRODUCTS.map((product) => (
+          {BLAKKHAIL_PRODUCTS.map((product, index) => (
             <Link
               key={product.id}
               href={`/sencere/blakkhail/product/${product.id}`}
               className="group cursor-pointer transition-all duration-300"
             >
               {/* Product Image Container */}
-              <div className="mb-6 aspect-[3/4] overflow-hidden bg-[#1a1a1a]">
-                <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#0a0a0a]">
-                  <div className="text-center">
-                    <div className="text-[64px] font-black text-[#E8A23A] opacity-10 group-hover:opacity-20 transition-opacity">
-                      {String(product.id).padStart(2, '0')}
-                    </div>
-                  </div>
-                </div>
+              <div className="mb-6 aspect-[3/4] overflow-hidden bg-[#1a1a1a] relative">
+                <Image
+                  src={shopPhotos[index % shopPhotos.length]}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
 
               {/* Product Info */}
