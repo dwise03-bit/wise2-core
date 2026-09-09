@@ -10,8 +10,12 @@ export default function BlakkhailPage() {
     <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <BlakkhailHeader />
       <main>
-        <BlakkhailHero />
-        <BlakkhailStorefront />
+        <section id="home">
+          <BlakkhailHero />
+        </section>
+        <section id="shop">
+          <BlakkhailStorefront />
+        </section>
       </main>
       <BlakkhailFooter />
       <BlakkhailMobileShopBar />
