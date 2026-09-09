@@ -29,8 +29,16 @@
     ]
   },
   "hooks": {
-    "onSessionStart": "cat /Users/danielwise/Projects/wise2-core/CLAUDE.md | head -50",
-    "before-deploy": "git status && git log --oneline -5"
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat /Users/danielwise/Projects/wise2-core/CLAUDE.md | head -50"
+          }
+        ]
+      }
+    ]
   },
   "workflowOptions": {
     "sizeGuideline": "medium",
