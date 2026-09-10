@@ -657,9 +657,21 @@
         "dateImported": "2026-09-01T01:42:14.972Z",
         "source": "production-app",
         "locked": true
+      },
+      {
+        "id": "wise2_brand-scrollcraft-homepage-84fd1375",
+        "brand": "WISE2_BRAND",
+        "type": "reference",
+        "filePath": "apps/website/app/page.tsx",
+        "fileName": "page.tsx",
+        "sha256": "84fd1375cd301d065457c95e8b2231f3c508b9ea7e038711f45c83d7d8e8c2e8",
+        "fileSize": 82,
+        "dateImported": "2026-09-10T19:38:00.000Z",
+        "source": "production-app",
+        "locked": true
       }
     ],
-    "totalAssets": 2,
-    "lastUpdated": "2026-09-01T01:42:14.972Z"
+    "totalAssets": 3,
+    "lastUpdated": "2026-09-10T19:38:00.000Z"
   }
 }

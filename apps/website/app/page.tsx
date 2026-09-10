@@ -1,5 +1,5 @@
-import { BrandEcosystemHomepage } from '@/components/BrandEcosystemHomepage';
+import { ScrollcraftHomepage } from '@/components/ScrollcraftHomepage';
 
 export default function HomePage() {
-  return <BrandEcosystemHomepage />;
+  return <ScrollcraftHomepage />;
 }
