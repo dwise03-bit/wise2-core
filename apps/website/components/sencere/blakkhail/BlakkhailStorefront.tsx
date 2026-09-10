@@ -100,8 +100,8 @@ export function BlakkhailStorefront() {
   }, []);
 
   return (
-    <section id="collection" className="bg-[#0a0a0a] py-16 lg:py-20">
-      <div className="mx-auto max-w-[1200px] px-6">
+    <section id="collection" className="bg-[#0a0a0a] py-16 lg:py-20" data-scroll>
+      <div className="mx-auto max-w-[1200px] px-6" data-scroll>
         {/* Latest Drop Section */}
         {latestProducts.length > 0 && (
           <div className="mb-24">

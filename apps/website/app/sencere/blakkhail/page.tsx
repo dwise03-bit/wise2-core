@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect } from 'react';
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
 import { BlakkhailHero } from '@/components/sencere/blakkhail/BlakkhailHero';
 import { BlakkhailFeaturedVideo } from '@/components/sencere/blakkhail/BlakkhailFeaturedVideo';
@@ -8,6 +11,29 @@ import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/Blakkhail
 import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
 
 export default function BlakkhailPage() {
+  useEffect(() => {
+    // Scroll animations for elements
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in', 'fade-in', 'duration-700');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-scroll]').forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className={`${BLAKKHAIL_LAYOUT.page} scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <BlakkhailHeader />
