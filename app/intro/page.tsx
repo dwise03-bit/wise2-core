@@ -1,4 +1,5 @@
 const sparks = Array.from({ length: 18 }, (_, index) => index);
+const formingSparks = Array.from({ length: 48 }, (_, index) => index);
 
 export default function IntroPage() {
   return (
@@ -14,6 +15,9 @@ export default function IntroPage() {
       <div className="intro-content">
         <p className="intro-kicker">A living system awakens</p>
         <div className="intro-mark" aria-label="WISE squared">
+          <span className="intro-forming-sparks" aria-hidden="true">
+            {formingSparks.map((spark) => <i key={spark} style={{ "--particle": spark } as React.CSSProperties} />)}
+          </span>
           <span className="intro-mark-w">W</span><sup>2</sup>
         </div>
         <p className="intro-statement">Two minds. One vision.<br />Infinite possibility.</p>
