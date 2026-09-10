@@ -84,7 +84,11 @@ export function BlakkhailStorefront() {
 
   useEffect(() => {
     // Fetch latest products from admin backend
-    fetch('http://localhost:3014/api/admin/products')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.wise2.net';
+    fetch(`${apiUrl}/api/admin/products`, {
+      credentials: 'omit',
+      headers: { 'Authorization': 'Bearer demo-token' }
+    })
       .then(res => res.json())
       .catch(err => {
         console.log('Admin API not available, using essentials only');
