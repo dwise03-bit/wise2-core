@@ -24,6 +24,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import { FeaturedLatestDrop } from "@/components/sencere/blakkhail/FeaturedLatestDrop";
 
 const metrics = [
   ["01", "connected operating layer", "Everything speaks to everything."],
@@ -185,6 +186,12 @@ export function BrandEcosystemHomepage() {
               SALES ACADEMY
             </Link>
             <Link
+              href="/api/revenue/dashboard"
+              className="transition-colors hover:text-[#b9ff00]"
+            >
+              REVENUE
+            </Link>
+            <Link
               href="#method"
               className="transition-colors hover:text-[#b9ff00]"
             >
@@ -227,6 +234,9 @@ export function BrandEcosystemHomepage() {
               </Link>
               <Link href="#sales-academy" onClick={() => setMenuOpen(false)}>
                 SALES ACADEMY
+              </Link>
+              <Link href="/api/revenue/dashboard" onClick={() => setMenuOpen(false)}>
+                REVENUE
               </Link>
               <Link href="#method" onClick={() => setMenuOpen(false)}>
                 METHOD
@@ -382,6 +392,8 @@ export function BrandEcosystemHomepage() {
           ))}
         </div>
       </section>
+
+      <FeaturedLatestDrop />
 
       <section
         id="system"
