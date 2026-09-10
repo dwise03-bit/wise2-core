@@ -673,5 +673,36 @@
     ],
     "totalAssets": 3,
     "lastUpdated": "2026-09-10T19:38:00.000Z"
+  },
+  "SOUNDLABS": {
+    "brand": "SOUNDLABS",
+    "assets": [
+      {
+        "id": "soundlabs-studio-app-page-e465ad1c",
+        "brand": "SOUNDLABS",
+        "type": "hero",
+        "filePath": "apps/studio/app/page.tsx",
+        "fileName": "page.tsx",
+        "sha256": "e465ad1c9ea7e8eade3c4ebf536ad2a2fe57a721f57d4e60693b41216d9f32df",
+        "fileSize": 2847,
+        "dateImported": "2026-09-10T19:40:00.000Z",
+        "source": "production-app",
+        "locked": true
+      },
+      {
+        "id": "soundlabs-studio-package-776639e2",
+        "brand": "SOUNDLABS",
+        "type": "reference",
+        "filePath": "apps/studio/package.json",
+        "fileName": "package.json",
+        "sha256": "776639e2700a2391583d2561f852ae55c43471549b3506a77a2e4a4276c424ab",
+        "fileSize": 1891,
+        "dateImported": "2026-09-10T19:40:00.000Z",
+        "source": "production-app",
+        "locked": true
+      }
+    ],
+    "totalAssets": 2,
+    "lastUpdated": "2026-09-10T19:40:00.000Z"
   }
 }
