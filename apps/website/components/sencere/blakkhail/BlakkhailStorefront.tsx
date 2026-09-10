@@ -83,20 +83,17 @@ export function BlakkhailStorefront() {
   const [latestProducts, setLatestProducts] = useState<AdminProduct[]>([]);
 
   useEffect(() => {
-    // Fetch latest products from admin backend
+    // Fetch latest products from storefront API (public endpoint)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.wise2.net';
-    fetch(`${apiUrl}/api/admin/products`, {
-      credentials: 'omit',
-      headers: { 'Authorization': 'Bearer demo-token' }
-    })
+    fetch(`${apiUrl}/api/storefront/latest-products?limit=3`)
       .then(res => res.json())
       .catch(err => {
-        console.log('Admin API not available, using essentials only');
+        console.log('Storefront API not available, using essentials only');
         return [];
       })
       .then(products => {
         if (Array.isArray(products) && products.length > 0) {
-          setLatestProducts(products.slice(0, 3));
+          setLatestProducts(products);
         }
       });
   }, []);

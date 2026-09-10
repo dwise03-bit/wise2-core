@@ -90,6 +90,19 @@ app.get('/api/admin/dashboard', authenticateAdmin, async (req, res) => {
 });
 
 // ============ PRODUCT MANAGEMENT ============
+
+// Public endpoint for storefront latest products (no auth required)
+app.get('/api/storefront/latest-products', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 3;
+    const result = await pool.query('SELECT id, name, description, price, image_url, sku FROM products ORDER BY created_at DESC LIMIT $1', [limit]);
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch products' });
+  }
+});
+
+// Admin endpoint for all products (requires auth)
 app.get('/api/admin/products', authenticateAdmin, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
