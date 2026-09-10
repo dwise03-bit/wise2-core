@@ -16,5 +16,49 @@ export function ScrollcraftHomepage() { const reduced = useReducedMotion(); retu
   <section className="mx-auto grid max-w-[1500px] gap-3 px-5 py-4 lg:grid-cols-[1.05fr_1fr] lg:px-8"><Fade><Panel><h2 className="section-title">WISE<sup>2</sup> CLOUD COMMAND CENTER</h2><div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">{[['UPTIME','99.99%'],['ACTIVE SERVERS','128'],['TOTAL DOMAINS','542'],['BANDWIDTH','12.4 TB'],['STORAGE USED','3.6 TB / 10 TB'],['DATABASES','256'],['CUSTOMERS','1,248'],['MONTHLY REVENUE','$24,780']].map(([a,b])=><div key={a} className="border border-[#b9ff00]/20 bg-black/50 p-3"><p className="text-[8px] text-white/60">{a}</p><p className="mt-2 text-xl font-bold">{b}</p><div className="mt-2 h-1 bg-[#b9ff00]/20"><motion.div animate={reduced?undefined:{width:['30%','85%','52%']}} transition={{duration:4,repeat:Infinity}} className="h-full bg-[#b9ff00]"/></div></div>)}</div><p className="mt-3 text-center text-[9px] font-bold tracking-[.18em] text-[#b9ff00]">REAL-TIME MONITORING. 24/7 PROTECTION. MAXIMUM PERFORMANCE.</p></Panel></Fade><Fade delay={.08}><Panel><h2 className="section-title mb-3 text-center">POWERFUL HOSTING PLANS</h2><div className="grid gap-2 sm:grid-cols-2">{plans.map(([name,price,desc],i)=><div key={name} className={`border p-3 ${i===1?'border-[#b9ff00] bg-[#b9ff00]/10':'border-[#b9ff00]/20 bg-black/40'}`}><h3 className="text-sm font-bold">{name}</h3><p className="mt-1 text-[9px] text-white/60">{desc}</p><p className="mt-2 text-2xl font-bold">{price}<small className="text-[9px] text-white/60"> /mo</small></p>{['Unlimited Websites','Free SSL Certificate','Daily Backups'].map(x=><p key={x} className="mt-1 text-[9px] text-white/75">✓ {x}</p>)}<Link href="/checkout" className="mt-3 block bg-[#b9ff00] py-2 text-center text-[9px] font-bold text-black">GET STARTED</Link></div>)}</div></Panel></Fade></section>
   <section className="mx-auto grid max-w-[1500px] gap-3 px-5 pb-5 lg:grid-cols-5 lg:px-8">{([['RESELLER OPPORTUNITY','Keep 100% of the profit.',Users],['INFRASTRUCTURE THAT PERFORMS','NVMe SSD. Global CDN.',Server],['SECURITY YOU CAN TRUST','DDoS protection and firewall.',LockKeyhole],['AI-POWERED MANAGEMENT','Smarter hosting. Less work.',Sparkles],['SOUNDLABS CREATIVE SUITE','Professional audio & media production.',Cloud]] as [string, string, LucideIcon][]).map(([title,text,Icon])=><Fade key={title}><Link href={title.includes('SOUNDLABS')?'/sound-labs':'/platform'} className="wise-feature"><Icon size={28} className="text-[#b9ff00]"/><h3>{title}</h3><p>{text}</p><ArrowRight size={16} className="mt-4 text-[#b9ff00]"/></Link></Fade>)}</section>
   <section className="border-y border-[#b9ff00]/35 bg-[#080c08] px-5 py-8 lg:px-8"><div className="mx-auto grid max-w-[1500px] gap-4 lg:grid-cols-3"><Panel><h2 className="section-title">CONSULTING & BUSINESS AUDIT</h2><p className="mt-3 text-sm text-white/70">Let our experts audit your current setup and recommend the perfect infrastructure for growth.</p><Link href="/audit" className="mt-5 inline-block bg-[#b9ff00] px-5 py-3 text-[10px] font-bold text-black">GET YOUR FREE AUDIT <ArrowRight className="inline" size={14}/></Link></Panel><Panel><h2 className="text-center text-2xl font-bold">BUILT DIFFERENT. BUILT <span className="text-[#b9ff00]">WISE<sup>2</sup>.</span></h2><p className="mt-3 text-center text-sm text-white/70">All-in-one cloud platform · enterprise security · automated backups</p></Panel><Panel><h2 className="section-title text-center">READY TO LAUNCH YOUR EMPIRE?</h2><Link href="/pricing" className="mt-5 block bg-[#b9ff00] px-5 py-3 text-center text-[10px] font-bold text-black">BUILD YOUR CLOUD TODAY <ArrowRight className="inline" size={14}/></Link></Panel></div></section>
+  <section className="border-t border-[#b9ff00]/35 bg-[#050805] px-5 py-12 lg:px-8">
+    <div className="mx-auto max-w-[1500px]">
+      <Fade>
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 text-xs font-bold tracking-[.35em] text-[#b9ff00]">
+            <Sparkles size={18} /> SALES ACADEMY
+          </div>
+          <h2 className="text-3xl font-black uppercase leading-tight lg:text-4xl">
+            Train Your Team to <br />
+            <span className="text-[#b9ff00]">Sell WISE²</span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-white/70">
+            Market-specific training, pricing guides, and proven call scripts for NC, NYC, and Long Island.
+          </p>
+        </div>
+      </Fade>
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { icon: Users, label: 'MASTER INDEX', title: 'Academy Index', desc: 'Select your market and get started.' },
+          { icon: Globe2, label: '🏠 NC', title: 'North Carolina', desc: 'HVAC, construction, trades.' },
+          { icon: Globe2, label: '🗽 NYC', title: 'New York City', desc: 'FinTech, startups, agencies.' },
+          { icon: Globe2, label: '🌊 LI', title: 'Long Island', desc: 'Family businesses, service ops.' },
+        ].map(({ label, title, desc }, i) => (
+          <Fade key={title} delay={i * 0.05}>
+            <Link
+              href={i === 0 ? '/sales-academy/' : `'/sales-academy/${['', 'nc', 'nyc', 'li'][i]}-academy.html`}
+              className="flex flex-col border border-[#b9ff00]/25 bg-black/40 p-5 hover:border-[#b9ff00]/60 hover:bg-[#b9ff00]/5 transition-all"
+            >
+              <div className="mb-3 text-xs font-bold tracking-[.2em] text-[#b9ff00]">{label}</div>
+              <h3 className="text-lg font-bold">{title}</h3>
+              <p className="mt-2 flex-1 text-xs text-white/60">{desc}</p>
+              <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-[#b9ff00]">
+                EXPLORE <ArrowRight size={12} />
+              </div>
+            </Link>
+          </Fade>
+        ))}
+      </div>
+      <div className="mt-6 rounded border border-[#b9ff00]/20 bg-[#0a0f0a] p-4 text-center text-[10px] text-white/60">
+        🎓 Each market includes: Training modules, value ladder pricing, objection scripts, call cheat sheets, and local case studies.
+      </div>
+    </div>
+  </section>
+
   <footer className="mx-auto flex max-w-[1500px] flex-wrap gap-5 px-5 py-7 text-[10px] text-white/55 lg:px-8"><span className="text-xl font-black text-white">WISE<sup className="text-[#b9ff00]">2</sup> <small className="text-[9px] tracking-[.3em] text-[#b9ff00]">CLOUD</small></span><span>YOUR BUSINESS. OUR INFRASTRUCTURE.</span><span>HOSTING · RESOURCES · SOLUTIONS · COMPANY · SUPPORT</span></footer>
  </main>; }
