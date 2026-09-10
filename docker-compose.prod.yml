@@ -187,6 +187,35 @@ services:
       timeout: 10s
       retries: 3
 
+  # Admin Backend (BLAKKHAIL Partner Admin)
+  admin-backend:
+    build:
+      context: .
+      dockerfile: services/admin-backend/Dockerfile
+    image: wise2-admin-backend:latest
+    container_name: wise2-admin-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3014
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: wise2_prod
+      DB_USER: wise2
+      DB_PASSWORD: ${DATABASE_PASSWORD:-wise2}
+    ports:
+      - "127.0.0.1:3014:3014"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3014/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Command Center (Sound Lab, Revenue OS, operator dashboard)
   command-center:
     build:
