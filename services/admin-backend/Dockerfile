@@ -1,11 +1,11 @@
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/services/admin-backend
 
-COPY package.json ./
+COPY services/admin-backend/package.json ./
 RUN npm install
 
-COPY . .
+COPY services/admin-backend/ .
 
 EXPOSE 3014
 
