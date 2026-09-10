@@ -84,8 +84,9 @@ export function BlakkhailStorefront() {
 
   useEffect(() => {
     // Fetch latest products from storefront API (public endpoint)
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.wise2.net';
-    fetch(`${apiUrl}/api/storefront/latest-products?limit=3`)
+    // For client-side requests from the browser, use relative path
+    // which will be proxied by nginx at /api/storefront/
+    fetch('/api/storefront/latest-products?limit=3')
       .then(res => res.json())
       .catch(err => {
         console.log('Storefront API not available, using essentials only');
