@@ -7,6 +7,7 @@ namespace Wise2.XR
     public sealed class XRCommandCenterRuntime : MonoBehaviour
     {
         private const int HvacStationIndex = 0;
+        private const int SoundLabsStationIndex = 4;
         private const string HvacNodeId = "pocket-node-01";
 
         private Vector3 worldOffset;
@@ -15,8 +16,11 @@ namespace Wise2.XR
         private readonly List<TextMesh> stationLabels = new List<TextMesh>();
         private readonly List<Renderer> stationRenderers = new List<Renderer>();
         private Wise2HvacApiClient hvacClient;
+        private SoundLabsApiClient soundLabsClient;
+        private SpatialAudioMixer audioMixer;
         private bool digitalTwinRequested;
         private bool wiseDefenseTrainingRequested;
+        private bool soundLabsOpened;
 
         private void Start()
         {
@@ -33,9 +37,12 @@ namespace Wise2.XR
                 CreateClientHud(view.transform);
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
-            CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); CreateVoiceMarker();
+            soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
+            CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); CreateSoundLabsStation(); CreateVoiceMarker();
+            InitializeAudioMixer();
             UpdateHvacStation();
             StartCoroutine(PollHvacTelemetry());
+            StartCoroutine(PollSoundLabsAudio());
         }
 
         private IEnumerator PollHvacTelemetry()
@@ -252,6 +259,63 @@ namespace Wise2.XR
             light.color = new Color(.85f, 1f, .9f);
             light.intensity = 1.15f;
             light.shadows = LightShadows.None;
+        }
+
+        private void InitializeAudioMixer()
+        {
+            // Create empty object for audio mixer
+            var mixerObj = new GameObject("Audio Mixer Manager");
+            audioMixer = mixerObj.AddComponent<SpatialAudioMixer>();
+            audioMixer.Initialize(soundLabsClient);
+        }
+
+        private IEnumerator PollSoundLabsAudio()
+        {
+            var wait = new WaitForSeconds(0.1f);  // 100ms update rate for audio
+            while (true)
+            {
+                yield return soundLabsClient.Refresh();
+                UpdateSoundLabsStation();
+                yield return wait;
+            }
+        }
+
+        private void UpdateSoundLabsStation()
+        {
+            if (soundLabsClient == null || stationLabels.Count <= SoundLabsStationIndex) return;
+
+            var snapshot = soundLabsClient.Latest;
+            var state = snapshot.ParsedState;
+            var sessionSummary = SoundLabsStateMapper.SessionSummary(snapshot.session);
+            var masterSummary = SoundLabsStateMapper.MasterSummary(snapshot.master);
+            var body = $"{sessionSummary}\n{masterSummary}";
+            stationLabels[SoundLabsStationIndex].text = $"SOUND LABS\n{SoundLabsStateMapper.StatusLabel(state)}\n{body}";
+            stationRenderers[SoundLabsStationIndex].material.color = SoundLabsStationColor(state);
+        }
+
+        private static Color SoundLabsStationColor(AudioConnectionState state)
+        {
+            switch (state)
+            {
+                case AudioConnectionState.Connected: return new Color(.12f, .38f, .08f);
+                case AudioConnectionState.Demo: return new Color(.02f, .09f, .055f);
+                case AudioConnectionState.OfflineDemo: return new Color(.06f, .12f, .08f);
+                default: return new Color(.12f, .09f, .02f);
+            }
+        }
+
+        private void CreateSoundLabsStation()
+        {
+            // Add voice command for opening SoundLabs mixer
+            var voiceMarker = FindFirstObjectByType<GameObject>();
+            if (voiceMarker != null && voiceMarker.name == "WISE² AI Voice")
+            {
+                var textMesh = voiceMarker.GetComponentInChildren<TextMesh>();
+                if (textMesh != null)
+                {
+                    textMesh.text = "WISE² AI VOICE\nSAY: OPEN SOUND LABS  ·  OPEN MIXER  ·  SHOW LEVELS  ·  START RECORDING  ·  OPEN CRM  ·  GO HOME";
+                }
+            }
         }
 
         private static Material templateMaterial;

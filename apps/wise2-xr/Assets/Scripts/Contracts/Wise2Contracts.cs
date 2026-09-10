@@ -13,4 +13,5 @@ namespace Wise2.XR
     public interface ICommandApprovalService { CommandPreview Preview(string intent, string summary); bool Confirm(CommandPreview preview); }
     public interface IVoiceCommandService { void Submit(string transcript); }
     public interface IWorldStateService { WorldState Current { get; } }
+    public interface ISoundLabsDataService { SoundLabsSnapshot Latest { get; } }
 }
