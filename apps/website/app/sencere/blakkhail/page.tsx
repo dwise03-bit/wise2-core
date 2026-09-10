@@ -15,7 +15,29 @@ export default function BlakkhailPage() {
         <section id="home">
           <BlakkhailHero />
         </section>
-        <BlakkhailFeaturedVideo videoId="VUa8Y9NMxTM" autoplay={true} />
+        <section id="video" className="w-full bg-black py-0" style={{ backgroundColor: '#000000' }}>
+          <div className="w-full aspect-video">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/VUa8Y9NMxTM?autoplay=1&mute=1&controls=1&rel=0&modestbranding=1"
+              title="Blakk Hail & UF Commercial"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full border-0"
+            />
+          </div>
+          <div className="w-full px-6 py-12 md:py-16" style={{ backgroundColor: '#000000' }}>
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 tracking-tight" style={{ color: '#D4AF37' }}>
+                Blakk Hail & UF Commercial
+              </h2>
+              <p className="text-sm md:text-base leading-relaxed max-w-3xl" style={{ color: '#A8A8A8' }}>
+                Experience the creative vision of Blakk Hail. Original fashion, designed for the culture.
+              </p>
+            </div>
+          </div>
+        </section>
         <BlakkhailStory />
         <section id="shop">
           <BlakkhailStorefront />
