@@ -91,8 +91,8 @@ export default function SignupPage() {
     setIsSubmitting(true);
 
     try {
-      // Call signup API
-      const result = await apiClient.post('/api/v1/auth/signup', {
+      // Call signup API (skip the /api prefix since apiClient already handles it)
+      const result = await apiClient.post('/v1/auth/signup', {
         email,
         password,
       });
