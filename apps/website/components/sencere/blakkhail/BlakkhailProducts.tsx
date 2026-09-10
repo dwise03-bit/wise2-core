@@ -26,6 +26,9 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
   const allProducts = getBlakkhailProducts();
   const products = useMemo(() => {
     if (!category || category === 'tees') return allProducts;
+    if (category === 'hoodies') {
+      return allProducts.filter(p => p.slug && (p.slug.includes('hoodie') || p.slug.includes('sweatshirt')));
+    }
     return [];
   }, [allProducts, category]);
 
@@ -49,7 +52,7 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
     );
   }
 
-  if (category === 'hoodies' || category === 'hats') {
+  if (category === 'hats' || (category === 'hoodies' && products.length === 0)) {
     return (
       <section
         id="collection"
