@@ -25,10 +25,11 @@ RUN pnpm install --shamefully-hoist --recursive
 # Generate Prisma client for current environment (linux-musl)
 RUN cd packages/db && pnpm exec prisma generate
 
-# Copy API source
+# Copy all source files
 COPY packages/ai-phone ./packages/ai-phone
 COPY packages/api ./packages/api
 COPY packages/db/prisma ./packages/db/prisma
+COPY packages/wise2-hvac-contracts ./packages/wise2-hvac-contracts
 
 # Build with the package's canonical Nest compiler. This preserves decorator
 # metadata and fails the image build on actual TypeScript errors.
@@ -36,7 +37,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096 \
     PORT=3000
 # Clear any pnpm cache before building to ensure fresh compilation
 RUN rm -rf ~/.pnpm-store/ node_modules/.pnpm-cache node_modules/.cache .turbo
-RUN pnpm store prune && pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
+RUN pnpm store prune && pnpm --filter @wise2/hvac-contracts build && pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
 
 EXPOSE 3000
 
