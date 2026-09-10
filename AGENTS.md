@@ -359,6 +359,185 @@ Every session should:
 ---
 
 **This kernel is the source of truth for WISE² operations. Update it when routing rules change, not during normal task execution.**
+
+---
+
+## Production Deployment (MacBook ↔ VPS Workflow)
+
+### Access Credentials
+- **VPS Public IP:** 173.208.147.165
+- **VPS Tailscale IP:** 100.68.145.5 (private, for MacBook access)
+- **Deployment User:** wise2ops (SSH key auth, no password)
+- **Access Method:** Tailscale private network (MacBook must have Tailscale installed)
+
+### Architecture on Production
+```
+┌─────────────────┐
+│   MacBook       │
+│  (Tailscale)    │
+└────────┬────────┘
+         │ SSH key auth
+         │ (100.68.145.5:22)
+         ↓
+┌────────────────────────────────────┐
+│   VPS (173.208.147.165)            │
+│                                    │
+│  nginx (80/443) ──┐               │
+│                   └→ localhost:3000 │
+│                      wise2-website │
+│                                    │
+│  localhost:3010 → wise2-api        │
+│  localhost:5432 → wise2-db         │
+│  localhost:6379 → wise2-redis      │
+│                                    │
+│  systemd wise2-core.service        │
+│  docker-compose.stable.yml         │
+└────────────────────────────────────┘
+```
+
+### MacBook Setup (Run These Commands)
+
+1. **Install Tailscale** (if not already installed):
+```bash
+# macOS
+brew install tailscale
+brew services start tailscale
+tailscale up
+
+# Or visit https://tailscale.com/download/mac
+```
+
+2. **Verify Tailscale Connection:**
+```bash
+tailscale ip -4
+# Should output something like: 100.62.xxx.xxx
+```
+
+3. **Test SSH Connection to VPS:**
+```bash
+ssh wise2ops@100.68.145.5 "echo 'VPS connection successful!'"
+# If this fails, wise2ops user may not exist yet or SSH key not configured
+```
+
+4. **Clone/Update wise2-core Repository:**
+```bash
+cd ~/projects  # or your preferred directory
+git clone git@github.com:dwise03-bit/wise2-core.git
+cd wise2-core
+git remote -v  # verify origin is set
+```
+
+5. **Create Local Development Shortcut:**
+```bash
+# Add to ~/.zshrc or ~/.bashrc
+alias wise2-connect='ssh wise2ops@100.68.145.5'
+alias wise2-code='code /path/to/wise2-core'
+
+# Then source it:
+source ~/.zshrc
+```
+
+### VPS Commands (Run on Production via SSH)
+
+Once connected via SSH as wise2ops, you can use these commands:
+
+```bash
+# Check service status
+docker ps
+docker-compose -f docker-compose.stable.yml ps
+sudo systemctl status wise2-core
+
+# View logs
+docker logs -f wise2-website  # Website logs
+docker logs -f wise2-api      # API logs
+docker logs -f wise2-db       # Database logs
+
+# Restart services
+sudo systemctl restart wise2-core
+# or
+docker-compose -f docker-compose.stable.yml restart wise2-api wise2-website
+
+# Deploy changes
+cd /home/dwise/wise2-core
+git pull origin main
+docker-compose -f docker-compose.stable.yml down
+docker-compose -f docker-compose.stable.yml up -d
+
+# Test API health
+curl http://localhost:3010/api/health
+
+# Database access
+docker exec wise2-db psql -U wise2 -d wise2_prod -c "SELECT version();"
+
+# Check disk space
+df -h /
+```
+
+### Daily Development Workflow
+
+1. **Start of session:**
+   ```bash
+   # On your MacBook
+   wise2-connect    # SSH to VPS
+   cd /home/dwise/wise2-core
+   git status       # Check if anything new
+   docker ps        # See what's running
+   ```
+
+2. **Make changes locally (on MacBook):**
+   ```bash
+   # In local clone
+   git checkout -b feature/my-feature
+   # Edit files, test locally
+   git add .
+   git commit -m "feat: description"
+   git push origin feature/my-feature
+   ```
+
+3. **Create PR and merge to main**, then deploy:
+   ```bash
+   # SSH to VPS
+   wise2-connect
+   cd /home/dwise/wise2-core
+   git pull origin main
+   docker-compose -f docker-compose.stable.yml restart
+   curl https://wise2.net/  # Verify
+   ```
+
+### Important Rules for Production
+
+- **Always test locally first** — Never push untested code
+- **Keep secrets in .env** — Never commit API keys or tokens
+- **Backup before major changes** — `docker-compose down` makes rollback easy
+- **Monitor after deploy** — Check logs immediately: `docker logs -f wise2-api`
+- **Rollback if needed** — `git reset --hard HEAD~1` + restart services
+- **Never expose internal APIs** — They live on 127.0.0.1, that's intentional
+- **Database changes are scary** — Test migrations on a copy first
+
+### Emergency Rollback
+
+```bash
+# SSH to VPS
+wise2-connect
+cd /home/dwise/wise2-core
+
+# See recent commits
+git log --oneline -5
+
+# Rollback to previous version
+git reset --hard HEAD~1
+
+# Restart services
+docker-compose -f docker-compose.stable.yml down
+docker-compose -f docker-compose.stable.yml up -d
+
+# Verify
+curl https://wise2.net/
+docker logs -f wise2-api
+```
+
+---
+
 # WISE² standard
 
 Before UI work, read `WISE2_UI_CONSTITUTION.md` and follow `WISE2_WORKFLOW_STANDARD.md`.
