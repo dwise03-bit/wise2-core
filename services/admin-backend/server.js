@@ -31,12 +31,17 @@ async function authenticateAdmin(req, res, next) {
   if (!token) return res.status(401).json({ error: 'No token' });
 
   try {
-    const result = await pool.query('SELECT * FROM users WHERE id = $1 AND role = $2', [token.substring(0, 36), 'ADMIN']);
-    if (!result.rows[0]) return res.status(403).json({ error: 'Unauthorized' });
+    const userId = token.substring(0, 36);
+    const result = await pool.query('SELECT * FROM users WHERE id = $1 AND role = $2', [userId, 'ADMIN']);
+    if (!result.rows[0]) {
+      console.error(`Auth failed: User ${userId} not found or not ADMIN`);
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
     req.user = result.rows[0];
     next();
   } catch (error) {
-    res.status(500).json({ error: 'Auth failed' });
+    console.error('Auth error:', error.message);
+    res.status(500).json({ error: 'Auth failed', details: error.message });
   }
 }
 
