@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { TailscaleClient } from './tailscale.client';
 import { CodexRemoteService } from './codex.service';
-import { AIService } from '@wise2/ai';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -15,12 +14,10 @@ const tailscale = new TailscaleClient({
   machineName: process.env.TAILSCALE_MACHINE_NAME || 'wise2-mac',
 });
 
-const aiService = new AIService({
-  provider: 'chatgpt',
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
-
-const codexRemote = new CodexRemoteService(aiService);
+const codexRemote = new CodexRemoteService(
+  process.env.OPENAI_API_KEY || '',
+  process.env.OPENAI_MODEL || 'gpt-4'
+);
 
 // Health check
 app.get('/health', (req: Request, res: Response) => {
