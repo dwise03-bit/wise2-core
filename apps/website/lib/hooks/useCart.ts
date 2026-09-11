@@ -11,27 +11,32 @@ export interface CartItem {
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [cartId, setCartId] = useState<string>('');
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize cart from localStorage
+  // Initialize cart from localStorage or create new cart
   useEffect(() => {
     const stored = localStorage.getItem('blakkhail-cart');
     if (stored) {
       try {
-        const { items: storedItems, cartId: storedCartId } = JSON.parse(stored);
-        setItems(storedItems || []);
-        setCartId(storedCartId || '');
+        const parsed = JSON.parse(stored);
+        setItems(parsed.items || []);
+        setCartId(parsed.cartId || crypto.randomUUID());
       } catch (e) {
         localStorage.removeItem('blakkhail-cart');
+        setCartId(crypto.randomUUID());
       }
+    } else {
+      setCartId(crypto.randomUUID());
     }
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes (after initialization)
   useEffect(() => {
-    if (cartId) {
+    if (isInitialized && cartId) {
       localStorage.setItem('blakkhail-cart', JSON.stringify({ items, cartId }));
     }
-  }, [items, cartId]);
+  }, [items, cartId, isInitialized]);
 
   const addToCart = (product: any, quantity: number = 1) => {
     setItems(prev => {

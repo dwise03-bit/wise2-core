@@ -102,7 +102,7 @@ export default function RevenuePage() {
     return (
       <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="text-2xl font-bold text-[#b9ff00] mb-4">Revenue Command Center</div>
+          <div className="text-2xl font-bold text-[#d4af37] mb-4">Revenue Command Center</div>
           <div className="text-gray-400">Loading...</div>
         </div>
       </div>
@@ -116,9 +116,9 @@ export default function RevenuePage() {
       <header className="border-b border-white/10 bg-[#050505]/85 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold">
-            WISE<sup className="text-sm text-[#b9ff00]">²</sup>
+            WISE<sup className="text-sm text-[#d4af37]">²</sup>
           </Link>
-          <h1 className="text-xl font-bold text-[#b9ff00]">Revenue Command Center</h1>
+          <h1 className="text-xl font-bold text-[#d4af37]">Revenue Command Center</h1>
           <div className="w-24" />
         </div>
       </header>
@@ -130,7 +130,7 @@ export default function RevenuePage() {
             onClick={() => setActiveTab('dashboard')}
             className={`py-4 px-2 font-bold text-sm tracking-wider border-b-2 transition-all ${
               activeTab === 'dashboard'
-                ? 'border-[#b9ff00] text-[#b9ff00]'
+                ? 'border-[#d4af37] text-[#d4af37]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -140,7 +140,7 @@ export default function RevenuePage() {
             onClick={() => setActiveTab('leads')}
             className={`py-4 px-2 font-bold text-sm tracking-wider border-b-2 transition-all ${
               activeTab === 'leads'
-                ? 'border-[#b9ff00] text-[#b9ff00]'
+                ? 'border-[#d4af37] text-[#d4af37]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -150,7 +150,7 @@ export default function RevenuePage() {
             onClick={() => setActiveTab('deals')}
             className={`py-4 px-2 font-bold text-sm tracking-wider border-b-2 transition-all ${
               activeTab === 'deals'
-                ? 'border-[#b9ff00] text-[#b9ff00]'
+                ? 'border-[#d4af37] text-[#d4af37]'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
@@ -188,7 +188,7 @@ export default function RevenuePage() {
               {leads.map((lead) => (
                 <div
                   key={lead.id}
-                  className="border border-white/10 rounded-lg p-6 hover:border-[#b9ff00]/50 transition-all bg-white/5"
+                  className="border border-white/10 rounded-lg p-6 hover:border-[#d4af37]/50 transition-all bg-white/5"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -210,7 +210,7 @@ export default function RevenuePage() {
                     </div>
                     <div>
                       <span className="text-gray-400">Score:</span>
-                      <p className="text-[#b9ff00] font-semibold">{lead.score}</p>
+                      <p className="text-[#d4af37] font-semibold">{lead.score}</p>
                     </div>
                     <div>
                       <span className="text-gray-400">ID:</span>
@@ -231,7 +231,7 @@ export default function RevenuePage() {
               {deals.map((deal) => (
                 <div
                   key={deal.id}
-                  className="border border-white/10 rounded-lg p-6 hover:border-[#b9ff00]/50 transition-all bg-white/5"
+                  className="border border-white/10 rounded-lg p-6 hover:border-[#d4af37]/50 transition-all bg-white/5"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
@@ -245,7 +245,7 @@ export default function RevenuePage() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
                       <span className="text-gray-400">Value:</span>
-                      <p className="text-[#b9ff00] font-semibold">${deal.value.toLocaleString()}</p>
+                      <p className="text-[#d4af37] font-semibold">${deal.value.toLocaleString()}</p>
                     </div>
                     <div>
                       <span className="text-gray-400">Status:</span>
@@ -272,7 +272,7 @@ export default function RevenuePage() {
 
 function KPICard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="border border-white/10 rounded-lg p-6 bg-gradient-to-br from-white/5 to-white/[2%] hover:border-[#b9ff00]/30 transition-all">
+    <div className="border border-white/10 rounded-lg p-6 bg-gradient-to-br from-white/5 to-white/[2%] hover:border-[#d4af37]/30 transition-all">
       <p className="text-sm text-gray-400 font-semibold tracking-wide mb-2">{label}</p>
       <p className="text-3xl font-bold text-white">
         {typeof value === 'number' ? (label.includes('Revenue') || label.includes('Pipeline') ? `$${value.toLocaleString()}` : value) : value}
@@ -299,7 +299,7 @@ function getStageColor(stage: string): string {
     case 'WON':
       return 'bg-green-500/20 text-green-400';
     case 'PROPOSAL':
-      return 'bg-[#b9ff00]/20 text-[#b9ff00]';
+      return 'bg-[#d4af37]/20 text-[#d4af37]';
     case 'DISCOVERY':
       return 'bg-blue-500/20 text-blue-400';
     default:
