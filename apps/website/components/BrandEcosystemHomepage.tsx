@@ -135,6 +135,18 @@ const deployments = [
   },
 ];
 
+const ecosystemNodes = [
+  { label: "WISE² COMMAND", detail: "One operating view", href: "/platform" },
+  { label: "AI PHONE", detail: "Voice, SMS, follow-up", href: "/phone" },
+  { label: "FIELD TECH", detail: "Jobs, teams, history", href: "/fieldtech" },
+  { label: "HVAC", detail: "Diagnostics + edge", href: "/hvac" },
+  { label: "CAPTURE", detail: "Turn work into memory", href: "/apps" },
+  { label: "WISE² CLOUD", detail: "Host, deploy, monitor", href: "/cloud" },
+  { label: "XR COMMAND", detail: "Spatial operations", href: "/quest" },
+  { label: "LIL LIZZY / BOOM TAG", detail: "Playable connected hardware", href: "/lil-lizzy/led-tag" },
+  { label: "BUSINESS AUDIT", detail: "Find the next move", href: "/audit" },
+];
+
 export function BrandEcosystemHomepage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const reduceMotion = useReducedMotion();
@@ -149,7 +161,7 @@ export function BrandEcosystemHomepage() {
     ? undefined
     : { opacity: 0, y: 28, filter: "blur(8px)" };
   return (
-    <main className="wise-home overflow-hidden bg-[#050505] text-[#f5f7f2]">
+    <main data-wise2-homepage="united-command-v2" className="wise-home overflow-hidden bg-[#050505] text-[#f5f7f2]">
       <div className="wise-topline">
         <span>WISE² UNITED / ONE PLATFORM. REAL BUSINESSES.</span>
         <span className="hidden sm:inline">
@@ -174,6 +186,12 @@ export function BrandEcosystemHomepage() {
               PRODUCTS
             </Link>
             <Link
+              href="/lil-lizzy"
+              className="transition-colors hover:text-[#b9ff00]"
+            >
+              LIL LIZZY
+            </Link>
+            <Link
               href="#deployments"
               className="transition-colors hover:text-[#b9ff00]"
             >
@@ -186,7 +204,7 @@ export function BrandEcosystemHomepage() {
               SALES ACADEMY
             </Link>
             <Link
-              href="/api/revenue/dashboard"
+              href="/revenue/dashboard"
               className="transition-colors hover:text-[#b9ff00]"
             >
               REVENUE
@@ -232,10 +250,13 @@ export function BrandEcosystemHomepage() {
               <Link href="#deployments" onClick={() => setMenuOpen(false)}>
                 DEPLOYMENTS
               </Link>
+              <Link href="/lil-lizzy" onClick={() => setMenuOpen(false)}>
+                LIL LIZZY / BOOMPOPSTERS
+              </Link>
               <Link href="#sales-academy" onClick={() => setMenuOpen(false)}>
                 SALES ACADEMY
               </Link>
-              <Link href="/api/revenue/dashboard" onClick={() => setMenuOpen(false)}>
+              <Link href="/revenue/dashboard" onClick={() => setMenuOpen(false)}>
                 REVENUE
               </Link>
               <Link href="#method" onClick={() => setMenuOpen(false)}>
@@ -305,7 +326,7 @@ export function BrandEcosystemHomepage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
-                href="/platform"
+                href="/audit"
                 className="wise-button inline-flex min-h-12 items-center gap-3 bg-[#b9ff00] px-6 py-4 text-xs font-black tracking-[.12em] text-black"
               >
                 BOOK A BUSINESS AUDIT <ArrowRight size={16} />
@@ -394,6 +415,31 @@ export function BrandEcosystemHomepage() {
       </section>
 
       <FeaturedLatestDrop />
+
+      <section id="ecosystem" className="wise-section border-y border-white/10 bg-[#080a08] px-6 py-28 lg:px-10 lg:py-36">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="wise-kicker mb-5">WISE² UNITED / THE ECOSYSTEM</p>
+              <h2 className="wise-heading">One context engine. <span>Every part of the business.</span></h2>
+            </div>
+            <p className="max-w-lg text-base leading-7 text-white/60">
+              Products, services, and field systems stay connected through one operating layer—so every signal can become a decision, an action, or a better customer experience.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+            {ecosystemNodes.map((node, index) => (
+              <Link key={node.label} href={node.href} className="wise-capability group bg-[#0e1015] p-7 transition-colors hover:bg-[#141a14]">
+                <div className="flex items-center justify-between text-[10px] font-bold tracking-[.18em] text-[#b9ff00]">
+                  <span>0{index + 1}</span><ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </div>
+                <h3 className="mt-12 text-xl font-black uppercase tracking-[-.03em]">{node.label}</h3>
+                <p className="mt-3 text-sm text-white/50">{node.detail}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section
         id="system"

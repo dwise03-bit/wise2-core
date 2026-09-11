@@ -77,7 +77,7 @@ namespace Wise2.XR
             handState.isTracking = true;
 
             // Get device position as palm position
-            if (inputDevice.TryGetFeatureValue(CommonUsages.devicePosition, out Vector3 position))
+            if (inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.devicePosition, out Vector3 position))
             {
                 handState.palmPosition = position;
             }

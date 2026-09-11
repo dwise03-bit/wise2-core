@@ -13,7 +13,8 @@ interface NavLink {
 const PRIMARY_LINKS: NavLink[] = [
   { href: '/platform', label: 'Platform' },
   { href: '/products', label: 'Products' },
-  { href: '/api/revenue/dashboard', label: 'Revenue' },
+  { href: '/lil-lizzy', label: 'Lil Lizzy' },
+  { href: '/revenue/dashboard', label: 'Revenue' },
   { href: '/hvac', label: 'HVAC' },
   { href: '/wise-defense', label: 'Defense' },
   { href: '/case-studies/get-down', label: 'Case Studies' },

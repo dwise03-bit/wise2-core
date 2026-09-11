@@ -1,5 +1,7 @@
 export const GA_MEASUREMENT_ID = 'G-XXXXX'; // Replace with actual GA4 ID
 
+declare const gtag: (...args: unknown[]) => void;
+
 export const pageview = (url: string) => {
   if (typeof window !== 'undefined' && typeof gtag !== 'undefined') {
     gtag('config', GA_MEASUREMENT_ID, { page_path: url });

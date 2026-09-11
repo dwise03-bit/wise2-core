@@ -1,3 +1,4 @@
+#if false // WebSocket transport is not part of the current Quest runtime build.
 using System;
 using System.Collections;
 using System.Text;
@@ -191,3 +192,4 @@ namespace Wise2.XR
         }
     }
 }
+#endif

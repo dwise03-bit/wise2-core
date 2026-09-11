@@ -16,11 +16,8 @@ namespace Wise2.XR
         private readonly List<TextMesh> stationLabels = new List<TextMesh>();
         private readonly List<Renderer> stationRenderers = new List<Renderer>();
         private Wise2HvacApiClient hvacClient;
-        private SoundLabsApiClient soundLabsClient;
-        private SpatialAudioMixer audioMixer;
         private bool digitalTwinRequested;
         private bool wiseDefenseTrainingRequested;
-        private bool soundLabsOpened;
 
         private void Start()
         {
@@ -37,12 +34,12 @@ namespace Wise2.XR
                 CreateClientHud(view.transform);
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
-            soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
-            CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); CreateSoundLabsStation(); CreateVoiceMarker();
-            InitializeAudioMixer();
+            // soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
+            CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); /* CreateSoundLabsStation(); */ CreateVoiceMarker();
+            // InitializeAudioMixer();
             UpdateHvacStation();
             StartCoroutine(PollHvacTelemetry());
-            StartCoroutine(PollSoundLabsAudio());
+            // StartCoroutine(PollSoundLabsAudio());
         }
 
         private IEnumerator PollHvacTelemetry()
@@ -261,6 +258,7 @@ namespace Wise2.XR
             light.shadows = LightShadows.None;
         }
 
+        #if false // Sound Labs audio integration is disabled until its service is wired into the Quest build.
         private void InitializeAudioMixer()
         {
             // Create empty object for audio mixer
@@ -317,6 +315,7 @@ namespace Wise2.XR
                 }
             }
         }
+        #endif
 
         private static Material templateMaterial;
 

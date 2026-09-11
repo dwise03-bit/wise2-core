@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { useCart } from '@/lib/hooks/useCart';
 
 const BLAKKHAIL_ESSENTIALS = [
   {
@@ -40,39 +41,59 @@ interface AdminProduct {
   sku?: string;
 }
 
-function ProductGrid({ products, shopPhotos }: { products: any[], shopPhotos: string[] }) {
+function ProductGrid({ products, shopPhotos }: { products: any[], shopPhotos: readonly string[] }) {
+  const { addToCart } = useCart();
+  const [addedId, setAddedId] = useState<string | null>(null);
+
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault();
+    addToCart(product, 1);
+    setAddedId(product.id);
+    setTimeout(() => setAddedId(null), 2000);
+  };
+
   return (
     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {products.map((product, index) => (
-        <Link
+        <div
           key={product.id}
-          href={`/sencere/blakkhail/product/${product.id}`}
           className="group cursor-pointer transition-all duration-300"
         >
-          <div className="mb-6 aspect-[3/4] overflow-hidden bg-[#1a1a1a] relative">
-            <Image
-              src={shopPhotos[index % shopPhotos.length]}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#E8A23A]">
-              {product.category || 'NEW'}
-            </p>
-            <h3 className="text-[16px] font-bold leading-tight text-white">
-              {product.name}
-            </h3>
-            <p className="text-[13px] text-[#A8A8A8]">
-              {product.displayName || product.description}
-            </p>
-            <p className="mt-4 text-[14px] font-bold text-[#E8A23A]">
-              ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
-            </p>
-          </div>
-        </Link>
+          <Link
+            href={`/sencere/blakkhail/product/${product.id}`}
+            className="block"
+          >
+            <div className="mb-6 aspect-[3/4] overflow-hidden bg-[#1a1a1a] relative">
+              <Image
+                src={product.image_url || shopPhotos[index % shopPhotos.length]}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#E8A23A]">
+                {product.category || 'NEW'}
+              </p>
+              <h3 className="text-[16px] font-bold leading-tight text-white">
+                {product.name}
+              </h3>
+              <p className="text-[13px] text-[#A8A8A8]">
+                {product.displayName || product.description}
+              </p>
+              <p className="mt-4 text-[14px] font-bold text-[#E8A23A]">
+                ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+              </p>
+            </div>
+          </Link>
+          <button
+            onClick={(e) => handleAddToCart(e, product)}
+            className="mt-4 w-full py-3 bg-[#E8A23A] text-black font-bold uppercase tracking-wider hover:bg-[#f5b347] transition-colors"
+          >
+            {addedId === product.id ? '✓ Added!' : '🛒 Add to Cart'}
+          </button>
+        </div>
       ))}
     </div>
   );

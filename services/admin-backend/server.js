@@ -237,6 +237,55 @@ app.get('/api/admin/analytics/top-products', authenticateAdmin, async (req, res)
   }
 });
 
+// ============ SHOPPING CART ============
+// Create or get cart session
+app.post('/api/cart/create', async (req, res) => {
+  try {
+    const cartId = require('crypto').randomUUID();
+    res.json({ cartId, items: [] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create cart' });
+  }
+});
+
+// Add item to cart (stored client-side via localStorage)
+app.post('/api/cart/:cartId/add', express.json(), async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    const product = await pool.query('SELECT * FROM products WHERE id = $1', [productId]);
+    if (!product.rows[0]) return res.status(404).json({ error: 'Product not found' });
+    res.json({ success: true, product: product.rows[0], quantity });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add to cart' });
+  }
+});
+
+// Create order from cart
+app.post('/api/orders/create', express.json(), async (req, res) => {
+  try {
+    const { items, customerEmail, totalPrice } = req.body;
+    if (!items.length) return res.status(400).json({ error: 'Cart is empty' });
+
+    const orderResult = await pool.query(
+      'INSERT INTO orders (customer_email, total_price, status) VALUES ($1, $2, $3) RETURNING id',
+      [customerEmail || 'guest@blakkhail.com', totalPrice, 'pending']
+    );
+
+    const orderId = orderResult.rows[0].id;
+    for (const item of items) {
+      await pool.query(
+        'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
+        [orderId, item.id, item.quantity, item.price]
+      );
+    }
+
+    res.json({ success: true, orderId, status: 'pending' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create order' });
+  }
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'admin-backend' });
