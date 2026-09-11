@@ -1,5 +1,4 @@
-import { AIService } from '@wise2/ai';
-import { z } from 'zod';
+import axios from 'axios';
 
 interface CodeCompletionRequest {
   code: string;
@@ -37,22 +36,48 @@ interface CodeExplanationResponse {
 }
 
 export class CodexRemoteService {
-  constructor(private aiService: AIService) {}
+  private apiKey: string;
+  private model: string;
+  private apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+  constructor(apiKey: string, model: string = 'gpt-4') {
+    this.apiKey = apiKey;
+    this.model = model;
+  }
+
+  private async callOpenAI(prompt: string, temperature: number = 0.7, maxTokens: number = 500): Promise<string> {
+    try {
+      const response = await axios.post(
+        this.apiUrl,
+        {
+          model: this.model,
+          messages: [{ role: 'user', content: prompt }],
+          temperature,
+          max_tokens: maxTokens,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return response.data.choices[0].message.content;
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      throw new Error('Failed to call OpenAI API');
+    }
+  }
 
   async completeCode(
     request: CodeCompletionRequest
   ): Promise<CodeCompletionResponse> {
     const prompt = this.buildCompletionPrompt(request);
-
-    const response = await this.aiService.generate({
-      prompt,
-      maxTokens: 500,
-      temperature: 0.7,
-      model: 'gpt-4',
-    });
+    const completion = await this.callOpenAI(prompt, 0.7, 500);
 
     return {
-      completion: response,
+      completion,
       language: request.language,
       confidence: 0.85,
     };
@@ -62,22 +87,16 @@ export class CodexRemoteService {
     request: CodeGenerationRequest
   ): Promise<CodeGenerationResponse> {
     const prompt = this.buildGenerationPrompt(request);
-
-    const response = await this.aiService.generate({
-      prompt,
-      maxTokens: 1000,
-      temperature: 0.8,
-      model: 'gpt-4',
-    });
+    const text = await this.callOpenAI(prompt, 0.8, 1000);
 
     // Extract code block if wrapped in markdown
-    const codeMatch = response.match(/```[\w]*\n([\s\S]*?)\n```/);
-    const code = codeMatch ? codeMatch[1] : response;
+    const codeMatch = text.match(/```[\w]*\n([\s\S]*?)\n```/);
+    const code = codeMatch ? codeMatch[1] : text;
 
     return {
       code,
       language: request.language,
-      explanation: this.extractExplanation(response),
+      explanation: this.extractExplanation(text),
     };
   }
 
@@ -85,15 +104,9 @@ export class CodexRemoteService {
     request: CodeExplanationRequest
   ): Promise<CodeExplanationResponse> {
     const prompt = this.buildExplanationPrompt(request);
+    const text = await this.callOpenAI(prompt, 0.7, 800);
 
-    const response = await this.aiService.generate({
-      prompt,
-      maxTokens: 800,
-      temperature: 0.7,
-      model: 'gpt-4',
-    });
-
-    return this.parseExplanation(response);
+    return this.parseExplanation(text);
   }
 
   private buildCompletionPrompt(request: CodeCompletionRequest): string {
