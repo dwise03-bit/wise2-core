@@ -20,7 +20,7 @@ export function getCloudPlans(configService: ConfigService): CloudPlan[] {
     {
       id: 'starter',
       name: 'Starter',
-      priceMonthly: 19,
+      priceMonthly: 29,
       envKey: 'TWENTYI_PACKAGE_TYPE_STARTER',
       labelEnvKey: 'TWENTYI_PACKAGE_LABEL_STARTER',
       stripeEnvKey: 'STRIPE_CLOUD_STARTER_PRICE_ID',
@@ -28,7 +28,7 @@ export function getCloudPlans(configService: ConfigService): CloudPlan[] {
     {
       id: 'business',
       name: 'Business',
-      priceMonthly: 39,
+      priceMonthly: 49,
       envKey: 'TWENTYI_PACKAGE_TYPE_BUSINESS',
       labelEnvKey: 'TWENTYI_PACKAGE_LABEL_BUSINESS',
       stripeEnvKey: 'STRIPE_CLOUD_BUSINESS_PRICE_ID',
@@ -37,7 +37,7 @@ export function getCloudPlans(configService: ConfigService): CloudPlan[] {
     {
       id: 'pro',
       name: 'Pro',
-      priceMonthly: 59,
+      priceMonthly: 79,
       envKey: 'TWENTYI_PACKAGE_TYPE_PRO',
       labelEnvKey: 'TWENTYI_PACKAGE_LABEL_PRO',
       stripeEnvKey: 'STRIPE_CLOUD_PRO_PRICE_ID',
