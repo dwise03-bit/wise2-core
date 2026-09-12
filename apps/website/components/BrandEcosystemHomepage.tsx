@@ -180,7 +180,7 @@ export function BrandEcosystemHomepage() {
           </Link>
           <nav className="hidden items-center gap-8 text-[11px] font-bold tracking-[.16em] text-white/65 lg:flex">
             <Link
-              href="#deployments"
+              href="/products"
               className="transition-colors hover:text-[#b08d57]"
             >
               PRODUCTS
@@ -192,13 +192,13 @@ export function BrandEcosystemHomepage() {
               LIL LIZZY
             </Link>
             <Link
-              href="#deployments"
+              href="/services"
               className="transition-colors hover:text-[#b08d57]"
             >
               SOLUTIONS
             </Link>
             <Link
-              href="#sales-academy"
+              href="/consulting"
               className="transition-colors hover:text-[#b08d57]"
             >
               SALES ACADEMY
@@ -216,7 +216,7 @@ export function BrandEcosystemHomepage() {
               XR COMMAND
             </Link>
             <Link
-              href="#method"
+              href="/industries"
               className="transition-colors hover:text-[#b08d57]"
             >
               INDUSTRIES
@@ -250,16 +250,16 @@ export function BrandEcosystemHomepage() {
         {menuOpen && (
           <div className="border-t border-white/10 bg-[#101820] px-6 py-5 lg:hidden">
             <div className="flex flex-col gap-4 text-xs font-bold tracking-[.16em] text-white/70">
-              <Link href="#system" onClick={() => setMenuOpen(false)}>
+              <Link href="/platform" onClick={() => setMenuOpen(false)}>
                 SYSTEM
               </Link>
-              <Link href="#deployments" onClick={() => setMenuOpen(false)}>
+              <Link href="/products" onClick={() => setMenuOpen(false)}>
                 DEPLOYMENTS
               </Link>
               <Link href="/lil-lizzy" onClick={() => setMenuOpen(false)}>
                 LIL LIZZY / BOOMPOPSTERS
               </Link>
-              <Link href="#sales-academy" onClick={() => setMenuOpen(false)}>
+              <Link href="/consulting" onClick={() => setMenuOpen(false)}>
                 SALES ACADEMY
               </Link>
               <Link href="/revenue/dashboard" onClick={() => setMenuOpen(false)}>
@@ -268,7 +268,7 @@ export function BrandEcosystemHomepage() {
               <Link href="/quest" onClick={() => setMenuOpen(false)}>
                 XR COMMAND
               </Link>
-              <Link href="#method" onClick={() => setMenuOpen(false)}>
+              <Link href="/about" onClick={() => setMenuOpen(false)}>
                 METHOD
               </Link>
               <Link href="/about" onClick={() => setMenuOpen(false)}>
@@ -341,7 +341,7 @@ export function BrandEcosystemHomepage() {
                 BOOK A BUSINESS AUDIT <ArrowRight size={16} />
               </Link>
               <Link
-                href="#system"
+                href="/platform"
                 className="wise-button inline-flex min-h-12 items-center gap-3 border border-white/30 bg-black/20 px-6 py-4 text-xs font-bold tracking-[.12em] text-white"
               >
                 EXPLORE WISE²
