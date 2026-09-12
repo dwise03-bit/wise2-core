@@ -111,15 +111,17 @@ echo ""
 echo "════════════════════════════════════════════════════════════════"
 echo "Installing Dependencies"
 echo "════════════════════════════════════════════════════════════════"
+cd services
 if [ -f "package-lock.json" ]; then
-  npm install discord.js
+  npm install
 elif [ -f "pnpm-lock.yaml" ]; then
-  pnpm add discord.js
+  pnpm install
 elif [ -f "yarn.lock" ]; then
-  yarn add discord.js
+  yarn install
 else
-  npm install discord.js
+  npm install
 fi
+cd ..
 echo "✅ Dependencies installed"
 echo ""
 
