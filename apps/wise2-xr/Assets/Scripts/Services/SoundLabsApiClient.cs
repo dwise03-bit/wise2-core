@@ -47,13 +47,4 @@ namespace Wise2.XR
             yield return null;
         }
     }
-
-    /// <summary>
-    /// Service contract for SoundLabs audio data.
-    /// Allows both API clients and demo implementations.
-    /// </summary>
-    public interface ISoundLabsDataService
-    {
-        SoundLabsSnapshot Latest { get; }
-    }
 }
