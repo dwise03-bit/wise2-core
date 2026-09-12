@@ -35,11 +35,13 @@ jobs:
 
             if [ -e "$WORKTREE" ]; then
               test -d "$WORKTREE" || { echo "Worktree path exists but is not a directory"; exit 3; }
-              if [ -n "$(git -C "$WORKTREE" status --porcelain)" ]; then
-                echo "Existing preview worktree is dirty; refusing to overwrite it."
-                git -C "$WORKTREE" status --short
-                exit 4
-              fi
+              case "$WORKTREE" in
+                "$HOME/wise2-worktrees/vps-unity-live-preview") ;;
+                *) echo "Refusing to clean unexpected worktree path: $WORKTREE"; exit 4 ;;
+              esac
+              echo "Refreshing automation-owned Unity preview worktree..."
+              git -C "$WORKTREE" reset --hard
+              git -C "$WORKTREE" clean -fdx
               git -C "$WORKTREE" fetch origin "$BRANCH"
               git -C "$WORKTREE" checkout --detach "origin/$BRANCH"
             else
@@ -56,6 +58,10 @@ jobs:
             tailscale ip -4 | head -n1
             tailscale status | head -n 20
             echo "=== Unity ==="
+            UNITY_EDITOR="/sdb-disk/unity/Hub/Editor/Editor/Data/PlaybackEngines/WebGLSupport/BuildTools/Emscripten/node/node"
+            if [ ! -x "$UNITY_EDITOR" ]; then
+              true
+            fi
             UNITY_EDITOR="/sdb-disk/unity/Hub/Editor/Editor/Unity"
             test -x "$UNITY_EDITOR" || { echo "Unity missing at $UNITY_EDITOR"; exit 5; }
             "$UNITY_EDITOR" -version || true
@@ -63,13 +69,12 @@ jobs:
             docker --version
             docker compose version
 
-            chmod +x ops/unity-vps/*.sh
             export UNITY_EDITOR
             export WISE2_XR_WEBGL_BUILD_DIR="$WORKTREE/apps/wise2-xr/Build/WebGL"
             export WISE2_UNITY_LOG="$WORKTREE/apps/wise2-xr/Build/webgl-build.log"
             bash ops/unity-vps/build-webgl.sh || {
               echo "=== Unity build log tail ==="
-              tail -n 160 "$WISE2_UNITY_LOG" || true
+              tail -n 200 "$WISE2_UNITY_LOG" || true
               exit 6
             }
 
