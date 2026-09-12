@@ -91,9 +91,42 @@ else
 fi
 echo ""
 
-# Step 4: Test
+# Step 4: Discord Bot Setup (Optional)
 echo "════════════════════════════════════════════════════════════════"
-echo "STEP 4: End-to-End Testing"
+echo "STEP 4: Discord Bot Setup (Optional)"
+echo "════════════════════════════════════════════════════════════════"
+read -p "Set up WISE² Discord Bot? (y/n) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  echo "Discord Bot Setup"
+  echo ""
+  read -p "Enter your Discord Bot Token (from Discord Developer Portal): " DISCORD_BOT_TOKEN
+
+  if [ -z "$DISCORD_BOT_TOKEN" ]; then
+    echo "❌ Bot token is required"
+    DISCORD_STATUS="⏭️  Skipped (no token)"
+  else
+    # Create .env.discord file
+    cat > .env.discord << EOF
+DISCORD_BOT_TOKEN=$DISCORD_BOT_TOKEN
+WISE2_IMP_URL=http://localhost:9002
+BOT_PORT=9003
+LOG_DIR=data/logs
+MEMORY_DIR=data/memory
+NODE_ENV=production
+EOF
+    chmod 600 .env.discord
+    echo "✅ Discord Bot token saved to .env.discord"
+    DISCORD_STATUS="✅ Configured"
+  fi
+else
+  DISCORD_STATUS="⏭️  Skipped"
+fi
+echo ""
+
+# Step 5: Test
+echo "════════════════════════════════════════════════════════════════"
+echo "STEP 5: End-to-End Testing"
 echo "════════════════════════════════════════════════════════════════"
 echo ""
 
@@ -114,8 +147,16 @@ else
 fi
 
 echo ""
+echo "Testing Discord Bot..."
+if [ -f ".env.discord" ]; then
+  echo "✅ Discord Bot configured"
+else
+  echo "ℹ️  Discord Bot not configured"
+fi
 
-# Step 5: Summary
+echo ""
+
+# Step 6: Summary
 echo "════════════════════════════════════════════════════════════════"
 echo "DEPLOYMENT SUMMARY"
 echo "════════════════════════════════════════════════════════════════"
@@ -123,6 +164,7 @@ echo ""
 echo "  Mac Setup:       $MAC_STATUS"
 echo "  VPS Setup:       $VPS_STATUS"
 echo "  Network Setup:   $NETWORK_STATUS"
+echo "  Discord Bot:     $DISCORD_STATUS"
 echo ""
 
 echo "╔══════════════════════════════════════════════════════════════╗"
