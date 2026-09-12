@@ -41,11 +41,18 @@ export class CodexRemoteService {
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   constructor(apiKey: string, model: string = 'gpt-4') {
+    if (!apiKey || apiKey.trim() === '') {
+      console.warn('⚠️ Warning: OPENAI_API_KEY is not set. Code operations will fail.');
+      console.warn('Set OPENAI_API_KEY in your .env file to enable Codex features.');
+    }
     this.apiKey = apiKey;
     this.model = model;
   }
 
   private async callOpenAI(prompt: string, temperature: number = 0.7, maxTokens: number = 500): Promise<string> {
+    if (!this.apiKey || this.apiKey.trim() === '') {
+      throw new Error('OpenAI API key is not configured. Set OPENAI_API_KEY in your .env file.');
+    }
     try {
       const response = await axios.post(
         this.apiUrl,
