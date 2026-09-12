@@ -1,4 +1,4 @@
-FROM node:20-alpine as builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY services/wise2-ai-router/tsconfig.json ./
 COPY services/wise2-ai-router/src ./src
 
 # Install all deps and build
-RUN npm ci && npm run build
+RUN npm install && npm run build
 
 # Production image
 FROM node:20-alpine
@@ -19,7 +19,7 @@ WORKDIR /app
 COPY services/wise2-ai-router/package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copy compiled code from builder
 COPY --from=builder /app/dist ./dist
