@@ -63,7 +63,9 @@ echo ""
 # ============================================================================
 echo "🔨 Building Docker images..."
 
-if ! docker compose -f docker-compose.prod.yml build --no-cache; then
+# Deploy the website independently so a transient build failure in an
+# unrelated demo/service cannot prevent storefront fixes from going live.
+if ! docker compose -f docker-compose.prod.yml build --no-cache website; then
   echo "❌ Docker build failed"
   exit 1
 fi
