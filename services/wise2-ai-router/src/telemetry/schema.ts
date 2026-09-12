@@ -60,14 +60,14 @@ CREATE INDEX IF NOT EXISTS idx_ai_router_events_date_project
 `;
 
 /**
- * Initialize telemetry schema
+ * Initialize telemetry schema (non-fatal if database unavailable)
  */
 export async function initializeSchema(pool: any): Promise<void> {
   try {
     await pool.query(TELEMETRY_SCHEMA);
     console.log('✅ Telemetry schema initialized');
   } catch (error) {
-    console.error('Failed to initialize telemetry schema:', error);
-    throw error;
+    console.warn('⚠️ Telemetry schema initialization failed (database unavailable):', (error as Error).message);
+    console.warn('Router will continue without telemetry logging');
   }
 }
