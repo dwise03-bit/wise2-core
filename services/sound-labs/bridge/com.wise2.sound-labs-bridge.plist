@@ -7,7 +7,7 @@
 
 	<key>ProgramArguments</key>
 	<array>
-		<string>/usr/local/bin/python3.12</string>
+		<string>/Users/danielwise/Projects/wise2-core/services/sound-labs/bridge/venv/bin/python</string>
 		<string>/Users/danielwise/Projects/wise2-core/services/sound-labs/bridge/main.py</string>
 	</array>
 
