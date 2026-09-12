@@ -14,6 +14,24 @@ export default function App() {
   useEffect(() => {
     let ws: WebSocket | null = null
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null
+    let pollTimer: ReturnType<typeof setInterval> | null = null
+
+    const fetchState = async () => {
+      try {
+        const response = await fetch(`${BRIDGE_API_URL}/state`, { cache: 'no-store' })
+        if (!response.ok) throw new Error(`Bridge returned ${response.status}`)
+        setState(await response.json())
+        setConnected(true)
+        setError(null)
+      } catch (e) {
+        console.error('Bridge state poll failed:', e)
+        setConnected(false)
+        setError('Bridge connection error')
+      }
+    }
+
+    fetchState()
+    pollTimer = setInterval(fetchState, 3000)
 
     const connect = () => {
       try {
@@ -38,8 +56,7 @@ export default function App() {
 
         ws.onerror = (event) => {
           console.error('WebSocket error:', event)
-          setError('Bridge connection error')
-          setConnected(false)
+          // HTTP polling remains the mobile-safe connection path.
         }
 
         ws.onclose = () => {
@@ -63,6 +80,9 @@ export default function App() {
       }
       if (reconnectTimeout) {
         clearTimeout(reconnectTimeout)
+      }
+      if (pollTimer) {
+        clearInterval(pollTimer)
       }
     }
   }, [])
