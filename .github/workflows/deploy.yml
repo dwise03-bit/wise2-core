@@ -89,7 +89,16 @@ jobs:
 
             echo "📋 Fetching latest code..."
             git fetch origin ${{ github.ref_name }} || { echo "❌ Git fetch failed"; exit 1; }
-            git reset --hard origin/${{ github.ref_name }} || { echo "❌ Git reset failed"; exit 1; }
+            # Older VPS deployments left some tracked files owned by root.
+            # Repair checkout ownership once, then perform the exact sync.
+            if ! git reset --hard origin/${{ github.ref_name }}; then
+              echo "⚠️ Checkout contains files not writable by the deploy user; repairing ownership..."
+              sudo -n chown -R "$(id -un):$(id -gn)" . || {
+                echo "❌ Cannot repair VPS checkout ownership (passwordless sudo required)"
+                exit 1
+              }
+              git reset --hard origin/${{ github.ref_name }}
+            fi
 
             echo "🔐 Setting environment variables..."
             export STRIPE_PUBLIC_KEY="${{ secrets.STRIPE_PUBLIC_KEY }}"
@@ -142,7 +151,7 @@ jobs:
             echo "✅ Services verification complete"
 
       - name: Notify Slack on success
-        if: success()
+        if: success() && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: 'success'
@@ -150,7 +159,7 @@ jobs:
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
 
       - name: Notify Slack on failure
-        if: failure()
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
         uses: 8398a7/action-slack@v3
         with:
           status: 'failure'
