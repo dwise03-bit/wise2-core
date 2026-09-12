@@ -16,7 +16,7 @@ namespace Wise2.XR.Editor
             // Without this the headset renders a flat surface (passthrough/black).
             ConfigureQuestXR.Configure();
 
-            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Branding/Wise2XRIcon.jpg");
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Branding/Wise2XRIconPro.png");
             if (icon != null)
                 PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Android, new[] { icon }, IconKind.Application);
 

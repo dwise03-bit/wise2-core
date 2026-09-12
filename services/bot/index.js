@@ -4774,6 +4774,14 @@ async function deployCommands() {
         'academy-schedule': contractorCommands.handlers.academySchedule,
         'academy-resources': contractorCommands.handlers.academyResources,
         'academy-instructors': contractorCommands.handlers.academyInstructors,
+        'sales': contractorCommands.handlers.sales,
+        'sales-pipeline': contractorCommands.handlers.salesPipeline,
+        'sales-strategy': contractorCommands.handlers.salesStrategy,
+        'sales-training': contractorCommands.handlers.salesTraining,
+        'sales-tools': contractorCommands.handlers.salesTools,
+        'sales-metrics': contractorCommands.handlers.salesMetrics,
+        'sales-resources': contractorCommands.handlers.salesResources,
+        'sales-contact': contractorCommands.handlers.salesContact,
       };
 
       contractorCommands.commands.forEach((cmd) => {

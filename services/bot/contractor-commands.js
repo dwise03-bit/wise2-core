@@ -100,6 +100,38 @@ const commands = [
   new SlashCommandBuilder()
     .setName('academy-instructors')
     .setDescription('👨‍🏫 Meet the WISE² Academy team'),
+
+  new SlashCommandBuilder()
+    .setName('sales')
+    .setDescription('💼 WISE² Sales — Grow your contractor business'),
+
+  new SlashCommandBuilder()
+    .setName('sales-pipeline')
+    .setDescription('📊 Sales pipeline management system'),
+
+  new SlashCommandBuilder()
+    .setName('sales-strategy')
+    .setDescription('🎯 Sales strategies for contractors'),
+
+  new SlashCommandBuilder()
+    .setName('sales-training')
+    .setDescription('🎓 Sales skills training program'),
+
+  new SlashCommandBuilder()
+    .setName('sales-tools')
+    .setDescription('🔧 Sales tools & resources'),
+
+  new SlashCommandBuilder()
+    .setName('sales-metrics')
+    .setDescription('📈 Key sales metrics & KPIs'),
+
+  new SlashCommandBuilder()
+    .setName('sales-resources')
+    .setDescription('📚 Sales playbooks, templates, scripts'),
+
+  new SlashCommandBuilder()
+    .setName('sales-contact')
+    .setDescription('📞 Sales team & support'),
 ];
 
 // Handler functions
@@ -1148,6 +1180,451 @@ const handlers = {
       new ButtonBuilder()
         .setLabel('Book Coaching')
         .setURL('https://wise2.net/academy/coaching')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async sales(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('💼 WISE² Sales')
+      .setDescription('Systems to grow your contractor business')
+      .setColor(0x06b6d4) // Cyan
+      .setURL('https://wise2.net/sales')
+      .addFields(
+        {
+          name: '🎯 What We Help With',
+          value:
+            '• Lead generation & capture\n' +
+            '• Lead qualification & scoring\n' +
+            '• Sales pipeline management\n' +
+            '• Follow-up automation\n' +
+            '• Closing techniques & training\n' +
+            '• Sales team management',
+          inline: false,
+        },
+        {
+          name: '📈 Results',
+          value:
+            'Average results from our system:\n' +
+            '• 40% more leads closed\n' +
+            '• 3x faster follow-ups\n' +
+            '• 50% higher close rates\n' +
+            '• 2x sales team productivity',
+          inline: false,
+        },
+        {
+          name: '🏆 For Contractors Who Want To',
+          value:
+            'Scale their business • Increase revenue\n' +
+            'Build a sales team • Stop leaving money on table',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Integrated with Contractor OS' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Sales System')
+        .setURL('https://wise2.net/sales')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Get Started')
+        .setURL('https://wise2.net/sales#demo')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesPipeline(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📊 Sales Pipeline Management')
+      .setDescription('Track, manage, and close more deals')
+      .setColor(0x06b6d4) // Cyan
+      .setURL('https://wise2.net/sales/pipeline')
+      .addFields(
+        {
+          name: '🔄 Pipeline Stages',
+          value:
+            '1️⃣ **Lead** — New prospects\n' +
+            '2️⃣ **Contact** — Made first contact\n' +
+            '3️⃣ **Proposal** — Quote sent\n' +
+            '4️⃣ **Negotiation** — Discussing terms\n' +
+            '5️⃣ **Closed** — Won or lost',
+          inline: false,
+        },
+        {
+          name: '✨ Smart Features',
+          value:
+            '📌 Drag-and-drop pipeline board\n' +
+            '🤖 AI move recommendations\n' +
+            '⏰ Automatic follow-up reminders\n' +
+            '📊 Real-time pipeline analytics\n' +
+            '🔔 Deal alerts & milestones',
+          inline: false,
+        },
+        {
+          name: '📈 Key Metrics',
+          value:
+            'Win rate • Average deal size\n' +
+            'Sales cycle length • Revenue forecast\n' +
+            'Team performance • Lead source ROI',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Built into Contractor OS CRM' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Learn More')
+        .setURL('https://wise2.net/sales/pipeline')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesStrategy(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🎯 Sales Strategies for Contractors')
+      .setDescription('Proven strategies to increase revenue')
+      .setColor(0xf59e0b) // Amber
+      .setURL('https://wise2.net/sales/strategies')
+      .addFields(
+        {
+          name: '🚀 Inbound Strategy',
+          value:
+            '• SEO & local visibility\n' +
+            '• Content marketing\n' +
+            '• Customer referrals\n' +
+            '• Online reviews management',
+          inline: true,
+        },
+        {
+          name: '📞 Outbound Strategy',
+          value:
+            '• Cold calling scripts\n' +
+            '• Direct mail campaigns\n' +
+            '• Door-to-door techniques\n' +
+            '• Partnership building',
+          inline: true,
+        },
+        {
+          name: '💬 Conversion Strategy',
+          value:
+            '• Initial consultation script\n' +
+            '• Objection handling\n' +
+            '• Pricing presentation\n' +
+            '• Closing techniques',
+          inline: true,
+        },
+        {
+          name: '🔄 Retention Strategy',
+          value:
+            '• Upsell & cross-sell\n' +
+            '• Customer loyalty program\n' +
+            '• Seasonal campaigns\n' +
+            '• Referral incentives',
+          inline: true,
+        }
+      )
+      .setFooter({ text: 'Industry-specific for your trade' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View All Strategies')
+        .setURL('https://wise2.net/sales/strategies')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Get Training')
+        .setURL('https://wise2.net/academy/courses')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesTraining(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🎓 Sales Skills Training')
+      .setDescription('Learn sales techniques that work for contractors')
+      .setColor(0x8b5cf6) // Purple
+      .setURL('https://wise2.net/sales/training')
+      .addFields(
+        {
+          name: '📚 Course Topics',
+          value:
+            '• Sales fundamentals & mindset\n' +
+            '• Prospecting & lead generation\n' +
+            '• Consultative selling techniques\n' +
+            '• Objection handling\n' +
+            '• Closing & negotiation\n' +
+            '• Team leadership & coaching',
+          inline: false,
+        },
+        {
+          name: '👥 Training Formats',
+          value:
+            '📹 Self-paced video courses\n' +
+            '🎙️ Weekly group training sessions\n' +
+            '👨‍🏫 1-on-1 coaching with sales experts\n' +
+            '🎯 Role-play & practice scenarios',
+          inline: false,
+        },
+        {
+          name: '🏆 Certification',
+          value:
+            'Complete sales certification\n' +
+            'Recognized in the industry\n' +
+            'LinkedIn credential included',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Led by Marcus Johnson (500+ contractors trained)' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Enroll in Training')
+        .setURL('https://wise2.net/sales/training')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesTools(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🔧 Sales Tools & Resources')
+      .setDescription('Everything you need to succeed in sales')
+      .setColor(0x3b82f6) // Blue
+      .setURL('https://wise2.net/sales/tools')
+      .addFields(
+        {
+          name: '📱 Sales Software',
+          value:
+            '✅ Contractor OS CRM\n' +
+            '✅ Pipeline management board\n' +
+            '✅ Lead scoring system\n' +
+            '✅ Follow-up automation\n' +
+            '✅ Sales analytics dashboard',
+          inline: true,
+        },
+        {
+          name: '📄 Templates & Scripts',
+          value:
+            '✅ Cold call scripts\n' +
+            '✅ Sales email templates\n' +
+            '✅ Proposal templates\n' +
+            '✅ Follow-up sequences\n' +
+            '✅ Negotiation checklists',
+          inline: true,
+        },
+        {
+          name: '🎯 Sales Playbooks',
+          value:
+            '✅ Industry-specific playbooks\n' +
+            '✅ Sales process documentation\n' +
+            '✅ Objection handling guides\n' +
+            '✅ Closing techniques manual',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'All tools integrated with Contractor OS' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Download Resources')
+        .setURL('https://wise2.net/sales/tools')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesMetrics(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📈 Sales Metrics & KPIs')
+      .setDescription('Track what matters for sales success')
+      .setColor(0x10b981) // Emerald
+      .setURL('https://wise2.net/sales/metrics')
+      .addFields(
+        {
+          name: '🎯 Key Metrics to Track',
+          value:
+            '• **Lead Volume** — How many leads per month\n' +
+            '• **Conversion Rate** — % of leads that close\n' +
+            '• **Average Deal Size** — Revenue per sale\n' +
+            '• **Sales Cycle** — Days from lead to close\n' +
+            '• **Win Rate** — % of proposals accepted',
+          inline: false,
+        },
+        {
+          name: '📊 Revenue Metrics',
+          value:
+            '• **Monthly Revenue** — Total sales\n' +
+            '• **Revenue Forecast** — Projected revenue\n' +
+            '• **Pipeline Value** — Potential revenue\n' +
+            '• **Cost per Lead** — Marketing ROI\n' +
+            '• **Profit Margin** — Net profitability',
+          inline: false,
+        },
+        {
+          name: '👥 Team Metrics',
+          value:
+            '• **Sales Productivity** — Revenue per person\n' +
+            '• **Activity Metrics** — Calls, emails, meetings\n' +
+            '• **Individual Close Rate** — Per salesperson\n' +
+            '• **Team Performance** — Comparative analytics',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Real-time dashboards in Contractor OS' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Dashboard')
+        .setURL('https://wise2.net/contractor#analytics')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesResources(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📚 Sales Playbooks & Resources')
+      .setDescription('Proven templates and playbooks')
+      .setColor(0xec4899) // Pink
+      .setURL('https://wise2.net/sales/resources')
+      .addFields(
+        {
+          name: '📋 Sales Playbooks',
+          value:
+            '[HVAC Sales Playbook](https://wise2.net/resources/hvac-playbook)\n' +
+            '[Roofing Sales Playbook](https://wise2.net/resources/roofing-playbook)\n' +
+            '[Plumbing Sales Playbook](https://wise2.net/resources/plumbing-playbook)\n' +
+            '[+ 7 more industry playbooks →](https://wise2.net/sales/resources)',
+          inline: false,
+        },
+        {
+          name: '📄 Templates',
+          value:
+            '✅ Sales email templates (20+)\n' +
+            '✅ Cold call scripts (10+)\n' +
+            '✅ Proposal templates (industry-specific)\n' +
+            '✅ Follow-up sequence templates\n' +
+            '✅ Objection handling guides',
+          inline: false,
+        },
+        {
+          name: '🎙️ Podcasts & Webinars',
+          value:
+            'Weekly sales tips podcast\n' +
+            'Monthly sales strategy webinars\n' +
+            'Expert interviews & case studies\n' +
+            'All past sessions recorded',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Free for Contractor OS users' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Download Resources')
+        .setURL('https://wise2.net/sales/resources')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async salesContact(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📞 Sales Team')
+      .setDescription('Get sales help & consultation')
+      .setColor(0x22c55e) // Green
+      .addFields(
+        {
+          name: '💼 Sales Consultants',
+          value:
+            '**Marcus Johnson** — Lead Sales Coach\n' +
+            'Specializes in lead generation & closing\n' +
+            '📧 marcus@wise2.net\n\n' +
+            '**Jennifer Lee** — Sales Strategy\n' +
+            'Specializes in team building & scaling\n' +
+            '📧 jennifer@wise2.net',
+        },
+        {
+          name: '📞 Contact Sales',
+          value:
+            '📧 **Email**: sales@wise2.net\n' +
+            '☎️ **Phone**: +1-855-WISE-2 (9am-6pm EST)\n' +
+            '💬 **Live Chat**: Available weekdays\n' +
+            '📅 **Schedule Call**: [Book 30-min consultation →](https://wise2.net/sales#demo)',
+          inline: false,
+        },
+        {
+          name: '🎯 What We Offer',
+          value:
+            '✓ Free sales assessment\n' +
+            '✓ Customized sales strategy\n' +
+            '✓ Training recommendations\n' +
+            '✓ Implementation support',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Ready to grow your sales?' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Schedule Consultation')
+        .setURL('https://wise2.net/sales#demo')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Send Email')
+        .setURL('mailto:sales@wise2.net')
         .setStyle(ButtonStyle.Link)
     );
 
