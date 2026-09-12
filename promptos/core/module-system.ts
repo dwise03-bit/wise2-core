@@ -61,7 +61,7 @@ export class ModuleSystem {
     const section = inheritMatch[1];
     
     // Extract module paths in parentheses
-    const regex = /modules\/(\w+)\.md/g;
+    const regex = /modules\/([\w-]+)\.md/g;
     let match;
     
     while ((match = regex.exec(section)) !== null) {
@@ -125,4 +125,3 @@ export class ModuleSystem {
     this.moduleGraph.clear();
   }
 }
-

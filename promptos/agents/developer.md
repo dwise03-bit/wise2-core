@@ -8,6 +8,7 @@
 ---
 
 ## Inherited Modules
+- PromptOS Visual Fidelity (modules/visual-fidelity.md) — High-fidelity design-to-code reconstruction and visual QA
 - PromptOS Core System (base-system-prompt.md)
 - Reasoning (modules/reasoning.md) — Technical decision-making
 - Tool-Use (modules/tool-use.md) — Safe tool execution
