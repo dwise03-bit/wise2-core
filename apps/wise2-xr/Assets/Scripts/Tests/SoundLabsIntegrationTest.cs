@@ -77,13 +77,14 @@ namespace Wise2.XR.Tests
             {
                 spectrum = new List<FrequencyBand>
                 {
-                    new FrequencyBand { label = "Low" },
-                    new FrequencyBand { label = "Mid" },
-                    new FrequencyBand { label = "High" }
+                    new FrequencyBand { frequency = 120f, magnitude = 0.25f },
+                    new FrequencyBand { frequency = 1000f, magnitude = 0.50f },
+                    new FrequencyBand { frequency = 8000f, magnitude = 0.75f }
                 }
             };
 
             Assert.AreEqual(3, snapshot.spectrum.Count);
+            Assert.AreEqual(1000f, snapshot.spectrum[1].frequency);
         }
 
         [Test]
@@ -142,13 +143,15 @@ namespace Wise2.XR.Tests
             var session = new RecordingSession
             {
                 projectName = "WISE2 Session",
-                bpm = 92,
-                isRecording = true
+                trackCount = 12,
+                isRecording = true,
+                status = "RECORDING"
             };
 
             Assert.AreEqual("WISE2 Session", session.projectName);
-            Assert.AreEqual(92, session.bpm);
+            Assert.AreEqual(12, session.trackCount);
             Assert.IsTrue(session.isRecording);
+            Assert.AreEqual("RECORDING", session.status);
         }
 
         [Test]
@@ -175,12 +178,10 @@ namespace Wise2.XR.Tests
         {
             var band = new FrequencyBand
             {
-                label = "Mid",
                 frequency = 1000f,
                 magnitude = 0.75f
             };
 
-            Assert.AreEqual("Mid", band.label);
             Assert.AreEqual(1000f, band.frequency);
             Assert.AreEqual(0.75f, band.magnitude);
         }
@@ -205,7 +206,6 @@ namespace Wise2.XR.Tests
         [Test]
         public void SoundLabsSnapshot_CanBeSerialized()
         {
-            // Arrange
             var snapshot = new SoundLabsSnapshot
             {
                 connectionState = "OFFLINE_DEMO",
@@ -213,14 +213,12 @@ namespace Wise2.XR.Tests
                 ageSeconds = 0,
                 session = new RecordingSession { projectName = "Test" },
                 master = new MasterChannel { level = 0.85f },
-                tracks = new System.Collections.Generic.List<AudioTrack>(),
-                spectrum = new System.Collections.Generic.List<FrequencyBand>(),
+                tracks = new List<AudioTrack>(),
+                spectrum = new List<FrequencyBand>(),
             };
 
-            // Act
             var json = JsonUtility.ToJson(snapshot);
 
-            // Assert
             Assert.IsNotEmpty(json);
             StringAssert.Contains("OFFLINE_DEMO", json);
             StringAssert.Contains("Test", json);
