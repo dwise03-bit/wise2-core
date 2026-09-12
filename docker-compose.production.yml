@@ -288,7 +288,7 @@ services:
       WISE2_REQUIRE_SIGNED_WRITES: ${WISE2_REQUIRE_SIGNED_WRITES:-true}
       WISE2_TARGET_ALIAS: ${WISE2_TARGET_ALIAS:-wise2-core}
       WISE2_TARGET_ENVIRONMENT: ${WISE2_TARGET_ENVIRONMENT:-production}
-      WISE2_ALLOWED_SERVICES: postgres,redis,mongodb,api,ollama,open-webui,website,dashboard,admin,studio,command-center,worker,prometheus,grafana
+      WISE2_ALLOWED_SERVICES: postgres,redis,mongodb,api,ollama,open-webui,website,dashboard,admin,studio,command-center,worker,prometheus,grafana,wise2-ai-router
       WISE2_ALLOWED_APPS: website,dashboard,admin,studio,command-center,api,worker
       WISE2_OLLAMA_URL: http://127.0.0.1:11434/api/tags
       WISE2_HERMES_URL: http://127.0.0.1:3010/api/v1/hermes/health
@@ -308,6 +308,59 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  # ============================================================================
+  # AI ROUTING & CREDIT SAVER
+  # ============================================================================
+  wise2-ai-router:
+    build:
+      context: .
+      dockerfile: services/wise2-ai-router/Dockerfile
+    container_name: wise2-ai-router-prod
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      ROUTER_PORT: 3100
+      ROUTER_API_KEY: ${ROUTER_API_KEY:-sk-router-change-me}
+
+      # Ollama
+      OLLAMA_API_URL: http://ollama:11434
+      OLLAMA_MODEL_PRIORITY: ollama-qwen-coder,ollama-mistral,ollama-gemma4-mlx
+
+      # Database
+      DATABASE_URL: postgresql://wise2_prod_user:${POSTGRES_APP_PASSWORD:-wise2_prod_secure_2026}@postgres:5432/wise2_core_prod
+      ROUTER_DB_SSL: "false"
+
+      # Budget
+      DAILY_BUDGET_USD: ${DAILY_BUDGET_USD:-50.00}
+      BUDGET_WARN_PCT: 50
+      BUDGET_COMPRESS_PCT: 70
+      BUDGET_RESTRICT_PCT: 85
+      BUDGET_BRAKE_PCT: 100
+
+      # Cloud providers (disabled by default in production - enable in .env)
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+      # Telemetry
+      TELEMETRY_ENABLED: "true"
+      TELEMETRY_RETENTION_DAYS: 90
+      TELEMETRY_REDACTION: "true"
+    ports:
+      - "127.0.0.1:3100:3100"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3100/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # ============================================================================
   # BACKGROUND JOBS & WORKERS
