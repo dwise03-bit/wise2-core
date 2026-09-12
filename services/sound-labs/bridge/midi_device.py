@@ -108,7 +108,7 @@ class MidiDeviceManager:
 
     def send_note_on(self, note: int, velocity: int = 127, channel: int = 0) -> bool:
         """Send Note On message to MASCHINE"""
-        if not self.is_connected():
+        if self.output_port is None:
             return False
         try:
             msg = mido.Message("note_on", note=note, velocity=velocity, channel=channel)
@@ -120,7 +120,7 @@ class MidiDeviceManager:
 
     def send_note_off(self, note: int, channel: int = 0) -> bool:
         """Send Note Off message to MASCHINE"""
-        if not self.is_connected():
+        if self.output_port is None:
             return False
         try:
             msg = mido.Message("note_off", note=note, channel=channel)
@@ -132,7 +132,7 @@ class MidiDeviceManager:
 
     def send_control_change(self, control: int, value: int, channel: int = 0) -> bool:
         """Send Control Change message to MASCHINE"""
-        if not self.is_connected():
+        if self.output_port is None:
             return False
         try:
             msg = mido.Message("control_change", control=control, value=value, channel=channel)
