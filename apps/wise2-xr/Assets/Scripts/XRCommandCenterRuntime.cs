@@ -16,6 +16,7 @@ namespace Wise2.XR
         private readonly List<TextMesh> stationLabels = new List<TextMesh>();
         private readonly List<Renderer> stationRenderers = new List<Renderer>();
         private Wise2HvacApiClient hvacClient;
+        private ContractorOsApiClient contractorOsClient;
         private bool digitalTwinRequested;
         private bool wiseDefenseTrainingRequested;
 
@@ -34,12 +35,30 @@ namespace Wise2.XR
                 CreateClientHud(view.transform);
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
+            contractorOsClient = new ContractorOsApiClient(Wise2Config.ApiBaseUrl);
             // soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
             CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); /* CreateSoundLabsStation(); */ CreateVoiceMarker();
             // InitializeAudioMixer();
             UpdateHvacStation();
             StartCoroutine(PollHvacTelemetry());
+            StartCoroutine(PollContractorOs());
             // StartCoroutine(PollSoundLabsAudio());
+        }
+
+        private IEnumerator PollContractorOs()
+        {
+            var wait = new WaitForSeconds(20f);
+            while (true)
+            {
+                yield return contractorOsClient.Refresh();
+                if (stationLabels.Count > 1)
+                {
+                    var job = contractorOsClient.TodaysJobs.Count > 0 ? contractorOsClient.TodaysJobs[0] : null;
+                    stationLabels[1].text = $"CONTRACTOR OS\n{contractorOsClient.Status}\n{(job == null ? "NO JOBS TODAY" : job.title + "\n" + job.status)}";
+                    stationRenderers[1].material.color = contractorOsClient.IsDemo ? new Color(.02f, .09f, .055f) : new Color(.12f, .38f, .08f);
+                }
+                yield return wait;
+            }
         }
 
         private IEnumerator PollHvacTelemetry()

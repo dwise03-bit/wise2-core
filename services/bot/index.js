@@ -4753,17 +4753,24 @@ async function deployCommands() {
       commandData = [...commandData, ...contractorCommandData];
 
       // Register command handlers in client.commands
+      const handlerMap = {
+        'contractor': contractorCommands.handlers.contractor,
+        'contractor-features': contractorCommands.handlers.contractorFeatures,
+        'contractor-demo': contractorCommands.handlers.contractorDemo,
+        'contractor-help': contractorCommands.handlers.contractorHelp,
+      };
+
       contractorCommands.commands.forEach((cmd) => {
         const commandName = cmd.name;
-        const handler = contractorCommands.handlers[
-          commandName.replace(/-/g, '').replace(/contractor/g, 'contractor')
-        ] || contractorCommands.handlers[commandName.replace(/-([a-z])/g, (g) => g[1].toUpperCase())];
+        const handler = handlerMap[commandName];
 
         if (handler) {
           client.commands.set(commandName, {
             data: cmd,
             execute: handler,
           });
+        } else {
+          console.warn(`Warning: No handler found for contractor command: ${commandName}`);
         }
       });
     }
