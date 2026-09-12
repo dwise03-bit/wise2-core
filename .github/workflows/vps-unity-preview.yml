@@ -1,0 +1,84 @@
+name: VPS Unity Preview
+
+on:
+  push:
+    branches:
+      - feat/vps-unity-live-preview
+    paths:
+      - '.github/workflows/vps-unity-preview.yml'
+      - 'apps/wise2-xr/**'
+      - 'ops/unity-vps/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-serve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and serve on VPS through existing deploy SSH channel
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 60m
+          script: |
+            set -euo pipefail
+            SOURCE="$HOME/wise2-core"
+            WORKTREE="$HOME/wise2-worktrees/vps-unity-live-preview"
+            BRANCH="feat/vps-unity-live-preview"
+
+            test -d "$SOURCE/.git" || { echo "Missing source checkout: $SOURCE"; exit 2; }
+            cd "$SOURCE"
+            git fetch origin "$BRANCH"
+
+            if [ -e "$WORKTREE" ]; then
+              test -d "$WORKTREE" || { echo "Worktree path exists but is not a directory"; exit 3; }
+              if [ -n "$(git -C "$WORKTREE" status --porcelain)" ]; then
+                echo "Existing preview worktree is dirty; refusing to overwrite it."
+                git -C "$WORKTREE" status --short
+                exit 4
+              fi
+              git -C "$WORKTREE" fetch origin "$BRANCH"
+              git -C "$WORKTREE" checkout --detach "origin/$BRANCH"
+            else
+              mkdir -p "$(dirname "$WORKTREE")"
+              git worktree add --detach "$WORKTREE" "origin/$BRANCH"
+            fi
+
+            cd "$WORKTREE"
+            echo "=== VPS ==="
+            hostname
+            id -un
+            uname -a
+            echo "=== Tailscale ==="
+            tailscale ip -4 | head -n1
+            tailscale status | head -n 20
+            echo "=== Unity ==="
+            UNITY_EDITOR="/sdb-disk/unity/Hub/Editor/Editor/Unity"
+            test -x "$UNITY_EDITOR" || { echo "Unity missing at $UNITY_EDITOR"; exit 5; }
+            "$UNITY_EDITOR" -version || true
+            echo "=== Docker ==="
+            docker --version
+            docker compose version
+
+            chmod +x ops/unity-vps/*.sh
+            export UNITY_EDITOR
+            export WISE2_XR_WEBGL_BUILD_DIR="$WORKTREE/apps/wise2-xr/Build/WebGL"
+            export WISE2_UNITY_LOG="$WORKTREE/apps/wise2-xr/Build/webgl-build.log"
+            bash ops/unity-vps/build-webgl.sh || {
+              echo "=== Unity build log tail ==="
+              tail -n 160 "$WISE2_UNITY_LOG" || true
+              exit 6
+            }
+
+            export WISE2_PREVIEW_BIND="$(tailscale ip -4 | head -n1)"
+            export WISE2_PREVIEW_PORT="8097"
+            bash ops/unity-vps/serve-webgl.sh
+
+            echo "=== Verify ==="
+            curl -fsS "http://${WISE2_PREVIEW_BIND}:${WISE2_PREVIEW_PORT}/health"
+            curl -fsSI "http://${WISE2_PREVIEW_BIND}:${WISE2_PREVIEW_PORT}/" | head
+            docker compose -f ops/unity-vps/docker-compose.preview.yml ps
+            echo "PREVIEW_URL=http://${WISE2_PREVIEW_BIND}:${WISE2_PREVIEW_PORT}/"
