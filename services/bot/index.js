@@ -4758,6 +4758,15 @@ async function deployCommands() {
         'contractor-features': contractorCommands.handlers.contractorFeatures,
         'contractor-demo': contractorCommands.handlers.contractorDemo,
         'contractor-help': contractorCommands.handlers.contractorHelp,
+        'contractor-pricing': contractorCommands.handlers.contractorPricing,
+        'contractor-trades': contractorCommands.handlers.contractorTrades,
+        'contractor-integrations': contractorCommands.handlers.contractorIntegrations,
+        'contractor-testimonials': contractorCommands.handlers.contractorTestimonials,
+        'contractor-roadmap': contractorCommands.handlers.contractorRoadmap,
+        'contractor-faq': contractorCommands.handlers.contractorFaq,
+        'contractor-docs': contractorCommands.handlers.contractorDocs,
+        'contractor-compare': contractorCommands.handlers.contractorCompare,
+        'contractor-contact': contractorCommands.handlers.contractorContact,
       };
 
       contractorCommands.commands.forEach((cmd) => {
