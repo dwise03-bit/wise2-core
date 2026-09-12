@@ -102,7 +102,7 @@ namespace Wise2.XR
             hud.name = "SOUND LABS CLIENT HUD";
             hud.transform.SetParent(cameraTransform, false);
             // Unity camera forward is negative local Z; keep the client HUD in front of the headset.
-            hud.transform.localPosition = new Vector3(0f, .05f, -3.2f);
+            hud.transform.localPosition = new Vector3(0f, .05f, 3.2f);
             hud.transform.localRotation = Quaternion.identity;
             hud.transform.localScale = new Vector3(2.4f, 1.05f, .04f);
             Destroy(hud.GetComponent<Collider>());
@@ -190,11 +190,12 @@ namespace Wise2.XR
             for (var i = 0; i < stations.Length; i++)
             {
                 var panel = GameObject.CreatePrimitive(PrimitiveType.Cube); panel.name = stations[i]; var row = i / 3; var col = i % 3;
-                panel.transform.position = Place(new Vector3((col - 1) * 1.85f, 1.55f - row * 1.05f, 1.7f)); panel.transform.localScale = new Vector3(1.35f, .72f, .08f);
+                var depth = 1.7f + row * .65f;
+                panel.transform.position = Place(new Vector3((col - 1) * 2.05f, 1.65f - row * 1.05f, depth)); panel.transform.localScale = new Vector3(1.45f, .72f, .08f);
                 var renderer = panel.GetComponent<Renderer>();
                 renderer.material = Material(new Color(.02f, .09f, .055f));
                 stationRenderers.Add(renderer);
-                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nGAZE + TRIGGER", new Vector3(0f, -.02f, -.02f), .065f));
+                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nGAZE + TRIGGER", new Vector3(0f, -.02f, -.02f), .05f));
             }
 
             if (wiseDefenseTrainingRequested) OpenWiseDefenseTraining();
@@ -209,7 +210,7 @@ namespace Wise2.XR
         private void CreateHvacWorld()
         {
             var room = new GameObject("WISE² HVAC DIAGNOSTIC WORLD");
-            room.transform.position = new Vector3(0f, 0f, -4.2f);
+            room.transform.position = Place(new Vector3(0f, 0f, 6.2f));
 
             var header = GameObject.CreatePrimitive(PrimitiveType.Cube);
             header.name = "HVAC telemetry header";

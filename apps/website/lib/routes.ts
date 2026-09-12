@@ -151,6 +151,12 @@ export const ROUTES: Record<string, Route> = {
     label: 'Apps',
     category: 'main',
   },
+  DEMOS: {
+    path: '/demos',
+    label: 'Demos',
+    category: 'main',
+    description: 'Live business operating system demos',
+  },
   MAINTENANCE: {
     path: '/maintenance',
     label: 'Maintenance',
