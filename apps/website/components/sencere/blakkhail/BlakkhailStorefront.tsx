@@ -128,7 +128,7 @@ export function BlakkhailStorefront() {
           <div className="mb-24">
             <div className="mb-16">
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#999]">01 / LATEST DROP</p>
-              <h2 className="mt-4 text-[48px] font-black uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-headers)' }}>
+              <h2 className="mt-4 text-[clamp(2.25rem,6vw,3rem)] font-black uppercase tracking-[0.08em] text-white" style={{ fontFamily: 'var(--font-display)' }}>
                 NEW RELEASES
               </h2>
               <div className="mt-8 flex items-center justify-between">
@@ -145,7 +145,7 @@ export function BlakkhailStorefront() {
         <div>
           <div className="mb-16">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#999]">{latestProducts.length > 0 ? '02' : '01'} / SHOP</p>
-            <h2 className="mt-4 text-[48px] font-black uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-headers)' }}>
+            <h2 className="mt-4 text-[clamp(2.25rem,6vw,3rem)] font-black uppercase tracking-[0.08em] text-white" style={{ fontFamily: 'var(--font-display)' }}>
               THE ESSENTIALS
             </h2>
             <div className="mt-8 flex items-center justify-between">

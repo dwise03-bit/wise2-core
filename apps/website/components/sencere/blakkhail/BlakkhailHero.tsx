@@ -8,7 +8,7 @@ export function BlakkhailHero() {
   const heroImage = BLAKKHAIL_LEGACY.assets.shopPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
 
   return (
-    <section className="relative w-full min-h-[500px] sm:min-h-[600px] lg:min-h-[800px] overflow-hidden group">
+    <section className="relative isolate flex min-h-[min(760px,calc(100svh-112px))] w-full overflow-hidden bg-black group sm:min-h-[600px] lg:min-h-[800px]">
       {/* Background with zoom effect on hover */}
       <div className="absolute inset-0 overflow-hidden">
         <Image
@@ -17,7 +17,7 @@ export function BlakkhailHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center scale-110 group-hover:scale-100 transition-transform duration-[2000ms] ease-out"
+          className="object-cover object-center scale-[1.04] transition-transform duration-[1800ms] ease-out group-hover:scale-100"
         />
         {/* Cinematic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
@@ -28,7 +28,7 @@ export function BlakkhailHero() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-yellow-500/10 blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-1000" />
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+      <div className="relative z-10 flex min-h-[inherit] flex-col items-center justify-center px-6 py-24 text-center sm:py-28">
         {/* Tagline */}
         <p
           className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] mb-8 opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]"
@@ -40,7 +40,7 @@ export function BlakkhailHero() {
         {/* Main Headline */}
         <div className="mb-12 overflow-hidden">
           <h1
-            className="text-[64px] sm:text-[80px] lg:text-[120px] font-black uppercase tracking-tighter leading-none opacity-0 animate-[slideUp_0.9s_cubic-bezier(0.34,1.56,0.64,1)_0.3s_forwards]"
+            className="text-[clamp(3.75rem,12vw,7.5rem)] font-black uppercase tracking-tighter leading-[.86] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
             style={{
               color: BLAKKHAIL.gold,
               fontFamily: 'var(--font-headers)',
@@ -61,10 +61,10 @@ export function BlakkhailHero() {
         </p>
 
         {/* CTA Button */}
-        <div className="mt-16 flex gap-4 opacity-0 animate-[scaleIn_0.6s_cubic-bezier(0.34,1.56,0.64,1)_0.7s_forwards]">
+        <div className="mt-16 flex gap-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.7s_forwards]">
           <a
             href="#collection"
-            className="px-10 py-4 font-bold uppercase tracking-widest text-[11px] transition-all duration-300 hover:scale-110 hover:shadow-2xl relative group/btn overflow-hidden"
+            className="relative overflow-hidden px-10 py-4 font-bold uppercase tracking-widest text-[11px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl group/btn"
             style={{
               backgroundColor: BLAKKHAIL.gold,
               color: BLAKKHAIL.jetBlack,
@@ -80,7 +80,7 @@ export function BlakkhailHero() {
       {/* Animated scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
         <svg
-          className="w-6 h-6 animate-[bounce_2.5s_cubic-bezier(0.68,-0.55,0.265,1.55)_infinite] opacity-70 hover:opacity-100 transition-opacity"
+          className="h-6 w-6 animate-[bounce_2.5s_ease-in-out_infinite] opacity-70 transition-opacity hover:opacity-100 motion-reduce:animate-none"
           style={{ color: BLAKKHAIL.gold }}
           fill="none"
           stroke="currentColor"

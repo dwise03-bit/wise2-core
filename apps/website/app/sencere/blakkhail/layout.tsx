@@ -56,7 +56,7 @@ export default function BlakkhailLayout({ children }: { children: React.ReactNod
   return (
     <div
       className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
-      style={{ fontFamily: 'Arial, Helvetica, sans-serif', backgroundColor: '#0A0A0A', color: '#A8A8A8' }}
+      style={{ fontFamily: 'var(--font-body)', backgroundColor: '#0A0A0A', color: '#A8A8A8' }}
     >
       {children}
     </div>
