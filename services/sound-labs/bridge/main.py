@@ -7,6 +7,7 @@ Hybrid local-first architecture with VPS sync
 import os
 import logging
 from fastapi import FastAPI, WebSocket, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import asyncio
@@ -292,6 +293,13 @@ app = FastAPI(
     description="MASCHINE MIKRO MK3 bridge for WISE² Sound Labs",
     version="0.1.0",
     lifespan=lifespan
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

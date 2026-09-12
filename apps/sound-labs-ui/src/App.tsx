@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import SoundLabsDashboard from './components/SoundLabsDashboard'
 import { BridgeState, ControllerMode } from './types'
 
-const BRIDGE_WS_URL = 'ws://127.0.0.1:8788/ws/state'
-const BRIDGE_API_URL = 'http://127.0.0.1:8788'
+const BRIDGE_API_URL = import.meta.env.VITE_BRIDGE_URL || 'http://100.64.72.14:8788'
+const BRIDGE_WS_URL = BRIDGE_API_URL.replace(/^http/, 'ws') + '/ws/state'
 
 export default function App() {
   const [state, setState] = useState<BridgeState | null>(null)
@@ -13,7 +13,7 @@ export default function App() {
   // Connect to bridge WebSocket
   useEffect(() => {
     let ws: WebSocket | null = null
-    let reconnectTimeout: NodeJS.Timeout | null = null
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null
 
     const connect = () => {
       try {

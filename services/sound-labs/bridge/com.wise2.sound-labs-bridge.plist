@@ -29,7 +29,7 @@
 	<key>EnvironmentVariables</key>
 	<dict>
 		<key>BRIDGE_HOST</key>
-		<string>127.0.0.1</string>
+		<string>0.0.0.0</string>
 		<key>BRIDGE_PORT</key>
 		<string>8788</string>
 		<key>REAPER_BRIDGE_URL</key>

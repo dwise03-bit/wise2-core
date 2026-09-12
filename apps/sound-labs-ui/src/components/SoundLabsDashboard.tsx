@@ -61,7 +61,7 @@ export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnecte
         <div className="footer-info">
           <span>Bridge v0.1.0</span>
           <span>•</span>
-          <span>{state.state.last_action || 'Ready'}</span>
+          <span>{state.state.state.last_action || 'Ready'}</span>
         </div>
       </footer>
     </div>
