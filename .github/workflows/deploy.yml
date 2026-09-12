@@ -149,19 +149,3 @@ jobs:
             echo "🔎 Verifying homepage source parity..."
             node -e "fetch('https://wise2.net/').then(async r => { const html = await r.text(); if (!r.ok || !html.includes('data-wise2-homepage=\\\"united-command-v2\\\"')) process.exit(1); console.log('✅ Homepage parity verified') })"
             echo "✅ Services verification complete"
-
-      - name: Notify Slack on success
-        if: success() && secrets.SLACK_WEBHOOK_URL != ''
-        uses: 8398a7/action-slack@v3
-        with:
-          status: 'success'
-          text: '✅ WISE² deployment successful | Commit: ${{ github.sha }}'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-
-      - name: Notify Slack on failure
-        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
-        uses: 8398a7/action-slack@v3
-        with:
-          status: 'failure'
-          text: '❌ WISE² deployment failed | Commit: ${{ github.sha }} | Branch: ${{ github.ref_name }}'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
