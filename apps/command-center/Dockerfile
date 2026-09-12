@@ -2,6 +2,11 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# The workspace declares pnpm 8, whose self-managed Alpine binary is not
+# available on linux-x64-musl. Keep the image on the compatible pnpm 9 binary
+# installed below instead of having pnpm switch versions during install.
+ENV COREPACK_ENABLE_PROJECT_SPEC=0
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/dashboard ./apps/dashboard
 COPY packages ./packages
