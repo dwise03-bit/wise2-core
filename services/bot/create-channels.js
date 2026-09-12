@@ -67,7 +67,7 @@ client.once('ready', async () => {
   for (const ch of channels.filter(c => c.type === 'category')) {
     try {
       const existing = guild.channels.cache.find(
-        c => c.name.toLowerCase() === ch.name.toLowerCase() && c.isCategory()
+        c => c.name.toLowerCase() === ch.name.toLowerCase() && c.type === ChannelType.GuildCategory
       );
       
       if (existing) {
