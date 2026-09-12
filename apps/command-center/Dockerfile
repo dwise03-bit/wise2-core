@@ -10,6 +10,7 @@ RUN npm install -g pnpm@9.15.9 \
     && pnpm config set manage-package-manager-versions false \
     && pnpm install --frozen-lockfile
 WORKDIR /app/apps/dashboard
+RUN npm install --omit=dev --no-audit --no-fund
 RUN pnpm build
 
 FROM node:20-alpine
