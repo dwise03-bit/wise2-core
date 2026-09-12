@@ -42,11 +42,11 @@ export class TelnyxController {
     }
 
     try {
-      const callControlId = payload.data?.payload?.call_control_id;
-      const callSessionId = payload.data?.payload?.call_session_id;
-      const clientState = payload.data?.payload?.client_state;
+      const callControlId = payload.data?.payload?.call_control_id || '';
+      const callSessionId = payload.data?.payload?.call_session_id || '';
+      const clientState = payload.data?.payload?.client_state || '';
 
-      // Use client_state (our callId) if available, else use call_session_id
+      // Use client_state (our callId) if available, else use call_session_id or call_control_id
       const callId = clientState || callSessionId || callControlId;
 
       switch (eventType) {

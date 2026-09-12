@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TelnyxProvider, CallSessionManager, VoiceOrchestrator, ToolRegistry } from '@wise2/ai-phone';
-import { PrismaService } from '@wise2/db';
+import { TelnyxProvider, CallSessionManager } from '@wise2/ai-phone';
 
 interface TelnyxWebhookEvent {
   callId: string;
@@ -15,12 +14,11 @@ interface TelnyxWebhookEvent {
 @Injectable()
 export class TelnyxService {
   private readonly logger = new Logger('TelnyxService');
-  private telnyxProvider: TelnyxProvider;
-  private sessionManager: CallSessionManager;
-  private voiceOrchestrator: VoiceOrchestrator;
+  private telnyxProvider?: TelnyxProvider;
+  private sessionManager?: CallSessionManager;
   private activeSessions = new Map<string, { sessionId: string; callId: string; callControlId: string; customerId?: string }>();
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor() {
     this.initializeProviders();
   }
 
@@ -39,9 +37,6 @@ export class TelnyxService {
 
       // Initialize session manager
       this.sessionManager = new CallSessionManager();
-
-      // Initialize tool registry
-      const toolRegistry = new ToolRegistry();
 
       // VoiceOrchestrator will be initialized when voice model provider is available
       // For now, we'll handle calls directly through the provider
@@ -62,41 +57,22 @@ export class TelnyxService {
     this.logger.log(`Incoming call from ${from} to ${to} (callId: ${callId}, controlId: ${callControlId})`);
 
     try {
+      if (!this.telnyxProvider || !this.sessionManager) {
+        throw new Error('Telnyx service not initialized');
+      }
+
       // Register call with provider
       const callInfo = await this.telnyxProvider.incomingCall(callId, from!, to!, callControlId);
 
-      // Look up customer in database
-      const customer = await this.prisma.customer.findFirst({
-        where: { primaryPhone: from },
-      });
-
-      if (customer) {
-        this.logger.log(`Found customer: ${customer.fullName}`);
-      } else {
-        this.logger.log(`New caller from ${from}`);
-      }
+      // TODO: Look up customer in database (requires Prisma setup)
+      // For MVP: log as new caller
+      this.logger.log(`Processing call from ${from}`);
 
       // Automatically accept call
       await this.telnyxProvider.acceptCall(callId);
 
-      // Create call record in database
-      const callRecord = await this.prisma.call.create({
-        data: {
-          tenantId: 'default',
-          providerId: 'telnyx',
-          direction: 'inbound',
-          fromNumber: from!,
-          toNumber: to!,
-          startedAt: new Date(timestamp),
-          recordingStatus: 'none',
-          transcriptStatus: 'pending',
-          confidence: 0,
-          costEstimate: 0,
-          customerId: customer?.id,
-        },
-      });
-
-      this.logger.log(`Created call record: ${callRecord.id}`);
+      // TODO: Create call record in database (requires Prisma setup)
+      this.logger.log(`Accepted call ${callId}`);
 
       // Create conversation session
       // TODO: Start voice conversation with OpenAI Realtime API
@@ -107,7 +83,6 @@ export class TelnyxService {
         sessionId: session.sessionId,
         callId,
         callControlId,
-        customerId: customer?.id,
       });
 
       // Start media stream
@@ -120,7 +95,9 @@ export class TelnyxService {
 
       // Reject call on error
       try {
-        await this.telnyxProvider.rejectCall(callId);
+        if (this.telnyxProvider) {
+          await this.telnyxProvider.rejectCall(callId);
+        }
       } catch (rejectError) {
         this.logger.error(`Failed to reject call: ${rejectError instanceof Error ? rejectError.message : String(rejectError)}`);
       }
@@ -138,13 +115,10 @@ export class TelnyxService {
     this.logger.log(`Call ${callId} answered at ${timestamp}`);
 
     try {
-      // Update call record
-      await this.prisma.call.update({
-        where: { id: callId },
-        data: { connectedAt: new Date(timestamp) },
-      });
+      // TODO: Update call record in database (requires Prisma setup)
+      this.logger.log(`Call ${callId} connected at ${timestamp}`);
     } catch (error) {
-      this.logger.warn(`Could not update call record: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(`Could not process call answered: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -161,23 +135,12 @@ export class TelnyxService {
       const sessionInfo = this.activeSessions.get(callId);
 
       // End call
-      await this.telnyxProvider.endCall(callId);
-
-      // Get call duration
-      const callRecord = await this.prisma.call.findUnique({ where: { id: callId } });
-      if (callRecord?.startedAt) {
-        const duration = new Date(timestamp).getTime() - callRecord.startedAt.getTime();
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: {
-            endedAt: new Date(timestamp),
-            disposition: 'completed',
-          },
-        });
+      if (this.telnyxProvider) {
+        await this.telnyxProvider.endCall(callId);
       }
 
       // Get call summary from session
-      if (sessionInfo) {
+      if (sessionInfo && this.sessionManager) {
         const summary = this.sessionManager.getSummary(sessionInfo.sessionId);
         this.logger.log(`Call ${callId} summary: ${(summary as any)?.messageCount || 0} messages, ${(summary as any)?.toolsUsed?.length || 0} tools used`);
       }
@@ -201,14 +164,8 @@ export class TelnyxService {
     this.logger.error(`Call ${callId} failed at ${timestamp}: ${reason || 'unknown error'}`);
 
     try {
-      // Update call record
-      await this.prisma.call.update({
-        where: { id: callId },
-        data: {
-          endedAt: new Date(timestamp),
-          disposition: 'failed',
-        },
-      });
+      // TODO: Update call record in database (requires Prisma setup)
+      this.logger.log(`Call ${callId} failed: ${reason}`);
 
       // Clean up session
       this.activeSessions.delete(callId);
@@ -227,40 +184,29 @@ export class TelnyxService {
     try {
       this.logger.log(`Processing post-call for ${callId}`);
 
+      if (!this.telnyxProvider) {
+        return;
+      }
+
       // Get recording URL
       const recording = await this.telnyxProvider.getRecording(callId);
       if (recording) {
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: { recordingStatus: 'recorded' },
-        });
+        // TODO: Update database (requires Prisma setup)
         this.logger.log(`Recording available: ${recording.url}`);
       }
 
       // Trigger transcript generation via Telnyx Speech-to-Text
       const transcript = await this.telnyxProvider.getTranscript(callId);
       if (transcript) {
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: { transcriptStatus: 'available' },
-        });
+        // TODO: Update database (requires Prisma setup)
         this.logger.log(`Transcript available: ${transcript.transcriptId}`);
       }
 
-      // Create lead or update customer if needed
+      // TODO: Create lead or update customer if needed (requires Prisma setup)
       if (customerId) {
-        // Update existing customer interaction
-        await this.prisma.customer.update({
-          where: { id: customerId },
-          data: { updatedAt: new Date() },
-        });
+        this.logger.log(`Would update customer ${customerId}`);
       } else {
-        // Create new lead from incoming call
-        const callRecord = await this.prisma.call.findUnique({ where: { id: callId } });
-        if (callRecord) {
-          // Create lead for follow-up
-          this.logger.log(`Creating lead from new caller`);
-        }
+        this.logger.log(`Would create lead from new caller`);
       }
     } catch (error) {
       this.logger.warn(`Post-call processing error: ${error instanceof Error ? error.message : String(error)}`);
