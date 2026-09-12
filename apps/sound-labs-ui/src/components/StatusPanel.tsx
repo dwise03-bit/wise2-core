@@ -150,83 +150,149 @@ export default function StatusPanel({
 }
 
 const styles = `
+@keyframes buttonPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.05); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .status-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   height: 100%;
   overflow-y: auto;
+  padding-right: 4px;
+}
+
+.status-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.status-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.status-panel::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.3);
+  border-radius: 3px;
+}
+
+.status-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.5);
 }
 
 .panel-card {
-  padding: 16px;
-  background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-dark) 100%);
-  border: 1px solid rgba(100, 100, 100, 0.2);
-  border-radius: 8px;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(30, 30, 35, 0.6) 0%, rgba(20, 20, 22, 0.8) 100%);
+  border: 1px solid rgba(100, 100, 100, 0.15);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  animation: slideInUp 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .panel-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--neon-green);
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(0, 255, 65, 0.25);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .mode-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .mode-button {
-  padding: 12px;
-  background: var(--bg-input);
-  border: 2px solid var(--gunmetal);
-  border-radius: 4px;
+  padding: 14px 12px;
+  background: linear-gradient(135deg, rgba(40, 40, 45, 0.8) 0%, rgba(25, 25, 28, 0.9) 100%);
+  border: 2px solid rgba(100, 100, 100, 0.3);
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: all 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
+  justify-content: center;
   color: var(--text-secondary);
+  font-weight: 500;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 300ms ease;
+}
+
+.mode-button:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .mode-button:hover:not(:disabled) {
-  border-color: var(--silver);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(50, 50, 55, 0.9) 0%, rgba(35, 35, 38, 1) 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .mode-button.active {
   color: white;
+  border-color: var(--neon-green);
+  background: linear-gradient(135deg, rgba(0, 255, 100, 0.1) 0%, rgba(0, 180, 80, 0.05) 100%);
+  box-shadow:
+    0 0 20px rgba(0, 255, 100, 0.3),
+    inset 0 0 15px rgba(0, 255, 100, 0.1);
+  animation: buttonPulse 2s infinite;
 }
 
 .mode-button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .mode-name {
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .mode-value {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  position: relative;
+  z-index: 2;
 }
 
 .status-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .status-item {
@@ -234,62 +300,85 @@ const styles = `
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.1);
+}
+
+.status-item:last-child {
+  border-bottom: none;
 }
 
 .status-item > span:first-child {
   color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .status-value {
   color: var(--text-primary);
-  font-weight: 500;
-  max-width: 200px;
+  font-weight: 600;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .status-badge {
-  padding: 4px 8px;
-  border-radius: 3px;
+  padding: 6px 10px;
+  border-radius: 5px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   background: rgba(100, 100, 100, 0.1);
-  border: 1px solid var(--gunmetal);
+  border: 1px solid rgba(100, 100, 100, 0.3);
   color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  transition: all 200ms ease;
 }
 
 .status-badge.active {
-  border-color: var(--neon-green);
+  border-color: rgba(0, 255, 65, 0.5);
   color: var(--neon-green);
-  background: rgba(0, 255, 65, 0.05);
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: inset 0 0 8px rgba(0, 255, 65, 0.1);
 }
 
 .actions-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 150px;
+  gap: 10px;
+  max-height: 180px;
   overflow-y: auto;
 }
 
 .action-item {
-  padding: 8px;
-  background: rgba(100, 100, 100, 0.1);
-  border-left: 2px solid var(--electric-blue);
-  border-radius: 2px;
+  padding: 10px 12px;
+  background: linear-gradient(90deg, rgba(70, 150, 255, 0.05) 0%, transparent 100%);
+  border-left: 3px solid var(--electric-blue);
+  border-radius: 4px;
   font-size: 11px;
+  transition: all 150ms ease;
+  animation: slideInUp 300ms ease;
+}
+
+.action-item:hover {
+  background: linear-gradient(90deg, rgba(70, 150, 255, 0.08) 0%, transparent 100%);
+  border-left-color: rgba(70, 150, 255, 0.8);
+  transform: translateX(2px);
 }
 
 .action-text {
   color: var(--text-secondary);
   font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 10px;
 }
 
 .empty-state {
   text-align: center;
   color: var(--text-muted);
   font-size: 12px;
-  padding: 20px 0;
+  padding: 24px 0;
+  font-style: italic;
 }
 `
 

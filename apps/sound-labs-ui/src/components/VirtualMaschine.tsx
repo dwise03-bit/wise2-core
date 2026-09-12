@@ -51,8 +51,21 @@ const LABEL_MAP = {
 
 export default function VirtualMaschine({ mode, midiConnected, recentActions }: Props) {
   const [activePads, setActivePads] = useState<Set<number>>(new Set())
+  const [prevMode, setPrevMode] = useState(mode)
+  const [modeTransition, setModeTransition] = useState(false)
+  const [hoveredPad, setHoveredPad] = useState<number | null>(null)
   const modeColor = MODE_COLORS[mode]
   const labels = LABEL_MAP[mode]
+
+  // Trigger mode transition effect
+  useEffect(() => {
+    if (prevMode !== mode) {
+      setModeTransition(true)
+      const timer = setTimeout(() => setModeTransition(false), 300)
+      setPrevMode(mode)
+      return () => clearTimeout(timer)
+    }
+  }, [mode, prevMode])
 
   // Light up pads when actions are triggered
   useEffect(() => {
@@ -63,17 +76,22 @@ export default function VirtualMaschine({ mode, midiConnected, recentActions }: 
       const padIndex = lastAction.context.note % 16
       setActivePads(new Set([padIndex]))
 
-      // Fade out after 200ms
+      // Fade out after 250ms
       const timer = setTimeout(() => {
         setActivePads(new Set())
-      }, 200)
+      }, 250)
 
       return () => clearTimeout(timer)
     }
   }, [recentActions])
 
+  const handlePadClick = (padIndex: number) => {
+    setActivePads(new Set([padIndex]))
+    setTimeout(() => setActivePads(new Set()), 250)
+  }
+
   return (
-    <div className="virtual-maschine">
+    <div className={`virtual-maschine ${modeTransition ? 'mode-transition' : ''}`}>
       <div className="maschine-header">
         <h3 className="maschine-title">MASCHINE MIKRO MK3</h3>
         <div className={`maschine-status ${midiConnected ? 'connected' : 'disconnected'}`}>
@@ -88,16 +106,22 @@ export default function VirtualMaschine({ mode, midiConnected, recentActions }: 
               {row.map((padIndex) => (
                 <div
                   key={padIndex}
-                  className={`pad ${activePads.has(padIndex) ? 'active' : ''}`}
+                  className={`pad ${activePads.has(padIndex) ? 'active' : ''} ${hoveredPad === padIndex ? 'hovered' : ''}`}
                   style={{
                     borderColor: modeColor,
                     boxShadow: activePads.has(padIndex)
-                      ? `0 0 20px ${modeColor}, inset 0 0 10px ${modeColor}`
-                      : `inset 0 0 5px rgba(0,0,0,0.5)`,
+                      ? `0 0 30px ${modeColor}, 0 0 60px ${modeColor}cc, inset 0 0 20px ${modeColor}66`
+                      : `inset 0 0 8px rgba(0,0,0,0.6), 0 0 1px ${modeColor}33`,
                   }}
+                  onClick={() => handlePadClick(padIndex)}
+                  onMouseEnter={() => setHoveredPad(padIndex)}
+                  onMouseLeave={() => setHoveredPad(null)}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="pad-label">{labels[padIndex]}</div>
                   <div className="pad-number">{padIndex + 1}</div>
+                  <div className="pad-ripple"></div>
                 </div>
               ))}
             </div>
@@ -107,7 +131,7 @@ export default function VirtualMaschine({ mode, midiConnected, recentActions }: 
 
       <div className="maschine-footer">
         <div className="mode-indicator" style={{ borderTopColor: modeColor }}>
-          Mode: <span style={{ color: modeColor }}>{mode.toUpperCase()}</span>
+          Mode: <span style={{ color: modeColor, transition: 'color 300ms ease' }}>{mode.toUpperCase()}</span>
         </div>
       </div>
     </div>
@@ -115,50 +139,86 @@ export default function VirtualMaschine({ mode, midiConnected, recentActions }: 
 }
 
 const styles = `
+@keyframes padPulse {
+  0% { box-shadow: 0 0 30px var(--mode-color), 0 0 60px var(--mode-color)cc, inset 0 0 20px var(--mode-color)66; }
+  50% { box-shadow: 0 0 40px var(--mode-color), 0 0 80px var(--mode-color)dd, inset 0 0 25px var(--mode-color)88; }
+  100% { box-shadow: 0 0 30px var(--mode-color), 0 0 60px var(--mode-color)cc, inset 0 0 20px var(--mode-color)66; }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes gridReveal {
+  0% { opacity: 0.7; filter: hue-rotate(-15deg); }
+  100% { opacity: 1; filter: hue-rotate(0deg); }
+}
+
+@keyframes modeColorShift {
+  0% { color: var(--text-secondary); }
+  50% { color: var(--mode-color); opacity: 0.8; }
+  100% { color: var(--mode-color); opacity: 1; }
+}
+
 .virtual-maschine {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px;
+  padding: 24px;
   background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-dark) 100%);
   border: 1px solid rgba(100, 100, 100, 0.2);
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.virtual-maschine.mode-transition {
+  animation: gridReveal 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .maschine-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(100, 100, 100, 0.2);
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.15);
 }
 
 .maschine-title {
   font-size: 18px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--chrome);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .maschine-status {
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  background: rgba(100, 100, 100, 0.1);
+  font-size: 11px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: rgba(100, 100, 100, 0.08);
   border: 1px solid var(--gunmetal);
   color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 200ms ease;
 }
 
 .maschine-status.connected {
-  border-color: var(--neon-green);
+  border-color: rgba(0, 255, 136, 0.4);
   color: var(--neon-green);
+  background: rgba(0, 255, 136, 0.05);
+  box-shadow: inset 0 0 8px rgba(0, 255, 136, 0.1);
 }
 
 .maschine-status.disconnected {
-  border-color: var(--accent-red);
+  border-color: rgba(255, 100, 100, 0.4);
   color: var(--accent-red);
+  background: rgba(255, 100, 100, 0.05);
+  box-shadow: inset 0 0 8px rgba(255, 100, 100, 0.1);
 }
 
 .maschine-body {
@@ -166,72 +226,147 @@ const styles = `
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  padding: 24px 0;
 }
 
 .pad-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .pad-row {
   display: flex;
-  gap: 12px;
+  gap: 14px;
+  justify-content: center;
 }
 
 .pad {
-  width: 70px;
-  height: 70px;
+  width: 76px;
+  height: 76px;
   border: 2px solid;
-  border-radius: 4px;
-  background: var(--bg-input);
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 22, 0.9) 100%);
   cursor: pointer;
-  transition: all 100ms ease;
+  transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 150ms ease,
+              border-color 150ms ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform, box-shadow;
 }
 
-.pad:hover {
-  transform: scale(1.05);
+.pad:hover:not(.active) {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    inset 0 0 8px rgba(100, 100, 100, 0.2),
+    0 0 20px rgba(100, 255, 200, 0.1);
+}
+
+.pad.hovered:not(.active)::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .pad.active {
-  transform: scale(0.98);
+  transform: scale(0.96);
+  animation: padPulse 200ms ease-out;
+}
+
+.pad-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.pad.active .pad-ripple {
+  animation: ripple 400ms ease-out;
 }
 
 .pad-label {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   color: var(--text-primary);
   text-transform: uppercase;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .pad-number {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
+  position: relative;
+  z-index: 2;
 }
 
 .maschine-footer {
-  padding-top: 12px;
-  border-top: 2px solid;
-  border-color: rgba(100, 100, 100, 0.2);
+  padding-top: 16px;
+  border-top: 1px solid rgba(100, 100, 100, 0.15);
 }
 
 .mode-indicator {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
   padding-top: 12px;
-  border-top: 2px solid;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+}
+
+.mode-indicator span {
+  animation: modeColorShift 300ms ease;
+}
+
+@media (max-width: 768px) {
+  .virtual-maschine {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .pad {
+    width: 64px;
+    height: 64px;
+  }
+
+  .pad-label {
+    font-size: 9px;
+  }
+
+  .pad-grid {
+    gap: 10px;
+  }
+
+  .pad-row {
+    gap: 10px;
+  }
 }
 `
 

@@ -20,6 +20,10 @@ from reaper_client import ReaperClient
 from ai_router import AIRouter
 from discord_integration import DiscordIntegration
 from state_manager import StateManager
+from discord_soundboard import DiscordSoundboard, SoundboardMidiMapper
+from soundboard_routes import register_soundboard_routes
+from studio_ai import StudioAI, IMPAssistant
+from studio_ai_routes import register_studio_ai_routes
 
 # Configure logging
 logging.basicConfig(
@@ -35,6 +39,10 @@ reaper_client: Optional[ReaperClient] = None
 ai_router: Optional[AIRouter] = None
 discord_integration: Optional[DiscordIntegration] = None
 state_manager: Optional[StateManager] = None
+soundboard: Optional[DiscordSoundboard] = None
+soundboard_mapper: Optional[SoundboardMidiMapper] = None
+studio_ai: Optional[StudioAI] = None
+imp_assistant: Optional[IMPAssistant] = None
 active_websockets: Set[WebSocket] = set()
 
 
@@ -44,7 +52,7 @@ async def lifespan(app: FastAPI):
     FastAPI lifespan context manager
     Initialize services on startup, cleanup on shutdown
     """
-    global midi_manager, mode_manager, reaper_client, ai_router, discord_integration, state_manager
+    global midi_manager, mode_manager, reaper_client, ai_router, discord_integration, state_manager, soundboard, soundboard_mapper, studio_ai, imp_assistant
 
     logger.info("🚀 WISE² Sound Labs MIDI Bridge starting...")
 
@@ -63,6 +71,31 @@ async def lifespan(app: FastAPI):
         webhook_url=os.getenv("DISCORD_WEBHOOK_URL", "")
     )
     state_manager = StateManager()
+
+    # Initialize Discord Soundboard
+    soundboard = DiscordSoundboard(
+        library_dir=os.getenv("SOUNDBOARD_LIBRARY_DIR", "./sounds")
+    )
+    soundboard_mapper = SoundboardMidiMapper(soundboard)
+    logger.info("✅ Discord Soundboard initialized with 13 sounds")
+
+    # Register soundboard routes
+    register_soundboard_routes(app, soundboard, soundboard_mapper)
+    logger.info("✅ Soundboard API endpoints registered (14 routes)")
+
+    # Initialize Studio AI (music generation + streaming)
+    studio_ai = StudioAI(
+        ollama_url=os.getenv("OLLAMA_URL", "http://127.0.0.1:11434"),
+        vps_api_url=os.getenv("VPS_API_URL", "https://wise2.net/api/v1")
+    )
+
+    # Initialize IMP Assistant (voice control)
+    imp_assistant = IMPAssistant(studio_ai)
+    logger.info("✅ Studio AI initialized (music generation, style transfer, streaming)")
+
+    # Register Studio AI routes
+    register_studio_ai_routes(app, studio_ai, imp_assistant)
+    logger.info("✅ Studio AI endpoints registered (15 routes)")
 
     # Auto-detect MASCHINE
     detect_result = midi_manager.detect_ports()
