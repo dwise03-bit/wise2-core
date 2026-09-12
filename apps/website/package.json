@@ -24,6 +24,7 @@
     "@wise2/db": "0.1.0",
     "@wise2/ui-components": "0.1.0",
     "axios": "^1.6.0",
+    "discord-interactions": "^4.4.0",
     "framer-motion": "^11.0.0",
     "jose": "^6.2.12",
     "jsonwebtoken": "^9.0.0",

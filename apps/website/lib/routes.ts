@@ -70,6 +70,12 @@ export const ROUTES: Record<string, Route> = {
     label: 'Start Your Digital Twin',
     category: 'content',
   },
+  QUEST_XR: {
+    path: '/quest',
+    label: 'WISE² XR for Quest',
+    category: 'main',
+    description: 'Open the spatial WISE² command room on Meta Quest.',
+  },
 
   // Gallery & Content
   GALLERY: {

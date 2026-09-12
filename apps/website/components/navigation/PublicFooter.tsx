@@ -11,6 +11,7 @@ const footerSections = [
       { href: '/products/imps', label: 'IMPS BYTE MINI' },
       { href: '/fieldtech', label: 'WISE² HVAC' },
       { href: '/wise-defense', label: 'WISE Defense' },
+      { href: '/quest', label: 'WISE² XR for Quest' },
       { href: '/soundlab', label: 'SoundLab' },
     ],
   },

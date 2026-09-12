@@ -210,6 +210,12 @@ export function BrandEcosystemHomepage() {
               REVENUE
             </Link>
             <Link
+              href="/quest"
+              className="hidden transition-colors hover:text-[#b9ff00] xl:inline"
+            >
+              XR COMMAND
+            </Link>
+            <Link
               href="#method"
               className="transition-colors hover:text-[#b9ff00]"
             >
@@ -258,6 +264,9 @@ export function BrandEcosystemHomepage() {
               </Link>
               <Link href="/revenue/dashboard" onClick={() => setMenuOpen(false)}>
                 REVENUE
+              </Link>
+              <Link href="/quest" onClick={() => setMenuOpen(false)}>
+                XR COMMAND
               </Link>
               <Link href="#method" onClick={() => setMenuOpen(false)}>
                 METHOD
