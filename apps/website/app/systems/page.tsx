@@ -89,7 +89,7 @@ export default function SystemsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white">
+    <div style={{minHeight: '100vh', background: 'linear-gradient(to bottom, #000000, #111827)', color: '#ffffff'}}>
       <div className="max-w-7xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="mb-16">
