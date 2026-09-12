@@ -39,44 +39,41 @@ DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1527107240845377639/..." \
 
 ---
 
-## Phase 2: Slash Commands 📋 SETUP READY
+## Phase 2: Slash Commands ✅ INTEGRATED WITH EXISTING BOT
 
 ### Available Commands
 
 | Command | Description | Behavior |
 |---------|-------------|----------|
-| `/contractor` | View Contractor OS overview | Links to https://wise2.net/contractor |
-| `/contractor [section]` | View specific section | Options: overview, features, trades, pricing, demo |
-| `/contractor-features` | View detailed features | Rich embed with all capabilities |
-| `/contractor-demo` | Request/schedule a demo | Links to demo booking |
-| `/contractor-help` | Get help & support | Help resources and contact options |
+| `/contractor` | View Contractor OS overview | Links to https://wise2.net/contractor with optional sections |
+| `/contractor-features` | View detailed features | Rich embed grid with all 8 core capabilities |
+| `/contractor-demo` | Request/schedule a demo | Links to demo booking with buttons |
+| `/contractor-help` | Get help & support | Help resources, docs, and contact options |
 
-### Setup Steps
+### Implementation Details
 
-To register these commands, you need:
-1. `DISCORD_BOT_TOKEN` — Bot token from Discord Developer Portal
-2. `DISCORD_APPLICATION_ID` — Your bot's application ID
-3. Interactions endpoint configured in Developer Portal
+**Integrated into existing bot**: `services/bot/index.js`  
+**Command module**: `services/bot/contractor-commands.js`
 
-**Register commands**:
+The Contractor OS commands are automatically loaded and deployed by the existing WISE² Discord bot. When the bot starts, it:
 
-```bash
-DISCORD_BOT_TOKEN="your_bot_token" \
-DISCORD_APPLICATION_ID="your_app_id" \
-  node scripts/discord-slash-commands-setup.js
+1. Loads contractor commands from `contractor-commands.js`
+2. Registers them in the discord.js client
+3. Deploys them to Discord when bot connects
+
+**No additional setup required** — Commands are active whenever the bot is running.
+
+### Testing Commands
+
+Once bot is online, in Discord:
+```
+/contractor overview
+/contractor-features
+/contractor-demo
+/contractor-help
 ```
 
-**Script**: `scripts/discord-slash-commands-setup.js`
-
-### Configuration in Discord Developer Portal
-
-1. Go to https://discord.com/developers/applications
-2. Select your WISE² bot application
-3. Navigate to "Interactions Endpoint URL"
-4. Set endpoint to: `https://wise2.net/api/discord/interactions`
-5. Save changes
-
-Discord will PING your endpoint to verify it's responding correctly.
+Each command returns rich embeds with links and buttons to the Contractor OS page.
 
 ---
 
@@ -181,23 +178,26 @@ Page updates can trigger webhooks:
 
 ### Immediate
 
-1. ✅ **Announcement posted** — Check Discord to verify
-2. 📋 **Register slash commands**:
-   - Get `DISCORD_BOT_TOKEN` and `DISCORD_APPLICATION_ID` from Developer Portal
-   - Run: `node scripts/discord-slash-commands-setup.js`
-   - Configure interactions endpoint in Developer Portal
+1. ✅ **Announcement posted** — Live on Discord
+2. ✅ **Slash commands integrated** — Added to existing bot
+3. **Start bot**: 
+   ```bash
+   bash scripts/start-discord-bot.sh
+   # Or if already running, restart to load new commands
+   pm2 restart wise2-bot
+   ```
 
 ### Short-term
 
-3. Create Discord channels (#contractor-os, #contractor-demos, etc.)
-4. Pin important guides in each channel
-5. Brief team on new slash commands
+4. Verify commands work in Discord: `/contractor`, `/contractor-features`, etc.
+5. Create Discord channels (#contractor-os, #contractor-demos, etc.)
+6. Pin important guides in each channel
 
 ### Medium-term
 
-6. Add demo booking form → Discord notification flow
-7. Set up customer feedback/support channels
-8. Create Discord role system for access control
+7. Add demo booking form → Discord notification flow
+8. Set up customer feedback/support channels
+9. Create Discord role system for access control
 
 ---
 
@@ -205,11 +205,11 @@ Page updates can trigger webhooks:
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `scripts/discord-contractor-setup.js` | Post announcement | ✅ Done |
-| `scripts/discord-slash-commands-setup.js` | Register commands | 📋 Ready |
-| `apps/website/app/api/discord/interactions/route.ts` | Handle command responses | ✅ Deployed |
-| `apps/website/app/api/discord/webhook/route.ts` | Receive webhooks | ✅ Deployed |
-| `docs/DISCORD_CONTRACTOR_INTEGRATION.md` | This guide | 📋 Current |
+| `scripts/discord-contractor-setup.js` | Post announcement (helper script) | ✅ Used |
+| `services/bot/contractor-commands.js` | Contractor OS command definitions | ✅ Integrated |
+| `services/bot/index.js` | Bot command loader (updated for contractor commands) | ✅ Active |
+| `scripts/start-discord-bot.sh` | Start/restart the Discord bot | ✅ Use to deploy |
+| `docs/DISCORD_CONTRACTOR_INTEGRATION.md` | This setup guide | 📋 Current |
 
 ---
 
@@ -217,24 +217,25 @@ Page updates can trigger webhooks:
 
 ### Commands not showing in Discord
 
-1. Verify bot has "applications.commands" scope
-2. Check registration script ran without errors
-3. Make sure bot is in the Discord server
-4. Try typing "/" and waiting a few seconds to refresh
+1. **Verify bot is running**: `pm2 list | grep wise2-bot`
+2. **Restart bot**: `pm2 restart wise2-bot`
+3. **Check logs**: `pm2 logs wise2-bot --lines 50`
+4. **Verify bot token**: Check `DISCORD_BOT_TOKEN` env var is set in `services/bot/.env`
+5. **Make sure bot is in the server**: Check server members list
 
-### Interactions endpoint not responding
+### Commands showing but not responding
 
-1. Verify HTTPS (Discord requires HTTPS, not HTTP)
-2. Check `DISCORD_PUBLIC_KEY` env var is set correctly
-3. Verify endpoint URL is publicly accessible
-4. Check server logs for verification errors
+1. Check bot has "Message Content Intent" enabled in Developer Portal
+2. Verify bot role has sufficient permissions
+3. Check server logs: `pm2 logs wise2-bot`
+4. Ensure contractor-commands.js is in `services/bot/` directory
 
-### Webhook not posting messages
+### Bot won't start
 
-1. Verify webhook URL is correct and active
-2. Check bot has permissions to post in target channel
-3. Verify JSON payload is valid
-4. Check for rate limiting (wait 60 seconds between posts)
+1. Check token is valid: `node scripts/discord-gateway-probe.js`
+2. Verify Node.js dependencies: `cd services/bot && npm install`
+3. Check for port conflicts (bot uses port 3002 for webhooks)
+4. Check syntax in contractor-commands.js
 
 ---
 

@@ -4745,6 +4745,32 @@ async function deployCommands() {
     console.warn('Warning: Could not load revenue commands:', error.message);
   }
 
+  // Add contractor commands from contractor-commands.js
+  try {
+    const contractorCommands = require('./contractor-commands');
+    if (contractorCommands.commands && Array.isArray(contractorCommands.commands)) {
+      const contractorCommandData = contractorCommands.commands.map((cmd) => cmd.toJSON());
+      commandData = [...commandData, ...contractorCommandData];
+
+      // Register command handlers in client.commands
+      contractorCommands.commands.forEach((cmd) => {
+        const commandName = cmd.name;
+        const handler = contractorCommands.handlers[
+          commandName.replace(/-/g, '').replace(/contractor/g, 'contractor')
+        ] || contractorCommands.handlers[commandName.replace(/-([a-z])/g, (g) => g[1].toUpperCase())];
+
+        if (handler) {
+          client.commands.set(commandName, {
+            data: cmd,
+            execute: handler,
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.warn('Warning: Could not load contractor commands:', error.message);
+  }
+
   try {
     console.log(
       `Started refreshing ${commandData.length} application (/) commands.`
