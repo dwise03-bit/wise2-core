@@ -12,9 +12,10 @@ namespace Wise2.XR
 
         private Vector3 worldOffset;
         private readonly string[] stations = { "HVAC", "CRM", "CLOUD", "AI AGENTS", "SOUND LABS", "COMMS", "DIGITAL TWIN" };
-        private readonly string[] states = { "DEMO", "DEMO", "NO TELEMETRY", "DEMO", "OFFLINE MIX", "UNAVAILABLE", "AWAITING LINK" };
+        private readonly string[] states = { "SIMULATION", "SIMULATION", "NO DATA", "SIMULATION", "SIMULATION", "NOT CONNECTED", "READY TO LINK" };
         private readonly List<TextMesh> stationLabels = new List<TextMesh>();
         private readonly List<Renderer> stationRenderers = new List<Renderer>();
+        private readonly List<Transform> worldOrnaments = new List<Transform>();
         private Wise2HvacApiClient hvacClient;
         private ContractorOsApiClient contractorOsClient;
         private bool digitalTwinRequested;
@@ -31,18 +32,27 @@ namespace Wise2.XR
             {
                 var forward = Vector3.ProjectOnPlane(view.transform.forward, Vector3.up).normalized;
                 if (forward.sqrMagnitude < .01f) forward = Vector3.forward;
-                worldOffset = view.transform.position + forward * 4.2f - new Vector3(0f, 1.6f, 1.8f);
+                // Place the command center in front of the headset.  XR cameras look
+                // down local -Z; the old offset put the HVAC room at the near clip
+                // plane and left the main panels effectively unreadable.
+                worldOffset = view.transform.position + forward * 2.6f - new Vector3(0f, 1.45f, 0f);
                 CreateClientHud(view.transform);
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
             contractorOsClient = new ContractorOsApiClient(Wise2Config.ApiBaseUrl);
             // soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
-            CreateFloor(); CreateCore(); CreateStations(); CreateHvacWorld(); /* CreateSoundLabsStation(); */ CreateVoiceMarker();
+            CreateFloor(); CreateImmersiveEnvironment(); CreateCore(); CreateStations(); CreateHvacWorld(); /* CreateSoundLabsStation(); */ CreateVoiceMarker();
             // InitializeAudioMixer();
             UpdateHvacStation();
             StartCoroutine(PollHvacTelemetry());
             StartCoroutine(PollContractorOs());
             // StartCoroutine(PollSoundLabsAudio());
+        }
+
+        private void Update()
+        {
+            for (var i = 0; i < worldOrnaments.Count; i++)
+                worldOrnaments[i].Rotate(Vector3.up, (8f + i * 2f) * Time.deltaTime, Space.Self);
         }
 
         private IEnumerator PollContractorOs()
@@ -102,12 +112,12 @@ namespace Wise2.XR
             hud.name = "SOUND LABS CLIENT HUD";
             hud.transform.SetParent(cameraTransform, false);
             // Unity camera forward is negative local Z; keep the client HUD in front of the headset.
-            hud.transform.localPosition = new Vector3(0f, .05f, 3.2f);
+            hud.transform.localPosition = new Vector3(0f, .05f, -3.2f);
             hud.transform.localRotation = Quaternion.identity;
             hud.transform.localScale = new Vector3(2.4f, 1.05f, .04f);
             Destroy(hud.GetComponent<Collider>());
             hud.GetComponent<Renderer>().material = Material(new Color(.015f, .08f, .045f));
-            Label(hud.transform, "WISE² SOUND LABS\nOFFLINE MIX · QUEST CLIENT READY", new Vector3(0f, 0f, -.03f), .1f);
+            Label(hud.transform, "WISE² COMMAND WORLD\nLIVE SIMULATION · QUEST READY", new Vector3(0f, 0f, -.03f), .1f);
         }
 
         public void OpenDigitalTwin()
@@ -178,6 +188,37 @@ namespace Wise2.XR
             floor.GetComponent<Renderer>().material = Material(new Color(.01f, .025f, .018f));
         }
 
+        private void CreateImmersiveEnvironment()
+        {
+            var platform = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            platform.name = "WISE² holographic command platform";
+            platform.transform.position = Place(new Vector3(0f, .03f, 3.2f));
+            platform.transform.localScale = new Vector3(2.9f, .06f, 2.9f);
+            Destroy(platform.GetComponent<Collider>());
+            platform.GetComponent<Renderer>().material = Material(new Color(.01f, .08f, .06f));
+            for (var i = 0; i < 3; i++)
+            {
+                var ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                ring.name = "Holographic navigation ring " + i;
+                ring.transform.position = Place(new Vector3(0f, .10f + i * .04f, 3.2f));
+                ring.transform.localScale = new Vector3(2.2f - i * .55f, .015f, 2.2f - i * .55f);
+                Destroy(ring.GetComponent<Collider>());
+                ring.GetComponent<Renderer>().material = Material(new Color(.02f, .28f + i * .12f, .42f));
+                worldOrnaments.Add(ring.transform);
+            }
+            for (var i = 0; i < 8; i++)
+            {
+                var angle = i * 45f * Mathf.Deg2Rad;
+                var tower = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                tower.name = "Command world landmark " + i;
+                tower.transform.position = Place(new Vector3(Mathf.Cos(angle) * 4.1f, .65f + (i % 3) * .22f, 3.2f + Mathf.Sin(angle) * 4.1f));
+                tower.transform.localScale = new Vector3(.28f, 1.3f + (i % 3) * .45f, .28f);
+                Destroy(tower.GetComponent<Collider>());
+                tower.GetComponent<Renderer>().material = Material(new Color(.02f, .12f + (i % 2) * .06f, .18f + (i % 3) * .05f));
+                worldOrnaments.Add(tower.transform);
+            }
+        }
+
         private void CreateCore()
         {
             var core = GameObject.CreatePrimitive(PrimitiveType.Sphere); core.name = "W² AI CORE"; core.transform.position = Place(new Vector3(0f, 1.65f, 1.8f)); core.transform.localScale = Vector3.one * .42f;
@@ -195,7 +236,7 @@ namespace Wise2.XR
                 var renderer = panel.GetComponent<Renderer>();
                 renderer.material = Material(new Color(.02f, .09f, .055f));
                 stationRenderers.Add(renderer);
-                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nGAZE + TRIGGER", new Vector3(0f, -.02f, -.02f), .05f));
+                stationLabels.Add(Label(panel.transform, stations[i] + "\n" + states[i] + "\nSELECT TO OPEN", new Vector3(0f, -.02f, -.02f), .075f));
             }
 
             if (wiseDefenseTrainingRequested) OpenWiseDefenseTraining();
@@ -204,13 +245,13 @@ namespace Wise2.XR
 
         private void CreateVoiceMarker()
         {
-            var voice = new GameObject("WISE² AI Voice"); voice.transform.position = Place(new Vector3(0f, .35f, 1.7f)); Label(voice.transform, "WISE² AI VOICE\nSAY: OPEN SOUND LABS  ·  SHOW TODAY'S HVAC CALLS  ·  OPEN CRM  ·  GO HOME", Vector3.zero, .085f);
+            var voice = new GameObject("WISE² AI Voice"); voice.transform.position = Place(new Vector3(0f, .35f, 1.7f)); Label(voice.transform, "WISE² AI VOICE\nSAY: OPEN HVAC  ·  OPEN CRM  ·  SHOW JOBS  ·  GO HOME", Vector3.zero, .10f);
         }
 
         private void CreateHvacWorld()
         {
             var room = new GameObject("WISE² HVAC DIAGNOSTIC WORLD");
-            room.transform.position = Place(new Vector3(0f, 0f, 6.2f));
+            room.transform.position = Place(new Vector3(0f, 0f, 4.6f));
 
             var header = GameObject.CreatePrimitive(PrimitiveType.Cube);
             header.name = "HVAC telemetry header";
@@ -254,7 +295,7 @@ namespace Wise2.XR
         private static TextMesh Label(Transform parent, string value, Vector3 position, float size)
         {
             var obj = new GameObject("Label"); obj.transform.SetParent(parent); obj.transform.localPosition = position; obj.transform.localRotation = Quaternion.identity;
-            var text = obj.AddComponent<TextMesh>(); text.text = value; text.fontSize = 48; text.characterSize = size * .55f; text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center; text.color = new Color(.72f, 1f, .4f);
+            var text = obj.AddComponent<TextMesh>(); text.text = value; text.fontSize = 64; text.characterSize = size * .72f; text.anchor = TextAnchor.MiddleCenter; text.alignment = TextAlignment.Center; text.color = new Color(.72f, 1f, .4f);
             var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
             if (font != null)
             {

@@ -15,6 +15,7 @@ export default function QuestPage({
   searchParams?: { surface?: string };
 }) {
   const isDigitalTwin = searchParams?.surface === 'digital-twin';
+  const isSoundLabs = searchParams?.surface === 'soundlabs';
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#050505] px-4 py-16 text-[#F4EBDD] sm:px-6 sm:py-24">
@@ -26,7 +27,9 @@ export default function QuestPage({
           <p className="mt-6 max-w-2xl text-base leading-8 text-[#d5cbbb] sm:text-lg">
             {isDigitalTwin
               ? 'Your Digital Twin context is ready to hand off to the WISE² XR command room.'
-              : 'Open WISE² operational surfaces as a spatial command room on your Quest headset.'}
+              : isSoundLabs
+                ? 'Your Sound Labs session is ready for a spatial production room on your Quest headset.'
+                : 'Open WISE² operational surfaces as a spatial command room on your Quest headset.'}
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -48,6 +51,14 @@ export default function QuestPage({
             >
               Return to Digital Twin
             </Link>
+            {isSoundLabs && (
+              <Link
+                href="/sound-labs"
+                className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-[#F4EBDD]/20 bg-black/20 px-6 py-4 text-center text-sm font-black uppercase tracking-[0.13em] text-[#F4EBDD] transition hover:border-[#39FF14]/60 hover:text-[#39FF14] focus:outline-none focus:ring-2 focus:ring-[#39FF14]"
+              >
+                Open browser studio
+              </Link>
+            )}
           </div>
 
           <div className="mt-10 grid gap-3 text-sm leading-7 text-[#c9bfaf] sm:grid-cols-3">

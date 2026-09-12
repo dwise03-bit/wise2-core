@@ -8,6 +8,7 @@ import {
   Music,
   Mic,
   Sparkles,
+  Glasses,
   Loader,
   AlertCircle,
   Plus,
@@ -66,6 +67,28 @@ export default function SoundLabsPage() {
           </div>
         </div>
       </div>
+
+      {/* Quest workspace */}
+      <section className="max-w-7xl mx-auto px-6 pb-12">
+        <div className="relative overflow-hidden rounded-2xl border border-emerald-400/30 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_42%),#0a0f0d] p-8 md:p-10">
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-3 flex items-center gap-3 text-emerald-300">
+                <Glasses className="h-6 w-6" />
+                <span className="text-xs font-black uppercase tracking-[0.2em]">Quest Sound Room</span>
+              </div>
+              <h2 className="text-3xl font-black text-white md:text-4xl">Produce inside the WISE² XR studio.</h2>
+              <p className="mt-3 text-gray-300">Open the Sound Labs workspace in Meta Quest with spatial controls, shared sessions, and a direct handoff to your browser project.</p>
+            </div>
+            <Link
+              href="/quest?surface=soundlabs"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-emerald-400 px-6 py-3 font-bold text-black transition hover:bg-emerald-300"
+            >
+              Open Quest Sound Room <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
