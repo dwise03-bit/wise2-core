@@ -82,7 +82,7 @@ const deployments = [
     title: "Sound Labs",
     copy: "A production environment for turning ideas into finished assets, campaigns, and culture.",
     image: "/brand/wise2-brand-identity.png",
-    href: "/sound-labs",
+    href: "/soundlab",
     tone: "purple",
   },
   {

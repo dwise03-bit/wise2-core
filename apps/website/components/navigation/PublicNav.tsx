@@ -17,6 +17,7 @@ const PRIMARY_LINKS: NavLink[] = [
   { href: '/revenue/dashboard', label: 'Revenue' },
   { href: '/hvac', label: 'HVAC' },
   { href: '/wise-defense', label: 'Defense' },
+  { href: '/soundlab', label: 'Sound Labs' },
   { href: '/case-studies/get-down', label: 'Case Studies' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
