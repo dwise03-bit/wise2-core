@@ -7,19 +7,19 @@
    ============================================================================ */
 
 :root {
-  /* ===== COLOR SYSTEM - UNITED PALETTE ===== */
+  /* ===== COLOR SYSTEM - UNITED PALETTE (LANDING PAGE LOCKED) ===== */
   /* Foundation - Black & Steel */
-  --wise-black: #07080a;
-  --wise-dark-steel: #0e1015;
+  --wise-black: #050505;              /* LANDING PAGE - Deep Black */
+  --wise-dark-steel: #0D1117;
   --wise-steel-panel: #14161c;
   --wise-chrome: #c8ccd4;
   --wise-muted-gray: #6b7080;
-  --wise-white: #f0f0f2;
+  --wise-white: #f5f7f2;              /* LANDING PAGE - Off-white Primary */
 
-  /* Primary Accent - Neon Lime */
-  --wise-neon-green: #39ff14;
-  --wise-green-secondary: #b8ff9f;
-  --wise-dark-green: #1a8a0a;
+  /* Primary Accent - Lime Yellow (Landing Page Signature) */
+  --wise-neon-green: #b9ff00;         /* LANDING PAGE - Bright Lime */
+  --wise-green-secondary: #d4ff33;
+  --wise-dark-green: #99cc00;
 
   /* Secondary Accent - Studio Purple */
   --wise-electric-blue: #9333ea;
@@ -99,8 +99,14 @@
     max-width: 100%;
     overflow-x: hidden;
     background: var(--wise-black);
-    color: var(--wise-chrome);
+    color: var(--wise-white);           /* Landing page text color */
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Apply landing page colors globally to all pages */
+  main {
+    background: var(--wise-black);
+    color: var(--wise-white);
   }
 
   img,
