@@ -111,18 +111,9 @@ echo ""
 echo "════════════════════════════════════════════════════════════════"
 echo "Installing Dependencies"
 echo "════════════════════════════════════════════════════════════════"
-cd services
-if [ -f "package-lock.json" ]; then
-  npm install
-elif [ -f "pnpm-lock.yaml" ]; then
-  pnpm install
-elif [ -f "yarn.lock" ]; then
-  yarn install
-else
-  npm install
-fi
-cd ..
-echo "✅ Dependencies installed"
+echo "Installing discord.js globally for Discord bot..."
+npm install -g discord.js
+echo "✅ discord.js installed"
 echo ""
 
 # Start bot
