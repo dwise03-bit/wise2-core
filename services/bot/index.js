@@ -4782,6 +4782,18 @@ async function deployCommands() {
         'sales-metrics': contractorCommands.handlers.salesMetrics,
         'sales-resources': contractorCommands.handlers.salesResources,
         'sales-contact': contractorCommands.handlers.salesContact,
+        'wise2': contractorCommands.handlers.wise2,
+        'wise2-status': contractorCommands.handlers.wise2Status,
+        'wise2-admin': contractorCommands.handlers.wise2Admin,
+        'wise2-users': contractorCommands.handlers.wise2Users,
+        'wise2-settings': contractorCommands.handlers.wise2Settings,
+        'wise2-analytics': contractorCommands.handlers.wise2Analytics,
+        'wise2-integrations': contractorCommands.handlers.wise2Integrations,
+        'wise2-billing': contractorCommands.handlers.wise2Billing,
+        'wise2-documentation': contractorCommands.handlers.wise2Documentation,
+        'wise2-changelog': contractorCommands.handlers.wise2Changelog,
+        'wise2-roadmap': contractorCommands.handlers.wise2Roadmap,
+        'wise2-support': contractorCommands.handlers.wise2Support,
       };
 
       contractorCommands.commands.forEach((cmd) => {

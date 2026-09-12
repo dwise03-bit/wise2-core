@@ -132,6 +132,54 @@ const commands = [
   new SlashCommandBuilder()
     .setName('sales-contact')
     .setDescription('📞 Sales team & support'),
+
+  new SlashCommandBuilder()
+    .setName('wise2')
+    .setDescription('🎛️ WISE² Control Center — Full platform control'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-status')
+    .setDescription('🟢 System status & health monitoring'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-admin')
+    .setDescription('⚙️ Admin panel & settings'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-users')
+    .setDescription('👥 User management & team'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-settings')
+    .setDescription('🔧 Platform settings & configuration'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-analytics')
+    .setDescription('📊 Platform analytics & insights'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-integrations')
+    .setDescription('🔗 Manage integrations & APIs'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-billing')
+    .setDescription('💳 Billing, subscriptions & invoices'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-documentation')
+    .setDescription('📚 Complete WISE² documentation'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-changelog')
+    .setDescription('📝 Version history & updates'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-roadmap')
+    .setDescription('🗺️ WISE² platform roadmap'),
+
+  new SlashCommandBuilder()
+    .setName('wise2-support')
+    .setDescription('🆘 Technical support & help'),
 ];
 
 // Handler functions
@@ -1625,6 +1673,684 @@ const handlers = {
       new ButtonBuilder()
         .setLabel('Send Email')
         .setURL('mailto:sales@wise2.net')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🎛️ WISE² Control Center')
+      .setDescription('Full platform control & administration')
+      .setColor(0xf2b632) // Gold
+      .setURL('https://wise2.net/admin')
+      .addFields(
+        {
+          name: '⚙️ Administration',
+          value:
+            '[Admin Dashboard](https://wise2.net/admin) — Full control\n' +
+            '[User Management](https://wise2.net/admin/users) — Manage team\n' +
+            '[Settings](https://wise2.net/admin/settings) — Configure platform\n' +
+            '[Integrations](https://wise2.net/admin/integrations) — Connect apps',
+          inline: false,
+        },
+        {
+          name: '📊 Analytics & Insights',
+          value:
+            '[Analytics Dashboard](https://wise2.net/admin/analytics) — Platform metrics\n' +
+            '[User Activity](https://wise2.net/admin/activity) — Team activity\n' +
+            '[Usage Stats](https://wise2.net/admin/stats) — Feature usage\n' +
+            '[Reports](https://wise2.net/admin/reports) — Custom reports',
+          inline: false,
+        },
+        {
+          name: '💼 Business',
+          value:
+            '[Billing](https://wise2.net/admin/billing) — Subscriptions & invoices\n' +
+            '[Team](https://wise2.net/admin/team) — Users & permissions\n' +
+            '[API Keys](https://wise2.net/admin/api) — API management\n' +
+            '[Support](https://wise2.net/admin/support) — Help & tickets',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Full admin access requires authentication' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Go to Admin Panel')
+        .setURL('https://wise2.net/admin')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Documentation')
+        .setURL('https://wise2.net/docs/admin')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Status(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🟢 System Status')
+      .setDescription('Real-time platform health & monitoring')
+      .setColor(0x10b981) // Emerald
+      .setURL('https://wise2.net/status')
+      .addFields(
+        {
+          name: '🟢 All Systems Operational',
+          value:
+            '✅ API Servers — Running\n' +
+            '✅ Database — Healthy\n' +
+            '✅ Authentication — Online\n' +
+            '✅ File Storage — Active\n' +
+            '✅ Email Service — Working\n' +
+            '✅ Integrations — Connected',
+          inline: false,
+        },
+        {
+          name: '⚡ Performance',
+          value:
+            '📊 API Response: 85ms avg\n' +
+            '📊 Database: 12ms avg\n' +
+            '📊 Uptime: 99.98%\n' +
+            '📊 Load: 34% of capacity',
+          inline: false,
+        },
+        {
+          name: '📈 Metrics',
+          value:
+            'Active Users: 2,847\n' +
+            'Requests/min: 18,394\n' +
+            'Data Processed: 4.2GB/day\n' +
+            'Last Incident: None (47 days ago)',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Real-time monitoring at https://wise2.net/status' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Status Page')
+        .setURL('https://wise2.net/status')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Admin(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('⚙️ Admin Panel')
+      .setDescription('Platform administration & configuration')
+      .setColor(0x8b5cf6) // Purple
+      .setURL('https://wise2.net/admin')
+      .addFields(
+        {
+          name: '👥 User Management',
+          value:
+            '[Manage Users](https://wise2.net/admin/users) — Add, edit, remove\n' +
+            '[Teams](https://wise2.net/admin/teams) — Organize users\n' +
+            '[Roles & Permissions](https://wise2.net/admin/roles) — Access control\n' +
+            '[Activity Log](https://wise2.net/admin/logs) — Audit trail',
+          inline: true,
+        },
+        {
+          name: '🔧 Configuration',
+          value:
+            '[Settings](https://wise2.net/admin/settings) — Platform config\n' +
+            '[Branding](https://wise2.net/admin/branding) — Customize look\n' +
+            '[Email Templates](https://wise2.net/admin/email) — Customize emails\n' +
+            '[Webhooks](https://wise2.net/admin/webhooks) — Automation',
+          inline: true,
+        },
+        {
+          name: '💳 Billing & Accounts',
+          value:
+            '[Subscriptions](https://wise2.net/admin/billing) — Manage plans\n' +
+            '[Invoices](https://wise2.net/admin/invoices) — View billing\n' +
+            '[Payments](https://wise2.net/admin/payments) — Payment history\n' +
+            '[Licenses](https://wise2.net/admin/licenses) — License keys',
+          inline: true,
+        },
+        {
+          name: '🔗 Integrations',
+          value:
+            '[Connected Apps](https://wise2.net/admin/apps) — Manage connections\n' +
+            '[API Keys](https://wise2.net/admin/api) — API access\n' +
+            '[Webhooks](https://wise2.net/admin/webhooks) — Incoming webhooks\n' +
+            '[Custom Integrations](https://wise2.net/admin/custom) — Build custom',
+          inline: true,
+        }
+      )
+      .setFooter({ text: 'Admin access requires proper permissions' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Admin Dashboard')
+        .setURL('https://wise2.net/admin')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Users(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('👥 User Management')
+      .setDescription('Manage team members & permissions')
+      .setColor(0x06b6d4) // Cyan
+      .setURL('https://wise2.net/admin/users')
+      .addFields(
+        {
+          name: '👤 User Actions',
+          value:
+            '✓ Add new team members\n' +
+            '✓ Edit user profiles\n' +
+            '✓ Manage permissions & roles\n' +
+            '✓ Deactivate users\n' +
+            '✓ Reset passwords\n' +
+            '✓ View activity logs',
+          inline: false,
+        },
+        {
+          name: '🔐 Roles & Permissions',
+          value:
+            '👑 **Owner** — Full control\n' +
+            '⭐ **Admin** — User & settings management\n' +
+            '💼 **Manager** — Team oversight\n' +
+            '👥 **User** — Standard access\n' +
+            '👁️ **Viewer** — Read-only access',
+          inline: false,
+        },
+        {
+          name: '📊 Team Overview',
+          value:
+            'Total Users: 3\n' +
+            'Active This Week: 3\n' +
+            'Pending Invites: 0\n' +
+            'Last User Added: 2 days ago',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Manage team at https://wise2.net/admin/users' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Manage Users')
+        .setURL('https://wise2.net/admin/users')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Settings(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🔧 Platform Settings')
+      .setDescription('Configure your WISE² instance')
+      .setColor(0x3b82f6) // Blue
+      .setURL('https://wise2.net/admin/settings')
+      .addFields(
+        {
+          name: '🎨 Branding',
+          value:
+            '[Logo & Colors](https://wise2.net/admin/branding) — Customize appearance\n' +
+            '[Company Info](https://wise2.net/admin/company) — Organization details\n' +
+            '[Custom Domain](https://wise2.net/admin/domain) — Custom URL',
+          inline: false,
+        },
+        {
+          name: '🔐 Security',
+          value:
+            '[Two-Factor Auth](https://wise2.net/admin/2fa) — 2FA settings\n' +
+            '[API Keys](https://wise2.net/admin/api) — Manage API access\n' +
+            '[IP Whitelist](https://wise2.net/admin/ip) — IP restrictions\n' +
+            '[Session Timeout](https://wise2.net/admin/sessions) — Auto-logout',
+          inline: false,
+        },
+        {
+          name: '📧 Communications',
+          value:
+            '[Email Templates](https://wise2.net/admin/email) — Customize emails\n' +
+            '[Notifications](https://wise2.net/admin/notifications) — Alert settings\n' +
+            '[SMS Gateway](https://wise2.net/admin/sms) — SMS configuration',
+          inline: false,
+        },
+        {
+          name: '🔗 Integrations',
+          value:
+            '[Connected Apps](https://wise2.net/admin/apps) — Active integrations\n' +
+            '[API Configuration](https://wise2.net/admin/api) — API settings\n' +
+            '[Webhooks](https://wise2.net/admin/webhooks) — Webhook settings',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Configure at https://wise2.net/admin/settings' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Settings')
+        .setURL('https://wise2.net/admin/settings')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Analytics(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📊 Platform Analytics')
+      .setDescription('Insights into platform usage & performance')
+      .setColor(0xf59e0b) // Amber
+      .setURL('https://wise2.net/admin/analytics')
+      .addFields(
+        {
+          name: '📈 Usage Metrics',
+          value:
+            '[Active Users](https://wise2.net/admin/analytics/users) — Daily/monthly active\n' +
+            '[Feature Usage](https://wise2.net/admin/analytics/features) — Which features are used\n' +
+            '[User Activity](https://wise2.net/admin/analytics/activity) — User behavior\n' +
+            '[Growth Trends](https://wise2.net/admin/analytics/trends) — Growth over time',
+          inline: false,
+        },
+        {
+          name: '⚡ Performance',
+          value:
+            '[API Performance](https://wise2.net/admin/analytics/api) — Response times\n' +
+            '[Database Performance](https://wise2.net/admin/analytics/db) — Query performance\n' +
+            '[Storage Usage](https://wise2.net/admin/analytics/storage) — Data storage\n' +
+            '[Bandwidth](https://wise2.net/admin/analytics/bandwidth) — Data transfer',
+          inline: false,
+        },
+        {
+          name: '💼 Business Analytics',
+          value:
+            '[Revenue](https://wise2.net/admin/analytics/revenue) — MRR/ARR trends\n' +
+            '[Churn Rate](https://wise2.net/admin/analytics/churn) — User retention\n' +
+            '[Conversion](https://wise2.net/admin/analytics/conversion) — Trial to paid\n' +
+            '[Custom Reports](https://wise2.net/admin/analytics/reports) — Create reports',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Real-time analytics at https://wise2.net/admin/analytics' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Analytics Dashboard')
+        .setURL('https://wise2.net/admin/analytics')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Integrations(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🔗 Integration Management')
+      .setDescription('Connect WISE² with your favorite apps')
+      .setColor(0xec4899) // Pink
+      .setURL('https://wise2.net/admin/integrations')
+      .addFields(
+        {
+          name: '✅ Currently Connected',
+          value:
+            '✓ Stripe (Payments)\n' +
+            '✓ Slack (Communication)\n' +
+            '✓ Google Workspace (Productivity)\n' +
+            '✓ Twilio (SMS/Voice)',
+          inline: true,
+        },
+        {
+          name: '🔌 Available Integrations',
+          value:
+            '📦 ServiceTitan • Jobber • Housecall Pro\n' +
+            '📧 Mailchimp • HubSpot • Klaviyo\n' +
+            '💳 Square • PayPal • QuickBooks\n' +
+            '☁️ Zapier • Make • n8n',
+          inline: true,
+        },
+        {
+          name: '⚙️ Management',
+          value:
+            '[Add Integration](https://wise2.net/admin/integrations/add) — Connect new app\n' +
+            '[Connected Apps](https://wise2.net/admin/integrations) — Manage active\n' +
+            '[API Keys](https://wise2.net/admin/api) — Generate API keys\n' +
+            '[Webhooks](https://wise2.net/admin/webhooks) — Manage webhooks',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Manage integrations at https://wise2.net/admin/integrations' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Integrations')
+        .setURL('https://wise2.net/admin/integrations')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Billing(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('💳 Billing & Subscriptions')
+      .setDescription('Manage your WISE² subscription')
+      .setColor(0x22c55e) // Green
+      .setURL('https://wise2.net/admin/billing')
+      .addFields(
+        {
+          name: '📋 Current Subscription',
+          value:
+            'Plan: Professional\n' +
+            'Status: Active\n' +
+            'Billing Cycle: Monthly\n' +
+            'Renewal Date: Oct 12, 2026\n' +
+            'Monthly Cost: $99',
+          inline: false,
+        },
+        {
+          name: '📊 Billing Overview',
+          value:
+            '[View Invoices](https://wise2.net/admin/invoices) — Billing history\n' +
+            '[Payment Methods](https://wise2.net/admin/payment-methods) — Add/edit cards\n' +
+            '[Usage](https://wise2.net/admin/usage) — Feature usage\n' +
+            '[Add-ons](https://wise2.net/admin/addons) — Extra features',
+          inline: false,
+        },
+        {
+          name: '🔄 Manage Subscription',
+          value:
+            '[Upgrade Plan](https://wise2.net/admin/upgrade) — Upgrade to Enterprise\n' +
+            '[Downgrade](https://wise2.net/admin/downgrade) — Change plan\n' +
+            '[Cancel Subscription](https://wise2.net/admin/cancel) — Stop service\n' +
+            '[Export Data](https://wise2.net/admin/export) — Export your data',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Manage billing at https://wise2.net/admin/billing' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Billing Portal')
+        .setURL('https://wise2.net/admin/billing')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Documentation(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📚 WISE² Documentation')
+      .setDescription('Complete platform & admin documentation')
+      .setColor(0x3b82f6) // Blue
+      .setURL('https://wise2.net/docs')
+      .addFields(
+        {
+          name: '🚀 Getting Started',
+          value:
+            '[Setup Guide](https://wise2.net/docs/setup) — Initial configuration\n' +
+            '[User Guide](https://wise2.net/docs/user-guide) — How to use WISE²\n' +
+            '[Admin Guide](https://wise2.net/docs/admin) — Administrator manual',
+          inline: false,
+        },
+        {
+          name: '⚙️ Advanced',
+          value:
+            '[API Reference](https://wise2.net/docs/api) — API documentation\n' +
+            '[Webhooks](https://wise2.net/docs/webhooks) — Webhook guide\n' +
+            '[Custom Integration](https://wise2.net/docs/custom) — Build custom apps\n' +
+            '[SDK](https://wise2.net/docs/sdk) — SDKs & libraries',
+          inline: false,
+        },
+        {
+          name: '🎓 Learning',
+          value:
+            '[Video Tutorials](https://wise2.net/docs/videos) — How-to videos\n' +
+            '[Blog](https://wise2.net/blog) — Articles & tips\n' +
+            '[FAQ](https://wise2.net/docs/faq) — Common questions\n' +
+            '[Best Practices](https://wise2.net/docs/best-practices) — Optimization',
+          inline: false,
+        },
+        {
+          name: '🔒 Security & Compliance',
+          value:
+            '[Security](https://wise2.net/docs/security) — Security info\n' +
+            '[Privacy Policy](https://wise2.net/privacy) — Privacy details\n' +
+            '[Compliance](https://wise2.net/docs/compliance) — Certifications',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Full docs at https://wise2.net/docs' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Documentation')
+        .setURL('https://wise2.net/docs')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Changelog(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📝 Changelog & Updates')
+      .setDescription('Version history & feature updates')
+      .setColor(0x8b5cf6) // Purple
+      .setURL('https://wise2.net/changelog')
+      .addFields(
+        {
+          name: '🆕 Latest Release',
+          value:
+            '**v2.5.0** — September 12, 2026\n' +
+            '✨ Discord integration with 28 commands\n' +
+            '✨ Academy training platform\n' +
+            '✨ Sales management system\n' +
+            '✨ Enhanced analytics dashboard',
+          inline: false,
+        },
+        {
+          name: '📋 Recent Updates',
+          value:
+            '[v2.4.9](https://wise2.net/changelog#v249) — API improvements\n' +
+            '[v2.4.8](https://wise2.net/changelog#v248) — Bug fixes\n' +
+            '[v2.4.7](https://wise2.net/changelog#v247) — Performance updates\n' +
+            '[v2.4.6](https://wise2.net/changelog#v246) — New integrations',
+          inline: false,
+        },
+        {
+          name: '🎯 Coming Next',
+          value:
+            '🔜 Mobile app (iOS/Android)\n' +
+            '🔜 Advanced AI features\n' +
+            '🔜 Multi-language support\n' +
+            '🔜 White-label options',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'See all updates at https://wise2.net/changelog' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Changelog')
+        .setURL('https://wise2.net/changelog')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Roadmap(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🗺️ WISE² Platform Roadmap')
+      .setDescription('Future features & vision')
+      .setColor(0x06b6d4) // Cyan
+      .setURL('https://wise2.net/roadmap')
+      .addFields(
+        {
+          name: '✅ Completed',
+          value:
+            '✓ Contractor OS (Core)\n' +
+            '✓ Academy (Training)\n' +
+            '✓ Sales System (Growth)\n' +
+            '✓ Discord Integration (28 commands)\n' +
+            '✓ Multi-tenant architecture',
+          inline: true,
+        },
+        {
+          name: '🔄 In Progress',
+          value:
+            '🔨 Mobile app (iOS/Android)\n' +
+            '🔨 Advanced AI features\n' +
+            '🔨 White-label platform\n' +
+            '🔨 Enhanced reporting',
+          inline: true,
+        },
+        {
+          name: '🎯 Q4 2026',
+          value:
+            '📅 Video tutorials platform\n' +
+            '📅 Multi-language support (8+ languages)\n' +
+            '📅 Advanced automation builder\n' +
+            '📅 Custom field builder',
+          inline: false,
+        },
+        {
+          name: '🚀 2027 & Beyond',
+          value:
+            '⭐ VR/AR job site visualization\n' +
+            '⭐ Blockchain-based contracts\n' +
+            '⭐ Advanced ML predictions\n' +
+            '⭐ Hardware integrations',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'See roadmap at https://wise2.net/roadmap' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Roadmap')
+        .setURL('https://wise2.net/roadmap')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async wise2Support(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🆘 Technical Support')
+      .setDescription('Get help with WISE² platform')
+      .setColor(0xf59e0b) // Amber
+      .addFields(
+        {
+          name: '📞 Support Channels',
+          value:
+            '💬 **Live Chat** — Instant help (weekdays)\n' +
+            '📧 **Email** — support@wise2.net\n' +
+            '☎️ **Phone** — +1-855-WISE-2 (9am-6pm EST)\n' +
+            '🆘 **Emergency** — emergency@wise2.net',
+          inline: false,
+        },
+        {
+          name: '📚 Self-Help Resources',
+          value:
+            '[Knowledge Base](https://wise2.net/kb) — Search answers\n' +
+            '[FAQ](https://wise2.net/docs/faq) — Common questions\n' +
+            '[Video Tutorials](https://wise2.net/docs/videos) — How-to videos\n' +
+            '[Community Forum](https://wise2.net/forum) — Ask other users',
+          inline: false,
+        },
+        {
+          name: '🎯 Support Plans',
+          value:
+            '✓ **Standard** — Email support (included)\n' +
+            '✓ **Premium** — Priority chat & phone\n' +
+            '✓ **Enterprise** — 24/7 phone + dedicated agent',
+          inline: false,
+        },
+        {
+          name: '⏱️ Response Times',
+          value:
+            'Chat: 15 min average\n' +
+            'Email: 2 hours average\n' +
+            'Phone: Immediate\n' +
+            'Emergency: 30 min guaranteed',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Support available 24/7' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Contact Support')
+        .setURL('https://wise2.net/support')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Knowledge Base')
+        .setURL('https://wise2.net/kb')
         .setStyle(ButtonStyle.Link)
     );
 
