@@ -1,0 +1,15 @@
+services:
+  wise2-unity-preview:
+    image: nginx:1.27-alpine
+    container_name: wise2-unity-preview
+    restart: unless-stopped
+    ports:
+      - "${WISE2_PREVIEW_BIND:-127.0.0.1}:${WISE2_PREVIEW_PORT:-8097}:80"
+    volumes:
+      - ../../apps/wise2-xr/Build/WebGL:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
