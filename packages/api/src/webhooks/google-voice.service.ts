@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GoogleVoiceProvider, CallSessionManager, VoiceOrchestrator, ToolRegistry } from '@wise2/ai-phone';
-import { PrismaService } from '@wise2/db';
+import { GoogleVoiceProvider, CallSessionManager } from '@wise2/ai-phone';
+import { PrismaService } from '../prisma/prisma.service';
 
 interface GoogleVoiceWebhookPayload {
   type: 'INCOMING_CALL' | 'CALL_CONNECTED' | 'CALL_ENDED' | 'CALL_FAILED';
@@ -15,21 +15,16 @@ interface GoogleVoiceWebhookPayload {
 @Injectable()
 export class GoogleVoiceService {
   private readonly logger = new Logger('GoogleVoiceService');
-  private googleVoiceProvider: GoogleVoiceProvider;
-  private sessionManager: CallSessionManager;
-  private voiceOrchestrator: VoiceOrchestrator;
+  private googleVoiceProvider?: GoogleVoiceProvider;
+  private sessionManager?: CallSessionManager;
   private activeSessions = new Map<string, { sessionId: string; callId: string; customerId?: string }>();
 
   constructor(private readonly prisma: PrismaService) {
     this.initializeProviders();
   }
 
-  /**
-   * Initialize Google Voice and orchestration components
-   */
   private initializeProviders() {
     try {
-      // Initialize Google Voice Provider
       this.googleVoiceProvider = new GoogleVoiceProvider({
         projectId: process.env.GOOGLE_PROJECT_ID!,
         credentials: {
@@ -47,246 +42,69 @@ export class GoogleVoiceService {
         phoneNumber: process.env.GOOGLE_PHONE_NUMBER!,
       });
 
-      // Initialize session manager
       this.sessionManager = new CallSessionManager();
-
-      // Initialize tool registry
-      const toolRegistry = new ToolRegistry();
-
-      // VoiceOrchestrator will be initialized when voice model provider is available
-      // For now, we'll handle calls directly through the provider
-
-      this.logger.log('✓ Google Voice service initialized successfully');
+      this.logger.log('✓ Google Voice service initialized');
     } catch (error) {
-      this.logger.error(`Failed to initialize Google Voice service: ${error instanceof Error ? error.message : String(error)}`);
-      // Don't throw - allow service to start but webhooks will fail until configured
+      this.logger.error(`Failed to initialize: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  /**
-   * Handle incoming call from Google Voice
-   */
   async handleIncomingCall(payload: GoogleVoiceWebhookPayload) {
     const { callId, googleCallId, from, to, timestamp } = payload;
-
-    this.logger.log(`Incoming call from ${from} to ${to} (callId: ${callId})`);
+    this.logger.log(`Incoming call from ${from} to ${to}`);
 
     try {
-      // Register call with provider
-      const callInfo = await this.googleVoiceProvider.incomingCall(callId, from, to, googleCallId);
-
-      // Look up customer in database
-      const customer = await this.prisma.customer.findFirst({
-        where: { primaryPhone: from },
-      });
-
-      if (customer) {
-        this.logger.log(`Found customer: ${customer.fullName}`);
-      } else {
-        this.logger.log(`New caller from ${from}`);
+      if (!this.googleVoiceProvider || !this.sessionManager) {
+        throw new Error('Provider not initialized');
       }
 
-      // Automatically accept call
+      const callInfo = await this.googleVoiceProvider.incomingCall(callId, from, to, googleCallId);
       await this.googleVoiceProvider.acceptCall(callId);
 
-      // Create call record in database
-      const callRecord = await this.prisma.call.create({
-        data: {
-          tenantId: 'default',
-          providerId: 'google-voice',
-          direction: 'inbound',
-          fromNumber: from,
-          toNumber: to,
-          startedAt: new Date(timestamp),
-          recordingStatus: 'none',
-          transcriptStatus: 'pending',
-          confidence: 0,
-          costEstimate: 0,
-          customerId: customer?.id,
-        },
-      });
-
-      this.logger.log(`Created call record: ${callRecord.id}`);
-
-      // Create conversation session
-      // TODO: Start voice conversation with OpenAI Realtime API
       const session = this.sessionManager.createSession(callId, 'default', []);
+      this.activeSessions.set(callId, { sessionId: session.sessionId, callId });
 
-      // Store session mapping
-      this.activeSessions.set(callId, {
-        sessionId: session.sessionId,
-        callId,
-        customerId: customer?.id,
-      });
-
-      // Start media stream
       const wsUrl = `wss://wise2.net/media/stream/${callId}`;
       await this.googleVoiceProvider.startMediaStream(callId, wsUrl);
 
-      this.logger.log(`Call ${callId} connected and ready for conversation`);
+      this.logger.log(`Call ${callId} connected`);
     } catch (error) {
-      this.logger.error(`Error handling incoming call: ${error instanceof Error ? error.message : String(error)}`);
-
-      // Reject call on error
-      try {
+      this.logger.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
+      if (this.googleVoiceProvider) {
         await this.googleVoiceProvider.rejectCall(callId);
-      } catch (rejectError) {
-        this.logger.error(`Failed to reject call: ${rejectError instanceof Error ? rejectError.message : String(rejectError)}`);
       }
-
-      throw error;
     }
   }
 
-  /**
-   * Handle call connected event
-   */
   async handleCallConnected(payload: GoogleVoiceWebhookPayload) {
     const { callId, timestamp } = payload;
-
     this.logger.log(`Call ${callId} connected at ${timestamp}`);
-
-    try {
-      // Update call record
-      await this.prisma.call.update({
-        where: { id: callId },
-        data: { connectedAt: new Date(timestamp) },
-      });
-    } catch (error) {
-      this.logger.warn(`Could not update call record: ${error instanceof Error ? error.message : String(error)}`);
-    }
   }
 
-  /**
-   * Handle call ended event
-   */
   async handleCallEnded(payload: GoogleVoiceWebhookPayload) {
-    const { callId, timestamp } = payload;
-
-    this.logger.log(`Call ${callId} ended at ${timestamp}`);
+    const { callId } = payload;
+    this.logger.log(`Call ${callId} ended`);
 
     try {
-      // Get session info
-      const sessionInfo = this.activeSessions.get(callId);
-
-      // End call
-      await this.googleVoiceProvider.endCall(callId);
-
-      // Get call duration
-      const callRecord = await this.prisma.call.findUnique({ where: { id: callId } });
-      if (callRecord?.startedAt) {
-        const duration = new Date(timestamp).getTime() - callRecord.startedAt.getTime();
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: {
-            endedAt: new Date(timestamp),
-            disposition: 'completed',
-          },
-        });
+      if (this.googleVoiceProvider) {
+        await this.googleVoiceProvider.endCall(callId);
       }
-
-      // Get call summary from session
-      if (sessionInfo) {
-        const summary = this.sessionManager.getSummary(sessionInfo.sessionId);
-        this.logger.log(`Call ${callId} summary: ${summary.messageCount} messages, ${summary.toolsUsed.length} tools used`);
-      }
-
-      // Clean up session
       this.activeSessions.delete(callId);
-
-      // Trigger post-call processing
-      await this.processPostCall(callId, sessionInfo?.customerId);
     } catch (error) {
-      this.logger.error(`Error handling call ended: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  /**
-   * Handle call failed event
-   */
   async handleCallFailed(payload: GoogleVoiceWebhookPayload) {
-    const { callId, timestamp, metadata } = payload;
-
-    this.logger.error(`Call ${callId} failed at ${timestamp}: ${metadata?.reason || 'unknown error'}`);
-
-    try {
-      // Update call record
-      await this.prisma.call.update({
-        where: { id: callId },
-        data: {
-          endedAt: new Date(timestamp),
-          disposition: 'failed',
-        },
-      });
-
-      // Clean up session
-      this.activeSessions.delete(callId);
-    } catch (error) {
-      this.logger.error(`Error handling call failed: ${error instanceof Error ? error.message : String(error)}`);
-    }
+    const { callId, metadata } = payload;
+    this.logger.error(`Call ${callId} failed: ${metadata?.reason || 'unknown'}`);
+    this.activeSessions.delete(callId);
   }
 
-  /**
-   * Process call after it ends
-   * - Request recordings from Cloud Storage
-   * - Trigger transcription
-   * - Update CRM
-   */
-  private async processPostCall(callId: string, customerId?: string) {
-    try {
-      this.logger.log(`Processing post-call for ${callId}`);
-
-      // Get recording URL
-      const recording = await this.googleVoiceProvider.getRecording(callId);
-      if (recording) {
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: { recordingStatus: 'recorded' },
-        });
-        this.logger.log(`Recording available: ${recording.url}`);
-      }
-
-      // Trigger transcript generation via Cloud Speech-to-Text
-      // This happens asynchronously in Google Cloud
-      const transcript = await this.googleVoiceProvider.getTranscript(callId);
-      if (transcript) {
-        await this.prisma.call.update({
-          where: { id: callId },
-          data: { transcriptStatus: 'available' },
-        });
-        this.logger.log(`Transcript available: ${transcript.transcriptId}`);
-      }
-
-      // Create lead or update customer if needed
-      if (customerId) {
-        // Update existing customer interaction
-        await this.prisma.customer.update({
-          where: { id: customerId },
-          data: { updatedAt: new Date() },
-        });
-      } else {
-        // Create new lead from incoming call
-        const callRecord = await this.prisma.call.findUnique({ where: { id: callId } });
-        if (callRecord) {
-          // Create lead for follow-up
-          this.logger.log(`Creating lead from new caller`);
-        }
-      }
-    } catch (error) {
-      this.logger.warn(`Post-call processing error: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  /**
-   * Get active call status
-   */
   getCallStatus(callId: string) {
     return this.activeSessions.get(callId);
   }
 
-  /**
-   * List active sessions
-   */
   getActiveSessions() {
     return Array.from(this.activeSessions.values());
   }
