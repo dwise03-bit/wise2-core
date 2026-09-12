@@ -1,0 +1,288 @@
+#!/usr/bin/env node
+
+/**
+ * WISE² CLI - Command-line interface for WISE² system
+ *
+ * Usage: wise2 <command> [options]
+ *
+ * This is the primary interface for system management when iMessage isn't available.
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+const commands = {
+  // System Commands
+  status: 'Show current system status',
+  health: 'Run comprehensive health check',
+  doctor: 'Diagnose and fix issues',
+
+  // Hermes Commands
+  'hermes:status': 'Show Hermes gateway status',
+  'hermes:restart': 'Restart Hermes gateway',
+  'hermes:logs': 'Show Hermes logs',
+
+  // Node Commands
+  'node:list': 'List all WISE² nodes',
+  'node:status': 'Show node status',
+  'node:check': 'Check node health',
+
+  // Jobs
+  jobs: 'List recent jobs',
+  'job:get': 'Get job details',
+  'job:log': 'Show job execution log',
+
+  // Auth/Security
+  'auth:list-senders': 'List authorized senders',
+  'auth:add-sender': 'Add authorized sender',
+  'auth:remove-sender': 'Remove authorized sender',
+
+  // Deployment
+  deploy: 'Deploy to staging or production',
+  rollback: 'Rollback to previous version',
+
+  // Remote Execution
+  'remote:status': 'Check remote host status',
+  'remote:logs': 'Get logs from remote host',
+  'remote:restart': 'Restart service on remote host',
+
+  // Memory & Logs
+  logs: 'Show system logs',
+  memory: 'Show memory/state',
+
+  // Help
+  help: 'Show help',
+  version: 'Show version',
+};
+
+const args = process.argv.slice(2);
+const command = args[0] || 'help';
+const opts = args.slice(1);
+
+function showHelp() {
+  console.log(`
+WISE² CLI v1.0.0
+================
+
+USAGE:
+  wise2 <command> [options]
+
+COMMANDS:
+
+System:
+  status              Show current system status
+  health              Run comprehensive health check
+  doctor              Diagnose and fix issues
+
+Hermes:
+  hermes:status       Show Hermes gateway status
+  hermes:restart      Restart Hermes gateway
+  hermes:logs         Show Hermes logs
+
+Nodes:
+  node:list           List all WISE² nodes
+  node:status <node>  Check specific node
+  node:check <node>   Health check for node
+
+Jobs:
+  jobs [--limit=10]   List recent jobs
+  job:get <id>        Get job details
+  job:log <id>        Show job execution log
+
+Security:
+  auth:list-senders   List authorized senders
+  auth:add-sender <e164> <role> <name>
+  auth:remove-sender <e164>
+
+Deployment:
+  deploy <target>     Deploy (staging|production)
+  rollback            Rollback to previous version
+
+Remote:
+  remote:status <host>            Check host status
+  remote:logs <host> <service>    Get service logs
+  remote:restart <host> <service> Restart service
+
+Logging:
+  logs [--filter=owner] [--since=1h]
+  memory [--show=customers|services]
+
+Help:
+  help                Show this help
+  version             Show version
+
+EXAMPLES:
+  wise2 status                              # System status
+  wise2 health                              # Full health check
+  wise2 node:status mac                     # Check Mac node
+  wise2 jobs --limit=20                     # List 20 jobs
+  wise2 deploy production                   # Deploy to prod
+  wise2 remote:status wise-vps              # Check VPS
+  wise2 auth:add-sender +1-555-0123 owner   # Add sender
+
+`);
+}
+
+function showVersion() {
+  console.log('WISE² CLI v1.0.0');
+  console.log('Built for WISE² Genesis v2.0');
+}
+
+async function runCommand(cmd, options) {
+  switch (cmd) {
+    // System Commands
+    case 'status':
+      return runStatus();
+    case 'health':
+      return runHealth();
+    case 'doctor':
+      return runDoctor();
+
+    // Help
+    case 'help':
+    case '--help':
+    case '-h':
+      return showHelp();
+    case 'version':
+    case '--version':
+    case '-v':
+      return showVersion();
+
+    default:
+      console.error(`Unknown command: ${cmd}`);
+      console.error(`Run 'wise2 help' for usage`);
+      process.exit(1);
+  }
+}
+
+function runStatus() {
+  console.log(`
+WISE² System Status
+===================
+\n`);
+
+  try {
+    // Check Mac Hermes
+    console.log('🏠 Mac Hermes:');
+    try {
+      const status = execSync('hermes gateway status', { encoding: 'utf-8' });
+      console.log('  ✅ Online');
+    } catch {
+      console.log('  ❌ Offline');
+    }
+
+    // Check Photon
+    console.log('\n📱 Photon (iMessage)');
+    try {
+      const status = execSync('hermes photon status', { encoding: 'utf-8' });
+      console.log('  ✅ Connected');
+    } catch {
+      console.log('  ❌ Not configured');
+    }
+
+    // Check Local Services
+    console.log('\n🔧 Local Services:');
+    checkPort(3000, 'Website Dev');
+    checkPort(5432, 'Postgres');
+    checkPort(6379, 'Redis');
+    checkPort(11434, 'Ollama');
+
+    // Check VPS
+    console.log('\n🌐 VPS:');
+    try {
+      execSync('ssh -o ConnectTimeout=2 wise-vps hostname > /dev/null 2>&1');
+      console.log('  ✅ Reachable');
+    } catch {
+      console.log('  ❌ Unreachable');
+    }
+
+    console.log('\n');
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+  }
+}
+
+function runHealth() {
+  console.log(`
+WISE² Health Check
+==================
+\n`);
+
+  const checks = [
+    { name: 'Hermes Gateway', cmd: 'hermes gateway status' },
+    { name: 'Photon', cmd: 'hermes photon status' },
+    { name: 'Local Ollama', cmd: 'curl -s http://localhost:11434/api/tags > /dev/null' },
+    { name: 'Postgres', cmd: 'nc -z localhost 5432' },
+    { name: 'Redis', cmd: 'nc -z localhost 6379' },
+    { name: 'VPS SSH', cmd: 'ssh -o ConnectTimeout=2 wise-vps hostname > /dev/null 2>&1' },
+  ];
+
+  console.log('Service Health:');
+  for (const check of checks) {
+    try {
+      execSync(`${check.cmd} 2>/dev/null`);
+      console.log(`  ✅ ${check.name}`);
+    } catch {
+      console.log(`  ❌ ${check.name}`);
+    }
+  }
+
+  console.log('\n');
+}
+
+function runDoctor() {
+  console.log(`
+WISE² Doctor - Diagnostics
+===========================
+\n`);
+
+  console.log('Checking common issues...\n');
+
+  // Check Hermes
+  console.log('Hermes:');
+  try {
+    execSync('which hermes > /dev/null');
+    console.log('  ✅ Installed');
+  } catch {
+    console.log('  ❌ Not installed');
+  }
+
+  // Check Node
+  console.log('\nNode.js:');
+  try {
+    const version = execSync('node --version', { encoding: 'utf-8' }).trim();
+    console.log(`  ✅ ${version}`);
+  } catch {
+    console.log('  ❌ Not installed');
+  }
+
+  // Check ports
+  console.log('\nPort availability:');
+  const criticalPorts = [
+    { port: 3000, name: 'Website' },
+    { port: 5432, name: 'Postgres' },
+    { port: 6379, name: 'Redis' },
+  ];
+
+  for (const { port, name } of criticalPorts) {
+    checkPort(port, name);
+  }
+
+  console.log('\n');
+}
+
+function checkPort(port, name) {
+  try {
+    execSync(`nc -z localhost ${port} 2>/dev/null`);
+    console.log(`  ✅ ${port} (${name})`);
+  } catch {
+    console.log(`  ❌ ${port} (${name}) - not listening`);
+  }
+}
+
+// Run the command
+runCommand(command, opts).catch((err) => {
+  console.error(`Fatal error: ${err.message}`);
+  process.exit(1);
+});
