@@ -1,0 +1,78 @@
+/* WISE² Sound Labs Color Scheme */
+:root {
+  /* Dark Studio Theme */
+  --bg-black: #0a0a0a;
+  --bg-dark: #141414;
+  --bg-panel: #1a1a1a;
+  --bg-input: #222222;
+
+  /* Metallic */
+  --chrome: #cccccc;
+  --gunmetal: #333333;
+  --silver: #999999;
+
+  /* WISE² Brand Colors */
+  --neon-green: #00ff41;
+  --cyan: #00e5ff;
+  --electric-blue: #0078ff;
+
+  /* Mode Colors */
+  --mode-normal: #00b8e6;   /* Cyan/Blue */
+  --mode-ai: #00ff41;        /* Neon Green */
+  --mode-live: #9d00ff;      /* Purple */
+  --mode-wise2: #ff9a00;     /* Gold/Orange */
+
+  /* Accents */
+  --accent-red: #ff2e5f;
+  --accent-orange: #ff9a00;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-muted: #666666;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gunmetal);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--silver);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--electric-blue);
+  color: white;
+}
