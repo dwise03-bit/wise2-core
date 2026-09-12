@@ -13,6 +13,7 @@ COPY packages ./packages
 
 RUN npm install -g pnpm@9.15.9 \
     && pnpm config set manage-package-manager-versions false \
+    && pnpm config set node-linker hoisted \
     && pnpm install --frozen-lockfile
 WORKDIR /app/apps/dashboard
 RUN pnpm install --filter @wise2/dashboard... --frozen-lockfile --force
