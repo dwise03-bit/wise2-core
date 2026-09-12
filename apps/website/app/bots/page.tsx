@@ -54,6 +54,16 @@ const BOTS: Bot[] = [
     features: ['Chat support', 'FAQ knowledge', 'Issue resolution'],
     endpoint: '/api/bots/hermes',
   },
+  {
+    id: 'discord-commands',
+    name: 'Discord Commands',
+    description: '40 slash commands for WISE² products',
+    status: 'online',
+    color: '#5865F2',
+    icon: '⚡',
+    features: ['40 commands', 'Rich embeds', 'Action buttons', 'Contractor OS', 'Academy', 'Sales', 'Control'],
+    endpoint: '/api/bots/discord-commands',
+  },
 ];
 
 export default function BotsPage() {
