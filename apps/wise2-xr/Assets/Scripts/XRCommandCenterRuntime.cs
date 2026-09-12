@@ -259,62 +259,6 @@ namespace Wise2.XR
         }
 
         #if false // Sound Labs audio integration is disabled until its service is wired into the Quest build.
-        private void InitializeAudioMixer()
-        {
-            // Create empty object for audio mixer
-            var mixerObj = new GameObject("Audio Mixer Manager");
-            audioMixer = mixerObj.AddComponent<SpatialAudioMixer>();
-            audioMixer.Initialize(soundLabsClient);
-        }
-
-        private IEnumerator PollSoundLabsAudio()
-        {
-            var wait = new WaitForSeconds(0.1f);  // 100ms update rate for audio
-            while (true)
-            {
-                yield return soundLabsClient.Refresh();
-                UpdateSoundLabsStation();
-                yield return wait;
-            }
-        }
-
-        private void UpdateSoundLabsStation()
-        {
-            if (soundLabsClient == null || stationLabels.Count <= SoundLabsStationIndex) return;
-
-            var snapshot = soundLabsClient.Latest;
-            var state = snapshot.ParsedState;
-            var sessionSummary = SoundLabsStateMapper.SessionSummary(snapshot.session);
-            var masterSummary = SoundLabsStateMapper.MasterSummary(snapshot.master);
-            var body = $"{sessionSummary}\n{masterSummary}";
-            stationLabels[SoundLabsStationIndex].text = $"SOUND LABS\n{SoundLabsStateMapper.StatusLabel(state)}\n{body}";
-            stationRenderers[SoundLabsStationIndex].material.color = SoundLabsStationColor(state);
-        }
-
-        private static Color SoundLabsStationColor(AudioConnectionState state)
-        {
-            switch (state)
-            {
-                case AudioConnectionState.Connected: return new Color(.12f, .38f, .08f);
-                case AudioConnectionState.Demo: return new Color(.02f, .09f, .055f);
-                case AudioConnectionState.OfflineDemo: return new Color(.06f, .12f, .08f);
-                default: return new Color(.12f, .09f, .02f);
-            }
-        }
-
-        private void CreateSoundLabsStation()
-        {
-            // Add voice command for opening SoundLabs mixer
-            var voiceMarker = FindFirstObjectByType<GameObject>();
-            if (voiceMarker != null && voiceMarker.name == "WISE² AI Voice")
-            {
-                var textMesh = voiceMarker.GetComponentInChildren<TextMesh>();
-                if (textMesh != null)
-                {
-                    textMesh.text = "WISE² AI VOICE\nSAY: OPEN SOUND LABS  ·  OPEN MIXER  ·  SHOW LEVELS  ·  START RECORDING  ·  OPEN CRM  ·  GO HOME";
-                }
-            }
-        }
         #endif
 
         private static Material templateMaterial;
