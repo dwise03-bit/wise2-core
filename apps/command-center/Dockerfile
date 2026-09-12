@@ -6,7 +6,9 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/dashboard ./apps/dashboard
 COPY packages ./packages
 
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN npm install -g pnpm@9.15.9 \
+    && pnpm config set manage-package-manager-versions false \
+    && pnpm install --frozen-lockfile
 WORKDIR /app/apps/dashboard
 RUN pnpm build
 
