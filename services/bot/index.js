@@ -4767,6 +4767,13 @@ async function deployCommands() {
         'contractor-docs': contractorCommands.handlers.contractorDocs,
         'contractor-compare': contractorCommands.handlers.contractorCompare,
         'contractor-contact': contractorCommands.handlers.contractorContact,
+        'academy': contractorCommands.handlers.academy,
+        'academy-courses': contractorCommands.handlers.academyCourses,
+        'academy-certification': contractorCommands.handlers.academyCertification,
+        'academy-enroll': contractorCommands.handlers.academyEnroll,
+        'academy-schedule': contractorCommands.handlers.academySchedule,
+        'academy-resources': contractorCommands.handlers.academyResources,
+        'academy-instructors': contractorCommands.handlers.academyInstructors,
       };
 
       contractorCommands.commands.forEach((cmd) => {

@@ -72,6 +72,34 @@ const commands = [
   new SlashCommandBuilder()
     .setName('contractor-contact')
     .setDescription('📞 Contact sales or support team'),
+
+  new SlashCommandBuilder()
+    .setName('academy')
+    .setDescription('🎓 WISE² Academy — Training for Contractor OS mastery'),
+
+  new SlashCommandBuilder()
+    .setName('academy-courses')
+    .setDescription('📚 Browse WISE² Academy courses'),
+
+  new SlashCommandBuilder()
+    .setName('academy-certification')
+    .setDescription('🏆 Get Contractor OS Certified'),
+
+  new SlashCommandBuilder()
+    .setName('academy-enroll')
+    .setDescription('✍️ Enroll in a course'),
+
+  new SlashCommandBuilder()
+    .setName('academy-schedule')
+    .setDescription('📅 View class schedules & live training'),
+
+  new SlashCommandBuilder()
+    .setName('academy-resources')
+    .setDescription('📖 Access learning materials & templates'),
+
+  new SlashCommandBuilder()
+    .setName('academy-instructors')
+    .setDescription('👨‍🏫 Meet the WISE² Academy team'),
 ];
 
 // Handler functions
@@ -686,6 +714,440 @@ const handlers = {
       new ButtonBuilder()
         .setLabel('Send Email')
         .setURL('mailto:hello@wise2.net')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academy(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🎓 WISE² Academy')
+      .setDescription('Master Contractor OS with our comprehensive training program')
+      .setColor(0x8b5cf6) // Purple
+      .setURL('https://wise2.net/academy')
+      .addFields(
+        {
+          name: '📚 What You\'ll Learn',
+          value:
+            '• Complete Contractor OS setup & workflow\n' +
+            '• How to use AI Operator effectively\n' +
+            '• Advanced automation & custom workflows\n' +
+            '• Industry best practices from experts',
+          inline: false,
+        },
+        {
+          name: '🎯 For Everyone',
+          value:
+            '**Beginners**: Get up and running in 15 minutes\n' +
+            '**Intermediate**: Unlock advanced features\n' +
+            '**Advanced**: Master customization & APIs',
+          inline: false,
+        },
+        {
+          name: '✨ Academy Benefits',
+          value:
+            '✓ Self-paced video courses\n' +
+            '✓ Live group training sessions\n' +
+            '✓ 1-on-1 coaching available\n' +
+            '✓ Official certification\n' +
+            '✓ Exclusive templates & resources',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Free for all Contractor OS users' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Browse Academy')
+        .setURL('https://wise2.net/academy')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('View Courses')
+        .setURL('https://wise2.net/academy/courses')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academyCourses(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📚 WISE² Academy Courses')
+      .setDescription('Choose your learning path')
+      .setColor(0x8b5cf6) // Purple
+      .setURL('https://wise2.net/academy/courses')
+      .addFields(
+        {
+          name: '🚀 Beginner Track',
+          value:
+            '**Contractor OS Essentials** (2 hours)\n' +
+            '→ Setup, dashboard, first lead\n\n' +
+            '**CRM Mastery** (3 hours)\n' +
+            '→ Lead capture, tracking, follow-up',
+          inline: true,
+        },
+        {
+          name: '⭐ Intermediate Track',
+          value:
+            '**Jobs & Dispatch** (2 hours)\n' +
+            '→ Scheduling, crew management, tracking\n\n' +
+            '**Estimates & Invoicing** (2.5 hours)\n' +
+            '→ Proposals, e-signatures, payments',
+          inline: true,
+        },
+        {
+          name: '🏆 Advanced Track',
+          value:
+            '**AI Operator Mastery** (2 hours)\n' +
+            '→ Automation, workflows, AI actions\n\n' +
+            '**Custom Integrations** (3 hours)\n' +
+            '→ API, webhooks, Zapier',
+          inline: true,
+        },
+        {
+          name: '🎯 Specialty Courses',
+          value:
+            '**Industry Guides** — HVAC, Roofing, Plumbing, etc.\n' +
+            '**Business Growth** — Systems, scaling, team building\n' +
+            '**Marketing Automation** — Campaigns, follow-up sequences',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Start any course at any time' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View All Courses')
+        .setURL('https://wise2.net/academy/courses')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Start Learning')
+        .setURL('https://wise2.net/academy/enroll')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academyCertification(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('🏆 Contractor OS Certified')
+      .setDescription('Earn your official certification')
+      .setColor(0xfbbf24) // Amber
+      .setURL('https://wise2.net/academy/certification')
+      .addFields(
+        {
+          name: '📜 What You Get',
+          value:
+            '✓ Official WISE² Certificate\n' +
+            '✓ Digital badge for your LinkedIn profile\n' +
+            '✓ "Certified Contractor OS Expert" title\n' +
+            '✓ Exclusive partner directory listing\n' +
+            '✓ Priority support access',
+          inline: false,
+        },
+        {
+          name: '🎯 Certification Path',
+          value:
+            '1. Complete beginner & intermediate courses (7 hours)\n' +
+            '2. Pass the certification exam (90 min)\n' +
+            '3. Complete a capstone project\n' +
+            '4. Receive your official certificate',
+          inline: false,
+        },
+        {
+          name: '⏱️ Time Investment',
+          value: 'Average: 10-12 hours spread over 2-4 weeks',
+        },
+        {
+          name: '✨ Benefits',
+          value:
+            'Build credibility • Attract more clients • Command higher rates • Join exclusive network',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Certification valid for 2 years' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Learn More')
+        .setURL('https://wise2.net/academy/certification')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Start Courses')
+        .setURL('https://wise2.net/academy/enroll')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academyEnroll(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('✍️ Enroll in Courses')
+      .setDescription('Start learning at your own pace')
+      .setColor(0x10b981) // Emerald
+      .setURL('https://wise2.net/academy/enroll')
+      .addFields(
+        {
+          name: '🎯 Choose Your Path',
+          value:
+            '**Self-Paced** — Learn anytime, anywhere\n' +
+            '📹 Video lessons + downloadable resources\n' +
+            '✨ Lifetime access to course materials\n' +
+            '🎓 Progress tracking & certificates',
+          inline: false,
+        },
+        {
+          name: '👥 Live Group Training',
+          value:
+            '🗓️ Weekly sessions — Tuesdays & Thursdays\n' +
+            '💬 Ask questions live\n' +
+            '🤝 Network with other contractors\n' +
+            '📹 Sessions recorded for later viewing',
+          inline: false,
+        },
+        {
+          name: '1️⃣ Private Coaching',
+          value:
+            '👨‍🏫 One-on-one sessions with WISE² experts\n' +
+            '⏰ Flexible scheduling\n' +
+            '🎯 Personalized to your business needs\n' +
+            '🚀 Accelerate your results',
+          inline: false,
+        },
+        {
+          name: '💰 Pricing',
+          value:
+            'Free courses included with Contractor OS\n' +
+            'Premium courses from $29-99\n' +
+            'Group training from $149/month\n' +
+            'Private coaching from $99/hour',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Start learning today' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Enroll Now')
+        .setURL('https://wise2.net/academy/enroll')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('View Schedule')
+        .setURL('https://wise2.net/academy/schedule')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academySchedule(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📅 Academy Schedule')
+      .setDescription('Live training sessions & class times')
+      .setColor(0x06b6d4) // Cyan
+      .setURL('https://wise2.net/academy/schedule')
+      .addFields(
+        {
+          name: '🗓️ Weekly Live Sessions',
+          value:
+            '**Tuesday, 2pm EST** — CRM & Leads Mastery\n' +
+            '**Wednesday, 10am EST** — Jobs & Dispatch Deep Dive\n' +
+            '**Thursday, 3pm EST** — AI Operator Workshop\n' +
+            '**Friday, 11am EST** — Q&A & Office Hours',
+          inline: false,
+        },
+        {
+          name: '📍 Upcoming Bootcamps',
+          value:
+            '**Sept 15-19** — Contractor OS Intensive (5-day)\n' +
+            '**Oct 1-5** — Advanced Automation Bootcamp\n' +
+            '**Oct 20-24** — Industry-Specific Workshop (HVAC)',
+          inline: false,
+        },
+        {
+          name: '🌍 Time Zones',
+          value:
+            'EST • CST • MST • PST sessions available\n' +
+            'All sessions recorded & replayed',
+          inline: false,
+        },
+        {
+          name: '✨ No Experience Needed',
+          value:
+            'Whether you\'re brand new or an advanced user,\n' +
+            'there\'s a course for your skill level.',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'Register in advance to get the Zoom link' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('View Full Schedule')
+        .setURL('https://wise2.net/academy/schedule')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Register for Session')
+        .setURL('https://wise2.net/academy/enroll')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academyResources(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('📖 Academy Resources')
+      .setDescription('Learning materials, templates & guides')
+      .setColor(0x3b82f6) // Blue
+      .setURL('https://wise2.net/academy/resources')
+      .addFields(
+        {
+          name: '📹 Video Library',
+          value:
+            '100+ tutorial videos\n' +
+            'Search by feature or trade\n' +
+            'Closed captions available\n' +
+            'Downloadable transcripts',
+          inline: true,
+        },
+        {
+          name: '📄 Templates & Guides',
+          value:
+            'CRM setup checklist\n' +
+            'Sales follow-up sequences\n' +
+            'Workflow templates\n' +
+            'Industry playbooks (HVAC, Roofing, etc.)',
+          inline: true,
+        },
+        {
+          name: '📊 Spreadsheets & Tools',
+          value:
+            'ROI calculator\n' +
+            'Pricing templates\n' +
+            'Lead scoring worksheet\n' +
+            'Team onboarding checklist',
+          inline: true,
+        },
+        {
+          name: '📚 Documentation',
+          value:
+            'Feature guides\n' +
+            'API documentation\n' +
+            'Integration guides\n' +
+            'Troubleshooting FAQs',
+          inline: true,
+        },
+        {
+          name: '🎙️ Podcasts & Webinars',
+          value:
+            'Weekly contractor success podcast\n' +
+            'Monthly expert webinars\n' +
+            'Past session recordings\n' +
+            'Guest expert interviews',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'All resources free with Contractor OS' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Browse Resources')
+        .setURL('https://wise2.net/academy/resources')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Download Templates')
+        .setURL('https://wise2.net/academy/resources/templates')
+        .setStyle(ButtonStyle.Link)
+    );
+
+    await interaction.reply({
+      embeds: [embed],
+      components: [row],
+      ephemeral: false,
+    });
+  },
+
+  async academyInstructors(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle('👨‍🏫 WISE² Academy Instructors')
+      .setDescription('Learn from industry experts')
+      .setColor(0xec4899) // Pink
+      .setURL('https://wise2.net/academy/instructors')
+      .addFields(
+        {
+          name: '🏆 Lead Instructor',
+          value:
+            '**Daniel Wise** — Founder & Contractor OS Creator\n' +
+            '20+ years in service business automation\n' +
+            'Specializes in: CRM, automation, business growth',
+        },
+        {
+          name: '⭐ Expert Instructors',
+          value:
+            '**Sarah Chen** — HVAC & Home Services Specialist\n' +
+            '15 years in HVAC business management\n\n' +
+            '**Marcus Johnson** — Sales & Lead Generation\n' +
+            'Helped 500+ contractors close 40% more deals\n\n' +
+            '**Lisa Rodriguez** — Team Building & Operations\n' +
+            'Scaled 5 service businesses to 6-figures+',
+          inline: false,
+        },
+        {
+          name: '🎓 Guest Experts',
+          value:
+            'Monthly sessions with:\n' +
+            '• Successful contractors from your trade\n' +
+            '• Business coaches & consultants\n' +
+            '• Marketing & SEO specialists\n' +
+            '• Financial advisors',
+          inline: false,
+        }
+      )
+      .setFooter({ text: 'All instructors are practicing contractors/experts' })
+      .setTimestamp();
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('Meet the Team')
+        .setURL('https://wise2.net/academy/instructors')
+        .setStyle(ButtonStyle.Link),
+      new ButtonBuilder()
+        .setLabel('Book Coaching')
+        .setURL('https://wise2.net/academy/coaching')
         .setStyle(ButtonStyle.Link)
     );
 
