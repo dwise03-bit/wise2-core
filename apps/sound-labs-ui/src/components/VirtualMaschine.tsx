@@ -368,6 +368,58 @@ const styles = `
     gap: 10px;
   }
 }
+
+@media (max-width: 640px) {
+  .virtual-maschine {
+    gap: 12px;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .maschine-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+
+  .maschine-title {
+    font-size: 13px;
+    letter-spacing: 1.2px;
+  }
+
+  .maschine-status {
+    width: 100%;
+    text-align: center;
+  }
+
+  .pad-grid {
+    gap: 6px;
+  }
+
+  .pad-row {
+    gap: 6px;
+  }
+
+  .pad {
+    min-width: 0;
+    min-height: 64px;
+    padding: 7px 3px;
+    border-radius: 7px;
+    touch-action: manipulation;
+  }
+
+  .pad-label {
+    font-size: 8px;
+    letter-spacing: 0;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  .pad-number {
+    font-size: 9px;
+  }
+}
 `
 
 const styleEl = document.createElement('style')

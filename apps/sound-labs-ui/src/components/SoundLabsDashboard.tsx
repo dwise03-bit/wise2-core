@@ -220,6 +220,68 @@ const styles = `
     width: 100%;
   }
 }
+
+@media (max-width: 640px) {
+  .dashboard {
+    min-height: 100dvh;
+    overflow: auto;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .dashboard-title {
+    flex-wrap: wrap;
+    gap: 6px 9px;
+    font-size: 21px;
+    letter-spacing: -.5px;
+  }
+
+  .subtitle {
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+
+  .header-right,
+  .status-indicator {
+    width: 100%;
+  }
+
+  .status-indicator {
+    justify-content: center;
+    padding: 10px 12px;
+  }
+
+  .dashboard-content {
+    display: block;
+    padding: 12px;
+    overflow: visible;
+  }
+
+  .content-left,
+  .content-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .content-right {
+    margin-top: 12px;
+    overflow: visible;
+  }
+
+  .dashboard-footer {
+    padding: 10px 16px;
+  }
+
+  .footer-info {
+    flex-wrap: wrap;
+    font-size: 10px;
+  }
+}
 `
 
 const styleEl = document.createElement('style')
