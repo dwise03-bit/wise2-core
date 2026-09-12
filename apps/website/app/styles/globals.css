@@ -7,19 +7,19 @@
    ============================================================================ */
 
 :root {
-  /* ===== COLOR SYSTEM - UNITED PALETTE (LANDING PAGE LOCKED) ===== */
-  /* Foundation - Black & Steel */
-  --wise-black: #050505;              /* LANDING PAGE - Deep Black */
-  --wise-dark-steel: #0D1117;
-  --wise-steel-panel: #14161c;
+  /* ===== COLOR SYSTEM - UNITED PALETTE (LANDING PAGE LOCKED - PRODUCTION) ===== */
+  /* Foundation - Navy & Steel */
+  --wise-black: #101820;              /* LANDING PAGE - Dark Navy */
+  --wise-dark-steel: #1a2534;
+  --wise-steel-panel: #1f2a38;
   --wise-chrome: #c8ccd4;
   --wise-muted-gray: #6b7080;
-  --wise-white: #f5f7f2;              /* LANDING PAGE - Off-white Primary */
+  --wise-white: #f7f7f4;              /* LANDING PAGE - Off-white Primary */
 
-  /* Primary Accent - Lime Yellow (Landing Page Signature) */
-  --wise-neon-green: #b9ff00;         /* LANDING PAGE - Bright Lime */
-  --wise-green-secondary: #d4ff33;
-  --wise-dark-green: #99cc00;
+  /* Primary Accent - Gold (Landing Page Signature) */
+  --wise-neon-green: #b08d57;         /* LANDING PAGE - Gold/Tan */
+  --wise-green-secondary: #c9a877;
+  --wise-dark-green: #997a47;
 
   /* Secondary Accent - Studio Purple */
   --wise-electric-blue: #9333ea;

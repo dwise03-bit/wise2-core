@@ -25,21 +25,21 @@ module.exports = {
     extend: {
       colors: {
         wise: {
-          // WISE² GLOBAL BRAND COLORS (Landing Page Locked)
+          // WISE² GLOBAL BRAND COLORS (Landing Page Locked - Production)
           // Applied across all pages for consistency
-          'bg-primary': '#050505',        // Deep black background
-          'bg-secondary': '#0D1117',
-          'bg-card': '#10151D',
+          'bg-primary': '#101820',        // Dark navy background (production)
+          'bg-secondary': '#1a2534',
+          'bg-card': '#1f2a38',
 
           // Text Colors (Landing Page Locked)
-          'text-primary': '#f5f7f2',      // Off-white primary (landing page)
+          'text-primary': '#f7f7f4',      // Off-white primary (production)
           'text-secondary': '#C9CED6',
           'text-muted': '#8D98A5',
 
-          // Accent - Lime Yellow (Landing Page Signature)
-          'accent-primary': '#b9ff00',    // Bright lime yellow
-          'accent-hover': '#d4ff33',
-          'accent-active': '#99cc00',
+          // Accent - Gold (Landing Page Signature)
+          'accent-primary': '#b08d57',    // Gold/tan accent
+          'accent-hover': '#c9a877',
+          'accent-active': '#997a47',
 
           // Primary Brand - Electric Blue (WISE²)
           'primary': '#0094FF',
