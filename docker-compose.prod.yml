@@ -56,8 +56,10 @@ services:
       TWENTYI_PACKAGE_LABEL_BUSINESS: ${TWENTYI_PACKAGE_LABEL_BUSINESS:-Business}
       TWENTYI_PACKAGE_LABEL_PRO: ${TWENTYI_PACKAGE_LABEL_PRO:-Pro}
       CLOUD_STOREFRONT_LIVE: ${CLOUD_STOREFRONT_LIVE:-false}
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      # Email is optional. Empty values keep the stack deployable when
+      # SendGrid is not configured; the API disables email delivery.
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-}
       APP_URL: ${APP_URL}
       API_BASE_URL: ${API_BASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://api.wise2.net,https://cloud.wise2.net}
