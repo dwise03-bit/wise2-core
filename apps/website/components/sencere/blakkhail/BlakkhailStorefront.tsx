@@ -113,7 +113,7 @@ function ProductGrid({ products, shopPhotos }: { products: any[], shopPhotos: re
                 {product.displayName || product.description}
               </p>
               <p className="mt-4 text-[14px] font-bold text-[#E8A23A]">
-                ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : product.price}
               </p>
             </div>
           </Link>
