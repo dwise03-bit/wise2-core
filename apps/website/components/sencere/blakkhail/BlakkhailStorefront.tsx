@@ -59,6 +59,9 @@ const BLAKKHAIL_ESSENTIALS = [
   },
 ];
 
+const BLAKKHAIL_LATEST_DROP = BLAKKHAIL_ESSENTIALS.filter((product) => product.category === 'NEW DROP');
+const BLAKKHAIL_LEGACY_ESSENTIALS = BLAKKHAIL_ESSENTIALS.filter((product) => product.category !== 'NEW DROP');
+
 interface AdminProduct {
   id: string;
   name: string;
@@ -151,7 +154,7 @@ export function BlakkhailStorefront() {
     <section id="collection" className="bg-[#0a0a0a] py-16 lg:py-20" data-scroll>
       <div className="mx-auto max-w-[1200px] px-6" data-scroll>
         {/* Latest Drop Section */}
-        {latestProducts.length > 0 && (
+        {(latestProducts.length > 0 || BLAKKHAIL_LATEST_DROP.length > 0) && (
           <div className="mb-24">
             <div className="mb-16">
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#999]">01 / LATEST DROP</p>
@@ -160,28 +163,28 @@ export function BlakkhailStorefront() {
               </h2>
               <div className="mt-8 flex items-center justify-between">
                 <p className="text-[14px] text-[#A8A8A8]">Fresh arrivals from BLAKKHAIL</p>
-                <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">{latestProducts.length} PIECES</p>
+                <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">{latestProducts.length || BLAKKHAIL_LATEST_DROP.length} PIECES</p>
               </div>
               <div className="mt-4 h-px bg-[#333]" />
             </div>
-            <ProductGrid products={latestProducts} shopPhotos={shopPhotos} />
+            <ProductGrid products={latestProducts.length > 0 ? latestProducts : BLAKKHAIL_LATEST_DROP} shopPhotos={shopPhotos} />
           </div>
         )}
 
         {/* Essentials Section */}
         <div>
           <div className="mb-16">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-[#999]">{latestProducts.length > 0 ? '02' : '01'} / SHOP</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#999]">{latestProducts.length > 0 || BLAKKHAIL_LATEST_DROP.length > 0 ? '02' : '01'} / SHOP</p>
             <h2 className="mt-4 text-[clamp(2.25rem,6vw,3rem)] font-black uppercase tracking-[0.08em] text-white" style={{ fontFamily: 'var(--font-display)' }}>
               THE ESSENTIALS
             </h2>
             <div className="mt-8 flex items-center justify-between">
               <p className="text-[14px] text-[#A8A8A8]">Street HAZE collection</p>
-              <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">{BLAKKHAIL_ESSENTIALS.length} PIECES</p>
+              <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">{BLAKKHAIL_LEGACY_ESSENTIALS.length} PIECES</p>
             </div>
             <div className="mt-4 h-px bg-[#333]" />
           </div>
-          <ProductGrid products={BLAKKHAIL_ESSENTIALS} shopPhotos={shopPhotos} />
+          <ProductGrid products={BLAKKHAIL_LEGACY_ESSENTIALS} shopPhotos={shopPhotos} />
         </div>
       </div>
     </section>
