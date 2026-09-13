@@ -139,7 +139,7 @@ export function BlakkhailStorefront() {
     // which will be proxied by nginx at /api/storefront/
     fetch('/api/storefront/latest-products?limit=3')
       .then(res => res.json())
-      .catch(err => {
+      .catch(() => {
         console.log('Storefront API not available, using essentials only');
         return [];
       })
