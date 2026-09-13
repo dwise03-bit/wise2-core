@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Activity, ArrowRight, Database, Gauge, RadioTower } from 'lucide-react';
+import { Activity, ArrowRight, Bot, Database, Gauge, RadioTower, Sparkles } from 'lucide-react';
 
 const capabilities = [
   {
@@ -38,15 +38,31 @@ export default function PlatformPage() {
     <main className="min-h-screen bg-[#050607] text-white">
       <section className="border-b border-white/10 px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="mx-auto max-w-7xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
-            WISE² Core
-          </p>
-          <h1 className="mt-5 max-w-4xl text-5xl font-black leading-tight sm:text-6xl">
-            The operating layer behind the products.
-          </h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#B7C0CB]">
-            WISE² Core is the shared system for field data, business records, AI support, and delivery workflows. It is built around work that has to survive outside a perfect demo.
-          </p>
+          <div className="grid gap-8 lg:grid-cols-[180px_1fr_280px] lg:items-stretch">
+            <aside className="hidden border border-[#1b4b70] bg-[#07111b] p-4 lg:block">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8EDBFF]">Command World</p>
+              <nav className="mt-7 space-y-2 text-xs text-white/65">
+                {['Home', 'Business Hub', 'AI Assistant', 'Sound Lab', 'Live Studio', 'HVAC', 'CRM', 'Automation', 'Analytics', 'Settings'].map((item, index) => <div key={item} className={`px-3 py-2 ${index === 0 ? 'bg-[#1164c0] text-white' : ''}`}>{item}</div>)}
+              </nav>
+            </aside>
+            <div className="relative overflow-hidden border border-[#1b4b70] bg-[radial-gradient(circle_at_center,#123d65_0%,#07111b_52%,#050607_100%)] p-6 sm:p-10">
+              <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(70,180,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(70,180,255,.35)_1px,transparent_1px)] [background-size:36px_36px]" />
+              <div className="relative text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8EDBFF]">WISE² COMMAND WORLD</p>
+                <h1 className="mt-3 text-4xl font-black leading-none sm:text-6xl">Build the world<br /><span className="text-[#26a9ff]">around your work.</span></h1>
+                <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#B7C0CB]">One operating layer for real businesses, connected systems, and measurable momentum.</p>
+                <div className="mx-auto mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-3">
+                  {['BUSINESS HUB', 'AI ASSISTANT', 'SOUND LAB', 'LIVE STUDIO', 'CRM + AUTOMATION', 'ANALYTICS'].map((item) => <div key={item} className="border border-[#318bd0] bg-[#0a2238]/90 px-3 py-5 text-[10px] font-bold tracking-[0.12em] text-white shadow-[0_0_22px_rgba(38,169,255,.16)]">{item}</div>)}
+                </div>
+              </div>
+            </div>
+            <aside className="border border-[#1b4b70] bg-[#07111b] p-5">
+              <div className="flex items-center gap-2 text-[#8EDBFF]"><Bot size={18} /><span className="text-xs font-bold uppercase tracking-[0.16em]">WISE² AI Assistant</span></div>
+              <p className="mt-6 border border-white/10 bg-white/5 p-4 text-sm leading-6 text-white/80">I’m ready. What do you want to build today?</p>
+              <div className="mt-5 space-y-2 text-xs text-white/70">{['Create a client workspace', 'Check today’s operations', 'Generate a campaign', 'Run a business audit'].map((item) => <div key={item} className="border border-white/10 px-3 py-3">{item}</div>)}</div>
+              <div className="mt-8 flex items-center gap-2 text-xs text-[#B9F18C]"><Sparkles size={14} /> Systems nominal</div>
+            </aside>
+          </div>
         </div>
       </section>
 
