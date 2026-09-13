@@ -119,7 +119,7 @@ class StudioAI:
             # Call custom MusicGen API
             async with httpx.AsyncClient() as client:
                 response = await client.post(
-                    f"{self.musicgen_api_url}/generate",
+                    f"{self.musicgen_api_url}/api/v1/generate",
                     json={
                         "prompt": prompt,
                         "duration_seconds": duration
