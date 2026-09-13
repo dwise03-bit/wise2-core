@@ -97,6 +97,16 @@ const BOTS: BotStatus[] = [
     endpoint: 'http://127.0.0.1:3000/api/v1/models/health',
     port: 3000,
   },
+  {
+    id: 'revenue-os',
+    name: 'Revenue OS',
+    service: 'Sales & Revenue Monitoring',
+    status: 'checking',
+    color: '#FFD700',
+    icon: '💰',
+    endpoint: 'http://127.0.0.1:3014/api/health',
+    port: 3014,
+  },
 ];
 
 export default function BotsDashboard() {
@@ -177,12 +187,22 @@ export default function BotsDashboard() {
                 Real-time monitoring of all WISE² services
               </p>
             </div>
-            <button
-              onClick={refreshAllBots}
-              className="px-6 py-3 bg-gradient-to-r from-[#0094FF] to-[#00D9FF] text-black font-bold rounded-lg hover:shadow-lg hover:shadow-[#0094FF]/50 transition"
-            >
-              🔄 Refresh Now
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={refreshAllBots}
+                className="px-6 py-3 bg-gradient-to-r from-[#0094FF] to-[#00D9FF] text-black font-bold rounded-lg hover:shadow-lg hover:shadow-[#0094FF]/50 transition"
+              >
+                🔄 Refresh Now
+              </button>
+              <a
+                href="/api/revenue/dashboard"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-black font-bold rounded-lg hover:shadow-lg hover:shadow-[#FFD700]/50 transition"
+              >
+                💰 Revenue OS
+              </a>
+            </div>
           </div>
 
           {/* Stats */}
