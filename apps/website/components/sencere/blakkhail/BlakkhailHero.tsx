@@ -19,7 +19,7 @@ export function BlakkhailHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center scale-[1.04] transition-transform duration-[1800ms] ease-out group-hover:scale-100"
+          className="object-cover object-center scale-100 opacity-45 transition-opacity duration-[1800ms] ease-out group-hover:opacity-60"
         />
         {/* Cinematic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
@@ -43,13 +43,13 @@ export function BlakkhailHero() {
       </div>
 
       {/* Featured artwork for the current New Drop. */}
-      <div className="pointer-events-none absolute bottom-10 right-[5%] z-[2] hidden w-[clamp(150px,18vw,260px)] rotate-[2deg] overflow-hidden border border-[#D4AF37]/70 shadow-[0_20px_70px_rgba(0,0,0,.7)] md:block">
+      <div className="pointer-events-none absolute bottom-8 right-[5%] z-[2] hidden w-[clamp(230px,30vw,500px)] rotate-[2deg] overflow-hidden border border-[#D4AF37]/70 shadow-[0_28px_90px_rgba(0,0,0,.8)] md:block">
         <Image
           src="/sencere-assets/blakkhail/blakkhail-new-drop-poster.png"
           alt="Blakk Hail The New Drop — Take Control, No Apologies"
           width={1003}
           height={1568}
-          sizes="(min-width: 1280px) 260px, 18vw"
+          sizes="(min-width: 1280px) 500px, 30vw"
           className="h-auto w-full"
         />
       </div>
