@@ -30,6 +30,15 @@ const BLAKKHAIL_ESSENTIALS = [
     category: 'LEGACY',
     description: 'Part of the essential collection. Designed for everyday wear with an edge.'
   },
+  {
+    id: 4,
+    name: 'Red Distressed Hail Hoodie',
+    displayName: 'Limited red short-sleeve hoodie with hand-finished distress details',
+    price: '$85',
+    category: 'NEW DROP',
+    image_url: '/sencere-assets/blakkhail/discord-new-drop.png',
+    description: 'A one-of-one energy piece from the latest Blakk Hail drop.'
+  },
 ];
 
 interface AdminProduct {
@@ -150,7 +159,7 @@ export function BlakkhailStorefront() {
             </h2>
             <div className="mt-8 flex items-center justify-between">
               <p className="text-[14px] text-[#A8A8A8]">Street HAZE collection</p>
-              <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">3 PIECES</p>
+              <p className="text-[12px] font-bold uppercase tracking-wider text-[#E8A23A]">{BLAKKHAIL_ESSENTIALS.length} PIECES</p>
             </div>
             <div className="mt-4 h-px bg-[#333]" />
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
@@ -36,6 +37,16 @@ const PRODUCTS = {
     story: 'Premium cotton, gold-accent print, built',
     image: 'placeholder',
   },
+  '4': {
+    name: 'Red Distressed Hail Hoodie',
+    displayName: 'Limited red short-sleeve hoodie with hand-finished distress details',
+    category: 'NEW DROP',
+    price: '$85.00',
+    priceNum: 85,
+    description: 'A one-of-one energy piece from the latest Blakk Hail drop.',
+    story: 'Hand-finished distress work, made for the front line.',
+    image: '/sencere-assets/blakkhail/discord-new-drop.png',
+  },
 };
 
 export default function ProductPage({ params }: { params: { id: string } }) {
@@ -64,11 +75,13 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Product Image */}
           <div className="flex items-center justify-center border-4 border-[#333] bg-gradient-to-br from-[#2a2a2a] to-[#0a0a0a] aspect-square">
-            <div className="text-center">
-              <div className="text-[96px] font-black text-[#E8A23A] opacity-20">
-                {String(params.id).padStart(2, '0')}
+            {product.image === 'placeholder' ? (
+              <div className="text-center">
+                <div className="text-[96px] font-black text-[#E8A23A] opacity-20">{String(params.id).padStart(2, '0')}</div>
               </div>
-            </div>
+            ) : (
+              <Image src={product.image} alt={product.name} width={900} height={900} className="h-full w-full object-contain p-8" priority />
+            )}
           </div>
 
           {/* Product Details */}
