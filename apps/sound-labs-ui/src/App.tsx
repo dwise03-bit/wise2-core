@@ -9,6 +9,9 @@ export default function App() {
   const [state, setState] = useState<BridgeState | null>(null)
   const [connected, setConnected] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [assistantOpen, setAssistantOpen] = useState(false)
+  const [prompt, setPrompt] = useState('')
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([])
 
   // Connect to bridge WebSocket
   useEffect(() => {
@@ -101,6 +104,27 @@ export default function App() {
     }
   }, [])
 
+  const askAssistant = useCallback(async (event: React.FormEvent) => {
+    event.preventDefault()
+    const message = prompt.trim()
+    if (!message) return
+    const next = [...messages, { role: 'user' as const, content: message }]
+    setMessages(next)
+    setPrompt('')
+    try {
+      const response = await fetch(`${BRIDGE_API_URL}/ai/chat`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, history: next.slice(-8) }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.detail || 'Assistant unavailable')
+      setMessages((current) => [...current, { role: 'assistant', content: data.reply }])
+    } catch (assistantError) {
+      setMessages((current) => [...current, { role: 'assistant', content: 'WISE² GPT is offline. Check the local AI service and try again.' }])
+      console.error(assistantError)
+    }
+  }, [messages, prompt])
+
   return (
     <div className="app">
       {!connected && (
@@ -114,6 +138,17 @@ export default function App() {
           onModeSwitch={switchMode}
           bridgeConnected={connected}
         />
+      )}
+      <button className="assistant-fab" onClick={() => setAssistantOpen((open) => !open)} aria-label="Open WISE2 GPT">✦</button>
+      {assistantOpen && (
+        <section className="assistant-panel" aria-label="WISE2 GPT assistant">
+          <div className="assistant-heading"><strong>WISE² GPT</strong><span>Sound Labs copilot</span></div>
+          <div className="assistant-messages">
+            {messages.length === 0 && <p className="assistant-empty">Ask for a beat idea, mix direction, arrangement, or Maschine workflow.</p>}
+            {messages.map((item, index) => <p key={index} className={`assistant-message ${item.role}`}>{item.content}</p>)}
+          </div>
+          <form onSubmit={askAssistant} className="assistant-form"><input value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask WISE² GPT..." /><button type="submit">Send</button></form>
+        </section>
       )}
       {!state && connected && (
         <div className="loading">
@@ -132,6 +167,19 @@ const styles = `
   display: flex;
   flex-direction: column;
 }
+
+.assistant-fab { position: fixed; right: 18px; bottom: 18px; z-index: 20; width: 52px; height: 52px; border: 2px solid var(--cyan); border-radius: 50%; background: #071522; color: var(--cyan); font-size: 25px; box-shadow: 0 0 24px rgba(0,229,255,.45); }
+.assistant-panel { position: fixed; right: 18px; bottom: 82px; z-index: 19; width: min(360px, calc(100vw - 36px)); padding: 14px; border: 1px solid var(--cyan); border-radius: 12px; background: rgba(5,14,24,.97); box-shadow: 0 0 30px rgba(0,120,255,.3); }
+.assistant-heading { display: flex; justify-content: space-between; color: var(--cyan); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.assistant-heading span { color: var(--text-secondary); font-size: 9px; }
+.assistant-messages { max-height: 230px; overflow: auto; padding: 12px 0; }
+.assistant-empty { color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+.assistant-message { margin: 7px 0; padding: 8px 10px; border-radius: 8px; font-size: 12px; line-height: 1.45; white-space: pre-wrap; }
+.assistant-message.user { margin-left: 24px; background: rgba(0,120,255,.25); }
+.assistant-message.assistant { margin-right: 24px; background: rgba(0,255,65,.12); color: #d9ffe3; }
+.assistant-form { display: flex; gap: 7px; }
+.assistant-form input { min-width: 0; flex: 1; padding: 10px; border: 1px solid var(--gunmetal); background: var(--bg-input); color: white; }
+.assistant-form button { padding: 0 12px; border: 1px solid var(--neon-green); background: rgba(0,255,65,.12); color: var(--neon-green); }
 
 .connection-banner {
   background: var(--accent-red);

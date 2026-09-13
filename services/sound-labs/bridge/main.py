@@ -14,6 +14,7 @@ import asyncio
 from typing import Dict, Any, Optional, Set
 from datetime import datetime
 import json
+import httpx
 
 from midi_device import MidiDeviceManager
 from modes import ControllerMode, ModeManager
@@ -321,6 +322,34 @@ async def health_check():
 async def get_state():
     """Get current bridge state"""
     return await get_current_state()
+
+
+@app.post("/ai/chat")
+async def ai_chat(payload: Dict[str, Any]):
+    """WISE² custom assistant for Sound Labs, routed to the local model first."""
+    message = str(payload.get("message", "")).strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="message is required")
+    history = payload.get("history", [])[-8:]
+    messages = [
+        {"role": "system", "content": "You are WISE² Sound Labs GPT, a concise music-production copilot. Help with beats, arrangement, recording, mixing, mastering, Maschine Mikro, REAPER, and creative direction. Give practical next actions."},
+        *history,
+        {"role": "user", "content": message},
+    ]
+    endpoint = ai_router.ollama_url if ai_router else "http://127.0.0.1:11434"
+    try:
+        async with httpx.AsyncClient(timeout=90) as client:
+            response = await client.post(f"{endpoint}/v1/chat/completions", json={
+                "model": "mistral",
+                "messages": messages,
+                "stream": False,
+            })
+        response.raise_for_status()
+        data = response.json()
+        return {"reply": data["choices"][0]["message"]["content"], "model": "mistral"}
+    except Exception as exc:
+        logger.exception("Sound Labs GPT request failed")
+        raise HTTPException(status_code=502, detail=f"WISE² GPT unavailable: {exc}")
 
 
 @app.post("/mode/{mode}")
