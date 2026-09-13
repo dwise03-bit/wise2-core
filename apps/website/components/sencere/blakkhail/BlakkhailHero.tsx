@@ -5,7 +5,9 @@ import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { BLAKKHAIL } from './brand-tokens';
 
 export function BlakkhailHero() {
-  const heroImage = BLAKKHAIL_LEGACY.assets.shopPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
+  // Use the landscape campaign frame for the hero. The shop thumbnail is a
+  // portrait crop and makes Chrome's cover fit look aggressively zoomed in.
+  const heroImage = BLAKKHAIL_LEGACY.assets.heroPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
 
   return (
     <section className="relative isolate flex min-h-[min(760px,calc(100svh-112px))] w-full overflow-hidden bg-black group sm:min-h-[600px] lg:min-h-[800px]">
