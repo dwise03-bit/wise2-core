@@ -778,6 +778,12 @@ importers:
 
   apps/sound-labs-ui:
     dependencies:
+      '@capacitor/android':
+        specifier: ^8.5.0
+        version: 8.5.0(@capacitor/core@8.5.0)
+      '@capacitor/core':
+        specifier: ^8.5.0
+        version: 8.5.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -788,6 +794,9 @@ importers:
         specifier: ^8.14.0
         version: 8.21.1
     devDependencies:
+      '@capacitor/cli':
+        specifier: ^8.5.0
+        version: 8.5.0
       '@types/react':
         specifier: 18.3.31
         version: 18.3.31
@@ -2113,7 +2122,6 @@ packages:
       '@capacitor/core': ^8.5.0
     dependencies:
       '@capacitor/core': 8.5.0
-    dev: true
 
   /@capacitor/cli@8.5.0:
     resolution: {integrity: sha512-rLdzMUM5QV4WITcqoWv04p32i14BXgUH2diqEH6MWQlWaJfiyNrvOyt/+d5vHAfOxOm1klBu637VDEobctlwBA==}

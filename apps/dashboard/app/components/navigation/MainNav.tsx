@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Brain } from 'lucide-react';
 
 const navItems = [
-  { href: '/', label: '📊 Dashboard', icon: '🎬' },
+  { href: '/', label: 'WISE² Command Center', icon: 'brain' },
   { href: '/crm', label: '👥 CRM', icon: '👥' },
   { href: '/sales', label: '📈 Sales', icon: '📈' },
   { href: '/projects', label: '🎯 Projects', icon: '🎯' },
@@ -13,6 +14,7 @@ const navItems = [
   { href: '/automation', label: '⚡ Automation', icon: '⚡' },
   { href: '/hermes', label: '🎨 Hermes', icon: '🎨' },
   { href: '/ai-studio', label: '🧠 AI Studio', icon: '🧠' },
+  { href: '/second-brain', label: 'Second Brain', icon: 'brain' },
   { href: '/settings', label: '⚙️ Settings', icon: '⚙️' },
 ];
 
@@ -42,7 +44,7 @@ export function MainNav() {
                   : 'text-gray-400 hover:bg-[#2cd588]/10 hover:text-[#2cd588]'
               }`}
             >
-              <span className="text-xl">{item.icon}</span>
+              {item.icon === 'brain' ? <Brain size={20} strokeWidth={1.8} aria-hidden="true" /> : <span className="text-xl">{item.icon}</span>}
               {!collapsed && <span className="text-sm font-medium">{item.label}</span>}
             </Link>
           );

@@ -14,6 +14,19 @@ components:
       in: header
       name: x-wise2-tool-secret
 paths:
+  /api/assistant/tools/write:
+    post:
+      operationId: performWise2WriteAction
+      summary: Perform a confirmed WISE² business action
+      description: Use only after the user explicitly confirms the exact action. Supports create_lead, create_follow_up, and create_estimate.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [operation, data] }
+      responses:
+        '200': { description: Action result, content: { application/json: { schema: { type: object } } } }
+        '401': { description: Invalid authentication }
   /api/assistant/tools/operations:
     post:
       operationId: getWise2Operations
