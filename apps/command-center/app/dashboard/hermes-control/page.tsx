@@ -1,168 +1,369 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Badge, Button } from '../../../src/components/ui';
 
 export default function HermesControlPage() {
   const [activeTab, setActiveTab] = useState<'models' | 'context' | 'costs' | 'tuning' | 'integrations'>('models');
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary">⚡ Hermes Control</h1>
-          <p className="text-sm text-text-muted mt-1">Advanced configuration & monitoring</p>
-        </div>
-        <div className="text-right">
-          <div className="text-xs uppercase tracking-widest text-text-muted">Status</div>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            <span className="text-sm font-semibold text-success">Online</span>
+    <div className="space-y-8">
+      {/* Import fonts */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        :root {
+          --color-primary: #00D9FF;
+          --color-secondary: #FFD700;
+          --color-danger: #FF006E;
+          --color-surface: #0A0E27;
+          --color-text: #E8F0FF;
+          --color-muted: #6B7C99;
+        }
+
+        .font-display {
+          font-family: 'Syne', sans-serif;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+        }
+
+        .font-body {
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          line-height: 1.6;
+        }
+
+        .font-mono {
+          font-family: 'JetBrains Mono', monospace;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+        }
+
+        /* Status orb pulsing animation - hero moment only */
+        @keyframes hermes-pulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(0, 217, 255, 0.4), 0 0 40px rgba(0, 217, 255, 0.2); }
+          50% { box-shadow: 0 0 30px rgba(0, 217, 255, 0.6), 0 0 60px rgba(0, 217, 255, 0.3); }
+        }
+
+        .hermes-orb {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 30% 30%, rgba(0, 217, 255, 0.3), rgba(10, 14, 39, 0.9));
+          border: 2px solid var(--color-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: ${loaded ? 'hermes-pulse 3s ease-in-out' : 'none'};
+        }
+
+        .hermes-orb-icon {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, var(--color-primary) 0%, #00A8CC 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+        }
+      `}</style>
+
+      {/* Hero: Status Orb */}
+      <div className="pt-4">
+        <div className="flex flex-col items-center gap-6 mb-12">
+          <div className="hermes-orb">
+            <div className="hermes-orb-icon">⚡</div>
+          </div>
+
+          <div className="text-center space-y-2">
+            <h1 className="font-display text-4xl" style={{ color: 'var(--color-primary)' }}>
+              Hermes Control
+            </h1>
+            <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+              AI orchestration, live
+            </p>
+          </div>
+
+          {/* Live metrics below orb */}
+          <div className="grid grid-cols-3 gap-6 w-full max-w-md">
+            <div className="text-center">
+              <div className="font-mono text-2xl" style={{ color: 'var(--color-primary)' }}>9/18</div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Agents Active</div>
+            </div>
+            <div className="text-center">
+              <div className="font-mono text-2xl" style={{ color: 'var(--color-secondary)' }}>$12.48</div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Today Cost</div>
+            </div>
+            <div className="text-center">
+              <div className="font-mono text-2xl" style={{ color: 'var(--color-primary)' }}>2.8s</div>
+              <div className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Avg Latency</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
-      <Card className="p-0 border-0 bg-transparent">
-        <div className="flex gap-1 overflow-x-auto border-b border-border-subtle">
-          {(['models', 'context', 'costs', 'tuning', 'integrations'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition-all ${
-                activeTab === tab
-                  ? 'border-wise-electric text-wise-electric'
-                  : 'border-transparent text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
+      {/* Asymmetric layout: Left tabs, centered content */}
+      <div className="grid grid-cols-12 gap-8">
+        {/* Left: Tabs (narrow) */}
+        <div className="col-span-12 lg:col-span-3">
+          <div className="space-y-2 sticky top-24">
+            {(['models', 'context', 'costs', 'tuning', 'integrations'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className="w-full text-left px-4 py-3 rounded-lg transition-all text-sm font-body"
+                style={{
+                  backgroundColor: activeTab === tab ? 'rgba(0, 217, 255, 0.1)' : 'transparent',
+                  borderLeft: activeTab === tab ? '3px solid var(--color-primary)' : '3px solid transparent',
+                  color: activeTab === tab ? 'var(--color-primary)' : 'var(--color-muted)',
+                }}
+              >
+                <span className="font-display text-base">{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </Card>
 
-      {/* Content */}
-      <Card className="p-6">
-        <h2 className="text-2xl font-bold text-wise-electric mb-4">{activeTab.toUpperCase()}</h2>
-
-        {activeTab === 'models' && (
-          <div className="space-y-4">
-            <p className="text-text-secondary mb-4">Model Zoo - Select and compare AI models</p>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card className="p-4 border-l-4 border-l-wise-electric">
-                <p className="font-semibold text-text-primary">Qwen 2.5 Coder (Local)</p>
-                <p className="text-sm text-text-muted mt-1">Provider: OLLAMA</p>
-                <div className="mt-3 flex gap-2">
-                  <Badge variant="info">RAG</Badge>
-                  <Badge variant="info">Code</Badge>
-                  <Badge variant="info">Vision</Badge>
-                </div>
-              </Card>
-              <Card className="p-4 border-l-4 border-l-border-subtle">
-                <p className="font-semibold text-text-primary">Claude Opus (Anthropic)</p>
-                <p className="text-sm text-text-muted mt-1">Provider: ANTHROPIC</p>
-                <div className="mt-3 flex gap-2">
-                  <Badge variant="success">Reasoning</Badge>
-                  <Badge variant="success">Code</Badge>
-                </div>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'context' && (
-          <div className="space-y-4">
-            <p className="text-text-secondary mb-4">Context Inspector - View live Hermes context</p>
-            <div className="grid gap-3 grid-cols-2 lg:grid-cols-3">
-              <Card className="p-3">
-                <div className="text-sm text-text-muted">Brain Entries</div>
-                <div className="text-2xl font-bold text-wise-electric mt-1">2,847</div>
-              </Card>
-              <Card className="p-3">
-                <div className="text-sm text-text-muted">Knowledge Vaults</div>
-                <div className="text-2xl font-bold text-wise-electric mt-1">12</div>
-              </Card>
-              <Card className="p-3">
-                <div className="text-sm text-text-muted">Active Agents</div>
-                <div className="text-2xl font-bold text-wise-electric mt-1">9/18</div>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'costs' && (
-          <div className="space-y-4">
-            <p className="text-text-secondary mb-4">Cost Dashboard - Track AI spending</p>
-            <div className="grid gap-4 lg:grid-cols-3">
-              <Card className="p-4">
-                <div className="text-xs uppercase tracking-widest text-text-muted">Today</div>
-                <div className="text-3xl font-bold text-wise-electric mt-2">$12.48</div>
-              </Card>
-              <Card className="p-4">
-                <div className="text-xs uppercase tracking-widest text-text-muted">This Month</div>
-                <div className="text-3xl font-bold text-wise-electric mt-2">$284.32</div>
-              </Card>
-              <Card className="p-4">
-                <div className="text-xs uppercase tracking-widest text-text-muted">This Year</div>
-                <div className="text-3xl font-bold text-wise-electric mt-2">$1,203.45</div>
-              </Card>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'tuning' && (
-          <div className="space-y-4">
-            <p className="text-text-secondary mb-4">Model Parameters - Adjust Hermes behavior</p>
-            <div className="space-y-4 max-w-md">
+        {/* Right: Content (wide, centered) */}
+        <div className="col-span-12 lg:col-span-9">
+          {activeTab === 'models' && (
+            <div className="space-y-6">
               <div>
-                <label className="text-sm font-medium text-text-secondary block mb-2">Temperature: 0.70</label>
-                <input type="range" min="0" max="2" step="0.1" defaultValue="0.7" className="w-full" />
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  Model Zoo
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  Select inference engine. Active model shows as highlighted.
+                </p>
               </div>
-              <div>
-                <label className="text-sm font-medium text-text-secondary block mb-2">Max Tokens: 2048</label>
-                <input type="range" min="256" max="8192" step="256" defaultValue="2048" className="w-full" />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-text-secondary block mb-2">Reasoning Depth</label>
-                <div className="flex gap-2">
-                  {['Basic', 'Standard', 'Deep'].map(depth => (
-                    <Button key={depth} variant="secondary" size="sm">
-                      {depth}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'integrations' && (
-          <div className="space-y-4">
-            <p className="text-text-secondary mb-4">Integration Manager - Connect external services</p>
-            <div className="space-y-3">
-              <Card className="p-4 border-l-4 border-l-success">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-text-primary">WISE² Discord</p>
-                    <p className="text-sm text-text-muted mt-1">Send alerts to Discord channels</p>
+              <div className="grid gap-4 lg:grid-cols-2">
+                {[
+                  { name: 'Qwen 2.5 Coder', provider: 'LOCAL', cost: 'FREE', speed: '180ms', active: true },
+                  { name: 'Claude Opus', provider: 'ANTHROPIC', cost: '$0.075/1K', speed: '90ms', active: false },
+                  { name: 'GPT-4 Turbo', provider: 'OPENAI', cost: '$0.030/1K', speed: '120ms', active: false },
+                ].map(model => (
+                  <div
+                    key={model.name}
+                    className="p-4 rounded-lg border-2 transition-all cursor-pointer"
+                    style={{
+                      borderColor: model.active ? 'var(--color-primary)' : 'rgba(107, 124, 153, 0.3)',
+                      backgroundColor: model.active ? 'rgba(0, 217, 255, 0.05)' : 'transparent',
+                    }}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-body font-600" style={{ color: 'var(--color-text)' }}>
+                          {model.name}
+                        </p>
+                        <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+                          {model.provider}
+                        </p>
+                      </div>
+                      {model.active && (
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: 'var(--color-primary)' }}
+                        />
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 pt-3 border-t border-opacity-20" style={{ borderColor: 'var(--color-primary)' }}>
+                      <div>
+                        <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Cost</div>
+                        <div className="font-mono text-sm mt-1" style={{ color: 'var(--color-text)' }}>{model.cost}</div>
+                      </div>
+                      <div>
+                        <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Speed</div>
+                        <div className="font-mono text-sm mt-1" style={{ color: 'var(--color-text)' }}>{model.speed}</div>
+                      </div>
+                    </div>
                   </div>
-                  <Badge variant="success">Connected</Badge>
-                </div>
-              </Card>
-              <Card className="p-4 border-l-4 border-l-warning">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-text-primary">Team Slack</p>
-                    <p className="text-sm text-text-muted mt-1">Integrate with team notifications</p>
-                  </div>
-                  <Badge variant="neutral">Disconnected</Badge>
-                </div>
-              </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-      </Card>
+          )}
+
+          {activeTab === 'context' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  Context Composition
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  What Hermes sees. Live breakdown of grounding sources.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'Brain Knowledge', value: 35, color: 'var(--color-primary)' },
+                  { label: 'Live Telemetry', value: 45, color: 'var(--color-secondary)' },
+                  { label: 'Agent State', value: 20, color: 'rgba(0, 217, 255, 0.5)' },
+                ].map(item => (
+                  <div key={item.label}>
+                    <div className="flex justify-between mb-2 text-sm font-body">
+                      <span style={{ color: 'var(--color-text)' }}>{item.label}</span>
+                      <span className="font-mono" style={{ color: item.color }}>{item.value}%</span>
+                    </div>
+                    <div className="h-2 rounded-full" style={{ backgroundColor: 'rgba(107, 124, 153, 0.2)' }}>
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${item.value}%`,
+                          backgroundColor: item.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'costs' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  Cost Dashboard
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  Spending by provider and operation type.
+                </p>
+              </div>
+
+              <div className="grid gap-4 grid-cols-3">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(0, 217, 255, 0.05)', borderLeft: '3px solid var(--color-primary)' }}>
+                  <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Today</div>
+                  <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-primary)' }}>$12.48</div>
+                </div>
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(255, 215, 0, 0.05)', borderLeft: '3px solid var(--color-secondary)' }}>
+                  <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>This Month</div>
+                  <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-secondary)' }}>$284.32</div>
+                </div>
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(0, 217, 255, 0.05)', borderLeft: '3px solid var(--color-primary)' }}>
+                  <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>YTD</div>
+                  <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-primary)' }}>$1,203.45</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tuning' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  Model Parameters
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  Tune Hermes behavior. Changes apply to next request.
+                </p>
+              </div>
+
+              <div className="space-y-6 max-w-md">
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="text-sm font-body" style={{ color: 'var(--color-text)' }}>Temperature</label>
+                    <span className="font-mono" style={{ color: 'var(--color-primary)' }}>0.70</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    defaultValue="0.7"
+                    className="w-full"
+                    style={{
+                      accentColor: 'var(--color-primary)',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="text-sm font-body" style={{ color: 'var(--color-text)' }}>Max Tokens</label>
+                    <span className="font-mono" style={{ color: 'var(--color-primary)' }}>2048</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="256"
+                    max="8192"
+                    step="256"
+                    defaultValue="2048"
+                    className="w-full"
+                    style={{
+                      accentColor: 'var(--color-primary)',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-body block mb-3" style={{ color: 'var(--color-text)' }}>Reasoning Depth</label>
+                  <div className="flex gap-2">
+                    {['Basic', 'Standard', 'Deep'].map(depth => (
+                      <button
+                        key={depth}
+                        className="flex-1 py-2 rounded text-xs font-body transition-all"
+                        style={{
+                          backgroundColor: depth === 'Standard' ? 'var(--color-primary)' : 'rgba(107, 124, 153, 0.2)',
+                          color: depth === 'Standard' ? 'var(--color-surface)' : 'var(--color-text)',
+                        }}
+                      >
+                        {depth}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'integrations' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  External Hooks
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  Where Hermes writes decisions. Webhooks are call-only.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'WISE² Discord', status: 'connected', color: 'var(--color-primary)' },
+                  { name: 'wise2-core GitHub', status: 'connected', color: 'var(--color-primary)' },
+                  { name: 'Team Slack', status: 'offline', color: 'var(--color-muted)' },
+                ].map(integration => (
+                  <div
+                    key={integration.name}
+                    className="p-4 rounded-lg flex items-center justify-between"
+                    style={{ backgroundColor: 'rgba(107, 124, 153, 0.1)' }}
+                  >
+                    <div>
+                      <p className="font-body font-600" style={{ color: 'var(--color-text)' }}>
+                        {integration.name}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+                        {integration.status}
+                      </p>
+                    </div>
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: integration.color }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

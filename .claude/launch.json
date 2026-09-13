@@ -42,6 +42,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "wise2-command-center", "run", "dev"],
       "port": 3006
+    },
+    {
+      "name": "cherry-count",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/cherry-count", "run", "dev"],
+      "port": 3025
     }
   ]
 }
