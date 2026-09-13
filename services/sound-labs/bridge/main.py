@@ -365,6 +365,17 @@ async def change_mode(mode: str):
         raise HTTPException(status_code=400, detail=f"Unknown mode: {mode}")
 
 
+@app.post("/reaper/transport/{action}")
+async def reaper_transport(action: str):
+    """Forward an explicit transport command to the connected REAPER bridge."""
+    if action not in {"play", "stop", "pause", "record"} or not reaper_client:
+        raise HTTPException(status_code=400, detail="Unsupported REAPER transport action")
+    if not await reaper_client.handle_transport(action):
+        raise HTTPException(status_code=502, detail="REAPER transport unavailable")
+    await broadcast_state_update()
+    return {"status": "ok", "action": action}
+
+
 @app.get("/midi/ports")
 async def detect_midi():
     """Detect available MIDI ports"""

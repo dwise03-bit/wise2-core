@@ -114,6 +114,11 @@ export default function App() {
     }
   }, [])
 
+  const transport = useCallback(async (action: 'play' | 'stop' | 'pause' | 'record') => {
+    const response = await fetch(`${BRIDGE_API_URL}/reaper/transport/${action}`, { method: 'POST' })
+    if (!response.ok) throw new Error(`REAPER ${action} failed`)
+  }, [])
+
   const askAssistant = useCallback(async (event: React.FormEvent) => {
     event.preventDefault()
     const message = prompt.trim()
@@ -148,6 +153,7 @@ export default function App() {
           onModeSwitch={switchMode}
           bridgeConnected={connected}
           onPadTrigger={triggerPad}
+          onTransport={transport}
         />
       )}
       <button className="assistant-fab" onClick={() => setAssistantOpen((open) => !open)} aria-label="Open WISE2 GPT">✦</button>

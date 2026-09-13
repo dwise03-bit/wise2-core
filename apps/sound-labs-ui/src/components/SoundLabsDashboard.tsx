@@ -2,15 +2,17 @@ import React from 'react'
 import { BridgeState, ControllerMode, MODE_COLORS } from '../types'
 import VirtualMaschine from './VirtualMaschine'
 import StatusPanel from './StatusPanel'
+import StudioControlDeck from './StudioControlDeck'
 
 interface Props {
   state: BridgeState
   onModeSwitch: (mode: ControllerMode) => Promise<void>
   bridgeConnected: boolean
   onPadTrigger: (padIndex: number) => Promise<void>
+  onTransport: (action: 'play' | 'stop' | 'pause' | 'record') => Promise<void>
 }
 
-export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnected, onPadTrigger }: Props) {
+export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnected, onPadTrigger, onTransport }: Props) {
   const midiConnected = state.midi.connected
   const currentMode = state.mode.current_mode
   const modeColor = MODE_COLORS[currentMode]
@@ -68,6 +70,8 @@ export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnecte
           />
         </div>
       </main>
+
+      <StudioControlDeck reaperOnline={Boolean(state.reaper?.connected)} onTransport={onTransport} />
 
       {/* Footer */}
       <footer className="dashboard-footer">
@@ -194,6 +198,12 @@ const styles = `
 .deck-metrics { display: flex; flex: 1; justify-content: center; gap: 24px; flex-wrap: wrap; }
 .deck-metrics b { margin-right: 5px; color: var(--text-muted); font-size: 9px; }
 .deck-save { color: var(--neon-green); white-space: nowrap; }
+.studio-deck-panels { display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; padding: 0 30px 18px; }
+.control-card { border: 1px solid rgba(0, 155, 255, .32); background: linear-gradient(145deg, rgba(8, 25, 40, .98), rgba(7, 12, 20, .98)); padding: 14px; }
+.control-heading { display: flex; justify-content: space-between; align-items: center; color: var(--cyan); font-size: 11px; letter-spacing: .12em; }
+.control-heading span { display: flex; align-items: center; gap: 7px; }
+.control-heading b { font-size: 9px; color: var(--neon-green); }.control-heading b.offline { color: var(--accent-red); }
+.transport-row { display: flex; gap: 8px; margin-top: 14px; }.transport-row button, .live-launch { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 1px solid rgba(0, 229, 255, .38); background: rgba(0, 110, 190, .12); color: white; padding: 8px 13px; font-size: 10px; letter-spacing: .1em; }.transport-row button:disabled { opacity: .35; }.timeline { display: flex; align-items: center; gap: 10px; margin-top: 13px; color: var(--text-secondary); font-size: 10px; }.timeline i { flex: 1; height: 2px; background: linear-gradient(90deg, var(--neon-green), var(--electric-blue)); }.live-card p { margin: 12px 0; color: var(--text-secondary); font-size: 12px; }.live-launch { color: var(--neon-green); border-color: var(--neon-green); }.collab-line { display: flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--text-muted); font-size: 10px; }
 
 .content-left {
   flex: 1;
@@ -239,6 +249,8 @@ const styles = `
   .content-right {
     width: 100%;
   }
+  .studio-deck-panels { grid-template-columns: 1fr; padding: 0 12px 12px; }
+  .transport-row { flex-wrap: wrap; }.transport-row button { flex: 1 1 40%; }
 }
 
 @media (max-width: 640px) {
