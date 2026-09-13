@@ -6,7 +6,9 @@
   "main": "dist/main.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./dist/telnyx-provider.js": "./dist/telnyx-provider.js",
+    "./dist/call-session.js": "./dist/call-session.js"
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",

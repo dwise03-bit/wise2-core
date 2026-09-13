@@ -38,7 +38,7 @@ async function bootstrap() {
     });
 
     // Global prefix for all routes
-    app.setGlobalPrefix('api/v1');
+    app.setGlobalPrefix('api');
 
     // Global validation pipe
     app.useGlobalPipes(new ValidationPipe({
