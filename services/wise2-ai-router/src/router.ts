@@ -6,18 +6,24 @@ import { v4 as uuid } from 'uuid';
 import { AIRequest, AIResponse, AIError } from './types/request';
 import { OllamaProvider } from './providers/ollama';
 import { SecondBrainClient } from './providers/second-brain';
+import { RayBanMetaClient } from './providers/rayban-meta';
+import { QuestMetaClient } from './providers/quest-meta';
 import { BudgetEngine } from './budget/engine';
 import { TelemetryLogger } from './telemetry/logger';
 
 export class AIRouter {
   private ollama: OllamaProvider;
   private secondBrain: SecondBrainClient;
+  private raybanMeta: RayBanMetaClient;
+  private questMeta: QuestMetaClient;
   private budget: BudgetEngine;
   private telemetry: TelemetryLogger;
 
   constructor(ollama: OllamaProvider, budget: BudgetEngine, telemetry: TelemetryLogger) {
     this.ollama = ollama;
     this.secondBrain = new SecondBrainClient();
+    this.raybanMeta = new RayBanMetaClient();
+    this.questMeta = new QuestMetaClient();
     this.budget = budget;
     this.telemetry = telemetry;
   }
@@ -125,6 +131,9 @@ export class AIRouter {
         success: true,
       });
 
+      // Broadcast to wearable devices if specified
+      await this.broadcastToWearables(request, response);
+
       return aiResponse;
     } catch (error) {
       // Log failure
@@ -202,6 +211,39 @@ export class AIRouter {
       inputTokens,
       outputTokens,
     };
+  }
+
+  /**
+   * Broadcast response to Ray-Ban Meta and Meta Quest devices
+   */
+  private async broadcastToWearables(request: AIRequest, response: string): Promise<void> {
+    try {
+      // Extract device IDs from request metadata
+      const devices = (request as any).devices || [];
+
+      for (const device of devices) {
+        if (device.type === 'rayban-meta' && device.id) {
+          await this.raybanMeta.sendResponse(device.id, {
+            text: response,
+            visual: (request as any).visual_context,
+            gesture_response: 'listen',
+          });
+        }
+
+        if (device.type === 'quest-meta' && device.id) {
+          await this.questMeta.sendResponse(device.id, {
+            spatial_object: {
+              type: 'text',
+              position: [0, 0, -2],
+              data: response,
+            },
+            hand_gesture_feedback: 'acknowledge',
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Wearable broadcast failed (graceful degradation):', error);
+    }
   }
 
   /**
