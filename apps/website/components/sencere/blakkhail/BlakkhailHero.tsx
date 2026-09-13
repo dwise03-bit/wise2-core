@@ -5,9 +5,9 @@ import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { BLAKKHAIL } from './brand-tokens';
 
 export function BlakkhailHero() {
-  // Use the landscape campaign frame for the hero. The shop thumbnail is a
-  // portrait crop and makes Chrome's cover fit look aggressively zoomed in.
-  const heroImage = BLAKKHAIL_LEGACY.assets.heroPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
+  // Lead with the approved drop artwork so the hero matches the brand reference
+  // instead of enlarging a low-resolution campaign thumbnail.
+  const heroImage = BLAKKHAIL_LEGACY.assets.dropAd || '/sencere-assets/blakkhail/default-hero.jpg';
 
   return (
     <section className="relative isolate flex min-h-[min(760px,calc(100svh-112px))] w-full overflow-hidden bg-black group sm:min-h-[600px] lg:min-h-[800px]">
@@ -19,7 +19,7 @@ export function BlakkhailHero() {
           fill
           priority
           sizes="100vw"
-          className="object-contain object-center scale-100 opacity-40 transition-opacity duration-[1800ms] ease-out group-hover:opacity-55"
+          className="object-contain object-right scale-100 opacity-85 transition-opacity duration-[1800ms] ease-out group-hover:opacity-100"
         />
         {/* Cinematic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
@@ -40,18 +40,6 @@ export function BlakkhailHero() {
             <i key={index} style={{ '--i': index } as React.CSSProperties} />
           ))}
         </div>
-      </div>
-
-      {/* Featured artwork for the current New Drop. */}
-      <div className="pointer-events-none absolute bottom-8 right-[5%] z-[2] hidden w-[clamp(230px,30vw,500px)] rotate-[2deg] overflow-hidden border border-[#D4AF37]/70 shadow-[0_28px_90px_rgba(0,0,0,.8)] md:block">
-        <Image
-          src="/sencere-assets/blakkhail/blakkhail-new-drop-poster.png"
-          alt="Blakk Hail The New Drop — Take Control, No Apologies"
-          width={1003}
-          height={1568}
-          sizes="(min-width: 1280px) 500px, 30vw"
-          className="h-auto w-full"
-        />
       </div>
 
       {/* Content */}
