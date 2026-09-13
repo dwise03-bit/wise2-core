@@ -1,11 +1,41 @@
 openapi: 3.1.0
 info:
   title: WISE² Custom GPT Actions
-  version: 1.0.0
-  description: Read-only WISE² health and runtime actions for a Custom GPT.
+  version: 1.2.0
+  description: Read-only WISE² health, Contractor OS, Revenue OS, and HVAC actions.
 servers:
   - url: https://api.wise2.net
+security:
+  - wise2ToolKey: []
+components:
+  securitySchemes:
+    wise2ToolKey:
+      type: apiKey
+      in: header
+      name: x-wise2-tool-secret
 paths:
+  /api/assistant/tools/operations:
+    post:
+      operationId: getWise2Operations
+      summary: Read Contractor OS and Revenue OS metrics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [operation]
+              properties:
+                operation:
+                  type: string
+                  enum: [business_health, revenue_today, jobs_today, open_estimates, outstanding_ar, margin_alerts, technician_utilization]
+      responses:
+        '200':
+          description: Requested business data
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { description: Invalid authentication }
   /api/v1/hermes/health:
     get:
       operationId: getWise2HermesHealth

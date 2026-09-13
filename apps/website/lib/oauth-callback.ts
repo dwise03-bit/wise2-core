@@ -51,11 +51,33 @@ export async function completeOAuthLogin(
   const cookieDomain = getCookieDomain();
   const isProduction = process.env.NODE_ENV === 'production';
 
-  const exchangeRes = await fetch(`${getApiBaseUrl()}/v1/auth/oauth/${provider}/exchange`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code, redirectUri }),
-  });
+  const exchangeUrl = `${getApiBaseUrl()}/v1/auth/oauth/${provider}/exchange`;
+  let exchangeRes: Response | undefined;
+  let lastError: unknown;
+
+  // The website and API are separate containers. During a rolling restart the
+  // API can accept connections a moment after the website receives Google's
+  // callback; retry transient transport failures so users are not bounced
+  // back to sign-in during that short readiness window.
+  for (const delayMs of [0, 300, 900]) {
+    if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    try {
+      exchangeRes = await fetch(exchangeUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, redirectUri }),
+        cache: 'no-store',
+      });
+      if (exchangeRes.ok || exchangeRes.status < 500) break;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (!exchangeRes) {
+    console.error(`${provider} OAuth exchange transport failed after retries:`, lastError);
+    return NextResponse.redirect(new URL('/auth/signin?error=oauth_failed', siteUrl));
+  }
 
   if (!exchangeRes.ok) {
     const errorText = await exchangeRes.text();

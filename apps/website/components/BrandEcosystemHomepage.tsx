@@ -79,8 +79,8 @@ const deployments = [
   },
   {
     label: "CREATIVE OPERATIONS",
-    title: "Sound Labs",
-    copy: "A production environment for turning ideas into finished assets, campaigns, and culture.",
+    title: "WISE² Sound Lab",
+    copy: "AI-powered custom jingles, sonic logos, and full audio branding — from a 15-second spot to a finished production.",
     image: "/brand/wise2-brand-identity.png",
     href: "/soundlab",
     tone: "purple",
@@ -108,14 +108,6 @@ const deployments = [
     image: "/brand/wise2-command-center.jpg",
     href: "/wise-defense",
     tone: "red",
-  },
-  {
-    label: "CREATIVE OPERATIONS",
-    title: "SoundLab",
-    copy: "Create, launch, and grow modern sound and media operations.",
-    image: "/brand/wise2-brand-identity.png",
-    href: "/soundlab",
-    tone: "cyan",
   },
   {
     label: "MARKET OPERATIONS",
