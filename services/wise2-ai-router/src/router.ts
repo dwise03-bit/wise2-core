@@ -5,16 +5,19 @@
 import { v4 as uuid } from 'uuid';
 import { AIRequest, AIResponse, AIError } from './types/request';
 import { OllamaProvider } from './providers/ollama';
+import { SecondBrainClient } from './providers/second-brain';
 import { BudgetEngine } from './budget/engine';
 import { TelemetryLogger } from './telemetry/logger';
 
 export class AIRouter {
   private ollama: OllamaProvider;
+  private secondBrain: SecondBrainClient;
   private budget: BudgetEngine;
   private telemetry: TelemetryLogger;
 
   constructor(ollama: OllamaProvider, budget: BudgetEngine, telemetry: TelemetryLogger) {
     this.ollama = ollama;
+    this.secondBrain = new SecondBrainClient();
     this.budget = budget;
     this.telemetry = telemetry;
   }
@@ -62,8 +65,11 @@ export class AIRouter {
         return this.createError('No suitable provider available', requestId);
       }
 
+      // Enrich prompt with Second Brain context
+      const enrichedRequest = await this.enrichWithSecondBrain(request);
+
       // Generate response
-      const response = await selectedProvider.generate(request);
+      const response = await selectedProvider.generate(enrichedRequest);
       const latency = Date.now() - startTime;
 
       // Log success
@@ -196,6 +202,39 @@ export class AIRouter {
       inputTokens,
       outputTokens,
     };
+  }
+
+  /**
+   * Enrich prompt with context from Second Brain knowledge base
+   */
+  private async enrichWithSecondBrain(request: AIRequest): Promise<AIRequest> {
+    try {
+      // Extract the user's question (last user message)
+      const userMessage = [...request.messages].reverse().find((m) => m.role === 'user');
+      if (!userMessage) return request;
+
+      // Query Second Brain for relevant context
+      const context = await this.secondBrain.query(userMessage.content, 3);
+      if (!context || context.contexts.length === 0) {
+        return request;
+      }
+
+      // Build enriched prompt
+      const enrichedContent = this.secondBrain.buildContextPrompt(userMessage.content, context);
+
+      // Create new request with enriched message
+      return {
+        ...request,
+        messages: request.messages.map((m) =>
+          m.role === 'user' && m === userMessage
+            ? { ...m, content: enrichedContent }
+            : m
+        ),
+      };
+    } catch (error) {
+      console.warn('Second Brain enrichment failed (graceful degradation):', error);
+      return request;
+    }
   }
 
   /**
