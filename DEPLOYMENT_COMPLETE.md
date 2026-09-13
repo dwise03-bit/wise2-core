@@ -1,103 +1,85 @@
-# WISE HVAC Field Tech — DEPLOYMENT COMPLETE ✅
+# 🚀 WISE² AI ROUTER - COMPLETE DEPLOYMENT
 
-**Status**: PRODUCTION LIVE  
-**Date**: 2026-08-24 00:45 UTC  
-**URL**: https://wise2.net/wise-hvac-demo  
-**Environment**: VPS (173.208.147.165)
-
----
-
-## **WHAT'S LIVE NOW** ✅
-
-### Web App
-- **URL**: https://wise2.net/wise-hvac-demo
-- **Status**: LIVE, fully responsive
-- **Server**: Nginx reverse proxy → Node.js:3024
-- **Performance**: <1s load time
-
-### Android App
-- **APK**: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.apk (3.0 MB, signed)
-- **AAB**: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.aab (2.9 MB, signed)
-- **Status**: Ready for distribution
+**Date**: 2026-09-13  
+**Status**: ✅ **PRODUCTION LIVE**  
+**Location**: 173.208.147.165:3100  
 
 ---
 
-## **VERIFICATION RESULTS**
+## ✅ FULL STACK DEPLOYED
 
-✅ **Desktop (1280×720)**
-- Hero section renders perfectly
-- Fire/ice branding visible
-- Navigation menu functional
-- All CTA buttons responsive
-- Services cards display
-- Contact form interactive
-
-✅ **Mobile (375×812)**
-- Hamburger menu working
-- Text scales properly
-- Buttons full-width and tappable
-- Layout responsive
-- All sections accessible
-
-✅ **Infrastructure**
-- Nginx routing configured
-- PM2 process running (PID: 1021226)
-- Memory: 107.4 MB
-- Auto-restart enabled
-- SSL/HTTPS active
-
----
-
-## **QUICK REFERENCE**
-
-### Check Status
-```bash
-ssh dwise@173.208.147.165
-pm2 status | grep wise-hvac
 ```
-
-### View Logs
-```bash
-pm2 logs wise-hvac-demo-home
-```
-
-### Restart
-```bash
-pm2 restart wise-hvac-demo-home
-```
-
-### Update (future)
-```bash
-cd ~/wise2-fieldtech-deploy
-git pull origin main
-cd apps/wise-hvac-demo
-pnpm install --no-frozen-lockfile
-pnpm build
-pm2 restart wise-hvac-demo-home
+✅ Router (3100)          - Local-first credit-saver engine
+✅ Ollama (11434)         - 10 models (Llama, Qwen, DeepSeek, Mistral)
+✅ PostgreSQL (5432)      - Telemetry database
+✅ Redis (6379)           - Request caching
+✅ SSH Access             - Mac Terminal shortcuts (vps, vps-health, vps-status, vps-logs)
+✅ Termius Setup          - Remote terminal access configured
+✅ API Health             - All 6 endpoints verified
+✅ Budget Engine          - $50/day with 4-tier enforcement
 ```
 
 ---
 
-## **NEXT STEPS**
+## 🚀 IMMEDIATE ACCESS
 
-1. **Share APK with field team** (immediate)
-   ```
-   File: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.apk
-   ```
+From your Mac Terminal:
 
-2. **Submit to Play Store** (optional, for public release)
-   ```
-   File: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.aab
-   Time: 5 min upload + 2-24 hours review
-   ```
-
-3. **Monitor web app** (ongoing)
-   ```
-   Watch logs: pm2 logs wise-hvac-demo-home
-   ```
+```bash
+vps                    # Direct SSH to VPS
+vps-health             # Check router health
+vps-status             # View budget status ($50/day)
+vps-logs               # Watch router logs
+```
 
 ---
 
-**FIELD TEAM CAN USE THE APP IMMEDIATELY.**
+## 💰 BUDGET ENFORCEMENT
 
-All deployment paths are open and verified.
+- **Daily Limit**: $50
+- **Thresholds**:
+  - 50% → Warning
+  - 70% → Aggressive compression
+  - 85% → Local-only mode
+  - 100% → Hard brake (deny all)
+
+---
+
+## 🤖 LOCAL INFERENCE
+
+10 models ready to use:
+- tinyllama (1B), neural-chat (7B), llama3.2 (3B)
+- qwen3-coder (30B), devstral (24B), qwen2.5vl (8B)
+- deepseek-r1 (8B), qwen3.6 (28B), mistral (7B)
+- kimi-k2.7-code (cloud)
+
+---
+
+## 📊 SERVICE STATUS
+
+| Service | Port | Status |
+|---------|------|--------|
+| Router | 3100 | ✅ Running |
+| Ollama | 11434 | ✅ Running (10 models) |
+| PostgreSQL | 5432 | ✅ Running |
+| Redis | 6379 | ✅ Running |
+| API | 3010 | ✅ Running |
+| Website | 3011 | ✅ Running |
+
+---
+
+## 📚 DOCUMENTATION
+
+- Full setup: TERMIUS_MAC_SETUP.md
+- Quick ref: TERMIUS_QUICK_START.md
+- Tech stack: services/wise2-ai-router/
+
+---
+
+## 🎉 READY TO USE
+
+**SSH Command**: `ssh -i ~/.ssh/vps-deploy dwise@173.208.147.165`  
+**API Endpoint**: `http://localhost:3100/api/generate` (via SSH tunnel)  
+**Health Check**: `curl http://localhost:3100/health | jq .`
+
+**Everything is deployed, tested, and production-ready.** 🚀
