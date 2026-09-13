@@ -4,6 +4,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts'],
   },
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [],
     formats: ['image/avif', 'image/webp'],
