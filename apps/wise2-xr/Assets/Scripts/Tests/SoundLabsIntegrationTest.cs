@@ -267,8 +267,8 @@ namespace Wise2.XR.Tests
 
             // Assert
             Assert.IsNotEmpty(json);
-            Assert.Contains("OFFLINE_DEMO", json);
-            Assert.Contains("Test", json);
+            StringAssert.Contains("OFFLINE_DEMO", json);
+            StringAssert.Contains("Test", json);
         }
     }
 }

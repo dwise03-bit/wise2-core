@@ -2,6 +2,12 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+EXPECTED_PROJECT="/home/dwise/wise2-core/apps/wise2-xr"
+if [[ -n "${WISE2_XR_REQUIRE_CANONICAL:-}" && "$PROJECT_DIR" != "$EXPECTED_PROJECT" ]]; then
+  echo "Refusing non-canonical Quest project: $PROJECT_DIR" >&2
+  echo "Use $EXPECTED_PROJECT as the Quest source of truth." >&2
+  exit 2
+fi
 UNITY_BIN="${UNITY_BIN:-/sdb-disk/unity/Hub/Editor/Editor/Unity}"
 [[ -x "$UNITY_BIN" ]] || { echo "Unity not found at $UNITY_BIN. Set UNITY_BIN to your Unity executable." >&2; exit 1; }
 BUILD_DIR="${WISE2_XR_BUILD_DIR:-/sdb-disk/unity/builds/wise2-xr}"

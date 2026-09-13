@@ -18,6 +18,7 @@ namespace Wise2.XR
         private readonly List<Transform> worldOrnaments = new List<Transform>();
         private Wise2HvacApiClient hvacClient;
         private ContractorOsApiClient contractorOsClient;
+        private SoundLabsApiClient soundLabsClient;
         private bool digitalTwinRequested;
         private bool wiseDefenseTrainingRequested;
 
@@ -40,13 +41,15 @@ namespace Wise2.XR
             }
             hvacClient = new Wise2HvacApiClient(Wise2Config.ApiBaseUrl, HvacNodeId, new OfflineDemoServices());
             contractorOsClient = new ContractorOsApiClient(Wise2Config.ApiBaseUrl);
-            // soundLabsClient = new SoundLabsApiClient(Wise2Config.ApiBaseUrl, new OfflineSoundLabsDemo());
-            CreateFloor(); CreateImmersiveEnvironment(); CreateCore(); CreateStations(); CreateHvacWorld(); /* CreateSoundLabsStation(); */ CreateVoiceMarker();
-            // InitializeAudioMixer();
+            soundLabsClient = new SoundLabsApiClient(Wise2Config.SoundLabsBridgeUrl, new OfflineSoundLabsDemo());
+            // CreateSoundLabsStation()/InitializeAudioMixer() (spatial mixer console,
+            // hand-gesture faders) are not implemented yet — the SOUND LABS entry in
+            // CreateStations() below gets real status via PollSoundLabsAudio() only.
+            CreateFloor(); CreateImmersiveEnvironment(); CreateCore(); CreateStations(); CreateHvacWorld(); CreateVoiceMarker();
             UpdateHvacStation();
             StartCoroutine(PollHvacTelemetry());
             StartCoroutine(PollContractorOs());
-            // StartCoroutine(PollSoundLabsAudio());
+            StartCoroutine(PollSoundLabsAudio());
         }
 
         private void Update()
@@ -66,6 +69,26 @@ namespace Wise2.XR
                     var job = contractorOsClient.TodaysJobs.Count > 0 ? contractorOsClient.TodaysJobs[0] : null;
                     stationLabels[1].text = $"CONTRACTOR OS\n{contractorOsClient.Status}\n{(job == null ? "NO JOBS TODAY" : job.title + "\n" + job.status)}";
                     stationRenderers[1].material.color = contractorOsClient.IsDemo ? new Color(.02f, .09f, .055f) : new Color(.12f, .38f, .08f);
+                }
+                yield return wait;
+            }
+        }
+
+        private IEnumerator PollSoundLabsAudio()
+        {
+            var wait = new WaitForSeconds(10f);
+            while (true)
+            {
+                yield return soundLabsClient.Refresh();
+                if (stationLabels.Count > SoundLabsStationIndex)
+                {
+                    var snapshot = soundLabsClient.Latest;
+                    var state = SoundLabsStateMapper.StatusLabel(snapshot.ParsedState);
+                    stationLabels[SoundLabsStationIndex].text = $"SOUND LABS\n{state}\n{snapshot.reason}";
+                    stationRenderers[SoundLabsStationIndex].material.color =
+                        snapshot.ParsedState == AudioConnectionState.OfflineDemo
+                            ? new Color(.02f, .09f, .055f)
+                            : new Color(.12f, .38f, .08f);
                 }
                 yield return wait;
             }
