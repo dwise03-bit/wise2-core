@@ -19,7 +19,7 @@ export function BlakkhailHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center scale-100 opacity-45 transition-opacity duration-[1800ms] ease-out group-hover:opacity-60"
+          className="object-contain object-center scale-100 opacity-40 transition-opacity duration-[1800ms] ease-out group-hover:opacity-55"
         />
         {/* Cinematic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
