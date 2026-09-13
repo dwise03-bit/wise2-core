@@ -86,6 +86,34 @@ export default function SystemsPage() {
         'Real-time sync',
       ],
     },
+    {
+      name: 'AI Router',
+      icon: '🤖',
+      status: 'LIVE',
+      description: 'Credit-saver engine with local-first inference & knowledge integration',
+      link: '/systems/ai-router',
+      features: [
+        'LOCAL-first routing (Ollama)',
+        '4-tier budget enforcement',
+        'Second Brain context enrichment',
+        'Prometheus metrics & telemetry',
+        '99.9% uptime SLA',
+      ],
+    },
+    {
+      name: 'Wearables',
+      icon: '👓',
+      status: 'LIVE',
+      description: 'Ray-Ban Meta AR & Meta Quest VR integration',
+      link: '/systems/wearables',
+      features: [
+        'Ray-Ban Meta glasses (AR overlay)',
+        'Meta Quest 3S (spatial audio)',
+        'Multi-device broadcast',
+        'Hand tracking & gestures',
+        'Real-time context awareness',
+      ],
+    },
   ];
 
   return (
@@ -153,6 +181,10 @@ export default function SystemsPage() {
                 <li>• API: /api/health</li>
                 <li>• Discord Bot: 40 commands</li>
                 <li>• Admin Backend: Port 3014</li>
+                <li>• AI Router: Port 3100</li>
+                <li>• Second Brain: Port 3012</li>
+                <li>• Ray-Ban Meta: AR integration</li>
+                <li>• Meta Quest: VR integration</li>
                 <li>• K10 Hardware: Deployed</li>
                 <li>• iOS/Android/XR: All platforms</li>
               </ul>

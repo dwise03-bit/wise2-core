@@ -35,7 +35,7 @@ export function ProcessFlow() {
     <section id="how-it-works" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-[1440px] mx-auto">
         <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-12">
-          HOW IT <span className="text-[#9AFF00] drop-shadow-[0_0_12px_rgba(154,255,0,0.5)]">WORKS</span>
+          HOW IT <span className="text-[#b08d57] drop-shadow-[0_0_12px_rgba(176,141,87,0.35)]">WORKS</span>
         </h2>
 
         <div className="grid md:grid-cols-4 gap-6 md:gap-4 relative">
@@ -47,7 +47,7 @@ export function ProcessFlow() {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="relative rounded-lg border border-white/10 bg-[#0a0a0a] p-6 text-center"
             >
-              <div className="mx-auto mb-4 w-12 h-12 rounded-full border-2 border-[#9AFF00] flex items-center justify-center text-[#9AFF00] font-black text-lg shadow-[0_0_16px_rgba(154,255,0,0.35)]">
+              <div className="mx-auto mb-4 w-12 h-12 rounded-full border-2 border-[#b08d57] flex items-center justify-center text-[#b08d57] font-black text-lg shadow-[0_0_16px_rgba(176,141,87,0.35)]">
                 {n}
               </div>
               <Icon size={22} className="mx-auto mb-3 text-gray-400" />
@@ -57,7 +57,7 @@ export function ProcessFlow() {
               {i < STAGES.length - 1 && (
                 <ArrowRight
                   size={20}
-                  className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2 text-[#9AFF00]/50 z-10"
+                  className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2 text-[#b08d57]/50 z-10"
                 />
               )}
             </motion.div>

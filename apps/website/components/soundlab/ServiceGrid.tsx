@@ -60,7 +60,7 @@ export function ServiceGrid() {
     <section id="what-we-create" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-[1440px] mx-auto">
         <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-12">
-          WHAT WE <span className="text-[#9AFF00] drop-shadow-[0_0_12px_rgba(154,255,0,0.5)]">CREATE</span>
+          WHAT WE <span className="text-[#b08d57] drop-shadow-[0_0_12px_rgba(176,141,87,0.35)]">CREATE</span>
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {SERVICES.map(({ icon: Icon, title, desc }, i) => (
@@ -69,10 +69,10 @@ export function ServiceGrid() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: (i % 4) * 0.06 }}
-              className="group rounded-lg border border-white/10 bg-[#0a0a0a] p-5 hover:border-[#9AFF00]/60 hover:-translate-y-1 hover:shadow-[0_0_24px_rgba(154,255,0,0.15)] transition-all cursor-default"
+              className="group rounded-lg border border-white/10 bg-[#0a0a0a] p-5 hover:border-[#b08d57]/60 hover:-translate-y-1 hover:shadow-[0_0_24px_rgba(176,141,87,0.15)] transition-all cursor-default"
             >
-              <div className="w-10 h-10 rounded-md bg-[#9AFF00]/10 flex items-center justify-center mb-4 group-hover:bg-[#9AFF00]/20 transition-colors">
-                <Icon size={20} className="text-[#9AFF00]" />
+              <div className="w-10 h-10 rounded-md bg-[#b08d57]/10 flex items-center justify-center mb-4 group-hover:bg-[#b08d57]/20 transition-colors">
+                <Icon size={20} className="text-[#b08d57]" />
               </div>
               <h3 className="text-xs font-black tracking-wide mb-1.5">{title}</h3>
               <p className="text-[11px] text-gray-500 leading-relaxed">{desc}</p>

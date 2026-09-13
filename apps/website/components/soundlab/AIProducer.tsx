@@ -92,12 +92,12 @@ function ProducerChat({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 40 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-y-0 right-0 z-[70] w-full sm:w-[420px] bg-[#0a0a0a] border-l border-[#9AFF00]/30 flex flex-col shadow-[-20px_0_60px_rgba(0,0,0,0.6)]"
+      className="fixed inset-y-0 right-0 z-[70] w-full sm:w-[420px] bg-[#0a0a0a] border-l border-[#b08d57]/30 flex flex-col shadow-[-20px_0_60px_rgba(0,0,0,0.6)]"
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-[#9AFF00]/15 border border-[#9AFF00]/40 flex items-center justify-center">
-            <Bot size={18} className="text-[#9AFF00]" />
+          <div className="w-9 h-9 rounded-full bg-[#b08d57]/15 border border-[#b08d57]/40 flex items-center justify-center">
+            <Bot size={18} className="text-[#b08d57]" />
           </div>
           <div>
             <p className="text-sm font-black tracking-wide">AI PRODUCER</p>
@@ -115,7 +115,7 @@ function ProducerChat({ onClose }: { onClose: () => void }) {
             key={i}
             className={`max-w-[85%] px-4 py-2.5 rounded-lg text-xs leading-relaxed ${
               m.role === 'user'
-                ? 'ml-auto bg-[#9AFF00] text-black font-medium'
+                ? 'ml-auto bg-[#b08d57] text-black font-medium'
                 : 'bg-white/5 border border-white/10 text-gray-200'
             }`}
           >
@@ -124,9 +124,9 @@ function ProducerChat({ onClose }: { onClose: () => void }) {
         ))}
         {thinking && (
           <div className="bg-white/5 border border-white/10 text-gray-400 text-xs px-4 py-2.5 rounded-lg w-fit flex gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9AFF00] animate-bounce [animation-delay:-0.3s]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9AFF00] animate-bounce [animation-delay:-0.15s]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-[#9AFF00] animate-bounce" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#b08d57] animate-bounce [animation-delay:-0.3s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#b08d57] animate-bounce [animation-delay:-0.15s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#b08d57] animate-bounce" />
           </div>
         )}
       </div>
@@ -137,7 +137,7 @@ function ProducerChat({ onClose }: { onClose: () => void }) {
             <button
               key={p}
               onClick={() => send(p)}
-              className="text-[10px] px-2.5 py-1.5 rounded border border-white/10 text-gray-300 hover:border-[#9AFF00]/50 hover:text-[#9AFF00] transition-colors cursor-pointer"
+              className="text-[10px] px-2.5 py-1.5 rounded border border-white/10 text-gray-300 hover:border-[#b08d57]/50 hover:text-[#b08d57] transition-colors cursor-pointer"
             >
               {p}
             </button>
@@ -156,11 +156,11 @@ function ProducerChat({ onClose }: { onClose: () => void }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask your AI Producer..."
-          className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#9AFF00]/60"
+          className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#b08d57]/60"
         />
         <button
           type="submit"
-          className="px-3.5 py-2.5 rounded bg-[#9AFF00] text-black hover:shadow-[0_0_16px_rgba(154,255,0,0.5)] transition-shadow cursor-pointer"
+          className="px-3.5 py-2.5 rounded bg-[#b08d57] text-black hover:shadow-[0_0_16px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer"
           aria-label="Send message"
         >
           <Send size={16} />
@@ -175,21 +175,21 @@ export function AIProducer() {
 
   return (
     <section className="bg-black py-8 px-5 md:px-8">
-      <div className="max-w-[1440px] mx-auto rounded-2xl border border-[#9AFF00]/30 bg-gradient-to-br from-[#0d1a05] to-black p-8 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+      <div className="max-w-[1440px] mx-auto rounded-2xl border border-[#b08d57]/30 bg-gradient-to-br from-[#0d1a05] to-black p-8 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
         <div>
-          <p className="text-xs font-black tracking-widest text-[#9AFF00] mb-2">LIVE AI PRODUCER</p>
+          <p className="text-xs font-black tracking-widest text-[#b08d57] mb-2">LIVE AI PRODUCER</p>
           <h2 className="text-xl md:text-2xl font-black tracking-wide mb-4">YOUR PERSONAL SOUND ENGINEER</h2>
           <ul className="grid sm:grid-cols-2 gap-2 mb-6">
             {CAPABILITIES.map((c) => (
               <li key={c} className="flex items-center gap-2 text-xs text-gray-300">
-                <Check size={14} className="text-[#9AFF00] shrink-0" />
+                <Check size={14} className="text-[#b08d57] shrink-0" />
                 {c}
               </li>
             ))}
           </ul>
           <button
             onClick={openProducer}
-            className="flex items-center gap-2 px-5 py-3 rounded bg-[#9AFF00] text-black text-xs font-black tracking-wide hover:shadow-[0_0_24px_rgba(154,255,0,0.5)] transition-shadow cursor-pointer"
+            className="flex items-center gap-2 px-5 py-3 rounded bg-[#b08d57] text-black text-xs font-black tracking-wide hover:shadow-[0_0_24px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer"
           >
             <MessageCircle size={16} />
             TALK TO AI PRODUCER
@@ -197,10 +197,10 @@ export function AIProducer() {
         </div>
 
         <div className="relative w-40 h-40 md:w-52 md:h-52 mx-auto">
-          <div className="absolute inset-0 rounded-full bg-[#9AFF00]/15 blur-2xl animate-pulse" />
-          <div className="relative w-full h-full rounded-full border-2 border-[#9AFF00]/50 bg-[#0a0a0a] flex items-center justify-center">
-            <Bot size={64} className="text-[#9AFF00]" />
-            <Sparkles size={20} className="absolute top-3 right-6 text-[#9AFF00] animate-pulse" />
+          <div className="absolute inset-0 rounded-full bg-[#b08d57]/15 blur-2xl animate-pulse" />
+          <div className="relative w-full h-full rounded-full border-2 border-[#b08d57]/50 bg-[#0a0a0a] flex items-center justify-center">
+            <Bot size={64} className="text-[#b08d57]" />
+            <Sparkles size={20} className="absolute top-3 right-6 text-[#b08d57] animate-pulse" />
           </div>
         </div>
       </div>

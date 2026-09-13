@@ -32,13 +32,13 @@ export function DeliveryPlatforms() {
     <section className="bg-black py-20 px-5 md:px-8 border-t border-white/10">
       <div className="max-w-[1440px] mx-auto text-center">
         <h2 className="text-xl md:text-2xl font-black tracking-widest mb-10">
-          DELIVERED READY <span className="text-[#9AFF00]">FOR</span>
+          DELIVERED READY <span className="text-[#b08d57]">FOR</span>
         </h2>
 
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-6 mb-12">
           {PLATFORMS.map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center gap-2 text-gray-400">
-              <Icon size={18} className="text-[#9AFF00]" />
+              <Icon size={18} className="text-[#b08d57]" />
               <span className="text-xs font-semibold">{label}</span>
             </div>
           ))}
@@ -46,7 +46,7 @@ export function DeliveryPlatforms() {
 
         <p className="text-sm md:text-base font-bold tracking-wide text-gray-300 max-w-2xl mx-auto mb-4">
           GREAT MUSIC IS HEARD.{' '}
-          <span className="text-[#9AFF00] drop-shadow-[0_0_10px_rgba(154,255,0,0.5)]">
+          <span className="text-[#b08d57] drop-shadow-[0_0_10px_rgba(176,141,87,0.35)]">
             UNFORGETTABLE MUSIC IS REMEMBERED.
           </span>
         </p>

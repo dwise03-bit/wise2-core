@@ -64,7 +64,7 @@ export function FAQ() {
                   <span className="text-sm font-bold text-gray-200">{item.q}</span>
                   <ChevronDown
                     size={18}
-                    className={`shrink-0 text-[#9AFF00] transition-transform duration-300 ${
+                    className={`shrink-0 text-[#b08d57] transition-transform duration-300 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                   />
