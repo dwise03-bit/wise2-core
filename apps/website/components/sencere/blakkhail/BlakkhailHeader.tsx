@@ -34,6 +34,15 @@ export function BlakkhailHeader() {
   const closeMenu = () => setMenuOpen(false);
   const storefrontPath = host ? (isBlackhailHost(host) ? '/' : '/sencere/blakkhail') : '/sencere/blakkhail';
   const isProductPage = pathname?.includes('/products/') ?? false;
+  const navHref = (item: (typeof BLAKKHAIL_LEGACY.nav)[number]) => {
+    if (!host || !isBlackhailHost(host)) return item.href;
+    const pages: Record<string, string> = {
+      Home: '/', Shop: '/products', 'About Us': '/sencere/about',
+      'Look Book': '/#look-book', Video: '/#video', Collection: '/products',
+      'Contact Us': '/sencere/contact',
+    };
+    return pages[item.label] ?? item.href;
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b" style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.jetBlack }}>
@@ -53,7 +62,7 @@ export function BlakkhailHeader() {
                 alt="SenCere Creative rabbit logo"
                 width={72}
                 height={74}
-                className="h-12 w-12 object-contain sm:h-16 sm:w-16 transition-transform duration-300 group-hover:scale-110"
+                className="h-16 w-16 object-contain sm:h-20 sm:w-20 transition-transform duration-300 group-hover:scale-110"
                 priority
               />
               {/* Glow effect */}
@@ -65,14 +74,14 @@ export function BlakkhailHeader() {
 
             {/* BLAKK HAIL Text Badge */}
             <div
-              className="ml-1 px-2 py-1 sm:ml-2 sm:px-3 sm:py-1.5 border-2 transform transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105"
+              className="ml-1 px-3 py-1.5 sm:ml-2 sm:px-4 sm:py-2 border-2 transform transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105"
               style={{
                 borderColor: BLAKKHAIL.gold,
                 backgroundColor: 'rgba(212, 175, 55, 0.05)'
               }}
             >
               <span
-                className="text-xs font-black uppercase tracking-widest sm:text-sm"
+                className="text-sm font-black uppercase tracking-widest sm:text-base"
                 style={{ color: BLAKKHAIL.gold }}
               >
                 Blakk<br className="sm:hidden" /> Hail
@@ -103,6 +112,16 @@ export function BlakkhailHeader() {
 
           {host ? (
             <Link
+              href={isBlackhailHost(host) ? '/login' : '/sencere/login'}
+              className="hidden min-h-10 items-center justify-center border px-3 py-2 text-[10px] font-bold uppercase tracking-wider sm:flex"
+              style={{ borderColor: BLAKKHAIL.darkGold, color: BLAKKHAIL.gold }}
+            >
+              Login / WISE²
+            </Link>
+          ) : null}
+
+          {host ? (
+            <Link
               href={checkoutPath(host)}
               className="flex min-h-10 min-w-10 items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider border"
               style={{ borderColor: BLAKKHAIL.gold, color: BLAKKHAIL.gold }}
@@ -128,7 +147,7 @@ export function BlakkhailHeader() {
           {BLAKKHAIL_LEGACY.nav.map((item) => (
             <li key={item.href}>
                 <Link
-                href={isProductPage && item.href.startsWith('#') ? `${storefrontPath}${item.href}` : item.href}
+                href={isProductPage && navHref(item).startsWith('/#') ? `${storefrontPath}${navHref(item).slice(1)}` : navHref(item)}
                 className="flex min-h-10 items-center text-sm font-semibold uppercase tracking-wide hover:text-opacity-60 transition-opacity"
                 style={{ color: BLAKKHAIL.steel }}
               >
@@ -151,7 +170,7 @@ export function BlakkhailHeader() {
             {BLAKKHAIL_LEGACY.nav.map((item) => (
               <li key={item.href} className="border-b" style={{ borderColor: BLAKKHAIL.neutral200 }}>
                 <Link
-                  href={isProductPage && item.href.startsWith('#') ? `${storefrontPath}${item.href}` : item.href}
+                  href={isProductPage && navHref(item).startsWith('/#') ? `${storefrontPath}${navHref(item).slice(1)}` : navHref(item)}
                   onClick={closeMenu}
                   className="flex min-h-12 items-center text-base font-semibold uppercase tracking-wide"
                   style={{ color: BLAKKHAIL.steel }}

@@ -65,14 +65,14 @@ export function BlakkhailHero() {
         {/* Main Headline */}
         <div className="mb-12 overflow-hidden">
           <h1
-            className="text-[clamp(3.75rem,12vw,7.5rem)] font-black uppercase tracking-tighter leading-[.86] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
+            className="w-[min(78vw,620px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
             style={{
               color: BLAKKHAIL.gold,
               fontFamily: 'var(--font-headers)',
               textShadow: `0 20px 40px rgba(0,0,0,0.8), 0 0 60px ${BLAKKHAIL.gold}22`
             }}
           >
-            Blakk<span className="block -mt-4">Hail</span>
+            <Image src="/sencere-assets/blakkhail/blakkhail-wordmark-gold.jpg" alt="Blakk Hail" width={1024} height={1024} className="h-auto w-full mix-blend-screen" priority />
           </h1>
         </div>
 

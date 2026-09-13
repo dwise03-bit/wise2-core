@@ -55,6 +55,10 @@ export function middleware(request: NextRequest) {
     return rewriteTo(request, `${SENCERE_PREFIX}${pathname}`);
   }
 
+  if (pathname === '/login') {
+    return rewriteTo(request, `${BLACKHAIL_PREFIX}/login`);
+  }
+
   if (pathname === '/order-confirmation' || pathname.startsWith('/order-confirmation/')) {
     return rewriteTo(request, `${SENCERE_PREFIX}${pathname}`);
   }
