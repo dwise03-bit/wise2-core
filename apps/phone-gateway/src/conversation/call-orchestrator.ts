@@ -231,17 +231,17 @@ export class CallOrchestrator extends EventEmitter {
 
       // Get LLM response
       const response = await this.llm.generate({
-        messages,
+        messages: messages as any,
         systemPrompt: this.buildSystemPrompt(context),
         maxTokens: 500,
         temperature: 0.7,
       });
 
       // Parse response and tool calls
-      const toolCalls: ToolCall[] = response.toolCalls || [];
-      for (const tc of toolCalls) {
-        tc.status = 'pending';
-      }
+      const toolCalls: ToolCall[] = (response.toolCalls || []).map((tc) => ({
+        ...tc,
+        status: 'pending' as const,
+      }));
 
       // Add to conversation
       const turn: ConversationTurn = {

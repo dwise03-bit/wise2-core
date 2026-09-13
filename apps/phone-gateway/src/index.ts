@@ -128,7 +128,7 @@ function findCallByChannelId(channelId: string): string {
 async function handleInboundCall(channelId: string, callerId: string) {
   try {
     // Initialize call session
-    const callState = orchestrator.initializeCall(channelId, callerId);
+    const callState = await orchestrator.initializeCall(channelId, callerId);
 
     // Answer the call
     if (asterisk) {
@@ -279,7 +279,7 @@ app.post('/test/inbound-call', async (req: Request, res: Response) => {
   const { callerId = '+1234567890', script = [] } = req.body;
 
   try {
-    const callState = orchestrator.initializeCall('test-channel', callerId);
+    const callState = await orchestrator.initializeCall('test-channel', callerId);
 
     // Play greeting
     const greeting = `Hey, you reached WISE² HVAC Solutions. I'm Daniel's AI assistant. Tell me what's going on.`;
@@ -325,7 +325,7 @@ app.post('/test/inbound-call', async (req: Request, res: Response) => {
 /**
  * WebSocket for real-time call events
  */
-wsApp.app.ws('/ws/calls', (ws, req) => {
+(app as any).ws('/ws/calls', (ws: any, req: any) => {
   logger.info('WebSocket client connected');
 
   // Send active calls on connect

@@ -37,7 +37,7 @@ export class AsteriskARIClient extends EventEmitter {
 
       // Setup WebSocket event listener
       // Inbound call event
-      this.client.on('StasisStart', (event, channel) => {
+      this.client.on('StasisStart', (event: any, channel: any) => {
         logger.info(`Inbound call: ${channel.id} from ${channel.caller.number}`);
         this.emit('inbound-call', {
           channelId: channel.id,
