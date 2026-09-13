@@ -24,6 +24,8 @@ export const TEAM_APPS: TeamApp[] = [
   { id: 'cherry-count', name: 'Cherry Count', tagline: 'Pop-up retail OS for counts, sales, and floor ops.', webUrl: 'https://wise2.net/cherry-count/dashboard', builds: [{ platform: 'ios', filename: 'cherry-count.ipa', label: 'Download iPhone app', minOs: 'iOS 14+' }] },
   { id: 'fergies-table', name: "Fergie's Table", tagline: 'Kitchen, bookings, catering, and guest flow.', webUrl: 'https://wise2.net/fergies-table/business', builds: [{ platform: 'ios', filename: 'fergies-table.ipa', label: 'Download iPhone app', minOs: 'iOS 14+' }] },
   { id: 'fieldtech', name: 'WISE² Field Tech', tagline: 'Jobsite diagnostics, equipment records, and field photos.', webUrl: '/fieldtech', builds: [{ platform: 'ios', filename: 'fieldtech.ipa', label: 'Download iPhone app', minOs: 'iOS 14+' }, { platform: 'android', filename: 'fieldtech.apk', label: 'Download Android app', minOs: 'Android 10+' }] },
+  { id: 'sound-labs', name: 'WISE² Sound Labs', tagline: 'Mikro controller, REAPER studio, WISE² GPT, and live collaboration.', webUrl: '/sound-labs', builds: [{ platform: 'android', filename: 'sound-labs.apk', label: 'Download Sound Labs APK', minOs: 'Android 10+' }] },
+  { id: 'wise2-xr', name: 'WISE² XR Command Center', tagline: 'Immersive Quest command room for connected WISE² systems.', webUrl: '/quest', builds: [{ platform: 'android', filename: 'wise2-xr.apk', label: 'Download Quest APK', minOs: 'Meta Quest 3 / 3S' }] },
 ];
 
 export function teamAppDownloadPath(filename: string): string {
