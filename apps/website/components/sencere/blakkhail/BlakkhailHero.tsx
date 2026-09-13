@@ -40,6 +40,18 @@ export function BlakkhailHero() {
         </div>
       </div>
 
+      {/* Featured artwork for the current New Drop. */}
+      <div className="pointer-events-none absolute bottom-10 right-[5%] z-[2] hidden w-[clamp(150px,18vw,260px)] rotate-[2deg] overflow-hidden border border-[#D4AF37]/70 shadow-[0_20px_70px_rgba(0,0,0,.7)] md:block">
+        <Image
+          src="/sencere-assets/blakkhail/blakkhail-new-drop-poster.png"
+          alt="Blakk Hail The New Drop — Take Control, No Apologies"
+          width={1003}
+          height={1568}
+          sizes="(min-width: 1280px) 260px, 18vw"
+          className="h-auto w-full"
+        />
+      </div>
+
       {/* Content */}
       <div className="relative z-10 flex min-h-[inherit] flex-col items-center justify-center px-6 py-24 text-center sm:py-28">
         {/* Tagline */}
