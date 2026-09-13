@@ -105,4 +105,17 @@ export class WorkspacesService {
     // TODO: Delete workspace and related data
     return { success: true };
   }
+
+  /**
+   * Get current workspace from tenant context
+   */
+  async getCurrentWorkspace(tenantId: string) {
+    // TODO: Query workspace from database by tenantId
+    return {
+      id: tenantId,
+      name: 'Acme Corporation',
+      urlSlug: 'acme',
+      createdAt: new Date(),
+    };
+  }
 }
