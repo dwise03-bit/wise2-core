@@ -38,7 +38,7 @@ async function bootstrap() {
     });
 
     // Global prefix for all routes
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api/v1');
 
     // Global validation pipe
     app.useGlobalPipes(new ValidationPipe({
@@ -58,8 +58,8 @@ async function bootstrap() {
       .addBearerAuth()
       .build();
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api/docs', app, swaggerDocument);
-    logger.log('Swagger docs available at /api/docs');
+    SwaggerModule.setup('api/v1/docs', app, swaggerDocument);
+    logger.log('Swagger docs available at /api/v1/docs');
 
     // Use PORT or API_PORT, default to 3001 for Docker
     const port = process.env.PORT || process.env.API_PORT || 3001;

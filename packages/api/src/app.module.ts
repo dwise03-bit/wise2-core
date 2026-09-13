@@ -23,6 +23,7 @@ import { CustomersModule } from './v1/customers/customers.module';
 import { GalleryModule } from './v1/gallery/gallery.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RevenueOsModule } from './revenue-os/revenue-os.module';
+import { WorkspacesModule } from './v1/workspaces/workspaces.module';
 import { DigitalTwinModule } from './digital-twin/digital-twin.module';
 import { DemoModule } from './demo/demo.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
@@ -128,6 +129,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     // DiscordModule, // DISABLED: TokenInvalid error blocking deployment
     PrismaModule,
     RevenueOsModule,
+    WorkspacesModule,
     DigitalTwinModule,
     DemoModule,
     WiseDefenseModule,
