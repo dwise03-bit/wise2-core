@@ -32,7 +32,7 @@ export function BlakkhailLookBook() {
           <div className={BLAKKHAIL_LAYOUT.frame} style={{ borderColor: BLAKKHAIL.darkGold }}>
             <Image
               src={src}
-              alt="Blakk Hail look book"
+              alt={`Blakk Hail editorial look book image ${BLAKKHAIL_LEGACY.assets.lookBook.indexOf(src) + 1}`}
               width={1600}
               height={1200}
               className="h-auto w-full object-cover"

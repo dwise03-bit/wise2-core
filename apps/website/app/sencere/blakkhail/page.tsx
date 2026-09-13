@@ -9,6 +9,7 @@ import { BlakkhailLookBook } from '@/components/sencere/blakkhail/BlakkhailMedia
 import { BlakkhailStorefront } from '@/components/sencere/blakkhail/BlakkhailStorefront';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
 import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
+import { BlakkhailTrust } from '@/components/sencere/blakkhail/BlakkhailTrust';
 import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
 
 export default function BlakkhailPage() {
@@ -93,6 +94,7 @@ export default function BlakkhailPage() {
         </section>
         <div className="bh-section"><BlakkhailStory /></div>
         <div className="bh-section"><BlakkhailLookBook /></div>
+        <div className="bh-section"><BlakkhailTrust /></div>
         <section id="shop" className="bh-section">
           <BlakkhailStorefront />
         </section>
