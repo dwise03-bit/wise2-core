@@ -1,33 +1,21 @@
-'use client';
-
 import React from 'react';
 
-type CardVariant = 'default' | 'elevated' | 'metric' | 'action';
-
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: CardVariant;
-  children: React.ReactNode;
-}
-
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ variant = 'default', className = '', children, ...props }, ref) => {
-    const variantStyles = {
-      default: 'bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg p-4 sm:p-6',
-      elevated: 'bg-[#101114] border border-[#1A1A1A] rounded-xl p-6 shadow-card',
-      metric: 'bg-[#050505] border border-[#1A1A1A] rounded-lg p-4 text-center',
-      action: 'bg-[#0A0A0A] border border-[#1A1A1A] rounded-lg p-6 hover:bg-[#101114] hover:border-[#2CD588] transition-all duration-150 cursor-pointer',
-    };
-
-    return (
-      <div
-        ref={ref}
-        className={`${variantStyles[variant]} ${className}`}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
+export const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-lg border ${className}`}>{children}</div>
 );
 
-Card.displayName = 'Card';
+export const CardHeader = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`p-4 border-b ${className}`}>{children}</div>
+);
+
+export const CardContent = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <div className={`p-4 ${className}`}>{children}</div>
+);
+
+export const CardTitle = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
+);
+
+export const CardDescription = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <p className={`text-sm text-gray-500 ${className}`}>{children}</p>
+);
