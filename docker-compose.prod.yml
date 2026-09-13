@@ -235,7 +235,7 @@ services:
   command-center:
     build:
       context: .
-      dockerfile: apps/command-center/Dockerfile
+      dockerfile: wise2-command-center/Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net/api}
         NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-wss://api.wise2.net}
