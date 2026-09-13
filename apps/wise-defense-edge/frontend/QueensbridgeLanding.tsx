@@ -32,14 +32,22 @@ interface StatPoint {
 export default function QueensbridgeLanding() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Parallax effect on hero
+  // Parallax effect on hero (throttled)
   useEffect(() => {
+    let rafId: number | null = null;
     const handleScroll = () => {
-      setScrollPosition(window.scrollY);
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setScrollPosition(window.scrollY);
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // ============================================
@@ -49,27 +57,62 @@ export default function QueensbridgeLanding() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-cyan-500/30">
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Shield className="w-8 h-8 text-cyan-400" />
+          <Shield className="w-8 h-8 text-cyan-400" aria-label="WISE Defense shield logo" />
           <span className="text-xl font-bold text-white">WISE DEFENSE</span>
         </div>
         <div className="hidden md:flex items-center gap-8">
-          <a href="#about" className="text-gray-300 hover:text-cyan-400 transition">
+          <a href="#about" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1">
             About
           </a>
-          <a href="#courses" className="text-gray-300 hover:text-cyan-400 transition">
+          <a href="#courses" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1">
             Courses
           </a>
-          <a href="#knight-wing" className="text-gray-300 hover:text-cyan-400 transition">
+          <a href="#knight-wing" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1">
             KNIGHT WING
           </a>
-          <a href="#contact" className="text-gray-300 hover:text-cyan-400 transition">
+          <a href="#contact" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1">
             Contact
           </a>
         </div>
-        <button className="px-6 py-2 bg-cyan-500 text-black font-semibold rounded-lg hover:bg-cyan-400 transition">
+        <button className="hidden md:block px-6 py-2 bg-cyan-500 text-black font-semibold rounded-lg hover:bg-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400">
           Book Training
         </button>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden flex flex-col gap-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded p-1"
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileMenuOpen}
+        >
+          <span className={`w-6 h-0.5 bg-cyan-400 transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`w-6 h-0.5 bg-cyan-400 transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`} />
+          <span className={`w-6 h-0.5 bg-cyan-400 transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
       </nav>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-black/90 border-t border-cyan-500/30">
+          <div className="px-6 py-4 flex flex-col gap-4">
+            <a href="#about" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
+              About
+            </a>
+            <a href="#courses" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
+              Courses
+            </a>
+            <a href="#knight-wing" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
+              KNIGHT WING
+            </a>
+            <a href="#contact" className="text-gray-300 hover:text-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded px-2 py-1" onClick={() => setMobileMenuOpen(false)}>
+              Contact
+            </a>
+            <button className="w-full px-6 py-2 bg-cyan-500 text-black font-semibold rounded-lg hover:bg-cyan-400 transition focus:outline-none focus:ring-2 focus:ring-cyan-400 mt-2">
+              Book Training
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 
@@ -87,20 +130,20 @@ export default function QueensbridgeLanding() {
     >
       {/* Animated background grid */}
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-20 will-change-transform"
         style={{
           backgroundImage:
             'linear-gradient(0deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 217, 255, 0.05) 25%, rgba(0, 217, 255, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 217, 255, 0.05) 75%, rgba(0, 217, 255, 0.05) 76%, transparent 77%, transparent)',
           backgroundSize: '50px 50px',
           transform: `translateY(${scrollPosition * 0.5}px)`,
-          transition: 'transform 0.1s ease-out',
+          transition: 'transform 0.2s ease-out',
         }}
       />
 
       {/* Hero content container */}
-      <div className="relative h-full flex items-center justify-between max-w-7xl mx-auto px-6">
+      <div className="relative h-full flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto px-6">
         {/* Left side: Text content */}
-        <div className="flex-1 z-10 max-w-2xl">
+        <div className="flex-1 z-10 max-w-2xl w-full">
           {/* Eyebrow */}
           <div className="mb-6 inline-block">
             <p className="text-cyan-400 text-sm font-mono tracking-widest uppercase">
@@ -125,39 +168,40 @@ export default function QueensbridgeLanding() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex gap-4 mb-12">
-            <button className="px-8 py-4 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition transform hover:scale-105">
+          <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <button className="px-8 py-4 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition-colors duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 prefers-reduced-motion:hover:scale-100">
               Book Training →
             </button>
-            <button className="px-8 py-4 border-2 border-cyan-500 text-cyan-400 font-bold rounded-lg hover:bg-cyan-500/10 transition">
+            <button className="px-8 py-4 border-2 border-cyan-500 text-cyan-400 font-bold rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400">
               Learn More
             </button>
           </div>
 
           {/* Trust indicators */}
-          <div className="flex items-center gap-6 text-sm text-gray-400">
+          <div className="flex items-center gap-6 text-sm text-gray-300">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className="w-4 h-4 text-green-500" aria-label="Certified" />
               <span>Certified Instructors</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-green-500" />
+              <CheckCircle className="w-4 h-4 text-green-500" aria-label="Military background" />
               <span>Military Background</span>
             </div>
           </div>
         </div>
 
         {/* Right side: Hero image placeholder */}
-        <div className="flex-1 relative h-full flex items-center justify-center">
-          <div className="relative w-full h-full max-w-lg">
+        <div className="flex-1 relative w-full h-64 md:h-full flex items-center justify-center mt-8 md:mt-0">
+          <div className="relative w-full h-full max-w-lg aspect-video md:aspect-auto">
             {/* Image frame with cinematic border */}
             <div className="absolute inset-0 border-2 border-cyan-500/30 rounded-lg overflow-hidden">
-              {/* Daniel seated in silver vehicle - real photography */}
+              {/* Training professional in field vehicle - real photography */}
               <div className="w-full h-full bg-gradient-to-b from-gray-900 to-black flex items-center justify-center border-l-4 border-cyan-500/50">
-                <div className="text-center">
-                  <p className="text-gray-500 text-sm">Daniel Asset</p>
-                  <p className="text-gray-600 text-xs">(Real Photography - Positioned)</p>
-                </div>
+                <img
+                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Crect fill='%231a1a1a' width='1200' height='800'/%3E%3Ctext x='50%' y='50%' font-size='48' fill='%23666' text-anchor='middle' dominant-baseline='middle'%3ETraining Professional Asset%3C/text%3E%3C/svg%3E"
+                  alt="Professional in tactical training vehicle"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
@@ -210,12 +254,12 @@ export default function QueensbridgeLanding() {
     return (
       <div className="bg-black border-y border-cyan-500/20 py-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <div className="text-cyan-400 mb-3 flex justify-center">{stat.icon}</div>
+                <div className="text-cyan-400 mb-3 flex justify-center" aria-label={stat.label}>{stat.icon}</div>
                 <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
+                <div className="text-gray-300 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -330,7 +374,7 @@ export default function QueensbridgeLanding() {
                   <span>Level: {course.level}</span>
                   <span>Duration: {course.duration}</span>
                 </div>
-                <button className="w-full py-2 border border-cyan-500 text-cyan-400 rounded font-semibold hover:bg-cyan-500/10 transition">
+                <button className="w-full py-2 border border-cyan-500 text-cyan-400 rounded font-semibold hover:bg-cyan-500/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400">
                   Learn More
                 </button>
               </div>
@@ -373,7 +417,7 @@ export default function QueensbridgeLanding() {
               ))}
             </div>
 
-            <button className="px-8 py-3 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition">
+            <button className="px-8 py-3 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400">
               Request Demo
             </button>
           </div>
@@ -405,10 +449,10 @@ export default function QueensbridgeLanding() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="px-8 py-4 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition transform hover:scale-105">
+          <button className="px-8 py-4 bg-cyan-500 text-black font-bold rounded-lg hover:bg-cyan-400 transition-colors duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 prefers-reduced-motion:hover:scale-100">
             Enroll Now →
           </button>
-          <button className="px-8 py-4 border-2 border-cyan-500 text-cyan-400 font-bold rounded-lg hover:bg-cyan-500/10 transition">
+          <button className="px-8 py-4 border-2 border-cyan-500 text-cyan-400 font-bold rounded-lg hover:bg-cyan-500/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400">
             Contact Us
           </button>
         </div>
