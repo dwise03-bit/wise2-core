@@ -106,12 +106,18 @@ jobs:
             export STRIPE_STARTER_PRICE_ID="${{ secrets.STRIPE_STARTER_PRICE_ID }}"
             export STRIPE_PRO_PRICE_ID="${{ secrets.STRIPE_PRO_PRICE_ID }}"
             export STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
-            # Optional: deploy.sh and Compose intentionally tolerate these.
-            export SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}"
-            export SENDGRID_FROM_EMAIL="${{ secrets.SENDGRID_FROM_EMAIL }}"
+            # Optional: SendGrid is optional; defaults to empty and disables email delivery
+            export SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }:-}"
+            export SENDGRID_FROM_EMAIL="${{ secrets.SENDGRID_FROM_EMAIL }:-}"
             export DATABASE_URL="${{ secrets.DATABASE_URL }}"
             export APP_URL="${{ secrets.APP_URL }}"
             export API_BASE_URL="${{ secrets.API_BASE_URL }}"
+            # Optional: Discord integration
+            export DISCORD_WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK_URL }:-}"
+            export DISCORD_BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }:-}"
+            # Optional: Google OAuth
+            export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }:-}"
+            export GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }:-}"
 
             echo "📊 Docker status before deployment..."
             docker ps -a || echo "⚠️ Docker ps failed"

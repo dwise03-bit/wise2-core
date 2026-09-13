@@ -19,13 +19,25 @@
     "allow": [
       "Bash(pnpm *)",
       "Bash(npm *)",
-      "Bash(git *)",
       "Bash(docker *)",
       "Bash(node *)",
       "Bash(ssh *)",
       "Bash(curl *)",
       "Bash(grep *)",
-      "Bash(find *)"
+      "Bash(find *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch)",
+      "Bash(git branch *)",
+      "Bash(git worktree list)",
+      "Bash(git fetch *)",
+      "Bash(git remote -v)",
+      "Bash(git stash list)"
     ]
   },
   "hooks": {
