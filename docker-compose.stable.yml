@@ -90,8 +90,8 @@ services:
       DISCORD_OAUTH_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_OAUTH_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://172.17.0.1:11435}
-      HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11435/v1/chat/completions}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://172.17.0.1:11434}
+      HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11434/v1/chat/completions}
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-mistral:latest}
       HERMES_TIMEOUT_MS: ${HERMES_TIMEOUT_MS:-90000}
     ports:
@@ -129,8 +129,8 @@ services:
       GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI_WEBSITE:-https://wise2.net/api/auth/google/callback}
       API_INTERNAL_URL: http://api:3000/api
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://wise2.net}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://172.17.0.1:11435}
-      HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11435/v1/chat/completions}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://172.17.0.1:11434}
+      HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11434/v1/chat/completions}
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-mistral:latest}
       OLLAMA_GRAPHICS_MODEL: ${OLLAMA_GRAPHICS_MODEL:-mistral:latest}
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
