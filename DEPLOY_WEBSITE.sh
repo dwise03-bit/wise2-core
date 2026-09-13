@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 # Configuration
 REMOTE_HOST="173.208.147.165"
 REMOTE_USER="dwise"
-PROJECT_PATH="/home/ubuntu/dev/wise2-core"
+PROJECT_PATH="/home/dwise/wise2-core"
 WEBSITE_PORT="3001"
 
 # Check if we can SSH to remote
