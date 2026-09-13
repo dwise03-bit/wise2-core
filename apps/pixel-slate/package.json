@@ -1,0 +1,28 @@
+{
+  "name": "@wise2/pixel-slate",
+  "version": "1.0.0",
+  "description": "WISE² Pixel Slate: ChromeOS/Linux/Mac setup with Tailscale integration",
+  "main": "index.js",
+  "scripts": {
+    "install": "bash install.sh",
+    "install:tailscale": "TAILSCALE_AUTH_KEY=$TAILSCALE_AUTH_KEY bash install.sh",
+    "dev": "npm run install",
+    "build": "echo 'Static installer, no build needed'",
+    "start": "echo 'Pixel Slate installs Command Center - see install.sh'"
+  },
+  "keywords": [
+    "wise2",
+    "command-center",
+    "pixel-slate",
+    "tailscale",
+    "chromeos",
+    "linux",
+    "macos"
+  ],
+  "author": "dwise03@gmail.com",
+  "license": "WISE2-PROPRIETARY",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dwise03-bit/wise2-core.git"
+  }
+}
