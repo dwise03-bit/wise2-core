@@ -66,7 +66,7 @@ echo -e "${GREEN}✓ Docker image built${NC}"
 # Deploy website
 echo ""
 echo -e "${YELLOW}[6/7]${NC} Starting website container..."
-ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH} && docker-compose -f docker-compose.prod.yml up -d website" || {
+ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH} && docker compose -f docker-compose.prod.yml up -d website" || {
     echo -e "${RED}✗ Docker compose failed${NC}"
     exit 1
 }
