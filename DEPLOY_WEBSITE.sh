@@ -39,15 +39,24 @@ ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH} && git pull origin main" |
 }
 echo -e "${GREEN}✓ Code updated${NC}"
 
+# Build the Next.js output required by the production Docker image
+echo ""
+echo -e "${YELLOW}[3/7]${NC} Building website application..."
+ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH}/wise-touch && npm install --no-audit --no-fund && npm run build" || {
+    echo -e "${RED}✗ Website application build failed${NC}"
+    exit 1
+}
+echo -e "${GREEN}✓ Website application built${NC}"
+
 # Stop existing website container
 echo ""
-echo -e "${YELLOW}[3/6]${NC} Stopping existing website container..."
+echo -e "${YELLOW}[4/7]${NC} Stopping existing website container..."
 ssh ${REMOTE_USER}@${REMOTE_HOST} "docker stop wise2-website 2>/dev/null || true" > /dev/null
 echo -e "${GREEN}✓ Old container stopped${NC}"
 
 # Build website Docker image
 echo ""
-echo -e "${YELLOW}[4/6]${NC} Building website Docker image..."
+echo -e "${YELLOW}[5/7]${NC} Building website Docker image..."
 ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH} && docker build -f wise-touch/Dockerfile -t wise2-website:latest wise-touch/" || {
     echo -e "${RED}✗ Docker build failed${NC}"
     exit 1
@@ -56,7 +65,7 @@ echo -e "${GREEN}✓ Docker image built${NC}"
 
 # Deploy website
 echo ""
-echo -e "${YELLOW}[5/6]${NC} Starting website container..."
+echo -e "${YELLOW}[6/7]${NC} Starting website container..."
 ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${PROJECT_PATH} && docker-compose -f docker-compose.prod.yml up -d website" || {
     echo -e "${RED}✗ Docker compose failed${NC}"
     exit 1
@@ -65,7 +74,7 @@ echo -e "${GREEN}✓ Website container started${NC}"
 
 # Verify deployment
 echo ""
-echo -e "${YELLOW}[6/6]${NC} Verifying website is running..."
+echo -e "${YELLOW}[7/7]${NC} Verifying website is running..."
 sleep 3
 if ssh ${REMOTE_USER}@${REMOTE_HOST} "docker ps | grep wise2-website" > /dev/null; then
     echo -e "${GREEN}✓ Website container is running${NC}"
