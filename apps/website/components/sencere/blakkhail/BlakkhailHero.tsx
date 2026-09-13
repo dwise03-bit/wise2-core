@@ -55,7 +55,7 @@ export function BlakkhailHero() {
         {/* Main Headline */}
         <div className="mb-12 overflow-hidden">
           <h1
-            className="w-[min(78vw,620px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
+            className="w-[min(82vw,760px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
             style={{
               color: BLAKKHAIL.gold,
               fontFamily: 'var(--font-headers)',
