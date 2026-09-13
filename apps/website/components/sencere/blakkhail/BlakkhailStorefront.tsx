@@ -39,6 +39,15 @@ const BLAKKHAIL_ESSENTIALS = [
     image_url: '/sencere-assets/blakkhail/discord-new-drop.png',
     description: 'A one-of-one energy piece from the latest Blakk Hail drop.'
   },
+  {
+    id: 5,
+    name: 'Piff City Utility Hoodie',
+    displayName: 'Hand-distressed utility hoodie with removable Piff City back panel',
+    price: '$125',
+    category: 'NEW DROP',
+    image_url: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
+    description: 'A layered statement piece built from the Piff City archive.'
+  },
 ];
 
 interface AdminProduct {

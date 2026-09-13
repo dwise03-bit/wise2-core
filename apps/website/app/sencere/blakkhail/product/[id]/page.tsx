@@ -47,6 +47,16 @@ const PRODUCTS = {
     story: 'Hand-finished distress work, made for the front line.',
     image: '/sencere-assets/blakkhail/discord-new-drop.png',
   },
+  '5': {
+    name: 'Piff City Utility Hoodie',
+    displayName: 'Hand-distressed utility hoodie with removable Piff City back panel',
+    category: 'NEW DROP',
+    price: '$125.00',
+    priceNum: 125,
+    description: 'A layered statement piece built from the Piff City archive.',
+    story: 'Hand-distressed cotton, modular patchwork, one-of-one attitude.',
+    image: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
+  },
 };
 
 export default function ProductPage({ params }: { params: { id: string } }) {
