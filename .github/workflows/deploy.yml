@@ -109,7 +109,10 @@ jobs:
             # Optional: SendGrid is optional; defaults to empty and disables email delivery
             export SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }:-}"
             export SENDGRID_FROM_EMAIL="${{ secrets.SENDGRID_FROM_EMAIL }:-}"
-            export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+            # Database: Defaults to local docker-compose credentials if not set
+            export DATABASE_URL="${{ secrets.DATABASE_URL }:-postgresql://wise2:wise2@postgres:5432/wise2_prod}"
+            export DATABASE_USER="${{ secrets.DATABASE_USER }:-wise2}"
+            export DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }:-wise2}"
             export APP_URL="${{ secrets.APP_URL }}"
             export API_BASE_URL="${{ secrets.API_BASE_URL }}"
             # Optional: Discord integration

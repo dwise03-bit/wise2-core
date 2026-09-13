@@ -9,7 +9,7 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_DB: wise2_prod
-      POSTGRES_USER: wise2
+      POSTGRES_USER: ${DATABASE_USER:-wise2}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-wise2}
     ports:
       - "127.0.0.1:5432:5432"
