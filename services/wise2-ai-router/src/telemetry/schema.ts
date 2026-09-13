@@ -55,8 +55,8 @@ CREATE INDEX IF NOT EXISTS idx_ai_router_events_user
   ON ai_router_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_router_events_provider
   ON ai_router_events(provider);
-CREATE INDEX IF NOT EXISTS idx_ai_router_events_date_project
-  ON ai_router_events(DATE(timestamp), project_id);
+CREATE INDEX IF NOT EXISTS idx_ai_router_events_timestamp_project
+  ON ai_router_events(timestamp, project_id);
 `;
 
 /**
