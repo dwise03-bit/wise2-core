@@ -325,6 +325,13 @@ Kernel Synthesizes A, B, C → User Response
 
 **Never say "done", "working", "fixed", "deployed", or "complete" — and never move to the next task — until the actual goal is verified as reached in reality.** Every task, every fix, every feature, every deployment. No exceptions.
 
+### Port governance
+
+- Existing project host ports are immutable. Do not change, rebind, or “clean up” an existing port used by another project.
+- A new service may use only a currently unused host port, documented in the project port inventory and its Compose configuration in the same change.
+- Before deployment, run `bash scripts/verify-port-policy.sh`; stop on duplicate host ports or an existing-port change.
+- Deployment scripts must recreate only their own service and must not rewrite another project's Compose files or port mappings.
+
 - ❌ NOT verification: "build succeeded", "no errors", "code committed", "process is online", "it should work"
 - ✅ Verification: ran the test and it passed, called the endpoint and got the expected response, opened the app in a browser and the feature works, reproduced the bug and it no longer occurs, screenshot proof attached
 - Paste the actual evidence in the reply. Test edge cases and confirm related features still work.
