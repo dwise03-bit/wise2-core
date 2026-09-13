@@ -1,0 +1,36 @@
+openapi: 3.1.0
+info:
+  title: WISE² Custom GPT Actions
+  version: 1.0.0
+  description: Read-only WISE² health and runtime actions for a Custom GPT.
+servers:
+  - url: https://api.wise2.net
+paths:
+  /api/v1/hermes/health:
+    get:
+      operationId: getWise2HermesHealth
+      summary: Check WISE² Hermes health
+      description: Returns Hermes provider, model, and Ollama availability.
+      responses:
+        '200':
+          description: WISE² Hermes health status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, provider, model, ollama]
+                properties:
+                  status: { type: string, example: online }
+                  provider: { type: string, example: ollama }
+                  model: { type: string, example: 'wise2:latest' }
+                  profile: { type: string, example: fast }
+                  context: { type: integer, example: 4096 }
+                  predictTokens: { type: integer, example: 1024 }
+                  think: { type: boolean, example: false }
+                  ollama:
+                    type: object
+                    required: [status, endpoint]
+                    properties:
+                      status: { type: string, example: online }
+                      endpoint: { type: string, format: uri, example: 'http://127.0.0.1:11434' }
+                      error: { type: string }
