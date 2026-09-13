@@ -98,6 +98,8 @@ export default function RootLayout({
           .justify-center { justify-content: center; }
           .space-y-2 > * + * { margin-top: 0.5rem; }
           .space-y-2 { display: flex; flex-direction: column; gap: 0.5rem; }
+          .systems-page { min-height: 100vh; background: #000; color: #fff; font-family: system-ui, -apple-system, sans-serif; }
+          .systems-container { max-width: 80rem; margin: 0 auto; padding: 0 1rem; padding-top: 4rem; padding-bottom: 4rem; }
           .transition-all { transition: all 0.3s; }
           .hover\\:border-green-500:hover { border-color: #22c55e; }
           .hover\\:bg-gray-800:hover { background: #1f2937; }

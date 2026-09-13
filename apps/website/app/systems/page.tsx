@@ -89,8 +89,8 @@ export default function SystemsPage() {
   ];
 
   return (
-    <div style={{minHeight: '100vh', background: '#000', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif'}}>
-      <div style={{maxWidth: '80rem', margin: '0 auto', padding: '0 1rem', paddingTop: '4rem', paddingBottom: '4rem'}}>
+    <div className="systems-page">
+      <div className="systems-container">
         {/* Header */}
         <div style={{marginBottom: '4rem'}}>
           <h1 style={{fontSize: '3rem', fontWeight: 700, marginBottom: '1rem', color: '#3ff14'}}>

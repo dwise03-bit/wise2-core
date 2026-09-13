@@ -27,6 +27,19 @@ export function BlakkhailHero() {
       {/* Light glow effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-yellow-500/10 blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-1000" />
 
+      {/* Always-on atmospheric particles and brief lightning flashes. The effect is
+          intentionally CSS-only so it still works when canvas/WebGL is unavailable. */}
+      <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden="true">
+        <div className="bh-lightning bh-lightning-one" />
+        <div className="bh-lightning bh-lightning-two" />
+        <div className="bh-storm-flash" />
+        <div className="bh-particles">
+          {Array.from({ length: 18 }, (_, index) => (
+            <i key={index} style={{ '--i': index } as React.CSSProperties} />
+          ))}
+        </div>
+      </div>
+
       {/* Content */}
       <div className="relative z-10 flex min-h-[inherit] flex-col items-center justify-center px-6 py-24 text-center sm:py-28">
         {/* Tagline */}
@@ -116,6 +129,27 @@ export function BlakkhailHero() {
             transform: scale(1);
           }
         }
+
+        .bh-lightning {
+          position: absolute;
+          top: -4%;
+          width: 2px;
+          height: 62%;
+          opacity: 0;
+          filter: drop-shadow(0 0 5px #ffe9a3) drop-shadow(0 0 16px #d4af37);
+          background: #fff7d6;
+          clip-path: polygon(48% 0, 62% 0, 45% 28%, 72% 28%, 26% 64%, 42% 64%, 0 100%, 18% 60%, 4% 60%, 38% 25%, 27% 25%);
+          animation: bhLightning 7s linear infinite;
+        }
+        .bh-lightning-one { left: 22%; transform: rotate(8deg); }
+        .bh-lightning-two { right: 18%; height: 48%; animation-delay: 3.7s; transform: rotate(-10deg) scaleX(.8); }
+        .bh-storm-flash { position: absolute; inset: 0; background: rgba(255, 239, 183, .13); opacity: 0; animation: bhFlash 7s linear infinite; }
+        .bh-particles { position: absolute; inset: 0; }
+        .bh-particles i { position: absolute; left: calc((var(--i) * 5.7%) + 2%); bottom: -4%; width: 2px; height: 2px; border-radius: 50%; background: #f6d77b; box-shadow: 0 0 8px 2px rgba(212,175,55,.8); animation: bhFloat calc(5s + (var(--i) * .35s)) linear infinite; animation-delay: calc(var(--i) * -.6s); }
+        @keyframes bhLightning { 0%, 39%, 43%, 100% { opacity: 0; } 40%, 41.5% { opacity: .95; } 42% { opacity: .15; } }
+        @keyframes bhFlash { 0%, 39%, 43%, 100% { opacity: 0; } 40%, 41% { opacity: 1; } }
+        @keyframes bhFloat { from { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; } 15% { opacity: .7; } to { transform: translate3d(18px, -110vh, 0) scale(1.2); opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .bh-lightning, .bh-storm-flash, .bh-particles i { animation: none; opacity: 0; } }
       `}</style>
     </section>
   );
