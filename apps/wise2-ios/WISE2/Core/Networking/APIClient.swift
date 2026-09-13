@@ -57,6 +57,18 @@ actor APIClient {
     return try await get("/dashboard/metrics")
   }
 
+  func authenticatedGet<T: Decodable>(_ endpoint: String) async throws -> T {
+    try await get(endpoint)
+  }
+
+  func authenticatedPost<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+    try await post(endpoint, body: body)
+  }
+
+  func authenticatedPatch<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+    try await patch(endpoint, body: body)
+  }
+
   // MARK: - AI Endpoints
 
   func chat(prompt: String) async throws -> String {
@@ -102,6 +114,17 @@ actor APIClient {
     let (data, response) = try await session.data(for: request)
     try validateResponse(response)
 
+    return try JSONDecoder().decode(R.self, from: data)
+  }
+
+  private func patch<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+    var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
+    request.httpMethod = "PATCH"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpBody = try JSONEncoder().encode(body)
+    try injectAuthHeader(&request)
+    let (data, response) = try await session.data(for: request)
+    try validateResponse(response)
     return try JSONDecoder().decode(R.self, from: data)
   }
 

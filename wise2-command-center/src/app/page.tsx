@@ -29,22 +29,22 @@ export default function Home() {
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/demo/javon"
+              href="/dashboard"
               className="rounded-full bg-[linear-gradient(135deg,#d8a43a,#a36f10)] px-6 py-3 text-sm font-semibold text-[#050505] transition hover:opacity-90"
             >
               Enter the command center <span aria-hidden="true">→</span>
             </Link>
             <Link
-              href="/demo/admin"
+              href="/demo"
               className="rounded-full border border-[rgba(255,255,255,0.1)] px-6 py-3 text-sm font-semibold text-[#f6f0e4] transition hover:border-[rgba(216,164,58,0.3)]"
             >
-              Explore the Javon demo
+              Explore the WISE² demo
             </Link>
             <Link
-              href="/dashboard"
+              href="/demo/admin"
               className="rounded-full border border-[rgba(255,255,255,0.1)] px-6 py-3 text-sm font-semibold text-[#f6f0e4] transition hover:border-[rgba(17,119,255,0.3)]"
             >
-              View admin demo
+              Open admin demo
             </Link>
             </div>
           </section>
