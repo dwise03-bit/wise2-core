@@ -13,6 +13,7 @@ import ClientShowcase from './pages/ClientShowcase';
 export default function CreativeStudio() {
   const [page, setPage] = useState('command');
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteSearch, setPaletteSearch] = useState('');
   const [credits, setCredits] = useState(7214);
 
   const pages = [
@@ -103,7 +104,14 @@ export default function CreativeStudio() {
               <span>AI Credits</span>
               <span style={{ color: '#ccc' }}>{credits.toLocaleString()}</span>
             </div>
-            <button style={{ background: 'rgba(57,255,20,.1)', border: '1px solid rgba(57,255,20,.35)', color: '#39FF14', borderRadius: '7px', padding: '7px', fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textTransform: 'uppercase' }}>
+            <button
+              onClick={() => {
+                const topUp = Math.floor(Math.random() * 5000) + 2000;
+                setCredits(c => c + topUp);
+                alert(`✅ Added ${topUp} credits!`);
+              }}
+              style={{ background: 'rgba(57,255,20,.1)', border: '1px solid rgba(57,255,20,.35)', color: '#39FF14', borderRadius: '7px', padding: '7px', fontFamily: '"Rajdhani", sans-serif', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textTransform: 'uppercase' }}
+            >
               + Top Up Credits
             </button>
           </div>
@@ -146,12 +154,18 @@ export default function CreativeStudio() {
           <div onClick={(e) => e.stopPropagation()} style={{ width: '560px', height: 'fit-content', background: '#0e0e0e', border: '1px solid rgba(57,255,20,.35)', borderRadius: '12px', boxShadow: '0 0 60px rgba(57,255,20,.15)', overflow: 'hidden', animation: 'w2rise .15s ease' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 16px', borderBottom: '1px solid #222' }}>
               <span style={{ color: '#39FF14' }}>⌕</span>
-              <input placeholder="Type a command..." style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: '#eee', fontFamily: '"Rajdhani", sans-serif', fontSize: '16px', fontWeight: 600 }} />
+              <input
+                placeholder="Type a command..."
+                value={paletteSearch}
+                onChange={(e) => setPaletteSearch(e.target.value)}
+                autoFocus
+                style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: '#eee', fontFamily: '"Rajdhani", sans-serif', fontSize: '16px', fontWeight: 600 }}
+              />
               <span style={{ fontSize: '11px', background: '#1a1a1a', border: '1px solid #333', borderRadius: '4px', padding: '1px 6px', color: '#777' }}>ESC</span>
             </div>
             <div style={{ maxHeight: '330px', overflowY: 'auto', padding: '7px' }}>
-              {pages.map((p, i) => (
-                <button key={i} onClick={() => { setPage(p.id); setPaletteOpen(false); }} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', fontFamily: '"Rajdhani", sans-serif', textAlign: 'left' }}>
+              {pages.filter(p => p.label.toLowerCase().includes(paletteSearch.toLowerCase())).map((p, i) => (
+                <button key={i} onClick={() => { setPage(p.id); setPaletteOpen(false); setPaletteSearch(''); }} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '8px', border: 'none', background: 'none', cursor: 'pointer', fontFamily: '"Rajdhani", sans-serif', textAlign: 'left' }}>
                   <span style={{ fontFamily: '"Orbitron", sans-serif', fontSize: '9px', color: '#39FF14', border: '1px solid rgba(57,255,20,.3)', borderRadius: '4px', padding: '3px 6px', minWidth: '44px', textAlign: 'center' }}>GO TO</span>
                   <span style={{ fontWeight: 700, fontSize: '14px', color: '#ddd' }}>{p.label}</span>
                 </button>
