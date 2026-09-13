@@ -47,6 +47,21 @@ async function bootstrap() {
       transform: true,
     }));
 
+    // Request logging for monitoring
+    app.use((req, res, next) => {
+      const start = Date.now();
+      res.on('finish', () => {
+        console.log(JSON.stringify({
+          timestamp: new Date().toISOString(),
+          method: req.method,
+          path: req.path,
+          status: res.statusCode,
+          duration_ms: Date.now() - start
+        }));
+      });
+      next();
+    });
+
     // Swagger / OpenAPI documentation
     // Note: SwaggerModule.setup() mounts its own Express middleware and is NOT
     // affected by app.setGlobalPrefix('api') above, so the full path ('api/docs')
