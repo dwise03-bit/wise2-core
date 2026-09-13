@@ -37,7 +37,7 @@ const BLAKKHAIL_ESSENTIALS = [
     price: '$85',
     category: 'NEW DROP',
     image_url: '/sencere-assets/blakkhail/discord-new-drop.png',
-    description: 'A one-of-one energy piece from the latest Blakk Hail drop.'
+    description: 'A red energy piece from the latest Blakk Hail drop.'
   },
   {
     id: 5,

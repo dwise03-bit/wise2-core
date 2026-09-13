@@ -8,14 +8,6 @@ import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
 import { company } from '@/lib/sencere/config';
 import { isBlackhailHost } from '@/lib/site-domains';
 
-function TikTokIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.78a4.85 4.85 0 01-1.01-.09z" />
-    </svg>
-  );
-}
-
 export function BlakkhailFooter() {
   const { social } = blakkhailBrand;
   const [parentHref, setParentHref] = useState<string>(blakkhailBrand.parentPath);
@@ -211,16 +203,11 @@ export function BlakkhailFooter() {
           >
             <Facebook size={18} />
           </a>
-          <a
-            href={social.twitter ?? '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
-            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
-            aria-label="TikTok"
-          >
-            <TikTokIcon size={18} />
-          </a>
+          {social.twitter && (
+            <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75" style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }} aria-label="X / Twitter">
+              <span className="text-sm font-bold" aria-hidden="true">𝕏</span>
+            </a>
+          )}
           <a
             href={social.youtube}
             target="_blank"

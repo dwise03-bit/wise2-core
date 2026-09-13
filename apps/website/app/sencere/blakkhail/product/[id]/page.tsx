@@ -5,11 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
 import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
+import { useCart } from '@/lib/hooks/useCart';
 
 const PRODUCTS = {
   '1': {
     name: 'No berry Cush gray',
-    displayName: 'PC Street life no berry kush destress short sleeve',
+    displayName: 'PC Street life no berry kush distressed short sleeve',
     category: 'LEGACY',
     price: '$65.99',
     priceNum: 65.99,
@@ -19,7 +20,7 @@ const PRODUCTS = {
   },
   '2': {
     name: 'No berry Cush long sleeve',
-    displayName: 'PC Street life no berry kush destress long sleeve hoodie',
+    displayName: 'PC Street life no berry kush distressed long sleeve hoodie',
     category: 'LEGACY',
     price: '$65.99',
     priceNum: 65.99,
@@ -29,7 +30,7 @@ const PRODUCTS = {
   },
   '3': {
     name: 'Strawberry haze',
-    displayName: 'PC Street life Strawberry haze destress long sleeve hoodie',
+    displayName: 'PC Street life Strawberry haze distressed long sleeve hoodie',
     category: 'LEGACY',
     price: '$65.99',
     priceNum: 65.99,
@@ -43,7 +44,7 @@ const PRODUCTS = {
     category: 'NEW DROP',
     price: '$85.00',
     priceNum: 85,
-    description: 'A one-of-one energy piece from the latest Blakk Hail drop.',
+    description: 'A red energy piece from the latest Blakk Hail drop.',
     story: 'Hand-finished distress work, made for the front line.',
     image: '/sencere-assets/blakkhail/discord-new-drop.png',
   },
@@ -54,7 +55,7 @@ const PRODUCTS = {
     price: '$125.00',
     priceNum: 125,
     description: 'A layered statement piece built from the Piff City archive.',
-    story: 'Hand-distressed cotton, modular patchwork, one-of-one attitude.',
+    story: 'Hand-distressed cotton, modular patchwork, built for movement.',
     image: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
   },
   '6': {
@@ -71,6 +72,7 @@ const PRODUCTS = {
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const product = PRODUCTS[params.id as keyof typeof PRODUCTS];
+  const { addToCart } = useCart();
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
 
@@ -169,7 +171,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             </div>
 
             {/* Add to Cart Button */}
-            <button className="w-full bg-[#0a0a0a] border-2 border-[#333] px-6 py-4 font-bold uppercase tracking-wider text-white hover:bg-[#1a1a1a] transition-colors flex items-center justify-center gap-2">
+            <button onClick={() => addToCart({ id: Number(params.id), name: product.name, displayName: product.displayName, price: product.priceNum, category: product.category }, quantity)} className="w-full bg-[#E8A23A] border-2 border-[#E8A23A] px-6 py-4 font-bold uppercase tracking-wider text-black hover:bg-[#f5b347] transition-colors flex items-center justify-center gap-2">
               <span>🛒</span> ADD TO CART
             </button>
 
