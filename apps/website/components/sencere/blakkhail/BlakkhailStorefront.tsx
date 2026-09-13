@@ -48,6 +48,15 @@ const BLAKKHAIL_ESSENTIALS = [
     image_url: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
     description: 'A layered statement piece built from the Piff City archive.'
   },
+  {
+    id: 6,
+    name: 'Take Control Utility Tee',
+    displayName: 'Hand-distressed utility tee with modular Piff City patchwork',
+    price: '$110',
+    category: 'NEW DROP',
+    image_url: '/sencere-assets/blakkhail/discord-new-drop-03.webp',
+    description: 'A limited utility tee carrying the Take Control message.'
+  },
 ];
 
 interface AdminProduct {

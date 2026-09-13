@@ -57,6 +57,16 @@ const PRODUCTS = {
     story: 'Hand-distressed cotton, modular patchwork, one-of-one attitude.',
     image: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
   },
+  '6': {
+    name: 'Take Control Utility Tee',
+    displayName: 'Hand-distressed utility tee with modular Piff City patchwork',
+    category: 'NEW DROP',
+    price: '$110.00',
+    priceNum: 110,
+    description: 'A limited utility tee carrying the Take Control message.',
+    story: 'Hand-distressed cotton, modular patchwork, built to move.',
+    image: '/sencere-assets/blakkhail/discord-new-drop-03.webp',
+  },
 };
 
 export default function ProductPage({ params }: { params: { id: string } }) {
