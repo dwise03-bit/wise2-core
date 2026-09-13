@@ -273,6 +273,21 @@ const styles = `
     overflow: visible;
   }
 
+  .dashboard-content {
+    background:
+      radial-gradient(circle at 50% 8%, rgba(0, 111, 255, .16), transparent 36%),
+      linear-gradient(180deg, #050b12 0%, #07111a 100%);
+  }
+
+  .virtual-maschine {
+    box-shadow: 0 0 26px rgba(0, 143, 255, .16), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .content-right .panel-card {
+    border-color: rgba(0, 163, 255, .35);
+    background: linear-gradient(145deg, rgba(7, 27, 43, .98), rgba(5, 12, 20, .98));
+  }
+
   .dashboard-footer {
     padding: 10px 16px;
   }
