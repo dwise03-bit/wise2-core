@@ -24,6 +24,15 @@ const capabilities = [
   },
 ];
 
+const deployments = [
+  ['Sound Labs', 'Creative production, MIDI control, and client-ready delivery.', '/soundlab', 'text-[#D6A8FF]'],
+  ['AI Phone', 'Voice, SMS, follow-up, and assistant operations.', '/phone', 'text-[#8EDBFF]'],
+  ['Field Tech', 'Jobs, dispatch, equipment history, and field capture.', '/fieldtech', 'text-[#B9F18C]'],
+  ['WISE² Cloud', 'Deploy, host, monitor, and operate the system layer.', '/cloud', 'text-[#FFD28A]'],
+  ['Revenue OS', 'Pipeline, offers, payments, and commercial momentum.', '/revenue/dashboard', 'text-[#FF9AAE]'],
+  ['XR Command', 'Spatial interfaces for devices, teams, and edge workflows.', '/quest', 'text-[#C7B5FF]'],
+];
+
 export default function PlatformPage() {
   return (
     <main className="min-h-screen bg-[#050607] text-white">
@@ -53,6 +62,27 @@ export default function PlatformPage() {
               </article>
             );
           })}
+        </div>
+      </section>
+
+      <section className="border-y border-white/10 bg-[#090C10] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">Connected deployments</p>
+              <h2 className="mt-4 text-3xl font-black sm:text-4xl">One core. Every direction.</h2>
+            </div>
+            <p className="max-w-md text-sm leading-7 text-[#B7C0CB]">Start with the workflow that matters today. The operating layer keeps the next one ready.</p>
+          </div>
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {deployments.map(([title, text, href, color]) => (
+              <Link key={title} href={href} className="group min-h-44 border border-white/10 bg-[#050607] p-6 transition hover:-translate-y-1 hover:border-white/30">
+                <span className={`text-xs font-bold uppercase tracking-[0.2em] ${color}`}>WISE² / {title}</span>
+                <p className="mt-6 text-lg font-black text-white">{text}</p>
+                <span className="mt-6 inline-flex items-center text-xs font-bold uppercase tracking-[0.16em] text-[#B7C0CB] transition group-hover:text-white">Open system <ArrowRight className="ml-2 h-4 w-4" /></span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
