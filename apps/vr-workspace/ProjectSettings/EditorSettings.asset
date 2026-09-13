@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG ! tag:unity3d.com,2011:
+--- !u!159 &1
+EditorSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 12
+  m_ExternalVersionControlSystem:
+  m_SerializationMode: 2
+  m_LineEndingsForNewScriptFiles: 0
+  m_DefaultBehaviorMode: 0
+  m_PrefabRegularEnvironment: {fileID: 0}
+  m_PrefabUIEnvironment: {fileID: 0}
+  m_SpritePackerMode: 0
+  m_SpritePackerPaddingPower: 1
+  m_EtcTextureCompressorBehavior: 1
+  m_EtcTextureFastCompressor: 1
+  m_EtcTextureNormalCompressor: 2
+  m_EtcTextureCompressorType: 0
+  m_EnableEditorAsyncCPUTextureUpload: 0
+  m_AsyncUploadTimeSlice: 16
+  m_AsyncUploadBufferSize: 16
+  m_AsyncUploadPersistentManager: 1
+  m_ShowAssetBundleNames: 0
+  m_Disable2DModes: 0
+  m_Enable2DPhysics: 0
+  m_ActiveEditorSceneToolMode: 0
+  m_VerifyOcclusionCulling: 0
+  m_DefaultFilterSettings:
+    filteringPath: Assets
+    attr: 0
+    rev: 0
+    refCount: 1

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG ! tag:unity3d.com,2011:
+--- !u!129 &1
+AndroidPlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 1
+  AndroidTargetDevice: 0
+  m_SyncGenericTextureJobsPerFrame: -1
+  m_VideoMemoryScale: 1
+  m_ActiveColorSpace: 0
+  m_MTRendering: 1
+  m_MobileMTRendering: 1
+  m_BlitType: 0
+  m_AndroidIsGame: 1
+  m_AndroidETC2Fallback: 0
+  m_AndroidMinSdkVersion: 29
+  m_AndroidTargetSdkVersion: 33
+  m_AndroidPreferredInstallLocation: 1
+  m_AndroidKeyaliasName:
+  m_AndroidKeyaliasPass:
+  m_AndroidKeystoreName:
+  m_AndroidKeystorePass:
+  m_AndroidUseCustomKeystore: 0
+  m_AndroidAllowUserPermissionManual: 1
+  m_AndroidLogFixedSize: 0
+  m_AndroidLogBufferSize: 330
+  m_AndroidProfiler: 0
+  m_AndroidEnableCrashHandler: 1
+  m_AndroidMinimumWindowWidth: 0
+  m_AndroidMinimumWindowHeight: 0
+  m_AndroidFullscreenMode: 1
+  m_DefaultIsNativeResolution: 1
+  m_MacRetinaSupport: 1
+  m_RunInBackground: 1
+  m_ActionOnDotNetUnhandledException: 0
+  m_RenderingPath: -1
+  m_ActiveColorSpace: 0
+  m_MTRendering: 1
+  m_MobileMTRendering: 1
+  m_MobileDefaultGraphicsChain: 1
+  targetPixelDensity: 0
+  m_SupportedAspectRatios:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ShowActivityIndicatorOnLoading: -1
+  m_AllowedAutorotateToPortrait: 1
+  m_AllowedAutorotateToPortraitUpsideDown: 1
+  m_AllowedAutorotateToLandscapeRight: 1
+  m_AllowedAutorotateToLandscapeLeft: 1
+  m_UseOSAutorotation: 1
+  m_Orientation: 4
+  m_AspectRatio: 1
+  m_BakedICPCompression: 0
+  m_EnableBuildDebugSymbols: 0
+  bundleIdentifier: com.wise2.vrworkspace
+  bundleVersionCode: 1
+  bundleVersion: 1.0.0
