@@ -30,6 +30,8 @@
   --text-primary: #ffffff;
   --text-secondary: #b0b0b0;
   --text-muted: #666666;
+  --studio-line: rgba(80, 185, 255, .22);
+  --studio-glow: rgba(0, 164, 255, .22);
 }
 
 * {
@@ -45,12 +47,17 @@ html, body, #root {
 
 body {
   background-color: var(--bg-black);
+  background-image: radial-gradient(circle at 50% -10%, rgba(0, 120, 255, .18), transparent 42%), linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+button, input { font: inherit; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {

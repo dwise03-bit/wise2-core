@@ -174,6 +174,8 @@ const styles = `
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background-image: linear-gradient(rgba(0, 155, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 155, 255, .035) 1px, transparent 1px), linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-dark) 100%);
+  background-size: 24px 24px, 24px 24px, auto;
 }
 
 .virtual-maschine.mode-transition {
@@ -248,7 +250,7 @@ const styles = `
   height: 76px;
   border: 2px solid;
   border-radius: 6px;
-  background: linear-gradient(135deg, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 22, 0.9) 100%);
+  background: linear-gradient(145deg, rgba(20, 50, 72, .72), rgba(7, 15, 23, .95) 58%, rgba(20, 20, 22, .96));
   cursor: pointer;
   transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
               box-shadow 150ms ease,
@@ -263,6 +265,7 @@ const styles = `
   user-select: none;
   -webkit-user-select: none;
   will-change: transform, box-shadow;
+  min-height: 84px;
 }
 
 .pad:hover:not(.active) {
