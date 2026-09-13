@@ -34,6 +34,17 @@ export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnecte
         </div>
       </header>
 
+      <div className="deck-toolbar" aria-label="Sound Labs command deck status">
+        <div className="deck-kicker"><span className="deck-pulse" /> COMMAND DECK</div>
+        <div className="deck-metrics">
+          <span><b>MASCHINE</b> {midiConnected ? 'CONNECTED' : 'OFFLINE'}</span>
+          <span><b>MIDI IN/OUT</b> {midiConnected ? 'READY' : 'WAITING'}</span>
+          <span><b>REAPER</b> {state.reaper?.connected ? 'ONLINE' : 'OFFLINE'}</span>
+          <span><b>AI ROUTE</b> LOCAL-FIRST</span>
+        </div>
+        <span className="deck-save">SESSION READY</span>
+      </div>
+
       {/* Main Content */}
       <main className="dashboard-content">
         <div className="content-left">
@@ -175,6 +186,13 @@ const styles = `
   overflow: auto;
 }
 
+.deck-toolbar { display: flex; align-items: center; gap: 20px; padding: 10px 30px; border-bottom: 1px solid rgba(0, 229, 255, .14); background: rgba(4, 13, 22, .92); color: var(--text-secondary); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.deck-kicker { display: flex; align-items: center; gap: 8px; color: var(--cyan); font-weight: 800; white-space: nowrap; }
+.deck-pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 12px var(--neon-green); }
+.deck-metrics { display: flex; flex: 1; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.deck-metrics b { margin-right: 5px; color: var(--text-muted); font-size: 9px; }
+.deck-save { color: var(--neon-green); white-space: nowrap; }
+
 .content-left {
   flex: 1;
   min-width: 500px;
@@ -233,6 +251,9 @@ const styles = `
     gap: 14px;
     padding: 16px;
   }
+
+  .deck-toolbar { align-items: flex-start; flex-direction: column; gap: 8px; padding: 10px 16px; }
+  .deck-metrics { justify-content: flex-start; gap: 8px 14px; line-height: 1.3; }
 
   .dashboard-title {
     flex-wrap: wrap;
