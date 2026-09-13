@@ -175,7 +175,7 @@ export function AIProducer() {
 
   return (
     <section className="bg-black py-8 px-5 md:px-8">
-      <div className="max-w-[1440px] mx-auto rounded-2xl border border-[#b08d57]/30 bg-gradient-to-br from-[#0d1a05] to-black p-8 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+      <div className="max-w-[1440px] mx-auto rounded-2xl border border-[#b08d57]/30 bg-gradient-to-br from-[#1a140a] to-black p-8 md:p-10 grid md:grid-cols-[1fr_auto] gap-8 items-center">
         <div>
           <p className="text-xs font-black tracking-widest text-[#b08d57] mb-2">LIVE AI PRODUCER</p>
           <h2 className="text-xl md:text-2xl font-black tracking-wide mb-4">YOUR PERSONAL SOUND ENGINEER</h2>

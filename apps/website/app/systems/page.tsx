@@ -119,64 +119,47 @@ export default function SystemsPage() {
   return (
     <div className="systems-page">
       <div className="systems-container">
-        {/* Header */}
-        <div style={{marginBottom: '4rem'}}>
-          <h1 style={{fontSize: '3rem', fontWeight: 700, marginBottom: '1rem', color: '#3ff14'}}>
-            WISE² Systems
-          </h1>
-          <p style={{fontSize: '1.25rem', color: '#d1d5db'}}>
-            All production systems are live and operational
-          </p>
+        <div className="systems-header">
+          <h1 className="systems-title">WISE² Systems</h1>
+          <p className="systems-subtitle">All production systems are live and operational</p>
         </div>
 
-        {/* Systems Grid */}
-        <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '4rem'}}>
+        <div className="systems-grid">
           {systems.map((system) => (
-            <Link
-              key={system.name}
-              href={system.link}
-              style={{textDecoration: 'none'}}
-            >
-              <div style={{background: 'rgba(31, 41, 55, 0.5)', border: '1px solid #374151', borderRadius: '0.5rem', padding: '1.5rem', height: '100%', transition: 'all 0.3s', cursor: 'pointer'}}>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
-                  <span style={{fontSize: '2rem'}}>{system.icon}</span>
-                  <span
-                    style={{padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700, background: system.status === 'LIVE' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(59, 130, 246, 0.2)', color: system.status === 'LIVE' ? '#4ade80' : '#60a5fa'}}
-                  >
+            <Link key={system.name} href={system.link} className="systems-link">
+              <div className="systems-card">
+                <div className="systems-card-header">
+                  <span className="systems-card-icon">{system.icon}</span>
+                  <span className={`systems-card-status ${system.status === 'LIVE' ? 'systems-card-status-live' : 'systems-card-status-ready'}`}>
                     {system.status}
                   </span>
                 </div>
 
-                <h3 style={{fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#fff'}}>
-                  {system.name}
-                </h3>
-                <p style={{color: '#9ca3af', marginBottom: '1rem', fontSize: '0.875rem'}}>{system.description}</p>
+                <h3 className="systems-card-title">{system.name}</h3>
+                <p className="systems-card-description">{system.description}</p>
 
-                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                <div className="systems-card-features">
                   {system.features.map((feature) => (
-                    <div key={feature} style={{display: 'flex', alignItems: 'flex-start', fontSize: '0.875rem'}}>
-                      <span style={{color: '#4ade80', marginRight: '0.5rem'}}>✓</span>
-                      <span style={{color: '#d1d5db'}}>{feature}</span>
+                    <div key={feature} className="systems-card-feature">
+                      <span className="systems-card-feature-check">✓</span>
+                      <span className="systems-card-feature-text">{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                <div style={{marginTop: '1.5rem', color: '#4ade80', fontWeight: 600, fontSize: '0.875rem'}}>
-                  Learn more →
-                </div>
+                <div className="systems-card-footer">Learn more →</div>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Status Dashboard */}
-        <div style={{background: 'rgba(31, 41, 55, 0.5)', border: '1px solid #374151', borderRadius: '0.5rem', padding: '2rem', marginBottom: '4rem'}}>
-          <h2 style={{fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem'}}>Live Status</h2>
+        <div className="systems-dashboard">
+          <h2 className="systems-dashboard-title">Live Status</h2>
 
-          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem'}}>
-            <div>
-              <h3 style={{fontWeight: 600, color: '#4ade80', marginBottom: '1rem'}}>✅ Operational</h3>
-              <ul style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', color: '#d1d5db'}}>
+          <div className="systems-dashboard-grid">
+            <div className="systems-dashboard-section">
+              <h3 className="systems-dashboard-section-title systems-dashboard-section-operational">✅ Operational</h3>
+              <ul className="systems-dashboard-list">
                 <li>• Website: https://wise2.net</li>
                 <li>• API: /api/health</li>
                 <li>• Discord Bot: 40 commands</li>
@@ -190,9 +173,9 @@ export default function SystemsPage() {
               </ul>
             </div>
 
-            <div>
-              <h3 style={{fontWeight: 600, color: '#60a5fa', marginBottom: '1rem'}}>🔧 Configuration</h3>
-              <ul style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', color: '#d1d5db'}}>
+            <div className="systems-dashboard-section">
+              <h3 className="systems-dashboard-section-title systems-dashboard-section-config">🔧 Configuration</h3>
+              <ul className="systems-dashboard-list">
                 <li>• Database: PostgreSQL 5432</li>
                 <li>• Cache: Redis 6379</li>
                 <li>• Messaging: Discord webhooks</li>
@@ -204,24 +187,14 @@ export default function SystemsPage() {
           </div>
         </div>
 
-        {/* Navigation */}
-        <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
-          <Link
-            href="/systems/discord"
-            style={{padding: '0.75rem 1.5rem', background: '#22c55e', color: '#000', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-          >
+        <div className="systems-nav">
+          <Link href="/systems/discord" className="systems-nav-btn systems-nav-btn-primary">
             Discord Setup
           </Link>
-          <Link
-            href="/api-docs"
-            style={{padding: '0.75rem 1.5rem', background: '#3b82f6', color: '#fff', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-          >
+          <Link href="/api-docs" className="systems-nav-btn systems-nav-btn-secondary">
             API Docs
           </Link>
-          <Link
-            href="/"
-            style={{padding: '0.75rem 1.5rem', background: '#374151', color: '#fff', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-          >
+          <Link href="/" className="systems-nav-btn systems-nav-btn-tertiary">
             Back Home
           </Link>
         </div>

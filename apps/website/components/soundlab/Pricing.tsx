@@ -82,7 +82,7 @@ export function Pricing() {
                 key={tier.id}
                 className={`relative rounded-2xl p-7 flex flex-col ${
                   tier.featured
-                    ? 'border-2 border-[#b08d57] bg-[#0d1a05] shadow-[0_0_50px_rgba(176,141,87,0.25)] md:-translate-y-3'
+                    ? 'border-2 border-[#b08d57] bg-[#1a140a] shadow-[0_0_50px_rgba(176,141,87,0.25)] md:-translate-y-3'
                     : tier.gold
                     ? 'border border-amber-500/40 bg-[#120f05]'
                     : 'border border-white/10 bg-[#0a0a0a]'
