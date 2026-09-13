@@ -190,6 +190,8 @@ services:
     environment:
       DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      # Runtime secret only. Never commit the webhook URL.
+      DISCORD_WEBHOOK_ALERTS: ${DISCORD_WEBHOOK_ALERTS}
       API_URL: http://api:3000
       ADMIN_ID: ${ADMIN_ID}
       BOT_TOKEN: ${DISCORD_BOT_TOKEN}
