@@ -5,6 +5,7 @@ interface Props {
   mode: ControllerMode
   midiConnected: boolean
   recentActions: any[]
+  onPadTrigger: (padIndex: number) => Promise<void>
 }
 
 const PAD_LAYOUT = [
@@ -49,7 +50,7 @@ const LABEL_MAP = {
   wise2: WISE2_MODE_LABELS,
 }
 
-export default function VirtualMaschine({ mode, midiConnected, recentActions }: Props) {
+export default function VirtualMaschine({ mode, midiConnected, recentActions, onPadTrigger }: Props) {
   const [activePads, setActivePads] = useState<Set<number>>(new Set())
   const [prevMode, setPrevMode] = useState(mode)
   const [modeTransition, setModeTransition] = useState(false)
@@ -87,6 +88,7 @@ export default function VirtualMaschine({ mode, midiConnected, recentActions }: 
 
   const handlePadClick = (padIndex: number) => {
     setActivePads(new Set([padIndex]))
+    void onPadTrigger(padIndex)
     setTimeout(() => setActivePads(new Set()), 250)
   }
 

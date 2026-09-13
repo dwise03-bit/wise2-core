@@ -7,9 +7,10 @@ interface Props {
   state: BridgeState
   onModeSwitch: (mode: ControllerMode) => Promise<void>
   bridgeConnected: boolean
+  onPadTrigger: (padIndex: number) => Promise<void>
 }
 
-export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnected }: Props) {
+export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnected, onPadTrigger }: Props) {
   const midiConnected = state.midi.connected
   const currentMode = state.mode.current_mode
   const modeColor = MODE_COLORS[currentMode]
@@ -53,6 +54,7 @@ export default function SoundLabsDashboard({ state, onModeSwitch, bridgeConnecte
             mode={currentMode}
             midiConnected={midiConnected}
             recentActions={state.state.recent_actions}
+            onPadTrigger={onPadTrigger}
           />
         </div>
 

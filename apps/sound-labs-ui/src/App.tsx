@@ -104,6 +104,16 @@ export default function App() {
     }
   }, [])
 
+  const triggerPad = useCallback(async (padIndex: number) => {
+    try {
+      const response = await fetch(`${BRIDGE_API_URL}/soundboard/trigger-pad/${padIndex}`, { method: 'POST' })
+      if (!response.ok) throw new Error(`Pad ${padIndex + 1} trigger failed`)
+    } catch (padError) {
+      console.error('Pad trigger error:', padError)
+      setError('Pad trigger unavailable')
+    }
+  }, [])
+
   const askAssistant = useCallback(async (event: React.FormEvent) => {
     event.preventDefault()
     const message = prompt.trim()
@@ -137,6 +147,7 @@ export default function App() {
           state={state}
           onModeSwitch={switchMode}
           bridgeConnected={connected}
+          onPadTrigger={triggerPad}
         />
       )}
       <button className="assistant-fab" onClick={() => setAssistantOpen((open) => !open)} aria-label="Open WISE2 GPT">✦</button>
