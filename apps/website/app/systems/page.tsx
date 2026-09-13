@@ -109,9 +109,7 @@ export default function SystemsPage() {
               href={system.link}
               style={{textDecoration: 'none'}}
             >
-              <div style={{background: 'rgba(31, 41, 55, 0.5)', border: '1px solid #374151', borderRadius: '0.5rem', padding: '1.5rem', height: '100%', transition: 'all 0.3s', cursor: 'pointer'}}
-                   onMouseEnter={(e) => {e.currentTarget.style.borderColor = '#22c55e'; e.currentTarget.style.background = '#1f2937'}}
-                   onMouseLeave={(e) => {e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.background = 'rgba(31, 41, 55, 0.5)'}}>
+              <div style={{background: 'rgba(31, 41, 55, 0.5)', border: '1px solid #374151', borderRadius: '0.5rem', padding: '1.5rem', height: '100%', transition: 'all 0.3s', cursor: 'pointer'}}>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>
                   <span style={{fontSize: '2rem'}}>{system.icon}</span>
                   <span
@@ -179,24 +177,18 @@ export default function SystemsPage() {
           <Link
             href="/systems/discord"
             style={{padding: '0.75rem 1.5rem', background: '#22c55e', color: '#000', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-            onMouseEnter={(e) => {e.currentTarget.style.background = '#4ade80'}}
-            onMouseLeave={(e) => {e.currentTarget.style.background = '#22c55e'}}
           >
             Discord Setup
           </Link>
           <Link
             href="/api-docs"
             style={{padding: '0.75rem 1.5rem', background: '#3b82f6', color: '#fff', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-            onMouseEnter={(e) => {e.currentTarget.style.background = '#60a5fa'}}
-            onMouseLeave={(e) => {e.currentTarget.style.background = '#3b82f6'}}
           >
             API Docs
           </Link>
           <Link
             href="/"
             style={{padding: '0.75rem 1.5rem', background: '#374151', color: '#fff', fontWeight: 700, borderRadius: '0.5rem', textDecoration: 'none', cursor: 'pointer', transition: 'all 0.3s'}}
-            onMouseEnter={(e) => {e.currentTarget.style.background = '#4b5563'}}
-            onMouseLeave={(e) => {e.currentTarget.style.background = '#374151'}}
           >
             Back Home
           </Link>
