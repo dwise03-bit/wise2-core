@@ -52,6 +52,7 @@ echo -e "${GREEN}✓ Website application built${NC}"
 echo ""
 echo -e "${YELLOW}[4/7]${NC} Stopping existing website container..."
 ssh ${REMOTE_USER}@${REMOTE_HOST} "docker stop wise2-website 2>/dev/null || true" > /dev/null
+ssh ${REMOTE_USER}@${REMOTE_HOST} "docker rm wise2-website 2>/dev/null || true" > /dev/null
 echo -e "${GREEN}✓ Old container stopped${NC}"
 
 # Build website Docker image
