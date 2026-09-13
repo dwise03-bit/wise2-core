@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import AppNav from '../../components/AppNav';
 
 export default function TrackerPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -36,7 +37,9 @@ export default function TrackerPage() {
   };
 
   return (
-    <div className="min-h-screen p-8" style={{ backgroundColor: '#0A0E27' }}>
+    <>
+      <AppNav />
+      <div className="min-h-screen p-8" style={{ backgroundColor: '#0A0E27', marginLeft: '200px' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -310,5 +313,6 @@ export default function TrackerPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

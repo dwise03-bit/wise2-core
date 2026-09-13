@@ -34,10 +34,18 @@ export const defaultNavSections: NavSection[] = [
     ],
   },
   {
+    id: 'operations',
+    title: 'Operations',
+    items: [
+      { id: 'arvr', label: 'AR/VR Ecosystem', icon: '🥽', href: '/arvr', badge: '⚡' },
+      { id: 'infrastructure', label: 'Infrastructure', icon: '🖥️', href: '/infrastructure' },
+      { id: 'monitoring', label: 'Monitoring', icon: '📊', href: 'http://localhost:3000' },
+    ],
+  },
+  {
     id: 'system',
     title: 'System',
     items: [
-      { id: 'infrastructure', label: 'Infrastructure', icon: '🖥️', href: '/infrastructure' },
       { id: 'files', label: 'Files', icon: '🗂️', href: '/files' },
       { id: 'marketplace', label: 'Marketplace', icon: '🛒', href: '/marketplace' },
       { id: 'settings', label: 'Settings', icon: '⚙️', href: '/settings', pinned: true },

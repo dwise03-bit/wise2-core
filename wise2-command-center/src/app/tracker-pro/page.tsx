@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import AppNav from '../../components/AppNav';
 
 export default function TrackerProPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -61,8 +62,10 @@ export default function TrackerProPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0A0E27' }}>
-      <style>{`
+    <>
+      <AppNav />
+      <div className="min-h-screen" style={{ backgroundColor: '#0A0E27', marginLeft: '200px' }}>
+        <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
@@ -577,5 +580,6 @@ export default function TrackerProPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
