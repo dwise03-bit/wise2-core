@@ -20,4 +20,8 @@ export ANDROID_HOME="${ANDROID_HOME:-/opt/android-sdk}"
 export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
 export ANDROID_NDK_ROOT="${ANDROID_NDK_ROOT:-$ANDROID_HOME/ndk/27.2.12479018}"
 export WISE2_USB_DEV="${WISE2_USB_DEV:-0}"
+# Unity's generated Android PlayerDataCache can retain a locked resource after
+# an interrupted batch build. Clear only generated Android build state so the
+# VPS build remains reproducible without touching project assets or settings.
+rm -rf "$PROJECT_DIR/Library/PlayerDataCache" "$PROJECT_DIR/Library/Bee/artifacts/AndroidPlayer"
 "$UNITY_BIN" -batchmode -nographics -quit -projectPath "$PROJECT_DIR" -buildTarget Android -executeMethod Wise2.XR.Editor.BuildQuest.PerformBuild -logFile "$LOG_DIR/unity-build.log"
