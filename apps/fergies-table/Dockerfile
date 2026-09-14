@@ -5,8 +5,8 @@ WORKDIR /app
 # Copy workspace files
 COPY package.json pnpm-lock.yaml ./
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm
+# Install pnpm using corepack (built-in to Node 16+)
+RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install --frozen-lockfile
 
 # Copy app source
@@ -21,8 +21,8 @@ RUN pnpm build
 FROM node:20-alpine
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Enable corepack for pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy built app from builder
 COPY --from=builder /app/apps/fergies-table/.next ./.next
