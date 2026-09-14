@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import CommandCenter from './pages/CommandCenter';
-import SoundLab from './pages/SoundLab';
+import SoundLabPro from './pages/SoundLabPro';
 import LiveStudio from './pages/LiveStudio';
 import JingleLab from './pages/JingleLab';
 import LyricsLab from './pages/LyricsLab';
@@ -137,7 +137,7 @@ export default function CreativeStudio() {
 
           <div style={{ background: '#0d0d0d', border: '1px solid #222', borderRadius: '12px', padding: '20px', minHeight: '300px', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
             {page === 'command' && <CommandCenter />}
-            {page === 'sound' && <SoundLab />}
+            {page === 'sound' && <SoundLabPro />}
             {page === 'live' && <LiveStudio />}
             {page === 'jingle' && <JingleLab />}
             {page === 'lyrics' && <LyricsLab />}
