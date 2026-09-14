@@ -2,8 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react'
 import SoundLabsDashboard from './components/SoundLabsDashboard'
 import { BridgeState, ControllerMode } from './types'
 
-const BRIDGE_API_URL = import.meta.env.VITE_BRIDGE_URL || 'http://100.64.72.14:8788'
-const BRIDGE_WS_URL = BRIDGE_API_URL.replace(/^http/, 'ws') + '/ws/state'
+const DEFAULT_BRIDGE_URL = import.meta.env.VITE_BRIDGE_URL || 'http://100.64.72.14:8788'
+
+function getBridgeUrl() {
+  const saved = window.localStorage.getItem('wise2.soundlabs.bridgeUrl')
+  return (saved || DEFAULT_BRIDGE_URL).replace(/\/$/, '')
+}
 
 export default function App() {
   const [state, setState] = useState<BridgeState | null>(null)
@@ -12,6 +16,8 @@ export default function App() {
   const [assistantOpen, setAssistantOpen] = useState(false)
   const [prompt, setPrompt] = useState('')
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([])
+  const bridgeApiUrl = getBridgeUrl()
+  const bridgeWsUrl = bridgeApiUrl.replace(/^http/, 'ws') + '/ws/state'
 
   // Connect to bridge WebSocket
   useEffect(() => {
@@ -21,7 +27,7 @@ export default function App() {
 
     const fetchState = async () => {
       try {
-        const response = await fetch(`${BRIDGE_API_URL}/state`, { cache: 'no-store' })
+        const response = await fetch(`${bridgeApiUrl}/state`, { cache: 'no-store' })
         if (!response.ok) throw new Error(`Bridge returned ${response.status}`)
         setState(await response.json())
         setConnected(true)
@@ -38,7 +44,7 @@ export default function App() {
 
     const connect = () => {
       try {
-        ws = new WebSocket(BRIDGE_WS_URL)
+        ws = new WebSocket(bridgeWsUrl)
 
         ws.onopen = () => {
           console.log('✅ Connected to Sound Labs bridge')
@@ -88,11 +94,11 @@ export default function App() {
         clearInterval(pollTimer)
       }
     }
-  }, [])
+  }, [bridgeApiUrl, bridgeWsUrl])
 
   const switchMode = useCallback(async (mode: ControllerMode) => {
     try {
-      const response = await fetch(`${BRIDGE_API_URL}/mode/${mode}`, {
+      const response = await fetch(`${getBridgeUrl()}/mode/${mode}`, {
         method: 'POST',
       })
       if (!response.ok) {
@@ -106,7 +112,7 @@ export default function App() {
 
   const triggerPad = useCallback(async (padIndex: number) => {
     try {
-      const response = await fetch(`${BRIDGE_API_URL}/soundboard/trigger-pad/${padIndex}`, { method: 'POST' })
+      const response = await fetch(`${getBridgeUrl()}/soundboard/trigger-pad/${padIndex}`, { method: 'POST' })
       if (!response.ok) throw new Error(`Pad ${padIndex + 1} trigger failed`)
     } catch (padError) {
       console.error('Pad trigger error:', padError)
@@ -115,7 +121,7 @@ export default function App() {
   }, [])
 
   const transport = useCallback(async (action: 'play' | 'stop' | 'pause' | 'record') => {
-    const response = await fetch(`${BRIDGE_API_URL}/reaper/transport/${action}`, { method: 'POST' })
+    const response = await fetch(`${getBridgeUrl()}/reaper/transport/${action}`, { method: 'POST' })
     if (!response.ok) throw new Error(`REAPER ${action} failed`)
   }, [])
 
@@ -127,7 +133,7 @@ export default function App() {
     setMessages(next)
     setPrompt('')
     try {
-      const response = await fetch(`${BRIDGE_API_URL}/ai/chat`, {
+      const response = await fetch(`${getBridgeUrl()}/ai/chat`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, history: next.slice(-8) }),
       })

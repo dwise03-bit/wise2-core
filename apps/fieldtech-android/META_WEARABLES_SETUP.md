@@ -4,7 +4,7 @@ WISE² integrates ordinary Ray-Ban Meta Gen 2 glasses through the Android compan
 
 ## Current implementation
 
-`MetaWearablesBridge` is the app boundary for connection state, voice commands, and camera frames. The checked-in mock provider keeps local and CI builds working until the Meta Wearables Device Access Toolkit developer-preview dependency is enabled for this application.
+`MetaWearablesBridge` is the app boundary for connection state, voice commands, and camera frames, exposed through `AppContainer.metaWearables`. Production builds default to `UNAVAILABLE` until Meta's official Device Access Toolkit is configured; they never report a simulated connection. `MockMetaWearablesBridge` is reserved for tests.
 
 ## Production activation
 

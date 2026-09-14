@@ -72,6 +72,29 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
+    env:
+      # Stripe (Payment Processing)
+      STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_STARTER_PRICE_ID: ${{ secrets.STRIPE_STARTER_PRICE_ID }}
+      STRIPE_PRO_PRICE_ID: ${{ secrets.STRIPE_PRO_PRICE_ID }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+      # Email (Optional)
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+      # Database
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      # URLs
+      APP_URL: ${{ secrets.APP_URL }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      # Discord (Optional)
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      # Google OAuth (Optional)
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
     steps:
       - uses: actions/checkout@v4
@@ -83,51 +106,47 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           command_timeout: 30m
+          envs: |
+            STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,STRIPE_STARTER_PRICE_ID,STRIPE_PRO_PRICE_ID,STRIPE_WEBHOOK_SECRET,
+            SENDGRID_API_KEY,SENDGRID_FROM_EMAIL,
+            DATABASE_URL,DATABASE_USER,DATABASE_PASSWORD,
+            APP_URL,API_BASE_URL,
+            DISCORD_WEBHOOK_URL,DISCORD_BOT_TOKEN,
+            GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
             set -e
             cd wise2-core || { echo "❌ Failed to cd to wise2-core"; exit 1; }
 
             echo "📋 Fetching latest code..."
-            git fetch origin ${{ github.ref_name }} || { echo "❌ Git fetch failed"; exit 1; }
+            git fetch origin main || { echo "❌ Git fetch failed"; exit 1; }
+
+            # Decide scope before resetting the checkout. Website-only changes
+            # must not recreate API, Postgres, Redis, or worker containers.
+            CHANGED_FILES="$(git diff --name-only HEAD origin/main)"
+            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|Dockerfile.website$)'; then
+              DEPLOY_MODE=production
+            else
+              DEPLOY_MODE=website-only
+            fi
+
             # Older VPS deployments left some tracked files owned by root.
             # Repair checkout ownership once, then perform the exact sync.
-            if ! git reset --hard origin/${{ github.ref_name }}; then
+            if ! git reset --hard origin/main; then
               echo "⚠️ Checkout contains files not writable by the deploy user; repairing ownership..."
               sudo -n chown -R "$(id -un):$(id -gn)" . || {
                 echo "❌ Cannot repair VPS checkout ownership (passwordless sudo required)"
                 exit 1
               }
-              git reset --hard origin/${{ github.ref_name }}
+              git reset --hard origin/main
             fi
-
-            echo "🔐 Setting environment variables..."
-            export STRIPE_PUBLIC_KEY="${{ secrets.STRIPE_PUBLIC_KEY }}"
-            export STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}"
-            export STRIPE_STARTER_PRICE_ID="${{ secrets.STRIPE_STARTER_PRICE_ID }}"
-            export STRIPE_PRO_PRICE_ID="${{ secrets.STRIPE_PRO_PRICE_ID }}"
-            export STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}"
-            # Optional: SendGrid is optional; defaults to empty and disables email delivery
-            export SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }:-}"
-            export SENDGRID_FROM_EMAIL="${{ secrets.SENDGRID_FROM_EMAIL }:-}"
-            # Database: Defaults to local docker-compose credentials if not set
-            export DATABASE_URL="${{ secrets.DATABASE_URL }:-postgresql://wise2:wise2@postgres:5432/wise2_prod}"
-            export DATABASE_USER="${{ secrets.DATABASE_USER }:-wise2}"
-            export DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }:-wise2}"
-            export APP_URL="${{ secrets.APP_URL }}"
-            export API_BASE_URL="${{ secrets.API_BASE_URL }}"
-            # Optional: Discord integration
-            export DISCORD_WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK_URL }:-}"
-            export DISCORD_BOT_TOKEN="${{ secrets.DISCORD_BOT_TOKEN }:-}"
-            # Optional: Google OAuth
-            export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }:-}"
-            export GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }:-}"
 
             echo "📊 Docker status before deployment..."
             docker ps -a || echo "⚠️ Docker ps failed"
 
             echo "🚀 Starting deployment..."
             chmod +x ./deploy.sh
-            if ! ./deploy.sh production; then
+            echo "Deploy mode: $DEPLOY_MODE"
+            if ! ./deploy.sh "$DEPLOY_MODE"; then
               echo ""
               echo "❌ Deployment script failed. Collecting debug info..."
               echo ""

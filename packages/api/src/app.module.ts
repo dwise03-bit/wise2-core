@@ -23,6 +23,7 @@ import { CustomersModule } from './v1/customers/customers.module';
 import { GalleryModule } from './v1/gallery/gallery.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RevenueOsModule } from './revenue-os/revenue-os.module';
+import { WorkspacesModule } from './v1/workspaces/workspaces.module';
 import { DigitalTwinModule } from './digital-twin/digital-twin.module';
 import { DemoModule } from './demo/demo.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
@@ -38,6 +39,7 @@ import { HvacTelemetryModule } from './hvac-telemetry/hvac-telemetry.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
+import { RayBanModule } from './rayban/rayban.module';
 import { CommandCenterModule } from './command-center/command-center.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
@@ -128,6 +130,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     // DiscordModule, // DISABLED: TokenInvalid error blocking deployment
     PrismaModule,
     RevenueOsModule,
+    WorkspacesModule,
     DigitalTwinModule,
     DemoModule,
     WiseDefenseModule,
@@ -150,6 +153,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     AiPhoneModule,
     CloudModule,
     WebhooksModule,
+    RayBanModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],

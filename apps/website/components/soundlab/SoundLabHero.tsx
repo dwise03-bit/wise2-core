@@ -19,7 +19,7 @@ function StudioVisual() {
   return (
     <div className="relative w-full aspect-square max-w-[560px] mx-auto">
       {/* ambient glow */}
-      <div className="absolute inset-0 rounded-full bg-[#9AFF00]/10 blur-[100px]" />
+      <div className="absolute inset-0 rounded-full bg-[#b08d57]/10 blur-[100px]" />
 
       {/* console base */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[92%] h-[38%] rounded-2xl bg-gradient-to-b from-[#141414] to-black border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.8)] overflow-hidden">
@@ -30,7 +30,7 @@ function StudioVisual() {
               className="rounded-sm bg-[#1a1a1a] border border-white/5 flex items-end justify-center overflow-hidden"
             >
               <div
-                className="w-full bg-[#9AFF00]/70 shadow-[0_0_6px_rgba(154,255,0,0.8)] animate-pulse"
+                className="w-full bg-[#b08d57]/70 shadow-[0_0_6px_rgba(176,141,87,0.35)] animate-pulse"
                 style={{
                   height: `${20 + ((i * 13) % 60)}%`,
                   animationDelay: `${i * 0.12}s`,
@@ -44,7 +44,7 @@ function StudioVisual() {
 
       {/* chrome W2 + headphones centerpiece */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <svg viewBox="0 0 400 400" className="w-[78%] h-[78%] drop-shadow-[0_0_40px_rgba(154,255,0,0.25)]">
+        <svg viewBox="0 0 400 400" className="w-[78%] h-[78%] drop-shadow-[0_0_40px_rgba(176,141,87,0.25)]">
           <defs>
             <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#f4f4f5" />
@@ -53,8 +53,8 @@ function StudioVisual() {
               <stop offset="100%" stopColor="#e5e7eb" />
             </linearGradient>
             <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#9AFF00" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#9AFF00" stopOpacity="0" />
+              <stop offset="0%" stopColor="#b08d57" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#b08d57" stopOpacity="0" />
             </radialGradient>
           </defs>
           <circle cx="200" cy="200" r="190" fill="url(#glow)" />
@@ -98,7 +98,7 @@ function StudioVisual() {
       ].map((pos, i) => (
         <div
           key={i}
-          className="absolute w-2 h-2 rounded-full bg-[#9AFF00] shadow-[0_0_10px_4px_rgba(154,255,0,0.7)] animate-pulse"
+          className="absolute w-2 h-2 rounded-full bg-[#b08d57] shadow-[0_0_10px_4px_rgba(176,141,87,0.35)] animate-pulse"
           style={pos as React.CSSProperties}
         />
       ))}
@@ -115,7 +115,7 @@ export function SoundLabHero() {
       className="relative pt-28 md:pt-36 pb-16 px-5 md:px-8 overflow-hidden bg-black"
     >
       {/* background texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(154,255,0,0.08),_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(176,141,87,0.08),_transparent_55%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:44px_44px]" />
 
       <div className="relative max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-12 items-center">
@@ -132,7 +132,7 @@ export function SoundLabHero() {
               WE BUILD THE
             </span>
             <br />
-            <span className="text-[#9AFF00] drop-shadow-[0_0_20px_rgba(154,255,0,0.6)]">
+            <span className="text-[#b08d57] drop-shadow-[0_0_20px_rgba(176,141,87,0.35)]">
               SOUND.
             </span>
           </h1>
@@ -146,7 +146,7 @@ export function SoundLabHero() {
                 key={label}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/10 bg-white/5 text-[11px] font-semibold tracking-wide text-gray-300"
               >
-                <Icon size={12} className="text-[#9AFF00]" />
+                <Icon size={12} className="text-[#b08d57]" />
                 {label}
               </span>
             ))}
@@ -161,7 +161,7 @@ export function SoundLabHero() {
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => openIntake()}
-              className="flex items-center gap-2 px-6 py-3.5 rounded bg-[#9AFF00] text-black text-sm font-black tracking-wide hover:shadow-[0_0_30px_rgba(154,255,0,0.6)] transition-shadow cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded bg-[#b08d57] text-black text-sm font-black tracking-wide hover:shadow-[0_0_30px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer"
             >
               START MY JINGLE
               <Sparkles size={16} />
@@ -170,7 +170,7 @@ export function SoundLabHero() {
               onClick={() =>
                 document.querySelector('#samples')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="flex items-center gap-2 px-6 py-3.5 rounded border border-[#9AFF00] text-[#9AFF00] text-sm font-black tracking-wide hover:bg-[#9AFF00]/10 transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-6 py-3.5 rounded border border-[#b08d57] text-[#b08d57] text-sm font-black tracking-wide hover:bg-[#b08d57]/10 transition-colors cursor-pointer"
             >
               <Play size={16} />
               HEAR SAMPLES
@@ -192,7 +192,7 @@ export function SoundLabHero() {
         {BAR_HEIGHTS.map((h, i) => (
           <div
             key={i}
-            className="flex-1 bg-[#9AFF00] rounded-sm"
+            className="flex-1 bg-[#b08d57] rounded-sm"
             style={{ height: `${h}%` }}
           />
         ))}

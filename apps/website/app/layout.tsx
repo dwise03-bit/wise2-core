@@ -100,6 +100,37 @@ export default function RootLayout({
           .space-y-2 { display: flex; flex-direction: column; gap: 0.5rem; }
           .systems-page { min-height: 100vh; background: #000; color: #fff; font-family: system-ui, -apple-system, sans-serif; }
           .systems-container { max-width: 80rem; margin: 0 auto; padding: 0 1rem; padding-top: 4rem; padding-bottom: 4rem; }
+          .systems-header { margin-bottom: 4rem; }
+          .systems-title { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; color: #3ff14; }
+          .systems-subtitle { font-size: 1.25rem; color: #d1d5db; }
+          .systems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 4rem; }
+          .systems-link { text-decoration: none; }
+          .systems-card { background: rgba(31, 41, 55, 0.5); border: 1px solid #374151; border-radius: 0.5rem; padding: 1.5rem; height: 100%; transition: all 0.3s; cursor: pointer; }
+          .systems-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+          .systems-card-icon { font-size: 2rem; }
+          .systems-card-status { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; }
+          .systems-card-status-live { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+          .systems-card-status-ready { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+          .systems-card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff; }
+          .systems-card-description { color: #9ca3af; margin-bottom: 1rem; font-size: 0.875rem; }
+          .systems-card-features { display: flex; flex-direction: column; gap: 0.5rem; }
+          .systems-card-feature { display: flex; align-items: flex-start; font-size: 0.875rem; }
+          .systems-card-feature-check { color: #4ade80; margin-right: 0.5rem; }
+          .systems-card-feature-text { color: #d1d5db; }
+          .systems-card-footer { margin-top: 1.5rem; color: #4ade80; font-weight: 600; font-size: 0.875rem; }
+          .systems-dashboard { background: rgba(31, 41, 55, 0.5); border: 1px solid #374151; border-radius: 0.5rem; padding: 2rem; margin-bottom: 4rem; }
+          .systems-dashboard-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+          .systems-dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+          .systems-dashboard-section { }
+          .systems-dashboard-section-title { font-weight: 600; margin-bottom: 1rem; }
+          .systems-dashboard-section-operational { color: #4ade80; }
+          .systems-dashboard-section-config { color: #60a5fa; }
+          .systems-dashboard-list { display: flex; flex-direction: column; gap: 0.5rem; color: #d1d5db; }
+          .systems-nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+          .systems-nav-btn { padding: 0.75rem 1.5rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; cursor: pointer; transition: all 0.3s; }
+          .systems-nav-btn-primary { background: #22c55e; color: #000; }
+          .systems-nav-btn-secondary { background: #3b82f6; color: #fff; }
+          .systems-nav-btn-tertiary { background: #374151; color: #fff; }
           .transition-all { transition: all 0.3s; }
           .hover\\:border-green-500:hover { border-color: #22c55e; }
           .hover\\:bg-gray-800:hover { background: #1f2937; }

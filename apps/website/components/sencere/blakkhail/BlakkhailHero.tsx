@@ -5,7 +5,9 @@ import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 import { BLAKKHAIL } from './brand-tokens';
 
 export function BlakkhailHero() {
-  const heroImage = BLAKKHAIL_LEGACY.assets.shopPhotos?.[0] || '/sencere-assets/blakkhail/default-hero.jpg';
+  // Lead with the approved drop artwork so the hero matches the brand reference
+  // instead of enlarging a low-resolution campaign thumbnail.
+  const heroImage = BLAKKHAIL_LEGACY.assets.dropAd || '/sencere-assets/blakkhail/default-hero.jpg';
 
   return (
     <section className="relative isolate flex min-h-[min(760px,calc(100svh-112px))] w-full overflow-hidden bg-black group sm:min-h-[600px] lg:min-h-[800px]">
@@ -17,7 +19,7 @@ export function BlakkhailHero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center scale-[1.04] transition-transform duration-[1800ms] ease-out group-hover:scale-100"
+          className="object-contain object-right scale-100 opacity-85 transition-opacity duration-[1800ms] ease-out group-hover:opacity-100"
         />
         {/* Cinematic gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
@@ -40,18 +42,6 @@ export function BlakkhailHero() {
         </div>
       </div>
 
-      {/* Featured artwork for the current New Drop. */}
-      <div className="pointer-events-none absolute bottom-10 right-[5%] z-[2] hidden w-[clamp(150px,18vw,260px)] rotate-[2deg] overflow-hidden border border-[#D4AF37]/70 shadow-[0_20px_70px_rgba(0,0,0,.7)] md:block">
-        <Image
-          src="/sencere-assets/blakkhail/blakkhail-new-drop-poster.png"
-          alt="Blakk Hail The New Drop — Take Control, No Apologies"
-          width={1003}
-          height={1568}
-          sizes="(min-width: 1280px) 260px, 18vw"
-          className="h-auto w-full"
-        />
-      </div>
-
       {/* Content */}
       <div className="relative z-10 flex min-h-[inherit] flex-col items-center justify-center px-6 py-24 text-center sm:py-28">
         {/* Tagline */}
@@ -65,7 +55,7 @@ export function BlakkhailHero() {
         {/* Main Headline */}
         <div className="mb-12 overflow-hidden">
           <h1
-            className="w-[min(78vw,620px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
+            className="w-[min(82vw,760px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
             style={{
               color: BLAKKHAIL.gold,
               fontFamily: 'var(--font-headers)',

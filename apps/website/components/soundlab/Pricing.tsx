@@ -82,28 +82,28 @@ export function Pricing() {
                 key={tier.id}
                 className={`relative rounded-2xl p-7 flex flex-col ${
                   tier.featured
-                    ? 'border-2 border-[#9AFF00] bg-[#0d1a05] shadow-[0_0_50px_rgba(154,255,0,0.25)] md:-translate-y-3'
+                    ? 'border-2 border-[#b08d57] bg-[#1a140a] shadow-[0_0_50px_rgba(176,141,87,0.25)] md:-translate-y-3'
                     : tier.gold
                     ? 'border border-amber-500/40 bg-[#120f05]'
                     : 'border border-white/10 bg-[#0a0a0a]'
                 }`}
               >
                 {tier.badge && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#9AFF00] text-black text-[10px] font-black tracking-wide">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#b08d57] text-black text-[10px] font-black tracking-wide">
                     {tier.badge}
                   </span>
                 )}
 
                 <Icon
                   size={28}
-                  className={`mb-3 ${tier.gold ? 'text-amber-400' : 'text-[#9AFF00]'}`}
+                  className={`mb-3 ${tier.gold ? 'text-amber-400' : 'text-[#b08d57]'}`}
                 />
                 <h3 className="text-base font-black tracking-wide">{tier.name}</h3>
                 <p className="text-[11px] text-gray-500 tracking-wide mb-4">{tier.tagline}</p>
 
                 <p
                   className={`text-3xl font-black mb-5 ${
-                    tier.gold ? 'text-amber-400' : tier.featured ? 'text-[#9AFF00]' : 'text-white'
+                    tier.gold ? 'text-amber-400' : tier.featured ? 'text-[#b08d57]' : 'text-white'
                   }`}
                 >
                   {tier.price}
@@ -114,7 +114,7 @@ export function Pricing() {
                     <li key={f} className="flex items-start gap-2 text-xs text-gray-300">
                       <Check
                         size={14}
-                        className={`mt-0.5 shrink-0 ${tier.gold ? 'text-amber-400' : 'text-[#9AFF00]'}`}
+                        className={`mt-0.5 shrink-0 ${tier.gold ? 'text-amber-400' : 'text-[#b08d57]'}`}
                       />
                       {f}
                     </li>
@@ -125,10 +125,10 @@ export function Pricing() {
                   onClick={() => openIntake(tier.name)}
                   className={`w-full py-3 rounded text-xs font-black tracking-wide transition-all cursor-pointer ${
                     tier.featured
-                      ? 'bg-[#9AFF00] text-black hover:shadow-[0_0_24px_rgba(154,255,0,0.6)]'
+                      ? 'bg-[#b08d57] text-black hover:shadow-[0_0_24px_rgba(176,141,87,0.35)]'
                       : tier.gold
                       ? 'border border-amber-500/60 text-amber-400 hover:bg-amber-500/10'
-                      : 'border border-[#9AFF00] text-[#9AFF00] hover:bg-[#9AFF00]/10'
+                      : 'border border-[#b08d57] text-[#b08d57] hover:bg-[#b08d57]/10'
                   }`}
                 >
                   {tier.cta}

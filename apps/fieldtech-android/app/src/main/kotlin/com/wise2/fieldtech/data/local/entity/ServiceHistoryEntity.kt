@@ -3,9 +3,11 @@ package com.wise2.fieldtech.data.local.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import androidx.room.Index
 
 @Entity(
     tableName = "service_history",
+    indices = [Index(value = ["equipmentId"])],
     foreignKeys = [
         ForeignKey(entity = EquipmentEntity::class, parentColumns = ["id"], childColumns = ["equipmentId"], onDelete = ForeignKey.CASCADE)
     ]

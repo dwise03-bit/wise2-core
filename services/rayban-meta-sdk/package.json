@@ -1,0 +1,25 @@
+{
+  "name": "@wise2/rayban-meta-sdk",
+  "version": "1.0.0",
+  "description": "Ray-Ban Meta AR SDK for WISE² Router integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "keywords": ["ar", "ray-ban", "ai-router", "wearable"],
+  "author": "dwise",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  }
+}

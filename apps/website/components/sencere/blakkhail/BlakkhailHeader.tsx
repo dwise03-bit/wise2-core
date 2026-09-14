@@ -62,7 +62,7 @@ export function BlakkhailHeader() {
                 alt="SenCere Creative rabbit logo"
                 width={72}
                 height={74}
-                className="h-16 w-16 object-contain sm:h-20 sm:w-20 transition-transform duration-300 group-hover:scale-110"
+                className="h-20 w-20 object-contain sm:h-24 sm:w-24 transition-transform duration-300 group-hover:scale-110"
                 priority
               />
               {/* Glow effect */}
@@ -81,7 +81,7 @@ export function BlakkhailHeader() {
               }}
             >
               <span
-                className="text-sm font-black uppercase tracking-widest sm:text-base"
+                className="text-base font-black uppercase tracking-[0.14em] sm:text-lg"
                 style={{ color: BLAKKHAIL.gold }}
               >
                 Blakk<br className="sm:hidden" /> Hail

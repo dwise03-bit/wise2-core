@@ -5,16 +5,25 @@
 import { v4 as uuid } from 'uuid';
 import { AIRequest, AIResponse, AIError } from './types/request';
 import { OllamaProvider } from './providers/ollama';
+import { SecondBrainClient } from './providers/second-brain';
+import { RayBanMetaClient } from './providers/rayban-meta';
+import { QuestMetaClient } from './providers/quest-meta';
 import { BudgetEngine } from './budget/engine';
 import { TelemetryLogger } from './telemetry/logger';
 
 export class AIRouter {
   private ollama: OllamaProvider;
+  private secondBrain: SecondBrainClient;
+  private raybanMeta: RayBanMetaClient;
+  private questMeta: QuestMetaClient;
   private budget: BudgetEngine;
   private telemetry: TelemetryLogger;
 
   constructor(ollama: OllamaProvider, budget: BudgetEngine, telemetry: TelemetryLogger) {
     this.ollama = ollama;
+    this.secondBrain = new SecondBrainClient();
+    this.raybanMeta = new RayBanMetaClient();
+    this.questMeta = new QuestMetaClient();
     this.budget = budget;
     this.telemetry = telemetry;
   }
@@ -62,8 +71,11 @@ export class AIRouter {
         return this.createError('No suitable provider available', requestId);
       }
 
+      // Enrich prompt with Second Brain context
+      const enrichedRequest = await this.enrichWithSecondBrain(request);
+
       // Generate response
-      const response = await selectedProvider.generate(request);
+      const response = await selectedProvider.generate(enrichedRequest);
       const latency = Date.now() - startTime;
 
       // Log success
@@ -118,6 +130,9 @@ export class AIRouter {
 
         success: true,
       });
+
+      // Broadcast to wearable devices if specified
+      await this.broadcastToWearables(request, response);
 
       return aiResponse;
     } catch (error) {
@@ -196,6 +211,72 @@ export class AIRouter {
       inputTokens,
       outputTokens,
     };
+  }
+
+  /**
+   * Broadcast response to Ray-Ban Meta and Meta Quest devices
+   */
+  private async broadcastToWearables(request: AIRequest, response: string): Promise<void> {
+    try {
+      // Extract device IDs from request metadata
+      const devices = (request as any).devices || [];
+
+      for (const device of devices) {
+        if (device.type === 'rayban-meta' && device.id) {
+          await this.raybanMeta.sendResponse(device.id, {
+            text: response,
+            visual: (request as any).visual_context,
+            gesture_response: 'listen',
+          });
+        }
+
+        if (device.type === 'quest-meta' && device.id) {
+          await this.questMeta.sendResponse(device.id, {
+            spatial_object: {
+              type: 'text',
+              position: [0, 0, -2],
+              data: response,
+            },
+            hand_gesture_feedback: 'acknowledge',
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Wearable broadcast failed (graceful degradation):', error);
+    }
+  }
+
+  /**
+   * Enrich prompt with context from Second Brain knowledge base
+   */
+  private async enrichWithSecondBrain(request: AIRequest): Promise<AIRequest> {
+    try {
+      // Extract the user's question (last user message)
+      const userMessage = [...request.messages].reverse().find((m) => m.role === 'user');
+      if (!userMessage) return request;
+
+      // Query Second Brain for relevant context
+      const context = await this.secondBrain.query(userMessage.content, 3);
+      if (!context || context.contexts.length === 0) {
+        return request;
+      }
+
+      // Build enriched prompt
+      const enrichedContent = this.secondBrain.buildContextPrompt(userMessage.content, context);
+
+      // Create new request with enriched message
+      return {
+        ...request,
+        messages: request.messages.map((m) =>
+          m.role === 'user' && m === userMessage
+            ? { ...m, content: enrichedContent }
+            : m
+        ),
+      };
+    } catch (error) {
+      console.warn('Second Brain enrichment failed (graceful degradation):', error);
+      return request;
+    }
   }
 
   /**

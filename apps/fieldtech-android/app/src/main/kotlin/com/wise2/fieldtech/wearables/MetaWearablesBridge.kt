@@ -4,7 +4,6 @@ import android.content.Context
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.serialization.Serializable
 
 /**
@@ -32,7 +31,7 @@ data class WearableEvent(
     val mimeType: String? = null,
 )
 
-/** Safe default used until the official Meta SDK adapter is configured. */
+/** Test-only bridge. It must never be used by a production provider. */
 class MockMetaWearablesBridge : MetaWearablesBridge {
     private val mutableState = MutableStateFlow(ConnectionState.DISCONNECTED)
     override val state: StateFlow<ConnectionState> = mutableState.asStateFlow()
@@ -55,11 +54,24 @@ class MockMetaWearablesBridge : MetaWearablesBridge {
     }
 }
 
+/** Production-safe fallback until Meta DAT credentials and SDK are configured. */
+class UnavailableMetaWearablesBridge : MetaWearablesBridge {
+    private val mutableState = MutableStateFlow(ConnectionState.UNAVAILABLE)
+    override val state: StateFlow<ConnectionState> = mutableState.asStateFlow()
+
+    override suspend fun connect() = error("Ray-Ban Meta integration is not configured for this build")
+    override suspend fun disconnect() = Unit
+    override suspend fun sendAudioCommand(text: String) =
+        error("Ray-Ban Meta audio is unavailable until Meta DAT is configured")
+    override suspend fun publishCameraFrame(bytes: ByteArray, mimeType: String) =
+        error("Ray-Ban Meta camera is unavailable until Meta DAT is configured")
+}
+
 /**
  * Entry point for dependency injection. Replace the provider implementation
  * here when Meta developer access and the official Android SDK artifact are
  * available; the rest of WISE² does not change.
  */
 object MetaWearables {
-    fun create(context: Context): MetaWearablesBridge = MockMetaWearablesBridge()
+    fun create(context: Context): MetaWearablesBridge = UnavailableMetaWearablesBridge()
 }

@@ -123,6 +123,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Intelligence',
     items: [
       { id: 'ai', label: 'Hermes', href: '/dashboard/ai', icon: 'brain' },
+      { id: 'hermes-control', label: 'Hermes Control', href: '/dashboard/hermes-control', icon: 'settings' },
       { id: 'second-brain', label: 'Second Brain', href: '/dashboard/second-brain', icon: 'brain' },
       { id: 'workflows', label: 'Workflows', href: '/dashboard/workflows', icon: 'workflow' },
     ],

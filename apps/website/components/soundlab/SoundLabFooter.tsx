@@ -44,7 +44,7 @@ export function SoundLabFooter() {
           <div>
             <p className="text-xl font-black tracking-tight mb-2">
               WISE<sup className="text-[10px]">2</sup>{' '}
-              <span className="text-[#9AFF00]">SOUND LAB</span>
+              <span className="text-[#b08d57]">SOUND LAB</span>
             </p>
             <p className="text-xs text-gray-500 tracking-wide leading-relaxed">
               SOUND BUILDS BRANDS.
@@ -57,7 +57,7 @@ export function SoundLabFooter() {
                   key={label}
                   href="#footer"
                   aria-label={label}
-                  className="w-8 h-8 rounded border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#9AFF00] hover:border-[#9AFF00]/50 transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded border border-white/10 flex items-center justify-center text-gray-500 hover:text-[#b08d57] hover:border-[#b08d57]/50 transition-colors cursor-pointer"
                 >
                   <Icon size={14} />
                 </a>
@@ -70,7 +70,7 @@ export function SoundLabFooter() {
             <ul className="space-y-2.5">
               {COMPANY_LINKS.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-xs text-gray-400 hover:text-[#9AFF00] transition-colors">
+                  <a href={l.href} className="text-xs text-gray-400 hover:text-[#b08d57] transition-colors">
                     {l.label}
                   </a>
                 </li>
@@ -83,7 +83,7 @@ export function SoundLabFooter() {
             <ul className="space-y-2.5">
               {LEGAL_LINKS.map((l) => (
                 <li key={l.label}>
-                  <Link href={l.href} className="text-xs text-gray-400 hover:text-[#9AFF00] transition-colors">
+                  <Link href={l.href} className="text-xs text-gray-400 hover:text-[#b08d57] transition-colors">
                     {l.label}
                   </Link>
                 </li>
@@ -97,7 +97,7 @@ export function SoundLabFooter() {
               Get updates, music tips, and exclusive offers.
             </p>
             {submitted ? (
-              <p className="flex items-center gap-2 text-xs text-[#9AFF00]">
+              <p className="flex items-center gap-2 text-xs text-[#b08d57]">
                 <Check size={14} /> You&apos;re on the list.
               </p>
             ) : (
@@ -108,12 +108,12 @@ export function SoundLabFooter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#9AFF00]/60"
+                  className="flex-1 min-w-0 bg-white/5 border border-white/10 rounded px-3 py-2.5 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#b08d57]/60"
                 />
                 <button
                   type="submit"
                   aria-label="Subscribe"
-                  className="px-3.5 py-2.5 rounded bg-[#9AFF00] text-black hover:shadow-[0_0_16px_rgba(154,255,0,0.5)] transition-shadow cursor-pointer"
+                  className="px-3.5 py-2.5 rounded bg-[#b08d57] text-black hover:shadow-[0_0_16px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer"
                 >
                   <Send size={14} />
                 </button>
@@ -125,7 +125,7 @@ export function SoundLabFooter() {
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[10px] text-gray-600">© 2026 WISE² Sound Lab. All rights reserved.</p>
           <p className="text-[10px] font-bold tracking-widest text-gray-600">
-            BUILT BY WISE² <span className="text-[#9AFF00]">|</span> ORGANIZED CHAOS.
+            BUILT BY WISE² <span className="text-[#b08d57]">|</span> ORGANIZED CHAOS.
           </p>
         </div>
       </div>

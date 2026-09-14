@@ -60,7 +60,7 @@ export function SoundLabHeader() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        scrolled ? 'bg-black/90 backdrop-blur-md border-b border-[#9AFF00]/20' : 'bg-transparent'
+        scrolled ? 'bg-black/90 backdrop-blur-md border-b border-[#b08d57]/20' : 'bg-transparent'
       }`}
     >
       <div className="max-w-[1440px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
@@ -75,7 +75,7 @@ export function SoundLabHeader() {
           >
             WISE<sup className="text-xs -top-3">2</sup>
           </span>
-          <span className="hidden sm:inline text-sm md:text-base font-extrabold tracking-widest text-[#9AFF00] drop-shadow-[0_0_8px_rgba(154,255,0,0.6)] group-hover:drop-shadow-[0_0_14px_rgba(154,255,0,0.9)] transition-all">
+          <span className="hidden sm:inline text-sm md:text-base font-extrabold tracking-widest text-[#b08d57] drop-shadow-[0_0_8px_rgba(176,141,87,0.35)] group-hover:drop-shadow-[0_0_14px_rgba(176,141,87,0.35)] transition-all">
             SOUND LAB
           </span>
         </button>
@@ -87,7 +87,7 @@ export function SoundLabHeader() {
               onClick={() => handleNavClick(link.href)}
               className={`px-3 py-2 text-xs font-bold tracking-wider transition-colors cursor-pointer ${
                 activeSection === link.href
-                  ? 'text-[#9AFF00]'
+                  ? 'text-[#b08d57]'
                   : 'text-gray-300 hover:text-white'
               }`}
             >
@@ -99,7 +99,7 @@ export function SoundLabHeader() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => openIntake()}
-            className="hidden md:flex items-center gap-2 px-4 md:px-5 py-2.5 rounded border border-[#9AFF00] text-[#9AFF00] text-xs font-bold tracking-wider hover:bg-[#9AFF00] hover:text-black hover:shadow-[0_0_20px_rgba(154,255,0,0.6)] transition-all cursor-pointer"
+            className="hidden md:flex items-center gap-2 px-4 md:px-5 py-2.5 rounded border border-[#b08d57] text-[#b08d57] text-xs font-bold tracking-wider hover:bg-[#b08d57] hover:text-black hover:shadow-[0_0_20px_rgba(176,141,87,0.35)] transition-all cursor-pointer"
           >
             START MY PROJECT
             <AudioWaveform size={14} />
@@ -116,13 +116,13 @@ export function SoundLabHeader() {
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden bg-black border-t border-[#9AFF00]/20 px-5 py-4 flex flex-col gap-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <div className="lg:hidden bg-black border-t border-[#b08d57]/20 px-5 py-4 flex flex-col gap-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
           {NAV_LINKS.map((link) => (
             <button
               key={link.href}
               onClick={() => handleNavClick(link.href)}
               className={`text-left px-3 py-3 text-sm font-bold tracking-wider border-b border-white/5 cursor-pointer ${
-                activeSection === link.href ? 'text-[#9AFF00]' : 'text-gray-300'
+                activeSection === link.href ? 'text-[#b08d57]' : 'text-gray-300'
               }`}
             >
               {link.label}
@@ -133,7 +133,7 @@ export function SoundLabHeader() {
               setMobileOpen(false);
               openIntake();
             }}
-            className="mt-4 flex items-center justify-center gap-2 px-5 py-3 rounded border border-[#9AFF00] text-[#9AFF00] text-sm font-bold tracking-wider hover:bg-[#9AFF00] hover:text-black transition-all cursor-pointer"
+            className="mt-4 flex items-center justify-center gap-2 px-5 py-3 rounded border border-[#b08d57] text-[#b08d57] text-sm font-bold tracking-wider hover:bg-[#b08d57] hover:text-black transition-all cursor-pointer"
           >
             START MY PROJECT
             <AudioWaveform size={16} />

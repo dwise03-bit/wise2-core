@@ -6,6 +6,18 @@ set -e
 
 echo "🚀 Command Center Dashboard - Deploying to wise2.net"
 echo "====================================================="
+echo ""
+
+# CRITICAL: Port Consistency Validation (MUST PASS BEFORE DEPLOYMENT)
+echo "🔍 Running port consistency validator..."
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if ! bash "$SCRIPT_DIR/verify-port-consistency.sh"; then
+  echo ""
+  echo "❌ DEPLOYMENT BLOCKED: Port configuration errors detected"
+  echo "See: DEPLOYMENT_PREFLIGHT.md"
+  exit 1
+fi
+echo ""
 
 # Configuration
 DOMAIN="wise2.net"

@@ -47,6 +47,21 @@ async function bootstrap() {
       transform: true,
     }));
 
+    // Request logging for monitoring
+    app.use((req, res, next) => {
+      const start = Date.now();
+      res.on('finish', () => {
+        console.log(JSON.stringify({
+          timestamp: new Date().toISOString(),
+          method: req.method,
+          path: req.path,
+          status: res.statusCode,
+          duration_ms: Date.now() - start
+        }));
+      });
+      next();
+    });
+
     // Swagger / OpenAPI documentation
     // Note: SwaggerModule.setup() mounts its own Express middleware and is NOT
     // affected by app.setGlobalPrefix('api') above, so the full path ('api/docs')
@@ -58,8 +73,8 @@ async function bootstrap() {
       .addBearerAuth()
       .build();
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api/docs', app, swaggerDocument);
-    logger.log('Swagger docs available at /api/docs');
+    SwaggerModule.setup('api/v1/docs', app, swaggerDocument);
+    logger.log('Swagger docs available at /api/v1/docs');
 
     // Use PORT or API_PORT, default to 3001 for Docker
     const port = process.env.PORT || process.env.API_PORT || 3001;

@@ -82,8 +82,8 @@ export function AudioPlayer({ src, isActive, onPlay, onPause }: AudioPlayerProps
             error
               ? 'bg-white/5 text-gray-600 cursor-not-allowed'
               : isActive
-              ? 'bg-[#9AFF00] text-black shadow-[0_0_16px_rgba(154,255,0,0.6)]'
-              : 'bg-white/10 text-white hover:bg-[#9AFF00]/20 hover:text-[#9AFF00]'
+              ? 'bg-[#b08d57] text-black shadow-[0_0_16px_rgba(176,141,87,0.35)]'
+              : 'bg-white/10 text-white hover:bg-[#b08d57]/20 hover:text-[#b08d57]'
           }`}
         >
           {error ? <AlertCircle size={16} /> : isActive ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
@@ -96,7 +96,7 @@ export function AudioPlayer({ src, isActive, onPlay, onPause }: AudioPlayerProps
               <div
                 key={i}
                 className={`flex-1 rounded-sm transition-colors ${
-                  filled ? 'bg-[#9AFF00]' : 'bg-white/15'
+                  filled ? 'bg-[#b08d57]' : 'bg-white/15'
                 } ${isActive ? 'animate-pulse' : ''}`}
                 style={{
                   height: `${h}%`,

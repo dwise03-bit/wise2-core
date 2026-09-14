@@ -13,7 +13,6 @@
 		08D55E62A91A49F77E58D5DA /* wise2-app-icon-source.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 282E4F295318D67EE1AEB4E2 /* wise2-app-icon-source.jpg */; };
 		0A284859A855ACB2B11FB379 /* CloudScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B144B06DEBE1D41712F26A41 /* CloudScreen.swift */; };
 		0F5FB257A1FB064B2FD50A64 /* FieldpieceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34FB1EB0555E6FAC995BEF1 /* FieldpieceModels.swift */; };
-		106D19F83FCBA1ECD19B3E37 /* AIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95AD4DFAFE871AE787208382 /* AIScreen.swift */; };
 		129E61D85A7BA05BFCB62FD6 /* CommandTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6DAF5F2F566D27A6A961B3 /* CommandTab.swift */; };
 		13CE9C1352B7427FA65D850B /* DiagnosticsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56F1B173E47F5F43F6BDA0F /* DiagnosticsPanel.swift */; };
 		1A2F59FDF6F9FDD69348CC09 /* MediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA0AAC24F456A446AA4147 /* MediaManager.swift */; };
@@ -53,7 +52,6 @@
 		8DFBDF2D66D3639D0FB05D1E /* CRMStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EFCF271142E8F0FAE9CE1 /* CRMStore.swift */; };
 		8F1B54E26F723F3245D59CEC /* InventoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51B9242172B56FD63D834C8 /* InventoryStore.swift */; };
 		8F5494A3858AEF83D401DB2A /* AIWorkforceScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC6DE75C802267C23CA3D20 /* AIWorkforceScreen.swift */; };
-		904391AFC502F7B2500D7DA2 /* WorkScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AD26CA0F3E95B3FD34F9EE /* WorkScreen.swift */; };
 		946E22F97BBE780229CCB4E1 /* StudioStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2446E497E61C21293656A317 /* StudioStore.swift */; };
 		9483D59C7BB8C50210871563 /* BackendConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE660CEA0F1B053739644C5B /* BackendConnector.swift */; };
 		94EF10D80A552474D227AF32 /* BusinessOSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479FEF175C4379F91EF21E85 /* BusinessOSClient.swift */; };
@@ -90,7 +88,6 @@
 		D355BB84A1EA37F7FD76CC80 /* MoreScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C582516F998D445F292F4B /* MoreScreenViewModel.swift */; };
 		D7426F551178A5D57E227AB9 /* BusinessOSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7B6867BB949467107D17B7 /* BusinessOSClientTests.swift */; };
 		D99D24C2BE41AEF2D9622F55 /* SenCereBrand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B96FC7FD562D9DC94818A /* SenCereBrand.swift */; };
-		DA1A7F97C8044383AC8EF5B2 /* AIScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFCD364D623B67A5D442091 /* AIScreenViewModel.swift */; };
 		DCF5AFB6DA9D04AB253A12CE /* WorkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04F91EA92B76CD8732ABD02 /* WorkStore.swift */; };
 		DF06FECE2E6D0930B8505A1F /* BusinessOSModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC60FC599C8F86B11DE748E /* BusinessOSModels.swift */; };
 		DFBEF7FD54790813D40D95C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 306F1CE33C92C71C3A8ED7F6 /* Assets.xcassets */; };
@@ -98,9 +95,7 @@
 		E1AC746352B6836784B60592 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895B9A843FF46938397696A6 /* AppState.swift */; };
 		E4873B315E8CFFDACFAFF17C /* HVACDraftQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A295EBD528B9A257CB5648 /* HVACDraftQueueTests.swift */; };
 		E5BB83267252299C439C2E90 /* WealthExperience.swift in Sources */ = {isa = PBXBuildFile; fileRef = D768DB4DFDDD8B4427E7C69A /* WealthExperience.swift */; };
-		EC7840E1B57652309907DAE5 /* MoreScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1259A44A84C796E841A957 /* MoreScreen.swift */; };
 		EE07DA2B9C125D8AECAC1DF8 /* AppFlavor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BEAF4C37D5ED1AFD543329 /* AppFlavor.swift */; };
-		F5E799A244AB2BCE0E71BB88 /* FieldpieceComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A0EC3281BE1CBE6B8C484 /* FieldpieceComplete.swift */; };
 		FABC3EA2234C2C8C6A9B7DD3 /* FakeBusinessOSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BC2FFDA4CCC4BA3509ACCA /* FakeBusinessOSService.swift */; };
 		FD660858396E7FC42A7DC7EC /* AnalyticsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29416023120DC8707F4E03C7 /* AnalyticsStore.swift */; };
 /* End PBXBuildFile section */
@@ -118,7 +113,6 @@
 /* Begin PBXFileReference section */
 		017708404E3E21604BDECF1B /* FinanceScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinanceScreen.swift; sourceTree = "<group>"; };
 		02106530D3E5D513BBF3A0A7 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
-		0AFCD364D623B67A5D442091 /* AIScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIScreenViewModel.swift; sourceTree = "<group>"; };
 		0C19B394E47E667952054DEC /* AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIScreen.swift; sourceTree = "<group>"; };
 		0CC60FC599C8F86B11DE748E /* BusinessOSModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessOSModels.swift; sourceTree = "<group>"; };
 		1628AE81CB6CBFC533100E35 /* NavigationSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationSmokeTests.swift; sourceTree = "<group>"; };
@@ -149,7 +143,6 @@
 		4BF20312E8D2012BC2BAD4D6 /* BusinessScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessScope.swift; sourceTree = "<group>"; };
 		4EFFF01B3592F94A9BCBF5CD /* WISE2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WISE2.entitlements; sourceTree = "<group>"; };
 		56D47DA758DBFB1E3BFC44E2 /* StudioScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioScreen.swift; sourceTree = "<group>"; };
-		597A0EC3281BE1CBE6B8C484 /* FieldpieceComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldpieceComplete.swift; sourceTree = "<group>"; };
 		59D54AAE9852916F116804CC /* CommandStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStoreTests.swift; sourceTree = "<group>"; };
 		5E3381A7DB0BF8C8B91D74D0 /* SalesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SalesScreen.swift; sourceTree = "<group>"; };
 		5F1EFD5E30D6804140511C56 /* CapabilityStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityStore.swift; sourceTree = "<group>"; };
@@ -170,8 +163,6 @@
 		92F8F92BBC50DA94F29054EC /* CommandOrb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandOrb.swift; sourceTree = "<group>"; };
 		9366F5DAC03C65E6866899C5 /* AnalyticsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsScreen.swift; sourceTree = "<group>"; };
 		93ADBC5F8A58F73E9E388F8E /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
-		95AD4DFAFE871AE787208382 /* AIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIScreen.swift; sourceTree = "<group>"; };
-		96AD26CA0F3E95B3FD34F9EE /* WorkScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkScreen.swift; sourceTree = "<group>"; };
 		A183CDBEC06641617EC3F45D /* CRMStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMStoreTests.swift; sourceTree = "<group>"; };
 		A478ED165CDBB9EDF94E3BA7 /* InventoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryScreen.swift; sourceTree = "<group>"; };
 		A51B9242172B56FD63D834C8 /* InventoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryStore.swift; sourceTree = "<group>"; };
@@ -197,7 +188,6 @@
 		CA0121D5A6B23372962225DD /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
 		CC97CBAF2A90C7FAB5245E0C /* OTAUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTAUpdateView.swift; sourceTree = "<group>"; };
 		CE0DC785721E76B4F4890449 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		CF1259A44A84C796E841A957 /* MoreScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreScreen.swift; sourceTree = "<group>"; };
 		CFABEC6F9CB6DE2A51017346 /* CompanionSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionSafariView.swift; sourceTree = "<group>"; };
 		D0C582516F998D445F292F4B /* MoreScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreScreenViewModel.swift; sourceTree = "<group>"; };
 		D34FB1EB0555E6FAC995BEF1 /* FieldpieceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldpieceModels.swift; sourceTree = "<group>"; };
@@ -277,8 +267,6 @@
 		2398CD1E05D0A8A2E2DAA858 /* AI */ = {
 			isa = PBXGroup;
 			children = (
-				95AD4DFAFE871AE787208382 /* AIScreen.swift */,
-				0AFCD364D623B67A5D442091 /* AIScreenViewModel.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -486,7 +474,6 @@
 			isa = PBXGroup;
 			children = (
 				5F1EFD5E30D6804140511C56 /* CapabilityStore.swift */,
-				CF1259A44A84C796E841A957 /* MoreScreen.swift */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -539,7 +526,6 @@
 			isa = PBXGroup;
 			children = (
 				B56F1B173E47F5F43F6BDA0F /* DiagnosticsPanel.swift */,
-				597A0EC3281BE1CBE6B8C484 /* FieldpieceComplete.swift */,
 				441DA5457F0F06A76CE96CC8 /* FieldpieceDashboard.swift */,
 				7D469F7967494DA473901E05 /* ProbeDiscoveryView.swift */,
 			);
@@ -629,7 +615,6 @@
 		E419BCA54A91BEA0E8549ABE /* Work */ = {
 			isa = PBXGroup;
 			children = (
-				96AD26CA0F3E95B3FD34F9EE /* WorkScreen.swift */,
 				F04F91EA92B76CD8732ABD02 /* WorkStore.swift */,
 			);
 			path = Work;
@@ -767,9 +752,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0485AC3D399CA609F1ADB207 /* AIScreen.swift in Sources */,
-				106D19F83FCBA1ECD19B3E37 /* AIScreen.swift in Sources */,
 				89FF7ED629B7A69C0B9B8426 /* AIScreenViewModel.swift in Sources */,
-				DA1A7F97C8044383AC8EF5B2 /* AIScreenViewModel.swift in Sources */,
 				8F5494A3858AEF83D401DB2A /* AIWorkforceScreen.swift in Sources */,
 				1B3208DD4970D54505B5C356 /* AIWorkforceStore.swift in Sources */,
 				A956FFB8FF6AB514B32BB554 /* APIClient.swift in Sources */,
@@ -809,7 +792,6 @@
 				13CE9C1352B7427FA65D850B /* DiagnosticsPanel.swift in Sources */,
 				BAB0E35DDC2DFD12C2C173E8 /* EnhancedAIViewModel.swift in Sources */,
 				BFE78E46C4775C87785D158C /* EnhancedWorkViewModel.swift in Sources */,
-				F5E799A244AB2BCE0E71BB88 /* FieldpieceComplete.swift in Sources */,
 				B29FE2A8A153A38D173DE81C /* FieldpieceDashboard.swift in Sources */,
 				0F5FB257A1FB064B2FD50A64 /* FieldpieceModels.swift in Sources */,
 				CBB4607076DA8BBDFC08BF33 /* FieldpieceService.swift in Sources */,
@@ -824,7 +806,6 @@
 				D0CE84D1002EC390D5A82C42 /* KeychainManager.swift in Sources */,
 				0618A9AA1E54160D399EBF89 /* MainTabView.swift in Sources */,
 				1A2F59FDF6F9FDD69348CC09 /* MediaManager.swift in Sources */,
-				EC7840E1B57652309907DAE5 /* MoreScreen.swift in Sources */,
 				4B5CF2B02688A96E3433C128 /* MoreScreen.swift in Sources */,
 				D355BB84A1EA37F7FD76CC80 /* MoreScreenViewModel.swift in Sources */,
 				9CD63F768B33B0E8179EBCCC /* NotificationManager.swift in Sources */,
@@ -846,7 +827,6 @@
 				49C08F467C5E99F2CC31D588 /* SystemsScreenViewModel.swift in Sources */,
 				8C15142B7FDE1AB28503822A /* WISE2App.swift in Sources */,
 				E5BB83267252299C439C2E90 /* WealthExperience.swift in Sources */,
-				904391AFC502F7B2500D7DA2 /* WorkScreen.swift in Sources */,
 				2392DF234AFE3F7C3A94F1E4 /* WorkScreen.swift in Sources */,
 				285594434975E5650C7A12AE /* WorkScreenViewModel.swift in Sources */,
 				DCF5AFB6DA9D04AB253A12CE /* WorkStore.swift in Sources */,
@@ -946,7 +926,7 @@
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7;
-				INFOPLIST_FILE = WISE2/Info.plist;
+				INFOPLIST_FILE = ../WISE2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1063,7 +1043,7 @@
 				CODE_SIGNING_REQUIRED = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 7;
-				INFOPLIST_FILE = WISE2/Info.plist;
+				INFOPLIST_FILE = ../WISE2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

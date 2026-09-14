@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WISE² Sound Labs</string>
+    <string name="title_activity_main">WISE² Sound Labs</string>
+    <string name="package_name">com.wise2.soundlabs</string>
+    <string name="custom_url_scheme">com.wise2.soundlabs</string>
+</resources>

@@ -1,5 +1,10 @@
 import Foundation
 
+struct SystemHealthResponse: Codable {
+  let status: String?
+  let message: String?
+}
+
 /// Thin retry wrapper around the shared live `APIClient` contract.
 actor BackendConnector {
   static let shared = BackendConnector()

@@ -1,391 +1,48 @@
 'use client';
 
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
+import { FormEvent, useState } from 'react';
+import { useHermesChat } from '@/hooks/useHermesChat';
 
-interface ImageReference {
-  id: string;
-  url: string;
-  role: 'LOCKED' | 'EDITABLE' | 'NEW';
-  kind: string;
-}
-
-interface HermesResult {
-  imageUrl?: string;
-  provider?: string;
-  preservedReferenceIds?: string[];
-  preservationGuaranteed?: boolean;
-  status?: string;
-  jobId?: string;
-  error?: string;
-}
+const nav = ['COMMAND','CHATS','AGENTS','PROJECTS','KNOWLEDGE','MEMORY','TASKS','AUTOMATIONS','CRM & SALES','PHONE (AI)','DISCORD','FILES','TOOLS','MONITORING','LOGS','SETTINGS'];
+const agents = ['Hermes','Coding','Deploy','HVAC','Sales','Phone','Research','Sound Labs','XR','Design'];
+const context = [['Project','wise2-core'],['Branch','main'],['Active Memory','Synced'],['Tools Connected','12 tools online'],['Docker Services','Healthy'],['System Alerts','0 critical'],['Active Agents','4 running']];
 
 export default function HermesPage() {
-  const [instruction, setInstruction] = useState('');
-  const [aspectRatio, setAspectRatio] = useState('1:1');
-  const [references, setReferences] = useState<ImageReference[]>([]);
-  const [refId, setRefId] = useState('');
-  const [refUrl, setRefUrl] = useState('');
-  const [refRole, setRefRole] = useState<'LOCKED' | 'EDITABLE' | 'NEW'>('LOCKED');
-  const [refKind, setRefKind] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<HermesResult | null>(null);
-  const [error, setError] = useState('');
+  const [route, setRoute] = useState('AUTO');
+  const [input, setInput] = useState('');
+  const { messages, sendMessage, isLoading, model, provider, error } = useHermesChat();
+  const submit = async (e: FormEvent) => { e.preventDefault(); if (!input.trim()) return; const value=input; setInput(''); await sendMessage(value, route.toLowerCase()); };
 
-  const handleAddReference = () => {
-    if (refId && refUrl && refKind) {
-      setReferences([
-        ...references,
-        {
-          id: refId,
-          url: refUrl,
-          role: refRole,
-          kind: refKind,
-        },
-      ]);
-      setRefId('');
-      setRefUrl('');
-      setRefRole('LOCKED');
-      setRefKind('');
-    }
-  };
+  return <main className="min-h-screen bg-[#02070d] text-[#d9f4ff] p-3 font-sans">
+    <header className="grid gap-3 xl:grid-cols-[1.4fr_1fr_1fr] border border-cyan-500/40 bg-[#04111c] p-4 shadow-[0_0_35px_rgba(0,180,255,.12)]">
+      <div><h1 className="text-3xl font-black tracking-[.08em] text-white">W² WISE² HERMES</h1><p className="text-xs tracking-[.22em] text-cyan-300">YOUR AI OPERATOR · SECOND BRAIN · EXECUTION ENGINE</p></div>
+      <div className="flex items-center gap-2">{['AUTO','LOCAL','CLOUD'].map(x=><button key={x} onClick={()=>setRoute(x)} className={`rounded border px-5 py-2 text-xs font-bold ${route===x?'border-green-400 bg-green-400/15 text-green-300 shadow-[0_0_18px_rgba(34,197,94,.25)]':'border-cyan-800 bg-[#061622] text-cyan-200'}`}>{x}</button>)}</div>
+      <div className="grid grid-cols-3 gap-2 text-xs">{['MAC ONLINE','VPS ONLINE','GPU ONLINE'].map(x=><div key={x} className="rounded border border-cyan-800 bg-black/30 p-3 text-center"><span className="text-green-400">●</span> {x}</div>)}</div>
+    </header>
 
-  const handleRemoveReference = (index: number) => {
-    setReferences(references.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setResult(null);
-
-    try {
-      const response = await fetch('/api/v1/hermes/image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          instruction,
-          references,
-          aspectRatio,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setResult(data);
-      setInstruction('');
-      setReferences([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f0f1e] via-[#1a1a2e] to-[#0f0f1e] text-white p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">🎨 Hermes Image Orchestrator</h1>
-          <p className="text-gray-400">
-            Generate images with locked asset preservation and provider-neutral generation
-          </p>
+    <section className="mt-3 grid gap-3 xl:grid-cols-[180px_minmax(0,1.4fr)_minmax(320px,.9fr)_270px]">
+      <aside className="rounded border border-cyan-800 bg-[#04101a] p-2">{nav.map((x,i)=><div key={x} className={`mb-1 rounded px-3 py-2 text-xs ${i===0?'bg-cyan-500/15 text-white ring-1 ring-cyan-400':'text-slate-400'}`}>{x}</div>)}</aside>
+      <section className="rounded border border-cyan-700 bg-[#04101a] p-4">
+        <div className="mb-4 flex items-center justify-between border-b border-cyan-900 pb-3"><div><span className="text-2xl font-black text-white">HERMES</span><span className="ml-3 text-[10px] tracking-widest text-cyan-400">AI OPERATOR · SECOND BRAIN</span></div><span className="text-xs text-green-400">● ONLINE</span></div>
+        <div className="h-[500px] space-y-3 overflow-y-auto pr-1">
+          {messages.length===0 && <><div className="rounded border border-cyan-900 bg-[#071a29] p-4"><b>You</b><p className="mt-2 text-sm text-slate-300">Deploy the latest WISE² build, run tests, and give me a full status.</p></div><div className="rounded border border-cyan-900 bg-black/30 p-4"><b>Hermes</b><p className="mt-2 text-sm text-cyan-100">Ready. I can inspect, reason, and execute through the connected WISE² operating layer.</p></div></>}
+          {messages.map(m=><div key={m.id} className={`rounded border p-4 ${m.role==='user'?'border-cyan-800 bg-[#071a29]':'border-green-900/70 bg-black/30'}`}><b>{m.role==='user'?'You':'Hermes'}</b><p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{m.content}</p></div>)}
+          {isLoading && <div className="text-sm text-green-400">Hermes is working…</div>}{error && <div className="text-sm text-red-400">{error}</div>}
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form */}
-          <div className="lg:col-span-2">
-            <Card className="bg-[#1a1a2e] border border-[#2cd588]/30">
-              <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                {/* Instruction */}
-                <div className="space-y-2">
-                  <Label className="text-[#2cd588]">Generation Instruction *</Label>
-                  <Textarea
-                    placeholder="Describe what you want to generate. Include details about locked elements to preserve and editable elements to enhance..."
-                    value={instruction}
-                    onChange={(e) => setInstruction(e.target.value)}
-                    className="min-h-32 bg-[#0f0f1e] border-[#2cd588]/30 text-white placeholder-gray-600"
-                    required
-                  />
-                </div>
-
-                {/* Aspect Ratio */}
-                <div className="space-y-2">
-                  <Label className="text-[#2cd588]">Aspect Ratio</Label>
-                  <select
-                    value={aspectRatio}
-                    onChange={(e) => setAspectRatio(e.target.value)}
-                    className="w-full bg-[#0f0f1e] border border-[#2cd588]/30 rounded px-3 py-2 text-white"
-                  >
-                    <option value="1:1">Square (1:1)</option>
-                    <option value="16:9">Widescreen (16:9)</option>
-                    <option value="9:16">Vertical (9:16)</option>
-                    <option value="4:3">Standard (4:3)</option>
-                    <option value="3:2">Classic (3:2)</option>
-                  </select>
-                </div>
-
-                {/* References */}
-                <div className="space-y-4">
-                  <div>
-                    <Label className="text-[#2cd588]">Asset References</Label>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Define images to include in generation
-                    </p>
-                  </div>
-
-                  {/* Add Reference */}
-                  <div className="bg-[#0f0f1e] rounded-lg p-4 space-y-3 border border-[#2cd588]/20">
-                    <div className="grid grid-cols-2 gap-3">
-                      <Input
-                        placeholder="Reference ID"
-                        value={refId}
-                        onChange={(e) => setRefId(e.target.value)}
-                        className="bg-[#1a1a2e] border-[#2cd588]/30 text-white"
-                      />
-                      <select
-                        value={refRole}
-                        onChange={(e) => setRefRole(e.target.value as any)}
-                        className="bg-[#1a1a2e] border border-[#2cd588]/30 rounded px-2 py-2 text-white"
-                      >
-                        <option value="LOCKED">🔒 Locked</option>
-                        <option value="EDITABLE">✏️ Editable</option>
-                        <option value="NEW">✨ New</option>
-                      </select>
-                    </div>
-
-                    <Input
-                      placeholder="Image URL"
-                      value={refUrl}
-                      onChange={(e) => setRefUrl(e.target.value)}
-                      className="bg-[#1a1a2e] border-[#2cd588]/30 text-white"
-                    />
-
-                    <Input
-                      placeholder="Asset Kind (e.g., 'hardware', 'photo', 'artwork')"
-                      value={refKind}
-                      onChange={(e) => setRefKind(e.target.value)}
-                      className="bg-[#1a1a2e] border-[#2cd588]/30 text-white"
-                    />
-
-                    <Button
-                      type="button"
-                      onClick={handleAddReference}
-                      className="w-full bg-[#2cd588] text-black hover:bg-[#2cd588]/90"
-                      disabled={!refId || !refUrl || !refKind}
-                    >
-                      + Add Reference
-                    </Button>
-                  </div>
-
-                  {/* References List */}
-                  {references.length > 0 && (
-                    <div className="space-y-2">
-                      {references.map((ref, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center justify-between bg-[#0f0f1e] p-3 rounded border border-[#2cd588]/20"
-                        >
-                          <div className="flex-1">
-                            <div className="font-medium">{ref.id}</div>
-                            <div className="text-xs text-gray-500 truncate">{ref.url}</div>
-                            <div className="flex gap-2 mt-1">
-                              <Badge variant="outline">{ref.role}</Badge>
-                              <Badge variant="secondary">{ref.kind}</Badge>
-                            </div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemoveReference(idx)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            ✕
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Error Display */}
-                {error && (
-                  <div className="bg-red-950/20 border border-red-500/30 rounded p-4">
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </div>
-                )}
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="w-full bg-[#2cd588] text-black hover:bg-[#2cd588]/90 font-semibold py-2 text-base"
-                  disabled={!instruction || loading}
-                >
-                  {loading ? '🔄 Generating...' : '✨ Generate Image'}
-                </Button>
-              </form>
-            </Card>
-          </div>
-
-          {/* Results Panel */}
-          <div>
-            <Card className="bg-[#1a1a2e] border border-[#2cd588]/30 sticky top-8">
-              <div className="p-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-[#2cd588] mb-4">Result</h3>
-
-                  {!result ? (
-                    <div className="text-center py-12">
-                      <p className="text-gray-500 text-sm">
-                        Submit a generation request to see results
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {/* Status */}
-                      {result.status && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Status</p>
-                          <Badge
-                            className={
-                              result.status === 'completed'
-                                ? 'bg-green-500/20 text-green-400'
-                                : result.status === 'failed'
-                                  ? 'bg-red-500/20 text-red-400'
-                                  : 'bg-yellow-500/20 text-yellow-400'
-                            }
-                          >
-                            {result.status}
-                          </Badge>
-                        </div>
-                      )}
-
-                      {/* Job ID */}
-                      {result.jobId && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Job ID</p>
-                          <p className="text-sm font-mono text-gray-300 break-all">{result.jobId}</p>
-                        </div>
-                      )}
-
-                      {/* Provider */}
-                      {result.provider && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Provider</p>
-                          <p className="text-sm text-gray-300">{result.provider}</p>
-                        </div>
-                      )}
-
-                      {/* Generated Image */}
-                      {result.imageUrl && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-2">Generated Image</p>
-                          <img
-                            src={result.imageUrl}
-                            alt="Generated"
-                            className="w-full rounded border border-[#2cd588]/30"
-                          />
-                        </div>
-                      )}
-
-                      {/* Preserved References */}
-                      {result.preservedReferenceIds && result.preservedReferenceIds.length > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-2">🔒 Preserved Assets</p>
-                          <div className="space-y-1">
-                            {result.preservedReferenceIds.map((id) => (
-                              <p key={id} className="text-sm text-gray-400">
-                                ✓ {id}
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Preservation Guaranteed */}
-                      {result.preservationGuaranteed !== undefined && (
-                        <div className="pt-4 border-t border-[#2cd588]/20">
-                          <p className="text-xs">
-                            <span className="text-gray-500">Asset Preservation: </span>
-                            <span
-                              className={
-                                result.preservationGuaranteed
-                                  ? 'text-green-400 font-semibold'
-                                  : 'text-yellow-400'
-                              }
-                            >
-                              {result.preservationGuaranteed ? '✓ Guaranteed' : '⚠️ Not Guaranteed'}
-                            </span>
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Error */}
-                      {result.error && (
-                        <div className="bg-red-950/20 border border-red-500/30 rounded p-2">
-                          <p className="text-red-400 text-xs">{result.error}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
-          </div>
+        <div className="mt-4 rounded border border-cyan-900 bg-black/40 p-3 font-mono text-xs text-cyan-300"><div>$ route {route.toLowerCase()}</div><div>$ model {model || 'auto'} · provider {provider || 'local-first'}</div><div className="text-green-400">✓ Command layer ready</div></div>
+      </section>      <section className="relative min-h-[650px] overflow-hidden rounded border border-cyan-700 bg-[radial-gradient(circle_at_50%_42%,rgba(0,174,255,.22),transparent_22%),linear-gradient(180deg,#061526,#02070d)] p-5 text-center">
+        <p className="text-xl font-black tracking-wider text-white">WISE² COMMAND WORLD</p><p className="text-[10px] tracking-[.2em] text-cyan-300">REAL-TIME INTELLIGENCE. REAL-WORLD ACTION.</p>
+        <div className="mx-auto mt-16 flex h-80 w-80 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-500/5 shadow-[0_0_80px_rgba(0,174,255,.3)]">
+          <div className="flex h-48 w-48 flex-col items-center justify-center rounded-full border-2 border-cyan-300 bg-[#061522] shadow-[0_0_55px_rgba(0,200,255,.45)]"><span className="text-5xl font-black">W²</span><span className="mt-2 text-xs font-bold text-cyan-300">CONTEXT ENGINE</span><span className="mt-3 text-[10px] leading-5 text-slate-400">PEOPLE · PROJECTS<br/>KNOWLEDGE · OPERATIONS<br/>REAL-WORLD IMPACT</span></div>
         </div>
+        <div className="absolute left-5 top-44 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">BUSINESS OPERATIONS</div><div className="absolute right-5 top-52 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">FIELD OPERATIONS</div><div className="absolute bottom-36 left-8 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">AI AGENTS</div><div className="absolute bottom-32 right-8 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">INFRASTRUCTURE</div>
+        <p className="absolute bottom-8 left-0 right-0 text-sm font-bold tracking-[.16em] text-cyan-300">ONE CONNECTED OPERATING LAYER<br/><span className="text-[10px] text-slate-500">FROM INTELLIGENCE TO IMPACT</span></p>
+      </section>
+      <aside className="rounded border border-cyan-800 bg-[#04101a] p-3"><div className="mb-3 flex justify-between"><b>LIVE CONTEXT</b><span className="text-xs text-cyan-400">↻ Sync</span></div>{context.map(([a,b])=><div key={a} className="mb-2 rounded border border-cyan-900 bg-black/30 p-3"><div className="text-[10px] text-slate-500">{a}</div><div className={`text-sm ${b.includes('critical')?'text-green-400':'text-cyan-100'}`}>{b}</div></div>)}<div className="mt-4 border-t border-cyan-900 pt-3"><b className="text-xs">RECENT ACTIVITY</b>{['Build pipeline ready','Hermes chat connected','Knowledge indexed','HVAC agent available'].map(x=><div key={x} className="mt-2 text-xs text-slate-400"><span className="text-green-400">●</span> {x}</div>)}</div></aside>
+    </section>
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Card className="bg-[#1a1a2e] border border-[#2cd588]/30 p-6">
-            <div className="flex gap-3">
-              <span className="text-3xl">🔒</span>
-              <div>
-                <h4 className="font-semibold text-[#2cd588]">Locked Assets</h4>
-                <p className="text-sm text-gray-500 mt-1">
-                  Elements marked as LOCKED will be preserved exactly in the generated image
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="bg-[#1a1a2e] border border-[#2cd588]/30 p-6">
-            <div className="flex gap-3">
-              <span className="text-3xl">✏️</span>
-              <div>
-                <h4 className="font-semibold text-[#2cd588]">Editable Assets</h4>
-                <p className="text-sm text-gray-500 mt-1">
-                  EDITABLE elements can be modified, enhanced, or improved by the provider
-                </p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="bg-[#1a1a2e] border border-[#2cd588]/30 p-6">
-            <div className="flex gap-3">
-              <span className="text-3xl">✨</span>
-              <div>
-                <h4 className="font-semibold text-[#2cd588]">New Assets</h4>
-                <p className="text-sm text-gray-500 mt-1">
-                  NEW elements should be generated fresh by the provider to match the instruction
-                </p>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
+    <section className="mt-3 rounded border border-cyan-800 bg-[#04101a] p-3"><div className="mb-3 text-xs font-bold">WISE² AGENTS</div><div className="flex flex-wrap gap-2">{agents.map((a,i)=><button key={a} className={`rounded border px-4 py-2 text-xs ${i===0?'border-green-400 bg-green-400/10':'border-cyan-900 bg-black/30'}`}>{a} <span className="text-green-400">●</span></button>)}</div>
+      <form onSubmit={submit} className="mt-3 flex gap-2"><button type="button" className="rounded border border-cyan-800 px-4">＋</button><button type="button" className="rounded border border-cyan-800 px-4">🎤</button><input value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask Hermes anything..." className="min-w-0 flex-1 rounded border border-cyan-800 bg-[#02070d] px-4 py-3 text-sm outline-none focus:border-cyan-400"/><div className="rounded border border-cyan-800 px-4 py-3 text-xs">Route: <b>{route}</b></div><button disabled={isLoading} className="rounded bg-cyan-500 px-8 font-bold text-black hover:bg-cyan-300 disabled:opacity-50">Send</button></form>
+    </section>
+  </main>;
 }

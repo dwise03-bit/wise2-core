@@ -82,7 +82,7 @@ function Field({
 }
 
 const inputClass =
-  'w-full bg-white/5 border border-white/10 rounded px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#9AFF00]/60 transition-colors';
+  'w-full bg-white/5 border border-white/10 rounded px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#b08d57]/60 transition-colors';
 
 function PillGroup({
   options,
@@ -102,8 +102,8 @@ function PillGroup({
           onClick={() => onChange(opt)}
           className={`px-3 py-1.5 rounded text-[11px] font-semibold border transition-colors cursor-pointer ${
             value === opt
-              ? 'bg-[#9AFF00] text-black border-[#9AFF00]'
-              : 'border-white/15 text-gray-300 hover:border-[#9AFF00]/50'
+              ? 'bg-[#b08d57] text-black border-[#b08d57]'
+              : 'border-white/15 text-gray-300 hover:border-[#b08d57]/50'
           }`}
         >
           {opt}
@@ -164,11 +164,11 @@ export function ProjectIntake() {
           exit={{ opacity: 0, y: 12, scale: 0.98 }}
           transition={{ duration: 0.2 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl border border-[#9AFF00]/30 bg-[#0a0a0a] shadow-[0_0_80px_rgba(0,0,0,0.8)]"
+          className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl border border-[#b08d57]/30 bg-[#0a0a0a] shadow-[0_0_80px_rgba(0,0,0,0.8)]"
         >
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
             <p className="text-sm font-black tracking-widest">
-              START MY <span className="text-[#9AFF00]">PROJECT</span>
+              START MY <span className="text-[#b08d57]">PROJECT</span>
             </p>
             <button onClick={closeIntake} className="p-1.5 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
               <X size={20} />
@@ -178,7 +178,7 @@ export function ProjectIntake() {
           {!submitted && (
             <div className="h-1 bg-white/5 shrink-0">
               <div
-                className="h-full bg-[#9AFF00] transition-all duration-300"
+                className="h-full bg-[#b08d57] transition-all duration-300"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -187,8 +187,8 @@ export function ProjectIntake() {
           <div className="overflow-y-auto px-6 py-6">
             {submitted ? (
               <div className="text-center py-8">
-                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#9AFF00]/15 border border-[#9AFF00]/50 flex items-center justify-center">
-                  <Check size={26} className="text-[#9AFF00]" />
+                <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#b08d57]/15 border border-[#b08d57]/50 flex items-center justify-center">
+                  <Check size={26} className="text-[#b08d57]" />
                 </div>
                 <h3 className="text-lg font-black mb-2">Project Request Captured</h3>
                 <p className="text-xs text-gray-400 max-w-sm mx-auto leading-relaxed mb-6">
@@ -198,7 +198,7 @@ export function ProjectIntake() {
                 </p>
                 <button
                   onClick={closeIntake}
-                  className="px-6 py-2.5 rounded bg-[#9AFF00] text-black text-xs font-black tracking-wide cursor-pointer"
+                  className="px-6 py-2.5 rounded bg-[#b08d57] text-black text-xs font-black tracking-wide cursor-pointer"
                 >
                   DONE
                 </button>
@@ -373,7 +373,7 @@ export function ProjectIntake() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded bg-[#9AFF00] text-black text-xs font-black tracking-wide hover:shadow-[0_0_20px_rgba(154,255,0,0.5)] transition-shadow cursor-pointer disabled:opacity-70"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded bg-[#b08d57] text-black text-xs font-black tracking-wide hover:shadow-[0_0_20px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer disabled:opacity-70"
                 >
                   {submitting ? (
                     <>
@@ -387,7 +387,7 @@ export function ProjectIntake() {
                 <button
                   onClick={() => canAdvance() && setStep((s) => s + 1)}
                   disabled={!canAdvance()}
-                  className="flex items-center gap-1.5 px-6 py-2.5 rounded bg-[#9AFF00] text-black text-xs font-black tracking-wide disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(154,255,0,0.5)] transition-shadow cursor-pointer"
+                  className="flex items-center gap-1.5 px-6 py-2.5 rounded bg-[#b08d57] text-black text-xs font-black tracking-wide disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(176,141,87,0.35)] transition-shadow cursor-pointer"
                 >
                   NEXT <ArrowRight size={14} />
                 </button>
