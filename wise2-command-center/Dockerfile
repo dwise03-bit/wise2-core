@@ -4,13 +4,13 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY wise2-command-center/package*.json ./
 
 # Install dependencies
 RUN npm ci
 
 # Copy source
-COPY . .
+COPY wise2-command-center/ ./
 
 # Build production bundle
 RUN npm run build
