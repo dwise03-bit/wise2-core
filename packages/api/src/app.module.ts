@@ -45,6 +45,7 @@ import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { OTAModule } from './ota/ota.module';
 
 @Module({
   imports: [
@@ -154,6 +155,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     CloudModule,
     WebhooksModule,
     RayBanModule,
+    OTAModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
