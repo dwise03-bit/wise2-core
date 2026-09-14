@@ -10,13 +10,13 @@ const modules = [
   ['TEAM + LEADERSHIP', 'Build leadership, collaboration and stronger school culture.', 'yellow'],
 ] as const;
 
-const roleFilters = [
-  'hue-rotate(0deg) saturate(1.25)',
-  'hue-rotate(72deg) saturate(1.35)',
-  'hue-rotate(310deg) saturate(1.35)',
-  'hue-rotate(225deg) saturate(1.25)',
-  'hue-rotate(155deg) saturate(1.45)',
-] as const;
+const impImages: Record<string, string> = {
+  'Learner IMP': '/imps/learner-imp.webp',
+  'Creator IMP': '/imps/creator-imp.webp',
+  'Guide IMP': '/imps/guide-imp.webp',
+  'Safe IMP': '/imps/safe-imp.webp',
+  'Team IMP': '/imps/team-imp.webp',
+};
 
 export default function ImpLabPage() {
   return <main className="min-h-screen bg-[#02060b] text-white selection:bg-cyan-400 selection:text-black">
@@ -41,7 +41,7 @@ export default function ImpLabPage() {
         <div id="imps" className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {impTracks.map((track, i) => <a key={track.name} href={track.href} className="group relative overflow-hidden rounded-2xl border bg-black/60 text-center transition hover:-translate-y-2" style={{borderColor:`${track.color}66`,boxShadow:`0 0 35px ${track.color}16`}}>
             <div className="relative h-56 overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_50%_55%,rgba(255,255,255,.08),transparent_55%)]">
-              <img src="/products/wise-imp.png" alt={`${track.name} — WISE² school AI companion`} className="h-full w-full object-contain object-center p-3 transition duration-300 group-hover:scale-105" style={{filter:`${roleFilters[i]} drop-shadow(0 0 18px ${track.color})`}} />
+              <img src={impImages[track.name]} alt={`${track.name} — WISE² school AI companion`} className="h-full w-full object-contain object-center p-3 transition duration-300 group-hover:scale-105" style={{boxShadow: `0 0 18px ${track.color}`}} />
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black to-transparent" />
             </div>
             <div className="p-5">
