@@ -86,13 +86,13 @@ jobs:
       # URLs
       APP_URL: ${{ secrets.APP_URL }}
       API_BASE_URL: ${{ secrets.API_BASE_URL }}
-      # Optional integrations (empty strings if not configured; docker-compose provides defaults)
-      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY || '' }}
-      SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL || '' }}
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL || '' }}
-      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN || '' }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || '' }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || '' }}
+      # Optional integrations (only passed if configured; docker-compose.prod.yml provides safe defaults)
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
     steps:
       - uses: actions/checkout@v4
@@ -106,11 +106,8 @@ jobs:
           command_timeout: 30m
           envs: |
             STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,STRIPE_STARTER_PRICE_ID,STRIPE_PRO_PRICE_ID,STRIPE_WEBHOOK_SECRET,
-            SENDGRID_API_KEY,SENDGRID_FROM_EMAIL,
             DATABASE_URL,DATABASE_USER,DATABASE_PASSWORD,
-            APP_URL,API_BASE_URL,
-            DISCORD_WEBHOOK_URL,DISCORD_BOT_TOKEN,
-            GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
+            APP_URL,API_BASE_URL
           script: |
             set -e
             cd wise2-core || { echo "❌ Failed to cd to wise2-core"; exit 1; }
