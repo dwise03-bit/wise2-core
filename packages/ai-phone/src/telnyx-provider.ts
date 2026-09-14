@@ -32,7 +32,11 @@ interface TelnyxCallState {
 
 export class TelnyxProvider implements TelephonyProvider {
   readonly name = 'Telnyx';
-  private config: Required<TelnyxConfig>;
+  private config: TelnyxConfig & {
+    maxRetries: number;
+    retryDelayMs: number;
+    requestTimeoutMs: number;
+  };
   private callCache = new Map<string, TelnyxCallState>();
   private apiUrl: string;
   private readonly DEFAULT_MAX_RETRIES = 3;
@@ -46,7 +50,7 @@ export class TelnyxProvider implements TelephonyProvider {
       retryDelayMs: config.retryDelayMs ?? this.DEFAULT_RETRY_DELAY_MS,
       requestTimeoutMs: config.requestTimeoutMs ?? this.DEFAULT_REQUEST_TIMEOUT_MS,
     };
-    this.apiUrl = this.config.apiUrl || 'https://api.telnyx.com/v2';
+    this.apiUrl = config.apiUrl || 'https://api.telnyx.com/v2';
   }
 
   private getAuthHeader(): { Authorization: string } {
