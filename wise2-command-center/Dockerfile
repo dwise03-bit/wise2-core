@@ -20,8 +20,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
+# Install dumb-init and verify installation
+RUN apk update && apk add --no-cache dumb-init && which dumb-init
 
 # Copy from builder
 COPY --from=builder /app/package*.json ./
@@ -31,6 +31,9 @@ COPY --from=builder /app/node_modules ./node_modules
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+
+# Grant nextjs user permission to use dumb-init
+RUN chmod +x /sbin/dumb-init
 
 USER nextjs
 
