@@ -40,7 +40,7 @@ export const PublicFooter: React.FC = () => {
     <footer className="border-t border-white/10 bg-[#050607] text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1.4fr]">
-          <div>
+          <div className="min-w-0">
             <Link href="/" className="inline-flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
               <span className="flex h-10 w-10 items-center justify-center bg-[#DCE7EF] text-sm font-black text-[#050607]">
                 W
@@ -60,7 +60,7 @@ export const PublicFooter: React.FC = () => {
 
           <div className="grid gap-8 sm:grid-cols-3">
             {footerSections.map((section) => (
-              <div key={section.title}>
+              <div key={section.title} className="min-w-0">
                 <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#8EDBFF]">{section.title}</h2>
                 <ul className="mt-4 space-y-3">
                   {section.links.map((link) => (

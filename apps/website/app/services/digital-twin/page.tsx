@@ -46,8 +46,8 @@ export default function DigitalTwinPage() {
   const { adsPlaceholderData } = wise2Content;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F4EBDD]">
-        <section className="relative overflow-hidden border-b border-[#39FF14]/15 px-6 pb-20 pt-28">
+    <div className="min-h-screen overflow-x-hidden bg-[#050505] text-[#F4EBDD]">
+        <section className="relative overflow-hidden border-b border-[#39FF14]/15 px-4 pb-16 pt-20 sm:px-6 sm:pb-20 sm:pt-28">
           <div
             className="absolute inset-0 opacity-90"
             style={{
@@ -57,13 +57,13 @@ export default function DigitalTwinPage() {
           />
           <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
-              <div className="mb-6 inline-flex items-center rounded-full border border-[#39FF14]/40 bg-[#39FF14]/10 px-4 py-2 text-xs font-black tracking-[0.3em] text-[#39FF14]">
+              <div className="mb-6 inline-flex max-w-full items-center rounded-full border border-[#39FF14]/40 bg-[#39FF14]/10 px-3 py-2 text-[10px] font-black tracking-[0.2em] text-[#39FF14] sm:px-4 sm:text-xs sm:tracking-[0.3em]">
                 {digitalTwinHero.eyebrow}
               </div>
-              <h1 className="max-w-4xl text-5xl font-black uppercase leading-[0.95] text-[#F4EBDD] md:text-7xl">
+              <h1 className="max-w-4xl break-words text-4xl font-black uppercase leading-[0.95] text-[#F4EBDD] sm:text-5xl md:text-7xl">
                 {digitalTwinHero.headline}
               </h1>
-              <p className="mt-6 max-w-3xl text-xl font-semibold text-[#39FF14] md:text-2xl">
+              <p className="mt-6 max-w-3xl text-lg font-semibold text-[#39FF14] sm:text-xl md:text-2xl">
                 {digitalTwinHero.subheadline}
               </p>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-[#ddd3c2]">
@@ -72,18 +72,24 @@ export default function DigitalTwinPage() {
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
                 <Link
                   href="/services/digital-twin/pricing"
-                  className="inline-flex items-center justify-center rounded-2xl bg-[#39FF14] px-8 py-4 text-base font-black uppercase tracking-[0.18em] text-[#050505] shadow-[0_0_35px_rgba(57,255,20,0.28)] transition hover:brightness-110"
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-[#39FF14] px-6 py-4 text-sm font-black uppercase tracking-[0.14em] text-[#050505] shadow-[0_0_35px_rgba(57,255,20,0.28)] transition hover:brightness-110 sm:w-auto sm:px-8 sm:text-base sm:tracking-[0.18em]"
                 >
                   {digitalTwinHero.primaryCta}
                 </Link>
                 <Link
                   href="/services/digital-twin/how-it-works"
-                  className="inline-flex items-center justify-center rounded-2xl border border-[#F4EBDD]/30 bg-white/[0.03] px-8 py-4 text-base font-bold uppercase tracking-[0.12em] text-[#F4EBDD] transition hover:border-[#39FF14]/55 hover:text-[#39FF14]"
+                  className="inline-flex w-full items-center justify-center rounded-2xl border border-[#F4EBDD]/30 bg-white/[0.03] px-6 py-4 text-sm font-bold uppercase tracking-[0.1em] text-[#F4EBDD] transition hover:border-[#39FF14]/55 hover:text-[#39FF14] sm:w-auto sm:px-8 sm:text-base sm:tracking-[0.12em]"
                 >
                   {digitalTwinHero.secondaryCta}
                 </Link>
               </div>
-              <div className="mt-8 inline-flex rotate-[-2deg] bg-[#8B3F23] px-5 py-3 text-xl font-black uppercase tracking-[0.14em] text-[#F4EBDD] shadow-[0_14px_50px_rgba(0,0,0,0.35)]">
+              <Link
+                href="/quest?surface=digital-twin"
+                className="mt-5 inline-flex min-h-11 items-center text-sm font-black uppercase tracking-[0.14em] text-[#F4EBDD] underline decoration-[#39FF14]/70 decoration-2 underline-offset-8 transition hover:text-[#39FF14]"
+              >
+                Open this command room in Meta Quest
+              </Link>
+              <div className="mt-8 inline-flex max-w-full rotate-[-2deg] bg-[#8B3F23] px-4 py-3 text-base font-black uppercase tracking-[0.1em] text-[#F4EBDD] shadow-[0_14px_50px_rgba(0,0,0,0.35)] sm:px-5 sm:text-xl sm:tracking-[0.14em]">
                 {digitalTwinHero.slogan}
               </div>
             </div>
@@ -101,11 +107,11 @@ export default function DigitalTwinPage() {
           </div>
         </section>
 
-        <section className="border-b border-[#39FF14]/10 px-6 py-20">
+        <section className="border-b border-[#39FF14]/10 px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <div className="mb-12 max-w-3xl">
               <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">The Bottleneck</p>
-              <h2 className="mt-3 text-4xl font-black uppercase text-[#F4EBDD] md:text-5xl">
+              <h2 className="mt-3 text-3xl font-black uppercase leading-tight text-[#F4EBDD] sm:text-4xl md:text-5xl">
                 Your expertise should not be trapped inside your calendar.
               </h2>
               <p className="mt-5 text-lg leading-8 text-[#d1c7b7]">
@@ -114,7 +120,7 @@ export default function DigitalTwinPage() {
             </div>
             <div className="grid gap-6 md:grid-cols-3">
               {['Sales answers', 'Customer responses', 'Marketing content', 'Follow-up', 'Decision support', 'Operational memory'].map((item) => (
-                <div key={item} className="rounded-3xl border border-[#F4EBDD]/10 bg-white/[0.03] px-6 py-7 text-lg font-semibold text-[#F4EBDD]">
+                <div key={item} className="rounded-3xl border border-[#F4EBDD]/10 bg-white/[0.03] px-5 py-6 text-base font-semibold text-[#F4EBDD] sm:px-6 sm:py-7 sm:text-lg">
                   {item}
                 </div>
               ))}
@@ -122,12 +128,12 @@ export default function DigitalTwinPage() {
           </div>
         </section>
 
-        <section className="px-6 py-20">
+        <section className="px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-12 flex items-end justify-between gap-6">
+            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Six Clones</p>
-                <h2 className="mt-3 text-4xl font-black uppercase text-[#F4EBDD] md:text-5xl">One operational system.</h2>
+                <h2 className="mt-3 text-3xl font-black uppercase leading-tight text-[#F4EBDD] sm:text-4xl md:text-5xl">One operational system.</h2>
               </div>
               <p className="max-w-xl text-sm leading-7 text-[#b7ad9d]">
                 Gritty on the surface, clean underneath. Marketing moments carry the campaign energy while the actual operating model stays usable and approval-aware.
@@ -137,7 +143,7 @@ export default function DigitalTwinPage() {
               {digitalTwinClones.map((clone) => (
                 <article
                   key={clone.id}
-                  className="rounded-[1.75rem] border border-[#39FF14]/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-7"
+                  className="rounded-[1.75rem] border border-[#39FF14]/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] p-5 sm:p-7"
                 >
                   <div className="mb-6 flex items-center justify-between">
                     <span className="text-sm font-black uppercase tracking-[0.3em] text-[#39FF14]">{clone.number}</span>
@@ -162,9 +168,9 @@ export default function DigitalTwinPage() {
           </div>
         </section>
 
-        <section className="border-y border-[#39FF14]/10 bg-[#0a0d0c] px-6 py-20">
+        <section className="border-y border-[#39FF14]/10 bg-[#0a0d0c] px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
-            <div className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-8">
+            <div className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-5 sm:p-8">
               <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Autonomy</p>
               <h2 className="mt-3 text-3xl font-black uppercase text-[#F4EBDD]">No unrestricted automation.</h2>
               <div className="mt-8 space-y-4">
@@ -177,7 +183,7 @@ export default function DigitalTwinPage() {
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-8">
+            <div className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-5 sm:p-8">
               <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Consent + Safety</p>
               <h2 className="mt-3 text-3xl font-black uppercase text-[#F4EBDD]">Every likeness and communication surface stays permission-based.</h2>
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -194,12 +200,12 @@ export default function DigitalTwinPage() {
           </div>
         </section>
 
-        <section className="border-b border-[#39FF14]/10 px-6 py-20">
+        <section className="border-b border-[#39FF14]/10 px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="rounded-[1.75rem] border border-[#39FF14]/20 bg-[linear-gradient(180deg,rgba(57,255,20,0.08),rgba(255,255,255,0.03))] p-8">
                 <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Ads System</p>
-                <h2 className="mt-3 text-4xl font-black uppercase text-[#F4EBDD] md:text-5xl">
+                <h2 className="mt-3 text-3xl font-black uppercase leading-tight text-[#F4EBDD] sm:text-4xl md:text-5xl">
                   {adsPlaceholderData.headline}
                 </h2>
                 <p className="mt-5 max-w-2xl text-lg leading-8 text-[#d1c7b7]">
@@ -217,10 +223,10 @@ export default function DigitalTwinPage() {
                 </div>
               </div>
 
-              <div className="grid gap-6">
+              <div className="grid gap-4 sm:gap-6">
                 <div className="grid gap-6 md:grid-cols-3">
                   {adsPlaceholderData.metrics.map((metric) => (
-                    <div key={metric.label} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-6">
+                    <div key={metric.label} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-5 sm:p-6">
                       <div className="text-3xl font-black uppercase text-[#39FF14]">{metric.value}</div>
                       <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-[#b3a999]">{metric.label}</p>
                     </div>
@@ -228,7 +234,7 @@ export default function DigitalTwinPage() {
                 </div>
                 <div className="grid gap-6 md:grid-cols-3">
                   {adsPlaceholderData.offers.map((offer) => (
-                    <article key={offer.id} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-6">
+                    <article key={offer.id} className="rounded-[1.5rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-5 sm:p-6">
                       <h3 className="text-xl font-black uppercase text-[#F4EBDD]">{offer.title}</h3>
                       <p className="mt-3 text-sm leading-7 text-[#c5bcad]">{offer.description}</p>
                     </article>
@@ -239,12 +245,12 @@ export default function DigitalTwinPage() {
           </div>
         </section>
 
-        <section className="px-6 py-20">
+        <section className="px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-12 flex items-end justify-between gap-6">
+            <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.28em] text-[#39FF14]">Packages</p>
-                <h2 className="mt-3 text-4xl font-black uppercase text-[#F4EBDD] md:text-5xl">Choose the build path.</h2>
+                <h2 className="mt-3 text-3xl font-black uppercase leading-tight text-[#F4EBDD] sm:text-4xl md:text-5xl">Choose the build path.</h2>
               </div>
               <Link href="/services/digital-twin/pricing" className="text-sm font-black uppercase tracking-[0.18em] text-[#39FF14]">
                 View full pricing →
@@ -252,7 +258,7 @@ export default function DigitalTwinPage() {
             </div>
             <div className="grid gap-6 lg:grid-cols-4">
               {digitalTwinPackages.map((pkg) => (
-                <div key={pkg.id} className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-6">
+                <div key={pkg.id} className="rounded-[1.75rem] border border-[#F4EBDD]/10 bg-white/[0.03] p-5 sm:p-6">
                   <div className="mb-5 flex items-center justify-between gap-4">
                     <h3 className="text-2xl font-black uppercase text-[#F4EBDD]">{pkg.name}</h3>
                     <span className="rounded-full bg-[#39FF14]/12 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-[#39FF14]">
