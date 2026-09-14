@@ -1,22 +1,23 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Metadata } from 'next';
 import AppNav from '../../components/AppNav';
 
+export const metadata: Metadata = {
+  title: 'Ray-Ban Intelligence Platform | WISE²',
+  description: 'Transform your Meta Ray-Ban Pro glasses into an intelligent AI assistant. Real-time video analysis, voice commands, and instant insights.',
+  openGraph: {
+    title: 'Ray-Ban Intelligence Platform',
+    description: 'Real-time video intelligence powered by Hermes AI',
+    type: 'website',
+  },
+};
+
 export default function RayBanPage() {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
-
   return (
     <>
       <AppNav />
-      <div className="min-h-screen" style={{ backgroundColor: '#0A0E27', marginLeft: '200px' }}>
+      <div className="min-h-screen bg-[#0A0E27] md:ml-52">
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
-
           :root {
             --primary: #00D9FF;
             --secondary: #FFD700;
@@ -25,23 +26,6 @@ export default function RayBanPage() {
             --text: #E8F0FF;
             --muted: #6B7C99;
             --surface: #0A0E27;
-          }
-
-          .font-display {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-          }
-
-          .font-body {
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            line-height: 1.6;
-          }
-
-          .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
           }
 
           @keyframes glow-pulse {
@@ -54,12 +38,17 @@ export default function RayBanPage() {
             to { opacity: 1; transform: translateY(0); }
           }
 
+          @keyframes float-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
           .hero-section {
             background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(255, 0, 110, 0.05) 100%);
             padding: 80px 40px;
             text-align: center;
             border-bottom: 1px solid rgba(0, 217, 255, 0.2);
-            animation: ${loaded ? 'float-in 0.8s ease-out' : 'none'};
+            animation: float-in 0.8s ease-out;
           }
 
           .hero-icon {
@@ -72,7 +61,7 @@ export default function RayBanPage() {
             align-items: center;
             justify-content: center;
             font-size: 48px;
-            animation: ${loaded ? 'glow-pulse 3s ease-in-out infinite' : 'none'};
+            animation: glow-pulse 3s ease-in-out infinite;
           }
 
           .feature-grid {
