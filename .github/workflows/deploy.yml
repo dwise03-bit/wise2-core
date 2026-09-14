@@ -120,6 +120,15 @@ jobs:
             echo "📋 Fetching latest code..."
             git fetch origin main || { echo "❌ Git fetch failed"; exit 1; }
 
+            # Decide scope before resetting the checkout. Website-only changes
+            # must not recreate API, Postgres, Redis, or worker containers.
+            CHANGED_FILES="$(git diff --name-only HEAD origin/main)"
+            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|Dockerfile.website$)'; then
+              DEPLOY_MODE=production
+            else
+              DEPLOY_MODE=website-only
+            fi
+
             # Older VPS deployments left some tracked files owned by root.
             # Repair checkout ownership once, then perform the exact sync.
             if ! git reset --hard origin/main; then
@@ -136,7 +145,8 @@ jobs:
 
             echo "🚀 Starting deployment..."
             chmod +x ./deploy.sh
-            if ! ./deploy.sh production; then
+            echo "Deploy mode: $DEPLOY_MODE"
+            if ! ./deploy.sh "$DEPLOY_MODE"; then
               echo ""
               echo "❌ Deployment script failed. Collecting debug info..."
               echo ""

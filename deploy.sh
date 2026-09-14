@@ -12,6 +12,15 @@ echo "🚀 WISE² Customer Journey Deployment"
 echo "Environment: $ENVIRONMENT"
 echo ""
 
+# Website-only releases must never recreate API, Postgres, Redis, or workers.
+if [ "$ENVIRONMENT" = "website-only" ]; then
+  echo "🌐 Website-only deployment (dependency-isolated)"
+  docker compose -f docker-compose.prod.yml build website
+  docker compose -f docker-compose.prod.yml up -d --no-deps website
+  docker compose -f docker-compose.prod.yml ps website
+  exit 0
+fi
+
 # ============================================================================
 # Step 1: Validate Environment Variables
 # ============================================================================
