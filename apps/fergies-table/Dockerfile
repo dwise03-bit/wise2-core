@@ -10,8 +10,8 @@ COPY pnpm-lock.yaml ./
 COPY package.json pnpm-workspace.yaml ./
 
 # Copy workspace packages needed for build
-COPY packages/db/package.json ./packages/db/ || true
-COPY packages/ui-components/package.json ./packages/ui-components/ || true
+COPY packages/db/package.json ./packages/db/
+COPY packages/ui-components/package.json ./packages/ui-components/
 
 # Copy app package.json
 COPY apps/fergies-table/package.json ./apps/fergies-table/
@@ -21,8 +21,8 @@ RUN pnpm install --no-frozen-lockfile
 
 # Copy full source
 COPY apps/fergies-table ./apps/fergies-table
-COPY packages/db ./packages/db || true
-COPY packages/ui-components ./packages/ui-components || true
+COPY packages/db ./packages/db
+COPY packages/ui-components ./packages/ui-components
 
 # Re-link dependencies after copying source
 RUN pnpm install --no-frozen-lockfile
