@@ -171,7 +171,7 @@ export default function SoundLab() {
                 <input
                   type="range" min="0" max="100" value={track.volume}
                   onChange={(e) => updateTrack(track.id, { volume: Number(e.target.value) })}
-                  style={{ width: '24px', height: '80px', writingMode: 'bt-lr', cursor: 'pointer' }}
+                  style={{ width: '80px', height: '24px', transform: 'rotate(-90deg)', cursor: 'pointer' }}
                 />
 
                 {/* MUTE / SOLO */}
