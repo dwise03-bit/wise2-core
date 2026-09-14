@@ -20,3 +20,13 @@ describe('WISE2 public site audit regressions', () => {
     expect(source).not.toContain("{ href: '/solutions', label: 'Solutions' }");
   });
 });
+
+test('homepage navigation avoids known 404 destinations', () => {
+  const source = read('components/BrandEcosystemHomepage.tsx');
+  expect(source).not.toContain('href="/lil-lizzy"');
+  expect(source).not.toContain('href="/industries"');
+  expect(source).not.toContain('href="/sales-academy/"');
+  expect(source).not.toContain('href="/sales-academy/nc-academy.html"');
+  expect(source).not.toContain('href="/sales-academy/nyc-academy.html"');
+  expect(source).not.toContain('href="/sales-academy/li-academy.html"');
+});

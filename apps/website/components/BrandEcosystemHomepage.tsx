@@ -178,7 +178,7 @@ export function BrandEcosystemHomepage() {
               PRODUCTS
             </Link>
             <Link
-              href="/lil-lizzy"
+              href="/lil-lizzy/led-tag"
               className="transition-colors hover:text-[#b08d57]"
             >
               LIL LIZZY
@@ -208,7 +208,7 @@ export function BrandEcosystemHomepage() {
               XR COMMAND
             </Link>
             <Link
-              href="/industries"
+              href="/services"
               className="transition-colors hover:text-[#b08d57]"
             >
               INDUSTRIES
@@ -248,7 +248,7 @@ export function BrandEcosystemHomepage() {
               <Link href="/products" onClick={() => setMenuOpen(false)}>
                 DEPLOYMENTS
               </Link>
-              <Link href="/lil-lizzy" onClick={() => setMenuOpen(false)}>
+              <Link href="/lil-lizzy/led-tag" onClick={() => setMenuOpen(false)}>
                 LIL LIZZY / BOOMPOPSTERS
               </Link>
               <Link href="/consulting" onClick={() => setMenuOpen(false)}>
@@ -322,8 +322,8 @@ export function BrandEcosystemHomepage() {
               Together.
             </h1>
             <p className="mt-8 max-w-[540px] text-base leading-7 text-white/75 lg:text-lg">
-              One platform for software, automation, communications,
-              infrastructure, AI, and real-world results.
+              Explore the WISE² ecosystem, find the friction in your business, and turn the next move into a deployed system.
+              Software, automation, communications, infrastructure, and AI—connected.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
@@ -692,7 +692,7 @@ export function BrandEcosystemHomepage() {
           </div>
           <div className="mt-16 grid gap-5 lg:grid-cols-4">
             <Link
-              href="/sales-academy/"
+              href="/consulting"
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
@@ -708,7 +708,7 @@ export function BrandEcosystemHomepage() {
             </Link>
 
             <Link
-              href="/sales-academy/nc-academy.html"
+              href="/consulting"
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
@@ -724,7 +724,7 @@ export function BrandEcosystemHomepage() {
             </Link>
 
             <Link
-              href="/sales-academy/nyc-academy.html"
+              href="/consulting"
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
@@ -740,7 +740,7 @@ export function BrandEcosystemHomepage() {
             </Link>
 
             <Link
-              href="/sales-academy/li-academy.html"
+              href="/consulting"
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
