@@ -30,7 +30,7 @@ export default function TrackerPage() {
   const totalDuration = steps.reduce((sum, s) => sum + s.duration, 0);
   const progressPercent = (currentStep / (steps.length - 1)) * 100;
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
