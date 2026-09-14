@@ -23,9 +23,9 @@ export default function APKsPage() {
 
   const fetchManifest = async () => {
     try {
-      const res = await fetch('/apks/manifest');
+      const res = await fetch('/api/apks');
       const data = await res.json();
-      setApps(data.apps);
+      setApps(data.apps || []);
     } catch (error) {
       console.error('Failed to load APK manifest:', error);
     } finally {

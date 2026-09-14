@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const searchParams = request.nextUrl.searchParams;
+  const type = searchParams.get('type');
 
-  // APK manifest with download links
   const APK_MANIFEST = {
     apps: [
       {
@@ -31,24 +31,13 @@ export async function GET(request: NextRequest) {
     totalDownloads: 1247,
   };
 
-  // If requesting specific app
-  if (pathname.includes('/apks/manifest')) {
-    return NextResponse.json(APK_MANIFEST);
+  if (type === 'quest') {
+    return NextResponse.json(APK_MANIFEST.apps[0]);
   }
 
-  if (pathname.includes('/apks/quest')) {
-    return NextResponse.json({
-      ...APK_MANIFEST.apps[0],
-      downloadUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/apks/downloads/wise2-xr-1.1.0.apk`,
-    });
+  if (type === 'rayban') {
+    return NextResponse.json(APK_MANIFEST.apps[1]);
   }
 
-  if (pathname.includes('/apks/rayban')) {
-    return NextResponse.json({
-      ...APK_MANIFEST.apps[1],
-      downloadUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/apks/downloads/wise2-rayban-2.0.1.apk`,
-    });
-  }
-
-  return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  return NextResponse.json(APK_MANIFEST);
 }
