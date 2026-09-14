@@ -38,7 +38,7 @@ export const defaultNavSections: NavSection[] = [
     title: 'Operations',
     items: [
       { id: 'arvr', label: 'AR/VR Ecosystem', icon: '🥽', href: '/arvr', badge: '⚡' },
-      { id: 'bot-dashboard', label: 'Bot Dashboard', icon: '🤖', href: '/bots/dashboard', badge: '9' },
+      { id: 'bot-dashboard', label: 'Bot Dashboard', icon: '🤖', href: '/bots/dashboard', badge: '11' },
       { id: 'infrastructure', label: 'Infrastructure', icon: '🖥️', href: '/infrastructure' },
       { id: 'monitoring', label: 'Monitoring', icon: '📊', href: 'http://localhost:3000' },
     ],

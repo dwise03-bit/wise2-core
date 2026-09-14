@@ -107,6 +107,26 @@ const BOTS: BotStatus[] = [
     endpoint: 'http://127.0.0.1:3014/api/health',
     port: 3014,
   },
+  {
+    id: 'quest-3s',
+    name: 'Meta Quest 3S',
+    service: 'VR Headset & Hand Tracking',
+    status: 'checking',
+    color: '#000000',
+    icon: '🥽',
+    endpoint: 'http://127.0.0.1:5900/api/health',
+    port: 5900,
+  },
+  {
+    id: 'rayban-meta',
+    name: 'Ray-Ban Meta',
+    service: 'AR Glasses & Camera Feed',
+    status: 'checking',
+    color: '#8B7355',
+    icon: '👓',
+    endpoint: 'http://127.0.0.1:5901/api/health',
+    port: 5901,
+  },
 ];
 
 export default function BotsDashboard() {
@@ -330,10 +350,101 @@ export default function BotsDashboard() {
           ))}
         </div>
 
+        {/* VR/AR Hardware Control Panel */}
+        <div className="mt-12 mb-8">
+          <h2 className="text-3xl font-black mb-6 bg-gradient-to-r from-[#0094FF] to-[#00D9FF] bg-clip-text text-transparent">
+            VR/AR Hardware Control
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Quest 3S Control */}
+            <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#333] rounded-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-black text-white mb-1">🥽 Meta Quest 3S</h3>
+                  <p className="text-xs text-[#666]">VR Headset Control & Monitoring</p>
+                </div>
+                <div className={`w-3 h-3 rounded-full ${bots.find(b => b.id === 'quest-3s')?.status === 'online' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              </div>
+
+              <div className="space-y-3 mb-4 pb-4 border-b border-[#333]">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="text-[#666] mb-1">Battery</div>
+                    <div className="text-green-400 font-mono">92%</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">Connection</div>
+                    <div className="text-blue-400 font-mono">WiFi 6 (USB)</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">Resolution</div>
+                    <div className="text-blue-400 font-mono">1800x1920</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">FPS</div>
+                    <div className="text-green-400 font-mono">72fps</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <button className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded transition">
+                  🎮 Launch XR App
+                </button>
+                <button className="w-full px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold rounded transition">
+                  👐 Hand Tracking Stream
+                </button>
+              </div>
+            </div>
+
+            {/* Ray-Ban Meta Control */}
+            <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-[#333] rounded-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-black text-white mb-1">👓 Ray-Ban Meta</h3>
+                  <p className="text-xs text-[#666]">AR Glasses Control & Camera Feed</p>
+                </div>
+                <div className={`w-3 h-3 rounded-full ${bots.find(b => b.id === 'rayban-meta')?.status === 'online' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              </div>
+
+              <div className="space-y-3 mb-4 pb-4 border-b border-[#333]">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="text-[#666] mb-1">Battery</div>
+                    <div className="text-green-400 font-mono">87%</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">Connection</div>
+                    <div className="text-blue-400 font-mono">Bluetooth 5.2</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">Camera</div>
+                    <div className="text-blue-400 font-mono">Dual 12MP</div>
+                  </div>
+                  <div>
+                    <div className="text-[#666] mb-1">AI Status</div>
+                    <div className="text-amber-400 font-mono">Active</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <button className="w-full px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-bold rounded transition">
+                  📹 View Camera Feed
+                </button>
+                <button className="w-full px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded transition">
+                  🔗 Sync to Command Center
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
         <div className="mt-12 text-center text-[#666] text-xs">
-          <p>🚀 WISE² Bot Ecosystem Monitoring</p>
-          <p className="mt-1">Status updates every 10 seconds • Last updated: {lastUpdate || 'never'}</p>
+          <p>🚀 WISE² Bot Ecosystem + VR/AR Hardware Monitoring</p>
+          <p className="mt-1">11 services monitored • Status updates every 10 seconds • Last updated: {lastUpdate || 'never'}</p>
         </div>
       </div>
     </div>
