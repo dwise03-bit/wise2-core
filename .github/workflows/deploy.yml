@@ -106,7 +106,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           command_timeout: 30m
-          env_names: |
+          envs: |
             STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,STRIPE_STARTER_PRICE_ID,STRIPE_PRO_PRICE_ID,STRIPE_WEBHOOK_SECRET,
             SENDGRID_API_KEY,SENDGRID_FROM_EMAIL,
             DATABASE_URL,DATABASE_USER,DATABASE_PASSWORD,
