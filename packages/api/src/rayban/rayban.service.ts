@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-interface RayBanDevice {
+export interface RayBanDevice {
   id: string;
   userId: string;
   deviceId: string;
@@ -11,7 +11,7 @@ interface RayBanDevice {
   lastSeen: Date;
 }
 
-interface RayBanCapture {
+export interface RayBanCapture {
   id: string;
   deviceId: string;
   type: 'video' | 'audio' | 'image';
@@ -20,7 +20,7 @@ interface RayBanCapture {
   hermesAnalysis?: Record<string, any>;
 }
 
-interface RayBanCommand {
+export interface RayBanCommand {
   id: string;
   deviceId: string;
   command: string;

@@ -1,25 +1,26 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { RayBanService } from './rayban.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @Controller('rayban')
-@UseGuards(JwtAuthGuard)
 export class RayBanController {
   constructor(private rayBanService: RayBanService) {}
 
   // Device Management
   @Post('devices/register')
+  @UseGuards(JwtAuthGuard)
   async registerDevice(
-    @CurrentUser() user: any,
+    @Req() req: Request & { user: any },
     @Body() body: { deviceId: string; name?: string }
   ) {
-    return this.rayBanService.registerDevice(user.id, body.deviceId);
+    return this.rayBanService.registerDevice(req.user.id, body.deviceId);
   }
 
   @Get('devices')
-  async listDevices(@CurrentUser() user: any) {
-    return this.rayBanService.listDevices(user.id);
+  @UseGuards(JwtAuthGuard)
+  async listDevices(@Req() req: Request & { user: any }) {
+    return this.rayBanService.listDevices(req.user.id);
   }
 
   @Get('devices/:deviceId')

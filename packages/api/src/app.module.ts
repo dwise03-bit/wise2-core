@@ -39,6 +39,7 @@ import { HvacTelemetryModule } from './hvac-telemetry/hvac-telemetry.module';
 // import { CjaysModule } from './cjays/cjays.module'; // DISABLED: depends on HermesModule
 // import { BusinessOsModule } from './v1/business-os/business-os.module'; // DISABLED: depends on HermesModule + AiPhoneModule
 import { CherryCountModule } from './cherry-count/cherry-count.module';
+import { RayBanModule } from './rayban/rayban.module';
 import { CommandCenterModule } from './command-center/command-center.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
@@ -152,6 +153,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     AiPhoneModule,
     CloudModule,
     WebhooksModule,
+    RayBanModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
