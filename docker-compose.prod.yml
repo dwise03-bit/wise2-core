@@ -344,6 +344,29 @@ services:
       timeout: 10s
       retries: 3
 
+  # Fergie's Table & Savôré (Premium catering OS)
+  fergies-table:
+    build:
+      context: .
+      dockerfile: apps/fergies-table/Dockerfile
+    image: wise2-fergies-table:latest
+    container_name: wise2-fergies-table
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3026
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3026:3026"
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3026', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # WISE² Ray-Ban Integration
   rayban-service:
     build:
@@ -410,6 +433,7 @@ services:
       - prompt-shop
       - getdown-demo
       - hvac
+      - fergies-table
       - rayban-service
       - redis
     networks:
