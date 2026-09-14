@@ -648,6 +648,8 @@ importers:
         specifier: ^5.3.0
         version: 5.9.3
 
+  apps/pixel-slate: {}
+
   apps/podcast-music:
     dependencies:
       '@prisma/client':
