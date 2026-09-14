@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "framework": "nextjs",
-  "env": {
-    "SKIP_ENV_VALIDATION": "true",
-    "NODE_ENV": "production"
-  }
-}
