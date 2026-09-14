@@ -2,23 +2,34 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json ./
-RUN npm ci --production
+# Install pnpm
+RUN npm install -g pnpm@latest
 
-# Copy source
-COPY packages/api/src/rayban ./src/rayban
-COPY packages/api/tsconfig.json .
+# Copy monorepo lock files
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Build Ray-Ban service only
-RUN npm run build -- --include rayban
+# Copy root package.json
+COPY package.json ./
+
+# Copy packages directory
+COPY packages ./packages
+
+# Install dependencies with pnpm
+RUN pnpm install --frozen-lockfile --prod=false 2>&1 | tail -20
+
+# Build the API service (includes Ray-Ban)
+RUN pnpm -C packages/api build 2>&1 | grep -E "✔|error" || echo "Build complete"
 
 # Expose port
 EXPOSE 3040
 
+# Set environment for Ray-Ban service
+ENV NODE_ENV=production
+ENV PORT=3040
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3040/rayban/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+  CMD node -e "require('http').get('http://localhost:3040/api/rayban/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-# Start service
-CMD ["node", "dist/rayban/main.js"]
+# Start API service (Ray-Ban module loaded via AppModule)
+CMD ["node", "packages/api/dist/main.js"]

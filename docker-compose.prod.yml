@@ -344,6 +344,35 @@ services:
       timeout: 10s
       retries: 3
 
+  # WISE² Ray-Ban Integration
+  rayban-service:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile.rayban
+    image: wise2/rayban:latest
+    container_name: wise2-rayban
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3040
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: postgresql://wise2:wise2@postgres:5432/wise2_prod
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis123}@redis:6379/1
+    ports:
+      - "127.0.0.1:3040:3040"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3040/api/rayban/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Redis Cache & Queue
   redis:
     image: redis:7-alpine
@@ -381,6 +410,7 @@ services:
       - prompt-shop
       - getdown-demo
       - hvac
+      - rayban-service
       - redis
     networks:
       - wise2
