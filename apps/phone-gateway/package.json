@@ -23,7 +23,9 @@
     "redis": "^4.6.10",
     "pcm-volume": "^1.0.0",
     "wav": "^1.0.2",
-    "node-record-lpcm16": "^1.0.1"
+    "node-record-lpcm16": "^1.0.1",
+    "twilio": "^4.10.0",
+    "form-data": "^4.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.20",

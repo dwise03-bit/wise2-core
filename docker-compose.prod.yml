@@ -344,6 +344,31 @@ services:
       timeout: 10s
       retries: 3
 
+  # JO Credit OS Demo
+  jo-credit-os-demo:
+    build:
+      context: .
+      dockerfile: apps/jo-credit-os-demo/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    image: wise2-jo-credit-os-demo:latest
+    container_name: wise2-jo-credit-os-demo
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+    ports:
+      - "127.0.0.1:3026:3000"
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Redis Cache & Queue
   redis:
     image: redis:7-alpine
@@ -381,6 +406,7 @@ services:
       - prompt-shop
       - getdown-demo
       - hvac
+      - jo-credit-os-demo
       - redis
     networks:
       - wise2

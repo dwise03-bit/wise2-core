@@ -3,6 +3,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Badge, Button } from '../../../src/components/ui';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import {
+  HermesActionsQueue,
+  HermesActionDetail,
+  HermesCreateAction,
+  type HermesAction,
+} from '../../../src/components/hermes';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3011/api';
 const BRAIN_API_URL = process.env.NEXT_PUBLIC_BRAIN_API_URL || '/brain-api';
@@ -64,6 +70,8 @@ export default function HermesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
+  const [tab, setTab] = useState<'chat' | 'actions' | 'create'>('chat');
+  const [selectedAction, setSelectedAction] = useState<HermesAction | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -221,6 +229,26 @@ export default function HermesPage() {
           <Button variant="secondary" size="sm" onClick={loadStatus}>Refresh</Button>
         </div>
 
+        {/* Tabs */}
+        <div className="flex gap-1 border-b border-border-subtle">
+          {(['chat', 'actions', 'create'] as const).map(t => (
+            <button
+              key={t}
+              onClick={() => {
+                setTab(t);
+                if (t === 'actions') setSelectedAction(null);
+              }}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                tab === t
+                  ? 'text-wise-electric border-wise-electric'
+                  : 'text-text-muted border-transparent hover:text-text-secondary'
+              }`}
+            >
+              {t === 'chat' ? '💬 Chat' : t === 'actions' ? '📋 Actions' : '➕ Create'}
+            </button>
+          ))}
+        </div>
+
         {/* Status rail */}
         <Card className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -307,118 +335,167 @@ export default function HermesPage() {
         </Card>
       </div>
 
-      {/* Chat area — grows to fill available space, natural scroll */}
+      {/* Content area — grows to fill available space, natural scroll */}
       <div className="flex-1 flex flex-col min-h-0">
-        {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-8 gap-5">
-            <div className="text-center">
-              <div className="text-4xl mb-2">⚡</div>
-              <p className="text-sm font-semibold text-text-secondary">Ask Hermes anything about WISE²</p>
-              <p className="text-xs text-text-muted mt-1">Uses live telemetry, Second Brain RAG, and Ollama inference</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md">
-              {SUGGESTED.map(q => (
-                <button
-                  key={q}
-                  onClick={() => { setInput(q); inputRef.current?.focus(); }}
-                  className="text-left p-3 rounded-lg bg-wise-black/40 border border-border-subtle hover:border-wise-electric/40 transition-colors text-xs text-text-secondary"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 space-y-4 pb-4 overflow-y-auto">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] ${m.role === 'user'
-                  ? 'bg-wise-electric/10 border border-wise-electric/20 rounded-2xl rounded-br-sm px-4 py-3'
-                  : m.error
-                    ? 'bg-red-500/10 border border-red-500/20 rounded-2xl rounded-bl-sm px-4 py-3'
-                    : 'bg-wise-black/50 border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3'
-                }`}>
-                  {m.role === 'assistant' && !m.error && (
-          <div className="flex items-center gap-1.5 mb-2">
-                      <span className="text-[9px] font-bold tracking-widest text-wise-electric uppercase">Hermes</span>
-                      {m.toolsUsed && m.toolsUsed.length > 0 && (
-                        <span className="text-[9px] text-text-muted">
-                          · {m.toolsUsed.join(', ')}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  <p className="text-sm text-text-primary whitespace-pre-wrap leading-relaxed">{m.content}</p>
-                  {m.sources && m.sources.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-border-subtle">
-                      <p className="text-[10px] text-text-muted mb-1">Sources</p>
-                      {m.sources.map(s => (
-                        <p key={s.title} className="text-[10px] text-wise-electric/70">· {s.title}</p>
-                      ))}
-                    </div>
-                  )}
-                  {m.durationMs && (
-                    <p className="text-[9px] text-text-muted mt-1.5">{(m.durationMs / 1000).toFixed(1)}s</p>
-                  )}
-                </div>
-              </div>
-            ))}
-            {thinking && (
-              <div className="flex justify-start">
-                <div className="bg-wise-black/50 border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <span className="text-[9px] font-bold tracking-widest text-wise-electric uppercase">Hermes</span>
+        {tab === 'chat' && (
+          <>
+            {/* Chat messages */}
+            <div className="flex-1 flex flex-col min-h-0">
+              {messages.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center py-8 gap-5">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">⚡</div>
+                    <p className="text-sm font-semibold text-text-secondary">Ask Hermes anything about WISE²</p>
+                    <p className="text-xs text-text-muted mt-1">Uses live telemetry, Second Brain RAG, and Ollama inference</p>
                   </div>
-                  <div className="flex gap-1">
-                    {[0, 1, 2].map(i => (
-                      <span key={i} className="w-1.5 h-1.5 rounded-full bg-wise-electric/60 animate-pulse" style={{ animationDelay: `${i * 0.15}s` }} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md">
+                    {SUGGESTED.map(q => (
+                      <button
+                        key={q}
+                        onClick={() => { setInput(q); inputRef.current?.focus(); }}
+                        className="text-left p-3 rounded-lg bg-wise-black/40 border border-border-subtle hover:border-wise-electric/40 transition-colors text-xs text-text-secondary"
+                      >
+                        {q}
+                      </button>
                     ))}
                   </div>
                 </div>
+              ) : (
+                <div className="flex-1 space-y-4 pb-4 overflow-y-auto">
+                  {messages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[85%] ${m.role === 'user'
+                        ? 'bg-wise-electric/10 border border-wise-electric/20 rounded-2xl rounded-br-sm px-4 py-3'
+                        : m.error
+                          ? 'bg-red-500/10 border border-red-500/20 rounded-2xl rounded-bl-sm px-4 py-3'
+                          : 'bg-wise-black/50 border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3'
+                      }`}>
+                        {m.role === 'assistant' && !m.error && (
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <span className="text-[9px] font-bold tracking-widest text-wise-electric uppercase">Hermes</span>
+                            {m.toolsUsed && m.toolsUsed.length > 0 && (
+                              <span className="text-[9px] text-text-muted">
+                                · {m.toolsUsed.join(', ')}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <p className="text-sm text-text-primary whitespace-pre-wrap leading-relaxed">{m.content}</p>
+                        {m.sources && m.sources.length > 0 && (
+                          <div className="mt-2 pt-2 border-t border-border-subtle">
+                            <p className="text-[10px] text-text-muted mb-1">Sources</p>
+                            {m.sources.map(s => (
+                              <p key={s.title} className="text-[10px] text-wise-electric/70">· {s.title}</p>
+                            ))}
+                          </div>
+                        )}
+                        {m.durationMs && (
+                          <p className="text-[9px] text-text-muted mt-1.5">{(m.durationMs / 1000).toFixed(1)}s</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {thinking && (
+                    <div className="flex justify-start">
+                      <div className="bg-wise-black/50 border border-border-subtle rounded-2xl rounded-bl-sm px-4 py-3">
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <span className="text-[9px] font-bold tracking-widest text-wise-electric uppercase">Hermes</span>
+                        </div>
+                        <div className="flex gap-1">
+                          {[0, 1, 2].map(i => (
+                            <span key={i} className="w-1.5 h-1.5 rounded-full bg-wise-electric/60 animate-pulse" style={{ animationDelay: `${i * 0.15}s` }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={bottomRef} />
+                </div>
+              )}
+            </div>
+
+            {/* Input — sticks to bottom, mobile-safe */}
+            <div className="shrink-0 pt-3 pb-[env(safe-area-inset-bottom,8px)]">
+              <div className="flex gap-2 items-end">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={onKey}
+                  placeholder="Ask about system status, WISE² operations, your devices…"
+                  rows={1}
+                  disabled={thinking || status?.status !== 'online'}
+                  className="flex-1 resize-none bg-wise-black/60 border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-wise-electric/50 transition-colors disabled:opacity-50"
+                  style={{ maxHeight: '120px', overflowY: 'auto' }}
+                  onInput={e => {
+                    const t = e.currentTarget;
+                    t.style.height = 'auto';
+                    t.style.height = Math.min(t.scrollHeight, 120) + 'px';
+                  }}
+                />
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={send}
+                  disabled={thinking || !input.trim() || status?.status !== 'online'}
+                  className="shrink-0"
+                >
+                  {thinking ? '…' : '↗'}
+                </Button>
               </div>
-            )}
-            <div ref={bottomRef} />
+              {messages.length > 0 && (
+                <button
+                  onClick={() => setMessages([])}
+                  className="mt-2 text-[10px] text-text-muted hover:text-text-secondary transition-colors"
+                >
+                  Clear conversation
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
+        {tab === 'actions' && (
+          <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="col-span-2">
+                <HermesActionsQueue
+                  token={token || ''}
+                  apiUrl={API_URL}
+                  onActionSelect={setSelectedAction}
+                />
+              </div>
+              <div>
+                <HermesActionDetail
+                  action={selectedAction}
+                  token={token || ''}
+                  apiUrl={API_URL}
+                  onClose={() => setSelectedAction(null)}
+                  onDecision={() => {
+                    setSelectedAction(null);
+                    // Refresh actions list would happen here
+                  }}
+                />
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Input — sticks to bottom, mobile-safe */}
-        <div className="shrink-0 pt-3 pb-[env(safe-area-inset-bottom,8px)]">
-          <div className="flex gap-2 items-end">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={onKey}
-              placeholder="Ask about system status, WISE² operations, your devices…"
-              rows={1}
-              disabled={thinking || status?.status !== 'online'}
-              className="flex-1 resize-none bg-wise-black/60 border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-wise-electric/50 transition-colors disabled:opacity-50"
-              style={{ maxHeight: '120px', overflowY: 'auto' }}
-              onInput={e => {
-                const t = e.currentTarget;
-                t.style.height = 'auto';
-                t.style.height = Math.min(t.scrollHeight, 120) + 'px';
-              }}
-            />
-            <Button
-              variant="primary"
-              size="md"
-              onClick={send}
-              disabled={thinking || !input.trim() || status?.status !== 'online'}
-              className="shrink-0"
-            >
-              {thinking ? '…' : '↗'}
-            </Button>
+        {tab === 'create' && (
+          <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4">
+            <div className="max-w-md">
+              <HermesCreateAction
+                token={token || ''}
+                apiUrl={API_URL}
+                onSuccess={(action) => {
+                  setTab('actions');
+                  setSelectedAction(action);
+                }}
+                onCancel={() => setTab('chat')}
+              />
+            </div>
           </div>
-          {messages.length > 0 && (
-            <button
-              onClick={() => setMessages([])}
-              className="mt-2 text-[10px] text-text-muted hover:text-text-secondary transition-colors"
-            >
-              Clear conversation
-            </button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

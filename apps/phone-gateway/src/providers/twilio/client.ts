@@ -66,8 +66,8 @@ export class TwilioClient {
         to,
         url: twimlUrl,
         record: options?.recordingEnabled ?? this.recordingEnabled,
-        transcribeCallback: this.transcriptionEnabled ? `${this.webhookBaseUrl}/twilio/transcription` : undefined,
-      });
+        // transcribeCallback: this.transcriptionEnabled ? `${this.webhookBaseUrl}/twilio/transcription` : undefined,
+      } as any);
 
       logger.info('Outbound call initiated', { to, callSid: call.sid, status: call.status });
       return { sid: call.sid, status: call.status };
