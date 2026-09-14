@@ -254,17 +254,18 @@ export class TelnyxDatabaseService {
         return null;
       }
 
-      // Use CallbackTask if available in schema
+      // Create callback task with retry strategy
       const task = await this.prisma.callbackTask.create({
         data: {
           customerId,
-          description: notes,
-          scheduledFor: scheduledFor || new Date(Date.now() + 24 * 60 * 60 * 1000),
           status: 'PENDING',
+          method: 'CALL',
+          nextAttempt: scheduledFor || new Date(Date.now() + 24 * 60 * 60 * 1000),
+          maxAttempts: 3,
         },
       });
 
-      this.logger.log(`Created callback task for customer ${customerId}`);
+      this.logger.log(`Created callback task for customer ${customerId}: scheduled for ${task.nextAttempt}`);
       return task;
     } catch (error) {
       this.logger.warn(
