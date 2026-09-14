@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Headers, HttpCode, HttpStatus, BadRequestException, Logger } from '@nestjs/common';
 import { TelnyxService } from './telnyx.service';
+import * as crypto from 'crypto';
 
 interface TelnyxWebhookPayload {
   data: {
@@ -87,8 +88,24 @@ export class TelnyxController {
           break;
 
         case 'call.dtmf.received':
-          // Log DTMF for future IVR implementation
+          // Handle DTMF input for IVR
           this.logger.debug(`DTMF received on call ${callId}: ${payload.data.payload.dtmf_digits}`);
+          await this.telnyxService.handleDTMFInput({
+            callId,
+            callControlId,
+            dtmfDigits: payload.data.payload.dtmf_digits || '',
+            timestamp: new Date().toISOString(),
+          });
+          break;
+
+        case 'call.hangup':
+          // Also handle hangup separately from failed
+          await this.telnyxService.handleCallEnded({
+            callId,
+            callControlId,
+            cause: payload.data.payload.cause || 'hangup',
+            timestamp: new Date().toISOString(),
+          });
           break;
 
         default:
@@ -103,13 +120,42 @@ export class TelnyxController {
   }
 
   /**
-   * Verify Telnyx webhook signature
-   * In production, validate the HMAC signature from Telnyx
+   * Verify Telnyx webhook signature using HMAC-SHA256
+   * Reference: https://developers.telnyx.com/docs/voice/webhooks#webhook_signature_verification
    */
   private verifyWebhookSignature(signature: string, payload: string): boolean {
-    // TODO: Implement HMAC verification using Telnyx webhook secret
-    // For now, we'll accept requests and rely on network security
-    return true;
+    if (!signature) {
+      this.logger.warn('No webhook signature provided');
+      return false;
+    }
+
+    const secret = process.env.TELNYX_WEBHOOK_SECRET;
+    if (!secret) {
+      this.logger.warn('TELNYX_WEBHOOK_SECRET not configured - webhook verification disabled');
+      // In development, allow unsigned webhooks if secret is not configured
+      return process.env.NODE_ENV !== 'production';
+    }
+
+    try {
+      // Telnyx uses HMAC-SHA256 for signature verification
+      const expectedSignature = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('base64');
+
+      // Compare signatures using constant-time comparison
+      const isValid = crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expectedSignature)
+      );
+
+      return isValid;
+    } catch (error) {
+      this.logger.error(
+        `Webhook signature verification error: ${error instanceof Error ? error.message : String(error)}`
+      );
+      return false;
+    }
   }
 
   @Post('health')

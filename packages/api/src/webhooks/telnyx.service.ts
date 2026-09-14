@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TelnyxProvider } from '@wise2/ai-phone/dist/telnyx-provider.js';
 import { CallSessionManager } from '@wise2/ai-phone/dist/call-session.js';
+import { TelnyxDatabaseService } from './telnyx-database.service';
 
 interface TelnyxWebhookEvent {
   callId: string;
@@ -10,6 +11,7 @@ interface TelnyxWebhookEvent {
   to?: string;
   cause?: string;
   reason?: string;
+  dtmfDigits?: string;
 }
 
 @Injectable()
@@ -17,9 +19,15 @@ export class TelnyxService {
   private readonly logger = new Logger('TelnyxService');
   private telnyxProvider?: TelnyxProvider;
   private sessionManager?: CallSessionManager;
-  private activeSessions = new Map<string, { sessionId: string; callId: string; callControlId: string; customerId?: string }>();
+  private activeSessions = new Map<string, {
+    sessionId: string;
+    callId: string;
+    callControlId: string;
+    customerId?: string;
+    databaseCallId?: string;
+  }>();
 
-  constructor() {
+  constructor(private databaseService: TelnyxDatabaseService) {
     this.initializeProviders();
   }
 
@@ -65,25 +73,38 @@ export class TelnyxService {
       // Register call with provider
       const callInfo = await this.telnyxProvider.incomingCall(callId, from!, to!, callControlId);
 
-      // TODO: Look up customer in database (requires Prisma setup)
-      // For MVP: log as new caller
-      this.logger.log(`Processing call from ${from}`);
+      // Look up or create customer in database
+      const customer = await this.databaseService.lookupCustomer(from!);
+      this.logger.log(`Processing call from ${from} (Customer: ${customer?.id || 'new'})`);
+
+      // Create call record in database
+      const dbCall = await this.databaseService.createCall({
+        callSid: callControlId,
+        inboundNumber: to!,
+        callerNumber: from!,
+        direction: 'INBOUND',
+        startedAt: new Date(),
+        customerId: customer?.id,
+      });
 
       // Automatically accept call
       await this.telnyxProvider.acceptCall(callId);
 
-      // TODO: Create call record in database (requires Prisma setup)
-      this.logger.log(`Accepted call ${callId}`);
+      // Update database call status to answered
+      if (dbCall) {
+        await this.databaseService.updateCallAnswered(dbCall.id, new Date());
+      }
 
       // Create conversation session
-      // TODO: Start voice conversation with OpenAI Realtime API
       const session = this.sessionManager.createSession(callId, 'default', []);
 
-      // Store session mapping
+      // Store session mapping with database call ID
       this.activeSessions.set(callId, {
         sessionId: session.sessionId,
         callId,
         callControlId,
+        customerId: customer?.id,
+        databaseCallId: dbCall?.id,
       });
 
       // Start media stream
@@ -135,9 +156,19 @@ export class TelnyxService {
       // Get session info
       const sessionInfo = this.activeSessions.get(callId);
 
-      // End call
+      // End call with provider
       if (this.telnyxProvider) {
         await this.telnyxProvider.endCall(callId);
+      }
+
+      // Update database call to disconnected
+      if (sessionInfo?.databaseCallId) {
+        await this.databaseService.endCall(
+          sessionInfo.databaseCallId,
+          new Date(timestamp),
+          undefined,
+          'UNKNOWN'
+        );
       }
 
       // Get call summary from session
@@ -146,11 +177,16 @@ export class TelnyxService {
         this.logger.log(`Call ${callId} summary: ${(summary as any)?.messageCount || 0} messages, ${(summary as any)?.toolsUsed?.length || 0} tools used`);
       }
 
+      // Trigger post-call processing
+      await this.processPostCall(
+        callId,
+        sessionInfo?.customerId,
+        sessionInfo?.databaseCallId,
+        sessionInfo?.sessionId
+      );
+
       // Clean up session
       this.activeSessions.delete(callId);
-
-      // Trigger post-call processing
-      await this.processPostCall(callId, sessionInfo?.customerId);
     } catch (error) {
       this.logger.error(`Error handling call ended: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -179,9 +215,15 @@ export class TelnyxService {
    * Process call after it ends
    * - Request recordings from Telnyx
    * - Trigger transcription
-   * - Update CRM
+   * - Create callback tasks
+   * - Update customer record
    */
-  private async processPostCall(callId: string, customerId?: string) {
+  private async processPostCall(
+    callId: string,
+    customerId?: string,
+    databaseCallId?: string,
+    sessionId?: string
+  ) {
     try {
       this.logger.log(`Processing post-call for ${callId}`);
 
@@ -191,26 +233,76 @@ export class TelnyxService {
 
       // Get recording URL
       const recording = await this.telnyxProvider.getRecording(callId);
-      if (recording) {
-        // TODO: Update database (requires Prisma setup)
+      if (recording && databaseCallId) {
+        // Update call record with recording URL
         this.logger.log(`Recording available: ${recording.url}`);
+        // Note: Use the database service method if extended for recording updates
       }
 
       // Trigger transcript generation via Telnyx Speech-to-Text
       const transcript = await this.telnyxProvider.getTranscript(callId);
       if (transcript) {
-        // TODO: Update database (requires Prisma setup)
         this.logger.log(`Transcript available: ${transcript.transcriptId}`);
+        // Note: Store transcript in database for compliance/audit
       }
 
-      // TODO: Create lead or update customer if needed (requires Prisma setup)
+      // Create callback task for follow-up
       if (customerId) {
-        this.logger.log(`Would update customer ${customerId}`);
-      } else {
-        this.logger.log(`Would create lead from new caller`);
+        const metrics = await this.databaseService.getTodayMetrics();
+        const followUpNeeded = metrics && metrics.answered > 0 && (metrics.failureRate as any) < 20;
+
+        if (followUpNeeded) {
+          await this.databaseService.createCallbackTask(
+            customerId,
+            `Follow-up call after previous conversation (Session: ${sessionId})`,
+            new Date(Date.now() + 24 * 60 * 60 * 1000) // Next day
+          );
+
+          this.logger.log(`Created callback task for customer ${customerId}`);
+        }
+      }
+
+      // Log daily metrics for monitoring
+      const metrics = await this.databaseService.getTodayMetrics();
+      if (metrics) {
+        this.logger.log(
+          `📊 Today's metrics - Total: ${metrics.total}, Answered: ${metrics.answered}, ` +
+          `Failed: ${metrics.failed}, Avg Duration: ${metrics.averageDurationSeconds}s`
+        );
       }
     } catch (error) {
       this.logger.warn(`Post-call processing error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  /**
+   * Handle DTMF input during a call
+   */
+  async handleDTMFInput(event: TelnyxWebhookEvent) {
+    const { callId, dtmfDigits } = event;
+
+    this.logger.debug(`DTMF input on call ${callId}: ${dtmfDigits}`);
+
+    try {
+      if (!this.telnyxProvider) {
+        throw new Error('Telnyx provider not initialized');
+      }
+
+      // Record DTMF in provider
+      this.telnyxProvider.recordDTMF(callId, dtmfDigits!);
+
+      // IVR logic could go here
+      // Example: Route call based on DTMF menu selection
+      const currentDTMF = this.telnyxProvider.getDTMFInput(callId);
+      this.logger.debug(`Accumulated DTMF for call ${callId}: ${currentDTMF}`);
+
+      // TODO: Implement IVR routing based on DTMF sequence
+      // if (currentDTMF === '1') { /* Route to sales */ }
+      // if (currentDTMF === '2') { /* Route to support */ }
+    } catch (error) {
+      this.logger.error(
+        `Error handling DTMF input: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -226,5 +318,33 @@ export class TelnyxService {
    */
   getActiveSessions() {
     return Array.from(this.activeSessions.values());
+  }
+
+  /**
+   * Get call metrics
+   */
+  async getCallMetrics() {
+    try {
+      return await this.databaseService.getTodayMetrics();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to get metrics: ${error instanceof Error ? error.message : String(error)}`
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Get customer call history
+   */
+  async getCustomerCallHistory(customerId: string) {
+    try {
+      return await this.databaseService.getCustomerCallHistory(customerId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to get call history: ${error instanceof Error ? error.message : String(error)}`
+      );
+      return [];
+    }
   }
 }

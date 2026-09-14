@@ -56,8 +56,9 @@ export class CallSessionManager {
     const validTransitions: Record<CallState, CallState[]> = {
       queued: ['ringing', 'failed'],
       ringing: ['answered', 'failed'],
-      'in-progress': ['transferring', 'completed', 'failed'],
+      'in-progress': ['held', 'transferring', 'completed', 'failed'],
       answered: ['in-progress', 'failed'],
+      held: ['in-progress', 'completed', 'failed'],
       transferring: ['in-progress', 'completed', 'failed'],
       completed: [],
       failed: [],

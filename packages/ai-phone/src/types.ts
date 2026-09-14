@@ -1,7 +1,7 @@
 // Provider-neutral interfaces for Wise2 AI Phone
 
 export type CallDirection = 'inbound' | 'outbound';
-export type CallState = 'queued' | 'ringing' | 'answered' | 'in-progress' | 'transferring' | 'completed' | 'failed';
+export type CallState = 'queued' | 'ringing' | 'answered' | 'in-progress' | 'transferring' | 'completed' | 'failed' | 'held';
 export type TransferStatus = 'pending' | 'initiated' | 'connected' | 'failed' | 'declined';
 export type BookingStatus = 'pending' | 'confirmed' | 'scheduled' | 'completed' | 'cancelled' | 'no-show';
 export type LeadStage = 'new' | 'qualified' | 'booked' | 'contacted' | 'lost' | 'nurture';

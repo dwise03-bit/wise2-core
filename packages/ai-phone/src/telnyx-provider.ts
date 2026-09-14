@@ -5,6 +5,9 @@ interface TelnyxConfig {
   apiUrl?: string;
   webhookSecret?: string;
   phoneNumber: string;
+  maxRetries?: number;
+  retryDelayMs?: number;
+  requestTimeoutMs?: number;
 }
 
 interface TelnyxCallState {
@@ -20,16 +23,33 @@ interface TelnyxCallState {
   duration?: number;
   recordingId?: string;
   transcriptId?: string;
+  isOnHold?: boolean;
+  voicemailUrl?: string;
+  dtmfDigits?: string;
+  conferenceId?: string;
+  retryCount?: number;
 }
 
 export class TelnyxProvider implements TelephonyProvider {
   readonly name = 'Telnyx';
-  private config: TelnyxConfig;
+  private config: TelnyxConfig & {
+    maxRetries: number;
+    retryDelayMs: number;
+    requestTimeoutMs: number;
+  };
   private callCache = new Map<string, TelnyxCallState>();
   private apiUrl: string;
+  private readonly DEFAULT_MAX_RETRIES = 3;
+  private readonly DEFAULT_RETRY_DELAY_MS = 1000;
+  private readonly DEFAULT_REQUEST_TIMEOUT_MS = 30000;
 
   constructor(config: TelnyxConfig) {
-    this.config = config;
+    this.config = {
+      ...config,
+      maxRetries: config.maxRetries ?? this.DEFAULT_MAX_RETRIES,
+      retryDelayMs: config.retryDelayMs ?? this.DEFAULT_RETRY_DELAY_MS,
+      requestTimeoutMs: config.requestTimeoutMs ?? this.DEFAULT_REQUEST_TIMEOUT_MS,
+    };
     this.apiUrl = config.apiUrl || 'https://api.telnyx.com/v2';
   }
 
@@ -37,6 +57,52 @@ export class TelnyxProvider implements TelephonyProvider {
     return {
       Authorization: `Bearer ${this.config.apiKey}`,
     };
+  }
+
+  /**
+   * Retry logic with exponential backoff
+   */
+  private async fetchWithRetry<T>(
+    url: string,
+    options: RequestInit,
+    retryCount = 0
+  ): Promise<T> {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.config.requestTimeoutMs);
+
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Telnyx API error: ${response.status} ${response.statusText}`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      clearTimeout(0);
+
+      // Retry on network errors or 5xx errors
+      const shouldRetry =
+        (error instanceof Error && error.name === 'AbortError') ||
+        (error instanceof Error && error.message.includes('5'));
+
+      if (shouldRetry && retryCount < this.config.maxRetries) {
+        const delayMs = this.config.retryDelayMs * Math.pow(2, retryCount);
+        console.warn(
+          `Telnyx API request failed (attempt ${retryCount + 1}/${this.config.maxRetries}), ` +
+          `retrying in ${delayMs}ms`
+        );
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+        return this.fetchWithRetry(url, options, retryCount + 1);
+      }
+
+      throw error;
+    }
   }
 
   async acceptCall(callId: string): Promise<void> {
@@ -48,18 +114,16 @@ export class TelnyxProvider implements TelephonyProvider {
     }
 
     try {
-      // In production, would use Telnyx Call Control API to answer the call
-      const response = await fetch(`${this.apiUrl}/calls/${call.telnyxCallId}/actions/answer`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-        body: JSON.stringify({
-          client_state: callId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/answer`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            client_state: callId,
+          }),
+        }
+      );
 
       call.state = 'answered';
       call.connectedAt = new Date();
@@ -81,15 +145,13 @@ export class TelnyxProvider implements TelephonyProvider {
     }
 
     try {
-      // In production, would use Telnyx Call Control API to reject/hangup
-      const response = await fetch(`${this.apiUrl}/calls/${call.telnyxCallId}/actions/hangup`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/hangup`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+        }
+      );
 
       call.state = 'failed';
       call.endedAt = new Date();
@@ -111,20 +173,17 @@ export class TelnyxProvider implements TelephonyProvider {
     }
 
     try {
-      // In production, this would establish media stream with Telnyx WebRTC/RTP
-      // Using the Call Control API to route audio to the WebSocket
-      const response = await fetch(`${this.apiUrl}/calls/${call.telnyxCallId}/actions/playback_start`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-        body: JSON.stringify({
-          audio_url: 'file:///dev/null', // Placeholder - real audio would be streamed via WebSocket
-          client_state: callId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/playback_start`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            audio_url: 'file:///dev/null',
+            client_state: callId,
+          }),
+        }
+      );
 
       call.state = 'in-progress';
       this.callCache.set(callId, call);
@@ -145,19 +204,17 @@ export class TelnyxProvider implements TelephonyProvider {
     }
 
     try {
-      // Use Telnyx Call Control API to transfer the call
-      const response = await fetch(`${this.apiUrl}/calls/${call.telnyxCallId}/actions/transfer`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-        body: JSON.stringify({
-          to: destination,
-          client_state: callId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/transfer`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            to: destination,
+            client_state: callId,
+          }),
+        }
+      );
 
       call.state = 'transferring';
       this.callCache.set(callId, call);
@@ -178,15 +235,13 @@ export class TelnyxProvider implements TelephonyProvider {
     }
 
     try {
-      // Use Telnyx Call Control API to hangup the call
-      const response = await fetch(`${this.apiUrl}/calls/${call.telnyxCallId}/actions/hangup`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/hangup`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+        }
+      );
 
       call.state = 'completed';
       call.endedAt = new Date();
@@ -256,25 +311,22 @@ export class TelnyxProvider implements TelephonyProvider {
     to: string
   ): Promise<CallInfo> {
     try {
-      // Use Telnyx Outbound Call API to initiate
-      const response = await fetch(`${this.apiUrl}/calls`, {
-        method: 'POST',
-        headers: this.getAuthHeader(),
-        body: JSON.stringify({
-          to,
-          from,
-          connection_id: process.env.TELNYX_CONNECTION_ID,
-          webhook_url: process.env.TELNYX_WEBHOOK_URL,
-          webhook_url_method: 'POST',
-          client_state: callId,
-        }),
-      });
+      const data = await this.fetchWithRetry<any>(
+        `${this.apiUrl}/calls`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            to,
+            from,
+            connection_id: process.env.TELNYX_CONNECTION_ID,
+            webhook_url: process.env.TELNYX_WEBHOOK_URL,
+            webhook_url_method: 'POST',
+            client_state: callId,
+          }),
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error(`Telnyx API error: ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as any;
       const telnyxCallId = data.data?.id;
 
       const callState: TelnyxCallState = {
@@ -371,6 +423,192 @@ export class TelnyxProvider implements TelephonyProvider {
       call.transcriptId = transcriptId;
       this.callCache.set(callId, call);
       console.log(`📝 Telnyx: Transcript ready for call ${callId} (ID: ${transcriptId})`);
+    }
+  }
+
+  /**
+   * Advanced Call Features
+   */
+
+  // Hold a call
+  async holdCall(callId: string): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/hold`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+        }
+      );
+
+      call.isOnHold = true;
+      call.state = 'held';
+      this.callCache.set(callId, call);
+
+      console.log(`⏸️  Telnyx: Call ${callId} placed on hold`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to hold call ${callId}:`, error);
+      throw error;
+    }
+  }
+
+  // Resume a held call
+  async resumeCall(callId: string): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      await this.fetchWithRetry(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/unhold`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+        }
+      );
+
+      call.isOnHold = false;
+      call.state = 'in-progress';
+      this.callCache.set(callId, call);
+
+      console.log(`▶️  Telnyx: Call ${callId} resumed`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to resume call ${callId}:`, error);
+      throw error;
+    }
+  }
+
+  // Send call to voicemail
+  async sendToVoicemail(callId: string): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      const response = await this.fetchWithRetry<any>(
+        `${this.apiUrl}/calls/${call.telnyxCallId}/actions/transfer`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            to: `*611`, // Voicemail code
+            ringless: true,
+          }),
+        }
+      );
+
+      call.voicemailUrl = response.data?.voicemail_url;
+      call.state = 'completed';
+      this.callCache.set(callId, call);
+
+      console.log(`📧 Telnyx: Call ${callId} sent to voicemail`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to send call to voicemail:`, error);
+      throw error;
+    }
+  }
+
+  // Detect and store DTMF input
+  recordDTMF(callId: string, digits: string): void {
+    const call = this.callCache.get(callId);
+    if (call) {
+      call.dtmfDigits = (call.dtmfDigits || '') + digits;
+      this.callCache.set(callId, call);
+      console.log(`🔢 Telnyx: DTMF input for call ${callId}: ${digits} (total: ${call.dtmfDigits})`);
+    }
+  }
+
+  // Get accumulated DTMF input
+  getDTMFInput(callId: string): string | undefined {
+    const call = this.callCache.get(callId);
+    return call?.dtmfDigits;
+  }
+
+  // Create conference call
+  async createConference(callId: string, conferenceId: string): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      await this.fetchWithRetry(
+        `${this.apiUrl}/conferences`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            name: conferenceId,
+            beep_on_enter: true,
+            beep_on_exit: true,
+          }),
+        }
+      );
+
+      call.conferenceId = conferenceId;
+      this.callCache.set(callId, call);
+
+      console.log(`🤝 Telnyx: Conference ${conferenceId} created for call ${callId}`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to create conference:`, error);
+      throw error;
+    }
+  }
+
+  // Add participant to conference
+  async addToConference(callId: string, conferenceId: string): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      await this.fetchWithRetry(
+        `${this.apiUrl}/conferences/${conferenceId}/participants`,
+        {
+          method: 'POST',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            call_control_id: call.telnyxCallId,
+            mute: false,
+          }),
+        }
+      );
+
+      call.conferenceId = conferenceId;
+      this.callCache.set(callId, call);
+
+      console.log(`🤝 Telnyx: Call ${callId} added to conference ${conferenceId}`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to add call to conference:`, error);
+      throw error;
+    }
+  }
+
+  // Mute/unmute in conference
+  async muteParticipant(callId: string, conferenceId: string, mute: boolean): Promise<void> {
+    const call = this.callCache.get(callId);
+    if (!call) throw new Error(`Call ${callId} not found`);
+    if (!call.telnyxCallId) throw new Error(`Telnyx call ID not set for ${callId}`);
+
+    try {
+      await this.fetchWithRetry(
+        `${this.apiUrl}/conferences/${conferenceId}/participants/${call.telnyxCallId}`,
+        {
+          method: 'PATCH',
+          headers: this.getAuthHeader(),
+          body: JSON.stringify({
+            mute,
+          }),
+        }
+      );
+
+      console.log(`🔇 Telnyx: Call ${callId} ${mute ? 'muted' : 'unmuted'} in conference`);
+    } catch (error) {
+      console.error(`❌ Telnyx: Failed to mute/unmute participant:`, error);
+      throw error;
     }
   }
 }
