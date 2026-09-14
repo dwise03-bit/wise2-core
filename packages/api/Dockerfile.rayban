@@ -3,14 +3,15 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci --production
 
 # Copy source
-COPY . .
+COPY packages/api/src/rayban ./src/rayban
+COPY packages/api/tsconfig.json .
 
-# Build
-RUN pnpm build
+# Build Ray-Ban service only
+RUN npm run build -- --include rayban
 
 # Expose port
 EXPOSE 3040
