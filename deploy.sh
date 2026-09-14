@@ -12,6 +12,18 @@ echo "🚀 WISE² Customer Journey Deployment"
 echo "Environment: $ENVIRONMENT"
 echo ""
 
+# ============================================================================
+# CRITICAL: Port Consistency Validation (MUST PASS BEFORE DEPLOYMENT)
+# ============================================================================
+echo "🔍 Running port consistency validator..."
+if ! bash "$SCRIPT_DIR/scripts/verify-port-consistency.sh"; then
+  echo ""
+  echo "❌ DEPLOYMENT BLOCKED: Port configuration errors detected"
+  echo "See: DEPLOYMENT_PREFLIGHT.md"
+  exit 1
+fi
+echo ""
+
 # Website-only releases must never recreate API, Postgres, Redis, or workers.
 if [ "$ENVIRONMENT" = "website-only" ]; then
   echo "🌐 Website-only deployment (dependency-isolated)"
