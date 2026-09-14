@@ -10,6 +10,14 @@ const modules = [
   ['TEAM + LEADERSHIP', 'Build leadership, collaboration and stronger school culture.', 'yellow'],
 ] as const;
 
+const roleFilters = [
+  'hue-rotate(0deg) saturate(1.25)',
+  'hue-rotate(72deg) saturate(1.35)',
+  'hue-rotate(310deg) saturate(1.35)',
+  'hue-rotate(225deg) saturate(1.25)',
+  'hue-rotate(155deg) saturate(1.45)',
+] as const;
+
 export default function ImpLabPage() {
   return <main className="min-h-screen bg-[#02060b] text-white selection:bg-cyan-400 selection:text-black">
     <header className="sticky top-0 z-40 border-b border-cyan-400/20 bg-[#02060b]/90 backdrop-blur-xl">
@@ -23,8 +31,28 @@ export default function ImpLabPage() {
     <section id="imp-lab" className="relative overflow-hidden border-b border-cyan-400/20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(0,168,255,.22),transparent_34%),radial-gradient(circle_at_20%_65%,rgba(140,255,0,.08),transparent_28%),radial-gradient(circle_at_80%_65%,rgba(226,60,255,.1),transparent_28%)]" />
       <div className="relative mx-auto max-w-[1500px] px-5 py-14 lg:py-20">
-        <div className="mx-auto max-w-4xl text-center"><p className="text-xs font-black tracking-[.34em] text-cyan-300">PEOPLE × EDUCATION × OPPORTUNITY</p><h1 className="mt-4 text-5xl font-black leading-[.88] sm:text-7xl lg:text-8xl">WISE² <span className="block text-cyan-400">IMP LAB</span></h1><p className="mt-5 text-lg font-bold text-slate-300">AI COMPANIONS FOR SCHOOLS</p><p className="mt-2 text-sm font-black tracking-[.22em]"><span className="text-blue-400">LEARN</span> · <span className="text-lime-400">CREATE</span> · <span className="text-red-400">GUIDE</span> · <span className="text-fuchsia-400">SAFE</span> · <span className="text-yellow-300">TEAM</span></p></div>
-        <div id="imps" className="mt-12 grid gap-3 md:grid-cols-5">{impTracks.map((track, i) => <a key={track.name} href={track.href} className="group relative overflow-hidden rounded-2xl border bg-black/60 p-5 text-center transition hover:-translate-y-2" style={{borderColor:`${track.color}66`,boxShadow:`0 0 35px ${track.color}16`}}><div className="mx-auto mb-5 flex h-28 w-24 items-center justify-center rounded-[28px] border-2 bg-black text-4xl font-black transition group-hover:scale-105" style={{borderColor:track.color,color:track.color,boxShadow:`0 0 28px ${track.color}44`}}>W²</div><p className="text-xs font-black" style={{color:track.color}}>{track.name.toUpperCase()}</p><p className="mt-2 text-xs leading-5 text-slate-400">{track.role}</p><span className="mt-4 inline-block text-[10px] font-black tracking-widest text-slate-500">IMP 0{i+1}</span></a>)}</div>
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-xs font-black tracking-[.34em] text-cyan-300">PEOPLE × EDUCATION × OPPORTUNITY</p>
+          <h1 className="mt-4 text-5xl font-black leading-[.88] sm:text-7xl lg:text-8xl">WISE² <span className="block text-cyan-400">IMP LAB</span></h1>
+          <p className="mt-5 text-lg font-bold text-slate-300">AI COMPANIONS FOR SCHOOLS</p>
+          <p className="mt-2 text-sm font-black tracking-[.22em]"><span className="text-blue-400">LEARN</span> · <span className="text-lime-400">CREATE</span> · <span className="text-red-400">GUIDE</span> · <span className="text-fuchsia-400">SAFE</span> · <span className="text-yellow-300">TEAM</span></p>
+        </div>
+
+        <div id="imps" className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {impTracks.map((track, i) => <a key={track.name} href={track.href} className="group relative overflow-hidden rounded-2xl border bg-black/60 text-center transition hover:-translate-y-2" style={{borderColor:`${track.color}66`,boxShadow:`0 0 35px ${track.color}16`}}>
+            <div className="relative h-56 overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_50%_55%,rgba(255,255,255,.08),transparent_55%)]">
+              <img src="/products/wise-imp.png" alt={`${track.name} — WISE² school AI companion`} className="h-full w-full object-contain object-center p-3 transition duration-300 group-hover:scale-105" style={{filter:`${roleFilters[i]} drop-shadow(0 0 18px ${track.color})`}} />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black to-transparent" />
+            </div>
+            <div className="p-5">
+              <p className="text-xs font-black" style={{color:track.color}}>{track.name.toUpperCase()}</p>
+              <p className="mt-2 text-xs leading-5 text-slate-400">{track.role}</p>
+              <span className="mt-4 inline-block text-[10px] font-black tracking-widest text-slate-500">IMP 0{i+1}</span>
+            </div>
+          </a>)}
+        </div>
+
+        <p className="mt-4 text-center text-[10px] font-bold uppercase tracking-[.22em] text-slate-500">Canonical WISE² IMP character artwork · role-color preview</p>
         <div className="mt-10 flex flex-wrap justify-center gap-3"><a href="#schools" className="rounded-lg bg-cyan-400 px-6 py-3 text-sm font-black text-black">STEP INTO THE FUTURE →</a><Link href="/quest" className="rounded-lg border border-cyan-400/40 px-6 py-3 text-sm font-black text-cyan-200">ENTER QUEST XR</Link></div>
       </div>
     </section>
