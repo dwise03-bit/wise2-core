@@ -4,8 +4,14 @@ import React, { useState, useEffect } from 'react';
 import AppNav from '../../components/AppNav';
 
 export default function HermesControlPage() {
-  const [activeTab, setActiveTab] = useState<'models' | 'context' | 'costs' | 'tuning' | 'integrations'>('models');
+  const [activeTab, setActiveTab] = useState<'models' | 'context' | 'costs' | 'tuning' | 'integrations' | 'rayban'>('models');
   const [loaded, setLoaded] = useState(false);
+  const [raybanDevices] = useState([
+    { id: 'rayban-001', name: 'Meta Ray-Ban Pro #1', status: 'connected', battery: 85, lastSeen: 'now' }
+  ]);
+  const [raybanCaptures] = useState([
+    { id: 'cap-001', timestamp: 'Just now', type: 'video', analysis: 'object_detection', confidence: 0.94 }
+  ]);
 
   useEffect(() => {
     setLoaded(true);
@@ -109,7 +115,7 @@ export default function HermesControlPage() {
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-3">
           <div className="space-y-2 sticky top-24">
-            {(['models', 'context', 'costs', 'tuning', 'integrations'] as const).map(tab => (
+            {(['models', 'context', 'costs', 'tuning', 'integrations', 'rayban'] as const).map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -354,6 +360,89 @@ export default function HermesControlPage() {
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'rayban' && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="font-display text-2xl mb-2" style={{ color: 'var(--color-text)' }}>
+                  Ray-Ban Intelligence
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                  Real-time AI analysis from Meta Ray-Ban Pro glasses. Live video intelligence powered by Hermes.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-body font-600" style={{ color: 'var(--color-text)' }}>Connected Devices</h3>
+                {raybanDevices.map(device => (
+                  <div
+                    key={device.id}
+                    className="p-4 rounded-lg flex items-center justify-between"
+                    style={{ backgroundColor: 'rgba(0, 217, 255, 0.05)', borderLeft: '3px solid var(--color-primary)' }}
+                  >
+                    <div>
+                      <p className="font-body font-600" style={{ color: 'var(--color-text)' }}>
+                        👓 {device.name}
+                      </p>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+                        Battery: {device.battery}% · {device.lastSeen}
+                      </p>
+                    </div>
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: device.status === 'connected' ? 'var(--color-primary)' : 'var(--color-muted)' }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-body font-600" style={{ color: 'var(--color-text)' }}>Recent Captures</h3>
+                {raybanCaptures.map(capture => (
+                  <div
+                    key={capture.id}
+                    className="p-4 rounded-lg"
+                    style={{ backgroundColor: 'rgba(255, 215, 0, 0.05)', border: '1px solid rgba(255, 215, 0, 0.2)' }}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-body font-600" style={{ color: 'var(--color-text)' }}>
+                          🎬 {capture.type.charAt(0).toUpperCase() + capture.type.slice(1)}
+                        </p>
+                        <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>
+                          {capture.timestamp}
+                        </p>
+                      </div>
+                      <span className="font-mono text-sm" style={{ color: 'var(--color-secondary)' }}>
+                        {(capture.confidence * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                      Analysis: {capture.analysis.replace(/_/g, ' ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-body font-600" style={{ color: 'var(--color-text)' }}>Session Analytics</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(0, 217, 255, 0.05)' }}>
+                    <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Frames</div>
+                    <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-primary)' }}>1.2K</div>
+                  </div>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(255, 215, 0, 0.05)' }}>
+                    <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Confidence</div>
+                    <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-secondary)' }}>87%</div>
+                  </div>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(255, 0, 110, 0.05)' }}>
+                    <div className="text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Latency</div>
+                    <div className="font-display text-2xl mt-2" style={{ color: 'var(--color-danger)' }}>1.2s</div>
+                  </div>
+                </div>
               </div>
             </div>
           )}

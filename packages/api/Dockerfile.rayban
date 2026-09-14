@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Build
+RUN pnpm build
+
+# Expose port
+EXPOSE 3040
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3040/rayban/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Start service
+CMD ["node", "dist/rayban/main.js"]
