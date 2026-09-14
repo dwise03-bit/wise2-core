@@ -3,62 +3,69 @@ using System.Collections.Generic;
 
 namespace Wise2.XR
 {
+    public sealed class CommandCenterItem
+    {
+        public string Id { get; }
+        public string Title { get; }
+        public CommandCenterItem(string id, string title) { Id = id; Title = title; }
+    }
+
+    public sealed class CommandCenterScreen
+    {
+        public string Id { get; }
+        public string Title { get; }
+        public IReadOnlyList<CommandCenterItem> Items { get; }
+        public CommandCenterScreen(string id, string title, params string[] items)
+        {
+            Id = id; Title = title;
+            var list = new List<CommandCenterItem>();
+            foreach (var item in items) list.Add(new CommandCenterItem(Slug(item), item));
+            Items = list;
+        }
+        private static string Slug(string value) => value.ToLowerInvariant().Replace(" & ", "-").Replace(" ", "-");
+    }
+
     public static class CommandCenterCatalog
     {
-        public static readonly string[] Domains =
+        public static readonly IReadOnlyList<CommandCenterItem> PrimaryDomains = new List<CommandCenterItem>
         {
-            "BUSINESS", "INFRASTRUCTURE", "AI AGENTS",
-            "WORLDS", "PEOPLE", "OPPORTUNITY"
+            new CommandCenterItem("business", "BUSINESS"), new CommandCenterItem("infrastructure", "INFRASTRUCTURE"),
+            new CommandCenterItem("ai-agents", "AI AGENTS"), new CommandCenterItem("worlds", "WORLDS"),
+            new CommandCenterItem("people", "PEOPLE"), new CommandCenterItem("opportunity", "OPPORTUNITY")
         };
 
-        public static readonly string[] Systems =
-        {
-            "CODEBASE", "DEPLOYMENTS", "VPS & SERVERS",
-            "MAC SYSTEMS", "RASPBERRY PI", "AUTOMATION"
-        };
+        private static readonly Dictionary<string, CommandCenterScreen> Screens =
+            new Dictionary<string, CommandCenterScreen>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["systems"] = new CommandCenterScreen("systems", "SYSTEMS", "CODEBASE", "DEPLOYMENTS", "VPS & SERVERS", "MAC SYSTEMS", "RASPBERRY PI", "AUTOMATION"),
+                ["operations"] = new CommandCenterScreen("operations", "OPERATIONS", "DOCUMENTATION", "RESEARCH", "MARKETING", "CRM", "FINANCE", "PLANNING"),
+                ["worlds"] = new CommandCenterScreen("worlds", "WORLDS", "NEXUS", "ORBITAL", "FOUNDRY")
+            };
 
-        public static readonly string[] Operations =
-        {
-            "DOCUMENTATION", "RESEARCH", "MARKETING",
-            "CRM", "FINANCE", "PLANNING"
-        };
-
-        public static readonly string[] Worlds = { "NEXUS", "ORBITAL", "FOUNDRY" };
+        public static bool TryGetScreen(string id, out CommandCenterScreen screen) => Screens.TryGetValue(id ?? string.Empty, out screen);
     }
 
     public sealed class CommandCenterNavigator
     {
-        private static readonly HashSet<string> Routes = BuildRoutes();
-        public string CurrentRoute { get; private set; } = "HOME";
-        public string Status { get; private set; } = "READY";
+        public string CurrentScreenId { get; private set; } = "home";
+        public string StatusMessage { get; private set; } = string.Empty;
 
-        public bool Navigate(string route)
+        public bool Open(string screenId)
         {
-            var normalized = (route ?? string.Empty).Trim().ToUpperInvariant();
-            if (!Routes.Contains(normalized))
+            if (!CommandCenterCatalog.TryGetScreen(screenId, out _))
             {
-                Status = "UNAVAILABLE";
+                StatusMessage = "DESTINATION UNAVAILABLE";
                 return false;
             }
-            CurrentRoute = normalized;
-            Status = "READY";
+            CurrentScreenId = screenId.ToLowerInvariant();
+            StatusMessage = string.Empty;
             return true;
         }
 
-        public void GoHome()
+        public void Home()
         {
-            CurrentRoute = "HOME";
-            Status = "READY";
-        }
-
-        private static HashSet<string> BuildRoutes()
-        {
-            var routes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "HOME", "SYSTEMS", "OPERATIONS", "WORLDS" };
-            foreach (var route in CommandCenterCatalog.Domains) routes.Add(route);
-            foreach (var route in CommandCenterCatalog.Systems) routes.Add(route);
-            foreach (var route in CommandCenterCatalog.Operations) routes.Add(route);
-            foreach (var route in CommandCenterCatalog.Worlds) routes.Add(route);
-            return routes;
+            CurrentScreenId = "home";
+            StatusMessage = string.Empty;
         }
     }
 }
