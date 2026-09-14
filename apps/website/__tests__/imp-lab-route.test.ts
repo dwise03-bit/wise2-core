@@ -19,4 +19,18 @@ describe('WISE2 IMP LAB route', () => {
       expect(config).toContain(`name: '${track} IMP'`);
     }
   });
+
+  test('uses distinct canonical artwork for all five school IMPs', () => {
+    const source = fs.readFileSync(route, 'utf8');
+    for (const image of [
+      '/imps/learner-imp.webp',
+      '/imps/creator-imp.webp',
+      '/imps/guide-imp.webp',
+      '/imps/safe-imp.webp',
+      '/imps/team-imp.webp',
+    ]) {
+      expect(source).toContain(image);
+    }
+    expect(source).not.toContain('roleFilters');
+  });
 });
