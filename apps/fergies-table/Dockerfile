@@ -1,41 +1,47 @@
 # Build stage
 FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-# Install pnpm using corepack (built-in to Node 16+)
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm
+RUN npm install -g pnpm@8.15.9
 
-# Copy workspace files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
+COPY package.json pnpm-workspace.yaml ./
 
-# Copy all packages and apps
-COPY packages ./packages
-COPY apps/fergies-table ./apps/fergies-table
+# Copy workspace packages needed for build
+COPY packages/db/package.json ./packages/db/ || true
+COPY packages/ui-components/package.json ./packages/ui-components/ || true
+
+# Copy app package.json
+COPY apps/fergies-table/package.json ./apps/fergies-table/
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
-# Build app using monorepo filter
-RUN pnpm build -F @wise2/fergies-table
+# Copy full source
+COPY apps/fergies-table ./apps/fergies-table
+COPY packages/db ./packages/db || true
+COPY packages/ui-components ./packages/ui-components || true
 
-# Runtime stage
+# Re-link dependencies after copying source
+RUN pnpm install --no-frozen-lockfile
+
+# Build using pnpm filter
+RUN pnpm --filter @wise2/fergies-table build
+
+# Production image
 FROM node:20-alpine
+
 WORKDIR /app
 
-# Enable corepack for pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+ENV NODE_ENV=production
 
-# Copy built app and dependencies from builder
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/fergies-table ./apps/fergies-table
-COPY --from=builder /app/pnpm-lock.yaml ./
-COPY package.json ./
+# Copy built app from builder
+COPY --from=builder /app/apps/fergies-table/.next/standalone ./
+COPY --from=builder /app/apps/fergies-table/.next/static ./apps/fergies-table/.next/static
+COPY --from=builder /app/apps/fergies-table/public ./apps/fergies-table/public
 
-# Expose port
 EXPOSE 3026
 
-# Set working directory to app
-WORKDIR /app/apps/fergies-table
-
-# Start server
-CMD ["pnpm", "start"]
+CMD ["sh", "-c", "HOSTNAME=0.0.0.0 node apps/fergies-table/server.js"]
