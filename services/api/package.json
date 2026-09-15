@@ -1,7 +1,7 @@
 {
-  "name": "@wise2/api",
+  "name": "@wise2/legacy-express-api",
   "version": "1.0.0",
-  "description": "Wise\u00b2 REST API Service",
+  "description": "Wise² REST API Service",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
