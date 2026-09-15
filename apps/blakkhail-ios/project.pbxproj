@@ -1,0 +1,108 @@
+// Project: Blakkhail
+// Target: iOS 17.0+
+// Deployment: Physical iPhone
+
+archiveVersion = 1
+classes = {
+}
+objectVersion = 56
+objects = {
+  // MARK: - Build Configuration
+  BLAKKHAIL_BUILD_CONFIG = {
+    isa = XCBuildConfiguration
+    name = Release
+    buildSettings = {
+      PRODUCT_NAME = Blakkhail
+      BUNDLE_IDENTIFIER = com.sencere.blakkhail
+      CODE_SIGN_STYLE = Automatic
+      CODE_SIGN_IDENTITY = "iPhone Developer"
+      DEVELOPMENT_TEAM = ""  // Set your team ID
+      PROVISIONING_PROFILE_SPECIFIER = ""  // Set provisioning profile
+      IPHONEOS_DEPLOYMENT_TARGET = 17.0
+      TARGETED_DEVICE_FAMILY = "1,2"  // iPhone + iPad
+      SWIFT_VERSION = 5.9
+      SWIFT_OPTIMIZATION_LEVEL = "-Osize"
+      ENABLE_BITCODE = NO
+      EXCLUDED_ARCHS = ""
+      VALID_ARCHS = "arm64"
+    }
+  }
+
+  // MARK: - Signing Configuration
+  BLAKKHAIL_SIGNING = {
+    CODE_SIGN_IDENTITY = "iPhone Developer"
+    CODE_SIGN_RESOURCE_RULES_PATH = ""
+    PROVISIONING_PROFILE = ""  // Device provisioning profile UUID
+    PROVISIONING_PROFILE_SPECIFIER = "Blakkhail Distribution"
+  }
+
+  // MARK: - App Capabilities
+  BLAKKHAIL_CAPABILITIES = {
+    com.apple.developer.networking.multicast = {
+      enabled = 1
+    }
+    com.apple.developer.networking.vpn = {
+      enabled = 1
+    }
+    com.apple.push = {
+      enabled = 1
+    }
+  }
+}
+rootObject = BlakkhailProject
+
+// MARK: - Project Settings
+BlakkhailProject = {
+  isa = PBXProject
+  attributes = {
+    BuildIndependentTargetsInParallel = YES
+    LastUpgradeCheck = 1500
+    TargetAttributes = {
+      Blakkhail = {
+        DevelopmentTeam = ""  // Your Apple Developer Team ID
+        ProvisioningStyle = Automatic
+        CreatedOnToolsVersion = 15.0
+      }
+    }
+  }
+  buildConfigurationList = BlakkhailBuildConfigList
+  classes = ()
+  classesHashStyle = Swift
+  objectVersion = 56
+  rootObject = BlakkhailProject
+}
+
+// MARK: - Build Configuration List
+BlakkhailBuildConfigList = {
+  isa = XCConfigurationList
+  buildConfigurations = (
+    DebugConfig,
+    ReleaseConfig
+  )
+  defaultConfigurationIsVisible = 0
+  defaultConfigurationName = Release
+}
+
+DebugConfig = {
+  isa = XCBuildConfiguration
+  name = Debug
+  buildSettings = {
+    PRODUCT_NAME = Blakkhail
+    BUNDLE_IDENTIFIER = com.sencere.blakkhail
+    IPHONEOS_DEPLOYMENT_TARGET = 17.0
+    SWIFT_OPTIMIZATION_LEVEL = "-Onone"
+    ENABLE_TESTABILITY = YES
+  }
+}
+
+ReleaseConfig = {
+  isa = XCBuildConfiguration
+  name = Release
+  buildSettings = {
+    PRODUCT_NAME = Blakkhail
+    BUNDLE_IDENTIFIER = com.sencere.blakkhail
+    IPHONEOS_DEPLOYMENT_TARGET = 17.0
+    SWIFT_OPTIMIZATION_LEVEL = "-Osize"
+    ENABLE_TESTABILITY = NO
+  }
+}
