@@ -444,7 +444,7 @@
 .wise-header a:focus-visible,
 .wise-header button:focus-visible,
 .wise-home a:focus-visible {
-  outline: 2px solid #b9ff00;
+  outline: 2px solid #C4A369;
   outline-offset: 4px;
 }
 .wise-hero-grid {
@@ -664,12 +664,9 @@
   color: var(--wise-united-cyan) !important;
 }
 .wise-home .wise-button {
-  background: linear-gradient(
-    105deg,
-    var(--wise-united-cyan),
-    #0096ff
-  ) !important;
-  box-shadow: 0 0 22px rgba(0, 200, 255, 0.18);
+  background: #C4A369 !important;
+  color: #050607 !important;
+  box-shadow: 0 0 22px rgba(196, 163, 105, 0.18);
 }
 .wise-home .wise-hero {
   min-height: 720px;

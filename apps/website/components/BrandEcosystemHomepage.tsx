@@ -63,6 +63,14 @@ const capabilities = [
 
 const deployments = [
   {
+    label: "PLAYABLE HARDWARE",
+    title: "LIL LIZZY",
+    copy: "BoomPopsters gaming device. Tap-to-trade, 8+ mini-games, Boom Star collection. For kids, by innovation.",
+    image: "/lil-lizzy/boom-tag.jpg",
+    href: "/lil-lizzy",
+    tone: "pink",
+  },
+  {
     label: "WISE² IMP SYSTEMS",
     title: "WISE IMPS",
     copy: "Voice, edge intelligence, and AI automation built for real life.",
@@ -561,7 +569,7 @@ export function BrandEcosystemHomepage() {
                 <div className="p-7">
                   <div className="flex items-center justify-between">
                     <p
-                      className={`text-[10px] font-bold tracking-[.22em] ${item.tone === "lime" ? "text-[#5c7900]" : item.tone === "purple" ? "text-[#7a42ad]" : "text-black/45"}`}
+                      className={`text-[10px] font-bold tracking-[.22em] ${item.tone === "lime" ? "text-[#5c7900]" : item.tone === "purple" ? "text-[#7a42ad]" : item.tone === "pink" ? "text-[#FF6B9D]" : "text-black/45"}`}
                     >
                       {item.label}
                     </p>
