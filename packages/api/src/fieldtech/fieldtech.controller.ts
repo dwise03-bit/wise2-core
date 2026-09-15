@@ -15,7 +15,7 @@ interface AuthenticatedUser {
  * revenue-os/service-jobs — see docs/ANDROID_IMPLEMENTATION_AUDIT.md §4 for why this is a
  * dedicated module rather than a reuse of the CRM job model.
  */
-@Controller('v1/fieldtech')
+@Controller('fieldtech')
 @UseGuards(JwtAuthGuard)
 export class FieldtechController {
   constructor(private readonly fieldtech: FieldtechService) {}
@@ -87,7 +87,7 @@ export class FieldtechController {
 }
 
 /** Unauthenticated: the app must be able to check for updates before/without a session. */
-@Controller('v1/fieldtech')
+@Controller('fieldtech/public')
 export class FieldtechPublicController {
   constructor(private readonly fieldtech: FieldtechService) {}
 
