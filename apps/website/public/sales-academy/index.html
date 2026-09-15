@@ -17,28 +17,46 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--wise-dark); color: var(--wise-gray-light); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    body { background: var(--wise-dark); color: var(--wise-gray-light); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow-x: hidden; }
     .container { max-width: 1400px; margin: 0 auto; padding: 60px 40px; }
-    h1 { font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 48px; font-weight: 900; color: var(--wise-blue); margin-bottom: 12px; letter-spacing: 0.05em; }
+
+    .hero { background: linear-gradient(135deg, #050607 0%, #0a0f1a 50%, #050607 100%); border-bottom: 2px solid rgba(0, 217, 255, 0.3); padding: 60px 40px; margin: -60px -40px 60px -40px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%); border-radius: 50%; }
+    .hero::after { content: ''; position: absolute; bottom: -30%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(0, 255, 127, 0.08) 0%, transparent 70%); border-radius: 50%; }
+    .hero-content { position: relative; z-index: 1; text-align: center; }
+
+    h1 { font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 48px; font-weight: 900; color: var(--wise-blue); margin-bottom: 12px; letter-spacing: 0.05em; text-shadow: 0 0 20px rgba(0, 217, 255, 0.3); }
     .tagline { font-size: 14px; color: var(--wise-green); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
     .market-selector { display: flex; gap: 12px; margin-bottom: 40px; justify-content: center; flex-wrap: wrap; }
-    .market-btn { background: rgba(10, 15, 26, 0.5); border: 1px solid rgba(0, 217, 255, 0.3); color: var(--wise-gray-light); padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-    .market-btn.active { background: var(--wise-blue); color: var(--wise-dark); border-color: var(--wise-blue); box-shadow: 0 0 20px rgba(0, 217, 255, 0.3); }
-    .market-btn:hover { border-color: var(--wise-blue); color: var(--wise-blue); }
+    .market-btn { background: rgba(10, 15, 26, 0.6); border: 1px solid rgba(0, 217, 255, 0.4); color: var(--wise-gray-light); padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; backdrop-filter: blur(10px); }
+    .market-btn.active { background: var(--wise-blue); color: var(--wise-dark); border-color: var(--wise-blue); box-shadow: 0 0 30px rgba(0, 217, 255, 0.5); }
+    .market-btn:hover { border-color: var(--wise-blue); color: var(--wise-blue); background: rgba(0, 217, 255, 0.1); }
+
     .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 60px; }
-    .card { background: rgba(10, 15, 26, 0.5); border: 1px solid rgba(0, 217, 255, 0.2); border-radius: 12px; padding: 32px; transition: all 0.3s; display: flex; flex-direction: column; }
-    .card:hover { border-color: var(--wise-blue); background: rgba(0, 217, 255, 0.05); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 217, 255, 0.1); }
+    .card { background: rgba(10, 15, 26, 0.6); border: 1px solid rgba(0, 217, 255, 0.2); border-radius: 12px; padding: 32px; transition: all 0.3s; display: flex; flex-direction: column; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--wise-blue), transparent); opacity: 0; transition: opacity 0.3s; }
+    .card:hover { border-color: var(--wise-blue); background: rgba(0, 217, 255, 0.08); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0, 217, 255, 0.15); }
+    .card:hover::before { opacity: 1; }
     .card h2 { font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 22px; font-weight: 700; color: var(--wise-green); margin-bottom: 12px; }
-    .card p { color: var(--wise-gray-light); font-size: 14px; line-height: 1.6; margin-bottom: 20px; flex: 1; opacity: 0.9; }
+    .card p { color: var(--wise-gray-light); font-size: 14px; line-height: 1.6; margin-bottom: 20px; flex: 1; opacity: 0.85; }
+    .card-icon { font-size: 48px; margin-bottom: 16px; filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.3)); }
     .card-link { display: inline-block; background: var(--wise-blue); color: var(--wise-dark); padding: 12px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 13px; text-transform: uppercase; cursor: pointer; border: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; letter-spacing: 0.05em; transition: all 0.3s; }
-    .card-link:hover { background: var(--wise-green); box-shadow: 0 4px 12px rgba(0, 255, 127, 0.2); }
+    .card-link:hover { background: var(--wise-green); box-shadow: 0 4px 16px rgba(0, 255, 127, 0.3); }
+
+    .header-text { font-size: 16px; color: var(--wise-green); margin-bottom: 24px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
   </style>
 </head>
 <body>
+  <div class="hero">
+    <div class="hero-content">
+      <h1>WISE² Sales Training Hub</h1>
+      <p class="tagline">Complete Sales Enablement Platform</p>
+    </div>
+  </div>
+
   <div class="container">
     <div style="text-align: center; margin-bottom: 40px;">
-      <h1>WISE² Sales Training Hub</h1>
-      <p class="tagline">Select your market:</p>
+      <p class="header-text">Select your market:</p>
       <div class="market-selector">
         <button class="market-btn active" onclick="loadMarket('nc')">🏠 North Carolina</button>
         <button class="market-btn" onclick="loadMarket('nyc')">🗽 New York City</button>
@@ -85,11 +103,11 @@
       event.target.classList.add('active');
       
       const m = markets[market];
-      const html = `<h2 style="color: var(--accent-green); margin-bottom: 24px;">${m.name} Training Materials</h2>
+      const html = `<h2 style="color: var(--wise-green); margin-bottom: 24px;">${m.name} Training Materials</h2>
         <div class="hub-grid">
           ${m.modules.map(mod => `
             <div class="card">
-              <div style="font-size: 36px; margin-bottom: 12px;">${mod.icon}</div>
+              <div class="card-icon">${mod.icon}</div>
               <h2>${mod.title}</h2>
               <p>Click to access ${mod.title.toLowerCase()} for ${m.name}</p>
               <a href="${mod.href}" class="card-link">Open Now</a>
