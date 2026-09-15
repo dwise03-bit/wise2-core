@@ -25,6 +25,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "tailwindcss": "^3.4.19",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.0",
     "@types/jsonwebtoken": "^9.0.10",
