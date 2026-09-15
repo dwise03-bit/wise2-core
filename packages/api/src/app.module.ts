@@ -51,6 +51,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { OTAModule } from './ota/ota.module';
 import { ToolsModule } from './tools/tools.module';
 import { OTAUpdatesModule } from './mobile/ota-updates.module';
+import { JobCapturesModule } from './jobs/job-captures.module';
 
 @Module({
   imports: [
@@ -164,6 +165,7 @@ import { OTAUpdatesModule } from './mobile/ota-updates.module';
     OTAModule,
     OTAUpdatesModule,
     ToolsModule,
+    JobCapturesModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],
