@@ -58,9 +58,9 @@ class HapticFeedbackManager(private val context: Context) {
         if (vibrator?.hasVibrator() == true) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Use pattern timing without explicit amplitudes
                     val timings = longArrayOf(0, 100, 50, 100)
-                    val amplitudes = intArrayOf(0, 200, 0, 200)  // Amplitude 0-255
-                    val effect = VibrationEffect.createWaveform(timings, amplitudes)
+                    val effect = VibrationEffect.createWaveform(timings, -1)  // -1 = default amplitude
                     vibrator?.cancel()
                     vibrator?.vibrate(effect)
                 } else {
@@ -90,19 +90,18 @@ class HapticFeedbackManager(private val context: Context) {
     /**
      * Custom pattern feedback
      * timings: array of timing in milliseconds
-     * amplitudes: array of amplitude (0-255)
      */
-    fun customFeedback(timings: LongArray, amplitudes: IntArray) {
-        if (vibrator?.hasVibrator() == true && timings.isNotEmpty() && amplitudes.size == timings.size) {
+    fun customFeedback(timings: LongArray) {
+        if (vibrator?.hasVibrator() == true && timings.isNotEmpty()) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val effect = VibrationEffect.createWaveform(timings, amplitudes)
+                    val effect = VibrationEffect.createWaveform(timings, -1)  // -1 = default amplitude
                     vibrator?.cancel()
                     vibrator?.vibrate(effect)
                 } else {
-                    // Fallback for older API levels
+                    // Fallback for older API levels - just use first timing value
                     @Suppress("DEPRECATION")
-                    vibrator?.vibrate(timings)
+                    vibrator?.vibrate(timings[0])
                 }
             } catch (e: Exception) {
                 // Fallback if custom pattern not supported

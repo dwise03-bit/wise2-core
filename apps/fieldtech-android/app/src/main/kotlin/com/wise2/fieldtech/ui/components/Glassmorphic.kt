@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.BorderStroke
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -48,7 +47,7 @@ fun GlassmorphicSurface(
 ) {
     Surface(
         modifier = modifier
-            .shadow(elevation, RoundedCornerShape(cornerRadius), Color(0xFF00D9FF).copy(alpha = 0.1f), Color(0xFF00D9FF).copy(alpha = 0.15f))
+            .shadow(elevation, RoundedCornerShape(cornerRadius))
             .then(
                 if (onClick != null) {
                     Modifier.clickable(
@@ -62,9 +61,16 @@ fun GlassmorphicSurface(
             ),
         shape = RoundedCornerShape(cornerRadius),
         color = glassColor,
-        border = BorderStroke(borderWidth, borderColor),
+        shadowElevation = elevation,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(cornerRadius),
+                )
+        ) {
             content()
         }
     }
@@ -106,8 +112,6 @@ fun AnimatedStatusIndicator(
                     Modifier.shadow(
                         size * 2,
                         RoundedCornerShape(size / 2),
-                        glowColor.copy(alpha = 0.4f),
-                        glowColor.copy(alpha = 0.6f),
                     )
                 } else {
                     Modifier
@@ -115,10 +119,10 @@ fun AnimatedStatusIndicator(
             )
     ) {
         Surface(
-            modifier = Modifier
-                .background(color),
+            modifier = Modifier,
             shape = RoundedCornerShape(size / 2),
             color = color,
+            shadowElevation = if (pulseEnabled) size else 0.dp,
         ) {}
     }
 }
@@ -154,8 +158,6 @@ fun GlowEffect(
                     Modifier.shadow(
                         glowRadius,
                         RoundedCornerShape(12.dp),
-                        glowColor.copy(alpha = glowAlpha.value),
-                        glowColor.copy(alpha = glowAlpha.value * 1.2f),
                     )
                 } else {
                     Modifier
