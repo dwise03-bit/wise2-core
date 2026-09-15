@@ -4,7 +4,7 @@ import {
   mapWise2Solutions,
   scoreAudit,
   type AuditAnswerMap,
-} from '../consulting-audit';
+} from './consultant-audit.engine';
 
 const strongAnswers: AuditAnswerMap = {
   website: 4,
