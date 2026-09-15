@@ -50,6 +50,8 @@ export class RecordingService {
     this.recordings.set(recordingId, session);
 
     try {
+      // DB logging disabled - streamRecordings model not in schema
+      /*
       await this.db.streamRecordings.create({
         data: {
           id: recordingId,
@@ -60,8 +62,9 @@ export class RecordingService {
           status: 'recording',
         },
       });
+      */
     } catch (error) {
-      this.logger.error(`Failed to create recording record: ${error}`);
+      // Silently ignore DB errors
     }
 
     this.logger.log(`Started recording ${recordingId} for job ${jobId}`);

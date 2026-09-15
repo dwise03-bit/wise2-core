@@ -71,7 +71,7 @@ export class MediaStorageService {
    * Upload to AWS S3
    */
   private async uploadToS3(
-    file: Express.Multer.File,
+    file: multer.File,
     fileName: string,
     isPublic: boolean
   ): Promise<UploadResult> {
