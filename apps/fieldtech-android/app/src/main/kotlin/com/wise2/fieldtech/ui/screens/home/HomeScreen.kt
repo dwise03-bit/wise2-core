@@ -45,7 +45,7 @@ import com.wise2.fieldtech.ui.components.StatusPill
 import com.wise2.fieldtech.ui.components.WiseCard
 import com.wise2.fieldtech.ui.components.color
 import com.wise2.fieldtech.ui.components.label
-import com.wise2.fieldtech.ui.theme.ElectricBlue
+import com.wise2.fieldtech.ui.theme.NeonGreen
 import com.wise2.fieldtech.ui.util.ClickDebouncer
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -78,7 +78,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("WISE² FIELD TECH", color = ElectricBlue, fontWeight = FontWeight.Bold) },
+                title = { Text("WISE² FIELD TECH", color = NeonGreen, fontWeight = FontWeight.Bold) },
                 actions = {
                     IconButton(onClick = {
                         if (settingsDebouncer.onClicked()) {
@@ -101,7 +101,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    Text("TODAY'S JOBS (${state.jobs.size})", style = MaterialTheme.typography.labelLarge, color = ElectricBlue)
+                    Text("TODAY'S JOBS (${state.jobs.size})", style = MaterialTheme.typography.labelLarge, color = NeonGreen)
                 }
 
                 items(state.jobs, key = { it.id }) { job ->
@@ -116,7 +116,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    Text("QUICK ACTIONS", style = MaterialTheme.typography.labelLarge, color = ElectricBlue)
+                    Text("QUICK ACTIONS", style = MaterialTheme.typography.labelLarge, color = NeonGreen)
                 }
 
                 item {
@@ -220,7 +220,7 @@ private fun ModuleTile(title: String, subtitle: String, icon: androidx.compose.u
         }
     ) {
         Column {
-            Icon(icon, contentDescription = null, tint = if (enabled) ElectricBlue else MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(icon, contentDescription = null, tint = if (enabled) NeonGreen else MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(subtitle, style = MaterialTheme.typography.bodyMedium)

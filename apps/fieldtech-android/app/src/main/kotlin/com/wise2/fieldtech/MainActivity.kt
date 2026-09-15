@@ -20,8 +20,8 @@ import com.wise2.fieldtech.ui.theme.WiseFieldTechTheme
 import com.wise2.fieldtech.util.HapticFeedbackManager
 import com.wise2.fieldtech.util.getHapticFeedbackManager
 
-// WISE² v2.0 Navy Brand Color (OLED-optimized)
-private val NavyBlackBrand = Color(0xFF050607)
+// WISE² Command Center Sync — Pure Black (OLED-optimized)
+private val CommandCenterBlack = Color(0xFF000000)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,12 +51,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WiseFieldTechTheme {
-                // Navy background (OLED-friendly)
+                // Command Center Black background (OLED-friendly)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(NavyBlackBrand),
-                    color = NavyBlackBrand,
+                        .background(CommandCenterBlack),
+                    color = CommandCenterBlack,
                 ) {
                     val navController = rememberNavController()
 
