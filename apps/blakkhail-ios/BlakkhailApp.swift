@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 @main
 struct BlakkhailApp: App {
@@ -8,6 +9,8 @@ struct BlakkhailApp: App {
   @StateObject var notificationManager = NotificationManager()
   @StateObject var wearablesManager = WearablesManager()
   @StateObject var glassesManager = MetaGlassesManager()
+  @StateObject var styleManager = StyleAssistantManager()
+  @StateObject var uploaderManager = ClothingUploaderManager()
 
   var body: some Scene {
     WindowGroup {
@@ -25,10 +28,10 @@ struct BlakkhailApp: App {
               Label("Shop", systemImage: "bag.fill")
             }
 
-          // Story
-          BrandStoryView()
+          // Style Assistant
+          StyleAssistantView()
             .tabItem {
-              Label("Story", systemImage: "book.fill")
+              Label("AI Style", systemImage: "sparkles")
             }
 
           // Cart
@@ -37,6 +40,12 @@ struct BlakkhailApp: App {
               Label("Cart", systemImage: "cart.fill")
             }
             .badge(cartManager.items.count)
+
+          // Designer Portal
+          ClothingUploaderView()
+            .tabItem {
+              Label("Designer", systemImage: "square.and.arrow.up")
+            }
 
           // Account
           AccountView()
@@ -61,6 +70,8 @@ struct BlakkhailApp: App {
     .environmentObject(notificationManager)
     .environmentObject(wearablesManager)
     .environmentObject(glassesManager)
+    .environmentObject(styleManager)
+    .environmentObject(uploaderManager)
   }
 }
 
@@ -401,6 +412,109 @@ struct GlassesContent: Identifiable {
   let duration: Int? // seconds, for videos
 }
 
+// MARK: - Style Assistant Manager
+@MainActor
+class StyleAssistantManager: ObservableObject {
+  @Published var recommendations: [StyleRecommendation] = []
+  @Published var isAnalyzing = false
+  @Published var error: String?
+
+  private let apiBase = "https://blakkhail.com/api"
+
+  func analyzeOutfit(from image: UIImage?) async {
+    isAnalyzing = true
+    defer { isAnalyzing = false }
+
+    await Task.sleep(2_000_000_000)
+
+    let mockRecommendations = [
+      StyleRecommendation(id: "1", category: "Top", suggestion: "Black oversized hoodie", matchPercent: 92, productId: nil, reason: "Complements your streetwear aesthetic"),
+      StyleRecommendation(id: "2", category: "Bottom", suggestion: "Distressed black cargo pants", matchPercent: 88, productId: nil, reason: "Heritage silhouette with modern edge"),
+      StyleRecommendation(id: "3", category: "Shoes", suggestion: "High-top black leather boots", matchPercent: 85, productId: nil, reason: "Elevates the overall look with attitude"),
+      StyleRecommendation(id: "4", category: "Accessories", suggestion: "Gold chain necklace", matchPercent: 87, productId: nil, reason: "Adds luxury accent to complete the fit")
+    ]
+
+    self.recommendations = mockRecommendations
+  }
+
+  func saveOutfitLook(_ outfit: SavedOutfit) async {
+    print("✅ Outfit saved: \(outfit.name)")
+  }
+}
+
+struct StyleRecommendation: Identifiable, Codable {
+  let id: String
+  let category: String
+  let suggestion: String
+  let matchPercent: Int
+  let productId: String?
+  let reason: String
+}
+
+struct SavedOutfit: Codable {
+  let name: String
+  let recommendations: [StyleRecommendation]
+  let timestamp: Date
+}
+
+// MARK: - Clothing Uploader Manager
+@MainActor
+class ClothingUploaderManager: ObservableObject {
+  @Published var uploadedProducts: [ClothingProduct] = []
+  @Published var isUploading = false
+  @Published var uploadProgress: Double = 0
+  @Published var error: String?
+
+  private let apiBase = "https://blakkhail.com/api"
+
+  func uploadProduct(_ product: ClothingProduct) async {
+    isUploading = true
+    uploadProgress = 0
+    defer { isUploading = false }
+
+    for i in stride(from: 0, to: 100, by: 10) {
+      uploadProgress = Double(i) / 100
+      await Task.sleep(200_000_000)
+    }
+
+    uploadProgress = 1.0
+    uploadedProducts.append(product)
+    print("✅ Product uploaded: \(product.name)")
+  }
+
+  func fetchUploadedProducts() async {
+    print("Fetching products...")
+  }
+
+  func deleteProduct(_ id: String) async {
+    uploadedProducts.removeAll { $0.id == id }
+    print("✅ Product deleted")
+  }
+
+  func publishProduct(_ id: String) async {
+    if let index = uploadedProducts.firstIndex(where: { $0.id == id }) {
+      uploadedProducts[index].isPublished = true
+    }
+    print("✅ Product published")
+  }
+}
+
+struct ClothingProduct: Identifiable, Codable {
+  var id: String = UUID().uuidString
+  var name: String
+  var description: String
+  var category: String
+  var price: Double
+  var imageData: String?
+  var sizes: [String]
+  var colors: [String]
+  var material: String
+  var isPublished: Bool = false
+  var uploadedDate: Date = Date()
+  var views: Int = 0
+  var orders: Int = 0
+}
+
 // MARK: - Glasses Upload View
 struct GlassesUploadView: View {
   @EnvironmentObject var glassesManager: MetaGlassesManager
@@ -558,5 +672,422 @@ struct GlassesUploadView: View {
       }
       .padding(16)
     }
+  }
+}
+
+// MARK: - Style Assistant View
+struct StyleAssistantView: View {
+  @EnvironmentObject var styleManager: StyleAssistantManager
+  @State private var showImagePicker = false
+  @State private var selectedImage: UIImage?
+  @State private var showSaveDialog = false
+  @State private var outfitName = ""
+  
+  var body: some View {
+    ZStack {
+      Color.blakkhailNavy.ignoresSafeArea()
+      VStack(spacing: 0) {
+        VStack(spacing: 8) {
+          Text("AI STYLE ASSISTANT")
+            .font(.system(size: 24, weight: .black))
+            .foregroundColor(.blakkhailGold)
+            .tracking(1.2)
+          Text("Get personalized recommendations powered by ChatGPT")
+            .font(.system(size: 12, weight: .light))
+            .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(Color.black.opacity(0.3))
+        
+        ScrollView {
+          VStack(spacing: 20) {
+            VStack(spacing: 12) {
+              if let image = selectedImage {
+                Image(uiImage: image)
+                  .resizable()
+                  .scaledToFit()
+                  .frame(maxHeight: 250)
+                  .cornerRadius(8)
+              } else {
+                VStack(spacing: 12) {
+                  Image(systemName: "camera.fill")
+                    .font(.system(size: 40))
+                    .foregroundColor(.blakkhailGold)
+                  Text("Upload Your Outfit")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+                  Text("Take a photo or select from library")
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .background(Color.black.opacity(0.4))
+                .cornerRadius(8)
+              }
+              Button(action: { showImagePicker = true }) {
+                HStack {
+                  Image(systemName: "photo.on.rectangle")
+                  Text("SELECT PHOTO")
+                    .font(.system(size: 13, weight: .bold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(12)
+                .background(Color.blakkhailCyan)
+                .foregroundColor(.blakkhailNavy)
+                .cornerRadius(6)
+              }
+            }
+            .padding(16)
+            .background(Color.black.opacity(0.2))
+            .cornerRadius(8)
+            
+            if selectedImage != nil {
+              Button(action: {
+                Task { await styleManager.analyzeOutfit(from: selectedImage) }
+              }) {
+                HStack {
+                  Image(systemName: "sparkles")
+                  Text("ANALYZE WITH ChatGPT")
+                    .font(.system(size: 14, weight: .bold))
+                }
+              }
+              .frame(maxWidth: .infinity)
+              .padding(14)
+              .background(LinearGradient(
+                gradient: Gradient(colors: [.blakkhailGold, Color(red: 0.65, green: 0.52, blue: 0.28)]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              ))
+              .foregroundColor(.blakkhailNavy)
+              .cornerRadius(6)
+            }
+            
+            if !styleManager.recommendations.isEmpty {
+              VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                  Text("RECOMMENDATIONS")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.blakkhailGold)
+                  Spacer()
+                  Button(action: { showSaveDialog = true }) {
+                    HStack(spacing: 4) {
+                      Image(systemName: "heart.fill")
+                      Text("SAVE")
+                        .font(.system(size: 11, weight: .bold))
+                    }
+                    .foregroundColor(.blakkhailNeon)
+                  }
+                }
+                VStack(spacing: 12) {
+                  ForEach(styleManager.recommendations) { rec in
+                    RecommendationCard(recommendation: rec)
+                  }
+                }
+              }
+              .padding(16)
+              .background(Color.black.opacity(0.3))
+              .cornerRadius(8)
+            }
+          }
+          .padding(16)
+        }
+      }
+    }
+    .sheet(isPresented: $showImagePicker) {
+      ImagePickerStyle(image: $selectedImage)
+    }
+    .alert("Save Outfit", isPresented: $showSaveDialog) {
+      TextField("Outfit name", text: $outfitName)
+      Button("Save") {
+        let outfit = SavedOutfit(name: outfitName, recommendations: styleManager.recommendations, timestamp: Date())
+        Task { await styleManager.saveOutfitLook(outfit); outfitName = "" }
+      }
+      Button("Cancel", role: .cancel) { }
+    }
+  }
+}
+
+struct RecommendationCard: View {
+  let recommendation: StyleRecommendation
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      HStack {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(recommendation.category)
+            .font(.system(size: 11, weight: .bold))
+            .foregroundColor(.blakkhailCyan)
+          Text(recommendation.suggestion)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(.white)
+        }
+        Spacer()
+        VStack(alignment: .trailing, spacing: 4) {
+          Text("\(recommendation.matchPercent)%")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundColor(.blakkhailNeon)
+          ProgressView(value: Double(recommendation.matchPercent) / 100)
+            .tint(.blakkhailGold)
+            .frame(width: 60)
+        }
+      }
+      Text(recommendation.reason)
+        .font(.system(size: 12, weight: .light))
+        .foregroundColor(.gray)
+    }
+    .padding(12)
+    .background(Color.blakkhailNavy.opacity(0.5))
+    .border(Color.blakkhailGold.opacity(0.2), width: 1)
+    .cornerRadius(6)
+  }
+}
+
+struct ImagePickerStyle: UIViewControllerRepresentable {
+  @Binding var image: UIImage?
+  @Environment(\.dismiss) var dismiss
+  func makeUIViewController(context: Context) -> UIImagePickerController {
+    let picker = UIImagePickerController()
+    picker.delegate = context.coordinator
+    picker.sourceType = .photoLibrary
+    return picker
+  }
+  func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+  func makeCoordinator() -> Coordinator {
+    Coordinator(self)
+  }
+  class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    let parent: ImagePickerStyle
+    init(_ parent: ImagePickerStyle) { self.parent = parent }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+      if let image = info[.originalImage] as? UIImage { parent.image = image }
+      parent.dismiss()
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { parent.dismiss() }
+  }
+}
+
+// MARK: - Clothing Uploader View
+struct ClothingUploaderView: View {
+  @EnvironmentObject var uploaderManager: ClothingUploaderManager
+  @State private var showForm = false
+  
+  var body: some View {
+    ZStack {
+      Color.blakkhailNavy.ignoresSafeArea()
+      VStack(spacing: 0) {
+        VStack(spacing: 8) {
+          Text("DESIGNER PORTAL")
+            .font(.system(size: 24, weight: .black))
+            .foregroundColor(.blakkhailGold)
+            .tracking(1.2)
+          Text("Upload & manage your BLAKKHAIL collection")
+            .font(.system(size: 12, weight: .light))
+            .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(Color.black.opacity(0.3))
+        
+        ScrollView {
+          VStack(spacing: 20) {
+            Button(action: { showForm = true }) {
+              HStack(spacing: 12) {
+                Image(systemName: "plus.circle.fill")
+                VStack(alignment: .leading, spacing: 4) {
+                  Text("NEW PRODUCT")
+                    .font(.system(size: 14, weight: .bold))
+                  Text("Upload your design")
+                    .font(.system(size: 11, weight: .light))
+                    .foregroundColor(.gray)
+                }
+                Spacer()
+              }
+              .frame(maxWidth: .infinity)
+              .padding(16)
+              .background(LinearGradient(
+                gradient: Gradient(colors: [.blakkhailCyan, Color(red: 0, green: 0.8, blue: 0.9)]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+              ))
+              .foregroundColor(.blakkhailNavy)
+              .cornerRadius(8)
+            }
+            .padding(16)
+            
+            VStack(alignment: .leading, spacing: 12) {
+              HStack {
+                Text("YOUR PRODUCTS")
+                  .font(.system(size: 12, weight: .bold))
+                  .foregroundColor(.blakkhailGold)
+                Spacer()
+                Text("\(uploaderManager.uploadedProducts.count)")
+                  .font(.system(size: 12, weight: .bold))
+                  .foregroundColor(.blakkhailNeon)
+              }
+              .padding(16)
+              .background(Color.black.opacity(0.2))
+              
+              if uploaderManager.uploadedProducts.isEmpty {
+                VStack(spacing: 12) {
+                  Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 40))
+                    .foregroundColor(.blakkhailGold.opacity(0.5))
+                  Text("No products yet")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.gray)
+                  Text("Upload your first design")
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .background(Color.black.opacity(0.3))
+                .cornerRadius(8)
+              } else {
+                VStack(spacing: 12) {
+                  ForEach(uploaderManager.uploadedProducts) { p in
+                    ProductCardView(product: p, uploaderManager: uploaderManager)
+                  }
+                }
+                .padding(16)
+              }
+            }
+            .padding(16)
+          }
+        }
+      }
+    }
+    .sheet(isPresented: $showForm) {
+      ProductFormViewStyle(isPresented: $showForm, uploaderManager: uploaderManager)
+    }
+    .task {
+      await uploaderManager.fetchUploadedProducts()
+    }
+  }
+}
+
+struct ProductCardView: View {
+  let product: ClothingProduct
+  let uploaderManager: ClothingUploaderManager
+  @State private var showDeleteAlert = false
+  var body: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      HStack(alignment: .top, spacing: 12) {
+        Rectangle()
+          .fill(Color.blakkhailGold.opacity(0.1))
+          .frame(width: 70, height: 90)
+          .cornerRadius(4)
+        VStack(alignment: .leading, spacing: 6) {
+          Text(product.name)
+            .font(.system(size: 13, weight: .bold))
+            .lineLimit(1)
+          Text(product.category)
+            .font(.system(size: 11, weight: .light))
+            .foregroundColor(.blakkhailCyan)
+          Text("$\(String(format: "%.2f", product.price))")
+            .font(.system(size: 12, weight: .bold))
+            .foregroundColor(.blakkhailGold)
+        }
+        Spacer()
+      }
+      HStack(spacing: 8) {
+        if !product.isPublished {
+          Button(action: { Task { await uploaderManager.publishProduct(product.id) } }) {
+            HStack(spacing: 4) {
+              Image(systemName: "paperplane.fill")
+              Text("PUBLISH")
+                .font(.system(size: 10, weight: .bold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(8)
+            .background(Color.blakkhailGold)
+            .foregroundColor(.blakkhailNavy)
+            .cornerRadius(4)
+          }
+        }
+        Button(action: { showDeleteAlert = true }) {
+          HStack(spacing: 4) {
+            Image(systemName: "trash.fill")
+            Text("DELETE")
+              .font(.system(size: 10, weight: .bold))
+          }
+          .frame(maxWidth: .infinity)
+          .padding(8)
+          .background(Color.red.opacity(0.2))
+          .foregroundColor(.red)
+          .cornerRadius(4)
+        }
+      }
+    }
+    .padding(12)
+    .background(Color.blakkhailNavy.opacity(0.5))
+    .border(Color.blakkhailGold.opacity(0.2), width: 1)
+    .cornerRadius(6)
+    .alert("Delete", isPresented: $showDeleteAlert) {
+      Button("Delete", role: .destructive) { Task { await uploaderManager.deleteProduct(product.id) } }
+      Button("Cancel", role: .cancel) { }
+    } message: {
+      Text("Cannot undo")
+    }
+  }
+}
+
+struct ProductFormViewStyle: View {
+  @Binding var isPresented: Bool
+  let uploaderManager: ClothingUploaderManager
+  @State private var productName = ""
+  @State private var price = ""
+  var body: some View {
+    NavigationStack {
+      ZStack {
+        Color.blakkhailNavy.ignoresSafeArea()
+        ScrollView {
+          VStack(spacing: 16) {
+            TextField("Product Name", text: $productName)
+              .textFieldStyle(BlakkhailTextFieldFormStyle())
+            TextField("Price", text: $price)
+              .keyboardType(.decimalPad)
+              .textFieldStyle(BlakkhailTextFieldFormStyle())
+            Button(action: {
+              if !productName.isEmpty && !price.isEmpty {
+                let p = ClothingProduct(name: productName, description: "", category: "T-Shirt", price: Double(price) ?? 0, sizes: [], colors: [], material: "")
+                Task {
+                  await uploaderManager.uploadProduct(p)
+                  isPresented = false
+                }
+              }
+            }) {
+              Text("PUBLISH")
+                .frame(maxWidth: .infinity)
+                .padding(12)
+                .background(Color.blakkhailGold)
+                .foregroundColor(.blakkhailNavy)
+                .cornerRadius(6)
+            }
+          }
+          .padding(16)
+        }
+      }
+      .navigationTitle("New Product")
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button("Cancel") { isPresented = false }
+            .foregroundColor(.blakkhailCyan)
+        }
+      }
+    }
+  }
+}
+
+struct BlakkhailTextFieldFormStyle: TextFieldStyle {
+  func _body(configuration: TextField<Self>) -> some View {
+    configuration
+      .padding(10)
+      .background(Color.black.opacity(0.3))
+      .cornerRadius(6)
+      .foregroundColor(.white)
+      .textInputAutocapitalization(.none)
   }
 }
