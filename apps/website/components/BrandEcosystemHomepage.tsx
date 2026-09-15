@@ -26,6 +26,10 @@ import {
 } from "framer-motion";
 import { FeaturedLatestDrop } from "@/components/sencere/blakkhail/FeaturedLatestDrop";
 import { PizzaProgressBar } from "@/components/PizzaProgressBar";
+import { EnhancedEcosystemGrid } from "@/components/EnhancedEcosystemGrid";
+import { MetricsDashboard } from "@/components/MetricsDashboard";
+import { ProductSpotlight } from "@/components/ProductSpotlight";
+import { ProductConnections } from "@/components/ProductConnections";
 
 const metrics = [
   ["01", "connected operating layer", "Everything speaks to everything."],
@@ -439,19 +443,24 @@ export function BrandEcosystemHomepage() {
               Products, services, and field systems stay connected through one operating layer—so every signal can become a decision, an action, or a better customer experience.
             </p>
           </div>
-          <div className="mt-16 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
-            {ecosystemNodes.map((node, index) => (
-              <Link key={node.label} href={node.href} className="wise-capability group bg-[#0e1015] p-7 transition-colors hover:bg-[#141a14]">
-                <div className="flex items-center justify-between text-[10px] font-bold tracking-[.18em] text-[#00D9FF]">
-                  <span>0{index + 1}</span><ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                </div>
-                <h3 className="mt-12 text-xl font-black uppercase tracking-[-.03em]">{node.label}</h3>
-                <p className="mt-3 text-sm text-white/50">{node.detail}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Enhanced Ecosystem Grid */}
+        <EnhancedEcosystemGrid />
+
+        {/* Product Spotlight */}
+        <ProductSpotlight />
+
+        {/* Metrics Dashboard */}
+        <MetricsDashboard />
+
+        {/* Product Connections */}
+        <ProductConnections />
+
+      <section
+        id="system"
+        className="wise-section mx-auto max-w-[1320px] px-6 py-28 lg:px-10 lg:py-36"
+      >
 
       <section
         id="system"

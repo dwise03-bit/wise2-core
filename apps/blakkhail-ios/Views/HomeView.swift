@@ -68,7 +68,7 @@ struct HomeView: View {
                 .tracking(2)
                 .foregroundColor(.blakkhailGold)
                 .padding(.horizontal, 24)
-                .paddingTop, 24)
+                .padding(.top, 24)
 
               if notificationManager.upcomingDrops.isEmpty {
                 VStack(spacing: 8) {

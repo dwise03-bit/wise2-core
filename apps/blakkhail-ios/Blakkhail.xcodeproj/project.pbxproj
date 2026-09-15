@@ -3,6 +3,7 @@
 	classes = {};
 	objectVersion = 56;
 	objects = {
+		OBJ_6 /* Blakkhail */ = {isa = PBXGroup; children = (OBJ_9, OBJ_11, OBJ_12, OBJ_13, OBJ_14, OBJ_15, OBJ_16, OBJ_17, OBJ_20, OBJ_31, OBJ_32, OBJ_33, OBJ_41); sourceTree = SOURCE_ROOT; };
 		OBJ_100 /* BlakkhailApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9; };
 		OBJ_101 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11; };
 		OBJ_102 /* ProductCatalogView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_12; };
@@ -30,7 +31,7 @@
 		OBJ_50 /* PBXFrameworksBuildPhase */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 0; files = (OBJ_108, OBJ_109, OBJ_110); runOnlyForDeploymentPostprocessing = 0; };
 		OBJ_60 /* Blakkhail */ = {isa = PBXNativeTarget; buildConfigurationList = OBJ_70; buildPhases = (OBJ_80, OBJ_50); buildRules = (); dependencies = (); name = Blakkhail; productName = Blakkhail; productReference = OBJ_20; productType = "com.apple.product-type.application"; };
 		OBJ_80 /* PBXSourcesBuildPhase */ = {isa = PBXSourcesBuildPhase; buildActionMask = 0; files = (OBJ_100, OBJ_101, OBJ_102, OBJ_103, OBJ_104, OBJ_105, OBJ_106, OBJ_107); runOnlyForDeploymentPostprocessing = 0; };
-		OBJ_1 /* PBXProject */ = {isa = PBXProject; buildConfigurationList = OBJ_2; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = OBJ_1; projectDirPath = ""; projectRoot = ""; targets = (OBJ_60); };
+		OBJ_1 /* PBXProject */ = {isa = PBXProject; buildConfigurationList = OBJ_2; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = OBJ_6; projectDirPath = ""; projectRoot = ""; targets = (OBJ_60); };
 		OBJ_2 /* Build configuration list for PBXProject */ = {isa = XCConfigurationList; buildConfigurations = (OBJ_3, OBJ_4); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		OBJ_3 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.9;}; name = Debug; };
 		OBJ_4 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.9; VALIDATE_PRODUCT = YES;}; name = Release; };
