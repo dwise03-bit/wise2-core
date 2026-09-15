@@ -122,7 +122,7 @@ export class BillingService {
       success_url: successUrl || `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${process.env.APP_URL}/checkout/cancel`,
       customer_email: email,
-      customer_creation: 'if_required',
+      customer_creation: isDigitalTwin ? 'if_required' : undefined,
       subscription_data: isDigitalTwin
         ? undefined
         : {

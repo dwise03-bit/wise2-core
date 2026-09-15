@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { FormEvent, useState, useEffect } from 'react';
+import { FormEvent, useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { validateEmail, validatePassword } from '@/lib/validation';
 import { analytics } from '@/lib/analytics';
@@ -14,7 +14,7 @@ interface FormErrors {
   password?: string;
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { setAuth } = useStore();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -325,5 +325,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-wise" />}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

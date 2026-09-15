@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TelnyxProvider } from '@wise2/ai-phone/dist/telnyx-provider.js';
-import { CallSessionManager } from '@wise2/ai-phone/dist/call-session.js';
+import { TelnyxProvider } from '../../../ai-phone/dist/telnyx-provider.js';
+import { CallSessionManager } from '../../../ai-phone/dist/call-session.js';
 import { TelnyxDatabaseService } from './telnyx-database.service';
 
 interface TelnyxWebhookEvent {

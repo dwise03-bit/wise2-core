@@ -118,7 +118,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       HOSTNAME: 0.0.0.0
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+      NEXT_PUBLIC_API_URL: http://api:3000/api
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
       DISCORD_OAUTH_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
@@ -136,7 +136,7 @@ services:
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
       OWNER_EMAIL: ${OWNER_EMAIL:-}
     ports:
-      - "0.0.0.0:3001:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - graphics_data:/app/data/graphics
     depends_on:
