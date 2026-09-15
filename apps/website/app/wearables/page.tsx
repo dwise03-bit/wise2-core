@@ -95,8 +95,8 @@ export default function WearablesPage() {
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
 
-      const rotX = (y - 0.5) * 30;
-      const rotY = (x - 0.5) * -30;
+      const rotX = (y - 0.5) * 8;
+      const rotY = (x - 0.5) * -8;
 
       setCardRotations(prev => ({ ...prev, [cardId]: { rotX, rotY } }));
     };
@@ -121,13 +121,15 @@ export default function WearablesPage() {
           y: hoveredCard === cardId ? -8 : 0,
         }}
         style={{
-          borderColor: `${WISE2_COLORS.neon_cyan}40`,
-          backgroundColor: `${WISE2_COLORS.navy}85`,
-          perspective: '1200px',
+          borderColor: `${WISE2_COLORS.neon_cyan}30`,
+          backgroundColor: `${WISE2_COLORS.navy}90`,
+          perspective: '800px',
           transformStyle: 'preserve-3d',
+          willChange: 'transform, box-shadow',
+          maxHeight: '100%',
           boxShadow: hoveredCard === cardId
-            ? `0 60px 120px rgba(0, 217, 255, 0.4), 0 0 60px rgba(0, 255, 127, 0.25), inset 0 1px 0 rgba(0, 255, 127, 0.2)`
-            : `0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 217, 255, 0.1)`,
+            ? `0 40px 80px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 255, 127, 0.2), inset 0 1px 0 rgba(0, 255, 127, 0.15)`
+            : `0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 217, 255, 0.08)`,
         }}
         transition={{
           default: { duration: 0.2 },
@@ -186,8 +188,36 @@ export default function WearablesPage() {
     <div style={{ backgroundColor: WISE2_COLORS.dark, color: WISE2_COLORS.white }} className="min-h-screen font-mono relative overflow-hidden"
       // @ts-ignore
       style={{ perspective: '1000px' }}>
-      {/* Background */}
-      <div className="fixed inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: `linear-gradient(0deg, ${WISE2_COLORS.neon_cyan}30 1px, transparent 1px), linear-gradient(90deg, ${WISE2_COLORS.neon_cyan}30 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
+      {/* Professional Background Graphics */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Grid background */}
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: `linear-gradient(0deg, ${WISE2_COLORS.neon_cyan}30 1px, transparent 1px), linear-gradient(90deg, ${WISE2_COLORS.neon_cyan}30 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
+
+        {/* Circuit pattern SVG */}
+        <svg className="absolute inset-0 w-full h-full opacity-8" style={{ mixBlendMode: 'screen' }}>
+          <defs>
+            <pattern id="circuit" x="100" y="100" width="100" height="100" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="10" r="2" fill={WISE2_COLORS.neon_green} opacity="0.3" />
+              <circle cx="90" cy="90" r="2" fill={WISE2_COLORS.neon_cyan} opacity="0.3" />
+              <line x1="10" y1="10" x2="90" y2="90" stroke={WISE2_COLORS.neon_green} strokeWidth="0.5" opacity="0.15" />
+              <circle cx="50" cy="50" r="1.5" fill={WISE2_COLORS.gold} opacity="0.2" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#circuit)" />
+        </svg>
+
+        {/* Animated accent lines */}
+        <svg className="absolute top-0 left-0 w-full h-full opacity-10" style={{ pointerEvents: 'none' }}>
+          <line x1="0" y1="25%" x2="100%" y2="25%" stroke={WISE2_COLORS.neon_cyan} strokeWidth="1" strokeDasharray="10,10" opacity="0.1" />
+          <line x1="0" y1="75%" x2="100%" y2="75%" stroke={WISE2_COLORS.neon_green} strokeWidth="1" strokeDasharray="10,10" opacity="0.1" />
+        </svg>
+
+        {/* Gradient overlays for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-transparent" style={{
+          background: `radial-gradient(ellipse at 50% 0%, ${WISE2_COLORS.neon_cyan}10, transparent 50%)`
+        }} />
+      </div>
 
       {/* Header */}
       <motion.div initial={{ y: -100 }} animate={{ y: 0 }} className="relative z-50 border-b sticky top-0" style={{ borderColor: `${WISE2_COLORS.neon_cyan}20`, backgroundColor: `${WISE2_COLORS.navy}98`, backdropFilter: 'blur(30px)' }}>
