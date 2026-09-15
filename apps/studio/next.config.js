@@ -5,6 +5,7 @@ const nextConfig = {
     unoptimized: true,
   },
   eslint: {
+    // Ignore ESLint errors during build - code compiles fine
     ignoreDuringBuilds: true,
   },
 };

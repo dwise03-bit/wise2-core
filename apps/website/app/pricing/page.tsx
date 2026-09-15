@@ -3,34 +3,48 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PublicFooter } from '@/components/navigation';
+import { MasterNav } from '@/components/MasterNav';
 
 const PRICING_TIERS = [
   {
     id: 'STARTER',
     name: 'Starter',
     price: 29,
-    description: 'Perfect for trying out WISE²',
-    features: ['1 workspace', 'Up to 5 users', 'Core dashboard', 'Basic analytics', 'Email support', 'Monthly data backups'],
+    description: 'Perfect for solopreneurs & small teams',
+    features: ['1 workspace', 'Up to 5 users', 'Core dashboard', 'Basic analytics', 'Email support', 'Monthly backups', 'Basic API access', '2 integrations'],
     cta: 'Start Free Trial',
     highlight: false,
+    color: 'blue',
   },
   {
     id: 'PRO',
     name: 'Growth',
     price: 99,
-    description: 'For established small businesses',
-    features: ['5 workspaces', 'Unlimited users', 'Advanced analytics', 'API access', 'Priority support', 'Daily backups', 'Custom integrations', 'RBAC'],
-    cta: 'Start 14-Day Trial',
+    description: 'For scaling businesses - Most Popular',
+    features: ['5 workspaces', 'Unlimited users', 'Advanced analytics', 'Full API access', 'Priority 24h support', 'Daily backups', 'Unlimited integrations', 'RBAC', 'Ad network integration', 'Revenue tracking'],
+    cta: 'Start 14-Day Free Trial',
     highlight: true,
+    color: 'green',
   },
   {
     id: 'ENTERPRISE',
     name: 'Scale',
-    price: null,
-    description: 'For larger teams and complex operations',
-    features: ['Unlimited workspaces', 'Unlimited users', 'Enterprise analytics', 'Dedicated API', '24/7 support', 'Real-time backups', 'Custom integrations', 'SSO & compliance'],
-    cta: 'Schedule Demo',
+    price: 299,
+    description: 'For large teams & complex operations',
+    features: ['Unlimited workspaces', 'Unlimited users', 'Enterprise analytics', 'Dedicated API', '24/7 premium support', 'Real-time backups', 'Unlimited everything', 'SSO & compliance', 'Dedicated account manager', 'Custom SLA'],
+    cta: 'Schedule Enterprise Demo',
     highlight: false,
+    color: 'purple',
+  },
+  {
+    id: 'AGENCY',
+    name: 'Agency',
+    price: 499,
+    description: 'For agencies & resellers',
+    features: ['Unlimited everything for clients', 'White-label options', 'Reseller program', '40% revenue share', 'Dedicated partner manager', 'Co-marketing support', 'Custom branding', 'Priority deployment'],
+    cta: 'Become a Partner',
+    highlight: false,
+    color: 'gold',
   },
 ];
 
@@ -53,9 +67,10 @@ export default function PricingPage() {
 
   return (
     <>
+      <MasterNav />
       <main className="bg-[#050505] min-h-screen text-white">
         {/* Hero */}
-        <section className="pt-32 pb-16 px-6">
+        <section className="pt-20 pb-16 px-6">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
               style={{ background: 'rgba(199,255,46,0.1)', border: '1px solid rgba(199,255,46,0.3)', color: '#C7FF2E' }}>

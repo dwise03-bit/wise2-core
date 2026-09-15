@@ -5,6 +5,13 @@ struct WISE2App: App {
   @StateObject private var authManager = AuthManager()
   @StateObject private var appState = AppState()
 
+  // Development convenience only. Release builds always require authentication.
+  #if DEBUG
+  private let authenticationDisabled = true
+  #else
+  private let authenticationDisabled = false
+  #endif
+
   init() {
     print("🚀 WISE² Command Center launching...")
   }
@@ -15,7 +22,7 @@ struct WISE2App: App {
         Color.wise2Background
           .ignoresSafeArea()
 
-        if authManager.isAuthenticated {
+        if authenticationDisabled || authManager.isAuthenticated {
           MainTabView()
             .environmentObject(authManager)
             .environmentObject(appState)

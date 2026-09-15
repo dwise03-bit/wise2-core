@@ -25,6 +25,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { FeaturedLatestDrop } from "@/components/sencere/blakkhail/FeaturedLatestDrop";
+import { PizzaProgressBar } from "@/components/PizzaProgressBar";
 
 const metrics = [
   ["01", "connected operating layer", "Everything speaks to everything."],
@@ -153,69 +154,69 @@ export function BrandEcosystemHomepage() {
     ? undefined
     : { opacity: 0, y: 28, filter: "blur(8px)" };
   return (
-    <main data-wise2-homepage="united-command-v2" className="wise-home overflow-hidden bg-[#101820] text-[#f7f7f4]">
+    <main data-wise2-homepage="united-command-v2" className="wise-home overflow-hidden bg-[#050607] text-[#D1D5DB]">
       <div className="wise-topline">
         <span>WISE² UNITED / ONE PLATFORM. REAL BUSINESSES.</span>
         <span className="hidden sm:inline">
           SYSTEM STATUS <i /> ALL SYSTEMS NOMINAL
         </span>
       </div>
-      <header className="wise-header fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#101820]/85 backdrop-blur-xl">
+      <header className="wise-header fixed inset-x-0 top-0 z-50 border-b border-[#00D9FF]/20 bg-[#050607]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[78px] max-w-[1320px] items-center justify-between px-6 lg:px-10">
           <Link href="/" aria-label="WISE2 home" className="leading-none">
-            <span className="block text-[27px] font-black tracking-[-.09em]">
-              WISE<sup className="text-sm text-[#b08d57]">²</sup>
+            <span className="block text-[27px] font-black tracking-[-.09em] text-[#00D9FF]">
+              WISE<sup className="text-sm text-[#00FF7F]">²</sup>
             </span>
-            <span className="mt-1 block text-[9px] font-bold tracking-[.38em] text-[#b08d57]">
-              BUILT DIFFERENT
+            <span className="mt-1 block text-[9px] font-bold tracking-[.38em] text-[#00FF7F]">
+              BUILD DIFFERENT
             </span>
           </Link>
           <nav className="hidden items-center gap-8 text-[11px] font-bold tracking-[.16em] text-white/65 lg:flex">
             <Link
               href="/products"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               PRODUCTS
             </Link>
             <Link
               href="/lil-lizzy"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               LIL LIZZY
             </Link>
             <Link
               href="/services"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               SOLUTIONS
             </Link>
             <Link
               href="/consulting"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               SALES ACADEMY
             </Link>
             <Link
               href="/revenue/dashboard"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               REVENUE
             </Link>
             <Link
               href="/quest"
-              className="hidden transition-colors hover:text-[#b08d57] xl:inline"
+              className="hidden transition-colors hover:text-[#00D9FF] xl:inline"
             >
               XR COMMAND
             </Link>
             <Link
               href="/industries"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               INDUSTRIES
             </Link>
             <Link
               href="/about"
-              className="transition-colors hover:text-[#b08d57]"
+              className="transition-colors hover:text-[#00D9FF]"
             >
               OUR WORK
             </Link>
@@ -240,7 +241,7 @@ export function BrandEcosystemHomepage() {
           </div>
         </div>
         {menuOpen && (
-          <div className="border-t border-white/10 bg-[#101820] px-6 py-5 lg:hidden">
+          <div className="border-t border-white/10 bg-[#050607] px-6 py-5 lg:hidden">
             <div className="flex flex-col gap-4 text-xs font-bold tracking-[.16em] text-white/70">
               <Link href="/platform" onClick={() => setMenuOpen(false)}>
                 SYSTEM
@@ -270,6 +271,16 @@ export function BrandEcosystemHomepage() {
           </div>
         )}
       </header>
+
+      <div className="bg-black border-b border-gray-800 py-6">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-xl font-bold text-white mb-1">WISE² Revenue Platform</h2>
+            <p className="text-sm text-gray-400">Building, Deploying & Making Money Today</p>
+          </div>
+          <PizzaProgressBar progress={72} />
+        </div>
+      </div>
 
       <section
         className="wise-hero relative flex min-h-[890px] items-end pt-[110px] lg:min-h-[980px]"
@@ -340,7 +351,7 @@ export function BrandEcosystemHomepage() {
               </Link>
             </div>
             <div className="mt-16 flex items-center gap-3 text-[10px] font-bold tracking-[.2em] text-white/50">
-              <ArrowDown size={15} className="text-[#b08d57]" /> SCROLL TO
+              <ArrowDown size={15} className="text-[#00D9FF]" /> SCROLL TO
               EXPLORE THE OPERATING LAYER
             </div>
           </motion.div>
@@ -353,7 +364,7 @@ export function BrandEcosystemHomepage() {
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4 text-[10px] font-bold tracking-[.16em] text-white/50">
               <span>LIVE SYSTEM READOUT</span>
-              <span className="flex items-center gap-2 text-[#b08d57]">
+              <span className="flex items-center gap-2 text-[#00D9FF]">
                 <Circle size={7} fill="currentColor" /> LIVE
               </span>
             </div>
@@ -401,7 +412,7 @@ export function BrandEcosystemHomepage() {
               className="wise-metric bg-[#0b0d0b] px-6 py-7 lg:px-8"
             >
               <div className="flex items-start justify-between">
-                <p className="text-4xl font-black tracking-[-.06em] text-[#b08d57]">
+                <p className="text-4xl font-black tracking-[-.06em] text-[#00D9FF]">
                   {value}
                 </p>
                 <span className="text-[10px] text-white/25">/ W²</span>
@@ -431,7 +442,7 @@ export function BrandEcosystemHomepage() {
           <div className="mt-16 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
             {ecosystemNodes.map((node, index) => (
               <Link key={node.label} href={node.href} className="wise-capability group bg-[#0e1015] p-7 transition-colors hover:bg-[#141a14]">
-                <div className="flex items-center justify-between text-[10px] font-bold tracking-[.18em] text-[#b08d57]">
+                <div className="flex items-center justify-between text-[10px] font-bold tracking-[.18em] text-[#00D9FF]">
                   <span>0{index + 1}</span><ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                 </div>
                 <h3 className="mt-12 text-xl font-black uppercase tracking-[-.03em]">{node.label}</h3>
@@ -491,7 +502,7 @@ export function BrandEcosystemHomepage() {
               className="wise-capability group bg-[#0b0d0b] p-8 lg:p-10"
             >
               <div className="flex items-start justify-between">
-                <Icon size={27} strokeWidth={1.5} className="text-[#b08d57]" />
+                <Icon size={27} strokeWidth={1.5} className="text-[#00D9FF]" />
                 <span className="text-[10px] font-bold tracking-[.18em] text-white/30">
                   {number}
                 </span>
@@ -653,7 +664,7 @@ export function BrandEcosystemHomepage() {
             </h2>
           </div>
           <div className="border border-white/15 bg-[#101210] p-8 lg:p-10">
-            <Cpu className="text-[#b08d57]" size={28} strokeWidth={1.5} />
+            <Cpu className="text-[#00D9FF]" size={28} strokeWidth={1.5} />
             <p className="mt-10 text-xl font-bold leading-8">
               We build the layer that lets your people do their best work
               without fighting the infrastructure around them.
@@ -665,7 +676,7 @@ export function BrandEcosystemHomepage() {
                 "Built for cloud, edge, and field reality",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3">
-                  <Check size={16} className="text-[#b08d57]" />
+                  <Check size={16} className="text-[#00D9FF]" />
                   {item}
                 </li>
               ))}
@@ -697,7 +708,7 @@ export function BrandEcosystemHomepage() {
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="text-[10px] font-bold tracking-[.16em] text-white/50">ENTRY POINT</span>
-                <ChevronRight size={16} className="text-[#b08d57] transition-transform group-hover:translate-x-1" />
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
               </div>
               <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
                 Academy Index
@@ -712,8 +723,8 @@ export function BrandEcosystemHomepage() {
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
-                <span className="text-[10px] font-bold tracking-[.16em] text-[#b08d57]">🏠 NC</span>
-                <ChevronRight size={16} className="text-[#b08d57] transition-transform group-hover:translate-x-1" />
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🏠 NC</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
               </div>
               <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
                 North Carolina
@@ -728,8 +739,8 @@ export function BrandEcosystemHomepage() {
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
-                <span className="text-[10px] font-bold tracking-[.16em] text-[#b08d57]">🗽 NYC</span>
-                <ChevronRight size={16} className="text-[#b08d57] transition-transform group-hover:translate-x-1" />
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🗽 NYC</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
               </div>
               <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
                 New York City
@@ -744,8 +755,8 @@ export function BrandEcosystemHomepage() {
               className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
-                <span className="text-[10px] font-bold tracking-[.16em] text-[#b08d57]">🌊 LI</span>
-                <ChevronRight size={16} className="text-[#b08d57] transition-transform group-hover:translate-x-1" />
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🌊 LI</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
               </div>
               <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
                 Long Island
@@ -786,7 +797,7 @@ export function BrandEcosystemHomepage() {
       <footer className="border-t border-white/10 px-6 py-9 lg:px-10">
         <div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-5 text-[10px] font-bold tracking-[.14em] text-white/40 md:flex-row md:items-center">
           <span className="text-lg tracking-[-.08em] text-white">
-            WISE<sup className="text-[#b08d57]">²</sup>
+            WISE<sup className="text-[#00D9FF]">²</sup>
           </span>
           <span>INTELLIGENT TOOLS FOR REAL-WORLD BUSINESSES</span>
           <span>© 2026 WISE²</span>

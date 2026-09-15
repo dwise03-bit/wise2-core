@@ -5,6 +5,8 @@ struct SystemHealthResponse: Codable {
   let message: String?
 }
 
+struct EmptyResponse: Decodable {}
+
 /// Thin retry wrapper around the shared live `APIClient` contract.
 actor BackendConnector {
   static let shared = BackendConnector()
@@ -33,8 +35,7 @@ actor BackendConnector {
   }
 
   func chat(prompt: String) async throws -> String {
-    let response = try await withRetry { try await self.api.chat(prompt: prompt) }
-    return response.content
+    return try await withRetry { try await self.api.chat(prompt: prompt) }
   }
 
   func getProjects() async throws -> [Project] {

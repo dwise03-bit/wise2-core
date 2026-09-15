@@ -1,16 +1,53 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useHermesChat } from '@/hooks/useHermesChat';
 
 const nav = ['COMMAND','CHATS','AGENTS','PROJECTS','KNOWLEDGE','MEMORY','TASKS','AUTOMATIONS','CRM & SALES','PHONE (AI)','DISCORD','FILES','TOOLS','MONITORING','LOGS','SETTINGS'];
 const agents = ['Hermes','Coding','Deploy','HVAC','Sales','Phone','Research','Sound Labs','XR','Design'];
 const context = [['Project','wise2-core'],['Branch','main'],['Active Memory','Synced'],['Tools Connected','12 tools online'],['Docker Services','Healthy'],['System Alerts','0 critical'],['Active Agents','4 running']];
+type HermesJob = { id: string; type: string; status: string; createdAt: string; updatedAt: string };
+
+function apiUrl(path: string) {
+  const base = process.env.NEXT_PUBLIC_API_URL || '/api';
+  return `${base.replace(/\/$/, '')}${path}`;
+}
+
+function authHeaders(): HeadersInit {
+  if (typeof window === 'undefined') return {};
+  const token = localStorage.getItem('wise2_access_token') || localStorage.getItem('auth_token') || localStorage.getItem('authToken');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 export default function HermesPage() {
   const [route, setRoute] = useState('AUTO');
   const [input, setInput] = useState('');
+  const [serviceStatus, setServiceStatus] = useState<'checking' | 'operational' | 'degraded'>('checking');
+  const [jobs, setJobs] = useState<HermesJob[]>([]);
+  const [opsError, setOpsError] = useState('');
   const { messages, sendMessage, isLoading, model, provider, error } = useHermesChat();
+  const refreshOperations = useCallback(async () => {
+    setOpsError('');
+    try {
+      const [statusResponse, jobsResponse] = await Promise.all([
+        fetch(apiUrl('/v1/hermes/status'), { cache: 'no-store' }),
+        fetch(apiUrl('/v1/hermes/jobs'), { headers: authHeaders(), cache: 'no-store' }),
+      ]);
+      setServiceStatus(statusResponse.ok ? 'operational' : 'degraded');
+      if (jobsResponse.ok) {
+        const payload = await jobsResponse.json();
+        setJobs(payload.data?.jobs || []);
+      } else if (jobsResponse.status === 401 || jobsResponse.status === 403) {
+        setOpsError('Sign in with a client workspace account to view build jobs.');
+      } else {
+        setOpsError('Job history is unavailable.');
+      }
+    } catch {
+      setServiceStatus('degraded');
+      setOpsError('Hermes operations API is unavailable.');
+    }
+  }, []);
+  useEffect(() => { void refreshOperations(); }, [refreshOperations]);
   const submit = async (e: FormEvent) => { e.preventDefault(); if (!input.trim()) return; const value=input; setInput(''); await sendMessage(value, route.toLowerCase()); };
 
   return <main className="min-h-screen bg-[#02070d] text-[#d9f4ff] p-3 font-sans">
@@ -21,9 +58,9 @@ export default function HermesPage() {
     </header>
 
     <section className="mt-3 grid gap-3 xl:grid-cols-[180px_minmax(0,1.4fr)_minmax(320px,.9fr)_270px]">
-      <aside className="rounded border border-cyan-800 bg-[#04101a] p-2">{nav.map((x,i)=><div key={x} className={`mb-1 rounded px-3 py-2 text-xs ${i===0?'bg-cyan-500/15 text-white ring-1 ring-cyan-400':'text-slate-400'}`}>{x}</div>)}</aside>
+      <aside aria-label="WISE² dashboard navigation" className="rounded border border-cyan-800 bg-[#04101a] p-2">{nav.map((x,i)=><div key={x} className={`mb-1 rounded px-3 py-2 text-xs ${i===0?'bg-cyan-500/15 text-white ring-1 ring-cyan-400':'text-slate-300'}`}>{x}</div>)}</aside>
       <section className="rounded border border-cyan-700 bg-[#04101a] p-4">
-        <div className="mb-4 flex items-center justify-between border-b border-cyan-900 pb-3"><div><span className="text-2xl font-black text-white">HERMES</span><span className="ml-3 text-[10px] tracking-widest text-cyan-400">AI OPERATOR · SECOND BRAIN</span></div><span className="text-xs text-green-400">● ONLINE</span></div>
+        <div className="mb-4 flex items-center justify-between border-b border-cyan-900 pb-3"><div><span className="text-2xl font-black text-white">HERMES</span><span className="ml-3 text-[10px] tracking-widest text-cyan-400">AI OPERATOR · SECOND BRAIN</span></div><span aria-live="polite" className={`text-xs ${serviceStatus === 'operational' ? 'text-green-400' : serviceStatus === 'checking' ? 'text-cyan-300' : 'text-amber-300'}`}>● {serviceStatus.toUpperCase()}</span></div>
         <div className="h-[500px] space-y-3 overflow-y-auto pr-1">
           {messages.length===0 && <><div className="rounded border border-cyan-900 bg-[#071a29] p-4"><b>You</b><p className="mt-2 text-sm text-slate-300">Deploy the latest WISE² build, run tests, and give me a full status.</p></div><div className="rounded border border-cyan-900 bg-black/30 p-4"><b>Hermes</b><p className="mt-2 text-sm text-cyan-100">Ready. I can inspect, reason, and execute through the connected WISE² operating layer.</p></div></>}
           {messages.map(m=><div key={m.id} className={`rounded border p-4 ${m.role==='user'?'border-cyan-800 bg-[#071a29]':'border-green-900/70 bg-black/30'}`}><b>{m.role==='user'?'You':'Hermes'}</b><p className="mt-2 whitespace-pre-wrap text-sm text-slate-300">{m.content}</p></div>)}
@@ -38,7 +75,7 @@ export default function HermesPage() {
         <div className="absolute left-5 top-44 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">BUSINESS OPERATIONS</div><div className="absolute right-5 top-52 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">FIELD OPERATIONS</div><div className="absolute bottom-36 left-8 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">AI AGENTS</div><div className="absolute bottom-32 right-8 rounded border border-cyan-700 bg-[#061522]/90 px-3 py-2 text-xs">INFRASTRUCTURE</div>
         <p className="absolute bottom-8 left-0 right-0 text-sm font-bold tracking-[.16em] text-cyan-300">ONE CONNECTED OPERATING LAYER<br/><span className="text-[10px] text-slate-500">FROM INTELLIGENCE TO IMPACT</span></p>
       </section>
-      <aside className="rounded border border-cyan-800 bg-[#04101a] p-3"><div className="mb-3 flex justify-between"><b>LIVE CONTEXT</b><span className="text-xs text-cyan-400">↻ Sync</span></div>{context.map(([a,b])=><div key={a} className="mb-2 rounded border border-cyan-900 bg-black/30 p-3"><div className="text-[10px] text-slate-500">{a}</div><div className={`text-sm ${b.includes('critical')?'text-green-400':'text-cyan-100'}`}>{b}</div></div>)}<div className="mt-4 border-t border-cyan-900 pt-3"><b className="text-xs">RECENT ACTIVITY</b>{['Build pipeline ready','Hermes chat connected','Knowledge indexed','HVAC agent available'].map(x=><div key={x} className="mt-2 text-xs text-slate-400"><span className="text-green-400">●</span> {x}</div>)}</div></aside>
+      <aside className="rounded border border-cyan-800 bg-[#04101a] p-3"><div className="mb-3 flex items-center justify-between"><b>LIVE CONTEXT</b><button type="button" onClick={() => void refreshOperations()} className="text-xs text-cyan-400 hover:text-cyan-200">↻ Sync</button></div>{context.map(([a,b])=><div key={a} className="mb-2 rounded border border-cyan-900 bg-black/30 p-3"><div className="text-[10px] text-slate-500">{a}</div><div className={`text-sm ${b.includes('critical')?'text-green-400':'text-cyan-100'}`}>{b}</div></div>)}<div className="mt-4 border-t border-cyan-900 pt-3"><div className="flex items-center justify-between"><b className="text-xs">RECENT JOBS</b><span className="text-[10px] text-slate-500">{jobs.length}</span></div>{jobs.length === 0 && <p className="mt-2 text-xs text-slate-500">No build jobs returned yet.</p>}{jobs.slice(0, 4).map(job => <div key={job.id} className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-400"><span className="truncate"><span className="text-cyan-400">●</span> {job.type}</span><span className="shrink-0 text-cyan-200">{job.status}</span></div>)}{opsError && <p className="mt-3 text-xs text-amber-300">{opsError}</p>}</div></aside>
     </section>
 
     <section className="mt-3 rounded border border-cyan-800 bg-[#04101a] p-3"><div className="mb-3 text-xs font-bold">WISE² AGENTS</div><div className="flex flex-wrap gap-2">{agents.map((a,i)=><button key={a} className={`rounded border px-4 py-2 text-xs ${i===0?'border-green-400 bg-green-400/10':'border-cyan-900 bg-black/30'}`}>{a} <span className="text-green-400">●</span></button>)}</div>

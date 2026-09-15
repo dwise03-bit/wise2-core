@@ -1,5 +1,7 @@
 **/node_modules
 **/.next
+**/.next-*
+**/.cache
 **/dist
 **/build
 **/coverage
@@ -23,3 +25,8 @@ README.md
 *.log
 .idea
 .vscode
+**/.worktrees
+**/.codex
+**/.agents
+*.ipa
+*.xcarchive

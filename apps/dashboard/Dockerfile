@@ -7,12 +7,16 @@ COPY packages ./packages
 COPY apps/website ./apps/website
 COPY apps/dashboard ./apps/dashboard
 
-RUN npm install -g pnpm && pnpm install --frozen-lockfile --recursive
+RUN node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('/app/package.json','utf8')); delete p.packageManager; fs.writeFileSync('/app/package.json', JSON.stringify(p));" \
+  && npm install -g pnpm@8.15.9 --ignore-scripts \
+  && pnpm install --frozen-lockfile --recursive
 
 WORKDIR /app/apps/dashboard
 # NEXT_PUBLIC_* vars inline into the client bundle at build time.
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG INTERNAL_API_URL
+ENV INTERNAL_API_URL=$INTERNAL_API_URL
 RUN pnpm run build
 
 FROM node:20-alpine

@@ -26,6 +26,7 @@ from discord_soundboard import DiscordSoundboard, SoundboardMidiMapper
 from soundboard_routes import register_soundboard_routes
 from studio_ai import StudioAI, IMPAssistant
 from studio_ai_routes import register_studio_ai_routes
+from sound_labs_routes import register_sound_labs_routes
 
 # Configure logging
 logging.basicConfig(
@@ -98,6 +99,10 @@ async def lifespan(app: FastAPI):
     # Register Studio AI routes
     register_studio_ai_routes(app, studio_ai, imp_assistant)
     logger.info("✅ Studio AI endpoints registered (15 routes)")
+
+    # Register Sound Labs production routes (auth, music gen, DAW, streaming)
+    register_sound_labs_routes(app, studio_ai, reaper_client)
+    logger.info("✅ Sound Labs production endpoints registered (12 routes)")
 
     # Auto-detect MASCHINE
     detect_result = midi_manager.detect_ports()

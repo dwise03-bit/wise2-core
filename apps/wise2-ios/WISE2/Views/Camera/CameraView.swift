@@ -6,6 +6,7 @@ struct CameraView: View {
   @State private var showPhotoPicker = false
   @State private var showCamera = false
   @State private var uploadStatus = ""
+  @State private var pickedItem: PhotosPickerItem?
 
   var body: some View {
     VStack(spacing: 16) {
@@ -96,7 +97,10 @@ struct CameraView: View {
       .padding(16)
     }
     .background(Color.wise2Background)
-    .photosPicker(isPresented: $showPhotoPicker, selection: $mediaManager.selectedImage, matching: .images)
+    .photosPicker(isPresented: $showPhotoPicker, selection: $pickedItem, matching: .images)
+    .onChange(of: pickedItem) { item in
+      Task { if let data = try? await item?.loadTransferable(type: Data.self), let image = UIImage(data: data) { mediaManager.selectedImage = image } }
+    }
   }
 
   private func uploadPhoto() async {

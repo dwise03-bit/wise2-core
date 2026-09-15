@@ -48,6 +48,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "apps/cherry-count", "run", "dev"],
       "port": 3025
+    },
+    {
+      "name": "fergies-table",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/fergies-table", "run", "dev"],
+      "port": 3026
     }
   ]
 }

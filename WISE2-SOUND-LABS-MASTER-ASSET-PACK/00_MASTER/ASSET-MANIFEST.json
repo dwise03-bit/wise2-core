@@ -1,0 +1,16 @@
+{
+  "product": "WISE² Sound Labs",
+  "pack": "Master Asset Pack",
+  "version": "1.0.0",
+  "platforms": ["web", "android", "ios", "quest", "marketing"],
+  "assets": [
+    {"path":"01_BRANDING/chrome/wise2-brand-identity.png","role":"WISE² identity reference","status":"existing"},
+    {"path":"03_BACKGROUNDS/studio/wise2-command-center.jpg","role":"studio environment","status":"existing"},
+    {"path":"04_IMP/transparent/wise2-imp-idle-green.png","role":"IMP transparent idle","status":"existing"},
+    {"path":"04_IMP/producer/wise2-imp-thinking-green.png","role":"IMP producer state","status":"existing"},
+    {"path":"04_IMP/overlays/wise2-imp-wave-green.webp","role":"IMP waveform state","status":"existing"},
+    {"path":"14_EXPORTS/android/sound-labs.apk","role":"Sound Labs Android build","status":"existing"}
+  ],
+  "reservedDirectories": ["ios", "quest", "streaming", "collaboration", "marketing", "source"],
+  "notes": "Reserved directories are intentionally empty until verified exports exist."
+}

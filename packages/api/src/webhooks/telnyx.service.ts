@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { TelnyxProvider } from '../../../ai-phone/dist/telnyx-provider.js';
-import { CallSessionManager } from '../../../ai-phone/dist/call-session.js';
+import { TelnyxProvider } from '@wise2/ai-phone/dist/telnyx-provider.js';
+import { CallSessionManager } from '@wise2/ai-phone/dist/call-session.js';
+import { ToolsService } from '../tools/tools.service';
 import { TelnyxDatabaseService } from './telnyx-database.service';
 
 interface TelnyxWebhookEvent {
@@ -27,7 +28,10 @@ export class TelnyxService {
     databaseCallId?: string;
   }>();
 
-  constructor(private databaseService: TelnyxDatabaseService) {
+  constructor(
+    private databaseService: TelnyxDatabaseService,
+    private toolsService?: ToolsService,
+  ) {
     this.initializeProviders();
   }
 
@@ -76,6 +80,29 @@ export class TelnyxService {
       // Look up or create customer in database
       const customer = await this.databaseService.lookupCustomer(from!);
       this.logger.log(`Processing call from ${from} (Customer: ${customer?.id || 'new'})`);
+
+      // If new customer, create lead via Tools service
+      if (!customer?.id && this.toolsService) {
+        try {
+          const tenantId = process.env.DEFAULT_TENANT_ID || 'default';
+          const leadResult = await this.toolsService.executeTool({
+            name: 'create_lead',
+            args: {
+              phone: from,
+              service_type: 'inbound_call',
+              urgency: 'FLEXIBLE',
+              summary: `Inbound call from ${from}`,
+            },
+            tenantId,
+          });
+
+          if (leadResult.success) {
+            this.logger.log(`Lead created: ${(leadResult.data as any)?.id || 'unknown'}`);
+          }
+        } catch (toolError) {
+          this.logger.warn(`Could not create lead via Tools: ${toolError instanceof Error ? toolError.message : String(toolError)}`);
+        }
+      }
 
       // Create call record in database
       const dbCall = await this.databaseService.createCall({

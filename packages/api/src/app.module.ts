@@ -41,11 +41,14 @@ import { HvacTelemetryModule } from './hvac-telemetry/hvac-telemetry.module';
 import { CherryCountModule } from './cherry-count/cherry-count.module';
 import { RayBanModule } from './rayban/rayban.module';
 import { CommandCenterModule } from './command-center/command-center.module';
+import { ConsultingModule } from './consulting/consulting.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { OTAModule } from './ota/ota.module';
+import { ToolsModule } from './tools/tools.module';
+import { OTAUpdatesModule } from './mobile/ota-updates.module';
 
 @Module({
   imports: [
@@ -135,8 +138,7 @@ import { OTAModule } from './ota/ota.module';
     DigitalTwinModule,
     DemoModule,
     WiseDefenseModule,
-    // ConsultingAuditModule, // DEFERRED - has type errors
-    // ConsultingModule, // DEFERRED
+    ConsultingModule,
     BillingModule,
     SoundLabsModule,
     ProspectsModule,
@@ -156,6 +158,8 @@ import { OTAModule } from './ota/ota.module';
     WebhooksModule,
     RayBanModule,
     OTAModule,
+    OTAUpdatesModule,
+    ToolsModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],

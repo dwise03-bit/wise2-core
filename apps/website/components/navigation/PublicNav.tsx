@@ -12,6 +12,8 @@ interface NavLink {
 
 const PRIMARY_LINKS: NavLink[] = [
   { href: '/platform', label: 'Platform' },
+  { href: '/apps', label: 'Apps' },
+  { href: '/hermes', label: 'WISE COMMAND' },
   { href: '/products', label: 'Products' },
   { href: '/lil-lizzy', label: 'Lil Lizzy' },
   { href: '/revenue/dashboard', label: 'Revenue' },

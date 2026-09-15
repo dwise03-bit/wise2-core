@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://blakkhail.com/sitemap.xml
 Sitemap: https://wise2.net/sitemap.xml

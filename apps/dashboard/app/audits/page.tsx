@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Plus, Mic, BarChart3, CheckCircle2 } from 'lucide-react';
+import { Plus, Mic, BarChart3, CheckCircle2, Search, SlidersHorizontal, TrendingUp, DollarSign, Users, ArrowUpRight } from 'lucide-react';
 
 interface ConsultingClient {
   id: string;
@@ -20,6 +20,8 @@ export default function AuditsPage() {
   const [clients, setClients] = useState<ConsultingClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewClientForm, setShowNewClientForm] = useState(false);
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
   const [formData, setFormData] = useState({
     companyName: '',
     industry: '',
@@ -78,6 +80,16 @@ export default function AuditsPage() {
     }
   };
 
+  const filteredClients = clients.filter((client) => {
+    const matchesQuery = `${client.companyName} ${client.industry || ''}`.toLowerCase().includes(query.toLowerCase());
+    const matchesStatus = statusFilter === 'ALL' || client.status === statusFilter;
+    return matchesQuery && matchesStatus;
+  });
+
+  const completedAudits = clients.filter((client) => ['COMPLETED', 'PLAN_APPROVED', 'IMPLEMENTATION_STARTED'].includes(client.status)).length;
+  const averageScore = clients.length ? Math.round(clients.reduce((sum, client) => sum + (client.auditScore || 0), 0) / clients.length) : 0;
+  const openFindings = clients.reduce((sum, client) => sum + (client.consultingFindings?.length || 0), 0);
+
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       'INTAKE': 'bg-[#1A3A52]/40 text-[#32A8FF] border border-[#0094FF]/30',
@@ -115,8 +127,51 @@ export default function AuditsPage() {
         </div>
       </div>
 
-      <div className="px-8 py-12">
+      <div className="px-8 py-10">
         <div className="max-w-7xl mx-auto">
+          {/* Sales-ready command strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {[
+              { label: 'Active engagements', value: clients.length, detail: 'Across your audit book', icon: Users, color: '#39FF14' },
+              { label: 'Average readiness', value: `${averageScore}/100`, detail: 'Based on scored audits', icon: TrendingUp, color: '#0094FF' },
+              { label: 'Audits completed', value: completedAudits, detail: 'Ready for proposal', icon: CheckCircle2, color: '#22C55E' },
+              { label: 'Opportunity signals', value: openFindings, detail: 'Findings to monetize', icon: DollarSign, color: '#F2B632' },
+            ].map((metric) => {
+              const Icon = metric.icon;
+              return (
+                <div key={metric.label} className="p-5 border border-[#39FF14]/15 rounded-lg bg-gradient-to-br from-[#0B0B0B] to-[#11151A]">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[#8D98A5] text-xs font-semibold tracking-wider uppercase">{metric.label}</p>
+                    <Icon size={17} style={{ color: metric.color }} />
+                  </div>
+                  <p className="text-3xl font-black mt-3" style={{ color: metric.color }}>{metric.value}</p>
+                  <p className="text-[#8D98A5]/70 text-xs mt-1">{metric.detail}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
+            <div>
+              <p className="text-[#39FF14] text-xs font-bold tracking-[0.2em] uppercase mb-2">Revenue intelligence</p>
+              <h2 className="text-2xl font-black tracking-wide">Your audit book</h2>
+              <p className="text-[#8D98A5] text-sm mt-1">Turn operational evidence into a clear next-step proposal.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-3.5 text-[#8D98A5]" />
+                <input aria-label="Search audits" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search businesses" className="w-full sm:w-56 pl-9 pr-3 py-3 bg-[#0B0B0B] border border-[#39FF14]/20 rounded-lg text-sm text-white placeholder-[#8D98A5]/60 focus:border-[#39FF14] focus:outline-none" />
+              </div>
+              <div className="relative">
+                <SlidersHorizontal size={15} className="absolute left-3 top-3.5 text-[#8D98A5]" />
+                <select aria-label="Filter audit status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="pl-9 pr-8 py-3 bg-[#0B0B0B] border border-[#39FF14]/20 rounded-lg text-sm text-white focus:border-[#39FF14] focus:outline-none appearance-none">
+                  <option value="ALL">All statuses</option>
+                  {Array.from(new Set(clients.map((client) => client.status))).map((status) => <option key={status} value={status}>{status.replace(/_/g, ' ')}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+
           {/* New Client Form */}
           {showNewClientForm && (
             <div className="mb-12 p-8 border border-[#39FF14]/30 rounded-lg bg-gradient-to-br from-[#0B0B0B] to-[#1A1A1A] shadow-lg shadow-[#39FF14]/10">
@@ -222,9 +277,15 @@ export default function AuditsPage() {
                 <p className="text-[#8D98A5]/60 text-sm mt-2">Create your first consulting audit to begin</p>
               </div>
             </div>
+          ) : filteredClients.length === 0 ? (
+            <div className="py-16 border border-dashed border-[#39FF14]/20 rounded-lg bg-[#0B0B0B]/50 text-center">
+              <Search size={38} className="mx-auto text-[#8D98A5] opacity-50 mb-4" />
+              <p className="text-[#8D98A5] font-semibold">No audits match this view</p>
+              <button onClick={() => { setQuery(''); setStatusFilter('ALL'); }} className="mt-4 text-sm text-[#39FF14] hover:text-white">Clear filters</button>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {clients.map((client) => (
+              {filteredClients.map((client) => (
                 <Link
                   key={client.id}
                   href={`/audits/${client.id}`}
@@ -278,7 +339,7 @@ export default function AuditsPage() {
                       <p className="text-[#8D98A5] text-xs">
                         {new Date(client.createdAt).toLocaleDateString()}
                       </p>
-                      <ChevronRight size={16} className="text-[#39FF14] group-hover:translate-x-1 transition" />
+                      <span className="flex items-center gap-1 text-xs font-bold text-[#39FF14]">Open audit <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" /></span>
                     </div>
                   </div>
                 </Link>

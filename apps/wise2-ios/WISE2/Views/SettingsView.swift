@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-  @State private var apiURL = UserDefaults.standard.string(forKey: "API_BASE_URL") ?? "http://173.208.147.165:3010/v1"
+  @State private var apiURL = UserDefaults.standard.string(forKey: "API_BASE_URL") ?? "https://wise2.net/api/v1"
   @State private var showSaved = false
   @StateObject private var updateManager = OTAUpdateManager()
   @State private var checkingUpdates = false

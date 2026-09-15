@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useSoundLabs } from '../../../lib/hooks/useSoundLabs';
 
 interface Track {
   id: string;
@@ -12,8 +13,16 @@ interface Track {
   color: string;
 }
 
+interface MeterReading {
+  peak: number;
+  rms: number;
+  frequency: number[];
+}
+
 export default function SoundLab() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const soundLabs = useSoundLabs();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [playheadPosition, setPlayheadPosition] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -34,6 +43,15 @@ export default function SoundLab() {
     compression: 0,
     eq: { low: 0, mid: 0, high: 0 },
   });
+  const [musicPrompt, setMusicPrompt] = useState('Upbeat electronic track with synth and drums');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Load projects on mount
+  useEffect(() => {
+    if (soundLabs.isAuthenticated) {
+      soundLabs.loadProjects();
+    }
+  }, [soundLabs.isAuthenticated]);
 
   // Draw waveform
   useEffect(() => {
@@ -99,13 +117,133 @@ export default function SoundLab() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleGenerateMusic = async () => {
+    if (!soundLabs.currentProject) return;
+    setIsGenerating(true);
+    try {
+      const result = await soundLabs.generateMusic(soundLabs.currentProject.id, {
+        prompt: musicPrompt,
+        duration: Math.ceil(duration),
+      });
+      console.log('✅ Music generated:', result);
+      // TODO: Load generated audio and sync with mixer
+    } catch (err) {
+      console.error('❌ Generation failed:', err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSaveMixerState = async () => {
+    if (!soundLabs.currentProject) return;
+    try {
+      const mixerState = {
+        tracks: tracks.map(t => ({ id: t.id, volume: t.volume, pan: t.pan, muted: t.muted, solo: t.solo })),
+        effects,
+        duration,
+      };
+      await soundLabs.updateMixerState(soundLabs.currentProject.id, mixerState);
+      console.log('✅ Mixer state saved');
+    } catch (err) {
+      console.error('❌ Save failed:', err);
+    }
+  };
+
   const selectedTrackData = tracks.find(t => t.id === selectedTrack);
+
+  if (!soundLabs.isAuthenticated) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#e6e6e6' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>🔐 Sign in to use Sound Labs</div>
+          <a href="/login" style={{ color: '#39FF14', textDecoration: 'underline' }}>Sign in with your WISE² account</a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '16px', color: '#e6e6e6' }}>
+      {/* PROJECT SELECTOR / CREATOR */}
+      <div style={{ display: 'flex', gap: '12px', background: '#0d0d0d', padding: '12px 16px', borderRadius: '8px', border: '1px solid #1a1a1a', alignItems: 'center' }}>
+        <select
+          onChange={(e) => {
+            if (e.target.value) {
+              soundLabs.loadProject(e.target.value);
+            }
+          }}
+          style={{
+            flex: 1,
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            color: '#e6e6e6',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '13px'
+          }}
+        >
+          <option value="">Select or create a project</option>
+          {soundLabs.projects.map(p => (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
+        <button
+          onClick={() => {
+            const name = prompt('New project name:');
+            if (name) soundLabs.createProject(name, 'Sound Labs project');
+          }}
+          style={{
+            padding: '8px 16px',
+            background: '#39FF14',
+            color: '#000',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 700,
+            fontSize: '13px'
+          }}
+        >
+          + New
+        </button>
+      </div>
       {/* WAVEFORM CANVAS */}
       <div style={{ flex: 1, background: '#0a0a0a', borderRadius: '8px', border: '1px solid #1a1a1a', overflow: 'hidden', position: 'relative' }}>
         <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'pointer' }} />
+      </div>
+
+      {/* MUSIC GENERATION */}
+      <div style={{ display: 'flex', gap: '12px', background: '#0d0d0d', padding: '12px 16px', borderRadius: '8px', border: '1px solid #1a1a1a' }}>
+        <input
+          type="text"
+          value={musicPrompt}
+          onChange={(e) => setMusicPrompt(e.target.value)}
+          placeholder="Describe the music you want to generate..."
+          style={{
+            flex: 1,
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            color: '#e6e6e6',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '13px'
+          }}
+        />
+        <button
+          onClick={handleGenerateMusic}
+          disabled={isGenerating || !soundLabs.currentProject}
+          style={{
+            padding: '8px 16px',
+            background: isGenerating ? 'rgba(57,255,20,.1)' : '#39FF14',
+            color: isGenerating ? '#39FF14' : '#000',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: isGenerating ? 'not-allowed' : 'pointer',
+            fontWeight: 700,
+            fontSize: '13px'
+          }}
+        >
+          {isGenerating ? '🎵 Generating...' : '🎵 Generate'}
+        </button>
       </div>
 
       {/* TRANSPORT CONTROLS */}
@@ -142,8 +280,17 @@ export default function SoundLab() {
 
         <div style={{ flex: 1, height: '4px', background: '#1a1a1a', borderRadius: '2px', cursor: 'pointer' }} />
 
-        <button style={{ width: '44px', height: '44px', borderRadius: '22px', background: '#1a1a1a', border: '1px solid #333', color: '#888', cursor: 'pointer', fontSize: '14px' }}>
-          🎙️
+        <button
+          onClick={handleSaveMixerState}
+          style={{
+            width: '44px', height: '44px', borderRadius: '22px',
+            background: '#1a1a1a', border: '1px solid #333',
+            color: '#39FF14', cursor: 'pointer', fontSize: '14px',
+            fontWeight: 700
+          }}
+          title="Save mixer state"
+        >
+          💾
         </button>
       </div>
 
@@ -171,7 +318,7 @@ export default function SoundLab() {
                 <input
                   type="range" min="0" max="100" value={track.volume}
                   onChange={(e) => updateTrack(track.id, { volume: Number(e.target.value) })}
-                  style={{ width: '24px', height: '80px', writingMode: 'bt-lr', cursor: 'pointer' }}
+                      style={{ width: '24px', height: '80px', cursor: 'pointer' }}
                 />
 
                 {/* MUTE / SOLO */}

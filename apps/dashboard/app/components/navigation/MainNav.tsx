@@ -12,7 +12,7 @@ const navItems = [
   { href: '/projects', label: '🎯 Projects', icon: '🎯' },
   { href: '/invoices', label: '💳 Invoices', icon: '💳' },
   { href: '/automation', label: '⚡ Automation', icon: '⚡' },
-  { href: '/hermes', label: '🎨 Hermes', icon: '🎨' },
+  { href: '/hermes', label: 'WISE COMMAND', icon: '⌘' },
   { href: '/ai-studio', label: '🧠 AI Studio', icon: '🧠' },
   { href: '/second-brain', label: 'Second Brain', icon: 'brain' },
   { href: '/settings', label: '⚙️ Settings', icon: '⚙️' },

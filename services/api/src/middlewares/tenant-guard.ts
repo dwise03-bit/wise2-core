@@ -38,7 +38,10 @@ declare global {
 export async function tenantGuard(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     // Ensure user is authenticated
-    const userId = (req as any).userId;
+    // `authenticate` attaches the canonical identity at req.user.id. Keep the
+    // legacy userId fallback for older internal middleware, but never accept a
+    // user identity from the request body, query, or headers.
+    const userId = (req as any).user?.id || (req as any).userId;
     if (!userId) {
       logger.warn('TenantGuard: Request missing userId', {
         path: req.path,

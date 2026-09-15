@@ -9,6 +9,9 @@ actor APIClient {
 
   private var mockMode = false // Set to true for development without backend
 
+  var baseURLString: String { baseURL.absoluteString }
+  var isOperatorPreviewMode: Bool { mockMode }
+
   init() {
     let config = URLSessionConfiguration.default
     config.timeoutIntervalForRequest = 30
@@ -18,11 +21,12 @@ actor APIClient {
     self.session = URLSession(configuration: config)
     // 🚀 Production: Connect to VPS API (or user-configured endpoint)
     let savedURL = UserDefaults.standard.string(forKey: "API_BASE_URL")
-    let defaultURL = "http://173.208.147.165:3010/v1"
+    let defaultURL = "https://wise2.net/api/v1"
     self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? (savedURL ?? defaultURL)) ?? URL(fileURLWithPath: "/")
 
     #if DEBUG
-    mockMode = ProcessInfo.processInfo.environment["MOCK_API"] != "false"
+    // Live services are the default, including Debug builds. Opt into fixtures explicitly.
+    mockMode = ProcessInfo.processInfo.environment["MOCK_API"] == "true"
     print("📡 API Client in \(mockMode ? "MOCK" : "LIVE") mode")
     #endif
   }
@@ -57,6 +61,11 @@ actor APIClient {
     return try await get("/dashboard/metrics")
   }
 
+  func getProjects() async throws -> [Project] { try await get("/projects") }
+  func getTasks() async throws -> [WorkTask] { try await get("/tasks") }
+  func updateTaskStatus(_ taskId: String, status: String) async throws { _ = try await authenticatedPatch("/tasks/\(taskId)", body: ["status": status] as [String: String]) as EmptyResponse }
+  func getSystemHealth() async throws -> SystemHealthResponse { try await get("/health") }
+
   func authenticatedGet<T: Decodable>(_ endpoint: String) async throws -> T {
     try await get(endpoint)
   }
@@ -79,14 +88,17 @@ actor APIClient {
 
     struct ChatRequest: Codable {
       let message: String
+      let mode: String
+      let profile: String
+      let messages: [[String: String]]
     }
 
     struct ChatResponse: Codable {
       let response: String
     }
 
-    let request = ChatRequest(message: prompt)
-    let response: ChatResponse = try await post("/ai/chat", body: request)
+    let request = ChatRequest(message: prompt, mode: "executive", profile: "auto", messages: [])
+    let response: ChatResponse = try await post("/hermes/chat", body: request)
     return response.response
   }
 
@@ -103,7 +115,7 @@ actor APIClient {
     return try JSONDecoder().decode(T.self, from: data)
   }
 
-  private func post<T: Codable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
+  private func post<T: Encodable, R: Decodable>(_ endpoint: String, body: T) async throws -> R {
     var request = URLRequest(url: baseURL.appendingPathComponent(endpoint))
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -193,6 +205,16 @@ struct DashboardMetrics: Codable {
   let outstandingTasks: Int
   let systemHealth: String
   let alerts: [Alert]
+  var activeWork: [ActiveWork] = []
+
+  struct ActiveWork: Codable, Identifiable {
+    let id: String
+    let title: String
+    let status: String
+    let owner: String
+    let due: String
+    let progress: Double
+  }
 
   struct Alert: Codable, Identifiable {
     let id: String
@@ -212,6 +234,9 @@ enum APIError: LocalizedError {
   case unknownError(Int)
   case decodingError(Error)
   case networkError(Error)
+  case retryLimitExceeded
+
+  var isRetryable: Bool { if case .networkError = self { return true }; if case .serverError = self { return true }; return false }
 
   var errorDescription: String? {
     switch self {
@@ -231,6 +256,8 @@ enum APIError: LocalizedError {
       return "Failed to decode response"
     case .networkError:
       return "Network error"
+    case .retryLimitExceeded:
+      return "Retry limit exceeded"
     }
   }
 }

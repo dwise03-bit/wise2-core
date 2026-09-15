@@ -4,13 +4,23 @@ import { BridgeState, ControllerMode } from './types'
 
 const DEFAULT_BRIDGE_URL = import.meta.env.VITE_BRIDGE_URL || 'http://100.64.72.14:8788'
 
+function createOfflineState(): BridgeState {
+  return {
+    midi: { connected: false, input_port: null, output_port: null, reconnect_attempts: 0 },
+    mode: { current_mode: 'normal', available_modes: ['normal', 'ai', 'live', 'wise2'], handlers_registered: 0 },
+    reaper: { connected: false, transport_state: 'stopped', project_name: 'Offline rehearsal', bpm: 120, current_track: 1 },
+    ai: { ollama_url: 'offline', available_models: [], active_jobs: 0, jobs: {} },
+    state: { state: { started_at: new Date().toISOString(), midi_connected: false, current_mode: 'normal', reaper_connected: false, ai_jobs_active: 0, last_action: 'Offline demo ready' }, action_history_size: 0, recent_actions: [], offline_queue_size: 0, pending_offline_count: 0 },
+  }
+}
+
 function getBridgeUrl() {
   const saved = window.localStorage.getItem('wise2.soundlabs.bridgeUrl')
   return (saved || DEFAULT_BRIDGE_URL).replace(/\/$/, '')
 }
 
 export default function App() {
-  const [state, setState] = useState<BridgeState | null>(null)
+  const [state, setState] = useState<BridgeState>(createOfflineState)
   const [connected, setConnected] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
@@ -35,7 +45,7 @@ export default function App() {
       } catch (e) {
         console.error('Bridge state poll failed:', e)
         setConnected(false)
-        setError('Bridge connection error')
+        setError('Bridge offline — local demo mode')
       }
     }
 
@@ -150,18 +160,10 @@ export default function App() {
     <div className="app">
       {!connected && (
         <div className="connection-banner">
-          ⚠️ {error || 'Connecting to Sound Labs bridge...'}
+          ⚠️ {error || 'Bridge offline — local demo mode'}
         </div>
       )}
-      {state && (
-        <SoundLabsDashboard
-          state={state}
-          onModeSwitch={switchMode}
-          bridgeConnected={connected}
-          onPadTrigger={triggerPad}
-          onTransport={transport}
-        />
-      )}
+      <SoundLabsDashboard state={state} onModeSwitch={switchMode} bridgeConnected={connected} onPadTrigger={triggerPad} onTransport={transport} />
       <button className="assistant-fab" onClick={() => setAssistantOpen((open) => !open)} aria-label="Open WISE2 GPT">✦</button>
       {assistantOpen && (
         <section className="assistant-panel" aria-label="WISE2 GPT assistant">
@@ -172,12 +174,6 @@ export default function App() {
           </div>
           <form onSubmit={askAssistant} className="assistant-form"><input value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="Ask WISE² GPT..." /><button type="submit">Send</button></form>
         </section>
-      )}
-      {!state && connected && (
-        <div className="loading">
-          <div className="spinner"></div>
-          <p>Loading Sound Labs...</p>
-        </div>
       )}
     </div>
   )

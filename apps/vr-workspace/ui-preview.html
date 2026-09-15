@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest VR UI Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .vr-container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(15, 20, 40, 0.9);
+            border: 2px solid #00d9ff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.3);
+        }
+
+        .vr-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #00d9ff;
+            padding-bottom: 20px;
+        }
+
+        .vr-header h1 {
+            font-size: 3em;
+            color: #00d9ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .vr-header p {
+            color: #00ff7f;
+            font-size: 1.1em;
+        }
+
+        .vr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: rgba(26, 31, 58, 0.8);
+            border: 2px solid #6366f1;
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel h2 {
+            color: #d97706;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .panel-content {
+            color: #e0e0e0;
+            line-height: 1.8;
+        }
+
+        .equipment-card {
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 4px solid #00d9ff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .equipment-card .name {
+            font-size: 1.3em;
+            color: #00d9ff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .diagnosis {
+            color: #c0c0c0;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .severity.critical {
+            background: rgba(220, 38, 38, 0.3);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+
+        .severity.warning {
+            background: rgba(217, 119, 6, 0.3);
+            color: #fbbf24;
+            border: 1px solid #fbbf24;
+        }
+
+        .severity.info {
+            background: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            border: 1px solid #6ee7b7;
+        }
+
+        .gesture-guide {
+            background: rgba(107, 114, 128, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .gesture-guide h3 {
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        .gesture-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .gesture-item {
+            background: rgba(0, 217, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #00d9ff;
+        }
+
+        .gesture-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .gesture-name {
+            color: #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        .hand-status {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hand-indicator {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .hand-indicator h4 {
+            color: #d97706;
+            margin-bottom: 10px;
+        }
+
+        .hand-status-text {
+            color: #00ff7f;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid #6366f1;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            color: #00d9ff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #a0a0a0;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid #00d9ff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff7f;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .vr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .vr-header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="vr-container">
+        <div class="vr-header">
+            <h1>🎮 WISE² VR Workspace</h1>
+            <p>Meta Quest 3S Immersive Field Service Interface</p>
+        </div>
+
+        <div class="vr-grid">
+            <!-- Equipment Analysis Panel -->
+            <div class="panel">
+                <h2>⚙️ Equipment Analysis</h2>
+                <div class="panel-content">
+                    <div class="equipment-card">
+                        <div class="name">HVAC Unit - Model 5000X</div>
+                        <div class="diagnosis">
+                            <strong>Diagnosis:</strong> Compressor efficiency reduced to 75%. Requires refrigerant recharge and valve replacement.
+                        </div>
+                        <div>
+                            <strong>Parts Needed:</strong>
+                            <ul style="margin: 10px 0 0 20px;">
+                                <li>Refrigerant (22 oz)</li>
+                                <li>Expansion valve</li>
+                                <li>Capacitor</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                        <div style="margin-top: 10px; color: #fbbf24;">
+                            <strong>Est. Time:</strong> 2.5 hours
+                        </div>
+                    </div>
+
+                    <div class="equipment-card">
+                        <div class="name">Connected to Ray-Ban</div>
+                        <div style="color: #00ff7f; margin-top: 10px;">
+                            📡 Real-time sync active
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hand Gestures Panel -->
+            <div class="panel">
+                <h2>👐 Hand Gestures</h2>
+                <div class="gesture-guide">
+                    <h3>Available Gestures:</h3>
+                    <div class="gesture-list">
+                        <div class="gesture-item">
+                            <span class="gesture-icon">👉</span>
+                            <span class="gesture-name">Pinch - Select</span>
+                        </div>
+                        <div class="gesture-item">
+                            <span class="gesture-icon">✊</span>
+                            <span class="gesture-name">Grab - Drag</span>
+                        </div>
+                        <div class="gesture-item">
+                            <span class="gesture-icon">☝️</span>
+                            <span class="gesture-name">Point - Aim</span>
+                        </div>
+                        <div class="gesture-item">
+                            <span class="gesture-icon">🖐️</span>
+                            <span class="gesture-name">Palm - Menu</span>
+                        </div>
+                        <div class="gesture-item">
+                            <span class="gesture-icon">👍</span>
+                            <span class="gesture-name">Thumbs - Confirm</span>
+                        </div>
+                        <div class="gesture-item">
+                            <span class="gesture-icon">📍</span>
+                            <span class="gesture-name">Index - Point</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hand-status">
+                    <div class="hand-indicator">
+                        <h4>Left Hand</h4>
+                        <div class="hand-status-text">Ready</div>
+                        <div style="color: #808080; font-size: 0.8em; margin-top: 5px;">Tracking active</div>
+                    </div>
+                    <div class="hand-indicator">
+                        <h4>Right Hand</h4>
+                        <div class="hand-status-text">Ready</div>
+                        <div style="color: #808080; font-size: 0.8em; margin-top: 5px;">Tracking active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Visualization Panel -->
+            <div class="panel">
+                <h2>🏗️ 3D Job Site</h2>
+                <div class="panel-content">
+                    <div style="background: rgba(0, 217, 255, 0.05); padding: 40px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+                        <div style="color: #00d9ff; font-size: 4em;">📐</div>
+                        <div style="margin-top: 15px; color: #c0c0c0;">
+                            3D job site visualization<br/>
+                            <small>Equipment models loading...</small>
+                        </div>
+                    </div>
+                    <div style="color: #a0a0a0;">
+                        <strong>Current Scene:</strong> Residential HVAC System<br/>
+                        <strong>Equipment Count:</strong> 3 items<br/>
+                        <strong>Annotations:</strong> 5 active<br/>
+                        <strong>FPS:</strong> 72 (target)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spatial Audio Panel -->
+            <div class="panel">
+                <h2>🔊 Spatial Audio</h2>
+                <div class="panel-content">
+                    <div style="margin-bottom: 20px;">
+                        <div style="color: #00ff7f; margin-bottom: 10px;">✓ Audio System: Active</div>
+                        <div style="color: #c0c0c0; font-size: 0.9em;">
+                            <ul style="margin-left: 20px;">
+                                <li>Guidance voice: Enabled</li>
+                                <li>Spatial positioning: 3D</li>
+                                <li>Alert notifications: Active</li>
+                                <li>Equipment sounds: Ambient</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(217, 119, 6, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid #fbbf24;">
+                        <div style="color: #fbbf24; font-weight: bold;">🎤 Current Guidance</div>
+                        <div style="margin-top: 10px; color: #c0c0c0; font-size: 0.9em;">
+                            "Point to the compressor unit to begin diagnosis"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value">72</div>
+                <div class="metric-label">FPS</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">5</div>
+                <div class="metric-label">Devices</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">2.1s</div>
+                <div class="metric-label">Latency</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">✓</div>
+                <div class="metric-label">Sync Active</div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>Router API: HEALTHY</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>Ollama: RUNNING</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>Hand Tracking: ACTIVE</span>
+            </div>
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>Ray-Ban Sync: CONNECTED</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

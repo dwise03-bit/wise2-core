@@ -1,6 +1,8 @@
 export const MASTER_ACCOUNT_EMAILS = [
   'dwise03@gmail.com',
   'darrinwisejr@gmail.com',
+  'dwise@wise2.net',
+  'dwise2@wise2.net',
 ] as const;
 
 /** Primary master account. Kept for callers that need a single canonical owner. */

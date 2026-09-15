@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct MoreScreen: View {
   @StateObject private var viewModel = MoreScreenViewModel()
@@ -170,7 +171,7 @@ struct BillingContent: View {
         BillingRow(label: "Monthly Cost", value: "$99.00")
       }
 
-      Button(action: {}) {
+      Button(action: { UIApplication.shared.open(URL(string: "https://wise2.net")!) }) {
         HStack {
           Text("View Invoice History")
             .font(.subheadline)
@@ -186,7 +187,7 @@ struct BillingContent: View {
         .cornerRadius(8)
       }
 
-      Button(action: {}) {
+      Button(action: { UIApplication.shared.open(URL(string: "https://wise2.net/start-your-build")!) }) {
         HStack {
           Text("Upgrade Plan")
             .font(.subheadline)
@@ -241,7 +242,7 @@ struct AnalyticsContent: View {
         AnalyticsMetric(label: "Avg Latency", value: "45ms", period: "average")
       }
 
-      Button(action: {}) {
+      Button(action: { UIApplication.shared.open(URL(string: "https://wise2.net")!) }) {
         Text("View Detailed Reports")
           .font(.subheadline)
           .fontWeight(.semibold)
@@ -322,7 +323,7 @@ struct FilesContent: View {
       .background(Color.wise2Surface)
       .cornerRadius(8)
 
-      Button(action: {}) {
+      Button(action: { UIApplication.shared.open(URL(string: "https://wise2.net/apps")!) }) {
         Text("Upgrade Storage")
           .font(.subheadline)
           .fontWeight(.semibold)
@@ -358,7 +359,7 @@ struct SettingsContent: View {
         SettingRow(label: "API Key", value: "••••••••")
       }
 
-      Button(action: {}) {
+      Button(action: { UIApplication.shared.open(URL(string: "https://wise2.net/contact")!) }) {
         HStack {
           Image(systemName: "key.horizontal")
             .font(.system(size: 14))
@@ -423,6 +424,14 @@ struct SettingRow: View {
     .padding(.vertical, 8)
     .background(Color.wise2Surface)
     .cornerRadius(6)
+  }
+}
+
+struct BusinessErrorView: View {
+  let message: String
+  let retry: () -> Void
+  var body: some View {
+    VStack(spacing: 12) { Text(message).multilineTextAlignment(.center).foregroundColor(.wise2Danger); Button("Retry", action: retry).buttonStyle(.borderedProminent) }.padding()
   }
 }
 

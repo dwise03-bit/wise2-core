@@ -72,7 +72,7 @@ export async function createServer(): Promise<Express> {
       origin: config_.cors.origin,
       credentials: config_.cors.credentials,
       methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID', 'X-Tenant-ID'],
       exposedHeaders: ['X-Request-ID', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset'],
       maxAge: 86400,
     }),

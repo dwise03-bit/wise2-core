@@ -170,3 +170,5 @@ print_ready/*.gcode
 .env*
 /tools/ghostty/release/
 .worktrees/
+# Xcode per-user workspace state
+**/xcuserdata/

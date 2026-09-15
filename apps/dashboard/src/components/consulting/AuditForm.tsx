@@ -109,7 +109,17 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="relative space-y-8 overflow-hidden rounded-2xl border border-cyan-400/20 bg-[#050912] p-6 text-white shadow-[0_0_80px_rgba(0,148,255,0.12)] sm:p-8">
+      <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-20 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl" />
+      <div className="relative flex items-start justify-between border-b border-white/10 pb-5">
+        <div>
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-cyan-300">WISE² / diagnostic intake</p>
+          <h2 className="text-2xl font-black tracking-tight text-white">Map the business signal</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-400">A short executive intake that turns friction into a prioritized automation brief.</p>
+        </div>
+        <div className="hidden rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-300 sm:block">Live audit</div>
+      </div>
       {error && (
         <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
           <AlertCircle className="h-4 w-4" />
@@ -119,7 +129,7 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
 
       {/* Client Information */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-foreground">Client Information</h3>
+        <h3 className="font-semibold text-white">01 / Client signal</h3>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
@@ -188,7 +198,7 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
 
       {/* Pain Points */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-foreground">Top Pain Points</h3>
+        <h3 className="font-semibold text-white">02 / Friction map</h3>
         <p className="text-sm text-muted-foreground">
           Select the challenges causing the most operational friction.
         </p>
@@ -210,7 +220,7 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
 
       {/* Desired Outcomes */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-foreground">Desired Outcomes</h3>
+        <h3 className="font-semibold text-white">03 / Target state</h3>
         <p className="text-sm text-muted-foreground">
           What are your top 3 business goals for the next 12 months?
         </p>
@@ -280,7 +290,7 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
       <Button
         type="submit"
         disabled={loading || !formData.clientName || !formData.industry}
-        className="w-full"
+        className="relative w-full border border-cyan-300/30 bg-cyan-300 text-[#04131b] shadow-[0_0_24px_rgba(103,232,249,0.22)] hover:bg-white"
       >
         {loading ? (
           <>
@@ -293,7 +303,7 @@ export default function AuditForm({ onComplete, defaultData }: AuditFormProps) {
       </Button>
 
       <p className="text-xs text-muted-foreground text-center">
-        This assessment typically takes 5-10 minutes and identifies key automation opportunities.
+        Private intake • 5–10 minutes • produces an actionable opportunity snapshot
       </p>
     </form>
   );

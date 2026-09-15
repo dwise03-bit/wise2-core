@@ -151,30 +151,6 @@ struct LoginView: View {
       }
       .disabled(isLoading || email.isEmpty || password.isEmpty)
 
-      #if DEBUG
-      if let onOperatorPreview {
-        Button {
-          Task { await onOperatorPreview() }
-        } label: {
-          Text("Continue as Operator (Debug)")
-            .fontWeight(.semibold)
-            .frame(maxWidth: .infinity)
-            .padding(12)
-            .background(Color.wise2SurfaceSecondary)
-            .foregroundColor(.wise2Accent)
-            .overlay(
-              RoundedRectangle(cornerRadius: 0)
-                .stroke(Color.wise2Accent.opacity(0.4), lineWidth: 1)
-            )
-        }
-        .disabled(isLoading)
-
-        Text("Opens Command Center with local business-ops fixtures. Use Sign in for live Nest auth.")
-          .font(.system(size: 11))
-          .foregroundColor(.wise2TextMuted)
-          .frame(maxWidth: .infinity, alignment: .leading)
-      }
-      #endif
     }
   }
 }

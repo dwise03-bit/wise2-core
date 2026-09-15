@@ -5,11 +5,12 @@ import { TelnyxController } from './telnyx.controller';
 import { TelnyxService } from './telnyx.service';
 import { TelnyxDatabaseService } from './telnyx-database.service';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ToolsModule } from '../tools/tools.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ToolsModule],
   controllers: [GoogleVoiceController, TelnyxController],
   providers: [GoogleVoiceService, TelnyxService, TelnyxDatabaseService],
-  exports: [GoogleVoiceService, TelnyxService],
+  exports: [GoogleVoiceService, TelnyxService, TelnyxDatabaseService],
 })
 export class WebhooksModule {}

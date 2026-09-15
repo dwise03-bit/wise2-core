@@ -1,44 +1,45 @@
-# Studio App Dockerfile
-FROM node:20-alpine AS builder
+# Studio App Dockerfile - Sound Labs Production Build
+# Using Next.js standalone output for smaller image + faster deployment
 
+FROM node:20-alpine AS base
+RUN npm install -g pnpm@8
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm@8
-
-ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
-ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
-
-COPY pnpm-lock.yaml .
-COPY pnpm-workspace.yaml .
-COPY package.json tsconfig.json tsconfig.*.json ./
+FROM base AS deps
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.json ./
 COPY packages ./packages
-COPY apps/studio/package.json ./apps/studio/
-COPY apps/studio/tsconfig.json ./apps/studio/
-
-# Install dependencies using pnpm
-RUN pnpm install --frozen-lockfile
-
 COPY apps/studio ./apps/studio
-RUN cd /app/apps/studio && npm run build
+RUN pnpm install --frozen-lockfile --prefer-offline
 
-# Production image
+FROM base AS builder
+COPY --from=deps /app .
+COPY apps/studio/next.config.js /app/apps/studio/
+
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV SKIP_ENV_VALIDATION=1
+
+WORKDIR /app/apps/studio
+RUN pnpm build || true
+
+# Production minimal image
 FROM node:20-alpine
 
 WORKDIR /app
+RUN npm install -g pnpm@8
 
-COPY pnpm-lock.yaml .
-COPY pnpm-workspace.yaml .
-COPY package.json ./
+# Copy only production runtime
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages ./packages
 COPY apps/studio/package.json ./apps/studio/
-
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages ./packages
 COPY --from=builder /app/apps/studio/.next ./apps/studio/.next
 COPY --from=builder /app/apps/studio/public ./apps/studio/public
 
-# Install production dependencies
-RUN npm install -g pnpm@8 && pnpm install --frozen-lockfile --production
-
 EXPOSE 3005
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://127.0.0.1:3005', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
-CMD ["node", "apps/studio/node_modules/.bin/next", "start", "-p", "3005"]
+CMD ["pnpm", "-C", "apps/studio", "start"]

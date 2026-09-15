@@ -214,13 +214,13 @@ class AnalyticsIntegration {
       .setColor(COLORS.info)
       .setTitle("📊 Daily Metrics")
       .addFields(
-        { name: "Uptime", value: metrics.uptime, inline: true },
-        { name: "API Calls", value: metrics.apiCalls, inline: true },
-        { name: "Errors", value: metrics.errors, inline: true },
-        { name: "Active Users", value: metrics.activeUsers, inline: true },
+        { name: "Uptime", value: String(metrics.uptime ?? "Unknown"), inline: true },
+        { name: "API Calls", value: String(metrics.apiCalls ?? 0), inline: true },
+        { name: "Errors", value: String(metrics.errors ?? 0), inline: true },
+        { name: "Active Users", value: String(metrics.activeUsers ?? 0), inline: true },
         {
           name: "Performance",
-          value: `Avg Response: ${metrics.avgResponse}ms`,
+          value: `Avg Response: ${String(metrics.avgResponse ?? "Unknown")}ms`,
           inline: false,
         }
       )

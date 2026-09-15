@@ -1,7 +1,7 @@
 import React from 'react';
 
-export const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-lg border ${className}`}>{children}</div>
+export const Card = ({ children, className = '', variant = 'default' }: { children: React.ReactNode; className?: string; variant?: 'default' | 'elevated' }) => (
+  <div className={`rounded-lg border ${variant === 'elevated' ? 'shadow-lg' : ''} ${className}`}>{children}</div>
 );
 
 export const CardHeader = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (

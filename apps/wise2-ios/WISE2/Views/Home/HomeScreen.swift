@@ -523,6 +523,14 @@ struct DetailScreen: View {
   }
 }
 
+struct CommandSurface<Content: View>: View {
+  let title: String
+  let subtitle: String
+  let selectedBusiness: String
+  @ViewBuilder let content: () -> Content
+  var body: some View { ScrollView { VStack(alignment: .leading, spacing: 12) { Text(title).font(.title2.bold()); Text(subtitle).font(.caption); Text(selectedBusiness).font(.caption); content() }.padding() }.background(Color.wise2Background) }
+}
+
 #Preview {
   HomeScreen(selectedBusiness: .constant("ALL BUSINESSES"))
     .environmentObject(AuthManager())

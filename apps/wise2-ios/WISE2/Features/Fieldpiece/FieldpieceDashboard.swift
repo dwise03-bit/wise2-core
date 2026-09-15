@@ -370,3 +370,8 @@ struct SignalQualityRow: View {
 #Preview {
   FieldpieceDashboard(fieldpieceService: FieldpieceService())
 }
+
+struct CommandCard<Content: View>: View {
+  @ViewBuilder let content: () -> Content
+  var body: some View { content().padding(12).background(Color.wise2Surface).clipShape(RoundedRectangle(cornerRadius: 10)) }
+}
