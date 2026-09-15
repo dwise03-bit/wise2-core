@@ -3,132 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WISE² North Carolina Call Cheat Sheet</title>
+  <title>WISE² NC Sales Cheat Sheet</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
   <style>
-    :root {
-      --bg-primary: #0A0E27;
-      --bg-secondary: #11152D;
-      --bg-tertiary: #1A1F3A;
-      --accent-green: #00FF41;
-      --accent-blue: #0080FF;
-      --text-primary: #E8E8E8;
-      --text-secondary: #A8A8C0;
-      --text-tertiary: #707090;
-      --border-color: #2A2F4A;
-    }
+    :root { --bg: #0A0E27; --bg2: #11152D; --accent: #00FF41; --blue: #0080FF; --text: #E8E8E8; --text2: #A8A8C0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; color: var(--accent-green); margin-bottom: 8px; }
-    .header { text-align: center; border-bottom: 2px solid var(--accent-green); padding-bottom: 16px; margin-bottom: 24px; }
-    .location-badge { display: inline-block; background: var(--accent-blue); color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .subheader { font-size: 12px; color: var(--text-secondary); }
-    .content { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .section { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
-    .section h3 { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-blue); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-    .step { background: var(--bg-tertiary); border-left: 3px solid var(--accent-green); padding: 10px 12px; margin-bottom: 10px; border-radius: 3px; font-size: 12px; line-height: 1.4; }
-    .step-label { font-weight: 700; color: var(--accent-green); margin-bottom: 2px; }
-    .step-text { color: var(--text-secondary); font-size: 11px; font-style: italic; }
-    .quick-ref { background: var(--bg-tertiary); padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 11px; line-height: 1.4; color: var(--text-secondary); }
-    .quick-ref strong { color: var(--accent-green); }
-    .cta-section { background: var(--bg-secondary); border: 2px solid var(--accent-green); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .cta-section h3 { font-size: 12px; font-weight: 700; color: var(--accent-green); margin-bottom: 8px; }
-    .cta-list { list-style: none; font-size: 11px; }
-    .cta-list li { padding: 4px 0; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
-    .cta-list li:last-child { border-bottom: none; }
-    .cta-list li::before { content: '✓ '; color: var(--accent-green); font-weight: bold; }
-    @media (max-width: 768px) { .content { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 40px 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 42px; color: var(--accent); margin-bottom: 20px; }
+    h2 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; color: var(--accent); margin: 30px 0 15px; }
+    h3 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--blue); margin: 15px 0 10px; }
+    .section { background: var(--bg2); border: 1px solid #2A2F4A; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+    .key-stat { display: inline-block; background: var(--accent); color: var(--bg); padding: 8px 16px; border-radius: 4px; font-weight: 700; margin: 5px 5px 5px 0; font-size: 13px; }
+    .script-box { background: #1A1F3A; border-left: 3px solid var(--blue); padding: 15px; margin: 10px 0; border-radius: 4px; font-size: 14px; }
+    .objective { font-weight: 600; color: var(--blue); margin-bottom: 8px; }
+    .script-text { color: var(--text2); line-height: 1.6; font-style: italic; }
+    .bullet-list { list-style: none; padding-left: 0; }
+    .bullet-list li { padding: 8px 0; padding-left: 24px; position: relative; color: var(--text2); }
+    .bullet-list li:before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+    .comparison { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    .comparison th, .comparison td { padding: 10px; text-align: left; border-bottom: 1px solid #2A2F4A; }
+    .comparison th { background: #1A1F3A; color: var(--accent); font-weight: 700; }
+    .comparison td { color: var(--text2); }
+    .badge { display: inline-block; background: var(--blue); color: white; padding: 4px 12px; border-radius: 3px; font-size: 11px; font-weight: 700; margin-right: 8px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <div class="location-badge">🏔️ North Carolina</div>
-      <h1>WISE² SALES CHEAT SHEET</h1>
-      <div class="subheader">North Carolina Market • Print & Reference During Calls</div>
-    </div>
+    <h1>📋 NC Sales Cheat Sheet</h1>
+    <p style="color: var(--text2); margin-bottom: 30px;">Quick reference for selling WISE² in North Carolina</p>
 
-    <div class="cta-section">
-      <h3>📞 BEFORE EVERY CALL</h3>
-      <ul class="cta-list">
-        <li>Research their business online and check their current systems</li>
-        <li>Know their business type, crew size, and revenue range</li>
-        <li>Identify a local reference or connection if possible</li>
-        <li>Update CRM BEFORE you call</li>
-        <li>Have this cheat sheet + offer map handy</li>
-      </ul>
-    </div>
-
-    <div class="content">
+    <div class="section">
+      <h2>The NC Opportunity</h2>
       <div>
-        <div class="section">
-          <h3>⏱️ Discovery Call Flow (45 min)</h3>
+        <span class="key-stat">2,000+ contractors</span>
+        <span class="key-stat">$5B+ annual spend</span>
+        <span class="key-stat">Low tech adoption</span>
+        <span class="key-stat">Growth-hungry</span>
+      </div>
+      <p style="margin-top: 15px; color: var(--text2);">NC has more HVAC, electrical, and service contractors than any state in the region. They're growing but still managing operations in spreadsheets and Outlook. High pain, high motivation to solve.</p>
+    </div>
 
-          <div class="step">
-            <div class="step-label">0-3 min: GREET</div>
-            <div class="step-text">"Hi [name], this is [you] from WISE². I work with [industry type] companies on [specific outcome]. Quick question: are you dealing with [specific pain point]?"</div>
-          </div>
+    <div class="section">
+      <h2>90-Second Pitch</h2>
+      <div class="script-box">
+        <div class="objective">OPENING:</div>
+        <div class="script-text">"I've been working with contractors across North Carolina. The ones who are winning have one thing in common: they've moved from managing in spreadsheets to having one operating system that connects dispatch, customer communication, and field data."</div>
+      </div>
+      <div class="script-box">
+        <div class="objective">PROBLEM:</div>
+        <div class="script-text">"Most teams lose 5-10 jobs a week to poor coordination. Miss calls, slow dispatch, techs waiting for information, office staff manually routing everything."</div>
+      </div>
+      <div class="script-box">
+        <div class="objective">SOLUTION:</div>
+        <div class="script-text">"WISE² Command is your operating system. One dashboard. Real-time job tracking. AI phone that answers 24/7. Field tech app that syncs instantly."</div>
+      </div>
+      <div class="script-box">
+        <div class="objective">OUTCOME:</div>
+        <div class="script-text">"Typical result: 2-3 extra jobs per tech per week, 20-30 recovered calls monthly, and you don't need to hire more admin staff. That's $100K-200K in new revenue on the same headcount."</div>
+      </div>
+    </div>
 
-          <div class="step">
-            <div class="step-label">3-20 min: AUDIT</div>
-            <div class="step-text">"How many people on your crews? How do you currently handle [key workflow]? What's costing you the most time or money?"</div>
-          </div>
-
-          <div class="step">
-            <div class="step-label">20-35 min: REVIEW</div>
-            <div class="step-text">"What you described—we see that constantly in NC. Most end up investing [amount] to fix it. We helped [local company type] solve it in [timeframe]."</div>
-          </div>
-
-          <div class="step">
-            <div class="step-label">35-45 min: CLOSE</div>
-            <div class="step-text">"I think there's a fit here. We'd start with an Audit so you have all the information to decide. It's [price], takes [weeks]. Want to move forward?"</div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>🎯 NC Elevator Pitches</h3>
-
-          <div class="quick-ref"><strong>15 sec:</strong> "We help service companies and contractors stop wasting time on paperwork and systems. We save money and make operations professional."</div>
-
-          <div class="quick-ref"><strong>30 sec:</strong> "We work with HVAC, plumbing, electrical, and general contractors around North Carolina. Most are spending 15+ hours weekly on scheduling, invoicing, and follow-up. We automate all of that."</div>
-
-          <div class="quick-ref"><strong>60 sec:</strong> "We help service companies scale without chaos. We give you a clean website, CRM, scheduling automation, and AI to handle calls when your office is busy. Most clients ROI within 6 months. We start with a quick $3.5K audit so you know exactly what we can do for you."</div>
-        </div>
+    <div class="section">
+      <h2>Objection Handlers</h2>
+      <h3>❌ "It's too expensive"</h3>
+      <div class="script-box">
+        <div class="script-text">"I get that. But a 10-person team misses 20 calls a month. If 5% turn into jobs, that's $6K in lost revenue monthly. WISE² costs $1,500/month. You're ahead in week one."</div>
       </div>
 
+      <h3>❌ "We already have a system"</h3>
+      <div class="script-box">
+        <div class="script-text">"Which systems? Most teams use 3-4 that don't talk to each other. WISE² connects them all. Your Outlook, QuickBooks, and phone operating as one operating system."</div>
+      </div>
+
+      <h3>❌ "We're fine with spreadsheets"</h3>
+      <div class="script-box">
+        <div class="script-text">"When you grow to 15-20 techs, spreadsheets become your growth ceiling. WISE² scales without adding staff. Plus, real-time data beats anything a spreadsheet can do."</div>
+      </div>
+
+      <h3>❌ "We need to think about it"</h3>
+      <div class="script-box">
+        <div class="script-text">"Let me show you a 20-minute walkthrough with your office manager and one tech. You'll see live how this works. Then you decide. Does Tuesday work?"</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Key Metrics to Lead With</h2>
       <div>
-        <div class="section">
-          <h3>🎯 Common NC Objections</h3>
-
-          <div class="step">
-            <div class="step-label">Objection: "We're too busy to implement change."</div>
-            <div class="step-text">Response: "Most of our clients say that. That's actually why WISE² exists—we handle the heavy lifting. Your team gets the benefit without the friction. We manage the transition."</div>
-          </div>
-
-          <div class="step">
-            <div class="step-label">Objection: "We're happy with what we have."</div>
-            <div class="step-text">Response: "I hear you. The question isn't whether you're 'unhappy'—it's whether you're leaving money on the table. How many leads are you missing because you can't follow up? How many tech-savvy competitors are beating you? That's what we fix."</div>
-          </div>
-
-          <div class="step">
-            <div class="step-label">Objection: "We've tried software before and it didn't work."</div>
-            <div class="step-text">Response: "That's actually really common. The difference with us is we don't sell you software and leave you. We implement it with you, train your team, and make sure it sticks. We're a partner, not a vendor."</div>
-          </div>
-
-          <div class="step">
-            <div class="step-label">Objection: "What's the timeline to ROI?"</div>
-            <div class="step-text">Response: "Most of our NC clients see measurable ROI within 4-6 months. We often see the first savings (time saved = money saved) within 30 days. The Audit shows you exactly what you'll get."</div>
-          </div>
+        <div style="margin-bottom: 15px;">
+          <span class="badge">ROI</span> <strong>3-4x first year</strong> — Payback in 4-8 weeks
         </div>
-
-        <div class="section">
-          <h3>💡 Quick Reference</h3>
-          <div class="quick-ref"><strong>Average Deal Cycle:</strong> 45-75 days (allow time for consideration)</div>
-          <div class="quick-ref"><strong>Decision Makers:</strong> Owner + Office Manager (usually 2)</div>
-          <div class="quick-ref"><strong>Budget Range:</strong> $10K–$40K typical first engagement</div>
-          <div class="quick-ref"><strong>Key Motivator:</strong> ROI and payback period (show the math)</div>
-          <div class="quick-ref"><strong>Trust Factor:</strong> Local references = huge (use them)</div>
+        <div style="margin-bottom: 15px;">
+          <span class="badge">SCALE</span> <strong>+3 jobs/tech/week</strong> — No additional hiring
+        </div>
+        <div style="margin-bottom: 15px;">
+          <span class="badge">CALLS</span> <strong>20-30 recovered/month</strong> — 24/7 answering
+        </div>
+        <div style="margin-bottom: 15px;">
+          <span class="badge">ADMIN</span> <strong>15+ hours saved/week</strong> — Dispatcher becomes profit center
         </div>
       </div>
     </div>
