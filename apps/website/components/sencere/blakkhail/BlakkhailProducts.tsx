@@ -179,12 +179,12 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
             >
               {/* Premium Product Card */}
               <div
-                className="relative overflow-hidden bg-zinc-900 transition-all duration-300"
+                className="relative overflow-hidden bg-zinc-900 transition-all duration-400"
                 style={{
                   boxShadow: hoveredId === product.id
-                    ? '0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 217, 255, 0.2)'
-                    : '0 10px 30px rgba(0, 0, 0, 0.6)',
-                  transform: hoveredId === product.id ? 'translateY(-8px)' : 'translateY(0)'
+                    ? '0 30px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(0, 217, 255, 0.3), inset 0 0 30px rgba(0, 217, 255, 0.05)'
+                    : '0 15px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 217, 255, 0.1)',
+                  transform: hoveredId === product.id ? 'translateY(-12px) scale(1.02)' : 'translateY(0) scale(1)'
                 }}
               >
                 {/* Image Container */}
