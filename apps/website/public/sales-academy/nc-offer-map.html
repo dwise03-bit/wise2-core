@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² North Carolina Offer Map</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg-primary: #0A0E27;
+      --bg-secondary: #11152D;
+      --bg-tertiary: #1A1F3A;
+      --accent-green: #00FF41;
+      --accent-blue: #0080FF;
+      --accent-gold: #FFD700;
+      --text-primary: #E8E8E8;
+      --text-secondary: #A8A8C0;
+      --text-tertiary: #707090;
+      --border-color: #2A2F4A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 48px; font-weight: 700; color: var(--accent-green); margin-bottom: 12px; }
+    .location-badge { display: inline-block; background: var(--accent-blue); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+    .header { text-align: center; margin-bottom: 60px; }
+    .tagline { font-size: 16px; color: var(--text-secondary); margin-bottom: 8px; }
+    .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 60px; }
+    .tier { background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: 12px; padding: 32px 24px; position: relative; overflow: hidden; transition: all 0.3s ease; }
+    .tier::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); opacity: 0.6; }
+    .tier:hover { border-color: var(--accent-green); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0, 255, 65, 0.1); }
+    .tier-number { font-family: 'Space Grotesk', sans-serif; font-size: 56px; font-weight: 700; color: var(--accent-green); line-height: 1; margin-bottom: 12px; }
+    .tier-name { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--text-primary); }
+    .tier-price { font-size: 28px; font-weight: 700; color: var(--accent-gold); margin-bottom: 8px; }
+    .tier-duration { font-size: 13px; color: var(--text-tertiary); margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+    .tier-description { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
+    .tier-features { list-style: none; font-size: 13px; margin-bottom: 20px; }
+    .tier-features li { padding: 8px 0; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px; }
+    .tier-features li:last-child { border-bottom: none; }
+    .tier-features li::before { content: '✓'; color: var(--accent-green); font-weight: bold; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="location-badge">🏔️ North Carolina</div>
+      <h1>WISE² Offer Map for NC</h1>
+      <p class="tagline">Five Tiers to Grow Your Service Business</p>
+    </div>
+
+    <div class="tiers">
+      <div class="tier">
+        <div class="tier-number">1</div>
+        <div class="tier-name">AUDIT</div>
+        <div class="tier-price">$3.5K–$6K</div>
+        <div class="tier-duration">1–2 weeks</div>
+        <div class="tier-description">Deep dive into your current systems, pain points, and growth blockers.</div>
+        <ul class="tier-features">
+          <li>Operations Audit</li>
+          <li>Technology Assessment</li>
+          <li>Team Workflow Review</li>
+          <li>15-page Report + Recommendations</li>
+        </ul>
+      </div>
+
+      <div class="tier">
+        <div class="tier-number">2</div>
+        <div class="tier-name">LAUNCH</div>
+        <div class="tier-price">$10K–$18K</div>
+        <div class="tier-duration">3–4 weeks</div>
+        <div class="tier-description">Clean website, CRM foundation, and basic automation to start modern operations.</div>
+        <ul class="tier-features">
+          <li>Professional Website</li>
+          <li>CRM Setup & Customization</li>
+          <li>Email Automation</li>
+          <li>Team Training</li>
+        </ul>
+      </div>
+
+      <div class="tier">
+        <div class="tier-number">3</div>
+        <div class="tier-name">GROW</div>
+        <div class="tier-price">$15K–$30K</div>
+        <div class="tier-duration">4–6 weeks</div>
+        <div class="tier-description">Marketing, lead generation, and customer pipeline management to scale predictably.</div>
+        <ul class="tier-features">
+          <li>Marketing Automation</li>
+          <li>Lead Scoring & Nurture</li>
+          <li>Analytics & Reporting</li>
+          <li>Sales Process Optimization</li>
+        </ul>
+      </div>
+
+      <div class="tier">
+        <div class="tier-number">4</div>
+        <div class="tier-name">AUTOMATE</div>
+        <div class="tier-price">$25K–$60K</div>
+        <div class="tier-duration">6–10 weeks</div>
+        <div class="tier-description">AI phone systems, workflow automation, and advanced integrations to eliminate manual work.</div>
+        <ul class="tier-features">
+          <li>AI Phone System</li>
+          <li>Custom Workflows</li>
+          <li>System Integrations</li>
+          <li>Advanced Analytics</li>
+        </ul>
+      </div>
+
+      <div class="tier">
+        <div class="tier-number">5</div>
+        <div class="tier-name">DOMINATE</div>
+        <div class="tier-price">$40K–$120K+</div>
+        <div class="tier-duration">Custom Timeline</div>
+        <div class="tier-description">Custom solutions tailored to your unique business model and scale.</div>
+        <ul class="tier-features">
+          <li>Custom Development</li>
+          <li>Enterprise Integration</li>
+          <li>Dedicated Support</li>
+          <li>Ongoing Optimization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
