@@ -385,6 +385,74 @@ Every session should:
 
 ---
 
+## Mac Bridge Operations (WISE² Remote Control)
+
+**Status**: ✅ **PERMANENT & OPERATIONAL**
+
+The WISE² Mac remote bridge (`com.wise2.desktopcommander.remote`) is permanently supervised by launchd and automatically recovers from all failure modes.
+
+### Before Any Mac-Bound Tasks
+
+Before executing remote Mac operations, verify bridge health:
+
+```bash
+wise2-bridge doctor
+```
+
+Expected output:
+```
+WISE² BRIDGE: GREEN
+✓ LaunchAgent registered
+✓ Service state: running
+✓ Process alive (PID: 59864)
+✓ Device marked as online
+✓ Has not crashed
+```
+
+If any check fails or returns `RED`, trigger recovery:
+
+```bash
+wise2-bridge recover
+```
+
+Then re-verify:
+
+```bash
+wise2-bridge doctor
+```
+
+### Available Commands
+
+```bash
+wise2-bridge status    # Show current status (supervisor/process/network)
+wise2-bridge doctor    # Run full diagnostics (all 5 layers)
+wise2-bridge start     # Start the service
+wise2-bridge stop      # Stop the service
+wise2-bridge restart   # Full unload/reload cycle
+wise2-bridge recover   # Safe targeted recovery
+wise2-bridge logs      # Show recent 100 lines of logs
+```
+
+### How It Works
+
+- **Supervisor**: launchd (native macOS process manager)
+- **Auto-restart**: Any process crash triggers automatic restart within seconds
+- **Terminal-independent**: Bridge runs as launchd service, survives terminal closure
+- **FNM-aware**: Dynamically finds desktop-commander binary (handles Node.js version updates)
+- **Self-healing**: Gracefully handles transient errors and temporary network loss
+
+### Root Cause (Fixed)
+
+Previous issue: Hardcoded FNM path (fnm_multishells/19336_...) became stale when Node.js updated, causing silent process launch failures (234 attempts, all failed).
+
+**Fix**: Dynamic path discovery + PATH injection in startup script ensures bridge always finds correct binaries regardless of FNM updates.
+
+### Documentation
+
+Full repair details: `~/.wise2/BRIDGE_REPAIR_SUMMARY.md`
+
+---
+
 **This kernel is the source of truth for WISE² operations. Update it when routing rules change, not during normal task execution.**
 # WISE² standard
 
