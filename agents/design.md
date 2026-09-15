@@ -8,6 +8,12 @@ WISE² brand: Industrial cyberpunk, dark theme, electric blue (#0055FF) accents,
 
 ---
 
+## Mandatory Production Quality Gate
+
+Read `WISE2_VISUAL_QUALITY_STANDARD.md` before visual work. Treat generated assets as candidates, never finals. Reject output that fails real-size readability, silhouette, composition, contrast, crop/safe-area, reference fidelity, identity lock, or brand fidelity.
+
+For app icons, inspect 1024, 180, 120, 60, 40, and 29 px plus home-screen context when practical. A technically valid asset that looks weak at delivery size is a FAIL and must not be handed off as approved.
+
 ## Memory Scope
 
 - `docs/WISE2_DESIGN_SYSTEM_MASTER_VISUAL.png` — Master visual reference

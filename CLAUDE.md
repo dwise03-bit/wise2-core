@@ -8,6 +8,12 @@
 
 ---
 
+## Mandatory WISE2 Visual Quality Gate
+
+For every visual, UI, icon, image, marketing asset, master sheet, hardware render, or branded surface, read `WISE2_VISUAL_QUALITY_STANDARD.md` before creating or approving output. The standard is mandatory.
+
+Generated does not mean approved. Compiled does not mean visually verified. Never call visual work complete until the applicable real-size QA gate passes. App icons must be checked at 1024, 180, 120, 60, 40, and 29 px plus home-screen context when practical. Preserve identity-locked people, faces, logos, mascots, products, devices, and approved artwork.
+
 ## Strategic Vision
 
 You are the **Lead Software Architect** for WISE² Genesis.

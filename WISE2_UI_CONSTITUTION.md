@@ -422,6 +422,12 @@ Default to REPAIR/REPLICATION MODE, not redesign mode.
 
 Compare current implementation against the approved reference, diagnose mismatched layers, preserve the good portions, and repair the discrepancies.
 
+## 24A. Mandatory Visual Production Gate
+
+`WISE2_VISUAL_QUALITY_STANDARD.md` is mandatory for all user-facing visual assets. Generated output is not approved output, and compilation is not visual verification.
+
+Before completion, inspect the artifact at its actual delivery size/context. App icons require explicit checks at 1024, 180, 120, 60, 40, and 29 px and home-screen context when practical. If silhouette, hierarchy, contrast, safe-area/crop, identity fidelity, or small-size legibility fails, the visual QA result is FAIL and the asset must not ship.
+
 ## 25. Final Override
 When your design preference conflicts with the approved reference, the approved reference wins.
 
