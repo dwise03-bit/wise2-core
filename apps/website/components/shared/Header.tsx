@@ -18,6 +18,7 @@ export default function Header() {
     { href: '/gallery', label: 'Gallery' },
     { href: '/studio', label: 'Studio' },
     { href: '/apps', label: 'Apps' },
+    { href: '/sales-academy/', label: 'Sales Academy' },
     { href: '/webstore', label: 'Webstore' },
     { href: '/shop', label: 'Shop' },
     { href: '/maintenance', label: 'Maintenance' },
