@@ -52,6 +52,7 @@ import { OTAModule } from './ota/ota.module';
 import { ToolsModule } from './tools/tools.module';
 import { OTAUpdatesModule } from './mobile/ota-updates.module';
 import { JobCapturesModule } from './jobs/job-captures.module';
+import { HvacDiagnosticsModule } from './hvac/hvac-diagnostics.module';
 
 @Module({
   imports: [
@@ -166,6 +167,7 @@ import { JobCapturesModule } from './jobs/job-captures.module';
     OTAUpdatesModule,
     ToolsModule,
     JobCapturesModule,
+    HvacDiagnosticsModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],

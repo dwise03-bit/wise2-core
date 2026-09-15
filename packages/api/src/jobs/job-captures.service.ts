@@ -1,7 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { MediaStorageService } from '../storage/media-storage.service';
+import { HvacDiagnosticsService } from '../hvac/hvac-diagnostics.service';
 import { CaptureDto, JobStatusUpdateDto, TechnicianPresenceDto } from './job-captures.controller';
 
 interface UploadCaptureParams {
@@ -54,6 +55,8 @@ interface TechnicianPresence {
 
 @Injectable()
 export class JobCapturesService {
+  private readonly logger = new Logger(JobCapturesService.name);
+
   // In-memory storage for demo (would use database in production)
   private captures: Map<string, StoredCapture[]> = new Map();
   private jobStatuses: Map<string, JobStatus> = new Map();
@@ -62,7 +65,9 @@ export class JobCapturesService {
 
   constructor(
     private readonly storageService: MediaStorageService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    @Inject(HvacDiagnosticsService)
+    private readonly diagnosticsService: HvacDiagnosticsService
   ) {
     this.initializeJobStatuses();
   }
@@ -135,6 +140,13 @@ export class JobCapturesService {
 
     // Trigger real-time notification (would emit WebSocket event in production)
     this.notifyCapture(capture);
+
+    // Trigger diagnostics analysis for photos (async, non-blocking)
+    if (params.mediaType === 'photo') {
+      this.triggerDiagnosticsAnalysis(params.jobId, capture).catch((error) => {
+        this.logger.error(`Failed to trigger diagnostics for capture ${capture.id}:`, error);
+      });
+    }
 
     return this.toResponseDto(capture);
   }
@@ -322,6 +334,25 @@ export class JobCapturesService {
   async getPresenceHistory(jobId: string): Promise<TechnicianPresenceDto[]> {
     const history = this.presenceHistory.get(jobId) || [];
     return history.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  }
+
+  /**
+   * Trigger HVAC diagnostics analysis for photo capture
+   */
+  private async triggerDiagnosticsAnalysis(jobId: string, capture: StoredCapture): Promise<void> {
+    try {
+      await this.diagnosticsService.analyzeEquipment({
+        jobId,
+        captureId: capture.id,
+        imageUrl: capture.mediaUrl,
+        mediaType: 'photo',
+        equipmentType: 'unit', // Default assumption, could be refined
+      });
+
+      this.logger.log(`Diagnostics analysis started for capture ${capture.id}`);
+    } catch (error) {
+      this.logger.error(`Diagnostics trigger failed:`, error);
+    }
   }
 
   // Private notification methods (would emit WebSocket events in production)
