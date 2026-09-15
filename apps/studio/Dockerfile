@@ -23,6 +23,8 @@ COPY apps/studio ./apps/studio
 COPY packages/db ./packages/db
 COPY packages/audio ./packages/audio
 
+RUN pnpm --filter @wise2/audio build
+
 RUN pnpm --filter @wise2/studio build
 
 FROM node:20-alpine AS runner
