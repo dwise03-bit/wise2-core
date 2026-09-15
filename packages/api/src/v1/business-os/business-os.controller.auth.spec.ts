@@ -7,6 +7,7 @@ import { AuthModule } from '../../auth/auth.module';
 import { BusinessOsController } from './business-os.controller';
 import { BusinessOsMobileService } from './business-os.mobile.service';
 import { BusinessOsService } from './business-os.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 describe('BusinessOsController auth', () => {
   let app: INestApplication;
@@ -19,7 +20,10 @@ describe('BusinessOsController auth', () => {
       imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule],
       controllers: [BusinessOsController],
       providers: [BusinessOsService, BusinessOsMobileService],
-    }).compile();
+    })
+      .overrideProvider(PrismaService)
+      .useValue({ $connect: jest.fn(), $disconnect: jest.fn() })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');

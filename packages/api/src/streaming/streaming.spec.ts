@@ -3,6 +3,7 @@ import { StreamingController, ConsumerResponseDto } from './streaming.controller
 import { StreamingService } from './streaming.service';
 import { MediasoupService } from './mediasoup.service';
 import { RecordingService } from './recording.service';
+import { MediaStorageService } from '../storage/media-storage.service';
 
 describe('Streaming Module (Phase 2)', () => {
   let controller: StreamingController;
@@ -15,10 +16,20 @@ describe('Streaming Module (Phase 2)', () => {
       controllers: [StreamingController],
       providers: [
         StreamingService,
-        MediasoupService,
-        RecordingService,
         {
-          provide: 'PrismaService',
+          provide: MediasoupService,
+          useValue: {
+            createRouter: jest.fn(async () => ({ id: 'router-test' })),
+            createWebRtcTransport: jest.fn(async () => ({ id: 'transport-test' })),
+            createProducer: jest.fn(async () => ({ id: 'producer-test' })),
+            createConsumer: jest.fn(async () => ({ id: 'consumer-test', rtpParameters: {} })),
+            closeStream: jest.fn(async () => undefined),
+          },
+        },
+        RecordingService,
+        { provide: MediaStorageService, useValue: { uploadMedia: jest.fn() } },
+        {
+          provide: 'DB_SERVICE',
           useValue: {
             streamSessions: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn() },
             streamViewers: { create: jest.fn(), findMany: jest.fn() },
@@ -129,7 +140,8 @@ describe('Streaming Module (Phase 2)', () => {
     it('should start and stop recording', async () => {
       const jobId = 'job-123';
 
-      // Start stream
+      // Start stream before recording
+      await service.startStream(jobId, 'tech-456', {});
       const recordingId = await service.startRecording(jobId);
       expect(recordingId).toMatch(/^rec-/);
 
@@ -144,7 +156,7 @@ describe('Streaming Module (Phase 2)', () => {
     });
 
     it('should chunk recording data and flush at threshold', async () => {
-      const recordingId = 'rec-test-123';
+      const recordingId = await recording.startRecording('job-chunk-test');
       const chunkSize = 10 * 1024 * 1024; // 10MB chunks
 
       // Record multiple chunks totaling 120MB

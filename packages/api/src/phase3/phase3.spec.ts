@@ -3,6 +3,10 @@ import { Phase3Controller } from './phase3.controller';
 import { DamageDetectionService } from '../ml/damage-detection.service';
 import { AREngineService } from '../ar/ar-engine.service';
 import { VoiceCommandService } from '../voice/voice-command.service';
+import axios from 'axios';
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('Phase 3: AR + ML + Voice (Ray-Ban Integration)', () => {
   let controller: Phase3Controller;
@@ -11,6 +15,20 @@ describe('Phase 3: AR + ML + Voice (Ray-Ban Integration)', () => {
   let voiceCommand: VoiceCommandService;
 
   beforeEach(async () => {
+    mockedAxios.post.mockImplementation(async (url: string) => {
+      if (url.endsWith('/detect')) {
+        return { data: { detection: true, confidence: 0.94, bbox: { x: 10, y: 20, w: 30, h: 40 }, class_name: 'damaged' } } as any;
+      }
+      if (url.endsWith('/train')) {
+        return { data: { job_id: 'train-job-123' } } as any;
+      }
+      return { data: {} } as any;
+    });
+    mockedAxios.get.mockImplementation(async (url: string) => {
+      if (url.includes('/train/')) return { data: { progress: 50, status: 'running' } } as any;
+      return { data: { models: [] } } as any;
+    });
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [Phase3Controller],
       providers: [DamageDetectionService, AREngineService, VoiceCommandService],
@@ -231,7 +249,7 @@ describe('Phase 3: AR + ML + Voice (Ray-Ban Integration)', () => {
 
       // Detect damage
       const imageData = Buffer.from('test-hvac-image').toString('base64');
-      const detection = await damageDetection.detectDamage(imageData, jobId);
+      const detection = await controller.detectDamage(jobId, imageData);
       expect(detection.classification).toBeDefined();
 
       // Verify detection box added to AR

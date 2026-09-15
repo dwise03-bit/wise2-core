@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OsDetectorService } from './os-detector.service';
-import * as os from 'os';
+import os = require('os');
 
 describe('OsDetectorService', () => {
   let service: OsDetectorService;

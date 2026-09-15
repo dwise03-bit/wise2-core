@@ -251,7 +251,13 @@ export class VoiceCommandService {
    * Simulate speech recognition for demo
    */
   private simulateSpeechRecognition(audioData: Buffer): string {
-    // In production: real ASR
+    // In production: real ASR. In demo/test mode, preserve recognizable input text
+    // so command parsing is deterministic instead of randomly changing intent.
+    const suppliedText = audioData.toString('utf8').trim();
+    if (suppliedText && /^[\x20-\x7E]+$/.test(suppliedText)) {
+      return suppliedText;
+    }
+
     const demoCommands = [
       'start stream',
       'stop stream',

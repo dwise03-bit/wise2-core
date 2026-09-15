@@ -67,14 +67,19 @@ export class SshKeysService {
       return false;
     }
 
-    const parts = sshPublicKey.split(' ');
-    if (parts.length < 2) {
+    const parts = sshPublicKey.trim().split(/\s+/);
+    if (parts.length < 3 || !parts[2]) {
+      return false;
+    }
+
+    const encoded = parts[1];
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(encoded) || encoded.length % 4 !== 0) {
       return false;
     }
 
     try {
-      const keyData = Buffer.from(parts[1], 'base64');
-      return keyData.length > 0;
+      const keyData = Buffer.from(encoded, 'base64');
+      return keyData.length > 0 && keyData.toString('base64') === encoded;
     } catch {
       return false;
     }
