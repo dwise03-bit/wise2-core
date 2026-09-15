@@ -4,6 +4,7 @@ sealed class Destination(val route: String) {
     data object Login : Destination("login")
     data object Home : Destination("home")
     data object Settings : Destination("settings")
+    data object RayBan : Destination("rayban")
 
     data object JobDetail : Destination("jobs/{jobId}") {
         fun path(jobId: String) = "jobs/$jobId"
