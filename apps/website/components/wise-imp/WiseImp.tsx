@@ -216,10 +216,10 @@ export function WiseImp() {
         aria-label={state.open ? 'Close Wise Imp' : 'Open Wise Imp, WISE² AI companion'}
         className="wise-imp-launcher"
         style={{
-          width: 300,
-          minWidth: 300,
-          height: 300,
-          borderRadius: 0,
+          width: 72,
+          minWidth: 72,
+          height: 72,
+          borderRadius: 18,
           background: 'transparent',
           border: '0',
           cursor: 'pointer',
@@ -239,7 +239,7 @@ export function WiseImp() {
         <WiseImpMascot
           glowColor={state.glowColor}
           mascotState={state.open ? 'idle' : tourStop?.state ?? state.mascotState}
-          size={300}
+          size={72}
           breathing={!state.open}
         />
       </button>

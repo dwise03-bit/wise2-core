@@ -59,7 +59,7 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#050505" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <style>{`
+        <style dangerouslySetInnerHTML={{ __html: `
           * { margin: 0; padding: 0; box-sizing: border-box; }
           html, body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
           h1, h2, h3 { font-weight: 700; }
@@ -140,7 +140,7 @@ export default function RootLayout({
           .bg-blue-500 { background: #3b82f6; color: #fff; }
           .hover\\:bg-green-400:hover { background: #4ade80; }
           .hover\\:bg-blue-400:hover { background: #60a5fa; }
-        `}</style>
+        ` }} />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <SessionProvider session={undefined}>
