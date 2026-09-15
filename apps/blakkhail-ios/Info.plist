@@ -87,11 +87,13 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>AppIcon</string>
+				<string>AppIcon-60x60@3x</string>
+				<string>AppIcon-120x120@2x</string>
+				<string>AppIcon-180x180@3x</string>
 			</array>
-			<key>CFBundleIconName</key>
-			<string>AppIcon</string>
 		</dict>
 	</dict>
+	<key>UIPrerenderedIcon</key>
+	<false/>
 </dict>
 </plist>
