@@ -137,40 +137,24 @@ export default function WearablesPage() {
         }}
       >
         {/* Animated gradient background */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+        <div
+          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: `linear-gradient(135deg, ${WISE2_COLORS.neon_green}15 0%, ${WISE2_COLORS.neon_cyan}15 100%)`,
-            pointerEvents: 'none',
+            background: `linear-gradient(135deg, ${WISE2_COLORS.neon_green}10 0%, ${WISE2_COLORS.neon_cyan}10 100%)`,
             transform: 'translateZ(10px)',
           }}
-          animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
-          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse' }}
         />
 
-        {/* Glow layer 1 */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-40" style={{
-          background: `radial-gradient(circle at 50% 50%, ${WISE2_COLORS.neon_cyan}20, transparent 70%)`,
+        {/* Glow layer 1 - subtle */}
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 pointer-events-none" style={{
+          background: `radial-gradient(circle at 50% 50%, ${WISE2_COLORS.neon_cyan}10, transparent 70%)`,
           filter: 'blur(20px)',
-          pointerEvents: 'none',
         }} />
 
-        {/* Glow layer 2 */}
-        <div className="absolute inset-0 rounded-2xl" style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, ${WISE2_COLORS.neon_cyan}05, transparent 50%)`,
-          pointerEvents: 'none',
+        {/* Glow layer 2 - very subtle */}
+        <div className="absolute inset-0 rounded-2xl opacity-5 pointer-events-none" style={{
+          backgroundImage: `radial-gradient(circle at 20% 50%, ${WISE2_COLORS.neon_cyan}03, transparent 50%)`,
         }} />
-
-        {/* Sparkle overlay - subtle on hover */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100"
-          style={{
-            background: `radial-gradient(circle at var(--sparkle-x, 50%) var(--sparkle-y, 50%), ${WISE2_COLORS.neon_green}30 0%, transparent 40%)`,
-            pointerEvents: 'none',
-          }}
-          animate={{ opacity: [0, 0.3, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-        />
 
         {/* Content */}
         <div className="relative z-10">
