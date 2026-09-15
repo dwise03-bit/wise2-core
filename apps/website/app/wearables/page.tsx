@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Zap, CheckCircle, Activity, Wifi } from 'lucide-react';
 
 const DESIGN_SYSTEM = {
   colors: {
@@ -72,6 +74,20 @@ export default function WearablesPage() {
       recentAlerts: [],
     };
   }
+
+  const StatCard = ({ icon, label, value, color, bgColor }: any) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`${bgColor} rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all hover:scale-105`}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className={`${color} p-3 rounded-lg bg-white/5`}>{icon}</div>
+      </div>
+      <p className="text-white/60 text-sm font-medium mb-2">{label}</p>
+      <p className={`${color} text-5xl font-black`}>{value}</p>
+    </motion.div>
+  );
 
   function generateMockCaptures() {
     return [
@@ -243,91 +259,118 @@ export default function WearablesPage() {
         {tab === 'overview' && stats && (
           <>
             {/* KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-              {[
-                { title: 'Total Captures', value: stats.stats.totalCaptures, color: '#1E40AF', icon: '📸' },
-                { title: 'Pending', value: stats.stats.pendingApprovals, color: '#D97706', icon: '⏳' },
-                { title: 'Active Sessions', value: stats.stats.activeSessions, color: '#10B981', icon: '▶️' },
-                { title: 'Connected', value: stats.stats.connectedDevices, color: '#3B82F6', icon: '🔗' },
-              ].map((card, idx) => (
-                <div
-                  key={idx}
-                  onMouseEnter={() => setHoveredCard(`kpi-${idx}`)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  className="group relative overflow-hidden rounded-xl border border-blue-200 bg-white/90 backdrop-blur p-8 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
-                >
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{
-                    background: `linear-gradient(135deg, ${card.color}08 0%, ${card.color}04 100%)`
-                  }} />
-
-                  <div className="relative z-10">
-                    <div className="text-4xl mb-3 transform group-hover:scale-125 transition-transform duration-300">
-                      {card.icon}
-                    </div>
-                    <div className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">
-                      {card.title}
-                    </div>
-                    <div className="text-5xl font-black" style={{ color: card.color }}>
-                      {card.value}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="grid md:grid-cols-2 gap-6 mb-10">
+              <StatCard
+                icon={<Zap className="w-8 h-8 text-blue-400" />}
+                label="Total Captures"
+                value={stats?.stats?.totalCaptures || 0}
+                color="text-blue-400"
+                bgColor="bg-gradient-to-br from-blue-500/10 to-blue-600/5"
+              />
+              <StatCard
+                icon={<CheckCircle className="w-8 h-8 text-orange-400" />}
+                label="Pending Approval"
+                value={stats?.stats?.pendingApprovals || 0}
+                color="text-orange-400"
+                bgColor="bg-gradient-to-br from-orange-500/10 to-orange-600/5"
+              />
+              <StatCard
+                icon={<Activity className="w-8 h-8 text-green-400" />}
+                label="Active Sessions"
+                value={stats?.stats?.activeSessions || 0}
+                color="text-green-400"
+                bgColor="bg-gradient-to-br from-green-500/10 to-green-600/5"
+              />
+              <StatCard
+                icon={<Wifi className="w-8 h-8 text-purple-400" />}
+                label="Connected Devices"
+                value={stats?.stats?.connectedDevices || 0}
+                color="text-purple-400"
+                bgColor="bg-gradient-to-br from-purple-500/10 to-purple-600/5"
+              />
             </div>
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Capture Trend */}
-              <div className="rounded-2xl border border-blue-200 bg-white/90 backdrop-blur p-8 shadow-sm hover:shadow-md transition-all">
-                <h3 className="text-lg font-bold text-blue-900 mb-6 flex items-center gap-2" style={{ fontFamily: DESIGN_SYSTEM.typography.headingFont }}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-blue-200 bg-gradient-to-br from-white/95 to-blue-50/50 backdrop-blur p-8 shadow-sm hover:shadow-md transition-all group"
+              >
+                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent mb-8 flex items-center gap-2" style={{ fontFamily: DESIGN_SYSTEM.typography.headingFont }}>
                   📈 CAPTURE TREND
                 </h3>
                 <div className="h-80 flex items-end justify-around gap-2">
                   {[45, 32, 52, 38, 61, 44, 55].map((v, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                    <motion.div
+                      key={i}
+                      className="flex-1 flex flex-col items-center gap-2 group/bar"
+                      initial={{ height: 0 }}
+                      animate={{ height: '100%' }}
+                      transition={{ delay: i * 0.1 }}
+                    >
                       <div
-                        className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg opacity-70 group-hover:opacity-100 transition-all duration-300 shadow-md"
-                        style={{ height: `${(v / 61) * 100}%` }}
+                        className="w-full bg-gradient-to-t from-blue-600 via-blue-400 to-cyan-300 rounded-t-lg opacity-70 group-hover/bar:opacity-100 transition-all duration-300 shadow-md hover:shadow-lg"
+                        style={{
+                          height: `${(v / 61) * 100}%`,
+                          filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))'
+                        }}
                       />
                       <span className="text-xs font-semibold text-blue-700">{['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'][i]}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-                <div className="mt-6 text-xs text-blue-600 font-medium">
-                  Avg: {((45 + 32 + 52 + 38 + 61 + 44 + 55) / 7) | 0} captures/day
+                <div className="mt-8 text-sm text-blue-600 font-medium px-4 py-3 rounded-lg bg-blue-50/50 border border-blue-100">
+                  <span className="font-bold">Avg:</span> {((45 + 32 + 52 + 38 + 61 + 44 + 55) / 7) | 0} captures/day
                 </div>
-              </div>
+              </motion.div>
 
               {/* Response Times */}
-              <div className="rounded-2xl border border-blue-200 bg-white/90 backdrop-blur p-8 shadow-sm hover:shadow-md transition-all">
-                <h3 className="text-lg font-bold text-blue-900 mb-6 flex items-center gap-2" style={{ fontFamily: DESIGN_SYSTEM.typography.headingFont }}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="rounded-2xl border border-blue-200 bg-gradient-to-br from-white/95 to-blue-50/50 backdrop-blur p-8 shadow-sm hover:shadow-md transition-all"
+              >
+                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent mb-8 flex items-center gap-2" style={{ fontFamily: DESIGN_SYSTEM.typography.headingFont }}>
                   ⏱️ RESPONSE TIMES
                 </h3>
                 <div className="space-y-6">
                   {[
-                    { label: 'Average', time: 45, color: '#3B82F6' },
-                    { label: 'Peak', time: 120, color: '#D97706' },
-                    { label: 'Minimum', time: 5, color: '#10B981' },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <div className="flex justify-between mb-3">
-                        <span className="text-sm font-semibold text-blue-900">{item.label}</span>
-                        <span className="text-sm font-mono text-blue-600">{item.time}s</span>
+                    { label: 'Average', time: 45, color: '#3B82F6', icon: '○' },
+                    { label: 'Peak', time: 120, color: '#D97706', icon: '△' },
+                    { label: 'Minimum', time: 5, color: '#10B981', icon: '■' },
+                  ].map((item, idx) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + idx * 0.1 }}
+                    >
+                      <div className="flex justify-between mb-3 items-center">
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: item.color }} className="text-lg">{item.icon}</span>
+                          <span className="text-sm font-semibold text-blue-900">{item.label}</span>
+                        </div>
+                        <span className="text-sm font-mono font-bold" style={{ color: item.color }}>{item.time}s</span>
                       </div>
-                      <div className="h-3 bg-blue-100 rounded-full overflow-hidden">
-                        <div
+                      <div className="h-3 bg-gradient-to-r from-blue-100 to-blue-50 rounded-full overflow-hidden border border-blue-100">
+                        <motion.div
                           className="h-full transition-all duration-500 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(item.time / 120) * 100}%` }}
+                          transition={{ delay: 0.3 + idx * 0.1, duration: 0.8 }}
                           style={{
-                            width: `${(item.time / 120) * 100}%`,
                             background: `linear-gradient(90deg, ${item.color}, ${item.color}dd)`,
                             boxShadow: `0 0 12px ${item.color}60`
                           }}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </>
         )}
