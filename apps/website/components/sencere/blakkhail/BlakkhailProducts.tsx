@@ -131,20 +131,26 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
 
       <div className="relative max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="mb-16 lg:mb-24">
-          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-gray-400 mb-4">
+        <div className="mb-20 lg:mb-32">
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.35em] text-gray-400 mb-6">
             Vault open
           </p>
           <h2
-            className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase leading-tight tracking-tighter mb-6"
+            className="text-6xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter mb-8"
             style={{
               color: '#C4A369',
-              textShadow: '0 4px 20px rgba(0, 0, 0, 0.6), 0 0 30px rgba(196, 163, 105, 0.15)'
+              textShadow: `
+                0 4px 30px rgba(0, 0, 0, 0.9),
+                0 0 60px rgba(196, 163, 105, 0.4),
+                0 0 100px rgba(196, 163, 105, 0.15),
+                3px 3px 8px rgba(0, 0, 0, 0.8)
+              `,
+              letterSpacing: '-0.03em'
             }}
           >
             Shop Blakk Hail
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl">
+          <p className="text-gray-300 text-lg max-w-3xl leading-relaxed font-light tracking-wide">
             Authentic pieces built on heritage, culture, and no apologies. Each item represents decades of street credibility.
           </p>
         </div>
