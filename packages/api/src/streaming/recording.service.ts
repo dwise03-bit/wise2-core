@@ -52,7 +52,7 @@ export class RecordingService {
     try {
       // DB logging disabled - streamRecordings model not in schema
       /*
-      await this.db.streamRecordings.create({
+      await // this.db.streamRecordings.create({
         data: {
           id: recordingId,
           jobId,
@@ -145,7 +145,7 @@ export class RecordingService {
       const duration = (endedAt.getTime() - session.startedAt.getTime()) / 1000;
 
       // Finalize recording in database
-      await this.db.streamRecordings.update({
+      await // this.db.streamRecordings.update({
         where: { id: recordingId },
         data: {
           endedAt,
@@ -181,7 +181,7 @@ export class RecordingService {
    */
   async getRecordingMetadata(recordingId: string) {
     try {
-      const recording = await this.db.streamRecordings.findUnique({
+      const recording = await // this.db.streamRecordings.findUnique({
         where: { id: recordingId },
       });
 
@@ -201,7 +201,7 @@ export class RecordingService {
    */
   async listJobRecordings(jobId: string) {
     try {
-      const recordings = await this.db.streamRecordings.findMany({
+      const recordings = await // this.db.streamRecordings.findMany({
         where: { jobId },
         orderBy: { startedAt: 'desc' },
       });
@@ -220,7 +220,7 @@ export class RecordingService {
     const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
     try {
-      const oldRecordings = await this.db.streamRecordings.findMany({
+      const oldRecordings = await // this.db.streamRecordings.findMany({
         where: {
           status: 'completed',
           endedAt: {
@@ -234,7 +234,7 @@ export class RecordingService {
           const s3Key = `recordings/${recording.jobId}/${recording.id}.webm`;
           await this.storage.deleteMedia(s3Key);
 
-          await this.db.streamRecordings.delete({
+          await // this.db.streamRecordings.delete({
             where: { id: recording.id },
           });
 

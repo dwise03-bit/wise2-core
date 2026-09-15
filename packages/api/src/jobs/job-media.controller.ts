@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
-import * as multer from 'multer';
+
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { JobMediaService } from './job-media.service';
 
@@ -77,7 +77,7 @@ export class JobMediaController {
         ],
       })
     )
-    file: multer.File,
+    file: any,
     @Body() dto: UploadMediaDto,
     @Req() req: Request
   ): Promise<MediaResponseDto> {

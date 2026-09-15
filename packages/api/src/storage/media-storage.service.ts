@@ -5,12 +5,12 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
-import * as multer from 'multer';
+
 
 const exec = promisify(child_process.exec);
 
 export interface MediaUploadParams {
-  file: multer.File;
+  file: any;
   jobId: string;
   mediaType: 'photo' | 'video';
   isPublic: boolean;
@@ -71,7 +71,7 @@ export class MediaStorageService {
    * Upload to AWS S3
    */
   private async uploadToS3(
-    file: multer.File,
+    file: any,
     fileName: string,
     isPublic: boolean
   ): Promise<UploadResult> {
@@ -106,7 +106,7 @@ export class MediaStorageService {
    * Upload to local filesystem
    */
   private async uploadToLocal(
-    file: multer.File,
+    file: any,
     fileName: string
   ): Promise<UploadResult> {
     const filePath = path.join(this.localStoragePath, fileName);
@@ -273,7 +273,7 @@ export class MediaStorageService {
    * Generate safe filename with timestamp and hash
    */
   private generateFileName(
-    file: multer.File,
+    file: any,
     jobId: string
   ): string {
     const timestamp = Date.now();
