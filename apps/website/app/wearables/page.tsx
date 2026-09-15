@@ -206,17 +206,13 @@ export default function WearablesPage() {
             <div className="grid grid-cols-6 grid-rows-8 gap-4 auto-rows-[150px]" style={{ perspective: '1200px' }}>
               {/* Hero Card - 3D */}
               <Card3D cardId="hero" index={0} span="col-span-3 row-span-3">
-                <motion.div
-                  className="h-full flex flex-col justify-between"
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                >
+                <div className="h-full flex flex-col justify-between">
                   <div>
                     <motion.div animate={{ scale: hoveredCard === 'hero' ? 1.15 : 1 }} className="text-7xl font-black mb-2" style={{ color: WISE2_COLORS.neon_green }}>347</motion.div>
                     <div className="text-sm tracking-widest" style={{ color: WISE2_COLORS.text_muted }}>TOTAL CAPTURES</div>
                   </div>
                   <motion.div className="h-1" animate={hoveredCard === 'hero' ? { width: '100%' } : { width: '40%' }} style={{ backgroundColor: WISE2_COLORS.neon_green }} transition={{ duration: 0.5 }} />
-                </motion.div>
+                </div>
               </Card3D>
 
               {/* Metric Cards */}
@@ -228,39 +224,27 @@ export default function WearablesPage() {
                 const Icon = m.icon;
                 return (
                   <Card3D key={i} cardId={`metric-${i}`} index={i + 1} span={m.span}>
-                    <motion.div
-                      className="h-full flex flex-col justify-between"
-                      animate={{ y: [0, -4, 0] }}
-                      transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
-                    >
+                    <div className="h-full flex flex-col justify-between">
                       <div className="flex items-center gap-2"><Icon size={16} style={{ color: m.color }} /><span className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</span></div>
                       <motion.div className="text-4xl font-black" style={{ color: m.color }} animate={hoveredCard === `metric-${i}` ? { scale: 1.2 } : { scale: 1 }}>{m.value}</motion.div>
-                    </motion.div>
+                    </div>
                   </Card3D>
                 );
               })}
 
               {/* Live Readout */}
               <Card3D cardId="live" index={4} span="col-span-3 row-span-3">
-                <motion.div
-                  className="space-y-4 h-full flex flex-col justify-between"
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                >
+                <div className="space-y-4 h-full flex flex-col justify-between">
                   <div className="flex items-center justify-between"><div className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_green }}>■ 3D LIVE</div><motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-2 h-2 rounded-full" style={{ backgroundColor: WISE2_COLORS.neon_green }} /></div>
                   <div className="space-y-3">
                     {[{ label: 'COVERAGE', value: '97%', color: WISE2_COLORS.neon_green }, { label: 'HEALTH', value: '100%', color: WISE2_COLORS.neon_cyan }, { label: 'APPROVAL', value: '94%', color: WISE2_COLORS.gold }].map((m) => (<div key={m.label}><div className="text-xs tracking-widest mb-1" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</div><motion.div className="text-2xl font-black" style={{ color: m.color }} animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity, delay: Math.random() }}>{m.value}</motion.div></div>))}
                   </div>
-                </motion.div>
+                </div>
               </Card3D>
 
               {/* Chart */}
               <Card3D cardId="chart" index={5} span="col-span-3 row-span-6">
-                <motion.div
-                  className="flex flex-col justify-between h-full"
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                >
+                <div className="flex flex-col justify-between h-full">
                   <div className="flex items-center gap-2 mb-4"><TrendingUp size={14} style={{ color: WISE2_COLORS.neon_cyan }} /><span className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_cyan }}>3D TREND</span></div>
                   <div className="flex-1 flex items-end justify-around gap-1 mb-4">
                     {[45, 32, 52, 38, 61, 44, 55].map((v, i) => (
@@ -268,7 +252,7 @@ export default function WearablesPage() {
                     ))}
                   </div>
                   <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>46 /day</div>
-                </motion.div>
+                </div>
               </Card3D>
             </div>
           </div>
