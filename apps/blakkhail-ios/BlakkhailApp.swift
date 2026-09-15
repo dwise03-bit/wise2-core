@@ -6,6 +6,7 @@ struct BlakkhailApp: App {
   @StateObject var cartManager = CartManager()
   @StateObject var productManager = ProductManager()
   @StateObject var notificationManager = NotificationManager()
+  @StateObject var wearablesManager = WearablesManager()
 
   var body: some Scene {
     WindowGroup {
@@ -51,6 +52,7 @@ struct BlakkhailApp: App {
     .environmentObject(cartManager)
     .environmentObject(productManager)
     .environmentObject(notificationManager)
+    .environmentObject(wearablesManager)
   }
 }
 
@@ -91,7 +93,7 @@ struct CartItem: Identifiable {
 // MARK: - Auth Manager
 @MainActor
 class AuthManager: ObservableObject {
-  @Published var isAuthenticated = false
+  @Published var isAuthenticated = true  // DEBUG: Skip login for testing
   @Published var currentUser: User?
   @Published var isLoading = false
   @Published var error: String?
@@ -263,4 +265,55 @@ struct Drop: Identifiable, Codable {
   let releaseDate: Date
   let image: String
   let productCount: Int
+}
+
+// MARK: - Wearables Manager
+@MainActor
+class WearablesManager: ObservableObject {
+  @Published var connectedDevices: [WearableDevice] = []
+  @Published var isScanning = false
+  @Published var hasAppleWatch = false
+  @Published var hasAirPods = false
+  @Published var hasFitnessTracker = false
+
+  func scanForWearables() async {
+    isScanning = true
+    defer { isScanning = false }
+
+    // Simulate device discovery
+    await Task.sleep(1_000_000_000) // 1 second
+
+    // Add discovered devices
+    if Bool.random() {
+      connectedDevices.append(WearableDevice(name: "Apple Watch Ultra", type: "watch", isConnected: true))
+      hasAppleWatch = true
+    }
+
+    if Bool.random() {
+      connectedDevices.append(WearableDevice(name: "AirPods Pro", type: "earbuds", isConnected: true))
+      hasAirPods = true
+    }
+
+    if Bool.random() {
+      connectedDevices.append(WearableDevice(name: "Fitness Tracker", type: "tracker", isConnected: true))
+      hasFitnessTracker = true
+    }
+  }
+
+  func sendNotificationToWearable(_ device: WearableDevice, message: String) {
+    print("📱 Sending to \(device.name): \(message)")
+  }
+
+  func syncCartToWatch() {
+    if let watch = connectedDevices.first(where: { $0.type == "watch" }) {
+      sendNotificationToWearable(watch, message: "Cart synced to Apple Watch")
+    }
+  }
+}
+
+struct WearableDevice: Identifiable {
+  let id = UUID()
+  let name: String
+  let type: String // "watch", "earbuds", "tracker"
+  let isConnected: Bool
 }

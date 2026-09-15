@@ -5,7 +5,7 @@ struct ProductCatalogView: View {
   @State private var searchText = ""
   @State private var selectedCategory = "All"
 
-  let categories = ["All", "Tees", "Hoodies", "Hats", "Accessories"]
+  let categories = ["All", "Wearables", "Tees", "Hoodies", "Hats", "Accessories"]
 
   var filteredProducts: [Product] {
     var products = productManager.products
@@ -150,7 +150,7 @@ struct ProductCardView: View {
           )
         )
         .frame(height: 200)
-        .cornerRadius(8, corners: [.topLeft, .topRight])
+        .cornerRadius(8)
 
       // Info
       VStack(alignment: .leading, spacing: 8) {
@@ -178,7 +178,7 @@ struct ProductCardView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(12)
       .background(Color.blakkhailNavy.opacity(0.4))
-      .cornerRadius(8, corners: [.bottomLeft, .bottomRight])
+      .cornerRadius(8)
     }
     .overlay(
       RoundedRectangle(cornerRadius: 8)
