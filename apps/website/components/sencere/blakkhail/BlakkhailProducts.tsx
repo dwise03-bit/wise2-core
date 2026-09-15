@@ -222,11 +222,14 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
                       ${product.basePrice.toFixed(2)}
                     </span>
                     <button
-                      className="text-xs font-bold uppercase tracking-wider transition-all duration-300 px-4 py-2"
+                      className="text-xs font-bold uppercase tracking-wider transition-all duration-300 px-5 py-2.5"
                       style={{
                         backgroundColor: hoveredId === product.id ? '#00FF7F' : 'transparent',
                         color: hoveredId === product.id ? '#050607' : '#00FF7F',
-                        border: '1px solid #00FF7F'
+                        border: '2px solid #00FF7F',
+                        boxShadow: hoveredId === product.id
+                          ? '0 0 30px rgba(0, 255, 127, 0.6), inset 0 0 10px rgba(0, 255, 127, 0.2)'
+                          : '0 0 15px rgba(0, 255, 127, 0.3)'
                       }}
                     >
                       View
@@ -243,23 +246,26 @@ export function BlakkhailProducts({ category = null, showVaultInline = true }: B
           <div className="text-center">
             <Link
               href={checkoutPath(host)}
-              className="inline-block px-10 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300"
+              className="inline-block px-12 py-6 text-sm font-black uppercase tracking-widest transition-all duration-400 relative group"
               style={{
                 backgroundColor: '#00FF7F',
                 color: '#050607',
-                boxShadow: '0 0 30px rgba(0, 255, 127, 0.3)'
+                boxShadow: '0 0 40px rgba(0, 255, 127, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)',
+                border: '2px solid #00FF7F'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(0, 255, 127, 0.6), 0 10px 30px rgba(0, 0, 0, 0.4)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 0 80px rgba(0, 255, 127, 0.8), 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 255, 127, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 127, 0.3)';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 127, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              View Cart
-              <span className="ml-2">→</span>
+              <span className="relative z-10 flex items-center gap-3 justify-center">
+                View Cart
+                <span className="text-xl">→</span>
+              </span>
             </Link>
           </div>
         )}

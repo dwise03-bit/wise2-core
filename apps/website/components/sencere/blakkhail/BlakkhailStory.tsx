@@ -29,18 +29,24 @@ export function BlakkhailStory() {
         </div>
 
         {/* Right - Premium Content */}
-        <div className="relative flex flex-col justify-center px-8 py-16 lg:px-16 lg:py-0 z-10 bg-black lg:bg-transparent order-1 lg:order-2">
-          <div className="space-y-12 max-w-2xl">
+        <div className="relative flex flex-col justify-center px-8 py-20 lg:px-20 lg:py-0 z-10 bg-black lg:bg-transparent order-1 lg:order-2">
+          <div className="space-y-16 max-w-2xl">
             {/* Header */}
             <div className="animate-[fadeInUp_0.8s_ease-out]">
-              <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-gray-400 mb-6">
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.35em] text-gray-400 mb-8">
                 The Story
               </p>
               <h2
-                className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase leading-tight tracking-tighter"
+                className="text-6xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter"
                 style={{
                   color: '#C4A369',
-                  textShadow: '0 4px 20px rgba(0, 0, 0, 0.6)'
+                  textShadow: `
+                    0 4px 30px rgba(0, 0, 0, 0.9),
+                    0 0 60px rgba(196, 163, 105, 0.4),
+                    0 0 100px rgba(196, 163, 105, 0.15),
+                    3px 3px 8px rgba(0, 0, 0, 0.8)
+                  `,
+                  letterSpacing: '-0.03em'
                 }}
               >
                 Heritage<br />Streetwear<br />Since 1994
@@ -48,17 +54,17 @@ export function BlakkhailStory() {
             </div>
 
             {/* Main Narrative */}
-            <div className="space-y-6 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
-              <p className="text-lg sm:text-xl leading-relaxed text-gray-300 font-light">
+            <div className="space-y-8 animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
+              <p className="text-lg sm:text-xl leading-relaxed lg:leading-loose text-gray-300 font-light tracking-wide">
                 Blakk Hail was born from a vision to create authentic streetwear that tells a story. For over 30 years, we've been designing pieces that capture the essence of street culture and original fashion.
               </p>
-              <p className="text-lg sm:text-xl leading-relaxed text-gray-300 font-light">
+              <p className="text-lg sm:text-xl leading-relaxed lg:leading-loose text-gray-300 font-light tracking-wide">
                 Every piece in our collection carries the legacy of those who came before. We don't just make clothes—we create statements. We design for the culture. We build for the future.
               </p>
             </div>
 
             {/* Core Values - Premium Cards */}
-            <div className="space-y-6 pt-8 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
+            <div className="space-y-8 pt-12 animate-[fadeInUp_0.8s_ease-out_0.4s_forwards]">
               {[
                 { label: 'ORIGINAL', text: 'Designed with authenticity at the core' },
                 { label: 'LEGACY', text: 'Three decades of streetwear excellence' },
@@ -66,13 +72,13 @@ export function BlakkhailStory() {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="relative pl-6 border-l-2 transition-all duration-300 hover:pl-8"
-                  style={{ borderColor: '#C4A369' }}
+                  className="relative pl-8 border-l-4 transition-all duration-400 hover:pl-10 hover:border-opacity-100 group"
+                  style={{ borderColor: '#C4A369', borderOpacity: 0.7 }}
                 >
-                  <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#C4A369' }}>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] mb-3" style={{ color: '#C4A369' }}>
                     {item.label}
                   </p>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-gray-300 leading-relaxed text-sm font-light group-hover:text-gray-200 transition-colors">
                     {item.text}
                   </p>
                 </div>
@@ -80,23 +86,25 @@ export function BlakkhailStory() {
             </div>
 
             {/* CTA */}
-            <div className="pt-4 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
+            <div className="pt-8 animate-[fadeInUp_0.8s_ease-out_0.6s_forwards]">
               <a
                 href="#collection"
-                className="inline-block text-sm font-bold uppercase tracking-wider transition-all duration-300"
+                className="inline-block text-sm font-black uppercase tracking-[0.15em] transition-all duration-300 px-6 py-3"
                 style={{
                   color: '#00D9FF',
                   textDecoration: 'none',
                   borderBottom: '2px solid #00D9FF',
-                  paddingBottom: '4px'
+                  boxShadow: '0 0 20px rgba(0, 217, 255, 0.2)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = '#00FF7F';
                   e.currentTarget.style.borderBottomColor = '#00FF7F';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 127, 0.4), 0 0 20px rgba(0, 255, 127, 0.2)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = '#00D9FF';
                   e.currentTarget.style.borderBottomColor = '#00D9FF';
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 217, 255, 0.2)';
                 }}
               >
                 Explore Collection →
