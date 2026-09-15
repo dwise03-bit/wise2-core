@@ -17,8 +17,14 @@ export default function LilLizzyPage() {
 
   return (
     <main className="bg-gradient-to-br from-[#1a0033] via-[#2d0052] to-[#0a001a] min-h-screen text-white overflow-hidden">
-      {/* Animated background */}
+      {/* Animated background with hero image */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <img
+          src="/lil-lizzy/lizzy-hero.jpg"
+          alt="Lil Lizzy Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-10"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a001a]/50 to-[#0a001a]/80"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#FF6B9D] rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-[#00D9FF] rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-[#FFD700] rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
@@ -52,11 +58,13 @@ export default function LilLizzyPage() {
             transition={{ duration: 0.8 }}
             className="grid md:grid-cols-2 gap-12 items-center"
           >
-            {/* Left: Product Image Placeholder */}
+            {/* Left: Product Image */}
             <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-[#FF6B9D]/30 to-[#00D9FF]/30 rounded-2xl border border-[#00D9FF]/50 flex items-center justify-center">
-                <div className="text-6xl">📱</div>
-              </div>
+              <img
+                src="/lil-lizzy/boom-tag.jpg"
+                alt="Lil Lizzy Boom Tag"
+                className="w-full h-auto rounded-2xl border-2 border-[#FF6B9D]/50 shadow-2xl"
+              />
             </div>
 
             {/* Right: Features */}
@@ -163,13 +171,21 @@ export default function LilLizzyPage() {
             {activeTab === "gallery" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <h3 className="text-2xl font-bold mb-6">Gallery</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {["Hero View", "Top Down", "UI Preview", "In Hand", "Boom Stars", "Trading Screen"].map((title, i) => (
-                    <div key={i} className="aspect-square bg-gradient-to-br from-[#FF6B9D]/20 to-[#00D9FF]/20 rounded-lg border border-[#00D9FF]/30 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">📷</div>
-                        <p className="text-sm text-white/60">{title}</p>
-                      </div>
+                <div className="space-y-6">
+                  {[
+                    { img: "lizzy-hero.jpg", title: "Hero View" },
+                    { img: "boom-tag.jpg", title: "Boom Tag Device" },
+                    { img: "style-board.jpg", title: "Style Board" },
+                    { img: "lookbook-strip.jpg", title: "Lookbook" },
+                    { img: "spec-board.jpg", title: "Technical Specs" },
+                    { img: "lizzy-sheet.jpg", title: "Character Sheet" },
+                  ].map((item, i) => (
+                    <div key={i} className="overflow-hidden rounded-lg border border-[#00D9FF]/30">
+                      <img
+                        src={`/lil-lizzy/${item.img}`}
+                        alt={item.title}
+                        className="w-full h-auto hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
                   ))}
                 </div>
