@@ -58,9 +58,9 @@
     <div style="text-align: center; margin-bottom: 40px;">
       <p class="header-text">Select your market:</p>
       <div class="market-selector">
-        <button class="market-btn active" onclick="loadMarket('nc')">🏠 North Carolina</button>
-        <button class="market-btn" onclick="loadMarket('nyc')">🗽 New York City</button>
-        <button class="market-btn" onclick="loadMarket('li')">🌊 Long Island</button>
+        <button class="market-btn active" onclick="this.parentElement.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadMarket('nc')">🏠 North Carolina</button>
+        <button class="market-btn" onclick="this.parentElement.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadMarket('nyc')">🗽 New York City</button>
+        <button class="market-btn" onclick="this.parentElement.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); loadMarket('li')">🌊 Long Island</button>
       </div>
     </div>
 
@@ -99,9 +99,12 @@
     };
 
     function loadMarket(market) {
-      document.querySelectorAll('.market-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      
+      const buttons = document.querySelectorAll('.market-btn');
+      const marketMap = { nc: 0, nyc: 1, li: 2 };
+      if (marketMap[market] !== undefined && buttons[marketMap[market]]) {
+        buttons[marketMap[market]].classList.add('active');
+      }
+
       const m = markets[market];
       const html = `<h2 style="color: var(--wise-green); margin-bottom: 24px;">${m.name} Training Materials</h2>
         <div class="hub-grid">
