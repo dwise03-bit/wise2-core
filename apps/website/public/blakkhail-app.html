@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Blakk Hail">
+    <meta name="theme-color" content="#050607">
+    <title>Blakk Hail</title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23050607' width='180' height='180'/><text x='90' y='100' font-size='60' font-weight='bold' fill='%23C4A369' text-anchor='middle' font-family='sans-serif'>BH</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #050607;
+            --cyan: #00D9FF;
+            --neon: #00FF7F;
+            --gold: #C4A369;
+            --dark-bg: #0a0a0c;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--navy);
+            border-top: 1px solid var(--gold);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+            padding: 8px 0;
+            safe-area-inset-bottom: 20px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            padding: 12px 20px;
+            font-size: 12px;
+            text-align: center;
+            flex: 1;
+            transition: all 0.3s;
+        }
+
+        nav button.active {
+            color: var(--cyan);
+            border-top: 3px solid var(--cyan);
+        }
+
+        /* Screen Layout */
+        .screen {
+            display: none;
+            padding: 20px;
+            padding-bottom: 120px;
+            min-height: 100vh;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-shadow:
+                0 0 10px rgba(196, 163, 105, 0.3),
+                0 0 20px rgba(196, 163, 105, 0.2),
+                0 0 30px rgba(196, 163, 105, 0.1),
+                0 0 40px rgba(0, 217, 255, 0.1);
+            margin: 20px 0;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--cyan);
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        /* Product Grid */
+        .products {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: rgba(5, 6, 7, 0.5);
+            border: 1px solid var(--gold);
+            padding: 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .product-card h3 {
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .product-card .price {
+            color: var(--cyan);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon);
+            font-size: 2rem;
+        }
+
+        /* Buttons */
+        button.cta {
+            background: linear-gradient(135deg, var(--gold), var(--cyan));
+            color: var(--navy);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        button.cta:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* Cart Badge */
+        .cart-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--neon);
+            color: var(--navy);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Info Section */
+        .info-card {
+            background: rgba(196, 163, 105, 0.05);
+            border-left: 3px solid var(--gold);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .info-card h3 {
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .info-card p {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        /* Form Inputs */
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(196, 163, 105, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            nav button {
+                font-size: 11px;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Screen -->
+    <div class="screen active" id="home">
+        <div class="hero">
+            <h1>HERITAGE</h1>
+            <p>TAKE CONTROL</p>
+            <p style="font-size: 0.9rem; color: var(--neon);">BLAKKHAIL STREETWEAR</p>
+            <button class="cta" onclick="switchScreen('shop')">SHOP COLLECTION</button>
+        </div>
+        <div style="margin-top: 40px;">
+            <div class="info-card">
+                <h3>FEATURED DROP</h3>
+                <p>New premium collection available now. Limited quantities.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Screen -->
+    <div class="screen" id="shop">
+        <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 2rem;">SHOP BLAKK HAIL</h2>
+        <div class="products">
+            <div class="product-card">
+                <div class="product-card img">👕</div>
+                <h3>Premium Tee</h3>
+                <p style="font-size: 0.85rem; color: #999;">Classic streetwear</p>
+                <div class="price">$49</div>
+                <button class="cta" style="width: 100%; margin-top: 10px; padding: 8px;" onclick="addToCart()">ADD</button>
+            </div>
+            <div class="product-card">
+                <div class="product-card img">🧥</div>
+                <h3>Hoodie</h3>
+                <p style="font-size: 0.85rem; color: #999;">Heavyweight fabric</p>
+                <div class="price">$89</div>
+                <button class="cta" style="width: 100%; margin-top: 10px; padding: 8px;" onclick="addToCart()">ADD</button>
+            </div>
+            <div class="product-card">
+                <div class="product-card img">🧢</div>
+                <h3>Cap</h3>
+                <p style="font-size: 0.85rem; color: #999;">Embroidered logo</p>
+                <div class="price">$29</div>
+                <button class="cta" style="width: 100%; margin-top: 10px; padding: 8px;" onclick="addToCart()">ADD</button>
+            </div>
+            <div class="product-card">
+                <div class="product-card img">🕶️</div>
+                <h3>Accessories</h3>
+                <p style="font-size: 0.85rem; color: #999;">Complete your look</p>
+                <div class="price">$39</div>
+                <button class="cta" style="width: 100%; margin-top: 10px; padding: 8px;" onclick="addToCart()">ADD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Screen -->
+    <div class="screen" id="story">
+        <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 2rem;">HERITAGE STREETWEAR SINCE 1994</h2>
+        <p style="color: var(--cyan); margin-bottom: 20px;">Building empires. Changing culture. Together.</p>
+
+        <div class="info-card">
+            <h3>ORIGINAL</h3>
+            <p>Born from the streets. Built on authenticity. BLAKKHAIL represents the raw energy of streetwear culture from day one.</p>
+        </div>
+
+        <div class="info-card">
+            <h3>LEGACY</h3>
+            <p>Three decades of innovation. Iconic pieces that defined generations. Our legacy is written in every stitch.</p>
+        </div>
+
+        <div class="info-card">
+            <h3>CULTURE</h3>
+            <p>More than fashion. We're a movement. BLAKKHAIL is where style meets substance, where culture comes alive.</p>
+        </div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--gold);">
+            <p style="text-align: center; color: var(--neon); font-size: 0.9rem; font-weight: bold;">Est. 1994 | Still Going Strong</p>
+        </div>
+    </div>
+
+    <!-- Cart Screen -->
+    <div class="screen" id="cart">
+        <div style="position: relative;">
+            <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 2rem;">YOUR CART</h2>
+            <span id="cart-count" class="cart-badge" style="position: absolute; top: -10px; right: 0; display: none;">0</span>
+        </div>
+
+        <div id="cart-items" style="margin-bottom: 20px;">
+            <p style="text-align: center; color: #999;">Your cart is empty</p>
+        </div>
+
+        <div class="info-card">
+            <p><strong>Subtotal:</strong> <span style="color: var(--cyan);">$0</span></p>
+            <p><strong>Tax (8%):</strong> <span style="color: var(--neon);">$0</span></p>
+            <p style="font-size: 1.2rem; margin-top: 10px;"><strong>Total:</strong> <span style="color: var(--gold);">$0</span></p>
+        </div>
+
+        <button class="cta" onclick="switchScreen('checkout')">PROCEED TO CHECKOUT</button>
+        <button class="cta" style="background: rgba(196, 163, 105, 0.2); margin-top: 10px;" onclick="clearCart()">CLEAR CART</button>
+    </div>
+
+    <!-- Account Screen -->
+    <div class="screen" id="account">
+        <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 2rem;">ACCOUNT</h2>
+
+        <div class="info-card">
+            <h3>LOGIN</h3>
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
+            <button class="cta">SIGN IN</button>
+        </div>
+
+        <div class="info-card">
+            <h3>CREATE ACCOUNT</h3>
+            <input type="text" placeholder="Display Name">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
+            <button class="cta">CREATE ACCOUNT</button>
+        </div>
+
+        <div class="info-card">
+            <h3>PREFERENCES</h3>
+            <label style="display: flex; align-items: center; cursor: pointer; margin: 10px 0;">
+                <input type="checkbox" checked style="width: auto; margin-right: 10px;">
+                <span>Notify me about new drops</span>
+            </label>
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" checked style="width: auto; margin-right: 10px;">
+                <span>Marketing emails</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <button class="active" onclick="switchScreen('home')">HOME</button>
+        <button onclick="switchScreen('shop')">SHOP</button>
+        <button onclick="switchScreen('story')">STORY</button>
+        <button onclick="switchScreen('cart')">CART</button>
+        <button onclick="switchScreen('account')">ACCOUNT</button>
+    </nav>
+
+    <script>
+        let cartCount = 0;
+
+        function switchScreen(id) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('nav button').forEach((btn, i) => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase() === id.toUpperCase());
+            });
+        }
+
+        function addToCart() {
+            cartCount++;
+            document.getElementById('cart-count').textContent = cartCount;
+            document.getElementById('cart-count').style.display = 'flex';
+            alert('Added to cart! (' + cartCount + ' items)');
+        }
+
+        function clearCart() {
+            cartCount = 0;
+            document.getElementById('cart-count').style.display = 'none';
+            document.getElementById('cart-items').innerHTML = '<p style="text-align: center; color: #999;">Your cart is empty</p>';
+        }
+    </script>
+</body>
+</html>
