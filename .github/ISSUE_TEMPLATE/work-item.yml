@@ -1,0 +1,23 @@
+name: Work item
+description: Track a focused WISE² Core task
+title: "[TYPE]: "
+labels: []
+body:
+  - type: textarea
+    attributes:
+      label: Outcome
+      description: What will be true when this is done?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Scope
+      description: List the systems or files this affects.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Verification
+      description: How will we confirm it works?
+    validations:
+      required: true
