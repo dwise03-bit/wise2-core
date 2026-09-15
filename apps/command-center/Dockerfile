@@ -1,6 +1,7 @@
 # Command Center Dashboard - Multi-stage build
 FROM node:20-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache python3 make g++
 
 # The workspace declares pnpm 8, whose self-managed Alpine binary is not
 # available on linux-x64-musl. Keep the image on the compatible pnpm 9 binary
