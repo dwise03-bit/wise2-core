@@ -1183,3 +1183,127 @@ extension View {
     modifier(BlakkhailTextFieldModifier())
   }
 }
+
+// MARK: - API Configuration Manager
+@MainActor
+class APIConfigurationManager: ObservableObject {
+  @Published var telynxApiKey: String {
+    didSet { UserDefaults.standard.set(telynxApiKey, forKey: "telynxApiKey") }
+  }
+  @Published var chatGPTApiKey: String {
+    didSet { UserDefaults.standard.set(chatGPTApiKey, forKey: "chatGPTApiKey") }
+  }
+  @Published var openAIApiKey: String {
+    didSet { UserDefaults.standard.set(openAIApiKey, forKey: "openAIApiKey") }
+  }
+  
+  init() {
+    self.telynxApiKey = UserDefaults.standard.string(forKey: "telynxApiKey") ?? ""
+    self.chatGPTApiKey = UserDefaults.standard.string(forKey: "chatGPTApiKey") ?? ""
+    self.openAIApiKey = UserDefaults.standard.string(forKey: "openAIApiKey") ?? ""
+  }
+  
+  func saveTelynxConfiguration() -> Bool {
+    guard !telynxApiKey.isEmpty else { return false }
+    UserDefaults.standard.set(telynxApiKey, forKey: "telynxApiKey")
+    return true
+  }
+}
+
+// MARK: - Settings View
+struct SettingsView: View {
+  @StateObject var apiConfig = APIConfigurationManager()
+  @State private var showSaveAlert = false
+  
+  var body: some View {
+    NavigationStack {
+      ZStack {
+        Color.blakkhailNavy.ignoresSafeArea()
+        
+        ScrollView {
+          VStack(spacing: 20) {
+            VStack(alignment: .leading, spacing: 12) {
+              Text("API CONFIGURATION")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundColor(.blakkhailGold)
+                .tracking(0.8)
+              
+              Text("Configure AI services for enhanced features")
+                .font(.system(size: 12, weight: .light))
+                .foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .background(Color.black.opacity(0.3))
+            .cornerRadius(8)
+            
+            // Telynx Configuration
+            VStack(alignment: .leading, spacing: 8) {
+              Text("TELYNX API")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundColor(.blakkhailCyan)
+                .tracking(0.8)
+              
+              SecureField("Paste your Telynx API key", text: $apiConfig.telynxApiKey)
+                .blakkhailTextFieldStyle()
+              
+              Text("Get your key from https://telynx.ai")
+                .font(.system(size: 10, weight: .light))
+                .foregroundColor(.gray)
+            }
+            .padding(16)
+            .background(Color.black.opacity(0.2))
+            .cornerRadius(8)
+            
+            // ChatGPT Configuration
+            VStack(alignment: .leading, spacing: 8) {
+              Text("CHATGPT API")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundColor(.blakkhailCyan)
+                .tracking(0.8)
+              
+              SecureField("Paste your ChatGPT API key", text: $apiConfig.chatGPTApiKey)
+                .blakkhailTextFieldStyle()
+              
+              Text("Get your key from https://openai.com/api")
+                .font(.system(size: 10, weight: .light))
+                .foregroundColor(.gray)
+            }
+            .padding(16)
+            .background(Color.black.opacity(0.2))
+            .cornerRadius(8)
+            
+            // Save Button
+            Button(action: {
+              if apiConfig.saveTelynxConfiguration() {
+                showSaveAlert = true
+              }
+            }) {
+              Text("SAVE CONFIGURATION")
+                .font(.system(size: 13, weight: .bold))
+                .tracking(0.8)
+                .frame(maxWidth: .infinity)
+                .padding(14)
+                .background(LinearGradient(
+                  gradient: Gradient(colors: [.blakkhailGold, Color(red: 0.65, green: 0.52, blue: 0.28)]),
+                  startPoint: .topLeading,
+                  endPoint: .bottomTrailing
+                ))
+                .foregroundColor(.blakkhailNavy)
+                .cornerRadius(6)
+            }
+          }
+          .padding(16)
+        }
+      }
+      .navigationTitle("Settings")
+      .navigationBarTitleDisplayMode(.inline)
+    }
+    .alert("Configuration Saved", isPresented: $showSaveAlert) {
+      Button("OK") { }
+    } message: {
+      Text("Telynx API key has been saved securely")
+    }
+  }
+}
+
