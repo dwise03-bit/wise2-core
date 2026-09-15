@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WISE² Status Active (Neon Green) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- Neon green (#00FF7F) -->
+    <solid android:color="#FF00FF7F" />
+    <!-- Optional glow shadow -->
+    <stroke android:width="2dp" android:color="#6600FF7F" />
+</shape>

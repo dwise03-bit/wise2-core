@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WISE² Status Active Animated (Neon Green Pulse) -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/status_active">
+    <target
+        android:name="status_circle"
+        android:animation="@animator/pulse_glow" />
+</animated-vector>

@@ -1,14 +1,11 @@
-import SecondBrainPage from './second-brain/page';
+'use client';
 
-export const metadata = {
-  title: 'WISE² Command Center',
-  description: 'WISE² business memory, context, and operating signals',
-};
+import { CommandCenterDemoPage } from '@/components/CommandCenter/DemoPage';
 
 export default function Home() {
   return (
     <main className="w-full h-screen">
-      <SecondBrainPage />
+      <CommandCenterDemoPage />
     </main>
   );
 }

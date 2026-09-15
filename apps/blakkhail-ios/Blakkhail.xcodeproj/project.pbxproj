@@ -1,20 +1,42 @@
-// !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 52;
+	classes = {};
+	objectVersion = 56;
 	objects = {
-		/* Begin PBXBuildFile section */
-		000001 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 000002; };
-		/* End PBXBuildFile section */
-		/* Begin PBXFileReference section */
-		000003 /* Blakkhail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blakkhail.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		000002 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		/* End PBXFileReference section */
-		/* Begin PBXProject section */
-		000004 /* Project object */ = {isa = PBXProject; buildConfigurationList = 000005; compatibilityVersion = "Xcode 12.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = 000006; projectDirPath = ""; projectRoot = ""; targets = (000007); };
-		/* End PBXProject section */
+		OBJ_100 /* BlakkhailApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9; };
+		OBJ_101 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11; };
+		OBJ_102 /* ProductCatalogView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_12; };
+		OBJ_103 /* ProductDetailView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_13; };
+		OBJ_104 /* CartView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_14; };
+		OBJ_105 /* BrandStoryView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_15; };
+		OBJ_106 /* AuthenticationView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_16; };
+		OBJ_107 /* AccountView.swift */ = {isa = PBXBuildFile; fileRef = OBJ_17; };
+		OBJ_108 /* SwiftUI.framework */ = {isa = PBXBuildFile; fileRef = OBJ_31; };
+		OBJ_109 /* UIKit.framework */ = {isa = PBXBuildFile; fileRef = OBJ_32; };
+		OBJ_110 /* Foundation.framework */ = {isa = PBXBuildFile; fileRef = OBJ_33; };
+		OBJ_9 /* BlakkhailApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlakkhailApp.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_11 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/HomeView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_12 /* ProductCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ProductCatalogView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_13 /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ProductDetailView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_14 /* CartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CartView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_15 /* BrandStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/BrandStoryView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_16 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AuthenticationView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_17 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AccountView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_20 /* Blakkhail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blakkhail.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		OBJ_31 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		OBJ_32 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		OBJ_33 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		OBJ_41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
+		OBJ_50 /* PBXFrameworksBuildPhase */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 0; files = (OBJ_108, OBJ_109, OBJ_110); runOnlyForDeploymentPostprocessing = 0; };
+		OBJ_60 /* Blakkhail */ = {isa = PBXNativeTarget; buildConfigurationList = OBJ_70; buildPhases = (OBJ_80, OBJ_50); buildRules = (); dependencies = (); name = Blakkhail; productName = Blakkhail; productReference = OBJ_20; productType = "com.apple.product-type.application"; };
+		OBJ_80 /* PBXSourcesBuildPhase */ = {isa = PBXSourcesBuildPhase; buildActionMask = 0; files = (OBJ_100, OBJ_101, OBJ_102, OBJ_103, OBJ_104, OBJ_105, OBJ_106, OBJ_107); runOnlyForDeploymentPostprocessing = 0; };
+		OBJ_1 /* PBXProject */ = {isa = PBXProject; buildConfigurationList = OBJ_2; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = OBJ_1; projectDirPath = ""; projectRoot = ""; targets = (OBJ_60); };
+		OBJ_2 /* Build configuration list for PBXProject */ = {isa = XCConfigurationList; buildConfigurations = (OBJ_3, OBJ_4); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		OBJ_3 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.9;}; name = Debug; };
+		OBJ_4 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.9; VALIDATE_PRODUCT = YES;}; name = Release; };
+		OBJ_70 /* Build configuration list for PBXNativeTarget */ = {isa = XCConfigurationList; buildConfigurations = (OBJ_71, OBJ_72); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		OBJ_71 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_IDENTIFIER = "com.sencere.blakkhail"; CODE_SIGN_STYLE = Automatic; INFOPLIST_FILE = Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Blakk Hail"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait; INFOPLIST_KEY_UIUserInterfaceStyle = Dark; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = "com.sencere.blakkhail"; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.9; TARGETED_DEVICE_FAMILY = "1,2";}; name = Debug; };
+		OBJ_72 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_IDENTIFIER = "com.sencere.blakkhail"; CODE_SIGN_STYLE = Automatic; INFOPLIST_FILE = Info.plist; INFOPLIST_KEY_CFBundleDisplayName = "Blakk Hail"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait; INFOPLIST_KEY_UIUserInterfaceStyle = Dark; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 1.0; PRODUCT_BUNDLE_IDENTIFIER = "com.sencere.blakkhail"; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.9; TARGETED_DEVICE_FAMILY = "1,2";}; name = Release; };
 	};
-	rootObject = 000004;
+	rootObject = OBJ_1;
 }

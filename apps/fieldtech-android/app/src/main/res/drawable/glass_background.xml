@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WISE² v2.0 Glassmorphic Background Drawable -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Base semi-transparent glass layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <!-- Navy glass: 25% opacity overlay on dark background -->
+            <solid android:color="#401A1D2E" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- Subtle cyan border highlight (top-left) -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:width="1dp" android:color="#2600D9FF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { SparklesIcon } from '@heroicons/react/24/outline';
+import { Sparkles } from 'lucide-react';
 
 const GPTWidget = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +44,7 @@ const GPTWidget = () => {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <SparklesIcon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <Sparkles size={24} className="text-blue-600 dark:text-blue-400" />
           <div className="flex-1">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               {gptData.name}

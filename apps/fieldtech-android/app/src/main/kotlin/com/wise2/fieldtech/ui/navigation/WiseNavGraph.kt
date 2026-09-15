@@ -30,10 +30,15 @@ import com.wise2.fieldtech.ui.screens.report.JobReportScreen
 import com.wise2.fieldtech.ui.screens.report.JobReportViewModel
 import com.wise2.fieldtech.ui.screens.settings.SettingsScreen
 import com.wise2.fieldtech.ui.screens.settings.SettingsViewModel
+import com.wise2.fieldtech.util.HapticFeedbackManager
 import kotlinx.coroutines.launch
 
 @Composable
-fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
+fun WiseNavGraph(
+    navController: NavHostController,
+    container: AppContainer,
+    haptics: HapticFeedbackManager? = null,
+) {
     // Demo mode: always go to Home, skip login
     val startDestination = Destination.Home.route
 

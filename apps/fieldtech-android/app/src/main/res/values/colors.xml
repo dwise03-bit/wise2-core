@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- WISE² v2.0 Brand Palette -->
+    <color name="navy_black">#050607</color>           <!-- Primary background (OLED-friendly) -->
+    <color name="dark_gunmetal">#0F1119</color>        <!-- Secondary dark layer -->
+    <color name="glass_gray">#1A1D2E</color>           <!-- Glassmorphic surface -->
+
+    <!-- Brand Accents -->
+    <color name="cyan_brand">#00D9FF</color>           <!-- Primary accent (cyan) -->
+    <color name="neon_green">#00FF7F</color>           <!-- Secondary accent (neon green) -->
+    <color name="gold_accent">#C4A369</color>          <!-- Tertiary accent (gold/bronze) -->
+
+    <!-- Status Colors -->
+    <color name="status_green">#2ECC71</color>         <!-- Success state -->
+    <color name="status_amber">#FFB020</color>         <!-- Warning state -->
+    <color name="status_red">#FF4D4F</color>           <!-- Error state -->
+
+    <!-- Text Colors -->
+    <color name="text_primary">#F5F5F5</color>         <!-- Light gray for primary text -->
+    <color name="text_secondary">#AAAAAA</color>       <!-- Medium gray for secondary text -->
+
+    <!-- Glassmorphic Overlays -->
+    <color name="surface_overlay">#401A1D2E</color>    <!-- 25% opacity glass -->
+
+    <!-- Legacy colors (keep for backward compatibility) -->
     <color name="jet_black">#050505</color>
     <color name="carbon_black">#0A0A0A</color>
     <color name="concrete_black">#111111</color>

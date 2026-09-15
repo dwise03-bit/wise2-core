@@ -3,8 +3,12 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 
 export const metadata: Metadata = {
-  title: 'WISE² Dashboard',
-  description: 'WISE² Creator Dashboard',
+  title: 'WISE² Command Center',
+  description: 'Production-grade command center with glassmorphic design, neon accents, and micro-interactions',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -16,11 +20,10 @@ export default function RootLayout({
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        <meta name="theme-color" content="#000000" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#050607" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className="bg-black text-white font-sans">
+      <body className="bg-[#050607] text-white font-sans overflow-hidden">
         <AuthProvider>
           {children}
         </AuthProvider>

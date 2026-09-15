@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WISE² v2.0 Glow Effect Drawable (Neon Cyan Glow) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer glow layer (soft shadow) -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#1A00D9FF" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- Middle glow layer -->
+    <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2600D9FF" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+
+    <!-- Inner bright layer -->
+    <item android:top="6dp" android:left="6dp" android:right="6dp" android:bottom="6dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#3300D9FF" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</layer-list>

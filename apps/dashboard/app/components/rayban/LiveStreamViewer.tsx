@@ -238,9 +238,8 @@ export function LiveStreamViewer({ jobId, onAnnotation }: LiveStreamViewerProps)
             {isRecording ? (
               <Button
                 size="sm"
-                variant="destructive"
                 onClick={stopRecording}
-                className="gap-2"
+                className="gap-2 bg-red-600 hover:bg-red-700 text-white"
               >
                 <Square size={16} />
                 Stop Recording
