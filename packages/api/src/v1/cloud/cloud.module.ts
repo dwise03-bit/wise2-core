@@ -9,10 +9,12 @@ import { CloudStripeEventStore } from './cloud-stripe-event.store';
 import { CloudStripeService } from './cloud-stripe.service';
 import { CloudProviderFactory } from './providers/provider.factory';
 import { TwentyIProvider } from './providers/twenty-i.provider';
+import { SshKeysService } from './ssh-keys.service';
+import { SshKeysController } from './ssh-keys.controller';
 
 @Module({
   imports: [EmailModule],
-  controllers: [CloudController],
+  controllers: [CloudController, SshKeysController],
   providers: [
     CloudService,
     CloudBillingService,
@@ -22,6 +24,7 @@ import { TwentyIProvider } from './providers/twenty-i.provider';
     CloudStripeEventStore,
     CloudProviderFactory,
     TwentyIProvider,
+    SshKeysService,
   ],
   exports: [
     CloudService,
@@ -32,6 +35,7 @@ import { TwentyIProvider } from './providers/twenty-i.provider';
     CloudStripeEventStore,
     CloudProviderFactory,
     TwentyIProvider,
+    SshKeysService,
   ],
 })
 export class CloudModule {}
