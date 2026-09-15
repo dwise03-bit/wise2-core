@@ -136,25 +136,6 @@ export default function WearablesPage() {
           opacity: { delay: index * 0.08, duration: 0.6, ease: 'easeOut' }
         }}
       >
-        {/* Animated gradient background */}
-        <div
-          className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
-          style={{
-            background: `linear-gradient(135deg, ${WISE2_COLORS.neon_green}10 0%, ${WISE2_COLORS.neon_cyan}10 100%)`,
-            transform: 'translateZ(10px)',
-          }}
-        />
-
-        {/* Glow layer 1 - subtle */}
-        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 pointer-events-none" style={{
-          background: `radial-gradient(circle at 50% 50%, ${WISE2_COLORS.neon_cyan}10, transparent 70%)`,
-          filter: 'blur(20px)',
-        }} />
-
-        {/* Glow layer 2 - very subtle */}
-        <div className="absolute inset-0 rounded-2xl opacity-5 pointer-events-none" style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, ${WISE2_COLORS.neon_cyan}03, transparent 50%)`,
-        }} />
 
         {/* Content */}
         <div className="relative z-10">
