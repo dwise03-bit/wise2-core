@@ -134,7 +134,7 @@ services:
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
       OWNER_EMAIL: ${OWNER_EMAIL:-}
     ports:
-      - "127.0.0.1:3000:3000"
+      - "0.0.0.0:3001:3000"
     volumes:
       - graphics_data:/app/data/graphics
     depends_on:
