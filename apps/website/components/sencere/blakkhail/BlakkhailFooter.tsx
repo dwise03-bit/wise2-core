@@ -1,236 +1,175 @@
 'use client';
 
-import Link from 'next/link';
-import { Facebook, Instagram, Youtube, Phone, Mail, Globe } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { blakkhailBrand } from './config';
-import { BLAKKHAIL, BLAKKHAIL_LAYOUT } from './brand-tokens';
-import { company } from '@/lib/sencere/config';
-import { isBlackhailHost } from '@/lib/site-domains';
+import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 
 export function BlakkhailFooter() {
-  const { social } = blakkhailBrand;
-  const [parentHref, setParentHref] = useState<string>(blakkhailBrand.parentPath);
-
-  useEffect(() => {
-    const onBlackhailDomain = isBlackhailHost(window.location.hostname);
-    setParentHref(
-      onBlackhailDomain
-        ? `${blakkhailBrand.parentSiteUrl}${blakkhailBrand.parentPath}`
-        : blakkhailBrand.parentPath
-    );
-  }, []);
-
   return (
-    <footer id="contact" className={BLAKKHAIL_LAYOUT.section} style={{ backgroundColor: BLAKKHAIL.jetBlack, color: BLAKKHAIL.steel }}>
+    <footer className="relative w-full bg-black border-t border-zinc-800">
+      {/* Background Accent */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(0, 217, 255, 0.1) 0%, transparent 60%)'
+      }} />
 
-      {/* ── CTA STRIP ─────────────────────────── */}
-      <div
-        className="border-y"
-        style={{ borderColor: BLAKKHAIL.darkGold, backgroundColor: BLAKKHAIL.gunmetal }}
-      >
-        <div
-          className={`${BLAKKHAIL_LAYOUT.container} grid gap-6 py-10 sm:py-12 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-10`}
-        >
-          <div>
-            <p
-              className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: BLAKKHAIL.neutral600 }}
-            >
-              Ready to work?
-            </p>
-            <h2
-              className="mt-2 text-2xl font-bold uppercase tracking-wide sm:text-3xl lg:text-4xl"
-              style={{ color: BLAKKHAIL.accentBrown }}
-            >
-              Let&apos;s Build Something Legendary
-            </h2>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href={`mailto:${blakkhailBrand.email}?subject=Quote%20Request`}
-              className="min-h-10 px-6 py-2.5 text-sm font-semibold uppercase tracking-wide"
-              style={{ backgroundColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.white }}
-            >
-              Get a Quote
-            </a>
-            <a
-              href={`tel:${company.phone.replace(/\D/g, '')}`}
-              className="min-h-10 border px-6 py-2.5 text-sm font-semibold uppercase tracking-wide"
-              style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
-            >
-              Book a Call
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* ── FOOTER BODY ──────────────────────────────────── */}
-      <div className={`${BLAKKHAIL_LAYOUT.container} py-10 sm:py-12`}>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-
-          {/* Brand column */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <h3
-              className="text-base font-semibold uppercase tracking-wider sm:text-lg"
-              style={{ color: BLAKKHAIL.accentBrown }}
-            >
-              {blakkhailBrand.name}
-            </h3>
-            <p
-              className="mt-1 text-xs font-semibold uppercase tracking-wide"
-              style={{ color: BLAKKHAIL.neutral600 }}
-            >
-              {blakkhailBrand.legalName}
-            </p>
-            <p
-              className="mt-3 text-sm leading-relaxed sm:text-base"
-              style={{ color: BLAKKHAIL.neutral600 }}
-            >
-              Original fashion est. {blakkhailBrand.established}
+      <div className="relative max-w-7xl mx-auto px-6 py-16 lg:py-24">
+        {/* Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          {/* Brand Info */}
+          <div className="col-span-1 space-y-6">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+                Blakk Hail
+              </p>
+              <p
+                className="text-sm leading-relaxed text-gray-400"
+                style={{ color: 'rgba(196, 163, 105, 0.8)' }}
+              >
+                Take Control • No Apologies<br />
+                <span className="text-xs text-gray-500">Est. 1994</span>
+              </p>
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Heritage streetwear designed for the culture. Original fashion since 1994.
             </p>
           </div>
 
-          {/* Contact column */}
-          <div>
-            <p
-              className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: BLAKKHAIL.accentBrown }}
-            >
-              Contact
+          {/* Shop */}
+          <div className="space-y-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-300 mb-6">
+              Shop
             </p>
-            <ul className="mt-3 flex flex-col gap-2">
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
-                <Phone size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
-                <a href={`tel:${company.phone.replace(/\D/g, '')}`} className="hover:opacity-75">
-                  {company.phone}
+            <ul className="space-y-3">
+              <li>
+                <a href="#collection" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  T-Shirts
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
-                <Mail size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
-                <a href={`mailto:${blakkhailBrand.email}`} className="hover:opacity-75 break-all">
-                  {blakkhailBrand.email}
+              <li>
+                <a href="#collection" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Hoodies
                 </a>
               </li>
-              <li className="flex items-center gap-2 text-sm sm:text-base" style={{ color: BLAKKHAIL.neutral700 }}>
-                <Globe size={14} style={{ color: BLAKKHAIL.accentBrown }} aria-hidden />
-                <a
-                  href={blakkhailBrand.parentSiteUrl}
-                  className="hover:opacity-75"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {company.website}
+              <li>
+                <a href="#collection" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Accessories
+                </a>
+              </li>
+              <li>
+                <a href="#collection" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  View All
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Location column */}
-          <div>
-            <p
-              className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: BLAKKHAIL.accentBrown }}
-            >
-              Location
+          {/* Support */}
+          <div className="space-y-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-300 mb-6">
+              Support
             </p>
-            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: BLAKKHAIL.neutral600 }}>
-              {company.location}
-            </p>
-            <Link
-              href={parentHref}
-              className="mt-3 block text-sm hover:opacity-75 sm:text-base"
-              style={{ color: BLAKKHAIL.neutral600 }}
-            >
-              {blakkhailBrand.legalName}
-            </Link>
+            <ul className="space-y-3">
+              <li>
+                <a href="/about" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <a href="/shipping" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Shipping
+                </a>
+              </li>
+              <li>
+                <a href="/returns" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Returns
+                </a>
+              </li>
+            </ul>
           </div>
 
-          {/* POWERED BY WISE² column */}
-          <div className="flex flex-col gap-3">
-            <p
-              className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: BLAKKHAIL.accentBrown }}
-            >
-              {blakkhailBrand.wise2.poweredByLabel}
+          {/* Connect */}
+          <div className="space-y-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-300 mb-6">
+              Connect
             </p>
-            <div className="flex items-center gap-2">
-              <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center border text-sm font-bold"
-                style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
-              >
-                W
-              </div>
-              <span
-                className="text-lg font-bold tracking-wide"
-                style={{ color: BLAKKHAIL.accentBrown }}
-              >
-                WISE²
-              </span>
-            </div>
-            <p
-              className="text-xs font-semibold leading-5 tracking-wide"
-              style={{ color: BLAKKHAIL.neutral600 }}
-            >
-              Smart Systems.
-              <br />
-              Stronger Businesses.
-              <br />
-              Scalable Growth.
-            </p>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href={BLAKKHAIL_LEGACY.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  href={BLAKKHAIL_LEGACY.social.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                >
+                  Twitter
+                </a>
+              </li>
+              <li>
+                <a
+                  href={BLAKKHAIL_LEGACY.social.discord}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-400 hover:text-cyan-400 transition-colors"
+                >
+                  Discord
+                </a>
+              </li>
+              <li>
+                <a href="mailto:contact@blakkhail.com" className="text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+                  Email
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Social icons */}
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <a
-            href={social.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-10 items-center gap-2 border px-4 py-2 text-xs font-semibold uppercase tracking-wide hover:opacity-75"
-            style={{ borderColor: BLAKKHAIL.accentBrown, color: BLAKKHAIL.accentBrown }}
-          >
-            <Instagram size={16} aria-hidden />
-            @blakkhail
-          </a>
-          <a
-            href={social.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
-            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
-            aria-label="Facebook"
-          >
-            <Facebook size={18} />
-          </a>
-          {social.twitter && (
-            <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75" style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }} aria-label="X / Twitter">
-              <span className="text-sm font-bold" aria-hidden="true">𝕏</span>
-            </a>
-          )}
-          <a
-            href={social.youtube}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-10 items-center justify-center border p-2 hover:opacity-75"
-            style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
-            aria-label="YouTube"
-          >
-            <Youtube size={18} />
-          </a>
-        </div>
+        {/* Divider */}
+        <div className="border-t border-zinc-800 my-12" />
 
-        {/* Bottom bar */}
-        <div
-          className="mt-8 flex flex-col items-center justify-between gap-3 border-t pt-6 text-xs sm:flex-row sm:text-sm"
-          style={{ borderColor: BLAKKHAIL.neutral200, color: BLAKKHAIL.neutral600 }}
-        >
-          <p>
-            © {new Date().getFullYear()} {blakkhailBrand.legalName} •{' '}
-            {blakkhailBrand.name} • {company.location}
+        {/* Bottom Footer */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-xs text-gray-500 text-center md:text-left">
+            © 1994–2026 Blakk Hail. All rights reserved. | SenCere Creative LLC
           </p>
-          <p style={{ color: BLAKKHAIL.accentBrown }}>
-            {blakkhailBrand.wise2.poweredByLabel} WISE²
+
+          {/* Bottom Links */}
+          <div className="flex items-center gap-6 text-xs text-gray-500">
+            <a href="/privacy" className="hover:text-gray-300 transition-colors">
+              Privacy
+            </a>
+            <span>•</span>
+            <a href="/terms" className="hover:text-gray-300 transition-colors">
+              Terms
+            </a>
+            <span>•</span>
+            <a href="/cookies" className="hover:text-gray-300 transition-colors">
+              Cookies
+            </a>
+          </div>
+        </div>
+
+        {/* Premium Badge */}
+        <div className="mt-12 pt-8 border-t border-zinc-800 text-center">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.15em] mb-2"
+            style={{ color: '#C4A369' }}
+          >
+            Heritage Streetwear Since 1994
+          </p>
+          <p className="text-xs text-gray-600">
+            Built for the culture. No apologies.
           </p>
         </div>
       </div>

@@ -2,156 +2,140 @@
 
 import Image from 'next/image';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
-import { BLAKKHAIL } from './brand-tokens';
 
 export function BlakkhailHero() {
-  // Lead with the approved drop artwork so the hero matches the brand reference
-  // instead of enlarging a low-resolution campaign thumbnail.
-  const heroImage = BLAKKHAIL_LEGACY.assets.dropAd || '/sencere-assets/blakkhail/default-hero.jpg';
+  const heroImage = BLAKKHAIL_LEGACY.assets.dropAd || '/sencere-assets/blakkhail/hero-4k.jpg';
 
   return (
-    <section className="relative isolate flex min-h-[min(760px,calc(100svh-112px))] w-full overflow-hidden bg-black group sm:min-h-[600px] lg:min-h-[800px]">
-      {/* Background with zoom effect on hover */}
-      <div className="absolute inset-0 overflow-hidden">
+    <section className="relative w-full overflow-hidden bg-black">
+      {/* 4K Hero Image - Full Immersion */}
+      <div className="relative h-screen w-full overflow-hidden">
+        {/* Main Image Layer */}
         <Image
           src={heroImage}
           alt="Blakk Hail Heritage - Original Fashion Since 1994"
           fill
           priority
           sizes="100vw"
-          className="object-contain object-right scale-100 opacity-85 transition-opacity duration-[1800ms] ease-out group-hover:opacity-100"
+          className="object-cover object-center scale-100 transition-transform duration-700 ease-out hover:scale-105"
+          quality={100}
         />
-        {/* Cinematic gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
-        <div className="absolute inset-0" style={{ backgroundColor: `${BLAKKHAIL.jetBlack}33` }} />
-      </div>
 
-      {/* Light glow effect */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-yellow-500/10 blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-1000" />
+        {/* Cinematic Depth Layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-radial-gradient-to-edge opacity-30" style={{
+          backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(196, 163, 105, 0.1) 0%, transparent 70%)'
+        }} />
 
-      {/* Always-on atmospheric particles and brief lightning flashes. The effect is
-          intentionally CSS-only so it still works when canvas/WebGL is unavailable. */}
-      <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden" aria-hidden="true">
-        <div className="bh-lightning bh-lightning-one" />
-        <div className="bh-lightning bh-lightning-two" />
-        <div className="bh-storm-flash" />
-        <div className="bh-particles">
-          {Array.from({ length: 18 }, (_, index) => (
-            <i key={index} style={{ '--i': index } as React.CSSProperties} />
-          ))}
+        {/* Premium Content Overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+          {/* Animated Entrance - Single, Orchestrated Moment */}
+          <div className="space-y-8 animate-[fadeInUp_1.2s_ease-out]">
+            {/* Tagline - Premium Typography */}
+            <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-gray-300 opacity-80">
+              Heritage Fashion • Est. 1994
+            </p>
+
+            {/* Main Headline - Ultra Bold, Brand-Locked Gold */}
+            <div className="max-w-5xl">
+              <h1
+                className="text-6xl sm:text-7xl lg:text-8xl font-black uppercase leading-none tracking-tighter drop-shadow-2xl"
+                style={{
+                  color: '#C4A369',
+                  textShadow: `
+                    0 4px 20px rgba(0, 0, 0, 0.8),
+                    0 0 40px rgba(196, 163, 105, 0.2),
+                    2px 2px 4px rgba(0, 0, 0, 0.6)
+                  `,
+                  letterSpacing: '-0.02em'
+                }}
+              >
+                Take Control
+              </h1>
+            </div>
+
+            {/* Subheadline */}
+            <p className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed text-gray-200 font-light">
+              Original streetwear culture built on legacy, authenticity, and no apologies.
+              <span className="block text-sm mt-3 text-gray-400">Since 1994 • For the culture</span>
+            </p>
+
+            {/* Premium CTA - Neon Green, Minimal Design */}
+            <div className="pt-8">
+              <a
+                href="#collection"
+                className="inline-block px-8 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300 relative group"
+                style={{
+                  backgroundColor: '#00FF7F',
+                  color: '#050607',
+                  boxShadow: '0 0 30px rgba(0, 255, 127, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(0, 255, 127, 0.6), 0 10px 30px rgba(0, 0, 0, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 255, 127, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                Shop Collection
+                <span className="ml-2">→</span>
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-[inherit] flex-col items-center justify-center px-6 py-24 text-center sm:py-28">
-        {/* Tagline */}
-        <p
-          className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.3em] mb-8 opacity-0 animate-[fadeIn_0.8s_ease-out_0.2s_forwards]"
-          style={{ color: BLAKKHAIL.gold }}
-        >
-          ORIGINAL FASHION • SINCE 1994
-        </p>
-
-        {/* Main Headline */}
-        <div className="mb-12 overflow-hidden">
-          <h1
-            className="w-[min(82vw,760px)] opacity-0 animate-[slideUp_0.9s_ease-out_0.3s_forwards]"
-            style={{
-              color: BLAKKHAIL.gold,
-              fontFamily: 'var(--font-headers)',
-              textShadow: `0 20px 40px rgba(0,0,0,0.8), 0 0 60px ${BLAKKHAIL.gold}22`
-            }}
+        {/* Scroll Indicator - Subtle */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+          <svg
+            className="w-6 h-6 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
           >
-            <Image src="/sencere-assets/blakkhail/blakkhail-wordmark-gold.jpg" alt="Blakk Hail" width={1024} height={1024} className="h-auto w-full mix-blend-screen" priority />
-          </h1>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
         </div>
-
-        {/* Subheading */}
-        <p
-          className="text-[13px] sm:text-[15px] max-w-[650px] leading-relaxed font-light opacity-0 animate-[fadeIn_0.8s_ease-out_0.5s_forwards]"
-          style={{ color: BLAKKHAIL.steel }}
-        >
-          Heritage streetwear & original fashion.<br />
-          <span style={{ color: BLAKKHAIL.gold }}>Designed for the culture.</span> Built to last.
-        </p>
-
-        {/* CTA Button */}
-        <div className="mt-16 flex gap-4 opacity-0 animate-[scaleIn_0.6s_ease-out_0.7s_forwards]">
-          <a
-            href="#collection"
-            className="relative overflow-hidden px-10 py-4 font-bold uppercase tracking-widest text-[11px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl group/btn"
-            style={{
-              backgroundColor: BLAKKHAIL.gold,
-              color: BLAKKHAIL.jetBlack,
-              boxShadow: `0 10px 40px ${BLAKKHAIL.gold}44`
-            }}
-          >
-            <span className="relative z-10">Shop Collection</span>
-            <div className="absolute inset-0 bg-white/30 scale-x-0 group-hover/btn:scale-x-100 origin-left transition-transform duration-500" />
-          </a>
-        </div>
-      </div>
-
-      {/* Animated scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
-        <svg
-          className="h-6 w-6 animate-[bounce_2.5s_ease-in-out_infinite] opacity-70 transition-opacity hover:opacity-100 motion-reduce:animate-none"
-          style={{ color: BLAKKHAIL.gold }}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
       </div>
 
       <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideUp {
+        @keyframes fadeInUp {
           from {
             opacity: 0;
-            transform: translateY(60px);
+            transform: translateY(40px);
           }
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.85);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
         }
 
-        .bh-lightning {
-          position: absolute;
-          top: -4%;
-          width: 2px;
-          height: 62%;
-          opacity: 0;
-          filter: drop-shadow(0 0 5px #ffe9a3) drop-shadow(0 0 16px #d4af37);
-          background: #fff7d6;
-          clip-path: polygon(48% 0, 62% 0, 45% 28%, 72% 28%, 26% 64%, 42% 64%, 0 100%, 18% 60%, 4% 60%, 38% 25%, 27% 25%);
-          animation: bhLightning 7s linear infinite;
+        .animate-fadeInUp {
+          animation: fadeInUp 1.2s ease-out;
         }
-        .bh-lightning-one { left: 22%; transform: rotate(8deg); }
-        .bh-lightning-two { right: 18%; height: 48%; animation-delay: 3.7s; transform: rotate(-10deg) scaleX(.8); }
-        .bh-storm-flash { position: absolute; inset: 0; background: rgba(255, 239, 183, .13); opacity: 0; animation: bhFlash 7s linear infinite; }
-        .bh-particles { position: absolute; inset: 0; }
-        .bh-particles i { position: absolute; left: calc((var(--i) * 5.7%) + 2%); bottom: -4%; width: 2px; height: 2px; border-radius: 50%; background: #f6d77b; box-shadow: 0 0 8px 2px rgba(212,175,55,.8); animation: bhFloat calc(5s + (var(--i) * .35s)) linear infinite; animation-delay: calc(var(--i) * -.6s); }
-        @keyframes bhLightning { 0%, 39%, 43%, 100% { opacity: 0; } 40%, 41.5% { opacity: .95; } 42% { opacity: .15; } }
-        @keyframes bhFlash { 0%, 39%, 43%, 100% { opacity: 0; } 40%, 41% { opacity: 1; } }
-        @keyframes bhFloat { from { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; } 15% { opacity: .7; } to { transform: translate3d(18px, -110vh, 0) scale(1.2); opacity: 0; } }
-        @media (prefers-reduced-motion: reduce) { .bh-lightning, .bh-storm-flash, .bh-particles i { animation: none; opacity: 0; } }
+
+        .animate-bounce {
+          animation: bounce 2s infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-fadeInUp,
+          .animate-bounce {
+            animation: none;
+          }
+        }
       `}</style>
     </section>
   );
