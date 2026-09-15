@@ -4949,6 +4949,7 @@ model Technician {
   calls        Call[]
   workOrders   WorkOrder[]
   appointments Appointment[]
+  devices      HVACDevice[] @relation("deviceTechnician")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -4991,6 +4992,7 @@ model HVACProperty {
   workOrders   WorkOrder[]
   appointments Appointment[]
   calls        Call[]
+  devices      HVACDevice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -7184,6 +7186,128 @@ model RayBanMetrics {
   @@index([contractorId])
   @@index([period])
   @@map("rayban_metrics")
+}
+
+// ===== HVAC TROUBLESHOOTER DEVICE SYSTEM =====
+
+// HVACDevice: Physical ESP32 troubleshooter device deployed in field
+model HVACDevice {
+  id String @id @default(cuid())
+
+  // Device identification
+  deviceId     String  @unique // ESP32 MAC address or serial
+  name         String
+  firmwareVersion String?
+
+  // Deployment
+  technicianId String?
+  technician   Technician? @relation("deviceTechnician", fields: [technicianId], references: [id], onDelete: SetNull)
+
+  jobId        String? // Reference to WISE² Contractor OS job
+  propertyId   String?
+  property     HVACProperty? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  // Network status
+  wifiSsid      String?
+  wifiStrength  Int? // RSSI signal strength
+  isOnline      Boolean @default(false)
+  lastSyncAt    DateTime?
+
+  // Device status
+  batteryLevel  Int? // 0-100 percentage
+  temperature   Float? // Device operating temperature
+  status        HVACDeviceStatus @default(IDLE)
+  healthStatus  HVACHealthStatus @default(HEALTHY)
+
+  // Operational settings
+  readingIntervalSeconds Int @default(30)
+  isRecording            Boolean @default(false)
+
+  // Calibration
+  calibrationMode    Boolean @default(false)
+  lastCalibratedAt   DateTime?
+  calibrationNotes   String? @db.Text
+
+  // Notes
+  notes String? @db.Text
+
+  // Relationships
+  readings HVACReading[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deviceId])
+  @@index([technicianId])
+  @@index([propertyId])
+  @@index([jobId])
+  @@index([isOnline])
+  @@index([status])
+}
+
+enum HVACDeviceStatus {
+  IDLE
+  READING
+  SYNCING
+  CALIBRATING
+  ERROR
+  OFFLINE
+}
+
+enum HVACHealthStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+}
+
+// HVACReading: Real-time sensor data from device
+model HVACReading {
+  id String @id @default(cuid())
+
+  // Device reference
+  deviceId String
+  device   HVACDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  // Temperature (°F)
+  temperatureF Float
+
+  // Humidity (%)
+  humidityPercent Float
+
+  // Pressure readings
+  highSidePressurePsi Float // High-side (discharge) pressure
+  lowSidePressurePsi  Float? // Low-side (suction) pressure
+
+  // Ductwork / Differential pressure
+  differentialPressureH2o Float? // Inches of water column
+
+  // Additional sensor data
+  supplyCellsiusF Float? // Supply air temperature
+  returnCelsiusF  Float? // Return air temperature
+
+  // Electrical (optional)
+  voltage  Float?
+  amperage Float?
+
+  // Quality metrics
+  signalStrength Int? // WiFi signal strength
+  batteryLevel   Int? // Device battery at time of reading
+
+  // Sync status
+  synced        Boolean @default(false)
+  syncedToWise2 Boolean @default(false)
+  syncedAt      DateTime?
+
+  // Technician notes captured during this reading
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deviceId])
+  @@index([createdAt])
+  @@index([synced])
+  @@index([syncedToWise2])
 }
 
 model DiscordWebhook {

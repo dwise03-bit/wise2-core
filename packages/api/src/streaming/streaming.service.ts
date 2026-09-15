@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { MediasoupService } from './mediasoup.service';
 import { RecordingService, RecordingResult } from './recording.service';
-import { PrismaService } from '@wise2/db';
 import { AnnotationDto, ConsumerResponseDto, StreamSessionResponseDto } from './streaming.controller';
 
 @Injectable()
@@ -13,7 +12,7 @@ export class StreamingService {
   constructor(
     private readonly mediasoup: MediasoupService,
     private readonly recording: RecordingService,
-    private readonly db: PrismaService
+    @Inject('DB_SERVICE') private readonly db?: any
   ) {}
 
   /**
@@ -191,7 +190,7 @@ export class StreamingService {
   async sendAudioToTechnician(
     jobId: string,
     supervisorId: string,
-    audioFile: Express.Multer.File
+    audioFile: any
   ): Promise<void> {
     const session = this.activeSessions.get(jobId);
     if (!session) {

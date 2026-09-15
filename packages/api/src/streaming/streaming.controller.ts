@@ -142,7 +142,7 @@ export class StreamingController {
   @UseInterceptors(FileInterceptor('audio'))
   async sendAudio(
     @Param('jobId') jobId: string,
-    @UploadedFile() audioFile: Express.Multer.File,
+    @UploadedFile() audioFile: any,
     @Req() req: Request
   ): Promise<{ success: boolean; message: string }> {
     const supervisorId = this.getSupervisorId(req);

@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { StreamingController } from './streaming.controller';
+import { StreamingController, ConsumerResponseDto } from './streaming.controller';
 import { StreamingService } from './streaming.service';
 import { MediasoupService } from './mediasoup.service';
 import { RecordingService } from './recording.service';
-import { PrismaService } from '@wise2/db';
 
 describe('Streaming Module (Phase 2)', () => {
   let controller: StreamingController;
@@ -19,7 +18,7 @@ describe('Streaming Module (Phase 2)', () => {
         MediasoupService,
         RecordingService,
         {
-          provide: PrismaService,
+          provide: 'PrismaService',
           useValue: {
             streamSessions: { create: jest.fn(), update: jest.fn(), findUnique: jest.fn() },
             streamViewers: { create: jest.fn(), findMany: jest.fn() },
@@ -85,7 +84,7 @@ describe('Streaming Module (Phase 2)', () => {
       const jobId = 'job-123';
       const supervisorId = 'super-789';
       const annotation = {
-        type: 'circle',
+        type: 'circle' as const,
         x: 100,
         y: 100,
         color: '#FF0000',
@@ -111,7 +110,7 @@ describe('Streaming Module (Phase 2)', () => {
 
       for (const type of types) {
         const annotation = {
-          type: type as any,
+          type: type as 'circle' | 'arrow' | 'rectangle' | 'text' | 'freehand',
           x: 50,
           y: 50,
           x2: 150,
@@ -281,7 +280,7 @@ describe('Streaming Module (Phase 2)', () => {
 
       // Supervisor sends annotation
       const annotation = {
-        type: 'circle',
+        type: 'circle' as const,
         x: 100,
         y: 100,
         color: '#FF0000',
@@ -307,7 +306,7 @@ describe('Streaming Module (Phase 2)', () => {
 
       await service.startStream(jobId, 'tech-456', {});
 
-      const subscribePromises = [];
+      const subscribePromises: Promise<ConsumerResponseDto>[] = [];
       for (let i = 0; i < supervisorCount; i++) {
         subscribePromises.push(
           service.subscribeToStream(jobId, `super-${i}`, {})
