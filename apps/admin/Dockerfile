@@ -2,14 +2,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY packages ./packages
 COPY apps/admin ./apps/admin
 
-RUN npm install --frozen-lockfile
+RUN npm install -g pnpm@8.15.9 --ignore-scripts \
+  && pnpm install --frozen-lockfile --recursive
 
 WORKDIR /app/apps/admin
-RUN npm run build
+RUN pnpm run build
 
 FROM node:20-alpine
 
