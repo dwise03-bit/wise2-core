@@ -2,6 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 
+// Pro Design System Tokens
+const DESIGN_TOKENS = {
+  colors: {
+    primary: '#0F766E',      // Trust teal
+    secondary: '#14B8A6',    // Light teal
+    accent: '#0369A1',       // Professional blue
+    background: '#F0FDFA',   // Off-white teal
+    foreground: '#134E4A',   // Dark teal
+    destructive: '#DC2626',  // Red
+  },
+  spacing: {
+    xs: '4px',
+    sm: '8px',
+    md: '12px',
+    lg: '16px',
+    xl: '24px',
+    '2xl': '32px',
+  },
+};
+
 export default function WearablesPage() {
   const [tab, setTab] = useState('overview');
   const [stats, setStats] = useState<any>(null);
@@ -189,87 +209,77 @@ export default function WearablesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 text-slate-900 p-6">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto mb-12">
+        <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-4">
-            <div className="text-5xl">👓</div>
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-600 to-blue-600 flex items-center justify-center text-2xl shadow-lg">
+              👓
+            </div>
             <div>
-              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+              <h1 className="text-5xl font-black bg-gradient-to-r from-teal-700 via-teal-600 to-blue-700 bg-clip-text text-transparent tracking-tight">
                 Ray-Ban Wearables
               </h1>
-              <p className="text-gray-400">Field Tech Command Center</p>
+              <p className="text-teal-600 font-medium">Field Service Operations Command Center</p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setTab('overview')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
-                tab === 'overview'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-              }`}
-            >
-              📊 Overview
-            </button>
-            <button
-              onClick={() => setTab('captures')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
-                tab === 'captures'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-              }`}
-            >
-              📸 Captures
-            </button>
-            <button
-              onClick={() => setTab('alerts')}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all ${
-                tab === 'alerts'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-              }`}
-            >
-              🔔 Alerts
-            </button>
+          <div className="flex gap-3">
+            {['overview', 'captures', 'alerts'].map((tabName, idx) => {
+              const icons = { overview: '📊', captures: '📸', alerts: '🔔' };
+              const labels = { overview: 'Overview', captures: 'Captures', alerts: 'Alerts' };
+              const isActive = tab === tabName;
+              return (
+                <button
+                  key={tabName}
+                  onClick={() => setTab(tabName as any)}
+                  className={`px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 ${
+                    isActive
+                      ? 'bg-gradient-to-r from-teal-600 to-blue-600 text-white shadow-lg shadow-teal-600/30'
+                      : 'bg-white/60 text-teal-700 hover:bg-white border border-teal-200'
+                  }`}
+                >
+                  {icons[tabName as keyof typeof icons]} {labels[tabName as keyof typeof labels]}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* KPI Cards */}
         {tab === 'overview' && stats && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
               <KPICard
                 title="Total Captures"
                 value={stats.stats.totalCaptures}
                 icon="📸"
-                color="from-blue-600 to-cyan-600"
+                color="from-teal-600 to-cyan-500"
               />
               <KPICard
                 title="Pending Approval"
                 value={stats.stats.pendingApprovals}
                 icon="⏳"
-                color="from-yellow-600 to-orange-600"
+                color="from-amber-500 to-orange-500"
               />
               <KPICard
                 title="Active Sessions"
                 value={stats.stats.activeSessions}
-                icon="🔴"
-                color="from-green-600 to-emerald-600"
+                icon="🟢"
+                color="from-emerald-500 to-teal-500"
               />
               <KPICard
                 title="Connected Devices"
                 value={stats.stats.connectedDevices}
-                icon="📡"
-                color="from-purple-600 to-pink-600"
+                icon="🔗"
+                color="from-blue-600 to-blue-500"
               />
             </div>
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-slate-700/50 backdrop-blur-md rounded-xl p-6 border border-slate-600">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-teal-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-teal-900">
                   📈 Capture Trend (Last 7 Days)
                 </h3>
                 <div className="h-72 flex items-end justify-around gap-2">
@@ -289,8 +299,8 @@ export default function WearablesPage() {
                 </div>
               </div>
 
-              <div className="bg-slate-700/50 backdrop-blur-md rounded-xl p-6 border border-slate-600">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-teal-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-teal-900">
                   ⏱️ Response Times
                 </h3>
                 <div className="space-y-4">
@@ -320,15 +330,15 @@ export default function WearablesPage() {
 
         {/* Captures Tab */}
         {tab === 'captures' && (
-          <div className="bg-slate-700/50 backdrop-blur-md rounded-xl p-6 border border-slate-600">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-teal-200 shadow-lg">
+            <h3 className="text-xl font-bold mb-8 flex items-center gap-2 text-teal-900">
               📸 Recent Captures ({captures.length})
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {captures.map((capture) => (
                 <div
                   key={capture.id}
-                  className="bg-slate-600/50 rounded-lg p-4 border border-slate-500 hover:border-blue-500 transition-all cursor-pointer group"
+                  className="bg-white rounded-xl p-6 border border-teal-200 hover:border-teal-400 hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1"
                 >
                   {capture.frameUrl && (
                     <img
@@ -383,22 +393,22 @@ export default function WearablesPage() {
 
         {/* Alerts Tab */}
         {tab === 'alerts' && (
-          <div className="bg-slate-700/50 backdrop-blur-md rounded-xl p-6 border border-slate-600">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-teal-200 shadow-lg">
+            <h3 className="text-xl font-bold mb-8 flex items-center gap-2 text-teal-900">
               🔔 Recent Alerts ({alerts.length})
             </h3>
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {alerts.map((alert) => (
                 <div
                   key={alert.id}
-                  className={`p-4 rounded-lg border-l-4 ${
+                  className={`p-5 rounded-lg border-l-4 transition-all duration-300 hover:shadow-md ${
                     alert.severity === 'CRITICAL'
-                      ? 'bg-red-900/20 border-l-red-600'
+                      ? 'bg-red-50 border-l-red-600'
                       : alert.severity === 'ERROR'
-                      ? 'bg-orange-900/20 border-l-orange-600'
+                      ? 'bg-orange-50 border-l-orange-600'
                       : alert.severity === 'WARNING'
-                      ? 'bg-yellow-900/20 border-l-yellow-600'
-                      : 'bg-blue-900/20 border-l-blue-600'
+                      ? 'bg-amber-50 border-l-amber-600'
+                      : 'bg-blue-50 border-l-teal-600'
                   }`}
                 >
                   <div className="flex justify-between items-start">
@@ -446,11 +456,11 @@ function KPICard({
 }) {
   return (
     <div
-      className={`bg-gradient-to-br ${color} rounded-xl p-6 border border-white/10 shadow-lg`}
+      className={`bg-gradient-to-br ${color} rounded-2xl p-8 border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 group`}
     >
-      <div className="text-3xl mb-2">{icon}</div>
-      <div className="text-sm text-white/70">{title}</div>
-      <div className="text-4xl font-black mt-2">{value}</div>
+      <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">{icon}</div>
+      <div className="text-sm font-medium text-white/75 uppercase tracking-wide">{title}</div>
+      <div className="text-5xl font-black mt-3 text-white">{value}</div>
     </div>
   );
 }
