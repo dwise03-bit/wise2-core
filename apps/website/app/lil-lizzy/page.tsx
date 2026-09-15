@@ -52,11 +52,84 @@ export default function LilLizzyPage() {
             transition={{ duration: 0.8 }}
             className="grid md:grid-cols-2 gap-12 items-center"
           >
-            {/* Left: Product Image Placeholder */}
-            <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-[#FF6B9D]/30 to-[#00D9FF]/30 rounded-2xl border border-[#00D9FF]/50 flex items-center justify-center">
-                <div className="text-6xl">📱</div>
-              </div>
+            {/* Left: Device Illustration */}
+            <div className="relative flex items-center justify-center h-96">
+              <svg viewBox="0 0 280 480" className="w-full max-w-xs drop-shadow-2xl">
+                {/* Device shadow */}
+                <ellipse cx="140" cy="450" rx="100" ry="20" fill="#000" opacity="0.2" />
+
+                {/* Device body */}
+                <rect x="40" y="20" width="200" height="380" rx="20" fill="#1a1a1a" stroke="#333" strokeWidth="2" />
+
+                {/* Screen bezel */}
+                <rect x="50" y="30" width="180" height="280" rx="16" fill="#0a0a0a" stroke="#444" strokeWidth="1" />
+
+                {/* Screen display - showing game state */}
+                <defs>
+                  <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FF6B9D" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#00D9FF" stopOpacity="0.3" />
+                  </linearGradient>
+                </defs>
+                <rect x="52" y="32" width="176" height="276" fill="url(#screenGrad)" />
+
+                {/* Game UI - Boom Star display */}
+                <circle cx="140" cy="80" r="30" fill="#FFD700" opacity="0.9" />
+                <text x="140" y="87" textAnchor="middle" fontSize="24" fill="#FFF" fontWeight="bold">★</text>
+
+                {/* Score display */}
+                <text x="140" y="140" textAnchor="middle" fontSize="16" fill="#FF6B9D" fontWeight="bold">Score: 2,450</text>
+
+                {/* Game grid preview */}
+                {[0, 1, 2].map((row) =>
+                  [0, 1, 2].map((col) => (
+                    <g key={`${row}-${col}`}>
+                      <rect
+                        x={75 + col * 40}
+                        y={170 + row * 35}
+                        width="35"
+                        height="30"
+                        rx="4"
+                        fill="#00D9FF"
+                        opacity={row === 1 && col === 1 ? 0.9 : 0.4}
+                        stroke="#FF6B9D"
+                        strokeWidth="1"
+                      />
+                      {row === 1 && col === 1 && (
+                        <text x={92 + col * 40} y={190 + row * 35} textAnchor="middle" fontSize="16" fill="#000" fontWeight="bold">💫</text>
+                      )}
+                    </g>
+                  ))
+                )}
+
+                {/* Bottom status bar */}
+                <rect x="52" y="280" width="176" height="28" fill="#1a1a2e" />
+                <text x="65" y="298" fontSize="11" fill="#00D9FF">🔋 85%</text>
+                <text x="140" y="298" textAnchor="middle" fontSize="11" fill="#FF6B9D">WiFi ◉</text>
+                <text x="210" y="298" textAnchor="end" fontSize="11" fill="#FFD700">↔ Trade</text>
+
+                {/* Physical button 1 - Top */}
+                <rect x="20" y="100" width="14" height="30" rx="7" fill="#FF6B9D" opacity="0.7" />
+
+                {/* Physical button 2 - Middle */}
+                <rect x="20" y="160" width="14" height="30" rx="7" fill="#00D9FF" opacity="0.7" />
+
+                {/* Speaker grille */}
+                <g opacity="0.3">
+                  <line x1="240" y1="320" x2="260" y2="320" stroke="#666" strokeWidth="2" />
+                  <line x1="240" y1="335" x2="260" y2="335" stroke="#666" strokeWidth="2" />
+                  <line x1="240" y1="350" x2="260" y2="350" stroke="#666" strokeWidth="2" />
+                </g>
+
+                {/* USB-C port */}
+                <rect x="115" y="415" width="50" height="8" rx="2" fill="#666" opacity="0.5" />
+
+                {/* Brand text */}
+                <text x="140" y="400" textAnchor="middle" fontSize="12" fill="#FF6B9D" fontWeight="bold" opacity="0.6">BOOM</text>
+              </svg>
+
+              {/* Animated glow */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#FF6B9D]/20 to-[#00D9FF]/20 blur-3xl -z-10 animate-pulse" />
             </div>
 
             {/* Right: Features */}
@@ -164,14 +237,68 @@ export default function LilLizzyPage() {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <h3 className="text-2xl font-bold mb-6">Gallery</h3>
                 <div className="grid md:grid-cols-3 gap-6">
-                  {["Hero View", "Top Down", "UI Preview", "In Hand", "Boom Stars", "Trading Screen"].map((title, i) => (
-                    <div key={i} className="aspect-square bg-gradient-to-br from-[#FF6B9D]/20 to-[#00D9FF]/20 rounded-lg border border-[#00D9FF]/30 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">📷</div>
-                        <p className="text-sm text-white/60">{title}</p>
-                      </div>
+                  {/* Hero View */}
+                  <div className="aspect-square bg-gradient-to-br from-[#FF6B9D] via-[#1a0033] to-[#00D9FF] rounded-lg border border-[#FF6B9D]/50 flex items-center justify-center overflow-hidden relative">
+                    <svg viewBox="0 0 200 200" className="w-32 h-32">
+                      <circle cx="100" cy="100" r="50" fill="#FFD700" opacity="0.8" />
+                      <text x="100" y="115" textAnchor="middle" fontSize="40" fill="#FFF">★</text>
+                    </svg>
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">Hero View</p>
+                  </div>
+
+                  {/* Top Down */}
+                  <div className="aspect-square bg-gradient-to-br from-[#0a0a0a] to-[#1a1a2e] rounded-lg border border-[#00D9FF]/30 flex items-center justify-center overflow-hidden relative">
+                    <svg viewBox="0 0 200 200" className="w-28 h-28">
+                      <rect x="45" y="20" width="110" height="160" rx="12" fill="#333" stroke="#00D9FF" strokeWidth="2" />
+                      <rect x="55" y="30" width="90" height="120" fill="#1a1a1a" stroke="#666" strokeWidth="1" />
+                      <circle cx="100" cy="80" r="15" fill="#FF6B9D" opacity="0.6" />
+                    </svg>
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">Top Down</p>
+                  </div>
+
+                  {/* UI Preview */}
+                  <div className="aspect-square bg-gradient-to-br from-[#1a0033] to-[#2d0052] rounded-lg border border-[#FF6B9D]/30 flex items-center justify-center overflow-hidden relative">
+                    <svg viewBox="0 0 200 200" className="w-24 h-24">
+                      <rect x="50" y="25" width="100" height="150" rx="8" fill="#0a0a0a" stroke="#FF6B9D" strokeWidth="2" />
+                      {[0, 1, 2].map((i) => (
+                        <rect key={i} x={55 + i * 30} y={45 + i * 20} width="25" height="25" fill="#00D9FF" opacity={0.6 - i * 0.1} />
+                      ))}
+                      <text x="100" y="145" textAnchor="middle" fontSize="10" fill="#FFD700">Score: 1K</text>
+                    </svg>
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">UI Preview</p>
+                  </div>
+
+                  {/* In Hand */}
+                  <div className="aspect-square bg-gradient-to-br from-[#2d0052] to-[#0a001a] rounded-lg border border-[#00D9FF]/50 flex items-center justify-center overflow-hidden relative">
+                    <svg viewBox="0 0 200 200" className="w-32 h-32">
+                      <ellipse cx="60" cy="140" rx="40" ry="30" fill="#8B4513" opacity="0.4" />
+                      <path d="M 40 120 Q 35 100 40 80 Q 45 60 60 50 Q 80 40 100 45 Q 120 50 130 70 Q 135 90 130 120" fill="#8B4513" opacity="0.3" />
+                      <rect x="60" y="50" width="60" height="90" rx="8" fill="#1a1a1a" stroke="#FF6B9D" strokeWidth="2" />
+                    </svg>
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">In Hand</p>
+                  </div>
+
+                  {/* Boom Stars */}
+                  <div className="aspect-square bg-gradient-to-br from-[#FFD700]/20 to-[#FF6B9D]/20 rounded-lg border border-[#FFD700]/50 flex items-center justify-center overflow-hidden relative">
+                    <div className="flex flex-wrap gap-4 justify-center items-center">
+                      {['★', '✨', '🌟', '💫'].map((star, i) => (
+                        <span key={i} className="text-3xl animate-pulse" style={{ animationDelay: `${i * 200}ms` }}>{star}</span>
+                      ))}
                     </div>
-                  ))}
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">Boom Stars</p>
+                  </div>
+
+                  {/* Trading Screen */}
+                  <div className="aspect-square bg-gradient-to-br from-[#00D9FF]/20 to-[#FF6B9D]/20 rounded-lg border border-[#00D9FF]/50 flex items-center justify-center overflow-hidden relative">
+                    <svg viewBox="0 0 200 200" className="w-28 h-28">
+                      <rect x="40" y="30" width="60" height="90" rx="6" fill="#0a0a0a" stroke="#FF6B9D" strokeWidth="1.5" />
+                      <text x="70" y="55" textAnchor="middle" fontSize="20" fill="#FF6B9D">→</text>
+                      <text x="70" y="85" textAnchor="middle" fontSize="10" fill="#FF6B9D" fontWeight="bold">NFC</text>
+                      <rect x="100" y="30" width="60" height="90" rx="6" fill="#0a0a0a" stroke="#00D9FF" strokeWidth="1.5" />
+                      <text x="130" y="75" textAnchor="middle" fontSize="14" fill="#00D9FF">↔</text>
+                    </svg>
+                    <p className="absolute bottom-3 text-xs text-white/80 font-bold">Trading Screen</p>
+                  </div>
                 </div>
               </motion.div>
             )}
