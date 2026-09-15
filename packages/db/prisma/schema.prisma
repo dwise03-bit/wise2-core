@@ -7012,3 +7012,200 @@ model BlakkhailEmailLog {
   @@index([status])
   @@map("blakkhail_email_logs")
 }
+
+// ===== RAY-BAN WEARABLES SYSTEM =====
+
+model RayBanDevice {
+  id String @id @default(cuid())
+
+  // Device info
+  serialNumber String @unique
+  deviceType   String @default("rayban_meta_gen2")
+  firmwareVersion String?
+
+  // Ownership
+  contractorId String
+  jobId        String?
+
+  // Connection state
+  isConnected Boolean @default(false)
+  lastSeenAt  DateTime?
+
+  // Metadata
+  metadata Json? // device-specific data
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  captures RayBanCapture[]
+  alerts   RayBanAlert[]
+  sessions RayBanSession[]
+
+  @@index([contractorId])
+  @@index([jobId])
+  @@index([isConnected])
+  @@map("rayban_devices")
+}
+
+model RayBanCapture {
+  id String @id @default(cuid())
+
+  deviceId String
+  device   RayBanDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  jobId       String
+  contractorId String
+  customerId  String?
+
+  // Capture details
+  frameUrl     String? // URL to stored frame image
+  frameSize    Int? // bytes
+  frameMimeType String @default("image/jpeg")
+
+  // Metadata
+  latitude  Float?
+  longitude Float?
+  accuracy  Float? // GPS accuracy in meters
+
+  notes String? @db.Text
+
+  // Status
+  status      String @default("PENDING") // PENDING, APPROVED, REJECTED, ARCHIVED
+  approvedBy  String?
+  approvedAt  DateTime?
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  alerts RayBanAlert[]
+
+  @@index([deviceId])
+  @@index([jobId])
+  @@index([contractorId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("rayban_captures")
+}
+
+model RayBanAlert {
+  id String @id @default(cuid())
+
+  deviceId String
+  device   RayBanDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  captureId String?
+  capture   RayBanCapture? @relation(fields: [captureId], references: [id], onDelete: SetNull)
+
+  // Alert content
+  title       String
+  message     String @db.Text
+  severity    String @default("INFO") // INFO, WARNING, ERROR, CRITICAL
+  type        String // query_sent, frame_captured, connection_event, error
+
+  jobId       String?
+  contractorId String
+  customerId  String?
+
+  // Metadata
+  metadata Json?
+
+  // Status
+  acknowledgedAt DateTime?
+  acknowledgedBy String?
+  sentToDiscord  Boolean @default(false)
+  sentToWise2Net Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([severity])
+  @@index([type])
+  @@index([contractorId])
+  @@index([sentToDiscord])
+  @@map("rayban_alerts")
+}
+
+model RayBanSession {
+  id String @id @default(cuid())
+
+  deviceId String
+  device   RayBanDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  jobId        String
+  contractorId String
+  customerId   String?
+
+  // Session tracking
+  startTime DateTime
+  endTime   DateTime?
+  duration  Int? // seconds
+
+  // Captures during session
+  captureCount Int @default(0)
+  queriesCount Int @default(0)
+
+  // Results
+  framesApproved Int @default(0)
+  framesPending  Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deviceId])
+  @@index([jobId])
+  @@index([contractorId])
+  @@index([startTime])
+  @@map("rayban_sessions")
+}
+
+model RayBanMetrics {
+  id String @id @default(cuid())
+
+  contractorId String @unique
+  period       String @default("monthly") // daily, weekly, monthly
+
+  // KPIs
+  totalCaptures     Int @default(0)
+  capturesApproved  Int @default(0)
+  captureApprovalRate Float @default(0) // percentage
+  avgResponseTime   Int @default(0) // seconds
+  totalSessionHours Float @default(0)
+  jobsCompleted     Int @default(0)
+  alertsReceived    Int @default(0)
+
+  // Calculated at
+  calculatedAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([contractorId])
+  @@index([period])
+  @@map("rayban_metrics")
+}
+
+model DiscordWebhook {
+  id String @id @default(cuid())
+
+  name        String
+  url         String @unique
+  description String?
+
+  // For Contractor OS
+  channel     String @default("contractor-os")
+  guildId     String? // Discord server ID
+  isActive    Boolean @default(true)
+
+  // Test
+  lastTestedAt DateTime?
+  lastTestStatus String? // SUCCESS, FAILED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([channel])
+  @@map("discord_webhooks")
+}
+}
