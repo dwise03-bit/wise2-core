@@ -22,7 +22,7 @@ import { HvacTroubleshooterService } from './hvac-troubleshooter.service';
 })
 export class HvacTroubleshooterGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private logger: Logger = new Logger('HvacTroubleshooterGateway');
   private deviceConnections: Map<string, Set<string>> = new Map(); // deviceId -> socket IDs
@@ -96,8 +96,9 @@ export class HvacTroubleshooterGateway implements OnGatewayConnection, OnGateway
       // Acknowledge to sender
       client.emit('reading-saved', { success: true, readingId: reading.id });
     } catch (error) {
-      this.logger.error(`Error saving reading: ${error.message}`);
-      client.emit('reading-error', { error: error.message });
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error saving reading: ${msg}`);
+      client.emit('reading-error', { error: msg });
     }
   }
 
@@ -114,15 +115,16 @@ export class HvacTroubleshooterGateway implements OnGatewayConnection, OnGateway
       });
 
       // Broadcast status update
-      this.server.to(`device:${deviceId}`).emit('device-status-update', {
+      this.server?.to(`device:${deviceId}`).emit('device-status-update', {
         deviceId,
         status: updated,
       });
 
       client.emit('device-status-saved', { success: true });
     } catch (error) {
-      this.logger.error(`Error updating device status: ${error.message}`);
-      client.emit('device-status-error', { error: error.message });
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error updating device status: ${msg}`);
+      client.emit('device-status-error', { error: msg });
     }
   }
 
@@ -140,14 +142,15 @@ export class HvacTroubleshooterGateway implements OnGatewayConnection, OnGateway
 
       client.emit('sync-success', { readingIds });
     } catch (error) {
-      this.logger.error(`Error syncing readings: ${error.message}`);
-      client.emit('sync-error', { error: error.message });
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Error syncing readings: ${msg}`);
+      client.emit('sync-error', { error: msg });
     }
   }
 
   // Public method for API to broadcast readings
   broadcastReading(deviceId: string, reading: any) {
-    this.server.to(`device:${deviceId}`).emit('reading-update', {
+    this.server?.to(`device:${deviceId}`).emit('reading-update', {
       deviceId,
       reading,
       receivedAt: new Date(),
