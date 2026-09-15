@@ -5,7 +5,6 @@ WORKDIR /app
 # Install system dependencies for FFmpeg, image processing, and utilities
 RUN apt-get update && apt-get install -y --no-install-recommends \
   ffmpeg \
-  ffprobe \
   imagemagick \
   postgresql-client \
   curl \
