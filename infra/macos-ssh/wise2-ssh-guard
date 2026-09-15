@@ -1,0 +1,20 @@
+#!/bin/zsh
+set -u
+SSH_DIR="$HOME/.ssh"
+LOG="$HOME/Library/Logs/wise2-ssh-guard.log"
+PUB="$SSH_DIR/id_ed25519.pub"
+AUTH="$SSH_DIR/authorized_keys"
+mkdir -p "$SSH_DIR" "${LOG:h}"
+chmod 700 "$SSH_DIR"
+if [[ -f "$PUB" ]]; then
+  touch "$AUTH"
+  KEY="$(cat "$PUB")"
+  grep -qxF "$KEY" "$AUTH" || printf '%s\n' "$KEY" >> "$AUTH"
+  chmod 600 "$AUTH"
+fi
+chmod 600 "$SSH_DIR/config" "$SSH_DIR/wise2.conf" 2>/dev/null || true
+command -v tailscale >/dev/null 2>&1 && tailscale status >/dev/null 2>&1 || true
+LOCAL=FAIL; GPU=FAIL
+ssh -o BatchMode=yes -o ConnectTimeout=5 localhost 'exit 0' >/dev/null 2>&1 && LOCAL=OK
+ssh -o BatchMode=yes -o ConnectTimeout=8 gpu-nmls 'exit 0' >/dev/null 2>&1 && GPU=OK
+printf '%s local=%s gpu=%s\n' "$(date '+%F %T')" "$LOCAL" "$GPU" >> "$LOG"

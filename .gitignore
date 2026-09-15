@@ -172,3 +172,10 @@ print_ready/*.gcode
 .worktrees/
 # Xcode per-user workspace state
 **/xcuserdata/
+
+# SSH secrets / machine-local credentials
+**/id_rsa
+**/id_rsa.*
+**/id_ed25519
+**/id_ed25519.*
+**/authorized_keys
