@@ -272,11 +272,11 @@ export function BrandEcosystemHomepage() {
         )}
       </header>
 
-      <div className="bg-black border-b border-gray-800 py-6">
+      <div className="bg-black border-b border-gray-800 py-8">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-xl font-bold text-white mb-1">WISE² Revenue Platform</h2>
-            <p className="text-sm text-gray-400">Building, Deploying & Making Money Today</p>
+            <h2 className="text-xl font-bold text-white mb-2">WISE² Revenue Platform</h2>
+            <p className="text-lg font-semibold text-[#C4A369]">Building, Deploying & Making Money Today</p>
           </div>
           <PizzaProgressBar progress={72} />
         </div>
@@ -339,13 +339,13 @@ export function BrandEcosystemHomepage() {
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/audit"
-                className="wise-button inline-flex min-h-12 items-center gap-3 bg-[#b08d57] px-6 py-4 text-xs font-black tracking-[.12em] text-black"
+                className="wise-button inline-flex min-h-12 items-center gap-3 bg-[#C4A369] px-6 py-4 text-xs font-black tracking-[.12em] text-black transition-transform hover:-translate-y-0.5"
               >
                 BOOK A BUSINESS AUDIT <ArrowRight size={16} />
               </Link>
               <Link
                 href="/platform"
-                className="wise-button inline-flex min-h-12 items-center gap-3 border border-white/30 bg-black/20 px-6 py-4 text-xs font-bold tracking-[.12em] text-white"
+                className="wise-button inline-flex min-h-12 items-center gap-3 border border-[#C4A369] bg-black/20 px-6 py-4 text-xs font-bold tracking-[.12em] text-[#C4A369] transition-colors hover:bg-[#C4A369]/10"
               >
                 EXPLORE WISE²
               </Link>
@@ -513,7 +513,7 @@ export function BrandEcosystemHomepage() {
               <p className="mt-4 max-w-sm text-sm leading-6 text-white/55">
                 {copy}
               </p>
-              <div className="mt-8 h-px w-0 bg-[#b08d57] transition-all duration-500 group-hover:w-full" />
+              <div className="mt-8 h-px w-0 bg-[#C4A369] transition-all duration-500 group-hover:w-full" />
             </motion.article>
           ))}
         </div>
@@ -704,7 +704,7 @@ export function BrandEcosystemHomepage() {
           <div className="mt-16 grid gap-5 lg:grid-cols-4">
             <Link
               href="/sales-academy/"
-              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#C4A369] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="text-[10px] font-bold tracking-[.16em] text-white/50">ENTRY POINT</span>
@@ -720,7 +720,7 @@ export function BrandEcosystemHomepage() {
 
             <Link
               href="/sales-academy/nc-academy.html"
-              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#C4A369] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🏠 NC</span>
@@ -736,7 +736,7 @@ export function BrandEcosystemHomepage() {
 
             <Link
               href="/sales-academy/nyc-academy.html"
-              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#C4A369] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🗽 NYC</span>
@@ -752,7 +752,7 @@ export function BrandEcosystemHomepage() {
 
             <Link
               href="/sales-academy/li-academy.html"
-              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#C4A369] transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🌊 LI</span>
@@ -787,7 +787,7 @@ export function BrandEcosystemHomepage() {
           </p>
           <Link
             href="/audit"
-            className="wise-button mt-10 inline-flex min-h-12 items-center gap-3 bg-[#b08d57] px-7 py-4 text-xs font-black tracking-[.12em] text-black"
+            className="wise-button mt-10 inline-flex min-h-12 items-center gap-3 bg-[#C4A369] px-7 py-4 text-xs font-black tracking-[.12em] text-black transition-transform hover:-translate-y-0.5"
           >
             GET YOUR BUSINESS AI AUDIT <ArrowRight size={16} />
           </Link>
