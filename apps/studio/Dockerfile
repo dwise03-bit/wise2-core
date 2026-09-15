@@ -14,12 +14,14 @@ COPY pnpm-lock.yaml tsconfig.json ./
 COPY package.json pnpm-workspace.yaml ./
 COPY apps/studio/package.json ./apps/studio/
 COPY packages/db/package.json ./packages/db/
+COPY packages/audio/package.json ./packages/audio/
 COPY packages/api/package.json ./packages/api/
 
 RUN pnpm install --frozen-lockfile
 
 COPY apps/studio ./apps/studio
 COPY packages/db ./packages/db
+COPY packages/audio ./packages/audio
 
 RUN pnpm --filter @wise2/studio build
 
