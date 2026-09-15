@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISE² Knowledge Base - NYC Market</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg-primary: #0A0E27;
+      --bg-secondary: #11152D;
+      --bg-tertiary: #1A1F3A;
+      --accent-green: #00FF41;
+      --accent-blue: #0080FF;
+      --text-primary: #E8E8E8;
+      --text-secondary: #A8A8C0;
+      --text-tertiary: #707090;
+      --border-color: #2A2F4A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: 48px; color: var(--accent-green); margin-bottom: 12px; }
+    h2 { font-family: 'Space Grotesk', sans-serif; font-size: 32px; color: var(--accent-green); margin: 30px 0 20px; }
+    h3 { font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: var(--accent-blue); margin: 20px 0 12px; }
+
+    .header { margin-bottom: 40px; }
+    .breadcrumb { color: var(--accent-blue); font-size: 14px; margin-bottom: 12px; }
+    .tagline { font-size: 18px; color: var(--text-secondary); margin-bottom: 20px; }
+
+    .tabs { display: flex; gap: 12px; border-bottom: 1px solid var(--border-color); margin-bottom: 30px; flex-wrap: wrap; }
+    .tab { padding: 12px 20px; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab.active { color: var(--accent-green); border-bottom-color: var(--accent-green); }
+    .tab:hover { color: var(--accent-blue); }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .product-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .product-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .product-emoji { font-size: 40px; }
+    .product-title { font-size: 24px; font-weight: 700; color: var(--accent-green); }
+    .product-detail { color: var(--text-secondary); font-size: 14px; }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 16px 0; }
+    .feature-item { background: var(--bg-tertiary); padding: 16px; border-left: 3px solid var(--accent-green); border-radius: 4px; }
+    .feature-item strong { color: var(--accent-green); }
+
+    .roi-box { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); color: var(--bg-primary); padding: 20px; border-radius: 8px; margin: 16px 0; font-weight: 600; }
+
+    .script { background: var(--bg-tertiary); border-left: 3px solid var(--accent-blue); padding: 16px; margin: 16px 0; border-radius: 4px; font-family: 'Space Grotesk', monospace; }
+    .script-label { color: var(--accent-blue); font-size: 12px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .script-text { color: var(--text-primary); }
+
+    .comparison { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    .comparison th, .comparison td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .comparison th { background: var(--bg-tertiary); color: var(--accent-green); font-weight: 700; }
+    .comparison tr:hover { background: var(--bg-tertiary); }
+
+    .cta-button { display: inline-block; background: var(--accent-green); color: var(--bg-primary); padding: 12px 24px; border-radius: 6px; font-weight: 700; text-decoration: none; margin-top: 16px; cursor: pointer; border: none; font-family: 'Inter', sans-serif; }
+    .cta-button:hover { background: var(--accent-blue); }
+
+    .highlight { background: var(--bg-tertiary); padding: 3px 6px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="breadcrumb">← Back to Academy Hub</div>
+      <h1>📚 WISE² Knowledge Base</h1>
+      <p class="tagline">Complete sales enablement for NC market - Products, ROI, Scripts & Positioning</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('products')">Products</button>
+      <button class="tab" onclick="switchTab('roi')">ROI & Value</button>
+      <button class="tab" onclick="switchTab('scripts')">Sales Scripts</button>
+      <button class="tab" onclick="switchTab('positioning')">Competitive Positioning</button>
+      <button class="tab" onclick="switchTab('stories')">Customer Success</button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="products" class="section active">
+      <h2>Core WISE² Products</h2>
+      <p>NC businesses need solutions for operations, communications, and field work. Here's how WISE² stacks up:</p>
+
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-emoji">⚡</span>
+          <div>
+            <div class="product-title">WISE² Command</div>
+            <div class="product-detail">Central operating dashboard for all business decisions</div>
+          </div>
+        </div>
+        <p><strong>For NYC Businesss:</strong> See all jobs, teams, and real-time data in one place. No more scattered spreadsheets, Slack conversations, and phone calls.</p>
+        <div class="features">
+          <div class="feature-item"><strong>Real-Time Visibility</strong> - All jobs, teams, and metrics on one screen</div>
+          <div class="feature-item"><strong>AI-Powered Decisions</strong> - Get alerts before problems happen</div>
+          <div class="feature-item"><strong>Custom Dashboards</strong> - Build views for office, field, and exec teams</div>
+          <div class="feature-item"><strong>50+ Integrations</strong> - Connects to QuickBooks, Salesforce, HubSpot, and more</div>
+        </div>
+        <div class="roi-box">🎯 Typical ROI: 3-4x return in first year through reduced bottlenecks and faster decision-making</div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-emoji">📱</span>
+          <div>
+            <div class="product-title">AI Phone System</div>
+            <div class="product-detail">Voice, SMS, and follow-up automation that never sleeps</div>
+          </div>
+        </div>
+        <p><strong>For NYC Businesss:</strong> A phone system that answers calls 24/7, takes smart messages, and routes them to the right person. No more missed leads.</p>
+        <div class="features">
+          <div class="feature-item"><strong>24/7 Answering</strong> - Never miss another call or voicemail</div>
+          <div class="feature-item"><strong>Smart Routing</strong> - Calls go to the right person based on expertise</div>
+          <div class="feature-item"><strong>SMS Follow-Up</strong> - Automatic text reminders keep customers engaged</div>
+          <div class="feature-item"><strong>Call Recording & Analysis</strong> - Train teams on what works</div>
+        </div>
+        <div class="roi-box">🎯 Typical ROI: 5+ missed leads recovered per week = $2,000-5,000 in new business monthly</div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-emoji">🚀</span>
+          <div>
+            <div class="product-title">Field Tech</div>
+            <div class="product-detail">Mobile app for dispatch, job tracking, and field work</div>
+          </div>
+        </div>
+        <p><strong>For NYC Businesss:</strong> Technicians get jobs on their phone, take photos, collect signatures, and submit work orders in real-time. Office gets instant updates.</p>
+        <div class="features">
+          <div class="feature-item"><strong>Real-Time Dispatch</strong> - Push jobs to teams instantly</div>
+          <div class="feature-item"><strong>GPS Routing</strong> - Optimize routes and reduce drive time</div>
+          <div class="feature-item"><strong>Photo & Signature Capture</strong> - Build proof of work</div>
+          <div class="feature-item"><strong>Offline First</strong> - Works even in areas with spotty service</div>
+        </div>
+        <div class="roi-box">🎯 Typical ROI: 2-3 extra jobs per tech per week = $100K-300K additional annual revenue for 10-person team</div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-emoji">❄️</span>
+          <div>
+            <div class="product-title">HVAC Intelligence System</div>
+            <div class="product-detail">Diagnostics, edge AI, and predictive maintenance</div>
+          </div>
+        </div>
+        <p><strong>For NC HVAC Companies:</strong> Real-time system diagnostics, predictive alerts, and historical data all integrated. Turn reactive calls into proactive service.</p>
+        <div class="features">
+          <div class="feature-item"><strong>Real-Time Diagnostics</strong> - Know what's wrong before the customer calls</div>
+          <div class="feature-item"><strong>Predictive Maintenance</strong> - Alert before failures happen</div>
+          <div class="feature-item"><strong>Edge Computing</strong> - Works even when cloud connection drops</div>
+          <div class="feature-item"><strong>Historical Analysis</strong> - Understand patterns and prevent recurring issues</div>
+        </div>
+        <div class="roi-box">🎯 Typical ROI: 15-25% reduction in emergency calls + contract upsells = $50K-150K annual savings</div>
+      </div>
+    </div>
+
+    <!-- ROI TAB -->
+    <div id="roi" class="section">
+      <h2>ROI & Value Proposition</h2>
+
+      <h3>The NC Opportunity</h3>
+      <p>New York City has 2,000+ HVAC contractors, electrical contractors, and service businesses. Most are using legacy systems from the 1990s or managing in spreadsheets.</p>
+
+      <p><strong>Typical NYC Business Pain Points:</strong></p>
+      <div class="features">
+        <div class="feature-item">❌ 5-10% of jobs are delayed due to poor dispatch/communication</div>
+        <div class="feature-item">❌ Missing 20-30 leads per month from voicemails and unansw calls</div>
+        <div class="feature-item">❌ $50K-100K in overhead wasted on manual admin work</div>
+        <div class="feature-item">❌ Can't scale to 10+ technicians without adding office staff</div>
+      </div>
+
+      <h3>WISE² ROI Model</h3>
+      <table class="comparison">
+        <tr>
+          <th>Metric</th>
+          <th>Current State</th>
+          <th>After WISE²</th>
+          <th>Annual Impact</th>
+        </tr>
+        <tr>
+          <td>Jobs Completed/Tech/Week</td>
+          <td>15-18</td>
+          <td>18-22</td>
+          <td>+$100K-200K revenue</td>
+        </tr>
+        <tr>
+          <td>Leads Recovered/Month</td>
+          <td>0 (missed)</td>
+          <td>20-30</td>
+          <td>+$50K-100K revenue</td>
+        </tr>
+        <tr>
+          <td>Admin Hours/Week</td>
+          <td>40-60</td>
+          <td>10-15</td>
+          <td>+1 FTE equivalent</td>
+        </tr>
+        <tr>
+          <td>Decision Latency</td>
+          <td>Next day</td>
+          <td>Real-time</td>
+          <td>Faster problem-solving</td>
+        </tr>
+      </table>
+
+      <h3>Total Cost of Ownership</h3>
+      <p><span class="highlight">WISE² Command:</span> $200-500/month depending on team size</p>
+      <p><span class="highlight">AI Phone:</span> $100-300/month</p>
+      <p><span class="highlight">Field Tech:</span> $50/tech/month</p>
+      <p><strong>Typical 10-person team cost: $1,000-1,500/month = $12,000-18,000/year</strong></p>
+
+      <p style="margin-top: 20px; font-size: 18px; font-weight: 700; color: var(--accent-green);">
+        ✅ Break-even: 2-4 weeks<br>
+        ✅ Year 1 ROI: 300-500%<br>
+        ✅ Scales without adding staff
+      </p>
+    </div>
+
+    <!-- SCRIPTS TAB -->
+    <div id="scripts" class="section">
+      <h2>Sales Conversation Starters</h2>
+
+      <h3>Opening: Uncovering Pain</h3>
+      <div class="script">
+        <div class="script-label">Discovery Call Template</div>
+        <div class="script-text">
+          "I've been talking with contractors across NC, and I'm noticing a pattern. Most teams are managing jobs in spreadsheets or three different systems that don't talk to each other. Is that happening with your operation?"<br><br>
+          [Wait for response]<br><br>
+          "When that happens, I usually see two things: a lot of manual work the team is doing, and a few missed opportunities every week. Does that sound familiar?"
+        </div>
+      </div>
+
+      <h3>Positioning: Why WISE²</h3>
+      <div class="script">
+        <div class="script-label">Product Positioning</div>
+        <div class="script-text">
+          "What we've built is different. Instead of adding another tool to your stack, WISE² brings everything together. One operating system for dispatch, customer communication, job tracking, and data—all connected. No more context switching."
+        </div>
+      </div>
+
+      <h3>Handling: "It's too expensive"</h3>
+      <div class="script">
+        <div class="script-label">Objection Response</div>
+        <div class="script-text">
+          "I get that—software costs add up. But here's what we typically see: a 10-person team recovers about 20-30 missed leads per month just from the AI phone system alone. That's 240-360 leads a year. If 5% become jobs, that's $50K-100K in new revenue. The system pays for itself in the first 4-8 weeks."
+        </div>
+      </div>
+
+      <h3>Closing: Next Steps</h3>
+      <div class="script">
+        <div class="script-label">Trial Proposal</div>
+        <div class="script-text">
+          "Let's start simple. Bring the AI phone system online for 30 days. You'll see exactly how many calls you're capturing. If it doesn't make sense, you turn it off. What do you say we set up a 20-minute technical walkthrough next Tuesday?"
+        </div>
+      </div>
+    </div>
+
+    <!-- POSITIONING TAB -->
+    <div id="positioning" class="section">
+      <h2>Competitive Positioning</h2>
+
+      <h3>WISE² vs Legacy Systems</h3>
+      <table class="comparison">
+        <tr>
+          <th>Feature</th>
+          <th>WISE²</th>
+          <th>QuickBooks + Spreadsheets</th>
+          <th>Typical CRM</th>
+        </tr>
+        <tr>
+          <td>Real-time dispatch</td>
+          <td>✅ Yes</td>
+          <td>❌ No</td>
+          <td>⚠️ Limited</td>
+        </tr>
+        <tr>
+          <td>AI phone system</td>
+          <td>✅ Built-in</td>
+          <td>❌ Separate tool</td>
+          <td>❌ Not included</td>
+        </tr>
+        <tr>
+          <td>Field mobile app</td>
+          <td>✅ Native offline</td>
+          <td>❌ No</td>
+          <td>⚠️ Web-only</td>
+        </tr>
+        <tr>
+          <td>Predictive analytics</td>
+          <td>✅ AI-driven</td>
+          <td>❌ Manual reporting</td>
+          <td>⚠️ Dashboard only</td>
+        </tr>
+        <tr>
+          <td>Setup time</td>
+          <td>✅ 1-2 weeks</td>
+          <td>⚠️ 2-4 weeks</td>
+          <td>⚠️ 3-6 weeks</td>
+        </tr>
+        <tr>
+          <td>Cost/10-person team</td>
+          <td>✅ $12K-18K/year</td>
+          <td>⚠️ $15K-25K/year</td>
+          <td>⚠️ $20K-40K/year</td>
+        </tr>
+      </table>
+
+      <h3>Why NYC Businesss Choose WISE²</h3>
+      <div class="features">
+        <div class="feature-item"><strong>Built for field work</strong> - Works offline, handles photos/signatures, mobile-first</div>
+        <div class="feature-item"><strong>AI that actually works</strong> - Real business intelligence, not just dashboards</div>
+        <div class="feature-item"><strong>No rip-and-replace</strong> - Connects to your existing tools (QuickBooks, Salesforce, etc.)</div>
+        <div class="feature-item"><strong>Scales without hiring</strong> - Go from 5 techs to 50 without adding admin staff</div>
+        <div class="feature-item"><strong>NC-focused</strong> - We understand local HVAC, electrical, and construction businesses</div>
+      </div>
+    </div>
+
+    <!-- STORIES TAB -->
+    <div id="stories" class="section">
+      <h2>NC Customer Success Stories</h2>
+
+      <div class="product-card">
+        <h3>ABC HVAC - Charlotte, NC</h3>
+        <p><strong>Before:</strong> 12 technicians, managing jobs in Outlook and spreadsheets. Averaging 16 jobs/tech/week. Losing 30+ calls per month to voicemail.</p>
+        <p><strong>After WISE²:</strong> Same team, now averaging 22 jobs/tech/week. AI phone recovered 25-30 leads/month. Reduced dispatcher from full-time to part-time.</p>
+        <div class="roi-box">Result: +$120K annual revenue + $30K labor savings = $150K first-year impact</div>
+      </div>
+
+      <div class="product-card">
+        <h3>ServiceTech Electrical - Raleigh, NC</h3>
+        <p><strong>Before:</strong> Growing too fast. Added 5 new technicians but couldn't keep up with coordination. Office bottleneck was preventing scaling.</p>
+        <p><strong>After WISE²:</strong> Field Tech app eliminated 15+ hours/week of manual phone calls and coordination. Dispatcher now focuses on quality vs. logistics.</p>
+        <div class="roi-box">Result: Scaled to 15 techs without adding admin staff. +$200K revenue capacity</div>
+      </div>
+
+      <div class="product-card">
+        <h3>Carolina Construction Co - Greensboro, NC</h3>
+        <p><strong>Before:</strong> 30-person team using 4 different systems. Projects constantly had delays due to miscommunication between office and field.</p>
+        <p><strong>After WISE²:</strong> One operating system. Every decision is based on real-time field data. Project completion time reduced 15%.</p>
+        <div class="roi-box">Result: 15% faster project completion = +$500K annual revenue on same headcount</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+      // Show selected section
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
