@@ -22,6 +22,8 @@ import com.wise2.fieldtech.ui.screens.jobdetail.JobDetailScreen
 import com.wise2.fieldtech.ui.screens.jobdetail.JobDetailViewModel
 import com.wise2.fieldtech.ui.screens.login.LoginScreen
 import com.wise2.fieldtech.ui.screens.login.LoginViewModel
+import com.wise2.fieldtech.ui.screens.rayban.RayBanScreen
+import com.wise2.fieldtech.ui.screens.rayban.RayBanViewModel
 import com.wise2.fieldtech.ui.screens.readings.LiveReadingsScreen
 import com.wise2.fieldtech.ui.screens.readings.LiveReadingsViewModel
 import com.wise2.fieldtech.ui.screens.report.JobReportScreen
@@ -166,6 +168,14 @@ fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
                 viewModel = vm,
                 onBack = { navController.popBackStack() },
                 onLoggedOut = { navController.navigate(Destination.Login.route) { popUpTo(0) { inclusive = true } } },
+            )
+        }
+
+        composable(Destination.RayBan.route) {
+            val vm: RayBanViewModel = viewModel(factory = viewModelFactory { initializer { RayBanViewModel(container.metaWearables) } })
+            RayBanScreen(
+                viewModel = vm,
+                onBack = { navController.popBackStack() },
             )
         }
     }
