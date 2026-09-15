@@ -3,6 +3,7 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { DamageDetectionService, DamageDetectionResult } from '../ml/damage-detection.service';
 import { AREngineService, ARScene } from '../ar/ar-engine.service';
 import { VoiceCommandService, VoiceCommand } from '../voice/voice-command.service';
+import { ModelTrainingService, TrainingJob } from '../ml/model-training.service';
 
 @Controller('jobs/:jobId/phase3')
 @UseGuards(JwtAuthGuard)
@@ -10,7 +11,8 @@ export class Phase3Controller {
   constructor(
     private readonly damageDetection: DamageDetectionService,
     private readonly arEngine: AREngineService,
-    private readonly voiceCommand: VoiceCommandService
+    private readonly voiceCommand: VoiceCommandService,
+    private readonly modelTraining: ModelTrainingService
   ) {}
 
   /**
@@ -178,5 +180,74 @@ export class Phase3Controller {
   @Get('../phase3/models/train/:trainingJobId')
   async getTrainingStatus(@Param('trainingJobId') trainingJobId: string) {
     return this.damageDetection.getTrainingStatus(trainingJobId);
+  }
+
+  /**
+   * Start model training (new training service)
+   * POST /phase3/training/start
+   */
+  @Post('../phase3/training/start')
+  async startModelTraining(
+    @Body('dataset') dataset: string,
+    @Body('epochs') epochs: number = 50,
+    @Body('batchSize') batchSize: number = 16,
+    @Body('learningRate') learningRate: number = 0.001
+  ): Promise<TrainingJob> {
+    return this.modelTraining.startTraining(dataset, epochs, batchSize, learningRate);
+  }
+
+  /**
+   * Get training job status
+   * GET /phase3/training/:jobId
+   */
+  @Get('../phase3/training/:jobId')
+  async getTrainingJobStatus(@Param('jobId') jobId: string) {
+    return this.modelTraining.getTrainingStatus(jobId);
+  }
+
+  /**
+   * List all training jobs
+   * GET /phase3/training/list
+   */
+  @Get('../phase3/training/list')
+  async listTrainingJobs() {
+    return this.modelTraining.listTrainingJobs();
+  }
+
+  /**
+   * Cancel training job
+   * POST /phase3/training/:jobId/cancel
+   */
+  @Post('../phase3/training/:jobId/cancel')
+  async cancelTraining(@Param('jobId') jobId: string): Promise<{ success: boolean }> {
+    const success = this.modelTraining.cancelTraining(jobId);
+    return { success };
+  }
+
+  /**
+   * Export trained model
+   * POST /phase3/training/:jobId/export
+   */
+  @Post('../phase3/training/:jobId/export')
+  async exportModel(
+    @Param('jobId') jobId: string,
+    @Body('outputPath') outputPath: string
+  ): Promise<{ success: boolean; path?: string }> {
+    const success = await this.modelTraining.exportModel(jobId, outputPath);
+    return { success, path: success ? outputPath : undefined };
+  }
+
+  /**
+   * Prepare dataset for training
+   * POST /phase3/training/prepare-dataset
+   */
+  @Post('../phase3/training/prepare-dataset')
+  async prepareDataset(
+    @Body('imagePath') imagePath: string,
+    @Body('labelPath') labelPath: string,
+    @Body('trainSplit') trainSplit: number = 0.8
+  ): Promise<{ datasetPath: string }> {
+    const datasetPath = await this.modelTraining.prepareDataset(imagePath, labelPath, trainSplit);
+    return { datasetPath };
   }
 }
