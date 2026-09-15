@@ -947,7 +947,7 @@ struct ClothingUploaderView: View {
               } else {
                 VStack(spacing: 12) {
                   ForEach(uploaderManager.uploadedProducts) { p in
-                    ProductCardView(product: p, uploaderManager: uploaderManager)
+                    ProductClothingCard(product: p, uploaderManager: uploaderManager)
                   }
                 }
                 .padding(16)
@@ -967,7 +967,7 @@ struct ClothingUploaderView: View {
   }
 }
 
-struct ProductCardView: View {
+struct ProductClothingCard: View {
   let product: ClothingProduct
   let uploaderManager: ClothingUploaderManager
   @State private var showDeleteAlert = false
@@ -1045,10 +1045,10 @@ struct ProductFormViewStyle: View {
         ScrollView {
           VStack(spacing: 16) {
             TextField("Product Name", text: $productName)
-              .textFieldStyle(BlakkhailTextFieldFormStyle())
+              .blakkhailTextFieldStyle()
             TextField("Price", text: $price)
               .keyboardType(.decimalPad)
-              .textFieldStyle(BlakkhailTextFieldFormStyle())
+              .blakkhailTextFieldStyle()
             Button(action: {
               if !productName.isEmpty && !price.isEmpty {
                 let p = ClothingProduct(name: productName, description: "", category: "T-Shirt", price: Double(price) ?? 0, sizes: [], colors: [], material: "")
@@ -1081,13 +1081,19 @@ struct ProductFormViewStyle: View {
   }
 }
 
-struct BlakkhailTextFieldFormStyle: TextFieldStyle {
-  func _body(configuration: TextField<Self>) -> some View {
-    configuration
+// Custom text field modifier
+struct BlakkhailTextFieldModifier: ViewModifier {
+  func body(content: Content) -> some View {
+    content
       .padding(10)
       .background(Color.black.opacity(0.3))
       .cornerRadius(6)
       .foregroundColor(.white)
-      .textInputAutocapitalization(.none)
+  }
+}
+
+extension View {
+  func blakkhailTextFieldStyle() -> some View {
+    modifier(BlakkhailTextFieldModifier())
   }
 }
