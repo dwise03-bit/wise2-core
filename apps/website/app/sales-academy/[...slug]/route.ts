@@ -7,7 +7,12 @@ export async function GET(
   { params }: { params: Promise<{ slug: string[] }> }
 ) {
   const slug = await params;
-  const fileName = slug.join('/');
+  let fileName = slug.join('/');
+
+  // Serve index.html for directory requests (empty slug or trailing slash)
+  if (!fileName || fileName === '') {
+    fileName = 'index.html';
+  }
 
   if (fileName.endsWith('.html')) {
     const publicPath = path.join(process.cwd(), 'public', 'sales-academy', fileName);
