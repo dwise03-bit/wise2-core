@@ -1,14 +1,14 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import * as mediasoup from 'mediasoup';
+// import * as mediasoup from 'mediasoup'; // Disabled - mediasoup requires native bindings
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
   private readonly logger = new Logger(MediasoupService.name);
-  private worker: mediasoup.types.Worker | null = null;
-  private routers: Map<string, mediasoup.types.Router> = new Map();
-  private producers: Map<string, mediasoup.types.Producer> = new Map();
-  private consumers: Map<string, mediasoup.types.Consumer> = new Map();
-  private transports: Map<string, mediasoup.types.PlainRtpTransport> = new Map();
+  private worker: any | null = null;
+  private routers: Map<string, any> = new Map();
+  private producers: Map<string, any> = new Map();
+  private consumers: Map<string, any> = new Map();
+  private transports: Map<string, any> = new Map();
 
   async onModuleInit() {
     await this.initializeWorker();

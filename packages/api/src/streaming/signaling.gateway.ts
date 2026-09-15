@@ -34,7 +34,7 @@ interface SessionContext {
 })
 export class SignalingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(SignalingGateway.name);
   private sessions: Map<string, SessionContext> = new Map();

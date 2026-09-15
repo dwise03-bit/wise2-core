@@ -1,13 +1,14 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
+import * as multer from 'multer';
 import { MediaStorageService } from '../storage/media-storage.service';
 import { MediaResponseDto, StreamStartResponseDto } from './job-media.controller';
 
 export interface UploadMediaParams {
   jobId: string;
   technicianId: string;
-  file: Express.Multer.File;
+  file: multer.File;
   mediaType: 'photo' | 'video';
   timestamp: Date;
   latitude?: number;

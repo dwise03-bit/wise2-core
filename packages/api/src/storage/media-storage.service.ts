@@ -1,16 +1,16 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { promisify } from 'util';
 import * as child_process from 'child_process';
+import * as multer from 'multer';
 
 const exec = promisify(child_process.exec);
 
 export interface MediaUploadParams {
-  file: Express.Multer.File;
+  file: multer.File;
   jobId: string;
   mediaType: 'photo' | 'video';
   isPublic: boolean;
@@ -24,7 +24,7 @@ export interface UploadResult {
 
 @Injectable()
 export class MediaStorageService {
-  private s3Client: AWS.S3;
+  private s3Client: any;
   private localStoragePath: string;
   private storageProvider: 's3' | 'local';
   private s3Bucket: string;
@@ -36,14 +36,15 @@ export class MediaStorageService {
     this.localStoragePath =
       this.configService.get('LOCAL_STORAGE_PATH') || './uploads/jobs';
 
-    // Initialize S3 if configured
-    if (this.storageProvider === 's3') {
-      this.s3Client = new AWS.S3({
-        accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
-        region: this.configService.get('AWS_REGION') || 'us-east-1',
-      });
-    }
+    // S3 support disabled - use local storage
+    // if (this.storageProvider === 's3') {
+    //   const AWS = require('aws-sdk');
+    //   this.s3Client = new AWS.S3({
+    //     accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
+    //     secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+    //     region: this.configService.get('AWS_REGION') || 'us-east-1',
+    //   });
+    // }
 
     // Ensure local storage directory exists
     if (this.storageProvider === 'local') {
@@ -96,7 +97,8 @@ export class MediaStorageService {
         fileSize: file.size,
       };
     } catch (error) {
-      throw new BadRequestException(`Failed to upload to S3: ${error.message}`);
+      const msg = error instanceof Error ? error.message : String(error);
+      throw new BadRequestException(`Failed to upload to S3: ${msg}`);
     }
   }
 
@@ -104,7 +106,7 @@ export class MediaStorageService {
    * Upload to local filesystem
    */
   private async uploadToLocal(
-    file: Express.Multer.File,
+    file: multer.File,
     fileName: string
   ): Promise<UploadResult> {
     const filePath = path.join(this.localStoragePath, fileName);
@@ -271,7 +273,7 @@ export class MediaStorageService {
    * Generate safe filename with timestamp and hash
    */
   private generateFileName(
-    file: Express.Multer.File,
+    file: multer.File,
     jobId: string
   ): string {
     const timestamp = Date.now();
@@ -302,10 +304,11 @@ export class MediaStorageService {
           details: `S3 bucket "${this.s3Bucket}" is accessible`,
         };
       } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
         return {
           healthy: false,
           provider: 's3',
-          details: `S3 connection failed: ${error.message}`,
+          details: `S3 connection failed: ${msg}`,
         };
       }
     } else {

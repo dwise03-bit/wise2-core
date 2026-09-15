@@ -103,12 +103,15 @@ export class RecordingService {
 
     try {
       const buffer = Buffer.concat(session.chunks);
-      const s3Key = `recordings/${session.jobId}/${recordingId}-chunk-${Date.now()}.webm`;
+      const fileName = `recording-${recordingId}-chunk-${Date.now()}.webm`;
 
-      await this.storage.uploadToS3(s3Key, buffer, 'video/webm');
+      // Store locally instead of S3
+      const filePath = path.join(this.TEMP_DIR, session.jobId, fileName);
+      await fs.mkdir(path.dirname(filePath), { recursive: true });
+      await fs.writeFile(filePath, buffer);
 
       this.logger.log(
-        `Flushed ${session.chunks.length} chunks (${session.totalSize} bytes) to S3`
+        `Flushed ${session.chunks.length} chunks (${session.totalSize} bytes) to local storage`
       );
 
       // Reset chunks after successful flush
