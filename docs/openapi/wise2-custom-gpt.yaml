@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: WISE² Custom GPT Actions
   version: 1.2.0
-  description: Read-only WISE² health, Contractor OS, Revenue OS, and HVAC actions.
+  description: WISE² health plus explicitly confirmed business actions.
 servers:
   - url: https://api.wise2.net
 security:
@@ -13,41 +13,53 @@ components:
       type: apiKey
       in: header
       name: x-wise2-tool-secret
+  schemas:
+    CreateLeadAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_lead }
+        data:
+          type: object
+          additionalProperties: true
+          description: Lead fields accepted by the WISE² Revenue OS.
+    CreateFollowUpAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_follow_up }
+        data:
+          type: object
+          required: [dueAt]
+          additionalProperties: true
+          properties:
+            dueAt: { type: string, format: date-time }
+    CreateEstimateAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_estimate }
+        data:
+          type: object
+          additionalProperties: true
+          description: Estimate fields accepted by the WISE² Revenue OS.
 paths:
   /api/assistant/tools/write:
     post:
       operationId: performWise2WriteAction
       summary: Perform a confirmed WISE² business action
-      description: Use only after the user explicitly confirms the exact action. Supports create_lead, create_follow_up, and create_estimate.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { type: object, required: [operation, data] }
-      responses:
-        '200': { description: Action result, content: { application/json: { schema: { type: object } } } }
-        '401': { description: Invalid authentication }
-  /api/assistant/tools/operations:
-    post:
-      operationId: getWise2Operations
-      summary: Read Contractor OS and Revenue OS metrics
+      description: Use only after the user explicitly confirms the exact action. This endpoint is intentionally limited to the three listed operations.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required: [operation]
-              properties:
-                operation:
-                  type: string
-                  enum: [business_health, revenue_today, jobs_today, open_estimates, outstanding_ar, margin_alerts, technician_utilization]
+              oneOf:
+                - $ref: '#/components/schemas/CreateLeadAction'
+                - $ref: '#/components/schemas/CreateFollowUpAction'
+                - $ref: '#/components/schemas/CreateEstimateAction'
       responses:
-        '200':
-          description: Requested business data
-          content:
-            application/json:
-              schema: { type: object }
+        '200': { description: Action result, content: { application/json: { schema: { type: object } } } }
         '401': { description: Invalid authentication }
   /api/v1/hermes/health:
     get:
