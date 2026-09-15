@@ -34,8 +34,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.wise2.fieldtech.BuildConfig
 import com.wise2.fieldtech.R
-import com.wise2.fieldtech.ui.theme.ChaosBlue
-import com.wise2.fieldtech.ui.theme.ElectricBlue
+import com.wise2.fieldtech.ui.theme.NeonGreen
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
@@ -69,7 +68,7 @@ fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("WISE² FIELD TECH", style = MaterialTheme.typography.headlineLarge, color = ElectricBlue, textAlign = TextAlign.Center)
+        Text("WISE² FIELD TECH", style = MaterialTheme.typography.headlineLarge, color = NeonGreen, textAlign = TextAlign.Center)
         Spacer(Modifier.height(8.dp))
         Text(stringRes(), style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
         Spacer(Modifier.height(32.dp))
@@ -105,7 +104,7 @@ fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
             modifier = Modifier.fillMaxWidth().height(56.dp),
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.height(20.dp), color = ChaosBlue)
+                CircularProgressIndicator(modifier = Modifier.height(20.dp), color = NeonGreen)
             } else {
                 Text("LOG IN")
             }
@@ -120,7 +119,7 @@ fun LoginScreen(viewModel: LoginViewModel, onLoggedIn: () -> Unit) {
             enabled = !state.isLoading && googleEnabled,
             modifier = Modifier.fillMaxWidth().height(56.dp),
         ) {
-            Text(if (googleEnabled) "SIGN IN WITH GOOGLE" else "GOOGLE SIGN-IN NEEDS CONFIG", color = ElectricBlue)
+            Text(if (googleEnabled) "SIGN IN WITH GOOGLE" else "GOOGLE SIGN-IN NEEDS CONFIG", color = NeonGreen)
         }
     }
 }

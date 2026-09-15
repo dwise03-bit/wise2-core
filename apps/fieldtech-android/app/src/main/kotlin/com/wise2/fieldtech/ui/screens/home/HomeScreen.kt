@@ -193,7 +193,7 @@ private fun JobRow(job: Job, onClick: () -> Unit) {
     ) {
         Column {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(timeLabel(job.appointmentAtEpochMillis), style = MaterialTheme.typography.titleMedium, color = ElectricBlue)
+                Text(timeLabel(job.appointmentAtEpochMillis), style = MaterialTheme.typography.titleMedium, color = NeonGreen)
                 StatusPill(text = job.status.label().uppercase(), color = job.status.color())
             }
             Spacer(Modifier.height(4.dp))
