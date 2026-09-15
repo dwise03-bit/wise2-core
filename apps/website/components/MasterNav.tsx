@@ -19,6 +19,7 @@ export function MasterNav() {
     { name: 'Field Tech', href: '/contractor', icon: '🔧' },
     { name: 'Sound Labs', href: '/soundlab', icon: '🎚️' },
     { name: 'Creative Studio', href: '/studio', icon: '🎨' },
+    { name: 'App Development', href: '/systems/app-development', icon: '📲' },
     { name: 'Digital Twin', href: '/services/digital-twin/start', icon: '🌐' },
     { name: 'WISE Defense', href: '/wise-defense/dashboard', icon: '🛡️' },
   ];
