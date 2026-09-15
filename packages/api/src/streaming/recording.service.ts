@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MediaStorageService } from '../storage/media-storage.service';
-import { PrismaService } from '@wise2/db';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -18,8 +17,7 @@ export class RecordingService {
   private readonly TEMP_DIR = '/tmp/wise2-recordings';
 
   constructor(
-    private readonly storage: MediaStorageService,
-    private readonly db: PrismaService
+    private readonly storage: MediaStorageService
   ) {
     this.initializeTempDir();
   }
@@ -153,14 +151,11 @@ export class RecordingService {
         },
       });
 
-      // Generate S3 URL
-      const s3Url = await this.storage.getSignedS3Url(
-        `recordings/${session.jobId}/${recordingId}.webm`,
-        3600 // 1 hour expiry
-      );
+      // Generate local file path
+      const localPath = path.join(this.TEMP_DIR, session.jobId, `${recordingId}.webm`);
 
       this.logger.log(
-        `Stopped recording ${recordingId} (duration: ${duration.toFixed(2)}s)`
+        `Stopped recording ${recordingId} (duration: ${duration.toFixed(2)}s, saved to ${localPath})`
       );
 
       // Clean up from memory

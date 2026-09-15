@@ -43,7 +43,7 @@ export class MediasoupService implements OnModuleInit {
   /**
    * Create router for job stream session
    */
-  async createRouter(jobId: string): Promise<mediasoup.types.Router> {
+  async createRouter(jobId: string): Promise<any> {
     if (!this.worker) {
       throw new Error('Mediasoup worker not initialized');
     }
@@ -52,7 +52,7 @@ export class MediasoupService implements OnModuleInit {
       return this.routers.get(jobId)!;
     }
 
-    const mediaCodecs: mediasoup.types.RtpCodecCapability[] = [
+    const mediaCodecs: any[] = [
       {
         kind: 'video',
         mimeType: 'video/VP9',
@@ -100,7 +100,7 @@ export class MediasoupService implements OnModuleInit {
   async createWebRtcTransport(
     jobId: string,
     supervisorId: string
-  ): Promise<mediasoup.types.WebRtcTransport> {
+  ): Promise<any> {
     const router = this.routers.get(jobId);
     if (!router) {
       throw new Error(`Router not found for job ${jobId}`);
@@ -140,9 +140,9 @@ export class MediasoupService implements OnModuleInit {
   async createConsumer(
     jobId: string,
     supervisorId: string,
-    transport: mediasoup.types.WebRtcTransport,
+    transport: any,
     producerId: string
-  ): Promise<mediasoup.types.Consumer> {
+  ): Promise<any> {
     const router = this.routers.get(jobId);
     if (!router) {
       throw new Error(`Router not found for job ${jobId}`);
@@ -190,9 +190,9 @@ export class MediasoupService implements OnModuleInit {
    */
   async createProducer(
     jobId: string,
-    transport: mediasoup.types.PlainRtpTransport,
+    transport: any,
     kind: 'video' | 'audio'
-  ): Promise<mediasoup.types.Producer> {
+  ): Promise<any> {
     try {
       const producer = await transport.produce({
         kind,
