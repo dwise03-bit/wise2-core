@@ -7208,4 +7208,3 @@ model DiscordWebhook {
   @@index([channel])
   @@map("discord_webhooks")
 }
-}

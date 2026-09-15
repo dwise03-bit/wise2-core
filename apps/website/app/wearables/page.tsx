@@ -17,27 +17,33 @@ export default function WearablesPage() {
 
   async function fetchDashboardData() {
     try {
-      // Try real API first
       const [statsRes, capturesRes, alertsRes] = await Promise.all([
-        fetch('/api/rayban/dashboard').catch(() => null),
-        fetch('/api/rayban/captures?limit=20').catch(() => null),
-        fetch('/api/rayban/alerts?limit=10').catch(() => null),
+        fetch('/api/rayban/dashboard'),
+        fetch('/api/rayban/captures?limit=20'),
+        fetch('/api/rayban/alerts?limit=10'),
       ]);
 
-      // Use mock data if API fails
-      const statsData = statsRes?.ok ? await statsRes.json() : generateMockStats();
-      const capturesData = capturesRes?.ok ? await capturesRes.json() : generateMockCaptures();
-      const alertsData = alertsRes?.ok ? await alertsRes.json() : generateMockAlerts();
+      if (!statsRes.ok || !capturesRes.ok || !alertsRes.ok) {
+        throw new Error('API request failed');
+      }
+
+      const statsData = await statsRes.json();
+      const capturesData = await capturesRes.json();
+      const alertsData = await alertsRes.json();
 
       setStats(statsData);
-      setCaptures(capturesData);
-      setAlerts(alertsData);
+      setCaptures(capturesData || []);
+      setAlerts(alertsData || []);
       setLoading(false);
     } catch (error) {
-      console.error('Using mock data:', error);
-      setStats(generateMockStats());
-      setCaptures(generateMockCaptures());
-      setAlerts(generateMockAlerts());
+      console.error('Error fetching data:', error);
+      // Graceful fallback with empty state, not mock data
+      setStats({
+        stats: { totalCaptures: 0, pendingApprovals: 0, activeSessions: 0, connectedDevices: 0 },
+        recentAlerts: [],
+      });
+      setCaptures([]);
+      setAlerts([]);
       setLoading(false);
     }
   }
