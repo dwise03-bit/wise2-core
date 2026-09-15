@@ -22,6 +22,8 @@ import com.wise2.fieldtech.update.UpdateManager
 import com.wise2.fieldtech.util.ConnectivityObserver
 import com.wise2.fieldtech.wearables.MetaWearables
 import com.wise2.fieldtech.wearables.MetaWearablesBridge
+import com.wise2.fieldtech.wearables.RayBanAlertService
+import com.wise2.fieldtech.wearables.RayBanAlertServiceImpl
 
 /**
  * Hand-rolled dependency container instead of Hilt/Dagger — the spec's preferred stack (§3)
@@ -50,6 +52,7 @@ class AppContainer private constructor(context: Context) {
     val toolManager = ToolManager(CombinedToolAdapter(FieldpieceAdapter(appContext), Fluke902FcAdapter(appContext)))
     val updateManager = UpdateManager(appContext, apiService)
     val metaWearables: MetaWearablesBridge = MetaWearables.create(appContext)
+    val rayBanAlerts: RayBanAlertService = RayBanAlertServiceImpl(metaWearables)
 
     companion object {
         @Volatile private var instance: AppContainer? = null

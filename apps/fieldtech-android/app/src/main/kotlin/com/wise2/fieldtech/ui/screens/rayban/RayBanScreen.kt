@@ -1,6 +1,7 @@
 package com.wise2.fieldtech.ui.screens.rayban
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -49,7 +54,6 @@ fun RayBanScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
     ) {
         // Header
         Row(
@@ -61,50 +65,79 @@ fun RayBanScreen(
             IconButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
-            Text(
-                "Ray-Ban Meta",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f).padding(start = 8.dp),
+            Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+                Text(
+                    "Ray-Ban Meta",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    "Field Tech Companion",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .background(
+                        if (uiState.connected) Color(0xFF4CAF50) else Color(0xFFF44336),
+                        shape = RoundedCornerShape(6.dp)
+                    )
             )
         }
 
-        // Status Card
-        StatusCard(uiState = uiState, modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            // Status Card
+            item {
+                StatusCard(uiState = uiState)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            // If unavailable, show setup message
+            if (!uiState.connected) {
+                item {
+                    UnavailableCard(
+                        onConnect = { viewModel.connectGlasses() },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            } else {
+                // Control Panel
+                item {
+                    ControlPanel(
+                        uiState = uiState,
+                        queryText = queryText,
+                        onQueryChange = { queryText = it },
+                        onAskWise2 = {
+                            if (queryText.isNotBlank()) {
+                                viewModel.askWise2(queryText)
+                                queryText = ""
+                            }
+                        },
+                        onCapture = { viewModel.captureFrame() },
+                        onDisconnect = { viewModel.disconnectGlasses() },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-        // If unavailable, show setup message
-        if (!uiState.connected) {
-            UnavailableCard(
-                onConnect = { viewModel.connectGlasses() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-        } else {
-            // Control Panel
-            ControlPanel(
-                uiState = uiState,
-                queryText = queryText,
-                onQueryChange = { queryText = it },
-                onAskWise2 = {
-                    if (queryText.isNotBlank()) {
-                        viewModel.askWise2(queryText)
-                        queryText = ""
-                    }
-                },
-                onCapture = { viewModel.captureFrame() },
-                onDisconnect = { viewModel.disconnectGlasses() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
+                // Job Context (placeholder)
+                item {
+                    JobContextPanel()
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                // Recent Captures (placeholder)
+                item {
+                    RecentCapturesPanel()
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -121,6 +154,7 @@ private fun StatusCard(
 
     Box(
         modifier = modifier
+            .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(12.dp)
@@ -135,11 +169,9 @@ private fun StatusCard(
                 Box(
                     modifier = Modifier
                         .background(statusColor, shape = RoundedCornerShape(4.dp))
-                        .height(16.dp)
-                        .height(16.dp)
-                        .weight(0.02f)
+                        .size(16.dp)
                 )
-                Spacer(modifier = Modifier.weight(0.02f))
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     uiState.statusLabel,
                     style = MaterialTheme.typography.titleMedium,
@@ -150,7 +182,7 @@ private fun StatusCard(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 when {
-                    uiState.connected -> "Glasses are online and ready"
+                    uiState.connected -> "Glasses are online and ready • Field capture enabled"
                     "UNAVAILABLE" in uiState.statusLabel -> "Setup required for Ray-Ban Meta integration"
                     else -> "Attempting connection..."
                 },
@@ -208,6 +240,7 @@ private fun ControlPanel(
 ) {
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(12.dp)
@@ -216,7 +249,7 @@ private fun ControlPanel(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            "Ask WISE²",
+            "🤖 Ask WISE²",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
         )
@@ -239,19 +272,107 @@ private fun ControlPanel(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedButton(
-            onClick = onCapture,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            enabled = uiState.canCapture,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("Capture Frame")
+            OutlinedButton(
+                onClick = onCapture,
+                modifier = Modifier.weight(1f),
+                enabled = uiState.canCapture,
+            ) {
+                Text("📸 Capture")
+            }
+
+            OutlinedButton(
+                onClick = onDisconnect,
+                modifier = Modifier.weight(1f),
+            ) {
+                Text("Disconnect")
+            }
+        }
+    }
+}
+
+@Composable
+private fun JobContextPanel(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            "📋 Job Context",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Customer", style = MaterialTheme.typography.labelSmall)
+                Text("John Smith", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Address", style = MaterialTheme.typography.labelSmall)
+                Text("123 Main St", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+            }
         }
 
-        OutlinedButton(
-            onClick = onDisconnect,
+        Row(
             modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Disconnect")
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Job #", style = MaterialTheme.typography.labelSmall)
+                Text("JOB-2026-001", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Service", style = MaterialTheme.typography.labelSmall)
+                Text("HVAC Diagnostic", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecentCapturesPanel(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            "📸 Recent Captures (0)",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "No captures yet\nStart by capturing a frame with your glasses",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

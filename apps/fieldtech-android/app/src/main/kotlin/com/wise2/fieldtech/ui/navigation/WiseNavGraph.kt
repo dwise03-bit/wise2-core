@@ -172,7 +172,7 @@ fun WiseNavGraph(navController: NavHostController, container: AppContainer) {
         }
 
         composable(Destination.RayBan.route) {
-            val vm: RayBanViewModel = viewModel(factory = viewModelFactory { initializer { RayBanViewModel(container.metaWearables) } })
+            val vm: RayBanViewModel = viewModel(factory = viewModelFactory { initializer { RayBanViewModel(container.metaWearables, container.rayBanAlerts) } })
             RayBanScreen(
                 viewModel = vm,
                 onBack = { navController.popBackStack() },

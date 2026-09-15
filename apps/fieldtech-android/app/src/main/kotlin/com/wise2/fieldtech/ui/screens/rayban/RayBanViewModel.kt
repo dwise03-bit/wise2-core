@@ -2,15 +2,21 @@ package com.wise2.fieldtech.ui.screens.rayban
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wise2.fieldtech.wearables.AlertSeverity
 import com.wise2.fieldtech.wearables.ConnectionState
 import com.wise2.fieldtech.wearables.MetaWearablesBridge
+import com.wise2.fieldtech.wearables.RayBanAlert
+import com.wise2.fieldtech.wearables.RayBanAlertService
 import com.wise2.fieldtech.wearables.RayBanUiState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class RayBanViewModel(private val bridge: MetaWearablesBridge) : ViewModel() {
+class RayBanViewModel(
+    private val bridge: MetaWearablesBridge,
+    private val alertService: RayBanAlertService,
+) : ViewModel() {
     val uiState = bridge.state
         .map { RayBanUiState.from(it) }
         .stateIn(viewModelScope, SharingStarted.Lazily, RayBanUiState.from(ConnectionState.UNAVAILABLE))
@@ -19,8 +25,21 @@ class RayBanViewModel(private val bridge: MetaWearablesBridge) : ViewModel() {
         viewModelScope.launch {
             try {
                 bridge.sendAudioCommand(query)
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Query Sent",
+                        message = query,
+                        severity = AlertSeverity.INFO,
+                    )
+                )
             } catch (e: Exception) {
-                // Log or emit error state; UI shows unavailable state
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Query Failed",
+                        message = "Could not send query to WISE²",
+                        severity = AlertSeverity.ERROR,
+                    )
+                )
             }
         }
     }
@@ -30,8 +49,21 @@ class RayBanViewModel(private val bridge: MetaWearablesBridge) : ViewModel() {
             try {
                 // Placeholder: frame would come from camera in production
                 bridge.publishCameraFrame(byteArrayOf(), "image/jpeg")
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Frame Captured",
+                        message = "Photo saved to job",
+                        severity = AlertSeverity.INFO,
+                    )
+                )
             } catch (e: Exception) {
-                // UI shows unavailable state
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Capture Failed",
+                        message = "Could not capture frame",
+                        severity = AlertSeverity.ERROR,
+                    )
+                )
             }
         }
     }
@@ -40,8 +72,21 @@ class RayBanViewModel(private val bridge: MetaWearablesBridge) : ViewModel() {
         viewModelScope.launch {
             try {
                 bridge.connect()
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Connected",
+                        message = "Ray-Ban Meta glasses connected",
+                        severity = AlertSeverity.INFO,
+                    )
+                )
             } catch (e: Exception) {
-                // Stay in unavailable state
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Connection Failed",
+                        message = "Setup required for Ray-Ban Meta",
+                        severity = AlertSeverity.WARNING,
+                    )
+                )
             }
         }
     }
@@ -50,6 +95,13 @@ class RayBanViewModel(private val bridge: MetaWearablesBridge) : ViewModel() {
         viewModelScope.launch {
             try {
                 bridge.disconnect()
+                alertService.sendAlert(
+                    RayBanAlert(
+                        title = "Disconnected",
+                        message = "Ray-Ban Meta glasses disconnected",
+                        severity = AlertSeverity.INFO,
+                    )
+                )
             } catch (e: Exception) {
                 // Stay in current state
             }
