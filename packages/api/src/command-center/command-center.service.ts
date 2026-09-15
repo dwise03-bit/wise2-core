@@ -429,4 +429,42 @@ export class CommandCenterService {
       };
     });
   }
+
+  /**
+   * Get WISE² Command Center GPT link
+   */
+  async getGPTLink(tenantId: string) {
+    return {
+      gptId: 'g-6aa6a67f0d9c8191bb664542f87f28b4',
+      name: 'WISE² Command Center',
+      url: 'https://chatgpt.com/g/g-6aa6a67f0d9c8191bb664542f87f28b4-wise2-command-center',
+      description: 'AI-native operations command center for WISE² Genesis systems, business, and automation.',
+      access: 'anyone_with_link',
+      status: 'active',
+      integrations: ['dashboard', 'website', 'discord', 'knowledge_base'],
+    };
+  }
+
+  /**
+   * Get GPT context for pre-loading user data
+   */
+  async getGPTContext(tenantId: string) {
+    const [dashboard, contacts, recentJobs] = await Promise.all([
+      this.getCompleteDashboard(tenantId),
+      this.getPermissionEngine(tenantId),
+      this.getTodayJobs(tenantId),
+    ]);
+
+    return {
+      tenant: tenantId,
+      dashboard,
+      userContext: contacts,
+      recentActivity: recentJobs,
+      timestamp: new Date(),
+      gptInstructions: `You are the WISE² Command Center GPT. Help the user manage their WISE² operations.
+You have access to: revenue data, jobs, technicians, estimates, AR tracking, margins, AI recommendations, schedules, and business health metrics.
+Current context loaded: Dashboard data, user permissions, recent jobs.
+Guide users through operations, provide insights, and help with decision-making.`,
+    };
+  }
 }

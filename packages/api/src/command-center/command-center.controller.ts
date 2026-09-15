@@ -68,6 +68,16 @@ export class CommandCenterController {
   getCompleteDashboard(@Req() req: Request) {
     return this.commandCenterService.getCompleteDashboard(getTenantId(req));
   }
+
+  @Get('gpt/link')
+  getGPTLink(@Req() req: Request) {
+    return this.commandCenterService.getGPTLink(getTenantId(req));
+  }
+
+  @Get('gpt/context')
+  getGPTContext(@Req() req: Request) {
+    return this.commandCenterService.getGPTContext(getTenantId(req));
+  }
 }
 
 function getTenantId(req: Request): string {

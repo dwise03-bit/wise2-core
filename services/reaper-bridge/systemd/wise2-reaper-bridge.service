@@ -1,0 +1,15 @@
+[Unit]
+Description=WISE² REAPER bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/wise2-core/services/reaper-bridge
+EnvironmentFile=%h/.config/wise2/reaper-bridge.env
+ExecStart=/usr/bin/node %h/wise2-core/services/reaper-bridge/dist/reaper-bridge/src/server.js
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
