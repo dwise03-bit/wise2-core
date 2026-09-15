@@ -30,7 +30,7 @@ RUN pnpm --filter @wise2/studio build
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
-ENV PORT 3005
+ENV PORT 3003
 ENV COREPACK_ENABLE_PROJECT_SPEC=0
 RUN apk add --no-cache libc6-compat
 RUN npm install -g pnpm@9.15.9 \
@@ -44,5 +44,5 @@ COPY --from=builder /app/packages/db ./packages/db
 
 RUN pnpm install --frozen-lockfile --production
 
-EXPOSE 3005
+EXPOSE 3003
 CMD ["pnpm", "--filter", "@wise2/studio", "start"]
