@@ -154,7 +154,7 @@ export class GPTDiscordService {
     userId?: string;
     timestamp?: Date;
   }): DiscordEmbed {
-    const fields = [];
+    const fields: Array<{ name: string; value: string; inline: boolean }> = [];
 
     if (data.metrics) {
       Object.entries(data.metrics).forEach(([key, value]) => {
