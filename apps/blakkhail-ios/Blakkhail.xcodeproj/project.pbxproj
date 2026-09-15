@@ -1,0 +1,20 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+		/* Begin PBXBuildFile section */
+		000001 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 000002; };
+		/* End PBXBuildFile section */
+		/* Begin PBXFileReference section */
+		000003 /* Blakkhail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blakkhail.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		000002 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		/* End PBXFileReference section */
+		/* Begin PBXProject section */
+		000004 /* Project object */ = {isa = PBXProject; buildConfigurationList = 000005; compatibilityVersion = "Xcode 12.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = 000006; projectDirPath = ""; projectRoot = ""; targets = (000007); };
+		/* End PBXProject section */
+	};
+	rootObject = 000004;
+}
