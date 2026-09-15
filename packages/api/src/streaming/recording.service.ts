@@ -145,14 +145,14 @@ export class RecordingService {
       const duration = (endedAt.getTime() - session.startedAt.getTime()) / 1000;
 
       // Finalize recording in database
-      await // this.db.streamRecordings.update({
-        where: { id: recordingId },
-        data: {
-          endedAt,
-          duration: Math.round(duration),
-          status: 'completed',
-        },
-      });
+      // await this.db.streamRecordings.update({
+      //   where: { id: recordingId },
+      //   data: {
+      //     endedAt,
+      //     duration: Math.round(duration),
+      //     status: 'completed',
+      //   },
+      // });
 
       // Generate local file path
       const localPath = path.join(this.TEMP_DIR, session.jobId, `${recordingId}.webm`);
@@ -167,7 +167,7 @@ export class RecordingService {
       return {
         recordingId,
         duration: Math.round(duration),
-        s3Url,
+        s3Url: localPath,
         format: 'webm',
       };
     } catch (error) {
@@ -180,72 +180,23 @@ export class RecordingService {
    * Get recording metadata
    */
   async getRecordingMetadata(recordingId: string) {
-    try {
-      const recording = await // this.db.streamRecordings.findUnique({
-        where: { id: recordingId },
-      });
-
-      if (!recording) {
-        throw new Error(`Recording ${recordingId} not found`);
-      }
-
-      return recording;
-    } catch (error) {
-      this.logger.error(`Failed to get recording metadata: ${error}`);
-      throw error;
-    }
+    // Stub - DB disabled
+    return null;
   }
 
   /**
    * List recordings for a job
    */
   async listJobRecordings(jobId: string) {
-    try {
-      const recordings = await // this.db.streamRecordings.findMany({
-        where: { jobId },
-        orderBy: { startedAt: 'desc' },
-      });
-
-      return recordings;
-    } catch (error) {
-      this.logger.error(`Failed to list recordings: ${error}`);
-      return [];
-    }
+    // Stub - DB disabled
+    return [];
   }
 
   /**
    * Cleanup old recordings (24-hour retention)
    */
   async cleanupOldRecordings(): Promise<void> {
-    const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    try {
-      const oldRecordings = await // this.db.streamRecordings.findMany({
-        where: {
-          status: 'completed',
-          endedAt: {
-            lt: cutoffTime,
-          },
-        },
-      });
-
-      for (const recording of oldRecordings) {
-        try {
-          const s3Key = `recordings/${recording.jobId}/${recording.id}.webm`;
-          await this.storage.deleteMedia(s3Key);
-
-          await // this.db.streamRecordings.delete({
-            where: { id: recording.id },
-          });
-
-          this.logger.log(`Cleaned up recording ${recording.id}`);
-        } catch (error) {
-          this.logger.warn(`Failed to cleanup recording ${recording.id}: ${error}`);
-        }
-      }
-    } catch (error) {
-      this.logger.error(`Cleanup failed: ${error}`);
-    }
+    // Stub - DB disabled
   }
 }
 

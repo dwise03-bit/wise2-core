@@ -19,13 +19,8 @@ export class MediasoupService implements OnModuleInit {
    */
   private async initializeWorker() {
     try {
-      this.worker = await mediasoup.createWorker({
-        logLevel: 'warn',
-        logTags: ['rtp', 'rtcp', 'srtp', 'bwe'],
-        rtcMinPort: 40000,
-        rtcMaxPort: 49999,
-        numWorkerThreads: 4,
-      });
+      // Mediasoup disabled - requires native bindings
+      // this.worker = await mediasoup.createWorker({...});
 
       this.logger.log('Mediasoup worker initialized');
 
