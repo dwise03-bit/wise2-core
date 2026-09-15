@@ -1,0 +1,26 @@
+name: Auto-Deploy BLAKKHAIL to iPhone
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/blakkhail-ios/**'
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Fastlane
+        run: sudo gem install -NV fastlane
+        
+      - name: Setup provisioning & deploy
+        working-directory: apps/blakkhail-ios
+        run: ./PERMANENT_DEPLOY.sh
+        env:
+          APPLE_ID: dwise954@icloud.com
+
+      - name: Verify installation
+        run: echo "✅ BLAKKHAIL auto-deployed"
+
