@@ -44,6 +44,7 @@ import { CommandCenterModule } from './command-center/command-center.module';
 import { ConsultingModule } from './consulting/consulting.module';
 import { AiPhoneModule } from './ai-phone/ai-phone.module';
 import { CloudModule } from './v1/cloud/cloud.module';
+import { SetupModule } from './v1/setup/setup.module';
 // import { ReaperModule } from './reaper/reaper.module'; // DISABLED: Prisma model name mismatches
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { OTAModule } from './ota/ota.module';
@@ -155,6 +156,7 @@ import { OTAUpdatesModule } from './mobile/ota-updates.module';
     CommandCenterModule,
     AiPhoneModule,
     CloudModule,
+    SetupModule,
     WebhooksModule,
     RayBanModule,
     OTAModule,
