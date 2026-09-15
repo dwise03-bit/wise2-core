@@ -24,6 +24,7 @@ export function MasterNav() {
   ];
 
   const resources = [
+    { name: 'iOS Apps', href: '/apps', icon: '📱' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'API Docs', href: '/api-docs' },
     { name: 'Contact', href: '/contact' },
@@ -78,7 +79,7 @@ export function MasterNav() {
           {/* Resources */}
           {resources.map((r) => (
             <Link key={r.href} href={r.href} className="text-white hover:text-neon-green transition text-sm">
-              {r.name}
+              {r.icon ? `${r.icon} ${r.name}` : r.name}
             </Link>
           ))}
         </div>
