@@ -217,16 +217,43 @@ export default function WearablesPage() {
 
               {/* Metric Cards */}
               {[
-                { label: 'PENDING', value: stats.stats.pendingApprovals, icon: AlertTriangle, color: WISE2_COLORS.gold, span: 'col-span-3 row-span-2' },
-                { label: 'ACTIVE', value: stats.stats.activeSessions, icon: Activity, color: WISE2_COLORS.neon_green, span: 'col-span-2 row-span-2' },
-                { label: 'CONNECTED', value: stats.stats.connectedDevices, icon: Radio, color: WISE2_COLORS.neon_cyan, span: 'col-span-2 row-span-2' },
+                { label: 'PENDING', value: stats.stats.pendingApprovals, icon: AlertTriangle, color: WISE2_COLORS.gold, span: 'col-span-3 row-span-2', maxValue: 50 },
+                { label: 'ACTIVE', value: stats.stats.activeSessions, icon: Activity, color: WISE2_COLORS.neon_green, span: 'col-span-2 row-span-2', maxValue: 20 },
+                { label: 'CONNECTED', value: stats.stats.connectedDevices, icon: Radio, color: WISE2_COLORS.neon_cyan, span: 'col-span-2 row-span-2', maxValue: 10 },
               ].map((m, i) => {
                 const Icon = m.icon;
+                const percentage = (m.value / m.maxValue) * 100;
                 return (
                   <Card3D key={i} cardId={`metric-${i}`} index={i + 1} span={m.span}>
                     <div className="h-full flex flex-col justify-between">
-                      <div className="flex items-center gap-2"><Icon size={16} style={{ color: m.color }} /><span className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</span></div>
-                      <motion.div className="text-4xl font-black" style={{ color: m.color }} animate={hoveredCard === `metric-${i}` ? { scale: 1.2 } : { scale: 1 }}>{m.value}</motion.div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <motion.div animate={{ rotate: hoveredCard === `metric-${i}` ? 360 : 0 }} transition={{ duration: 0.8 }}>
+                            <Icon size={16} style={{ color: m.color }} />
+                          </motion.div>
+                          <span className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</span>
+                        </div>
+                        {/* Status indicator */}
+                        <motion.div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: m.color }}
+                          animate={{ opacity: [1, 0.3, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        />
+                      </div>
+                      <div>
+                        <motion.div className="text-4xl font-black mb-2" style={{ color: m.color }} animate={hoveredCard === `metric-${i}` ? { scale: 1.2 } : { scale: 1 }}>{m.value}</motion.div>
+                        {/* Progress bar */}
+                        <div className="h-1 bg-black/40 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full"
+                            style={{ background: `linear-gradient(90deg, ${m.color}80, ${m.color}20)` }}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${percentage}%` }}
+                            transition={{ delay: 0.2 + i * 0.1, duration: 0.8 }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </Card3D>
                 );
@@ -245,13 +272,62 @@ export default function WearablesPage() {
               {/* Chart */}
               <Card3D cardId="chart" index={5} span="col-span-3 row-span-6">
                 <div className="flex flex-col justify-between h-full">
-                  <div className="flex items-center gap-2 mb-4"><TrendingUp size={14} style={{ color: WISE2_COLORS.neon_cyan }} /><span className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_cyan }}>3D TREND</span></div>
-                  <div className="flex-1 flex items-end justify-around gap-1 mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-4"><TrendingUp size={14} style={{ color: WISE2_COLORS.neon_cyan }} /><span className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_cyan }}>3D TREND</span></div>
+                    {/* SVG Gradient Background */}
+                    <svg className="absolute inset-0 w-full h-full opacity-10" style={{ pointerEvents: 'none' }} viewBox="0 0 100 100">
+                      <defs>
+                        <linearGradient id="chartGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                          <stop offset="0%" stopColor={WISE2_COLORS.neon_green} />
+                          <stop offset="100%" stopColor={WISE2_COLORS.neon_cyan} />
+                        </linearGradient>
+                      </defs>
+                      <path d="M 0 80 L 14 60 L 28 65 L 42 50 L 56 45 L 70 55 L 84 40 L 100 35" fill="none" stroke="url(#chartGrad)" strokeWidth="2" />
+                    </svg>
+                  </div>
+
+                  <div className="flex-1 flex items-end justify-around gap-1 mb-4 relative">
                     {[45, 32, 52, 38, 61, 44, 55].map((v, i) => (
-                      <motion.div key={i} className="flex-1" initial={{ height: 0, rotateX: -90 }} animate={{ height: `${(v / 61) * 100}%`, rotateX: hoveredCard === 'chart' ? 0 : -90 }} transition={{ delay: 0.5 + i * 0.05, duration: 0.8 }} whileHover={{ scale: 1.15, rotateX: 0 }} style={{ backgroundColor: WISE2_COLORS.neon_green, boxShadow: `0 20px 40px ${WISE2_COLORS.neon_green}`, borderRadius: '4px', cursor: 'pointer', transformStyle: 'preserve-3d' }} />
+                      <motion.div
+                        key={i}
+                        className="flex-1 group"
+                        initial={{ height: 0, rotateX: -90 }}
+                        animate={{ height: `${(v / 61) * 100}%`, rotateX: hoveredCard === 'chart' ? 0 : -90 }}
+                        transition={{ delay: 0.5 + i * 0.05, duration: 0.8 }}
+                        whileHover={{ scale: 1.15, rotateX: 0 }}
+                        style={{
+                          background: `linear-gradient(180deg, ${WISE2_COLORS.neon_green}, ${WISE2_COLORS.neon_cyan})`,
+                          boxShadow: `0 20px 40px ${WISE2_COLORS.neon_green}, inset 0 1px 0 rgba(0,255,127,0.3)`,
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          transformStyle: 'preserve-3d',
+                          position: 'relative'
+                        }}
+                      >
+                        {/* Value label on hover */}
+                        <motion.div
+                          className="text-xs font-bold opacity-0 group-hover:opacity-100 absolute -top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+                          style={{ color: WISE2_COLORS.neon_green }}
+                        >
+                          {v}
+                        </motion.div>
+                      </motion.div>
                     ))}
                   </div>
-                  <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>46 /day</div>
+
+                  {/* Chart stats */}
+                  <div className="space-y-2">
+                    <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>DAILY AVG: <span style={{ color: WISE2_COLORS.neon_green, fontWeight: 'bold' }}>46.9</span> captures</div>
+                    <div className="h-1 bg-black/50 rounded" style={{ overflow: 'hidden' }}>
+                      <motion.div
+                        className="h-full rounded"
+                        style={{ background: `linear-gradient(90deg, ${WISE2_COLORS.neon_green}, ${WISE2_COLORS.neon_cyan})` }}
+                        initial={{ width: 0 }}
+                        animate={{ width: '75%' }}
+                        transition={{ delay: 1, duration: 1 }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </Card3D>
             </div>
