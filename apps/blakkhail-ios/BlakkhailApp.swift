@@ -237,8 +237,94 @@ class ProductManager: ObservableObject {
       let (data, _) = try await URLSession.shared.data(from: url)
       self.products = try JSONDecoder().decode([Product].self, from: data)
     } catch {
-      self.error = "Failed to load products: \(error.localizedDescription)"
+      // Fallback to seeded BLAKKHAIL products
+      self.products = Self.seedProducts()
     }
+  }
+
+  private static func seedProducts() -> [Product] {
+    [
+      Product(
+        id: "bk-001",
+        name: "Heritage Logo Hoodie",
+        description: "Premium oversized hoodie with embroidered BLAKKHAIL logo",
+        price: 89.99,
+        image: "📦",
+        category: "Hoodies",
+        inStock: true,
+        sizes: ["S", "M", "L", "XL", "2XL"]
+      ),
+      Product(
+        id: "bk-002",
+        name: "Distressed Cargo Pants",
+        description: "Black distressed cargo pants with multiple pockets and heritage detailing",
+        price: 79.99,
+        image: "📦",
+        category: "Pants",
+        inStock: true,
+        sizes: ["28", "30", "32", "34", "36"]
+      ),
+      Product(
+        id: "bk-003",
+        name: "Gold Chain Necklace",
+        description: "Premium 18k gold-plated chain necklace, signature BLAKKHAIL accessory",
+        price: 49.99,
+        image: "📦",
+        category: "Accessories",
+        inStock: true,
+        sizes: ["18in", "20in", "24in"]
+      ),
+      Product(
+        id: "bk-004",
+        name: "Black Leather Bomber Jacket",
+        description: "High-quality black leather bomber with gold accents and heritage patch",
+        price: 199.99,
+        image: "📦",
+        category: "Jackets",
+        inStock: true,
+        sizes: ["S", "M", "L", "XL"]
+      ),
+      Product(
+        id: "bk-005",
+        name: "Classic T-Shirt",
+        description: "100% cotton classic tee with front logo print",
+        price: 29.99,
+        image: "📦",
+        category: "T-Shirts",
+        inStock: true,
+        sizes: ["XS", "S", "M", "L", "XL", "2XL"]
+      ),
+      Product(
+        id: "bk-006",
+        name: "Snapback Cap",
+        description: "Classic snapback with 3D embroidered BLAKKHAIL logo",
+        price: 34.99,
+        image: "📦",
+        category: "Hats",
+        inStock: true,
+        sizes: ["One Size"]
+      ),
+      Product(
+        id: "bk-007",
+        name: "Heritage Sweatpants",
+        description: "Jogger-style sweatpants with vintage BLAKKHAIL branding",
+        price: 59.99,
+        image: "📦",
+        category: "Pants",
+        inStock: false,
+        sizes: ["S", "M", "L", "XL"]
+      ),
+      Product(
+        id: "bk-008",
+        name: "Gold Rings Set",
+        description: "Set of 3 gold-plated statement rings",
+        price: 44.99,
+        image: "📦",
+        category: "Accessories",
+        inStock: true,
+        sizes: ["7", "8", "9", "10", "11", "12"]
+      ),
+    ]
   }
 
   func searchProducts(_ query: String) -> [Product] {
@@ -427,14 +513,14 @@ class StyleAssistantManager: ObservableObject {
 
     await Task.sleep(2_000_000_000)
 
-    let mockRecommendations = [
-      StyleRecommendation(id: "1", category: "Top", suggestion: "Black oversized hoodie", matchPercent: 92, productId: nil, reason: "Complements your streetwear aesthetic"),
-      StyleRecommendation(id: "2", category: "Bottom", suggestion: "Distressed black cargo pants", matchPercent: 88, productId: nil, reason: "Heritage silhouette with modern edge"),
-      StyleRecommendation(id: "3", category: "Shoes", suggestion: "High-top black leather boots", matchPercent: 85, productId: nil, reason: "Elevates the overall look with attitude"),
-      StyleRecommendation(id: "4", category: "Accessories", suggestion: "Gold chain necklace", matchPercent: 87, productId: nil, reason: "Adds luxury accent to complete the fit")
+    let blakkhailRecommendations = [
+      StyleRecommendation(id: "bk-001", category: "Top", suggestion: "Heritage Logo Hoodie", matchPercent: 94, productId: "bk-001", reason: "Premium oversized hoodie - BLAKKHAIL signature piece"),
+      StyleRecommendation(id: "bk-002", category: "Bottom", suggestion: "Distressed Cargo Pants", matchPercent: 91, productId: "bk-002", reason: "Heritage silhouette with authentic distressing - pure street culture"),
+      StyleRecommendation(id: "bk-003", category: "Accessories", suggestion: "Gold Chain Necklace", matchPercent: 89, productId: "bk-003", reason: "18k gold-plated - luxury meets streetwear"),
+      StyleRecommendation(id: "bk-004", category: "Jacket", suggestion: "Black Leather Bomber", matchPercent: 96, productId: "bk-004", reason: "Premium leather with gold accents - ultimate heritage statement")
     ]
 
-    self.recommendations = mockRecommendations
+    self.recommendations = blakkhailRecommendations
   }
 
   func saveOutfitLook(_ outfit: SavedOutfit) async {
