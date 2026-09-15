@@ -246,4 +246,45 @@ export class RayBanService {
     };
     return analyses[type] || { raw: 'analysis data' };
   }
+
+  async getDashboard(): Promise<Record<string, any>> {
+    const captures = Array.from(this.captures.values());
+    const devices = Array.from(this.devices.values());
+
+    return {
+      stats: {
+        totalCaptures: captures.length,
+        pendingApprovals: captures.filter(c => (c as any).status === 'PENDING').length,
+        activeSessions: devices.filter(d => d.status === 'connected').length,
+        connectedDevices: devices.length,
+      },
+      recentAlerts: [],
+    };
+  }
+
+  async getAlerts(limit: number = 10, offset: number = 0): Promise<Array<Record<string, any>>> {
+    return [
+      {
+        id: 'alert-001',
+        deviceId: 'meta-rayban-pro-001',
+        severity: 'info',
+        message: 'Device connected successfully',
+        timestamp: new Date(Date.now() - 300000).toISOString(),
+      },
+      {
+        id: 'alert-002',
+        deviceId: 'meta-rayban-pro-001',
+        severity: 'warning',
+        message: 'Battery level low (30%)',
+        timestamp: new Date(Date.now() - 600000).toISOString(),
+      },
+      {
+        id: 'alert-003',
+        deviceId: 'meta-rayban-pro-001',
+        severity: 'info',
+        message: 'New capture added',
+        timestamp: new Date(Date.now() - 900000).toISOString(),
+      },
+    ].slice(offset, offset + limit);
+  }
 }

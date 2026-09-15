@@ -111,6 +111,18 @@ export class RayBanController {
     return this.rayBanService.getAnalytics(deviceId, metric);
   }
 
+  // Dashboard
+  @Get('dashboard')
+  async getDashboard() {
+    return this.rayBanService.getDashboard();
+  }
+
+  // Alerts
+  @Get('alerts')
+  async getAlerts(@Query('limit') limit = 10, @Query('offset') offset = 0) {
+    return this.rayBanService.getAlerts(limit, offset);
+  }
+
   // Health Check
   @Get('health')
   async health() {

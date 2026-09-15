@@ -55,7 +55,7 @@ export class HvacTroubleshooterGateway implements OnGatewayConnection, OnGateway
     if (!this.deviceConnections.has(deviceId)) {
       this.deviceConnections.set(deviceId, new Set());
     }
-    this.deviceConnections.get(deviceId).add(client.id);
+    this.deviceConnections.get(deviceId)!.add(client.id);
 
     // Join room for this device
     client.join(`device:${deviceId}`);
