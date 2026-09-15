@@ -10,7 +10,7 @@ ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 RUN npm install -g pnpm@9.15.9 \
   && pnpm config set manage-package-manager-versions false
 
-COPY pnpm-lock.yaml ./
+COPY pnpm-lock.yaml tsconfig.json ./
 COPY package.json pnpm-workspace.yaml ./
 COPY apps/studio/package.json ./apps/studio/
 COPY packages/db/package.json ./packages/db/
