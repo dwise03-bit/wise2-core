@@ -18,6 +18,8 @@ jobs:
     env:
       # Prisma needs a URL present for `generate`/`validate`; no DB is contacted.
       DATABASE_URL: postgresql://user:pass@localhost:5432/wise2?schema=public
+      # Skip native module build fallback if prebuilt binary unavailable
+      npm_config_build_from_source: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
