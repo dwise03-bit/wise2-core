@@ -27,8 +27,8 @@ interface RouterResponse {
 // Configuration from environment or defaults
 const MAC_ENDPOINT = process.env.LOCAL_AI_MAC_ENDPOINT || 'http://localhost:11434';
 const VPS_ENDPOINT = process.env.LOCAL_AI_VPS_ENDPOINT || 'http://173.208.147.165:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'neural-chat';
-const QUERY_TIMEOUT_MS = parseInt(process.env.QUERY_TIMEOUT_MS || '30000', 10);
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'wise2-fast-m4';
+const QUERY_TIMEOUT_MS = parseInt(process.env.QUERY_TIMEOUT_MS || '60000', 10);
 const MAC_HEALTH_TIMEOUT_MS = 1500;
 
 // Cache Mac health status with TTL
