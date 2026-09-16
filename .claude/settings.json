@@ -50,7 +50,30 @@
           }
         ]
       }
+    ],
+    "TaskComplete": [
+      {
+        "skill": "completion-report",
+        "trigger": "auto",
+        "keywords": ["done", "verified", "tested", "deployed", "complete", "finished", "published"],
+        "minContextLength": 30000,
+        "description": "Auto-generate completion report on task completion"
+      }
     ]
+  },
+  "skills": {
+    "completion-report": {
+      "autoInvoke": true,
+      "detectionKeywords": ["done", "verified", "tested", "deployed", "complete", "finished", "published", "shipped"],
+      "minElapsedSeconds": 30,
+      "askConfirmationIfAmbiguous": true,
+      "alwaysPublishAsArtifact": true,
+      "includeGitMetrics": true,
+      "includeTestResults": true,
+      "includeCodeStatistics": true,
+      "generateDiscordMessage": true,
+      "reportTypes": ["technical", "summary"]
+    }
   },
   "workflowOptions": {
     "sizeGuideline": "medium",

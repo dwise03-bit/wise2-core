@@ -27,9 +27,21 @@ echo ""
 # Website-only releases must never recreate API, Postgres, Redis, or workers.
 if [ "$ENVIRONMENT" = "website-only" ]; then
   echo "🌐 Website-only deployment (dependency-isolated)"
-  docker compose -f docker-compose.prod.yml build website
-  docker compose -f docker-compose.prod.yml up -d --no-deps website
+
+  if ! docker compose -f docker-compose.prod.yml build website; then
+    echo "❌ Docker build failed for website service"
+    docker compose -f docker-compose.prod.yml logs website || true
+    exit 1
+  fi
+
+  if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
+    echo "❌ Failed to start website service"
+    docker compose -f docker-compose.prod.yml logs website || true
+    exit 1
+  fi
+
   docker compose -f docker-compose.prod.yml ps website
+  echo "✅ Website-only deployment complete"
   exit 0
 fi
 

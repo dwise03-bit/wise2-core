@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+// @ts-ignore twilio lacks type definitions
 import twilio from 'twilio';
 import { logger } from '../../logger';
 import { getTwilioClient } from './client';
