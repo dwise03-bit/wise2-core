@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Zap, Package, AlertCircle, CheckCircle, Lightbulb, Code2, Cpu } from "lucide-react";
+import { ArrowLeft, Zap, Package, AlertCircle, CheckCircle, Lightbulb, Code2, Cpu, Radio } from "lucide-react";
 
 export default function LedTagDevKitPage() {
   const containerVariants = {
