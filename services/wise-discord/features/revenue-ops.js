@@ -4,6 +4,7 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 const fetch = require('node-fetch');
 
 const COMMAND_CENTER = process.env.COMMAND_CENTER_URL || 'http://127.0.0.1:3004';
+const REVENUE_API = process.env.REVENUE_API_URL || 'http://127.0.0.1:3000';
 
 const revenueCommand = new SlashCommandBuilder()
   .setName('revenue')
@@ -134,37 +135,30 @@ async function handleRevenueCommand(interaction, jwtToken) {
 
 async function handleRevenueDashboard(interaction, jwtToken) {
   try {
-    const res = await fetch(`${COMMAND_CENTER}/api/revenue/dashboard`, {
+    const res = await fetch(`${REVENUE_API}/api/revenue/dashboard`, {
       headers: { 'Authorization': `Bearer ${jwtToken}` },
       timeout: 15000,
     });
 
     if (!res.ok) throw new Error(`Dashboard fetch failed: ${res.status}`);
-    const data = await res.json();
+    const apiResponse = await res.json();
+    const data = apiResponse.data?.kpis || {};
 
     const embed = new EmbedBuilder()
       .setColor(0x00ff7f)
-      .setTitle('💰 Revenue Dashboard')
+      .setTitle('💰 Revenue Dashboard — Live Data')
       .addFields([
-        { name: 'MRR', value: `$${data.mrr || '0'}`, inline: true },
-        { name: 'Pipeline', value: `$${data.pipeline || '0'}`, inline: true },
+        { name: 'Total Revenue', value: `$${data.totalRevenue || '0'}`, inline: true },
+        { name: 'Pipeline Value', value: `$${data.pipelineValue || '0'}`, inline: true },
         { name: 'Conversion Rate', value: `${data.conversionRate || '0'}%`, inline: true },
-        { name: 'Active Deals', value: String(data.activeDeals || 0), inline: true },
+        { name: 'Total Deals', value: String(data.totalDeals || 0), inline: true },
+        { name: 'Won Deals', value: String(data.wonDeals || 0), inline: true },
         { name: 'Hot Leads', value: String(data.hotLeads || 0), inline: true },
-        { name: 'Close Rate (30d)', value: `${data.closeRate || '0'}%`, inline: true },
       ])
-      .setFooter({ text: 'Command Center Dashboard' })
+      .setFooter({ text: `Last updated: ${data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'N/A'}` })
       .setTimestamp();
 
-    const row = new ActionRowBuilder()
-      .addComponents(
-        new ButtonBuilder()
-          .setLabel('Full Dashboard')
-          .setURL(`${COMMAND_CENTER}/revenue/dashboard`)
-          .setStyle(ButtonStyle.Link)
-      );
-
-    return interaction.editReply({ embeds: [embed], components: [row] });
+    return interaction.editReply({ embeds: [embed] });
   } catch (error) {
     throw error;
   }
@@ -175,13 +169,14 @@ async function handleCRM(interaction, jwtToken) {
   const contact = interaction.options.getString('contact') || '';
 
   try {
-    const res = await fetch(`${COMMAND_CENTER}/api/revenue/crm/${action}?q=${contact}`, {
+    const res = await fetch(`${REVENUE_API}/api/revenue/leads?limit=50`, {
       headers: { 'Authorization': `Bearer ${jwtToken}` },
       timeout: 10000,
     });
 
     if (!res.ok) throw new Error(`CRM operation failed: ${res.status}`);
-    const data = await res.json();
+    const apiResponse = await res.json();
+    const data = apiResponse.data || {};
 
     if (action === 'history' && data.calls) {
       const callList = data.calls
@@ -223,14 +218,15 @@ async function handleDeal(interaction, jwtToken) {
   const dealId = interaction.options.getString('deal_id') || '';
 
   try {
-    const res = await fetch(`${COMMAND_CENTER}/api/revenue/deal/${action}?id=${dealId}`, {
-      method: action === 'update' || action === 'close' || action === 'create' ? 'POST' : 'GET',
+    const res = await fetch(`${REVENUE_API}/api/revenue/deals?limit=50`, {
+      method: 'GET',
       headers: { 'Authorization': `Bearer ${jwtToken}` },
       timeout: 10000,
     });
 
     if (!res.ok) throw new Error(`Deal operation failed: ${res.status}`);
-    const data = await res.json();
+    const apiResponse = await res.json();
+    const data = apiResponse.data || {};
 
     if (action === 'pipeline') {
       const stages = data.stages || [];
