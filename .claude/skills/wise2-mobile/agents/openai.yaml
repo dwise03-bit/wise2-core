@@ -1,0 +1,4 @@
+interface:
+  display_name: "WISE2 Mobile"
+  short_description: "Build, test, sign, release and debug WISE2 iOS and Android apps"
+  brand_color: "#00D9FF"

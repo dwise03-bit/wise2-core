@@ -200,6 +200,27 @@ export class RayBanService {
   }
 
   // Hermes Integration
+  async updateCaptureStatus(captureId: string, status: string): Promise<any> {
+    const capture = this.captures.get(captureId);
+    if (!capture) throw new Error('Capture not found');
+
+    const updated = {
+      ...capture,
+      status,
+      syncedAt: new Date(),
+    };
+
+    this.captures.set(captureId, updated);
+
+    return {
+      id: captureId,
+      deviceId: capture.deviceId,
+      type: capture.type,
+      status,
+      syncedAt: new Date(),
+    };
+  }
+
   async processWithHermes(
     captureId: string,
     analysisType: string
