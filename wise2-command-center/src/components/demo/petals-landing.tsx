@@ -15,21 +15,54 @@ export function PetalsLanding() {
       <div className="petals-orb petals-orb-one" aria-hidden="true" />
       <div className="petals-orb petals-orb-two" aria-hidden="true" />
       <header className="petals-nav">
-        <a href="#top" className="petals-logo">PETALS <span>&</span> POTIONS</a>
+        <a href="#top" className="petals-logo">
+          PETALS <span>&</span> POTIONS
+        </a>
         <nav aria-label="Primary navigation">
-          <a href="#apothecary">APOTHECARY</a><a href="#ritual">YOUR RITUAL</a><a href="#paige">PAIGE</a><a href="#journal">JOURNAL</a>
+          <a href="#apothecary">APOTHECARY</a>
+          <a href="#ritual">YOUR RITUAL</a>
+          <a href="#paige">PAIGE</a>
+          <a href="#journal">JOURNAL</a>
         </nav>
-        <a className="petals-nav-cta" href="/petals-and-potions/ritual">BUILD MY RITUAL <span>↗</span></a>
+        <a className="petals-nav-cta" href="/petals-and-potions/ritual">
+          BUILD MY RITUAL <span>↗</span>
+        </a>
       </header>
 
       <section id="top" className="petals-hero">
         <div className="petals-hero-copy">
-          <p className="petals-kicker">BOTANICAL WELLNESS · HEART · MIND · BODY · SOUL</p>
-          <h1>Your Ritual.<br /><em>Your Blend.</em><br />Your Wellness.</h1>
-          <p className="petals-lede">Personalized botanical teas, body care and mindful rituals created to make everyday wellness feel beautiful, intentional and yours.</p>
-          <div className="petals-actions"><a className="petals-button" href="/petals-and-potions/ritual">BUILD MY RITUAL <span>↗</span></a><a className="petals-text-link" href="#apothecary">EXPLORE THE APOTHECARY <span>↓</span></a></div>
+          <p className="petals-kicker">
+            BOTANICAL WELLNESS · HEART · MIND · BODY · SOUL
+          </p>
+          <h1>
+            Your Ritual.
+            <br />
+            <em>Your Blend.</em>
+            <br />
+            Your Wellness.
+          </h1>
+          <p className="petals-lede">
+            Personalized botanical teas, body care and mindful rituals created
+            to make everyday wellness feel beautiful, intentional and yours.
+          </p>
+          <div className="petals-actions">
+            <a className="petals-button" href="/petals-and-potions/ritual">
+              BUILD MY RITUAL <span>↗</span>
+            </a>
+            <a className="petals-text-link" href="#apothecary">
+              EXPLORE THE APOTHECARY <span>↓</span>
+            </a>
+          </div>
         </div>
-        <div className="petals-hero-image"><Image src="/petals/paige-outdoor.png" alt="Paige creating a custom Petals & Potions blend" fill priority sizes="(max-width: 900px) 100vw, 58vw" /></div>
+        <div className="petals-hero-image">
+          <Image
+            src="/petals/paige-outdoor.png"
+            alt="Paige creating a custom Petals & Potions blend"
+            fill
+            priority
+            sizes="(max-width: 900px) 100vw, 58vw"
+          />
+        </div>
       </section>
 
       <section className="petals-philosophy">
