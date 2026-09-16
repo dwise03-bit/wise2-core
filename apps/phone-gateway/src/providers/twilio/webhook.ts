@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+// @ts-ignore twilio lacks type definitions
 import twilio from 'twilio';
 import { logger } from '../../logger';
 

@@ -30,6 +30,8 @@ export interface ToolCall {
   id: string;
   name: string;
   args: Record<string, any>;
+  status: 'pending' | 'executing' | 'completed' | 'failed';
+  result?: any;
 }
 
 export class LLMService {
@@ -306,6 +308,7 @@ export class LLMService {
           id: `tool_${Date.now()}`,
           name,
           args,
+          status: 'pending',
         });
       } catch (e) {
         logger.warn(`Failed to parse tool call: ${match[0]}`);
