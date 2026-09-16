@@ -203,18 +203,28 @@ export default function WearablesPage() {
               <Card3D cardId="hero" index={0} span="col-span-3 row-span-3">
                 <div className="h-full flex flex-col justify-between">
                   <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Eye size={20} style={{ color: WISE2_COLORS.neon_green }} />
+                      <span className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>TOTAL CAPTURES</span>
+                    </div>
                     <motion.div animate={{ scale: hoveredCard === 'hero' ? 1.15 : 1 }} className="text-7xl font-black mb-2" style={{ color: WISE2_COLORS.neon_green }}>347</motion.div>
-                    <div className="text-sm tracking-widest" style={{ color: WISE2_COLORS.text_muted }}>TOTAL CAPTURES</div>
+                    <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>+12% this week</div>
                   </div>
-                  <motion.div className="h-1" animate={hoveredCard === 'hero' ? { width: '100%' } : { width: '40%' }} style={{ backgroundColor: WISE2_COLORS.neon_green }} transition={{ duration: 0.5 }} />
+                  <motion.div className="space-y-2">
+                    <motion.div className="h-1" animate={hoveredCard === 'hero' ? { width: '100%' } : { width: '40%' }} style={{ backgroundColor: WISE2_COLORS.neon_green }} transition={{ duration: 0.5 }} />
+                    <div className="flex items-center justify-between text-xs" style={{ color: WISE2_COLORS.text_muted }}>
+                      <span>⬆ TRENDING</span>
+                      <motion.span animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>●</motion.span>
+                    </div>
+                  </motion.div>
                 </div>
               </Card3D>
 
               {/* Metric Cards */}
               {[
-                { label: 'PENDING', value: stats.stats.pendingApprovals, icon: AlertTriangle, color: WISE2_COLORS.gold, span: 'col-span-3 row-span-2', maxValue: 50 },
-                { label: 'ACTIVE', value: stats.stats.activeSessions, icon: Activity, color: WISE2_COLORS.neon_green, span: 'col-span-2 row-span-2', maxValue: 20 },
-                { label: 'CONNECTED', value: stats.stats.connectedDevices, icon: Radio, color: WISE2_COLORS.neon_cyan, span: 'col-span-2 row-span-2', maxValue: 10 },
+                { label: 'PENDING', value: stats.stats.pendingApprovals, icon: AlertTriangle, color: WISE2_COLORS.gold, span: 'col-span-3 row-span-2', maxValue: 50, subtitle: 'Awaiting Approval' },
+                { label: 'ACTIVE', value: stats.stats.activeSessions, icon: Activity, color: WISE2_COLORS.neon_green, span: 'col-span-2 row-span-2', maxValue: 20, subtitle: 'Live Sessions' },
+                { label: 'CONNECTED', value: stats.stats.connectedDevices, icon: Radio, color: WISE2_COLORS.neon_cyan, span: 'col-span-2 row-span-2', maxValue: 10, subtitle: 'Devices Online' },
               ].map((m, i) => {
                 const Icon = m.icon;
                 const percentage = (m.value / m.maxValue) * 100;
@@ -223,30 +233,41 @@ export default function WearablesPage() {
                     <div className="h-full flex flex-col justify-between">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <motion.div animate={{ rotate: hoveredCard === `metric-${i}` ? 360 : 0 }} transition={{ duration: 0.8 }}>
-                            <Icon size={16} style={{ color: m.color }} />
-                          </motion.div>
-                          <span className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</span>
+                          <div className="p-2 rounded" style={{ backgroundColor: `${m.color}15` }}>
+                            <motion.div animate={{ rotate: hoveredCard === `metric-${i}` ? 360 : 0 }} transition={{ duration: 0.8 }}>
+                              <Icon size={16} style={{ color: m.color }} />
+                            </motion.div>
+                          </div>
+                          <div>
+                            <div className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</div>
+                            <div className="text-xs" style={{ color: `${m.color}80` }}>{m.subtitle}</div>
+                          </div>
                         </div>
                         {/* Status indicator */}
                         <motion.div
                           className="w-2 h-2 rounded-full"
                           style={{ backgroundColor: m.color }}
-                          animate={{ opacity: [1, 0.3, 1] }}
+                          animate={{ opacity: [1, 0.3, 1], scale: [1, 1.3, 1] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
                         />
                       </div>
                       <div>
                         <motion.div className="text-4xl font-black mb-2" style={{ color: m.color }} animate={hoveredCard === `metric-${i}` ? { scale: 1.2 } : { scale: 1 }}>{m.value}</motion.div>
-                        {/* Progress bar */}
-                        <div className="h-1 bg-black/40 rounded-full overflow-hidden">
-                          <motion.div
-                            className="h-full rounded-full"
-                            style={{ background: `linear-gradient(90deg, ${m.color}80, ${m.color}20)` }}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${percentage}%` }}
-                            transition={{ delay: 0.2 + i * 0.1, duration: 0.8 }}
-                          />
+                        {/* Progress bar with better styling */}
+                        <div className="space-y-2">
+                          <div className="h-2 bg-black/40 rounded-full overflow-hidden border" style={{ borderColor: `${m.color}20` }}>
+                            <motion.div
+                              className="h-full rounded-full"
+                              style={{ background: `linear-gradient(90deg, ${m.color}80, ${m.color}40)`, boxShadow: `0 0 10px ${m.color}40` }}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              transition={{ delay: 0.2 + i * 0.1, duration: 0.8 }}
+                            />
+                          </div>
+                          <div className="flex justify-between text-xs" style={{ color: WISE2_COLORS.text_muted }}>
+                            <span>{m.value}</span>
+                            <span>{m.maxValue}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -257,9 +278,31 @@ export default function WearablesPage() {
               {/* Live Readout */}
               <Card3D cardId="live" index={4} span="col-span-3 row-span-3">
                 <div className="space-y-4 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between"><div className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_green }}>■ 3D LIVE</div><motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-2 h-2 rounded-full" style={{ backgroundColor: WISE2_COLORS.neon_green }} /></div>
-                  <div className="space-y-3">
-                    {[{ label: 'COVERAGE', value: '97%', color: WISE2_COLORS.neon_green }, { label: 'HEALTH', value: '100%', color: WISE2_COLORS.neon_cyan }, { label: 'APPROVAL', value: '94%', color: WISE2_COLORS.gold }].map((m) => (<div key={m.label}><div className="text-xs tracking-widest mb-1" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</div><motion.div className="text-2xl font-black" style={{ color: m.color }} animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity, delay: Math.random() }}>{m.value}</motion.div></div>))}
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-bold uppercase tracking-widest" style={{ color: WISE2_COLORS.neon_green }}>■ SYSTEM STATUS</div>
+                    <motion.div animate={{ opacity: [1, 0.3, 1], scale: [1, 1.5, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-3 h-3 rounded-full" style={{ backgroundColor: WISE2_COLORS.neon_green, boxShadow: `0 0 10px ${WISE2_COLORS.neon_green}` }} />
+                  </div>
+                  <div className="space-y-4">
+                    {[{ label: 'COVERAGE', value: 97, color: WISE2_COLORS.neon_green }, { label: 'HEALTH', value: 100, color: WISE2_COLORS.neon_cyan }, { label: 'APPROVAL', value: 94, color: WISE2_COLORS.gold }].map((m, idx) => (
+                      <div key={m.label} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs tracking-widest font-bold" style={{ color: WISE2_COLORS.text_muted }}>{m.label}</div>
+                          <motion.div className="text-sm font-black" style={{ color: m.color }} animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity, delay: idx * 0.3 }}>
+                            {m.value}%
+                          </motion.div>
+                        </div>
+                        {/* Circular progress ring */}
+                        <div className="relative h-1 bg-black/50 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full"
+                            style={{ background: `linear-gradient(90deg, ${m.color}80, ${m.color}40)`, boxShadow: `0 0 8px ${m.color}60` }}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${m.value}%` }}
+                            transition={{ delay: 0.3 + idx * 0.2, duration: 1 }}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </Card3D>
@@ -331,15 +374,70 @@ export default function WearablesPage() {
 
         {tab === 'captures' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="text-3xl font-black mb-8 uppercase" style={{ color: WISE2_COLORS.neon_cyan }}>CAPTURES ({captures.length})</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {captures.map((c) => (
-                <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} whileHover={{ y: -12, scale: 1.08 }} className="border rounded-lg p-4 cursor-pointer relative overflow-hidden group" style={{ borderColor: c.status === 'APPROVED' ? `${WISE2_COLORS.neon_green}60` : `${WISE2_COLORS.gold}60`, backgroundColor: `${WISE2_COLORS.navy}70`, boxShadow: `0 20px 50px rgba(0, 0, 0, 0.4)` }}>
-                  <img src={c.frameUrl} alt="Frame" className="w-full h-24 object-cover mb-3 border rounded" style={{ borderColor: `${WISE2_COLORS.neon_cyan}30` }} />
-                  <div className="space-y-2 relative z-10 text-xs">
-                    <div style={{ color: WISE2_COLORS.neon_cyan }} className="font-bold">{c.jobId}</div>
-                    <div style={{ color: WISE2_COLORS.text_muted }}>{c.notes}</div>
-                    <div className="px-3 py-1 w-fit rounded text-xs font-bold" style={{ backgroundColor: c.status === 'APPROVED' ? `${WISE2_COLORS.neon_green}30` : `${WISE2_COLORS.gold}30`, color: c.status === 'APPROVED' ? WISE2_COLORS.neon_green : WISE2_COLORS.gold }}>{c.status}</div>
+            <div className="mb-8">
+              <h2 className="text-3xl font-black mb-2 uppercase" style={{ color: WISE2_COLORS.neon_cyan }}>CAPTURES</h2>
+              <p className="text-sm" style={{ color: WISE2_COLORS.text_muted }}>Recent field data submissions and approvals</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {captures.map((c, idx) => (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  whileHover={{ y: -12, scale: 1.05 }}
+                  className="border rounded-xl p-5 cursor-pointer relative overflow-hidden group backdrop-blur-sm"
+                  style={{
+                    borderColor: c.status === 'APPROVED' ? `${WISE2_COLORS.neon_green}40` : `${WISE2_COLORS.gold}40`,
+                    backgroundColor: `${WISE2_COLORS.navy}60`,
+                    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px ${c.status === 'APPROVED' ? WISE2_COLORS.neon_green : WISE2_COLORS.gold}10`
+                  }}
+                >
+                  {/* Hover glow effect */}
+                  <motion.div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100"
+                    style={{
+                      background: `radial-gradient(circle at center, ${c.status === 'APPROVED' ? WISE2_COLORS.neon_green : WISE2_COLORS.gold}10, transparent)`,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  />
+
+                  {/* Image with frame */}
+                  <div className="relative mb-4 rounded-lg overflow-hidden border" style={{ borderColor: `${WISE2_COLORS.neon_cyan}30` }}>
+                    <img src={c.frameUrl} alt="Frame" className="w-full h-32 object-cover" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                      <Eye size={24} style={{ color: WISE2_COLORS.neon_cyan }} />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="space-y-3 relative z-10">
+                    {/* Job ID and timestamp */}
+                    <div>
+                      <div className="font-bold text-sm" style={{ color: WISE2_COLORS.neon_cyan }}>{c.jobId}</div>
+                      <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>
+                        {new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>{c.notes}</div>
+
+                    {/* Status badge */}
+                    <div className="flex items-center gap-2 pt-2 border-t" style={{ borderColor: `${WISE2_COLORS.text_muted}20` }}>
+                      <motion.div
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: c.status === 'APPROVED' ? WISE2_COLORS.neon_green : WISE2_COLORS.gold }}
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      <div className="text-xs font-bold flex-1" style={{ color: c.status === 'APPROVED' ? WISE2_COLORS.neon_green : WISE2_COLORS.gold }}>
+                        {c.status}
+                      </div>
+                      <div className="text-xs" style={{ color: WISE2_COLORS.text_muted }}>
+                        {c.status === 'APPROVED' ? '✓' : '◆'}
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -349,16 +447,89 @@ export default function WearablesPage() {
 
         {tab === 'alerts' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <h2 className="text-3xl font-black mb-8 uppercase" style={{ color: WISE2_COLORS.neon_cyan }}>ALERTS ({alerts.length})</h2>
+            <div className="mb-8">
+              <h2 className="text-3xl font-black mb-2 uppercase" style={{ color: WISE2_COLORS.neon_cyan }}>ALERTS</h2>
+              <p className="text-sm" style={{ color: WISE2_COLORS.text_muted }}>Real-time system notifications and event log</p>
+            </div>
             <div className="space-y-3">
-              {alerts.map((a) => (
-                <motion.div key={a.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} whileHover={{ x: 8, scale: 1.02 }} className="border-l-4 pl-4 py-3 rounded cursor-pointer relative overflow-hidden group" style={{ borderColor: a.severity === 'WARNING' ? WISE2_COLORS.gold : WISE2_COLORS.neon_green, backgroundColor: `${WISE2_COLORS.navy}70`, boxShadow: `0 10px 30px rgba(0, 0, 0, 0.3)` }}>
-                  <div className="flex items-start justify-between relative z-10">
-                    <div><div className="font-bold text-sm" style={{ color: WISE2_COLORS.neon_cyan }}>{a.title}</div><div className="text-xs mt-1" style={{ color: WISE2_COLORS.text_muted }}>{a.message}</div></div>
-                    <motion.div className="text-xs font-bold px-3 py-1 rounded whitespace-nowrap ml-4" animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }} style={{ backgroundColor: a.severity === 'WARNING' ? `${WISE2_COLORS.gold}30` : `${WISE2_COLORS.neon_green}30`, color: a.severity === 'WARNING' ? WISE2_COLORS.gold : WISE2_COLORS.neon_green }}>{a.severity}</motion.div>
-                  </div>
-                </motion.div>
-              ))}
+              {alerts.map((a, idx) => {
+                const severityColor = a.severity === 'WARNING' ? WISE2_COLORS.gold : WISE2_COLORS.neon_green;
+                const Icon = a.severity === 'WARNING' ? AlertTriangle : CheckCircle;
+                return (
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    whileHover={{ x: 8, scale: 1.01 }}
+                    className="border-l-4 rounded-r-lg pl-5 pr-4 py-4 cursor-pointer relative overflow-hidden group backdrop-blur-sm"
+                    style={{
+                      borderColor: severityColor,
+                      backgroundColor: `${WISE2_COLORS.navy}60`,
+                      boxShadow: `0 8px 24px rgba(0, 0, 0, 0.3), inset 0 0 20px ${severityColor}08`
+                    }}
+                  >
+                    {/* Hover glow */}
+                    <motion.div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100"
+                      style={{
+                        background: `linear-gradient(90deg, ${severityColor}10, transparent)`,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+
+                    <div className="flex items-start gap-4 relative z-10">
+                      {/* Icon */}
+                      <div className="pt-1">
+                        <motion.div
+                          animate={{
+                            scale: [1, 1.1, 1],
+                            opacity: [0.8, 1, 0.8]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="p-2 rounded-lg"
+                          style={{ backgroundColor: `${severityColor}15` }}
+                        >
+                          <Icon size={18} style={{ color: severityColor }} />
+                        </motion.div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-sm" style={{ color: WISE2_COLORS.neon_cyan }}>
+                          {a.title}
+                        </div>
+                        <div className="text-xs mt-1" style={{ color: WISE2_COLORS.text_muted }}>
+                          {a.message}
+                        </div>
+                        <div className="text-xs mt-2" style={{ color: `${WISE2_COLORS.text_muted}80` }}>
+                          {new Date(a.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+
+                      {/* Status badge */}
+                      <motion.div
+                        className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-2"
+                        animate={{ scale: [1, 1.05, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        style={{
+                          backgroundColor: `${severityColor}25`,
+                          color: severityColor,
+                          border: `1px solid ${severityColor}40`
+                        }}
+                      >
+                        <motion.span
+                          animate={{ opacity: [0.5, 1, 0.5] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          ●
+                        </motion.span>
+                        {a.severity}
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         )}
