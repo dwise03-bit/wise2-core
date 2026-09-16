@@ -1,7 +1,7 @@
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
-import { spawn } from 'child_process';
+import * as pty from 'node-pty';
 import os from 'os';
 import si from 'systeminformation';
 import path from 'path';
@@ -101,7 +101,7 @@ wss.on('connection', (ws) => {
 
         case 'input':
           if (session.shell) {
-            session.shell.stdin.write(data.data);
+            session.shell.write(data.data);
             recordCommand(data.data);
           }
           break;
@@ -139,43 +139,55 @@ wss.on('connection', (ws) => {
 
 function initializeShell(session, ws) {
   try {
-    const shell = spawn('zsh', [], {
+    const shellPath = process.env.SHELL || '/bin/zsh';
+    const ptyProcess = pty.spawn(shellPath, [], {
+      name: 'xterm-256color',
+      cols: 80,
+      rows: 24,
       cwd: process.env.HOME,
       env: { ...process.env, TERM: 'xterm-256color' },
     });
 
-    session.shell = shell;
+    session.shell = ptyProcess;
 
-    shell.stdout.on('data', (data) => {
-      ws.send(JSON.stringify({
-        type: 'output',
-        data: data.toString(),
-      }));
+    ptyProcess.onData((data) => {
+      try {
+        ws.send(JSON.stringify({
+          type: 'output',
+          data: data,
+        }));
+      } catch (err) {
+        console.error(`[Terminal] Failed to send output (session ${session.id}):`, err.message);
+      }
     });
 
-    shell.stderr.on('data', (data) => {
-      ws.send(JSON.stringify({
-        type: 'output',
-        data: data.toString(),
-      }));
-    });
-
-    shell.on('exit', () => {
+    ptyProcess.onExit(() => {
       session.shell = null;
-      ws.send(JSON.stringify({
-        type: 'exit',
-        code: 0,
-      }));
+      try {
+        ws.send(JSON.stringify({
+          type: 'exit',
+          code: 0,
+        }));
+      } catch (err) {
+        // WebSocket might be closed
+      }
+      console.log(`[Terminal] Shell exited for session ${session.id}`);
     });
 
     ws.send(JSON.stringify({
       type: 'shell-ready',
     }));
+    console.log(`[Terminal] PTY shell initialized for session ${session.id} (${shellPath})`);
   } catch (err) {
-    ws.send(JSON.stringify({
-      type: 'error',
-      message: `Failed to initialize shell: ${err.message}`,
-    }));
+    console.error(`[Terminal] Failed to initialize PTY shell (session ${session.id}):`, err.message);
+    try {
+      ws.send(JSON.stringify({
+        type: 'error',
+        message: `Failed to initialize shell: ${err.message}`,
+      }));
+    } catch (e) {
+      // WebSocket might be closed
+    }
   }
 }
 
