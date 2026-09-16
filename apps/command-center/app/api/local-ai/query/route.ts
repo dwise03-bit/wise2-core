@@ -24,36 +24,63 @@ interface RouterResponse {
   tokensUsed?: number;
 }
 
-// Heuristic to detect query complexity
-function getQueryComplexity(query: string): 'simple' | 'complex' {
-  // Simple heuristics for now
-  const wordCount = query.split(/\s+/).length;
-  const hasCode = /```|function|class|import|def |const |let |var |class /i.test(query);
-  const has3D = /3d|mesh|rendering|gpu|tensor|cuda|opengl|model|voxel/i.test(query);
-  const hasLongContext = query.length > 500;
+// Configuration from environment or defaults
+const MAC_ENDPOINT = process.env.LOCAL_AI_MAC_ENDPOINT || 'http://localhost:11434';
+const VPS_ENDPOINT = process.env.LOCAL_AI_VPS_ENDPOINT || 'http://173.208.147.165:11434';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'neural-chat';
+const QUERY_TIMEOUT_MS = parseInt(process.env.QUERY_TIMEOUT_MS || '30000', 10);
+const MAC_HEALTH_TIMEOUT_MS = 1500;
 
-  // Mark as complex if: code request, 3D request, very long context, or many words
-  if (hasCode || has3D || hasLongContext || wordCount > 100) {
-    return 'complex';
-  }
+// Cache Mac health status with TTL
+let macHealthCache: { healthy: boolean; timestamp: number } | null = null;
+const MAC_HEALTH_CACHE_TTL = 5000; // 5 seconds
+
+// Compiled regex patterns (compile once, reuse many times)
+const COMPLEXITY_PATTERNS = {
+  code: /```|function|class|import|def |const |let |var /i,
+  gpu: /\b(3d|mesh|render|gpu|tensor|cuda|opengl|voxel|model|ml|neural|llm|llama)\b/i,
+};
+
+// Detect query complexity using optimized patterns
+function getQueryComplexity(query: string): 'simple' | 'complex' {
+  const wordCount = query.split(/\s+/).length;
+  const length = query.length;
+
+  // Quick checks for obviously complex queries
+  if (length > 500 || wordCount > 100) return 'complex';
+  if (COMPLEXITY_PATTERNS.code.test(query)) return 'complex';
+  if (COMPLEXITY_PATTERNS.gpu.test(query)) return 'complex';
 
   return 'simple';
 }
 
-// Check if Mac is responsive (simple health check)
+// Check if Mac is responsive with caching
 async function isMacResponsive(): Promise<boolean> {
-  try {
-    // Try to reach a local Ollama instance on Mac
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+  const now = Date.now();
 
-    const response = await fetch('http://localhost:11434/api/tags', {
+  // Return cached result if still valid
+  if (macHealthCache && now - macHealthCache.timestamp < MAC_HEALTH_CACHE_TTL) {
+    return macHealthCache.healthy;
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), MAC_HEALTH_TIMEOUT_MS);
+
+    const response = await fetch(`${MAC_ENDPOINT}/api/tags`, {
       signal: controller.signal,
-    }).catch(() => null);
+      method: 'GET',
+    });
 
     clearTimeout(timeoutId);
-    return response?.ok ?? false;
+    const healthy = response.ok;
+
+    // Cache the result
+    macHealthCache = { healthy, timestamp: now };
+    return healthy;
   } catch {
+    // Cache negative result
+    macHealthCache = { healthy: false, timestamp: now };
     return false;
   }
 }
@@ -68,15 +95,15 @@ async function routeQuery(query: string, preferredRoute: RouteMode): Promise<{
     // Use explicit route
     if (preferredRoute === 'mac') {
       return {
-        endpoint: 'http://localhost:11434',
+        endpoint: MAC_ENDPOINT,
         route: 'mac',
-        model: 'ollama-local',
+        model: OLLAMA_MODEL,
       };
     } else {
       return {
-        endpoint: 'http://173.208.147.165:11434',
+        endpoint: VPS_ENDPOINT,
         route: 'vps',
-        model: 'ollama-vps',
+        model: OLLAMA_MODEL,
       };
     }
   }
@@ -88,17 +115,17 @@ async function routeQuery(query: string, preferredRoute: RouteMode): Promise<{
   if (complexity === 'simple' && macHealthy) {
     // Route simple queries to Mac when healthy
     return {
-      endpoint: 'http://localhost:11434',
+      endpoint: MAC_ENDPOINT,
       route: 'mac',
-      model: 'ollama-local',
+      model: OLLAMA_MODEL,
     };
   }
 
   // Default to VPS for complex queries or when Mac is unresponsive
   return {
-    endpoint: 'http://173.208.147.165:11434',
+    endpoint: VPS_ENDPOINT,
     route: 'vps',
-    model: 'ollama-vps',
+    model: OLLAMA_MODEL,
   };
 }
 
@@ -112,46 +139,92 @@ async function callOllama(endpoint: string, query: string): Promise<{
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'neural-chat',
+        model: OLLAMA_MODEL,
         prompt: query,
         stream: false,
       }),
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(QUERY_TIMEOUT_MS),
     });
 
     if (!response.ok) {
-      throw new Error(`Ollama returned ${response.status}`);
+      // Provide better error messages for common HTTP status codes
+      let errorMsg = `HTTP ${response.status}`;
+      if (response.status === 404) {
+        errorMsg = `Model "${OLLAMA_MODEL}" not found on Ollama. Please install it first.`;
+      } else if (response.status === 503) {
+        errorMsg = 'Ollama service is unavailable. Please check if it\'s running.';
+      }
+      throw new Error(errorMsg);
     }
 
     const data = await response.json();
 
+    // Validate response structure
+    if (typeof data.response !== 'string') {
+      throw new Error('Invalid response format from Ollama');
+    }
+
     return {
-      response: data.response || 'No response generated',
-      tokensUsed: data.eval_count,
+      response: data.response,
+      tokensUsed: typeof data.eval_count === 'number' ? data.eval_count : undefined,
     };
   } catch (err) {
-    throw new Error(
-      `Failed to call Ollama at ${endpoint}: ${
-        err instanceof Error ? err.message : 'unknown error'
-      }`
-    );
+    if (err instanceof TypeError) {
+      throw new Error(`Network error connecting to ${endpoint}. Is Ollama running?`);
+    }
+    throw err;
   }
 }
 
 // Main route handler
 export async function POST(req: NextRequest) {
-  try {
-    const body = (await req.json()) as RouterRequest;
-    const { query, route: preferredRoute } = body;
+  const startTime = Date.now();
 
-    if (!query || typeof query !== 'string') {
+  try {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
       return NextResponse.json(
-        { error: 'Missing or invalid query' },
+        { error: 'Invalid JSON in request body' },
         { status: 400 }
       );
     }
 
-    if (preferredRoute && !['auto', 'mac', 'vps'].includes(preferredRoute)) {
+    const { query, route: preferredRoute } = body as RouterRequest;
+
+    // Validate query
+    if (!query) {
+      return NextResponse.json(
+        { error: 'Query is required' },
+        { status: 400 }
+      );
+    }
+
+    if (typeof query !== 'string') {
+      return NextResponse.json(
+        { error: 'Query must be a string' },
+        { status: 400 }
+      );
+    }
+
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
+      return NextResponse.json(
+        { error: 'Query cannot be empty' },
+        { status: 400 }
+      );
+    }
+
+    if (trimmedQuery.length > 10000) {
+      return NextResponse.json(
+        { error: 'Query exceeds maximum length of 10000 characters' },
+        { status: 413 }
+      );
+    }
+
+    // Validate route mode
+    if (preferredRoute && !['auto', 'mac', 'vps'].includes(preferredRoute as string)) {
       return NextResponse.json(
         { error: 'Invalid route mode. Must be: auto, mac, or vps' },
         { status: 400 }
@@ -160,12 +233,14 @@ export async function POST(req: NextRequest) {
 
     // Determine routing
     const { endpoint, route, model } = await routeQuery(
-      query,
+      trimmedQuery,
       preferredRoute || 'auto'
     );
 
     // Call the AI endpoint
-    const { response, tokensUsed } = await callOllama(endpoint, query);
+    const { response, tokensUsed } = await callOllama(endpoint, trimmedQuery);
+
+    const duration = Date.now() - startTime;
 
     const result: RouterResponse = {
       response,
@@ -175,10 +250,34 @@ export async function POST(req: NextRequest) {
       tokensUsed,
     };
 
+    // Log successful query
+    console.info(`[LocalAI] Query routed to ${route} (${duration}ms)`, {
+      routeUsed: route,
+      endpoint,
+      model,
+      tokensUsed,
+      duration,
+      queryLength: trimmedQuery.length,
+    });
+
     return NextResponse.json(result);
   } catch (err) {
+    const duration = Date.now() - startTime;
     const message = err instanceof Error ? err.message : 'Unknown error';
-    console.error('Local AI Router error:', message);
+
+    console.error(`[LocalAI] Error (${duration}ms): ${message}`, {
+      error: message,
+      duration,
+      stack: err instanceof Error ? err.stack : undefined,
+    });
+
+    // Determine appropriate HTTP status code
+    if (message.includes('Network error')) {
+      return NextResponse.json({ error: message }, { status: 503 });
+    }
+    if (message.includes('Ollama')) {
+      return NextResponse.json({ error: message }, { status: 502 });
+    }
 
     return NextResponse.json(
       { error: message },

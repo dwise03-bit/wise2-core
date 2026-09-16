@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Card } from '@/src/components/ui/Card';
 import { Button } from '@/src/components/ui/Button';
-import { Input } from '@/src/components/ui/Input';
 
 type RouteMode = 'auto' | 'mac' | 'vps';
 
@@ -23,6 +22,7 @@ interface Message {
   tokensUsed?: number;
 }
 
+// Move outside component to prevent recreation on every render
 const ROUTE_CONFIGS: Record<RouteMode, RouteInfo> = {
   auto: {
     mode: 'auto',
@@ -44,6 +44,64 @@ const ROUTE_CONFIGS: Record<RouteMode, RouteInfo> = {
   },
 };
 
+const MAX_HISTORY = 50;
+const MAX_QUERY_LENGTH = 10000;
+
+// Memoized message card component to prevent unnecessary re-renders
+const MessageCard = React.memo(({ message }: { message: Message }) => {
+  const timeStr = useMemo(
+    () => message.timestamp.toLocaleTimeString(),
+    [message.timestamp]
+  );
+
+  return (
+    <Card className="p-6 border border-border-subtle space-y-4">
+      {/* Query */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
+          Query
+        </div>
+        <div className="text-text-primary">{message.query}</div>
+      </div>
+
+      {/* Route Info Badge */}
+      <div className="flex items-center gap-3 py-3 px-3 bg-wise-surface rounded-lg border border-border-subtle">
+        <div className="w-2 h-2 rounded-full bg-green-500" />
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold text-text-primary">
+            {message.route.model}
+          </div>
+          <div className="text-xs text-text-muted">
+            {message.route.description}
+          </div>
+        </div>
+        {message.tokensUsed && (
+          <div className="text-xs font-mono text-text-muted">
+            {message.tokensUsed} tokens
+          </div>
+        )}
+      </div>
+
+      {/* Response */}
+      <div className="space-y-1">
+        <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
+          Response
+        </div>
+        <div className="text-text-secondary whitespace-pre-wrap break-words">
+          {message.response}
+        </div>
+      </div>
+
+      {/* Timestamp */}
+      <div className="text-xs text-text-muted">
+        {timeStr}
+      </div>
+    </Card>
+  );
+});
+
+MessageCard.displayName = 'MessageCard';
+
 export default function LocalAIRouterPage() {
   const [query, setQuery] = useState('');
   const [selectedRoute, setSelectedRoute] = useState<RouteMode>('auto');
@@ -51,50 +109,80 @@ export default function LocalAIRouterPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Clear error when user edits query
+  const handleQueryChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuery(e.target.value);
+    if (error) setError(null);
+  }, [error]);
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      setError('Please enter a query');
+      return;
+    }
+
+    if (trimmedQuery.length > MAX_QUERY_LENGTH) {
+      setError(`Query exceeds maximum length of ${MAX_QUERY_LENGTH} characters`);
+      return;
+    }
 
     setLoading(true);
     setError(null);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch('/api/local-ai/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          query: query.trim(),
+          query: trimmedQuery,
           route: selectedRoute,
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to process query');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to process query`);
       }
 
       const data = await response.json();
       const routeInfo = ROUTE_CONFIGS[data.routeUsed || selectedRoute];
 
-      setMessages([
-        {
-          id: `msg_${Date.now()}`,
-          query: query.trim(),
-          response: data.response,
-          route: routeInfo,
-          timestamp: new Date(),
-          tokensUsed: data.tokensUsed,
-        },
-        ...messages,
-      ]);
+      setMessages((prev) => {
+        const updated = [
+          {
+            id: `msg_${Date.now()}`,
+            query: trimmedQuery,
+            response: data.response,
+            route: routeInfo,
+            timestamp: new Date(),
+            tokensUsed: data.tokensUsed,
+          },
+          ...prev,
+        ];
+        // Cap history to prevent memory bloat
+        return updated.slice(0, MAX_HISTORY);
+      });
 
       setQuery('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [query, selectedRoute]);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -115,11 +203,12 @@ export default function LocalAIRouterPage() {
             </label>
             <textarea
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={handleQueryChange}
               placeholder="Ask anything... The router will automatically optimize for speed and efficiency"
               className="w-full px-4 py-3 bg-wise-surface border border-border-subtle rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-wise-electric/50 focus:border-wise-electric resize-none"
               rows={4}
               disabled={loading}
+              maxLength={MAX_QUERY_LENGTH}
             />
           </div>
 
@@ -174,50 +263,9 @@ export default function LocalAIRouterPage() {
       {/* Messages Display */}
       {messages.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-text-primary">Query History</h2>
+          <h2 className="text-lg font-semibold text-text-primary">Query History ({messages.length})</h2>
           {messages.map((msg) => (
-            <Card key={msg.id} className="p-6 border border-border-subtle space-y-4">
-              {/* Query */}
-              <div className="space-y-1">
-                <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
-                  Query
-                </div>
-                <div className="text-text-primary">{msg.query}</div>
-              </div>
-
-              {/* Route Info Badge */}
-              <div className="flex items-center gap-3 py-3 px-3 bg-wise-surface rounded-lg border border-border-subtle">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-text-primary">
-                    {msg.route.model}
-                  </div>
-                  <div className="text-xs text-text-muted">
-                    {msg.route.description}
-                  </div>
-                </div>
-                {msg.tokensUsed && (
-                  <div className="text-xs font-mono text-text-muted">
-                    {msg.tokensUsed} tokens
-                  </div>
-                )}
-              </div>
-
-              {/* Response */}
-              <div className="space-y-1">
-                <div className="text-xs font-semibold text-text-muted uppercase tracking-wide">
-                  Response
-                </div>
-                <div className="text-text-secondary whitespace-pre-wrap break-words">
-                  {msg.response}
-                </div>
-              </div>
-
-              {/* Timestamp */}
-              <div className="text-xs text-text-muted">
-                {msg.timestamp.toLocaleTimeString()}
-              </div>
-            </Card>
+            <MessageCard key={msg.id} message={msg} />
           ))}
         </div>
       )}
