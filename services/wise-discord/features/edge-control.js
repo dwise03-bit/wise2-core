@@ -2,8 +2,13 @@
 
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fetch = require('node-fetch');
+const K10Client = require('../../k10-api/k10-client');
 
 const COMMAND_CENTER = process.env.COMMAND_CENTER_URL || 'http://127.0.0.1:3004';
+const k10 = new K10Client({
+  baseURL: process.env.K10_API_URL || 'http://192.168.1.100:5000',
+  fetch,
+});
 
 const edgeCommand = new SlashCommandBuilder()
   .setName('edge')
@@ -234,35 +239,117 @@ async function handleK10Control(interaction, jwtToken) {
   const action = interaction.options.getString('action') || 'status';
 
   try {
-    const res = await fetch(`${COMMAND_CENTER}/api/edge/k10/${action}`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${jwtToken}` },
-      timeout: 30000,
-    });
+    let data;
 
-    if (!res.ok) throw new Error(`K10 control failed: ${res.status}`);
-    const data = await res.json();
+    switch (action) {
+      case 'status': {
+        data = await k10.getDeviceInfo();
+        const embed = new EmbedBuilder()
+          .setColor(data.online ? 0x00ff7f : 0xff0000)
+          .setTitle('📱 UNIHIKER K10')
+          .addFields([
+            { name: 'Status', value: data.online ? '🟢 Online' : '🔴 Offline', inline: true },
+            { name: 'Firmware', value: data.firmware || 'unknown', inline: true },
+            { name: 'Display', value: data.display || 'unknown', inline: true },
+          ]);
 
+        if (data.metrics) {
+          embed.addFields([
+            { name: 'CPU', value: `${data.metrics.cpu || 0}%`, inline: true },
+            { name: 'Memory', value: `${data.metrics.memory || 0}%`, inline: true },
+            { name: 'Temp', value: `${data.metrics.temperature || 0}°C`, inline: true },
+          ]);
+        }
+
+        if (data.wifi) {
+          embed.addFields({
+            name: 'WiFi',
+            value: `${data.wifi.connected ? '✅' : '❌'} ${data.wifi.ssid || 'Not connected'}`,
+          });
+        }
+
+        embed.setFooter({ text: 'K10 Device Status' }).setTimestamp();
+        return interaction.editReply({ embeds: [embed] });
+      }
+
+      case 'display_test': {
+        data = await k10.testDisplay('color_bars');
+        const embed = new EmbedBuilder()
+          .setColor(0x00ff7f)
+          .setTitle('📱 K10 Display Test')
+          .addFields([
+            { name: 'Test', value: data.success ? '✅ Started' : '❌ Failed' },
+            { name: 'Pattern', value: 'Color Bars' },
+          ])
+          .setDescription(data.success ? 'Display test pattern running — color bars cycling' : `Error: ${data.error}`)
+          .setFooter({ text: 'K10 Display' })
+          .setTimestamp();
+
+        return interaction.editReply({ embeds: [embed] });
+      }
+
+      case 'wifi': {
+        data = await k10.getWiFi();
+        const embed = new EmbedBuilder()
+          .setColor(data.connected ? 0x00ff7f : 0xff9d00)
+          .setTitle('📡 K10 WiFi Status')
+          .addFields([
+            { name: 'Connected', value: data.connected ? '✅ Yes' : '❌ No', inline: true },
+            { name: 'SSID', value: data.ssid || 'N/A', inline: true },
+            { name: 'Signal', value: `${data.signal || 0}%`, inline: true },
+            { name: 'IP Address', value: data.ip || 'N/A' },
+          ])
+          .setFooter({ text: 'K10 Network' })
+          .setTimestamp();
+
+        return interaction.editReply({ embeds: [embed] });
+      }
+
+      case 'mic_test': {
+        data = await k10.testMicrophone(3);
+        const embed = new EmbedBuilder()
+          .setColor(0x00ff7f)
+          .setTitle('🎤 K10 Microphone Test')
+          .addFields([
+            { name: 'Test', value: data.success ? '✅ Started' : '❌ Failed' },
+            { name: 'Duration', value: '3 seconds' },
+          ])
+          .setDescription(data.success ? 'Microphone recording started — listening for 3 seconds' : `Error: ${data.error}`)
+          .setFooter({ text: 'K10 Audio I/O' })
+          .setTimestamp();
+
+        return interaction.editReply({ embeds: [embed] });
+      }
+
+      case 'sync': {
+        data = await k10.sync({ timestamp: Date.now(), source: 'discord' });
+        const embed = new EmbedBuilder()
+          .setColor(data.success ? 0x00ff7f : 0xff9d00)
+          .setTitle('🔄 K10 Dashboard Sync')
+          .addFields([
+            { name: 'Sync', value: data.success ? '✅ Complete' : '⚠️  Partial' },
+            { name: 'Timestamp', value: new Date().toLocaleString() },
+          ])
+          .setDescription(data.success ? 'K10 dashboard synchronized with Discord' : `Status: ${data.error}`)
+          .setFooter({ text: 'K10 Sync' })
+          .setTimestamp();
+
+        return interaction.editReply({ embeds: [embed] });
+      }
+
+      default:
+        return interaction.editReply('Unknown K10 action');
+    }
+  } catch (error) {
+    console.error('[edge-control] K10 error:', error);
     const embed = new EmbedBuilder()
-      .setColor(0x00ff7f)
-      .setTitle('📱 UNIHIKER K10')
-      .addFields([
-        { name: 'Action', value: action },
-        { name: 'Status', value: data.status || 'OK' },
-        { name: 'Display', value: data.displayStatus || 'OK', inline: true },
-        { name: 'WiFi', value: data.wifiSSID || 'Connected', inline: true },
-        { name: 'CPU', value: `${data.cpu || 0}%`, inline: true },
-      ])
-      .setFooter({ text: 'K10 Edge Device' })
+      .setColor(0xff0000)
+      .setTitle('❌ K10 Error')
+      .setDescription(error.message)
+      .setFooter({ text: 'K10 Device Control' })
       .setTimestamp();
 
-    if (data.displayTest) {
-      embed.addFields({ name: 'Display Test', value: data.displayTest });
-    }
-
     return interaction.editReply({ embeds: [embed] });
-  } catch (error) {
-    throw error;
   }
 }
 
