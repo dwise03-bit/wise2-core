@@ -126,9 +126,6 @@ export default function ImpLabPage() {
         </article>)}</div>
       </section>
 
-<<<<<<< HEAD
-    <section id="classroom" className="border-y border-white/10 bg-white/[.02]"><div className="mx-auto max-w-[1500px] px-5 py-14"><div className="mb-7"><p className="text-xs font-black tracking-[.25em] text-cyan-400">CLASSROOM</p><h2 className="mt-2 text-3xl font-black">Continue your IMP journey.</h2></div><div className="grid gap-4 lg:grid-cols-5">{impCourses.map(course=><article key={course.title} className="rounded-xl border border-white/10 bg-black/40 p-5"><span className="text-xs font-bold text-cyan-300">{course.track}</span><h3 className="mt-3 min-h-12 font-bold">{course.title}</h3><div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full bg-cyan-400" style={{width:`${course.progress}%`}} /></div><p className="mt-2 text-xs text-slate-300">{course.progress}% complete</p></article>)}</div></div></section>
-=======
     <section id="classroom" className="border-y border-white/10 bg-white/[.02]">
       <div className="mx-auto max-w-[1500px] px-5 py-14">
         <div className="mb-7">
@@ -156,7 +153,6 @@ export default function ImpLabPage() {
           </article>)}</div>
         </div>
       </section>
->>>>>>> 26fcde17 (perf: Level up IMP Lab page with production-ready UX polish)
 
     <section id="resources" className="mx-auto grid max-w-[1500px] gap-6 px-5 py-14 lg:grid-cols-2"><div><p className="text-xs font-black tracking-[.25em] text-fuchsia-400">COMMUNITY + RESOURCES</p><h2 className="mt-2 text-3xl font-black">Real skills. Real support. Brighter futures.</h2><p className="mt-4 text-slate-400">Challenges, educator support, physical IMP builds and Quest XR labs connect the school community to the wider WISE² ecosystem.</p><div className="mt-6 flex gap-3">
             <a
@@ -197,9 +193,6 @@ export default function ImpLabPage() {
       </div>
     </section>
 
-<<<<<<< HEAD
-    <footer className="border-t border-cyan-400/20 px-5 py-12 text-center"><p className="text-3xl font-black">REAL SCHOOLS. <span className="text-lime-400">BRIGHTER FUTURES.</span></p><span className="sr-only">REAL SCHOOLS. BRIGHTER FUTURES.</span><p className="mt-3 text-sm text-slate-300">Same technology. A brighter generation.</p><Link href="/contact" className="mt-6 inline-block rounded-lg bg-cyan-400 px-7 py-3 text-sm font-black text-black shadow-[0_0_28px_rgba(34,211,238,.25)]">BOOK A SCHOOL DEMO →</Link></footer>
-=======
     <footer className="border-t border-cyan-400/20 px-5 py-12 text-center">
       <p className="text-3xl font-black">REAL SCHOOLS. <span className="text-lime-400">BRIGHTER FUTURES.</span></p>
       <p className="mt-3 text-sm text-slate-400">Same technology. A brighter generation.</p>
@@ -208,6 +201,5 @@ export default function ImpLabPage() {
         className="mt-6 inline-block rounded-lg bg-cyan-400 px-7 py-3 text-sm font-black text-black shadow-[0_0_28px_rgba(34,211,238,.25)] transition-all duration-200 hover:shadow-[0_0_40px_rgba(34,211,238,.4)] hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
       >BOOK A SCHOOL DEMO →</Link>
     </footer>
->>>>>>> 26fcde17 (perf: Level up IMP Lab page with production-ready UX polish)
   </main>;
 }
