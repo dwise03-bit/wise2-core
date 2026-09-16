@@ -106,3 +106,15 @@ body {
 .voice-pulse {
   animation: voice-pulse 1.4s ease-out infinite;
 }
+
+.fergie-luxe-bg {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(106, 34, 226, 0.16), transparent 30%),
+    radial-gradient(circle at 85% 65%, rgba(255, 215, 0, 0.05), transparent 25%),
+    #0a0a0a;
+}
+
+::selection {
+  background: rgba(255, 215, 0, 0.9);
+  color: #0a0a0a;
+}

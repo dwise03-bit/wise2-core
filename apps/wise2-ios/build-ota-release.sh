@@ -15,7 +15,7 @@ xcodebuild clean build \
   -destination generic/platform=iOS \
   -derivedDataPath "$IOS_DIR/build" \
   CODE_SIGN_STYLE=Automatic \
-  DEVELOPMENT_TEAM=9N5L62DHKJ \
+  DEVELOPMENT_TEAM=FB042344774DE4FA29C74D7260790DD49A04F257 \
   CODE_SIGNING_REQUIRED=YES \
   CODE_SIGNING_ALLOWED=YES \
   -allowProvisioningUpdates

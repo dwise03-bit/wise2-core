@@ -225,7 +225,7 @@ export class CallOrchestrator extends EventEmitter {
     try {
       // Build conversation context
       const messages = state.conversationTurns.map((turn) => ({
-        role: turn.role === 'caller' ? 'user' : 'assistant',
+        role: (turn.role === 'caller' ? 'user' : 'assistant') as 'user' | 'assistant',
         content: turn.text,
       }));
 

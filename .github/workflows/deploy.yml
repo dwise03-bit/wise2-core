@@ -38,7 +38,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run linter
         run: pnpm run lint
@@ -127,12 +127,17 @@ jobs:
             # Older VPS deployments left some tracked files owned by root.
             # Repair checkout ownership once, then perform the exact sync.
             if ! git reset --hard origin/main; then
-              echo "⚠️ Checkout contains files not writable by the deploy user; repairing ownership..."
-              sudo -n chown -R "$(id -un):$(id -gn)" . || {
-                echo "❌ Cannot repair VPS checkout ownership (passwordless sudo required)"
+              echo "⚠️ Checkout contains files not writable by the deploy user; attempting repair..."
+              if sudo -n chown -R "$(id -un):$(id -gn)" . 2>/dev/null; then
+                echo "✓ Ownership repaired with sudo"
+              else
+                echo "⚠️ Passwordless sudo unavailable; using git clean and force reset instead..."
+                git clean -fd || true
+              fi
+              git reset --hard origin/main || {
+                echo "❌ Failed to reset checkout even after cleanup attempt"
                 exit 1
               }
-              git reset --hard origin/main
             fi
 
             echo "📊 Docker status before deployment..."

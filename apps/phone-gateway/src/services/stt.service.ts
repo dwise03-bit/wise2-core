@@ -4,6 +4,7 @@
  */
 
 import axios from 'axios';
+// @ts-ignore form-data lacks type definitions
 import FormData from 'form-data';
 import { logger } from '../logger';
 

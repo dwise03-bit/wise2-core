@@ -15,7 +15,7 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/ui-components/package.json ./packages/ui-components/
 COPY packages/brand-lock/package.json ./packages/brand-lock/
 
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY apps/website ./apps/website
 COPY packages/db ./packages/db
@@ -25,7 +25,7 @@ COPY packages/brand-lock ./packages/brand-lock
 # Copying the full app source after the initial workspace install can clobber
 # the app-local node_modules symlink created by pnpm. Re-link dependencies now
 # so `next build` resolves the workspace binaries reliably in Docker.
-RUN pnpm install --no-frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # NEXT_PUBLIC_* are inlined into the client bundle at build time, so they
 # must be present as build args. Previously they came from an .env.local
