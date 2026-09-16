@@ -1,0 +1,251 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #050607;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 217, 255, 0.2) transparent;
+}
+
+.dashboard::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard::-webkit-scrollbar-thumb {
+  background: rgba(0, 217, 255, 0.2);
+  border-radius: 3px;
+}
+
+.dashboard::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 217, 255, 0.4);
+}
+
+.dashboard-header {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.dashboard-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #00D9FF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  font-size: 13px;
+}
+
+.metrics-section,
+.services-section,
+.commands-section,
+.actions-section {
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.08);
+}
+
+.metrics-section h3,
+.services-section h3,
+.commands-section h3,
+.actions-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  font-weight: 600;
+}
+
+/* Metrics */
+.metric {
+  margin-bottom: 12px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-value {
+  font-size: 11px;
+  color: #00FF7F;
+  font-weight: 600;
+  float: right;
+  margin-top: -24px;
+}
+
+.metric-bar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.metric-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.metric-fill.cpu {
+  background: linear-gradient(90deg, #00D9FF, #00FF7F);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+}
+
+.metric-fill.memory {
+  background: linear-gradient(90deg, #ffd700, #ff00ff);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.metric-fill.disk {
+  background: linear-gradient(90deg, #ff6b6b, #ffd700);
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+}
+
+/* Services */
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.service-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: rgba(0, 217, 255, 0.05);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+  font-size: 12px;
+}
+
+.service-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 4px currentColor;
+}
+
+.service-name {
+  flex: 1;
+  color: #ccc;
+}
+
+.service-status {
+  font-size: 10px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.service-status.online {
+  color: #00FF7F;
+}
+
+.service-status.offline {
+  color: #ff6b6b;
+}
+
+/* Commands */
+.commands-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.command-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0, 217, 255, 0.05);
+  border-radius: 4px;
+  border-left: 2px solid #00D9FF;
+  font-size: 11px;
+  gap: 8px;
+}
+
+.command-text {
+  flex: 1;
+  color: #ccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: Monaco, Menlo, monospace;
+}
+
+.command-time {
+  color: #666;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.empty-message {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Actions */
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 255, 127, 0.1));
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  border-radius: 4px;
+  color: #00D9FF;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 255, 127, 0.2));
+  border-color: rgba(0, 217, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.2);
+}
+
+.action-btn:active {
+  opacity: 0.8;
+}
+
+/* Footer */
+.dashboard-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(0, 217, 255, 0.08);
+  text-align: center;
+  color: #666;
+  font-size: 10px;
+  flex-shrink: 0;
+}

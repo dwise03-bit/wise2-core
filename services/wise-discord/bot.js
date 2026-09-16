@@ -4,6 +4,7 @@ require('dotenv').config({ path: '/home/dwise/wise2-core/.env' });
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const jwt = require('jsonwebtoken');
 const { createOpsContext, opsCommand, handleOpsCommand, handleOpsComponent, handleOpsModal } = require('./ops');
+const { getCommandBuilders, handleFeatureCommand } = require('./features');
 const fetch = require('node-fetch');
 
 // ── Config ────────────────────────────────────────────────────────────────────
@@ -48,10 +49,11 @@ async function publishEvent(event) {
 }
 
 // ── Brain API ─────────────────────────────────────────────────────────────────
-async function brainChat(message) {
+async function brainChat(message, jwtToken = null) {
+  const token = jwtToken || _botJwt;
   const res = await fetch(`${BRAIN_API}/brain/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${_botJwt}` },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify({ message, business: 'wise2' }),
     timeout: 90000,
   });
@@ -326,7 +328,7 @@ async function handleHealth(interaction) {
   await interaction.editReply(lines.join('\n'));
 }
 
-async function handleBrain(interaction) {
+async function handleBrain(interaction, jwtToken) {
   if (!isAdmin(interaction.user.id)) {
     return interaction.reply({ content: '❌ Unauthorized — WISE² admin access required.', ephemeral: true });
   }
@@ -344,7 +346,7 @@ async function handleBrain(interaction) {
   });
 
   try {
-    const data = await brainChat(question);
+    const data = await brainChat(question, jwtToken);
     const response = data.response || 'No response.';
     const sources = data.sources || [];
     const contextUsed = data.contextUsed || false;
@@ -831,10 +833,17 @@ client.on('ready', async () => {
   // Register slash commands
   const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
   try {
+    const allCommands = [
+      wiseCommand.toJSON(),
+      contentCommand.toJSON(),
+      opsCommand.toJSON(),
+      ...getCommandBuilders().map(cmd => cmd.toJSON()),
+    ];
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-      body: [wiseCommand.toJSON(), contentCommand.toJSON(), opsCommand.toJSON()],
+      body: allCommands,
     });
-    console.log('[discord] Commands registered: /wise, /content, /ops');
+    const cmdNames = ['wise', 'content', 'ops', ...getCommandBuilders().map(c => c.name)];
+    console.log(`[discord] Commands registered: /${cmdNames.join(', /')}`);
     for (const warning of opsContext.readiness) console.warn(`[discord][ops] ${warning}`);
   } catch (err) {
     console.error('[discord] Command registration failed:', err.message);
@@ -856,13 +865,19 @@ client.on('interactionCreate', async (interaction) => {
   console.log(`[discord] /${cmd} ${sub} from ${interaction.user.tag}(${interaction.user.id})`);
 
   try {
+    // Feature commands (ai, client, create, edge, revenue, admin, deploy)
+    const featureCommands = ['ai', 'client', 'create', 'edge', 'revenue', 'admin', 'deploy'];
+    if (featureCommands.includes(cmd)) {
+      return handleFeatureCommand(interaction, _botJwt);
+    }
+
     if (cmd === 'ops') {
       return handleOpsCommand(interaction, opsContext);
     } else if (cmd === 'wise') {
       switch (sub) {
         case 'status':  return handleStatus(interaction);
         case 'health':  return handleHealth(interaction);
-        case 'brain':   return handleBrain(interaction);
+        case 'brain':   return handleBrain(interaction, _botJwt);
         case 'devices': return handleDevices(interaction);
         case 'device':  return handleDevice(interaction);
         case 'revenue': return handleRevenue(interaction);
