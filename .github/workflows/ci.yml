@@ -18,6 +18,8 @@ jobs:
     env:
       # Prisma needs a URL present for `generate`/`validate`; no DB is contacted.
       DATABASE_URL: postgresql://user:pass@localhost:5432/wise2?schema=public
+      # Skip native module build fallback if prebuilt binary unavailable
+      npm_config_build_from_source: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,8 +35,11 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Install build tools for native modules
+        run: sudo apt-get update && sudo apt-get install -y build-essential python3
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate Prisma client
         run: cd packages/db && npx prisma generate

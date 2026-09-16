@@ -3,6 +3,7 @@
  * Manages connection to Asterisk and call events
  */
 
+// @ts-ignore ari-client lacks type definitions
 import ari from 'ari-client';
 import { EventEmitter } from 'events';
 import { logger } from '../logger';
@@ -37,7 +38,7 @@ export class AsteriskARIClient extends EventEmitter {
 
       // Setup WebSocket event listener
       // Inbound call event
-      this.client.on('StasisStart', (event, channel) => {
+      this.client.on('StasisStart', (event: any, channel: any) => {
         logger.info(`Inbound call: ${channel.id} from ${channel.caller.number}`);
         this.emit('inbound-call', {
           channelId: channel.id,
@@ -47,7 +48,7 @@ export class AsteriskARIClient extends EventEmitter {
       });
 
       // Channel state change
-      this.client.on('ChannelStateChange', (event, channel) => {
+      this.client.on('ChannelStateChange', (event: any, channel: any) => {
         logger.info(`Channel state: ${channel.id} → ${channel.state}`);
         this.emit('channel-state-change', {
           channelId: channel.id,
@@ -56,7 +57,7 @@ export class AsteriskARIClient extends EventEmitter {
       });
 
       // Channel hangup
-      this.client.on('ChannelHangupRequest', (event, channel) => {
+      this.client.on('ChannelHangupRequest', (event: any, channel: any) => {
         logger.info(`Channel hangup: ${channel.id}`);
         this.emit('channel-hangup', {
           channelId: channel.id,
@@ -66,7 +67,7 @@ export class AsteriskARIClient extends EventEmitter {
       });
 
       // DTMF
-      this.client.on('ChannelDtmfReceived', (event, channel) => {
+      this.client.on('ChannelDtmfReceived', (event: any, channel: any) => {
         logger.debug(`DTMF: ${channel.id} → ${event.digit}`);
         this.emit('dtmf', {
           channelId: channel.id,
