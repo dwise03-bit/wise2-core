@@ -7,6 +7,7 @@ import express from 'express';
 import pinoHttp from 'pino-http';
 import { Pool } from 'pg';
 import { OllamaProvider } from './providers/ollama';
+import { RemoteOllamaProvider } from './providers/remote-ollama';
 import { BudgetEngine } from './budget/engine';
 import { TelemetryLogger } from './telemetry/logger';
 import { AIRouter } from './router';
@@ -60,8 +61,30 @@ async function initialize() {
     const ollamaUrl = process.env.OLLAMA_API_URL || 'http://localhost:11434';
     const modelPriority = (process.env.OLLAMA_MODEL_PRIORITY || '').split(',').filter(Boolean);
     const ollama = new OllamaProvider(ollamaUrl, modelPriority);
+    const cloudProviders: RemoteOllamaProvider[] = [];
+
+    const kaggleUrl = process.env.KAGGLE_OLLAMA_URL;
+    if (kaggleUrl) {
+      cloudProviders.push(new RemoteOllamaProvider({
+        name: 'kaggle-ollama',
+        baseUrl: kaggleUrl,
+        bearerToken: process.env.KAGGLE_OLLAMA_TOKEN,
+        modelPriority: (process.env.KAGGLE_MODEL_PRIORITY || 'qwen').split(',').filter(Boolean),
+      }));
+    }
+
+    const nvidiaUrl = process.env.NVIDIA_OLLAMA_URL;
+    if (nvidiaUrl) {
+      cloudProviders.push(new RemoteOllamaProvider({
+        name: 'nvidia-ollama',
+        baseUrl: nvidiaUrl,
+        bearerToken: process.env.NVIDIA_OLLAMA_TOKEN,
+        modelPriority: (process.env.NVIDIA_MODEL_PRIORITY || '').split(',').filter(Boolean),
+      }));
+    }
 
     console.log(`🤖 Ollama configured at ${ollamaUrl}`);
+    console.log(`☁️ Free GPU providers configured: ${cloudProviders.map((p) => p.name).join(', ') || 'none'}`);
 
     // Setup budget engine
     const budget = new BudgetEngine({
@@ -84,7 +107,7 @@ async function initialize() {
     console.log('📝 Telemetry configured');
 
     // Setup router
-    router = new AIRouter(ollama, budget, telemetry);
+    router = new AIRouter(ollama, budget, telemetry, cloudProviders);
     healthChecker = new HealthChecker(ollama, dbPool);
 
     console.log('✅ Router initialized');

@@ -4,7 +4,7 @@
  */
 
 import { BudgetEngine } from '../src/budget/engine';
-import { DEFAULT_DAILY_BUDGET_USD, DEFAULT_THRESHOLDS } from '../src/budget/thresholds';
+import { DEFAULT_THRESHOLDS } from '../src/budget/thresholds';
 
 describe('Budget Engine', () => {
   let budgetEngine: BudgetEngine;
@@ -71,5 +71,47 @@ describe('Budget Engine', () => {
     budgetEngine.recordCost(2.0);
     const level2 = budgetEngine.getCompressionLevel(70);
     expect(level2).toBe('standard');
+  });
+});
+
+import { AIRouter } from '../src/router';
+import { AIProvider, AIRequest, Model } from '../src/types/request';
+
+class FakeProvider implements AIProvider {
+  constructor(public name: string, private healthy: boolean, private answer: string) {}
+  async isHealthy() { return this.healthy; }
+  async listModels(): Promise<Model[]> { return [{ id: `${this.name}-model`, name: `${this.name}-model`, provider: this.name, contextWindow: 8192, capabilities: ['chat'], healthy: this.healthy }]; }
+  async estimate() { return { tokens: 1, cost: 0 }; }
+  async generate() { return this.answer; }
+}
+
+describe('AI Router free GPU fallback', () => {
+  const request: AIRequest = {
+    project_id: 'wise2-core', agent_id: 'hermes', user_id: 'test', task_type: 'chat',
+    messages: [{ role: 'user', content: 'ping' }], route_mode: 'AUTO', privacy_class: 'public',
+  };
+
+  test('AUTO falls back to first healthy zero-cost cloud provider', async () => {
+    const local = new FakeProvider('ollama', false, 'local') as any;
+    const cloud = new FakeProvider('kaggle-ollama', true, 'kaggle');
+    const budget = new BudgetEngine({ dailyBudget: 10, warnPct: 50, compressPct: 70, restrictPct: 85, brakePct: 100 });
+    const telemetry = { logEvent: jest.fn().mockResolvedValue(undefined) } as any;
+    const router = new AIRouter(local, budget, telemetry, [cloud]);
+    (router as any).secondBrain = { query: jest.fn().mockResolvedValue({ contexts: [] }) };
+    const result: any = await router.route(request);
+    expect(result.response).toBe('kaggle');
+    expect(result.routing.actual_route).toBe('CLOUD');
+    expect(result.routing.provider).toBe('kaggle-ollama');
+    expect(result.routing.estimated_cost).toBe(0);
+  });
+
+  test('LOCAL never spills to a cloud provider', async () => {
+    const local = new FakeProvider('ollama', false, 'local') as any;
+    const cloud = new FakeProvider('kaggle-ollama', true, 'kaggle');
+    const budget = new BudgetEngine({ dailyBudget: 10, warnPct: 50, compressPct: 70, restrictPct: 85, brakePct: 100 });
+    const telemetry = { logEvent: jest.fn().mockResolvedValue(undefined) } as any;
+    const router = new AIRouter(local, budget, telemetry, [cloud]);
+    const result: any = await router.route({ ...request, route_mode: 'LOCAL' });
+    expect(result.error).toBeDefined();
   });
 });

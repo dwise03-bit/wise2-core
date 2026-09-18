@@ -3,7 +3,7 @@
  */
 
 import { v4 as uuid } from 'uuid';
-import { AIRequest, AIResponse, AIError } from './types/request';
+import { AIRequest, AIResponse, AIError, AIProvider } from './types/request';
 import { OllamaProvider } from './providers/ollama';
 import { SecondBrainClient } from './providers/second-brain';
 import { RayBanMetaClient } from './providers/rayban-meta';
@@ -18,14 +18,16 @@ export class AIRouter {
   private questMeta: QuestMetaClient;
   private budget: BudgetEngine;
   private telemetry: TelemetryLogger;
+  private cloudProviders: AIProvider[];
 
-  constructor(ollama: OllamaProvider, budget: BudgetEngine, telemetry: TelemetryLogger) {
+  constructor(ollama: OllamaProvider, budget: BudgetEngine, telemetry: TelemetryLogger, cloudProviders: AIProvider[] = []) {
     this.ollama = ollama;
     this.secondBrain = new SecondBrainClient();
     this.raybanMeta = new RayBanMetaClient();
     this.questMeta = new QuestMetaClient();
     this.budget = budget;
     this.telemetry = telemetry;
+    this.cloudProviders = cloudProviders;
   }
 
   /**
@@ -54,7 +56,7 @@ export class AIRouter {
 
       if (!canProceed.allowed) {
         return this.createError(canProceed.reason || 'Request blocked', requestId, {
-          available_providers: ['ollama'],
+          available_providers: ['ollama', ...this.cloudProviders.map((p) => p.name)],
           suggested_action: 'Use local inference instead',
           budget_status: {
             used_pct: budgetStatus.used_pct,
@@ -88,7 +90,7 @@ export class AIRouter {
         },
         routing: {
           actual_route: selectedProvider.name === 'ollama' ? 'LOCAL' : 'CLOUD',
-          model: 'ollama-qwen-coder', // Would be dynamic based on selection
+          model: (await selectedProvider.listModels())[0]?.id || 'unknown',
           provider: selectedProvider.name,
           latency_ms: latency,
           estimated_cost: estimation.cost,
@@ -176,18 +178,16 @@ export class AIRouter {
   /**
    * Select best provider based on routing mode and budget
    */
-  private async selectProvider(request: AIRequest): Promise<any> {
-    // For MVP, only Ollama is available
+  private async selectProvider(request: AIRequest): Promise<AIProvider | null> {
     if (request.route_mode === 'LOCAL' || request.route_mode === 'AUTO') {
-      const healthy = await this.ollama.isHealthy();
-      if (healthy) {
-        return this.ollama;
-      }
+      if (await this.ollama.isHealthy()) return this.ollama;
+      if (request.route_mode === 'LOCAL') return null;
     }
 
-    // If cloud requested and budget allows, would return cloud provider here
-    if (request.route_mode === 'CLOUD') {
-      throw new Error('Cloud providers not yet implemented in MVP');
+    if (request.route_mode === 'AUTO' || request.route_mode === 'CLOUD') {
+      for (const provider of this.cloudProviders) {
+        if (await provider.isHealthy()) return provider;
+      }
     }
 
     return null;
@@ -307,7 +307,7 @@ export class AIRouter {
         code: 'ROUTER_ERROR',
         message,
         details: {
-          available_providers: ['ollama'],
+          available_providers: ['ollama', ...this.cloudProviders.map((p) => p.name)],
           suggested_action: 'Retry with local model',
           ...details,
         },
