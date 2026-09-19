@@ -137,7 +137,9 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Start server
-server.listen(PORT, 'localhost', () => {
+// Bind explicitly to IPv4 loopback so 127.0.0.1 health checks and callers
+// work consistently on macOS systems where localhost resolves to ::1.
+server.listen(PORT, '127.0.0.1', () => {
   log(`✅ WISE² Mac Bridge listening on http://localhost:${PORT}`);
   log(`   Health: http://localhost:${PORT}/health`);
   log(`   Status: http://localhost:${PORT}/status`);
