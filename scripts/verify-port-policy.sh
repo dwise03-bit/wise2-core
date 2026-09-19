@@ -16,12 +16,10 @@ echo "===================================="
 echo ""
 
 # Define immutable port mappings
-declare -A IMMUTABLE_PORTS=(
-  ["3001"]="website (Next.js landing page)"
-  ["3010"]="api (NestJS backend)"
-  ["5432"]="postgres (database, localhost only)"
-  ["6379"]="redis (cache, if enabled)"
-)
+IMMUTABLE_PORTS="3001|website (Next.js landing page)
+3010|api (NestJS backend)
+5432|postgres (database, localhost only)
+6379|redis (cache, if enabled)"
 
 # ============================================================================
 # Check 1: Verify docker-compose.prod.yml has correct ports
@@ -36,8 +34,7 @@ fi
 
 violations=0
 
-for port in "${!IMMUTABLE_PORTS[@]}"; do
-  service_desc="${IMMUTABLE_PORTS[$port]}"
+while IFS='|' read -r port service_desc; do
   service_name=$(echo "$service_desc" | cut -d' ' -f1)
 
   # Check if port appears in compose file
@@ -47,7 +44,9 @@ for port in "${!IMMUTABLE_PORTS[@]}"; do
     echo "   ❌ Port $port ($service_desc) NOT found in docker-compose.prod.yml"
     violations=$((violations + 1))
   fi
-done
+done <<EOF
+$IMMUTABLE_PORTS
+EOF
 
 if [ $violations -gt 0 ]; then
   echo ""
@@ -106,9 +105,11 @@ echo ""
 echo "✅ Port policy verification complete"
 echo ""
 echo "Immutable Port Mappings:"
-for port in "${!IMMUTABLE_PORTS[@]}"; do
-  echo "  Port $port → ${IMMUTABLE_PORTS[$port]}"
-done
+while IFS='|' read -r port service_desc; do
+  echo "  Port $port → $service_desc"
+done <<EOF
+$IMMUTABLE_PORTS
+EOF
 echo ""
 echo "These ports are documented and immutable."
 echo "Do not change them without updating nginx routing rules."
