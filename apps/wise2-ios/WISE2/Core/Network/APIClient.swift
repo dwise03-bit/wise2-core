@@ -8,7 +8,7 @@ actor APIClient {
     private var authToken: String?
 
     init() {
-        self.baseURL = ProcessInfo.processInfo.environment["API_URL"] ?? "http://localhost:3000"
+        self.baseURL = ProcessInfo.processInfo.environment["API_URL"] ?? "https://api.wise2.net"
     }
 
     func setAuthToken(_ token: String) {
