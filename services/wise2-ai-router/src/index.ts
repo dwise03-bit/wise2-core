@@ -15,6 +15,7 @@ import { initializeSchema } from './telemetry/schema';
 import { validateRequest, validateApiKey } from './middleware/validation';
 import { errorHandler } from './middleware/error-handler';
 import { DEFAULT_THRESHOLDS, DEFAULT_DAILY_BUDGET_USD } from './budget/thresholds';
+import { SUBSCRIPTION_RESOURCES, ROUTING_POLICY } from './subscriptions';
 
 const app = express();
 const port = parseInt(process.env.ROUTER_PORT || '3100', 10);
@@ -154,6 +155,10 @@ app.get('/api/models', validateApiKey, async (_req, res, next) => {
 app.get('/api/status', validateApiKey, (_req, res) => {
   const budgetStatus = router['budget'].getStatus();
   res.json(budgetStatus);
+});
+
+app.get('/api/resources', validateApiKey, (_req, res) => {
+  res.json({ policy: ROUTING_POLICY, resources: SUBSCRIPTION_RESOURCES });
 });
 
 // Error handler (must be last)

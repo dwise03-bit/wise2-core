@@ -4,7 +4,7 @@
  */
 
 import { BudgetEngine } from '../src/budget/engine';
-import { DEFAULT_DAILY_BUDGET_USD, DEFAULT_THRESHOLDS } from '../src/budget/thresholds';
+import { DEFAULT_THRESHOLDS } from '../src/budget/thresholds';
 
 describe('Budget Engine', () => {
   let budgetEngine: BudgetEngine;
