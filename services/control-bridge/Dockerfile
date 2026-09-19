@@ -20,9 +20,9 @@ COPY --from=build /app/services/control-bridge/package*.json ./
 COPY --from=build /app/services/control-bridge/node_modules ./node_modules
 COPY --from=build /app/services/control-bridge/dist ./dist
 # The compiled bridge keeps relative imports to the shared protocol runtime
-# (../../../packages/ops-protocol/src/*.js). Include those modules in the
-# runtime image as well as the build stage.
-COPY --from=build /app/packages/ops-protocol/src /app/packages/ops-protocol/src
+# (../../../packages/ops-protocol/src/*.js). Copy the compiled modules to that
+# runtime path; raw TypeScript sources are not executable by Node.
+COPY --from=build /app/services/control-bridge/dist/packages/ops-protocol /app/packages/ops-protocol
 USER control
 EXPOSE 3099
 CMD ["node", "dist/services/control-bridge/src/server.js"]
