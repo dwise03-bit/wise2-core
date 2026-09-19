@@ -19,6 +19,10 @@ RUN apk add --no-cache docker-cli docker-cli-compose git curl coreutils && addgr
 COPY --from=build /app/services/control-bridge/package*.json ./
 COPY --from=build /app/services/control-bridge/node_modules ./node_modules
 COPY --from=build /app/services/control-bridge/dist ./dist
+# The compiled bridge keeps relative imports to the shared protocol runtime
+# (../../../packages/ops-protocol/src/*.js). Include those modules in the
+# runtime image as well as the build stage.
+COPY --from=build /app/packages/ops-protocol/src /app/packages/ops-protocol/src
 USER control
 EXPOSE 3099
 CMD ["node", "dist/services/control-bridge/src/server.js"]
