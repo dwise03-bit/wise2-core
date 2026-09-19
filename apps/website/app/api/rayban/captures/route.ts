@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010')
+const API_BASE_URL = (process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010')
   .replace(/\/$/, '')
   .replace(/\/api$/, '');
 const CAPTURES_URL = `${API_BASE_URL}/api/rayban/captures`;
