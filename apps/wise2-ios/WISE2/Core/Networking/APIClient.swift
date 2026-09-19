@@ -21,7 +21,7 @@ actor APIClient {
     self.session = URLSession(configuration: config)
     // 🚀 Production: Connect to VPS API (or user-configured endpoint)
     let savedURL = UserDefaults.standard.string(forKey: "API_BASE_URL")
-    let defaultURL = "https://wise2.net/api/v1"
+    let defaultURL = "https://api.wise2.net/api/v1"
     self.baseURL = URL(string: ProcessInfo.processInfo.environment["API_URL"] ?? (savedURL ?? defaultURL)) ?? URL(fileURLWithPath: "/")
 
     #if DEBUG
