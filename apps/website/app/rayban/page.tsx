@@ -42,8 +42,9 @@ export default function RayBanPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-8 pt-20 pb-16">
-        <div className="mb-12">
+      <section className="mx-auto max-w-6xl px-5 pb-16 pt-12 sm:px-8 sm:pt-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
+        <div className="mb-4">
           <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30">
             <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
             <span className="text-sm font-medium text-cyan-300">
@@ -51,7 +52,8 @@ export default function RayBanPage() {
             </span>
           </div>
 
-          <h1 className="text-5xl font-bold mb-6 font-fira-code">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[.28em] text-slate-500">Field operations / live command layer</p>
+          <h1 className="mb-6 text-5xl font-bold font-fira-code tracking-[-.04em] sm:text-6xl">
             Ray-Ban Integration
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
@@ -64,7 +66,7 @@ export default function RayBanPage() {
             for emergency diagnostics, equipment inspection, and voice-controlled operations.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <Link
               href="/hermes"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 font-medium transition-all duration-300"
@@ -80,8 +82,24 @@ export default function RayBanPage() {
           </div>
         </div>
 
+        <div className="relative overflow-hidden rounded-2xl border border-cyan-400/25 bg-slate-900/75 p-5 shadow-[0_0_70px_rgba(34,211,238,.10)] backdrop-blur sm:p-7">
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(34,211,238,.10),transparent_45%,rgba(16,185,129,.08))]" />
+          <div className="relative">
+            <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
+              <div><p className="text-[10px] font-bold uppercase tracking-[.24em] text-cyan-300">Field console</p><p className="mt-1 text-sm text-slate-300">Ray-Ban / Hermes bridge</p></div>
+              <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">{status === 'live' ? 'Online' : 'Connecting'}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[['01','Capture','Vision input'],['02','Analyze','Hermes AI'],['03','Route','Work order']].map(([step,label,detail], index) => <div key={step} className="rounded-xl border border-white/10 bg-black/20 p-4"><div className="mb-5 flex items-center justify-between"><span className="text-xs font-mono text-cyan-300">{step}</span><span className={`h-2 w-2 rounded-full ${index < 2 ? 'bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,.8)]' : 'bg-slate-600'}`} /></div><p className="font-semibold text-white">{label}</p><p className="mt-1 text-xs text-slate-500">{detail}</p></div>)}
+              <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4"><div className="mb-5 flex items-center justify-between"><span className="text-xs font-mono text-cyan-300">SYNC</span><span className="text-xs text-cyan-200">10s</span></div><p className="font-semibold text-white">Cloud relay</p><p className="mt-1 text-xs text-slate-500">Live API heartbeat</p></div>
+            </div>
+            <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-black/25 px-4 py-3 text-xs text-slate-400"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Secure transport active <span className="ml-auto font-mono text-slate-600">/api/rayban</span></div>
+          </div>
+        </div>
+        </div>
+
         {/* Status Card */}
-        <div className="rounded-lg border border-slate-700 bg-slate-900/60 p-8 backdrop-blur-sm mb-12">
+        <div className="mb-12 rounded-2xl border border-cyan-400/20 bg-slate-900/70 p-5 shadow-[0_20px_70px_rgba(2,8,23,.35)] backdrop-blur-sm sm:p-8">
           <div className="grid md:grid-cols-4 gap-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
