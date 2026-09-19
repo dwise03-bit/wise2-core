@@ -66,7 +66,7 @@ export default function RayBanPage() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              href="/hermes-control"
+              href="/hermes"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 font-medium transition-all duration-300"
             >
               Open Dashboard <ArrowRight className="w-4 h-4" />
@@ -246,7 +246,7 @@ export default function RayBanPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/hermes-control"
+              href="/hermes"
               className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 font-medium transition-all"
             >
               Launch Ray-Ban Dashboard <ArrowRight className="w-4 h-4" />
