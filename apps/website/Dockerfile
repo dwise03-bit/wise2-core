@@ -10,7 +10,7 @@ RUN npm install -g pnpm@8.15.9
 COPY . .
 
 # Install dependencies - skip frozen lockfile and integrity check
-RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false 2>&1 || pnpm install --force --no-frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false --ignore-scripts 2>&1 || pnpm install --force --no-frozen-lockfile --ignore-scripts
 
 # Build Next.js app
 WORKDIR /app/apps/website
