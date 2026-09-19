@@ -159,18 +159,18 @@ export default function CloudLandingPage() {
       <section className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>WISE² Cloud Command Center</p>
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl">Real-Time Monitoring. 24/7 Protection. Maximum Performance.</h2>
+          <h2 className="mt-4 text-3xl font-black sm:text-4xl">Managed Hosting. Clear Onboarding. One Accountable Team.</h2>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: 'Uptime', value: '99.99%', detail: '4+ Years Operations' },
-              { label: 'Active Servers', value: '128', detail: '+2 this month' },
-              { label: 'Total Domains', value: '542', detail: '+28 this month' },
-              { label: 'Bandwidth', value: '12.4 TB', detail: '+2.1% this month' },
-              { label: 'Storage Used', value: '3.6 TB / 10 TB', detail: '36% Used' },
-              { label: 'Databases', value: '256', detail: 'Active Databases' },
-              { label: 'Customers', value: '1,248', detail: '+38 this month' },
-              { label: 'Monthly Revenue', value: '$24,780', detail: '+23% this month' },
+              { label: 'SSL', value: 'Included', detail: 'TLS certificates on managed plans' },
+              { label: 'Backups', value: 'Managed', detail: 'Plan-based backup schedules' },
+              { label: 'Monitoring', value: 'Active', detail: 'Service health visibility' },
+              { label: 'Migration', value: 'Included', detail: 'Assisted website transfer' },
+              { label: 'Business Email', value: 'Available', detail: 'Professional mailbox options' },
+              { label: 'Support', value: 'WISE²', detail: 'Human onboarding and help' },
+              { label: 'Provisioning', value: 'Automated', detail: 'Checkout-to-service workflow' },
+              { label: 'Client Portal', value: 'Included', detail: 'Service and order visibility' },
             ].map(({ label, value, detail }) => (
               <div key={label} className={cloudPanel + ' p-6'}>
                 <p className={cloudEyebrow}>{label}</p>
@@ -214,7 +214,7 @@ export default function CloudLandingPage() {
       <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>Price Menu</p>
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-10">Three Plans. One Obvious Winner.</h2>
+          <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-10">Simple plans for real businesses.</h2>
 
           <div className="grid gap-6 lg:grid-cols-4">
             {CLOUD_PLANS_STATIC.map((plan) => (
@@ -253,7 +253,7 @@ export default function CloudLandingPage() {
                 </li>
               ))}
             </ul>
-            <p className="text-3xl font-black text-[#B8FF00] mb-8">Keep 100% of the Profit</p>
+            <p className="text-3xl font-black text-[#B8FF00] mb-8">Build recurring hosting revenue</p>
             <Link href="/cloud/plans?tab=reseller" className={cloudBtnPrimary}>
               Start selling
               <ArrowRight size={16} />
@@ -266,6 +266,32 @@ export default function CloudLandingPage() {
         </div>
       </section>
 
+      {/* CLIENT ONBOARDING */}
+      <section className="border-y border-white/10 bg-[#050805] px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <p className={cloudEyebrow}>Client onboarding</p>
+          <h2 className="mt-4 text-3xl font-black sm:text-4xl">From signup to live site without the hosting maze.</h2>
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              ['01', 'Choose', 'Pick the plan that matches your website and support needs.'],
+              ['02', 'Checkout', 'Enter your email and primary domain, then complete secure checkout.'],
+              ['03', 'Provision', 'WISE² creates the hosting order and starts the service workflow.'],
+              ['04', 'Launch', 'We help connect the domain, migrate the site, and verify the live service.'],
+            ].map(([step, title, copy]) => (
+              <div key={step} className={cloudPanel + ' p-6'}>
+                <p className="text-xs font-black tracking-[0.2em] text-[#B8FF00]">{step}</p>
+                <h3 className="mt-3 text-xl font-black">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[#A7ADA8]">{copy}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/cloud/plans" className={cloudBtnPrimary}>Start onboarding <ArrowRight size={16} /></Link>
+            <a href="mailto:sales@wise2.net" className={cloudBtnGhost}>Talk to WISE² Sales</a>
+          </div>
+        </div>
+      </section>
+
       {/* INFRASTRUCTURE */}
       <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
@@ -274,7 +300,7 @@ export default function CloudLandingPage() {
             {[
               { icon: Server, label: 'NVMe SSD', detail: 'Blazing Fast' },
               { icon: Globe, label: 'Global CDN', detail: 'Worldwide' },
-              { icon: Shield, label: '99.99% Uptime', detail: 'SLA Guaranteed' },
+              { icon: Shield, label: 'Managed Uptime', detail: 'Monitored' },
               { icon: Zap, label: 'Scalable', detail: 'On Demand' },
             ].map(({ icon: Icon, label, detail }) => (
               <div key={label} className={cloudPanel + ' p-6 text-center'}>
@@ -323,12 +349,12 @@ export default function CloudLandingPage() {
             <h2 className="mt-4 text-3xl font-black mb-6">Smarter Hosting. Less Work.</h2>
             <ul className="space-y-3 text-[#A7ADA8]">
               {[
-                'AI Server Optimization',
-                'Predictive Monitoring',
-                'Smart Resource Allocation',
+                'Performance Monitoring',
+                'Resource Visibility',
                 'Automated Backups',
-                'Instant Threat Detection',
-                'One-Click Management',
+                'Service Health Alerts',
+                'Centralized Management',
+                'WISE² Support',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3">
                   <Check size={16} className="text-[#B8FF00]" />
@@ -414,7 +440,7 @@ export default function CloudLandingPage() {
         <div className="mx-auto max-w-4xl text-center">
           <p className={cloudEyebrow}>Ready to Launch Your Empire?</p>
           <h2 className="mt-4 text-4xl font-black sm:text-5xl mb-4">
-            Join Thousands Who Trust WISE² Cloud to Power Their Success.
+            Bring your business online with infrastructure you can actually reach someone about.
           </h2>
           <Link href="/cloud/plans" className={cloudBtnPrimary + ' inline-flex mt-10'}>
             Build your cloud today
@@ -428,7 +454,7 @@ export default function CloudLandingPage() {
         <div className="mx-auto max-w-7xl text-center">
           <p className={cloudEyebrow}>Featured Clients</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-[#8FA0AE]">
-            {['Fresh Winds Church', 'Rocky Tops', 'Once Upon A Child', "Logan's Heating & Cooling", 'Savôré', 'CJays Auto Recon', '& More'].map((client) => (
+            {['Fresh Winds Church', 'Rocky Tops', 'Once Upon A Child', "Logan's Heating & Cooling", 'Savôré', 'CJays Auto Recon'].map((client) => (
               <span key={client} className="text-sm font-semibold">{client}</span>
             ))}
           </div>
@@ -467,7 +493,7 @@ export default function CloudLandingPage() {
                 <li><a href="mailto:support@wise2.net" className="hover:text-[#B8FF00]">support@wise2.net</a></li>
                 <li><a href="mailto:sales@wise2.net" className="hover:text-[#B8FF00]">sales@wise2.net</a></li>
                 <li className="text-xs mt-4">🇺🇸 USA Based</li>
-                <li className="text-xs">24/7 Support</li>
+                <li className="text-xs">Managed client support</li>
               </ul>
             </div>
           </div>
