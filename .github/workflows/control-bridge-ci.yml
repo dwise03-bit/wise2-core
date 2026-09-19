@@ -44,6 +44,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Build production container
+        working-directory: .
+        run: docker build --pull -f services/control-bridge/Dockerfile -t wise2-control-bridge-ci .
+
+      - name: Smoke-test production container modules
+        working-directory: .
+        run: >-
+          docker run --rm --entrypoint node wise2-control-bridge-ci
+          --input-type=module -e
+          "Promise.all([import('/app/dist/services/control-bridge/src/jobs.js'), import('/app/dist/services/control-bridge/src/config.js')])"
+
       - name: Validate production Compose
         working-directory: .
         run: docker compose -f docker-compose.production.yml config >/dev/null
