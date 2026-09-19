@@ -23,6 +23,7 @@ COPY --from=build /app/services/control-bridge/dist ./dist
 # (../../../packages/ops-protocol/src/*.js). Copy the compiled modules to that
 # runtime path; raw TypeScript sources are not executable by Node.
 COPY --from=build /app/services/control-bridge/dist/packages/ops-protocol /app/packages/ops-protocol
+COPY packages/ops-protocol/package.json /app/packages/ops-protocol/package.json
 USER control
 EXPOSE 3099
 CMD ["node", "dist/services/control-bridge/src/server.js"]
