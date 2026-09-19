@@ -1,13 +1,17 @@
 import {
   createNonceStore,
+} from '../../../packages/ops-protocol/src/replay.js';
+import type { NonceStore } from '../../../packages/ops-protocol/src/replay.js';
+import {
   verifyJob,
-  type Confirmation,
-  type Job,
-  type NonceStore,
-  type Signed,
-  type TargetRecord,
-  type ValidationErrorCode,
-} from '../../../packages/ops-protocol/src/index.js';
+} from '../../../packages/ops-protocol/src/validate.js';
+import type {
+  Confirmation,
+  Job,
+  Signed,
+  TargetRecord,
+  ValidationErrorCode,
+} from '../../../packages/ops-protocol/src/types.js';
 import type { ControlConfig } from './types.js';
 
 export type WriteRequestBody = {

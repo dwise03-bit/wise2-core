@@ -1,4 +1,3 @@
-import { profileIds } from '../../../packages/ops-protocol/src/index.js';
 import type { Environment } from '../../../packages/ops-protocol/src/index.js';
 import type { SigningKey } from '../../../packages/ops-protocol/src/signature.js';
 import type { ControlConfig } from './types.js';
@@ -64,7 +63,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ControlConfig 
   if (!ENVIRONMENTS.includes(targetEnvironment)) throw new Error('WISE2_TARGET_ENVIRONMENT must be development, staging or production');
 
   const allowedProfiles = csv(env.WISE2_ALLOWED_PROFILES, DEFAULT_PROFILES);
-  const unknownProfile = allowedProfiles.find(profile => !profileIds().includes(profile));
+  const unknownProfile = allowedProfiles.find(profile => !DEFAULT_PROFILES.includes(profile as typeof DEFAULT_PROFILES[number]));
   if (unknownProfile) throw new Error(`WISE2_ALLOWED_PROFILES contains an unknown profile: ${unknownProfile}`);
 
   // Nothing is stoppable unless it is named explicitly, and a protected service can never
