@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Glasses, Radio, Zap, BarChart3, Mic, Camera, AlertCircle, CheckCircle2, Battery } from 'lucide-react';
+import { ArrowRight, Glasses, Radio, Zap, BarChart3, Mic, Camera, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -16,29 +16,26 @@ export default function RayBanPage() {
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const response = await fetch('http://localhost:3040/api/rayban/health', {
-          headers: { 'Accept': 'application/json' }
-        }).catch(() => null);
-
-        if (response?.ok) {
-          setStatus('live');
-          // Mock metrics for demo
-          setMetrics({
-            devicesConnected: 1,
-            capturesProcessed: 3,
-            avgConfidence: 89,
-            avgLatency: 2847,
-          });
-        } else {
-          setStatus('connecting');
-        }
+        const response = await fetch('/api/rayban/captures?limit=100', {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (!response.ok) throw new Error('Capture service unavailable');
+        const captures = await response.json();
+        const devices = new Set(captures.map((capture: { deviceId?: string }) => capture.deviceId).filter(Boolean));
+        setStatus('live');
+        setMetrics((current) => ({
+          ...current,
+          devicesConnected: devices.size,
+          capturesProcessed: captures.length,
+        }));
       } catch {
-        setStatus('offline');
+        setStatus('connecting');
       }
     };
 
     checkHealth();
-    const interval = setInterval(checkHealth, 30000);
+    const interval = setInterval(checkHealth, 10000);
     return () => clearInterval(interval);
   }, []);
 
