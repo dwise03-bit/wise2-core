@@ -10,6 +10,7 @@ COPY services/control-bridge/package*.json services/control-bridge/tsconfig.json
 COPY services/control-bridge/src ./src
 # Shared ops protocol is compiled in from source; it has no runtime dependencies.
 COPY packages/ops-protocol/src /app/packages/ops-protocol/src
+COPY packages/ops-protocol/package.json /app/packages/ops-protocol/package.json
 RUN npm run build && npm prune --omit=dev
 
 FROM node:20-alpine AS runtime
