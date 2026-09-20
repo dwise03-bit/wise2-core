@@ -71,7 +71,7 @@ function CheckoutContent() {
 
   return (
     <div>
-      <main className="bg-[#050505] min-h-screen pb-20 text-white">
+      <main className="bg-[#050816] min-h-screen pb-20 text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Form Section */}
@@ -79,7 +79,7 @@ function CheckoutContent() {
               <h1 className="text-4xl font-black uppercase tracking-[0.08em] text-white mb-2">
                 {isDigitalTwin ? 'Build Your Digital Twin' : 'Complete Your Build'}
               </h1>
-              <p className="text-[#B7BDC8] mb-8">
+              <p className="text-[#AEB8CB] mb-8">
                 {isDigitalTwin
                   ? 'Enter your details to launch tenant setup, onboarding, and the approval-controlled Digital Twin workflow.'
                   : 'Enter your details to continue into the WISE² system.'}
@@ -99,7 +99,7 @@ function CheckoutContent() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
+                    className="w-full px-4 py-3 bg-[#07111F]/70 border-2 border-[#00D9FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#00D9FF]"
                     disabled={loading}
                   />
                 </div>
@@ -111,7 +111,7 @@ function CheckoutContent() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#C7FF2E]"
+                    className="w-full px-4 py-3 bg-[#07111F]/70 border-2 border-[#00D9FF]/30 rounded-lg text-white placeholder-wise-text-muted focus:outline-none focus:border-[#00D9FF]"
                     disabled={loading}
                   />
                 </div>
@@ -120,7 +120,7 @@ function CheckoutContent() {
                   <label className="block text-white font-semibold">
                     By proceeding, you agree to our terms
                   </label>
-                  <p className="text-sm text-gray-300">
+                  <p className="text-sm text-[#AEB8CB]">
                     {isDigitalTwin
                       ? 'You’ll be taken to our secure payment processor. After payment, your Digital Twin onboarding and tenant-linked build flow begin.'
                       : 'You&apos;ll be taken to our secure payment processor to complete your build.'}
@@ -130,7 +130,7 @@ function CheckoutContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-[#C7FF2E] text-black rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 bg-[#00D9FF] text-black rounded-lg font-bold text-lg hover:brightness-110 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Processing...' : 'Continue to Payment'}
                 </button>
@@ -138,7 +138,7 @@ function CheckoutContent() {
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="w-full py-3 bg-white/[0.04] border-2 border-[#C7FF2E]/30 text-[#C7FF2E] rounded-lg font-semibold hover:border-[#C7FF2E]/60 transition-all"
+                  className="w-full py-3 bg-[#07111F]/70 border-2 border-[#00D9FF]/30 text-[#00D9FF] rounded-lg font-semibold hover:border-[#00D9FF]/60 transition-all"
                   disabled={loading}
                 >
                   Back to Pricing
@@ -148,40 +148,40 @@ function CheckoutContent() {
 
             {/* Order Summary */}
             <div>
-              <div className="sticky top-32 bg-white/[0.04] border-2 border-[#C7FF2E]/30 rounded-3xl p-8">
+              <div className="sticky top-32 bg-[#07111F]/70 border-2 border-[#00D9FF]/30 rounded-3xl p-8">
                 <h2 className="text-2xl font-bold text-white mb-8">Order Summary</h2>
 
-                <div className="border-b border-[#C7FF2E]/20 pb-8 mb-8">
+                <div className="border-b border-[#00D9FF]/20 pb-8 mb-8">
                   <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-                  <p className="text-[#B7BDC8] text-sm mb-4">{plan.description}</p>
+                  <p className="text-[#AEB8CB] text-sm mb-4">{plan.description}</p>
 
                   <div className="flex justify-between items-baseline mb-4">
-                    <span className="text-gray-300">Plan Price:</span>
+                    <span className="text-[#AEB8CB]">Plan Price:</span>
                     {typeof plan.price === 'number' ? (
-                      <span className="text-2xl font-bold text-[#C7FF2E]">
+                      <span className="text-2xl font-bold text-[#00D9FF]">
                         ${plan.price}
-                        <span className="text-lg text-gray-300">/mo</span>
+                        <span className="text-lg text-[#AEB8CB]">/mo</span>
                       </span>
                     ) : (
-                      <span className="text-2xl font-bold text-[#C7FF2E]">Custom</span>
+                      <span className="text-2xl font-bold text-[#00D9FF]">Custom</span>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between">
-                    <span className="text-gray-300">Billing Cycle:</span>
+                    <span className="text-[#AEB8CB]">Billing Cycle:</span>
                     <span className="text-white font-semibold">Monthly</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-300">First Charge:</span>
+                    <span className="text-[#AEB8CB]">First Charge:</span>
                     <span className="text-white font-semibold">
                       {typeof plan.price === 'number' ? `$${plan.price}` : 'Contact us'}
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-[#C7FF2E]/10 border border-[#C7FF2E]/30 rounded-lg p-4 text-sm text-gray-300">
+                <div className="bg-[#00D9FF]/10 border border-[#00D9FF]/30 rounded-lg p-4 text-sm text-[#AEB8CB]">
                   {isDigitalTwin ? (
                     <>
                       ✓ Tenant-linked onboarding
