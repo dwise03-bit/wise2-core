@@ -49,7 +49,7 @@ services:
 
   # NestJS API
   api:
-    image: wise2-core-api:latest
+    image: wise2-core-api:cloud-pricing-20260919
     container_name: wise2-api
     restart: unless-stopped
     environment:

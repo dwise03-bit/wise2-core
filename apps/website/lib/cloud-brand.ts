@@ -24,7 +24,7 @@ export const CLOUD_PLANS_STATIC = [
   {
     id: 'starter' as const,
     name: 'WISE² Cloud Starter',
-    price: 29,
+    price: 39,
     tagline: 'A professional home for your business online',
     cta: 'Start with WISE²',
     features: [
@@ -38,7 +38,7 @@ export const CLOUD_PLANS_STATIC = [
   {
     id: 'business' as const,
     name: 'WISE² Cloud Business',
-    price: 49,
+    price: 79,
     tagline: 'Built for growing businesses',
     highlight: true,
     cta: 'Choose Business',
@@ -54,7 +54,7 @@ export const CLOUD_PLANS_STATIC = [
   {
     id: 'pro' as const,
     name: 'WISE² Cloud Pro',
-    price: 79,
+    price: 129,
     tagline: 'Managed hosting for serious growth',
     cta: 'Go Pro',
     features: [
@@ -73,14 +73,14 @@ export const CLOUD_UPSELLS = [
   {
     id: 'contractor',
     name: 'WISE² Contractor Cloud',
-    price: 99,
+    price: 199,
     tagline: 'Hosting + website + leads + CRM + automations',
     status: 'contact_sales' as const,
   },
   {
     id: 'managed',
     name: 'WISE² Managed Cloud',
-    price: 149,
+    price: 299,
     tagline: 'Hosting, maintenance, monitoring, AI & ops support',
     status: 'contact_sales' as const,
   },

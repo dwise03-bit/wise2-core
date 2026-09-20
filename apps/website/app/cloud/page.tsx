@@ -14,26 +14,24 @@ import {
   Globe,
   CheckCircle2,
   Gauge,
-  BarChart3,
   Mail,
 } from 'lucide-react';
 import {
   CLOUD_PLANS_STATIC,
-  CLOUD_TAGLINE,
   CLOUD_TRUST_ITEMS,
-  CLOUD_UPSELLS,
   cloudBtnGhost,
   cloudBtnPrimary,
   cloudEyebrow,
   cloudPanel,
-  WISE_CLOUD,
 } from '@/lib/cloud-brand';
+import { CloudScrollFX } from '@/components/cloud/CloudScrollFX';
 
 export default function CloudLandingPage() {
   return (
-    <main className="bg-[#020403] text-white overflow-hidden">
+    <main className="cloud-landing bg-[#020403] text-white overflow-hidden">
+      <CloudScrollFX />
       {/* HERO */}
-      <section className="relative border-b border-white/10 overflow-hidden">
+      <section data-cloud-reveal="hero" className="cloud-hero relative border-b border-white/10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/5 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-12 items-center min-h-[600px]">
 
@@ -119,7 +117,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* TRUST STRIP */}
-      <section className="border-b border-white/10 bg-[#090D0A] px-4 py-8 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-b border-white/10 bg-[#090D0A] px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-4">
           {CLOUD_TRUST_ITEMS.map((item) => (
             <span key={item} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#A7ADA8]">
@@ -131,7 +129,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* SERVICE STRIP */}
-      <section className="border-b border-white/10 px-4 py-12 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-b border-white/10 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
             {[
@@ -156,7 +154,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* CLOUD COMMAND CENTER */}
-      <section className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>WISE² Cloud Command Center</p>
           <h2 className="mt-4 text-3xl font-black sm:text-4xl">Real-Time Monitoring. 24/7 Protection. Maximum Performance.</h2>
@@ -183,7 +181,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* WHY WISE² */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>Why WISE²</p>
           <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-4">
@@ -211,7 +209,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* PRICING */}
-      <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>Price Menu</p>
           <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-10">Three Plans. One Obvious Winner.</h2>
@@ -240,7 +238,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* RESELLER OPPORTUNITY */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <p className={cloudEyebrow}>Reseller Opportunity</p>
@@ -267,7 +265,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* INFRASTRUCTURE */}
-      <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>Infrastructure That Performs</p>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -288,7 +286,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* SECURITY */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
           <div className={cloudPanel + ' p-8 flex items-center justify-center'}>
             <Lock size={80} className="text-[#B8FF00]" />
@@ -410,7 +408,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="border-t border-white/10 bg-gradient-to-b from-[#0D141A] to-[#020403] px-4 py-20 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-t border-white/10 bg-gradient-to-b from-[#0D141A] to-[#020403] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className={cloudEyebrow}>Ready to Launch Your Empire?</p>
           <h2 className="mt-4 text-4xl font-black sm:text-5xl mb-4">
@@ -424,7 +422,7 @@ export default function CloudLandingPage() {
       </section>
 
       {/* FEATURED CLIENTS */}
-      <section className="border-t border-white/10 px-4 py-12 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-t border-white/10 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
           <p className={cloudEyebrow}>Featured Clients</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-[#8FA0AE]">

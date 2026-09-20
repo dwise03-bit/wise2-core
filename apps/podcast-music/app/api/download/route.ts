@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { NextRequest, NextResponse } from 'next/server';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { prisma } from '@/lib/prisma';
 import { downloadAudioSchema } from '@/lib/validations';
 import {
@@ -11,16 +13,36 @@ import {
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// For a real implementation, you would:
-// 1. Fetch the file from S3/cloud storage
-// 2. Stream it to the client
-// 3. Track the download in usage
-
 async function downloadFileFromStorage(fileUrl: string): Promise<Buffer> {
-  // TODO: Implement actual file download from S3 or your storage service
-  // Placeholder for now
-  console.debug('Downloading file:', fileUrl);
-  throw new Error('File storage download not implemented');
+  if (!fileUrl || fileUrl.length > 4096) {
+    throw new Error('Invalid storage URL');
+  }
+
+  if (fileUrl.startsWith('file://')) {
+    return readFile(fileURLToPath(fileUrl));
+  }
+
+  if (fileUrl.startsWith('/')) {
+    return readFile(fileUrl);
+  }
+
+  let url: URL;
+  try {
+    url = new URL(fileUrl);
+  } catch {
+    throw new Error('Invalid storage URL');
+  }
+
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new Error('Unsupported storage URL protocol');
+  }
+
+  const response = await fetch(url, { redirect: 'error' });
+  if (!response.ok) {
+    throw new Error(`Storage returned HTTP ${response.status}`);
+  }
+
+  return Buffer.from(await response.arrayBuffer());
 }
 
 export async function GET(request: NextRequest) {

@@ -16,6 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 WISE2_HOME="${WISE2_HOME:-$HOME/.wise2}"
 WISE2_VERSION="1.0.0"
+WISE2_CODE_MODEL="${WISE2_CODE_MODEL:-ollama/wise2-coder-m4-local}"
 
 # Color codes
 RED='\033[0;31m'
@@ -222,6 +223,23 @@ cmd_ai() {
     fi
 }
 
+cmd_code() {
+    if ! command -v opencode &> /dev/null; then
+        error "OpenCode is not installed. Install it first, then run: wise2 code"
+        return 1
+    fi
+
+    cd "$PROJECT_ROOT"
+    log "Starting local AI coding session"
+    info "Model: $WISE2_CODE_MODEL"
+    info "Workspace: $PROJECT_ROOT"
+    echo ""
+
+    # OpenCode is configured for the local Ollama provider. Keep the model
+    # overridable for experimentation without changing the default behavior.
+    opencode "$PROJECT_ROOT" --model "$WISE2_CODE_MODEL" "$@"
+}
+
 cmd_models() {
     log "Checking available Ollama models..."
 
@@ -339,6 +357,7 @@ ${BOLD}Core Commands:${NC}
 
 ${BOLD}AI Operations:${NC}
   ai <query>          Query the Local AI Router
+  code                Start local AI coding (Ollama/OpenCode)
   models              List available Ollama models
   dashboard           Open WISE² dashboard in browser
 
@@ -358,7 +377,8 @@ ${BOLD}Utilities:${NC}
 
 ${BOLD}Examples:${NC}
   wise2 start all                    Start all services
-  wise2 ai "What is Node.js?"       Query AI Router
+  wise2 code                         Start a local AI coding session
+  wise2 ai "What is Node.js?"        Query AI Router
   wise2 status                       Check system status
   wise2 dashboard                    Open dashboard
   wise2 doctor                       Run diagnostics
@@ -376,7 +396,9 @@ cmd_version() {
 ################################################################################
 
 main() {
-    local command="${1:-help}"
+    # A bare interactive `wise2` command opens the local coding agent, making
+    # WISE² feel like a Claude Code-style coding terminal by default.
+    local command="${1:-code}"
     shift || true
 
     # Handle empty terminal (show welcome)
@@ -392,6 +414,7 @@ main() {
         stop)           cmd_stop "$@" ;;
         logs)           cmd_logs "$@" ;;
         ai)             cmd_ai "$@" ;;
+        code|coding)    cmd_code "$@" ;;
         models)         cmd_models "$@" ;;
         dashboard)      cmd_dashboard "$@" ;;
         doctor)         cmd_doctor "$@" ;;

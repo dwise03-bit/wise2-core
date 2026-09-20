@@ -10,9 +10,9 @@ describe('WISE² Cloud production catalog', () => {
     expect(
       getCloudPlans(config).map(({ id, name, priceMonthly }) => ({ id, name, priceMonthly })),
     ).toEqual([
-      { id: 'starter', name: 'Starter', priceMonthly: 29 },
-      { id: 'business', name: 'Business', priceMonthly: 49 },
-      { id: 'pro', name: 'Pro', priceMonthly: 79 },
+      { id: 'starter', name: 'Starter', priceMonthly: 39 },
+      { id: 'business', name: 'Business', priceMonthly: 79 },
+      { id: 'pro', name: 'Pro', priceMonthly: 129 },
     ]);
   });
 });

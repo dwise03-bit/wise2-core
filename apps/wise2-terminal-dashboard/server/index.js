@@ -14,6 +14,7 @@ const wss = new WebSocketServer({ server });
 
 const PORT = 3030;
 const STATIC_DIR = path.join(__dirname, '../dist');
+const WORKSPACE_DIR = process.env.WISE2_WORKSPACE || path.resolve(__dirname, '../..');
 
 // Serve static files
 app.use(express.static(STATIC_DIR));
@@ -144,8 +145,13 @@ function initializeShell(session, ws) {
       name: 'xterm-256color',
       cols: 80,
       rows: 24,
-      cwd: process.env.HOME,
-      env: { ...process.env, TERM: 'xterm-256color' },
+      cwd: WORKSPACE_DIR,
+      env: {
+        ...process.env,
+        TERM: 'xterm-256color',
+        WISE2_CODE_MODEL: process.env.WISE2_CODE_MODEL || 'ollama/wise2-coder-m4-local',
+        WISE2_WORKSPACE: WORKSPACE_DIR,
+      },
     });
 
     session.shell = ptyProcess;

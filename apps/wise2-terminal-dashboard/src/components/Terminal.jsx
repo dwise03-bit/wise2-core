@@ -64,7 +64,9 @@ export default function Terminal({ wsReady }) {
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: 'init' }));
       xterm.write('\r\n🚀 WISE² Terminal Dashboard\r\n');
-      xterm.write('Type commands below. Press Ctrl+L to clear.\r\n\r\n');
+      xterm.write('Workspace: WISE² Core (local AI coding ready)\r\n');
+      xterm.write('Run `wise2 code` or type `wise2` to open the Ollama coding agent.\r\n');
+      xterm.write('Press Ctrl+L to clear.\r\n\r\n');
     };
 
     ws.onmessage = (event) => {

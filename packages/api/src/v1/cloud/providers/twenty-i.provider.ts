@@ -17,6 +17,10 @@ interface TwentyIPackageResponse {
   status?: string;
 }
 
+interface TwentyIProvisionResponse {
+  result?: number | string;
+}
+
 @Injectable()
 export class TwentyIProvider implements HostingProvider {
   private readonly logger = new Logger(TwentyIProvider.name);
@@ -45,9 +49,8 @@ export class TwentyIProvider implements HostingProvider {
   }
 
   async listPackageTypes(): Promise<TwentyIPackageType[]> {
-    // Package types are exposed at the account-level endpoint. The wildcard
-    // reseller path is valid for addWeb, but 20i returns 404 for packageTypes.
-    const response = await this.requireClient().get<TwentyIPackageType[]>('/packageTypes');
+    // Package types are exposed through the reseller account endpoint.
+    const response = await this.requireClient().get<TwentyIPackageType[]>('/reseller/*/packageTypes');
     return Array.isArray(response) ? response : [];
   }
 
@@ -68,8 +71,15 @@ export class TwentyIProvider implements HostingProvider {
       body.stackUser = input.stackUserRef;
     }
 
-    const response = await this.requireClient().post<number | string>('/reseller/*/addWeb', body);
-    const externalId = String(response ?? '');
+    const response = await this.requireClient().post<number | string | TwentyIProvisionResponse>(
+      '/reseller/*/addWeb',
+      body,
+    );
+    const externalId = String(
+      typeof response === 'object' && response !== null && 'result' in response
+        ? response.result ?? ''
+        : response ?? '',
+    );
     if (!externalId) {
       throw new Error('20i provision response did not include a package id');
     }

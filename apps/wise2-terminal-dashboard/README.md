@@ -8,6 +8,7 @@ A modern, Claude Code-like terminal interface with integrated system monitoring,
 
 ### Terminal
 - 🖥️ **Full-featured terminal** with Xterm.js
+- 🤖 **Local AI coding by default** via `wise2` / `wise2 code` (Ollama + OpenCode)
 - 🎨 **WISE² dark theme** with neon cyan/green colors
 - 💻 **Syntax highlighting** for shell output
 - 📜 **1000-line scrollback** buffer

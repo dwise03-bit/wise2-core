@@ -10,6 +10,8 @@ export function getApiBaseUrl(): string {
     'https://api.wise2.net'
   ).replace(/\/$/, '');
 
+  // The Nest API exposes all application routes below the global `/api` prefix.
+  // Keep callers consistent even when production env files provide only the host.
   return publicApi.endsWith('/api') ? publicApi : `${publicApi}/api`;
 }
 

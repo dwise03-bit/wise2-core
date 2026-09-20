@@ -59,18 +59,21 @@ export class CloudService {
     const provider = this.providerFactory.getProvider();
     let packageTypes: Awaited<ReturnType<typeof provider.listPackageTypes>> = [];
     let providerOk = false;
+    let error: string | undefined;
 
     try {
       packageTypes = await provider.listPackageTypes();
       providerOk = packageTypes.length > 0;
-    } catch {
+    } catch (cause) {
       providerOk = false;
+      error = cause instanceof Error ? cause.message : 'Unknown provider error';
     }
 
     return {
       ok: providerOk,
       provider: provider.constructor.name,
       packageTypeCount: packageTypes.length,
+      ...(error ? { error } : {}),
       packageTypes: packageTypes.map((type) => ({
         id: type.id,
         label: type.label ?? type.name ?? `type-${type.id}`,

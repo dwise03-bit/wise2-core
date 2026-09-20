@@ -20,7 +20,7 @@ import { RayBanService } from './rayban.service';
 })
 @Injectable()
 export class RayBanGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() server!: Server;
 
   private deviceConnections: Map<string, Socket[]> = new Map();
   private userConnections: Map<string, Socket[]> = new Map();
@@ -36,7 +36,7 @@ export class RayBanGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!this.userConnections.has(userId)) {
         this.userConnections.set(userId, []);
       }
-      this.userConnections.get(userId).push(socket);
+      this.userConnections.get(userId)!.push(socket);
       socket.data.userId = userId;
     }
 
@@ -44,14 +44,16 @@ export class RayBanGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!this.deviceConnections.has(deviceId)) {
         this.deviceConnections.set(deviceId, []);
       }
-      this.deviceConnections.get(deviceId).push(socket);
+      this.deviceConnections.get(deviceId)!.push(socket);
       socket.data.deviceId = deviceId;
 
-      // Notify dashboard of device connection
-      this.broadcastToUser(userId, 'device:connected', {
-        deviceId,
-        timestamp: new Date(),
-      });
+      // Notify the user's dashboard when the socket is authenticated.
+      if (userId) {
+        this.broadcastToUser(userId, 'device:connected', {
+          deviceId,
+          timestamp: new Date(),
+        });
+      }
     }
   }
 
@@ -229,7 +231,7 @@ export class RayBanGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit(event, data);
   }
 
-  private extractUserIdFromToken(token: string): string {
+  private extractUserIdFromToken(token: string): string | null {
     // Simple token extraction - in production, use proper JWT verification
     try {
       if (!token) return null;

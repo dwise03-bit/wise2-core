@@ -346,6 +346,23 @@ Every session should:
 - [ ] Update daily log at end of session
 - [ ] Write session reflection
 
+## Completion Verification Gate
+
+Never describe a deployment, production fix, or onboarding-ready state as
+complete from source inspection or a successful build alone. Before reporting
+completion, run the relevant live checks and record the results:
+
+- Confirm the public URL returns the expected HTTP status.
+- Confirm the active nginx virtual host points to the currently published
+  container port.
+- Confirm the relevant container is running and healthy.
+- Confirm the relevant API health/catalog endpoint when the change depends on
+  API behavior.
+- Inspect the rendered result in Chrome for UI changes, including the key
+  interaction or safety state.
+- Report any failed check, stale reconciler state, unresolved billing/provider
+  dependency, or environmental warning instead of calling the work complete.
+
 ---
 
 ## Quick Reference
