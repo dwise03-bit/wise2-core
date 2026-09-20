@@ -22,7 +22,7 @@ export interface BrandProduct {
 export const BRANDS: Record<string, Brand> = {
   blakkhail: {
     id: 'blakkhail',
-    name: 'BLAKKHAIL',
+    name: 'BLAKK HAIL',
     tagline: 'LEGACY / ORIGIN',
     description: 'The foundation. The history. The real.',
     accentColor: '#D4842F',

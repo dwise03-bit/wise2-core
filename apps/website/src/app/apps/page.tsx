@@ -8,7 +8,7 @@ export default function AppsPage() {
   const apps = [
     {
       id: 'blakkhail',
-      name: 'BLAKKHAIL',
+      name: 'BLAKK HAIL',
       tagline: 'Authentic pieces built on heritage, culture, and no apologies.',
       icon: '👕',
       status: 'Live',

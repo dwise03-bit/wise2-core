@@ -5,11 +5,11 @@ import Link from 'next/link';
 const brands = [
   {
     id: 'blakkhail',
-    name: 'BLAKKHAIL',
+    name: 'BLAKK HAIL',
     tagline: 'LEGACY / ORIGIN',
     description: 'The foundation.\nThe history.\nThe real.',
     href: '/sencere/blakkhail',
-    buttonText: 'EXPLORE BLAKKHAIL',
+    buttonText: 'EXPLORE BLAKK HAIL',
     accentColor: '#D4842F',
   },
   {
