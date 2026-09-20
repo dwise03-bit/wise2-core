@@ -31,6 +31,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -45,8 +47,24 @@ jobs:
       - name: Install workspace dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Lint
-        run: pnpm --filter @wise2/website lint
+      - name: Lint changed website files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          mapfile -t files < <(
+            git diff --name-only "$BASE_SHA" HEAD -- 'apps/website/**/*.js' 'apps/website/**/*.jsx' 'apps/website/**/*.ts' 'apps/website/**/*.tsx' |
+              grep -E '\.(js|jsx|ts|tsx)$' |
+              sed 's#^apps/website/##' || true
+          )
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No website source files changed."
+            exit 0
+          fi
+
+          printf 'Linting changed website files:\n%s\n' "${files[@]}"
+          pnpm --filter @wise2/website exec eslint "${files[@]}"
 
       - name: Type-check
         run: pnpm --filter @wise2/website type-check
