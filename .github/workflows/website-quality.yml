@@ -1,0 +1,57 @@
+name: Website quality
+
+on:
+  pull_request:
+    paths:
+      - 'apps/website/**'
+      - 'packages/db/**'
+      - 'packages/ui-components/**'
+      - 'packages/brand-lock/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/website-quality.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/website/**'
+      - 'packages/db/**'
+      - 'packages/ui-components/**'
+      - 'packages/brand-lock/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/website-quality.yml'
+
+jobs:
+  website:
+    name: Website quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Lint
+        run: pnpm --filter @wise2/website lint
+
+      - name: Type-check
+        run: pnpm --filter @wise2/website type-check
+
+      - name: Test
+        run: pnpm --filter @wise2/website test
+
+      - name: Production build
+        run: pnpm --filter @wise2/website build
