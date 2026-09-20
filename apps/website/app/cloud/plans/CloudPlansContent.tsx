@@ -101,7 +101,7 @@ export default function CloudPlansContent() {
       <div className="mx-auto max-w-7xl">
         <p className={cloudEyebrow}>WISE² Cloud Plans</p>
         <h1 className="mt-4 text-4xl font-black sm:text-5xl">Choose your hosting plan</h1>
-        <p className="mt-4 max-w-2xl text-[#B7C0CB]">
+        <p className="mt-4 max-w-2xl text-[#AEB8CB]">
           Recurring hosting with SSL, email, and backups. Pay through Stripe — WISE² provisions
           your stack automatically.
         </p>
@@ -136,13 +136,13 @@ export default function CloudPlansContent() {
               <p className={cloudEyebrow}>{plan.highlight ? 'Most popular' : plan.name}</p>
               <h2 className="mt-4 text-4xl font-black">
                 ${plan.priceMonthly}
-                <span className="text-base text-[#8FA0AE]">/mo</span>
+                <span className="text-base text-[#AEB8CB]">/mo</span>
               </h2>
-              <p className="mt-2 text-sm text-[#8EDBFF]">{plan.twentyIPackageLabel}</p>
-              <ul className="mt-6 space-y-2 text-sm text-[#B7C0CB]">
+              <p className="mt-2 text-sm text-[#9AEFFF]">{plan.twentyIPackageLabel}</p>
+              <ul className="mt-6 space-y-2 text-sm text-[#AEB8CB]">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
-                    <Check size={14} className="mt-0.5 shrink-0 text-[#4DA3FF]" aria-hidden />
+                    <Check size={14} className="mt-0.5 shrink-0 text-[#00D9FF]" aria-hidden />
                     {feature}
                   </li>
                 ))}
@@ -158,47 +158,47 @@ export default function CloudPlansContent() {
 
         <form className={`${cloudPanel} mt-12 max-w-2xl p-6`} onSubmit={handleCheckout}>
           <h2 className="text-xl font-bold">Launch your WISE² Cloud site</h2>
-          <p className="mt-2 text-sm text-[#8FA0AE]">
+          <p className="mt-2 text-sm text-[#AEB8CB]">
             Already a customer?{' '}
-            <Link href="/cloud/dashboard" className="text-[#8EDBFF] hover:text-white">
+            <Link href="/cloud/dashboard" className="text-[#9AEFFF] hover:text-white">
               View my services
             </Link>
           </p>
           <div className="mt-6 grid gap-4">
             <label className="block text-sm">
-              <span className="mb-2 block text-[#B7C0CB]">Email</span>
+              <span className="mb-2 block text-[#AEB8CB]">Email</span>
               <input
                 required
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="w-full border border-white/10 bg-[#050607] px-4 py-3 text-white outline-none focus:border-[#4DA3FF]"
+                className="w-full border border-white/10 bg-[#050816] px-4 py-3 text-white outline-none focus:border-[#00D9FF]"
               />
             </label>
             <label className="block text-sm">
-              <span className="mb-2 block text-[#B7C0CB]">Primary domain</span>
+              <span className="mb-2 block text-[#AEB8CB]">Primary domain</span>
               <input
                 required
                 type="text"
                 placeholder="yourdomain.com"
                 value={domainName}
                 onChange={(event) => setDomainName(event.target.value)}
-                className="w-full border border-white/10 bg-[#050607] px-4 py-3 text-white outline-none focus:border-[#4DA3FF]"
+                className="w-full border border-white/10 bg-[#050816] px-4 py-3 text-white outline-none focus:border-[#00D9FF]"
               />
             </label>
           </div>
           {error ? <p className="mt-4 text-sm text-red-300">{error}</p> : null}
-          <p className="mt-6 text-xs text-[#8FA0AE]">
+          <p className="mt-6 text-xs text-[#AEB8CB]">
             By continuing you agree to the{' '}
-            <Link href="/terms" className="text-[#8EDBFF] hover:text-white">
+            <Link href="/terms" className="text-[#9AEFFF] hover:text-white">
               Terms of Service
             </Link>
             ,{' '}
-            <Link href="/cloud/acceptable-use" className="text-[#8EDBFF] hover:text-white">
+            <Link href="/cloud/acceptable-use" className="text-[#9AEFFF] hover:text-white">
               Acceptable Use Policy
             </Link>
             , and{' '}
-            <Link href="/cloud/refunds" className="text-[#8EDBFF] hover:text-white">
+            <Link href="/cloud/refunds" className="text-[#9AEFFF] hover:text-white">
               Refund Policy
             </Link>
             .
