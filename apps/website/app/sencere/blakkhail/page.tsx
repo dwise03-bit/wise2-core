@@ -11,6 +11,10 @@ import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter'
 import { BlakkhailMobileShopBar } from '@/components/sencere/blakkhail/BlakkhailMobileShopBar';
 import { BlakkhailTrust } from '@/components/sencere/blakkhail/BlakkhailTrust';
 import { BLAKKHAIL_LAYOUT } from '@/components/sencere/blakkhail/brand-tokens';
+import { BlakkhailHeritage } from '@/components/sencere/blakkhail/BlakkhailHeritage';
+import { BlakkhailDropTimeline } from '@/components/sencere/blakkhail/BlakkhailDropTimeline';
+import { BlakkhailTestimonials } from '@/components/sencere/blakkhail/BlakkhailTestimonials';
+import { BlakkhailPhilosophy } from '@/components/sencere/blakkhail/BlakkhailPhilosophy';
 
 export default function BlakkhailPage() {
   useEffect(() => {
@@ -69,6 +73,11 @@ export default function BlakkhailPage() {
         <section id="home" className="bh-section bh-section-hero">
           <BlakkhailHero />
         </section>
+
+        <section id="philosophy" className="bh-section">
+          <BlakkhailPhilosophy />
+        </section>
+
         <section id="video" className="bh-section w-full bg-black py-0" style={{ backgroundColor: '#000000' }}>
           <div className="bh-split-stage mx-auto grid max-w-[1400px] items-stretch gap-8 px-5 py-16 sm:px-8 lg:grid-cols-[1.3fr_.7fr] lg:gap-12 lg:px-12 lg:py-28">
             <div className="bh-video-panel relative overflow-hidden border border-[#8C6518]/70 bg-[#090909] p-2 sm:p-3">
@@ -103,9 +112,25 @@ export default function BlakkhailPage() {
             </article>
           </div>
         </section>
+
+        <section id="heritage" className="bh-section">
+          <BlakkhailHeritage />
+        </section>
+
         <div className="bh-section"><BlakkhailStory /></div>
+
+        <section id="drops" className="bh-section">
+          <BlakkhailDropTimeline />
+        </section>
+
         <div className="bh-section"><BlakkhailLookBook /></div>
+
+        <section id="testimonials" className="bh-section">
+          <BlakkhailTestimonials />
+        </section>
+
         <div className="bh-section"><BlakkhailTrust /></div>
+
         <section id="shop" className="bh-section">
           <BlakkhailStorefront />
         </section>
@@ -121,8 +146,8 @@ export default function BlakkhailPage() {
         .bh-hailfall { pointer-events: none; position: fixed; inset: 0; z-index: 6; overflow: hidden; perspective: 900px; }
         .bh-hailfall i { position: absolute; left: calc((var(--i) * 3.11%) - 2%); top: -8vh; width: 7px; height: 17px; border-radius: 45% 55% 60% 40%; background: linear-gradient(160deg, #fffbe6 0 18%, #f6d77b 34%, #d4af37 58%, #29200d 100%); box-shadow: 0 0 5px 1px rgba(255,246,190,.95), 0 0 16px 3px rgba(212,175,55,.62), 2px 5px 13px rgba(0,0,0,.95); opacity: .88; transform: rotate(calc((var(--i) * 19deg) - 20deg)); animation: bhHail calc(7s + (var(--i) * .19s)) linear infinite; animation-delay: calc(var(--i) * -.57s); }
         .bh-hailfall i::after { content: ''; position: absolute; top: 11px; left: 2px; width: 2px; height: 24px; background: linear-gradient(#fffbe6, rgba(212,175,55,.65), transparent); filter: blur(.4px); opacity: .8; transform: rotate(18deg); }
-        .bh-storm-overlay { pointer-events: none; position: fixed; inset: 0; z-index: 7; opacity: 0; background: rgba(241, 217, 153, .12); mix-blend-mode: screen; animation: bhGlobalFlash 7s linear infinite; }
-        .bh-global-bolt { position: absolute; top: -5%; right: 24%; width: 3px; height: 57vh; background: #fffbe6; clip-path: polygon(55% 0, 100% 0, 60% 29%, 83% 29%, 21% 67%, 40% 67%, 0 100%, 19% 62%, 2% 62%, 42% 25%, 24% 25%); filter: drop-shadow(0 0 7px #fff4bd) drop-shadow(0 0 22px #d4af37); transform: rotate(-7deg); }
+        .bh-storm-overlay { pointer-events: none; position: fixed; inset: 0; z-index: 7; opacity: 0; background: rgba(241, 217, 153, .12); mix-blend-mode: screen; animation: bhGlobalFlash 7s linear infinite, bhStormWind 4s ease-in-out infinite; }
+        .bh-global-bolt { position: absolute; top: -5%; right: 24%; width: 3px; height: 57vh; background: #fffbe6; clip-path: polygon(55% 0, 100% 0, 60% 29%, 83% 29%, 21% 67%, 40% 67%, 0 100%, 19% 62%, 2% 62%, 42% 25%, 24% 25%); filter: drop-shadow(0 0 7px #fff4bd) drop-shadow(0 0 22px #d4af37); transform: rotate(-7deg); animation: bhLightning 8s ease-in-out infinite; }
         .bh-scroll-rail { pointer-events: none; position: fixed; right: 18px; top: 22vh; z-index: 9; width: 2px; height: 56vh; background: rgba(212,175,55,.18); }
         .bh-scroll-rail span { display: block; width: 100%; height: calc(var(--bh-scroll-progress, 0) * 100%); background: linear-gradient(#f6d77b, #6f5417); box-shadow: 0 0 12px #d4af37; transform-origin: top; }
         .bh-section { position: relative; width: 100%; min-width: 0; transform-style: preserve-3d; }
@@ -142,6 +167,8 @@ export default function BlakkhailPage() {
         @keyframes bhPageParticle { 0%, 100% { opacity: 0; transform: translate3d(0, 12vh, 0) scale(.6); } 18% { opacity: .55; } 50% { opacity: .2; transform: translate3d(18px, -8vh, 0) scale(1); } 82% { opacity: .5; } }
         @keyframes bhHail { 0% { opacity: 0; transform: translate3d(0, -12vh, -80px) rotate(0deg); } 10% { opacity: .8; } 88% { opacity: .72; } 100% { opacity: 0; transform: translate3d(calc((var(--i) * 7px) - 80px), 118vh, 140px) rotate(520deg); } }
         @keyframes bhGlobalFlash { 0%, 31%, 34%, 63%, 66%, 100% { opacity: 0; } 32%, 33%, 64%, 65% { opacity: 1; } }
+        @keyframes bhStormWind { 0%, 100% { backdrop-filter: blur(0px); } 50% { backdrop-filter: blur(2px); } }
+        @keyframes bhLightning { 0%, 100% { opacity: 0; transform: rotate(-7deg) scaleY(0.95); } 15% { opacity: 0.8; transform: rotate(-7deg) scaleY(1); } 16% { opacity: 0; } 50% { opacity: 0; } 65% { opacity: 0.9; transform: rotate(-7deg) scaleY(1.02); } 66% { opacity: 0; transform: rotate(-7deg) scaleY(0.95); } }
         @media (max-width: 767px) { .bh-hailfall i { opacity: .52; } .bh-scroll-rail { right: 8px; } .bh-page { perspective: none; } .bh-split-stage { perspective: none; } .bh-video-panel:hover, .bh-drop-panel:hover { transform: none; } }
         @media (prefers-reduced-motion: reduce) { .bh-page-grid, .bh-global-particles, .bh-hailfall, .bh-storm-overlay, .bh-scroll-rail, .bh-section, .bh-section::after, .bh-page #collection .group, .bh-page #collection .group > a > div:first-child { transform: none; transition: none; animation: none; } .bh-hailfall, .bh-storm-overlay { display: none; } }
       `}</style>
