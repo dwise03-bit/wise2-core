@@ -92,7 +92,7 @@ export function CloudShell({ children }: { children: ReactNode }) {
             {CLOUD_TAGLINE}
           </p>
           <p className="mt-3 text-center text-sm text-[#8FA0AE]">
-            Piff City Infrastructure · Speed. Reliability. Security. Support.
+            WISE² Cloud · Speed. Reliability. Security. Support.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-[#8FA0AE]">
             <Link href="/cloud/acceptable-use" className="hover:text-white">

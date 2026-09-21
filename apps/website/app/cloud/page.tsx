@@ -64,12 +64,12 @@ export default function CloudLandingPage() {
                 <span className="text-[#B8FF00]">Active</span>
               </div>
               <div className="flex justify-between">
-                <span>Uptime</span>
-                <span className="text-[#B8FF00]">99.99%</span>
+                <span>Support</span>
+                <span className="text-[#B8FF00]">24/7 Available</span>
               </div>
               <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2">
                 <span className="w-2 h-2 bg-[#B8FF00] rounded-full animate-pulse" />
-                <span>All Systems Operational</span>
+                <span>Services Ready</span>
               </div>
             </div>
           </div>
@@ -153,29 +153,50 @@ export default function CloudLandingPage() {
         </div>
       </section>
 
-      {/* CLOUD COMMAND CENTER */}
+      {/* CLOUD COMMAND CENTER - REAL VALUE */}
       <section data-cloud-reveal className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className={cloudEyebrow}>WISE² Cloud Command Center</p>
           <h2 className="mt-4 text-3xl font-black sm:text-4xl">Real-Time Monitoring. 24/7 Protection. Maximum Performance.</h2>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { label: 'Uptime', value: '99.99%', detail: '4+ Years Operations' },
-              { label: 'Active Servers', value: '128', detail: '+2 this month' },
-              { label: 'Total Domains', value: '542', detail: '+28 this month' },
-              { label: 'Bandwidth', value: '12.4 TB', detail: '+2.1% this month' },
-              { label: 'Storage Used', value: '3.6 TB / 10 TB', detail: '36% Used' },
-              { label: 'Databases', value: '256', detail: 'Active Databases' },
-              { label: 'Customers', value: '1,248', detail: '+38 this month' },
-              { label: 'Monthly Revenue', value: '$24,780', detail: '+23% this month' },
-            ].map(({ label, value, detail }) => (
+              {
+                icon: Server,
+                label: 'Live Infrastructure',
+                detail: 'Monitor your domains, storage, and services in real-time from your customer dashboard.',
+              },
+              {
+                icon: Gauge,
+                label: 'Performance Metrics',
+                detail: 'Track uptime, bandwidth, and resource usage specific to your account and services.',
+              },
+              {
+                icon: Lock,
+                label: 'Security Dashboard',
+                detail: 'Manage SSL certificates, backups, security alerts, and access controls.',
+              },
+            ].map(({ icon: Icon, label, detail }) => (
               <div key={label} className={cloudPanel + ' p-6'}>
-                <p className={cloudEyebrow}>{label}</p>
-                <p className="mt-3 text-3xl font-black">{value}</p>
-                <p className="mt-2 text-xs text-[#8FA0AE]">{detail}</p>
+                <div className="flex items-start gap-3">
+                  <Icon size={20} className="text-[#B8FF00] mt-1 shrink-0" />
+                  <div>
+                    <p className={cloudEyebrow}>{label}</p>
+                    <p className="mt-3 text-sm leading-6 text-[#B8FF00]">{detail}</p>
+                  </div>
+                </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-[#A7ADA8] text-sm">
+              After you sign up, your customer dashboard provides real-time metrics, invoices, and service management.
+            </p>
+            <Link href="/cloud/plans" className={`${cloudBtnPrimary} mt-6 inline-flex`}>
+              See Your Dashboard
+              <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
@@ -272,7 +293,7 @@ export default function CloudLandingPage() {
             {[
               { icon: Server, label: 'NVMe SSD', detail: 'Blazing Fast' },
               { icon: Globe, label: 'Global CDN', detail: 'Worldwide' },
-              { icon: Shield, label: '99.99% Uptime', detail: 'SLA Guaranteed' },
+              { icon: Shield, label: 'Enterprise Security', detail: 'SSL, Backups & Protection' },
               { icon: Zap, label: 'Scalable', detail: 'On Demand' },
             ].map(({ icon: Icon, label, detail }) => (
               <div key={label} className={cloudPanel + ' p-6 text-center'}>
