@@ -30,7 +30,7 @@ export function CloudCrownLogo({ size = 'md', showWordmark = false }: CloudCrown
         <span>
           <span className="block text-sm font-black tracking-[0.2em]">WISE² CLOUD</span>
           <span className="block text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8FA0AE]">
-            Piff City Infrastructure
+            Managed Hosting Platform
           </span>
         </span>
       ) : null}
