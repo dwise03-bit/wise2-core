@@ -318,7 +318,6 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Performance</p>
             <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Built for Speed. Built to Last.</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -405,7 +404,6 @@ export default function CloudLandingPage() {
       {/* MIGRATION - ZERO FRICTION */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
-          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Zero-Friction Migration</p>
           <h2 className="text-4xl font-black mb-12" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Move Your Empire in 48 Hours.</h2>
           <ul className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
             {['Free Transfer', 'Free Databases', 'Zero Downtime', 'Expert Team', 'All Plans'].map((item) => (
@@ -450,7 +448,6 @@ export default function CloudLandingPage() {
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Why WISE²</p>
             <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
               Built Different.
               <br/>
