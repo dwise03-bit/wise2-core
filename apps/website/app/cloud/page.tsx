@@ -98,11 +98,11 @@ export default function CloudLandingPage() {
                 </div>
 
                 <div className="flex flex-col gap-4 pt-8">
-                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black text-sm rounded-sm hover:bg-[#d0ff20] hover:shadow-[0_0_50px_rgba(184,255,0,0.8)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
+                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black text-sm rounded-xl hover:bg-[#d0ff20] hover:shadow-[0_0_50px_rgba(184,255,0,0.8)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
                     Get Started
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </Link>
-                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-sm rounded-sm hover:border-[#B8FF00] hover:bg-[#B8FF00]/5 hover:shadow-[0_0_40px_rgba(184,255,0,0.5)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
+                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-sm rounded-xl hover:border-[#B8FF00] hover:bg-[#B8FF00]/5 hover:shadow-[0_0_40px_rgba(184,255,0,0.5)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
                     Free Audit
                   </Link>
                 </div>
@@ -163,7 +163,7 @@ export default function CloudLandingPage() {
               { icon: Gauge, label: 'Managed Hosting' },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="text-center group">
-                <div className="p-6 rounded-lg border border-[#B8FF00]/20 mb-3 group-hover:border-[#B8FF00] group-hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all duration-300 bg-[#0f1419]/50">
+                <div className="p-6 rounded-xl border border-[#B8FF00]/20 mb-3 group-hover:border-[#B8FF00] group-hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all duration-300 bg-[#0f1419]/50">
                   <Icon size={28} className="mx-auto text-[#B8FF00]" />
                 </div>
                 <p className="text-xs font-black uppercase tracking-[0.1em] text-[#c5d3e0]">{label}</p>
@@ -204,7 +204,7 @@ export default function CloudLandingPage() {
                 detail: 'SSL, DDoS protection, firewalls, backups. Enterprise-grade security out of the box.',
               },
             ].map(({ icon: Icon, label, detail }) => (
-              <div key={label} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+              <div key={label} className="p-6 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
                 <div className="flex items-start gap-3">
                   <Icon size={24} className="text-[#B8FF00] mt-1 shrink-0" style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                   <div>
@@ -242,7 +242,7 @@ export default function CloudLandingPage() {
               { icon: Zap, title: 'AUTOMATION', copy: 'Workflows that scale. Revenue automation. Zero manual work.' },
               { icon: Sparkles, title: 'WEALTH', copy: 'Build systems that generate passive income. Forever.' },
             ].map(({ icon: Icon, title, copy }) => (
-              <div key={title} className="p-8 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+              <div key={title} className="p-8 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
                 <Icon className="text-[#B8FF00]" size={28} style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                 <p className="font-black text-lg uppercase tracking-widest mt-6 text-[#B8FF00]">{title}</p>
                 <p className="mt-4 text-sm leading-7 text-[#c5d3e0]">{copy}</p>
@@ -261,7 +261,7 @@ export default function CloudLandingPage() {
 
           <div className="grid gap-6 lg:grid-cols-4">
             {CLOUD_PLANS_STATIC.map((plan) => (
-              <div key={plan.id} className={`flex flex-col p-8 rounded-lg border transition-all duration-300 ${plan.highlight ? 'border-[#B8FF00] bg-[#0f1419] shadow-[0_0_40px_rgba(184,255,0,0.3)]' : 'border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)]'}`}>
+              <div key={plan.id} className={`flex flex-col p-8 rounded-xl border transition-all duration-300 ${plan.highlight ? 'border-[#B8FF00] bg-[#0f1419] shadow-[0_0_40px_rgba(184,255,0,0.3)]' : 'border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)]'}`}>
                 <p className={`text-[#B8FF00] font-black text-xs uppercase tracking-widest ${plan.highlight ? '' : ''}`}>{plan.highlight ? '★ MOST POPULAR' : plan.name}</p>
                 <h3 className="mt-4 text-5xl font-black text-white">${plan.price}<span className="text-lg text-[#6b7a8c]">/mo</span></h3>
                 <p className="mt-3 text-sm text-[#B8FF00] font-semibold">{plan.tagline}</p>
@@ -305,7 +305,7 @@ export default function CloudLandingPage() {
               <ArrowRight size={18} />
             </Link>
           </div>
-          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-gradient-to-br from-[#B8FF00]/10 to-transparent text-center">
+          <div className="p-12 rounded-xl border border-[#B8FF00]/20 bg-gradient-to-br from-[#B8FF00]/10 to-transparent text-center">
             <Sparkles size={56} className="mx-auto text-[#B8FF00] mb-6" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
             <p className="text-xl font-black text-[#B8FF00]" style={{textShadow: '0 0 20px rgba(184,255,0,0.4)'}}>
               Your clients' success<br/>becomes your legacy.
@@ -327,7 +327,7 @@ export default function CloudLandingPage() {
               { icon: Shield, label: 'Enterprise Grade', detail: 'Military-level security' },
               { icon: Zap, label: 'Auto-Scaling', detail: 'Unlimited capacity' },
             ].map(({ icon: Icon, label, detail }) => (
-              <div key={label} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 text-center hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all">
+              <div key={label} className="p-6 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 text-center hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all">
                 <Icon size={28} className="mx-auto text-[#B8FF00] mb-4" style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                 <p className="font-black text-sm uppercase tracking-widest text-[#B8FF00]">{label}</p>
                 <p className="text-xs text-[#6b7a8c] mt-2">{detail}</p>
@@ -340,7 +340,7 @@ export default function CloudLandingPage() {
       {/* SECURITY - FORTRESS */}
       <section data-cloud-reveal className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
-          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+          <div className="p-12 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
             <Lock size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
           <div>
@@ -395,7 +395,7 @@ export default function CloudLandingPage() {
               ))}
             </ul>
           </div>
-          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+          <div className="p-12 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
             <Sparkles size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
         </div>
@@ -423,7 +423,7 @@ export default function CloudLandingPage() {
       {/* CONSULTING - STRATEGY */}
       <section className="border-y border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
-          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+          <div className="p-12 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
             <Gauge size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
           <div>
@@ -466,7 +466,7 @@ export default function CloudLandingPage() {
               'Global Infrastructure',
               'Infinite Scale',
             ].map((benefit) => (
-              <div key={benefit} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all flex items-start gap-4">
+              <div key={benefit} className="p-6 rounded-xl border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all flex items-start gap-4">
                 <Check className="text-[#B8FF00] shrink-0 mt-1" size={20} style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
                 <span className="font-semibold text-[#c5d3e0]">{benefit}</span>
               </div>
