@@ -9,8 +9,9 @@ RUN npm install -g pnpm@8.15.9
 # Copy all files for workspace build
 COPY . .
 
-# Install dependencies - skip frozen lockfile and integrity check
-RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false --ignore-scripts 2>&1 || pnpm install --force --no-frozen-lockfile --ignore-scripts
+# Install dependencies from workspace root - skip frozen lockfile and integrity check
+# This ensures @wise2/* workspace packages are resolved correctly
+RUN pnpm install --no-frozen-lockfile --strict-peer-dependencies=false --ignore-scripts
 
 # Build Next.js app
 WORKDIR /app/apps/website
