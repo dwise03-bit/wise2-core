@@ -34,6 +34,14 @@ if [ "$ENVIRONMENT" = "website-only" ]; then
     exit 1
   fi
 
+  if docker ps -aq -f name=^/wise2-website$ | grep -q .; then
+    echo "♻️ Removing existing website container to avoid name conflicts..."
+    if ! docker rm -f wise2-website >/dev/null; then
+      echo "❌ Failed to remove existing website container"
+      exit 1
+    fi
+  fi
+
   if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
     echo "❌ Failed to start website service"
     docker compose -f docker-compose.prod.yml logs website || true
