@@ -28,98 +28,85 @@ import { CloudScrollFX } from '@/components/cloud/CloudScrollFX';
 
 export default function CloudLandingPage() {
   return (
-    <main className="cloud-landing bg-white text-[#16181d] overflow-hidden">
-      {/* HERO */}
-      <section className="cloud-hero relative border-b border-[#d3d7df] overflow-hidden bg-[#f8f9fb]">
-        <div className="relative mx-auto max-w-5xl px-6 py-24 sm:px-8 grid lg:grid-cols-2 gap-16 items-center min-h-[600px]">
+    <main className="cloud-landing bg-[#0a0d0f] text-[#ffffff] overflow-hidden">
+      {/* HERO - NEON CYBERPUNK */}
+      <section className="cloud-hero relative border-b border-[#B8FF00]/20 overflow-hidden bg-gradient-to-b from-[#0f1419] to-[#0a0d0f]">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#B8FF00]/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#00FF00]/5 rounded-full blur-3xl" />
+        </div>
 
-          {/* LEFT: Specifications */}
-          <div className="bg-white border border-[#d3d7df] rounded-sm p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#5b626e] mb-6">Specs</p>
-            <div className="space-y-4 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-[#353a44]">Uptime SLA</span>
-                <span className="font-mono text-[#e8590c]">99.95%</span>
+        <div className="relative mx-auto max-w-7xl px-6 py-32 sm:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* LEFT: Leadership + Vision */}
+            <div className="space-y-8">
+              <div>
+                <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4 glow" style={{textShadow: '0 0 20px rgba(184,255,0,0.6)'}}>
+                  DISCIPLINE • EXECUTION • RESULTS
+                </p>
+                <h1 className="text-6xl font-black leading-tight mb-6" style={{textShadow: '0 0 40px rgba(184,255,0,0.4)'}}>
+                  Build Your Empire.
+                  <br/>
+                  <span className="text-[#B8FF00]">Change Culture.</span>
+                </h1>
               </div>
-              <div className="border-b border-[#e2e5ea]" />
-              <div className="flex justify-between items-center">
-                <span className="text-[#353a44]">Data Centers</span>
-                <span className="font-mono text-[#353a44]">3 regions</span>
+
+              <div className="space-y-4">
+                <p className="text-[#a0b0c0] text-lg leading-relaxed">
+                  WISE² Cloud is the infrastructure for builders. Enterprise security. Infinite scale. Real support. Built for founders who demand excellence.
+                </p>
+                <div className="flex gap-8 text-sm">
+                  <div>
+                    <p className="text-[#B8FF00] font-black mb-2">PEOPLE</p>
+                    <p className="text-[#6b7a8c]">Real humans, 24/7</p>
+                  </div>
+                  <div>
+                    <p className="text-[#B8FF00] font-black mb-2">AI</p>
+                    <p className="text-[#6b7a8c]">Autonomous optimization</p>
+                  </div>
+                  <div>
+                    <p className="text-[#B8FF00] font-black mb-2">OPPORTUNITY</p>
+                    <p className="text-[#6b7a8c]">Scale without limits</p>
+                  </div>
+                </div>
               </div>
-              <div className="border-b border-[#e2e5ea]" />
-              <div className="flex justify-between items-center">
-                <span className="text-[#353a44]">DDoS Protection</span>
-                <Check size={18} className="text-[#1f7a55]" />
-              </div>
-              <div className="border-b border-[#e2e5ea]" />
-              <div className="flex justify-between items-center">
-                <span className="text-[#353a44]">Backups</span>
-                <span className="font-mono text-[#353a44]">Daily</span>
-              </div>
-              <div className="border-b border-[#e2e5ea]" />
-              <div className="flex justify-between items-center">
-                <span className="text-[#353a44]">Auto-scaling</span>
-                <Check size={18} className="text-[#1f7a55]" />
-              </div>
-              <div className="mt-6 pt-6 border-t-2 border-[#e2e5ea] text-xs text-[#5b626e] leading-relaxed">
-                Managed by WISE² on 20i infrastructure. See your actual metrics in your dashboard after signup.
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all duration-300">
+                  Launch now
+                  <ArrowRight size={18} />
+                </Link>
+                <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/40 text-[#B8FF00] font-semibold hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all">
+                  Free audit
+                </Link>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT: Copy */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#5b626e] mb-3">Hosting</p>
-            <h1 className="text-5xl font-bold leading-tight mb-6 text-[#16181d]">
-              Your app. Our infrastructure.
-            </h1>
-            <p className="text-lg text-[#353a44] mb-8 leading-relaxed">
-              Stop managing servers. WISE² Cloud runs your application on reliable, secure infrastructure. We handle deployment, scaling, monitoring, and backups. You focus on your product.
-            </p>
-            <ul className="space-y-3 mb-10 text-sm text-[#353a44]">
-              <li className="flex gap-3">
-                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
-                <span>Deploy in minutes, not weeks</span>
-              </li>
-              <li className="flex gap-3">
-                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
-                <span>99.95% uptime SLA with automatic failover</span>
-              </li>
-              <li className="flex gap-3">
-                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
-                <span>Daily backups across 3 data centers</span>
-              </li>
-            </ul>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#e8590c] text-white font-semibold rounded-sm hover:bg-[#c9420a] transition-colors">
-                Get started
-                <ArrowRight size={16} />
-              </Link>
-              <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-[#d3d7df] text-[#16181d] font-semibold rounded-sm hover:bg-[#f8f9fb] transition-colors">
-                Free infrastructure audit
-              </Link>
+            {/* RIGHT: Leadership Image */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/20 to-transparent rounded-2xl" />
+              <Image
+                src="/brand/wise2-hero-united.webp"
+                alt="WISE² Leadership - Building Empires"
+                width={500}
+                height={500}
+                priority
+                className="w-full h-auto rounded-2xl relative z-10 border border-[#B8FF00]/30"
+                style={{boxShadow: '0 0 40px rgba(184,255,0,0.3)'}}
+              />
+              <p className="mt-6 text-center text-[#6b7a8c] text-sm font-mono">
+                WISE² United • People × AI × Opportunity
+              </p>
             </div>
-          </div>
-
-          {/* RIGHT: Approved WISE² Leaders */}
-          <div className="relative hidden lg:block">
-            <Image
-              src="/brand/wise2-hero-united.webp"
-              alt="WISE² Leadership Team"
-              width={400}
-              height={400}
-              priority
-              className="w-full h-auto rounded-lg"
-            />
           </div>
         </div>
       </section>
 
-      {/* TRUST STRIP */}
-      <section data-cloud-reveal className="border-b border-white/10 bg-[#090D0A] px-4 py-8 sm:px-6 lg:px-8">
+      {/* TRUST STRIP - NEON */}
+      <section data-cloud-reveal className="border-b border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-4">
           {CLOUD_TRUST_ITEMS.map((item) => (
-            <span key={item} className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#A7ADA8]">
+            <span key={item} className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] text-[#B8FF00]" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>
               <Check size={14} className="text-[#B8FF00]" />
               {item}
             </span>
@@ -127,128 +114,135 @@ export default function CloudLandingPage() {
         </div>
       </section>
 
-      {/* SERVICE STRIP */}
-      <section data-cloud-reveal className="border-b border-white/10 px-4 py-12 sm:px-6 lg:px-8">
+      {/* SERVICE STRIP - CAPABILITIES */}
+      <section data-cloud-reveal className="border-b border-[#B8FF00]/20 bg-gradient-to-b from-[#0f1419] to-[#0a0d0f] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-6">
+          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-8 text-center" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Capabilities</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Globe, label: 'Web Hosting' },
               { icon: CheckCircle2, label: 'Reseller Hosting' },
               { icon: Server, label: 'VPS Servers' },
               { icon: Globe, label: 'Domains' },
-              { icon: Mail, label: 'Business Email' },
+              { icon: Mail, label: 'Email Services' },
               { icon: Lock, label: 'SSL & Security' },
               { icon: RefreshCw, label: 'Daily Backups' },
               { icon: Gauge, label: 'Managed Hosting' },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="text-center group">
-                <div className={`${cloudPanel} p-4 rounded mb-3 group-hover:border-[#B8FF00] transition`}>
-                  <Icon size={24} className="mx-auto text-[#B8FF00]" />
+                <div className="p-6 rounded-lg border border-[#B8FF00]/20 mb-3 group-hover:border-[#B8FF00] group-hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all duration-300 bg-[#0f1419]/50">
+                  <Icon size={28} className="mx-auto text-[#B8FF00]" />
                 </div>
-                <p className="text-xs font-semibold uppercase tracking-[0.1em]">{label}</p>
+                <p className="text-xs font-black uppercase tracking-[0.1em] text-[#a0b0c0]">{label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CLOUD COMMAND CENTER - REAL VALUE */}
-      <section data-cloud-reveal className="border-b border-white/10 px-4 py-16 sm:px-6 lg:px-8">
+      {/* COMMAND CENTER - AUTOMATION */}
+      <section data-cloud-reveal className="border-b border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className={cloudEyebrow}>WISE² Cloud Command Center</p>
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl">Real-Time Monitoring. 24/7 Protection. Maximum Performance.</h2>
+          <div className="text-center mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Automation</p>
+            <h2 className="text-4xl font-black sm:text-5xl leading-tight" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Build. Automate. Dominate.
+            </h2>
+            <p className="mt-6 text-[#a0b0c0] text-lg max-w-2xl mx-auto">
+              One system for everything. Deploy apps, manage clients, track revenue, scale infinitely.
+            </p>
+          </div>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 icon: Server,
-                label: 'Live Infrastructure',
-                detail: 'Monitor your domains, storage, and services in real-time from your customer dashboard.',
+                label: 'Instant Deployment',
+                detail: 'Deploy applications in minutes. No servers to manage. Automatic scaling under load.',
               },
               {
                 icon: Gauge,
-                label: 'Performance Metrics',
-                detail: 'Track uptime, bandwidth, and resource usage specific to your account and services.',
+                label: 'Real-Time Analytics',
+                detail: 'Watch your metrics live. Performance, uptime, resource usage in one dashboard.',
               },
               {
                 icon: Lock,
-                label: 'Security Dashboard',
-                detail: 'Manage SSL certificates, backups, security alerts, and access controls.',
+                label: 'Security Built-In',
+                detail: 'SSL, DDoS protection, firewalls, backups. Enterprise-grade security out of the box.',
               },
             ].map(({ icon: Icon, label, detail }) => (
-              <div key={label} className={cloudPanel + ' p-6'}>
+              <div key={label} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
                 <div className="flex items-start gap-3">
-                  <Icon size={20} className="text-[#B8FF00] mt-1 shrink-0" />
+                  <Icon size={24} className="text-[#B8FF00] mt-1 shrink-0" style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                   <div>
-                    <p className={cloudEyebrow}>{label}</p>
-                    <p className="mt-3 text-sm leading-6 text-[#B8FF00]">{detail}</p>
+                    <p className="font-black text-sm uppercase tracking-widest text-[#B8FF00]">{label}</p>
+                    <p className="mt-3 text-sm leading-6 text-[#a0b0c0]">{detail}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 text-center">
-            <p className="text-[#A7ADA8] text-sm">
-              After you sign up, your customer dashboard provides real-time metrics, invoices, and service management.
-            </p>
-            <Link href="/cloud/plans" className={`${cloudBtnPrimary} mt-6 inline-flex`}>
-              See Your Dashboard
-              <ArrowRight size={16} />
+          <div className="mt-12 text-center">
+            <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all">
+              Start Building
+              <ArrowRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* WHY WISE² */}
-      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
+      {/* PILLARS - EMPIRE BUILDING */}
+      <section data-cloud-reveal className="bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8 border-b border-[#B8FF00]/20">
         <div className="mx-auto max-w-7xl">
-          <p className={cloudEyebrow}>Why WISE²</p>
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-4">
-            More Than Hosting.
-            <span className="block text-[#B8FF00]">It's a Business Platform.</span>
-          </h2>
-          <p className="max-w-2xl text-[#A7ADA8] mb-10">
-            We do not sell commodity disk space. We sell convenience, management, continuity, security, automation, support, and growth.
-          </p>
+          <div className="text-center mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Foundation</p>
+            <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Three Pillars.
+              <br/>
+              <span className="text-[#B8FF00]">Infinite Possibilities.</span>
+            </h2>
+          </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-3">
             {[
-              { icon: Server, title: 'HOST.', copy: 'Managed stacks with SSL, email, and backups.' },
-              { icon: Zap, title: 'AUTOMATE.', copy: 'Paid orders provision one package—no manual ops.' },
-              { icon: Sparkles, title: 'SCALE.', copy: 'Grow from one site to a full client portfolio.' },
+              { icon: Server, title: 'STRATEGY', copy: 'Enterprise architecture designed for founders who think big.' },
+              { icon: Zap, title: 'AUTOMATION', copy: 'Workflows that scale. Revenue automation. Zero manual work.' },
+              { icon: Sparkles, title: 'WEALTH', copy: 'Build systems that generate passive income. Forever.' },
             ].map(({ icon: Icon, title, copy }) => (
-              <div key={title} className={cloudPanel + ' p-6'}>
-                <Icon className="text-[#B8FF00]" size={22} />
-                <p className={`${cloudEyebrow} mt-4`}>{title}</p>
-                <p className="mt-4 text-sm leading-7 text-[#A7ADA8]">{copy}</p>
+              <div key={title} className="p-8 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+                <Icon className="text-[#B8FF00]" size={28} style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
+                <p className="font-black text-lg uppercase tracking-widest mt-6 text-[#B8FF00]">{title}</p>
+                <p className="mt-4 text-sm leading-7 text-[#a0b0c0]">{copy}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PRICING */}
-      <section data-cloud-reveal className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
+      {/* PRICING - DOMINANCE */}
+      <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className={cloudEyebrow}>Price Menu</p>
-          <h2 className="mt-4 text-3xl font-black sm:text-4xl mb-10">Three Plans. One Obvious Winner.</h2>
+          <div className="text-center mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Results Dominate</p>
+            <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Plans Built for Growth.</h2>
+          </div>
 
           <div className="grid gap-6 lg:grid-cols-4">
             {CLOUD_PLANS_STATIC.map((plan) => (
-              <div key={plan.id} className={`${cloudPanel} flex flex-col p-6 ${plan.highlight ? 'ring-1 ring-[#B8FF00]/50 shadow-[0_0_56px_rgba(184,255,0,0.2)]' : ''}`}>
-                <p className={cloudEyebrow}>{plan.highlight ? 'MOST POPULAR' : plan.name}</p>
-                <h3 className="mt-3 text-4xl font-black">${plan.price}<span className="text-lg text-[#8FA0AE]">/mo</span></h3>
-                <p className="mt-2 text-sm text-[#B8FF00]">{plan.tagline}</p>
-                <ul className="mt-6 flex-1 space-y-2 text-sm text-[#A7ADA8]">
+              <div key={plan.id} className={`flex flex-col p-8 rounded-lg border transition-all duration-300 ${plan.highlight ? 'border-[#B8FF00] bg-[#0f1419] shadow-[0_0_40px_rgba(184,255,0,0.3)]' : 'border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)]'}`}>
+                <p className={`text-[#B8FF00] font-black text-xs uppercase tracking-widest ${plan.highlight ? '' : ''}`}>{plan.highlight ? '★ MOST POPULAR' : plan.name}</p>
+                <h3 className="mt-4 text-5xl font-black text-white">${plan.price}<span className="text-lg text-[#6b7a8c]">/mo</span></h3>
+                <p className="mt-3 text-sm text-[#B8FF00] font-semibold">{plan.tagline}</p>
+                <ul className="mt-8 flex-1 space-y-3 text-sm text-[#a0b0c0]">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2">
-                      <Check size={14} className="mt-0.5 shrink-0 text-[#B8FF00]" />
-                      {feature}
+                    <li key={feature} className="flex items-start gap-3">
+                      <Check size={16} className="mt-0.5 shrink-0 text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
-                <Link href={`/cloud/plans?plan=${plan.id}`} className={`${cloudBtnPrimary} mt-8 w-full justify-center`}>
+                <Link href={`/cloud/plans?plan=${plan.id}`} className={`mt-8 w-full py-4 font-black text-center transition-all duration-300 ${plan.highlight ? 'bg-[#B8FF00] text-[#000000] hover:shadow-[0_0_40px_rgba(184,255,0,0.5)]' : 'border border-[#B8FF00]/40 text-[#B8FF00] hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.3)]'}`}>
                   {plan.cta}
                 </Link>
               </div>
@@ -257,75 +251,87 @@ export default function CloudLandingPage() {
         </div>
       </section>
 
-      {/* RESELLER OPPORTUNITY */}
-      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
+      {/* RESELLER - BUILD YOUR EMPIRE */}
+      <section data-cloud-reveal className="px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className={cloudEyebrow}>Reseller Opportunity</p>
-            <h2 className="mt-4 text-3xl font-black mb-6">Start Your Hosting Business.</h2>
-            <ul className="space-y-4 text-[#A7ADA8] mb-8">
-              {['Free Billing System', 'Host Unlimited Clients', 'Set Your Own Prices', '24/7 Expert Support', '100% White Label'].map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <Check size={16} className="text-[#B8FF00]" />
-                  {item}
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Reseller Program</p>
+            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Build Your Own Empire.
+              <br/>
+              <span className="text-[#B8FF00]">100% Profit.</span>
+            </h2>
+            <ul className="space-y-4 text-[#a0b0c0] mb-10">
+              {['Free Billing & Portal', 'Unlimited Clients', 'Set Your Own Pricing', '24/7 Priority Support', '100% White Label'].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-lg">
+                  <Check size={20} className="text-[#B8FF00] shrink-0" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                  <span className="font-semibold">{item}</span>
                 </li>
               ))}
             </ul>
-            <p className="text-3xl font-black text-[#B8FF00] mb-8">Keep 100% of the Profit</p>
-            <Link href="/cloud/plans?tab=reseller" className={cloudBtnPrimary}>
-              Start selling
-              <ArrowRight size={16} />
+            <Link href="/cloud/plans?tab=reseller" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all">
+              Start Selling
+              <ArrowRight size={18} />
             </Link>
           </div>
-          <div className={cloudPanel + ' p-8 text-center'}>
-            <Sparkles size={48} className="mx-auto text-[#B8FF00] mb-4" />
-            <p className="font-semibold">Build your hosting empire with WISE² Cloud</p>
+          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-gradient-to-br from-[#B8FF00]/10 to-transparent text-center">
+            <Sparkles size={56} className="mx-auto text-[#B8FF00] mb-6" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
+            <p className="text-xl font-black text-[#B8FF00]" style={{textShadow: '0 0 20px rgba(184,255,0,0.4)'}}>
+              Your clients' success<br/>becomes your legacy.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* INFRASTRUCTURE */}
-      <section data-cloud-reveal className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
+      {/* INFRASTRUCTURE - PERFORMANCE */}
+      <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className={cloudEyebrow}>Infrastructure That Performs</p>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="text-center mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Performance</p>
+            <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Built for Speed. Built to Last.</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Server, label: 'NVMe SSD', detail: 'Blazing Fast' },
-              { icon: Globe, label: 'Global CDN', detail: 'Worldwide' },
-              { icon: Shield, label: 'Enterprise Security', detail: 'SSL, Backups & Protection' },
-              { icon: Zap, label: 'Scalable', detail: 'On Demand' },
+              { icon: Server, label: 'NVMe SSD', detail: 'Lightning-fast storage' },
+              { icon: Globe, label: 'Global CDN', detail: 'Content everywhere' },
+              { icon: Shield, label: 'Enterprise Grade', detail: 'Military-level security' },
+              { icon: Zap, label: 'Auto-Scaling', detail: 'Unlimited capacity' },
             ].map(({ icon: Icon, label, detail }) => (
-              <div key={label} className={cloudPanel + ' p-6 text-center'}>
-                <Icon size={24} className="mx-auto text-[#B8FF00] mb-4" />
-                <p className="font-bold text-sm">{label}</p>
-                <p className="text-xs text-[#8FA0AE] mt-2">{detail}</p>
+              <div key={label} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 text-center hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all">
+                <Icon size={28} className="mx-auto text-[#B8FF00] mb-4" style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
+                <p className="font-black text-sm uppercase tracking-widest text-[#B8FF00]">{label}</p>
+                <p className="text-xs text-[#6b7a8c] mt-2">{detail}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECURITY */}
-      <section data-cloud-reveal className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
-          <div className={cloudPanel + ' p-8 flex items-center justify-center'}>
-            <Lock size={80} className="text-[#B8FF00]" />
+      {/* SECURITY - FORTRESS */}
+      <section data-cloud-reveal className="px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
+          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+            <Lock size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
           <div>
-            <p className={cloudEyebrow}>Security You Can Trust</p>
-            <h2 className="mt-4 text-3xl font-black mb-6">Your Data. Our Priority.</h2>
-            <ul className="space-y-3 text-[#A7ADA8]">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Fortress Grade</p>
+            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Enterprise Security.
+              <br/>
+              <span className="text-[#B8FF00]">Zero Compromise.</span>
+            </h2>
+            <ul className="space-y-4 text-[#a0b0c0]">
               {[
-                'DDoS Protection',
-                'Web Application Firewall',
-                'Malware Scanning',
-                'Free SSL Certificates',
-                'Automatic Backups',
-                '24/7 Threat Monitoring',
+                'DDoS Protection (Multi-layer)',
+                'Web Application Firewall (WAF)',
+                'Real-time Malware Scanning',
+                'Free SSL Certificates (Auto-Renew)',
+                'Automatic Daily Backups',
+                '24/7 Threat Intelligence',
               ].map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <Check size={16} className="text-[#B8FF00]" />
-                  {item}
+                <li key={item} className="flex items-center gap-3 text-lg">
+                  <Check size={20} className="text-[#B8FF00] shrink-0" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                  <span className="font-semibold">{item}</span>
                 </li>
               ))}
             </ul>
@@ -333,164 +339,195 @@ export default function CloudLandingPage() {
         </div>
       </section>
 
-      {/* AI MANAGEMENT */}
-      <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
+      {/* AI INNOVATION */}
+      <section className="border-y border-[#B8FF00]/20 bg-gradient-to-b from-[#0f1419] to-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className={cloudEyebrow}>AI-Powered Management</p>
-            <h2 className="mt-4 text-3xl font-black mb-6">Smarter Hosting. Less Work.</h2>
-            <ul className="space-y-3 text-[#A7ADA8]">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>AI Innovation</p>
+            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Intelligence at Scale.
+              <br/>
+              <span className="text-[#B8FF00]">Zero Friction.</span>
+            </h2>
+            <ul className="space-y-4 text-[#a0b0c0]">
               {[
-                'AI Server Optimization',
-                'Predictive Monitoring',
-                'Smart Resource Allocation',
-                'Automated Backups',
-                'Instant Threat Detection',
-                'One-Click Management',
+                'AI-Optimized Performance',
+                'Predictive Resource Management',
+                'Smart Threat Detection',
+                'Autonomous Backup Systems',
+                'Real-Time Optimization',
+                'One-Command Deploy',
               ].map((item) => (
-                <li key={item} className="flex items-center gap-3">
-                  <Check size={16} className="text-[#B8FF00]" />
-                  {item}
+                <li key={item} className="flex items-center gap-3 text-lg">
+                  <Check size={20} className="text-[#B8FF00] shrink-0" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                  <span className="font-semibold">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className={cloudPanel + ' p-8 flex items-center justify-center'}>
-            <Sparkles size={80} className="text-[#B8FF00]" />
+          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+            <Sparkles size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
         </div>
       </section>
 
-      {/* MIGRATION */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      {/* MIGRATION - ZERO FRICTION */}
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
-          <p className={cloudEyebrow}>Free Migration</p>
-          <h2 className="mt-4 text-3xl font-black mb-4">We Move You for Free!</h2>
-          <ul className="max-w-2xl mx-auto grid grid-cols-2 gap-4 mb-8 text-[#A7ADA8]">
-            {['Free Website Transfer', 'Free Database Transfer', 'Zero Downtime', 'Expert Team', 'All Plans'].map((item) => (
-              <li key={item} className="flex items-center justify-center gap-2">
-                <Check size={16} className="text-[#B8FF00]" />
-                {item}
+          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Zero-Friction Migration</p>
+          <h2 className="text-4xl font-black mb-12" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Move Your Empire in 48 Hours.</h2>
+          <ul className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
+            {['Free Transfer', 'Free Databases', 'Zero Downtime', 'Expert Team', 'All Plans'].map((item) => (
+              <li key={item} className="flex flex-col items-center justify-center gap-2">
+                <Check size={20} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                <span className="text-sm font-semibold text-[#a0b0c0]">{item}</span>
               </li>
             ))}
           </ul>
-          <Link href="/cloud/plans?tab=migration" className={cloudBtnPrimary}>
-            Migrate now
-            <ArrowRight size={16} />
+          <Link href="/cloud/plans?tab=migration" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all">
+            Start Migration
+            <ArrowRight size={18} />
           </Link>
         </div>
       </section>
 
-      {/* CONSULTING */}
-      <section className="border-y border-white/10 bg-[#090D0A] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-12 items-center">
-          <div className={cloudPanel + ' p-8 flex items-center justify-center'}>
-            <Gauge size={80} className="text-[#B8FF00]" />
+      {/* CONSULTING - STRATEGY */}
+      <section className="border-y border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
+          <div className="p-12 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 flex items-center justify-center">
+            <Gauge size={96} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 20px rgba(184,255,0,0.4))'}} />
           </div>
           <div>
-            <p className={cloudEyebrow}>Consulting & Business Audit</p>
-            <h2 className="mt-4 text-3xl font-black mb-4">Not Sure What You Need?</h2>
-            <p className="text-[#A7ADA8] mb-6">
-              Let our experts audit your current setup and recommend the perfect infrastructure for growth.
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Strategic Planning</p>
+            <h2 className="text-4xl font-black mb-6" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Unsure About Your Path?
+              <br/>
+              <span className="text-[#B8FF00]">We'll Architect It.</span>
+            </h2>
+            <p className="text-lg text-[#a0b0c0] mb-8 leading-relaxed">
+              Free infrastructure audit. We analyze your current setup and design the perfect system for infinite growth. No obligation. Real strategy from real experts.
             </p>
-            <Link href="/cloud/audit" className={cloudBtnPrimary}>
-              Get your free audit
-              <ArrowRight size={16} />
+            <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all">
+              Get Free Audit
+              <ArrowRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
       {/* BUILT DIFFERENT */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className={cloudEyebrow}>Built Different. Built WISE².</p>
-          <h2 className="mt-4 text-3xl font-black mb-10">Enterprise. Affordable. Personal.</h2>
+          <div className="text-center mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Why WISE²</p>
+            <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+              Built Different.
+              <br/>
+              <span className="text-[#B8FF00]">Built for Legends.</span>
+            </h2>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              'All-in-One Cloud Platform',
-              'Enterprise Security',
-              'Real Human Support',
-              'Affordable Pricing',
-              'AI-Powered Tools',
-              'Automated Backups',
+              'All-in-One Platform',
+              'Enterprise-Grade Security',
+              'Real Humans 24/7',
+              'Transparent Pricing',
+              'AI-Powered Optimization',
+              'Unlimited Backups',
               'Global Infrastructure',
-              'Endless Possibilities',
+              'Infinite Scale',
             ].map((benefit) => (
-              <div key={benefit} className={cloudPanel + ' p-6 flex items-center gap-4'}>
-                <Check className="text-[#B8FF00] shrink-0" size={20} />
-                <span className="font-semibold">{benefit}</span>
+              <div key={benefit} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all flex items-start gap-4">
+                <Check className="text-[#B8FF00] shrink-0 mt-1" size={20} style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
+                <span className="font-semibold text-[#a0b0c0]">{benefit}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section data-cloud-reveal className="border-t border-white/10 bg-gradient-to-b from-[#0D141A] to-[#020403] px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className={cloudEyebrow}>Ready to Launch Your Empire?</p>
-          <h2 className="mt-4 text-4xl font-black sm:text-5xl mb-4">
-            Join Thousands Who Trust WISE² Cloud to Power Their Success.
+      {/* FINAL CTA - DOMINANCE */}
+      <section data-cloud-reveal className="border-t border-[#B8FF00]/20 bg-gradient-to-b from-[#0f1419] via-[#0a0d0f] to-[#000000] px-4 py-28 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#B8FF00]/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B8FF00]/5 rounded-full blur-3xl" />
+        </div>
+        <div className="mx-auto max-w-5xl text-center relative z-10">
+          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-6" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>The Choice is Clear</p>
+          <h2 className="text-5xl sm:text-6xl font-black mb-6 leading-tight" style={{textShadow: '0 0 40px rgba(184,255,0,0.4)'}}>
+            Ready to Build Your
+            <br/>
+            <span className="text-[#B8FF00]">Empire?</span>
           </h2>
-          <Link href="/cloud/plans" className={cloudBtnPrimary + ' inline-flex mt-10'}>
-            Build your cloud today
-            <ArrowRight size={16} />
+          <p className="text-xl text-[#a0b0c0] mb-12 leading-relaxed">
+            Join the founders, entrepreneurs, and visionaries who've chosen WISE² Cloud as their operating system.
+            <br/>
+            Your success story starts here.
+          </p>
+          <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-12 py-6 bg-[#B8FF00] text-[#000000] font-black text-lg hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] transition-all duration-300">
+            Launch Your Empire
+            <ArrowRight size={20} />
           </Link>
+          <p className="mt-10 text-[#6b7a8c] text-sm">
+            No credit card required. Free infrastructure audit included. Cancel anytime.
+          </p>
         </div>
       </section>
 
       {/* FEATURED CLIENTS */}
-      <section data-cloud-reveal className="border-t border-white/10 px-4 py-12 sm:px-6 lg:px-8">
+      <section data-cloud-reveal className="border-t border-[#B8FF00]/20 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
-          <p className={cloudEyebrow}>Featured Clients</p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-[#8FA0AE]">
-            {['Fresh Winds Church', 'Rocky Tops', 'Once Upon A Child', "Logan's Heating & Cooling", 'Savôré', 'CJays Auto Recon', '& More'].map((client) => (
-              <span key={client} className="text-sm font-semibold">{client}</span>
+          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-8" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Trusted By Industry Leaders</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 text-[#6b7a8c]">
+            {['Fresh Winds Church', 'Rocky Tops', 'Once Upon A Child', "Logan's Heating & Cooling", 'Savôré', 'CJays Auto Recon', '& Growing'].map((client) => (
+              <span key={client} className="text-sm font-semibold hover:text-[#B8FF00] transition-colors">{client}</span>
             ))}
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-[#090D0A] px-4 py-12 sm:px-6 lg:px-8">
+      <footer className="border-t border-[#B8FF00]/20 bg-[#000000] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
-              <p className="text-[#B8FF00] font-black text-2xl">WISE²</p>
-              <p className="text-sm text-[#A7ADA8] mt-2">Your Business.<br/>Our Infrastructure.</p>
+              <p className="text-[#B8FF00] font-black text-3xl mb-2" style={{textShadow: '0 0 20px rgba(184,255,0,0.4)'}}>WISE²</p>
+              <p className="text-sm text-[#6b7a8c] mt-2">People × AI × Opportunity
+                <br/>
+                <span className="text-xs">Building Empires.</span>
+              </p>
             </div>
             <div>
-              <p className="font-semibold mb-4">Navigation</p>
-              <ul className="space-y-2 text-sm text-[#A7ADA8]">
-                <li><Link href="#" className="hover:text-[#B8FF00]">Hosting</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">Reseller</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">VPS</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">Domains</Link></li>
+              <p className="font-black text-[#B8FF00] mb-4 uppercase text-xs tracking-widest">Navigation</p>
+              <ul className="space-y-2 text-sm text-[#6b7a8c]">
+                <li><Link href="/cloud" className="hover:text-[#B8FF00] transition-colors font-semibold">Cloud Hosting</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">Reseller Program</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">VPS Servers</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">Domains</Link></li>
               </ul>
             </div>
             <div>
-              <p className="font-semibold mb-4">Company</p>
-              <ul className="space-y-2 text-sm text-[#A7ADA8]">
-                <li><Link href="#" className="hover:text-[#B8FF00]">About</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">Support</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">Blog</Link></li>
-                <li><Link href="#" className="hover:text-[#B8FF00]">Careers</Link></li>
+              <p className="font-black text-[#B8FF00] mb-4 uppercase text-xs tracking-widest">Company</p>
+              <ul className="space-y-2 text-sm text-[#6b7a8c]">
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">About</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">Support</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">Blog</Link></li>
+                <li><Link href="#" className="hover:text-[#B8FF00] transition-colors font-semibold">Careers</Link></li>
               </ul>
             </div>
             <div>
-              <p className="font-semibold mb-4">Contact</p>
-              <ul className="space-y-2 text-sm text-[#A7ADA8]">
-                <li><a href="mailto:support@wise2.net" className="hover:text-[#B8FF00]">support@wise2.net</a></li>
-                <li><a href="mailto:sales@wise2.net" className="hover:text-[#B8FF00]">sales@wise2.net</a></li>
-                <li className="text-xs mt-4">🇺🇸 USA Based</li>
-                <li className="text-xs">24/7 Support</li>
+              <p className="font-black text-[#B8FF00] mb-4 uppercase text-xs tracking-widest">Contact</p>
+              <ul className="space-y-2 text-sm text-[#6b7a8c]">
+                <li><a href="mailto:support@wise2.net" className="hover:text-[#B8FF00] transition-colors font-semibold">support@wise2.net</a></li>
+                <li><a href="mailto:sales@wise2.net" className="hover:text-[#B8FF00] transition-colors font-semibold">sales@wise2.net</a></li>
+                <li className="text-xs mt-4 text-[#4a5a6a]">🇺🇸 USA Based</li>
+                <li className="text-xs text-[#4a5a6a]">24/7 Expert Support</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 text-center text-sm text-[#8FA0AE]">
-            <p>© 2026 WISE² United. All Rights Reserved.</p>
+          <div className="border-t border-[#B8FF00]/20 pt-8 text-center text-sm text-[#4a5a6a]">
+            <p>© 2026 WISE² United. All Rights Reserved. | <span className="text-[#6b7a8c]">Building Empires. Changing Culture.</span></p>
           </div>
         </div>
       </footer>
