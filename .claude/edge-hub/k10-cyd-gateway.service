@@ -1,0 +1,36 @@
+[Unit]
+Description=WISE² K10 + CYD Gateway Service
+Documentation=file:///opt/wise2/gateway/K10_CYD_WISEPI_INTEGRATION.md
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wise2
+WorkingDirectory=/opt/wise2/gateway
+ExecStart=/usr/bin/node k10-cyd-gateway-service.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-k10-cyd-gateway
+
+# Environment variables
+Environment="NODE_ENV=production"
+Environment="MQTT_HOST=localhost"
+Environment="MQTT_PORT=1883"
+Environment="GATEWAY_PORT=8888"
+Environment="POCKET_NODE_IP=100.85.242.34"
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/wise2/gateway
+
+# Resource limits
+MemoryLimit=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target
