@@ -53,7 +53,7 @@ export default function CloudLandingPage() {
             {/* LEFT: Darrin - Operations & Growth Leader */}
             <div className="lg:col-span-1 relative group">
               <Image
-                src="/brand/wise2-darrin-hero.webp"
+                src="/wiseeye-assets/darrin.png"
                 alt="Darrin - Operations & Growth Leader"
                 width={350}
                 height={450}
@@ -62,7 +62,7 @@ export default function CloudLandingPage() {
               />
               <div className="mt-4">
                 <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DARRIN</p>
-                <p className="text-[#a0b0c0] text-sm font-semibold">Operations & Growth Leader</p>
+                <p className="text-[#c5d3e0] text-sm font-semibold">Operations & Growth Leader</p>
                 <p className="text-[#7a8a9a] text-xs mt-2">Execution Master · Growth Strategist</p>
               </div>
             </div>
@@ -78,31 +78,31 @@ export default function CloudLandingPage() {
                   <p className="text-white text-2xl font-black">OUR INFRASTRUCTURE</p>
                 </div>
 
-                <p className="text-sm text-[#a0b0c0] font-semibold leading-relaxed">
+                <p className="text-sm text-[#c5d3e0] font-semibold leading-relaxed">
                   Fast. Secure. Scalable. Reliable.
                 </p>
 
                 <div className="space-y-2 pt-4">
                   <div className="flex items-center justify-center gap-2">
                     <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] text-sm font-semibold">99.95% Uptime SLA</span>
+                    <span className="text-[#c5d3e0] text-sm font-semibold">99.95% Uptime SLA</span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] text-sm font-semibold">Global Infrastructure</span>
+                    <span className="text-[#c5d3e0] text-sm font-semibold">Global Infrastructure</span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] text-sm font-semibold">Real Human Support</span>
+                    <span className="text-[#c5d3e0] text-sm font-semibold">Real Human Support</span>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-3 pt-6">
-                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B8FF00] text-[#000000] font-black rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300 text-sm">
+                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B8FF00] text-[#000000] font-black rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300 text-sm focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none">
                     Get Started
                     <ArrowRight size={16} />
                   </Link>
-                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300 text-sm">
+                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300 text-sm focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none">
                     Free Audit
                   </Link>
                 </div>
@@ -112,7 +112,7 @@ export default function CloudLandingPage() {
             {/* RIGHT: Daniel - Founder & System Architect */}
             <div className="lg:col-span-1 relative group">
               <Image
-                src="/brand/wise2-daniel-hero.webp"
+                src="/wiseeye-assets/daniel.png"
                 alt="Daniel - Founder & System Architect"
                 width={350}
                 height={450}
@@ -121,7 +121,7 @@ export default function CloudLandingPage() {
               />
               <div className="mt-4">
                 <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DANIEL</p>
-                <p className="text-[#a0b0c0] text-sm font-semibold">Founder & System Architect</p>
+                <p className="text-[#c5d3e0] text-sm font-semibold">Founder & System Architect</p>
                 <p className="text-[#7a8a9a] text-xs mt-2">Business Leader · AI Expert</p>
               </div>
             </div>
@@ -151,7 +151,6 @@ export default function CloudLandingPage() {
       {/* SERVICE STRIP - CAPABILITIES */}
       <section data-cloud-reveal className="border-b border-[#B8FF00]/20 bg-gradient-to-b from-[#0f1419] to-[#0a0d0f] px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-8 text-center" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Capabilities</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Globe, label: 'Web Hosting' },
@@ -167,7 +166,7 @@ export default function CloudLandingPage() {
                 <div className="p-6 rounded-lg border border-[#B8FF00]/20 mb-3 group-hover:border-[#B8FF00] group-hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all duration-300 bg-[#0f1419]/50">
                   <Icon size={28} className="mx-auto text-[#B8FF00]" />
                 </div>
-                <p className="text-xs font-black uppercase tracking-[0.1em] text-[#a0b0c0]">{label}</p>
+                <p className="text-xs font-black uppercase tracking-[0.1em] text-[#c5d3e0]">{label}</p>
               </div>
             ))}
           </div>
@@ -182,7 +181,7 @@ export default function CloudLandingPage() {
             <h2 className="text-4xl font-black sm:text-5xl leading-tight" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
               Build. Automate. Dominate.
             </h2>
-            <p className="mt-6 text-[#a0b0c0] text-lg max-w-2xl mx-auto">
+            <p className="mt-6 text-[#c5d3e0] text-lg max-w-2xl mx-auto">
               One system for everything. Deploy apps, manage clients, track revenue, scale infinitely.
             </p>
           </div>
@@ -210,7 +209,7 @@ export default function CloudLandingPage() {
                   <Icon size={24} className="text-[#B8FF00] mt-1 shrink-0" style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                   <div>
                     <p className="font-black text-sm uppercase tracking-widest text-[#B8FF00]">{label}</p>
-                    <p className="mt-3 text-sm leading-6 text-[#a0b0c0]">{detail}</p>
+                    <p className="mt-3 text-sm leading-6 text-[#c5d3e0]">{detail}</p>
                   </div>
                 </div>
               </div>
@@ -230,7 +229,6 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8 border-b border-[#B8FF00]/20">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Foundation</p>
             <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
               Three Pillars.
               <br/>
@@ -247,7 +245,7 @@ export default function CloudLandingPage() {
               <div key={title} className="p-8 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
                 <Icon className="text-[#B8FF00]" size={28} style={{filter: 'drop-shadow(0 0 10px rgba(184,255,0,0.4))'}} />
                 <p className="font-black text-lg uppercase tracking-widest mt-6 text-[#B8FF00]">{title}</p>
-                <p className="mt-4 text-sm leading-7 text-[#a0b0c0]">{copy}</p>
+                <p className="mt-4 text-sm leading-7 text-[#c5d3e0]">{copy}</p>
               </div>
             ))}
           </div>
@@ -258,7 +256,6 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Results Dominate</p>
             <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Plans Built for Growth.</h2>
           </div>
 
@@ -268,7 +265,7 @@ export default function CloudLandingPage() {
                 <p className={`text-[#B8FF00] font-black text-xs uppercase tracking-widest ${plan.highlight ? '' : ''}`}>{plan.highlight ? '★ MOST POPULAR' : plan.name}</p>
                 <h3 className="mt-4 text-5xl font-black text-white">${plan.price}<span className="text-lg text-[#6b7a8c]">/mo</span></h3>
                 <p className="mt-3 text-sm text-[#B8FF00] font-semibold">{plan.tagline}</p>
-                <ul className="mt-8 flex-1 space-y-3 text-sm text-[#a0b0c0]">
+                <ul className="mt-8 flex-1 space-y-3 text-sm text-[#c5d3e0]">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
                       <Check size={16} className="mt-0.5 shrink-0 text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
@@ -295,7 +292,7 @@ export default function CloudLandingPage() {
               <br/>
               <span className="text-[#B8FF00]">100% Profit.</span>
             </h2>
-            <ul className="space-y-4 text-[#a0b0c0] mb-10">
+            <ul className="space-y-4 text-[#c5d3e0] mb-10">
               {['Free Billing & Portal', 'Unlimited Clients', 'Set Your Own Pricing', '24/7 Priority Support', '100% White Label'].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-lg">
                   <Check size={20} className="text-[#B8FF00] shrink-0" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
@@ -354,7 +351,7 @@ export default function CloudLandingPage() {
               <br/>
               <span className="text-[#B8FF00]">Zero Compromise.</span>
             </h2>
-            <ul className="space-y-4 text-[#a0b0c0]">
+            <ul className="space-y-4 text-[#c5d3e0]">
               {[
                 'DDoS Protection (Multi-layer)',
                 'Web Application Firewall (WAF)',
@@ -383,7 +380,7 @@ export default function CloudLandingPage() {
               <br/>
               <span className="text-[#B8FF00]">Zero Friction.</span>
             </h2>
-            <ul className="space-y-4 text-[#a0b0c0]">
+            <ul className="space-y-4 text-[#c5d3e0]">
               {[
                 'AI-Optimized Performance',
                 'Predictive Resource Management',
@@ -414,7 +411,7 @@ export default function CloudLandingPage() {
             {['Free Transfer', 'Free Databases', 'Zero Downtime', 'Expert Team', 'All Plans'].map((item) => (
               <li key={item} className="flex flex-col items-center justify-center gap-2">
                 <Check size={20} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
-                <span className="text-sm font-semibold text-[#a0b0c0]">{item}</span>
+                <span className="text-sm font-semibold text-[#c5d3e0]">{item}</span>
               </li>
             ))}
           </ul>
@@ -438,7 +435,7 @@ export default function CloudLandingPage() {
               <br/>
               <span className="text-[#B8FF00]">We'll Architect It.</span>
             </h2>
-            <p className="text-lg text-[#a0b0c0] mb-8 leading-relaxed">
+            <p className="text-lg text-[#c5d3e0] mb-8 leading-relaxed">
               Free infrastructure audit. We analyze your current setup and design the perfect system for infinite growth. No obligation. Real strategy from real experts.
             </p>
             <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all">
@@ -474,7 +471,7 @@ export default function CloudLandingPage() {
             ].map((benefit) => (
               <div key={benefit} className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/50 hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.2)] transition-all flex items-start gap-4">
                 <Check className="text-[#B8FF00] shrink-0 mt-1" size={20} style={{filter: 'drop-shadow(0 0 5px rgba(184,255,0,0.4))'}} />
-                <span className="font-semibold text-[#a0b0c0]">{benefit}</span>
+                <span className="font-semibold text-[#c5d3e0]">{benefit}</span>
               </div>
             ))}
           </div>
@@ -494,7 +491,7 @@ export default function CloudLandingPage() {
             <br/>
             <span className="text-[#B8FF00]">Empire?</span>
           </h2>
-          <p className="text-xl text-[#a0b0c0] mb-12 leading-relaxed">
+          <p className="text-xl text-[#c5d3e0] mb-12 leading-relaxed">
             Join the founders, entrepreneurs, and visionaries who've chosen WISE² Cloud as their operating system.
             <br/>
             Your success story starts here.
