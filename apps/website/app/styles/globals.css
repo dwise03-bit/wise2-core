@@ -7,29 +7,37 @@
    ============================================================================ */
 
 :root {
-  /* ===== COLOR SYSTEM - UNITED PALETTE (LANDING PAGE LOCKED - PRODUCTION) ===== */
-  /* Foundation - Navy & Steel */
-  --wise-black: #101820;              /* LANDING PAGE - Dark Navy */
-  --wise-dark-steel: #1a2534;
+  /* ===== WISE² BRAND LOCK (2026-09-13) - IMMUTABLE ===== */
+  /* Primary Colors */
+  --wise-navy: #050607;               /* Primary background, authority */
+  --wise-charcoal: #0a0f1a;           /* Secondary background, depth */
+  --wise-cyan: #00D9FF;               /* Primary action, focus states */
+  --wise-neon-green: #00FF7F;         /* Success, active, hero accent */
+  --wise-gold: #C4A369;               /* Premium accent, secondary CTA */
+  --wise-gray-light: #D1D5DB;         /* Body text, readability */
+  --wise-gray-dark: #1f2937;          /* Subtle text, disabled states */
+
+  /* Semantic aliases for component use */
+  --wise-primary: #00D9FF;
+  --wise-secondary: #C4A369;
+  --wise-success: #00FF7F;
+  --wise-danger: #FF4444;
+  --wise-warning: #F59E0B;
+  --wise-info: #3B82F6;
+  --wise-background: #050607;
+  --wise-surface: #0a0f1a;
+
+  /* Legacy/deprecated (kept for backwards compatibility) */
+  --wise-black: #050607;              /* Use --wise-navy instead */
+  --wise-dark-steel: #0a0f1a;         /* Use --wise-charcoal instead */
   --wise-steel-panel: #1f2a38;
-  --wise-chrome: #c8ccd4;
+  --wise-chrome: #D1D5DB;             /* Use --wise-gray-light instead */
   --wise-muted-gray: #6b7080;
-  --wise-white: #f7f7f4;              /* LANDING PAGE - Off-white Primary */
-
-  /* Primary Accent - Gold (Landing Page Signature) */
-  --wise-neon-green: #b08d57;         /* LANDING PAGE - Gold/Tan */
-  --wise-green-secondary: #c9a877;
-  --wise-dark-green: #997a47;
-
-  /* Secondary Accent - Studio Purple */
-  --wise-electric-blue: #9333ea;
-  --wise-hover-blue: #c084fc;
-
-  /* Status Colors */
-  --wise-success: #22c55e;
-  --wise-warning: #f2b632;
-  --wise-danger: #e53935;
-  --wise-info: #0094ff;
+  --wise-white: #f7f7f4;
+  --wise-dark-green: #00FF7F;         /* Use --wise-neon-green instead */
+  --wise-green-secondary: #C4A369;    /* Use --wise-gold instead */
+  --wise-electric-blue: #00D9FF;      /* Use --wise-cyan instead */
+  --wise-hover-blue: #00D9FF;         /* Use --wise-cyan instead */
 
   /* ===== TYPOGRAPHY SYSTEM ===== */
   --font-headers: "Segoe UI", system-ui, -apple-system, sans-serif;
