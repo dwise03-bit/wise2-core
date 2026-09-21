@@ -29,75 +29,117 @@ import { CloudScrollFX } from '@/components/cloud/CloudScrollFX';
 export default function CloudLandingPage() {
   return (
     <main className="cloud-landing bg-[#0a0d0f] text-[#ffffff] overflow-hidden">
-      {/* HERO - NEON CYBERPUNK */}
-      <section className="cloud-hero relative border-b border-[#B8FF00]/20 overflow-hidden bg-gradient-to-b from-[#0f1419] to-[#0a0d0f]">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#B8FF00]/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#00FF00]/5 rounded-full blur-3xl" />
+      {/* HERO - FULL REBRAND */}
+      <section className="cloud-hero relative overflow-hidden bg-[#000000] border-b border-[#B8FF00]/20">
+        {/* Background gradient */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl">
+            <div className="absolute top-20 right-1/4 w-96 h-96 bg-[#B8FF00]/8 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#00FF00]/5 rounded-full blur-3xl" />
+          </div>
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 py-32 sm:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* LEFT: Leadership + Vision */}
-            <div className="space-y-8">
-              <div>
-                <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4 glow" style={{textShadow: '0 0 20px rgba(184,255,0,0.6)'}}>
-                  DISCIPLINE • EXECUTION • RESULTS
-                </p>
-                <h1 className="text-6xl font-black leading-tight mb-6" style={{textShadow: '0 0 40px rgba(184,255,0,0.4)'}}>
-                  Build Your Empire.
-                  <br/>
-                  <span className="text-[#B8FF00]">Change Culture.</span>
-                </h1>
-              </div>
+        {/* Content */}
+        <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 py-20 sm:py-24 lg:py-32">
+          {/* Logo + Tagline */}
+          <div className="text-center mb-12 lg:mb-16">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
+              PEOPLE × AI × OPPORTUNITY
+            </p>
+          </div>
 
-              <div className="space-y-4">
-                <p className="text-[#a0b0c0] text-lg leading-relaxed">
-                  WISE² Cloud is the infrastructure for builders. Enterprise security. Infinite scale. Real support. Built for founders who demand excellence.
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
+            {/* LEFT: Copy */}
+            <div className="lg:col-span-1">
+              <div className="space-y-6">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wider text-[#B8FF00] mb-3" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>
+                    WISE² CLOUD
+                  </p>
+                  <h1 className="text-5xl sm:text-6xl font-black leading-tight text-white mb-4">
+                    Build Your
+                    <br/>
+                    <span className="text-[#B8FF00]" style={{textShadow: '0 0 30px rgba(184,255,0,0.6)'}}>Empire</span>
+                  </h1>
+                </div>
+
+                <p className="text-lg text-[#a0b0c0] font-semibold leading-relaxed max-w-sm">
+                  Enterprise infrastructure. Built for founders who demand excellence. Scale infinitely. Support 24/7.
                 </p>
-                <div className="flex gap-8 text-sm">
-                  <div>
-                    <p className="text-[#B8FF00] font-black mb-2">PEOPLE</p>
-                    <p className="text-[#6b7a8c]">Real humans, 24/7</p>
+
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] font-semibold">99.95% Uptime SLA</span>
                   </div>
-                  <div>
-                    <p className="text-[#B8FF00] font-black mb-2">AI</p>
-                    <p className="text-[#6b7a8c]">Autonomous optimization</p>
+                  <div className="flex items-center gap-2">
+                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] font-semibold">Global Infrastructure</span>
                   </div>
-                  <div>
-                    <p className="text-[#B8FF00] font-black mb-2">OPPORTUNITY</p>
-                    <p className="text-[#6b7a8c]">Scale without limits</p>
+                  <div className="flex items-center gap-2">
+                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] font-semibold">Real Human Support</span>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black hover:shadow-[0_0_30px_rgba(184,255,0,0.5)] transition-all duration-300">
-                  Launch now
-                  <ArrowRight size={18} />
-                </Link>
-                <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/40 text-[#B8FF00] font-semibold hover:border-[#B8FF00] hover:shadow-[0_0_20px_rgba(184,255,0,0.3)] transition-all">
-                  Free audit
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black text-lg rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300">
+                    Launch
+                    <ArrowRight size={18} />
+                  </Link>
+                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-lg rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300">
+                    Free Audit
+                  </Link>
+                </div>
               </div>
             </div>
 
-            {/* RIGHT: Leadership Image */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/20 to-transparent rounded-2xl" />
+            {/* CENTER: Leadership Image - HERO */}
+            <div className="lg:col-span-1 relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/30 via-[#00FF00]/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur" />
               <Image
                 src="/brand/wise2-hero-united.webp"
-                alt="WISE² Leadership - Building Empires"
-                width={500}
-                height={500}
+                alt="WISE² Leadership - Founders Building Empires"
+                width={450}
+                height={450}
                 priority
-                className="w-full h-auto rounded-2xl relative z-10 border border-[#B8FF00]/30"
-                style={{boxShadow: '0 0 40px rgba(184,255,0,0.3)'}}
+                className="w-full h-auto rounded-2xl border-2 border-[#B8FF00]/40 relative z-10 shadow-2xl group-hover:shadow-[0_0_60px_rgba(184,255,0,0.4)] transition-all duration-300"
               />
-              <p className="mt-6 text-center text-[#6b7a8c] text-sm font-mono">
-                WISE² United • People × AI × Opportunity
-              </p>
             </div>
+
+            {/* RIGHT: Values */}
+            <div className="lg:col-span-1">
+              <div className="space-y-6">
+                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Discipline</p>
+                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
+                    Execution results. No shortcuts. Built for founders who execute at scale.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Infrastructure</p>
+                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
+                    Enterprise-grade security. Automatic scaling. Daily backups. Zero management.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
+                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Support</p>
+                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
+                    Real humans. 24/7 availability. Expert guidance. Your success is our mission.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom tagline */}
+          <div className="mt-16 pt-12 border-t border-[#B8FF00]/10 text-center">
+            <p className="text-[#B8FF00] text-xl font-black" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)'}}>
+              Building Empires. Changing Culture.
+            </p>
           </div>
         </div>
       </section>
