@@ -35,41 +35,40 @@ export default function CloudLandingPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/5 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-12 items-center min-h-[600px]">
 
-          {/* LEFT: System Status HUD */}
+          {/* LEFT: Real Infrastructure Details */}
           <div className={`${cloudPanel} p-4 text-xs`}>
-            <p className={cloudEyebrow}>Cloud System Status</p>
-            <div className="mt-4 space-y-2 text-[#8FA0AE]">
+            <p className={cloudEyebrow}>What You Get</p>
+            <div className="mt-4 space-y-3 text-[#8FA0AE]">
               <div className="flex justify-between">
-                <span>Web Servers</span>
-                <span className="text-[#B8FF00]">Online</span>
+                <span>Uptime SLA</span>
+                <span className="text-[#B8FF00] font-semibold">99.95%</span>
               </div>
               <div className="flex justify-between">
-                <span>Database Clusters</span>
-                <span className="text-[#B8FF00]">Secure</span>
+                <span>Data Centers</span>
+                <span className="text-[#B8FF00] font-semibold">3 regions</span>
               </div>
               <div className="flex justify-between">
-                <span>Storage Systems</span>
-                <span className="text-[#B8FF00]">Online</span>
+                <span>DDoS Protection</span>
+                <span className="text-[#B8FF00] font-semibold">Included</span>
               </div>
               <div className="flex justify-between">
-                <span>Network</span>
-                <span className="text-[#B8FF00]">Optimal</span>
+                <span>SSL Certificates</span>
+                <span className="text-[#B8FF00] font-semibold">Free</span>
               </div>
               <div className="flex justify-between">
                 <span>Backups</span>
-                <span className="text-[#B8FF00]">Protected</span>
+                <span className="text-[#B8FF00] font-semibold">Daily</span>
               </div>
               <div className="flex justify-between">
-                <span>Security</span>
-                <span className="text-[#B8FF00]">Active</span>
+                <span>Auto-scaling</span>
+                <span className="text-[#B8FF00] font-semibold">Built-in</span>
               </div>
               <div className="flex justify-between">
                 <span>Support</span>
-                <span className="text-[#B8FF00]">24/7 Available</span>
+                <span className="text-[#B8FF00] font-semibold">Email</span>
               </div>
-              <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#B8FF00] rounded-full animate-pulse" />
-                <span>Services Ready</span>
+              <div className="mt-4 pt-4 border-t border-white/10 text-[10px] leading-relaxed text-[#6B7280]">
+                Infrastructure managed by WISE² with 20i for domain registration & DNS.
               </div>
             </div>
           </div>
@@ -81,15 +80,15 @@ export default function CloudLandingPage() {
               <p className="text-4xl font-black">CLOUD</p>
             </div>
             <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
-              YOUR BUSINESS.
+              Host Your Apps.
               <br />
-              <span className="text-[#B8FF00]">OUR INFRASTRUCTURE.</span>
+              <span className="text-[#B8FF00]">Without the Headache.</span>
             </h1>
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#B8FF00] mb-6">
-              Fast. Secure. Scalable. Reliable.
+              Managed hosting built for real businesses
             </p>
-            <p className="text-[#A7ADA8] mb-8 leading-relaxed">
-              WISE² Cloud delivers enterprise-grade hosting and infrastructure built for performance, security, and growth. Power your business. Host for clients. Build your empire.
+            <p className="text-[#A7ADA8] mb-8 leading-relaxed text-sm">
+              We manage the servers. You manage your business. WISE² Cloud handles uptime, security, backups, and scaling so you can focus on what matters.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/cloud/plans" className={cloudBtnPrimary}>
