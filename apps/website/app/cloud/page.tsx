@@ -48,89 +48,81 @@ export default function CloudLandingPage() {
             </p>
           </div>
 
-          {/* Main Content Grid */}
+          {/* Two Leaders + Branding Grid */}
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
-            {/* LEFT: Copy */}
-            <div className="lg:col-span-1">
-              <div className="space-y-6">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-wider text-[#B8FF00] mb-3" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>
+            {/* LEFT: Darrin - Operations & Growth Leader */}
+            <div className="lg:col-span-1 relative group">
+              <Image
+                src="/brand/wise2-darrin-hero.webp"
+                alt="Darrin - Operations & Growth Leader"
+                width={350}
+                height={450}
+                priority
+                className="w-full h-auto object-cover border-2 border-[#B8FF00]/60 relative z-10 shadow-2xl group-hover:shadow-[0_0_60px_rgba(184,255,0,0.4)] transition-all duration-300"
+              />
+              <div className="mt-4">
+                <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DARRIN</p>
+                <p className="text-[#a0b0c0] text-sm font-semibold">Operations & Growth Leader</p>
+                <p className="text-[#7a8a9a] text-xs mt-2">Execution Master · Growth Strategist</p>
+              </div>
+            </div>
+
+            {/* CENTER: WISE² Cloud Branding */}
+            <div className="lg:col-span-1 text-center space-y-8">
+              <div className="space-y-4">
+                <div className="text-center mb-4">
+                  <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-2" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
                     WISE² CLOUD
                   </p>
-                  <h1 className="text-5xl sm:text-6xl font-black leading-tight text-white mb-4">
-                    Build Your
-                    <br/>
-                    <span className="text-[#B8FF00]" style={{textShadow: '0 0 30px rgba(184,255,0,0.6)'}}>Empire</span>
-                  </h1>
+                  <p className="text-[#B8FF00] text-2xl font-black" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)'}}>YOUR BUSINESS</p>
+                  <p className="text-white text-2xl font-black">OUR INFRASTRUCTURE</p>
                 </div>
 
-                <p className="text-lg text-[#a0b0c0] font-semibold leading-relaxed max-w-sm">
-                  Enterprise infrastructure. Built for founders who demand excellence. Scale infinitely. Support 24/7.
+                <p className="text-sm text-[#a0b0c0] font-semibold leading-relaxed">
+                  Fast. Secure. Scalable. Reliable.
                 </p>
 
-                <div className="space-y-3 pt-2">
-                  <div className="flex items-center gap-2">
-                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] font-semibold">99.95% Uptime SLA</span>
+                <div className="space-y-2 pt-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] text-sm font-semibold">99.95% Uptime SLA</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] font-semibold">Global Infrastructure</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] text-sm font-semibold">Global Infrastructure</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Check size={18} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#a0b0c0] font-semibold">Real Human Support</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
+                    <span className="text-[#a0b0c0] text-sm font-semibold">Real Human Support</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black text-lg rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300">
-                    Launch
-                    <ArrowRight size={18} />
+                <div className="flex flex-col gap-3 pt-6">
+                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B8FF00] text-[#000000] font-black rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300 text-sm">
+                    Get Started
+                    <ArrowRight size={16} />
                   </Link>
-                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-lg rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300">
+                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300 text-sm">
                     Free Audit
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* CENTER: Leadership Image - HERO */}
+            {/* RIGHT: Daniel - Founder & System Architect */}
             <div className="lg:col-span-1 relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/30 via-[#00FF00]/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur" />
               <Image
-                src="/brand/wise2-hero-united.webp"
-                alt="WISE² Leadership - Founders Building Empires"
-                width={450}
+                src="/brand/wise2-daniel-hero.webp"
+                alt="Daniel - Founder & System Architect"
+                width={350}
                 height={450}
                 priority
-                className="w-full h-auto rounded-2xl border-2 border-[#B8FF00]/40 relative z-10 shadow-2xl group-hover:shadow-[0_0_60px_rgba(184,255,0,0.4)] transition-all duration-300"
+                className="w-full h-auto object-cover border-2 border-[#B8FF00]/60 relative z-10 shadow-2xl group-hover:shadow-[0_0_60px_rgba(184,255,0,0.4)] transition-all duration-300"
               />
-            </div>
-
-            {/* RIGHT: Values */}
-            <div className="lg:col-span-1">
-              <div className="space-y-6">
-                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
-                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Discipline</p>
-                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
-                    Execution results. No shortcuts. Built for founders who execute at scale.
-                  </p>
-                </div>
-
-                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
-                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Infrastructure</p>
-                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
-                    Enterprise-grade security. Automatic scaling. Daily backups. Zero management.
-                  </p>
-                </div>
-
-                <div className="p-6 rounded-lg border border-[#B8FF00]/20 bg-[#0f1419]/60 backdrop-blur-sm hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.2)] transition-all duration-300">
-                  <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-2" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Support</p>
-                  <p className="text-[#a0b0c0] text-sm font-semibold leading-relaxed">
-                    Real humans. 24/7 availability. Expert guidance. Your success is our mission.
-                  </p>
-                </div>
+              <div className="mt-4">
+                <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DANIEL</p>
+                <p className="text-[#a0b0c0] text-sm font-semibold">Founder & System Architect</p>
+                <p className="text-[#7a8a9a] text-xs mt-2">Business Leader · AI Expert</p>
               </div>
             </div>
           </div>
