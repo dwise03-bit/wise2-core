@@ -117,37 +117,56 @@ export default function SystemsPage() {
   ];
 
   return (
-    <div className="systems-page">
-      <div className="systems-container">
-        <div className="systems-header">
-          <h1 className="systems-title">WISE² Systems</h1>
-          <p className="systems-subtitle">All production systems are live and operational</p>
-        </div>
+    <main className="min-h-screen bg-[#050607] text-white">
+      {/* Hero Section */}
+      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+        <h1 className="text-5xl sm:text-6xl font-black uppercase tracking-tight mb-4 text-white">
+          WISE² Systems
+        </h1>
+        <p className="text-xl text-[#D1D5DB] max-w-2xl">
+          All production systems are live and operational. Explore our integrated ecosystem of tools, platforms, and services.
+        </p>
+      </section>
 
-        <div className="systems-grid">
+      {/* Systems Grid */}
+      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {systems.map((system) => (
-            <Link key={system.name} href={system.link} className="systems-link">
-              <div className="systems-card">
-                <div className="systems-card-header">
-                  <span className="systems-card-icon">{system.icon}</span>
-                  <span className={`systems-card-status ${system.status === 'LIVE' ? 'systems-card-status-live' : 'systems-card-status-ready'}`}>
+            <Link key={system.name} href={system.link}>
+              <div className="group border border-[#00D9FF]/30 bg-[#0a0f1a]/50 p-6 hover:border-[#00D9FF] hover:bg-[#0a0f1a]/80 transition cursor-pointer h-full flex flex-col">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-4xl">{system.icon}</span>
+                  <span className={`text-xs font-black uppercase tracking-[0.1em] px-3 py-1 ${
+                    system.status === 'LIVE'
+                      ? 'bg-[#00FF7F]/20 text-[#00FF7F]'
+                      : 'bg-[#C4A369]/20 text-[#C4A369]'
+                  }`}>
                     {system.status}
                   </span>
                 </div>
 
-                <h3 className="systems-card-title">{system.name}</h3>
-                <p className="systems-card-description">{system.description}</p>
+                {/* Title & Description */}
+                <h3 className="text-lg font-black uppercase tracking-tight mb-2 text-white">
+                  {system.name}
+                </h3>
+                <p className="text-sm text-[#B7C0CB] mb-6 flex-grow">
+                  {system.description}
+                </p>
 
-                <div className="systems-card-features">
+                {/* Features */}
+                <div className="space-y-2 mb-6 border-t border-[#00D9FF]/20 pt-4">
                   {system.features.map((feature) => (
-                    <div key={feature} className="systems-card-feature">
-                      <span className="systems-card-feature-check">✓</span>
-                      <span className="systems-card-feature-text">{feature}</span>
+                    <div key={feature} className="flex items-start gap-2">
+                      <span className="text-[#00FF7F] font-bold text-sm flex-shrink-0 mt-0.5">✓</span>
+                      <span className="text-xs text-[#D1D5DB]">{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="systems-card-footer">Learn more →</div>
+                {/* Footer */}
+                <div className="text-sm font-bold uppercase tracking-[0.1em] text-[#00D9FF] group-hover:text-[#39FF14] transition">
+                  Learn more →</div>
               </div>
             </Link>
           ))}

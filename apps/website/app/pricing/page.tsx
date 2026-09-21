@@ -68,89 +68,93 @@ export default function PricingPage() {
   return (
     <>
       <MasterNav />
-      <main className="bg-[#050505] min-h-screen text-white">
+      <main className="bg-[#050607] min-h-screen text-white">
         {/* Hero */}
-        <section className="pt-20 pb-16 px-6">
+        <section className="pt-20 pb-16 px-5 sm:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-              style={{ background: 'rgba(199,255,46,0.1)', border: '1px solid rgba(199,255,46,0.3)', color: '#C7FF2E' }}>
-              LEGACY-LAYERED PRICING — NO GUESSWORK
-            </div>
-            <h1 className="text-5xl font-bold mb-6">
-              Simple, Transparent <span style={{ color: '#C7FF2E' }}>Pricing</span>
-            </h1>
-            <p className="text-xl text-gray-400 mb-4">
-              Not sure which build path fits your operation?
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#00FF7F] mb-6">
+              Transparent Pricing — No Guesswork
             </p>
-            <a
-              href="/start-your-build"
-              className="inline-block mb-12 px-6 py-3 rounded-lg font-bold text-sm transition"
-              style={{ background: 'rgba(199,255,46,0.15)', border: '1px solid rgba(199,255,46,0.4)', color: '#C7FF2E' }}
-            >
-              Start with the brand build →
-            </a>
+            <h1 className="text-5xl sm:text-6xl font-black uppercase tracking-tight mb-6">
+              Simple, Honest <span className="text-[#00D9FF]">Pricing</span>
+            </h1>
+            <p className="text-lg text-[#D1D5DB] mb-12 max-w-3xl mx-auto">
+              Choose the WISE² system that fits your operation. All plans include enterprise security, dedicated support, and unlimited everything.
+            </p>
 
-            <div className="flex items-center justify-center gap-6 mb-8">
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-4 mb-16">
               <button
                 onClick={() => setBillingCycle('monthly')}
-                className={`px-6 py-3 rounded-lg font-semibold transition ${billingCycle === 'monthly' ? 'text-white' : 'bg-[#161616] text-gray-400'}`}
-                style={billingCycle === 'monthly' ? { background: '#C7FF2E', color: '#050505' } : {}}
+                className={`px-8 py-3 font-bold uppercase tracking-[0.1em] text-sm transition ${
+                  billingCycle === 'monthly'
+                    ? 'bg-[#00D9FF] text-[#050607]'
+                    : 'border border-[#D1D5DB]/30 text-[#D1D5DB] hover:border-[#00D9FF] hover:text-[#00D9FF]'
+                }`}
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle('annual')}
-                className={`px-6 py-3 rounded-lg font-semibold transition ${billingCycle === 'annual' ? 'text-white' : 'bg-[#161616] text-gray-400'}`}
-                style={billingCycle === 'annual' ? { background: '#C7FF2E', color: '#050505' } : {}}
+                className={`px-8 py-3 font-bold uppercase tracking-[0.1em] text-sm transition ${
+                  billingCycle === 'annual'
+                    ? 'bg-[#00D9FF] text-[#050607]'
+                    : 'border border-[#D1D5DB]/30 text-[#D1D5DB] hover:border-[#00D9FF] hover:text-[#00D9FF]'
+                }`}
               >
-                Annual <span className="ml-2 text-xs px-2 py-1 rounded" style={{ background: 'rgba(199,255,46,0.3)' }}>Save 20%</span>
+                Annual
+                <span className="ml-2 text-xs text-[#00FF7F]">(Save 20%)</span>
               </button>
             </div>
           </div>
         </section>
 
         {/* Pricing Cards */}
-        <section className="px-6 pb-20">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+        <section className="px-5 pb-24 sm:px-8">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {PRICING_TIERS.map((tier) => (
               <div
                 key={tier.id}
-                className={`rounded-2xl p-8 transition transform hover:scale-105 ${
+                className={`border p-8 transition ${
                   tier.highlight
-                    ? 'border-2'
-                    : 'bg-[#101010] border border-[#1a1a1a]'
+                    ? 'border-[#00D9FF] bg-[#0a0f1a]/80'
+                    : 'border-[#00D9FF]/30 bg-[#0a0f1a]/50 hover:border-[#00D9FF]'
                 }`}
-                style={tier.highlight ? {
-                  background: 'linear-gradient(to bottom, rgba(199,255,46,0.12), rgba(199,255,46,0.04))',
-                  borderColor: '#C7FF2E',
-                } : {}}
               >
                 {tier.highlight && (
-                  <div className="mb-4 inline-block px-3 py-1 rounded-full text-xs font-bold text-white"
-                    style={{ background: '#C7FF2E', color: '#050505' }}>
-                    MOST POPULAR
-                  </div>
+                  <p className="text-xs font-bold uppercase tracking-[0.1em] mb-4 text-[#00FF7F]">
+                    Most Popular
+                  </p>
                 )}
-                <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                <p className="text-gray-400 text-sm mb-6">{tier.description}</p>
+                <h3 className="text-2xl font-black uppercase tracking-tight mb-2 text-white">
+                  {tier.name}
+                </h3>
+                <p className="text-sm text-[#D1D5DB] mb-6">
+                  {tier.description}
+                </p>
 
-                <div className="mb-8">
+                <div className="mb-8 border-t border-[#00D9FF]/20 pt-6">
                   {tier.price === null ? (
-                    <div className="text-3xl font-bold">Custom</div>
+                    <div className="text-4xl font-black text-[#00D9FF]">Custom</div>
                   ) : (
                     <>
-                      <div className="text-5xl font-bold" style={{ color: '#C7FF2E' }}>${getPrice(tier.price)}</div>
-                      <div className="text-gray-400 text-sm mt-2">per {billingCycle === 'annual' ? 'year' : 'month'}</div>
+                      <div className="text-5xl font-black text-[#00D9FF]">
+                        ${getPrice(tier.price)}
+                      </div>
+                      <div className="text-xs text-[#B7C0CB] mt-2 uppercase tracking-[0.1em]">
+                        per {billingCycle === 'annual' ? 'year' : 'month'}
+                      </div>
                     </>
                   )}
                 </div>
 
                 <button
                   onClick={() => handleSelectTier(tier.id)}
-                  className="w-full py-3 rounded-lg font-bold mb-8 transition"
-                  style={tier.highlight
-                    ? { background: '#C7FF2E', color: '#050505', boxShadow: '0 0 16px rgba(199,255,46,0.4)' }
-                    : { background: '#161616', color: '#fff', border: '1px solid #1a1a1a' }}
+                  className={`w-full py-3 font-bold uppercase tracking-[0.12em] text-sm transition mb-8 ${
+                    tier.highlight
+                      ? 'bg-[#00D9FF] text-[#050607] hover:bg-[#39FF14]'
+                      : 'border border-[#00D9FF] text-[#00D9FF] hover:bg-[#00D9FF]/10'
+                  }`}
                 >
                   {tier.cta}
                 </button>
@@ -158,10 +162,8 @@ export default function PricingPage() {
                 <div className="space-y-3">
                   {tier.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <svg className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: '#C7FF2E' }} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
-                      </svg>
-                      <span className="text-gray-300 text-sm">{feature}</span>
+                      <span className="text-[#00FF7F] font-bold text-sm flex-shrink-0 mt-0.5">✓</span>
+                      <span className="text-xs text-[#D1D5DB]">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -171,26 +173,26 @@ export default function PricingPage() {
         </section>
 
         {/* CTA */}
-        <section className="px-6 py-20" style={{ background: 'linear-gradient(135deg, rgba(199,255,46,0.12) 0%, rgba(179,107,255,0.08) 100%)' }}>
+        <section className="px-5 py-24 sm:px-8 bg-[#0a0f1a] border-t border-[#00D9FF]/30">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">Don&apos;t know where to start?</h2>
-            <p className="text-xl text-gray-400 mb-8">
-              Start with the build that fits your operation.
+            <h2 className="text-4xl sm:text-5xl font-black uppercase tracking-tight mb-6">
+              Ready to Build?
+            </h2>
+            <p className="text-lg text-[#D1D5DB] mb-12">
+              Join 120+ founders running their business OS on WISE².
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
               <button
                 onClick={() => router.push('/start-your-build')}
-                className="px-8 py-4 rounded-lg font-bold transition"
-                style={{ background: '#C7FF2E', color: '#050505', boxShadow: '0 0 20px rgba(199,255,46,0.4)' }}
+                className="px-8 py-4 bg-[#00D9FF] text-[#050607] font-bold uppercase tracking-[0.1em] text-sm hover:bg-[#39FF14] transition"
               >
                 Start Your Build
               </button>
               <button
                 onClick={() => handleSelectTier('PRO')}
-                className="px-8 py-4 bg-[#161616] rounded-lg font-bold hover:bg-[#1a1a1a] transition"
-                style={{ border: '1px solid rgba(199,255,46,0.3)', color: '#C7FF2E' }}
+                className="px-8 py-4 border border-[#00D9FF] text-[#00D9FF] font-bold uppercase tracking-[0.1em] text-sm hover:bg-[#00D9FF]/10 transition"
               >
-                Open the System
+                See Pricing
               </button>
             </div>
           </div>

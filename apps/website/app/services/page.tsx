@@ -40,16 +40,18 @@ export default function ServicesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F5F5F5]">
+    <div className="min-h-screen bg-[#050607] text-white">
       {/* Hero Section */}
-      <section className="py-16 sm:py-24 border-b border-[#1A1A1A]">
+      <section className="py-24 border-b border-[#00D9FF]/30">
         <Container>
           <div className="text-center space-y-6">
-            <Badge variant="success">Our Services</Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              Everything You Need to <span className="text-[#2CD588]">Succeed</span>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#00FF7F]">
+              Our Services
+            </p>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight">
+              Everything You Need to <span className="text-[#00D9FF]">Succeed</span>
             </h1>
-            <p className="text-[#A0A0A0] text-lg max-w-2xl mx-auto">
+            <p className="text-[#D1D5DB] text-lg max-w-2xl mx-auto">
               Comprehensive suite of tools and services designed to help you create, automate, and scale your business.
             </p>
           </div>
@@ -57,9 +59,9 @@ export default function ServicesPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-16 sm:py-24">
+      <section className="py-24">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {services.map((service, idx) => (
               <Card key={idx} variant="elevated" className="space-y-6">
                 <div className="space-y-4">
@@ -90,11 +92,13 @@ export default function ServicesPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 sm:py-24 bg-[#0A0A0A] border-y border-[#1A1A1A]">
+      <section className="py-24 bg-[#0a0f1a] border-y border-[#00D9FF]/30">
         <Container>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Flexible Pricing Plans</h2>
-            <p className="text-[#A0A0A0] max-w-2xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-black uppercase tracking-tight mb-4 text-white">
+              Service Plans
+            </h2>
+            <p className="text-[#D1D5DB] max-w-2xl mx-auto text-lg">
               Choose the plan that works best for you. All plans include core features.
             </p>
           </div>
