@@ -43,7 +43,7 @@ export default function ServicesPage() {
                   {cap.items.map((item) => (
                     <li
                       key={item}
-                      className="rounded-full border border-[#8C6518]/30 px-3 py-1 text-[11px] text-[#C8C8C8]"
+                      className="rounded-pill border border-[#8C6518]/30 px-3 py-1 text-[11px] text-[#C8C8C8]"
                     >
                       {item}
                     </li>

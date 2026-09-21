@@ -28,7 +28,7 @@ export default function ProductsPage() {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`px-6 py-2 rounded-full font-montserrat font-medium transition-all ${
+            className={`px-6 py-2 rounded-lg font-montserrat font-medium transition-all ${
               selectedCategory === null
                 ? 'bg-[#0369A1] text-white'
                 : 'bg-gray-900 text-gray-300 hover:bg-gray-800'
@@ -40,7 +40,7 @@ export default function ProductsPage() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full font-montserrat font-medium transition-all capitalize ${
+              className={`px-6 py-2 rounded-lg font-montserrat font-medium transition-all capitalize ${
                 selectedCategory === category
                   ? 'bg-[#0369A1] text-white'
                   : 'bg-gray-900 text-gray-300 hover:bg-gray-800'

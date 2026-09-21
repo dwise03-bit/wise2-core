@@ -76,6 +76,7 @@ module.exports = {
         },
       },
       fontFamily: {
+        // unslop-ignore: Cormorant is intentional for SENCERE's gothic-industrial brand
         cormorant: ['Cormorant', 'serif'],
         montserrat: ['Montserrat', 'sans-serif'],
         display: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -124,6 +125,16 @@ module.exports = {
         md: '8px',
         lg: '16px',
         xl: '24px',
+      },
+      borderRadius: {
+        // Intentional radius scale (unslop: replacing rounded-full everywhere)
+        'xs': '2px',
+        'sm': '4px',
+        'base': '6px',
+        'md': '8px',
+        'lg': '12px',
+        'xl': '16px',
+        'pill': '24px',  // only for intentional pill buttons
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
