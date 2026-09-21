@@ -4,7 +4,26 @@
 **Version**: 2.0 (PromptOS-based)  
 **Owner**: dwise (dwise03@gmail.com)  
 **Architecture**: PromptOS + Agent Framework  
-**Last Updated**: 2026-07-21
+**Last Updated**: 2026-09-21
+
+---
+
+## WISE².net Redesign Complete (2026-09-21)
+
+✅ **wise2.net main pages rebuilt** with TasteSkill + brand lock:
+- Homepage: Organized chaos layout (features grid + metrics + value prop)
+- Systems page: 8-system grid with status badges
+- Pricing page: 4-tier cards with billing toggle
+- Services page: Service offerings with features
+
+**Brand Lock Applied**:
+- Navy #050607, Cyan #00D9FF, Neon Green #00FF7F, Gold #C4A369
+- System sans-serif (no serifs)
+- Grid layouts, high-contrast, professional
+
+**Commits**: 08a0d48c3, 729e6cb9a  
+**Docs**: `docs/WISE2_NET_REBUILD_FINAL_20260921.md`, `docs/WISE2_NET_BRAND_BRIEF.md`  
+**Next**: Tailwind config alignment (~30 min)
 
 ---
 
