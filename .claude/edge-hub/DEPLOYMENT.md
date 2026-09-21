@@ -6,10 +6,10 @@ Deploy the Edge Hub to Raspberry Pi 3B+:
 
 ```bash
 # 1. Copy files to Pi
-scp -r .claude/edge-hub dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app
+scp -r .claude/edge-hub dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app
 
 # 2. SSH into Pi
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 # 3. Install dependencies
 cd wise2-edge/app

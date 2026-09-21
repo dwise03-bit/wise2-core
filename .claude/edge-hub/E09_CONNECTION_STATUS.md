@@ -3,7 +3,7 @@
 **Status**: Paired & trusted, but not currently connected (speaker not discoverable)  
 **Date**: 2026-08-02 16:45 UTC  
 **MAC Address**: 34:17:23:01:A5:34  
-**Pi**: wisepi.tail44396d.ts.net
+**Pi**: skorpius.tail44396d.ts.net
 
 ---
 
@@ -73,7 +73,7 @@ Possible reasons:
 **On Pi**:
 ```bash
 # SSH to Pi
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 # Attempt to pair
 bluetoothctl scan on
@@ -211,7 +211,7 @@ pm2 logs wise2-edge-voice | grep BT
 
 **Voice Service Logs**:
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 pm2 logs wise2-edge-voice
 
 # or file

@@ -68,7 +68,7 @@ const char* SSID = "your_wifi_ssid";              // ← CHANGE THIS
 const char* PASSWORD = "your_wifi_password";      // ← CHANGE THIS
 
 // MQTT Configuration (don't change)
-const char* MQTT_BROKER = "wisepi.tail44396d.ts.net";
+const char* MQTT_BROKER = "skorpius.tail44396d.ts.net";
 const int MQTT_PORT = 1883;
 const char* MQTT_USER = "dwise";
 const char* MQTT_PASSWORD = "password";
@@ -253,7 +253,7 @@ BYTE Mini CYD - WISE² Edge Hub
 Connecting to WiFi: your_wifi_ssid
 ....✓ WiFi Connected!
 IP: 192.168.x.x
-Connecting to MQTT: wisepi.tail44396d.ts.net:1883
+Connecting to MQTT: skorpius.tail44396d.ts.net:1883
 ✓ MQTT Connected!
 ✓ Heartbeat sent
 ✓ Heartbeat sent
@@ -270,7 +270,7 @@ If you see this, **SUCCESS!** ✅
 From your Mac terminal:
 
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 curl http://127.0.0.1:4900/devices | jq '.devices[] | select(.id=="byte-mini-01")'
 ```
 
@@ -303,7 +303,7 @@ Should show:
 - Check signal strength (device close to router)
 
 ### "MQTT won't connect"
-- Make sure Pi is reachable: `ping wisepi.tail44396d.ts.net`
+- Make sure Pi is reachable: `ping skorpius.tail44396d.ts.net`
 - Check credentials: user=`dwise`, password=`password`
 - Verify MQTT broker is running on Pi
 
@@ -320,7 +320,7 @@ Once device is online and sending heartbeats:
 
 1. **Send a display message**:
    ```bash
-   ssh dwise@wisepi.tail44396d.ts.net
+   ssh dwise@skorpius.tail44396d.ts.net
    mosquitto_pub -h 127.0.0.1 -u dwise -P password \
      -t "wise2/device/byte-mini-01/command" \
      -m '{"action":"display_update","text":"WISE² Ready","color":"green"}'

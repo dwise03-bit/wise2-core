@@ -41,7 +41,7 @@ Machines: Raspberry Pi, embedded devices
 
 - **Machines**:
   - `wise2-skorpious` (Pocket Node - HVAC diagnostics) ← Primary
-  - `wisepi` (Secondary Pi)
+  - `skorpius` (Secondary Pi)
 
 - **Services**: Port 22, 1883 (MQTT), 3000 (Dashboard), 4000 (AI Assistant), 8080 (API)
 - **Access**: `tag:field-tech` + `tag:operators`
@@ -174,7 +174,7 @@ wise2-cloud-agent: tag:infrastructure
 **Edge**:
 ```
 wise2-skorpious: tag:edge
-wisepi: tag:edge
+skorpius: tag:edge
 ```
 
 **Developers**:

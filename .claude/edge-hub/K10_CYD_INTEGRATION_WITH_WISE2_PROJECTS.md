@@ -13,7 +13,7 @@
 │                    WISE² Unified System                              │
 │                                                                       │
 │  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐      │
-│  │  K10 Voice  │  │ CYD Display  │  │  wisepi Gateway       │      │
+│  │  K10 Voice  │  │ CYD Display  │  │  skorpius Gateway       │      │
 │  │  (ASR/TTS)  │  │ (2.8" TFT)   │  │  (Port 8888 + MQTT)   │      │
 │  └──────┬──────┘  └──────┬───────┘  └───────────┬───────────┘      │
 │         │                │                      │                  │
@@ -182,15 +182,15 @@ export const MQTT_TOPICS = {
 
 ---
 
-### 4. **pi/** ↔ Raspberry Pi / wisepi Gateway
+### 4. **pi/** ↔ Raspberry Pi / skorpius Gateway
 **Current**: Pi configuration and scripts  
-**Integration**: Deploy gateway service to wisepi
+**Integration**: Deploy gateway service to skorpius
 ```bash
 # pi/scripts/deploy-gateway.sh
 #!/bin/bash
 set -e
 
-echo "Deploying WISE² K10/CYD Gateway to wisepi..."
+echo "Deploying WISE² K10/CYD Gateway to skorpius..."
 
 # 1. Update system
 sudo apt-get update && sudo apt-get upgrade -y
@@ -216,12 +216,12 @@ sudo systemctl daemon-reload
 sudo systemctl enable k10-cyd-gateway
 sudo systemctl start k10-cyd-gateway
 
-echo "✓ Gateway deployed to wisepi at port 8888"
+echo "✓ Gateway deployed to skorpius at port 8888"
 ```
 
 **Files to create/update**:
 - `pi/scripts/deploy-gateway.sh`
-- `pi/config/wisepi-gateway-config.json`
+- `pi/config/skorpius-gateway-config.json`
 - `pi/docs/GATEWAY_DEPLOYMENT.md`
 
 ---
@@ -448,9 +448,9 @@ export class PocketNodeGatewaySync {
 ## Deployment Sequence
 
 ### Phase 1: Core Infrastructure (Week 1)
-1. Deploy gateway to wisepi: `bash pi/scripts/deploy-gateway.sh`
-2. Connect K10 device to wisepi WiFi
-3. Connect CYD display to wisepi WiFi
+1. Deploy gateway to skorpius: `bash pi/scripts/deploy-gateway.sh`
+2. Connect K10 device to skorpius WiFi
+3. Connect CYD display to skorpius WiFi
 4. Verify all 3 devices register with gateway
 
 ### Phase 2: Data Layer (Week 2)
@@ -495,11 +495,11 @@ export class PocketNodeGatewaySync {
 Local Network (192.168.8.0/24):
   K10:      192.168.8.100:4000  (voice ASR/TTS)
   CYD:      192.168.8.101:80    (display)
-  wisepi:   192.168.8.226:8888  (gateway)
+  skorpius:   192.168.8.226:8888  (gateway)
   Pocket:   192.168.8.227:3000  (HVAC)
 
 Tailscale Network (100.85.0.0/16):
-  wisepi:   100.85.x.x:8888
+  skorpius:   100.85.x.x:8888
   Pocket:   100.85.242.34:8080
   Cloud:    100.85.x.x (infrastructure)
 
@@ -514,7 +514,7 @@ MQTT Topics (Local + Tailscale):
 
 ## Quick Integration Checklist
 
-- [ ] Deploy gateway to wisepi
+- [ ] Deploy gateway to skorpius
 - [ ] Update HVAC contracts with gateway schemas
 - [ ] Add K10 gateway sync to products/byte-k10
 - [ ] Create Pocket Node ↔ Gateway bridge

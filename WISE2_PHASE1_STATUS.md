@@ -53,7 +53,7 @@
   - Public access via pi.wise2.net
   - Tailscale VPN bridge active
   - PM2 process management
-  - Bluetooth support (discoverable as "wisepi")
+  - Bluetooth support (discoverable as "skorpius")
 
 - [x] **API Routes** (`packages/api/src/routes/api.routes.ts`)
   - 50+ endpoints defined (blueprint phase)

@@ -1,14 +1,14 @@
 #!/bin/bash
-# Deploy WISE² K10 + CYD Gateway Service to wisepi
+# Deploy WISE² K10 + CYD Gateway Service to skorpius
 #
 # This script:
 # 1. Installs Node.js dependencies
-# 2. Copies gateway files to wisepi
+# 2. Copies gateway files to skorpius
 # 3. Creates systemd service
 # 4. Starts the gateway service
 # 5. Verifies connectivity
 #
-# Run on: wisepi (Raspberry Pi)
+# Run on: skorpius (Raspberry Pi 5)
 # Usage: bash deploy-k10-cyd-gateway.sh
 
 set -e

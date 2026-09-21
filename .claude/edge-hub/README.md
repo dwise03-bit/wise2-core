@@ -53,13 +53,13 @@ The Edge Hub runs on **Raspberry Pi 3B+** (Debian 13, 905MB RAM, 57GB disk) and 
 ### 1. Copy Files to Pi
 
 ```bash
-scp -r .claude/edge-hub dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app
+scp -r .claude/edge-hub dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app
 ```
 
 ### 2. Build on Pi
 
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 cd wise2-edge/app
 npm install
 npm run build
@@ -359,7 +359,7 @@ curl -s http://127.0.0.1:4900/health | jq .
 **Remote Access** (via Tailscale):
 ```bash
 # From your machine
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 curl http://127.0.0.1:4900/health
 ```
 

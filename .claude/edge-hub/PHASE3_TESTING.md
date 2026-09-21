@@ -33,10 +33,10 @@
 scp .claude/edge-hub/remote-support.ts \
     .claude/edge-hub/support-api.ts \
     .claude/edge-hub/ota-coordinator.ts \
-    dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
+    dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
 
 # Build
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 cd wise2-edge/app && npm run build
 
 # Restart services (Support auto-starts)

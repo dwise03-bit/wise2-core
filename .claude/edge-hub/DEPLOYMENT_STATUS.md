@@ -241,10 +241,10 @@ curl http://127.0.0.1:4902/support/diagnostics  # ✅ Responds
 
 ```bash
 # Copy code to Pi
-scp .claude/edge-hub/*.ts dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
+scp .claude/edge-hub/*.ts dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
 
 # Build on Pi
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 cd wise2-edge/app && npm run build
 
 # Start services

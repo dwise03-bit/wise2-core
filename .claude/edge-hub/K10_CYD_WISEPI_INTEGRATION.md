@@ -1,7 +1,7 @@
-# WISE² K10 + CYD 2.8 Integration via wisepi Gateway
+# WISE² K10 + CYD 2.8 Integration via skorpius Gateway
 
 **Date**: 2026-09-20  
-**Architecture**: K10 (voice) + CYD 2.8 (display) ← Gateway → wisepi (Raspberry Pi)  
+**Architecture**: K10 (voice) + CYD 2.8 (display) ← Gateway → skorpius (Raspberry Pi)  
 **Network**: Tailscale VPN with tag:edge routing  
 **Status**: Implementation Ready
 
@@ -18,7 +18,7 @@
          ┌───────────────┼───────────────┐
          │               │               │
     ┌────▼────┐  ┌──────▼───────┐  ┌───▼──────┐
-    │ wise2-  │  │    wisepi    │  │  Pocket  │
+    │ wise2-  │  │    skorpius    │  │  Pocket  │
     │ skor-   │  │   (Gateway)  │  │  Node    │
     │ pious   │  │   Tailscale  │  │(HVAC)    │
     │(HVAC)   │  │   tag:edge   │  │          │
@@ -39,7 +39,7 @@
          │                            │
          └──────────────┬─────────────┘
                         │
-                   wisepi Gateway
+                   skorpius Gateway
                    (MQTT + HTTP)
                    192.168.8.226
                    100.85.x.x (TS)
@@ -49,7 +49,7 @@
 
 ## Device Specifications
 
-### wisepi (Gateway Hub)
+### skorpius (Gateway Hub)
 - **Device**: Raspberry Pi (tag:edge)
 - **Tailscale IP**: 100.85.x.x
 - **Local IP**: 192.168.8.226
@@ -62,15 +62,15 @@
 ### K10 (Voice Assistant)
 - **Device**: Specialized IoT device
 - **Features**: ASR (speech recognition), TTS (text-to-speech)
-- **Connection**: WiFi to wisepi
+- **Connection**: WiFi to skorpius
 - **API Port**: 4000 (on K10)
-- **Communication**: HTTP/REST to wisepi gateway
-- **Data Stream**: Voice commands → wisepi → HVAC diagnostics
+- **Communication**: HTTP/REST to skorpius gateway
+- **Data Stream**: Voice commands → skorpius → HVAC diagnostics
 
 ### CYD 2.8" (Display)
 - **Device**: ESP32 + 2.8" TFT display
 - **Resolution**: 240x320 pixels
-- **Connection**: WiFi to wisepi
+- **Connection**: WiFi to skorpius
 - **API Port**: 80 (web interface)
 - **Data Display**:
   - HVAC metrics from Pocket Node
@@ -82,14 +82,14 @@
 
 ## Implementation Steps
 
-### Phase 1: wisepi Gateway Setup
+### Phase 1: skorpius Gateway Setup
 
 #### 1.1 MQTT Broker Configuration
-On wisepi, ensure mosquitto is running:
+On skorpius, ensure mosquitto is running:
 
 ```bash
-# SSH to wisepi
-ssh user@wisepi
+# SSH to skorpius
+ssh user@skorpius
 
 # Check MQTT broker
 sudo systemctl status mosquitto
@@ -105,7 +105,7 @@ sudo nano /etc/mosquitto/mosquitto.conf
 ```
 
 #### 1.2 HTTP Gateway Service
-Create gateway proxy on wisepi at `192.168.8.226:8888`:
+Create gateway proxy on skorpius at `192.168.8.226:8888`:
 
 ```bash
 # Create gateway service
@@ -145,7 +145,7 @@ app.post('/mqtt/publish', express.json(), (req, res) => {
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'online',
-    gateway: 'wisepi',
+    gateway: 'skorpius',
     k10: 'checking...',
     cyd: 'checking...',
     mqtt: mqttClient.connected ? 'connected' : 'disconnected'
@@ -173,7 +173,7 @@ node /opt/wise2/gateway/k10-cyd-gateway.js
 
 #### 1.3 Network Configuration
 ```bash
-# On wisepi, ensure local network allows device discovery
+# On skorpius, ensure local network allows device discovery
 # Check UFW rules
 sudo ufw allow in on eth0 from 192.168.8.0/24
 sudo ufw allow 8888/tcp
@@ -205,7 +205,7 @@ iface wlan0 inet static
 ```
 
 #### 2.2 K10 Discovery Registration
-Register K10 with wisepi gateway:
+Register K10 with skorpius gateway:
 
 ```bash
 # On K10, create discovery script
@@ -279,7 +279,7 @@ Load firmware on CYD ESP32:
 
 ```cpp
 // CYD 2.8" Firmware (Arduino/PlatformIO)
-// Display dashboard connected to wisepi gateway
+// Display dashboard connected to skorpius gateway
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -417,7 +417,7 @@ platformio run -e esp32s3 --target upload
 
 #### 4.1 Sync K10 Data to Pocket Node
 ```bash
-# On wisepi, forward K10 voice data to Pocket Node
+# On skorpius, forward K10 voice data to Pocket Node
 cat > /opt/wise2/gateway/sync-k10-to-pocket.js << 'EOF'
 const mqtt = require('mqtt');
 
@@ -438,7 +438,7 @@ EOF
 
 #### 4.2 Push HVAC Data to CYD
 ```bash
-# On Pocket Node, send HVAC data to CYD via wisepi gateway
+# On Pocket Node, send HVAC data to CYD via skorpius gateway
 GATEWAY="192.168.8.226:8888"
 
 curl -X POST http://$GATEWAY/mqtt/publish \
@@ -463,11 +463,11 @@ curl -X POST http://$GATEWAY/mqtt/publish \
 ## Tagging & Network Policy
 
 ### Machine Tags
-- **wisepi** (gateway): `tag:edge`
+- **skorpius** (gateway): `tag:edge`
 - **wise2-skorpious** (Pocket Node): `tag:edge`
-- K10 and CYD: Local network only (no Tailscale, connect via wisepi)
+- K10 and CYD: Local network only (no Tailscale, connect via skorpius)
 
-### ACL Rules (for Pocket Node ↔ wisepi)
+### ACL Rules (for Pocket Node ↔ skorpius)
 ```json
 {
   "action": "accept",
@@ -480,7 +480,7 @@ curl -X POST http://$GATEWAY/mqtt/publish \
 ```
 K10 (192.168.8.100:4000)
   ↓ WiFi + MQTT
-wisepi Gateway (192.168.8.226:8888)
+skorpius Gateway (192.168.8.226:8888)
   ↓ MQTT (local) + Tailscale (remote)
 Pocket Node (100.85.242.34:8080)
   ↓ Tailscale
@@ -513,13 +513,13 @@ mosquitto_sub -h 192.168.8.226 -t 'wise2/k10/+' -C 5
 ```bash
 # On Pocket Node
 mosquitto_sub -t 'wise2/k10/#' -C 1
-# Should see K10 voice data forwarded from wisepi
+# Should see K10 voice data forwarded from skorpius
 ```
 
 ### 5. End-to-End Voice Test
 ```bash
 # Speak to K10
-# K10 → wisepi gateway → MQTT → Pocket Node
+# K10 → skorpius gateway → MQTT → Pocket Node
 # Pocket Node → HVAC diagnostics → CYD display
 ```
 
@@ -528,7 +528,7 @@ mosquitto_sub -t 'wise2/k10/#' -C 1
 ## File Structure
 
 ```
-wisepi:/opt/wise2/
+skorpius:/opt/wise2/
 ├── gateway/
 │   ├── k10-cyd-gateway.js          (HTTP proxy + MQTT bridge)
 │   ├── sync-k10-to-pocket.js       (Data forwarding)
@@ -557,15 +557,15 @@ CYD:/firmware/
 
 ## Deployment Checklist
 
-- [ ] wisepi gateway HTTP service running (port 8888)
-- [ ] wisepi MQTT broker accessible from local network
-- [ ] K10 WiFi connected to wisepi LAN
+- [ ] skorpius gateway HTTP service running (port 8888)
+- [ ] skorpius MQTT broker accessible from local network
+- [ ] K10 WiFi connected to skorpius LAN
 - [ ] K10 registered with gateway (/health shows K10: "online")
 - [ ] K10 voice data publishing to MQTT
-- [ ] CYD WiFi connected to wisepi LAN
+- [ ] CYD WiFi connected to skorpius LAN
 - [ ] CYD firmware flashed and running
 - [ ] CYD subscribing to MQTT (serial shows connected)
-- [ ] wisepi forwarding K10 data to Pocket Node (Tailscale)
+- [ ] skorpius forwarding K10 data to Pocket Node (Tailscale)
 - [ ] Pocket Node receiving K10 voice data
 - [ ] Pocket Node publishing HVAC data to CYD via gateway
 - [ ] CYD displaying HVAC metrics in real-time
@@ -577,8 +577,8 @@ CYD:/firmware/
 ## Quick Start
 
 ```bash
-# 1. SSH to wisepi
-ssh user@wisepi
+# 1. SSH to skorpius
+ssh user@skorpius
 
 # 2. Deploy gateway service
 node /opt/wise2/gateway/k10-cyd-gateway.js &

@@ -20,10 +20,10 @@
 
 ```bash
 # From your machine
-ping wisepi.tail44396d.ts.net
+ping skorpius.tail44396d.ts.net
 
 # If it responds, SSH in
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 # Once on Pi, verify services
 pm2 status
@@ -40,14 +40,14 @@ mosquitto -v
 cd /Users/danielwise/Projects/wise2-core/.claude/edge-hub
 
 # Copy all service files to Pi
-scp *.ts dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
+scp *.ts dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
 
 # Copy config files
-scp package.json dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/
-scp ecosystem.config.js dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/
+scp package.json dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/
+scp ecosystem.config.js dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/
 
 # Verify files arrived
-ssh dwise@wisepi.tail44396d.ts.net "ls -lh wise2-edge/app/src/*.ts | wc -l"
+ssh dwise@skorpius.tail44396d.ts.net "ls -lh wise2-edge/app/src/*.ts | wc -l"
 # Should output: 9
 ```
 
@@ -57,7 +57,7 @@ ssh dwise@wisepi.tail44396d.ts.net "ls -lh wise2-edge/app/src/*.ts | wc -l"
 
 ```bash
 # ON PI
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 cd wise2-edge/app
 
@@ -343,7 +343,7 @@ pm2 logs wise2-edge-voice
 ## Deployment Checklist
 
 - [ ] Pi online and Tailscale connected
-- [ ] SSH access verified (`ssh dwise@wisepi...`)
+- [ ] SSH access verified (`ssh dwise@skorpius...`)
 - [ ] Code copied to `/home/dwise/wise2-edge/app/src/`
 - [ ] npm build succeeded (dist/ has 9 .js files)
 - [ ] PM2 started all 4 services

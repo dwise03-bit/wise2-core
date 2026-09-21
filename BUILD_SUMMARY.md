@@ -44,7 +44,7 @@ Raspberry Pi 3B+
 ├── Dashboard (Next.js on port 3003)
 ├── Kiosk Mode (Chromium fullscreen auto-launch)
 ├── Tailscale VPN (100.69.116.79)
-├── Bluetooth (discoverable as "wisepi")
+├── Bluetooth (discoverable as "skorpius")
 ├── PM2 Process Management
 └── Auto-restart on failure
 ```
@@ -273,7 +273,7 @@ wise2-core/
 - Memory: 94 MB
 - Services: 1 (dashboard running)
 - Kiosk: ✅ Auto-launching fullscreen
-- Bluetooth: ✅ Discoverable as "wisepi"
+- Bluetooth: ✅ Discoverable as "skorpius"
 
 **Production Server**:
 - IP: 173.208.147.165

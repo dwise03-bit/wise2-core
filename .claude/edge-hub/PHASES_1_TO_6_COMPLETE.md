@@ -43,7 +43,7 @@
 
 **Test**:
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 systemctl status wise2-edge-registry
 # Should show: Active: active (running)
 ```
@@ -70,7 +70,7 @@ pm2 status  # Should show 4/4 online
 **To Enable Full Voice**:
 ```bash
 # Option A: Configure Ollama registry access
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 OLLAMA_REGISTRY=docker.io ollama pull whisper-small
 
 # Option B: Start Hermes on Pi
@@ -269,7 +269,7 @@ Infrastructure
 ### Immediate (If Needed)
 1. **Test Pi Reboot**:
    ```bash
-   ssh dwise@wisepi.tail44396d.ts.net
+   ssh dwise@skorpius.tail44396d.ts.net
    sudo reboot
    # Wait 30s, then verify services
    pm2 status
@@ -277,14 +277,14 @@ Infrastructure
 
 2. **Enable Ollama STT**:
    ```bash
-   ssh dwise@wisepi.tail44396d.ts.net
+   ssh dwise@skorpius.tail44396d.ts.net
    ollama pull whisper-small
    # Or configure Hermes API on port 3012
    ```
 
 3. **Connect Dashboard to Frontend**:
-   - Point React dashboard to `http://wisepi.tail44396d.ts.net:4903`
-   - Subscribe to WebSocket: `ws://wisepi.tail44396d.ts.net:4903/stream`
+   - Point React dashboard to `http://skorpius.tail44396d.ts.net:4903`
+   - Subscribe to WebSocket: `ws://skorpius.tail44396d.ts.net:4903/stream`
 
 ### Short-term (Next Session)
 1. Register BYTE Mini CYD (connect to MQTT, send heartbeat)
@@ -304,7 +304,7 @@ Infrastructure
 
 ### Full Health Check
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 # Check all services
 systemctl status wise2-edge-* --all

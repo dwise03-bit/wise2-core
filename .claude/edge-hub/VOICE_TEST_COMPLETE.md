@@ -243,7 +243,7 @@ const sttUrl = process.env.STT_URL || 'http://127.0.0.1:3012/api/transcribe';
 
 **Real-time monitoring**:
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 pm2 logs wise2-edge-voice
 ```
 
@@ -261,7 +261,7 @@ pm2 logs wise2-edge-voice
 
 1. **Diagnose Ollama connectivity**:
    ```bash
-   ssh dwise@wisepi.tail44396d.ts.net
+   ssh dwise@skorpius.tail44396d.ts.net
    
    # Check if registry is reachable
    curl -v https://registry.ollama.ai/v2/whisper-small/blobs/manifest

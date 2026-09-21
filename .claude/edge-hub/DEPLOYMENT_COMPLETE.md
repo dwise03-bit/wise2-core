@@ -2,7 +2,7 @@
 
 **Status**: All 4 services deployed and running  
 **Date**: 2026-08-02  
-**Pi**: wisepi.tail44396d.ts.net (100.69.116.79)  
+**Pi**: skorpius.tail44396d.ts.net (100.69.116.79)  
 **Uptime**: Running stable  
 
 ---
@@ -163,7 +163,7 @@ curl http://127.0.0.1:4901/voice/status
 
 ```c
 // Configure MQTT heartbeat
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/heartbeat" \
   -m '{
@@ -400,25 +400,25 @@ WISE² Edge Hub (Raspberry Pi 3B+)
 
 ### View Status
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net "pm2 status"
+ssh dwise@skorpius.tail44396d.ts.net "pm2 status"
 ```
 
 ### Restart a Service
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net "pm2 restart wise2-edge-voice"
+ssh dwise@skorpius.tail44396d.ts.net "pm2 restart wise2-edge-voice"
 ```
 
 ### View Logs
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net "pm2 logs wise2-edge-registry"
+ssh dwise@skorpius.tail44396d.ts.net "pm2 logs wise2-edge-registry"
 ```
 
 ### Redeploy Code
 ```bash
 # From your machine
 cd ~/.../wise2-core/.claude/edge-hub
-scp *.ts dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
-ssh dwise@wisepi.tail44396d.ts.net "cd wise2-edge/app && npm run build && pm2 restart all"
+scp *.ts dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
+ssh dwise@skorpius.tail44396d.ts.net "cd wise2-edge/app && npm run build && pm2 restart all"
 ```
 
 ---

@@ -40,16 +40,16 @@
 cd /Users/danielwise/Projects/wise2-core/.claude/edge-hub
 
 # Copy all TypeScript files
-scp *.ts dwise@wisepi.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
+scp *.ts dwise@skorpius.tail44396d.ts.net:/home/dwise/wise2-edge/app/src/
 
 # Verify copy
-ssh dwise@wisepi.tail44396d.ts.net ls -la wise2-edge/app/src/
+ssh dwise@skorpius.tail44396d.ts.net ls -la wise2-edge/app/src/
 ```
 
 ### 2. Build on Pi
 
 ```bash
-ssh dwise@wisepi.tail44396d.ts.net
+ssh dwise@skorpius.tail44396d.ts.net
 
 cd wise2-edge/app
 npm install  # Already did phase 1

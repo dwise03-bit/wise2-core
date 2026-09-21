@@ -1,20 +1,20 @@
 #!/bin/bash
 # WISE² K10 + CYD Gateway Deployment Script for Raspberry Pi
 #
-# Deploys the K10 (voice) + CYD (display) gateway service to wisepi
+# Deploys the K10 (voice) + CYD (display) gateway service to skorpius
 # This script:
 #   - Sets up Node.js environment
 #   - Installs MQTT broker (Mosquitto)
 #   - Deploys gateway service
 #   - Configures systemd auto-start
 #   - Sets up networking and firewall
-#   - Verifies all 3 devices (K10, CYD, wisepi)
+#   - Verifies all 3 devices (K10, CYD, skorpius)
 #
-# Run on: wisepi (Raspberry Pi 5 running Debian 13 arm64)
+# Run on: skorpius (Raspberry Pi 5 running Debian 13 arm64)
 # Usage: sudo bash deploy-k10-cyd-gateway.sh
 #
 # Prerequisites:
-#   - SSH access to wisepi
+#   - SSH access to skorpius
 #   - Internet connection for package downloads
 #   - ~500MB free disk space
 

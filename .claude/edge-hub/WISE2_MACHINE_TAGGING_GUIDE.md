@@ -23,7 +23,7 @@ This guide covers how to tag all 18 WISE² machines with their designated Tailsc
 
 #### Edge Nodes (2 machines) → `tag:edge`
 - `wise2-skorpious` - HVAC Pocket Node (Raspberry Pi 5)
-- `wisepi` - Secondary Pi
+- `skorpius` - Secondary Pi
 
 #### Developers (3 machines) → `tag:developers` (+ 2 also get `tag:operators`)
 - `daniels-macbook-pro` - macOS (also `tag:operators`)

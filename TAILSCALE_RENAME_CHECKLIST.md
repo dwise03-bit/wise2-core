@@ -39,7 +39,7 @@ sudo tailscale set --hostname=dwise-DEVICENAME
 - [ ] `motorola-razr-2025-xt2553v` → `dwise-android`
 - [ ] `vps-0fa5d30a` (requires sudo on 173.208.147.165) → `dwise-vps`
 - [ ] `wise2-cloud-agent` → `dwise-cloud`
-- [ ] `wisepi` → `dwise-pi-2`
+- [ ] `skorpius` → `dwise-pi-2`
 
 #### 👤 Other User
 - N/A `darrinwisejr.tail1dc3bd.ts.net` (darrinwisejr owns this)
@@ -55,7 +55,7 @@ sudo tailscale set --hostname=dwise-vps
 ### Raspberry Pi
 ```bash
 # Via Tailscale
-ssh dwise@wisepi.tail1dc3bd.ts.net
+ssh dwise@skorpius.tail1dc3bd.ts.net
 tailscale set --hostname=dwise-pi
 
 # Or directly

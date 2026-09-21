@@ -13,7 +13,7 @@
 Register the device by sending a heartbeat to the registry:
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/heartbeat" \
   -m '{
@@ -34,7 +34,7 @@ mosquitto_pub -h wisepi.tail44396d.ts.net \
 ### Step 2: Verify Registration
 
 ```bash
-curl http://wisepi.tail44396d.ts.net:4900/devices | jq '.devices[] | select(.deviceId=="byte-mini-01")'
+curl http://skorpius.tail44396d.ts.net:4900/devices | jq '.devices[] | select(.deviceId=="byte-mini-01")'
 ```
 
 **Expected Response**:
@@ -58,7 +58,7 @@ curl http://wisepi.tail44396d.ts.net:4900/devices | jq '.devices[] | select(.dev
 ### Command 1: Show Text
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/command" \
   -m '{
@@ -75,7 +75,7 @@ mosquitto_pub -h wisepi.tail44396d.ts.net \
 ### Command 2: Show Status Message
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/command" \
   -m '{
@@ -91,7 +91,7 @@ mosquitto_pub -h wisepi.tail44396d.ts.net \
 ### Command 3: Show Image
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/command" \
   -m '{
@@ -108,7 +108,7 @@ mosquitto_pub -h wisepi.tail44396d.ts.net \
 ### Command 4: Clear Display
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/command" \
   -m '{
@@ -121,7 +121,7 @@ mosquitto_pub -h wisepi.tail44396d.ts.net \
 ### Command 5: Show Dashboard
 
 ```bash
-mosquitto_pub -h wisepi.tail44396d.ts.net \
+mosquitto_pub -h skorpius.tail44396d.ts.net \
   -u dwise -P [password] \
   -t "wise2/device/byte-mini-01/command" \
   -m '{
@@ -199,7 +199,7 @@ Screen 1: "⚠ Offline"
 You can also send display updates via the Health API:
 
 ```bash
-curl -X POST http://wisepi.tail44396d.ts.net:4900/devices/byte-mini-01/command \
+curl -X POST http://skorpius.tail44396d.ts.net:4900/devices/byte-mini-01/command \
   -H "Content-Type: application/json" \
   -d '{
     "command": "show_status",
@@ -315,13 +315,13 @@ Mapped to zones:
 
 1. **Check device is online**:
    ```bash
-   curl http://wisepi.tail44396d.ts.net:4900/devices | jq '.devices[] | select(.deviceId=="byte-mini-01")'
+   curl http://skorpius.tail44396d.ts.net:4900/devices | jq '.devices[] | select(.deviceId=="byte-mini-01")'
    ```
    Should show `"isOnline": true`
 
 2. **Check MQTT message format**:
    ```bash
-   mosquitto_sub -h wisepi.tail44396d.ts.net -u dwise -P [password] \
+   mosquitto_sub -h skorpius.tail44396d.ts.net -u dwise -P [password] \
      -t "wise2/device/byte-mini-01/command" -v
    ```
    Should receive published messages
@@ -336,13 +336,13 @@ Mapped to zones:
 
 1. Verify MQTT connection:
    ```bash
-   mosquitto_pub -h wisepi.tail44396d.ts.net -u dwise -P [password] \
+   mosquitto_pub -h skorpius.tail44396d.ts.net -u dwise -P [password] \
      -t "test/topic" -m "test"
    ```
 
 2. Check credentials:
    ```bash
-   ssh dwise@wisepi.tail44396d.ts.net
+   ssh dwise@skorpius.tail44396d.ts.net
    mosquitto_passwd -c /etc/mosquitto/passwd dwise
    ```
 
@@ -358,7 +358,7 @@ Mapped to zones:
 ```bash
 #!/bin/bash
 
-HOST="wisepi.tail44396d.ts.net"
+HOST="skorpius.tail44396d.ts.net"
 TOPIC="wise2/device/byte-mini-01"
 
 # Register device
@@ -406,7 +406,7 @@ Display automatically updates with:
 ### With Dashboard API
 BYTE Mini can request latest stats and render them:
 ```bash
-curl http://wisepi.tail44396d.ts.net:4903/dashboard | jq .
+curl http://skorpius.tail44396d.ts.net:4903/dashboard | jq .
 ```
 
 ---

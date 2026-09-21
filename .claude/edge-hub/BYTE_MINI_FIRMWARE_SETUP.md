@@ -39,7 +39,7 @@ const char* SSID = "your_wifi_ssid";
 const char* PASSWORD = "your_wifi_password";
 
 // MQTT Configuration
-const char* MQTT_BROKER = "wisepi.tail44396d.ts.net";  // or Pi IP: 192.168.x.x
+const char* MQTT_BROKER = "skorpius.tail44396d.ts.net";  // or Pi IP: 192.168.x.x
 const int MQTT_PORT = 1883;
 const char* MQTT_USER = "dwise";
 const char* MQTT_PASSWORD = "password";
@@ -293,7 +293,7 @@ BYTE Mini CYD - WISE² Edge Hub
 Connecting to WiFi: your_wifi_ssid
 ....✓ WiFi Connected!
 IP: 192.168.x.x
-Connecting to MQTT broker: wisepi.tail44396d.ts.net:1883
+Connecting to MQTT broker: skorpius.tail44396d.ts.net:1883
 ✓ MQTT Connected!
 Subscribed to: wise2/device/byte-mini-01/command
 ✓ Heartbeat sent
