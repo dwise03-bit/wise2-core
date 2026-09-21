@@ -70,12 +70,12 @@ export default function CloudLandingPage() {
             {/* CENTER: WISE² Cloud Branding */}
             <div className="lg:col-span-1 text-center space-y-8">
               <div className="space-y-4">
-                <div className="text-center mb-4">
-                  <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-2" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
+                <div className="text-center mb-6">
+                  <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-3" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
                     WISE² CLOUD
                   </p>
-                  <p className="text-[#B8FF00] text-2xl font-black" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)'}}>YOUR BUSINESS</p>
-                  <p className="text-white text-2xl font-black">OUR INFRASTRUCTURE</p>
+                  <h1 className="text-[#B8FF00] text-3xl sm:text-4xl lg:text-5xl font-black leading-tight" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)', fontFeatureSettings: '"ss01" 1'}}>YOUR BUSINESS</h1>
+                  <p className="text-white text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mt-2">OUR INFRASTRUCTURE</p>
                 </div>
 
                 <p className="text-sm text-[#c5d3e0] font-semibold leading-relaxed">
@@ -97,12 +97,12 @@ export default function CloudLandingPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3 pt-6">
-                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#B8FF00] text-[#000000] font-black rounded-none hover:shadow-[0_0_40px_rgba(184,255,0,0.6)] hover:scale-105 transition-all duration-300 text-sm focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none">
+                <div className="flex flex-col gap-4 pt-8">
+                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#B8FF00] text-[#000000] font-black text-sm rounded-sm hover:bg-[#d0ff20] hover:shadow-[0_0_50px_rgba(184,255,0,0.8)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
                     Get Started
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </Link>
-                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black rounded-none hover:border-[#B8FF00] hover:shadow-[0_0_30px_rgba(184,255,0,0.4)] transition-all duration-300 text-sm focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none">
+                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-sm rounded-sm hover:border-[#B8FF00] hover:bg-[#B8FF00]/5 hover:shadow-[0_0_40px_rgba(184,255,0,0.5)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95">
                     Free Audit
                   </Link>
                 </div>
@@ -229,7 +229,7 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8 border-b border-[#B8FF00]/20">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Three Pillars.
               <br/>
               <span className="text-[#B8FF00]">Infinite Possibilities.</span>
@@ -256,7 +256,7 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-[#0a0d0f] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black sm:text-5xl" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Plans Built for Growth.</h2>
+            <h2 className="font-black" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>Plans Built for Growth.</h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-4">
@@ -287,7 +287,7 @@ export default function CloudLandingPage() {
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Reseller Program</p>
-            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black mb-8" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Build Your Own Empire.
               <br/>
               <span className="text-[#B8FF00]">100% Profit.</span>
@@ -318,7 +318,7 @@ export default function CloudLandingPage() {
       <section data-cloud-reveal className="border-y border-[#B8FF00]/20 bg-gradient-to-b from-[#0a0d0f] to-[#0f1419] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Built for Speed. Built to Last.</h2>
+            <h2 className="font-black" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>Built for Speed. Built to Last.</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
@@ -345,7 +345,7 @@ export default function CloudLandingPage() {
           </div>
           <div>
             <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Fortress Grade</p>
-            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black mb-8" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Enterprise Security.
               <br/>
               <span className="text-[#B8FF00]">Zero Compromise.</span>
@@ -374,7 +374,7 @@ export default function CloudLandingPage() {
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>AI Innovation</p>
-            <h2 className="text-4xl font-black mb-8" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black mb-8" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Intelligence at Scale.
               <br/>
               <span className="text-[#B8FF00]">Zero Friction.</span>
@@ -404,7 +404,7 @@ export default function CloudLandingPage() {
       {/* MIGRATION - ZERO FRICTION */}
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
-          <h2 className="text-4xl font-black mb-12" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>Move Your Empire in 48 Hours.</h2>
+          <h2 className="font-black mb-12" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>Move Your Empire in 48 Hours.</h2>
           <ul className="max-w-3xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
             {['Free Transfer', 'Free Databases', 'Zero Downtime', 'Expert Team', 'All Plans'].map((item) => (
               <li key={item} className="flex flex-col items-center justify-center gap-2">
@@ -428,7 +428,7 @@ export default function CloudLandingPage() {
           </div>
           <div>
             <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-4" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>Strategic Planning</p>
-            <h2 className="text-4xl font-black mb-6" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black mb-6" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Unsure About Your Path?
               <br/>
               <span className="text-[#B8FF00]">We'll Architect It.</span>
@@ -448,7 +448,7 @@ export default function CloudLandingPage() {
       <section className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black" style={{textShadow: '0 0 30px rgba(184,255,0,0.3)'}}>
+            <h2 className="font-black" style={{fontSize: 'clamp(2rem, 6vw, 3.5rem)', lineHeight: 1.1, textShadow: '0 0 30px rgba(184,255,0,0.3)', letterSpacing: '-0.02em'}}>
               Built Different.
               <br/>
               <span className="text-[#B8FF00]">Built for Legends.</span>
@@ -483,7 +483,7 @@ export default function CloudLandingPage() {
         </div>
         <div className="mx-auto max-w-5xl text-center relative z-10">
           <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-6" style={{textShadow: '0 0 10px rgba(184,255,0,0.4)'}}>The Choice is Clear</p>
-          <h2 className="text-5xl sm:text-6xl font-black mb-6 leading-tight" style={{textShadow: '0 0 40px rgba(184,255,0,0.4)'}}>
+          <h2 className="font-black mb-6 leading-tight" style={{fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', textShadow: '0 0 40px rgba(184,255,0,0.4)', letterSpacing: '-0.02em'}}>
             Ready to Build Your
             <br/>
             <span className="text-[#B8FF00]">Empire?</span>
