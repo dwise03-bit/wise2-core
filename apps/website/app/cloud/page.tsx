@@ -165,107 +165,95 @@ export default function CloudLandingPage() {
           }
         }
       `}</style>
-      {/* HERO - FULL REBRAND */}
-      <section className="cloud-hero relative overflow-hidden bg-[#000000] border-b border-[#B8FF00]/20">
-        {/* Background gradient */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl">
-            <div className="absolute top-20 right-1/4 w-96 h-96 bg-[#B8FF00]/15 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#00FF00]/10 rounded-full blur-3xl" />
+      {/* HERO - LEADERS FIRST */}
+      <section className="cloud-hero relative overflow-hidden bg-gradient-to-b from-[#000000] via-[#0a0d0f] to-[#000000]">
+        {/* Cyberpunk background effects */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-full h-full max-w-3xl">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#B8FF00]/20 rounded-full blur-3xl" />
+            <div className="absolute top-32 right-1/4 w-80 h-80 bg-[#00D9FF]/10 rounded-full blur-3xl" />
           </div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#B8FF00]/10 rounded-full blur-3xl" />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-          {/* Logo + Tagline */}
-          <div className="text-center mb-8 lg:mb-12">
-            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-3" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
-              PEOPLE × AI × OPPORTUNITY
+        <div className="relative z-10">
+          {/* Tagline */}
+          <div className="text-center pt-8 pb-4">
+            <p className="text-[#B8FF00] text-xs font-black uppercase tracking-[0.3em] mb-2" style={{textShadow: '0 0 20px rgba(184,255,0,0.8)'}}>
+              TWO LEADERS. ONE VISION.
             </p>
           </div>
 
-          {/* Two Leaders + Branding Grid */}
-          <div className="grid lg:grid-cols-3 gap-4 lg:gap-8 items-stretch">
-            {/* LEFT: Darrin - Operations & Growth Leader */}
-            <div className="lg:col-span-1 relative group">
+          {/* Leaders Grid - Full Width */}
+          <div className="grid lg:grid-cols-2 gap-0 items-stretch">
+            {/* LEFT: Darrin */}
+            <div className="relative group overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#B8FF00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <Image
                 src="/wiseeye-assets/darrin.png"
                 alt="Darrin - Operations & Growth Leader"
-                width={350}
-                height={450}
+                width={600}
+                height={800}
                 priority
-                className="w-full h-auto object-cover border-2 border-[#B8FF00]/60 relative z-10 shadow-2xl hero-image-pop transition-all duration-300 cursor-pointer"
+                className="w-full h-96 sm:h-[32rem] lg:h-[500px] object-cover hero-image-pop transition-all duration-300 cursor-pointer brightness-90 group-hover:brightness-100"
               />
-              <div className="mt-4">
-                <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DARRIN</p>
-                <p className="text-[#c5d3e0] text-sm font-semibold">Operations & Growth Leader</p>
-                <p className="text-[#7a8a9a] text-xs mt-2">Execution Master · Growth Strategist</p>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent p-6 lg:p-8">
+                <p className="text-[#B8FF00] font-black uppercase text-lg lg:text-2xl tracking-wider mb-2 hero-title-glow">DARRIN</p>
+                <p className="text-[#c5d3e0] text-sm lg:text-base font-bold">Operations & Growth Leader</p>
+                <p className="text-[#7a8a9a] text-xs lg:text-sm mt-1">Execution Master · Growth Strategist</p>
               </div>
             </div>
 
-            {/* CENTER: WISE² Cloud Branding */}
-            <div className="lg:col-span-1 text-center space-y-6 flex flex-col justify-center py-8 lg:py-0">
-              <div className="space-y-3">
-                <div className="text-center">
-                  <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest mb-2" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
-                    WISE² CLOUD
-                  </p>
-                  <h1 className="text-[#B8FF00] font-black leading-tight hero-title-glow" style={{fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontFeatureSettings: '"ss01" 1', letterSpacing: '-0.02em'}}>YOUR BUSINESS</h1>
-                  <p className="text-white font-black leading-tight mt-1 hero-title-glow" style={{fontSize: 'clamp(2.5rem, 8vw, 4rem)', letterSpacing: '-0.02em'}}>OUR INFRASTRUCTURE</p>
-                </div>
-
-                <p className="text-sm lg:text-base text-[#c5d3e0] font-semibold leading-relaxed">
-                  Fast. Secure. Scalable. Reliable.
-                </p>
-
-                <div className="space-y-2 pt-4">
-                  <div className="flex items-center justify-center gap-2">
-                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#c5d3e0] text-sm font-semibold">99.95% Uptime SLA</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#c5d3e0] text-sm font-semibold">Global Infrastructure</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Check size={16} className="text-[#B8FF00]" style={{filter: 'drop-shadow(0 0 8px rgba(184,255,0,0.5))'}} />
-                    <span className="text-[#c5d3e0] text-sm font-semibold">Real Human Support</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 pt-8">
-                  <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-10 py-6 bg-[#B8FF00] text-[#000000] font-black text-lg rounded-xl hover:bg-[#d0ff20] hover:shadow-[0_0_50px_rgba(184,255,0,0.8)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95 cloud-button-animate">
-                    Get Started
-                    <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
-                  </Link>
-                  <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-10 py-6 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-lg rounded-xl hover:border-[#B8FF00] hover:bg-[#B8FF00]/5 hover:shadow-[0_0_40px_rgba(184,255,0,0.5)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95 cloud-button-animate">
-                    Free Audit
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT: Daniel - Founder & System Architect */}
-            <div className="lg:col-span-1 relative group">
+            {/* RIGHT: Daniel */}
+            <div className="relative group overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-l from-[#B8FF00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <Image
                 src="/wiseeye-assets/daniel.png"
                 alt="Daniel - Founder & System Architect"
-                width={350}
-                height={450}
+                width={600}
+                height={800}
                 priority
-                className="w-full h-auto object-cover border-2 border-[#B8FF00]/60 relative z-10 shadow-2xl hero-image-pop transition-all duration-300 cursor-pointer"
+                className="w-full h-96 sm:h-[32rem] lg:h-[500px] object-cover hero-image-pop transition-all duration-300 cursor-pointer brightness-90 group-hover:brightness-100"
               />
-              <div className="mt-4">
-                <p className="text-[#B8FF00] font-black uppercase text-xs tracking-widest mb-1" style={{textShadow: '0 0 10px rgba(184,255,0,0.5)'}}>DANIEL</p>
-                <p className="text-[#c5d3e0] text-sm font-semibold">Founder & System Architect</p>
-                <p className="text-[#7a8a9a] text-xs mt-2">Business Leader · AI Expert</p>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent p-6 lg:p-8">
+                <p className="text-[#B8FF00] font-black uppercase text-lg lg:text-2xl tracking-wider mb-2 hero-title-glow">DANIEL</p>
+                <p className="text-[#c5d3e0] text-sm lg:text-base font-bold">Founder & System Architect</p>
+                <p className="text-[#7a8a9a] text-xs lg:text-sm mt-1">Business Leader · AI Expert</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Central CTA Overlay */}
+          <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+            <div className="text-center space-y-6">
+              <div className="space-y-3">
+                <p className="text-[#B8FF00] text-xs font-black uppercase tracking-widest" style={{textShadow: '0 0 15px rgba(184,255,0,0.6)'}}>
+                  WISE² CLOUD
+                </p>
+                <h1 className="text-[#B8FF00] font-black leading-tight hero-title-glow" style={{fontSize: 'clamp(2rem, 7vw, 3.5rem)', fontFeatureSettings: '"ss01" 1', letterSpacing: '-0.02em'}}>YOUR BUSINESS</h1>
+                <p className="text-white font-black leading-tight hero-title-glow" style={{fontSize: 'clamp(2rem, 7vw, 3.5rem)', letterSpacing: '-0.02em'}}>OUR INFRASTRUCTURE</p>
+              </div>
+
+              <p className="text-sm lg:text-base text-[#c5d3e0] font-semibold max-w-2xl mx-auto">
+                Fast. Secure. Scalable. Reliable.
+              </p>
+
+              <div className="flex flex-col gap-3 pt-4">
+                <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-10 py-6 bg-[#B8FF00] text-[#000000] font-black text-lg rounded-xl hover:bg-[#d0ff20] hover:shadow-[0_0_50px_rgba(184,255,0,0.8)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95 cloud-button-animate">
+                  Get Started
+                  <ArrowRight size={20} />
+                </Link>
+                <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-10 py-6 border-2 border-[#B8FF00]/60 text-[#B8FF00] font-black text-lg rounded-xl hover:border-[#B8FF00] hover:bg-[#B8FF00]/5 hover:shadow-[0_0_40px_rgba(184,255,0,0.5)] hover:-translate-y-1 transition-all duration-200 ease-out focus:ring-2 focus:ring-[#B8FF00] focus:ring-offset-2 focus:ring-offset-[#000000] focus:outline-none active:scale-95 cloud-button-animate">
+                  Free Audit
+                </Link>
               </div>
             </div>
           </div>
 
           {/* Bottom tagline */}
-          <div className="mt-16 pt-12 border-t border-[#B8FF00]/10 text-center">
-            <p className="text-[#B8FF00] text-xl font-black" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)'}}>
+          <div className="text-center py-8 border-t border-[#B8FF00]/10">
+            <p className="text-[#B8FF00] text-lg font-black" style={{textShadow: '0 0 20px rgba(184,255,0,0.5)'}}>
               Building Empires. Changing Culture.
             </p>
           </div>
