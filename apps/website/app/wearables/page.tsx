@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Eye, Radio, Activity, Zap, AlertTriangle, Download, Filter, AlertCircle, Wifi, Battery, Smartphone, Headphones, Cpu, Glasses, Mic, Camera, Database, Cloud, Smartphone as Phone, Radio as Antenna } from 'lucide-react';
+import { Eye, Radio, Activity, Zap, AlertTriangle, Download, Filter, AlertCircle, Wifi, Battery, Smartphone, Headphones, Cpu, Glasses, Mic, Camera, Database, Cloud, Smartphone as Phone, Radio as Antenna, TrendingUp, BarChart3, Clock, Gauge } from 'lucide-react';
 
 const WISE2 = {
   dark: '#050607',
@@ -227,6 +227,111 @@ const StatusPanel = () => {
   );
 };
 
+// Live Activity Feed
+const LiveActivityFeed = () => {
+  const activities = [
+    { time: '2m ago', event: 'CAMERA ACTIVATED', device: 'RAY-BAN META', status: 'success' },
+    { time: '5m ago', event: 'SYNC COMPLETED', device: 'POCKET NODE', status: 'success' },
+    { time: '8m ago', event: 'BATTERY LOW', device: 'HVAC SENSOR', status: 'warning' },
+    { time: '12m ago', event: 'FIELD CAPTURE', device: 'RAY-BAN META', status: 'success' },
+    { time: '15m ago', event: 'CONNECTION RESTORED', device: 'PHONE BRIDGE', status: 'success' },
+  ];
+
+  return (
+    <div className="rounded-lg p-4 border space-y-3" style={{ borderColor: `${WISE2.cyan}30`, backgroundColor: `${WISE2.navy}60` }}>
+      <div className="flex items-center gap-2">
+        <Clock size={16} style={{ color: WISE2.cyan }} />
+        <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: WISE2.cyan }}>LIVE ACTIVITY</h3>
+      </div>
+      <div className="space-y-2">
+        {activities.map((activity, i) => (
+          <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-xs border-l-2 pl-3" style={{ borderColor: activity.status === 'success' ? WISE2.green : WISE2.orange, color: WISE2.muted }}>
+            <div className="flex-1">
+              <div style={{ color: activity.status === 'success' ? WISE2.green : WISE2.orange }}>{activity.event}</div>
+              <div className="text-xs" style={{ color: WISE2.muted }}>{activity.device}</div>
+            </div>
+            <div className="text-xs">{activity.time}</div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Advanced Analytics
+const AdvancedAnalytics = () => {
+  const metrics = [
+    { label: 'Capture Rate', value: '94%', trend: '↑', color: WISE2.green },
+    { label: 'Avg Latency', value: '24ms', trend: '↓', color: WISE2.green },
+    { label: 'Data Quality', value: '98.7%', trend: '↑', color: WISE2.green },
+    { label: 'Active Devices', value: '1,247', trend: '↑', color: WISE2.cyan },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-4">
+        <BarChart3 size={16} style={{ color: WISE2.cyan }} />
+        <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: WISE2.cyan }}>PERFORMANCE METRICS</h3>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {metrics.map((metric, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="rounded-lg p-3 border" style={{ borderColor: `${metric.color}30`, backgroundColor: `${WISE2.navy}60` }}>
+            <div className="text-xs mb-1" style={{ color: WISE2.muted }}>{metric.label}</div>
+            <div className="flex items-end justify-between">
+              <div className="text-sm font-bold" style={{ color: metric.color }}>{metric.value}</div>
+              <div className="text-xs" style={{ color: metric.color }}>{metric.trend}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Device Health Heatmap
+const DeviceHealthHeatmap = () => {
+  const devices = ['RAY-BAN', 'PHONE', 'EDGE', 'SENSORS', 'QUEST'];
+  const hours = Array.from({ length: 24 }, (_, i) => `${i}h`);
+  const getHealthColor = (value: number) => {
+    if (value >= 90) return WISE2.green;
+    if (value >= 70) return WISE2.gold;
+    return WISE2.red;
+  };
+
+  return (
+    <div className="rounded-lg p-4 border" style={{ borderColor: `${WISE2.gold}30`, backgroundColor: `${WISE2.navy}60` }}>
+      <div className="flex items-center gap-2 mb-4">
+        <Gauge size={16} style={{ color: WISE2.gold }} />
+        <h3 className="text-xs font-bold uppercase tracking-wider" style={{ color: WISE2.gold }}>DEVICE HEALTH (24H)</h3>
+      </div>
+      <div className="overflow-x-auto">
+        <div className="space-y-2 pb-2">
+          {devices.map((device) => (
+            <div key={device} className="flex items-center gap-2">
+              <div className="w-16 text-xs font-bold" style={{ color: WISE2.text }}>{device}</div>
+              <div className="flex gap-1">
+                {hours.map((hour, idx) => {
+                  const health = Math.floor(Math.random() * 100) + (idx % 2 === 0 ? 5 : -5);
+                  return (
+                    <motion.div
+                      key={hour}
+                      className="w-2 h-6 rounded-sm"
+                      style={{ backgroundColor: getHealthColor(health) }}
+                      animate={{ opacity: [0.6, 1, 0.6] }}
+                      transition={{ duration: 3, repeat: Infinity, delay: idx * 0.05 }}
+                      title={`${hour}: ${health}%`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // CTA Section
 const CTASection = () => {
   return (
@@ -250,7 +355,7 @@ const CTASection = () => {
 };
 
 export default function WearablesPage() {
-  const [activeSection, setActiveSection] = useState('architecture');
+  const [activeSection, setActiveSection] = useState('intelligence');
 
   return (
     <div style={{ backgroundColor: WISE2.dark, color: WISE2.text }} className="min-h-screen font-mono relative overflow-hidden">
@@ -323,15 +428,15 @@ export default function WearablesPage() {
 
         {/* Tabs for content */}
         <section>
-          <div className="flex gap-2 mb-6 border-b" style={{ borderColor: `${WISE2.cyan}20` }}>
-            {['ARCHITECTURE', 'HVAC', 'CAPTURE', 'ECOSYSTEM'].map((tab) => (
+          <div className="flex gap-2 mb-6 border-b overflow-x-auto" style={{ borderColor: `${WISE2.cyan}20` }}>
+            {['INTELLIGENCE', 'ARCHITECTURE', 'HVAC', 'CAPTURE', 'ECOSYSTEM'].map((tab) => (
               <motion.button
                 key={tab}
                 onClick={() => setActiveSection(tab.toLowerCase())}
-                className="px-4 py-2 text-xs font-bold uppercase border-b-2 transition-all"
+                className="px-4 py-2 text-xs font-bold uppercase border-b-2 transition-all whitespace-nowrap"
                 style={{
-                  borderColor: activeSection === tab.toLowerCase() ? WISE2.green : 'transparent',
-                  color: activeSection === tab.toLowerCase() ? WISE2.green : WISE2.muted,
+                  borderColor: activeSection === tab.toLowerCase() ? WISE2.cyan : 'transparent',
+                  color: activeSection === tab.toLowerCase() ? WISE2.cyan : WISE2.muted,
                 }}
               >
                 {tab}
@@ -339,6 +444,18 @@ export default function WearablesPage() {
             ))}
           </div>
 
+          {activeSection === 'intelligence' && (
+            <div className="space-y-6">
+              <AdvancedAnalytics />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <DeviceHealthHeatmap />
+                </div>
+                <LiveActivityFeed />
+              </div>
+            </div>
+          )}
+          {activeSection === 'architecture' && <ArchitectureFlow />}
           {activeSection === 'hvac' && <HVACFieldMode />}
           {activeSection === 'capture' && <CapturePipeline />}
           {activeSection === 'ecosystem' && <DeviceEcosystem />}
