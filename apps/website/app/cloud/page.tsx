@@ -28,75 +28,75 @@ import { CloudScrollFX } from '@/components/cloud/CloudScrollFX';
 
 export default function CloudLandingPage() {
   return (
-    <main className="cloud-landing bg-[#020403] text-white overflow-hidden">
-      <CloudScrollFX />
+    <main className="cloud-landing bg-white text-[#16181d] overflow-hidden">
       {/* HERO */}
-      <section data-cloud-reveal="hero" className="cloud-hero relative border-b border-white/10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#B8FF00]/5 via-transparent to-transparent" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-12 items-center min-h-[600px]">
+      <section className="cloud-hero relative border-b border-[#d3d7df] overflow-hidden bg-[#f8f9fb]">
+        <div className="relative mx-auto max-w-5xl px-6 py-24 sm:px-8 grid lg:grid-cols-2 gap-16 items-center min-h-[600px]">
 
-          {/* LEFT: Real Infrastructure Details */}
-          <div className={`${cloudPanel} p-4 text-xs`}>
-            <p className={cloudEyebrow}>What You Get</p>
-            <div className="mt-4 space-y-3 text-[#8FA0AE]">
-              <div className="flex justify-between">
-                <span>Uptime SLA</span>
-                <span className="text-[#B8FF00] font-semibold">99.95%</span>
+          {/* LEFT: Specifications */}
+          <div className="bg-white border border-[#d3d7df] rounded-sm p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#5b626e] mb-6">Specs</p>
+            <div className="space-y-4 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-[#353a44]">Uptime SLA</span>
+                <span className="font-mono text-[#e8590c]">99.95%</span>
               </div>
-              <div className="flex justify-between">
-                <span>Data Centers</span>
-                <span className="text-[#B8FF00] font-semibold">3 regions</span>
+              <div className="border-b border-[#e2e5ea]" />
+              <div className="flex justify-between items-center">
+                <span className="text-[#353a44]">Data Centers</span>
+                <span className="font-mono text-[#353a44]">3 regions</span>
               </div>
-              <div className="flex justify-between">
-                <span>DDoS Protection</span>
-                <span className="text-[#B8FF00] font-semibold">Included</span>
+              <div className="border-b border-[#e2e5ea]" />
+              <div className="flex justify-between items-center">
+                <span className="text-[#353a44]">DDoS Protection</span>
+                <Check size={18} className="text-[#1f7a55]" />
               </div>
-              <div className="flex justify-between">
-                <span>SSL Certificates</span>
-                <span className="text-[#B8FF00] font-semibold">Free</span>
+              <div className="border-b border-[#e2e5ea]" />
+              <div className="flex justify-between items-center">
+                <span className="text-[#353a44]">Backups</span>
+                <span className="font-mono text-[#353a44]">Daily</span>
               </div>
-              <div className="flex justify-between">
-                <span>Backups</span>
-                <span className="text-[#B8FF00] font-semibold">Daily</span>
+              <div className="border-b border-[#e2e5ea]" />
+              <div className="flex justify-between items-center">
+                <span className="text-[#353a44]">Auto-scaling</span>
+                <Check size={18} className="text-[#1f7a55]" />
               </div>
-              <div className="flex justify-between">
-                <span>Auto-scaling</span>
-                <span className="text-[#B8FF00] font-semibold">Built-in</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Support</span>
-                <span className="text-[#B8FF00] font-semibold">Email</span>
-              </div>
-              <div className="mt-4 pt-4 border-t border-white/10 text-[10px] leading-relaxed text-[#6B7280]">
-                Infrastructure managed by WISE² with 20i for domain registration & DNS.
+              <div className="mt-6 pt-6 border-t-2 border-[#e2e5ea] text-xs text-[#5b626e] leading-relaxed">
+                Managed by WISE² on 20i infrastructure. See your actual metrics in your dashboard after signup.
               </div>
             </div>
           </div>
 
-          {/* CENTER: Hero Content */}
-          <div className="lg:col-span-1 text-center">
-            <div className="mb-6">
-              <p className="text-5xl font-black text-[#B8FF00] mb-2">WISE²</p>
-              <p className="text-4xl font-black">CLOUD</p>
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
-              Host Your Apps.
-              <br />
-              <span className="text-[#B8FF00]">Without the Headache.</span>
+          {/* RIGHT: Copy */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#5b626e] mb-3">Hosting</p>
+            <h1 className="text-5xl font-bold leading-tight mb-6 text-[#16181d]">
+              Your app. Our infrastructure.
             </h1>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[#B8FF00] mb-6">
-              Managed hosting built for real businesses
+            <p className="text-lg text-[#353a44] mb-8 leading-relaxed">
+              Stop managing servers. WISE² Cloud runs your application on reliable, secure infrastructure. We handle deployment, scaling, monitoring, and backups. You focus on your product.
             </p>
-            <p className="text-[#A7ADA8] mb-8 leading-relaxed text-sm">
-              We manage the servers. You manage your business. WISE² Cloud handles uptime, security, backups, and scaling so you can focus on what matters.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/cloud/plans" className={cloudBtnPrimary}>
+            <ul className="space-y-3 mb-10 text-sm text-[#353a44]">
+              <li className="flex gap-3">
+                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
+                <span>Deploy in minutes, not weeks</span>
+              </li>
+              <li className="flex gap-3">
+                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
+                <span>99.95% uptime SLA with automatic failover</span>
+              </li>
+              <li className="flex gap-3">
+                <Check size={20} className="text-[#e8590c] flex-shrink-0 mt-0.5" />
+                <span>Daily backups across 3 data centers</span>
+              </li>
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link href="/cloud/plans" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#e8590c] text-white font-semibold rounded-sm hover:bg-[#c9420a] transition-colors">
                 Get started
                 <ArrowRight size={16} />
               </Link>
-              <Link href="/cloud/plans" className={cloudBtnGhost}>
-                Build your cloud
+              <Link href="/cloud/audit" className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-[#d3d7df] text-[#16181d] font-semibold rounded-sm hover:bg-[#f8f9fb] transition-colors">
+                Free infrastructure audit
               </Link>
             </div>
           </div>
