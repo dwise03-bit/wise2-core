@@ -109,6 +109,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.website
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://wise2.net}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+        NEXT_PUBLIC_DASHBOARD_URL: ${NEXT_PUBLIC_DASHBOARD_URL:-https://wise2.net}
+        NEXT_PUBLIC_ANALYTICS_ID: ${NEXT_PUBLIC_ANALYTICS_ID:-}
     image: wise2-core-website:latest
     container_name: wise2-website
     restart: unless-stopped

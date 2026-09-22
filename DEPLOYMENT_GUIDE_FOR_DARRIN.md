@@ -1,10 +1,13 @@
 # WISE² Deployment Guide for Darrin
 
 **Last Updated**: 2026-09-20  
-**Status**: Production-Ready  
+**Status**: Deployment Runbook — validate the target Compose stack before use  
 **Target**: VPS at 173.208.147.165 (dwise user)
 
 ---
+
+> [!WARNING]
+> Do not use `docker system prune`, `git reset --hard`, `kill -9`, or a full `docker-compose down` as routine deployment steps. These actions can remove rollback artifacts, destroy uncommitted server changes, or interrupt unrelated services. Build and restart only the services that the approved change requires.
 
 ## ⚡ Quick Start (5 minutes)
 
@@ -18,12 +21,13 @@ ssh dwise@173.208.147.165
 cd /home/dwise/wise2-core
 git pull origin main
 
-# 3. Restart services
-sudo docker-compose -f docker-compose.prod.yml up -d --build
+# 3. Build and restart only the approved service
+# Example for a website-only change:
+sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps website
 
-# 4. Verify (wait 60 seconds)
+# 4. Verify the targeted service (wait for its health check)
 sleep 60
-sudo docker-compose -f docker-compose.prod.yml ps
+sudo docker-compose -f docker-compose.prod.yml ps website
 
 # 5. Test
 curl https://wise2.net/
@@ -85,27 +89,23 @@ git pull origin main
 git log -1 --oneline  # Should show the latest commit from dwise
 ```
 
-### Step 3: Stop Old Services (30 sec)
+### Step 3: Identify the deployment scope (30 sec)
+
+For a website-only change, do not restart the API, database, cache, or unrelated applications. Confirm the exact service and current running revision before proceeding.
 
 ```bash
-# Bring down all containers (keeps data)
-sudo docker-compose -f docker-compose.prod.yml down
-
-# Remove orphaned containers and unused images
-sudo docker system prune -af
-
-# Verify all stopped
-sudo docker ps  # Should show no WISE² containers
+git rev-parse --short HEAD
+sudo docker-compose -f docker-compose.prod.yml ps website
 ```
 
-### Step 4: Build & Start (3 min)
+### Step 4: Build & Start the approved service (3 min)
 
 ```bash
-# Build and start all services
-sudo docker-compose -f docker-compose.prod.yml up -d --build
+# Website-only deployment; preserves dependent production services.
+sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps website
 
-# Monitor the build (press Ctrl+C to stop watching)
-sudo docker-compose -f docker-compose.prod.yml logs -f
+# Monitor only the service being deployed (press Ctrl+C to stop watching)
+sudo docker-compose -f docker-compose.prod.yml logs -f website
 ```
 
 ### Step 5: Wait & Verify (2 min)
@@ -269,11 +269,14 @@ git merge --abort
 If deployment breaks production, **roll back to the last known working version:**
 
 ```bash
-# Reset to previous commit
-git reset --hard HEAD~1
+# First identify the last known-good, recorded commit or release tag.
+git log --oneline -5
 
-# Re-deploy
-sudo docker-compose -f docker-compose.prod.yml up -d --build
+# Check out that exact known-good revision only after approval.
+git checkout <known-good-commit-or-tag>
+
+# Rebuild only the affected service.
+sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps website
 
 # Verify
 sleep 60
@@ -405,8 +408,8 @@ sudo docker-compose -f docker-compose.prod.yml restart api
 # Stop all services (keeps data)
 sudo docker-compose -f docker-compose.prod.yml down
 
-# Full deployment
-cd /home/dwise/wise2-core && git pull && sudo docker-compose -f docker-compose.prod.yml down && sudo docker-compose -f docker-compose.prod.yml up -d --build
+# Website-only deployment
+cd /home/dwise/wise2-core && git pull --ff-only origin main && sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps website
 
 # Check specific port
 sudo lsof -i :3001
@@ -414,8 +417,8 @@ sudo lsof -i :3001
 # View docker disk usage
 sudo docker system df
 
-# Clean up unused images/volumes
-sudo docker system prune -a
+# Review disk usage; request an approved maintenance window before cleanup
+sudo docker system df
 ```
 
 ---
