@@ -66,4 +66,10 @@ export const BLAKKHAIL_PRODUCT_IMAGES: Record<string, string> = {
   'alien-alliance-gray': BLAKKHAIL_LEGACY.assets.shopPhotos[3],
   'alien-alliance-black': BLAKKHAIL_LEGACY.assets.shopPhotos[4],
   'alien-alliance-white': BLAKKHAIL_LEGACY.assets.shopPhotos[5],
+  'distressed-red-hoodie-01': '/sencere-assets/blakkhail/sencere-distressed-red-01.webp',
+  'distressed-red-hoodie-02': '/sencere-assets/blakkhail/sencere-distressed-red-02.webp',
+  'distressed-red-hoodie-03': '/sencere-assets/blakkhail/sencere-distressed-red-03.webp',
+  'piff-city-stone-01': '/sencere-assets/blakkhail/sencere-piff-city-stone-01.webp',
+  'piff-city-stone-02': '/sencere-assets/blakkhail/sencere-piff-city-stone-02.webp',
+  'piff-city-stone-03': '/sencere-assets/blakkhail/sencere-piff-city-stone-03.webp',
 };
