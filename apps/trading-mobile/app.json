@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "WISE² Trading",
+    "slug": "wise2-trading",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "backgroundColor": "#050607",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#050607"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "entryPoint": "./index.tsx",
+    "ios": {
+      "supportsTabletMode": true,
+      "bundleIdentifier": "com.wise2.trading"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#050607"
+      },
+      "package": "com.wise2.trading",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
