@@ -12,7 +12,7 @@ import {
   Menu,
 } from 'lucide-react';
 import { TradingLandingExperience } from './TradingLandingExperience';
-import CommandCenter from './CommandCenter';
+import TradingDashboard from './TradingDashboard';
 import Markets from './Markets';
 import TradingJournal from './TradingJournal';
 import StrategyLab from './StrategyLab';
@@ -32,14 +32,19 @@ interface NavItem {
 }
 
 export default function TradingPage() {
-  const [currentPage, setCurrentPage] = useState<Page>('landing');
+  const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Check if user is authenticated (for now, assume landing for demo)
-  const isAuthenticated = false;
+  // Check if user is authenticated (for demo, default to authenticated state)
+  const isAuthenticated = true;
 
   if (!isAuthenticated && currentPage === 'landing') {
     return <TradingLandingExperience />;
+  }
+
+  // If showing landing and authenticated, go to dashboard
+  if (currentPage === 'landing' && isAuthenticated) {
+    return <TradingDashboard />;
   }
 
   const navItems: NavItem[] = [
@@ -103,7 +108,7 @@ export default function TradingPage() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          {currentPage === 'dashboard' && <CommandCenter />}
+          {currentPage === 'dashboard' && <TradingDashboard />}
           {currentPage === 'markets' && <Markets />}
           {currentPage === 'strategy' && <StrategyLab />}
           {currentPage === 'journal' && <TradingJournal />}

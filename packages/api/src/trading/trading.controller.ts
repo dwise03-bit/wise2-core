@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { TradingService } from './trading.service';
+import { TradingAssistantService } from './trading.assistant';
 
 /**
  * WISE² Trading API Controller
@@ -17,7 +18,10 @@ import { TradingService } from './trading.service';
  */
 @Controller('trading')
 export class TradingController {
-  constructor(private readonly tradingService: TradingService) {}
+  constructor(
+    private readonly tradingService: TradingService,
+    private readonly assistantService: TradingAssistantService
+  ) {}
 
   /**
    * GET /api/trading/account
@@ -172,5 +176,38 @@ export class TradingController {
     }
   ) {
     return this.tradingService.logRiskEvent(req.user.id, eventData);
+  }
+
+  /**
+   * POST /api/trading/assistant
+   * AI Trading Assistant - market analysis & guidance
+   */
+  @Post('assistant')
+  async assistantChat(
+    @Body() data: {
+      message: string;
+      context?: {
+        symbol: string;
+        lastPrice: number;
+        change: number;
+        regime: string;
+        setups: number;
+      };
+      conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
+    }
+  ) {
+    const response = await this.assistantService.processMessage(
+      data.message,
+      data.context || {
+        symbol: 'BTCUSD',
+        lastPrice: 0,
+        change: 0,
+        regime: 'RANGING',
+        setups: 0,
+      },
+      data.conversationHistory || []
+    );
+
+    return { response };
   }
 }
