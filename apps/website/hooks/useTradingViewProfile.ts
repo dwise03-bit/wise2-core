@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getApiUrl } from '@/lib/api-config';
 
 interface TradingViewWatchlistItem {
   symbol: string;
@@ -26,8 +27,9 @@ export function useTradingViewProfile(username: string) {
         setLoading(true);
 
         // Fetch via WISE² backend (uses cached TradingView API)
+        const apiUrl = getApiUrl();
         const response = await fetch(
-          `http://localhost:3000/api/trading/tradingview/watchlist/${username}`
+          `${apiUrl}/api/trading/tradingview/watchlist/${username}`
         );
 
         if (!response.ok) {

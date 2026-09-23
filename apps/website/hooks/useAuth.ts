@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getBrowserAuthToken, getBrowserAuthUser, clearBrowserAuthSession, BrowserAuthUser } from '@/lib/auth-session';
+import { getApiUrl } from '@/lib/api-config';
 
 interface UseAuthReturn {
   user: BrowserAuthUser | null;
@@ -41,7 +42,8 @@ export function useAuth(): UseAuthReturn {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/refresh', {
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/v1/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),

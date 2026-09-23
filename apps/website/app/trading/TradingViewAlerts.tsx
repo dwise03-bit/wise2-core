@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Bell, X, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getApiUrl } from '@/lib/api-config';
 
 interface Alert {
   id: string;
@@ -36,7 +37,8 @@ export default function TradingViewAlerts({
     if (formData.symbol && formData.price) {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:3000/api/trading/tradingview/alerts', {
+        const apiUrl = getApiUrl();
+        const response = await fetch(`${apiUrl}/api/trading/tradingview/alerts`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -63,8 +65,9 @@ export default function TradingViewAlerts({
   const handleDelete = async (id: string) => {
     setLoading(true);
     try {
+      const apiUrl = getApiUrl();
       const response = await fetch(
-        `http://localhost:3000/api/trading/tradingview/alerts/${username}/${id}`,
+        `${apiUrl}/api/trading/tradingview/alerts/${username}/${id}`,
         { method: 'DELETE' }
       );
 
@@ -81,8 +84,9 @@ export default function TradingViewAlerts({
   const handleToggle = async (id: string) => {
     setLoading(true);
     try {
+      const apiUrl = getApiUrl();
       const response = await fetch(
-        `http://localhost:3000/api/trading/tradingview/alerts/${username}/${id}/toggle`,
+        `${apiUrl}/api/trading/tradingview/alerts/${username}/${id}/toggle`,
         { method: 'POST' }
       );
 

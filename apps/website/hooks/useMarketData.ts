@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getWebSocketUrl } from '@/lib/api-config';
 
 interface Quote {
   symbol: string;
@@ -23,7 +24,7 @@ export function useMarketData(symbols: string[] = ['BTCUSD', 'ETHUSD', 'AAPL', '
 
   useEffect(() => {
     // Initialize WebSocket connection
-    const wsUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const wsUrl = getWebSocketUrl();
     const newSocket = io(wsUrl, {
       path: '/socket.io',
       reconnection: true,
