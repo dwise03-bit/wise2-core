@@ -1,5 +1,5 @@
 import { Client, TextChannel, EmbedBuilder } from 'discord.js';
-import { AETHERTrader, TradeSetup, OHLCV } from '../../../packages/trading-engine/src/aether-trader';
+import { AETHERTrader, TradeSetup, OHLCV } from '../types/trading-engine';
 import { PriceDataService } from './price-data-service';
 import { ChartService } from './chart-service';
 
@@ -7,7 +7,7 @@ interface TrackedSymbol {
   symbol: string;
   trader: AETHERTrader;
   channelId: string;
-  updateInterval: NodeJS.Timer | null;
+  updateInterval: ReturnType<typeof setInterval> | null;
   lastSetups: TradeSetup[];
 }
 
@@ -16,7 +16,7 @@ export class TradingBotService {
   private priceDataService: PriceDataService;
   private chartService: ChartService;
   private trackedSymbols = new Map<string, TrackedSymbol>();
-  private updateTimer: NodeJS.Timer | null = null;
+  private updateTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     client: Client,
@@ -105,7 +105,7 @@ export class TradingBotService {
 
             // Detect new setups
             const newSetups = setups.filter(
-              (setup) => !tracked.lastSetups.find((s) => s.id === setup.id)
+              (setup: TradeSetup) => !tracked.lastSetups.find((s) => s.id === setup.id)
             );
 
             if (newSetups.length > 0) {
@@ -132,7 +132,7 @@ export class TradingBotService {
     try {
       const channel = (await this.client.channels.fetch(channelId)) as TextChannel;
 
-      for (const setup of setups) {
+      for (const setup of setups as TradeSetup[]) {
         const embed = new EmbedBuilder()
           .setTitle(`🎯 New Setup: ${setup.symbol}`)
           .setColor(setup.direction === 'LONG' ? 0x00ff00 : 0xff0000)

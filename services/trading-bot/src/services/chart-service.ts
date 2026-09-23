@@ -1,5 +1,5 @@
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
-import { TradeSetup, OHLCV } from '../../../packages/trading-engine/src/aether-trader';
+import { TradeSetup, OHLCV } from '../types/trading-engine';
 
 /**
  * ChartService: Generate trading charts with technical analysis overlays

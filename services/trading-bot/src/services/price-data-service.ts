@@ -1,6 +1,6 @@
 import axios from 'axios';
 import NodeCache from 'node-cache';
-import { OHLCV } from '../../../packages/trading-engine/src/aether-trader';
+import { OHLCV } from '../types/trading-engine';
 
 /**
  * PriceDataService: Fetch real market data from exchanges/APIs
