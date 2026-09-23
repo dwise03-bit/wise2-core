@@ -11,10 +11,15 @@ function withBlackhailBrand(request: NextRequest): Headers {
 }
 
 function rewriteTo(request: NextRequest, pathname: string) {
+  // Modify request to set the x-site-brand header
+  const headers = withBlackhailBrand(request);
+  // Rewrite the URL internally while preserving headers
   const url = request.nextUrl.clone();
   url.pathname = pathname;
-  return NextResponse.rewrite(url, {
-    request: { headers: withBlackhailBrand(request) },
+  return NextResponse.next({
+    request: {
+      headers,
+    },
   });
 }
 
