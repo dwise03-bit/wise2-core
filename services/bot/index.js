@@ -4734,16 +4734,8 @@ async function deployCommands() {
     return cmd.data;
   });
 
-  // Add revenue commands from revenue-commands.js
-  try {
-    const revenueCommands = require('./revenue-commands');
-    if (revenueCommands.commands && Array.isArray(revenueCommands.commands)) {
-      const revenueCommandData = revenueCommands.commands.map((cmd) => cmd.toJSON());
-      commandData = [...commandData, ...revenueCommandData];
-    }
-  } catch (error) {
-    console.warn('Warning: Could not load revenue commands:', error.message);
-  }
+  // Revenue commands are already represented in the main commands object above.
+  // Do not append revenue-commands.js here: Discord rejects duplicate slash-command names.
 
   // Add contractor commands from contractor-commands.js
   try {
