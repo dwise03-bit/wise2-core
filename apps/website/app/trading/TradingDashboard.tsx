@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import {
   TrendingUp,
   TrendingDown,
@@ -203,6 +205,18 @@ export default function TradingDashboard() {
     }
   }, [quotes, selectedSymbol]);
 
+  // GSAP Bento stagger animation
+  useGSAP(() => {
+    gsap.from('.bento-grid > *', {
+      opacity: 0,
+      scale: 0.92,
+      y: 16,
+      duration: 0.4,
+      stagger: { each: 0.06, from: 'start', grid: 'auto' },
+      ease: 'back.out(1.4)',
+    });
+  });
+
   return (
     <div className="flex h-screen bg-[#050607] text-white">
       {/* Sidebar */}
@@ -330,9 +344,9 @@ export default function TradingDashboard() {
           </div>
         </div>
 
-        {/* Content Grid */}
+        {/* Content Grid - Bento Layout */}
         <div className="p-8">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 auto-rows-max bento-grid" data-gsap-animation="stagger">
             {/* Main Chart Section */}
             <div className="col-span-2 space-y-4">
               {/* Chart Card */}

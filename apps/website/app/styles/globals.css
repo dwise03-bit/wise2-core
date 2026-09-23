@@ -39,6 +39,17 @@
   --wise-electric-blue: #00D9FF;      /* Use --wise-cyan instead */
   --wise-hover-blue: #00D9FF;         /* Use --wise-cyan instead */
 
+  /* ===== UI/UX PRO MAX DESIGN SYSTEM (Trading Dashboard) ===== */
+  --color-primary: #0F172A;
+  --color-accent: #22C55E;
+  --color-secondary: #1E293B;
+  --color-background: #020617;
+  --color-foreground: #F8FAFC;
+  --color-destructive: #EF4444;
+  --color-ring: #0F172A;
+  --color-muted: #1A1E2F;
+  --color-border: #334155;
+
   /* ===== TYPOGRAPHY SYSTEM ===== */
   --font-headers: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-body: "Segoe UI", system-ui, -apple-system, sans-serif;
