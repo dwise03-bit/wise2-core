@@ -12,7 +12,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
-import TradingViewChart from './TradingViewChart';
+import MarketChart from './MarketChart';
 import TradingViewWatchlist from './TradingViewWatchlist';
 import TradingViewAlerts from './TradingViewAlerts';
 import AITradingAssistant from './AITradingAssistant';
@@ -222,7 +222,7 @@ export default function TradingDashboard() {
                 <p>Vol: {(marketData.volume / 1000000).toFixed(1)}M</p>
               </div>
             </div>
-            <TradingViewChart symbol={selectedSymbol} data={chartData} />
+            <MarketChart symbol={selectedSymbol} data={chartData} />
           </motion.div>
 
           {/* Market Regime & Setups */}
