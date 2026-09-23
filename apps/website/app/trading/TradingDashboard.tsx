@@ -16,9 +16,11 @@ import {
   Zap,
   BookOpen,
   Disc3,
+  LogOut,
 } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useTradingViewProfile } from '@/hooks/useTradingViewProfile';
+import { useAuth } from '@/hooks/useAuth';
 import MarketChart from './MarketChart';
 import TradingViewWatchlist from './TradingViewWatchlist';
 import TradingViewAlerts from './TradingViewAlerts';
@@ -75,10 +77,35 @@ function NavItem({ icon, label, active, onClick }: NavItemProps) {
 }
 
 export default function TradingDashboard() {
+  const { user, token, isAuthenticated, isLoading, logout } = useAuth();
   const [selectedSymbol, setSelectedSymbol] = useState('BTCUSD');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [activeNav, setActiveNav] = useState('command-center');
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      window.location.href = '/auth/signin';
+    }
+  }, [isAuthenticated, isLoading]);
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">⏳</div>
+          <p className="text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Load user's real TradingView profile and watchlist
   const { watchlist: tvWatchlist, profile, loading } = useTradingViewProfile('dwise03');
@@ -259,6 +286,23 @@ export default function TradingDashboard() {
             onClick={() => setActiveNav('settings')}
           />
         </nav>
+
+        {/* User Info & Logout */}
+        <div className="mt-auto pt-6 border-t border-[#1f2a38]">
+          {user && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-400">Logged in as</p>
+              <p className="text-sm font-semibold text-[#00D9FF]">{user.email}</p>
+            </div>
+          )}
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/40 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all font-semibold"
+          >
+            <LogOut size={20} />
+            <span className="text-sm">Logout</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
