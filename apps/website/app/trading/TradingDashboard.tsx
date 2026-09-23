@@ -70,7 +70,7 @@ export default function TradingDashboard() {
     { symbol: 'MSFT', price: 380, change: -5, changePercent: -1.3, watched: false },
   ]);
 
-  // Sync TradingView watchlist with local state
+  // Sync TradingView watchlist with local state (only on mount or when tvWatchlist changes)
   useEffect(() => {
     if (tvWatchlist.length > 0) {
       setWatchlist(
@@ -83,7 +83,7 @@ export default function TradingDashboard() {
         }))
       );
     }
-  }, [tvWatchlist]);
+  }, [tvWatchlist.length]); // Only depend on length to avoid infinite loops
 
   // Alerts state
   const [alerts, setAlerts] = useState([
