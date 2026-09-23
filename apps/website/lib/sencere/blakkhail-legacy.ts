@@ -25,7 +25,8 @@ export const BLAKKHAIL_LEGACY = {
     logo: '/sencere-assets/blakkhail/sencere-rabbit-logo.png',
     wordmark: '/sencere-assets/blakkhail/blakkhail-wordmark.png',
     skull: '/sencere-assets/blakkhail/piff-city-skull.png',
-    dropAd: '/sencere-assets/blakkhail/blakkhail-drop-ad.png',
+    dropAd: '/sencere-assets/blakkhail/sencere-creative-studio-hero.webp',
+    studioHero: '/sencere-assets/blakkhail/sencere-creative-studio-hero.webp',
     latestDrop: [
       '/sencere-assets/blakkhail/latest-drop-01.jpg',
       '/sencere-assets/blakkhail/latest-drop-02.jpg',
