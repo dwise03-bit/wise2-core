@@ -10,6 +10,10 @@ import {
   Eye,
   EyeOff,
   Settings,
+  BarChart3,
+  Zap,
+  BookOpen,
+  Disc3,
 } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useTradingViewProfile } from '@/hooks/useTradingViewProfile';
@@ -44,10 +48,35 @@ interface MarketData {
   setups: number;
 }
 
+interface NavItemProps {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+function NavItem({ icon, label, active, onClick }: NavItemProps) {
+  return (
+    <motion.button
+      whileHover={{ x: 4 }}
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
+        active
+          ? 'bg-[#00D9FF]/15 border border-[#00D9FF]/40 text-[#00D9FF] font-semibold'
+          : 'text-gray-400 hover:text-[#00D9FF] hover:bg-[#00D9FF]/5'
+      }`}
+    >
+      {icon}
+      <span className="text-sm">{label}</span>
+    </motion.button>
+  );
+}
+
 export default function TradingDashboard() {
   const [selectedSymbol, setSelectedSymbol] = useState('BTCUSD');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [activeNav, setActiveNav] = useState('command-center');
 
   // Load user's real TradingView profile and watchlist
   const { watchlist: tvWatchlist, profile, loading } = useTradingViewProfile('dwise03');
@@ -83,7 +112,7 @@ export default function TradingDashboard() {
         }))
       );
     }
-  }, [tvWatchlist.length]); // Only depend on length to avoid infinite loops
+  }, [tvWatchlist.length]);
 
   // Alerts state
   const [alerts, setAlerts] = useState([
@@ -105,16 +134,17 @@ export default function TradingDashboard() {
     },
   ]);
 
+  // Positions state
   const [positions, setPositions] = useState<Position[]>([
     {
       id: '1',
       symbol: 'BTCUSD',
       direction: 'LONG',
       entryPrice: 42500,
-      quantity: 0.5,
+      quantity: 0.05,
       currentPrice: 43200,
-      pnl: 350,
-      pnlPercent: 1.65,
+      pnl: 35,
+      pnlPercent: 1.64,
       stopPrice: 41500,
       target: 45000,
     },
@@ -126,7 +156,7 @@ export default function TradingDashboard() {
     change: 700,
     changePercent: 1.65,
     high: 43500,
-    low: 42100,
+    low: 42800,
     volume: 24500000,
     regime: 'TRENDING_UP',
     setups: 2,
@@ -174,245 +204,301 @@ export default function TradingDashboard() {
   }, [quotes, selectedSymbol]);
 
   return (
-    <div className="min-h-screen bg-[#070812] text-white p-6">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-cyan-100">Trading Command Center</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
+    <div className="flex h-screen bg-[#050607] text-white">
+      {/* Sidebar */}
+      <div className="w-56 border-r border-[#1f2a38] bg-[#0a0f1a] p-6">
+        <div className="mb-8">
+          <h1 className="text-lg font-black tracking-tight">
+            <span className="text-[#00D9FF]">WISE</span><span className="text-[#00FF7F]">²</span> TRADING
+          </h1>
+          <p className="text-xs text-[#00D9FF] mt-1 opacity-75">QUANT PLATFORM</p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <ScreenRecorder isRecording={isRecording} onToggle={setIsRecording} />
-          <button
-            onClick={() => setIsAssistantOpen(!isAssistantOpen)}
-            className="p-3 rounded-lg bg-violet-900/20 border border-violet-400/30 text-violet-300 hover:bg-violet-900/30 transition"
-          >
-            <MessageSquare className="w-5 h-5" />
-          </button>
-          <button className="p-3 rounded-lg bg-violet-900/20 border border-violet-400/30 text-violet-300 hover:bg-violet-900/30 transition">
-            <Settings className="w-5 h-5" />
-          </button>
-        </div>
+        <nav className="space-y-2">
+          <NavItem
+            icon={<BarChart3 size={20} />}
+            label="Command Center"
+            active={activeNav === 'command-center'}
+            onClick={() => setActiveNav('command-center')}
+          />
+          <NavItem
+            icon={<TrendingUp size={20} />}
+            label="Markets"
+            active={activeNav === 'markets'}
+            onClick={() => setActiveNav('markets')}
+          />
+          <NavItem
+            icon={<Zap size={20} />}
+            label="Strategy Lab"
+            active={activeNav === 'strategy-lab'}
+            onClick={() => setActiveNav('strategy-lab')}
+          />
+          <NavItem
+            icon={<BookOpen size={20} />}
+            label="Journal"
+            active={activeNav === 'journal'}
+            onClick={() => setActiveNav('journal')}
+          />
+          <NavItem
+            icon={<Settings size={20} />}
+            label="Settings"
+            active={activeNav === 'settings'}
+            onClick={() => setActiveNav('settings')}
+          />
+        </nav>
       </div>
 
-      {/* Account Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {[
-          { label: 'Account Equity', value: `$${accountStats.equity.toLocaleString()}`, color: 'cyan' },
-          { label: 'Available', value: `$${accountStats.available.toLocaleString()}`, color: 'slate' },
-          { label: 'Day P&L', value: `$${accountStats.pnl.toFixed(2)}`, color: accountStats.pnl > 0 ? 'green' : 'red' },
-          { label: 'Risk Used', value: `${accountStats.riskUsed.toFixed(1)}%`, color: 'orange' },
-        ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className={`bg-gradient-to-br from-${stat.color}-900/10 to-${stat.color}-900/5 border border-${stat.color}-500/20 rounded-lg p-4`}
-          >
-            <p className={`text-sm text-${stat.color}-300 mb-1`}>{stat.label}</p>
-            <p className={`text-2xl font-bold text-${stat.color}-100`}>{stat.value}</p>
-          </motion.div>
-        ))}
-      </div>
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        {/* Top Header - PRODUCTION POLISH */}
+        <div className="border-b border-[#1f2a38] bg-[#0a0f1a] px-8 py-6">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <h2 className="text-4xl font-black tracking-tighter mb-1">
+                <span className="text-[#00D9FF]">TRADING</span> <span className="text-white">COMMAND CENTER</span>
+              </h2>
+              <p className="text-sm text-[#00D9FF] opacity-70 font-medium tracking-wide">
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 0 12px rgba(0, 217, 255, 0.3)' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#00D9FF]/10 border border-[#00D9FF] rounded font-semibold text-[#00D9FF] hover:bg-[#00D9FF]/20 transition-all shadow-lg shadow-[#00D9FF]/5"
+              >
+                <Disc3 size={18} />
+                Record Session
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="p-2.5 hover:bg-[#1f2a38] rounded transition text-[#00D9FF] hover:text-[#00FF7F]"
+              >
+                <MessageSquare size={20} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="p-2.5 hover:bg-[#1f2a38] rounded transition text-[#C4A369] hover:text-[#00FF7F]"
+              >
+                <Settings size={20} />
+              </motion.button>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        {/* Main Chart */}
-        <div className="col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0b0d1c] rounded-lg border border-cyan-500/20 p-4"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-cyan-100">{selectedSymbol}</h2>
-                <p className="text-sm text-slate-400">
-                  <span className="text-lg font-bold text-cyan-100">${marketData.lastPrice.toFixed(2)}</span>
-                  <span className={`ml-2 ${marketData.changePercent > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {marketData.changePercent > 0 ? '+' : ''}{marketData.changePercent.toFixed(2)}%
-                  </span>
-                </p>
-              </div>
-              <div className="text-right text-sm text-slate-400">
-                <p>High: ${marketData.high.toFixed(2)}</p>
-                <p>Low: ${marketData.low.toFixed(2)}</p>
-                <p>Vol: {(marketData.volume / 1000000).toFixed(1)}M</p>
-              </div>
-            </div>
-            <MarketChart symbol={selectedSymbol} data={chartData} />
-          </motion.div>
-
-          {/* Market Regime & Setups */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-2 gap-4 mt-4"
-          >
-            <div className="bg-[#0b0d1c] rounded-lg border border-violet-500/20 p-4">
-              <p className="text-sm text-slate-400 mb-2">Market Regime</p>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-                <span className="font-bold text-green-300">{marketData.regime}</span>
-              </div>
-            </div>
-            <div className="bg-[#0b0d1c] rounded-lg border border-violet-500/20 p-4">
-              <p className="text-sm text-slate-400 mb-2">Active Setups</p>
-              <span className="text-2xl font-bold text-cyan-100">{marketData.setups}</span>
-            </div>
-          </motion.div>
+          {/* Account Stats - PRODUCTION POLISH */}
+          <div className="grid grid-cols-4 gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="border border-[#00D9FF]/20 rounded-lg p-4 bg-[#050607] hover:border-[#00D9FF]/40 hover:bg-[#0a0f1a] transition-all group"
+            >
+              <div className="text-xs font-bold text-[#00D9FF] uppercase tracking-wider mb-2 opacity-75 group-hover:opacity-100">Equity</div>
+              <div className="text-3xl font-black text-[#00D9FF]">${accountStats.equity.toLocaleString()}</div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="border border-[#C4A369]/20 rounded-lg p-4 bg-[#050607] hover:border-[#C4A369]/40 hover:bg-[#0a0f1a] transition-all group"
+            >
+              <div className="text-xs font-bold text-[#C4A369] uppercase tracking-wider mb-2 opacity-75 group-hover:opacity-100">Available</div>
+              <div className="text-3xl font-black text-[#C4A369]">${accountStats.available.toLocaleString()}</div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="border border-[#00FF7F]/20 rounded-lg p-4 bg-[#050607] hover:border-[#00FF7F]/40 hover:bg-[#0a0f1a] transition-all group"
+            >
+              <div className="text-xs font-bold text-[#00FF7F] uppercase tracking-wider mb-2 opacity-75 group-hover:opacity-100">Day P&L</div>
+              <div className="text-3xl font-black text-[#00FF7F]">${accountStats.pnl.toLocaleString()}</div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="border border-[#F59E0B]/20 rounded-lg p-4 bg-[#050607] hover:border-[#F59E0B]/40 hover:bg-[#0a0f1a] transition-all group"
+            >
+              <div className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider mb-2 opacity-75 group-hover:opacity-100">Risk Used</div>
+              <div className="text-3xl font-black text-[#F59E0B]">{accountStats.riskUsed.toFixed(1)}%</div>
+            </motion.div>
+          </div>
         </div>
 
-        {/* Right Sidebar: Positions & Quick Actions */}
-        <div className="space-y-4">
-          {/* New Trade Button */}
-          <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="w-full py-3 px-4 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white font-bold rounded-lg hover:from-cyan-500 hover:to-cyan-400 transition flex items-center justify-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            New Trade
-          </motion.button>
+        {/* Content Grid */}
+        <div className="p-8">
+          <div className="grid grid-cols-3 gap-6">
+            {/* Main Chart Section */}
+            <div className="col-span-2 space-y-4">
+              {/* Chart Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="border border-[#1f2a38] rounded-lg p-6 bg-[#0a0f1a] hover:border-[#00D9FF]/30 transition-all"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-3xl font-black text-[#00D9FF]">{selectedSymbol}</h2>
+                    <p className="text-sm text-gray-400 mt-1">
+                      <span className="text-xl font-bold text-white">${marketData.lastPrice.toFixed(2)}</span>
+                      <span
+                        className={`ml-3 font-semibold ${
+                          marketData.changePercent > 0 ? 'text-[#00FF7F]' : 'text-red-400'
+                        }`}
+                      >
+                        {marketData.changePercent > 0 ? '+' : ''}{marketData.changePercent.toFixed(2)}%
+                      </span>
+                    </p>
+                  </div>
+                  <div className="text-right text-sm text-gray-400 space-y-1">
+                    <p className="font-medium">H: <span className="text-white font-bold">${marketData.high.toFixed(2)}</span></p>
+                    <p className="font-medium">L: <span className="text-white font-bold">${marketData.low.toFixed(2)}</span></p>
+                    <p className="font-medium">V: <span className="text-white font-bold">{(marketData.volume / 1000000).toFixed(1)}M</span></p>
+                  </div>
+                </div>
+                <MarketChart symbol={selectedSymbol} data={chartData} />
+              </motion.div>
 
-          {/* TradingView Watchlist */}
-          <TradingViewWatchlist
-            items={watchlist}
-            onAddSymbol={(symbol) => {
-              if (!watchlist.find(w => w.symbol === symbol)) {
-                setWatchlist([...watchlist, { symbol, price: 0, change: 0, changePercent: 0 }]);
-              }
-            }}
-            onRemoveSymbol={(symbol) => {
-              setWatchlist(watchlist.filter(w => w.symbol !== symbol));
-            }}
-            onToggleWatch={(symbol) => {
-              setWatchlist(
-                watchlist.map(w =>
-                  w.symbol === symbol ? { ...w, watched: !w.watched } : w
-                )
-              );
-            }}
-          />
-
-          {/* TradingView Alerts */}
-          <TradingViewAlerts
-            alerts={alerts}
-            onCreateAlert={(symbol, type, price) => {
-              setAlerts([
-                ...alerts,
-                {
-                  id: Date.now().toString(),
-                  symbol,
-                  type,
-                  price,
-                  active: true,
-                  triggered: false,
-                },
-              ]);
-            }}
-            onDeleteAlert={(id) => {
-              setAlerts(alerts.filter(a => a.id !== id));
-            }}
-            onToggleAlert={(id) => {
-              setAlerts(
-                alerts.map(a =>
-                  a.id === id ? { ...a, active: !a.active } : a
-                )
-              );
-            }}
-          />
-
-          {/* Open Positions */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-[#0b0d1c] rounded-lg border border-violet-500/20 p-4"
-          >
-            <h3 className="font-bold text-cyan-100 mb-3">Open Positions ({positions.length})</h3>
-            <div className="space-y-3">
-              {positions.map(pos => (
+              {/* Market Regime & Setups */}
+              <div className="grid grid-cols-2 gap-4">
                 <motion.div
-                  key={pos.id}
-                  whileHover={{ backgroundColor: 'rgba(15, 23, 42, 0.8)' }}
-                  className="bg-[#0f1729] rounded p-3 cursor-pointer transition"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="border border-[#1f2a38] rounded-lg p-4 bg-[#0a0f1a] hover:border-[#00FF7F]/30 transition-all"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-white">{pos.symbol}</span>
-                    <span
-                      className={`text-sm font-bold px-2 py-1 rounded ${
-                        pos.direction === 'LONG'
-                          ? 'bg-green-900/30 text-green-300'
-                          : 'bg-red-900/30 text-red-300'
-                      }`}
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Market Regime</p>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-[#00FF7F]" />
+                    <span className="font-bold text-[#00FF7F]">{marketData.regime}</span>
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="border border-[#1f2a38] rounded-lg p-4 bg-[#0a0f1a] hover:border-[#00D9FF]/30 transition-all"
+                >
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Active Setups</p>
+                  <span className="text-2xl font-black text-[#00D9FF]">{marketData.setups}</span>
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Right Sidebar */}
+            <div className="space-y-4">
+              {/* Quick Actions */}
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.05 }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#00D9FF]/10 border border-[#00D9FF]/40 rounded-lg font-bold text-[#00D9FF] hover:bg-[#00D9FF]/20 transition-all"
+              >
+                <Plus size={20} />
+                New Trade
+              </motion.button>
+
+              {/* Positions Card */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="border border-[#1f2a38] rounded-lg p-4 bg-[#0a0f1a]"
+              >
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Open Positions</p>
+                <div className="space-y-2">
+                  {positions.map(pos => (
+                    <motion.div
+                      key={pos.id}
+                      whileHover={{ x: 4 }}
+                      className="p-2 rounded bg-[#050607] border border-[#1f2a38] hover:border-[#00D9FF]/20 transition-all cursor-pointer"
                     >
-                      {pos.direction}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-400 space-y-1 mb-2">
-                    <p>Entry: ${pos.entryPrice} | Current: ${pos.currentPrice.toFixed(2)}</p>
-                    <p>Qty: {pos.quantity} | Stop: ${pos.stopPrice} | Target: ${pos.target}</p>
-                  </div>
-                  <div className={`text-sm font-bold ${pos.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {pos.pnl > 0 ? '+' : ''} ${pos.pnl.toFixed(2)} ({pos.pnlPercent > 0 ? '+' : ''}{pos.pnlPercent.toFixed(2)}%)
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-bold text-white text-sm">{pos.symbol}</p>
+                          <p className="text-xs text-gray-500">{pos.direction}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`font-bold text-sm ${pos.pnl > 0 ? 'text-[#00FF7F]' : 'text-red-400'}`}>
+                            {pos.pnl > 0 ? '+' : ''}{pos.pnl.toFixed(0)}
+                          </p>
+                          <p className={`text-xs ${pos.pnlPercent > 0 ? 'text-[#00FF7F]' : 'text-red-400'}`}>
+                            {pos.pnlPercent > 0 ? '+' : ''}{pos.pnlPercent.toFixed(2)}%
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Alerts Card */}
+              <TradingViewAlerts alerts={alerts} onCreateAlert={() => {}} onDeleteAlert={() => {}} onToggleAlert={() => {}} />
+            </div>
+          </div>
+
+          {/* Watchlist Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-6 border border-[#1f2a38] rounded-lg p-6 bg-[#0a0f1a]"
+          >
+            <h3 className="text-lg font-bold text-[#00D9FF] mb-4">TradingView Watchlist</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {watchlist.slice(0, 6).map((symbol, idx) => (
+                <motion.div
+                  key={symbol.symbol}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 + idx * 0.05 }}
+                  onClick={() => setSelectedSymbol(symbol.symbol)}
+                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                    selectedSymbol === symbol.symbol
+                      ? 'border-[#00D9FF]/60 bg-[#00D9FF]/10'
+                      : 'border-[#1f2a38] bg-[#050607] hover:border-[#00D9FF]/30'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-bold text-white">{symbol.symbol}</p>
+                      <p className="text-sm text-gray-400">${symbol.price.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-semibold ${symbol.changePercent > 0 ? 'text-[#00FF7F]' : 'text-red-400'}`}>
+                        {symbol.changePercent > 0 ? '+' : ''}{symbol.changePercent.toFixed(2)}%
+                      </p>
+                    </div>
                   </div>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
-
-          {/* Trading Statistics */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-[#0b0d1c] rounded-lg border border-violet-500/20 p-4 text-sm"
-          >
-            <h3 className="font-bold text-cyan-100 mb-3">Trading Stats</h3>
-            <div className="space-y-2 text-slate-400">
-              <div className="flex justify-between">
-                <span>Win Rate</span>
-                <span className="text-green-400 font-semibold">68%</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Profit Factor</span>
-                <span className="text-green-400 font-semibold">2.3</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Avg Win / Loss</span>
-                <span className="text-cyan-400 font-semibold">1.8R</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Total Trades</span>
-                <span className="text-cyan-400 font-semibold">127</span>
-              </div>
             </div>
           </motion.div>
         </div>
       </div>
 
       {/* AI Assistant */}
-      <AITradingAssistant
-        isOpen={isAssistantOpen}
-        onClose={() => setIsAssistantOpen(false)}
-        marketContext={{
-          symbol: selectedSymbol,
-          lastPrice: marketData.lastPrice,
-          change: marketData.changePercent,
-          regime: marketData.regime,
-          setups: marketData.setups,
-        }}
-      />
+      {isAssistantOpen && (
+        <motion.div
+          initial={{ opacity: 0, x: 400 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 400 }}
+          className="w-96 border-l border-[#1f2a38] bg-[#0a0f1a] flex flex-col"
+        >
+          <AITradingAssistant
+            symbol={selectedSymbol}
+            price={marketData.lastPrice}
+            regime={marketData.regime}
+            setups={marketData.setups}
+          />
+        </motion.div>
+      )}
     </div>
   );
 }
