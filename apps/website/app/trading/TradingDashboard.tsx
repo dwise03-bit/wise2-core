@@ -12,7 +12,9 @@ import {
   Settings,
 } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
-import MarketChart from './MarketChart';
+import TradingViewChart from './TradingViewChart';
+import TradingViewWatchlist from './TradingViewWatchlist';
+import TradingViewAlerts from './TradingViewAlerts';
 import AITradingAssistant from './AITradingAssistant';
 import ScreenRecorder from './ScreenRecorder';
 
@@ -48,6 +50,34 @@ export default function TradingDashboard() {
 
   // Connect to WebSocket market data
   const { quotes, connected, getPrice } = useMarketData(['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
+
+  // Watchlist state
+  const [watchlist, setWatchlist] = useState([
+    { symbol: 'BTCUSD', price: 43200, change: 700, changePercent: 1.65, watched: true },
+    { symbol: 'ETHUSD', price: 2250, change: 45, changePercent: 2.0, watched: true },
+    { symbol: 'AAPL', price: 225, change: 2, changePercent: 0.9, watched: false },
+    { symbol: 'MSFT', price: 380, change: -5, changePercent: -1.3, watched: false },
+  ]);
+
+  // Alerts state
+  const [alerts, setAlerts] = useState([
+    {
+      id: '1',
+      symbol: 'BTCUSD',
+      type: 'ABOVE' as const,
+      price: 45000,
+      active: true,
+      triggered: false,
+    },
+    {
+      id: '2',
+      symbol: 'AAPL',
+      type: 'BELOW' as const,
+      price: 220,
+      active: true,
+      triggered: false,
+    },
+  ]);
 
   const [positions, setPositions] = useState<Position[]>([
     {
@@ -192,7 +222,7 @@ export default function TradingDashboard() {
                 <p>Vol: {(marketData.volume / 1000000).toFixed(1)}M</p>
               </div>
             </div>
-            <MarketChart symbol={selectedSymbol} data={chartData} />
+            <TradingViewChart symbol={selectedSymbol} data={chartData} />
           </motion.div>
 
           {/* Market Regime & Setups */}
@@ -227,6 +257,54 @@ export default function TradingDashboard() {
             <Plus className="w-5 h-5" />
             New Trade
           </motion.button>
+
+          {/* TradingView Watchlist */}
+          <TradingViewWatchlist
+            items={watchlist}
+            onAddSymbol={(symbol) => {
+              if (!watchlist.find(w => w.symbol === symbol)) {
+                setWatchlist([...watchlist, { symbol, price: 0, change: 0, changePercent: 0 }]);
+              }
+            }}
+            onRemoveSymbol={(symbol) => {
+              setWatchlist(watchlist.filter(w => w.symbol !== symbol));
+            }}
+            onToggleWatch={(symbol) => {
+              setWatchlist(
+                watchlist.map(w =>
+                  w.symbol === symbol ? { ...w, watched: !w.watched } : w
+                )
+              );
+            }}
+          />
+
+          {/* TradingView Alerts */}
+          <TradingViewAlerts
+            alerts={alerts}
+            onCreateAlert={(symbol, type, price) => {
+              setAlerts([
+                ...alerts,
+                {
+                  id: Date.now().toString(),
+                  symbol,
+                  type,
+                  price,
+                  active: true,
+                  triggered: false,
+                },
+              ]);
+            }}
+            onDeleteAlert={(id) => {
+              setAlerts(alerts.filter(a => a.id !== id));
+            }}
+            onToggleAlert={(id) => {
+              setAlerts(
+                alerts.map(a =>
+                  a.id === id ? { ...a, active: !a.active } : a
+                )
+              );
+            }}
+          />
 
           {/* Open Positions */}
           <motion.div
