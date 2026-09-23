@@ -23,11 +23,15 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   // Check if this is a BLAKKHAIL route (either by host or by path)
   const isBlakkhailRoute =
     blackhailHost ||
-    pathname?.startsWith('/sencere/blakkhail') ||
-    pathname?.startsWith('/sencere') && pathname !== '/sencere/products' && !pathname?.startsWith('/sencere/checkout');
+    pathname?.startsWith('/sencere/blakkhail');
+
+  // Check if this is any SenCere route (more restrictive)
+  const isSencereRoute =
+    pathname?.startsWith('/sencere');
 
   const hasCustomShell =
     isBlakkhailRoute ||
+    isSencereRoute ||
     CUSTOM_SHELL_ROUTES.some(
       (route) => pathname === route || pathname?.startsWith(`${route}/`)
     );
@@ -41,7 +45,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <PublicNav />
       <div className="flex min-h-screen flex-col overflow-x-hidden pt-16">
         <div className="min-w-0 flex-1">{children}</div>
-        {pathname !== '/' && pathname !== '/products/imp' && <WiseImp />}
+        {pathname !== '/' && pathname !== '/products/imp' && !isSencereRoute && <WiseImp />}
         <PublicFooter />
       </div>
     </>
