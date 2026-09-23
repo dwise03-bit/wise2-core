@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CronJob } from 'cron';
 import WebSocket from 'isomorphic-ws';
 
 interface QuoteData {
