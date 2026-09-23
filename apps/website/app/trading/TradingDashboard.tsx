@@ -11,6 +11,7 @@ import {
   EyeOff,
   Settings,
 } from 'lucide-react';
+import { useMarketData } from '@/hooks/useMarketData';
 import MarketChart from './MarketChart';
 import AITradingAssistant from './AITradingAssistant';
 import ScreenRecorder from './ScreenRecorder';
@@ -44,6 +45,10 @@ export default function TradingDashboard() {
   const [selectedSymbol, setSelectedSymbol] = useState('BTCUSD');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+
+  // Connect to WebSocket market data
+  const { quotes, connected, getPrice } = useMarketData(['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
+
   const [positions, setPositions] = useState<Position[]>([
     {
       id: '1',
@@ -87,37 +92,30 @@ export default function TradingDashboard() {
     riskUsed: 13.5,
   });
 
-  // Fetch real market data in production
+  // Update market data from WebSocket quotes
   useEffect(() => {
-    // In production, subscribe to real market data service
-    const interval = setInterval(() => {
-      const change = (Math.random() - 0.5) * 100;
+    const quote = quotes.get(selectedSymbol);
+    if (quote) {
       setMarketData(prev => ({
         ...prev,
-        lastPrice: prev.lastPrice + change,
-        change: prev.change + change,
-        changePercent: ((prev.change + change) / prev.lastPrice) * 100,
+        symbol: selectedSymbol,
+        lastPrice: quote.price,
+        change: quote.price - prev.lastPrice,
+        changePercent: ((quote.price - prev.lastPrice) / prev.lastPrice) * 100,
+        volume: quote.volume,
       }));
 
       // Update position P&L
       setPositions(prev =>
         prev.map(p => ({
           ...p,
-          currentPrice: p.currentPrice + (Math.random() - 0.5) * 10,
-          pnl: (p.currentPrice - p.entryPrice) * p.quantity,
-          pnlPercent: ((p.currentPrice - p.entryPrice) / p.entryPrice) * 100,
+          currentPrice: p.symbol === selectedSymbol ? quote.price : p.currentPrice,
+          pnl: (quote.price - p.entryPrice) * p.quantity,
+          pnlPercent: ((quote.price - p.entryPrice) / p.entryPrice) * 100,
         }))
       );
-
-      setAccountStats(prev => ({
-        ...prev,
-        pnl: positions.reduce((sum, p) => sum + p.pnl, 0),
-        pnlPercent: (positions.reduce((sum, p) => sum + p.pnl, 0) / prev.equity) * 100,
-      }));
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
+    }
+  }, [quotes, selectedSymbol]);
 
   return (
     <div className="min-h-screen bg-[#070812] text-white p-6">
