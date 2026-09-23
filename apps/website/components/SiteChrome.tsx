@@ -10,7 +10,7 @@ import { isBlackhailHost } from '@/lib/site-domains';
  * Routes that own a fully custom header/footer and must not receive the
  * shared site chrome (PublicNav/PublicFooter/WiseImp).
  */
-const CUSTOM_SHELL_ROUTES = ['/soundlab', '/sencere'];
+const CUSTOM_SHELL_ROUTES = ['/soundlab', '/sencere', '/sencere/blakkhail'];
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,8 +20,14 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     setBlackhailHost(isBlackhailHost(window.location.hostname));
   }, []);
 
-  const hasCustomShell =
+  // Check if this is a BLAKKHAIL route (either by host or by path)
+  const isBlakkhailRoute =
     blackhailHost ||
+    pathname?.startsWith('/sencere/blakkhail') ||
+    pathname?.startsWith('/sencere') && pathname !== '/sencere/products' && !pathname?.startsWith('/sencere/checkout');
+
+  const hasCustomShell =
+    isBlakkhailRoute ||
     CUSTOM_SHELL_ROUTES.some(
       (route) => pathname === route || pathname?.startsWith(`${route}/`)
     );

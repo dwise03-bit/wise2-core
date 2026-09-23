@@ -56,7 +56,12 @@ export default function BlakkhailPage() {
   }, []);
 
   return (
-    <div className={`${BLAKKHAIL_LAYOUT.page} bh-page scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
+    <>
+      <style>{`
+        /* Hide WISE2 trading dashboard on BLAKKHAIL pages */
+        [class*="trading"], [class*="dashboard"], [class*="chart"], [class*="WISE2"], .wise-imp, .wise2-dashboard { display: none !important; }
+      `}</style>
+      <div className={`${BLAKKHAIL_LAYOUT.page} bh-page scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <div className="bh-page-grid" aria-hidden="true" />
       <div className="bh-global-particles" aria-hidden="true">
         {Array.from({ length: 42 }, (_, index) => (
@@ -173,5 +178,6 @@ export default function BlakkhailPage() {
         @media (prefers-reduced-motion: reduce) { .bh-page-grid, .bh-global-particles, .bh-hailfall, .bh-storm-overlay, .bh-scroll-rail, .bh-section, .bh-section::after, .bh-page #collection .group, .bh-page #collection .group > a > div:first-child { transform: none; transition: none; animation: none; } .bh-hailfall, .bh-storm-overlay { display: none; } }
       `}</style>
     </div>
+    </>
   );
 }
