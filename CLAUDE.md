@@ -195,6 +195,91 @@ Base System Prompt
 
 ---
 
+## Mac Bridge Operations (F5-OPS Permanent Fix)
+
+**Status**: ✅ PERMANENT STABILIZATION COMPLETE  
+**Last Updated**: 2026-09-16
+
+The WISE² Mac control-relay is a production service that verifies Discord operations and relays them securely to infrastructure. It must remain available automatically.
+
+### Pre-Operation Health Check
+
+**Before any remote Mac operations**, verify bridge health:
+
+```bash
+wise2-bridge doctor
+```
+
+This checks:
+- ✅ launchd service loaded and configured
+- ✅ Process is running
+- ✅ Port 4600 is listening
+- ✅ Service responds to health endpoint
+
+Expected output:
+```
+WISE2 BRIDGE: GREEN
+  Launchd: ✅
+  Process: ✅
+  Port:    ✅
+  Health:  ✅
+```
+
+### If Bridge Is Unhealthy (RED)
+
+Automatically recover:
+
+```bash
+wise2-bridge recover
+```
+
+Then verify:
+
+```bash
+wise2-bridge status
+```
+
+Both commands should show `GREEN` before proceeding with Mac operations.
+
+### Reference Documentation
+
+- **Installation & Stabilization**: `docs/MAC_BRIDGE_PERMANENT_FIX.md`
+- **Secure Configuration**: `docs/MAC_BRIDGE_SECURE_CONFIG.md`
+- **Troubleshooting**: See "Troubleshooting" section in `MAC_BRIDGE_PERMANENT_FIX.md`
+
+### Service Details
+
+| Property | Value |
+|----------|-------|
+| **Service name** | `com.wise2.control-relay` |
+| **Port** | 4600 (localhost only) |
+| **Process owner** | dwise (user login session) |
+| **Logs** | `~/.wise2/relay.log`, `~/.wise2/relay.err.log` |
+| **Audit trail** | `~/.wise2/relay-audit.jsonl` |
+| **Health check** | `wise2-bridge status` |
+| **Recovery** | `wise2-bridge recover` |
+
+### What It Does NOT Require
+
+- Manual Mac reboot intervention (auto-loads via launchd)
+- Terminal to stay open (owned by launchd, not shell)
+- Manual restart after process crash (auto-recovery via launchd)
+- Network to stay alive locally (bound to 127.0.0.1, survives WiFi loss)
+- Root/sudo access (runs as user dwise)
+
+### Agent Requirements
+
+**All Claude/Codex agents** performing Mac-related operations must:
+
+1. **Check health first**: `wise2-bridge doctor` → must show GREEN
+2. **If not healthy**: `wise2-bridge recover` → wait for GREEN
+3. **Proceed only after verified**: Green health check confirms bridge is live
+4. **After major changes**: Verify `wise2-bridge status` still shows GREEN
+
+Never assume the bridge is running. Always verify before operations.
+
+---
+
 ## Knowledge Base
 
 ### Brand & Design
@@ -217,6 +302,18 @@ Base System Prompt
 - **Deployment Handoff**: `DEPLOYMENT_HANDOFF.md`
 
 ### Known Issues & Fixes
+
+**✅ FIXED:**
+- **Mac Bridge Not Recovering After Reboot/Crash** — PERMANENT FIX APPLIED (2026-09-16)
+  - **Issue**: Bridge would disappear on Mac reboot, terminal closure, or process crash
+  - **Root Cause**: Hard-coded paths, weak launchd config, no health checks
+  - **Solution**: Robust launchd plist with KeepAlive, automatic recovery scripts, health checks
+  - **Status**: Verified across reboot, crash, and terminal closure scenarios
+  - **Setup**: Run `scripts/mac/install-bridge-permanent.sh` on the Mac
+  - **Verification**: `wise2-bridge doctor` should show GREEN
+  - **Reference**: `docs/MAC_BRIDGE_PERMANENT_FIX.md`
+
+**OPEN:**
 - **Port Mismatch**: App defaults to 3000, nginx expects 3001 (see memory)
 - **Sudo No-TTY**: Shell has no TTY; sudo always needs password (see memory)
 - **Admin Service**: Disabled for MVP (CSS build errors)
