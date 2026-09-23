@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-interface TradingViewWatchlistItem {
+export interface TradingViewWatchlistItem {
   symbol: string;
   exchange?: string;
   name?: string;
@@ -9,7 +9,7 @@ interface TradingViewWatchlistItem {
   changePercent?: number;
 }
 
-interface PriceAlert {
+export interface PriceAlert {
   id: string;
   symbol: string;
   type: 'ABOVE' | 'BELOW';
@@ -58,11 +58,11 @@ export class TradingViewService {
         throw new Error(`TradingView API returned ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as any;
 
       // Extract watchlist from profile
       let watchlist: TradingViewWatchlistItem[] = [];
-      if (data.watchlist && Array.isArray(data.watchlist)) {
+      if (data?.watchlist && Array.isArray(data.watchlist)) {
         watchlist = data.watchlist.map((item: any) => ({
           symbol: item.symbol || item.ticker,
           exchange: item.exchange,
