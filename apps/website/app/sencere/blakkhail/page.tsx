@@ -89,23 +89,17 @@ export default function BlakkhailPage() {
   return (
     <>
       <style>{`
-        /* Hide ALL trading/dashboard elements on BLAKKHAIL */
-        [class*="trading"], [class*="dashboard"], [class*="chart"], [class*="WISE2"],
-        [class*="wise"], [class*="market"], [class*="metrics"], [class*="stock"],
-        .wise-imp, .wise2-dashboard, .trading-overlay, .chart-container,
-        [id*="trading"], [id*="dashboard"], [id*="chart"], [id*="wise"],
-        div[class*="trading"], div[class*="wise"], div[class*="dashboard"],
-        aside[class*="trading"], aside[class*="wise"], aside[class*="dashboard"],
-        nav[class*="trading"], nav[class*="wise"], nav[class*="dashboard"] {
-          display: none !important;
-          visibility: hidden !important;
-          position: absolute !important;
-          left: -9999px !important;
-        }
+        /* NUCLEAR: Hide everything except BLAKKHAIL */
+        body { background: #0A0A0A !important; }
+        body > div:not(.bh-page) { display: none !important; }
+        body > main:not(.bh-page) { display: none !important; }
+        body > section:not(.bh-page) { display: none !important; }
+        body > * { display: none !important; visibility: hidden !important; }
+        .bh-page { display: block !important; visibility: visible !important; }
 
-        /* Ensure full width for BLAKKHAIL content */
-        .bh-page { width: 100vw !important; }
-        main { width: 100% !important; }
+        /* Hide by name pattern */
+        [class*="trading"], [class*="dashboard"], [class*="chart"],
+        [class*="wise2"], [class*="wise-"], aside, nav { display: none !important; }
       `}</style>
       <div className={`${BLAKKHAIL_LAYOUT.page} bh-page scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <div className="bh-page-grid" aria-hidden="true" />
