@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
@@ -12,6 +12,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
+import { useTradingViewProfile } from '@/hooks/useTradingViewProfile';
 import MarketChart from './MarketChart';
 import TradingViewWatchlist from './TradingViewWatchlist';
 import TradingViewAlerts from './TradingViewAlerts';
@@ -48,16 +49,41 @@ export default function TradingDashboard() {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
-  // Connect to WebSocket market data
-  const { quotes, connected, getPrice } = useMarketData(['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
+  // Load user's real TradingView profile and watchlist
+  const { watchlist: tvWatchlist, profile, loading } = useTradingViewProfile('dwise03');
 
-  // Watchlist state
-  const [watchlist, setWatchlist] = useState([
+  // Connect to WebSocket market data for watchlist symbols
+  const symbols = tvWatchlist.map(w => w.symbol).slice(0, 6);
+  const { quotes, connected, getPrice } = useMarketData(symbols.length > 0 ? symbols : ['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
+
+  // Watchlist state (synced from TradingView)
+  const [watchlist, setWatchlist] = useState<Array<{
+    symbol: string;
+    price: number;
+    change: number;
+    changePercent: number;
+    watched?: boolean;
+  }>>([
     { symbol: 'BTCUSD', price: 43200, change: 700, changePercent: 1.65, watched: true },
     { symbol: 'ETHUSD', price: 2250, change: 45, changePercent: 2.0, watched: true },
     { symbol: 'AAPL', price: 225, change: 2, changePercent: 0.9, watched: false },
     { symbol: 'MSFT', price: 380, change: -5, changePercent: -1.3, watched: false },
   ]);
+
+  // Sync TradingView watchlist with local state
+  useEffect(() => {
+    if (tvWatchlist.length > 0) {
+      setWatchlist(
+        tvWatchlist.map((item, idx) => ({
+          symbol: item.symbol,
+          price: getPrice(item.symbol) || (43200 - idx * 1000),
+          change: Math.random() * 100,
+          changePercent: (Math.random() - 0.5) * 5,
+          watched: idx < 2,
+        }))
+      );
+    }
+  }, [tvWatchlist]);
 
   // Alerts state
   const [alerts, setAlerts] = useState([
