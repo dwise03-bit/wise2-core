@@ -15,6 +15,7 @@ interface Alert {
 
 interface Props {
   alerts: Alert[];
+  username?: string;
   onCreateAlert?: (symbol: string, type: 'ABOVE' | 'BELOW', price: number) => void;
   onDeleteAlert?: (id: string) => void;
   onToggleAlert?: (id: string) => void;
@@ -22,18 +23,76 @@ interface Props {
 
 export default function TradingViewAlerts({
   alerts,
+  username = 'dwise03',
   onCreateAlert,
   onDeleteAlert,
   onToggleAlert,
 }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ symbol: '', type: 'ABOVE' as 'ABOVE' | 'BELOW', price: '' });
+  const [loading, setLoading] = useState(false);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (formData.symbol && formData.price) {
-      onCreateAlert?.(formData.symbol.toUpperCase(), formData.type, parseFloat(formData.price));
-      setFormData({ symbol: '', type: 'ABOVE', price: '' });
-      setShowForm(false);
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:3000/api/trading/tradingview/alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            symbol: formData.symbol.toUpperCase(),
+            type: formData.type,
+            price: parseFloat(formData.price),
+          }),
+        });
+
+        if (response.ok) {
+          onCreateAlert?.(formData.symbol.toUpperCase(), formData.type, parseFloat(formData.price));
+          setFormData({ symbol: '', type: 'ABOVE', price: '' });
+          setShowForm(false);
+        }
+      } catch (err) {
+        console.error('Failed to create alert:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/trading/tradingview/alerts/${username}/${id}`,
+        { method: 'DELETE' }
+      );
+
+      if (response.ok) {
+        onDeleteAlert?.(id);
+      }
+    } catch (err) {
+      console.error('Failed to delete alert:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggle = async (id: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/trading/tradingview/alerts/${username}/${id}/toggle`,
+        { method: 'POST' }
+      );
+
+      if (response.ok) {
+        onToggleAlert?.(id);
+      }
+    } catch (err) {
+      console.error('Failed to toggle alert:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,18 +179,22 @@ export default function TradingViewAlerts({
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => onToggleAlert?.(alert.id)}
+                  onClick={() => handleToggle(alert.id)}
+                  disabled={loading}
                   className={`px-2 py-1 rounded text-xs transition ${
                     alert.active
                       ? 'bg-green-600/20 text-green-400 hover:bg-green-600/30'
                       : 'bg-slate-600/20 text-slate-400 hover:bg-slate-600/30'
-                  }`}
+                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {alert.active ? 'Active' : 'Paused'}
                 </button>
                 <button
-                  onClick={() => onDeleteAlert?.(alert.id)}
-                  className="p-1.5 hover:bg-red-600/20 rounded transition"
+                  onClick={() => handleDelete(alert.id)}
+                  disabled={loading}
+                  className={`p-1.5 hover:bg-red-600/20 rounded transition ${
+                    loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   <X className="w-4 h-4 text-red-400" />
                 </button>

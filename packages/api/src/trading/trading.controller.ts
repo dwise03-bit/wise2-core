@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Param,
   Body,
   Query,
@@ -11,6 +12,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { TradingService } from './trading.service';
 import { TradingAssistantService } from './trading.assistant';
+import { TradingViewService } from './tradingview.service';
 
 /**
  * WISE² Trading API Controller
@@ -20,7 +22,8 @@ import { TradingAssistantService } from './trading.assistant';
 export class TradingController {
   constructor(
     private readonly tradingService: TradingService,
-    private readonly assistantService: TradingAssistantService
+    private readonly assistantService: TradingAssistantService,
+    private readonly tradingViewService: TradingViewService
   ) {}
 
   /**
@@ -176,6 +179,75 @@ export class TradingController {
     }
   ) {
     return this.tradingService.logRiskEvent(req.user.id, eventData);
+  }
+
+  /**
+   * GET /api/trading/tradingview/watchlist/:username
+   * Sync watchlist from TradingView public profile
+   */
+  @Get('tradingview/watchlist/:username')
+  async getTradingViewWatchlist(@Param('username') username: string) {
+    const watchlist = await this.tradingViewService.getWatchlist(username);
+    return { username, watchlist, count: watchlist.length };
+  }
+
+  /**
+   * GET /api/trading/tradingview/alerts/:username
+   * Get all price alerts for user
+   */
+  @Get('tradingview/alerts/:username')
+  async getAlerts(@Param('username') username: string) {
+    const alerts = this.tradingViewService.getAlerts(username);
+    return { username, alerts, count: alerts.length };
+  }
+
+  /**
+   * POST /api/trading/tradingview/alerts
+   * Create a new price alert
+   */
+  @Post('tradingview/alerts')
+  async createAlert(
+    @Body()
+    data: {
+      username: string;
+      symbol: string;
+      type: 'ABOVE' | 'BELOW';
+      price: number;
+    }
+  ) {
+    const alert = this.tradingViewService.createAlert(
+      data.username,
+      data.symbol,
+      data.type,
+      data.price
+    );
+    return { alert, message: '✅ Alert created' };
+  }
+
+  /**
+   * POST /api/trading/tradingview/alerts/:username/:alertId/toggle
+   * Toggle alert active/paused status
+   */
+  @Post('tradingview/alerts/:username/:alertId/toggle')
+  async toggleAlert(
+    @Param('username') username: string,
+    @Param('alertId') alertId: string
+  ) {
+    const success = this.tradingViewService.toggleAlert(username, alertId);
+    return { success, message: success ? '✅ Alert toggled' : '❌ Alert not found' };
+  }
+
+  /**
+   * Delete /api/trading/tradingview/alerts/:username/:alertId
+   * Delete a price alert
+   */
+  @Delete('tradingview/alerts/:username/:alertId')
+  async deleteAlert(
+    @Param('username') username: string,
+    @Param('alertId') alertId: string
+  ) {
+    const success = this.tradingViewService.deleteAlert(username, alertId);
+    return { success, message: success ? '✅ Alert deleted' : '❌ Alert not found' };
   }
 
   /**

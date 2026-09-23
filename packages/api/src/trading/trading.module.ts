@@ -5,6 +5,7 @@ import { TradingService } from './trading.service';
 import { TradingAssistantService } from './trading.assistant';
 import { MarketDataService } from './market-data.service';
 import { TradingGateway } from './trading.gateway';
+import { TradingViewService } from './tradingview.service';
 
 /**
  * WISE² Trading Module
@@ -13,6 +14,6 @@ import { TradingGateway } from './trading.gateway';
 @Module({
   imports: [PrismaModule],
   controllers: [TradingController],
-  providers: [TradingService, TradingAssistantService, MarketDataService, TradingGateway],
+  providers: [TradingService, TradingAssistantService, MarketDataService, TradingGateway, TradingViewService],
 })
 export class TradingModule {}
