@@ -165,45 +165,16 @@ function InsightCard({ title, icon, content, color = '#00D9FF' }: any) {
 }
 
 export default function TradingDashboard() {
+  // ALL HOOKS MUST BE CALLED FIRST, BEFORE ANY CONDITIONAL RETURNS
   const { user, token, isAuthenticated, isLoading, logout } = useAuth();
+  const { watchlist: tvWatchlist, profile, loading } = useTradingViewProfile('dwise03');
+
   const [selectedSymbol, setSelectedSymbol] = useState('BTCUSD');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [activeNav, setActiveNav] = useState('dashboard');
   const [chartInterval, setChartInterval] = useState('1D');
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      window.location.href = '/auth/signin';
-    }
-  }, [isAuthenticated, isLoading]);
-
-  // Show loading while checking auth
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#050607] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin text-4xl mb-4">⏳</div>
-          <p className="text-gray-400">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render if not authenticated
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  // Load user's real TradingView profile and watchlist
-  const { watchlist: tvWatchlist, profile, loading } = useTradingViewProfile('dwise03');
-
-  // Connect to WebSocket market data for watchlist symbols
-  const symbols = tvWatchlist.map(w => w.symbol).slice(0, 6);
-  const { quotes, connected, getPrice } = useMarketData(symbols.length > 0 ? symbols : ['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
-
-  // Watchlist state (synced from TradingView)
   const [watchlist, setWatchlist] = useState<Array<{
     symbol: string;
     price: number;
@@ -217,22 +188,6 @@ export default function TradingDashboard() {
     { symbol: 'MSFT', price: 380, change: -5, changePercent: -1.3, watched: false },
   ]);
 
-  // Sync TradingView watchlist with local state (only on mount or when tvWatchlist changes)
-  useEffect(() => {
-    if (tvWatchlist.length > 0) {
-      setWatchlist(
-        tvWatchlist.map((item, idx) => ({
-          symbol: item.symbol,
-          price: getPrice(item.symbol) || (43200 - idx * 1000),
-          change: Math.random() * 100,
-          changePercent: (Math.random() - 0.5) * 5,
-          watched: idx < 2,
-        }))
-      );
-    }
-  }, [tvWatchlist.length]);
-
-  // Alerts state
   const [alerts, setAlerts] = useState([
     {
       id: '1',
@@ -252,7 +207,6 @@ export default function TradingDashboard() {
     },
   ]);
 
-  // Positions state
   const [positions, setPositions] = useState<Position[]>([
     {
       id: '1',
@@ -296,7 +250,31 @@ export default function TradingDashboard() {
     riskUsed: 13.5,
   });
 
-  // Update market data from WebSocket quotes
+  // Connect to WebSocket market data
+  const symbols = tvWatchlist.map(w => w.symbol).slice(0, 6);
+  const { quotes, connected, getPrice } = useMarketData(symbols.length > 0 ? symbols : ['BTCUSD', 'ETHUSD', 'AAPL', 'MSFT']);
+
+  // ALL useEffect HOOKS
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      window.location.href = '/auth/signin';
+    }
+  }, [isAuthenticated, isLoading]);
+
+  useEffect(() => {
+    if (tvWatchlist.length > 0) {
+      setWatchlist(
+        tvWatchlist.map((item, idx) => ({
+          symbol: item.symbol,
+          price: getPrice(item.symbol) || (43200 - idx * 1000),
+          change: Math.random() * 100,
+          changePercent: (Math.random() - 0.5) * 5,
+          watched: idx < 2,
+        }))
+      );
+    }
+  }, [tvWatchlist.length]);
+
   useEffect(() => {
     const quote = quotes.get(selectedSymbol);
     if (quote) {
@@ -309,7 +287,6 @@ export default function TradingDashboard() {
         volume: quote.volume,
       }));
 
-      // Update position P&L
       setPositions(prev =>
         prev.map(p => ({
           ...p,
@@ -320,6 +297,22 @@ export default function TradingDashboard() {
       );
     }
   }, [quotes, selectedSymbol]);
+
+  // CONDITIONAL EARLY RETURNS (after all hooks)
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#050607] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">⏳</div>
+          <p className="text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // GSAP Bento stagger animation
   useGSAP(() => {
