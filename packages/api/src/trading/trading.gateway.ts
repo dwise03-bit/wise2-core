@@ -16,9 +16,9 @@ import { Logger } from '@nestjs/common';
   namespace: '/trading',
 })
 export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() server!: Server;
   private logger = new Logger('TradingGateway');
-  private marketDataInterval: NodeJS.Timeout;
+  private marketDataInterval!: NodeJS.Timeout;
   private connectedClients = new Set<string>();
 
   constructor(
