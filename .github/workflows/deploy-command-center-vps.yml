@@ -57,7 +57,7 @@ jobs:
             COMPOSE_FILE=docker-compose.prod.yml
             SERVICE=command-center
             CONTAINER=wise2-command-center
-            PUBLIC_URL=https://command.wise2.net/woji
+            LEGACY_UNIT=wise2-command-center.service
             LOCAL_URL=http://127.0.0.1:3004/woji
             ROLLBACK_TAG=wise2-core-command-center:rollback-${{ github.run_id }}
 
@@ -74,6 +74,38 @@ jobs:
             git merge --ff-only origin/main
             docker compose -f "$COMPOSE_FILE" config --services | grep -qx "$SERVICE"
 
+            PORT_OWNERS="$(docker ps --filter publish=3004 --format '{{.Names}}')"
+            if [ -n "$PORT_OWNERS" ] && ! printf '%s\n' "$PORT_OWNERS" | grep -qx "$CONTAINER"; then
+              echo "Port 3004 is owned by a different container; refusing to replace it without verifying its role."
+              docker ps --filter publish=3004 --format 'name={{.Names}} image={{.Image}} ports={{.Ports}}'
+              for OWNER in $PORT_OWNERS; do
+                docker container inspect --format 'name={{.Name}} compose_project={{index .Config.Labels "com.docker.compose.project"}} compose_service={{index .Config.Labels "com.docker.compose.service"}} image={{.Config.Image}}' "$OWNER"
+              done
+              exit 1
+            fi
+
+            UNIT_WAS_ACTIVE=false
+            UNIT_WAS_ENABLED=false
+            UNIT_PID=""
+            if sudo -n systemctl is-active --quiet "$LEGACY_UNIT"; then
+              UNIT_WAS_ACTIVE=true
+              UNIT_PID="$(sudo -n systemctl show --property MainPID --value "$LEGACY_UNIT")"
+            fi
+            if [ "$(sudo -n systemctl is-enabled "$LEGACY_UNIT" 2>/dev/null || true)" = enabled ]; then
+              UNIT_WAS_ENABLED=true
+            fi
+
+            LISTENER_PID="$(sudo -n ss -ltnp | sed -n '/127\.0\.0\.1:3004/s/.*pid=\([0-9][0-9]*\).*/\1/p' | head -n 1)"
+            if [ -n "$LISTENER_PID" ] && [ -z "$PORT_OWNERS" ] && [ "$LISTENER_PID" != "$UNIT_PID" ]; then
+              echo "Port 3004 is owned by an unexpected host process; refusing to stop it."
+              sudo -n ss -ltnp | grep ':3004' || true
+              ps -o pid,ppid,user,lstart,args -p "$LISTENER_PID" || true
+              exit 1
+            fi
+            if [ -n "$LISTENER_PID" ] && [ "$LISTENER_PID" = "$UNIT_PID" ]; then
+              echo "Migrating $LEGACY_UNIT from the legacy host process to the canonical Compose container."
+            fi
+
             OLD_IMAGE=""
             if docker container inspect "$CONTAINER" >/dev/null 2>&1; then
               OLD_IMAGE="$(docker container inspect --format '{{.Image}}' "$CONTAINER")"
@@ -88,11 +120,20 @@ jobs:
               if [ -n "$OLD_IMAGE" ]; then
                 docker image tag "$ROLLBACK_TAG" wise2-core-command-center:latest
                 docker compose -f "$COMPOSE_FILE" up -d --no-deps "$SERVICE"
+              elif [ "$UNIT_WAS_ACTIVE" = true ]; then
+                if [ "$UNIT_WAS_ENABLED" = true ]; then
+                  sudo -n systemctl enable "$LEGACY_UNIT" >/dev/null
+                fi
+                sudo -n systemctl start "$LEGACY_UNIT"
               fi
               docker compose -f "$COMPOSE_FILE" logs --tail=100 "$SERVICE" || true
             }
             trap rollback EXIT INT TERM
 
+            if [ "$UNIT_WAS_ACTIVE" = true ]; then
+              sudo -n systemctl stop "$LEGACY_UNIT"
+            fi
+            sudo -n systemctl disable "$LEGACY_UNIT" >/dev/null 2>&1 || true
             docker container rm -f "$CONTAINER" >/dev/null 2>&1 || true
             docker compose -f "$COMPOSE_FILE" up -d --no-deps --force-recreate "$SERVICE"
 
@@ -114,22 +155,27 @@ jobs:
             printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'server_name[[:space:]]+command\.wise2\.net'
             printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'proxy_pass[[:space:]]+http://127\.0\.0\.1:3004'
 
-            check=1
-            while [ "$check" -le 5 ]; do
-              curl -fsS --retry 2 --retry-delay 2 "$PUBLIC_URL" | grep -qi WOJI
-              check=$((check + 1))
-              sleep 2
-            done
-
             trap - EXIT INT TERM
             docker compose -f "$COMPOSE_FILE" ps "$SERVICE"
             docker compose -f "$COMPOSE_FILE" logs --tail=40 "$SERVICE"
+            sudo -n systemctl is-active "$LEGACY_UNIT" 2>/dev/null | grep -qx inactive
+            sudo -n systemctl is-enabled "$LEGACY_UNIT" 2>/dev/null | grep -qx disabled
             docker image rm "$ROLLBACK_TAG" >/dev/null 2>&1 || true
 
-      - name: Verify the public WOJI page repeatedly
+      - name: Verify VPS HTTPS ingress repeatedly
+        env:
+          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
           set -eu
           for attempt in 1 2 3 4 5; do
-            curl -fsS --retry 2 --retry-delay 2 https://command.wise2.net/woji | grep -qi WOJI
+            curl -fsS --retry 2 --retry-delay 2 --resolve "command.wise2.net:443:$VPS_HOST" https://command.wise2.net/woji | grep -qi WOJI
             sleep 2
           done
+
+      - name: Report public DNS readiness
+        run: |
+          if getent ahostsv4 command.wise2.net >/dev/null 2>&1; then
+            curl -fsS https://command.wise2.net/woji | grep -qi WOJI
+          else
+            echo "::warning::command.wise2.net has no public DNS record. Add an A record to the VPS before announcing the URL."
+          fi
