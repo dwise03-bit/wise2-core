@@ -162,10 +162,20 @@ jobs:
             sudo -n systemctl is-enabled "$LEGACY_UNIT" 2>/dev/null | grep -qx disabled
             docker image rm "$ROLLBACK_TAG" >/dev/null 2>&1 || true
 
-      - name: Verify the public WOJI page repeatedly
+      - name: Verify VPS HTTPS ingress repeatedly
+        env:
+          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
           set -eu
           for attempt in 1 2 3 4 5; do
-            curl -fsS --retry 2 --retry-delay 2 https://command.wise2.net/woji | grep -qi WOJI
+            curl -fsS --retry 2 --retry-delay 2 --resolve "command.wise2.net:443:$VPS_HOST" https://command.wise2.net/woji | grep -qi WOJI
             sleep 2
           done
+
+      - name: Report public DNS readiness
+        run: |
+          if getent ahostsv4 command.wise2.net >/dev/null 2>&1; then
+            curl -fsS https://command.wise2.net/woji | grep -qi WOJI
+          else
+            echo "::warning::command.wise2.net has no public DNS record. Add an A record to the VPS before announcing the URL."
+          fi
