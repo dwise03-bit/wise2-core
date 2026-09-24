@@ -66,6 +66,7 @@ ENV NEXT_PUBLIC_DISCORD_REDIRECT_URI=$NEXT_PUBLIC_DISCORD_REDIRECT_URI
 ARG CACHE_BUST=none
 ENV CACHE_BUST=$CACHE_BUST
 
+RUN pnpm --filter @wise2/db prisma:generate
 RUN pnpm --filter @wise2/website build
 
 # Production image
