@@ -88,6 +88,13 @@ jobs:
               echo "Port 3004 is owned by a host process rather than the expected container."
               sudo -n ss -ltnp | grep ':3004' || true
               sudo -n lsof -nP -iTCP:3004 -sTCP:LISTEN || true
+              OWNER_PID="$(sudo -n ss -ltnp | sed -n '/:3004/s/.*pid=\([0-9][0-9]*\).*/\1/p' | head -n 1)"
+              if [ -n "$OWNER_PID" ]; then
+                ps -o pid,ppid,user,lstart,args -p "$OWNER_PID" || true
+                sudo -n readlink -f "/proc/$OWNER_PID/cwd" || true
+                sudo -n cat "/proc/$OWNER_PID/cgroup" || true
+                sudo -n systemctl status "$OWNER_PID" --no-pager || true
+              fi
               curl -fsSI http://127.0.0.1:3004/ || true
               exit 1
             fi
