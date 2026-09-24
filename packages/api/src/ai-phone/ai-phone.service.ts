@@ -143,9 +143,71 @@ export class AiPhoneService {
 
   async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
     if (input.eventType === 'call.initiated') {
+      if (String(input.payload.to || '') === '+16312281912') {
+        await this.handleMoneyBagCall(input.payload);
+        return { accepted: true, eventType: input.eventType, agent: 'MoneyBag' };
+      }
+      await this.answerTelnyxCall(input.payload);
       await this.notifyDiscordIncomingCall(input.payload);
     }
     return { accepted: true, eventType: input.eventType };
+  }
+
+  private async handleMoneyBagCall(payload: Record<string, unknown>): Promise<void> {
+    await this.answerTelnyxCall(payload);
+    await this.speakTelnyxCall(
+      payload,
+      "Welcome to MoneyBag, the WISE2 trading intelligence desk. Ask about market signals, your portfolio, risk, or a trade.",
+    );
+  }
+
+  private async answerTelnyxCall(payload: Record<string, unknown>): Promise<void> {
+    const callControlId = String(payload.call_control_id || '');
+    const apiKey = process.env.TELNYX_API_KEY;
+    if (!callControlId || !apiKey) {
+      throw new Error('Telnyx call control ID or TELNYX_API_KEY is missing');
+    }
+
+    const response = await fetch(
+      `${process.env.TELNYX_API_URL || 'https://api.telnyx.com/v2'}/calls/${encodeURIComponent(callControlId)}/actions/answer`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          client_state: callControlId,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Telnyx answer failed: ${response.status} ${response.statusText}`);
+    }
+  }
+
+  private async speakTelnyxCall(payload: Record<string, unknown>, text: string): Promise<void> {
+    const callControlId = String(payload.call_control_id || '');
+    const apiKey = process.env.TELNYX_API_KEY;
+    const response = await fetch(
+      `${process.env.TELNYX_API_URL || 'https://api.telnyx.com/v2'}/calls/${encodeURIComponent(callControlId)}/actions/speak`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          payload: text,
+          voice: 'Polly.Salli',
+          language: 'en-US',
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`Telnyx trading greeting failed: ${response.status} ${response.statusText}`);
+    }
   }
 
   private async notifyDiscordIncomingCall(payload: Record<string, unknown>): Promise<void> {

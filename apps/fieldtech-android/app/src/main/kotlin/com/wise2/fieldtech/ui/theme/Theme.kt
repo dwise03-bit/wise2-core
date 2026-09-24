@@ -23,6 +23,17 @@ val StatusGreen = Color(0xFF2ECC71)
 val StatusAmber = Color(0xFFFFB020)
 val StatusRed = Color(0xFFFF4D4F)
 
+// Named palette used by reusable controls. Keep these aliases centralized so
+// component styling stays aligned with the WISE² command-center theme.
+object WISE2Colors {
+    val CyanBrand = ElectricBlue
+    val NavyBlack = PureBlack
+    val Gunmetal = com.wise2.fieldtech.ui.theme.Gunmetal
+    val DarkGunmetal = ConcreteBlack
+    val TextSecondary = ChromeSilver
+    val NeonGreen = com.wise2.fieldtech.ui.theme.NeonGreen
+}
+
 private val WiseColorScheme = darkColorScheme(
     primary = NeonGreen,  // Sync with Command Center
     onPrimary = PureBlack,

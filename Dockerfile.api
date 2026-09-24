@@ -5,10 +5,10 @@ FROM node:20-slim
 WORKDIR /app
 
 # Install runtime dependencies for Prisma (openssl 1.1 for linux-musl binary)
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
-RUN npm install -g pnpm@8.15.9
+RUN npm install -g pnpm@8.15.9 node-pre-gyp
 
 # Copy all package.json files for workspace resolution
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
