@@ -417,6 +417,30 @@ services:
       timeout: 5s
       retries: 5
 
+  # WISE² Terminal Dashboard
+  terminal-dashboard:
+    build:
+      context: ./apps/wise2-terminal-dashboard
+      dockerfile: Dockerfile
+    image: wise2-terminal-dashboard:latest
+    container_name: wise2-terminal-dashboard
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3030
+    ports:
+      - "127.0.0.1:3030:3030"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3030/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
@@ -438,6 +462,7 @@ services:
       - hvac
       - fergies-table
       - rayban-service
+      - terminal-dashboard
       - redis
     networks:
       - wise2
