@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard';
 import PerformanceChart from './components/PerformanceChart';
 import AlertsPanel from './components/AlertsPanel';
 import ThemeToggle from './components/ThemeToggle';
+import AIAssistant from './components/AIAssistant';
 import { useTheme } from './hooks/useTheme';
 import './App.css';
 
@@ -87,6 +88,10 @@ export default function App() {
             <PerformanceChart historyData={historyData} />
             <Dashboard metrics={metrics} />
           </div>
+        </div>
+
+        <div className="ai-section">
+          <AIAssistant metrics={metrics} />
         </div>
       </div>
     </div>
