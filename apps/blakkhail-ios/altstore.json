@@ -1,0 +1,41 @@
+{
+  "name": "BLAKKHAIL",
+  "identifier": "com.sencere.blakkhail",
+  "category": "entertainment",
+  "description": "Heritage streetwear culture for the new generation. Authentic pieces built on legacy.",
+  "screenshotURLs": [
+    "https://wise2.net/apps/blakkhail/screenshots/1.png",
+    "https://wise2.net/apps/blakkhail/screenshots/2.png",
+    "https://wise2.net/apps/blakkhail/screenshots/3.png"
+  ],
+  "iconURL": "https://wise2.net/apps/blakkhail/icon.png",
+  "tintColor": "c4a369",
+  "version": "1.0.0",
+  "versionDate": "2026-09-24T19:00:00Z",
+  "downloadURL": "https://wise2.net/apps/blakkhail/releases/Blakkhail-1.0.0.ipa",
+  "developerName": "SenCere Creative",
+  "permissions": [
+    {
+      "type": "photos",
+      "usageDescription": "Upload photos to your BLAKKHAIL collection and share designs with the community"
+    },
+    {
+      "type": "camera",
+      "usageDescription": "Capture photos and videos for product uploads and field captures"
+    },
+    {
+      "type": "location",
+      "usageDescription": "Track location for field service technician coordinates"
+    }
+  ],
+  "news": [
+    {
+      "title": "Welcome to BLAKKHAIL",
+      "identifier": "welcome-1",
+      "caption": "Heritage fashion. No apologies.",
+      "date": "2026-09-24T00:00:00Z",
+      "imageURL": "https://wise2.net/apps/blakkhail/news/welcome.png",
+      "notify": true
+    }
+  ]
+}

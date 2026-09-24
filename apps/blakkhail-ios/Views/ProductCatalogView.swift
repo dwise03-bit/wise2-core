@@ -31,6 +31,15 @@ struct ProductCatalogView: View {
           .ignoresSafeArea()
 
         VStack(spacing: 0) {
+          if productManager.products.isEmpty {
+            VStack(spacing: 16) {
+              ProgressView()
+                .tint(.blakkhailGold)
+              Text("Loading products...")
+                .foregroundColor(.gray)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+          } else {
           // Header
           VStack(spacing: 16) {
             Text("SHOP BLAKK HAIL")
@@ -122,10 +131,14 @@ struct ProductCatalogView: View {
             }
             .padding(16)
           }
+          }
         }
       }
       .navigationTitle("")
       .navigationBarTitleDisplayMode(.inline)
+      .task {
+        await productManager.fetchProducts()
+      }
     }
   }
 }

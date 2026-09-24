@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLAKKHAIL - Download</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #050607;
+            color: #d1d5db;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 40px 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            color: #c4a369;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .tagline {
+            color: #00d9ff;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .app-info {
+            background: rgba(10, 15, 26, 0.5);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            padding: 30px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(196, 163, 105, 0.1);
+            font-size: 14px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .label { color: #888; }
+        .value { color: #00ff7f; font-weight: bold; }
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #c4a369 0%, #8b7355 100%);
+            color: #050607;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+        }
+        .cta-button:hover {
+            background: linear-gradient(135deg, #d4b379 0%, #9b8365 100%);
+        }
+        .alt-button {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: transparent;
+            color: #00d9ff;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #00d9ff;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .alt-button:hover {
+            background: rgba(0, 217, 255, 0.1);
+        }
+        .features {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+        .features h3 {
+            color: #00d9ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 15px;
+        }
+        .feature {
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        .feature:before {
+            content: "✓ ";
+            color: #00ff7f;
+            margin-right: 8px;
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 255, 127, 0.05);
+            border: 1px solid rgba(0, 255, 127, 0.2);
+            border-radius: 4px;
+            color: #00ff7f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BLAKKHAIL</h1>
+            <div class="tagline">Heritage Fashion. No Apologies.</div>
+        </div>
+
+        <button class="cta-button" onclick="downloadApp()">DOWNLOAD v1.0.0</button>
+        <button class="alt-button" onclick="addAltStore()">ADD TO ALTSTORE</button>
+
+        <div class="app-info">
+            <div class="info-row">
+                <span class="label">Version</span>
+                <span class="value">1.0.0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Bundle ID</span>
+                <span class="value">com.sencere.blakkhail</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Size</span>
+                <span class="value">~82 MB</span>
+            </div>
+            <div class="info-row">
+                <span class="label">iOS</span>
+                <span class="value">17.0+</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Released</span>
+                <span class="value">2026-09-24</span>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>Features</h3>
+            <div class="feature">8-product collection from blakkhail.com</div>
+            <div class="feature">Live product sync</div>
+            <div class="feature">AI Style Assistant</div>
+            <div class="feature">Meta Ray-Ban Glasses integration</div>
+            <div class="feature">Designer Portal</div>
+            <div class="feature">Apple Wearables support</div>
+            <div class="feature">Field capture & uploads</div>
+            <div class="feature">Heritage brand experience</div>
+        </div>
+
+        <div class="status">✅ APP READY FOR INSTALLATION</div>
+    </div>
+
+    <script>
+        function downloadApp() {
+            window.location.href = '/apps/blakkhail/releases/1.0.0/Blakkhail-1.0.0.ipa';
+        }
+
+        function addAltStore() {
+            const altStoreURL = 'altstore://source?url=https://wise2.net/apps/altstore-apps.json';
+            window.location.href = altStoreURL;
+        }
+    </script>
+</body>
+</html>

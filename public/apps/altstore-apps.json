@@ -1,0 +1,38 @@
+{
+  "apps": [
+    {
+      "name": "BLAKKHAIL",
+      "bundleIdentifier": "com.sencere.blakkhail",
+      "version": "1.0.0",
+      "versionDate": "2026-09-24T19:00:00Z",
+      "downloadURL": "https://wise2.net/apps/blakkhail/releases/Blakkhail-1.0.0.ipa",
+      "localizedDescription": "Heritage streetwear culture for the new generation. Authentic pieces built on legacy, authenticity, and no apologies. Shop the latest drop.",
+      "iconURL": "https://wise2.net/apps/blakkhail/icon.png",
+      "tintColor": "c4a369",
+      "category": "entertainment",
+      "developer": {
+        "name": "SenCere Creative",
+        "contactURL": "mailto:support@blakkhail.com"
+      },
+      "screenshotURLs": [
+        "https://wise2.net/apps/blakkhail/screenshots/1.png",
+        "https://wise2.net/apps/blakkhail/screenshots/2.png",
+        "https://wise2.net/apps/blakkhail/screenshots/3.png"
+      ],
+      "permissions": [
+        {
+          "type": "photos",
+          "usageDescription": "Upload photos to your BLAKKHAIL collection and share designs with the community"
+        },
+        {
+          "type": "camera",
+          "usageDescription": "Capture photos and videos for product uploads and field captures"
+        },
+        {
+          "type": "location",
+          "usageDescription": "Track location for field service technician coordinates"
+        }
+      ]
+    }
+  ]
+}
