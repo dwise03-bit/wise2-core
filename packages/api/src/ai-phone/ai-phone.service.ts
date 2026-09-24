@@ -143,16 +143,22 @@ export class AiPhoneService {
 
   async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
     if (input.eventType === 'call.initiated') {
-      await this.answerTelnyxCall(input.payload);
       if (String(input.payload.to || '') === '+16312281912') {
-        await this.speakTelnyxCall(
-          input.payload,
-          "Welcome to WISE2 Trading. I’m your market intelligence assistant. Ask about market signals, your portfolio, risk, or a trade.",
-        );
+        await this.handleMoneyBagCall(input.payload);
+        return { accepted: true, eventType: input.eventType, agent: 'MoneyBag' };
       }
+      await this.answerTelnyxCall(input.payload);
       await this.notifyDiscordIncomingCall(input.payload);
     }
     return { accepted: true, eventType: input.eventType };
+  }
+
+  private async handleMoneyBagCall(payload: Record<string, unknown>): Promise<void> {
+    await this.answerTelnyxCall(payload);
+    await this.speakTelnyxCall(
+      payload,
+      "Welcome to MoneyBag, the WISE2 trading intelligence desk. Ask about market signals, your portfolio, risk, or a trade.",
+    );
   }
 
   private async answerTelnyxCall(payload: Record<string, unknown>): Promise<void> {
