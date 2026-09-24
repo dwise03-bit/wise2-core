@@ -14,9 +14,12 @@ export interface WojiRegistry {
 
 export class MemoryWojiRegistry implements WojiRegistry {
   private records = new Map<string,WojiProjectRecord>();
-  async get(id:string){ return this.records.get(id) ?? null; }
+  async get(id:string){
+    const record = this.records.get(id);
+    return record ? structuredClone(record) : null;
+  }
   async save(record:WojiProjectRecord){ this.records.set(record.projectId, structuredClone(record)); }
-  async list(){ return [...this.records.values()].map(structuredClone); }
+  async list(){ return [...this.records.values()].map((record) => structuredClone(record)); }
 }
 
 export function addEvent(record:WojiProjectRecord,event:WojiEvent):WojiProjectRecord {
@@ -26,5 +29,13 @@ export function addCheckpoint(record:WojiProjectRecord,checkpoint:WojiCheckpoint
   return {...record,checkpoints:[...record.checkpoints,checkpoint],updatedAt:checkpoint.at};
 }
 export function lockConflict(record:WojiProjectRecord,scope:string):WojiLock[] {
-  return record.locksDetailed.filter(l => l.scope === scope && l.level >= 2);
+  return record.locksDetailed.filter((lock) => lock.scope === scope);
+}
+
+export function setQaResult(record:WojiProjectRecord,name:string,passed:boolean):WojiProjectRecord {
+  const existing = record.tests.findIndex((test) => test.name === name);
+  const tests = record.tests.map((test) => ({...test}));
+  if(existing >= 0) tests[existing] = {name,passed};
+  else tests.push({name,passed});
+  return {...record,tests};
 }

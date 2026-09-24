@@ -101,6 +101,7 @@ export function parseWojiChain(raw: string): ParsedWojiChain {
 
 export interface WojiProjectState {
   projectId: string;
+  target?: string;
   progress: number;
   locks: string[];
   missing: string[];

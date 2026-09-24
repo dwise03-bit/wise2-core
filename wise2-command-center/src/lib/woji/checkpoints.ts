@@ -25,6 +25,7 @@ export function restoreCheckpoint(record: WojiProjectRecord, checkpointId?: stri
 function snapshot(record: WojiProjectRecord): WojiProjectState {
   return {
     projectId: record.projectId,
+    target: record.target,
     progress: record.progress,
     locks: [...record.locks],
     missing: [...record.missing],

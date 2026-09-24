@@ -13,6 +13,10 @@ This implementation turns the approved WOJI language into executable project-con
 - Project state contract covering progress, locks, missing pieces, blockers, active work, QA, handoff readiness, and next action.
 - Completion gate: `💯` is valid only at 100% with no gaps/blockers and at least one passing QA check.
 - Completion-chain selector for stalled or partially complete projects.
+- Immutable permission denials and explicit `🛡️❌` outcomes.
+- Lock-conflict enforcement with explicit `⚠️🔒` outcomes.
+- Protected pre-operation checkpoints, restore, resume, and event history.
+- A real chain executor consumed by the Command Center Control Deck.
 
 ## Locked execution protocol
 
@@ -20,12 +24,8 @@ This implementation turns the approved WOJI language into executable project-con
 
 The engine must stop rather than silently override a lock, bypass permissions, expose secrets, perform an unapproved destructive action, or claim verified completion without passing acceptance criteria.
 
-## Next implementation targets
+## Control Deck
 
-1. Persist Project Registry records.
-2. Add Memory Map lock reasons and lock levels.
-3. Add Event Log and Checkpoint adapters.
-4. Add permissions evaluation.
-5. Add Orchestrator/Router execution interfaces.
-6. Add API endpoint for Control Deck clients.
-7. Add unit/integration tests and wire into Command Center UI.
+The `/woji` route uses `executeWojiChain` directly. UI actions therefore pass through the same parser, command contract, permission checks, completion gate, locks, checkpoint logic, event recorder, and state transitions covered by integration tests.
+
+The in-memory registry remains the V1 adapter. A durable project-registry adapter can replace it without changing the command contract or executor.
