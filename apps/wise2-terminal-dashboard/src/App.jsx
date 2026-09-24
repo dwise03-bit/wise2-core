@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Terminal from './components/Terminal';
 import Dashboard from './components/Dashboard';
+import PerformanceChart from './components/PerformanceChart';
+import AlertsPanel from './components/AlertsPanel';
+import ThemeToggle from './components/ThemeToggle';
+import { useTheme } from './hooks/useTheme';
 import './App.css';
 
 export default function App() {
   const [metrics, setMetrics] = useState(null);
   const [wsReady, setWsReady] = useState(false);
+  const [historyData, setHistoryData] = useState({ cpu: [], memory: [], disk: [] });
+  const { theme } = useTheme();
 
   useEffect(() => {
     const ws = new WebSocket(`ws://${window.location.host}`);
@@ -21,6 +27,12 @@ export default function App() {
         const msg = JSON.parse(event.data);
         if (msg.type === 'metrics') {
           setMetrics(msg.data);
+          // Track history for charts (60-second window)
+          setHistoryData(prev => ({
+            cpu: [...prev.cpu.slice(-59), msg.data.cpu],
+            memory: [...prev.memory.slice(-59), msg.data.memory],
+            disk: [...prev.disk.slice(-59), msg.data.disk]
+          }));
         }
       } catch (err) {
         console.error('Parse error:', err);
@@ -55,9 +67,13 @@ export default function App() {
     <div className="app">
       <div className="app-header">
         <h1>⚙️ WISE² Terminal Dashboard</h1>
-        <div className="status">
-          <span className={`indicator ${wsReady ? 'online' : 'offline'}`}></span>
-          {wsReady ? 'Connected' : 'Disconnected'}
+        <div className="header-controls">
+          <AlertsPanel metrics={metrics} />
+          <ThemeToggle />
+          <div className="status">
+            <span className={`indicator ${wsReady ? 'online' : 'offline'}`}></span>
+            {wsReady ? 'Connected' : 'Disconnected'}
+          </div>
         </div>
       </div>
 
@@ -67,7 +83,10 @@ export default function App() {
         </div>
 
         <div className="dashboard-section">
-          <Dashboard metrics={metrics} />
+          <div className="dashboard-content">
+            <PerformanceChart historyData={historyData} />
+            <Dashboard metrics={metrics} />
+          </div>
         </div>
       </div>
     </div>
