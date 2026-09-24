@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Gitleaks compares the PR range against its parent commit.
+          # A shallow checkout can omit that parent and fail the scan before
+          # any secrets are evaluated.
+          fetch-depth: 0
 
       # Build-free filesystem scan — no package manager needed, so it never
       # fails on install tooling. Reports HIGH/CRITICAL without gating the build.

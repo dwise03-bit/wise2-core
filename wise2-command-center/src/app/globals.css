@@ -51,6 +51,8 @@
 :root {
   --background: #050505;
   --foreground: #f6f0e4;
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
   --card: #0a0a0c;
   --card-foreground: #f6f0e4;
   --popover: #0a0a0c;
