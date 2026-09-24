@@ -81,7 +81,7 @@ function handleCallInitiated(
       },
       {
         speak: {
-          payload: `Welcome to WISE² Trading Assistant. Please hold while I connect you.`,
+          payload: `Welcome to MoneyBag. We keep the market talk smooth and the risk tight. Ask me about signals, your portfolio, or a trade.`,
           voice: agentConfig.voice,
           language: agentConfig.voiceLanguage,
         },
@@ -113,7 +113,7 @@ function handleCallAnswered(
     commands: [
       {
         speak: {
-          payload: 'You are now connected to the AI trading assistant.',
+          payload: 'MoneyBag is live. What are we looking at today?',
           voice: agentConfig.voice,
           language: agentConfig.voiceLanguage,
         },
@@ -175,7 +175,7 @@ function handleDTMF(
           {
             speak: {
               payload:
-                'Market signals: Tech sector showing strength with a 2.5 percent gain. AI-related stocks leading the rally. Volatility index stable at 14 points.',
+                'I can pull the latest market signal feed when the live market connector is configured. No made-up numbers here—clean data only.',
               voice: agentConfig.voice,
               language: agentConfig.voiceLanguage,
             },
@@ -190,7 +190,7 @@ function handleDTMF(
           {
             speak: {
               payload:
-                'Portfolio review: Your current holdings total 250,000 dollars. Largest position is in technology at 45 percent allocation. Current unrealized gains stand at 12,000 dollars.',
+                'I can review positions, exposure, drawdown, and risk once your portfolio is connected. Your money gets facts, not guesses.',
               voice: agentConfig.voice,
               language: agentConfig.voiceLanguage,
             },
@@ -205,7 +205,7 @@ function handleDTMF(
           {
             speak: {
               payload:
-                'Trading execution: Please confirm the order details. Buy 100 shares of Tesla at market. Confirm by saying yes or no.',
+                'I can prepare an order, but MoneyBag never sends a trade without the full ticket and your clear confirmation.',
               voice: agentConfig.voice,
               language: agentConfig.voiceLanguage,
             },
@@ -230,7 +230,7 @@ function processTradeQuery(query: string): string {
     lowerQuery.includes('signal') ||
     lowerQuery.includes('trend')
   ) {
-    return 'Current market signals indicate bullish momentum in technology and financial sectors. VIX showing healthy volatility at 14 points. Recommend reviewing growth-focused positions.';
+    return 'I can check market signals once the live data feed is connected. I will give you the setup, the risk, and the invalidation level—no hype, just the playbook.';
   }
 
   // Portfolio analysis
@@ -239,7 +239,7 @@ function processTradeQuery(query: string): string {
     lowerQuery.includes('position') ||
     lowerQuery.includes('holding')
   ) {
-    return 'Your portfolio is well-diversified with strong tech exposure at 45 percent. Current gains are 12,000 dollars. Recommend rebalancing if tech allocation exceeds 50 percent.';
+    return 'Connect the portfolio and I will break down exposure, concentration, drawdown, and risk in plain English.';
   }
 
   // Trading execution
@@ -248,16 +248,16 @@ function processTradeQuery(query: string): string {
     lowerQuery.includes('sell') ||
     lowerQuery.includes('trade')
   ) {
-    return 'Ready to execute your trade. Please specify the symbol, quantity, and order type. I can place market or limit orders.';
+    return 'Give me the symbol, buy or sell, quantity, order type, and stop. I will read it back and wait for confirmation before anything moves.';
   }
 
   // Risk assessment
   if (lowerQuery.includes('risk') || lowerQuery.includes('volatility')) {
-    return 'Portfolio risk assessment: Your current beta is 1.2, indicating moderate volatility relative to the market. Maximum drawdown in last 30 days was 8 percent. Consider your risk tolerance.';
+    return 'Risk first, always. I need the live portfolio and market feed to calculate beta, drawdown, and position risk accurately.';
   }
 
   // Default response
-  return 'I understand you want to learn about trading. Please specify your inquiry: market signals, portfolio review, or trading execution.';
+  return 'Say market signals, portfolio review, risk check, or prepare a trade. Smooth, precise, confirmation-first.';
 }
 
 /**
