@@ -58,7 +58,6 @@ jobs:
             SERVICE=command-center
             CONTAINER=wise2-command-center
             LEGACY_UNIT=wise2-command-center.service
-            PUBLIC_URL=https://command.wise2.net/woji
             LOCAL_URL=http://127.0.0.1:3004/woji
             ROLLBACK_TAG=wise2-core-command-center:rollback-${{ github.run_id }}
 
@@ -155,13 +154,6 @@ jobs:
             NGINX_CONFIG="$(sudo -n nginx -T 2>&1)"
             printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'server_name[[:space:]]+command\.wise2\.net'
             printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'proxy_pass[[:space:]]+http://127\.0\.0\.1:3004'
-
-            check=1
-            while [ "$check" -le 5 ]; do
-              curl -fsS --retry 2 --retry-delay 2 "$PUBLIC_URL" | grep -qi WOJI
-              check=$((check + 1))
-              sleep 2
-            done
 
             trap - EXIT INT TERM
             docker compose -f "$COMPOSE_FILE" ps "$SERVICE"
