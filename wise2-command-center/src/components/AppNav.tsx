@@ -48,6 +48,23 @@ export default function AppNav() {
         🏠 Home
       </Link>
 
+      <Link href="/woji" style={{
+        color: '#E8F0FF',
+        textDecoration: 'none',
+        fontSize: '14px',
+        padding: '12px',
+        borderRadius: '8px',
+        transition: 'all 0.3s ease',
+      }} onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(0,217,255,0.1)';
+        e.currentTarget.style.color = '#00D9FF';
+      }} onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'transparent';
+        e.currentTarget.style.color = '#E8F0FF';
+      }}>
+        🎛️ WOJI Control
+      </Link>
+
       <Link href="/hermes-control" style={{
         color: '#E8F0FF',
         textDecoration: 'none',
