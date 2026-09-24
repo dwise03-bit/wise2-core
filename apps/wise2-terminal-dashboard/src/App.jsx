@@ -5,6 +5,10 @@ import PerformanceChart from './components/PerformanceChart';
 import AlertsPanel from './components/AlertsPanel';
 import ThemeToggle from './components/ThemeToggle';
 import AIAssistant from './components/AIAssistant';
+import CommandHub from './components/CommandHub';
+import ProcessMonitor from './components/ProcessMonitor';
+import Snapshots from './components/Snapshots';
+import LogViewer from './components/LogViewer';
 import { useTheme } from './hooks/useTheme';
 import './App.css';
 
@@ -64,6 +68,27 @@ export default function App() {
     };
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeydown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.querySelector('.command-toggle')?.click();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+        e.preventDefault();
+        document.querySelector('.snapshot-toggle')?.click();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+        e.preventDefault();
+        document.querySelector('.log-toggle')?.click();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeydown);
+    return () => window.removeEventListener('keydown', handleKeydown);
+  }, []);
+
   return (
     <div className="app">
       <div className="app-header">
@@ -85,7 +110,12 @@ export default function App() {
 
         <div className="dashboard-section">
           <div className="dashboard-content">
+            <div className="dashboard-toolbar">
+              <Snapshots metrics={metrics} />
+              <LogViewer />
+            </div>
             <PerformanceChart historyData={historyData} />
+            <ProcessMonitor />
             <Dashboard metrics={metrics} />
           </div>
         </div>
@@ -94,6 +124,8 @@ export default function App() {
           <AIAssistant metrics={metrics} />
         </div>
       </div>
+
+      <CommandHub metrics={metrics} />
     </div>
   );
 }

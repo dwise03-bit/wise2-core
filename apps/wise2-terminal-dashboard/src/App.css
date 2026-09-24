@@ -124,6 +124,12 @@
   padding: 12px;
 }
 
+.dashboard-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .ai-section {
   width: 320px;
   display: flex;
