@@ -124,3 +124,34 @@ export const notifyFormSubmission = async (
     return false;
   }
 };
+
+export async function notifyConnectCapture(input: {
+  type: 'audio' | 'video';
+  duration: number;
+  createdAt: string;
+  status: 'LOCAL' | 'SYNC';
+}): Promise<boolean> {
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl) return false;
+  const response = await fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: 'WISE² Connect',
+      embeds: [{
+        title: 'New Connect capture saved',
+        description: 'A consent-aware capture is available in the local Connect library.',
+        color: 0x0094ff,
+        fields: [
+          { name: 'Type', value: input.type === 'video' ? 'Video + audio' : 'Audio', inline: true },
+          { name: 'Duration', value: `${Math.floor(input.duration / 60)}:${String(input.duration % 60).padStart(2, '0')}`, inline: true },
+          { name: 'Status', value: input.status, inline: true },
+          { name: 'Recorded', value: input.createdAt, inline: false },
+        ],
+        url: 'https://wise2.net/connect',
+        timestamp: new Date().toISOString(),
+      }],
+    }),
+  });
+  return response.ok;
+}

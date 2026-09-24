@@ -10,6 +10,8 @@ describe('WISE² Connect recording surface', () => {
     expect(page).toContain('Save locally');
     expect(page).toContain('Discard');
     expect(page).toContain('Recording');
+    expect(page).toContain('Discord');
+    expect(page).toContain('/api/connect/captures/discord');
   });
 
   it('persists capture metadata and media in IndexedDB', () => {
