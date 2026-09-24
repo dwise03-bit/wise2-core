@@ -143,9 +143,36 @@ export class AiPhoneService {
 
   async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
     if (input.eventType === 'call.initiated') {
+      await this.answerTelnyxCall(input.payload);
       await this.notifyDiscordIncomingCall(input.payload);
     }
     return { accepted: true, eventType: input.eventType };
+  }
+
+  private async answerTelnyxCall(payload: Record<string, unknown>): Promise<void> {
+    const callControlId = String(payload.call_control_id || '');
+    const apiKey = process.env.TELNYX_API_KEY;
+    if (!callControlId || !apiKey) {
+      throw new Error('Telnyx call control ID or TELNYX_API_KEY is missing');
+    }
+
+    const response = await fetch(
+      `${process.env.TELNYX_API_URL || 'https://api.telnyx.com/v2'}/calls/${encodeURIComponent(callControlId)}/actions/answer`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          client_state: callControlId,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Telnyx answer failed: ${response.status} ${response.statusText}`);
+    }
   }
 
   private async notifyDiscordIncomingCall(payload: Record<string, unknown>): Promise<void> {
