@@ -74,6 +74,16 @@ jobs:
             git merge --ff-only origin/main
             docker compose -f "$COMPOSE_FILE" config --services | grep -qx "$SERVICE"
 
+            PORT_OWNERS="$(docker ps --filter publish=3004 --format '{{.Names}}')"
+            if [ -n "$PORT_OWNERS" ] && ! printf '%s\n' "$PORT_OWNERS" | grep -qx "$CONTAINER"; then
+              echo "Port 3004 is owned by a different container; refusing to replace it without verifying its role."
+              docker ps --filter publish=3004 --format 'name={{.Names}} image={{.Image}} ports={{.Ports}}'
+              for OWNER in $PORT_OWNERS; do
+                docker container inspect --format 'name={{.Name}} compose_project={{index .Config.Labels "com.docker.compose.project"}} compose_service={{index .Config.Labels "com.docker.compose.service"}} image={{.Config.Image}}' "$OWNER"
+              done
+              exit 1
+            fi
+
             OLD_IMAGE=""
             if docker container inspect "$CONTAINER" >/dev/null 2>&1; then
               OLD_IMAGE="$(docker container inspect --format '{{.Image}}' "$CONTAINER")"
