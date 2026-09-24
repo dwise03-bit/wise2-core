@@ -245,84 +245,84 @@ class ProductManager: ObservableObject {
   private static func seedProducts() -> [Product] {
     [
       Product(
-        id: "bk-001",
-        name: "Heritage Logo Hoodie",
-        description: "Premium oversized hoodie with embroidered BLAKKHAIL logo",
-        price: 89.99,
-        image: "📦",
+        id: "bk-new-001",
+        name: "Red Distressed Hail Hoodie",
+        description: "Limited red short-sleeve hoodie with hand-finished distress details",
+        price: 85.00,
+        image: "🔴",
         category: "Hoodies",
         inStock: true,
         sizes: ["S", "M", "L", "XL", "2XL"]
       ),
       Product(
-        id: "bk-002",
-        name: "Distressed Cargo Pants",
-        description: "Black distressed cargo pants with multiple pockets and heritage detailing",
-        price: 79.99,
-        image: "📦",
-        category: "Pants",
+        id: "bk-new-002",
+        name: "Piff City Utility Hoodie",
+        description: "Hand-distressed utility hoodie with removable Piff City back panel",
+        price: 125.00,
+        image: "🎒",
+        category: "Hoodies",
         inStock: true,
-        sizes: ["28", "30", "32", "34", "36"]
+        sizes: ["S", "M", "L", "XL", "2XL"]
       ),
       Product(
-        id: "bk-003",
-        name: "Gold Chain Necklace",
-        description: "Premium 18k gold-plated chain necklace, signature BLAKKHAIL accessory",
-        price: 49.99,
-        image: "📦",
-        category: "Accessories",
-        inStock: true,
-        sizes: ["18in", "20in", "24in"]
-      ),
-      Product(
-        id: "bk-004",
-        name: "Black Leather Bomber Jacket",
-        description: "High-quality black leather bomber with gold accents and heritage patch",
-        price: 199.99,
-        image: "📦",
-        category: "Jackets",
-        inStock: true,
-        sizes: ["S", "M", "L", "XL"]
-      ),
-      Product(
-        id: "bk-005",
-        name: "Classic T-Shirt",
-        description: "100% cotton classic tee with front logo print",
-        price: 29.99,
-        image: "📦",
+        id: "bk-new-003",
+        name: "Take Control Utility Tee",
+        description: "Hand-distressed utility tee with modular Piff City patchwork",
+        price: 110.00,
+        image: "👕",
         category: "T-Shirts",
         inStock: true,
         sizes: ["XS", "S", "M", "L", "XL", "2XL"]
       ),
       Product(
-        id: "bk-006",
-        name: "Snapback Cap",
-        description: "Classic snapback with 3D embroidered BLAKKHAIL logo",
-        price: 34.99,
-        image: "📦",
-        category: "Hats",
+        id: "bk-ess-001",
+        name: "No berry Cush Gray",
+        description: "PC Street life no berry kush destress short sleeve",
+        price: 65.00,
+        image: "⚫",
+        category: "T-Shirts",
         inStock: true,
-        sizes: ["One Size"]
-      ),
-      Product(
-        id: "bk-007",
-        name: "Heritage Sweatpants",
-        description: "Jogger-style sweatpants with vintage BLAKKHAIL branding",
-        price: 59.99,
-        image: "📦",
-        category: "Pants",
-        inStock: false,
         sizes: ["S", "M", "L", "XL"]
       ),
       Product(
-        id: "bk-008",
-        name: "Gold Rings Set",
-        description: "Set of 3 gold-plated statement rings",
-        price: 44.99,
-        image: "📦",
+        id: "bk-ess-002",
+        name: "No berry Cush Long Sleeve",
+        description: "PC Street life no berry kush destress long sleeve hoodie",
+        price: 65.00,
+        image: "🖤",
+        category: "Hoodies",
+        inStock: true,
+        sizes: ["S", "M", "L", "XL"]
+      ),
+      Product(
+        id: "bk-ess-003",
+        name: "Strawberry Haze",
+        description: "PC Street life Strawberry haze destress long sleeve hoodie",
+        price: 65.00,
+        image: "🍓",
+        category: "Hoodies",
+        inStock: true,
+        sizes: ["S", "M", "L", "XL"]
+      ),
+      Product(
+        id: "bk-heritage-001",
+        name: "Heritage Logo Hoodie",
+        description: "Premium oversized hoodie with embroidered BLAKKHAIL logo",
+        price: 89.99,
+        image: "👔",
+        category: "Hoodies",
+        inStock: true,
+        sizes: ["S", "M", "L", "XL", "2XL"]
+      ),
+      Product(
+        id: "bk-heritage-002",
+        name: "Gold Chain Necklace",
+        description: "Premium 18k gold-plated chain necklace, signature BLAKKHAIL accessory",
+        price: 49.99,
+        image: "⛓️",
         category: "Accessories",
         inStock: true,
-        sizes: ["7", "8", "9", "10", "11", "12"]
+        sizes: ["18in", "20in", "24in"]
       ),
     ]
   }
@@ -356,9 +356,21 @@ class NotificationManager: ObservableObject {
     do {
       let url = URL(string: "\(apiBase)/drops")!
       let (data, _) = try await URLSession.shared.data(from: url)
-      self.upcomingDrops = try JSONDecoder().decode([Drop].self, from: data)
+
+      let decoder = JSONDecoder()
+      decoder.dateDecodingStrategy = .iso8601
+
+      // Try to decode as array first, fallback to single object
+      if let drops = try? decoder.decode([Drop].self, from: data) {
+        self.upcomingDrops = drops
+      } else if let drop = try? decoder.decode(Drop.self, from: data) {
+        self.upcomingDrops = [drop]
+      } else {
+        self.upcomingDrops = []
+      }
     } catch {
       print("Failed to fetch drops: \(error)")
+      self.upcomingDrops = []
     }
   }
 }
