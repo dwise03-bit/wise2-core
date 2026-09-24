@@ -6,6 +6,8 @@ import os from 'os';
 import si from 'systeminformation';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { dbOps } from './database.js';
+import { Tail } from 'tail';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -224,6 +226,111 @@ setInterval(() => {
     }
   });
 }, 2000);
+
+// API Routes
+app.use(express.json());
+
+// Processes API
+app.get('/api/processes', async (req, res) => {
+  try {
+    const processes = await si.processes();
+    const topProcesses = processes.list
+      .sort((a, b) => (b.memVms || 0) - (a.memVms || 0))
+      .slice(0, 50)
+      .map(p => ({
+        pid: p.pid,
+        name: p.name,
+        cpu: parseFloat((p.pcpu || 0).toFixed(1)),
+        memory: parseFloat((p.pmem || 0).toFixed(1)),
+        cmd: p.command || '',
+      }));
+
+    // Store in database
+    dbOps.storeProcesses(topProcesses);
+    res.json(topProcesses);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Kill process
+app.delete('/api/process/:pid', async (req, res) => {
+  try {
+    const pid = parseInt(req.params.pid);
+    process.kill(pid, 'SIGTERM');
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Logs API
+const systemLogFiles = [
+  '/var/log/system.log',
+  '/var/log/syslog',
+  '/var/log/messages',
+];
+
+let logBuffer = [];
+let tail = null;
+
+function startLogTailing() {
+  const logFile = systemLogFiles.find(f => {
+    try { require('fs').accessSync(f); return true; } catch { return false; }
+  }) || '/var/log/system.log';
+
+  try {
+    tail = new Tail(logFile);
+    tail.on('line', (line) => {
+      logBuffer.unshift({
+        timestamp: new Date().toISOString(),
+        level: line.includes('ERROR') ? 'error' : line.includes('WARN') ? 'warn' : 'info',
+        message: line,
+      });
+
+      if (logBuffer.length > 1000) {
+        logBuffer = logBuffer.slice(0, 1000);
+      }
+
+      // Broadcast to WebSocket clients
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1) {
+          client.send(JSON.stringify({
+            type: 'log',
+            data: logBuffer[0],
+          }));
+        }
+      });
+    });
+  } catch (err) {
+    console.log('[Logs] Could not open log file, using mock data');
+  }
+}
+
+app.get('/api/logs', (req, res) => {
+  const limit = parseInt(req.query.limit) || 100;
+  res.json(logBuffer.slice(0, limit));
+});
+
+startLogTailing();
+
+// Metrics export API
+app.get('/api/export/metrics.csv', (req, res) => {
+  const csv = dbOps.exportMetricsCSV();
+  res.header('Content-Type', 'text/csv');
+  res.header('Content-Disposition', 'attachment; filename="metrics.csv"');
+  res.send(csv);
+});
+
+// Store metrics periodically
+setInterval(() => {
+  try {
+    dbOps.storeMetrics(systemMetrics.cpu, systemMetrics.memory, systemMetrics.disk);
+    dbOps.cleanup();
+  } catch (err) {
+    console.error('[Database] Error storing metrics:', err.message);
+  }
+}, 30000); // Every 30 seconds
 
 // Fallback to index.html for SPA
 app.get('*', (req, res) => {

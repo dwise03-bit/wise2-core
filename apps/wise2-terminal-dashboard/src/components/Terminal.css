@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #050607;
+  background: linear-gradient(135deg, #0F0F23 0%, #121212 100%);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 .terminal-header {

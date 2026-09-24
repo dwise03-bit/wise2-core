@@ -63,10 +63,23 @@ export default function Terminal({ wsReady }) {
 
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: 'init' }));
-      xterm.write('\r\n🚀 WISE² Terminal Dashboard\r\n');
-      xterm.write('Workspace: WISE² Core (local AI coding ready)\r\n');
-      xterm.write('Run `wise2 code` or type `wise2` to open the Ollama coding agent.\r\n');
-      xterm.write('Press Ctrl+L to clear.\r\n\r\n');
+
+      // System Banner Graphics
+      xterm.write('\x1b[36m┌─────────────────────────────────────────────────────────┐\x1b[0m\r\n');
+      xterm.write('\x1b[36m│\x1b[0m  \x1b[1;35m⚙️  WISE² Terminal Dashboard\x1b[0m                       \x1b[36m│\x1b[0m\r\n');
+      xterm.write('\x1b[36m│\x1b[0m  \x1b[32m✓ Connected\x1b[0m • Real-time Monitoring Active         \x1b[36m│\x1b[0m\r\n');
+      xterm.write('\x1b[36m├─────────────────────────────────────────────────────────┤\x1b[0m\r\n');
+      xterm.write('\x1b[36m│\x1b[0m  Workspace: \x1b[1mWISE² Core\x1b[0m (local AI coding ready)  \x1b[36m│\x1b[0m\r\n');
+      xterm.write('\x1b[36m│\x1b[0m  Commands:  wise2, wise2-ai, wise2-status             \x1b[36m│\x1b[0m\r\n');
+      xterm.write('\x1b[36m│\x1b[0m  Terminal:  Full PTY with native shell support        \x1b[36m│\x1b[0m\r\n');
+      xterm.write('\x1b[36m└─────────────────────────────────────────────────────────┘\x1b[0m\r\n\r\n');
+
+      // Quick Help
+      xterm.write('\x1b[1;33m⚡ Quick Commands:\x1b[0m\r\n');
+      xterm.write('  • wise2 status      - System status\r\n');
+      xterm.write('  • wise2 ai          - Ollama AI agent\r\n');
+      xterm.write('  • wise2 dashboard   - Show dashboard\r\n');
+      xterm.write('  • Ctrl+L            - Clear terminal\r\n\r\n');
     };
 
     ws.onmessage = (event) => {

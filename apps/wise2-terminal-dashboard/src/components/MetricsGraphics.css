@@ -1,0 +1,159 @@
+.metrics-graphics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(67, 56, 202, 0.3) transparent;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.graphics-card {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.4), rgba(19, 18, 48, 0.4));
+  border: 1px solid rgba(67, 56, 202, 0.3);
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: inset 0 1px 0 rgba(67, 56, 202, 0.1);
+}
+
+.graphics-card:hover {
+  border-color: rgba(67, 56, 202, 0.5);
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.6), rgba(19, 18, 48, 0.6));
+}
+
+/* ASCII Output */
+.ascii-output {
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary, #F8FAFC);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Stats Card */
+.stats-card {
+  min-height: auto;
+}
+
+.stats-card .ascii-output {
+  color: #00D9FF;
+}
+
+/* Services Card */
+.services-card {
+  min-height: auto;
+}
+
+.services-card .ascii-output {
+  color: #00D9FF;
+}
+
+/* History Card */
+.history-card {
+  min-height: auto;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(67, 56, 202, 0.2);
+}
+
+.history-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #00D9FF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-card .ascii-output {
+  color: #00FF7F;
+  font-size: 10px;
+}
+
+/* Info Card */
+.info-card {
+  padding: 12px;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(67, 56, 202, 0.2);
+}
+
+.info-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #00D9FF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.info-label {
+  font-family: 'Fira Code', monospace;
+  color: var(--text-secondary, #94A3B8);
+  min-width: 80px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: #22C55E;
+  font-weight: 500;
+}
+
+/* Scrollbar */
+.metrics-graphics::-webkit-scrollbar {
+  width: 6px;
+}
+
+.metrics-graphics::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.metrics-graphics::-webkit-scrollbar-thumb {
+  background: rgba(67, 56, 202, 0.3);
+  border-radius: 3px;
+}
+
+.metrics-graphics::-webkit-scrollbar-thumb:hover {
+  background: rgba(67, 56, 202, 0.5);
+}
+
+/* Animation for updates */
+@keyframes graphics-update {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.graphics-card {
+  animation: graphics-update 0.3s ease-in-out;
+}
