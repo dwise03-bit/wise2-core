@@ -1,5 +1,5 @@
-import { canMarkComplete, nextCompletionChain, parseWojiChain, type WojiProjectState } from "./index";
-import { planWojiExecution } from "./orchestrator";
+import { canMarkComplete, nextCompletionChain, parseWojiChain, type WojiProjectState } from "../index";
+import { planWojiExecution } from "../orchestrator";
 
 const state = (patch: Partial<WojiProjectState> = {}): WojiProjectState => ({
   projectId: "test",
@@ -16,6 +16,12 @@ const state = (patch: Partial<WojiProjectState> = {}): WojiProjectState => ({
 describe("WOJI control engine", () => {
   test("normalizes the fast-forward alias", () => {
     expect(parseWojiChain("👌🔒⏩").normalized).toBe("👌🔒⏭️");
+  });
+
+  test("captures unknown tokens without corrupting recognized commands", () => {
+    const parsed = parseWojiChain("👌x🔒");
+    expect(parsed.commands.map((command) => command.token)).toEqual(["👌", "🔒"]);
+    expect(parsed.unknown).toEqual(["x"]);
   });
 
   test("does not fake completion", () => {
