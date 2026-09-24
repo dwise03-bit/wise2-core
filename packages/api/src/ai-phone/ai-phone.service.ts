@@ -144,6 +144,12 @@ export class AiPhoneService {
   async handleTelnyxEvent(input: { eventType: string; payload: Record<string, unknown> }) {
     if (input.eventType === 'call.initiated') {
       await this.answerTelnyxCall(input.payload);
+      if (String(input.payload.to || '') === '+16312281912') {
+        await this.speakTelnyxCall(
+          input.payload,
+          "Welcome to WISE2 Trading. I’m your market intelligence assistant. Ask about market signals, your portfolio, risk, or a trade.",
+        );
+      }
       await this.notifyDiscordIncomingCall(input.payload);
     }
     return { accepted: true, eventType: input.eventType };
@@ -172,6 +178,29 @@ export class AiPhoneService {
 
     if (!response.ok) {
       throw new Error(`Telnyx answer failed: ${response.status} ${response.statusText}`);
+    }
+  }
+
+  private async speakTelnyxCall(payload: Record<string, unknown>, text: string): Promise<void> {
+    const callControlId = String(payload.call_control_id || '');
+    const apiKey = process.env.TELNYX_API_KEY;
+    const response = await fetch(
+      `${process.env.TELNYX_API_URL || 'https://api.telnyx.com/v2'}/calls/${encodeURIComponent(callControlId)}/actions/speak`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          payload: text,
+          voice: 'Polly.Salli',
+          language: 'en-US',
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`Telnyx trading greeting failed: ${response.status} ${response.statusText}`);
     }
   }
 
