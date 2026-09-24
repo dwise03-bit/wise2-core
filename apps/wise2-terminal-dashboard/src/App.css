@@ -1,10 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  /* DevOps Dark Theme Palette */
+  --bg-black: #0F0F23;
+  --bg-dark: #1B1B30;
+  --bg-dark-grey: #121212;
+  --primary: #1E1B4B;
+  --secondary: #4338CA;
+  --success: #22C55E;
+  --warning: #FFA500;
+  --critical: #FF0000;
+  --accent: #00D9FF;
+  --border: #312E81;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+}
+
 .app {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #050607 0%, #0a0a0c 100%);
-  color: #e0e0e0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, var(--bg-black) 0%, #1a1a2e 100%);
+  color: var(--text-primary);
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .app-header {
@@ -12,20 +31,21 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(0, 217, 255, 0.2);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: rgba(30, 27, 75, 0.3);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(67, 56, 202, 0.2);
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  letter-spacing: 1px;
-  background: linear-gradient(135deg, #00D9FF 0%, #00FF7F 100%);
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-family: 'Fira Code', monospace;
 }
 
 .status {
