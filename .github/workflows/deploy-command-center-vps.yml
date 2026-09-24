@@ -84,6 +84,14 @@ jobs:
               exit 1
             fi
 
+            if sudo -n ss -ltnp | grep -q ':3004'; then
+              echo "Port 3004 is owned by a host process rather than the expected container."
+              sudo -n ss -ltnp | grep ':3004' || true
+              sudo -n lsof -nP -iTCP:3004 -sTCP:LISTEN || true
+              curl -fsSI http://127.0.0.1:3004/ || true
+              exit 1
+            fi
+
             OLD_IMAGE=""
             if docker container inspect "$CONTAINER" >/dev/null 2>&1; then
               OLD_IMAGE="$(docker container inspect --format '{{.Image}}' "$CONTAINER")"
