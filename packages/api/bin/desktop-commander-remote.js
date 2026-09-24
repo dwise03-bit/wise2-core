@@ -94,6 +94,43 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // ChatGPT registration
+  if (req.url === '/register' && req.method === 'POST') {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+      try {
+        const { device_id, api_key, app_name } = JSON.parse(body);
+        if (!device_id || !api_key) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'device_id and api_key required' }));
+          return;
+        }
+
+        log(`ChatGPT registration: device_id=${device_id}, app=${app_name || 'unknown'}`);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          registered_at: new Date().toISOString(),
+          device_id,
+          message: 'Device registered successfully',
+        }));
+      } catch (error) {
+        log(`Registration error: ${error.message}`, 'ERROR');
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          error: error.message,
+        }));
+      }
+    });
+    return;
+  }
+
   // Remote command execution
   if (req.url === '/exec' && req.method === 'POST') {
     let body = '';
