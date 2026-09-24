@@ -65,6 +65,7 @@ export function parseWojiChain(raw: string): ParsedWojiChain {
   const normalized = raw.replaceAll("⏩", "⏭️").trim();
   const commands: WojiCommand[] = [];
   let remaining = normalized;
+  const unknown: string[] = [];
 
   const tokens = [...WOJI_COMMANDS]
     .map((command) => command.token)
@@ -84,13 +85,11 @@ export function parseWojiChain(raw: string): ParsedWojiChain {
       remaining = remaining.slice(token.length);
       continue;
     }
-    const [unknown] = Array.from(remaining);
-    remaining = remaining.slice(unknown.length);
-    commands.push();
+    const [unknownToken] = Array.from(remaining);
+    remaining = remaining.slice(unknownToken.length);
+    unknown.push(unknownToken);
   }
 
-  const recognizedText = commands.map((command) => command?.token ?? "").join("");
-  const unknown = Array.from(normalized.replace(recognizedText, "").replace(/\s/gu, ""));
   return {
     raw,
     normalized,
