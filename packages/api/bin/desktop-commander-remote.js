@@ -169,6 +169,37 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Serve ChatGPT plugin files
+  if (req.url === '/ai-plugin.json') {
+    try {
+      const pluginFile = path.join(__dirname, '../public/ai-plugin.json');
+      const pluginData = fs.readFileSync(pluginFile, 'utf-8');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(pluginData);
+      return;
+    } catch (error) {
+      log(`Plugin file error: ${error.message}`, 'ERROR');
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Plugin manifest not found' }));
+      return;
+    }
+  }
+
+  if (req.url === '/openapi.json') {
+    try {
+      const specFile = path.join(__dirname, '../public/openapi.json');
+      const specData = fs.readFileSync(specFile, 'utf-8');
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(specData);
+      return;
+    } catch (error) {
+      log(`OpenAPI spec error: ${error.message}`, 'ERROR');
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'OpenAPI spec not found' }));
+      return;
+    }
+  }
+
   res.writeHead(404, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ error: 'Not found' }));
 });

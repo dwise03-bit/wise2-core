@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "WISE² Desktop Commander",
+  "name_for_model": "wise2_desktop_commander",
+  "description_for_human": "Control Mac via ChatGPT. Execute commands, register device, check health.",
+  "description_for_model": "Allows ChatGPT to register with and control the WISE² Mac Desktop Commander bridge. Supports device registration, command execution, and health monitoring.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://100.109.186.4:9999/openapi.json"
+  },
+  "logo_url": "http://100.109.186.4:9999/logo.png",
+  "contact_email": "dwise03@gmail.com",
+  "legal_info_url": "https://wise2.net/legal"
+}
