@@ -1,0 +1,135 @@
+name: Deploy WOJI Command Center to VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-command-center-vps
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: wise2-command-center/package-lock.json
+
+      - name: Install Command Center dependencies
+        working-directory: wise2-command-center
+        run: npm ci
+
+      - name: Test Command Center
+        working-directory: wise2-command-center
+        run: npm test
+
+      - name: Type-check Command Center
+        working-directory: wise2-command-center
+        run: npm run type-check
+
+      - name: Build Command Center
+        working-directory: wise2-command-center
+        run: npm run build
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Command Center on the VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 30m
+          script: |
+            set -eu
+
+            APP_DIR=/home/dwise/wise2-core
+            COMPOSE_FILE=docker-compose.prod.yml
+            SERVICE=command-center
+            CONTAINER=wise2-command-center
+            PUBLIC_URL=https://command.wise2.net/woji
+            LOCAL_URL=http://127.0.0.1:3004/woji
+            ROLLBACK_TAG=wise2-core-command-center:rollback-${{ github.run_id }}
+
+            cd "$APP_DIR"
+            git fetch origin main
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "The production checkout has uncommitted changes; refusing to overwrite them."
+              git status --short
+              exit 1
+            fi
+
+            git checkout main
+            git merge --ff-only origin/main
+            docker compose -f "$COMPOSE_FILE" config --services | grep -qx "$SERVICE"
+
+            OLD_IMAGE=""
+            if docker container inspect "$CONTAINER" >/dev/null 2>&1; then
+              OLD_IMAGE="$(docker container inspect --format '{{.Image}}' "$CONTAINER")"
+              docker image tag "$OLD_IMAGE" "$ROLLBACK_TAG"
+            fi
+
+            docker compose -f "$COMPOSE_FILE" build "$SERVICE"
+
+            rollback() {
+              echo "Command Center deployment failed; attempting rollback."
+              docker container rm -f "$CONTAINER" >/dev/null 2>&1 || true
+              if [ -n "$OLD_IMAGE" ]; then
+                docker image tag "$ROLLBACK_TAG" wise2-core-command-center:latest
+                docker compose -f "$COMPOSE_FILE" up -d --no-deps "$SERVICE"
+              fi
+              docker compose -f "$COMPOSE_FILE" logs --tail=100 "$SERVICE" || true
+            }
+            trap rollback EXIT INT TERM
+
+            docker container rm -f "$CONTAINER" >/dev/null 2>&1 || true
+            docker compose -f "$COMPOSE_FILE" up -d --no-deps --force-recreate "$SERVICE"
+
+            attempt=1
+            while [ "$attempt" -le 30 ]; do
+              STATUS="$(docker container inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$CONTAINER" 2>/dev/null || true)"
+              if [ "$STATUS" = healthy ] && curl -fsS "$LOCAL_URL" | grep -qi WOJI; then
+                break
+              fi
+              if [ "$attempt" -eq 30 ]; then
+                echo "Command Center did not become healthy. Last status: $STATUS"
+                exit 1
+              fi
+              attempt=$((attempt + 1))
+              sleep 5
+            done
+
+            NGINX_CONFIG="$(sudo -n nginx -T 2>&1)"
+            printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'server_name[[:space:]]+command\.wise2\.net'
+            printf '%s\n' "$NGINX_CONFIG" | grep -Eq 'proxy_pass[[:space:]]+http://127\.0\.0\.1:3004'
+
+            check=1
+            while [ "$check" -le 5 ]; do
+              curl -fsS --retry 2 --retry-delay 2 "$PUBLIC_URL" | grep -qi WOJI
+              check=$((check + 1))
+              sleep 2
+            done
+
+            trap - EXIT INT TERM
+            docker compose -f "$COMPOSE_FILE" ps "$SERVICE"
+            docker compose -f "$COMPOSE_FILE" logs --tail=40 "$SERVICE"
+            docker image rm "$ROLLBACK_TAG" >/dev/null 2>&1 || true
+
+      - name: Verify the public WOJI page repeatedly
+        run: |
+          set -eu
+          for attempt in 1 2 3 4 5; do
+            curl -fsS --retry 2 --retry-delay 2 https://command.wise2.net/woji | grep -qi WOJI
+            sleep 2
+          done
