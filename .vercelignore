@@ -16,9 +16,7 @@ build
 tmp
 work
 
-# The website project only needs its own app and shared packages.
-apps/*
-!apps/website
+# Keep the website app and shared packages in the deployment context.
 services
 clients
 products
