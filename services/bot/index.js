@@ -135,6 +135,7 @@ const CHANNELS_CONFIG = {
   decisions: process.env.DISCORD_WEBHOOK_DECISIONS,
   "daily-sync": process.env.DISCORD_WEBHOOK_DAILY_SYNC,
   status: process.env.DISCORD_WEBHOOK_STATUS,
+  customers: process.env.DISCORD_WEBHOOK_CUSTOMERS,
 };
 
 client.commands = new Collection();
@@ -1545,6 +1546,7 @@ ${description}
             { name: "decisions", value: "decisions" },
             { name: "daily-sync", value: "daily-sync" },
             { name: "status", value: "status" },
+            { name: "customers", value: "customers" },
           ],
         },
         {
