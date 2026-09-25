@@ -7372,8 +7372,8 @@ model DesignBrief {
   status          DesignBriefStatus @default(SUBMITTED)
 
   // Assets from ChatGPT
-  referenceImages String[]? // URLs to images
-  designAssets    String[]? // URLs to design files
+  referenceImages String[] @default([]) // URLs to images
+  designAssets    String[] @default([]) // URLs to design files
   brandGuide      String? // URL to brand guidelines
 
   // Claude context
