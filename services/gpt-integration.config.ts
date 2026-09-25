@@ -99,6 +99,30 @@ export const GPT_CONFIG = {
         messages: false,
       },
     },
+
+    // Claude Design Handoff Integration
+    claudeDesignHandoff: {
+      enabled: true,
+      baseUrl: process.env.API_BASE_URL || 'http://localhost:3010',
+      endpoints: {
+        submitBrief: '/api/design-briefs',
+        getBrief: '/api/design-briefs/:briefId',
+        listBriefs: '/api/design-briefs',
+        updateBrief: '/api/design-briefs/:briefId',
+        getPending: '/api/design-briefs/pending',
+        getStats: '/api/design-briefs/stats',
+      },
+      features: {
+        submitFromChatGPT: true,
+        trackStatus: true,
+        claudeUpdates: true,
+        feedbackLoop: true,
+        assetManagement: true,
+      },
+      headers: {
+        'x-design-handoff': 'chatgpt-plugin',
+      },
+    },
   },
 
   // Pre-load data for GPT context
