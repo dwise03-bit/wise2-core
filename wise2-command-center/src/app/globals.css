@@ -49,35 +49,35 @@
 }
 
 :root {
-  --background: #0a0e17;
-  --foreground: #f6f0e4;
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  --font-display: 'Sohne', 'Helvetica Neue', sans-serif;
-  --card: #0f1620;
-  --card-foreground: #f6f0e4;
-  --popover: #0f1620;
-  --popover-foreground: #f6f0e4;
-  --primary: #d8a43a;
-  --primary-foreground: #050505;
-  --secondary: #1a1f2e;
-  --secondary-foreground: #f6f0e4;
-  --muted: #1a1f2e;
-  --muted-foreground: #a9a39a;
-  --accent: #1177ff;
-  --accent-foreground: #f6f0e4;
+  --background: #050607;
+  --foreground: #D1D5DB;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --card: #0a0f1a;
+  --card-foreground: #D1D5DB;
+  --popover: #0a0f1a;
+  --popover-foreground: #D1D5DB;
+  --primary: #00D9FF;
+  --primary-foreground: #050607;
+  --secondary: #0a0f1a;
+  --secondary-foreground: #D1D5DB;
+  --muted: #1f2937;
+  --muted-foreground: #9CA3AF;
+  --accent: #00FF7F;
+  --accent-foreground: #050607;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(255, 255, 255, 0.06);
-  --input: rgba(255, 255, 255, 0.06);
-  --ring: #d8a43a;
+  --border: rgba(0, 217, 255, 0.1);
+  --input: rgba(0, 217, 255, 0.08);
+  --ring: #00D9FF;
   --radius: 0.625rem;
-  --sidebar: #0f1620;
-  --sidebar-foreground: #f6f0e4;
-  --sidebar-primary: #d8a43a;
-  --sidebar-primary-foreground: #050505;
-  --sidebar-accent: #1a1f2e;
-  --sidebar-accent-foreground: #f6f0e4;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-ring: #d8a43a;
+  --sidebar: #0a0f1a;
+  --sidebar-foreground: #D1D5DB;
+  --sidebar-primary: #00D9FF;
+  --sidebar-primary-foreground: #050607;
+  --sidebar-accent: #1f2937;
+  --sidebar-accent-foreground: #D1D5DB;
+  --sidebar-border: rgba(0, 217, 255, 0.1);
+  --sidebar-ring: #00D9FF;
 }
 
 .dark {
@@ -149,10 +149,10 @@
   body {
     @apply min-h-full bg-background text-foreground antialiased;
     background-image:
-      radial-gradient(circle at top left, rgba(17, 119, 255, 0.14), transparent 32%),
-      radial-gradient(circle at top right, rgba(216, 164, 58, 0.10), transparent 35%),
-      radial-gradient(circle at bottom center, rgba(17, 119, 255, 0.06), transparent 40%),
-      linear-gradient(180deg, #0a0e17 0%, #090c14 45%, #070a10 100%);
+      radial-gradient(circle at top left, rgba(0, 217, 255, 0.15), transparent 35%),
+      radial-gradient(circle at top right, rgba(0, 255, 127, 0.08), transparent 38%),
+      radial-gradient(circle at bottom center, rgba(0, 217, 255, 0.05), transparent 42%),
+      linear-gradient(180deg, #050607 0%, #0a0f1a 50%, #030405 100%);
     background-attachment: fixed;
   }
   h1,
