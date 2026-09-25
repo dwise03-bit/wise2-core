@@ -11,6 +11,75 @@ import { tenantGuard, requireRole, scopedWhere, validateOwnership } from '../mid
 
 const router = Router();
 
+// Helper function to send customer info to Discord
+async function notifyDiscordCustomerEvent(action: string, customer: any) {
+  const discordWebhookUrl = process.env.DISCORD_WEBHOOK_CUSTOMERS;
+  if (!discordWebhookUrl) {
+    return; // Silently skip if webhook not configured
+  }
+
+  const colorMap = {
+    CREATED: 0x2cd588,     // Success Green
+    UPDATED: 0x0055ff,     // Primary Blue
+    DELETED: 0xff5535,     // Accent Red
+  };
+
+  const embed = {
+    color: colorMap[action as keyof typeof colorMap] || 0x0099ff,
+    title: `👤 Customer ${action}`,
+    description: `Customer information has been ${action.toLowerCase()} in WISE² CRM`,
+    fields: [
+      {
+        name: 'Name',
+        value: `${customer.firstName || ''}${customer.firstName && customer.lastName ? ' ' : ''}${customer.lastName || 'N/A'}`.trim(),
+        inline: true,
+      },
+      {
+        name: 'Email',
+        value: customer.email || 'N/A',
+        inline: true,
+      },
+      {
+        name: 'Phone',
+        value: customer.phone || 'N/A',
+        inline: true,
+      },
+      {
+        name: 'Location',
+        value: `${customer.city || ''}${customer.city && customer.state ? ', ' : ''}${customer.state || 'N/A'}`.trim(),
+        inline: true,
+      },
+      {
+        name: 'Customer ID',
+        value: customer.id,
+        inline: false,
+      },
+    ],
+    footer: {
+      text: 'WISE² CRM Notification',
+    },
+    timestamp: new Date().toISOString(),
+  };
+
+  if (customer.notes) {
+    embed.fields.push({
+      name: 'Notes',
+      value: customer.notes.slice(0, 1024),
+      inline: false,
+    });
+  }
+
+  try {
+    await fetch(discordWebhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+  } catch (error) {
+    logger?.warn?.(`Failed to notify Discord of customer event: ${error}`);
+  }
+}
+
 // All CRM routes require authentication and tenant context
 router.use(authenticate);
 router.use(tenantGuard);
@@ -147,6 +216,15 @@ router.post('/tenants/:tenantId/leads', async (req: Request, res: Response, next
 
     // Trigger workflows
     // TODO: Trigger lead.created workflow
+
+    // Notify Discord
+    await notifyDiscordCustomerEvent('CREATED', {
+      ...lead,
+      email: lead.customerId ? `[Lead for customer: ${lead.customerId}]` : 'New Lead',
+      firstName: lead.summary || 'New Lead',
+      lastName: `(${lead.source})`,
+      phone: lead.serviceType || '',
+    });
 
     res.status(201).json({ success: true, data: { lead } });
   } catch (error) {
@@ -338,6 +416,9 @@ router.post('/tenants/:tenantId/customers', async (req: Request, res: Response, 
       },
     });
 
+    // Notify Discord
+    await notifyDiscordCustomerEvent('CREATED', customer);
+
     res.status(201).json({ success: true, data: { customer } });
   } catch (error) {
     next(error);
@@ -368,6 +449,66 @@ router.get('/tenants/:tenantId/customers/:customerId', async (req: Request, res:
         error: { code: 'NOT_FOUND', message: 'Customer not found' },
       });
     }
+
+    res.json({ success: true, data: { customer } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * PATCH /api/v1/crm/tenants/:tenantId/customers/:customerId
+ * Update customer information
+ */
+router.patch('/tenants/:tenantId/customers/:customerId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { customerId } = req.params;
+    const { firstName, lastName, phone, email, addressLine1, city, state, postalCode, notes } = req.body;
+
+    // Verify customer exists
+    const existingCustomer = await db.revenueCustomer.findFirst({
+      where: scopedWhere(req, { id: customerId }),
+    });
+
+    if (!existingCustomer) {
+      return res.status(404).json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Customer not found' },
+      });
+    }
+
+    const customer = await db.revenueCustomer.update({
+      where: { id: customerId },
+      data: {
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(phone !== undefined && { phone }),
+        ...(email !== undefined && { email }),
+        ...(addressLine1 !== undefined && { addressLine1 }),
+        ...(city !== undefined && { city }),
+        ...(state !== undefined && { state }),
+        ...(postalCode !== undefined && { postalCode }),
+        ...(notes !== undefined && { notes }),
+        updatedAt: new Date(),
+      },
+    });
+
+    // Audit log
+    await db.auditLog.create({
+      data: {
+        tenantId: req.tenant!.tenantId,
+        actor: req.tenant!.userId,
+        action: 'CUSTOMER_UPDATED',
+        resourceType: 'RevenueCustomer',
+        resourceId: customerId,
+        changesBefore: existingCustomer,
+        changesAfter: customer,
+        source: 'API',
+      },
+    });
+
+    // Notify Discord
+    await notifyDiscordCustomerEvent('UPDATED', customer);
 
     res.json({ success: true, data: { customer } });
   } catch (error) {
