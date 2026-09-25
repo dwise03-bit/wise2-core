@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -175,12 +176,9 @@ export default function TradingDashboard() {
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <div className="w-64 border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 overflow-y-auto">
-          <div className="mb-8">
-            <h1 className="text-2xl font-black tracking-tight mb-1">
-              <span className="text-[#00D9FF]">WISE</span><span className="text-[#00FF7F]">²</span>
-            </h1>
-            <p className="text-xs text-[#00D9FF] opacity-70">TRADING</p>
-            <p className="text-xs text-gray-500 mt-2">YOUR WISE² INTELLIGENT<br/>MARKET PARTNER</p>
+          <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
+            <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={210} height={92} className="h-auto w-full" priority />
+            <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
           </div>
 
           <nav className="space-y-1 mb-8">
@@ -327,9 +325,7 @@ export default function TradingDashboard() {
                 {/* PLOT AI */}
                 <div className="bg-gradient-to-br from-[#0b0d1c] to-[#050607] border border-[#C4A369]/30 rounded-lg p-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-full bg-[#C4A369]/20 border border-[#C4A369]/50 flex items-center justify-center">
-                      <span className="text-sm font-bold" style={{ color: '#C4A369' }}>◆</span>
-                    </div>
+                    <Image src="/trading/plot-ai-avatar.png" alt="PLOT AI" width={48} height={48} className="h-10 w-10 rounded-full border border-[#27d7ff]/50 object-cover" />
                     <div>
                       <h3 className="font-bold uppercase tracking-wider text-sm">PLOT</h3>
                       <p className="text-xs text-gray-500">AI TRADING ASSISTANT</p>
@@ -352,6 +348,19 @@ export default function TradingDashboard() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* WISE² Connect */}
+                <div className="rounded-lg border border-[#168fff]/30 bg-[#07111f] p-5">
+                  <div className="flex items-center gap-3">
+                    <Image src="/trading/wise2-connect-avatar.png" alt="WISE² Connect" width={44} height={44} className="h-11 w-11 rounded-lg border border-[#168fff]/40 object-cover" />
+                    <div>
+                      <h3 className="text-sm font-bold uppercase tracking-wider">WISE² Connect</h3>
+                      <p className="text-xs text-gray-500">People, calls, and client context</p>
+                    </div>
+                    <span className="ml-auto flex items-center gap-1 text-[10px] font-bold uppercase text-[#00FF7F]"><span className="h-2 w-2 rounded-full bg-[#00FF7F]" /> Online</span>
+                  </div>
+                  <button className="mt-4 w-full rounded-md border border-[#168fff]/40 bg-[#0a2742] px-3 py-2 text-xs font-bold text-[#b8eaff] transition hover:border-[#27d7ff]">Open Connect</button>
                 </div>
 
                 {/* Insights */}
@@ -381,6 +390,12 @@ export default function TradingDashboard() {
                     ))}
                   </div>
                 </div>
+
+                <div className="rounded-lg border border-[#8B5CF6]/30 bg-[#0b0d1c] p-4">
+                  <div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-bold uppercase tracking-wider">RECENT JOURNAL</h3><span className="text-[10px] text-[#27d7ff]">VIEW ALL</span></div>
+                  <Image src="/trading/recent-journal-chart.png" alt="Recent journal chart" width={520} height={220} className="h-28 w-full rounded-md border border-white/10 object-cover" />
+                  <p className="mt-3 text-xs text-gray-400">AAPL long · thesis saved with risk plan.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -389,3 +404,4 @@ export default function TradingDashboard() {
     </div>
   );
 }
+
