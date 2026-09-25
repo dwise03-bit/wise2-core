@@ -267,6 +267,105 @@ app.post('/cyd/brightness', async (req, res) => {
 });
 
 // ============================================================================
+// Theme Routes (WISE² Design System Lock)
+// ============================================================================
+
+// WISE² Brand Palette (Immutable - 2026-09-13)
+const WISE_THEME = {
+  version: '2.0',
+  locked: true,
+  timestamp: '2026-09-13T00:00:00Z',
+  colors: {
+    navy: '#050607',           // Primary background, authority
+    charcoal: '#0a0f1a',       // Secondary background, depth
+    cyan: '#00D9FF',           // Primary action, focus states
+    neon: '#00FF7F',           // Success, active, hero accent
+    gold: '#C4A369',           // Premium accent, secondary CTA
+    gray_light: '#D1D5DB',     // Body text, readability
+    gray_dark: '#1f2937'       // Subtle text, disabled states
+  },
+  semantic: {
+    primary: '#00D9FF',
+    secondary: '#C4A369',
+    success: '#00FF7F',
+    danger: '#FF4444',
+    warning: '#F59E0B',
+    info: '#3B82F6',
+    background: '#050607',
+    surface: '#0a0f1a'
+  },
+  typography: {
+    family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    mono: '"SF Mono", Monaco, "Cascadia Code", monospace',
+    scale: {
+      hero: '56px',           // H1 display
+      section: '36px',        // H2
+      subsection: '24px',     // H3
+      card_title: '18px',     // H4
+      body: '16px',
+      small: '14px',
+      caption: '12px'
+    }
+  },
+  spacing: {
+    xs: '2px',
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px',
+    xxl: '24px',
+    xxxl: '32px'
+  },
+  border_radius: {
+    none: '0px',
+    xs: '2px',
+    sm: '4px',
+    md: '8px',
+    lg: '16px'
+  }
+};
+
+app.get('/theme', (req, res) => {
+  res.json({
+    status: 'ok',
+    theme: WISE_THEME,
+    gateway: 'skorpius-pi',
+    devices: devices
+  });
+});
+
+app.get('/theme/colors', (req, res) => {
+  res.json({
+    colors: WISE_THEME.colors,
+    semantic: WISE_THEME.semantic
+  });
+});
+
+app.get('/theme/css', (req, res) => {
+  const css = `/* WISE² Theme - Locked Brand v2.0 */
+:root {
+  --wise-navy: ${WISE_THEME.colors.navy};
+  --wise-charcoal: ${WISE_THEME.colors.charcoal};
+  --wise-cyan: ${WISE_THEME.colors.cyan};
+  --wise-neon: ${WISE_THEME.colors.neon};
+  --wise-gold: ${WISE_THEME.colors.gold};
+  --wise-gray-light: ${WISE_THEME.colors.gray_light};
+  --wise-gray-dark: ${WISE_THEME.colors.gray_dark};
+
+  --wise-primary: ${WISE_THEME.semantic.primary};
+  --wise-secondary: ${WISE_THEME.semantic.secondary};
+  --wise-success: ${WISE_THEME.semantic.success};
+  --wise-background: ${WISE_THEME.semantic.background};
+  --wise-surface: ${WISE_THEME.semantic.surface};
+
+  --font-sans: ${WISE_THEME.typography.family};
+  --font-mono: ${WISE_THEME.typography.mono};
+}`;
+
+  res.type('text/css').send(css);
+});
+
+// ============================================================================
 // MQTT Publish Routes
 // ============================================================================
 
@@ -366,6 +465,9 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`  GET  /cyd/health                 - CYD status`);
   console.log(`  POST /cyd/display                - Update CYD display`);
   console.log(`  POST /mqtt/publish               - Publish to MQTT`);
+  console.log(`  GET  /theme                      - WISE² theme (colors + tokens)`);
+  console.log(`  GET  /theme/colors               - Theme colors only (JSON)`);
+  console.log(`  GET  /theme/css                  - Theme CSS variables`);
   console.log('\n');
 });
 
