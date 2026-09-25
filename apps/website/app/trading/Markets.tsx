@@ -177,7 +177,7 @@ export default function Markets() {
                   </div>
 
                   <div className="col-span-1">
-                    <button className="text-slate-400 hover:text-emerald-400 transition">
+                    <button onClick={() => alert(`Added ${sym.symbol} to watchlist`)} className="text-slate-400 hover:text-emerald-400 transition cursor-pointer">
                       <Eye className="w-4 h-4" />
                     </button>
                   </div>
@@ -264,7 +264,7 @@ export default function Markets() {
                 </div>
 
                 {/* Actions */}
-                <button className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition">
+                <button onClick={() => alert(`Viewing setup details for ${sym.symbol} - Coming soon`)} className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition cursor-pointer">
                   View Setup Details
                 </button>
               </div>

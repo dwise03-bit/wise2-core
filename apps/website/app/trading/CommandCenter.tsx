@@ -102,7 +102,7 @@ export default function CommandCenter() {
               AI-Powered. Data-Driven. Disciplined.
             </p>
           </div>
-          <button className="p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition">
+          <button onClick={() => alert('Settings panel - Coming soon')} className="p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition cursor-pointer">
             <Settings className="w-6 h-6 text-slate-300" />
           </button>
         </div>
@@ -345,10 +345,10 @@ function PositionRow({ position }: PositionRowProps) {
       </div>
 
       <div className="mt-2 flex gap-2">
-        <button className="flex-1 py-1 text-xs font-semibold text-slate-300 hover:text-white transition">
+        <button onClick={() => alert(`Adjusting ${position.symbol} ${position.direction} - Coming soon`)} className="flex-1 py-1 text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
           Adjust
         </button>
-        <button className="flex-1 py-1 text-xs font-semibold text-red-400 hover:text-red-300 transition">
+        <button onClick={() => alert(`Closing ${position.symbol} ${position.direction} - Coming soon`)} className="flex-1 py-1 text-xs font-semibold text-red-400 hover:text-red-300 transition cursor-pointer">
           Close
         </button>
       </div>
