@@ -58,6 +58,36 @@ struct BlakkhailApp: App {
             .tabItem {
               Label("Glasses", systemImage: "glasses")
             }
+
+          // DTF Printing
+          DTFPrintingView()
+            .tabItem {
+              Label("DTF Print", systemImage: "printer.fill")
+            }
+
+          // 3D Printing
+          ThreeDPrintingView()
+            .tabItem {
+              Label("3D Print", systemImage: "cube.fill")
+            }
+
+          // Telynx AI
+          TelynxAIView()
+            .tabItem {
+              Label("Telynx AI", systemImage: "brain.head.profile")
+            }
+
+          // Phone Service
+          PhoneServiceView()
+            .tabItem {
+              Label("Phone", systemImage: "phone.fill")
+            }
+
+          // Google Suite
+          GoogleSuiteView()
+            .tabItem {
+              Label("Google", systemImage: "g.circle.fill")
+            }
         }
         .tint(Color(red: 0, green: 217/255, blue: 1)) // Cyan accent
       } else {
@@ -938,30 +968,6 @@ struct RecommendationCard: View {
     .background(Color.blakkhailNavy.opacity(0.5))
     .border(Color.blakkhailGold.opacity(0.2), width: 1)
     .cornerRadius(6)
-  }
-}
-
-struct ImagePickerStyle: UIViewControllerRepresentable {
-  @Binding var image: UIImage?
-  @Environment(\.dismiss) var dismiss
-  func makeUIViewController(context: Context) -> UIImagePickerController {
-    let picker = UIImagePickerController()
-    picker.delegate = context.coordinator
-    picker.sourceType = .photoLibrary
-    return picker
-  }
-  func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-  func makeCoordinator() -> Coordinator {
-    Coordinator(self)
-  }
-  class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    let parent: ImagePickerStyle
-    init(_ parent: ImagePickerStyle) { self.parent = parent }
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-      if let image = info[.originalImage] as? UIImage { parent.image = image }
-      parent.dismiss()
-    }
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { parent.dismiss() }
   }
 }
 
