@@ -117,11 +117,17 @@ jobs:
 
             # Decide scope before resetting the checkout. Website-only changes
             # must not recreate API, Postgres, Redis, or worker containers.
-            CHANGED_FILES="$(git diff --name-only HEAD origin/main)"
-            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|Dockerfile.website$)'; then
-              DEPLOY_MODE=production
-            else
-              DEPLOY_MODE=website-only
+            DEPLOY_MODE=production
+            CHANGED_FILES=""
+            BEFORE_SHA="${{ github.event.before }}"
+            CURRENT_SHA="${{ github.sha }}"
+            if [ "${{ github.event_name }}" = "push" ] && [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+              CHANGED_FILES="$(git diff --name-only "$BEFORE_SHA" "$CURRENT_SHA")"
+              if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Eqv '^(apps/website/|Dockerfile.website$)'; then
+                DEPLOY_MODE=production
+              else
+                DEPLOY_MODE=website-only
+              fi
             fi
 
             # Older VPS deployments left some tracked files owned by root.
