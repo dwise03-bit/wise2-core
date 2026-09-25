@@ -63,6 +63,9 @@ model User {
   accounts            Account[]            @relation("accounts")
   passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
 
+  // Claude Design Handoff relationships
+  designBriefs DesignBrief[] @relation("designBriefs")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -7331,4 +7334,63 @@ model DiscordWebhook {
 
   @@index([channel])
   @@map("discord_webhooks")
+}
+
+// ===== CLAUDE DESIGN HANDOFF =====
+
+enum DesignBriefStatus {
+  SUBMITTED
+  ACKNOWLEDGED
+  IN_PROGRESS
+  REVIEW_REQUESTED
+  COMPLETED
+  REJECTED
+}
+
+enum DesignType {
+  LANDING_PAGE
+  DASHBOARD
+  MOBILE_APP
+  COMPONENT
+  REDESIGN
+  OTHER
+}
+
+model DesignBrief {
+  id String @id @default(cuid())
+
+  // Source: ChatGPT plugin submission
+  userId      String
+  user        User    @relation("designBriefs", fields: [userId], references: [id], onDelete: Cascade)
+  submittedBy String? // ChatGPT plugin identifier
+
+  // Brief details
+  title           String
+  description     String @db.Text
+  briefJson       Json? // Full brief data from ChatGPT
+  designType      DesignType @default(OTHER)
+  status          DesignBriefStatus @default(SUBMITTED)
+
+  // Assets from ChatGPT
+  referenceImages String[]? // URLs to images
+  designAssets    String[]? // URLs to design files
+  brandGuide      String? // URL to brand guidelines
+
+  // Claude context
+  claudeNotes     String? @db.Text // Notes from Claude design work
+  claudeStatus    String? @default("pending") // Who's working on it
+  claudeUrl       String? // Link to Claude artifact/work
+
+  // Feedback loop
+  feedback        String? @db.Text
+  revision_count  Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([designType])
+  @@map("design_briefs")
 }
