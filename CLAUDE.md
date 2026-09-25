@@ -216,6 +216,24 @@ Base System Prompt
 - **Auto-Deploy**: GitHub Actions on push to main
 - **Deployment Handoff**: `DEPLOYMENT_HANDOFF.md`
 
+### VPS Storage Layout — Persistent Memory
+
+The VPS has two disks. Treat this as operationally important:
+
+- Root filesystem `/dev/sda3`, mounted at `/`: approximately 234 GB; this is the constrained system disk.
+- Secondary disk `/dev/sdb1`, mounted at `/sdb-disk`: approximately 916 GB; use it for large logs, temporary artifacts, builds, exports, backups, and caches.
+- Gateway log: `/sdb-disk/logs/gateway.log*`; `/tmp/gateway.log` is a compatibility symlink to the active gateway log.
+- Temporary-file archive: `/sdb-disk/tmp/<timestamp>/`.
+
+Operational rules:
+
+- Check `df -h / /sdb-disk` before large builds, Docker pulls, deployments, or package installs.
+- Prefer `/sdb-disk` for large or persistent artifacts; do not allow logs/build output to accumulate on `/`.
+- Do not delete Docker volumes during routine cleanup. Named PostgreSQL, Redis, MongoDB, Prometheus, Grafana, Ollama, and application volumes may contain recoverable state.
+- Before clearing `/tmp`, copy it to `/sdb-disk/tmp/<timestamp>/` and preserve any required compatibility symlinks.
+- Use Docker image/build-cache cleanup before considering volume deletion. Volume deletion requires explicit review of each volume and a backup decision.
+- Current verified post-cleanup baseline (2026-09-25): `/` had approximately 28 GB free and `/sdb-disk` approximately 677 GB free; Docker volumes were intentionally preserved.
+
 ### Known Issues & Fixes
 - **Port Mismatch**: App defaults to 3000, nginx expects 3001 (see memory)
 - **Sudo No-TTY**: Shell has no TTY; sudo always needs password (see memory)
