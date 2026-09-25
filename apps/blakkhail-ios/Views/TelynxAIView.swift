@@ -123,11 +123,15 @@ struct TelynxAIView: View {
   }
 }
 
-struct AIMessage: Identifiable {
+struct AIMessage: Identifiable, Equatable {
   let id = UUID()
   let text: String
   let isUser: Bool
   let timestamp: String
+
+  static func == (lhs: AIMessage, rhs: AIMessage) -> Bool {
+    lhs.text == rhs.text && lhs.isUser == rhs.isUser && lhs.timestamp == rhs.timestamp
+  }
 }
 
 @MainActor

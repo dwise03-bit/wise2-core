@@ -15,6 +15,12 @@
 		OBJ_105 /* Views/BrandStoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* Views/BrandStoryView.swift */; };
 		OBJ_106 /* Views/AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* Views/AuthenticationView.swift */; };
 		OBJ_107 /* Views/AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_17 /* Views/AccountView.swift */; };
+		OBJ_112 /* DTFPrintingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_35 /* DTFPrintingView.swift */; };
+		OBJ_113 /* ThreeDPrintingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_36 /* ThreeDPrintingView.swift */; };
+		OBJ_114 /* TelynxAIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_37 /* TelynxAIView.swift */; };
+		OBJ_115 /* PhoneServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_38 /* PhoneServiceView.swift */; };
+		OBJ_116 /* GoogleSuiteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_39 /* GoogleSuiteView.swift */; };
+		OBJ_117 /* ImagePickerStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_40 /* ImagePickerStyle.swift */; };
 		OBJ_108 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_31 /* SwiftUI.framework */; };
 		OBJ_109 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_32 /* UIKit.framework */; };
 		OBJ_110 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_33 /* Foundation.framework */; };
@@ -29,6 +35,12 @@
 		OBJ_15 /* Views/BrandStoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/BrandStoryView.swift; sourceTree = SOURCE_ROOT; };
 		OBJ_16 /* Views/AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AuthenticationView.swift; sourceTree = SOURCE_ROOT; };
 		OBJ_17 /* Views/AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AccountView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_35 /* DTFPrintingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DTFPrintingView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_36 /* ThreeDPrintingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ThreeDPrintingView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_37 /* TelynxAIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TelynxAIView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_38 /* PhoneServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/PhoneServiceView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_39 /* GoogleSuiteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GoogleSuiteView.swift; sourceTree = SOURCE_ROOT; };
+		OBJ_40 /* ImagePickerStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ImagePickerStyle.swift; sourceTree = SOURCE_ROOT; };
 		OBJ_20 /* Blakkhail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blakkhail.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_31 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		OBJ_32 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -141,6 +153,12 @@
 				OBJ_105 /* Views/BrandStoryView.swift in Sources */,
 				OBJ_106 /* Views/AuthenticationView.swift in Sources */,
 				OBJ_107 /* Views/AccountView.swift in Sources */,
+				OBJ_112 /* DTFPrintingView.swift in Sources */,
+				OBJ_113 /* ThreeDPrintingView.swift in Sources */,
+				OBJ_114 /* TelynxAIView.swift in Sources */,
+				OBJ_115 /* PhoneServiceView.swift in Sources */,
+				OBJ_116 /* GoogleSuiteView.swift in Sources */,
+				OBJ_117 /* ImagePickerStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
