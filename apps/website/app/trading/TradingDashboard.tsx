@@ -347,7 +347,7 @@ export default function TradingDashboard() {
                   />
                   <div className="space-y-2 text-xs">
                     {['Explain this chart', 'What is this pattern?', 'Show support & resistance', 'Summarize news'].map((action, i) => (
-                      <button key={i} className="w-full text-left px-3 py-2 bg-[#050607] hover:bg-[#0a0f1a] rounded border border-[#00D9FF]/20 text-gray-300">
+                      <button key={i} onClick={() => setIsAssistantOpen(true)} className="w-full text-left px-3 py-2 bg-[#050607] hover:bg-[#0a0f1a] rounded border border-[#00D9FF]/20 text-gray-300 transition">
                         {action}
                       </button>
                     ))}
