@@ -34,6 +34,11 @@ if [ "$ENVIRONMENT" = "website-only" ]; then
     exit 1
   fi
 
+  # Stop the old website container (if running) to avoid name conflict
+  echo "🛑 Stopping old website container..."
+  docker compose -f docker-compose.prod.yml stop website || true
+  docker compose -f docker-compose.prod.yml rm -f website || true
+
   if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
     echo "❌ Failed to start website service"
     docker compose -f docker-compose.prod.yml logs website || true
@@ -110,6 +115,11 @@ echo ""
 # Step 3: Start Services
 # ============================================================================
 echo "🚀 Starting services..."
+
+# Stop all old containers to avoid name conflicts (but preserve volumes)
+echo "🛑 Stopping old containers..."
+docker compose -f docker-compose.prod.yml stop || true
+docker compose -f docker-compose.prod.yml rm -f || true
 
 if ! docker compose -f docker-compose.prod.yml up -d; then
   echo "❌ Failed to start services"
