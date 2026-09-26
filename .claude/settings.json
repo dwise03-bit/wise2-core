@@ -81,5 +81,13 @@
   },
   "skipWorkflowUsageWarning": true,
   "agentPushNotifEnabled": true,
-  "inputNeededNotifEnabled": true
+  "inputNeededNotifEnabled": true,
+  "mcpServers": {
+    "firecrawl": {
+      "type": "http",
+      "url": "https://mcp.firecrawl.dev/v2/mcp-oauth",
+      "description": "Firecrawl web scraping and crawling MCP server",
+      "auth": "oauth"
+    }
+  }
 }
