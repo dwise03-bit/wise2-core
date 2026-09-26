@@ -36,8 +36,14 @@ if [ "$ENVIRONMENT" = "website-only" ]; then
 
   # Stop the old website container (if running) to avoid name conflict
   echo "🛑 Stopping old website container..."
-  docker compose -f docker-compose.prod.yml stop website || true
-  docker compose -f docker-compose.prod.yml rm -f website || true
+  docker compose -f docker-compose.prod.yml stop website 2>/dev/null || true
+  docker compose -f docker-compose.prod.yml rm -f website 2>/dev/null || true
+
+  # Force-kill any orphaned container with this name (fallback if compose rm fails)
+  if docker ps -a --filter "name=^wise2-website$" --quiet | grep -q .; then
+    echo "⚠️ Found orphaned container, force-removing..."
+    docker ps -a --filter "name=^wise2-website$" --quiet | xargs -r docker rm -f
+  fi
 
   if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
     echo "❌ Failed to start website service"
