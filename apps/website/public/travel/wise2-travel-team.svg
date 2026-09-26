@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071829"/><stop offset="1" stop-color="#01050b"/></linearGradient>
+<linearGradient id="skin1" x1="0" x2="1"><stop stop-color="#d59a73"/><stop offset="1" stop-color="#7d4e37"/></linearGradient>
+<linearGradient id="skin2" x1="0" x2="1"><stop stop-color="#9d5f3e"/><stop offset="1" stop-color="#4a281e"/></linearGradient>
+<linearGradient id="skin3" x1="0" x2="1"><stop stop-color="#c98265"/><stop offset="1" stop-color="#6b3e32"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="6"/></filter>
+</defs>
+<rect width="1000" height="420" rx="28" fill="url(#bg)"/>
+<path d="M0 300C180 230 300 350 480 270S780 230 1000 280V420H0Z" fill="#052238"/>
+<g opacity=".35" stroke="#18b9ff"><path d="M0 120h1000M0 220h1000M0 320h1000"/><path d="M120 0v420M320 0v420M520 0v420M720 0v420M920 0v420"/></g>
+<g transform="translate(70 38)">
+<ellipse cx="100" cy="185" rx="82" ry="86" fill="#0a0f16"/><circle cx="100" cy="108" r="55" fill="url(#skin1)"/><path d="M45 95q55-60 110 0v-30q-55-40-110 0z" fill="#060708"/><path d="M38 61h124v31H38z" fill="#0a0a0b"/><path d="M80 113h14M109 113h14" stroke="#101010" stroke-width="5"/><path d="M89 140q11 8 22 0" stroke="#23130e" stroke-width="4" fill="none"/>
+<text x="100" y="278" text-anchor="middle" font-size="36" font-family="cursive" font-style="italic" fill="#43ff9c">Daniel</text><text x="100" y="307" text-anchor="middle" font-size="14" font-family="Arial" fill="#fff">TRAVEL • AUTOMATE • DOMINATE</text>
+</g>
+<g transform="translate(285 28)">
+<ellipse cx="100" cy="195" rx="86" ry="90" fill="#090d12"/><circle cx="100" cy="112" r="56" fill="url(#skin2)"/><path d="M48 79q52-47 104 0l-5-27q-47-34-94 1z" fill="#161016"/><rect x="57" y="96" width="42" height="19" rx="7" fill="#060708" transform="rotate(5 57 96)"/><rect x="101" y="96" width="42" height="19" rx="7" fill="#060708" transform="rotate(-5 101 96)"/><path d="M96 141q15 10 30 0" stroke="#22110e" stroke-width="4" fill="none"/>
+<path d="M145 177l62 34" stroke="#0a0d12" stroke-width="32" stroke-linecap="round"/><circle cx="214" cy="214" r="18" fill="url(#skin2)"/>
+<text x="100" y="288" text-anchor="middle" font-size="36" font-family="cursive" font-style="italic" fill="#43ff9c">Darrin</text><text x="100" y="317" text-anchor="middle" font-size="14" font-family="Arial" fill="#fff">PEOPLE • STRATEGY • GROWTH</text>
+</g>
+<g transform="translate(510 30)">
+<ellipse cx="100" cy="192" rx="84" ry="92" fill="#11161d"/><circle cx="100" cy="110" r="58" fill="url(#skin3)"/><path d="M42 104q10-78 66-76 55 8 51 86-22-65-59-63-36 0-58 53z" fill="#181214"/><path d="M80 112h13M110 112h13" stroke="#21120e" stroke-width="5"/><path d="M88 142q12 10 28 0" stroke="#3b1f1a" stroke-width="4" fill="none"/>
+<text x="100" y="286" text-anchor="middle" font-size="36" font-family="cursive" font-style="italic" fill="#43ff9c">Paige</text><text x="100" y="315" text-anchor="middle" font-size="14" font-family="Arial" fill="#fff">OPERATIONS • CLIENT EXPERIENCE</text>
+</g>
+<g transform="translate(730 38)">
+<ellipse cx="100" cy="185" rx="84" ry="90" fill="#0d1117"/><circle cx="100" cy="106" r="56" fill="url(#skin2)"/><path d="M49 73q50-44 102 0-8-46-51-46-43 1-51 46z" fill="#17100d"/><path d="M79 113h14M109 113h14" stroke="#140b08" stroke-width="5"/><path d="M83 142q17 13 34 0" stroke="#2b1611" stroke-width="4" fill="none"/><path d="M68 156q32 18 64 0" stroke="#21120e" stroke-width="10"/>
+<text x="100" y="278" text-anchor="middle" font-size="36" font-family="cursive" font-style="italic" fill="#43ff9c">Capital Jay</text><text x="100" y="307" text-anchor="middle" font-size="14" font-family="Arial" fill="#fff">CREATIVE • BRANDING • MEDIA</text>
+</g>
+<text x="500" y="395" text-anchor="middle" font-family="Arial Black" font-size="18" letter-spacing="4" fill="#9edfff">REAL PEOPLE • REAL SUPPORT • WISE² TRAVEL</text>
+</svg>
