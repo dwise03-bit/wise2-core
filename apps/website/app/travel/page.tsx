@@ -30,7 +30,7 @@ export default function TravelPage() {
               <a href="#search" style={{color:'#fff',textDecoration:'none'}}>Search & Book</a><a href="#categories" style={{color:'#fff',textDecoration:'none'}}>Flights</a><a href="#categories" style={{color:'#fff',textDecoration:'none'}}>Hotels</a><a href="#categories" style={{color:'#fff',textDecoration:'none'}}>Cars</a><a href="#categories" style={{color:'#fff',textDecoration:'none'}}>Cruises</a><a href="#planner" style={{color:'#fff',textDecoration:'none'}}>AI Trip Planner</a><a href="#partners" style={{padding:'11px 18px',border:'1px solid #149cff',borderRadius:8,color:'#fff',background:'#0b75ff',boxShadow:'0 0 28px rgba(0,136,255,.28)',textDecoration:'none'}}>Plan My Trip</a>
             </nav>
           </header>
-          <div style={{display:'grid',gridTemplateColumns:'minmax(0,1.05fr) minmax(520px,.95fr)',gap:28,alignItems:'end'}}>
+          <div style={{display:'grid',gridTemplateColumns:'minmax(0,1.05fr) minmax(300px,.95fr)',gap:28,alignItems:'end',gridAutoFlow:'row'}}>
             <div style={{padding:'34px 0 18px'}}>
               <div style={{fontSize:14,letterSpacing:5,color:'#77d7ff',fontWeight:800,marginBottom:12}}>POWERED BY WISE²</div>
               <h1 style={{fontSize:'clamp(46px,6vw,92px)',lineHeight:.87,margin:0,fontWeight:950,letterSpacing:-3}}>DREAM IT.<br/>WE <span style={{color:'#159cff'}}>PLAN IT.</span></h1>
@@ -40,11 +40,12 @@ export default function TravelPage() {
                 {['Best Prices Worldwide','Trusted Travel Partners','Exclusive Deals & Rewards','AI-Powered Trip Planning','Real People. Real Support.'].map((x)=><span key={x} style={{padding:'10px 12px',border:'1px solid rgba(56,189,248,.25)',borderRadius:10,background:'rgba(2,15,32,.58)',fontSize:12,color:'#d7f1ff'}}>{x}</span>)}
               </div>
             </div>
-            <div style={{alignSelf:'end'}}>
+            <div style={{alignSelf:'end',minHeight:280}}>
               <img
                 src="/travel/wise2-travel-team.svg"
                 alt="WISE² Travel team: Daniel, Darrin, Paige, and Capital Jay"
-                style={{display:'block',width:'100%',height:'auto',borderRadius:18,border:'1px solid rgba(56,189,248,.28)',boxShadow:'0 18px 54px rgba(0,0,0,.48)'}}
+                loading="eager"
+                style={{display:'block',width:'100%',height:'auto',borderRadius:18,border:'1px solid rgba(56,189,248,.28)',boxShadow:'0 18px 54px rgba(0,0,0,.48)',objectFit:'cover'}}
               />
             </div>
           </div>
@@ -100,11 +101,20 @@ export default function TravelPage() {
           #search{grid-template-columns:1fr !important}
           #categories{grid-template-columns:repeat(2,1fr) !important}
         }
+        @media (max-width: 900px){
+          div[style*="gridTemplateColumns: minmax(0, 1.05fr)"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
         @media (max-width: 720px){
           header{align-items:flex-start !important;flex-direction:column !important}
           nav{justify-content:flex-start !important;gap:12px !important}
           form{grid-template-columns:1fr 1fr !important}
           #categories{grid-template-columns:1fr !important}
+          div[style*="gridTemplateColumns: minmax(0, 1.05fr)"] {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+          }
         }
       `}</style>
     </main>
