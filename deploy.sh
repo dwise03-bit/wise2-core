@@ -34,16 +34,9 @@ if [ "$ENVIRONMENT" = "website-only" ]; then
     exit 1
   fi
 
-  # Stop the old website container (if running) to avoid name conflict
-  echo "🛑 Stopping old website container..."
-  docker compose -f docker-compose.prod.yml stop website 2>/dev/null || true
-  docker compose -f docker-compose.prod.yml rm -f website 2>/dev/null || true
-
-  # Force-kill any orphaned container with this name (fallback if compose rm fails)
-  if docker ps -a --filter "name=^wise2-website$" --quiet | grep -q .; then
-    echo "⚠️ Found orphaned container, force-removing..."
-    docker ps -a --filter "name=^wise2-website$" --quiet | xargs -r docker rm -f
-  fi
+  # Force-remove the old website container to avoid name conflict
+  echo "🛑 Force-removing old website container..."
+  docker rm -f wise2-website 2>/dev/null || true
 
   if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
     echo "❌ Failed to start website service"
@@ -122,10 +115,9 @@ echo ""
 # ============================================================================
 echo "🚀 Starting services..."
 
-# Stop all old containers to avoid name conflicts (but preserve volumes)
-echo "🛑 Stopping old containers..."
-docker compose -f docker-compose.prod.yml stop || true
-docker compose -f docker-compose.prod.yml rm -f || true
+# Force-remove all old containers to avoid name conflicts (but preserve volumes)
+echo "🛑 Force-removing old containers..."
+docker rm -f wise2-website wise2-api wise2-command-center 2>/dev/null || true
 
 if ! docker compose -f docker-compose.prod.yml up -d; then
   echo "❌ Failed to start services"
