@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+// Force clean deployment rebuild (2026-09-27 02:15:00 UTC)
 export const metadata: Metadata = {
   title: 'WISE² Travel | Search. Compare. Book. Travel.',
   description: 'WISE² Travel helps travelers compare flights, hotels, cars, cruises, tours and activities in one place.',
