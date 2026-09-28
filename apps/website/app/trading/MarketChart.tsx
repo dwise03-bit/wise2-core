@@ -15,9 +15,9 @@ interface MarketChartProps {
 }
 
 export default function MarketChart({ symbol, data }: MarketChartProps) {
-  const { candlePositions, minPrice, maxPrice, chartWidth, candleWidth } = useMemo(() => {
+  const { candlePositions, minPrice, maxPrice, maxVolume, chartWidth, candleWidth } = useMemo(() => {
     if (!data || data.length === 0) {
-      return { candlePositions: [], minPrice: 0, maxPrice: 1, chartWidth: 0, candleWidth: 0 };
+      return { candlePositions: [], minPrice: 0, maxPrice: 1, maxVolume: 1, chartWidth: 0, candleWidth: 0 };
     }
 
     const prices = data.flatMap(d => [d.high, d.low]);
@@ -29,12 +29,13 @@ export default function MarketChart({ symbol, data }: MarketChartProps) {
     const candleWidth = Math.max(3, Math.floor((chartWidth - 40) / data.length));
     const spacing = Math.floor((chartWidth - 40) / data.length);
 
+    const maxVolume = Math.max(...data.map(d => d.volume || 0), 1);
     const positions = data.map((candle, i) => {
       const x = 20 + i * spacing + spacing / 2;
-      const highY = 450 - ((candle.high - min) / range) * 400;
-      const lowY = 450 - ((candle.low - min) / range) * 400;
-      const openY = 450 - ((candle.open - min) / range) * 400;
-      const closeY = 450 - ((candle.close - min) / range) * 400;
+      const highY = 35 + (1 - (candle.high - min) / range) * 335;
+      const lowY = 35 + (1 - (candle.low - min) / range) * 335;
+      const openY = 35 + (1 - (candle.open - min) / range) * 335;
+      const closeY = 35 + (1 - (candle.close - min) / range) * 335;
 
       return { x, highY, lowY, openY, closeY, candle };
     });
@@ -43,29 +44,36 @@ export default function MarketChart({ symbol, data }: MarketChartProps) {
       candlePositions: positions,
       minPrice: min,
       maxPrice: max,
+      maxVolume,
       chartWidth,
       candleWidth,
     };
   }, [data]);
 
   return (
-    <div className="w-full bg-[#0f0f23] rounded-lg border border-cyan-500/20 p-4">
+    <div className="w-full bg-[#07101f] rounded-xl border border-cyan-400/25 p-4 shadow-[inset_0_1px_rgba(255,255,255,.08),0_0_35px_rgba(0,217,255,.08)]">
       <svg viewBox="0 0 840 500" className="w-full h-full" style={{ minHeight: '300px' }}>
+        <defs>
+          <linearGradient id="chart-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#102642" /><stop offset="1" stopColor="#030812" /></linearGradient>
+          <filter id="candle-glow"><feGaussianBlur stdDeviation="2.2" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+        </defs>
+        <rect x="0" y="0" width="840" height="500" rx="12" fill="url(#chart-bg)" />
+        <rect x="20" y="35" width="800" height="335" fill="rgba(0,0,0,.12)" />
         {/* Grid lines */}
         {[0, 1, 2, 3, 4].map(i => (
           <g key={`grid-${i}`}>
             <line
               x1="20"
-              y1={50 + i * 100}
+              y1={35 + i * 83.75}
               x2="820"
-              y2={50 + i * 100}
+              y2={35 + i * 83.75}
               stroke="rgba(0, 217, 255, 0.1)"
               strokeDasharray="4"
               strokeWidth="1"
             />
             <text
               x="10"
-              y={55 + i * 100}
+              y={40 + i * 83.75}
               fontSize="12"
               fill="rgba(107, 114, 128, 0.8)"
               textAnchor="end"
@@ -91,17 +99,18 @@ export default function MarketChart({ symbol, data }: MarketChartProps) {
                 x2={wickX}
                 y2={pos.lowY}
                 stroke={isUp ? '#00ff7f' : '#ff2563'}
-                strokeWidth="1"
-                opacity="0.8"
+                strokeWidth={Math.max(1.5, candleWidth / 5)}
+                opacity="0.95"
+                filter="url(#candle-glow)"
               />
               {/* Body */}
               <rect
                 x={wickX - candleWidth / 2}
                 y={bodyTop}
-                width={candleWidth}
+                width={Math.max(5, candleWidth - 2)}
                 height={bodyHeight}
                 fill={isUp ? '#00ff7f' : '#ff2563'}
-                opacity={isUp ? 0.7 : 0.7}
+                opacity={isUp ? 0.92 : 0.88}
               />
               {/* Body border */}
               <rect
@@ -111,23 +120,25 @@ export default function MarketChart({ symbol, data }: MarketChartProps) {
                 height={bodyHeight}
                 fill="none"
                 stroke={isUp ? '#00ff7f' : '#ff2563'}
-                strokeWidth="0.5"
-                opacity="0.5"
+                strokeWidth="1"
+                opacity="0.9"
               />
+              <rect x={wickX - candleWidth / 2} y={380 - ((pos.candle.volume || 0) / maxVolume) * 70} width={Math.max(5, candleWidth - 2)} height={((pos.candle.volume || 0) / maxVolume) * 70} fill={isUp ? '#00d9ff' : '#ff4d88'} opacity=".34" rx="2" />
             </g>
           );
         })}
 
         {/* X-axis */}
-        <line x1="20" y1="450" x2="820" y2="450" stroke="rgba(107, 114, 128, 0.3)" strokeWidth="1" />
+        <line x1="20" y1="370" x2="820" y2="370" stroke="rgba(84, 216, 255, 0.35)" strokeWidth="1" />
+        <text x="25" y="395" fontSize="10" fill="rgba(148, 197, 224, .65)">VOLUME</text>
 
         {/* Labels */}
         {candlePositions.length > 0 && (
           <>
-            <text x="820" y="470" fontSize="12" fill="rgba(107, 114, 128, 0.8)" textAnchor="end">
+            <text x="820" y="435" fontSize="12" fill="rgba(148, 197, 224, .8)" textAnchor="end">
               Now
             </text>
-            <text x="20" y="470" fontSize="12" fill="rgba(107, 114, 128, 0.8)">
+            <text x="20" y="435" fontSize="12" fill="rgba(148, 197, 224, .8)">
               {candlePositions.length}h ago
             </text>
           </>
