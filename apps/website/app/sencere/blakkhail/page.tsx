@@ -87,21 +87,7 @@ export default function BlakkhailPage() {
   }, []);
 
   return (
-    <>
-      <style>{`
-        /* NUCLEAR: Hide everything except BLAKKHAIL */
-        body { background: #0A0A0A !important; }
-        body > div:not(.bh-page) { display: none !important; }
-        body > main:not(.bh-page) { display: none !important; }
-        body > section:not(.bh-page) { display: none !important; }
-        body > * { display: none !important; visibility: hidden !important; }
-        .bh-page { display: block !important; visibility: visible !important; }
-
-        /* Hide by name pattern */
-        [class*="trading"], [class*="dashboard"], [class*="chart"],
-        [class*="wise2"], [class*="wise-"], aside, nav { display: none !important; }
-      `}</style>
-      <div className={`${BLAKKHAIL_LAYOUT.page} bh-page scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
+    <div className={`${BLAKKHAIL_LAYOUT.page} bh-page scroll-smooth pb-20 md:pb-0`} style={{ backgroundColor: '#0A0A0A', color: '#A8A8A8' }}>
       <div className="bh-page-grid" aria-hidden="true" />
       <div className="bh-global-particles" aria-hidden="true">
         {Array.from({ length: 42 }, (_, index) => (
@@ -231,6 +217,5 @@ export default function BlakkhailPage() {
         @media (prefers-reduced-motion: reduce) { .bh-page-grid, .bh-global-particles, .bh-hailfall, .bh-storm-overlay, .bh-scroll-rail, .bh-section, .bh-section::after, .bh-page #collection .group, .bh-page #collection .group > a > div:first-child { transform: none; transition: none; animation: none; } .bh-hailfall, .bh-storm-overlay { display: none; } }
       `}</style>
     </div>
-    </>
   );
 }
