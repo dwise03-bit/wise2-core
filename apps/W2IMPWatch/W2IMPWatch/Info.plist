@@ -35,6 +35,8 @@
 	</array>
 	<key>WKApplication</key>
 	<true/>
+	<key>WKWatchOnly</key>
+	<true/>
 	<key>WKWatchKitRequired</key>
 	<true/>
 </dict>
