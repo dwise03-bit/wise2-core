@@ -10,21 +10,6 @@ function withBlackhailBrand(request: NextRequest): Headers {
   return requestHeaders;
 }
 
-function rewriteTo(request: NextRequest, pathname: string) {
-  // Rewrite the URL internally
-  const url = request.nextUrl.clone();
-  url.pathname = pathname;
-
-  // Create rewritten response and add the brand header
-  const response = NextResponse.rewrite(url);
-  const headers = withBlackhailBrand(request);
-  headers.forEach((value, key) => {
-    response.headers.set(key, value);
-  });
-
-  return response;
-}
-
 export function middleware(request: NextRequest) {
   const host = normalizeHost(request.headers.get('host'));
 
@@ -37,7 +22,9 @@ export function middleware(request: NextRequest) {
   // Force all BLAKKHAIL requests to the new storefront design
   // Disable any old legacy pages or cached content
   if (pathname === '/' || pathname === '' || pathname.toLowerCase() === '/blakkhail/home.html') {
-    return rewriteTo(request, BLACKHAIL_PREFIX);
+    const url = request.nextUrl.clone();
+    url.pathname = BLACKHAIL_PREFIX;
+    return NextResponse.redirect(url);
   }
 
   // Keep campaign links shareable while the storefront remains section-based.
@@ -51,23 +38,33 @@ export function middleware(request: NextRequest) {
     pathname === '/sencere/blakkhail' ||
     pathname === '/sencere/blakkhail/'
   ) {
-    return rewriteTo(request, BLACKHAIL_PREFIX);
+    const url = request.nextUrl.clone();
+    url.pathname = BLACKHAIL_PREFIX;
+    return NextResponse.redirect(url);
   }
 
   if (pathname === '/products' || pathname.startsWith('/products/')) {
-    return rewriteTo(request, `${SENCERE_PREFIX}${pathname}`);
+    const url = request.nextUrl.clone();
+    url.pathname = `${SENCERE_PREFIX}${pathname}`;
+    return NextResponse.redirect(url);
   }
 
   if (pathname === '/checkout' || pathname.startsWith('/checkout/')) {
-    return rewriteTo(request, `${SENCERE_PREFIX}${pathname}`);
+    const url = request.nextUrl.clone();
+    url.pathname = `${SENCERE_PREFIX}${pathname}`;
+    return NextResponse.redirect(url);
   }
 
   if (pathname === '/login') {
-    return rewriteTo(request, `${BLACKHAIL_PREFIX}/login`);
+    const url = request.nextUrl.clone();
+    url.pathname = `${BLACKHAIL_PREFIX}/login`;
+    return NextResponse.redirect(url);
   }
 
   if (pathname === '/order-confirmation' || pathname.startsWith('/order-confirmation/')) {
-    return rewriteTo(request, `${SENCERE_PREFIX}${pathname}`);
+    const url = request.nextUrl.clone();
+    url.pathname = `${SENCERE_PREFIX}${pathname}`;
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next({
