@@ -16,7 +16,7 @@ function rewriteTo(request: NextRequest, pathname: string) {
   // Rewrite the URL internally while preserving headers
   const url = request.nextUrl.clone();
   url.pathname = pathname;
-  return NextResponse.next({
+  return NextResponse.rewrite(url, {
     request: {
       headers,
     },
