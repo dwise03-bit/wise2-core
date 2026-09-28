@@ -1,0 +1,13 @@
+{
+  "images": [
+    {
+      "filename": "05_notification_state.png",
+      "idiom": "universal",
+      "scale": "1x"
+    }
+  ],
+  "info": {
+    "author": "xcode",
+    "version": 1
+  }
+}
