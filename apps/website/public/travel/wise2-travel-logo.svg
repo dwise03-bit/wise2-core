@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180">
+<defs><linearGradient id="m" x1="0" x2="1"><stop stop-color="#f8fbff"/><stop offset=".45" stop-color="#98b8d4"/><stop offset=".7" stop-color="#fff"/><stop offset="1" stop-color="#6c8298"/></linearGradient><linearGradient id="b" x1="0" x2="1"><stop stop-color="#20d8ff"/><stop offset="1" stop-color="#0877ff"/></linearGradient><filter id="g"><feGaussianBlur stdDeviation="5"/></filter></defs>
+<rect width="640" height="180" fill="#020914"/>
+<circle cx="82" cy="86" r="58" fill="none" stroke="#1cbcff" stroke-width="7"/><path d="M30 95c35-20 70-22 111-4M55 35c32 34 42 65 35 108M24 72h117M35 117h98" fill="none" stroke="#1cbcff" stroke-width="3" opacity=".75"/>
+<path d="M55 86l78-34-31 38 24 10-11 11-27-8-18 24-11-7 9-25z" fill="#d8f4ff" stroke="#29c6ff" stroke-width="2"/>
+<text x="160" y="82" font-family="Arial Black,Arial" font-size="62" font-weight="900" fill="url(#m)">WISE²</text>
+<text x="160" y="142" font-family="Arial Black,Arial" font-size="58" font-weight="900" fill="url(#b)">TRAVEL</text>
+<text x="435" y="165" font-family="Arial" font-size="15" letter-spacing="5" fill="#ccefff">POWERED BY WISE²</text>
+</svg>

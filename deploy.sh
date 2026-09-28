@@ -34,6 +34,10 @@ if [ "$ENVIRONMENT" = "website-only" ]; then
     exit 1
   fi
 
+  # Force-remove the old website container to avoid name conflict
+  echo "🛑 Force-removing old website container..."
+  docker rm -f wise2-website 2>/dev/null || true
+
   if ! docker compose -f docker-compose.prod.yml up -d --no-deps website; then
     echo "❌ Failed to start website service"
     docker compose -f docker-compose.prod.yml logs website || true
@@ -110,6 +114,10 @@ echo ""
 # Step 3: Start Services
 # ============================================================================
 echo "🚀 Starting services..."
+
+# Force-remove all old containers to avoid name conflicts (but preserve volumes)
+echo "🛑 Force-removing old containers..."
+docker rm -f wise2-website wise2-api wise2-command-center 2>/dev/null || true
 
 if ! docker compose -f docker-compose.prod.yml up -d; then
   echo "❌ Failed to start services"

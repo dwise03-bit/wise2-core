@@ -118,7 +118,7 @@ jobs:
             # Decide scope before resetting the checkout. Website-only changes
             # must not recreate API, Postgres, Redis, or worker containers.
             CHANGED_FILES="$(git diff --name-only HEAD origin/main)"
-            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|Dockerfile.website$)'; then
+            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|packages/ui-components/|packages/brand-lock/|packages/db/|Dockerfile.website$|docker-compose.prod.yml$|package.json$|pnpm-lock.yaml$|pnpm-workspace.yaml$|scripts/deploy-website-vps.sh$)'; then
               DEPLOY_MODE=production
             else
               DEPLOY_MODE=website-only
@@ -176,4 +176,6 @@ jobs:
             docker compose -f docker-compose.prod.yml ps
             echo "🔎 Verifying homepage source parity..."
             node -e "fetch('https://wise2.net/').then(async r => { const html = await r.text(); if (!r.ok || !html.includes('data-wise2-homepage=\\\"united-command-v2\\\"')) process.exit(1); console.log('✅ Homepage parity verified') })"
+            echo "🔎 Verifying WISE² Travel route..."
+            node -e "fetch('https://wise2.net/travel').then(async r => { const html = await r.text(); if (!r.ok || !html.includes('WISE²')) { console.error('Travel route failed with HTTP', r.status); process.exit(1); } console.log('✅ Travel route verified') })"
             echo "✅ Services verification complete"
