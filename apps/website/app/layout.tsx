@@ -3,8 +3,9 @@ import { headers } from 'next/headers';
 import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
-import { isBlackhailBrand } from '@/lib/site-domains';
+import { isBlackhailBrand, isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 import { SessionProvider } from './providers';
+import { cookies } from 'next/headers';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -50,8 +51,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const siteBrand = headers().get('x-site-brand');
-  const skipSiteChrome = isBlackhailBrand(siteBrand);
+  const headerList = headers();
+  const cookieStore = cookies();
+  const siteBrand = headerList.get('x-site-brand') || cookieStore.get('x-brand')?.value;
+  const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
+  const skipSiteChrome = isBlackhailBrand(siteBrand) || isBlackhailHost(host);
 
   return (
     <html lang="en" suppressHydrationWarning>

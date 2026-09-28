@@ -44,7 +44,7 @@ async function fetchOllamaStatus(): Promise<{ status: string; count: number }> {
       status: modelCount > 0 ? 'Ready' : 'Offline',
       count: modelCount,
     };
-  } catch (error) {
+  } catch {
     return { status: 'Offline', count: 0 };
   }
 }
@@ -67,7 +67,7 @@ async function fetchCodexStatus(): Promise<string> {
 
     const data = await response.json();
     return data.status === 'healthy' ? 'Ready' : 'Offline';
-  } catch (error) {
+  } catch {
     return 'Offline';
   }
 }
@@ -97,7 +97,7 @@ async function fetchVpsStatus(): Promise<{
     }
 
     return await response.json();
-  } catch (error) {
+  } catch {
     return {
       docker: { healthy: 0, total: 0 },
       traefik: 'Offline',
@@ -125,7 +125,7 @@ async function fetchGpuStatus(): Promise<{
     }
 
     return await response.json();
-  } catch (error) {
+  } catch {
     return { gpu: 'OFFLINE', cuda: 'Offline', ollamaModels: 'Offline' };
   }
 }
@@ -142,7 +142,7 @@ async function fetchTailscaleStatus(): Promise<string> {
 
     const data = await response.json();
     return data.status || 'Unknown';
-  } catch (error) {
+  } catch {
     return 'Disconnected';
   }
 }
@@ -159,9 +159,9 @@ export async function fetchSystemStatus(): Promise<SystemStatus> {
 
   return {
     wise2Core: {
-      ollama: (ollamaData.status as any) || 'Unknown',
+      ollama: (ollamaData.status as 'Ready' | 'Offline' | 'Loading' | 'Unknown') || 'Unknown',
       hermes: 'Ready', // Will connect to actual service
-      codex: (codexStatus as any) || 'Unknown',
+      codex: (codexStatus as 'Ready' | 'Offline' | 'Loading' | 'Unknown') || 'Unknown',
       modelCount: ollamaData.count,
     },
     vpsOps: {
@@ -173,19 +173,19 @@ export async function fetchSystemStatus(): Promise<SystemStatus> {
             ? 'Ready'
             : 'Offline',
       },
-      traefik: (vpsData.traefik as any) || 'Offline',
-      postgresql: (vpsData.postgresql as any) || 'Offline',
-      redis: (vpsData.redis as any) || 'Offline',
-      wise2net: (vpsData.wise2net as any) || 'Offline',
+      traefik: (vpsData.traefik as 'Online' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
+      postgresql: (vpsData.postgresql as 'Online' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
+      redis: (vpsData.redis as 'Online' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
+      wise2net: (vpsData.wise2net as 'Online' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
     },
     gpuAi: {
-      gpu: (gpuData.gpu as any) || 'OFFLINE',
-      cuda: (gpuData.cuda as any) || 'Offline',
-      ollamaModels: (gpuData.ollamaModels as any) || 'Offline',
+      gpu: (gpuData.gpu as 'READY' | 'OFFLINE' | 'LOADING' | 'UNKNOWN') || 'OFFLINE',
+      cuda: (gpuData.cuda as 'Ready' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
+      ollamaModels: (gpuData.ollamaModels as 'Ready' | 'Offline' | 'Loading' | 'Unknown') || 'Offline',
       claudeCode: 'Ready', // Will connect to actual service
     },
     access: {
-      tailscale: (tailscaleStatus as any) || 'Unknown',
+      tailscale: (tailscaleStatus as 'Connected' | 'Disconnected' | 'Loading' | 'Unknown') || 'Unknown',
       user: 'DANIEL',
       accessLevel: 'OWNER CONTROL',
       creditMode: 'Active',

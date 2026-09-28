@@ -1,21 +1,17 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AppNav from '../../components/AppNav';
 
 export default function HermesControlPage() {
   const [activeTab, setActiveTab] = useState<'models' | 'context' | 'costs' | 'tuning' | 'integrations' | 'rayban'>('models');
-  const [loaded, setLoaded] = useState(false);
   const [raybanDevices] = useState([
     { id: 'rayban-001', name: 'Meta Ray-Ban Pro #1', status: 'connected', battery: 85, lastSeen: 'now' }
   ]);
   const [raybanCaptures] = useState([
     { id: 'cap-001', timestamp: 'Just now', type: 'video', analysis: 'object_detection', confidence: 0.94 }
   ]);
-
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
+  const loaded = true;
 
   return (
     <>

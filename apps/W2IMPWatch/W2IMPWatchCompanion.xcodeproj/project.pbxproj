@@ -1,0 +1,211 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C2A1B2C12C9E1F3A00B8C9D1 /* W2IMPWatchCompanionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchCompanionApp.swift */; };
+		C2A1B2C42C9E1F3A00B8C9D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatchCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = W2IMPWatchCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchCompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = W2IMPWatchCompanionApp.swift; sourceTree = "<group>"; };
+		C2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2A1B2BD2C9E1F3A00B8C9D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C2A1B2A12C9E1F3900B8C9D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C2A1B2992C9E1F3900B8C9D1 = {
+			isa = PBXGroup;
+			children = (
+				C2A1B2BD2C9E1F3A00B8C9D1 /* W2IMPWatchCompanion */,
+				C2A1B2A52C9E1F3900B8C9D1 /* Products */,
+			);
+			sourceTree = "<unknown>";
+		};
+		C2A1B2A52C9E1F3900B8C9D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatchCompanion.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C2A1B2BD2C9E1F3A00B8C9D1 /* W2IMPWatchCompanion */ = {
+			isa = PBXGroup;
+			children = (
+				C2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchCompanionApp.swift */,
+				C2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */,
+				C2A1B2BD2C9E1F3A00B8C9D1 /* Info.plist */,
+			);
+			path = W2IMPWatchCompanion;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C2A1B2A32C9E1F3900B8C9D1 /* W2IMPWatchCompanion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2A1B2C52C9E1F3A00B8C9D1 /* Build configuration list for PBXNativeTarget "W2IMPWatchCompanion" */;
+			buildPhases = (
+				C2A1B2A02C9E1F3900B8C9D1 /* Sources */,
+				C2A1B2A12C9E1F3900B8C9D1 /* Frameworks */,
+				C2A1B2A22C9E1F3900B8C9D1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = W2IMPWatchCompanion;
+			productName = W2IMPWatchCompanion;
+			productReference = C2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatchCompanion.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C2A1B29A2C9E1F3900B8C9D1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = C2A1B29D2C9E1F3900B8C9D1 /* Build configuration list for PBXProject "W2IMPWatchCompanion" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = C2A1B2992C9E1F3900B8C9D1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C2A1B2A32C9E1F3900B8C9D1 /* W2IMPWatchCompanion */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C2A1B2A22C9E1F3900B8C9D1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2A1B2C42C9E1F3A00B8C9D1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C2A1B2A02C9E1F3900B8C9D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2A1B2C12C9E1F3A00B8C9D1 /* W2IMPWatchCompanionApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C2A1B2C62C9E1F3A00B8C9D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = W2IMPWatchCompanion/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifestKey = @{};
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.w2impwatch.companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C2A1B2C72C9E1F3A00B8C9D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = W2IMPWatchCompanion/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifestKey = @{};
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.w2impwatch.companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C2A1B29E2C9E1F3900B8C9D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		C2A1B29F2C9E1F3900B8C9D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C2A1B29D2C9E1F3900B8C9D1 /* Build configuration list for PBXProject "W2IMPWatchCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2A1B29E2C9E1F3900B8C9D1 /* Debug */,
+				C2A1B29F2C9E1F3900B8C9D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2A1B2C52C9E1F3A00B8C9D1 /* Build configuration list for PBXNativeTarget "W2IMPWatchCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2A1B2C62C9E1F3A00B8C9D1 /* Debug */,
+				C2A1B2C72C9E1F3A00B8C9D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = C2A1B29A2C9E1F3900B8C9D1 /* Project object */;
+}

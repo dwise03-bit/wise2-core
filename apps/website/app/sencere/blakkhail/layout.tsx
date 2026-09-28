@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Oswald, Inter } from 'next/font/google';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 import { blakkhailBrand } from '@/components/sencere/blakkhail/config';
 import { isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 

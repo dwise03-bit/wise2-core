@@ -36,7 +36,6 @@ export function useSystemStatus(refetchInterval = 30000) {
 
   useEffect(() => {
     let isMounted = true;
-    let intervalId: NodeJS.Timeout;
 
     const fetchStatus = async () => {
       try {
@@ -58,7 +57,7 @@ export function useSystemStatus(refetchInterval = 30000) {
     fetchStatus();
 
     // Set up refetch interval
-    intervalId = setInterval(fetchStatus, refetchInterval);
+    const intervalId = setInterval(fetchStatus, refetchInterval);
 
     return () => {
       isMounted = false;

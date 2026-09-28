@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     let gpu = 'OFFLINE';
     let cuda = 'Offline';
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       await execAsync('which nvidia-smi', { timeout: 1000 });
       gpu = 'READY';
       cuda = 'Ready';
-    } catch (error) {
+    } catch {
       // No NVIDIA GPU or nvidia-smi not available
       // Check for Apple Metal (M1/M4 Macs)
       try {
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
           gpu = 'READY';
           cuda = 'Ready';
         }
-      } catch (e) {
+      } catch {
         // Not an Apple Silicon Mac either
       }
     }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       });
       const modelCount = parseInt(stdout.trim()) || 0;
       ollamaModels = modelCount > 0 ? 'Ready' : 'Offline';
-    } catch (error) {
+    } catch {
       ollamaModels = 'Offline';
     }
 

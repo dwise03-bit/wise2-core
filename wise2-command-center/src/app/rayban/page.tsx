@@ -171,7 +171,7 @@ export default function RayBanPage() {
               <div className="feature-icon">🎤</div>
               <h3 className="font-body font-600 mb-2" style={{ color: 'var(--text)' }}>Voice Commands</h3>
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                "Hermes, analyze this." Natural language voice commands control everything. Get instant answers, analysis, and actionable insights.
+                &quot;Hermes, analyze this.&quot; Natural language voice commands control everything. Get instant answers, analysis, and actionable insights.
               </p>
             </div>
 
@@ -179,7 +179,7 @@ export default function RayBanPage() {
               <div className="feature-icon">🧠</div>
               <h3 className="font-body font-600 mb-2" style={{ color: 'var(--text)' }}>AI-Powered Reasoning</h3>
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                Claude AI processes your glasses' visual input with deep reasoning. Context-aware, intelligent, always learning from your patterns.
+                Claude AI processes your glasses&apos; visual input with deep reasoning. Context-aware, intelligent, always learning from your patterns.
               </p>
             </div>
 
@@ -187,7 +187,7 @@ export default function RayBanPage() {
               <div className="feature-icon">💾</div>
               <h3 className="font-body font-600 mb-2" style={{ color: 'var(--text)' }}>Persistent Memory</h3>
               <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                Every capture, every analysis, every decision is logged. Build a complete searchable knowledge base of everything you've seen.
+                Every capture, every analysis, every decision is logged. Build a complete searchable knowledge base of everything you&apos;ve seen.
               </p>
             </div>
 

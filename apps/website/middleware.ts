@@ -24,7 +24,9 @@ export function middleware(request: NextRequest) {
   if (pathname === '/' || pathname === '' || pathname.toLowerCase() === '/blakkhail/home.html') {
     const url = request.nextUrl.clone();
     url.pathname = BLACKHAIL_PREFIX;
-    return NextResponse.redirect(url);
+    const response = NextResponse.redirect(url);
+    response.cookies.set('x-brand', 'blakkhail', { maxAge: 3600 });
+    return response;
   }
 
   // Keep campaign links shareable while the storefront remains section-based.
@@ -67,9 +69,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next({
+  const response = NextResponse.next({
     request: { headers: withBlackhailBrand(request) },
   });
+  response.cookies.set('x-brand', 'blakkhail', { maxAge: 3600 });
+  return response;
 }
 
 export const config = {

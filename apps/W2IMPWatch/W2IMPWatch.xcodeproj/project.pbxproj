@@ -1,32 +1,208 @@
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {};
+	classes = {
+	};
 	objectVersion = 54;
 	objects = {
-		D2A1B2C12C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2B82C9E1F3A00B8C9D1; };
-		D2A1B2C22C9E1F3A00B8C9D1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2B92C9E1F3A00B8C9D1; };
-		D2A1B2C32C9E1F3A00B8C9D1 /* WatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2BA2C9E1F3A00B8C9D1; };
-		D2A1B2C42C9E1F3A00B8C9D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2A1B2BB2C9E1F3A00B8C9D1; };
+
+/* Begin PBXBuildFile section */
+		D2A1B2C12C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift */; };
+		D2A1B2C22C9E1F3A00B8C9D1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2B92C9E1F3A00B8C9D1 /* ContentView.swift */; };
+		D2A1B2C32C9E1F3A00B8C9D1 /* WatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A1B2BA2C9E1F3A00B8C9D1 /* WatchState.swift */; };
+		D2A1B2C42C9E1F3A00B8C9D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
 		D2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = W2IMPWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = W2IMPWatchApp.swift; sourceTree = "<group>"; };
 		D2A1B2B92C9E1F3A00B8C9D1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D2A1B2BA2C9E1F3A00B8C9D1 /* WatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchState.swift; sourceTree = "<group>"; };
 		D2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D2A1B2A02C9E1F3900B8C9D1 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (D2A1B2C12C9E1F3A00B8C9D1, D2A1B2C22C9E1F3A00B8C9D1, D2A1B2C32C9E1F3A00B8C9D1); runOnlyForDeploymentPostprocessing = 0; };
-		D2A1B2A12C9E1F3900B8C9D1 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		D2A1B2A22C9E1F3900B8C9D1 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (D2A1B2C42C9E1F3A00B8C9D1); runOnlyForDeploymentPostprocessing = 0; };
-		D2A1B29A2C9E1F3900B8C9D1 /* Project object */ = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastUpgradeCheck = 1540;}; buildConfigurationList = D2A1B29D2C9E1F3900B8C9D1; classPrefix = ""; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en); mainGroup = D2A1B2992C9E1F3900B8C9D1; projectDirPath = ""; targets = (D2A1B2A32C9E1F3900B8C9D1); };
-		D2A1B2A32C9E1F3900B8C9D1 /* W2IMPWatch */ = {isa = PBXNativeTarget; buildConfigurationList = D2A1B2C52C9E1F3A00B8C9D1; buildPhases = (D2A1B2A02C9E1F3900B8C9D1, D2A1B2A12C9E1F3900B8C9D1, D2A1B2A22C9E1F3900B8C9D1); buildRules = (); dependencies = (); name = W2IMPWatch; productName = W2IMPWatch; productReference = D2A1B2A42C9E1F3900B8C9D1; productType = "com.apple.product-type.application"; };
-		D2A1B2992C9E1F3900B8C9D1 = {isa = PBXGroup; children = (D2A1B2BD2C9E1F3A00B8C9D1, D2A1B2A52C9E1F3900B8C9D1); sourceRoot = ""; };
-		D2A1B2A52C9E1F3900B8C9D1 = {isa = PBXGroup; children = (D2A1B2A42C9E1F3900B8C9D1); name = Products; sourceTree = "<group>"; };
-		D2A1B2BD2C9E1F3A00B8C9D1 = {isa = PBXGroup; children = (D2A1B2B82C9E1F3A00B8C9D1, D2A1B2B92C9E1F3A00B8C9D1, D2A1B2BA2C9E1F3A00B8C9D1, D2A1B2BB2C9E1F3A00B8C9D1); path = W2IMPWatch; sourceTree = "<group>"; };
-		D2A1B29D2C9E1F3900B8C9D1 = {isa = XCConfigurationList; buildConfigurations = (D2A1B2B02C9E1F3900B8C9D1, D2A1B2B12C9E1F3900B8C9D1); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		D2A1B2B02C9E1F3900B8C9D1 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = watchos; SWIFT_VERSION = 5.9; WATCHOS_DEPLOYMENT_TARGET = 9.0;}; name = Debug; };
-		D2A1B2B12C9E1F3900B8C9D1 = {isa = XCBuildConfiguration; buildSettings = {SDKROOT = watchos; SWIFT_VERSION = 5.9; WATCHOS_DEPLOYMENT_TARGET = 9.0;}; name = Release; };
-		D2A1B2C52C9E1F3A00B8C9D1 = {isa = XCConfigurationList; buildConfigurations = (D2A1B2C62C9E1F3A00B8C9D1, D2A1B2C72C9E1F3A00B8C9D1); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		D2A1B2C62C9E1F3A00B8C9D1 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = ""; CODE_SIGNING_REQUIRED = NO; INFOPLIST_FILE = W2IMPWatch/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.wise2.W2IMPWatch; PRODUCT_NAME = W2IMPWatch; TARGETED_DEVICE_FAMILY = 4; WATCHOS_DEPLOYMENT_TARGET = 9.0; GENERATE_INFOPLIST_FILE = NO;}; name = Debug; };
-		D2A1B2C72C9E1F3A00B8C9D1 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_IDENTITY = ""; CODE_SIGNING_REQUIRED = NO; INFOPLIST_FILE = W2IMPWatch/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = com.wise2.W2IMPWatch; PRODUCT_NAME = W2IMPWatch; TARGETED_DEVICE_FAMILY = 4; WATCHOS_DEPLOYMENT_TARGET = 9.0; GENERATE_INFOPLIST_FILE = NO;}; name = Release; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D2A1B2A12C9E1F3900B8C9D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D2A1B2992C9E1F3900B8C9D1 = {
+			isa = PBXGroup;
+			children = (
+				D2A1B2BD2C9E1F3A00B8C9D1 /* W2IMPWatch */,
+				D2A1B2A52C9E1F3900B8C9D1 /* Products */,
+			);
+			sourceTree = "<unknown>";
+		};
+		D2A1B2A52C9E1F3900B8C9D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D2A1B2BD2C9E1F3A00B8C9D1 /* W2IMPWatch */ = {
+			isa = PBXGroup;
+			children = (
+				D2A1B2B82C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift */,
+				D2A1B2B92C9E1F3A00B8C9D1 /* ContentView.swift */,
+				D2A1B2BA2C9E1F3A00B8C9D1 /* WatchState.swift */,
+				D2A1B2BB2C9E1F3A00B8C9D1 /* Assets.xcassets */,
+			);
+			path = W2IMPWatch;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D2A1B2A32C9E1F3900B8C9D1 /* W2IMPWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2A1B2C52C9E1F3A00B8C9D1 /* Build configuration list for PBXNativeTarget "W2IMPWatch" */;
+			buildPhases = (
+				D2A1B2A02C9E1F3900B8C9D1 /* Sources */,
+				D2A1B2A12C9E1F3900B8C9D1 /* Frameworks */,
+				D2A1B2A22C9E1F3900B8C9D1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = W2IMPWatch;
+			productName = W2IMPWatch;
+			productReference = D2A1B2A42C9E1F3900B8C9D1 /* W2IMPWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D2A1B29A2C9E1F3900B8C9D1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = D2A1B29D2C9E1F3900B8C9D1 /* Build configuration list for PBXProject "W2IMPWatch" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = D2A1B2992C9E1F3900B8C9D1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2A1B2A32C9E1F3900B8C9D1 /* W2IMPWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D2A1B2A22C9E1F3900B8C9D1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2A1B2C42C9E1F3A00B8C9D1 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D2A1B2A02C9E1F3900B8C9D1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2A1B2C12C9E1F3A00B8C9D1 /* W2IMPWatchApp.swift in Sources */,
+				D2A1B2C22C9E1F3A00B8C9D1 /* ContentView.swift in Sources */,
+				D2A1B2C32C9E1F3A00B8C9D1 /* WatchState.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D2A1B2B02C9E1F3900B8C9D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = watchos;
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		D2A1B2B12C9E1F3900B8C9D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = watchos;
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		D2A1B2C62C9E1F3A00B8C9D1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = W2IMPWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.W2IMPWatch;
+				PRODUCT_NAME = W2IMPWatch;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		D2A1B2C72C9E1F3A00B8C9D1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9N5L62DHKJ;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = W2IMPWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wise2.W2IMPWatch;
+				PRODUCT_NAME = W2IMPWatch;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D2A1B29D2C9E1F3900B8C9D1 /* Build configuration list for PBXProject "W2IMPWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2A1B2B02C9E1F3900B8C9D1 /* Debug */,
+				D2A1B2B12C9E1F3900B8C9D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D2A1B2C52C9E1F3A00B8C9D1 /* Build configuration list for PBXNativeTarget "W2IMPWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D2A1B2C62C9E1F3A00B8C9D1 /* Debug */,
+				D2A1B2C72C9E1F3A00B8C9D1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
 	};
-	rootObject = D2A1B29A2C9E1F3900B8C9D1;
+	rootObject = D2A1B29A2C9E1F3900B8C9D1 /* Project object */;
 }

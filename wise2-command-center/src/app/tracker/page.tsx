@@ -6,6 +6,16 @@ import AppNav from '../../components/AppNav';
 export default function TrackerPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [orderId] = useState(() => `WISE-2024-${Math.floor(Math.random() * 9000) + 1000}`);
+
+  const steps = [
+    { label: 'Order Confirmed', icon: '✓', duration: 1 },
+    { label: 'Preparing', icon: '👨‍🍳', duration: 8 },
+    { label: 'In the Oven', icon: '🔥', duration: 12 },
+    { label: 'Quality Check', icon: '✅', duration: 3 },
+    { label: 'Out for Delivery', icon: '🚗', duration: 15 },
+    { label: 'Delivered', icon: '🏠', duration: 0 },
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,16 +26,7 @@ export default function TrackerPage() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [elapsedTime, currentStep]);
-
-  const steps = [
-    { label: 'Order Confirmed', icon: '✓', duration: 1 },
-    { label: 'Preparing', icon: '👨‍🍳', duration: 8 },
-    { label: 'In the Oven', icon: '🔥', duration: 12 },
-    { label: 'Quality Check', icon: '✅', duration: 3 },
-    { label: 'Out for Delivery', icon: '🚗', duration: 15 },
-    { label: 'Delivered', icon: '🏠', duration: 0 },
-  ];
+  }, [elapsedTime, currentStep, steps.length]);
 
   const totalDuration = steps.reduce((sum, s) => sum + s.duration, 0);
   const progressPercent = (currentStep / (steps.length - 1)) * 100;
@@ -257,7 +258,7 @@ export default function TrackerPage() {
       <div className="tracker-container">
         {/* Header */}
         <div className="order-header">
-          <div className="order-id">Order #WISE-2024-{Math.floor(Math.random() * 9000) + 1000}</div>
+          <div className="order-id">Order #{orderId}</div>
           <h1 className="order-title font-display">{steps[currentStep].label}</h1>
           <div className="eta">
             Estimated time: {formatTime(totalDuration - elapsedTime)}

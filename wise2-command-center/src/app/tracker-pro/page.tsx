@@ -6,29 +6,10 @@ import AppNav from '../../components/AppNav';
 export default function TrackerProPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [driverLocation, setDriverLocation] = useState({ lat: 40.7128, lng: -74.0060 });
-  const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState<Array<{ role: 'driver' | 'customer'; text: string; time: string }>>([
     { role: 'driver', text: 'Your order is being prepared!', time: '2:34 PM' },
   ]);
   const [newMessage, setNewMessage] = useState('');
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setElapsedTime(prev => prev + 1);
-      if (elapsedTime > 0 && elapsedTime % 8 === 0 && currentStep < steps.length - 1) {
-        setCurrentStep(prev => prev + 1);
-        // Simulate driver movement on delivery
-        if (currentStep >= 4) {
-          setDriverLocation(prev => ({
-            lat: prev.lat - Math.random() * 0.002,
-            lng: prev.lng + Math.random() * 0.002,
-          }));
-        }
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [elapsedTime, currentStep]);
 
   const steps = [
     { label: 'Order Confirmed', icon: '✓', duration: 1, color: '#00FF88' },
@@ -38,6 +19,16 @@ export default function TrackerProPage() {
     { label: 'Out for Delivery', icon: '🚗', duration: 15, color: '#00D9FF' },
     { label: 'Delivered', icon: '🏠', duration: 0, color: '#00FF88' },
   ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+      if (elapsedTime > 0 && elapsedTime % 8 === 0 && currentStep < steps.length - 1) {
+        setCurrentStep(prev => prev + 1);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [elapsedTime, currentStep, steps.length]);
 
   const orderItems = [
     { name: 'Large Pepperoni Pizza', qty: 2, price: 23.99 },

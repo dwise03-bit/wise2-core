@@ -35,9 +35,9 @@ export default function Home() {
         gsap.registerPlugin(ScrollTrigger);
 
         // Initialize reveal animations
-        gsap.utils.toArray("[data-reveal]").forEach((element: any) => {
+        gsap.utils.toArray("[data-reveal]").forEach((element) => {
           gsap.fromTo(
-            element,
+            element as Element,
             { y: 40, opacity: 0, filter: "blur(10px)" },
             {
               y: 0,
@@ -46,7 +46,7 @@ export default function Home() {
               duration: 1,
               ease: "power4.out",
               scrollTrigger: {
-                trigger: element,
+                trigger: element as Element,
                 start: "top 85%",
                 once: true,
               },
@@ -65,8 +65,8 @@ export default function Home() {
         }
 
         // Glow effect on green accent
-        gsap.utils.toArray("[data-glow]").forEach((element: any) => {
-          gsap.to(element, {
+        gsap.utils.toArray("[data-glow]").forEach((element) => {
+          gsap.to(element as Element, {
             textShadow: "0 0 20px rgba(0, 255, 127, 0.6)",
             duration: 2,
             repeat: -1,
