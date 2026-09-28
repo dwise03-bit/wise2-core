@@ -170,12 +170,12 @@ export default function TradingDashboard() {
 
   // ===== NOW RENDER THE DASHBOARD =====
   return (
-    <div className="flex flex-col h-screen bg-[#050607] text-white">
+    <div className="flex flex-col bg-[#050607] text-white min-h-screen">
       <MarketTickerBar />
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <div className="w-64 border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 overflow-y-auto">
+        <div className="lg:w-64 md:w-48 w-0 md:block hidden border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 overflow-y-auto">
           <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
             <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={210} height={92} className="h-auto w-full" priority />
             <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
@@ -219,7 +219,7 @@ export default function TradingDashboard() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Search Bar */}
           <div className="bg-[#050607] border-b border-[#00D9FF]/20 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2 bg-[#0b0d1c] border border-[#00D9FF]/20 rounded px-3 py-2 w-80">
+            <div className="flex items-center gap-2 bg-[#0b0d1c] border border-[#00D9FF]/20 rounded px-3 py-2 flex-1 md:w-80">
               <Search size={16} className="text-[#00D9FF]/60" />
               <input
                 type="text"
@@ -268,7 +268,7 @@ export default function TradingDashboard() {
                       ))}
                     </div>
                   </div>
-                  <div className="bg-[#050607] rounded h-64 border border-[#00D9FF]/10 flex items-center justify-center mb-4">
+                  <div className="bg-[#050607] rounded md:h-64 h-40 border border-[#00D9FF]/10 flex items-center justify-center mb-4">
                     <div className="text-center">
                       <LineChart size={48} className="text-[#00D9FF]/30 mx-auto mb-2" />
                       <p className="text-sm text-gray-500">Live chart - Connect TradingView API</p>
@@ -321,7 +321,7 @@ export default function TradingDashboard() {
               </div>
 
               {/* Right Column - PLOT & Insights */}
-              <div className="col-span-3 space-y-6 overflow-y-auto">
+              <div className="col-span-3 space-y-6">
                 {/* PLOT AI */}
                 <div className="bg-gradient-to-br from-[#0b0d1c] to-[#050607] border border-[#C4A369]/30 rounded-lg p-6">
                   <div className="flex items-center gap-2 mb-4">
