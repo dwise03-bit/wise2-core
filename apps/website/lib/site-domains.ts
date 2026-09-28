@@ -32,5 +32,5 @@ export function checkoutPath(host: string | null | undefined): string {
 }
 
 export function homePath(host: string | null | undefined): string {
-  return isBlackhailHost(host) ? '/sencere' : '/sencere/blakkhail';
+  return isBlackhailHost(host) ? '/sencere/blakkhail' : '/sencere';
 }
