@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import MarketChart from './MarketChart';
+import AITradingAssistant from './AITradingAssistant';
 
 // Design Tokens
 const COLORS = {
@@ -401,6 +402,17 @@ export default function TradingDashboard() {
           </div>
         </div>
       </div>
+      <AITradingAssistant
+        isOpen={isAssistantOpen}
+        onClose={() => setIsAssistantOpen(false)}
+        marketContext={{
+          symbol: marketData.symbol,
+          lastPrice: marketData.lastPrice,
+          change: marketData.changePercent,
+          regime: marketData.regime,
+          setups: marketData.setups,
+        }}
+      />
     </div>
   );
 }
