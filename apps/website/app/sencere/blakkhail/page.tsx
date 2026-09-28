@@ -18,36 +18,6 @@ import { BlakkhailPhilosophy } from '@/components/sencere/blakkhail/BlakkhailPhi
 
 export default function BlakkhailPage() {
   useEffect(() => {
-    // Aggressively hide trading dashboard elements
-    const hideTrading = () => {
-      // Remove all elements with trading-related classes
-      document.querySelectorAll(`
-        [class*="trading"],
-        [class*="dashboard"],
-        [class*="chart"],
-        [class*="wise"],
-        [class*="market"],
-        [id*="trading"],
-        [id*="dashboard"],
-        [id*="wise"],
-        aside,
-        nav[role="navigation"]
-      `).forEach(el => {
-        if (el && el.parentNode) {
-          // Check if it's not part of BLAKKHAIL structure
-          if (!el.closest('.bh-')) {
-            el.style.display = 'none';
-            el.remove();
-          }
-        }
-      });
-    };
-
-    // Run immediately and watch for new additions
-    hideTrading();
-    const observer = new MutationObserver(hideTrading);
-    observer.observe(document.body, { childList: true, subtree: true });
-
     // Scroll animations for elements
     const scrollObserverOptions = {
       threshold: 0.1,
@@ -79,7 +49,6 @@ export default function BlakkhailPage() {
     window.addEventListener('scroll', updateScrollDepth, { passive: true });
 
     return () => {
-      observer.disconnect();
       scrollObserver.disconnect();
       cancelAnimationFrame(frame);
       window.removeEventListener('scroll', updateScrollDepth);
