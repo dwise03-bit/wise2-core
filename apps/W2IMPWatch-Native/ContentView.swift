@@ -5,7 +5,7 @@ struct ContentView: View {
     @State private var currentTime = Date()
     @Environment(\.accessibilityReduceMotion) var reduceMotion
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var formattedTime: String {
         let formatter = DateFormatter()
