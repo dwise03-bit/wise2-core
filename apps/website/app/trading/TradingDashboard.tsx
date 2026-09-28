@@ -118,6 +118,15 @@ export default function TradingDashboard() {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [activeNav, setActiveNav] = useState('dashboard');
   const [chartInterval, setChartInterval] = useState('1D');
+  const [alpacaMode, setAlpacaMode] = useState<'paper' | 'live'>('paper');
+  const [alpacaStatus, setAlpacaStatus] = useState<'idle' | 'connected' | 'error'>('idle');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('alpaca');
+    if (status === 'connected') setAlpacaStatus('connected');
+    if (status && status !== 'connected') setAlpacaStatus('error');
+  }, []);
 
   const [watchlist] = useState([
     { symbol: 'BTCUSD', price: 43200, change: 700, changePercent: 1.65, watched: true },
@@ -349,6 +358,32 @@ export default function TradingDashboard() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* WISE² Connect */}
+                <div className="rounded-lg border border-[#00D9FF]/30 bg-[#07111f] p-5 shadow-[0_0_32px_rgba(0,217,255,0.08)]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#27d7ff]">Broker bridge</p>
+                      <h3 className="mt-1 text-sm font-bold uppercase tracking-wider">Alpaca</h3>
+                      <p className="mt-1 text-xs leading-5 text-gray-400">Connect your account for paper trading and supervised follow mode.</p>
+                    </div>
+                    <span className={`rounded-full border px-2 py-1 text-[10px] font-bold uppercase ${alpacaStatus === 'connected' ? 'border-[#00FF7F]/40 text-[#00FF7F]' : 'border-[#C4A369]/40 text-[#C4A369]'}`}>
+                      {alpacaStatus === 'connected' ? 'Paper linked' : 'Not linked'}
+                    </span>
+                  </div>
+                  <div className="mt-4 grid grid-cols-2 gap-2 rounded-md border border-white/10 bg-[#050607] p-1">
+                    <button onClick={() => setAlpacaMode('paper')} className={`min-h-11 rounded px-2 text-xs font-bold uppercase tracking-wider ${alpacaMode === 'paper' ? 'bg-[#00D9FF]/20 text-[#27d7ff]' : 'text-gray-500'}`}>Paper</button>
+                    <button onClick={() => setAlpacaMode('live')} className={`min-h-11 rounded px-2 text-xs font-bold uppercase tracking-wider ${alpacaMode === 'live' ? 'bg-[#FF0055]/15 text-[#ff6b91]' : 'text-gray-500'}`}>Live locked</button>
+                  </div>
+                  <button
+                    onClick={() => { if (alpacaMode === 'paper') window.location.href = '/api/integrations/alpaca/authorize'; }}
+                    disabled={alpacaMode !== 'paper'}
+                    className="mt-3 min-h-11 w-full rounded-md border border-[#27d7ff]/50 bg-[#0a2742] px-3 py-2 text-xs font-bold uppercase tracking-wider text-[#b8eaff] transition hover:border-[#27d7ff] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {alpacaMode === 'paper' ? 'Connect Alpaca Paper' : 'Live requires approval'}
+                  </button>
+                  {alpacaStatus === 'error' && <p className="mt-2 text-[11px] text-[#ff8aa8]">Connection was not completed. Check the Alpaca app redirect URI.</p>}
                 </div>
 
                 {/* WISE² Connect */}
