@@ -178,7 +178,7 @@ export default function TradingDashboard() {
         {/* Left Sidebar */}
         <div className="lg:w-64 md:w-48 w-0 md:block hidden border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 overflow-y-auto">
           <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
-            <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={210} height={92} className="h-auto w-full" priority />
+            <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={270} height={150} sizes="(max-width: 1024px) 180px, 210px" className="h-auto w-full object-contain" priority />
             <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
           </div>
 
@@ -326,7 +326,7 @@ export default function TradingDashboard() {
                 {/* PLOT AI */}
                 <div className="bg-gradient-to-br from-[#0b0d1c] to-[#050607] border border-[#C4A369]/30 rounded-lg p-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <Image src="/trading/plot-ai-avatar.png" alt="PLOT AI" width={48} height={48} className="h-10 w-10 rounded-full border border-[#27d7ff]/50 object-cover" />
+                    <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-[#27d7ff]/50 bg-[#061a2b]"><Image src="/trading/plot-ai-avatar.png" alt="PLOT AI" width={155} height={140} sizes="40px" className="h-full w-full object-contain" /></span>
                     <div>
                       <h3 className="font-bold uppercase tracking-wider text-sm">PLOT</h3>
                       <p className="text-xs text-gray-500">AI TRADING ASSISTANT</p>
@@ -354,7 +354,7 @@ export default function TradingDashboard() {
                 {/* WISE² Connect */}
                 <div className="rounded-lg border border-[#168fff]/30 bg-[#07111f] p-5">
                   <div className="flex items-center gap-3">
-                    <Image src="/trading/wise2-connect-avatar.png" alt="WISE² Connect" width={44} height={44} className="h-11 w-11 rounded-lg border border-[#168fff]/40 object-cover" />
+                    <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-lg border border-[#168fff]/40 bg-[#061a2b]"><Image src="/trading/wise2-connect-avatar.png" alt="WISE² Connect" width={120} height={120} sizes="44px" className="h-full w-full object-contain" /></span>
                     <div>
                       <h3 className="text-sm font-bold uppercase tracking-wider">WISE² Connect</h3>
                       <p className="text-xs text-gray-500">People, calls, and client context</p>
@@ -394,7 +394,7 @@ export default function TradingDashboard() {
 
                 <div className="rounded-lg border border-[#8B5CF6]/30 bg-[#0b0d1c] p-4">
                   <div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-bold uppercase tracking-wider">RECENT JOURNAL</h3><span className="text-[10px] text-[#27d7ff]">VIEW ALL</span></div>
-                  <Image src="/trading/recent-journal-chart.png" alt="Recent journal chart" width={520} height={220} className="h-28 w-full rounded-md border border-white/10 object-cover" />
+                  <span className="block h-28 w-full overflow-hidden rounded-md border border-white/10 bg-[#06101f]"><Image src="/trading/recent-journal-chart.png" alt="Recent journal chart" width={240} height={205} sizes="(max-width: 768px) 100vw, 520px" className="h-full w-full object-contain" /></span>
                   <p className="mt-3 text-xs text-gray-400">AAPL long · thesis saved with risk plan.</p>
                 </div>
               </div>
