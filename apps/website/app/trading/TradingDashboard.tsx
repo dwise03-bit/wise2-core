@@ -170,7 +170,7 @@ export default function TradingDashboard() {
 
   // ===== NOW RENDER THE DASHBOARD =====
   return (
-    <div className="flex flex-col bg-[#050607] text-white min-h-screen">
+    <div className="sjs-cinematic flex flex-col bg-[#050607] text-white min-h-screen">
       <MarketTickerBar />
 
       <div className="flex flex-1 overflow-hidden">
@@ -404,4 +404,3 @@ export default function TradingDashboard() {
     </div>
   );
 }
-
