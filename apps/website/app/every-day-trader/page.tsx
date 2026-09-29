@@ -3,6 +3,7 @@
 import styles from './trader-3d.module.css';
 import CuzzoAI from './cuzzo-ai';
 import LiveTrading from './live-trading';
+import FollowTrader from './follow-trader';
 
 export default function EveryDayTraderPage() {
   const markets = [
@@ -182,6 +183,9 @@ export default function EveryDayTraderPage() {
 
         {/* Live Trading */}
         <LiveTrading />
+
+        {/* Follow Trader */}
+        <FollowTrader />
 
         {/* Footer */}
         <footer className={styles.footerPremium}>
