@@ -54,6 +54,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "apps/fergies-table", "run", "dev"],
       "port": 3026
+    },
+    {
+      "name": "every-day-trader",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/danielwise/Projects/every-day-trader-web", "run", "dev"],
+      "port": 3002
     }
   ]
 }
