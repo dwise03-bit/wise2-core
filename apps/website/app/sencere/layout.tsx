@@ -1,12 +1,5 @@
 import type { Metadata } from 'next';
-import { Oswald, Inter } from 'next/font/google';
-
-const oswald = Oswald({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-display',
-  display: 'swap',
-});
+import { Inter } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,7 +28,7 @@ export const metadata: Metadata = {
 export default function SenCereLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className={`${oswald.variable} ${inter.variable} bg-[#050505] antialiased`}
+      className={`${inter.variable} bg-[#050505] antialiased`}
       style={{ fontFamily: 'var(--font-body)' }}
     >
       {children}
