@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './styles/globals.css';
-import { SiteChrome } from '@/components/SiteChrome';
+// import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 import { isBlackhailBrand, isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 import { SessionProvider } from './providers';
@@ -51,15 +51,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const headerList = headers();
-  const cookieStore = cookies();
-  const xBrandCookie = cookieStore.get('x-brand')?.value;
-  const siteBrand = headerList.get('x-site-brand') || xBrandCookie;
-  const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
-  const isBlackhailHost_ = isBlackhailHost(host);
-  const isBlackhailBrand_ = isBlackhailBrand(siteBrand) || xBrandCookie === 'blakkhail';
-  const isBlackhailPath = headerList.get('x-pathname')?.includes('/sencere/blakkhail');
-  const skipSiteChrome = isBlackhailHost_ || isBlackhailBrand_ || isBlackhailPath || headerList.get('x-blakkhail-request') === 'true';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -159,11 +150,7 @@ export default function RootLayout({
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <SessionProvider session={undefined}>
           <ToastProvider>
-            {skipSiteChrome ? (
-              children
-            ) : (
-              <SiteChrome>{children}</SiteChrome>
-            )}
+            {children}
           </ToastProvider>
         </SessionProvider>
       </body>
