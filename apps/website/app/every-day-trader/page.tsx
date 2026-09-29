@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './trader-3d.module.css';
+import CuzzoAI from './cuzzo-ai';
 
 export default function EveryDayTraderPage() {
   const markets = [
@@ -184,6 +185,7 @@ export default function EveryDayTraderPage() {
           <span className={styles.footerTagline}>Knowledge Builds Freedom.</span>
         </footer>
       </section>
+      <CuzzoAI />
     </main>
   );
 }

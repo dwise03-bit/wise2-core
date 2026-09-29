@@ -1,0 +1,320 @@
+/* CUZZO AI ASSISTANT - Premium 4K Interactive Component */
+
+.cuzzoContainer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 380px;
+  max-height: 600px;
+  background: linear-gradient(135deg, rgba(6, 38, 76, 0.95) 0%, rgba(3, 17, 37, 0.95) 100%);
+  border: 1px solid rgba(12, 126, 216, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 0 60px rgba(0, 217, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  animation: slideInCuzzo 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideInCuzzo {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) translateY(0px) scale(1);
+  }
+}
+
+.cuzzoHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(12, 126, 216, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.cuzzoHeader:hover {
+  background: rgba(12, 126, 216, 0.1);
+}
+
+.cuzzoAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00D9FF, #0563D8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+  animation: floatAvatar 3s ease-in-out infinite;
+}
+
+@keyframes floatAvatar {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.cuzzoTitle {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f4f8ff;
+  letter-spacing: 0.5px;
+}
+
+.cuzzoSubtitle {
+  font-size: 11px;
+  color: #7a9fb5;
+  font-weight: 500;
+}
+
+.cuzzoClose {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(12, 126, 216, 0.2);
+  border: none;
+  color: #00D9FF;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 200ms ease;
+}
+
+.cuzzoClose:hover {
+  background: rgba(12, 126, 216, 0.4);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.cuzzoBody {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cuzzoBody::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cuzzoBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cuzzoBody::-webkit-scrollbar-thumb {
+  background: rgba(0, 217, 255, 0.3);
+  border-radius: 3px;
+}
+
+.cuzzoBody::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 217, 255, 0.5);
+}
+
+.cuzzoMessage {
+  display: flex;
+  gap: 10px;
+  animation: fadeInMessage 300ms ease;
+}
+
+@keyframes fadeInMessage {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.cuzzoMessage.user {
+  justify-content: flex-end;
+}
+
+.cuzzoMessageBubble {
+  max-width: 280px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  transition: all 200ms ease;
+  transform-style: preserve-3d;
+}
+
+.cuzzoMessage.assistant .cuzzoMessageBubble {
+  background: rgba(12, 126, 216, 0.4);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #d4e3f7;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05), 0 0 15px rgba(0, 217, 255, 0.15);
+}
+
+.cuzzoMessage.user .cuzzoMessageBubble {
+  background: linear-gradient(135deg, #0563D8, #087df9);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(32, 125, 249, 0.3);
+  border: 1px solid rgba(32, 125, 249, 0.5);
+}
+
+.cuzzoMessage.assistant .cuzzoMessageBubble:hover,
+.cuzzoMessage.user .cuzzoMessageBubble:hover {
+  transform: perspective(600px) scale(1.02) translateY(-1px);
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.35);
+}
+
+.cuzzoFooter {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(12, 126, 216, 0.2);
+  display: flex;
+  gap: 8px;
+}
+
+.cuzzoInput {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid rgba(12, 126, 216, 0.3);
+  border-radius: 10px;
+  background: rgba(6, 26, 51, 0.8);
+  color: #f4f8ff;
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 200ms ease;
+  outline: none;
+}
+
+.cuzzoInput:focus {
+  border-color: #00D9FF;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 217, 255, 0.2);
+  background: rgba(6, 26, 51, 0.95);
+}
+
+.cuzzoInput::placeholder {
+  color: #5a7a95;
+}
+
+.cuzzo SendButton {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00D9FF, #0563D8);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 200ms ease;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+}
+
+.cuzzoSendButton:hover {
+  transform: perspective(800px) scale(1.05) rotateX(1deg);
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.5);
+  background: linear-gradient(135deg, #00E8FF, #0580FF);
+}
+
+.cuzzoSendButton:active {
+  transform: perspective(800px) scale(0.98);
+}
+
+.cuzzoTyping {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px;
+  background: rgba(12, 126, 216, 0.3);
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.cuzzoTypingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 217, 255, 0.8);
+  animation: typingBounce 1.4s ease-in-out infinite;
+}
+
+.cuzzoTypingDot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.cuzzoTypingDot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+.cuzzoFloatingButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00D9FF, #0563D8);
+  border: 2px solid rgba(0, 217, 255, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 999;
+  animation: float 3s ease-in-out infinite;
+}
+
+.cuzzoFloatingButton:hover {
+  transform: perspective(1000px) scale(1.1) rotateX(5deg) rotateY(-5deg);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.6), 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.cuzzoFloatingButton:active {
+  transform: perspective(1000px) scale(0.95);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.cuzzoNotification {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FF3B7F;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 59, 127, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
