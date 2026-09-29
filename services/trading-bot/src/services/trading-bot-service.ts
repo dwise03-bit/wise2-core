@@ -1,4 +1,5 @@
 import { Client, TextChannel, EmbedBuilder } from 'discord.js';
+import { PrismaClient } from '@prisma/client';
 import { AETHERTrader, TradeSetup, OHLCV } from '../types/trading-engine';
 import { PriceDataService } from './price-data-service';
 import { ChartService } from './chart-service';
@@ -9,23 +10,27 @@ interface TrackedSymbol {
   channelId: string;
   updateInterval: ReturnType<typeof setInterval> | null;
   lastSetups: TradeSetup[];
+  accountId?: string;
 }
 
 export class TradingBotService {
   private client: Client;
   private priceDataService: PriceDataService;
   private chartService: ChartService;
+  private prisma: PrismaClient;
   private trackedSymbols = new Map<string, TrackedSymbol>();
   private updateTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     client: Client,
     priceDataService: PriceDataService,
-    chartService: ChartService
+    chartService: ChartService,
+    prisma: PrismaClient
   ) {
     this.client = client;
     this.priceDataService = priceDataService;
     this.chartService = chartService;
+    this.prisma = prisma;
   }
 
   /**
@@ -236,6 +241,62 @@ export class TradingBotService {
    */
   getTrackedSymbols(): string[] {
     return Array.from(this.trackedSymbols.keys());
+  }
+
+  /**
+   * Persist setup to database
+   */
+  async persistSetup(setup: TradeSetup, accountId: string) {
+    try {
+      const setupData: any = {
+        symbol: setup.symbol,
+        setupType: setup.type,
+        direction: setup.direction,
+        confidence: setup.confidence,
+        entryZoneStart: setup.entryZone.start,
+        entryZoneEnd: setup.entryZone.end,
+        regime: setup.regime.type,
+        isValid: true,
+        wasTraded: false,
+        detectedAt: new Date(),
+      };
+
+      // Add optional properties if they exist
+      if ('impulseHigh' in setup) setupData.impulseHigh = (setup as any).impulseHigh;
+      if ('impulseLow' in setup) setupData.impulseLow = (setup as any).impulseLow;
+      if ('liquidityLevel' in setup) setupData.liquidityLevel = (setup as any).liquidityLevel;
+      if ('rsiValue' in setup) setupData.rsiValue = (setup as any).rsiValue;
+
+      await this.prisma.setup.create({ data: setupData });
+    } catch (error) {
+      console.error(`Error persisting setup for ${setup.symbol}:`, error);
+    }
+  }
+
+  /**
+   * Update watchlist with current price
+   */
+  async updateWatchlist(symbol: string, price: number, accountId: string) {
+    try {
+      const watchlist = await this.prisma.watchlist.findFirst({
+        where: {
+          account: { id: accountId },
+          symbol,
+        },
+      });
+
+      if (watchlist) {
+        await this.prisma.watchlist.update({
+          where: { id: watchlist.id },
+          data: {
+            price,
+            updatedAt: new Date(),
+          },
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating watchlist for ${symbol}:`, error);
+    }
   }
 
   /**

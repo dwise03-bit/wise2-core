@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits, ChannelType } from 'discord.js';
+import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import { TradingBotService } from './services/trading-bot-service';
 import { DiscordCommandHandler } from './handlers/command-handler';
@@ -16,6 +17,8 @@ const client = new Client({
   ],
 });
 
+const prisma = new PrismaClient();
+
 let tradingBotService: TradingBotService;
 let commandHandler: DiscordCommandHandler;
 let priceDataService: PriceDataService;
@@ -27,7 +30,7 @@ client.once('ready', async () => {
   // Initialize services
   priceDataService = new PriceDataService();
   chartService = new ChartService();
-  tradingBotService = new TradingBotService(client, priceDataService, chartService);
+  tradingBotService = new TradingBotService(client, priceDataService, chartService, prisma);
   commandHandler = new DiscordCommandHandler(tradingBotService, chartService);
 
   // Start polling for price updates
@@ -56,7 +59,16 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+// Cleanup on exit
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down...');
+  tradingBotService.destroy();
+  await prisma.$disconnect();
+  await client.destroy();
+  process.exit(0);
+});
+
 // Login to Discord
 client.login(process.env.DISCORD_TOKEN);
 
-export { client, tradingBotService, commandHandler };
+export { client, tradingBotService, commandHandler, prisma };
