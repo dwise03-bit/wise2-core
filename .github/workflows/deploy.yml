@@ -73,6 +73,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
     env:
+      # Authentication
+      JWT_SECRET: ${{ secrets.JWT_SECRET || 'dev-key-change-in-production' }}
       # Stripe (Payment Processing)
       STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
@@ -105,6 +107,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           command_timeout: 30m
           envs: |
+            JWT_SECRET,
             STRIPE_PUBLIC_KEY,STRIPE_SECRET_KEY,STRIPE_STARTER_PRICE_ID,STRIPE_PRO_PRICE_ID,STRIPE_WEBHOOK_SECRET,
             DATABASE_URL,DATABASE_USER,DATABASE_PASSWORD,
             APP_URL,API_BASE_URL
