@@ -171,33 +171,40 @@ export default function EveryDayTraderPage() {
             placeholder="⌕  Search stocks, crypto, or ETFs..."
             className={styles.searchInput3d}
           />
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
             <button
               onClick={() => {
                 const loginUrl = typeof window !== 'undefined' ? `${window.location.origin}/login` : '/login';
                 window.location.href = loginUrl;
               }}
               style={{
-                padding: '8px 16px',
-                background: 'linear-gradient(135deg, #00D9FF, #00FF7F)',
-                border: 'none',
-                borderRadius: '6px',
+                padding: '10px 20px',
+                background: 'linear-gradient(135deg, #00D9FF 0%, #00FF7F 100%)',
+                border: '1.5px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '10px',
                 color: '#050607',
-                fontWeight: 600,
-                fontSize: '13px',
+                fontWeight: 700,
+                fontSize: '12px',
+                letterSpacing: '0.5px',
                 cursor: 'pointer',
-                transition: 'all 200ms ease',
+                transition: 'all 350ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                boxShadow: '0 4px 20px rgba(0, 217, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                position: 'relative',
+                overflow: 'hidden',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 217, 255, 0.4)';
+                e.currentTarget.style.transform = 'perspective(1000px) translateY(-3px) scale(1.06)';
+                e.currentTarget.style.boxShadow = '0 12px 35px rgba(0, 217, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = 'none';
+                e.currentTarget.style.transform = 'perspective(1000px) translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 217, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = 'perspective(1000px) translateY(0) scale(0.98)';
               }}
             >
-              Sign In →
+              ✨ Sign In →
             </button>
             <div style={{ width: '48px' }}>
               <WISELogo />
