@@ -171,8 +171,37 @@ export default function EveryDayTraderPage() {
             placeholder="⌕  Search stocks, crypto, or ETFs..."
             className={styles.searchInput3d}
           />
-          <div style={{ width: '48px' }}>
-            <WISELogo />
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                const loginUrl = typeof window !== 'undefined' ? `${window.location.origin}/login` : '/login';
+                window.location.href = loginUrl;
+              }}
+              style={{
+                padding: '8px 16px',
+                background: 'linear-gradient(135deg, #00D9FF, #00FF7F)',
+                border: 'none',
+                borderRadius: '6px',
+                color: '#050607',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 217, 255, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Sign In →
+            </button>
+            <div style={{ width: '48px' }}>
+              <WISELogo />
+            </div>
           </div>
         </header>
 
