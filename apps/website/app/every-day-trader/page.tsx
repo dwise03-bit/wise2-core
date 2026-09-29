@@ -20,23 +20,25 @@ export default function EveryDayTraderPage() {
   // Initialize live data on component mount
   useEffect(() => {
     const initializeData = async () => {
-      // Load config from public/config.json or environment variables
+      // Try loading config from file
+      let dataSource: 'mock' | 'alpha-vantage' | 'yahoo' = 'mock';
+      let apiKey = '';
+
       try {
         const response = await fetch('/config.json');
         if (response.ok) {
           const config = await response.json();
-          console.log(`🚀 EDT Dashboard - Data Source: ${config.marketDataSource} (with API key from config.json)`);
-          liveDataManager.setDataSource(config.marketDataSource, config.alphaVantageKey);
-        } else {
-          throw new Error('Config not found');
+          dataSource = config.marketDataSource;
+          apiKey = config.alphaVantageKey;
         }
       } catch (e) {
-        // Fallback: Set data source from environment
-        const dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'mock') as 'mock' | 'alpha-vantage' | 'yahoo';
-        const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.NEXT_PUBLIC_RAPID_API_KEY || '';
-        console.log(`🚀 EDT Dashboard - Data Source: ${dataSource}${apiKey ? ' (with API key)' : ' (no API key - using mock)'}`);
-        liveDataManager.setDataSource(dataSource, apiKey);
+        // Fallback to environment or hardcoded for development
+        dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'alpha-vantage') as 'mock' | 'alpha-vantage' | 'yahoo';
+        apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || 'VCPIQUKNZ4LT0TFX';
       }
+
+      console.log(`🚀 EDT Dashboard - Data Source: ${dataSource}${apiKey && apiKey !== 'VCPIQUKNZ4LT0TFX' ? ' (with API key)' : apiKey ? ' (with Alpha Vantage API key - LIVE)' : ' (no API key - using mock)'}`);
+      liveDataManager.setDataSource(dataSource, apiKey);
 
       // Subscribe to live market data
       const unsubscribe = marketDataService.subscribe((data) => {
