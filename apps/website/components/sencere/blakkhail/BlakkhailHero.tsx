@@ -36,35 +36,44 @@ export function BlakkhailHero() {
 
       {/* SenCere Creative Composite Hero */}
       <div className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Lightning Bolts - Layer 1 */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[1, 2, 3, 4].map((i) => (
+        {/* Lightning Bolts - Layer 1 - AMPLIFIED */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ mixBlendMode: 'screen' }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={`lightning-${i}`}
-              className="absolute opacity-0"
+              className="absolute"
               style={{
-                left: `${20 + i * 20}%`,
-                top: `${10 + i * 15}%`,
-                animation: `lightningBolt ${3 + i * 0.5}s cubic-bezier(0.34, 1.56, 0.64, 1) infinite`,
-                animationDelay: `${i * 0.3}s`,
+                left: `${15 + i * 15}%`,
+                top: `${5 + i * 12}%`,
+                animation: `lightningBolt ${2.5 + i * 0.3}s cubic-bezier(0.34, 1.56, 0.64, 1) infinite`,
+                animationDelay: `${i * 0.15}s`,
+                filter: 'drop-shadow(0 0 30px rgba(0, 217, 255, 0.8)) drop-shadow(0 0 60px rgba(0, 200, 255, 0.4))',
               }}
             >
-              <svg width="120" height="200" viewBox="0 0 120 200" className="drop-shadow-lg">
+              <svg width="140" height="240" viewBox="0 0 120 200" className="w-full h-full" style={{ opacity: 0.95 }}>
                 <path
                   d={`M${60 + (i % 2 ? 10 : -10)} 0 L${50 + (i % 2 ? 15 : -15)} 60 L${70 + (i % 2 ? 5 : -5)} 80 L${40 + (i % 2 ? 20 : -20)} 140 L${60} 200`}
-                  stroke={`hsl(${200 + i * 10}, 100%, 50%)`}
-                  strokeWidth="2"
+                  stroke={`hsl(${190 + i * 8}, 100%, 55%)`}
+                  strokeWidth="3"
                   fill="none"
                   strokeLinecap="round"
                 />
                 <path
                   d={`M${60 + (i % 2 ? 10 : -10)} 0 L${50 + (i % 2 ? 15 : -15)} 60 L${70 + (i % 2 ? 5 : -5)} 80 L${40 + (i % 2 ? 20 : -20)} 140 L${60} 200`}
-                  stroke={`hsl(${180}, 100%, 60%)`}
-                  strokeWidth="0.5"
+                  stroke={`hsl(${180}, 100%, 70%)`}
+                  strokeWidth="1"
                   fill="none"
                   strokeLinecap="round"
-                  opacity="0.6"
+                  opacity="0.8"
                   filter="url(#glow)"
+                />
+                <path
+                  d={`M${60 + (i % 2 ? 10 : -10)} 0 L${50 + (i % 2 ? 15 : -15)} 60 L${70 + (i % 2 ? 5 : -5)} 80 L${40 + (i % 2 ? 20 : -20)} 140 L${60} 200`}
+                  stroke={`hsl(${200}, 100%, 80%)`}
+                  strokeWidth="0.3"
+                  fill="none"
+                  strokeLinecap="round"
+                  opacity="0.5"
                 />
               </svg>
             </div>
@@ -88,6 +97,7 @@ export function BlakkhailHero() {
             />
           ))}
         </div>
+
 
         {/* Full hero composite background with parallax */}
         <div
@@ -197,42 +207,7 @@ export function BlakkhailHero() {
               Legacy apparel. Original designs. Built for the culture.
             </p>
 
-            {/* CTA Button with enhanced effects */}
-            <div className="pt-4">
-              <a
-                href="#collection"
-                className="inline-block px-10 py-4 text-xs sm:text-sm font-black uppercase tracking-widest transition-all duration-300 relative group"
-                style={{
-                  backgroundColor: '#C4A369',
-                  color: '#050607',
-                  boxShadow: '0 0 60px rgba(196, 163, 105, 0.6), 0 30px 80px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  border: '2px solid #C4A369',
-                  animation: 'buttonFloat 3s ease-in-out infinite',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 100px rgba(196, 163, 105, 1), 0 40px 100px rgba(0, 217, 255, 0.3), inset 0 1px 20px rgba(255, 255, 255, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-6px) scale(1.05)';
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #C4A369 0%, #E8C89F 100%)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 60px rgba(196, 163, 105, 0.6), 0 30px 80px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.background = '#C4A369';
-                }}
-              >
-                <span style={{ position: 'relative', zIndex: 2 }}>Shop Collection →</span>
-                {/* Button glow effect */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: 'inherit',
-                    background: 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 217, 255, 0.2), transparent)',
-                    pointerEvents: 'none',
-                  }}
-                />
-              </a>
-            </div>
+            {/* CTA removed for pure cinematic aesthetic */}
           </div>
         </div>
 
@@ -367,6 +342,7 @@ export function BlakkhailHero() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.8; }
         }
+
 
         @media (prefers-reduced-motion: reduce) {
           * {
