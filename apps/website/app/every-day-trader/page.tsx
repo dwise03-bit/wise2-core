@@ -4,6 +4,7 @@ import styles from './trader-3d.module.css';
 import CuzzoAI from './cuzzo-ai';
 import LiveTrading from './live-trading';
 import FollowTrader from './follow-trader';
+import CandlestickChart from './candlestick-chart';
 import { useState } from 'react';
 
 export default function EveryDayTraderPage() {
@@ -189,39 +190,8 @@ export default function EveryDayTraderPage() {
               </div>
             </div>
 
-            {/* Chart */}
-            <div className={styles.chartContainer}>
-              <svg viewBox="0 0 780 340" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-                <defs>
-                  <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
-                    <stop stopColor="#0ce3ff" stopOpacity="0.45" />
-                    <stop offset="1" stopColor="#0ce3ff" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path fill="url(#area)" d="M0 290 L45 260 90 275 135 204 180 225 225 153 270 175 315 105 360 135 405 92 450 165 495 125 540 201 585 170 630 235 675 201 720 245 780 150V340H0Z" />
-                <path fill="none" stroke="#13e4ff" strokeWidth="3" d="M0 290 L45 260 90 275 135 204 180 225 225 153 270 175 315 105 360 135 405 92 450 165 495 125 540 201 585 170 630 235 675 201 720 245 780 150" />
-              </svg>
-              <span className={styles.label3d} style={{ right: 16, top: 70 }}>RESISTANCE $228.50</span>
-              <span className={styles.label3d} style={{ right: 70, top: 210 }}>ENTRY $223–$224</span>
-              <span className={styles.label3d} style={{ right: 25, bottom: 38 }}>SUPPORT $220.50</span>
-            </div>
-
-            {/* Volume Bar Chart */}
-            <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid #21405e' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 40 }}>
-                {Array.from({ length: 40 }).map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flex: 1,
-                      height: `${30 + Math.random() * 70}%`,
-                      background: Math.random() > 0.5 ? 'rgba(0, 255, 127, 0.3)' : 'rgba(255, 59, 127, 0.3)',
-                      borderRadius: '2px'
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            {/* Candlestick Chart */}
+            <CandlestickChart />
           </article>
 
           {/* Right Column: Analysis + Stats */}
