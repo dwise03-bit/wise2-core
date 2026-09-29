@@ -5,6 +5,9 @@ import CuzzoAI from './cuzzo-ai';
 import LiveTrading from './live-trading';
 import FollowTrader from './follow-trader';
 import CandlestickChart from './candlestick-chart';
+import { TraderAvatars, CandlestickGraphics, IndicatorIcons } from './trader-avatars';
+import { HeroBackground, DashboardPreview, SentimentGauge, TradingSetupCard } from './hero-graphics';
+import { WISELogo, EDTLogo, ChartSymbols, FeatureBadges, EducationIcons, SentimentBadges } from './brand-assets';
 import { useState } from 'react';
 
 export default function EveryDayTraderPage() {
@@ -92,20 +95,17 @@ export default function EveryDayTraderPage() {
       <div className={styles.mainContent}>
         {/* Header */}
         <header className={styles.headerPremium}>
-          <div className={styles.titlePremium}>
-            EVERY DAY
-            <br />
-            <span className={styles.titleAccent}>TRADER</span>
-            <small style={{ display: 'block', fontSize: 8, textAlign: 'right', letterSpacing: '1.4px', marginTop: 8 }}>
-              POWERED BY WISE²
-            </small>
+          <div style={{ width: '160px' }}>
+            <EDTLogo />
           </div>
           <input
             aria-label="Search"
             placeholder="⌕  Search stocks, crypto, or ETFs..."
             className={styles.searchInput3d}
           />
-          <b style={{ fontSize: 16, letterSpacing: '0.5px' }}>WISE²</b>
+          <div style={{ width: '48px' }}>
+            <WISELogo />
+          </div>
         </header>
 
         {/* Market Stats Grid */}
@@ -205,10 +205,9 @@ export default function EveryDayTraderPage() {
                 </small>
               </h2>
 
-              {/* Bullish Gauge */}
-              <div style={{ margin: '16px auto', width: 140, height: 70, border: '10px solid #0ce3c6', borderBottom: 0, borderRadius: '140px 140px 0 0', textAlign: 'center', paddingTop: 16, boxShadow: 'inset 0 2px 8px rgba(12, 227, 198, 0.2)' }}>
-                <b style={{ display: 'block', fontSize: 24, letterSpacing: '-0.5px' }}>72%</b>
-                <small style={{ color: '#05e9ad', fontSize: '10px', fontWeight: 600 }}>BULLISH BIAS</small>
+              {/* Sentiment Gauge Graphic */}
+              <div style={{ margin: '8px auto', width: '160px' }}>
+                <SentimentGauge />
               </div>
 
               {/* Analysis Points */}
@@ -409,12 +408,12 @@ export default function EveryDayTraderPage() {
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {[
-                { icon: '🕯️', title: 'Understanding Candlesticks', desc: 'The foundation of price action.', duration: '7 min' },
-                { icon: '📊', title: 'Options Basics for Beginners', desc: 'Strategies explained simply.', duration: '8 min' },
-                { icon: '🛡️', title: 'Risk Management', desc: 'Protect your capital. Trade longer.', duration: '6 min' }
+                { icon: EducationIcons.PlayVideo, title: 'Understanding Candlesticks', desc: 'The foundation of price action.', duration: '7 min' },
+                { icon: EducationIcons.Book, title: 'Options Basics for Beginners', desc: 'Strategies explained simply.', duration: '8 min' },
+                { icon: EducationIcons.Certificate, title: 'Risk Management', desc: 'Protect your capital. Trade longer.', duration: '6 min' }
               ].map((video, i) => (
                 <div key={i} style={{ padding: '16px', background: 'rgba(0, 217, 255, 0.08)', borderRadius: '12px', border: '1px solid rgba(0, 217, 255, 0.15)', cursor: 'pointer', transition: 'all 200ms ease', textAlign: 'center' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.15)'; e.currentTarget.style.transform = 'scale(1.02)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.08)'; e.currentTarget.style.transform = 'scale(1)'; }}>
-                  <div style={{ fontSize: 32, marginBottom: 8 }}>▶️</div>
+                  <div style={{ fontSize: '40px', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>{video.icon}</div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff', marginBottom: 4 }}>{video.title}</div>
                   <div style={{ fontSize: '11px', color: '#7a9fb5', marginBottom: 8 }}>{video.desc}</div>
                   <div style={{ fontSize: '11px', color: '#00D9FF', fontWeight: 600 }}>{video.duration}</div>
