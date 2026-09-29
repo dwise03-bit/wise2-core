@@ -169,12 +169,21 @@ export default function EveryDayTraderPage() {
             <button className={`${styles.buttonPremium} ${styles.buttonFull}`}>Build Trade Plan →</button>
           </article>
 
-          {/* Education */}
-          <article className={styles.premiumPanel}>
+          {/* Education - Video */}
+          <article className={styles.premiumPanel} style={{ display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ marginTop: 0, fontSize: '16px', fontWeight: 700 }}>◇ EDUCATION</h3>
             <h2 style={{ margin: '8px 0', fontSize: '18px', fontWeight: 700, letterSpacing: '-0.5px' }}>Learn. Practice. Grow.</h2>
-            <p style={{ color: '#b9cde8', lineHeight: 1.6, fontSize: '13px', margin: '8px 0 16px 0' }}>Focused lessons designed for the next trading day.</p>
-            <button className={styles.buttonPremium}>Continue Learning →</button>
+            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px', marginBottom: '16px', marginTop: '12px' }}>
+              <iframe
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', borderRadius: '12px' }}
+                src="https://www.youtube.com/embed/1KL06bwKzME"
+                title="Trading Education"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <p style={{ color: '#b9cde8', lineHeight: 1.6, fontSize: '13px', margin: '0 0 16px 0' }}>Focused trading education designed for the next trading day.</p>
+            <button className={styles.buttonPremium} style={{ marginTop: 'auto' }}>Continue Learning →</button>
           </article>
         </div>
 
