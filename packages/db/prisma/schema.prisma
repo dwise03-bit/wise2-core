@@ -70,6 +70,9 @@ model User {
   following  TraderFollower[] @relation("following")  // Users I follow
   followers  TraderFollower[] @relation("followers")  // Users following me
 
+  // Clipper System relationships
+  clipperMediaAssets MediaAsset[] @relation("clipperMediaAssets")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -7364,6 +7367,250 @@ model DiscordWebhook {
 
   @@index([channel])
   @@map("discord_webhooks")
+}
+
+// ===== CLIPPER SYSTEM =====
+
+enum MediaSourceType {
+  UPLOAD
+  STREAM
+  TRANSCRIPT
+}
+
+enum ClipPlatform {
+  INSTAGRAM
+  TIKTOK
+  YOUTUBE
+  DISCORD
+  TWITTER
+  LINKEDIN
+}
+
+enum MomentType {
+  LAUGHTER
+  APPLAUSE
+  TOPIC_CHANGE
+  HIGH_ENERGY
+  SILENCE
+  SPEECH_EMPHASIS
+}
+
+enum PublishingJobStatus {
+  PENDING
+  PROCESSING
+  PUBLISHED
+  FAILED
+  SCHEDULED
+}
+
+model MediaAsset {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation("clipperMediaAssets", fields: [userId], references: [id], onDelete: Cascade)
+
+  title         String
+  description   String?  @db.Text
+  sourceType    MediaSourceType
+  sourceUrl     String?
+  filePath      String?  // Local file path
+
+  durationSeconds  Int?
+  fileSize      Int?     // Bytes
+  fileFormat    String?  // mp4, wav, webm, etc
+
+  transcriptUrl String?  // Transcript file or URL
+
+  // Processing status
+  isProcessed   Boolean  @default(false)
+  processingError String? // Error if processing failed
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  clips         Clip[]
+  moments       ClipMoment[]
+
+  @@index([userId])
+  @@index([sourceType])
+  @@map("media_assets")
+}
+
+model Clip {
+  id            String   @id @default(cuid())
+  mediaAssetId  String
+  mediaAsset    MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  userId        String   // Cache user ID for queries
+
+  title         String
+  description   String?  @db.Text
+
+  startTimeSeconds  Int
+  endTimeSeconds    Int
+  durationSeconds   Int
+
+  // Quality metrics
+  engagementScore   Float?  // 0-100 score for clip quality
+  momentScore       Float?  // How well this matches detected moments
+
+  // Auto-generated content
+  autoCaption   String?  @db.Text // Generated captions
+  hashtags      String[] @default([])
+
+  // Status
+  isExtracted   Boolean  @default(false)
+  extractionError String? // Error if extraction failed
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  clipAssets    ClipAsset[]
+  publishingJobs ClipPublishingJob[]
+  campaigns     EngagementCampaign[]
+  analytics     ClipAnalytics[]
+
+  @@index([mediaAssetId])
+  @@index([userId])
+  @@map("clips")
+}
+
+model ClipAsset {
+  id            String   @id @default(cuid())
+  clipId        String
+  clip          Clip     @relation(fields: [clipId], references: [id], onDelete: Cascade)
+
+  platform      ClipPlatform
+  fileFormat    String   // mp4, vertical_mp4, webm, etc (platform-specific)
+  resolution    String?  // 1080x1920, 1280x720, etc
+  bitrate       String?  // 4500k, 2500k, etc
+
+  filePath      String?  // Local storage path
+  s3Key         String?  // S3 bucket key
+  fileSize      Int?     // Bytes
+
+  thumbnailPath String?  // Thumbnail image
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  publishingJobs ClipPublishingJob[]
+
+  @@index([clipId])
+  @@index([platform])
+  @@map("clip_assets")
+}
+
+model ClipMoment {
+  id            String   @id @default(cuid())
+  mediaAssetId  String
+  mediaAsset    MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  timestampSeconds  Int
+  momentType    MomentType
+  confidenceScore   Float   // 0-1.0
+
+  // Analysis metadata
+  analysisData  Json?   // Raw analysis data from ML model
+
+  createdAt     DateTime @default(now())
+
+  @@index([mediaAssetId])
+  @@index([momentType])
+  @@map("clip_moments")
+}
+
+model ClipPublishingJob {
+  id            String   @id @default(cuid())
+  clipId        String
+  clip          Clip     @relation(fields: [clipId], references: [id], onDelete: Cascade)
+
+  clipAssetId   String?
+  clipAsset     ClipAsset? @relation(fields: [clipAssetId], references: [id], onDelete: SetNull)
+
+  platform      ClipPlatform
+  status        PublishingJobStatus @default(PENDING)
+
+  scheduledAt   DateTime?
+  publishedAt   DateTime?
+
+  platformUrl   String?  // URL to published content
+  platformPostId String? // Platform-specific post ID
+
+  errorMessage  String?  @db.Text
+  retryCount    Int      @default(0)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([clipId])
+  @@index([platform])
+  @@index([status])
+  @@map("clip_publishing_jobs")
+}
+
+model EngagementCampaign {
+  id            String   @id @default(cuid())
+  clipId        String
+  clip          Clip     @relation(fields: [clipId], references: [id], onDelete: Cascade)
+
+  platform      ClipPlatform
+  strategy      String   // coordinated_comments, scheduled_shares, hashtag_boost
+
+  targetEngagementCount Int
+  status        PublishingJobStatus @default(PENDING)
+
+  scheduledAt   DateTime?
+  startedAt     DateTime?
+  completedAt   DateTime?
+
+  errorMessage  String?  @db.Text
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  engagementEvents EngagementEvent[]
+
+  @@index([clipId])
+  @@index([platform])
+  @@map("engagement_campaigns")
+}
+
+model EngagementEvent {
+  id            String   @id @default(cuid())
+  campaignId    String
+  campaign      EngagementCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  eventType     String   // comment, share, like
+  accountId     String?  // Account used for engagement (if multi-account)
+
+  executedAt    DateTime?
+
+  createdAt     DateTime @default(now())
+
+  @@index([campaignId])
+  @@map("engagement_events")
+}
+
+model ClipAnalytics {
+  id            String   @id @default(cuid())
+  clipId        String
+  clip          Clip     @relation(fields: [clipId], references: [id], onDelete: Cascade)
+
+  platform      ClipPlatform
+
+  viewCount     Int      @default(0)
+  likeCount     Int      @default(0)
+  shareCount    Int      @default(0)
+  commentCount  Int      @default(0)
+  saveCount     Int      @default(0)
+
+  roi_score     Float?   // Return on investment for engagement campaign
+
+  measuredAt    DateTime @default(now())
+
+  @@index([clipId])
+  @@index([platform])
+  @@map("clip_analytics")
 }
 
 // ===== CLAUDE DESIGN HANDOFF =====
