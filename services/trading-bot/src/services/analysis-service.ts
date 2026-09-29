@@ -210,28 +210,33 @@ export class AnalysisService {
     const totalVolume = volumes.reduce((a, b) => a + b, 0);
 
     // Point of Control (price with most volume)
-    let maxVolumePrice = prices[0];
-    let maxVolume = volumes[0];
+    let maxVolumePrice = prices[0] || 0;
+    let maxVolume = volumes[0] || 0;
 
     for (let i = 0; i < prices.length; i++) {
-      if (volumes[i] > maxVolume) {
-        maxVolume = volumes[i];
-        maxVolumePrice = prices[i];
+      const vol = volumes[i] || 0;
+      if (vol > maxVolume) {
+        maxVolume = vol;
+        maxVolumePrice = prices[i] || 0;
       }
     }
 
     // Volume at high/low
     const high = Math.max(...prices);
     const low = Math.min(...prices);
-    const volumeAtHigh = volumes[prices.indexOf(high)];
-    const volumeAtLow = volumes[prices.indexOf(low)];
+    const highIdx = prices.indexOf(high);
+    const lowIdx = prices.indexOf(low);
+    const volumeAtHigh = highIdx >= 0 ? volumes[highIdx] || 0 : 0;
+    const volumeAtLow = lowIdx >= 0 ? volumes[lowIdx] || 0 : 0;
 
     // Average volume
     const avgVolume = totalVolume / candles.length;
 
     // Volume trend (last 3 vs previous 3)
-    const recentVolumes = volumes.slice(-3).reduce((a, b) => a + b, 0) / 3;
-    const previousVolumes = volumes.slice(-6, -3).reduce((a, b) => a + b, 0) / 3;
+    const recentVols = volumes.slice(-3).filter((v) => v !== undefined);
+    const prevVols = volumes.slice(-6, -3).filter((v) => v !== undefined);
+    const recentVolumes = recentVols.length > 0 ? recentVols.reduce((a, b) => a + b, 0) / recentVols.length : 0;
+    const previousVolumes = prevVols.length > 0 ? prevVols.reduce((a, b) => a + b, 0) / prevVols.length : 0;
 
     let volumeTrend: 'increasing' | 'decreasing' | 'neutral' = 'neutral';
     if (recentVolumes > previousVolumes * 1.2) volumeTrend = 'increasing';
