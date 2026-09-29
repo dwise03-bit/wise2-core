@@ -6,8 +6,9 @@ import MediaUpload from '@/components/MediaUpload';
 import ClipEditor from '@/components/ClipEditor';
 import PublishManager from '@/components/PublishManager';
 import SuggestedClips from '@/components/SuggestedClips';
+import ResearchDashboard from '@/components/ResearchDashboard';
 
-type Tab = 'upload' | 'clips' | 'publish' | 'suggested';
+type Tab = 'upload' | 'clips' | 'publish' | 'suggested' | 'research';
 
 export default function ClipperDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('upload');
@@ -78,9 +79,10 @@ export default function ClipperDashboard() {
         {/* Tabs */}
         <div className="flex gap-2 mb-8 border-b border-wise-cyan/20">
           {[
+            { id: 'research' as Tab, label: '🤖 Research', icon: '🤖' },
             { id: 'upload' as Tab, label: '📤 Upload Media', icon: '📤' },
             { id: 'clips' as Tab, label: '✂️ Create Clips', icon: '✂️' },
-            { id: 'suggested' as Tab, label: '🤖 AI Suggestions', icon: '🤖' },
+            { id: 'suggested' as Tab, label: '✨ AI Suggestions', icon: '✨' },
             { id: 'publish' as Tab, label: '📱 Publish', icon: '📱' },
           ].map((tab) => (
             <button
@@ -99,6 +101,8 @@ export default function ClipperDashboard() {
 
         {/* Tab Content */}
         <div className="bg-wise-navy/40 border border-wise-cyan/10 rounded-2xl p-8 backdrop-blur">
+          {activeTab === 'research' && <ResearchDashboard />}
+
           {activeTab === 'upload' && (
             <MediaUpload
               onMediaUploaded={handleMediaUploaded}
