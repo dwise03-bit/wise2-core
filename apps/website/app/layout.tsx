@@ -53,10 +53,12 @@ export default function RootLayout({
 }) {
   const headerList = headers();
   const cookieStore = cookies();
-  const siteBrand = headerList.get('x-site-brand') || cookieStore.get('x-brand')?.value || cookieStore.getAll().find(c => c.name === 'x-brand')?.value;
+  const xBrandCookie = cookieStore.get('x-brand')?.value;
+  const siteBrand = headerList.get('x-site-brand') || xBrandCookie;
   const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
-  const isBlackhailRequest = headerList.get('x-blakkhail-request') === 'true';
-  const skipSiteChrome = isBlackhailRequest || isBlackhailBrand(siteBrand) || isBlackhailHost(host) || siteBrand === 'blakkhail';
+  const isBlackhailHost_ = isBlackhailHost(host);
+  const isBlackhailBrand_ = isBlackhailBrand(siteBrand) || xBrandCookie === 'blakkhail';
+  const skipSiteChrome = isBlackhailHost_ || isBlackhailBrand_ || headerList.get('x-blakkhail-request') === 'true';
 
   return (
     <html lang="en" suppressHydrationWarning>
