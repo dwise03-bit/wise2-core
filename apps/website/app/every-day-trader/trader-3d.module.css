@@ -22,8 +22,10 @@
   font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   padding: 24px;
   position: relative;
-  perspective: 1000px;
+  perspective: 1500px;
   overflow-x: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 
@@ -38,12 +40,14 @@
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
 }
 
 .premiumPanel:hover {
-  transform: translateY(-4px) translateZ(20px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 50px rgba(255, 215, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 215, 0, 0.3);
+  transform: perspective(800px) translateY(-6px) rotateX(2deg) scale(1.01);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 215, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 215, 0, 0.35);
 }
 
 .premiumPanel:active {
@@ -128,9 +132,9 @@
 }
 
 .statCard:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 40px rgba(255, 215, 0, 0.5);
-  border-color: #FFD700;
+  transform: perspective(600px) translateY(-8px) rotateY(-3deg) scale(1.03);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3), 0 0 50px rgba(255, 215, 0, 0.55);
+  border-color: rgba(255, 215, 0, 0.5);
 }
 
 .chartContainer {
@@ -168,9 +172,9 @@
 }
 
 .label3d:hover {
-  background: rgba(164, 22, 93, 0.9);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 25px rgba(255, 215, 0, 0.4);
-  transform: scale(1.05);
+  background: rgba(164, 22, 93, 0.95);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 0 0 30px rgba(255, 215, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
+  transform: perspective(500px) scale(1.08) rotateZ(1deg) translateZ(10px);
 }
 
 .buttonPremium {
@@ -198,9 +202,9 @@
 }
 
 .buttonPremium:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 30px rgba(32, 125, 249, 0.5);
-  border-color: #FFD700;
+  transform: perspective(1000px) translateY(-3px) rotateX(1deg) rotateY(2deg) scale(1.04);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25), 0 0 40px rgba(32, 125, 249, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 215, 0, 0.6);
 }
 
 .buttonPremium:active {
@@ -259,13 +263,21 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  0%, 100% { transform: perspective(1000px) translateY(0px) rotateX(0deg); }
+  50% { transform: perspective(1000px) translateY(-8px) rotateX(1deg); }
 }
 
 @keyframes glowPulse {
   0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
   50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes rotate3d {
+  0% { transform: perspective(800px) rotateX(0deg) rotateY(0deg); }
+  25% { transform: perspective(800px) rotateX(1deg) rotateY(2deg); }
+  50% { transform: perspective(800px) rotateX(0deg) rotateY(3deg); }
+  75% { transform: perspective(800px) rotateX(-1deg) rotateY(2deg); }
+  100% { transform: perspective(800px) rotateX(0deg) rotateY(0deg); }
 }
 
 .animateFloat {
@@ -274,6 +286,11 @@
 
 .animateGlow {
   animation: glowPulse 2s ease-in-out infinite;
+}
+
+.animate3dRotate {
+  animation: rotate3d 6s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
 @media (max-width: 1200px) {
