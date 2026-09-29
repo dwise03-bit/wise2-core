@@ -67,10 +67,10 @@ export default function RootLayout({
         <meta name="theme-color" content="#050505" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <style dangerouslySetInnerHTML={{ __html: `
-          /* BLAKKHAIL NUCLEAR CSS - Hide all SiteChrome */
-          @media screen {
-            [class*="SiteChrome"], [class*="siteChrome"], [class*="site-chrome"], [class*="trading"], [class*="dashboard"], nav[role="navigation"], nav[class*="Nav"], [role="navigation"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; top: -9999px !important; }
-          }
+          /* BLAKKHAIL COMPLETE HIDE */
+          nav, header, aside, [role="navigation"], [role="banner"], [class*="SiteChrome"], [class*="siteChrome"], [class*="Chrome"], [class*="trading"], [class*="dashboard"], [class*="chart"], [class*="ticker"], [class*="market"], [class*="stock"], .market-open, .market-data, .quote-ticker { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+          body > div > nav, body > div > header, body > div > aside { display: none !important; }
+          body > * > * > [class*="Chrome"], body > * > * > nav, body > * > * > header { display: none !important; }
         `}} />
         <style dangerouslySetInnerHTML={{ __html: `
           * { margin: 0; padding: 0; box-sizing: border-box; }
