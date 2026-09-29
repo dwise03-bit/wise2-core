@@ -4,94 +4,80 @@ import Image from 'next/image';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 
 export function BlakkhailHero() {
-  const heroImage = BLAKKHAIL_LEGACY.assets.dropAd || '/sencere-assets/blakkhail/hero-4k.jpg';
-
   return (
     <section className="relative w-full overflow-hidden bg-black">
-      {/* Full-screen 4K image with premium depth */}
-      <div className="relative h-screen w-full overflow-hidden">
-        {/* Main Image - crisp and dramatic */}
-        <Image
-          src={heroImage}
-          alt="Blakk Hail Heritage - Original Fashion Since 1994"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center scale-100 transition-transform duration-1000 ease-out hover:scale-110"
-          quality={100}
-        />
+      {/* SenCere Creative Apparel Hero */}
+      <div className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+        {/* Background dark gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-black/95" />
 
-        {/* Premium Cinematic Layering - Multiple depth stages */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/30 to-black/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
-        
-        {/* Luxury vignette effect */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%)'
-        }} />
+        {/* Left model - beige hoodie */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-full opacity-95 animate-[fadeInUp_1.2s_ease-out]">
+          <Image
+            src="/sencere-assets/blakkhail/model-left.webp"
+            alt="SenCere Creative Apparel"
+            fill
+            priority
+            className="object-cover object-center"
+            quality={100}
+          />
+        </div>
 
-        {/* Gold glow emanation from center */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 50% 40%, rgba(196, 163, 105, 0.15) 0%, transparent 70%)'
-        }} />
+        {/* Center badge - SenCere Creative Red Logo */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 animate-[fadeInDown_1.2s_ease-out]">
+          <div className="w-64 h-64 flex items-center justify-center">
+            <Image
+              src="/sencere-assets/blakkhail/sencere-badge-2026.webp"
+              alt="SenCere Creative 2026"
+              width={280}
+              height={280}
+              priority
+              className="object-contain drop-shadow-2xl"
+            />
+          </div>
+        </div>
 
-        {/* Cyan accent glow (top right) */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 blur-3xl opacity-40" />
+        {/* Right model - dreadlocks */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-full opacity-95 animate-[fadeInUp_1.2s_ease-out_0.1s_forwards]" style={{ animation: 'fadeInUp 1.2s ease-out 0.1s forwards' }}>
+          <Image
+            src="/sencere-assets/blakkhail/model-right.webp"
+            alt="SenCere Creative Apparel"
+            fill
+            priority
+            className="object-cover object-center"
+            quality={100}
+          />
+        </div>
 
-        {/* Premium Content Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center z-10">
-          <div className="space-y-10 max-w-5xl animate-[fadeInUp_1.4s_ease-out]">
-            {/* Premium Eyebrow - Ultra refined */}
-            <div className="space-y-2">
-              <p className="text-xs sm:text-sm font-black uppercase tracking-[0.35em] text-gray-300 opacity-90">
-                Heritage Fashion
+        {/* Gold glow from badge */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 blur-3xl pointer-events-none" />
+
+        {/* Text Overlay - Below models */}
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center z-20 animate-[fadeInUp_1.4s_ease-out_0.2s_forwards]" style={{ animation: 'fadeInUp 1.4s ease-out 0.2s forwards' }}>
+          <div className="space-y-6 max-w-2xl">
+            {/* Tagline */}
+            <div className="space-y-3">
+              <p className="text-xs sm:text-sm font-black uppercase tracking-[0.3em] text-red-500/90">
+                SenCere Creative
               </p>
-              <div className="flex items-center justify-center gap-4">
-                <div className="h-px w-8 bg-gradient-to-r from-transparent to-yellow-600/50" />
-                <p className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: '#C4A369' }}>
-                  Est. 1994
-                </p>
-                <div className="h-px w-8 bg-gradient-to-l from-transparent to-yellow-600/50" />
-              </div>
-            </div>
-
-            {/* Ultra-Bold Main Headline - Maximalist */}
-            <div className="space-y-4">
-              <h1
-                className="text-7xl sm:text-8xl lg:text-9xl font-black uppercase leading-none tracking-tighter drop-shadow-2xl"
-                style={{
-                  color: '#C4A369',
-                  textShadow: `
-                    0 4px 30px rgba(0, 0, 0, 0.9),
-                    0 0 60px rgba(196, 163, 105, 0.4),
-                    0 0 100px rgba(196, 163, 105, 0.15),
-                    3px 3px 8px rgba(0, 0, 0, 0.8)
-                  `,
-                  letterSpacing: '-0.03em'
-                }}
-              >
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight tracking-tighter" style={{ color: '#C4A369' }}>
                 Take Control
-              </h1>
-              
-              {/* Premium divider */}
-              <div className="flex items-center justify-center gap-4 pt-2">
-                <div className="h-0.5 w-12 bg-gradient-to-r from-transparent to-cyan-400/60" />
-                <div className="w-1 h-1 rounded-full" style={{ backgroundColor: '#00D9FF' }} />
-                <div className="h-0.5 w-12 bg-gradient-to-l from-transparent to-cyan-400/60" />
-              </div>
+              </h2>
+              <p className="text-sm sm:text-base font-black uppercase tracking-widest" style={{ color: '#00D9FF' }}>
+                No Apologies
+              </p>
             </div>
 
-            {/* Premium Subheading - Rich typography */}
-            <p className="text-xl sm:text-2xl max-w-3xl mx-auto leading-relaxed text-gray-200 font-light tracking-wide">
-              Original streetwear culture built on legacy, authenticity, and no apologies.
-              <span className="block text-sm mt-4 text-gray-400 font-light tracking-wider">Since 1994 • For the culture • No compromises</span>
+            {/* Description */}
+            <p className="text-sm sm:text-base text-gray-300 max-w-xl mx-auto font-light">
+              Legacy apparel. Original designs. Built for the culture.
             </p>
 
-            {/* Premium CTA - Maximalist button */}
-            <div className="pt-8">
+            {/* CTA Button */}
+            <div className="pt-4">
               <a
                 href="#collection"
-                className="inline-block px-12 py-6 text-sm font-black uppercase tracking-widest transition-all duration-400 relative group"
+                className="inline-block px-10 py-4 text-xs sm:text-sm font-black uppercase tracking-widest transition-all duration-400"
                 style={{
                   backgroundColor: '#00FF7F',
                   color: '#050607',
@@ -100,19 +86,14 @@ export function BlakkhailHero() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = '0 0 80px rgba(0, 255, 127, 0.8), 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 255, 127, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 127, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                <span className="relative z-10 flex items-center gap-3">
-                  Shop Collection
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
+                Shop Collection →
               </a>
             </div>
           </div>
