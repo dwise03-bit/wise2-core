@@ -71,6 +71,7 @@ export function middleware(request: NextRequest) {
     request: { headers: withBlackhailBrand(request) },
   });
   response.cookies.set('x-brand', 'blakkhail', { maxAge: 3600 });
+  response.headers.set('x-blakkhail-request', 'true');
   return response;
 }
 

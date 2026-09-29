@@ -55,7 +55,8 @@ export default function RootLayout({
   const cookieStore = cookies();
   const siteBrand = headerList.get('x-site-brand') || cookieStore.get('x-brand')?.value || cookieStore.getAll().find(c => c.name === 'x-brand')?.value;
   const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
-  const skipSiteChrome = isBlackhailBrand(siteBrand) || isBlackhailHost(host) || siteBrand === 'blakkhail';
+  const isBlackhailRequest = headerList.get('x-blakkhail-request') === 'true';
+  const skipSiteChrome = isBlackhailRequest || isBlackhailBrand(siteBrand) || isBlackhailHost(host) || siteBrand === 'blakkhail';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -63,6 +64,12 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#050505" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* BLAKKHAIL NUCLEAR CSS - Hide all SiteChrome */
+          @media screen {
+            [class*="SiteChrome"], [class*="siteChrome"], [class*="site-chrome"], [class*="trading"], [class*="dashboard"], nav[role="navigation"], nav[class*="Nav"], [role="navigation"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; top: -9999px !important; }
+          }
+        `}} />
         <style dangerouslySetInnerHTML={{ __html: `
           * { margin: 0; padding: 0; box-sizing: border-box; }
           html, body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }

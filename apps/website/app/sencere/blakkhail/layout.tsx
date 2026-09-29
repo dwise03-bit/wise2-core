@@ -56,9 +56,11 @@ export default function BlakkhailLayout({ children }: { children: React.ReactNod
   return (
     <>
       <style>{`
-        /* Hide SiteChrome when rendering BLAKKHAIL */
-        nav, [class*="SiteChrome"], [class*="siteChrome"], [class*="site-chrome"], header[role="navigation"], aside { display: none !important; }
-        body > div:first-child > div:first-child { width: 100%; max-width: 100%; }
+        /* BLAKKHAIL NUCLEAR: Destroy all overlays */
+        nav, header, aside, [class*="SiteChrome"], [class*="siteChrome"], [class*="site-chrome"], header[role="navigation"], header[class*="Nav"], nav[class*="Nav"], [class*="trading"], [class*="dashboard"], [class*="overlay"], [class*="modal"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; top: -9999px !important; height: 0 !important; width: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+        body > div > nav, body > div > header, body > div > aside, body > div > [class*="Chrome"] { display: none !important; }
+        /* Ensure BLAKKHAIL content is visible */
+        .bh-page, [class*="blakkhail"], main { display: block !important; visibility: visible !important; opacity: 1 !important; position: static !important; }
       `}</style>
       <div
         className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
