@@ -6,51 +6,21 @@ import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
 export function BlakkhailHero() {
   return (
     <section className="relative w-full overflow-hidden bg-black">
-      {/* SenCere Creative Apparel Hero */}
+      {/* SenCere Creative Composite Hero */}
       <div className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Background dark gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-black/95" />
+        {/* Full hero composite background */}
+        <Image
+          src="/sencere-assets/blakkhail/sencere-hero-composite.webp"
+          alt="SenCere Creative 2026 - Take Control No Apologies"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center animate-[fadeIn_1.2s_ease-out]"
+          quality={100}
+        />
 
-        {/* Left model - beige hoodie */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-full opacity-95 animate-[fadeInUp_1.2s_ease-out]">
-          <Image
-            src="/sencere-assets/blakkhail/model-left.webp"
-            alt="SenCere Creative Apparel"
-            fill
-            priority
-            className="object-cover object-center"
-            quality={100}
-          />
-        </div>
-
-        {/* Center badge - SenCere Creative Red Logo */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 animate-[fadeInDown_1.2s_ease-out]">
-          <div className="w-64 h-64 flex items-center justify-center">
-            <Image
-              src="/sencere-assets/blakkhail/sencere-badge-2026.webp"
-              alt="SenCere Creative 2026"
-              width={280}
-              height={280}
-              priority
-              className="object-contain drop-shadow-2xl"
-            />
-          </div>
-        </div>
-
-        {/* Right model - dreadlocks */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-full opacity-95 animate-[fadeInUp_1.2s_ease-out_0.1s_forwards]" style={{ animation: 'fadeInUp 1.2s ease-out 0.1s forwards' }}>
-          <Image
-            src="/sencere-assets/blakkhail/model-right.webp"
-            alt="SenCere Creative Apparel"
-            fill
-            priority
-            className="object-cover object-center"
-            quality={100}
-          />
-        </div>
-
-        {/* Gold glow from badge */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 blur-3xl pointer-events-none" />
+        {/* Overlay gradient for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
         {/* Text Overlay - Below models */}
         <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center z-20 animate-[fadeInUp_1.4s_ease-out_0.2s_forwards]" style={{ animation: 'fadeInUp 1.4s ease-out 0.2s forwards' }}>
@@ -121,6 +91,14 @@ export function BlakkhailHero() {
       </div>
 
       <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
         @keyframes fadeInUp {
           from {
             opacity: 0;
