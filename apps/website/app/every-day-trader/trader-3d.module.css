@@ -1,0 +1,318 @@
+/* WISE² Trading Dashboard - 3D Hyperrealistic 4K Design System */
+
+.dashboardRoot {
+  --color-deep-navy: #001F3F;
+  --color-navy-base: #050607;
+  --color-gold: #FFD700;
+  --color-gold-secondary: #C4A369;
+  --color-silver: #C0C0C0;
+  --color-bullish: #228B22;
+  --color-bearish: #800020;
+  --shadow-depth-1: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-depth-2: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-depth-3: 0 12px 28px rgba(0, 0, 0, 0.18);
+  --shadow-depth-4: 0 20px 50px rgba(0, 0, 0, 0.25);
+  --glow-gold: 0 0 30px rgba(255, 215, 0, 0.3);
+  --glow-gold-intense: 0 0 40px rgba(255, 215, 0, 0.5);
+  --glow-cyan: 0 0 25px rgba(0, 217, 255, 0.2);
+
+  min-height: 100vh;
+  background: radial-gradient(circle at 70% 0, #164d8a, #001F3F 55%, #020914 85%);
+  color: #f4f8ff;
+  font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 24px;
+  position: relative;
+  perspective: 1000px;
+  overflow-x: hidden;
+}
+
+
+.premiumPanel {
+  background: linear-gradient(135deg, rgba(6, 38, 76, 0.8) 0%, rgba(3, 17, 37, 0.8) 100%);
+  border: 1px solid rgba(12, 126, 216, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 30px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.premiumPanel:hover {
+  transform: translateY(-4px) translateZ(20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 50px rgba(255, 215, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.premiumPanel:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.premiumPanel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.headerPremium {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin: 0 auto 20px;
+  max-width: 1400px;
+  backdrop-filter: blur(8px);
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(12, 126, 216, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 25px rgba(0, 217, 255, 0.2);
+}
+
+.titlePremium {
+  font-size: 28px;
+  font-weight: 900;
+  font-style: italic;
+  line-height: 0.75;
+  letter-spacing: -0.02em;
+}
+
+.titleAccent {
+  color: #08b8ff;
+  font-size: 39px;
+  display: inline-block;
+}
+
+.searchInput3d {
+  margin-left: auto;
+  width: min(520px, 55%);
+  padding: 13px 17px;
+  border: 1px solid #128ced;
+  border-radius: 8px;
+  background: rgba(6, 26, 51, 0.9);
+  color: white;
+  font-family: 'Fira Sans', sans-serif;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 20px rgba(18, 142, 237, 0.2);
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.searchInput3d:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 30px rgba(255, 215, 0, 0.4);
+  transform: scale(1.02);
+}
+
+.marketStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+  perspective: 1000px;
+}
+
+.statCard {
+  background: linear-gradient(135deg, rgba(6, 38, 76, 0.9) 0%, rgba(3, 17, 37, 0.7) 100%);
+  border: 1px solid rgba(12, 126, 216, 0.6);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), 0 0 40px rgba(255, 215, 0, 0.5);
+  border-color: #FFD700;
+}
+
+.chartContainer {
+  height: 380px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #155d99;
+  background: linear-gradient(#177ed629 1px, transparent 1px), linear-gradient(90deg, #177ed629 1px, transparent 1px), #03152a;
+  background-size: 100% 45px, 65px 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 25px rgba(0, 217, 255, 0.2);
+  backdrop-filter: blur(2px);
+}
+
+.chartPathFill {
+  filter: drop-shadow(0 4px 12px rgba(13, 227, 255, 0.2));
+}
+
+.chartPathStroke {
+  filter: drop-shadow(0 2px 6px rgba(13, 227, 255, 0.3));
+}
+
+.label3d {
+  position: absolute;
+  background: rgba(164, 22, 93, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 215, 0, 0.2);
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.label3d:hover {
+  background: rgba(164, 22, 93, 0.9);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 25px rgba(255, 215, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.buttonPremium {
+  padding: 13px 18px;
+  border: 1px solid #23b8ff;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #087df9, #0563d8);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 20px rgba(32, 125, 249, 0.3);
+}
+
+.buttonPremium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.buttonPremium:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 30px rgba(32, 125, 249, 0.5);
+  border-color: #FFD700;
+}
+
+.buttonPremium:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 20px rgba(32, 125, 249, 0.3);
+}
+
+.buttonFull {
+  width: 100%;
+}
+
+.scrollableList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.scrollableList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollableList::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+}
+
+.scrollableList::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.5);
+}
+
+.footerPremium {
+  padding-top: 25px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.5px;
+  color: #f4f8ff;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(12, 126, 216, 0.3);
+  margin-top: 25px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.footerTagline {
+  font-size: 12px;
+  color: #aec4de;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 1px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+}
+
+.animateFloat {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animateGlow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@media (max-width: 1200px) {
+  .headerPremium {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .searchInput3d {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .statCard {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardRoot {
+    padding: 16px;
+  }
+
+  .marketStatsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .chartContainer {
+    height: 280px;
+  }
+
+  .titlePremium {
+    font-size: 20px;
+  }
+
+  .titleAccent {
+    font-size: 28px;
+  }
+}
