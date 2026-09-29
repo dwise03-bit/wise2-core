@@ -81,24 +81,6 @@ export function BlakkhailHero() {
           ))}
         </div>
 
-        {/* Electrical Particles */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={`particle-${i}`}
-              className="absolute w-1 h-1 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                background: `hsl(${180 + Math.random() * 40}, 100%, ${50 + Math.random() * 30}%)`,
-                boxShadow: `0 0 ${10 + Math.random() * 20}px currentColor`,
-                animation: `particleFloat ${5 + Math.random() * 5}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
-        </div>
-
 
         {/* Full hero composite background with parallax */}
         <div
@@ -280,23 +262,6 @@ export function BlakkhailHero() {
           50% {
             opacity: 0.3;
             transform: translateY(10px) scaleX(0.9);
-          }
-        }
-
-        @keyframes particleFloat {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            transform: translate(var(--tx, 50px), var(--ty, -100px)) scale(0);
-            opacity: 0;
           }
         }
 
