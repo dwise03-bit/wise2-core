@@ -119,8 +119,8 @@ export default function EveryDayTraderPage() {
           ))}
         </div>
 
-        {/* Main Grid: Chart + Right Column */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1fr', gap: 14 }}>
+        {/* Main Grid: Chart + Right Column (matching reference) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr', gap: 14 }}>
           {/* Chart Panel */}
           <article className={styles.premiumPanel}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
@@ -149,7 +149,7 @@ export default function EveryDayTraderPage() {
 
             {/* Time Buttons */}
             <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-              {['1D', '5D', '1M', '3M', '6M', '1Y', '5Y'].map((period) => (
+              {['1D', '5D', '1M', '3M', '6M', '1Y'].map((period) => (
                 <button
                   key={period}
                   style={{
@@ -194,7 +194,7 @@ export default function EveryDayTraderPage() {
             <CandlestickChart />
           </article>
 
-          {/* Right Column: Analysis + Stats */}
+          {/* Right Column: PLOT AI + Key Levels + Options */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* PLOT AI Panel */}
             <article className={styles.premiumPanel}>
@@ -253,97 +253,171 @@ export default function EveryDayTraderPage() {
                   <b style={{ color: '#d4e3f7' }}>$186.4M</b>
                 </div>
               </div>
-              <button className={styles.buttonPremium} style={{ marginTop: 12, fontSize: '11px', padding: '6px 12px' }}>
+              <button className={styles.buttonPremium} style={{ marginTop: 12, fontSize: '11px', padding: '6px 12px', width: '100%' }}>
                 View Options Flow →
               </button>
             </article>
           </div>
         </div>
 
-        {/* Market Intelligence Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginTop: 14 }}>
-          {/* Volume Analysis */}
-          <article className={styles.premiumPanel}>
-            <h3 style={{ marginTop: 0, fontSize: '12px', fontWeight: 700, marginBottom: 10 }}>VOLUME ANALYSIS</h3>
-            <b style={{ fontSize: 20, color: '#00ff7f' }}>48.2M</b>
-            <small style={{ display: 'block', color: '#7a9fb5', fontSize: '11px', marginTop: 4 }}>Above 200-day Avg</small>
-            <div style={{ marginTop: 8, height: 30, display: 'flex', alignItems: 'flex-end', gap: 1 }}>
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} style={{ flex: 1, height: `${20 + Math.random() * 80}%`, background: 'rgba(0, 217, 255, 0.4)', borderRadius: '2px' }} />
-              ))}
-            </div>
-          </article>
-
-          {/* Price Action */}
-          <article className={styles.premiumPanel}>
-            <h3 style={{ marginTop: 0, fontSize: '12px', fontWeight: 700, marginBottom: 10 }}>PRICE ACTION</h3>
-            <b style={{ fontSize: 20, color: '#d4e3f7' }}>225.07</b>
-            <small style={{ display: 'block', color: '#00ff7f', fontSize: '11px', marginTop: 4, fontWeight: 600 }}>+0.22%</small>
-            <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: '#7a9fb5' }}>Holding above EMA 20</p>
-          </article>
-
-          {/* Trend Alignment */}
-          <article className={styles.premiumPanel}>
-            <h3 style={{ marginTop: 0, fontSize: '12px', fontWeight: 700, marginBottom: 10 }}>TREND ALIGNMENT</h3>
-            <div style={{ display: 'flex', gap: 4 }}>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#00ff7f' }}>✓ BULLISH</span>
-            </div>
-            <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: '#7a9fb5' }}>Holding above short-term EMAs</p>
-          </article>
-        </div>
-
-        {/* Watchlist + Market Heatmap */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 14, marginTop: 14 }}>
+        {/* Watchlist + Market Pulse + Paper Trade (3-column grid matching reference) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 1.2fr', gap: 14, marginTop: 14 }}>
           {/* Watchlist */}
           <article className={styles.premiumPanel}>
-            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12 }}>WATCHLIST</h3>
+            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+              📊 WATCHLIST <span style={{ fontSize: 10, color: '#7a9fb5', fontWeight: 400, marginLeft: 'auto' }}>View All →</span>
+            </h3>
             <div className={styles.scrollableList}>
-              {watchlist.map((item) => (
-                <div key={item.symbol} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', marginBottom: 10, paddingBottom: 10, borderBottom: '1px solid #193553' }}>
-                  <span style={{ fontWeight: 600, color: '#f4f8ff' }}>{item.symbol}</span>
+              {[
+                { symbol: 'NVDA', price: '225.07', change: '+0.22%' },
+                { symbol: 'AAPL', price: '227.52', change: '+0.62%' },
+                { symbol: 'TSLA', price: '254.27', change: '-1.83%' },
+                { symbol: 'MSFT', price: '418.06', change: '-0.74%' },
+                { symbol: 'AMZN', price: '186.53', change: '+0.31%' },
+                { symbol: 'BTC', price: '63,284.50', change: '+2.46%' },
+                { symbol: 'ETH', price: '2,612.08', change: '+1.38%' }
+              ].map((item) => (
+                <div key={item.symbol} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #193553' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 14 }}>
+                      {item.symbol === 'NVDA' ? '💚' : item.symbol === 'AAPL' ? '💚' : item.symbol === 'MSFT' ? '💔' : item.symbol === 'TSLA' ? '💔' : item.symbol === 'AMZN' ? '💚' : item.symbol === 'BTC' ? '💚' : '💚'}
+                    </span>
+                    <span style={{ fontWeight: 600, color: '#f4f8ff' }}>{item.symbol}</span>
+                  </div>
                   <span style={{ color: '#d4e3f7' }}>{item.price}</span>
-                  <span style={{ color: '#00ff7f', fontWeight: 600 }}>{item.change}</span>
+                  <span style={{ color: item.change.includes('-') ? '#ff3b7f' : '#00ff7f', fontWeight: 600 }}>{item.change}</span>
                 </div>
               ))}
             </div>
           </article>
 
-          {/* Market Heatmap */}
+          {/* Market Pulse */}
           <article className={styles.premiumPanel}>
-            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12 }}>MARKET HEATMAP</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-              {[
-                { sym: 'NVDA', change: '+0.22%', pos: true },
-                { sym: 'AAPL', change: '+0.62%', pos: true },
-                { sym: 'MSFT', change: '+0.74%', pos: true },
-                { sym: 'TSLA', change: '-0.28%', pos: false },
-                { sym: 'AMZN', change: '+0.31%', pos: true },
-                { sym: 'BRK.B', change: '+0.41%', pos: true },
-                { sym: 'GOOGL', change: '+0.50%', pos: true },
-                { sym: 'META', change: '-0.19%', pos: false }
-              ].map((stock) => (
-                <div
-                  key={stock.sym}
+            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12 }}>📊 MARKET PULSE</h3>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+              {['Stocks', 'Crypto', 'ETFs'].map((tab) => (
+                <button
+                  key={tab}
                   style={{
-                    padding: '10px',
-                    borderRadius: '10px',
-                    background: stock.pos ? 'rgba(0, 255, 127, 0.15)' : 'rgba(255, 59, 127, 0.15)',
-                    border: `1px solid ${stock.pos ? 'rgba(0, 255, 127, 0.3)' : 'rgba(255, 59, 127, 0.3)'}`,
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: 'all 200ms ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: tab === 'Stocks' ? 'rgba(0, 217, 255, 0.2)' : 'transparent',
+                    border: `1px solid ${tab === 'Stocks' ? 'rgba(0, 217, 255, 0.4)' : 'rgba(0, 217, 255, 0.2)'}`,
+                    color: tab === 'Stocks' ? '#00D9FF' : '#7a9fb5',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
                   }}
                 >
-                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#f4f8ff' }}>{stock.sym}</div>
-                  <div style={{ fontSize: '10px', color: stock.pos ? '#00ff7f' : '#ff3b7f', fontWeight: 600, marginTop: 4 }}>
-                    {stock.change}
+                  {tab}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+              <div style={{ padding: '12px', background: 'rgba(0, 217, 255, 0.1)', borderRadius: '10px', border: '1px solid rgba(0, 217, 255, 0.2)' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff' }}>S&P 500</div>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: '#f4f8ff', marginTop: 4 }}>5,728.41</div>
+                <div style={{ fontSize: '11px', color: '#00ff7f', fontWeight: 600, marginTop: 4 }}>+0.82%</div>
+              </div>
+              <div style={{ padding: '12px', background: 'rgba(0, 217, 255, 0.1)', borderRadius: '10px', border: '1px solid rgba(0, 217, 255, 0.2)' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff' }}>NASDAQ</div>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: '#f4f8ff', marginTop: 4 }}>18,230.12</div>
+                <div style={{ fontSize: '11px', color: '#00ff7f', fontWeight: 600, marginTop: 4 }}>+1.14%</div>
+              </div>
+            </div>
+            <div style={{ padding: '12px', background: 'rgba(0, 217, 255, 0.08)', borderRadius: '10px', border: '1px solid rgba(0, 217, 255, 0.15)' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: '#7a9fb5', marginBottom: 8 }}>Market Breadth</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'conic-gradient(#00ff7f 0deg 245deg, #ff3b7f 245deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 50, height: 50, borderRadius: '50%', background: '#020914', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#00ff7f' }}>68%</span>
                   </div>
+                </div>
+                <div style={{ fontSize: '11px' }}>
+                  <div style={{ color: '#00ff7f', fontWeight: 600 }}>1,842 Advancing</div>
+                  <div style={{ color: '#ff3b7f', fontWeight: 600 }}>742 Declining</div>
+                  <div style={{ color: '#7a9fb5', marginTop: 4 }}>96 Unchanged</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          {/* Paper Trade Planner */}
+          <article className={styles.premiumPanel}>
+            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12 }}>📋 PAPER TRADE PLANNER</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div>
+                <small style={{ color: '#7a9fb5', fontSize: '11px' }}>Entry Price</small>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: '#FFD700', marginTop: 4 }}>$223.00 - $224.00</div>
+              </div>
+              <div>
+                <small style={{ color: '#7a9fb5', fontSize: '11px' }}>Stop Loss</small>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: '#ff3b7f', marginTop: 4 }}>$220.50</div>
+              </div>
+              <div>
+                <small style={{ color: '#7a9fb5', fontSize: '11px' }}>Target</small>
+                <div style={{ fontSize: '16px', fontWeight: 700, color: '#00ff7f', marginTop: 4 }}>$228.50</div>
+              </div>
+              <div style={{ paddingTop: 10, borderTop: '1px solid #193553' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: 6 }}>
+                  <span style={{ color: '#7a9fb5' }}>Risk / Reward</span>
+                  <b style={{ color: '#d4e3f7' }}>1 : 2.1</b>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+                  <span style={{ color: '#7a9fb5' }}>Position Size</span>
+                  <b style={{ color: '#d4e3f7' }}>100 Shares</b>
+                </div>
+              </div>
+            </div>
+            <button className={`${styles.buttonPremium} ${styles.buttonFull}`} style={{ marginTop: 12, fontSize: '12px' }}>
+              Build Trade Plan →
+            </button>
+          </article>
+        </div>
+
+        {/* Recent Journal + Education (2-column grid) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 14, marginTop: 14 }}>
+          {/* Recent Journal */}
+          <article className={styles.premiumPanel}>
+            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              📰 RECENT JOURNAL <span style={{ fontSize: 10, color: '#7a9fb5', fontWeight: 400 }}>View All →</span>
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { title: 'NVDA Trade Setup', desc: 'Good support at $223. Looking for confirmation with volume.', date: 'Apr 9, 2025', time: '6 min read', icon: '💚' },
+                { title: 'AAPL Pullback Opportunity', desc: 'Great risk/reward setup. Watch $226 for potential entry.', date: 'Apr 8, 2025', time: '4 min read', icon: '💚' },
+                { title: 'Risk Management Review', desc: 'Stick to the plan. Small size, big discipline. Trade longer.', date: 'Jul 7, 2025', time: '5 min read', icon: '⚠️' }
+              ].map((entry, i) => (
+                <div key={i} style={{ padding: '12px', background: 'rgba(0, 217, 255, 0.05)', borderRadius: '10px', border: '1px solid rgba(0, 217, 255, 0.1)', cursor: 'pointer', transition: 'all 200ms ease' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.1)'; e.currentTarget.style.borderColor = 'rgba(0, 217, 255, 0.2)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.05)'; e.currentTarget.style.borderColor = 'rgba(0, 217, 255, 0.1)'; }}>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: 16 }}>{entry.icon}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff' }}>{entry.title}</div>
+                      <div style={{ fontSize: '11px', color: '#7a9fb5', marginTop: 4 }}>{entry.desc}</div>
+                      <div style={{ fontSize: '10px', color: '#7a9fb5', marginTop: 6 }}>{entry.date} • {entry.time}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          {/* Education */}
+          <article className={styles.premiumPanel}>
+            <h3 style={{ marginTop: 0, fontSize: '14px', fontWeight: 700, marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              🎓 EDUCATION <span style={{ fontSize: 10, color: '#7a9fb5', fontWeight: 400 }}>View All →</span>
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {[
+                { icon: '🕯️', title: 'Understanding Candlesticks', desc: 'The foundation of price action.', duration: '7 min' },
+                { icon: '📊', title: 'Options Basics for Beginners', desc: 'Strategies explained simply.', duration: '8 min' },
+                { icon: '🛡️', title: 'Risk Management', desc: 'Protect your capital. Trade longer.', duration: '6 min' }
+              ].map((video, i) => (
+                <div key={i} style={{ padding: '16px', background: 'rgba(0, 217, 255, 0.08)', borderRadius: '12px', border: '1px solid rgba(0, 217, 255, 0.15)', cursor: 'pointer', transition: 'all 200ms ease', textAlign: 'center' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.15)'; e.currentTarget.style.transform = 'scale(1.02)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.08)'; e.currentTarget.style.transform = 'scale(1)'; }}>
+                  <div style={{ fontSize: 32, marginBottom: 8 }}>▶️</div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff', marginBottom: 4 }}>{video.title}</div>
+                  <div style={{ fontSize: '11px', color: '#7a9fb5', marginBottom: 8 }}>{video.desc}</div>
+                  <div style={{ fontSize: '11px', color: '#00D9FF', fontWeight: 600 }}>{video.duration}</div>
                 </div>
               ))}
             </div>
