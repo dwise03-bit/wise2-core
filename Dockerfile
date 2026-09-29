@@ -1,51 +1,50 @@
-# Build stage
-FROM node:20-alpine AS builder
+# WISE² Dashboard Docker Container
+# Build: docker build -t wise2-dashboard .
+# Run: docker run -d -p 80:80 -p 443:443 -v /etc/letsencrypt:/etc/letsencrypt wise2-dashboard
 
-WORKDIR /app
+FROM nginx:alpine
 
-# Copy monorepo files
-COPY . .
+# Install dependencies
+RUN apk add --no-cache \
+    git \
+    curl \
+    certbot \
+    python3 \
+    py3-pip && \
+    pip3 install certbot-nginx
 
-# Install pnpm and dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# Clone WISE² dashboard
+RUN mkdir -p /app && cd /app && \
+    git clone --branch setup/dave-station https://github.com/dwise03-bit/wise2-core.git . && \
+    cp -r CommandCenter/Dashboard/* /usr/share/nginx/html/
 
-# Build all apps
-RUN pnpm run build
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY wise2.conf /etc/nginx/conf.d/default.conf
 
-# Production stage
-FROM node:20-alpine
+# Create startup script
+RUN mkdir -p /docker-entrypoint.d && \
+    echo '#!/bin/sh\n\
+set -e\n\
+DOMAIN=${DOMAIN:-wise2.net}\n\
+EMAIL=${EMAIL:-admin@wise2.net}\n\
+\n\
+if [ ! -f /etc/letsencrypt/live/$DOMAIN/fullchain.pem ]; then\n\
+    echo "Generating SSL certificate..."\n\
+    certbot certonly --standalone -d $DOMAIN -d www.$DOMAIN \\\n\
+        --non-interactive --agree-tos --email $EMAIL\n\
+fi\n\
+\n\
+nginx -g "daemon off;"\n\
+' > /docker-entrypoint.d/ssl-setup.sh && \
+    chmod +x /docker-entrypoint.d/ssl-setup.sh
 
-WORKDIR /app
-
-# Install serve for static hosting and dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
-
-# Copy built artifacts from builder
-COPY --from=builder /app/apps ./apps
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/package-lock.json ./package-lock.json
-
-# Copy public files
-COPY --from=builder /app/apps/studio/public ./apps/studio/public
-COPY --from=builder /app/apps/website/public ./apps/website/public
-COPY --from=builder /app/apps/dashboard/public ./apps/dashboard/public
-COPY --from=builder /app/apps/admin/public ./apps/admin/public
-
-# Set working directory to studio
-WORKDIR /app/apps/studio
+# Expose ports
+EXPOSE 80 443
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3003/ || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost/index.html || exit 1
 
-# Start the studio app by default (port 3003)
-ENV PORT=3003
-ENV NODE_ENV=production
-
-EXPOSE 3003
-
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "/app/node_modules/.bin/next", "start", "-p", "3003"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
