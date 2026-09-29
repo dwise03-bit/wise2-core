@@ -49,17 +49,17 @@ export function BlakkhailHero() {
                 href="#collection"
                 className="inline-block px-10 py-4 text-xs sm:text-sm font-black uppercase tracking-widest transition-all duration-400"
                 style={{
-                  backgroundColor: '#00FF7F',
+                  backgroundColor: '#C4A369',
                   color: '#050607',
-                  boxShadow: '0 0 40px rgba(0, 255, 127, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)',
-                  border: '2px solid #00FF7F'
+                  boxShadow: '0 0 40px rgba(196, 163, 105, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)',
+                  border: '2px solid #C4A369'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 80px rgba(0, 255, 127, 0.8), 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(0, 255, 127, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 0 80px rgba(196, 163, 105, 0.8), 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(196, 163, 105, 0.2)';
                   e.currentTarget.style.transform = 'translateY(-3px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(0, 255, 127, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(196, 163, 105, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
