@@ -66,6 +66,10 @@ model User {
   // Claude Design Handoff relationships
   designBriefs DesignBrief[] @relation("designBriefs")
 
+  // Social Trading relationships
+  following  TraderFollower[] @relation("following")  // Users I follow
+  followers  TraderFollower[] @relation("followers")  // Users following me
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -4303,6 +4307,32 @@ model TradingAccount {
 
   @@index([userId])
   @@index([accountType])
+}
+
+// Social Trading: User follows other users' trades
+model TraderFollower {
+  id         String         @id @default(cuid())
+  followerId String         // User doing the following
+  follower   User           @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followingId String         // User being followed
+  following   User           @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  // Notification preferences
+  notifyOnEntry   Boolean @default(true)
+  notifyOnExit    Boolean @default(true)
+  notifyOnAlert   Boolean @default(false)
+  autoCopyTrades  Boolean @default(false)
+
+  // Copy trading settings (if enabled)
+  riskScaleFactor Float   @default(1.0) // Scale position size by this factor
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
 
 // User trading account relation

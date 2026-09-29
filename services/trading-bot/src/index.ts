@@ -31,7 +31,7 @@ client.once('ready', async () => {
   priceDataService = new PriceDataService();
   chartService = new ChartService();
   tradingBotService = new TradingBotService(client, priceDataService, chartService, prisma);
-  commandHandler = new DiscordCommandHandler(tradingBotService, chartService);
+  commandHandler = new DiscordCommandHandler(tradingBotService, chartService, prisma, client);
 
   // Start polling for price updates
   tradingBotService.startPricePolling();

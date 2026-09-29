@@ -1,7 +1,10 @@
 import { Message, EmbedBuilder } from 'discord.js';
+import { PrismaClient } from '@prisma/client';
 import { TradingBotService } from '../services/trading-bot-service';
 import { ChartService } from '../services/chart-service';
 import { PriceDataService } from '../services/price-data-service';
+import { FollowingService } from '../services/following-service';
+import { SocialCommands } from '../commands/social-commands';
 
 /**
  * DiscordCommandHandler: Process trading bot commands
@@ -10,14 +13,23 @@ export class DiscordCommandHandler {
   private tradingBotService: TradingBotService;
   private chartService: ChartService;
   private priceDataService: PriceDataService;
+  private socialCommands?: SocialCommands;
 
   constructor(
     tradingBotService: TradingBotService,
-    chartService: ChartService
+    chartService: ChartService,
+    prisma?: PrismaClient,
+    discordClient?: any
   ) {
     this.tradingBotService = tradingBotService;
     this.chartService = chartService;
     this.priceDataService = new PriceDataService();
+
+    // Initialize social commands if prisma is provided
+    if (prisma && discordClient) {
+      const followingService = new FollowingService(prisma, discordClient);
+      this.socialCommands = new SocialCommands(followingService);
+    }
   }
 
   /**
@@ -45,6 +57,30 @@ export class DiscordCommandHandler {
         break;
       case 'tracked':
         await this.handleTracked(message);
+        break;
+      case 'follow':
+        if (this.socialCommands) await this.socialCommands.handleFollow(message, args);
+        else await message.reply('Social features not enabled');
+        break;
+      case 'unfollow':
+        if (this.socialCommands) await this.socialCommands.handleUnfollow(message, args);
+        else await message.reply('Social features not enabled');
+        break;
+      case 'followers':
+        if (this.socialCommands) await this.socialCommands.handleFollowers(message);
+        else await message.reply('Social features not enabled');
+        break;
+      case 'following':
+        if (this.socialCommands) await this.socialCommands.handleFollowing(message);
+        else await message.reply('Social features not enabled');
+        break;
+      case 'community-feed':
+        if (this.socialCommands) await this.socialCommands.handleCommunityFeed(message);
+        else await message.reply('Social features not enabled');
+        break;
+      case 'autocopy':
+        if (this.socialCommands) await this.socialCommands.handleAutoCopy(message, args);
+        else await message.reply('Social features not enabled');
         break;
       case 'help':
         await this.handleHelp(message);
@@ -250,16 +286,16 @@ export class DiscordCommandHandler {
     const embed = new EmbedBuilder()
       .setColor(0x00D9FF)
       .setTitle('🤖 WISE² Trading Bot Commands')
-      .setDescription('Automated technical analysis & trade alerts')
+      .setDescription('Automated technical analysis & social trading')
       .addFields(
         {
-          name: '!track <symbol> [timeframe]',
-          value: 'Start tracking a symbol for trade setups\n`!track BTC/USDT 1h`',
+          name: '📊 Market Analysis',
+          value: '`!track`, `!untrack`, `!price`, `!setups`, `!chart`, `!tracked`',
           inline: false,
         },
         {
-          name: '!untrack <symbol>',
-          value: 'Stop tracking a symbol\n`!untrack BTC/USDT`',
+          name: '!track <symbol> [timeframe]',
+          value: 'Start tracking a symbol for trade setups\n`!track BTC/USDT 1h`',
           inline: false,
         },
         {
@@ -269,22 +305,42 @@ export class DiscordCommandHandler {
         },
         {
           name: '!setups [symbol]',
-          value: 'Show active trade setups\n`!setups` or `!setups BTC/USDT`',
+          value: 'Show active trade setups\n`!setups BTC/USDT`',
           inline: false,
         },
         {
-          name: '!chart <symbol> [type]',
-          value: 'Generate price chart\n`!chart BTC/USDT price` `!chart BTC/USDT volume`',
+          name: '👥 Social Trading',
+          value: '`!follow`, `!unfollow`, `!followers`, `!following`, `!community-feed`, `!autocopy`',
           inline: false,
         },
         {
-          name: '!tracked',
-          value: 'Show all tracked symbols',
+          name: '!follow <username>',
+          value: 'Follow a trader to see their trades\n`!follow john_trader`',
           inline: false,
         },
         {
-          name: '📚 Analysis',
-          value: 'Uses ÆTHER-Trader engine:\n• Swing detection\n• Fibonacci retracements\n• RSI momentum\n• Liquidity sweeps\n• Market regime analysis',
+          name: '!followers',
+          value: 'Show who\'s following you',
+          inline: false,
+        },
+        {
+          name: '!following',
+          value: 'Show traders you\'re following',
+          inline: false,
+        },
+        {
+          name: '!community-feed',
+          value: 'View trade feed from followed traders',
+          inline: false,
+        },
+        {
+          name: '!autocopy <enable|disable> <username> [riskScale]',
+          value: 'Auto-copy trades from a trader\n`!autocopy enable john_trader 0.5`',
+          inline: false,
+        },
+        {
+          name: '📚 Engine: ÆTHER-Trader',
+          value: '• Swing detection • Fibonacci retracements • RSI momentum\n• Liquidity sweeps • Market regime analysis',
           inline: false,
         }
       )
