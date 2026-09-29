@@ -1,7 +1,7 @@
 'use client';
 
 // Hero Background Graphic - Trading Dashboard Theme
-export const HeroBackground = (
+export const HeroBackground = () => (
   <svg width="100%" height="400" viewBox="0 0 1200 400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
     <defs>
       <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -51,7 +51,7 @@ export const HeroBackground = (
 );
 
 // Dashboard Screenshot Graphic (for marketing)
-export const DashboardPreview = (
+export const DashboardPreview = () => (
   <svg width="100%" height="300" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="dashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -95,7 +95,7 @@ export const DashboardPreview = (
 );
 
 // Market Sentiment Gauge
-export const SentimentGauge = (
+export const SentimentGauge = () => (
   <svg width="160" height="90" viewBox="0 0 160 90" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -125,7 +125,7 @@ export const SentimentGauge = (
 );
 
 // Trading Setup Card Graphic
-export const TradingSetupCard = (
+export const TradingSetupCard = () => (
   <svg width="280" height="160" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -161,7 +161,7 @@ export const TradingSetupCard = (
 );
 
 // Market Breadth Distribution
-export const MarketDistribution = (
+export const MarketDistribution = () => (
   <svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="distGrad1" x1="0%" y1="100%" x2="0%" y2="0%">

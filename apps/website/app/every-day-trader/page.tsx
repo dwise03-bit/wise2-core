@@ -475,7 +475,7 @@ export default function EveryDayTraderPage() {
                 { icon: EducationIcons.Certificate, title: 'Risk Management', desc: 'Protect your capital. Trade longer.', duration: '6 min' }
               ].map((video, i) => (
                 <div key={i} style={{ padding: '16px', background: 'rgba(0, 217, 255, 0.08)', borderRadius: '12px', border: '1px solid rgba(0, 217, 255, 0.15)', cursor: 'pointer', transition: 'all 200ms ease', textAlign: 'center' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.15)'; e.currentTarget.style.transform = 'scale(1.02)'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 217, 255, 0.08)'; e.currentTarget.style.transform = 'scale(1)'; }}>
-                  <div style={{ fontSize: '40px', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>{video.icon}</div>
+                  <div style={{ fontSize: '40px', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>{video.icon()}</div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#f4f8ff', marginBottom: 4 }}>{video.title}</div>
                   <div style={{ fontSize: '11px', color: '#7a9fb5', marginBottom: 8 }}>{video.desc}</div>
                   <div style={{ fontSize: '11px', color: '#00D9FF', fontWeight: 600 }}>{video.duration}</div>
