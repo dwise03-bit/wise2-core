@@ -63,4 +63,10 @@ export class ClipperController {
   async getPublishingJobs(@Request() req, @Param('id') id: string) {
     return this.clipperService.getPublishingJobs(req.user.id, id);
   }
+
+  // Phase 2: AI-powered suggestions
+  @Get('media/:id/suggested-clips')
+  async getSuggestedClips(@Request() req, @Param('id') id: string) {
+    return this.clipperService.getSuggestedClips(req.user.id, id);
+  }
 }
