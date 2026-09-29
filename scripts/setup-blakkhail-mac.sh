@@ -16,6 +16,15 @@ if ! command -v docker &> /dev/null; then
 fi
 
 echo "✅ Docker found"
+
+# Check if Docker daemon is running
+if ! docker ps &> /dev/null; then
+    echo "❌ Docker daemon not running. Start Docker Desktop and try again."
+    echo "   Open Applications/Docker.app"
+    exit 1
+fi
+
+echo "✅ Docker daemon running"
 echo ""
 
 # Check if git is installed
