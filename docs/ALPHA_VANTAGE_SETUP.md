@@ -38,7 +38,17 @@ The dashboard will now fetch live quotes and candles from Alpha Vantage.
 
 ## Step 4: Verify Data Flow
 
-1. Open the dashboard at `http://localhost:3000/every-day-trader`
+**Production URL:**
+```
+https://wise2.net/every-day-trader
+```
+
+**Local Dev URL:**
+```
+http://localhost:3001/every-day-trader
+```
+
+Access the dashboard and verify:
 2. Check the browser console for any API errors
 3. Verify price updates every 5 seconds
 4. Watch PLOT AI analysis recalculate with real data
