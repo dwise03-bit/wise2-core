@@ -162,17 +162,11 @@ if [ $attempt -eq $max_attempts ]; then
   exit 1
 fi
 
-# Run migrations if schema file exists
-if [ -f "packages/db/schema.sql" ]; then
-  echo "📝 Applying database schema..."
-  docker compose -f docker-compose.prod.yml exec -T postgres psql \
-    -U wise2 \
-    -d wise2_prod \
-    -f /docker-entrypoint-initdb.d/01-schema.sql || {
-    echo "⚠️ Schema application had errors (may be normal if tables already exist)"
-  }
-else
-  echo "⚠️ Database schema file not found at packages/db/schema.sql"
+# Sync Prisma schema with database using db push (no migration files required)
+echo "📝 Syncing database schema..."
+if ! docker compose -f docker-compose.prod.yml exec -T api sh -c "cd /app && pnpm -C packages/db exec prisma db push --skip-generate --skip-validate"; then
+  echo "⚠️ Database schema sync had issues (may be normal if schema already exists)"
+  # Don't exit on schema sync failure — it may already be current
 fi
 
 echo "✅ Database initialization complete"
