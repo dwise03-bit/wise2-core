@@ -8,10 +8,45 @@ import CandlestickChart from './candlestick-chart';
 import { TraderAvatars, CandlestickGraphics, IndicatorIcons } from './trader-avatars';
 import { HeroBackground, DashboardPreview, SentimentGauge, TradingSetupCard } from './hero-graphics';
 import { WISELogo, EDTLogo, ChartSymbols, FeatureBadges, EducationIcons, SentimentBadges } from './brand-assets';
-import { useState } from 'react';
+import { marketDataService, liveDataManager, MarketData } from './market-data-service';
+import { plotAIService, PlotAIAnalysis } from './plot-ai-service';
+import { useState, useEffect } from 'react';
 
 export default function EveryDayTraderPage() {
   const [activeNav, setActiveNav] = useState('Dashboard');
+  const [marketData, setMarketData] = useState<MarketData | null>(null);
+  const [plotAnalysis, setPlotAnalysis] = useState<PlotAIAnalysis | null>(null);
+
+  // Initialize live data on component mount
+  useEffect(() => {
+    // Set data source (mock for development, can be switched to 'alpha-vantage' or 'yahoo')
+    liveDataManager.setDataSource('mock');
+
+    // Subscribe to live market data
+    const unsubscribe = marketDataService.subscribe((data) => {
+      setMarketData(data);
+
+      // Update PLOT AI analysis when data changes
+      const nvda = data.quotes['NVDA'];
+      const nvdaCandles = data.candles['NVDA'] || [];
+
+      if (nvda && nvdaCandles.length > 0) {
+        const analysis = plotAIService.analyze(nvdaCandles, nvda);
+        setPlotAnalysis(analysis);
+      }
+    });
+
+    // Start live updates for main symbols
+    liveDataManager.startLiveUpdates('NVDA', 5000); // Update every 5 seconds
+    liveDataManager.startLiveUpdates('AAPL', 5000);
+    liveDataManager.startLiveUpdates('SPY', 5000);
+    liveDataManager.startLiveUpdates('QQQ', 5000);
+
+    return () => {
+      unsubscribe();
+      liveDataManager.stopAll();
+    };
+  }, []);
 
   const navItems = [
     { icon: '🏠', label: 'Dashboard', id: 'Dashboard' },
@@ -40,18 +75,30 @@ export default function EveryDayTraderPage() {
     { symbol: 'MSFT', price: '418.06', change: '+0.74%' }
   ];
 
-  const analysisPoints = [
-    '✓ Trend — Bullish',
-    '✓ Momentum — Strong',
-    '✓ Volume — Above Avg',
-    '✓ Options Flow — Bullish',
-    '✓ News Sentiment — Positive'
+  // Generate dynamic analysis points from PLOT AI
+  const analysisPoints = plotAnalysis ? [
+    `✓ Trend — ${plotAnalysis.trend.replace('_', ' ')}`,
+    `✓ Momentum — ${plotAnalysis.momentum}`,
+    `✓ Volume — ${plotAnalysis.volume.replace('_', ' ')}`,
+    `✓ Options Flow — ${plotAnalysis.optionsFlow}`,
+    `✓ News Sentiment — ${plotAnalysis.newsSentiment}`
+  ] : [
+    '✓ Trend — Loading...',
+    '✓ Momentum — Loading...',
+    '✓ Volume — Loading...',
+    '✓ Options Flow — Loading...',
+    '✓ News Sentiment — Loading...'
   ];
 
-  const keyLevels = [
-    { label: 'Resistance', value: '$228.50', color: '#ff5276' },
-    { label: 'Entry Zone', value: '$223–$224', color: '#FFD700' },
-    { label: 'Support', value: '$220.50', color: '#00ff7f' }
+  // Use PLOT AI levels or defaults
+  const keyLevels = plotAnalysis ? [
+    { label: 'Resistance', value: `$${(Math.max(...plotAnalysis.targets)).toFixed(2)}`, color: '#ff5276' },
+    { label: 'Entry Zone', value: `$${plotAnalysis.entryZone.low.toFixed(2)}–$${plotAnalysis.entryZone.high.toFixed(2)}`, color: '#FFD700' },
+    { label: 'Support', value: `$${plotAnalysis.stopLoss.toFixed(2)}`, color: '#00ff7f' }
+  ] : [
+    { label: 'Resistance', value: '—', color: '#ff5276' },
+    { label: 'Entry Zone', value: '—', color: '#FFD700' },
+    { label: 'Support', value: '—', color: '#00ff7f' }
   ];
 
   const trendAlignments = [
@@ -179,14 +226,18 @@ export default function EveryDayTraderPage() {
               ))}
             </div>
 
-            {/* Price & Stats */}
+            {/* Price & Stats - Live Data */}
             <div style={{ display: 'flex', gap: 20, alignItems: 'baseline', marginBottom: 14 }}>
-              <b style={{ fontSize: 32, letterSpacing: '-1px' }}>225.07</b>
-              <em style={{ color: '#00e8ad', fontStyle: 'normal', fontWeight: 600, fontSize: '16px' }}>+0.22%</em>
+              <b style={{ fontSize: 32, letterSpacing: '-1px' }}>
+                ${marketData?.quotes['NVDA']?.price.toFixed(2) || '225.07'}
+              </b>
+              <em style={{ color: marketData?.quotes['NVDA']?.change ?? 0 > 0 ? '#00e8ad' : '#ff3b7f', fontStyle: 'normal', fontWeight: 600, fontSize: '16px' }}>
+                {marketData?.quotes['NVDA']?.changePercent.toFixed(2) || '+0.22'}%
+              </em>
               <div style={{ display: 'flex', gap: 16, fontSize: '12px', color: '#adbfda' }}>
-                <span>High 226.48</span>
-                <span>Low 222.91</span>
-                <span>Volume 48.2M</span>
+                <span>High ${marketData?.quotes['NVDA']?.high.toFixed(2) || '226.48'}</span>
+                <span>Low ${marketData?.quotes['NVDA']?.low.toFixed(2) || '222.91'}</span>
+                <span>Volume {(marketData?.quotes['NVDA']?.volume ?? 0 / 1000000).toFixed(1)}M</span>
               </div>
             </div>
 
@@ -205,9 +256,17 @@ export default function EveryDayTraderPage() {
                 </small>
               </h2>
 
-              {/* Sentiment Gauge Graphic */}
-              <div style={{ margin: '8px auto', width: '160px' }}>
+              {/* Sentiment Gauge with Live Bias */}
+              <div style={{ margin: '8px auto', width: '160px', position: 'relative' }}>
                 <SentimentGauge />
+                <div style={{ position: 'absolute', top: '25%', left: '50%', transform: 'translateX(-50%)', textAlign: 'center', zIndex: 10 }}>
+                  <div style={{ fontSize: '20px', fontWeight: '900', color: plotAnalysis ? (plotAnalysis.bullishBias > 60 ? '#00ff7f' : plotAnalysis.bullishBias > 40 ? '#00D9FF' : '#ff3b7f') : '#00D9FF' }}>
+                    {plotAnalysis ? Math.round(plotAnalysis.bullishBias) : 72}%
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#7a9fb5', marginTop: '2px' }}>
+                    {plotAnalysis?.bullishBias ? (plotAnalysis.bullishBias > 60 ? 'BULLISH' : plotAnalysis.bullishBias > 40 ? 'NEUTRAL' : 'BEARISH') : 'BULLISH'}
+                  </div>
+                </div>
               </div>
 
               {/* Analysis Points */}
