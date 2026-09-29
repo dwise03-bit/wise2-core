@@ -19,38 +19,52 @@ export default function EveryDayTraderPage() {
 
   // Initialize live data on component mount
   useEffect(() => {
-    // Set data source from environment or fallback to mock
-    const dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'mock') as 'mock' | 'alpha-vantage' | 'yahoo';
-    const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.NEXT_PUBLIC_RAPID_API_KEY || '';
-
-    console.log(`🚀 EDT Dashboard - Data Source: ${dataSource}${apiKey ? ' (with API key)' : ' (no API key - using mock)'}`);
-
-    liveDataManager.setDataSource(dataSource, apiKey);
-
-    // Subscribe to live market data
-    const unsubscribe = marketDataService.subscribe((data) => {
-      setMarketData(data);
-
-      // Update PLOT AI analysis when data changes
-      const nvda = data.quotes['NVDA'];
-      const nvdaCandles = data.candles['NVDA'] || [];
-
-      if (nvda && nvdaCandles.length > 0) {
-        const analysis = plotAIService.analyze(nvdaCandles, nvda);
-        setPlotAnalysis(analysis);
+    const initializeData = async () => {
+      // Load config from public/config.json or environment variables
+      try {
+        const response = await fetch('/config.json');
+        if (response.ok) {
+          const config = await response.json();
+          console.log(`🚀 EDT Dashboard - Data Source: ${config.marketDataSource} (with API key from config.json)`);
+          liveDataManager.setDataSource(config.marketDataSource, config.alphaVantageKey);
+        } else {
+          throw new Error('Config not found');
+        }
+      } catch (e) {
+        // Fallback: Set data source from environment
+        const dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'mock') as 'mock' | 'alpha-vantage' | 'yahoo';
+        const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.NEXT_PUBLIC_RAPID_API_KEY || '';
+        console.log(`🚀 EDT Dashboard - Data Source: ${dataSource}${apiKey ? ' (with API key)' : ' (no API key - using mock)'}`);
+        liveDataManager.setDataSource(dataSource, apiKey);
       }
-    });
 
-    // Start live updates for main symbols
-    liveDataManager.startLiveUpdates('NVDA', 5000); // Update every 5 seconds
-    liveDataManager.startLiveUpdates('AAPL', 5000);
-    liveDataManager.startLiveUpdates('SPY', 5000);
-    liveDataManager.startLiveUpdates('QQQ', 5000);
+      // Subscribe to live market data
+      const unsubscribe = marketDataService.subscribe((data) => {
+        setMarketData(data);
 
-    return () => {
-      unsubscribe();
-      liveDataManager.stopAll();
+        // Update PLOT AI analysis when data changes
+        const nvda = data.quotes['NVDA'];
+        const nvdaCandles = data.candles['NVDA'] || [];
+
+        if (nvda && nvdaCandles.length > 0) {
+          const analysis = plotAIService.analyze(nvdaCandles, nvda);
+          setPlotAnalysis(analysis);
+        }
+      });
+
+      // Start live updates for main symbols
+      liveDataManager.startLiveUpdates('NVDA', 5000); // Update every 5 seconds
+      liveDataManager.startLiveUpdates('AAPL', 5000);
+      liveDataManager.startLiveUpdates('SPY', 5000);
+      liveDataManager.startLiveUpdates('QQQ', 5000);
+
+      return () => {
+        unsubscribe();
+        liveDataManager.stopAll();
+      };
     };
+
+    initializeData();
   }, []);
 
   const navItems = [
