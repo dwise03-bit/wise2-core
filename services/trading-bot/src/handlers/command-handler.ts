@@ -3,8 +3,12 @@ import { PrismaClient } from '@prisma/client';
 import { TradingBotService } from '../services/trading-bot-service';
 import { ChartService } from '../services/chart-service';
 import { PriceDataService } from '../services/price-data-service';
+import { PortfolioService } from '../services/portfolio-service';
+import { AlertService } from '../services/alert-service';
+import { SchedulerService } from '../services/scheduler-service';
 import { FollowingService } from '../services/following-service';
 import { SocialCommands } from '../commands/social-commands';
+import { AutomationCommands } from '../commands/automation-commands';
 
 /**
  * DiscordCommandHandler: Process trading bot commands
@@ -14,12 +18,16 @@ export class DiscordCommandHandler {
   private chartService: ChartService;
   private priceDataService: PriceDataService;
   private socialCommands?: SocialCommands;
+  private automationCommands?: AutomationCommands;
 
   constructor(
     tradingBotService: TradingBotService,
     chartService: ChartService,
     prisma?: PrismaClient,
-    discordClient?: any
+    discordClient?: any,
+    portfolioService?: PortfolioService,
+    alertService?: AlertService,
+    schedulerService?: SchedulerService
   ) {
     this.tradingBotService = tradingBotService;
     this.chartService = chartService;
@@ -29,6 +37,17 @@ export class DiscordCommandHandler {
     if (prisma && discordClient) {
       const followingService = new FollowingService(prisma, discordClient);
       this.socialCommands = new SocialCommands(followingService);
+    }
+
+    // Initialize automation commands if services are provided
+    if (tradingBotService && alertService && portfolioService && schedulerService) {
+      this.automationCommands = new AutomationCommands(
+        tradingBotService,
+        alertService,
+        portfolioService,
+        schedulerService,
+        this.priceDataService
+      );
     }
   }
 

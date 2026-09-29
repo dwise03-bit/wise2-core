@@ -5,6 +5,9 @@ import { TradingBotService } from './services/trading-bot-service';
 import { DiscordCommandHandler } from './handlers/command-handler';
 import { ChartService } from './services/chart-service';
 import { PriceDataService } from './services/price-data-service';
+import { PortfolioService } from './services/portfolio-service';
+import { AlertService } from './services/alert-service';
+import { SchedulerService } from './services/scheduler-service';
 
 dotenv.config();
 
@@ -23,6 +26,9 @@ let tradingBotService: TradingBotService;
 let commandHandler: DiscordCommandHandler;
 let priceDataService: PriceDataService;
 let chartService: ChartService;
+let portfolioService: PortfolioService;
+let alertService: AlertService;
+let schedulerService: SchedulerService;
 
 client.once('ready', async () => {
   console.log(`✅ Bot online as ${client.user?.tag}`);
@@ -31,10 +37,14 @@ client.once('ready', async () => {
   priceDataService = new PriceDataService();
   chartService = new ChartService();
   tradingBotService = new TradingBotService(client, priceDataService, chartService, prisma);
-  commandHandler = new DiscordCommandHandler(tradingBotService, chartService, prisma, client);
+  portfolioService = new PortfolioService(prisma);
+  alertService = new AlertService(prisma, priceDataService);
+  schedulerService = new SchedulerService(prisma, client, portfolioService, priceDataService);
+  commandHandler = new DiscordCommandHandler(tradingBotService, chartService, prisma, client, portfolioService, alertService, schedulerService);
 
-  // Start polling for price updates
+  // Start services
   tradingBotService.startPricePolling();
+  schedulerService.startScheduler();
 });
 
 client.on('messageCreate', async (message) => {
@@ -63,6 +73,7 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down...');
   tradingBotService.destroy();
+  if (schedulerService) schedulerService.destroy();
   await prisma.$disconnect();
   await client.destroy();
   process.exit(0);
