@@ -28,13 +28,13 @@
 
 
 .premiumPanel {
-  background: linear-gradient(135deg, rgba(6, 38, 76, 0.8) 0%, rgba(3, 17, 37, 0.8) 100%);
-  border: 1px solid rgba(12, 126, 216, 0.5);
-  border-radius: 12px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 0 30px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(6, 38, 76, 0.85) 0%, rgba(3, 17, 37, 0.85) 100%);
+  border: 1px solid rgba(12, 126, 216, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 12px 32px rgba(0, 0, 0, 0.25), 0 0 40px rgba(255, 215, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
   padding: 16px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
@@ -66,11 +66,11 @@
   align-items: center;
   margin: 0 auto 20px;
   max-width: 1400px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   padding: 16px 20px;
-  border-radius: 10px;
-  border: 1px solid rgba(12, 126, 216, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 25px rgba(0, 217, 255, 0.2);
+  border-radius: 16px;
+  border: 1px solid rgba(12, 126, 216, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 217, 255, 0.22);
 }
 
 .titlePremium {
@@ -91,12 +91,12 @@
   margin-left: auto;
   width: min(520px, 55%);
   padding: 13px 17px;
-  border: 1px solid #128ced;
-  border-radius: 8px;
+  border: 1px solid rgba(18, 140, 237, 0.4);
+  border-radius: 12px;
   background: rgba(6, 26, 51, 0.9);
   color: white;
   font-family: 'Fira Sans', sans-serif;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 20px rgba(18, 142, 237, 0.2);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 20px rgba(18, 142, 237, 0.25);
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -117,10 +117,10 @@
 
 .statCard {
   background: linear-gradient(135deg, rgba(6, 38, 76, 0.9) 0%, rgba(3, 17, 37, 0.7) 100%);
-  border: 1px solid rgba(12, 126, 216, 0.6);
-  border-radius: 10px;
+  border: 1px solid rgba(12, 126, 216, 0.35);
+  border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 25px rgba(255, 215, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
   position: relative;
@@ -137,12 +137,12 @@
   height: 380px;
   position: relative;
   overflow: hidden;
-  border: 1px solid #155d99;
-  background: linear-gradient(#177ed629 1px, transparent 1px), linear-gradient(90deg, #177ed629 1px, transparent 1px), #03152a;
+  border: 1px solid rgba(21, 93, 153, 0.4);
+  background: linear-gradient(#177ed615 1px, transparent 1px), linear-gradient(90deg, #177ed615 1px, transparent 1px), #03152a;
   background-size: 100% 45px, 65px 100%;
-  border-radius: 8px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 25px rgba(0, 217, 255, 0.2);
-  backdrop-filter: blur(2px);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.04), inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 217, 255, 0.25);
+  backdrop-filter: blur(3px);
 }
 
 .chartPathFill {
@@ -155,15 +155,15 @@
 
 .label3d {
   position: absolute;
-  background: rgba(164, 22, 93, 0.7);
-  backdrop-filter: blur(8px);
+  background: rgba(164, 22, 93, 0.8);
+  backdrop-filter: blur(10px);
   padding: 8px 12px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 215, 0, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 15px rgba(255, 215, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.25);
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -175,8 +175,8 @@
 
 .buttonPremium {
   padding: 13px 18px;
-  border: 1px solid #23b8ff;
-  border-radius: 6px;
+  border: 1px solid rgba(35, 184, 255, 0.5);
+  border-radius: 12px;
   background: linear-gradient(135deg, #087df9, #0563d8);
   color: white;
   font-weight: 700;
@@ -186,7 +186,7 @@
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 20px rgba(32, 125, 249, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 25px rgba(32, 125, 249, 0.4);
 }
 
 .buttonPremium::before {
