@@ -36,8 +36,8 @@ export function BlakkhailHero() {
 
       {/* SenCere Creative Composite Hero */}
       <div className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Lightning Bolts - Layer 1 - AMPLIFIED */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ mixBlendMode: 'screen' }}>
+        {/* Lightning Bolts - Layer 1 - BALANCED */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ mixBlendMode: 'multiply', opacity: 0.6 }}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={`lightning-${i}`}
@@ -45,9 +45,10 @@ export function BlakkhailHero() {
               style={{
                 left: `${15 + i * 15}%`,
                 top: `${5 + i * 12}%`,
-                animation: `lightningBolt ${2.5 + i * 0.3}s cubic-bezier(0.34, 1.56, 0.64, 1) infinite`,
-                animationDelay: `${i * 0.15}s`,
-                filter: 'drop-shadow(0 0 30px rgba(0, 217, 255, 0.8)) drop-shadow(0 0 60px rgba(0, 200, 255, 0.4))',
+                animation: `lightningBolt ${3 + i * 0.4}s cubic-bezier(0.34, 1.56, 0.64, 1) infinite`,
+                animationDelay: `${i * 0.2}s`,
+                filter: 'drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.3))',
+                opacity: 0.8,
               }}
             >
               <svg width="140" height="240" viewBox="0 0 120 200" className="w-full h-full" style={{ opacity: 0.95 }}>
