@@ -159,7 +159,11 @@ export default function RootLayout({
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <SessionProvider session={undefined}>
           <ToastProvider>
-            {skipSiteChrome ? children : <SiteChrome>{children}</SiteChrome>}
+            {skipSiteChrome ? (
+              children
+            ) : (
+              <SiteChrome>{children}</SiteChrome>
+            )}
           </ToastProvider>
         </SessionProvider>
       </body>

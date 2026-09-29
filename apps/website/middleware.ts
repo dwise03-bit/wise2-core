@@ -73,6 +73,7 @@ export function middleware(request: NextRequest) {
   });
   response.cookies.set('x-brand', 'blakkhail', { maxAge: 3600 });
   response.headers.set('x-blakkhail-request', 'true');
+  response.headers.set('x-pathname', request.nextUrl.pathname);
   return response;
 }
 
