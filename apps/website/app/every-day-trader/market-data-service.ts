@@ -88,20 +88,36 @@ export const DataSources = {
   // Alpha Vantage adapter
   alphaVantage: {
     async fetchQuote(symbol: string, apiKey: string): Promise<MarketQuote> {
-      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const quote = data['Global Quote'];
-      return {
-        symbol,
-        price: parseFloat(quote['05. price']),
-        change: parseFloat(quote['09. change']),
-        changePercent: parseFloat(quote['10. change percent'].replace('%', '')),
-        high: parseFloat(quote['03. high']),
-        low: parseFloat(quote['04. low']),
-        volume: parseFloat(quote['06. volume']),
-        timestamp: Date.now(),
-      };
+      try {
+        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data || !data['Global Quote']) {
+          throw new Error('Invalid API response');
+        }
+
+        const quote = data['Global Quote'];
+        const price = parseFloat(quote['05. price']);
+
+        if (isNaN(price)) {
+          throw new Error('Invalid price data');
+        }
+
+        return {
+          symbol,
+          price,
+          change: parseFloat(quote['09. change']) || 0,
+          changePercent: parseFloat(quote['10. change percent']?.replace('%', '') || '0'),
+          high: parseFloat(quote['03. high']) || price,
+          low: parseFloat(quote['04. low']) || price,
+          volume: parseFloat(quote['06. volume']) || 0,
+          timestamp: Date.now(),
+        };
+      } catch (error) {
+        console.error(`Alpha Vantage API error for ${symbol}:`, error);
+        throw error;
+      }
     },
 
     async fetchCandles(symbol: string, apiKey: string, interval: string = '60min'): Promise<ChartCandle[]> {
@@ -212,8 +228,15 @@ export class LiveDataManager {
           const quote = DataSources.mock.generateQuote(symbol);
           marketDataService.updateQuote(symbol, quote);
         } else if (this.dataSource === 'alpha-vantage') {
-          const quote = await DataSources.alphaVantage.fetchQuote(symbol, this.apiKey);
-          marketDataService.updateQuote(symbol, quote);
+          try {
+            const quote = await DataSources.alphaVantage.fetchQuote(symbol, this.apiKey);
+            marketDataService.updateQuote(symbol, quote);
+          } catch (apiError) {
+            console.warn(`Alpha Vantage failed for ${symbol}, falling back to mock data`);
+            // Fallback to mock data on API error
+            const quote = DataSources.mock.generateQuote(symbol);
+            marketDataService.updateQuote(symbol, quote);
+          }
         }
       } catch (error) {
         console.error(`Failed to update ${symbol}:`, error);
