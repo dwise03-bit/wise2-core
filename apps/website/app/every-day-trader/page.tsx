@@ -23,6 +23,8 @@ export default function EveryDayTraderPage() {
     const dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'mock') as 'mock' | 'alpha-vantage' | 'yahoo';
     const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.NEXT_PUBLIC_RAPID_API_KEY || '';
 
+    console.log(`🚀 EDT Dashboard - Data Source: ${dataSource}${apiKey ? ' (with API key)' : ' (no API key - using mock)'}`);
+
     liveDataManager.setDataSource(dataSource, apiKey);
 
     // Subscribe to live market data
