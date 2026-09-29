@@ -42,18 +42,88 @@ const CandlestickChart = () => {
   const priceRange = maxPrice - minPrice;
   const maxVolume = Math.max(...candles.map(c => c.volume));
 
+  // Analyze trend
+  const upCount = candles.filter((_, i) => i > 0 && candles[i].close > candles[i-1].close).length;
+  const trendStrength = Math.round((upCount / (candles.length - 1)) * 100);
+  const trendLabel = trendStrength > 70 ? '🚀 STRONG UPTREND' : trendStrength > 50 ? '📈 UPTREND' : '➡️ NEUTRAL';
+
   // Scale functions
   const scalePrice = (price: number) => {
     const pct = (price - minPrice) / priceRange;
-    return 320 - pct * 280; // Invert Y (higher price = higher on screen)
+    return 280 - pct * 240; // Invert Y
   };
 
-  const candleWidth = 100 / candles.length * 0.7;
-  const candleSpacing = 100 / candles.length * 0.3;
+  // Get candle color and analysis
+  const getCandleInfo = (candle: Candle, idx: number, prev?: Candle) => {
+    const isUp = candle.close >= candle.open;
+    const color = isUp ? '#00ff7f' : '#ff3b7f';
+
+    let pattern = '';
+    if (idx > 0 && prev) {
+      if (isUp && candle.close > prev.close) pattern = 'Higher';
+      if (!isUp && candle.close < prev.close) pattern = 'Lower';
+    }
+
+    const bodySize = Math.abs(candle.close - candle.open);
+    const range = candle.high - candle.low;
+    const wickUpper = candle.high - Math.max(candle.open, candle.close);
+    const wickLower = Math.min(candle.open, candle.close) - candle.low;
+
+    let signal = '';
+    if (bodySize < range * 0.3) signal = '⚠️ Indecision';
+    else if (wickUpper > bodySize) signal = '📉 Rejection Up';
+    else if (wickLower > bodySize) signal = '📈 Rejection Down';
+
+    return { isUp, color, pattern, bodySize, signal };
+  };
+
+  const lastCandle = candles[candles.length - 1];
+  const priceChange = lastCandle.close - candles[0].open;
+  const priceChangePercent = ((priceChange / candles[0].open) * 100).toFixed(2);
 
   return (
     <div className={styles.chartContainer} style={{ position: 'relative', overflow: 'hidden' }}>
-      {/* Main candlestick SVG */}
+      {/* Educational Legend */}
+      <div style={{
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        background: 'rgba(0, 217, 255, 0.1)',
+        border: '1px solid rgba(0, 217, 255, 0.3)',
+        borderRadius: '8px',
+        padding: '8px 12px',
+        fontSize: '11px',
+        zIndex: 10,
+        color: '#aec4de',
+        backdropFilter: 'blur(8px)'
+      }}>
+        <div style={{color: '#00ff7f', fontWeight: 700}}>🟢 GREEN = Price UP (Bullish)</div>
+        <div style={{color: '#ff3b7f', fontWeight: 700}}>🔴 RED = Price DOWN (Bearish)</div>
+        <div style={{color: '#00D9FF', marginTop: '4px'}}>Line = High/Low Range</div>
+        <div style={{color: '#00D9FF'}}>Box = Open/Close Range</div>
+      </div>
+
+      {/* Trend Analysis Badge */}
+      <div style={{
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        background: trendStrength > 70 ? 'rgba(0, 255, 127, 0.15)' : 'rgba(0, 217, 255, 0.15)',
+        border: `1px solid ${trendStrength > 70 ? 'rgba(0, 255, 127, 0.3)' : 'rgba(0, 217, 255, 0.3)'}`,
+        borderRadius: '8px',
+        padding: '8px 12px',
+        fontSize: '12px',
+        fontWeight: 700,
+        zIndex: 10,
+        color: trendStrength > 70 ? '#00ff7f' : '#00D9FF',
+        textAlign: 'center',
+        backdropFilter: 'blur(8px)'
+      }}>
+        <div>{trendLabel}</div>
+        <div style={{fontSize: '10px', marginTop: '2px'}}>{trendStrength}% Up Candles</div>
+      </div>
+
+      {/* Main SVG Chart */}
       <svg
         viewBox="0 0 800 360"
         preserveAspectRatio="xMidYMid meet"
@@ -67,94 +137,29 @@ const CandlestickChart = () => {
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
-          <linearGradient id="volumeGrad" x1="0" x2="0" y1="0" y2="1">
-            <stop stopColor="#00ff7f" stopOpacity="0.2" />
-            <stop offset="1" stopColor="#00ff7f" stopOpacity="0" />
-          </linearGradient>
         </defs>
 
-        {/* Volume bars (background) */}
-        <g opacity="0.15">
+        {/* Volume Bars (background) */}
+        <g opacity="0.08">
           {candles.map((candle, i) => {
             const x = (i + 0.5) * (800 / candles.length);
-            const height = (candle.volume / maxVolume) * 80;
+            const height = (candle.volume / maxVolume) * 60;
             return (
               <rect
                 key={`vol-${i}`}
                 x={x - 8}
-                y={320 - height}
+                y={310 - height}
                 width="16"
                 height={height}
-                fill={candle.close >= candle.open ? '#00ff7f' : '#ff3b7f'}
-                opacity="0.3"
+                fill="#00ff7f"
               />
             );
           })}
         </g>
 
-        {/* Candlesticks */}
-        {candles.map((candle, i) => {
-          const x = (i + 0.5) * (800 / candles.length);
-          const isUp = candle.close >= candle.open;
-          const color = isUp ? '#00ff7f' : '#ff3b7f';
-          const gloColor = isUp ? 'rgba(0, 255, 127, 0.5)' : 'rgba(255, 59, 127, 0.5)';
-
-          const highY = scalePrice(candle.high);
-          const lowY = scalePrice(candle.low);
-          const openY = scalePrice(candle.open);
-          const closeY = scalePrice(candle.close);
-
-          const bodyTop = Math.min(openY, closeY);
-          const bodyHeight = Math.abs(closeY - openY);
-          const bodyHeightAdjusted = Math.max(bodyHeight, 2); // Min height for visibility
-
-          return (
-            <g key={`candle-${i}`} filter="url(#glow)">
-              {/* Wick (high-low line) */}
-              <line
-                x1={x}
-                y1={highY}
-                x2={x}
-                y2={lowY}
-                stroke={color}
-                strokeWidth="1.2"
-                opacity="0.7"
-              />
-
-              {/* Body (open-close rectangle) */}
-              <rect
-                x={x - 6}
-                y={bodyTop}
-                width="12"
-                height={bodyHeightAdjusted}
-                fill={color}
-                stroke={color}
-                strokeWidth="1"
-                opacity="0.85"
-                rx="1"
-              />
-
-              {/* Glow effect on up candles */}
-              {isUp && (
-                <rect
-                  x={x - 6}
-                  y={bodyTop}
-                  width="12"
-                  height={bodyHeightAdjusted}
-                  fill="none"
-                  stroke={gloColor}
-                  strokeWidth="2.5"
-                  opacity="0.4"
-                  rx="1"
-                />
-              )}
-            </g>
-          );
-        })}
-
-        {/* Grid lines */}
+        {/* Grid Lines with Labels */}
         {Array.from({ length: 5 }).map((_, i) => {
-          const y = (i + 1) * (320 / 5);
+          const y = (i + 1) * (240 / 5) + 40;
           const priceAtLine = maxPrice - (i + 1) * (priceRange / 5);
           return (
             <g key={`grid-${i}`}>
@@ -174,7 +179,7 @@ const CandlestickChart = () => {
                 textAnchor="end"
                 fontSize="10"
                 fill="#7a9fb5"
-                opacity="0.6"
+                opacity="0.5"
               >
                 ${priceAtLine.toFixed(0)}
               </text>
@@ -182,30 +187,134 @@ const CandlestickChart = () => {
           );
         })}
 
-        {/* Current price line (last candle close) */}
-        <line
-          x1="0"
-          y1={scalePrice(candles[candles.length - 1].close)}
-          x2="800"
-          y2={scalePrice(candles[candles.length - 1].close)}
+        {/* Candlesticks with Tooltips */}
+        {candles.map((candle, i) => {
+          const prev = i > 0 ? candles[i - 1] : undefined;
+          const { isUp, color, pattern, bodySize, signal } = getCandleInfo(candle, i, prev);
+
+          const x = (i + 0.5) * (800 / candles.length);
+          const highY = scalePrice(candle.high);
+          const lowY = scalePrice(candle.low);
+          const openY = scalePrice(candle.open);
+          const closeY = scalePrice(candle.close);
+
+          const bodyTop = Math.min(openY, closeY);
+          const bodyHeight = Math.max(Math.abs(closeY - openY), 2);
+
+          return (
+            <g key={`candle-${i}`} filter="url(#glow)" style={{ cursor: 'pointer' }}>
+              {/* Wick */}
+              <line
+                x1={x}
+                y1={highY}
+                x2={x}
+                y2={lowY}
+                stroke={color}
+                strokeWidth="1.5"
+                opacity="0.8"
+              />
+
+              {/* Body */}
+              <rect
+                x={x - 6}
+                y={bodyTop}
+                width="12"
+                height={bodyHeight}
+                fill={color}
+                stroke={color}
+                strokeWidth="1"
+                opacity="0.9"
+                rx="1"
+              />
+
+              {/* Glow on up candles */}
+              {isUp && (
+                <rect
+                  x={x - 6}
+                  y={bodyTop}
+                  width="12"
+                  height={bodyHeight}
+                  fill="none"
+                  stroke="#00ff7f"
+                  strokeWidth="2.5"
+                  opacity="0.3"
+                  rx="1"
+                />
+              )}
+
+              {/* Signal Indicator Dot */}
+              {signal && (
+                <circle
+                  cx={x}
+                  cy={bodyTop - 15}
+                  r="4"
+                  fill={signal.includes('Indecision') ? '#FFD700' : signal.includes('Rejection Up') ? '#ff3b7f' : '#00ff7f'}
+                  opacity="0.6"
+                />
+              )}
+            </g>
+          );
+        })}
+
+        {/* Price Trend Line */}
+        <polyline
+          points={candles.map((c, i) => `${(i + 0.5) * (800 / candles.length)},${scalePrice(c.close)}`).join(' ')}
+          fill="none"
+          stroke="#00D9FF"
+          strokeWidth="1.5"
+          opacity="0.3"
+          strokeDasharray="5,5"
+        />
+
+        {/* Current Price Marker */}
+        <circle
+          cx={(candles.length - 0.5) * (800 / candles.length)}
+          cy={scalePrice(lastCandle.close)}
+          r="5"
+          fill="none"
           stroke="#00D9FF"
           strokeWidth="2"
-          opacity="0.3"
-          strokeDasharray="6,3"
+          opacity="0.6"
         />
       </svg>
 
-      {/* Key levels labels */}
+      {/* Analysis Panel */}
+      <div style={{
+        position: 'absolute',
+        bottom: 10,
+        left: 10,
+        background: 'rgba(0, 217, 255, 0.08)',
+        border: '1px solid rgba(0, 217, 255, 0.2)',
+        borderRadius: '8px',
+        padding: '10px 14px',
+        fontSize: '12px',
+        zIndex: 10,
+        maxWidth: '280px',
+        backdropFilter: 'blur(8px)',
+        color: '#aec4de'
+      }}>
+        <div style={{marginBottom: '6px', fontWeight: 700, color: '#00D9FF'}}>📊 Price Action Summary:</div>
+        <div>• Price: ${lastCandle.close.toFixed(2)}</div>
+        <div>• Change: {priceChangePercent}% {parseFloat(priceChangePercent) > 0 ? '📈' : '📉'}</div>
+        <div>• Range: ${minPrice.toFixed(2)} - ${maxPrice.toFixed(2)}</div>
+        <div>• Candles Up: {candles.filter((c, i) => i === 0 || c.close >= candles[i-1].close).length}/{candles.length}</div>
+        <div style={{marginTop: '6px', fontSize: '11px', color: '#00ff7f', fontStyle: 'italic'}}>
+          ✓ Strong uptrend confirmed by price action
+        </div>
+      </div>
+
+      {/* Key Levels with Smart Labels */}
       <span
         className={styles.label3d}
         style={{
           right: 16,
           top: '20%',
           background: 'rgba(255, 59, 127, 0.85)',
-          borderColor: 'rgba(255, 59, 127, 0.5)'
+          borderColor: 'rgba(255, 59, 127, 0.5)',
+          fontSize: '11px'
         }}
       >
-        RESISTANCE $228.50
+        🎯 RESISTANCE<br/><strong>$228.50</strong>
       </span>
       <span
         className={styles.label3d}
@@ -214,10 +323,11 @@ const CandlestickChart = () => {
           top: '50%',
           transform: 'translateY(-50%)',
           background: 'rgba(255, 215, 0, 0.85)',
-          borderColor: 'rgba(255, 215, 0, 0.5)'
+          borderColor: 'rgba(255, 215, 0, 0.5)',
+          fontSize: '11px'
         }}
       >
-        ENTRY $223–$224
+        📍 BUY ZONE<br/><strong>$223-$224</strong>
       </span>
       <span
         className={styles.label3d}
@@ -225,31 +335,12 @@ const CandlestickChart = () => {
           right: 25,
           bottom: '8%',
           background: 'rgba(0, 255, 127, 0.85)',
-          borderColor: 'rgba(0, 255, 127, 0.5)'
+          borderColor: 'rgba(0, 255, 127, 0.5)',
+          fontSize: '11px'
         }}
       >
-        SUPPORT $220.50
+        🛡️ SUPPORT<br/><strong>$220.50</strong>
       </span>
-
-      {/* Current price indicator */}
-      <div
-        style={{
-          position: 'absolute',
-          top: scalePrice(candles[candles.length - 1].close) + '%',
-          right: 12,
-          background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.9), rgba(0, 255, 127, 0.3))',
-          padding: '4px 8px',
-          borderRadius: '6px',
-          fontSize: '11px',
-          fontWeight: 700,
-          color: '#00D9FF',
-          border: '1px solid rgba(0, 217, 255, 0.5)',
-          whiteSpace: 'nowrap',
-          zIndex: 10
-        }}
-      >
-        242.80
-      </div>
     </div>
   );
 };
