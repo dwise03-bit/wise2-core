@@ -35,10 +35,8 @@ export function middleware(request: NextRequest) {
   }
 
   if (
-    pathname === '/sencere' ||
-    pathname === '/sencere/' ||
-    pathname === '/sencere/blakkhail' ||
-    pathname === '/sencere/blakkhail/'
+    (pathname === '/sencere' || pathname === '/sencere/') &&
+    pathname !== BLACKHAIL_PREFIX
   ) {
     const url = request.nextUrl.clone();
     url.pathname = BLACKHAIL_PREFIX;
