@@ -1,0 +1,90 @@
+╔════════════════════════════════════════════════════════════╗
+║         WISE² DARRIN - QUICK CONNECTION GUIDE             ║
+║                    5-MINUTE SETUP                         ║
+╚════════════════════════════════════════════════════════════╝
+
+STEP 1: INSTALL TAILSCALE (3 min)
+─────────────────────────────────
+powershell
+Invoke-WebRequest "https://tailscale.com/download/windows" -OutFile "$env:TEMP\ts.msi"
+msiexec /i "$env:TEMP\ts.msi"
+tailscale up
+
+→ Browser will open. Sign in with your account.
+→ Copy your Tailscale IP when done (100.x.x.x)
+
+
+STEP 2: GENERATE SSH KEY (2 min)
+────────────────────────────────
+powershell
+ssh-keygen -t ed25519 -f "$env:USERPROFILE\.ssh\id_ed25519" -C "darrin@wise2" -N ""
+Get-Content "$env:USERPROFILE\.ssh\id_ed25519.pub"
+
+→ Copy the entire public key output
+→ Send to Dave
+
+
+STEP 3: SEND TO DAVE
+────────────────────
+Message Dave:
+"I'm ready to connect!
+Tailscale IP: [YOUR_IP]
+SSH Public Key: [PASTE_KEY_HERE]"
+
+→ Wait for Dave to confirm
+
+
+STEP 4: VIEW DASHBOARD
+──────────────────────
+Open browser: http://[DAVE_IP]:8080
+
+OR via Tailscale (if Dave shares his IP):
+http://100.x.x.x:8080
+
+→ You should see "Darrin - Collaborator - Online ✓"
+
+
+STEP 5: VERIFY CONNECTION
+──────────────────────────
+PowerShell test:
+ping 100.x.x.x
+ssh dave@100.x.x.x
+
+→ Both should respond successfully
+
+
+DASHBOARD FEATURES
+──────────────────
+✓ AI Metrics - Neural performance (94.7%)
+✓ Predictive Insights - System efficiency trends
+✓ Network Topology - Live visualization
+✓ Real-Time Charts - Animated analytics
+✓ System Log - Live events
+✓ User Status - Shows you & Dave online
+
+
+TROUBLESHOOTING
+───────────────
+Can't connect?
+→ Check Tailscale: tailscale status
+→ Restart service: Restart-Service Tailscale
+→ Test ping: ping 100.x.x.x
+
+SSH key rejected?
+→ Dave may not have added it yet
+→ Share public key again with Dave
+→ Check: cat $env:USERPROFILE\.ssh\id_ed25519.pub
+
+
+CONTACT
+───────
+Dave's Tailscale IP: __________________ (ask Dave)
+Dashboard URL: ________________________ (given by Dave)
+
+
+STATUS: READY FOR COLLABORATION ✅
+
+═══════════════════════════════════════════════════════════
+Generated: 2026-09-29
+WISE² Command Center - Collaborative Setup
+═══════════════════════════════════════════════════════════
