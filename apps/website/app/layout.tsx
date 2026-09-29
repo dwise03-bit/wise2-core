@@ -53,9 +53,9 @@ export default function RootLayout({
 }) {
   const headerList = headers();
   const cookieStore = cookies();
-  const siteBrand = headerList.get('x-site-brand') || cookieStore.get('x-brand')?.value;
+  const siteBrand = headerList.get('x-site-brand') || cookieStore.get('x-brand')?.value || cookieStore.getAll().find(c => c.name === 'x-brand')?.value;
   const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
-  const skipSiteChrome = isBlackhailBrand(siteBrand) || isBlackhailHost(host);
+  const skipSiteChrome = isBlackhailBrand(siteBrand) || isBlackhailHost(host) || siteBrand === 'blakkhail';
 
   return (
     <html lang="en" suppressHydrationWarning>

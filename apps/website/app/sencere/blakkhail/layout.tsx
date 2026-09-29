@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Oswald, Inter } from 'next/font/google';
-import { headers, cookies } from 'next/headers';
+import { headers } from 'next/headers';
 import { blakkhailBrand } from '@/components/sencere/blakkhail/config';
 import { isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 
@@ -54,11 +54,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function BlakkhailLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
-      style={{ fontFamily: 'var(--font-body)', backgroundColor: '#0A0A0A', color: '#A8A8A8', ['--font-headers' as string]: 'var(--font-display)' }}
-    >
-      {children}
-    </div>
+    <>
+      <style>{`
+        /* Hide SiteChrome when rendering BLAKKHAIL */
+        nav, [class*="SiteChrome"], [class*="siteChrome"], [class*="site-chrome"], header[role="navigation"], aside { display: none !important; }
+        body > div:first-child > div:first-child { width: 100%; max-width: 100%; }
+      `}</style>
+      <div
+        className={`${oswald.variable} ${inter.variable} min-h-screen antialiased`}
+        style={{ fontFamily: 'var(--font-body)', backgroundColor: '#0A0A0A', color: '#A8A8A8', ['--font-headers' as string]: 'var(--font-display)' }}
+      >
+        {children}
+      </div>
+    </>
   );
 }
