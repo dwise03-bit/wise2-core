@@ -2,6 +2,7 @@
 
 import styles from './trader-3d.module.css';
 import CuzzoAI from './cuzzo-ai';
+import LiveTrading from './live-trading';
 
 export default function EveryDayTraderPage() {
   const markets = [
@@ -178,6 +179,9 @@ export default function EveryDayTraderPage() {
             <button className={styles.buttonPremium}>Continue Learning →</button>
           </article>
         </div>
+
+        {/* Live Trading */}
+        <LiveTrading />
 
         {/* Footer */}
         <footer className={styles.footerPremium}>
