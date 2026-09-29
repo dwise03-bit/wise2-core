@@ -58,7 +58,8 @@ export default function RootLayout({
   const host = normalizeHost(headerList.get('x-forwarded-host') ?? headerList.get('host'));
   const isBlackhailHost_ = isBlackhailHost(host);
   const isBlackhailBrand_ = isBlackhailBrand(siteBrand) || xBrandCookie === 'blakkhail';
-  const skipSiteChrome = isBlackhailHost_ || isBlackhailBrand_ || headerList.get('x-blakkhail-request') === 'true';
+  const isBlackhailPath = headerList.get('x-pathname')?.includes('/sencere/blakkhail');
+  const skipSiteChrome = isBlackhailHost_ || isBlackhailBrand_ || isBlackhailPath || headerList.get('x-blakkhail-request') === 'true';
 
   return (
     <html lang="en" suppressHydrationWarning>

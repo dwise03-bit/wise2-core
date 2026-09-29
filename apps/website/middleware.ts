@@ -7,6 +7,7 @@ const SENCERE_PREFIX = '/sencere';
 function withBlackhailBrand(request: NextRequest): Headers {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-site-brand', 'blakkhail');
+  requestHeaders.set('x-pathname', request.nextUrl.pathname);
   return requestHeaders;
 }
 
