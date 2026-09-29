@@ -19,8 +19,11 @@ export default function EveryDayTraderPage() {
 
   // Initialize live data on component mount
   useEffect(() => {
-    // Set data source (mock for development, can be switched to 'alpha-vantage' or 'yahoo')
-    liveDataManager.setDataSource('mock');
+    // Set data source from environment or fallback to mock
+    const dataSource = (process.env.NEXT_PUBLIC_MARKET_DATA_SOURCE || 'mock') as 'mock' | 'alpha-vantage' | 'yahoo';
+    const apiKey = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_KEY || process.env.NEXT_PUBLIC_RAPID_API_KEY || '';
+
+    liveDataManager.setDataSource(dataSource, apiKey);
 
     // Subscribe to live market data
     const unsubscribe = marketDataService.subscribe((data) => {
