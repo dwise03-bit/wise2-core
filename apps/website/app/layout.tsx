@@ -60,7 +60,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <style dangerouslySetInnerHTML={{ __html: `
           /* BLAKKHAIL COMPLETE HIDE */
-          nav, header, aside, [role="navigation"], [role="banner"], [class*="SiteChrome"], [class*="siteChrome"], [class*="Chrome"], [class*="trading"], [class*="dashboard"], [class*="chart"], [class*="ticker"], [class*="market"], [class*="stock"], .market-open, .market-data, .quote-ticker { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+          nav, header, aside, [role="navigation"], [role="banner"], [class*="SiteChrome"], [class*="siteChrome"], [class*="Chrome"], [class*="ticker"], [class*="market"], [class*="stock"], .market-open, .market-data, .quote-ticker { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
           body > div > nav, body > div > header, body > div > aside { display: none !important; }
           body > * > * > [class*="Chrome"], body > * > * > nav, body > * > * > header { display: none !important; }
         `}} />
