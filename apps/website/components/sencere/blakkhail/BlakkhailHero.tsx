@@ -2,83 +2,263 @@
 
 import Image from 'next/image';
 import { BLAKKHAIL_LEGACY } from '@/lib/sencere/blakkhail-legacy';
+import { useEffect, useRef, useState } from 'react';
 
 export function BlakkhailHero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setMousePos({
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
-    <section className="relative w-full overflow-hidden bg-black">
+    <section className="relative w-full overflow-hidden bg-black" ref={containerRef}>
+      {/* Animated Lightning Background Grid */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `linear-gradient(0deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
+          animation: 'gridFlow 20s linear infinite'
+        }} />
+      </div>
+
       {/* SenCere Creative Composite Hero */}
       <div className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Full hero composite background */}
-        <Image
-          src="/sencere-assets/blakkhail/sencere-hero-composite.webp"
-          alt="SenCere Creative 2026 - Take Control No Apologies"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center animate-[fadeIn_1.2s_ease-out]"
-          quality={100}
-        />
+        {/* Lightning Bolts - Layer 1 */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={`lightning-${i}`}
+              className="absolute opacity-0"
+              style={{
+                left: `${20 + i * 20}%`,
+                top: `${10 + i * 15}%`,
+                animation: `lightningBolt ${3 + i * 0.5}s cubic-bezier(0.34, 1.56, 0.64, 1) infinite`,
+                animationDelay: `${i * 0.3}s`,
+              }}
+            >
+              <svg width="120" height="200" viewBox="0 0 120 200" className="drop-shadow-lg">
+                <path
+                  d={`M${60 + (i % 2 ? 10 : -10)} 0 L${50 + (i % 2 ? 15 : -15)} 60 L${70 + (i % 2 ? 5 : -5)} 80 L${40 + (i % 2 ? 20 : -20)} 140 L${60} 200`}
+                  stroke={`hsl(${200 + i * 10}, 100%, 50%)`}
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+                <path
+                  d={`M${60 + (i % 2 ? 10 : -10)} 0 L${50 + (i % 2 ? 15 : -15)} 60 L${70 + (i % 2 ? 5 : -5)} 80 L${40 + (i % 2 ? 20 : -20)} 140 L${60} 200`}
+                  stroke={`hsl(${180}, 100%, 60%)`}
+                  strokeWidth="0.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  opacity="0.6"
+                  filter="url(#glow)"
+                />
+              </svg>
+            </div>
+          ))}
+        </div>
+
+        {/* Electrical Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={`particle-${i}`}
+              className="absolute w-1 h-1 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: `hsl(${180 + Math.random() * 40}, 100%, ${50 + Math.random() * 30}%)`,
+                boxShadow: `0 0 ${10 + Math.random() * 20}px currentColor`,
+                animation: `particleFloat ${5 + Math.random() * 5}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Full hero composite background with parallax */}
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 10}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        >
+          <Image
+            src="/sencere-assets/blakkhail/sencere-hero-composite.webp"
+            alt="SenCere Creative 2026 - Take Control No Apologies"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center animate-[fadeIn_1.5s_ease-out] scale-105"
+            style={{
+              filter: 'contrast(1.1) brightness(1.05) saturate(1.1)',
+            }}
+            quality={100}
+          />
+        </div>
+
+        {/* Cinematic light rays overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div style={{
+            background: `radial-gradient(ellipse at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(0, 217, 255, 0.3), transparent 50%)`,
+            transition: 'background 0.3s ease-out',
+          }} className="absolute inset-0" />
+        </div>
 
         {/* Overlay gradient for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
 
-        {/* Text Overlay - Below models */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center z-20 animate-[fadeInUp_1.4s_ease-out_0.2s_forwards]" style={{ animation: 'fadeInUp 1.4s ease-out 0.2s forwards' }}>
+        {/* Chromatic aberration effect */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]">
+          <Image
+            src="/sencere-assets/blakkhail/sencere-hero-composite.webp"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            style={{
+              filter: 'hue-rotate(10deg)',
+              mixBlendMode: 'screen',
+            }}
+            quality={100}
+          />
+        </div>
+
+        {/* Text Overlay - Below models with enhanced effects */}
+        <div
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 text-center z-20 animate-[fadeInUp_1.6s_ease-out_0.3s_forwards]"
+          style={{
+            animation: 'fadeInUp 1.6s ease-out 0.3s forwards',
+            filter: 'drop-shadow(0 20px 40px rgba(0, 217, 255, 0.2))',
+          }}
+        >
           <div className="space-y-6 max-w-2xl">
-            {/* Tagline */}
+            {/* Tagline with enhanced glow */}
             <div className="space-y-3">
-              <p className="text-xs sm:text-sm font-black uppercase tracking-[0.3em] text-red-500/90">
+              <p
+                className="text-xs sm:text-sm font-black uppercase tracking-[0.3em]"
+                style={{
+                  color: '#FF4444',
+                  textShadow: '0 0 20px rgba(255, 68, 68, 0.8), 0 0 40px rgba(255, 68, 68, 0.4)',
+                  animation: 'glow 3s ease-in-out infinite',
+                }}
+              >
                 SenCere Creative
               </p>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase leading-tight tracking-tighter" style={{ color: '#C4A369' }}>
+
+              {/* Main heading with cinematic styling */}
+              <h2
+                className="text-4xl sm:text-5xl lg:text-7xl font-black uppercase leading-tight tracking-tighter"
+                style={{
+                  color: '#C4A369',
+                  textShadow: '0 0 30px rgba(196, 163, 105, 0.6), 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 2px 8px rgba(255, 255, 255, 0.1)',
+                  letterSpacing: '0.08em',
+                  animation: 'textPulse 4s ease-in-out infinite',
+                }}
+              >
                 Take Control
               </h2>
-              <p className="text-sm sm:text-base font-black uppercase tracking-widest" style={{ color: '#00D9FF' }}>
+
+              {/* Subheading with cyan glow */}
+              <p
+                className="text-sm sm:text-base font-black uppercase tracking-widest"
+                style={{
+                  color: '#00D9FF',
+                  textShadow: '0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4)',
+                  animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                }}
+              >
                 No Apologies
               </p>
             </div>
 
             {/* Description */}
-            <p className="text-sm sm:text-base text-gray-300 max-w-xl mx-auto font-light">
+            <p
+              className="text-sm sm:text-base font-light max-w-xl mx-auto"
+              style={{
+                color: '#D1D5DB',
+                textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+              }}
+            >
               Legacy apparel. Original designs. Built for the culture.
             </p>
 
-            {/* CTA Button */}
+            {/* CTA Button with enhanced effects */}
             <div className="pt-4">
               <a
                 href="#collection"
-                className="inline-block px-10 py-4 text-xs sm:text-sm font-black uppercase tracking-widest transition-all duration-400"
+                className="inline-block px-10 py-4 text-xs sm:text-sm font-black uppercase tracking-widest transition-all duration-300 relative group"
                 style={{
                   backgroundColor: '#C4A369',
                   color: '#050607',
-                  boxShadow: '0 0 40px rgba(196, 163, 105, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)',
-                  border: '2px solid #C4A369'
+                  boxShadow: '0 0 60px rgba(196, 163, 105, 0.6), 0 30px 80px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  border: '2px solid #C4A369',
+                  animation: 'buttonFloat 3s ease-in-out infinite',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 80px rgba(196, 163, 105, 0.8), 0 30px 70px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(196, 163, 105, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  e.currentTarget.style.boxShadow = '0 0 100px rgba(196, 163, 105, 1), 0 40px 100px rgba(0, 217, 255, 0.3), inset 0 1px 20px rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(-6px) scale(1.05)';
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #C4A369 0%, #E8C89F 100%)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 40px rgba(196, 163, 105, 0.5), 0 20px 50px rgba(0, 0, 0, 0.6)';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(196, 163, 105, 0.6), 0 30px 80px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.background = '#C4A369';
                 }}
               >
-                Shop Collection →
+                <span style={{ position: 'relative', zIndex: 2 }}>Shop Collection →</span>
+                {/* Button glow effect */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: 'inherit',
+                    background: 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 217, 255, 0.2), transparent)',
+                    pointerEvents: 'none',
+                  }}
+                />
               </a>
             </div>
           </div>
         </div>
 
-        {/* Premium scroll indicator with pulse */}
+        {/* Premium scroll indicator with enhanced effects */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20">
           <div className="animate-[bounce_3s_ease-in-out_infinite] text-center">
-            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Scroll</p>
+            <p
+              className="text-xs uppercase tracking-widest mb-3"
+              style={{
+                color: '#6B7280',
+                textShadow: '0 0 10px rgba(0, 217, 255, 0.3)',
+              }}
+            >
+              Scroll
+            </p>
             <svg
-              className="w-6 h-6 mx-auto text-gray-400"
+              className="w-6 h-6 mx-auto"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
+              style={{
+                color: '#4B5563',
+                filter: 'drop-shadow(0 0 10px rgba(0, 217, 255, 0.2))',
+                animation: 'glowPulse 2s ease-in-out infinite',
+              }}
             >
               <path
                 strokeLinecap="round"
@@ -92,13 +272,10 @@ export function BlakkhailHero() {
 
       <style jsx>{`
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
+
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -109,10 +286,86 @@ export function BlakkhailHero() {
             transform: translateY(0);
           }
         }
-        
+
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-12px); }
+        }
+
+        @keyframes lightningBolt {
+          0%, 10%, 90%, 100% {
+            opacity: 0;
+            transform: translateY(0) scaleX(0.8);
+          }
+          5%, 8% {
+            opacity: 1;
+            transform: translateY(20px) scaleX(1);
+          }
+          50% {
+            opacity: 0.3;
+            transform: translateY(10px) scaleX(0.9);
+          }
+        }
+
+        @keyframes particleFloat {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(var(--tx, 50px), var(--ty, -100px)) scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes gridFlow {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(60px); }
+        }
+
+        @keyframes glow {
+          0%, 100% {
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.8), 0 0 40px rgba(255, 68, 68, 0.4);
+          }
+          50% {
+            text-shadow: 0 0 30px rgba(255, 68, 68, 1), 0 0 60px rgba(255, 68, 68, 0.6);
+          }
+        }
+
+        @keyframes textPulse {
+          0%, 100% {
+            text-shadow: 0 0 30px rgba(196, 163, 105, 0.6), 0 20px 60px rgba(0, 0, 0, 0.8);
+            transform: scale(1);
+          }
+          50% {
+            text-shadow: 0 0 50px rgba(196, 163, 105, 0.8), 0 20px 80px rgba(0, 0, 0, 0.9);
+            transform: scale(1.02);
+          }
+        }
+
+        @keyframes buttonFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% {
+            filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.2));
+          }
+          50% {
+            filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.5));
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -121,6 +374,18 @@ export function BlakkhailHero() {
           }
         }
       `}</style>
+
+      <svg style={{ display: 'none' }}>
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
     </section>
   );
 }
