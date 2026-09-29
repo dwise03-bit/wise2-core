@@ -72,6 +72,7 @@ model User {
 
   // Clipper System relationships
   clipperMediaAssets MediaAsset[] @relation("clipperMediaAssets")
+  clipperSettings    UserClipperSettings?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -7670,4 +7671,278 @@ model DesignBrief {
   @@index([status])
   @@index([designType])
   @@map("design_briefs")
+}
+
+// ============================================================================
+// WISE² Creator Research & Automated Clipping System (Phase 2)
+// ============================================================================
+
+enum PlatformSource {
+  YOUTUBE
+  TWITCH
+  KICK
+  FACEBOOK
+  INSTAGRAM
+  TIKTOK
+  TWITTER
+}
+
+enum CreatorTier {
+  NANO      // < 10K followers
+  MICRO     // 10K - 100K
+  SMALL     // 100K - 1M
+  MEDIUM    // 1M - 10M
+  MACRO     // > 10M
+}
+
+enum ResearchStatus {
+  PENDING
+  ANALYZING
+  COMPLETED
+  FAILED
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  QUEUED
+  PROCESSING
+  EXTRACTED
+  PUBLISHED
+  FAILED
+}
+
+model CreatorProfile {
+  id                String   @id @default(cuid())
+
+  // Creator info
+  name              String
+  handle            String   @unique
+  bio               String?  @db.Text
+
+  // Platform presence
+  platforms         PlatformSource[] @default([])
+  youtubeChannelId  String?
+  twitchChannelId   String?
+  instagramHandle   String?
+  twitterHandle     String?
+  kickChannelId     String?
+  facebookPageId    String?
+
+  // URLs
+  profileUrl        String?
+  avatarUrl         String?
+
+  // Content focus
+  contentCategories String[] @default([])
+  language          String   @default("en")
+
+  // Research metadata
+  followerCount     Int?
+  engagementRate    Float?
+  clippingScore     Float?  @default(0)  // 0-100: how good are they for clipping
+  trendingScore     Float?  @default(0)  // 0-100: current relevance
+  growthVelocity    Float?  @default(0)  // Follower growth rate
+
+  // Status
+  isMonitored       Boolean @default(false)
+  isBlacklisted     Boolean @default(false)
+  blacklistReason   String?
+
+  lastAnalyzedAt    DateTime?
+  lastClippedAt     DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  research          CreatorResearch[]
+  scheduledClips    ScheduledClip[]
+  metrics           CreatorMetrics[]
+
+  @@index([handle])
+  @@index([clippingScore])
+  @@index([trendingScore])
+  @@index([isMonitored])
+  @@map("creator_profiles")
+}
+
+model CreatorResearch {
+  id                String   @id @default(cuid())
+  creatorId         String
+  creator           CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // Research analysis
+  contentSummary    String?  @db.Text
+  strengths         String[] @default([])
+  weaknesses        String[] @default([])
+  opportunities     String[] @default([])
+
+  // AI Analysis
+  vitalityScore     Float?  // How "alive" is their content?
+  virialityScore    Float?  // How likely to go viral?
+  audienceQuality   Float?  // Quality of engaged audience (0-100)
+  contentRelevance  Float?  // How relevant to trends (0-100)
+  clipPotential     Float?  // Score for clipping potential (0-100)
+
+  // Recommended clips
+  recommendedTopics String[] @default([])
+  bestPerformingContent String[]? @db.Text[]
+
+  // Status
+  status            ResearchStatus @default(PENDING)
+  aiAnalysis        Json?
+  researchNotes     String?  @db.Text
+
+  // Analysis metadata
+  analyzedBy        String? // "claude", "human", "automated"
+  confidenceScore   Float? @default(0.5)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  analyzedAt        DateTime?
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([clipPotential])
+  @@map("creator_research")
+}
+
+model CreatorMetrics {
+  id                String   @id @default(cuid())
+  creatorId         String
+  creator           CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // Follower metrics
+  followerCount     Int
+  followingCount    Int?
+  totalViews        BigInt?
+  totalEngagement   BigInt?
+
+  // Growth metrics
+  followerGrowth7d  Int?     // Growth in last 7 days
+  followerGrowth30d Int?    // Growth in last 30 days
+  engagementGrowth  Float?   // Engagement rate growth (%)
+
+  // Content metrics
+  avgViewsPerVideo  BigInt?
+  avgLikesPerVideo  BigInt?
+  avgCommentsPerVideo BigInt?
+  avgSharesPerVideo BigInt?
+
+  // Timing
+  recordedAt        DateTime @default(now())
+
+  @@index([creatorId, recordedAt])
+  @@map("creator_metrics")
+}
+
+model ScheduledClip {
+  id                String   @id @default(cuid())
+  creatorId         String
+  creator           CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  // Source content
+  sourceUrl         String
+  sourcePlatform    PlatformSource
+  sourceId          String?  // Video ID from platform
+
+  // Clipping schedule
+  scheduledFor      DateTime
+  status            ScheduleStatus @default(SCHEDULED)
+
+  // Clip metadata
+  title             String?
+  description       String?  @db.Text
+  suggestedHashtags String[] @default([])
+
+  // AI suggestion
+  clipPotentialScore Float? @default(0)
+  recommendedStart  Int?    // seconds
+  recommendedEnd    Int?    // seconds
+
+  // Processing
+  extractedPath     String?
+  extractionError   String?
+  publishedClipId   String? // Reference to published clip
+
+  // Publishing plan
+  publishTo         PlatformSource[] @default([])
+  publishedAt       DateTime?
+
+  // Execution
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("scheduled_clips")
+}
+
+model ResearchJob {
+  id                String   @id @default(cuid())
+
+  // Job type
+  jobType           String   // "daily-discovery", "trend-analysis", "creator-deep-dive"
+
+  // Parameters
+  platforms         PlatformSource[] @default([])
+  categories        String[] @default([])
+  minFollowers      Int?
+  maxFollowers      Int?
+
+  // Execution
+  status            ResearchStatus @default(PENDING)
+  resultCount       Int @default(0)
+
+  // AI details
+  aiPrompt          String?  @db.Text
+  aiFindings        Json?    // Structured findings from AI
+  topCreators       String[] @default([]) // Array of creator IDs found
+
+  // Scheduling
+  scheduledAt       DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  nextRunAt         DateTime? // For recurring jobs
+
+  // Error handling
+  errorMessage      String?
+  retryCount        Int @default(0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([jobType])
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("research_jobs")
+}
+
+// Add relationship to User model
+model UserClipperSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation("clipperSettings", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Research preferences
+  monitoredCreators String[] @default([])
+  preferredPlatforms PlatformSource[] @default([YOUTUBE, TWITCH])
+  contentCategories String[] @default([])
+
+  // Automation settings
+  autoClipEnabled   Boolean @default(false)
+  autoPublishEnabled Boolean @default(false)
+  dailyResearchTime String? @default("08:00") // UTC time
+
+  // Quality thresholds
+  minClipScore      Float @default(60.0)
+  minViralityScore  Float @default(50.0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("user_clipper_settings")
 }
