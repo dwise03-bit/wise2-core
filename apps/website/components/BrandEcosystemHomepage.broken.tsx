@@ -1,0 +1,817 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowDown,
+  ArrowRight,
+  Check,
+  ChevronRight,
+  Circle,
+  Cpu,
+  Gauge,
+  Layers3,
+  Menu,
+  ShieldCheck,
+  Workflow,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { FeaturedLatestDrop } from "@/components/sencere/blakkhail/FeaturedLatestDrop";
+import { PizzaProgressBar } from "@/components/PizzaProgressBar";
+import { EnhancedEcosystemGrid } from "@/components/EnhancedEcosystemGrid";
+import { MetricsDashboard } from "@/components/MetricsDashboard";
+import { ProductSpotlight } from "@/components/ProductSpotlight";
+import { ProductConnections } from "@/components/ProductConnections";
+
+const metrics = [
+  ["01", "connected operating layer", "Everything speaks to everything."],
+  ["24/7", "systems that keep moving", "Momentum does not clock out."],
+  ["04", "ways to run the work", "Cloud, edge, desktop, mobile."],
+  ["∞", "room to grow into", "Start where you are. Build forward."],
+];
+
+const capabilities = [
+  {
+    icon: Workflow,
+    number: "01",
+    title: "AI workflows",
+    copy: "Turn repeatable work into intelligent systems that execute, remember, and improve.",
+  },
+  {
+    icon: Layers3,
+    number: "02",
+    title: "Business infrastructure",
+    copy: "Bring cloud, VPS, edge, desktop, and mobile operations into one coherent layer.",
+  },
+  {
+    icon: Gauge,
+    number: "03",
+    title: "Command visibility",
+    copy: "See what is moving, what is stuck, and what deserves attention before it becomes a fire.",
+  },
+  {
+    icon: ShieldCheck,
+    number: "04",
+    title: "Durable control",
+    copy: "Build with practical security, documented decisions, and systems your team can actually own.",
+  },
+];
+
+const deployments = [
+  {
+    label: "WISE² IMP SYSTEMS",
+    title: "WISE IMPS",
+    copy: "Voice, edge intelligence, and AI automation built for real life.",
+    image: "/wise-imp/imps-product.png",
+    href: "/products/imp",
+    tone: "cyan",
+  },
+  {
+    label: "FIELD OPERATIONS",
+    title: "HVAC intelligence",
+    copy: "Diagnostics, dispatch, maintenance, and customer history in one field-ready flow.",
+    image: "/brand/wise2-command-center.jpg",
+    href: "/hvac",
+    tone: "lime",
+  },
+  {
+    label: "CREATIVE OPERATIONS",
+    title: "WISE² Sound Lab",
+    copy: "AI-powered custom jingles, sonic logos, and full audio branding — from a 15-second spot to a finished production.",
+    image: "/brand/wise2-brand-identity.png",
+    href: "/soundlab",
+    tone: "purple",
+  },
+  {
+    label: "CLIENT OPERATIONS",
+    title: "The client OS",
+    copy: "A shared operating layer for keeping relationships, work, and momentum visible.",
+    image: "/brand/wise2-hero-united-source.png",
+    href: "/platform",
+    tone: "white",
+  },
+  {
+    label: "CONTRACTOR OPERATIONS",
+    title: "Contractor OS",
+    copy: "CRM, estimates, scheduling, dispatch, and field work in one system.",
+    image: "/brand/wise2-command-center.jpg",
+    href: "/fieldtech",
+    tone: "gold",
+  },
+  {
+    label: "WISE DEFENSE",
+    title: "Nightwing",
+    copy: "Train. Protect. Connect. Security systems for the real world.",
+    image: "/brand/wise2-command-center.jpg",
+    href: "/wise-defense",
+    tone: "red",
+  },
+  {
+    label: "MARKET OPERATIONS",
+    title: "WISE Trading",
+    copy: "Scan markets, model opportunity, and move with disciplined signals.",
+    image: "/brand/wise2-hero-united-source.png",
+    href: "/trading",
+    tone: "green",
+  },
+  {
+    label: "WISE SHINE",
+    title: "Wise Shine",
+    copy: "Premium detailing and growth systems built around real operators.",
+    image: "/brand/wise2-brand-identity.png",
+    href: "/wise-shine",
+    tone: "gold",
+  },
+];
+
+const ecosystemNodes = [
+  { label: "WISE² COMMAND", detail: "One operating view", href: "/platform" },
+  { label: "AI PHONE", detail: "Voice, SMS, follow-up", href: "/phone" },
+  { label: "FIELD TECH", detail: "Jobs, teams, history", href: "/fieldtech" },
+  { label: "HVAC", detail: "Diagnostics + edge", href: "/hvac" },
+  { label: "CAPTURE", detail: "Turn work into memory", href: "/apps" },
+  { label: "WISE² CLOUD", detail: "Host, deploy, monitor", href: "/cloud" },
+  { label: "XR COMMAND", detail: "Spatial operations", href: "/quest" },
+  { label: "LIL LIZZY / BOOM TAG", detail: "Playable connected hardware", href: "/lil-lizzy/led-tag" },
+  { label: "BUSINESS AUDIT", detail: "Find the next move", href: "/audit" },
+];
+
+export function BrandEcosystemHomepage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const pointerX = useSpring(useMotionValue(0), { stiffness: 70, damping: 20 });
+  const pointerY = useSpring(useMotionValue(0), { stiffness: 70, damping: 20 });
+  const artworkX = useTransform(pointerX, [-0.5, 0.5], [-14, 14]);
+  const artworkY = useTransform(pointerY, [-0.5, 0.5], [-10, 10]);
+  const reveal = reduceMotion
+    ? undefined
+    : { opacity: 1, y: 0, filter: "blur(0px)" };
+  const initialReveal = reduceMotion
+    ? undefined
+    : { opacity: 0, y: 28, filter: "blur(8px)" };
+  return (
+    <main data-wise2-homepage="united-command-v2" className="wise-home overflow-hidden bg-[#050607] text-[#D1D5DB]">
+      <div className="wise-topline">
+        <span>WISE² UNITED / ONE PLATFORM. REAL BUSINESSES.</span>
+        <span className="hidden sm:inline">
+          SYSTEM STATUS <span /> ALL SYSTEMS NOMINAL
+        </span>
+      </div>
+      <header className="wise-header fixed inset-x-0 top-0 z-50 border-b border-[#00D9FF]/20 bg-[#050607]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-[78px] max-w-[1320px] items-center justify-between px-6 lg:px-10">
+          <Link href="/" aria-label="WISE2 home" className="leading-none">
+            <span className="block text-[27px] font-black tracking-[-.09em] text-[#00D9FF]">
+              WISE<sup className="text-sm text-[#00FF7F]">²</sup>
+            </span>
+            <span className="mt-1 block text-[9px] font-bold tracking-[.38em] text-[#00FF7F]">
+              BUILD DIFFERENT
+            </span>
+          </Link>
+          <nav className="hidden items-center gap-8 text-[11px] font-bold tracking-[.16em] text-white/65 lg:flex">
+            <Link
+              href="/products"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              PRODUCTS
+            </Link>
+            <Link
+              href="/lil-lizzy"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              LIL LIZZY
+            </Link>
+            <Link
+              href="/services"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              SOLUTIONS
+            </Link>
+            <Link
+              href="/consulting"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              SALES ACADEMY
+            </Link>
+            <Link
+              href="/revenue/dashboard"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              REVENUE
+            </Link>
+            <Link
+              href="/quest"
+              className="hidden transition-colors hover:text-[#00D9FF] xl:inline"
+            >
+              XR COMMAND
+            </Link>
+            <Link
+              href="/industries"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              INDUSTRIES
+            </Link>
+            <Link
+              href="/about"
+              className="transition-colors hover:text-[#00D9FF]"
+            >
+              OUR WORK
+            </Link>
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/audit"
+              className="inline-flex min-h-11 items-center gap-2 bg-[#b08d57] px-4 py-3 text-[10px] font-black tracking-[.13em] text-black transition-transform hover:-translate-y-0.5"
+            >
+              BOOK A BUSINESS AUDIT <ArrowRight size={14} />
+            </Link>
+            <button
+              type="button"
+              aria-label={
+                menuOpen ? "Close navigation menu" : "Open navigation menu"
+              }
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="inline-flex min-h-11 min-w-11 items-center justify-center border border-white/20 text-white lg:hidden"
+            >
+              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+        {menuOpen && (
+          <div className="border-t border-white/10 bg-[#050607] px-6 py-5 lg:hidden">
+            <div className="flex flex-col gap-4 text-xs font-bold tracking-[.16em] text-white/70">
+              <Link href="/platform" onClick={() => setMenuOpen(false)}>
+                SYSTEM
+              </Link>
+              <Link href="/products" onClick={() => setMenuOpen(false)}>
+                DEPLOYMENTS
+              </Link>
+              <Link href="/lil-lizzy" onClick={() => setMenuOpen(false)}>
+                LIL LIZZY / BOOMPOPSTERS
+              </Link>
+              <Link href="/consulting" onClick={() => setMenuOpen(false)}>
+                SALES ACADEMY
+              </Link>
+              <Link href="/revenue/dashboard" onClick={() => setMenuOpen(false)}>
+                REVENUE
+              </Link>
+              <Link href="/quest" onClick={() => setMenuOpen(false)}>
+                XR COMMAND
+              </Link>
+              <Link href="/about" onClick={() => setMenuOpen(false)}>
+                METHOD
+              </Link>
+              <Link href="/about" onClick={() => setMenuOpen(false)}>
+                ABOUT
+              </Link>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <div className="bg-black border-b border-gray-800 py-6">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-xl font-bold text-white mb-1">WISE² Revenue Platform</h2>
+            <p className="text-sm text-gray-400">Building, Deploying & Making Money Today</p>
+          </div>
+          <PizzaProgressBar progress={72} />
+        </div>
+      </div>
+
+      <section
+        className="wise-hero relative flex min-h-[890px] items-end pt-[110px] lg:min-h-[980px]"
+        onMouseMove={(event) => {
+          if (reduceMotion) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
+          pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
+        }}
+        onMouseLeave={() => {
+          pointerX.set(0);
+          pointerY.set(0);
+        }}
+      >
+        <motion.div
+          initial={reduceMotion ? false : { scale: 1.08 }}
+          animate={reduceMotion ? undefined : { scale: 1 }}
+          transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+          style={reduceMotion ? undefined : { x: artworkX, y: artworkY }}
+          className="absolute inset-0"
+        >
+          <Image
+            src="/brand/wise2-hero-united-source.png"
+            alt="WISE² team and business operating system brand artwork"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        </motion.div>
+        <div className="wise-hero-grid absolute inset-0" />
+        <div className="wise-hero-shade wise-hero-shade-horizontal absolute inset-0" />
+        <div className="wise-hero-shade wise-hero-shade-vertical absolute inset-0" />
+        <div className="relative mx-auto grid w-full max-w-[1320px] gap-14 px-6 pb-16 lg:grid-cols-[1fr_330px] lg:items-end lg:px-10 lg:pb-24">
+          <motion.div
+            initial={initialReveal}
+            whileInView={reveal}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-[760px]"
+          >
+            <p className="wise-kicker mb-7">
+              WISE² UNITED · BUSINESS OPERATING SYSTEM
+            </p>
+            <h1 className="wise-display">
+              Building empires.
+              <br />
+              <span>Changing culture.</span>
+              <br />
+              Together.
+            </h1>
+            <p className="mt-8 max-w-[540px] text-base leading-7 text-white/75 lg:text-lg">
+              One platform for software, automation, communications,
+              infrastructure, AI, and real-world results.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="/audit"
+                className="wise-button inline-flex min-h-12 items-center gap-3 bg-[#b08d57] px-6 py-4 text-xs font-black tracking-[.12em] text-black"
+              >
+                BOOK A BUSINESS AUDIT <ArrowRight size={16} />
+              </Link>
+              <Link
+                href="/platform"
+                className="wise-button inline-flex min-h-12 items-center gap-3 border border-white/30 bg-black/20 px-6 py-4 text-xs font-bold tracking-[.12em] text-white"
+              >
+                EXPLORE WISE²
+              </Link>
+            </div>
+            <div className="mt-16 flex items-center gap-3 text-[10px] font-bold tracking-[.2em] text-white/50">
+              <ArrowDown size={15} className="text-[#00D9FF]" /> SCROLL TO
+              EXPLORE THE OPERATING LAYER
+            </div>
+          </motion.div>
+          <motion.div
+            initial={initialReveal}
+            whileInView={reveal}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ delay: 0.18, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="wise-status-panel hidden border border-white/15 bg-black/45 p-5 backdrop-blur-md lg:block"
+          >
+            <div className="flex items-center justify-between border-b border-white/10 pb-4 text-[10px] font-bold tracking-[.16em] text-white/50">
+              <span>LIVE SYSTEM READOUT</span>
+              <span className="flex items-center gap-2 text-[#00D9FF]">
+                <Circle size={7} fill="currentColor" /> LIVE
+              </span>
+            </div>
+            <div className="space-y-5 pt-5">
+              <div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-white/55">OPERATING LAYER</span>
+                  <strong>ONLINE</strong>
+                </div>
+                <div className="wise-meter">
+                  <i style={{ width: "94%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-white/55">AUTOMATION LOAD</span>
+                  <strong>72%</strong>
+                </div>
+                <div className="wise-meter">
+                  <i style={{ width: "72%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-white/55">FIELD SIGNAL</span>
+                  <strong>STRONG</strong>
+                </div>
+                <div className="wise-meter">
+                  <i style={{ width: "86%" }} />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 border-t border-white/10 pt-4 text-[10px] leading-5 text-white/40">
+              A practical intelligence layer for the work that cannot wait.
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="wise-metrics border-y border-white/10 bg-[#0b0d0b] px-6 py-5 lg:px-10">
+        <div className="mx-auto grid max-w-[1320px] gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+          {metrics.map(([value, label, copy]) => (
+            <div
+              key={label}
+              className="wise-metric bg-[#0b0d0b] px-6 py-7 lg:px-8"
+            >
+              <div className="flex items-start justify-between">
+                <p className="text-4xl font-black tracking-[-.06em] text-[#00D9FF]">
+                  {value}
+                </p>
+                <span className="text-[10px] text-white/25">/ W²</span>
+              </div>
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[.18em] text-white/65">
+                {label}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-white/35">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <FeaturedLatestDrop />
+
+      <section id="ecosystem" className="wise-section border-y border-white/10 bg-[#080a08] px-6 py-28 lg:px-10 lg:py-36">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="wise-kicker mb-5">WISE² UNITED / THE ECOSYSTEM</p>
+              <h2 className="wise-heading">One context engine. <span>Every part of the business.</span></h2>
+            </div>
+            <p className="max-w-lg text-base leading-7 text-white/60">
+              Products, services, and field systems stay connected through one operating layer—so every signal can become a decision, an action, or a better customer experience.
+            </p>
+          </div>
+        </section>
+
+        {/* Enhanced Ecosystem Grid */}
+        <EnhancedEcosystemGrid />
+
+        {/* Product Spotlight */}
+        <ProductSpotlight />
+
+        {/* Metrics Dashboard */}
+        <MetricsDashboard />
+
+        {/* Product Connections */}
+        <ProductConnections />
+
+      <section
+        id="system"
+        className="wise-section mx-auto max-w-[1320px] px-6 py-28 lg:px-10 lg:py-36"
+      >
+
+      <section
+        id="system"
+        className="wise-section mx-auto max-w-[1320px] px-6 py-28 lg:px-10 lg:py-36"
+      >
+        <div className="grid gap-14 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+          <div>
+            <p className="wise-kicker mb-5">THE WISE² DIFFERENCE</p>
+            <h2 className="wise-heading max-w-2xl">
+              One layer for the work <span>between</span> the work.
+            </h2>
+          </div>
+          <p className="max-w-lg text-base leading-7 text-white/60">
+            Most businesses do not need more disconnected tools. They need the
+            intelligence and operating rhythm to make the tools they already
+            have work together.
+          </p>
+        </div>
+        <div className="wise-layer-diagram mt-16">
+          <div className="wise-layer-label">
+            <span>01</span>
+            <strong>CAPTURE</strong>
+            <small>Signal from the field</small>
+          </div>
+          <div className="wise-layer-label">
+            <span>02</span>
+            <strong>ORCHESTRATE</strong>
+            <small>Intelligence in motion</small>
+          </div>
+          <div className="wise-layer-label">
+            <span>03</span>
+            <strong>DEPLOY</strong>
+            <small>Work that lands</small>
+          </div>
+        </div>
+        <div className="mt-10 grid gap-px bg-white/10 sm:grid-cols-2">
+          {capabilities.map(({ icon: Icon, number, title, copy }) => (
+            <motion.article
+              key={title}
+              initial={initialReveal}
+              whileInView={reveal}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.65,
+                delay: Number(number) * 0.05,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="wise-capability group bg-[#0b0d0b] p-8 lg:p-10"
+            >
+              <div className="flex items-start justify-between">
+                <Icon size={27} strokeWidth={1.5} className="text-[#00D9FF]" />
+                <span className="text-[10px] font-bold tracking-[.18em] text-white/30">
+                  {number}
+                </span>
+              </div>
+              <h3 className="mt-16 text-2xl font-black uppercase tracking-[-.03em]">
+                {title}
+              </h3>
+              <p className="mt-4 max-w-sm text-sm leading-6 text-white/55">
+                {copy}
+              </p>
+              <div className="mt-8 h-px w-0 bg-[#b08d57] transition-all duration-500 group-hover:w-full" />
+            </motion.article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        id="deployments"
+        className="wise-work border-y border-white/10 bg-[#f7f7f4] px-6 py-28 text-[#050505] lg:px-10 lg:py-36"
+      >
+        <div className="mx-auto max-w-[1320px]">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <p className="wise-kicker mb-5 text-[#5c7900]">
+                REAL BUSINESSES. REAL RESULTS.
+              </p>
+              <h2 className="wise-heading max-w-2xl">Proof over promises.</h2>
+            </div>
+            <Link
+              href="/apps"
+              className="inline-flex min-h-11 items-center gap-2 text-xs font-black tracking-[.15em] text-[#5c7900]"
+            >
+              VIEW ALL SYSTEMS <ArrowRight size={15} />
+            </Link>
+          </div>
+          <div className="mt-16 grid gap-5 lg:grid-cols-3">
+            {deployments.map((item, index) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="wise-project group block overflow-hidden bg-white"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#101210]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <span className="absolute left-5 top-5 border border-white/30 bg-black/35 px-3 py-2 text-[9px] font-bold tracking-[.16em] text-white">
+                    0{index + 1} / LIVE DEPLOYMENT
+                  </span>
+                </div>
+                <div className="p-7">
+                  <div className="flex items-center justify-between">
+                    <p
+                      className={`text-[10px] font-bold tracking-[.22em] ${item.tone === "lime" ? "text-[#5c7900]" : item.tone === "purple" ? "text-[#7a42ad]" : "text-black/45"}`}
+                    >
+                      {item.label}
+                    </p>
+                    <ChevronRight
+                      size={16}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
+                  </div>
+                  <h3 className="mt-4 text-3xl font-black uppercase tracking-[-.04em]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-black/60">
+                    {item.copy}
+                  </p>
+                  <span className="mt-7 inline-flex items-center gap-2 text-[10px] font-black tracking-[.16em]">
+                    EXPLORE SYSTEM <ArrowRight size={14} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="method"
+        className="wise-section px-6 py-28 lg:px-10 lg:py-36"
+      >
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-14 lg:grid-cols-[.85fr_1.15fr] lg:items-end">
+            <div>
+              <p className="wise-kicker mb-5">THE METHOD</p>
+              <h2 className="wise-heading">
+                From scattered effort to <span>synchronized momentum.</span>
+              </h2>
+            </div>
+            <p className="max-w-lg text-base leading-7 text-white/60">
+              Every WISE² build starts with the real operating conditions—not a
+              slide deck version of the business.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-px bg-white/10 md:grid-cols-3">
+            <div className="wise-method">
+              <span>01</span>
+              <h3>MAP THE REALITY</h3>
+              <p>
+                Find the friction, hidden work, and signals your current tools
+                are missing.
+              </p>
+            </div>
+            <div className="wise-method">
+              <span>02</span>
+              <h3>BUILD THE LAYER</h3>
+              <p>
+                Connect the people, intelligence, and infrastructure that move
+                the work forward.
+              </p>
+            </div>
+            <div className="wise-method">
+              <span>03</span>
+              <h3>KEEP IT MOVING</h3>
+              <p>
+                Measure what matters, document the system, and keep improving
+                from the field.
+              </p>
+            </div>
+            <div className="wise-method">
+              <span>04</span>
+              <h3>INTEGRATE</h3>
+              <p>Connect the systems your people already use every day.</p>
+            </div>
+            <div className="wise-method">
+              <span>05</span>
+              <h3>DEPLOY</h3>
+              <p>Launch the operating layer and train the people who run it.</p>
+            </div>
+            <div className="wise-method">
+              <span>06</span>
+              <h3>VERIFY</h3>
+              <p>
+                Measure what works and make the next decision with evidence.
+              </p>
+            </div>
+            <div className="wise-method">
+              <span>07</span>
+              <h3>DOMINATE</h3>
+              <p>Scale the system into a stronger, more durable business.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="wise-proof border-y border-white/10 px-6 py-28 lg:px-10 lg:py-36">
+        <div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          <div>
+            <p className="wise-kicker mb-5">WHY WISE²</p>
+            <h2 className="wise-heading max-w-3xl">
+              Your business is already a system.{" "}
+              <span>Make it intentional.</span>
+            </h2>
+          </div>
+          <div className="border border-white/15 bg-[#101210] p-8 lg:p-10">
+            <Cpu className="text-[#00D9FF]" size={28} strokeWidth={1.5} />
+            <p className="mt-10 text-xl font-bold leading-8">
+              We build the layer that lets your people do their best work
+              without fighting the infrastructure around them.
+            </p>
+            <ul className="mt-8 space-y-4 text-sm text-white/60">
+              {[
+                "Practical AI, not theater",
+                "Systems your team can own",
+                "Built for cloud, edge, and field reality",
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <Check size={16} className="text-[#00D9FF]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="sales-academy"
+        className="wise-section border-y border-white/10 bg-[#0b0d0b] px-6 py-28 lg:px-10 lg:py-36"
+      >
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:items-end">
+            <div>
+              <p className="wise-kicker mb-5">SALES READINESS</p>
+              <h2 className="wise-heading">
+                Train your team to <span>sell WISE².</span>
+              </h2>
+            </div>
+            <p className="max-w-lg text-base leading-7 text-white/60">
+              Market-specific training, pricing guides, and proven call scripts for NC, NYC, and Long Island.
+            </p>
+          </div>
+          <div className="mt-16 grid gap-5 lg:grid-cols-4">
+            <Link
+              href="/sales-academy/"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-white/50">ENTRY POINT</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                Academy Index
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                Select your market and get started.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/nc-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🏠 NC</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                North Carolina
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                HVAC, construction, trades.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/nyc-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🗽 NYC</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                New York City
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                FinTech, startups, agencies.
+              </p>
+            </Link>
+
+            <Link
+              href="/sales-academy/li-academy.html"
+              className="wise-project group block overflow-hidden border border-white/20 bg-[#101210] p-7 hover:border-[#b08d57] transition-colors"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[10px] font-bold tracking-[.16em] text-[#00D9FF]">🌊 LI</span>
+                <ChevronRight size={16} className="text-[#00D9FF] transition-transform group-hover:translate-x-1" />
+              </div>
+              <h3 className="text-2xl font-black uppercase tracking-[-.04em]">
+                Long Island
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-white/50">
+                Family businesses, service ops.
+              </p>
+            </Link>
+          </div>
+          <div className="mt-10 grid gap-3 text-xs text-white/40">
+            <p>🎓 Each market includes: Training modules, value ladder pricing, objection scripts, call cheat sheets, and local case studies.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="wise-cta relative px-6 py-32 text-center lg:px-10 lg:py-44">
+        <div className="wise-cta-orbit absolute inset-0" />
+        <div className="relative mx-auto max-w-4xl">
+          <p className="wise-kicker mb-6">START WITH THE MESSY VERSION</p>
+          <h2 className="wise-display text-6xl md:text-9xl">
+            Make your
+            <br />
+            <span>move.</span>
+          </h2>
+          <p className="mx-auto mt-8 max-w-md text-sm leading-6 text-white/60">
+            Get a clear picture of where your business is, what is slowing it
+            down, and what to build next.
+          </p>
+          <Link
+            href="/audit"
+            className="wise-button mt-10 inline-flex min-h-12 items-center gap-3 bg-[#b08d57] px-7 py-4 text-xs font-black tracking-[.12em] text-black"
+          >
+            GET YOUR BUSINESS AI AUDIT <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 px-6 py-9 lg:px-10">
+        <div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-5 text-[10px] font-bold tracking-[.14em] text-white/40 md:flex-row md:items-center">
+          <span className="text-lg tracking-[-.08em] text-white">
+            WISE<sup className="text-[#00D9FF]">²</sup>
+          </span>
+          <span>INTELLIGENT TOOLS FOR REAL-WORLD BUSINESSES</span>
+          <span>© 2026 WISE²</span>
+        </div>
+      </footer>
+    </main>
+  );
+}

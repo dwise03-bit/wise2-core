@@ -1,0 +1,390 @@
+---
+# WISE² Edge Appliance Ansible Playbook
+# Deploys and configures Raspberry Pi edge nodes
+# Usage: ansible-playbook -i inventory.yml setup.yml
+
+- name: Setup WISE² Edge Appliance on Raspberry Pi
+  hosts: edge_nodes
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  vars:
+    wise2_home: /opt/wise2-edge
+    wise2_user: wise2
+    wise2_group: wise2
+    docker_compose_version: "2.20.2"
+    node_version: "20.10.0"
+    ollama_model: "mistral"
+
+  pre_tasks:
+    - name: Display node information
+      debug:
+        msg:
+          - "Hostname: {{ ansible_hostname }}"
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Architecture: {{ ansible_architecture }}"
+          - "Memory: {{ ansible_memtotal_mb }} MB"
+          - "CPU cores: {{ ansible_processor_vcpus }}"
+
+    - name: Update system packages
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      register: apt_update
+      until: apt_update is succeeded
+      retries: 3
+
+  tasks:
+    # System Configuration
+    - name: Install system dependencies
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+          - build-essential
+          - python3-pip
+          - python3-dev
+          - libssl-dev
+          - libffi-dev
+          - apt-transport-https
+          - ca-certificates
+          - gnupg
+          - lsb-release
+          - vim
+          - htop
+          - tmux
+        state: present
+        cache_valid_time: 3600
+      register: sys_deps
+      until: sys_deps is succeeded
+      retries: 3
+
+    - name: Configure memory split for GPU (Raspberry Pi)
+      lineinfile:
+        path: /boot/config.txt
+        regexp: '^gpu_mem='
+        line: 'gpu_mem=256'
+        backup: yes
+      when: ansible_architecture == "armv7l" or ansible_architecture == "aarch64"
+      notify: Reboot Raspberry Pi
+
+    - name: Enable audio
+      lineinfile:
+        path: /boot/config.txt
+        regexp: '^dtparam=audio='
+        line: 'dtparam=audio=on'
+      when: ansible_architecture == "armv7l" or ansible_architecture == "aarch64"
+      notify: Reboot Raspberry Pi
+
+    # User Management
+    - name: Create wise2 user
+      user:
+        name: "{{ wise2_user }}"
+        groups: video,audio,gpio,dialout,i2c,spi
+        shell: /bin/bash
+        createhome: yes
+        state: present
+
+    - name: Create wise2 group
+      group:
+        name: "{{ wise2_group }}"
+        state: present
+
+    # Directory Structure
+    - name: Create application directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ wise2_user }}"
+        group: "{{ wise2_group }}"
+        mode: '0755'
+      loop:
+        - "{{ wise2_home }}"
+        - "{{ wise2_home }}/data"
+        - "{{ wise2_home }}/models"
+        - "{{ wise2_home }}/logs"
+        - "{{ wise2_home }}/config"
+        - /var/log/wise2-edge-appliance
+        - /etc/wise2
+
+    # Docker Installation
+    - name: Install Docker
+      include_tasks: docker-install.yml
+
+    - name: Install Docker Compose
+      shell: |
+        curl -L "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)" \
+        -o /usr/local/bin/docker-compose
+        chmod +x /usr/local/bin/docker-compose
+      register: docker_compose_result
+      changed_when: "'Downloading' in docker_compose_result.stderr"
+
+    - name: Add user to docker group
+      user:
+        name: "{{ wise2_user }}"
+        groups: docker
+        append: yes
+
+    # Node.js Installation
+    - name: Download Node.js
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+      changed_when: false
+
+    - name: Install Node.js
+      apt:
+        name: nodejs
+        state: present
+        cache_valid_time: 3600
+      register: nodejs_install
+      until: nodejs_install is succeeded
+      retries: 3
+
+    # Application Deployment
+    - name: Clone or pull WISE² repository
+      git:
+        repo: "{{ wise2_repo_url | default('https://github.com/wise2/wise2-core.git') }}"
+        dest: "{{ wise2_home }}/app"
+        version: "{{ wise2_repo_branch | default('main') }}"
+        update: yes
+      become_user: "{{ wise2_user }}"
+
+    - name: Copy edge appliance to application directory
+      copy:
+        src: ../
+        dest: "{{ wise2_home }}/app/services/edge-appliance/"
+        owner: "{{ wise2_user }}"
+        group: "{{ wise2_group }}"
+        mode: '0755'
+
+    - name: Install npm dependencies
+      shell: |
+        cd {{ wise2_home }}/app/services/edge-appliance
+        npm ci --only=production
+      become_user: "{{ wise2_user }}"
+      register: npm_install
+      until: npm_install is succeeded
+      retries: 3
+
+    - name: Build TypeScript
+      shell: |
+        cd {{ wise2_home }}/app/services/edge-appliance
+        npm run build
+      become_user: "{{ wise2_user }}"
+
+    # WireGuard VPN Configuration
+    - name: Install WireGuard
+      apt:
+        name: wireguard-tools
+        state: present
+        cache_valid_time: 3600
+      register: wg_install
+      until: wg_install is succeeded
+      retries: 3
+
+    - name: Create WireGuard configuration directory
+      file:
+        path: /etc/wireguard
+        state: directory
+        mode: '0700'
+        owner: root
+        group: root
+
+    - name: Copy WireGuard configuration
+      template:
+        src: wireguard-config.j2
+        dest: /etc/wireguard/wise2.conf
+        owner: root
+        group: root
+        mode: '0600'
+      when: wireguard_private_key is defined
+      notify: Restart WireGuard
+
+    # Systemd Service Configuration
+    - name: Create systemd service file
+      template:
+        src: wise2-edge.service.j2
+        dest: /etc/systemd/system/wise2-edge.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload systemd
+
+    - name: Create systemd timer for health checks
+      template:
+        src: wise2-health-check.timer.j2
+        dest: /etc/systemd/system/wise2-health-check.timer
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload systemd
+
+    - name: Create systemd timer service
+      template:
+        src: wise2-health-check.service.j2
+        dest: /etc/systemd/system/wise2-health-check.service
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload systemd
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    # Environment Configuration
+    - name: Create environment file
+      template:
+        src: edge-appliance.env.j2
+        dest: "{{ wise2_home }}/.env"
+        owner: "{{ wise2_user }}"
+        group: "{{ wise2_group }}"
+        mode: '0600'
+
+    # Logging Configuration
+    - name: Configure rsyslog for edge appliance
+      template:
+        src: rsyslog-wise2.conf.j2
+        dest: /etc/rsyslog.d/50-wise2-edge.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Restart rsyslog
+
+    # Firewall Configuration
+    - name: Configure UFW firewall rules
+      ufw:
+        rule: allow
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+      loop:
+        - { port: '22', proto: 'tcp' }
+        - { port: '3000', proto: 'tcp' }
+        - { port: '3001', proto: 'tcp' }
+        - { port: '3002', proto: 'tcp' }
+        - { port: '11434', proto: 'tcp' }
+        - { port: '51820', proto: 'udp' }
+
+    - name: Enable UFW
+      ufw:
+        state: enabled
+
+    # Cron Jobs
+    - name: Create cron job for daily sync
+      cron:
+        name: "WISE² daily sync"
+        minute: "0"
+        hour: "2"
+        user: "{{ wise2_user }}"
+        job: "curl -s http://localhost:3000/sync > /dev/null 2>&1"
+        state: present
+
+    - name: Create cron job for health reports
+      cron:
+        name: "WISE² health report"
+        minute: "0"
+        hour: "*/6"
+        user: "{{ wise2_user }}"
+        job: "curl -s http://localhost:3000/health/report | mail -s 'WISE² Health Report' admin@wise2.cloud"
+        state: present
+      when: admin_email is defined
+
+    # Performance Tuning
+    - name: Increase file descriptor limits
+      lineinfile:
+        path: /etc/security/limits.conf
+        regexp: "^{{ wise2_user }}"
+        line: "{{ wise2_user }} soft nofile 65535"
+        state: present
+
+    - name: Configure TCP settings for better performance
+      sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_set: yes
+        state: present
+      loop:
+        - { key: 'net.core.rmem_max', value: '134217728' }
+        - { key: 'net.core.wmem_max', value: '134217728' }
+        - { key: 'net.ipv4.tcp_rmem', value: '4096 87380 67108864' }
+        - { key: 'net.ipv4.tcp_wmem', value: '4096 65536 67108864' }
+
+    # Final Steps
+    - name: Enable and start WISE² edge service
+      systemd:
+        name: wise2-edge.service
+        enabled: yes
+        state: started
+      register: service_start
+
+    - name: Enable and start health check timer
+      systemd:
+        name: wise2-health-check.timer
+        enabled: yes
+        state: started
+
+    - name: Wait for service to be ready
+      wait_for:
+        port: 3000
+        delay: 5
+        timeout: 30
+
+    - name: Verify service is healthy
+      uri:
+        url: http://localhost:3000/health
+        method: GET
+        status_code: 200
+      retries: 5
+      delay: 5
+      register: health_check
+      until: health_check.status == 200
+
+    - name: Display service status
+      debug:
+        msg:
+          - "WISE² Edge Appliance deployed successfully"
+          - "Service status: {{ service_start.status.ActiveState }}"
+          - "API endpoint: http://{{ ansible_hostname }}:3000"
+
+  handlers:
+    - name: Reboot Raspberry Pi
+      reboot:
+        msg: "Rebooting to apply configuration changes"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Restart rsyslog
+      systemd:
+        name: rsyslog
+        state: restarted
+
+    - name: Restart WireGuard
+      systemd:
+        name: wg-quick@wise2
+        state: restarted
+
+  post_tasks:
+    - name: Generate deployment report
+      template:
+        src: deployment-report.j2
+        dest: "{{ wise2_home }}/DEPLOYMENT_REPORT.md"
+        owner: "{{ wise2_user }}"
+        group: "{{ wise2_group }}"
+
+    - name: Display final status
+      debug:
+        msg:
+          - "=== WISE² Edge Appliance Deployment Complete ==="
+          - "Node: {{ inventory_hostname }}"
+          - "API: http://{{ ansible_default_ipv4.address }}:3000"
+          - "Ollama: http://{{ ansible_default_ipv4.address }}:11434"
+          - "Logs: tail -f /var/log/wise2-edge-appliance/*.log"
+          - "Status: systemctl status wise2-edge"

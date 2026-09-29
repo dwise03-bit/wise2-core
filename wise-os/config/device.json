@@ -1,0 +1,6 @@
+{
+  "name": "WISE² Defense IMP",
+  "designation": "EDGE INTELLIGENCE NODE",
+  "port": 3000,
+  "location": { "latitude": null, "longitude": null, "source": "not_configured" }
+}

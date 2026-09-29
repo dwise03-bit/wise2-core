@@ -1,0 +1,14 @@
+localOllamaUrl: http://127.0.0.1:11434
+gpuOllamaUrl: null
+hermesUrl: null
+controlBridgeUrl: null
+controlBridgeTokenEnv: WISE2_CONTROL_TOKEN
+autoCloudEscalation: false
+requestTimeoutMs: 120000
+keepAlive: 5m
+roles:
+  fast: { backend: local-ollama, model: wise2-fast, maxLocalMemoryPercent: 82 }
+  code: { backend: local-ollama, model: qwen2.5-coder:7b, maxLocalMemoryPercent: 82 }
+  vision: { backend: local-ollama, model: wise2-vision, maxLocalMemoryPercent: 80 }
+  rag: { backend: local-ollama, model: wise2-rag, maxLocalMemoryPercent: 82 }
+  architect: { backend: gpu-ollama, model: qwen3-coder:30b }

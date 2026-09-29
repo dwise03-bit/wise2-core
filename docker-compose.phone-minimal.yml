@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  phone-gateway:
+    image: node:18-alpine
+    container_name: wise2-phone-gateway
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      API_BASE_URL: http://localhost:3000
+      TENANT_ID: default-workspace
+      LOG_LEVEL: info
+    volumes:
+      - ./apps/phone-gateway/src:/app/src
+      - ./apps/phone-gateway/package.json:/app/package.json
+    command: sh -c "npm install && npm start"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Mock STT (for testing without Whisper)
+  whisper-mock:
+    image: node:18-alpine
+    container_name: wise2-whisper-mock
+    working_dir: /app
+    ports:
+      - "9000:9000"
+    command: sh -c "npm install express && node -e \"const express = require('express'); const app = express(); app.post('/v1/audio/transcriptions', (req, res) => res.json({text: 'Test transcription'})); app.listen(9000, () => console.log('Mock Whisper on :9000'));\""
+
+  # Mock LLM (for testing without Ollama)
+  hermes-mock:
+    image: node:18-alpine
+    container_name: wise2-hermes-mock
+    working_dir: /app
+    ports:
+      - "11435:11435"
+    command: sh -c "npm install express && node -e \"const express = require('express'); const app = express(); app.post('/v1/chat/completions', (req, res) => res.json({choices:[{message:{content:'Test response'}}]}); app.listen(11435, () => console.log('Mock Hermes on :11435'));\""
+
+  # Mock TTS (for testing without Piper)
+  piper-mock:
+    image: node:18-alpine
+    container_name: wise2-piper-mock
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    command: sh -c "npm install express && node -e \"const express = require('express'); const app = express(); app.get('/api/tts', (req, res) => res.send('mock audio')); app.listen(8080, () => console.log('Mock Piper on :8080'));\""

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WISE Imp Desktop — WISE²</title>
+    <meta name="description" content="WISE Imp is a WISE² desktop companion service. Try the live Imp here, then install the Windows pet on the machine." />
+    <script>
+      document.documentElement.classList.toggle('tauri', Boolean(window.__TAURI_INTERNALS__));
+      document.documentElement.classList.toggle('web', !window.__TAURI_INTERNALS__);
+    </script>
+  </head>
+  <body>
+    <div id="product" hidden>
+      <header class="top">
+        <span class="mark">W²</span>
+        <strong>WISE Imp</strong>
+        <span class="tag">Alpha 0.1 service</span>
+      </header>
+      <section class="hero">
+        <p class="eyebrow">Offered by WISE²</p>
+        <h1>A desktop companion that stays with the work.</h1>
+        <p class="lede">
+          The locked glossy black/cyan Imp lives on the glass. This page is the live service.
+          The Windows pet is the installable SKU for operator and client machines.
+        </p>
+        <p id="imp-status" class="status" hidden></p>
+        <div class="actions">
+          <a class="btn" href="#download">Get the desktop pet</a>
+          <p class="hint">Click the Imp. Drag it. Right-click for Wake, Sleep, Center, Quit.</p>
+        </div>
+      </section>
+      <section class="grid" id="download">
+        <article>
+          <h2>Live service</h2>
+          <p>The Imp on this page is the same companion runtime. No account. Settings stay in this browser.</p>
+        </article>
+        <article>
+          <h2>Windows pet</h2>
+          <p>Transparent, always-on-top, no taskbar button, tray Show/Hide/Quit, local save/restore. Current-user NSIS install, no admin.</p>
+          <p class="hint">Installer publishes to <code>/imp/downloads/</code> after a Windows build.</p>
+        </article>
+        <article>
+          <h2>What stays locked</h2>
+          <p>Horns, cyan eyes, black hoodie, W² chest mark, spade tail. Pose art is the product identity.</p>
+        </article>
+      </section>
+      <footer class="foot">
+        <span>WISE² Genesis</span>
+        <a href="/products/imp">Product page</a>
+        <a href="https://wise2.net">wise2.net</a>
+      </footer>
+    </div>
+    <main id="pet-stage" aria-label="WISE Imp desktop pet">
+      <img id="imp" alt="WISE Imp" draggable="false" />
+      <div id="speech" hidden></div>
+      <div id="menu" hidden>
+        <button data-action="wake">Wake</button>
+        <button data-action="sleep">Sleep</button>
+        <button data-action="center">Center</button>
+        <button data-action="quit">Quit</button>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

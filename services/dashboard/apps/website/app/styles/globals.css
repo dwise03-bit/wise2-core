@@ -1,0 +1,54 @@
+@import '@wise2/ui-components/src/globals.css';
+
+/* Website-specific styles */
+
+/* Hero gradient background */
+.hero-gradient {
+  @apply relative overflow-hidden;
+}
+
+.hero-gradient::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-b from-blue-500/20 via-transparent to-transparent;
+}
+
+/* Animated background */
+.animated-bg {
+  @apply relative overflow-hidden bg-black;
+}
+
+.animated-bg::before {
+  content: '';
+  @apply absolute inset-0;
+  background: linear-gradient(135deg, transparent 0%, rgba(0, 217, 255, 0.05) 50%, transparent 100%);
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Feature card hover effect */
+.feature-card {
+  @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+}
+
+/* Glass morphism */
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent;
+}
+
+/* Prevent layout shift */
+html {
+  overflow-y: scroll;
+}

@@ -1,0 +1,32 @@
+# WireGuard VPN Configuration for WISE² Edge Appliance
+# Node: {{ inventory_hostname }}
+
+[Interface]
+Address = {{ wireguard_address }}
+PrivateKey = {{ wireguard_private_key }}
+ListenPort = 51820
+DNS = 8.8.8.8, 8.8.4.4
+
+# Firewall rules for WireGuard interface
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+# Cloud VPN Server
+[Peer]
+PublicKey = {{ vault_wireguard_server_public_key }}
+AllowedIPs = 10.0.0.0/24
+Endpoint = {{ wireguard_server }}:{{ wireguard_port }}
+PersistentKeepalive = 25
+
+# Other edge nodes (optional - for p2p communication)
+{% for node in groups['edge_nodes'] %}
+{% if node != inventory_hostname %}
+[Peer]
+PublicKey = {{ hostvars[node]['wireguard_public_key'] | default('') }}
+AllowedIPs = {{ hostvars[node]['wireguard_address'] | default('') }}
+{% if hostvars[node]['wireguard_endpoint'] | default(false) %}
+Endpoint = {{ hostvars[node]['wireguard_endpoint'] }}
+PersistentKeepalive = 25
+{% endif %}
+{% endif %}
+{% endfor %}

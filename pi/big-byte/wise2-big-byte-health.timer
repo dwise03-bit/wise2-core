@@ -1,0 +1,12 @@
+[Unit]
+Description=WISE² Big Byte Health Check Timer
+Requires=wise2-big-byte-health.service
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=1min
+AccuracySec=30s
+Unit=wise2-big-byte-health.service
+
+[Install]
+WantedBy=timers.target

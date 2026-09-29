@@ -1,0 +1,29 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    jsonData:
+      timeInterval: 15s
+    isDefault: true
+
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: localhost:5432
+    database: wise2_telemetry
+    user: postgres
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 100
+    secureJsonData:
+      password: ${POSTGRES_PASSWORD}
+
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis://redis:6379
+    jsonData:
+      client: standalone

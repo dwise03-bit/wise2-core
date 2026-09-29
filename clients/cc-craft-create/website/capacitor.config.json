@@ -1,0 +1,30 @@
+{
+  "appId": "com.wise2.cccraftcreate",
+  "appName": "CC Craft & Create",
+  "webDir": "public",
+  "server": {
+    "url": "http://127.0.0.1:3011",
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": [
+      "http://127.0.0.1:3011",
+      "http://localhost:3011",
+      "https://wise2.net",
+      "https://*.wise2.net",
+      "https://cc.wise2.net"
+    ]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "limitsNavigationsToAppBoundDomains": false,
+    "backgroundColor": "#F3E8FF",
+    "scheme": "CC Craft Create"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1800,
+      "backgroundColor": "#6D2DBD"
+    }
+  }
+}

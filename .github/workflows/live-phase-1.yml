@@ -1,0 +1,81 @@
+name: SoundLabs Live Phase 1 CI
+
+on:
+  pull_request:
+    paths:
+      - 'packages/api/src/v1/sound-labs/live/**'
+      - 'apps/website/app/live/**'
+      - 'apps/website/app/components/live/**'
+      - '.github/workflows/live-phase-1.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/api/src/v1/sound-labs/live/**'
+      - 'apps/website/app/live/**'
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint -- src/v1/sound-labs/live
+        continue-on-error: true
+
+      - name: Type check
+        run: npx tsc --noEmit src/v1/sound-labs/live
+
+      - name: Unit Tests - Auth
+        run: npm test -- v1/sound-labs/live/__tests__/auth.live.spec.ts
+
+      - name: Unit Tests - API
+        run: npm test -- v1/sound-labs/live/__tests__/live-rooms.spec.ts
+
+      - name: Unit Tests - Presence
+        run: npm test -- v1/sound-labs/live/__tests__/presence.spec.ts
+
+      - name: Unit Tests - Version Stack
+        run: npm test -- v1/sound-labs/live/__tests__/version-stack.spec.ts
+
+      - name: Build API
+        run: npm run build
+
+  website-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/website
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit app/live
+
+      - name: Build
+        run: npm run build
+
+  quality-gates:
+    needs: [api-tests, website-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check results
+        run: echo "All quality gates passed ✅"

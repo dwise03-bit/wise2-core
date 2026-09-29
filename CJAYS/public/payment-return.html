@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CJAYS REKON — Payment</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: #05080c;
+      color: #f6f8fa;
+    }
+    main {
+      width: min(92vw, 420px);
+      padding: 28px 24px;
+      border: 1px solid #283442;
+      border-radius: 16px;
+      background: #0c1219;
+      text-align: center;
+    }
+    .mark {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 16px;
+      border-radius: 10px;
+      background: #d9a62e;
+      color: #05080c;
+      font-weight: 900;
+      line-height: 44px;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.35rem; }
+    p { margin: 0; color: #b4bfca; line-height: 1.5; }
+    .ok { color: #35c76f; }
+    .warn { color: #d9a62e; }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #0878f9;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark">C</div>
+    <h1 id="title">Payment</h1>
+    <p id="message">Return to CJAYS REKON and tap Refresh payment status on the job.</p>
+    <a href="/cjay/download">Download CJAYS REKON</a>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const state = params.get('payment');
+    const title = document.getElementById('title');
+    const message = document.getElementById('message');
+    if (state === 'success') {
+      title.textContent = 'Payment received';
+      message.innerHTML = '<span class="ok">Stripe checkout completed.</span> Open CJAYS REKON and tap <strong>Refresh payment status</strong> on the job to verify the receipt.';
+    } else if (state === 'cancelled') {
+      title.textContent = 'Checkout cancelled';
+      message.innerHTML = '<span class="warn">No charge was made.</span> You can restart checkout from the job screen in CJAYS REKON.';
+    }
+  </script>
+</body>
+</html>

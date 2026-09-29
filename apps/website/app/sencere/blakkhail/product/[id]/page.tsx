@@ -1,0 +1,202 @@
+'use client';
+
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { BlakkhailHeader } from '@/components/sencere/blakkhail/BlakkhailHeader';
+import { BlakkhailFooter } from '@/components/sencere/blakkhail/BlakkhailFooter';
+import { useCart } from '@/lib/hooks/useCart';
+
+const PRODUCTS = {
+  '1': {
+    name: 'No berry Cush gray',
+    displayName: 'PC Street life no berry kush distressed short sleeve',
+    category: 'LEGACY',
+    price: '$65.99',
+    priceNum: 65.99,
+    description: 'Original for the culture since 1994.',
+    story: 'Premium cotton, gold-accent print, built',
+    image: 'placeholder',
+  },
+  '2': {
+    name: 'No berry Cush long sleeve',
+    displayName: 'PC Street life no berry kush distressed long sleeve hoodie',
+    category: 'LEGACY',
+    price: '$65.99',
+    priceNum: 65.99,
+    description: 'Original for the culture since 1994.',
+    story: 'Premium cotton, gold-accent print, built',
+    image: 'placeholder',
+  },
+  '3': {
+    name: 'Strawberry haze',
+    displayName: 'PC Street life Strawberry haze distressed long sleeve hoodie',
+    category: 'LEGACY',
+    price: '$65.99',
+    priceNum: 65.99,
+    description: 'Original for the culture since 1994.',
+    story: 'Premium cotton, gold-accent print, built',
+    image: 'placeholder',
+  },
+  '4': {
+    name: 'Red Distressed Hail Hoodie',
+    displayName: 'Limited red short-sleeve hoodie with hand-finished distress details',
+    category: 'NEW DROP',
+    price: '$85.00',
+    priceNum: 85,
+    description: 'A red energy piece from the latest Blakk Hail drop.',
+    story: 'Hand-finished distress work, made for the front line.',
+    image: '/sencere-assets/blakkhail/discord-new-drop.png',
+  },
+  '5': {
+    name: 'Piff City Utility Hoodie',
+    displayName: 'Hand-distressed utility hoodie with removable Piff City back panel',
+    category: 'NEW DROP',
+    price: '$125.00',
+    priceNum: 125,
+    description: 'A layered statement piece built from the Piff City archive.',
+    story: 'Hand-distressed cotton, modular patchwork, built for movement.',
+    image: '/sencere-assets/blakkhail/discord-new-drop-02.webp',
+  },
+  '6': {
+    name: 'Take Control Utility Tee',
+    displayName: 'Hand-distressed utility tee with modular Piff City patchwork',
+    category: 'NEW DROP',
+    price: '$110.00',
+    priceNum: 110,
+    description: 'A limited utility tee carrying the Take Control message.',
+    story: 'Hand-distressed cotton, modular patchwork, built to move.',
+    image: '/sencere-assets/blakkhail/discord-new-drop-03.webp',
+  },
+};
+
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const product = PRODUCTS[params.id as keyof typeof PRODUCTS];
+  const { addToCart } = useCart();
+  const [selectedSize, setSelectedSize] = useState('M');
+  const [quantity, setQuantity] = useState(1);
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-[#0f0f0f] text-white flex items-center justify-center">
+        <p>Product not found</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0f0f0f]">
+      <BlakkhailHeader />
+
+      <main className="mx-auto max-w-[1200px] px-6 py-12">
+        {/* Back Link */}
+        <Link href="/sencere/blakkhail" className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-[#E8A23A] hover:text-[#F5B24A] transition-colors mb-12 border border-[#E8A23A] px-4 py-2">
+          ← BACK TO COLLECTION
+        </Link>
+
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          {/* Product Image */}
+          <div className="flex items-center justify-center border-4 border-[#333] bg-gradient-to-br from-[#2a2a2a] to-[#0a0a0a] aspect-square">
+            {product.image === 'placeholder' ? (
+              <div className="text-center">
+                <div className="text-[96px] font-black text-[#E8A23A] opacity-20">{String(params.id).padStart(2, '0')}</div>
+              </div>
+            ) : (
+              <Image src={product.image} alt={product.name} width={900} height={900} className="h-full w-full object-contain p-8" priority />
+            )}
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-8">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#E8A23A]">
+                {product.category}
+              </p>
+              <h1 className="mt-4 text-[32px] font-black uppercase leading-tight text-white">
+                {product.name}
+              </h1>
+              <p className="mt-4 text-[13px] text-[#A8A8A8]">
+                {product.displayName}
+              </p>
+            </div>
+
+            <div className="border-t border-[#333] pt-6">
+              <p className="text-[18px] font-bold text-[#E8A23A]">
+                {product.price}
+              </p>
+            </div>
+
+            {/* Size Selection */}
+            <div className="space-y-3">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-white">
+                SIZE
+              </label>
+              <div className="flex gap-3">
+                {['S', 'M', 'L', 'XL', '2XL'].map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`w-12 h-12 font-bold text-[12px] transition-all border-2 ${
+                      selectedSize === size
+                        ? 'border-[#E8A23A] bg-[#E8A23A] text-[#0f0f0f]'
+                        : 'border-[#333] text-white hover:border-[#E8A23A]'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Quantity Selection */}
+            <div className="space-y-3">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-white">
+                QUANTITY
+              </label>
+              <div className="flex items-center gap-4 border border-[#333] w-fit">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 flex items-center justify-center text-[#E8A23A] hover:bg-[#1a1a1a] transition-colors"
+                >
+                  −
+                </button>
+                <span className="w-12 text-center font-bold">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 flex items-center justify-center text-[#E8A23A] hover:bg-[#1a1a1a] transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Add to Cart Button */}
+            <button onClick={() => addToCart({ id: Number(params.id), name: product.name, displayName: product.displayName, price: product.priceNum, category: product.category }, quantity)} className="w-full bg-[#E8A23A] border-2 border-[#E8A23A] px-6 py-4 font-bold uppercase tracking-wider text-black hover:bg-[#f5b347] transition-colors flex items-center justify-center gap-2">
+              <span>🛒</span> ADD TO CART
+            </button>
+
+            {/* Product Story */}
+            <div className="border-t border-[#333] space-y-4 pt-6">
+              <h3 className="text-[12px] font-bold uppercase tracking-wider text-white">
+                THE STORY
+              </h3>
+              <div className="space-y-2 text-[13px] text-[#A8A8A8]">
+                <p>{product.description}</p>
+                <p>{product.story}</p>
+              </div>
+            </div>
+
+            {/* Product Notes */}
+            <div className="border-t border-[#333] pt-6">
+              <h3 className="text-[12px] font-bold uppercase tracking-wider text-white">
+                PRODUCT NOTES
+              </h3>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <BlakkhailFooter />
+    </div>
+  );
+}

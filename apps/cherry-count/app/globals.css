@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cherry-black: #050505;
+  --cherry-hot: #ff2e88;
+  --cherry-bubblegum: #ff5fa2;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  background: var(--cherry-black);
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-cherry-black text-white antialiased;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Glass panel utility */
+.glass-panel {
+  @apply rounded-cherry border border-cherry-bubblegum/20 bg-cherry-soft/70 backdrop-blur-xl;
+}
+
+/* Pink glow behind elements */
+.glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, rgba(255, 46, 136, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff5fa2;
+  border-radius: 3px;
+}
+
+/* Touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Presentation slide transitions */
+.slide-enter {
+  animation: slideIn 0.5s ease-out;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

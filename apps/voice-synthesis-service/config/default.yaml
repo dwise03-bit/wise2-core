@@ -1,0 +1,80 @@
+# Default configuration for voice synthesis service
+
+environment: development
+debug: true
+device: cpu
+
+# Paths
+data_dir: data
+models_dir: models
+output_dir: output
+logs_dir: logs
+
+# API configuration
+api_host: 0.0.0.0
+api_port: 5000
+api_workers: 4
+
+# Audio configuration
+audio:
+  sample_rate: 22050
+  n_fft: 1024
+  hop_length: 256
+  n_mels: 80
+  f_min: 40
+  f_max: 11025
+  ref_db: 20.0
+  min_db: -100.0
+  normalize: true
+  preemphasis: 0.97
+
+# Model configuration
+model:
+  # Encoder
+  encoder_hidden_dim: 512
+  encoder_num_layers: 1
+  encoder_kernel_size: 5
+  encoder_dropout: 0.5
+
+  # Decoder
+  decoder_hidden_dim: 1024
+  decoder_num_layers: 2
+  decoder_dropout: 0.5
+
+  # Attention
+  attention_dim: 128
+  attention_location_kernel_size: 31
+
+  # Speaker embedding
+  speaker_embed_dim: 256
+  speaker_embed_layers: 2
+
+  # Pitch prediction
+  pitch_hidden_dim: 256
+  pitch_num_layers: 2
+  pitch_kernel_size: 3
+
+# Training configuration
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.000001
+  epochs: 1000
+  warmup_steps: 4000
+  checkpoint_interval: 5
+  max_norm: 400.0
+
+# Voice parameter configuration
+voice_params:
+  pitch_shift_range: [-24, 24]
+  vibrato_amount_range: [0, 100]
+  vibrato_rate_range: [4, 10]
+  breathiness_range: [0, 100]
+  speed_range: [0.5, 2.0]
+  formant_shift_range: [-0.5, 0.5]
+
+# Feature flags
+enable_voice_cloning: true
+enable_singing: true
+enable_emotion: true
+enable_cache: true

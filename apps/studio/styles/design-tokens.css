@@ -1,0 +1,366 @@
+/**
+ * WISE² Design System Tokens
+ * Modern neon/dark theme with professional audio engineering aesthetic
+ *
+ * Color System: Primary #0080FF (Blue), Accent #00D4FF (Cyan)
+ * Typography: Inter (sans), Fira Code (mono)
+ * Grid: 8px base unit
+ * Breakpoints: xs(320) sm(480) md(768) lg(1024) xl(1280) 2xl(1536)
+ */
+
+:root {
+  /* ===== COLOR TOKENS ===== */
+
+  /* Primary Blue (#0080FF) */
+  --color-primary-50: #e6f2ff;
+  --color-primary-100: #b3d9ff;
+  --color-primary-200: #80bfff;
+  --color-primary-300: #4da6ff;
+  --color-primary-400: #1a8cff;
+  --color-primary-500: #0080ff;
+  --color-primary-600: #0066cc;
+  --color-primary-700: #004d99;
+  --color-primary-800: #003366;
+  --color-primary-900: #001a33;
+
+  /* Accent Cyan (#00D4FF) */
+  --color-accent-50: #e0f7ff;
+  --color-accent-100: #b3eeff;
+  --color-accent-200: #80e6ff;
+  --color-accent-300: #4ddfff;
+  --color-accent-400: #1ad7ff;
+  --color-accent-500: #00d4ff;
+  --color-accent-600: #00a8cc;
+  --color-accent-700: #007c99;
+  --color-accent-800: #005066;
+  --color-accent-900: #002433;
+
+  /* Semantic Colors */
+  --color-success: #22c55e;
+  --color-warning: #fbbf24;
+  --color-danger: #ff3333;
+  --color-info: #00d4ff;
+
+  /* Neutral Grays */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #0f1419;
+
+  /* Dark backgrounds */
+  --color-bg-dark: #0a0e27;
+  --color-bg-darker: #050810;
+  --color-surface-dark: #1a1f3a;
+  --color-surface-light: #2a3145;
+
+  /* ===== TYPOGRAPHY TOKENS ===== */
+
+  --font-family-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-family-mono: 'Fira Code', 'Courier New', monospace;
+  --font-family-display: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Font Sizes (1.25x scale) */
+  --text-xs: 0.625rem; /* 10px */
+  --text-sm: 0.8125rem; /* 13px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.25rem; /* 20px */
+  --text-xl: 1.5625rem; /* 25px */
+  --text-2xl: 1.953125rem; /* 31px */
+  --text-3xl: 2.44140625rem; /* 39px */
+  --text-4xl: 3.0517578125rem; /* 49px */
+  --text-5xl: 3.814697265625rem; /* 61px */
+
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
+
+  /* ===== SPACING TOKENS (8px grid) ===== */
+
+  --space-0: 0;
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+  --space-20: 5rem; /* 80px */
+  --space-24: 6rem; /* 96px */
+
+  /* Semantic spacing */
+  --space-xs: var(--space-2);
+  --space-sm: var(--space-3);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+  --space-2xl: var(--space-12);
+
+  /* ===== SIZING TOKENS ===== */
+
+  --size-touch-target: 44px; /* Minimum touch target */
+  --size-icon-sm: 16px;
+  --size-icon-md: 24px;
+  --size-icon-lg: 32px;
+
+  /* Button heights */
+  --button-height-sm: 32px;
+  --button-height-md: 40px;
+  --button-height-lg: 48px;
+
+  /* Input heights */
+  --input-height-sm: 32px;
+  --input-height-md: 40px;
+  --input-height-lg: 48px;
+
+  /* ===== BORDER TOKENS ===== */
+
+  --border-radius-none: 0;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+
+  --border-width-thin: 1px;
+  --border-width-md: 2px;
+  --border-width-thick: 3px;
+
+  /* ===== SHADOW TOKENS (Neon aesthetic) ===== */
+
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 128, 255, 0.05);
+  --shadow-md: 0 4px 12px 0 rgba(0, 212, 255, 0.1);
+  --shadow-lg: 0 10px 24px 0 rgba(0, 128, 255, 0.15);
+  --shadow-xl: 0 20px 48px 0 rgba(0, 128, 255, 0.2);
+  --shadow-2xl: 0 25px 50px 0 rgba(0, 128, 255, 0.25);
+
+  /* Neon glow effects */
+  --shadow-neon-sm: 0 0 10px rgba(0, 212, 255, 0.2);
+  --shadow-neon-md: 0 0 20px rgba(0, 212, 255, 0.3);
+  --shadow-neon-lg: 0 0 40px rgba(0, 128, 255, 0.4);
+
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+  /* ===== ANIMATION TOKENS ===== */
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-linear: linear;
+
+  /* ===== Z-INDEX TOKENS ===== */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+
+  /* ===== RESPONSIVE BREAKPOINTS ===== */
+
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* ===== FLUID TYPOGRAPHY ===== */
+
+  --fluid-h1: clamp(2rem, 1rem + 3.6vw, 4rem);
+  --fluid-h2: clamp(1.75rem, 1rem + 2.3vw, 3rem);
+  --fluid-h3: clamp(1.5rem, 1rem + 1.4vw, 2.25rem);
+  --fluid-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  --fluid-small: clamp(0.875rem, 0.825rem + 0.15vw, 0.95rem);
+}
+
+/* ===== COMPONENT VARIANTS ===== */
+
+/* Button Variants */
+.btn {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-base) var(--ease-in-out);
+  min-height: var(--button-height-md);
+  padding: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-primary-500);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-600);
+  box-shadow: var(--shadow-neon-md);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-700);
+}
+
+.btn-secondary {
+  background-color: var(--color-neutral-800);
+  color: var(--color-neutral-100);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-neutral-700);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 51, 51, 0.3);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-primary-500);
+  border: 1px solid var(--color-primary-500);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-primary-500);
+  color: white;
+}
+
+/* Button Sizes */
+.btn-sm {
+  height: var(--button-height-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.btn-lg {
+  height: var(--button-height-lg);
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-lg);
+}
+
+/* Focus States */
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-700) var(--color-neutral-900);
+}
+
+/* Chrome, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-700);
+  border-radius: var(--border-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-600);
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Text utilities */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-clip {
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+/* Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-accent-500));
+}
+
+.gradient-neon {
+  background: linear-gradient(45deg, var(--color-primary-500), var(--color-accent-500), var(--color-primary-500));
+  background-size: 200% 200%;
+  animation: neon-flow 3s ease-in-out infinite;
+}
+
+@keyframes neon-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Focus ring for accessibility */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISE² Defense - Knight Wing Viral Ad</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+        }
+        canvas {
+            display: block;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Facebook viral format: 1080x1080 (square)
+        canvas.width = 1080;
+        canvas.height = 1080;
+
+        // Animation state
+        let frameCount = 0;
+        const fps = 30;
+        const totalSeconds = 30;
+        const totalFrames = fps * totalSeconds; // 900 frames
+
+        // Load base image
+        const baseImage = new Image();
+        baseImage.src = './nightwing-design.png';
+
+        // Colors
+        const RED = '#FF2E3E';
+        const BLUE = '#00A8FF';
+        const NEON_GREEN = '#00FF41';
+        const DARK_BG = '#0A0E27';
+
+        function drawFrame(progress) {
+            // Clear canvas
+            ctx.fillStyle = DARK_BG;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw base image
+            if (baseImage.complete) {
+                ctx.globalAlpha = 0.95;
+                const imgAspect = baseImage.width / baseImage.height;
+                const canvasAspect = canvas.width / canvas.height;
+                let drawWidth, drawHeight, offsetX, offsetY;
+
+                if (imgAspect > canvasAspect) {
+                    drawHeight = canvas.height;
+                    drawWidth = drawHeight * imgAspect;
+                    offsetX = (canvas.width - drawWidth) / 2;
+                    offsetY = 0;
+                } else {
+                    drawWidth = canvas.width;
+                    drawHeight = drawWidth / imgAspect;
+                    offsetX = 0;
+                    offsetY = (canvas.height - drawHeight) / 2;
+                }
+                ctx.drawImage(baseImage, offsetX, offsetY, drawWidth, drawHeight);
+                ctx.globalAlpha = 1;
+            }
+
+            // === ANIMATION SEQUENCES ===
+
+            // Phase 1: Opening (0-8 seconds) - Headlight pulse
+            if (progress < 0.267) {
+                const phaseProgress = progress / 0.267;
+                const pulseIntensity = Math.sin(phaseProgress * Math.PI * 4) * 0.5 + 0.5;
+
+                // Left headlight glow
+                const gradient1 = ctx.createRadialGradient(420, 320, 20, 420, 320, 120);
+                gradient1.addColorStop(0, `rgba(255, 46, 62, ${pulseIntensity * 0.6})`);
+                gradient1.addColorStop(1, 'rgba(255, 46, 62, 0)');
+                ctx.fillStyle = gradient1;
+                ctx.fillRect(300, 200, 240, 240);
+
+                // Right headlight glow
+                const gradient2 = ctx.createRadialGradient(660, 320, 20, 660, 320, 120);
+                gradient2.addColorStop(0, `rgba(255, 46, 62, ${pulseIntensity * 0.6})`);
+                gradient2.addColorStop(1, 'rgba(255, 46, 62, 0)');
+                ctx.fillStyle = gradient2;
+                ctx.fillRect(540, 200, 240, 240);
+            }
+
+            // Phase 2: Tech activation (8-16 seconds) - Dashboard glow
+            if (progress > 0.267 && progress < 0.533) {
+                const phaseProgress = (progress - 0.267) / 0.266;
+                const glowIntensity = Math.sin(phaseProgress * Math.PI * 3) * 0.4 + 0.5;
+
+                // Dashboard light pulse
+                ctx.fillStyle = `rgba(0, 168, 255, ${glowIntensity * 0.4})`;
+                ctx.fillRect(750, 380, 280, 180);
+
+                // Scan lines effect
+                ctx.strokeStyle = `rgba(0, 255, 65, ${glowIntensity * 0.3})`;
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(750, 390 + i * 35);
+                    ctx.lineTo(1030, 390 + i * 35);
+                    ctx.stroke();
+                }
+            }
+
+            // Phase 3: Operator focus (16-24 seconds) - Character highlight
+            if (progress > 0.533 && progress < 0.8) {
+                const phaseProgress = (progress - 0.533) / 0.267;
+                const focusIntensity = Math.sin(phaseProgress * Math.PI * 2) * 0.3 + 0.4;
+
+                // Operator silhouette glow
+                const gradient3 = ctx.createRadialGradient(540, 280, 50, 540, 280, 150);
+                gradient3.addColorStop(0, `rgba(0, 168, 255, ${focusIntensity * 0.5})`);
+                gradient3.addColorStop(1, 'rgba(0, 168, 255, 0)');
+                ctx.fillStyle = gradient3;
+                ctx.beginPath();
+                ctx.arc(540, 280, 150, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Phase 4: Full system alert (24-30 seconds) - Logo reveal & tagline
+            if (progress > 0.8) {
+                const phaseProgress = (progress - 0.8) / 0.2;
+                const fadeIn = Math.min(phaseProgress * 2, 1);
+
+                // Red accent overlay
+                ctx.fillStyle = `rgba(255, 46, 62, ${fadeIn * 0.15})`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // KNIGHT WING text glow
+                ctx.globalAlpha = fadeIn;
+                ctx.font = 'bold 72px Arial';
+                ctx.fillStyle = RED;
+                ctx.textAlign = 'center';
+                ctx.fillText('KNIGHT WING', canvas.width / 2, canvas.height - 80);
+
+                // Tagline
+                ctx.font = '32px Arial';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillText('STAY READY. STAY WISE.', canvas.width / 2, canvas.height - 30);
+                ctx.globalAlpha = 1;
+            }
+
+            // Ambient glow throughout
+            ctx.fillStyle = 'rgba(0, 168, 255, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function animate() {
+            const progress = (frameCount % totalFrames) / totalFrames;
+            drawFrame(progress);
+            frameCount++;
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation after image loads
+        baseImage.onload = () => animate();
+        baseImage.onerror = () => {
+            // Fallback: draw without image
+            console.log('Image failed to load, drawing animation anyway');
+            animate();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'tools/ghostty'
+  - '!apps/wise-imp-desktop'
+  - 'packages/*'
+  - 'services/reaper-bridge'
+
+shared-workspace-lockfile: true

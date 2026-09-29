@@ -1,0 +1,189 @@
+.process-monitor {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 217, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: slideInLeft 0.4s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.process-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(30, 27, 75, 0.3);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.process-header:hover {
+  background: rgba(30, 27, 75, 0.4);
+}
+
+.process-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  font-family: 'Fira Code', monospace;
+  letter-spacing: 0.3px;
+}
+
+.process-expand {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.process-expand:hover {
+  transform: scale(1.2);
+}
+
+.process-controls {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.05);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.sort-btn {
+  flex: 1;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 217, 255, 0.1);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+
+.sort-btn:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-color: rgba(0, 217, 255, 0.2);
+}
+
+.sort-btn.active {
+  background: rgba(0, 217, 255, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+}
+
+.process-list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.process-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.05);
+  font-size: 11px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.process-row:hover {
+  background: rgba(0, 217, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.process-name {
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 80px;
+  text-transform: capitalize;
+}
+
+.process-metrics {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.metric {
+  min-width: 40px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.metric.cpu {
+  color: #00D9FF;
+}
+
+.metric.mem {
+  color: #FF00FF;
+}
+
+.process-monitor.compact {
+  max-height: 40px;
+}
+
+.process-monitor.expanded {
+  animation: expandHeight 0.3s ease-out;
+}
+
+@keyframes expandHeight {
+  from {
+    max-height: 40px;
+  }
+  to {
+    max-height: 400px;
+  }
+}
+
+.process-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.process-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.process-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 217, 255, 0.2);
+  border-radius: 2px;
+}
+
+.process-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 217, 255, 0.4);
+}

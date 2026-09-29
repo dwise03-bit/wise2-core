@@ -1,0 +1,224 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                 WISE² DOCKER DEPLOYMENT - EXECUTION GUIDE                    ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+IMPORTANT: You need to run these commands in your terminal, not through this interface.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: VERIFY DOCKER IS INSTALLED
+───────────────────────────────────
+
+In your terminal, run:
+  docker --version
+  docker-compose --version
+
+Expected output:
+  Docker version 29.6.1 (or similar)
+  Docker Compose version v5.1.4 (or similar)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 2: START DOCKER DAEMON
+────────────────────────────
+
+Choose your platform:
+
+macOS:
+  open /Applications/Docker.app
+  (Wait 10-20 seconds for Docker to start)
+
+Linux:
+  sudo systemctl start docker
+  (Or: sudo service docker start)
+
+Windows:
+  Click Windows Start Menu → Docker Desktop
+  (Or use: docker run hello-world to verify)
+
+Test it started:
+  docker run hello-world
+  (Should print "Hello from Docker!")
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 3: NAVIGATE TO WEBSITE DIRECTORY
+──────────────────────────────────────
+
+In your terminal, run:
+
+  cd /Users/danielwise/Projects/wise2-core/apps/website
+  pwd  # Should show: /Users/danielwise/Projects/wise2-core/apps/website
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 4: RUN DEPLOYMENT SCRIPT
+──────────────────────────────
+
+Execute the automated deployment:
+
+  ./docker-deploy.sh
+
+This will:
+  ✓ Check Docker installation
+  ✓ Stop any existing containers
+  ✓ Build the Docker image (2-3 minutes)
+  ✓ Start the container
+  ✓ Verify health checks
+  ✓ Show access information
+
+═══════════════════════════════════════════════════════════════════════════════
+
+WHAT YOU'LL SEE
+───────────────
+
+During build (takes 2-3 minutes):
+  Sending build context to Docker daemon
+  Step 1/20 : FROM node:20-alpine
+  Step 2/20 : WORKDIR /app
+  ...continuing...
+  Successfully built abc123def456
+  Successfully tagged wise2-website:latest
+
+When starting:
+  Creating wise2-website ... done
+  wise2-website is up-to-date
+
+Final status:
+  NAME              IMAGE                  PORTS
+  wise2-website     wise2-website:latest   0.0.0.0:3000->3000/tcp
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 5: VERIFY DEPLOYMENT
+──────────────────────────
+
+After script completes, verify in another terminal:
+
+  # Check container is running
+  docker-compose ps
+
+  # Test the endpoint
+  curl http://localhost:3000
+
+  # View logs
+  docker-compose logs -f website
+
+Expected: Should see "Next.js has started on" in logs
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 6: OPEN IN BROWSER
+────────────────────────
+
+Open your web browser and go to:
+
+  http://localhost:3000
+
+You should see:
+  ✓ WISE² Homepage loads
+  ✓ Animated sections (Features, Products, Testimonials, etc.)
+  ✓ Responsive design
+  ✓ No console errors (open DevTools with F12)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+USEFUL COMMANDS WHILE RUNNING
+──────────────────────────────
+
+View logs in real-time:
+  docker-compose logs -f website
+
+Stop container:
+  docker-compose stop
+
+Restart container:
+  docker-compose restart website
+
+Stop and remove:
+  docker-compose down
+
+Monitor resources:
+  docker stats wise2-website
+
+Rebuild image:
+  docker-compose build --no-cache
+
+═══════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+───────────────
+
+Problem: "Cannot connect to Docker daemon"
+Solution: Start Docker daemon (see Step 2)
+
+Problem: "docker-compose: command not found"
+Solution: Install Docker Compose (or use: docker compose)
+
+Problem: "Port 3000 already in use"
+Solution: Kill the process using port 3000
+  lsof -i :3000 | grep -v COMMAND | awk '{print $2}' | xargs kill -9
+
+Problem: "Build fails with errors"
+Solution: Check logs and rebuild
+  docker-compose build --no-cache
+  docker-compose up -d
+
+Problem: "Container exits immediately"
+Solution: Check logs
+  docker-compose logs website
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DEPLOYMENT SUMMARY
+───────────────────
+
+What gets deployed:
+  ✓ Next.js 14 website app
+  ✓ Optimized production build
+  ✓ All animations (Framer Motion)
+  ✓ Design system components
+  ✓ Security headers configured
+  ✓ Health checks enabled
+
+Where it runs:
+  ✓ Container: wise2-website
+  ✓ Port: 3000 (http://localhost:3000)
+  ✓ Image: wise2-website:latest (~200MB)
+
+Resource usage:
+  ✓ Memory: 100-150MB typical
+  ✓ CPU: <5% at idle
+  ✓ Startup time: ~5-10 seconds
+
+═══════════════════════════════════════════════════════════════════════════════
+
+NEXT STEPS AFTER DEPLOYMENT
+─────────────────────────────
+
+1. Open http://localhost:3000 in browser
+2. Test animations and responsiveness
+3. Run Lighthouse audit (DevTools → Lighthouse)
+4. Check console for errors (F12)
+5. Read DOCKER.md for advanced features
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DOCUMENTATION
+──────────────
+
+If you need help:
+  - DOCKER_STARTUP.md - Complete startup guide
+  - DOCKER.md - Docker reference
+  - DEPLOYMENT_CHECKLIST.md - QA procedures
+  - README.md - Project overview
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                        YOU'RE ALL SET! 🚀
+
+        Run: cd apps/website && ./docker-deploy.sh
+
+                     Then open: http://localhost:3000
+
+═══════════════════════════════════════════════════════════════════════════════

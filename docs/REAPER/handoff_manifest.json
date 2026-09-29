@@ -1,0 +1,22 @@
+{
+  "product": "REAPER V1",
+  "parent": "WISE\u00b2 OS",
+  "status": "planning/specification handoff",
+  "current_milestone": "M0",
+  "provider_mode": "mock/fixture-first",
+  "external_messaging": false,
+  "live_proposal_sending": false,
+  "pricing_policy": "manual or approved service catalog only",
+  "authoritative_spec": "docs/MASTER_BUILD_KIT.md",
+  "supporting_specs": [
+    "docs/ARCHITECTURE.md",
+    "docs/AUDIT_RULEBOOK.md",
+    "docs/UX_UI_SPEC.md",
+    "docs/LIVE_DATA.md",
+    "docs/WORKFLOW.md"
+  ],
+  "recommended_first_scope": [
+    "M0",
+    "M1"
+  ]
+}

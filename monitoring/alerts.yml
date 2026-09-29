@@ -1,0 +1,234 @@
+# Alert rules for WISE² AR/VR production monitoring
+
+groups:
+  - name: wise2-ar-vr-alerts
+    interval: 30s
+    rules:
+      # Router Alerts
+      - alert: RouterDown
+        expr: up{job="wise2-router"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: router
+        annotations:
+          summary: "WISE² Router is down"
+          description: "Router service at localhost:3100 is not responding for more than 1 minute"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(router_request_duration_ms[5m])) > 2500
+        for: 5m
+        labels:
+          severity: warning
+          service: router
+        annotations:
+          summary: "Router latency is high (P95 > 2500ms)"
+          description: "Request latency has exceeded target SLA"
+
+      - alert: ErrorRateHigh
+        expr: rate(router_errors_total[5m]) > 0.001
+        for: 5m
+        labels:
+          severity: warning
+          service: router
+        annotations:
+          summary: "Router error rate > 0.1%"
+          description: "More than 0.1% of requests are failing"
+
+      - alert: BudgetExceeded
+        expr: budget_used_pct >= 100
+        for: 1m
+        labels:
+          severity: critical
+          service: router
+        annotations:
+          summary: "Daily budget fully consumed"
+          description: "Budget enforcement has kicked in - new requests are being blocked"
+
+      # Ollama Alerts
+      - alert: OllamaDown
+        expr: up{job="ollama"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ollama
+        annotations:
+          summary: "Ollama inference engine is down"
+          description: "Cannot reach Ollama at localhost:11434 for more than 1 minute"
+
+      - alert: OllamaHighLatency
+        expr: histogram_quantile(0.95, rate(ollama_inference_duration_ms[5m])) > 3000
+        for: 5m
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "Ollama inference latency is high"
+          description: "Model inference time is exceeding normal thresholds"
+
+      - alert: OllamaMemoryHigh
+        expr: ollama_memory_usage_bytes / ollama_memory_total_bytes > 0.9
+        for: 10m
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "Ollama memory usage > 90%"
+          description: "Model memory allocation is critically high"
+
+      # Second Brain Alerts
+      - alert: SecondBrainDown
+        expr: up{job="second-brain"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: second-brain
+        annotations:
+          summary: "Second Brain knowledge system is down"
+          description: "Knowledge enrichment will continue with fallback"
+
+      - alert: RAGLatencyHigh
+        expr: histogram_quantile(0.95, rate(secondbrain_rag_duration_ms[5m])) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: second-brain
+        annotations:
+          summary: "RAG query latency is high"
+          description: "Knowledge base searches are slow"
+
+      # Device Connectivity Alerts
+      - alert: NoRayBanDevices
+        expr: rayban_connected_devices == 0
+        for: 10m
+        labels:
+          severity: info
+          service: devices
+        annotations:
+          summary: "No Ray-Ban devices connected"
+          description: "No AR glasses have checked in recently"
+
+      - alert: NoQuestDevices
+        expr: quest_connected_devices == 0
+        for: 10m
+        labels:
+          severity: info
+          service: devices
+        annotations:
+          summary: "No Quest devices connected"
+          description: "No VR headsets have checked in recently"
+
+      # Performance Alerts
+      - alert: FPSDropDetected
+        expr: quest_avg_fps < 60
+        for: 2m
+        labels:
+          severity: warning
+          service: performance
+        annotations:
+          summary: "Quest FPS dropped below 60"
+          description: "VR rendering performance degraded"
+
+      - alert: BatteryDrainAbnormal
+        expr: rate(quest_battery_drain[1h]) > 0.1
+        for: 15m
+        labels:
+          severity: warning
+          service: performance
+        annotations:
+          summary: "Abnormal battery drain detected on Quest"
+          description: "Battery draining faster than expected (>10%/hour)"
+
+      # Database Alerts
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "Cannot connect to telemetry database"
+
+      - alert: PostgresSlowQueries
+        expr: rate(pg_slow_query_count[5m]) > 1
+        for: 10m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Slow queries detected in PostgreSQL"
+          description: "More than 1 slow query per 5 minutes"
+
+      - alert: PostgresDiskSpace
+        expr: pg_database_size_bytes / pg_disk_available_bytes > 0.8
+        for: 30m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "PostgreSQL disk usage > 80%"
+          description: "Database storage nearly full"
+
+      # Cache Alerts
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Redis cache is down"
+          description: "Cache unavailable - requests will bypass"
+
+      - alert: RediMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Redis memory usage > 85%"
+          description: "Cache eviction may increase miss rate"
+
+      # System Alerts
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage exceeding 80% for sustained period"
+
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
+        for: 30m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Disk usage > 85%"
+          description: "Root filesystem nearly full"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Memory usage > 85%"
+          description: "System memory nearly exhausted"
+
+      # SLA Alerts
+      - alert: SLABreach
+        expr: up{job="wise2-router"} == 0 or (histogram_quantile(0.95, rate(router_request_duration_ms[5m])) > 2500 and on (job) up{job="wise2-router"} == 1)
+        for: 5m
+        labels:
+          severity: critical
+          sla: "99.9%"
+        annotations:
+          summary: "SLA breach detected"
+          description: "Service unavailable or latency SLA exceeded"

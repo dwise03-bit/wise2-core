@@ -1,0 +1,78 @@
+name: Deploy to Production (DISABLED - use manual SSH deployment)
+
+on:
+  # Deployment is now manual only - use scripts/deploy.sh
+  # This workflow is disabled to prevent conflicts with manual deployment
+  workflow_dispatch:  # Can be triggered manually if needed, but not automatic
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Skip cleanly (no red X) if deploy secrets aren't configured, instead of
+      # failing the SSH step. Set DEPLOY_HOST/DEPLOY_USER/DEPLOY_KEY to enable.
+      - name: Check deploy secrets
+        id: guard
+        run: |
+          if [ -n "${{ secrets.DEPLOY_HOST }}" ] && [ -n "${{ secrets.DEPLOY_USER }}" ] && [ -n "${{ secrets.DEPLOY_KEY }}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️  Deploy secrets not set — skipping deploy. Configure DEPLOY_HOST, DEPLOY_USER, DEPLOY_KEY to enable." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Deploy via SSH
+        if: steps.guard.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -e
+            echo "📦 Deploying WISE² Platform..."
+
+            cd /home/dwise/wise2-core
+
+            echo "📥 Pulling latest code..."
+            git fetch origin
+            git checkout main
+            git pull origin main
+
+            echo "🚀 Rebuilding and restarting services..."
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml up -d --build
+
+            # Health check runs ON THE SERVER, where the services actually run.
+            echo "🏥 Checking deployment health..."
+            for i in $(seq 1 30); do
+              if curl -fs http://localhost:3000 > /dev/null 2>&1; then
+                echo "✅ Services are healthy"
+                exit 0
+              fi
+              echo "⏳ Waiting for services... ($i/30)"
+              sleep 2
+            done
+            echo "❌ Health check failed"
+            docker-compose -f docker-compose.prod.yml logs --tail 50
+            exit 1
+
+      - name: Deployment result
+        if: always()
+        run: |
+          if [ "${{ steps.guard.outputs.configured }}" != "true" ]; then
+            echo "⏭️  Deploy skipped (secrets not configured)"
+          elif [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Successfully deployed to https://wise2.net"
+          else
+            echo "❌ Deployment failed - check logs above"
+          fi

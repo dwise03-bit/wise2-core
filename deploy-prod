@@ -1,0 +1,136 @@
+#!/bin/bash
+set -e
+
+REMOTE_USER="dwise"
+REMOTE_HOST="wise2.net"
+REMOTE_PATH="/home/dwise/wise2-core"
+
+echo "🚀 WISE² Enterprise Production Deployment"
+echo "=========================================="
+
+# Push to GitHub
+echo "📤 Pushing to GitHub..."
+git add -A
+git commit -m "deploy: Production MLP deployment" 2>/dev/null || true
+git push origin main
+
+# Deploy to server
+echo "🌐 Deploying to $REMOTE_HOST..."
+
+ssh "$REMOTE_USER@$REMOTE_HOST" << 'REMOTE'
+set -e
+
+cd /home/dwise/wise2-core
+
+echo "📥 Pulling latest code..."
+git fetch origin
+git reset --hard origin/main
+
+echo "🔧 Setting up environment..."
+cat > .env << ENVFILE
+NODE_ENV=production
+API_HOST=0.0.0.0
+API_PORT=3001
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/wise2_core
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=wise2_core
+JWT_SECRET=$(openssl rand -hex 32)
+STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_placeholder}
+API_CORS_ORIGIN=http://wise2.net,https://wise2.net
+ENVFILE
+
+echo "🐳 Building Docker images..."
+docker-compose -f docker-compose.prod.yml build
+
+echo "🚀 Starting services..."
+docker-compose -f docker-compose.prod.yml up -d
+
+echo "⏳ Waiting for services to be ready..."
+sleep 10
+
+echo "🗄️ Running database migrations..."
+docker-compose -f docker-compose.prod.yml exec -T postgres psql -U postgres -d wise2_core << SQL
+-- Create tables if not exists
+CREATE TABLE IF NOT EXISTS "User" (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT,
+  passwordHash TEXT NOT NULL,
+  role TEXT NOT NULL,
+  createdAt TIMESTAMP DEFAULT NOW(),
+  updatedAt TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "Subscription" (
+  id TEXT PRIMARY KEY,
+  userId TEXT UNIQUE NOT NULL REFERENCES "User"(id),
+  stripeCustomerId TEXT UNIQUE,
+  stripeSubscriptionId TEXT UNIQUE,
+  status TEXT NOT NULL,
+  plan TEXT NOT NULL,
+  currentPeriodStart TIMESTAMP,
+  currentPeriodEnd TIMESTAMP,
+  canceledAt TIMESTAMP,
+  createdAt TIMESTAMP DEFAULT NOW(),
+  updatedAt TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "Project" (
+  id TEXT PRIMARY KEY,
+  userId TEXT NOT NULL REFERENCES "User"(id),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  budget FLOAT,
+  timeline TEXT,
+  status TEXT NOT NULL DEFAULT 'IDEA',
+  category TEXT,
+  tags TEXT[],
+  fileUrl TEXT,
+  createdAt TIMESTAMP DEFAULT NOW(),
+  updatedAt TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "ProjectUpdate" (
+  id TEXT PRIMARY KEY,
+  projectId TEXT NOT NULL REFERENCES "Project"(id),
+  status TEXT NOT NULL,
+  message TEXT NOT NULL,
+  timestamp TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS "Notification" (
+  id TEXT PRIMARY KEY,
+  userId TEXT NOT NULL,
+  type TEXT NOT NULL,
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  read BOOLEAN DEFAULT false,
+  createdAt TIMESTAMP DEFAULT NOW()
+);
+SQL
+
+echo "✅ Database initialized"
+
+echo "🔍 Service health check..."
+curl http://localhost:3001/ || echo "API warming up..."
+curl http://localhost:3002/ || echo "Dashboard warming up..."
+curl http://localhost:3003/ || echo "Admin warming up..."
+
+echo ""
+echo "✅ WISE² Enterprise MLP Deployed!"
+echo "=========================================="
+echo "🌐 Website:  http://wise2.net (port 80/443 via nginx)"
+echo "📊 Dashboard: http://wise2.net:3002 (or configure nginx)"
+echo "🔧 Admin:    http://wise2.net:3003 (or configure nginx)"
+echo "⚙️  API:      http://wise2.net:3001"
+echo ""
+echo "📝 Next steps:"
+echo "  1. Configure nginx reverse proxy (optional)"
+echo "  2. Test signup at http://wise2.net:3002/auth/signup"
+echo "  3. Monitor logs: docker-compose -f docker-compose.prod.yml logs -f"
+echo ""
+
+REMOTE
+
+echo "✅ Production deployment complete!"

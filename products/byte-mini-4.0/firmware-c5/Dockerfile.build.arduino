@@ -1,0 +1,10 @@
+FROM espressif/idf:v5.3
+
+# Install Arduino component
+RUN cd /opt/esp/idf/components && \
+    git clone --depth 1 https://github.com/espressif/arduino-esp32.git && \
+    cd arduino-esp32 && \
+    git fetch --depth 1 origin tag 3.3.11 && \
+    git checkout tags/3.3.11
+
+RUN echo "Arduino component installed at /opt/esp/idf/components/arduino-esp32"

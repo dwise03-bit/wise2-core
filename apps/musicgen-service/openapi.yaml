@@ -1,0 +1,451 @@
+openapi: 3.0.0
+info:
+  title: MusicGen Inference Server API
+  description: Production-ready microservice for AI music generation using Meta's MusicGen
+  version: 1.0.0
+  contact:
+    name: WISE² Support
+    email: dwise03@gmail.com
+  license:
+    name: Proprietary
+    url: https://wise2.net
+
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+  - url: https://musicgen.wise2.net
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Simple health check endpoint
+      tags:
+        - Health & Status
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                  service:
+                    type: string
+
+  /status:
+    get:
+      summary: Detailed service status
+      description: Get service statistics and configuration
+      tags:
+        - Health & Status
+      responses:
+        '200':
+          description: Service status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  stats:
+                    type: object
+                    properties:
+                      active_generations:
+                        type: integer
+                      queue_size:
+                        type: integer
+                      cached_results:
+                        type: integer
+                      model_loaded:
+                        type: boolean
+                  config:
+                    type: object
+
+  /api/v1/generate:
+    post:
+      summary: Generate music from text prompt
+      tags:
+        - Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                  description: Text description of desired music
+                  example: "upbeat electronic dance music with heavy bass"
+                duration:
+                  type: integer
+                  minimum: 1
+                  maximum: 120
+                  default: 30
+                  description: Duration in seconds
+                genre:
+                  type: string
+                  description: Music genre
+                  enum:
+                    - ambient
+                    - classical
+                    - electronic
+                    - jazz
+                    - pop
+                    - rock
+                mood:
+                  type: string
+                  description: Music mood
+                  enum:
+                    - happy
+                    - sad
+                    - energetic
+                    - calm
+                    - dramatic
+                tempo:
+                  type: integer
+                  minimum: 40
+                  maximum: 240
+                  description: Tempo in BPM
+                key:
+                  type: string
+                  description: Musical key
+                  example: "C"
+                intensity:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                  description: Music intensity
+                temperature:
+                  type: number
+                  minimum: 0
+                  maximum: 2
+                  default: 1.0
+                  description: Sampling temperature
+                top_k:
+                  type: integer
+                  default: 250
+                top_p:
+                  type: number
+                  default: 0.0
+                seed:
+                  type: integer
+                  description: Random seed for reproducibility
+      responses:
+        '200':
+          description: Music generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  generation_id:
+                    type: string
+                  prompt:
+                    type: string
+                  duration:
+                    type: integer
+                  sample_rate:
+                    type: integer
+                  timestamp:
+                    type: string
+                  download_url:
+                    type: string
+        '400':
+          description: Invalid request parameters
+        '500':
+          description: Generation failed
+
+  /api/v1/generate/variants:
+    post:
+      summary: Generate multiple variants
+      tags:
+        - Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                duration:
+                  type: integer
+                  default: 30
+                num_variants:
+                  type: integer
+                  minimum: 1
+                  maximum: 4
+                  default: 3
+      responses:
+        '200':
+          description: Variants generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  variants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        generation_id:
+                          type: string
+                        download_url:
+                          type: string
+
+  /api/v1/generate/stream:
+    post:
+      summary: Generate music with streaming output
+      tags:
+        - Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                duration:
+                  type: integer
+      responses:
+        '200':
+          description: Audio stream
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /api/v1/generate/with-narration:
+    post:
+      summary: Generate music with TTS narration
+      tags:
+        - Generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - music_prompt
+                - narration_text
+              properties:
+                music_prompt:
+                  type: string
+                narration_text:
+                  type: string
+                duration:
+                  type: integer
+      responses:
+        '200':
+          description: Music with narration generated
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/download/{generation_id}:
+    get:
+      summary: Download generated audio
+      tags:
+        - Download & Retrieval
+      parameters:
+        - name: generation_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audio file
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Generation not found
+
+  /api/v1/result/{generation_id}:
+    get:
+      summary: Get generation result metadata
+      tags:
+        - Download & Retrieval
+      parameters:
+        - name: generation_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Generation metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  generation_id:
+                    type: string
+                  prompt:
+                    type: string
+                  duration:
+                    type: integer
+                  timestamp:
+                    type: string
+
+  /api/v1/config/genres:
+    get:
+      summary: Get supported genres
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: List of genres
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  genres:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/config/moods:
+    get:
+      summary: Get supported moods
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: List of moods
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  moods:
+                    type: array
+                    items:
+                      type: string
+
+  /api/v1/config/parameters:
+    get:
+      summary: Get parameter configuration
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: Parameter ranges and defaults
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/cache/clear:
+    post:
+      summary: Clear cached results
+      tags:
+        - Maintenance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                max_age_seconds:
+                  type: integer
+                  default: 3600
+      responses:
+        '200':
+          description: Cache cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  cleared:
+                    type: integer
+
+  /api/v1/shutdown:
+    post:
+      summary: Gracefully shutdown service
+      tags:
+        - Maintenance
+      responses:
+        '200':
+          description: Shutdown initiated
+
+tags:
+  - name: Health & Status
+    description: Server health and status endpoints
+  - name: Generation
+    description: Music generation endpoints
+  - name: Download & Retrieval
+    description: Download and retrieve generated audio
+  - name: Configuration
+    description: Configuration and parameter endpoints
+  - name: Maintenance
+    description: Maintenance and administrative endpoints
+
+components:
+  schemas:
+    GenerationRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+        duration:
+          type: integer
+        genre:
+          type: string
+        mood:
+          type: string
+        temperature:
+          type: number
+
+    GenerationResult:
+      type: object
+      properties:
+        generation_id:
+          type: string
+        prompt:
+          type: string
+        duration:
+          type: integer
+        timestamp:
+          type: string

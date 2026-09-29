@@ -1,0 +1,462 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Menu, X, CheckCircle2 } from 'lucide-react';
+import { wiseDefenseInstructors } from '@/data/wise2-content';
+
+export default function WiseDefenseLanding() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const navigationItems = [
+    { label: 'HOME', href: '#' },
+    { label: 'TRAINING', href: '#' },
+    { label: 'ABOUT', href: '#' },
+    { label: 'RESOURCES', href: '#' },
+    { label: 'CONTACT', href: '#' },
+  ];
+
+  const services = [
+    { label: 'CRIME RADAR', desc: 'Live incident map. Queens, NYC.', status: 'LIVE' },
+    { label: 'WATCH ZONES', desc: 'Monitor what matters. 4 zones.', status: 'ACTIVE' },
+    { label: 'SDR MONITORING', desc: 'Receive-only intelligence. 462-550 MHz.', status: 'ACTIVE' },
+    { label: 'MESH NETWORKING', desc: 'Encrypted & resilient. 12 nodes active.', status: 'ACTIVE' },
+    { label: 'WEATHER ALERTS', desc: 'Hyperlocal intelligence. Real-time.', status: 'ACTIVE' },
+    { label: 'OFFLINE FIRST', desc: 'No internet. No problem. 100% operational.', status: 'NATIVE' },
+  ];
+
+  const aboutPoints = [
+    'Firearm Safety & Education',
+    'Youth Development',
+    'Veteran Outreach',
+    'Community Events',
+  ];
+
+  return (
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-40 bg-black/80 backdrop-blur-sm border-b border-red-600/20">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded flex items-center justify-center font-black text-2xl text-black">
+                W
+              </div>
+              <div>
+                <p className="text-sm font-black tracking-widest">WISE DEFENSE</p>
+                <p className="text-xs text-gray-500">TRAIN. TEACH. PROTECT.</p>
+              </div>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-8">
+              {navigationItems.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className={`text-xs font-bold tracking-wider uppercase transition-colors ${
+                    item.label === 'HOME' ? 'text-red-600' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <div className="hidden lg:block">
+              <button className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black tracking-wider rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-500">
+                BOOK TRAINING
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+
+          {/* Mobile Navigation */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden mt-4 pt-4 border-t border-red-600/20 space-y-3 pb-4">
+              {navigationItems.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="block px-4 py-2 text-sm font-bold text-gray-300 hover:text-red-500"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <button className="w-full mt-4 px-4 py-2 bg-red-600 text-white text-xs font-bold rounded">
+                BOOK TRAINING
+              </button>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent z-0" />
+
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 w-full items-center">
+          {/* Left Content */}
+          <div className="px-6 sm:px-8 lg:px-12 py-16 lg:py-0">
+            <div className="max-w-xl animate-fade-in">
+              <p className="text-red-600 text-xs font-black tracking-widest mb-4 uppercase">
+                WISE² DEFENSE
+              </p>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6 tracking-tighter">
+                NIGHTWING<br />
+                <span className="text-red-600">EDGE INTELLIGENCE NODE</span>
+              </h1>
+              <p className="text-red-600 text-lg font-bold mb-6 tracking-wide">
+                TRAIN. TEACH. PROTECT.
+              </p>
+              <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-md">
+                Offline. Encrypted. Mission Ready. Intelligence that works where others don't.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-sm tracking-wider uppercase transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center gap-2">
+                  WATCH OVERVIEW
+                  <span>▶</span>
+                </button>
+                <button className="px-8 py-3 border-2 border-gray-700 hover:border-white text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
+                  LEARN MORE
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Hero Image Placeholder */}
+          <div className="relative h-96 lg:h-screen w-full lg:order-last">
+            <div className="absolute inset-0 bg-gradient-to-b from-red-900/10 to-black flex items-center justify-center">
+              <div className="text-center text-gray-600">
+                <p className="text-sm">Instructor in action</p>
+                <p className="text-xs text-gray-700">Professional photo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-16 lg:py-20 border-t border-red-600/20 bg-black/50">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service, i) => (
+              <div
+                key={i}
+                className="group border border-red-600/30 rounded-lg p-6 hover:border-red-600/60 hover:bg-red-600/5 transition-all duration-300 text-center"
+              >
+                <div className="text-3xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
+                  {['📡', '🎯', '📻', '🔗', '⛅', '📦'][i]}
+                </div>
+                <h3 className="font-black text-xs tracking-widest uppercase mb-3 text-red-600">
+                  {service.label}
+                </h3>
+                <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                  {service.desc}
+                </p>
+                <p className="text-gray-600 text-xs font-black tracking-wider uppercase">
+                  {service.status}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-16 lg:py-20 border-t border-red-600/20">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: About Content */}
+            <div>
+              <h2 className="text-4xl lg:text-5xl font-black mb-4 leading-tight">
+                ABOUT NIGHTWING
+              </h2>
+              <h3 className="text-2xl lg:text-3xl font-black mb-8">
+                <span className="text-red-600">OFFLINE. ENCRYPTED.</span><br />
+                <span className="text-white">MISSION READY.</span>
+              </h3>
+              <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-md">
+                NIGHTWING is an edge intelligence platform built for urban situational awareness. Private by design, encrypted by default, and mission-ready connectivity that works where others don't.
+              </p>
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Offline-first edge platform</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Encrypted local intelligence</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Mission-ready connectivity</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 font-semibold">Works where others don't</span>
+                </li>
+              </ul>
+              <button className="px-6 py-3 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
+                LEARN MORE
+                <span>→</span>
+              </button>
+            </div>
+
+            {/* Right: Testimonial & Logo */}
+            <div className="space-y-8">
+              {/* Large W Logo */}
+              <div className="relative h-64 flex items-center justify-center opacity-20">
+                <div className="text-9xl font-black text-gray-600">W</div>
+              </div>
+
+              {/* Quote */}
+              <div className="border border-red-600/30 rounded-lg p-8 bg-red-600/5">
+                <p className="text-2xl font-black text-red-600 mb-4">"</p>
+                <p className="text-white text-lg font-bold leading-relaxed mb-6">
+                  It's not about looking<br />
+                  for a fight.<br />
+                  <span className="text-red-600">It's about being ready</span><br />
+                  so you don't have to.
+                </p>
+                <p className="text-gray-400 font-semibold">— Coach WISE</p>
+                <p className="text-gray-500 text-sm font-black tracking-wider">FOUNDER</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Instructors Section */}
+      <section className="py-16 lg:py-20 border-t border-red-600/20 bg-black">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="mb-12">
+            <h2 className="text-5xl lg:text-6xl font-black mb-4">
+              OUR INSTRUCTORS
+            </h2>
+            <p className="text-xl text-red-600 font-bold tracking-wide">
+              CERTIFIED PROFESSIONALS DEDICATED TO YOUR SUCCESS
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Instructor Profile */}
+            {wiseDefenseInstructors.filter(i => i.featured).map((instructor) => (
+              <div key={instructor.id} className="space-y-8">
+                {/* Main Image */}
+                <div className="relative rounded-lg overflow-hidden border-2 border-red-600/30 h-96 lg:h-[500px]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                  <img
+                    src={instructor.image}
+                    alt={instructor.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                    <p className="text-red-600 text-xs font-black tracking-widest mb-2 uppercase">{instructor.role}</p>
+                    <h3 className="text-3xl lg:text-4xl font-black text-white">{instructor.name}</h3>
+                  </div>
+                </div>
+
+                {/* Secondary Image */}
+                <div className="relative rounded-lg overflow-hidden border-2 border-red-600/30 h-64 lg:h-80">
+                  <img
+                    src={instructor.actionImage}
+                    alt={`${instructor.name} in action`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            ))}
+
+            {/* Instructor Details */}
+            {wiseDefenseInstructors.filter(i => i.featured).map((instructor) => (
+              <div key={`details-${instructor.id}`} className="space-y-8">
+                <div>
+                  <h3 className="text-2xl font-black mb-4 text-red-600">CREDENTIALS</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                    {instructor.bio}
+                  </p>
+                  <p className="text-xs font-black text-gray-500 tracking-widest mb-6 uppercase">Specializations</p>
+                  <div className="space-y-3">
+                    {instructor.specialties.map((specialty, idx) => (
+                      <div key={idx} className="flex items-center gap-3 pb-3 border-b border-red-600/20">
+                        <div className="w-2 h-2 bg-red-600 rounded-full flex-shrink-0" />
+                        <span className="text-white font-semibold">{specialty}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border-t border-red-600/20 pt-8">
+                  <h3 className="text-2xl font-black mb-6 text-red-600">TRAINING FOCUS</h3>
+                  <p className="text-gray-400 leading-relaxed mb-8">
+                    With a passion for excellence and a commitment to safety, {instructor.name.toLowerCase()} brings years of professional expertise to every training session. Whether you're a beginner or advanced, we'll meet you where you are and elevate your skills.
+                  </p>
+                  <button className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-sm tracking-wider uppercase transition-all duration-300 flex items-center gap-2">
+                    BOOK TRAINING SESSION
+                    <span>→</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section
+        ref={statsRef}
+        className="py-16 lg:py-20 border-t border-red-600/20 bg-black/50"
+      >
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: '⭐', value: '10+', label: 'YEARS EXPERIENCE' },
+              { icon: '👥', value: '2000+', label: 'STUDENTS TRAINED' },
+              { icon: '⭐', value: '5★', label: 'RATING BY STUDENTS' },
+              { icon: '🛡️', value: '100%', label: 'COMMITMENT TO SAFETY' },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="text-center"
+                style={{
+                  opacity: statsVisible ? 1 : 0,
+                  transform: statsVisible ? 'translateY(0)' : 'translateY(20px)',
+                  transition: `all 0.6s ease-out ${i * 100}ms`,
+                }}
+              >
+                <div className="text-4xl mb-3">{stat.icon}</div>
+                <p className="text-3xl lg:text-4xl font-black text-red-600 mb-2">
+                  {stat.value}
+                </p>
+                <p className="text-xs font-black text-gray-400 tracking-widest uppercase">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Expansion Section */}
+      <section className="py-16 lg:py-20 border-t border-red-600/20">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
+          <h2 className="text-5xl lg:text-6xl font-black mb-4">
+            NIGHTWING<br />
+            <span className="text-red-600">EDGE INTELLIGENCE NODE</span>
+          </h2>
+          <div className="mt-12 p-12 border-2 border-red-600/30 rounded-lg bg-red-600/5">
+            <p className="text-5xl lg:text-6xl font-black text-white leading-tight">
+              <span className="text-red-600">LOCK</span><br />
+              <span className="text-white">IT</span><br />
+              <span className="text-red-600">IN.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-red-600/20 py-16 bg-black/50">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
+            {/* Brand */}
+            <div>
+              <p className="text-sm font-black tracking-widest mb-4">WISE DEFENSE</p>
+              <p className="text-xs text-gray-500">TRAIN. TEACH. PROTECT.</p>
+            </div>
+
+            {/* Links */}
+            <div>
+              <p className="text-xs font-black text-gray-400 tracking-widest mb-4">FOLLOW US</p>
+              <ul className="space-y-3 text-xs">
+                <li><a href="#" className="text-gray-500 hover:text-red-600 transition-colors">Instagram</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-red-600 transition-colors">Facebook</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-red-600 transition-colors">YouTube</a></li>
+                <li><a href="#" className="text-gray-500 hover:text-red-600 transition-colors">TikTok</a></li>
+              </ul>
+            </div>
+
+            {/* Contact */}
+            <div>
+              <p className="text-xs font-black text-gray-400 tracking-widest mb-4">CONTACT US</p>
+              <ul className="space-y-3 text-xs text-gray-500">
+                <li><a href="mailto:info@wisedefensellc.com" className="hover:text-red-600 transition-colors">info@wisedefensellc.com</a></li>
+                <li><a href="tel:+13367090472" className="hover:text-red-600 transition-colors">(336) 709-0472</a></li>
+              </ul>
+            </div>
+
+            {/* Badge */}
+            <div className="lg:col-span-2 flex justify-center lg:justify-end">
+              <div className="w-32 h-32 border-2 border-red-600/40 rounded-full flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-xs font-black text-red-600 tracking-widest">WISE</p>
+                  <p className="text-4xl font-black text-gray-600">W</p>
+                  <p className="text-xs font-black text-red-600 tracking-widest">DEFENSE</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="border-t border-red-600/20 pt-8 text-center">
+            <p className="text-xs text-gray-600 font-black tracking-widest">
+              © 2026 WISE DEFENSE L.L.C. ALL RIGHTS RESERVED
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          * {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

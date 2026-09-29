@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-revenue"
+  },
+  "include": [
+    "src/main.p0.ts",
+    "src/app.module.p0.ts",
+    "src/app.controller.ts",
+    "src/app.service.ts",
+    "src/config/api-status.controller.ts",
+    "src/config/api-manager.module.ts",
+    "src/prisma/**/*.ts",
+    "src/email/**/*.ts",
+    "src/analytics/**/*.ts",
+    "src/v1/billing/**/*.ts",
+    "src/v1/prospects/**/*.ts",
+    "../../packages/db/prisma"
+  ]
+}

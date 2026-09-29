@@ -1,0 +1,22 @@
+{
+  "name": "@wise2/reaper-worker",
+  "version": "0.1.0",
+  "description": "REAPER V1 BullMQ audit job processor",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@wise2/reaper-domain": "workspace:*",
+    "@wise2/reaper-intelligence": "workspace:*",
+    "bullmq": "^4.13.0",
+    "redis": "^4.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.9.0"
+  }
+}

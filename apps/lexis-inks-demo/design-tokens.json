@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "name": "Lexi's Inks Design System",
+  "description": "Premium custom pen business brand tokens",
+  "primitives": {
+    "colors": {
+      "navy-900": "#0a1f3d",
+      "navy-800": "#0d2850",
+      "navy-700": "#051428",
+      "blue-600": "#0066ff",
+      "blue-500": "#3d8fff",
+      "cyan-500": "#00d4ff",
+      "white-100": "#ffffff",
+      "silver-100": "#e8e8e8",
+      "silver-600": "#999999"
+    },
+    "typography": {
+      "font-sans": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+      "font-script": "'Brush Script MT', cursive",
+      "size-xs": "12px",
+      "size-sm": "14px",
+      "size-base": "16px",
+      "size-lg": "20px",
+      "size-xl": "24px",
+      "size-2xl": "32px",
+      "size-3xl": "40px",
+      "size-4xl": "48px",
+      "size-5xl": "64px",
+      "weight-normal": "400",
+      "weight-bold": "700"
+    },
+    "spacing": {
+      "0": "0",
+      "1": "4px",
+      "2": "8px",
+      "3": "12px",
+      "4": "16px",
+      "6": "24px",
+      "8": "32px",
+      "12": "48px",
+      "16": "64px",
+      "20": "80px"
+    },
+    "radius": {
+      "none": "0",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16px"
+    },
+    "shadow": {
+      "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+      "md": "0 4px 6px rgba(0, 0, 0, 0.1)",
+      "lg": "0 10px 15px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  "semantic": {
+    "colors": {
+      "background": "{primitives.colors.navy-900}",
+      "background-secondary": "{primitives.colors.navy-800}",
+      "background-tertiary": "{primitives.colors.navy-700}",
+      "primary": "{primitives.colors.blue-600}",
+      "primary-hover": "{primitives.colors.blue-500}",
+      "accent": "{primitives.colors.cyan-500}",
+      "text-primary": "{primitives.colors.white-100}",
+      "text-secondary": "{primitives.colors.silver-600}",
+      "border": "{primitives.colors.navy-800}",
+      "border-accent": "{primitives.colors.cyan-500}"
+    },
+    "typography": {
+      "body-font": "{primitives.typography.font-sans}",
+      "heading-font": "{primitives.typography.font-script}",
+      "body-size": "{primitives.typography.size-base}",
+      "body-weight": "{primitives.typography.weight-normal}",
+      "heading-size": "{primitives.typography.size-2xl}",
+      "heading-weight": "{primitives.typography.weight-bold}"
+    }
+  },
+  "component": {
+    "button": {
+      "primary": {
+        "background": "{semantic.colors.primary}",
+        "background-hover": "{semantic.colors.primary-hover}",
+        "text": "{semantic.colors.text-primary}",
+        "padding": "{primitives.spacing.4}",
+        "radius": "{primitives.radius.md}"
+      },
+      "secondary": {
+        "background": "transparent",
+        "border": "{semantic.colors.border-accent}",
+        "text": "{semantic.colors.accent}",
+        "padding": "{primitives.spacing.4}",
+        "radius": "{primitives.radius.md}"
+      }
+    },
+    "card": {
+      "background": "{semantic.colors.background-secondary}",
+      "border": "{semantic.colors.border}",
+      "padding": "{primitives.spacing.6}",
+      "radius": "{primitives.radius.lg}",
+      "shadow": "{primitives.shadow.md}"
+    },
+    "input": {
+      "background": "{semantic.colors.background-secondary}",
+      "border": "{semantic.colors.border}",
+      "text": "{semantic.colors.text-primary}",
+      "padding": "{primitives.spacing.3}",
+      "radius": "{primitives.radius.md}"
+    },
+    "nav": {
+      "background": "{semantic.colors.background-tertiary}",
+      "border": "{semantic.colors.border}",
+      "text": "{semantic.colors.text-primary}",
+      "text-hover": "{semantic.colors.accent}"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+[Unit]
+Description=WISE² Edge Hub - Device Registry
+Documentation=https://wise2.net/docs/edge-hub
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-edge/app
+Environment="NODE_ENV=production"
+Environment="MQTT_URL=mqtt://127.0.0.1:1883"
+Environment="LOG_LEVEL=info"
+ExecStart=/usr/bin/node /home/dwise/wise2-edge/app/dist/device-registry.js
+
+# Process management
+Restart=on-failure
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+
+# Resource limits
+MemoryMax=200M
+CPUQuota=50%
+TasksMax=100
+
+# Logging
+StandardOutput=append:/home/dwise/wise2-edge/app/logs/registry-out.log
+StandardError=append:/home/dwise/wise2-edge/app/logs/registry-error.log
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/dwise/wise2-edge/app/logs
+
+[Install]
+WantedBy=multi-user.target

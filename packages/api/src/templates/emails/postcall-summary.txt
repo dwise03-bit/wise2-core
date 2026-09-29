@@ -1,0 +1,86 @@
+================================================================================
+                     WISE² - CONSULTATION SUMMARY
+================================================================================
+
+Thank you, {{firstName}}!
+
+We enjoyed our consultation with you today. Here's a summary of our discussion
+and the next steps.
+
+================================================================================
+CONSULTATION SUMMARY
+================================================================================
+
+Discussion Overview:
+{{discussionSummary}}
+
+================================================================================
+ACTION ITEMS
+================================================================================
+
+{{#each actionItems}}
+☐ {{this.description}}{{#if this.dueDate}} (Due: {{this.dueDate}}){{/if}}
+{{/each}}
+
+================================================================================
+CONSULTANT NOTES
+================================================================================
+
+{{#if consultantNotes}}
+{{consultantName}}'s Notes:
+{{consultantNotes}}
+{{else}}
+No additional notes provided.
+{{/if}}
+
+================================================================================
+CALL RECORDING
+================================================================================
+
+{{#if recordingLink}}
+Duration:  {{recordingDuration}} minutes
+Date:      {{recordingDate}}
+Link:      {{recordingLink}}
+
+Access your recording via the link above. The link will expire in
+{{recordingExpiryDays}} days.
+{{else}}
+No recording was made for this session.
+{{/if}}
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Review the action items above
+2. Complete any tasks due before our next session
+3. Save this email for future reference
+4. Schedule a follow-up if needed
+
+================================================================================
+FEEDBACK & FOLLOW-UP
+================================================================================
+
+Share Feedback:       {{feedbackLink}}
+Schedule Follow-Up:   {{followUpLink}}
+
+{{#if resourcesLink}}
+Additional Resources: {{resourcesLink}}
+{{/if}}
+
+================================================================================
+
+Thank you for choosing WISE² Consulting. We're here to support your success!
+
+Questions? Contact us at support@wise2.io
+
+================================================================================
+PREFERENCES & LEGAL
+================================================================================
+
+Unsubscribe:      {{unsubscribeLink}}
+Email Preferences: {{preferencesLink}}
+Privacy Policy:   {{privacyLink}}
+
+© 2026 WISE² - Organized Chaos Command Center
+All rights reserved.

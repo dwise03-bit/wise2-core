@@ -1,0 +1,206 @@
+#!/bin/bash
+################################################################################
+# WISE² Backup Monitoring - Environment Configuration
+#
+# Copy to /etc/wise2-backup-env and update values:
+#   sudo cp config/backup/wise2-backup-env.example /etc/wise2-backup-env
+#   sudo chmod 600 /etc/wise2-backup-env
+#   sudo editor /etc/wise2-backup-env
+#
+# Then source in cron or monitoring scripts:
+#   source /etc/wise2-backup-env
+#
+################################################################################
+
+# ============================================================================
+# BACKUP STORAGE CONFIGURATION
+# ============================================================================
+
+# Local backup directory
+export BACKUP_DIR=/backups/wise2
+
+# Backup retention (days) - keep backups for this many days
+export BACKUP_RETENTION_DAYS=7
+
+# Minimum backups to keep (even if older than retention days)
+export BACKUP_RETENTION_MIN_COUNT=10
+
+# ============================================================================
+# REMOTE BACKUP (AWS S3)
+# ============================================================================
+
+# S3 bucket for remote backups (leave empty to disable)
+export S3_BUCKET_BACKUP=wise2-backups
+
+# AWS region
+export AWS_REGION=us-east-1
+
+# AWS credentials (use IAM roles instead if possible)
+# export AWS_ACCESS_KEY_ID=your-key-here
+# export AWS_SECRET_ACCESS_KEY=your-secret-here
+
+# ============================================================================
+# DATABASE CONFIGURATION
+# ============================================================================
+
+# PostgreSQL host
+export DB_HOST=localhost
+
+# PostgreSQL port
+export DB_PORT=5432
+
+# Database name
+export DB_NAME=wise2_prod
+
+# Database user
+export DB_USER=wise2_prod
+
+# Database password (for restore tests - use .pgpass instead if possible)
+# export DB_PASSWORD=your-password-here
+
+# ============================================================================
+# MONITORING THRESHOLDS
+# ============================================================================
+
+# Warn if backup is older than this many hours
+export BACKUP_AGE_WARN_HOURS=48
+
+# Fail/alert if backup is older than this many hours
+export BACKUP_AGE_CRITICAL_HOURS=72
+
+# Fail/alert if disk space available is less than this percentage
+export MIN_DISK_SPACE_PERCENT=20
+
+# Warn if backup file is smaller than this many MB
+export MIN_BACKUP_SIZE_MB=1
+
+# ============================================================================
+# ALERTING
+# ============================================================================
+
+# Email address for alert notifications (leave empty to disable)
+export ALERT_EMAIL=ops@wise2.com
+
+# CC additional recipients (comma-separated, optional)
+export ALERT_EMAIL_CC=backup-team@wise2.com
+
+# Discord webhook URL for notifications (leave empty to disable)
+# Get this from Discord channel Settings → Integrations → Webhooks
+export DISCORD_WEBHOOK=
+
+# Slack webhook URL (if using Slack instead of Discord)
+export SLACK_WEBHOOK=
+
+# Alert severity levels to send
+# Options: ERROR, WARN, INFO, OK
+export ALERT_LEVEL=WARN
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+
+# Log directory
+export MONITOR_LOG_DIR=/var/log/wise2
+
+# Log retention (days)
+export LOG_RETENTION_DAYS=30
+
+# Verbosity level: DEBUG, INFO, WARN, ERROR
+export LOG_LEVEL=INFO
+
+# ============================================================================
+# PERFORMANCE TUNING
+# ============================================================================
+
+# Timeout for S3 operations (seconds)
+export AWS_TIMEOUT=30
+
+# Timeout for database operations (seconds)
+export DB_TIMEOUT=30
+
+# Number of concurrent backup verification tasks
+export PARALLEL_CHECKS=4
+
+# ============================================================================
+# NOTIFICATION TEMPLATES
+# ============================================================================
+
+# Email subject template
+export EMAIL_SUBJECT="WISE² Backup Alert: {STATUS}"
+
+# Slack notification channel
+export SLACK_CHANNEL="#backup-alerts"
+
+# Discord notification role to mention
+export DISCORD_ROLE="@ops"
+
+# ============================================================================
+# BACKUP LOCATIONS (for multi-location backups)
+# ============================================================================
+
+# Primary backup location
+export PRIMARY_BACKUP_DIR=/backups/wise2
+
+# Secondary backup location (NFS/USB/external drive)
+# export SECONDARY_BACKUP_DIR=/mnt/backup-usb
+
+# Tertiary backup location (cold storage)
+# export TERTIARY_BACKUP_DIR=/mnt/archive
+
+# ============================================================================
+# ADVANCED OPTIONS
+# ============================================================================
+
+# Enable backup verification (slower but safer)
+export VERIFY_BACKUPS=true
+
+# Test restore on every backup (resource intensive, usually monthly)
+export TEST_RESTORE_MONTHLY=true
+
+# Archive old backups to cold storage instead of deleting
+export ARCHIVE_OLD_BACKUPS=false
+
+# Compress archived backups (archive location must exist)
+export COMPRESS_ARCHIVED=true
+
+# Enable backup deduplication with rsync (requires rsync)
+export DEDUPLICATE_BACKUPS=false
+
+# ============================================================================
+# INTEGRATION ENDPOINTS
+# ============================================================================
+
+# Prometheus metrics endpoint (for scraping metrics)
+export PROMETHEUS_PUSHGATEWAY=
+
+# Grafana annotations webhook
+export GRAFANA_WEBHOOK=
+
+# Custom webhook for status updates
+export STATUS_WEBHOOK=
+
+# ============================================================================
+# DOCUMENTATION LINKS
+# ============================================================================
+
+# Quick links for alerts/reports
+export DOCS_BACKUP_SETUP=https://wiki.wise2.com/backup-setup
+export DOCS_DISASTER_RECOVERY=https://wiki.wise2.com/disaster-recovery
+export DOCS_TROUBLESHOOTING=https://wiki.wise2.com/backup-troubleshooting
+
+# ============================================================================
+# TESTING & DEVELOPMENT
+# ============================================================================
+
+# Dry-run mode (no actual cleanup/deletion)
+export DRY_RUN=false
+
+# Debug mode (very verbose logging)
+export DEBUG=false
+
+# Test mode (skip external services)
+export TEST_MODE=false
+
+################################################################################
+# END CONFIGURATION
+################################################################################

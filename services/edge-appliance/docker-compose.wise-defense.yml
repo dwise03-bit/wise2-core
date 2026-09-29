@@ -1,0 +1,28 @@
+services:
+  edge-runtime:
+    # Apply with:
+    # docker compose -f docker-compose.yml -f docker-compose.wise-defense.yml up -d
+    env_file:
+      - .env
+    environment:
+      WISE_DEFENSE_GATEWAY_ENABLED: ${WISE_DEFENSE_GATEWAY_ENABLED:-false}
+      WISE_DEFENSE_GATEWAY_ID: ${WISE_DEFENSE_GATEWAY_ID:-}
+      WISE_DEFENSE_GATEWAY_TOKEN: ${WISE_DEFENSE_GATEWAY_TOKEN:-}
+      WISE_DEFENSE_TENANT_ID: ${WISE_DEFENSE_TENANT_ID:-}
+      WISE_DEFENSE_API_URL: ${WISE_DEFENSE_API_URL:-}
+      MESHTASTIC_CONNECTION_TYPE: ${MESHTASTIC_CONNECTION_TYPE:-}
+      MESHTASTIC_SERIAL_PORT: ${MESHTASTIC_SERIAL_PORT:-}
+      MESHTASTIC_TCP_HOST: ${MESHTASTIC_TCP_HOST:-}
+      MESHTASTIC_TCP_PORT: ${MESHTASTIC_TCP_PORT:-}
+      MESHTASTIC_MQTT_URL: ${MESHTASTIC_MQTT_URL:-}
+      SDR_ENABLED: ${SDR_ENABLED:-false}
+      SDR_DEVICE_TYPE: ${SDR_DEVICE_TYPE:-}
+      SDR_CENTER_FREQUENCY_HZ: ${SDR_CENTER_FREQUENCY_HZ:-}
+      SDR_SAMPLE_RATE_HZ: ${SDR_SAMPLE_RATE_HZ:-}
+    # Required for USB receiver discovery. The service remains receive-only.
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

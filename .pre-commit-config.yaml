@@ -1,0 +1,13 @@
+repos:
+  # CRITICAL: Port Configuration Lock
+  # Blocks any commit that changes docker-compose ports without validator passing
+  - repo: local
+    hooks:
+      - id: port-consistency-check
+        name: Port Consistency Validator
+        entry: bash -c 'bash scripts/verify-port-consistency.sh || exit 1'
+        language: system
+        files: 'docker-compose.*\.yml|infrastructure/nginx/.*\.conf'
+        stages: [commit]
+        pass_filenames: false
+        always_run: true

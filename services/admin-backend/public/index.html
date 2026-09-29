@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAKKHAIL Admin Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; background: #0a0a0a; color: #a8a8a8; }
+
+    .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1a1a1a, #0a0a0a); }
+    .login-box { background: #1a1a1a; border: 1px solid #8C6518; border-radius: 8px; padding: 2rem; width: 100%; max-width: 400px; }
+    .login-box h1 { color: #D4AF37; font-size: 24px; margin-bottom: 0.5rem; text-transform: uppercase; }
+    .login-box p { color: #666; font-size: 14px; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; color: #D4AF37; font-size: 12px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .form-group input { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 4px; color: #a8a8a8; font-size: 14px; }
+    .form-group input:focus { outline: none; border-color: #D4AF37; }
+    .submit-btn { width: 100%; padding: 12px; background: #D4AF37; color: #000; border: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+    .submit-btn:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4); }
+    .error { color: #ff4444; font-size: 12px; margin-top: 1rem; }
+
+    .dashboard { display: none; }
+    .dashboard.active { display: flex; }
+    .dashboard { min-height: 100vh; }
+
+    .sidebar { width: 250px; background: #1a1a1a; border-right: 1px solid #333; }
+    .sidebar-header { padding: 2rem 1.5rem; border-bottom: 1px solid #333; }
+    .sidebar-header h2 { color: #D4AF37; font-size: 16px; margin-bottom: 0.5rem; }
+    .sidebar-header p { color: #666; font-size: 12px; }
+    .sidebar-menu { list-style: none; }
+    .sidebar-menu li { border-bottom: 1px solid #333; }
+    .sidebar-menu a { display: block; padding: 12px 1.5rem; color: #a8a8a8; text-decoration: none; font-size: 14px; transition: all 0.3s; cursor: pointer; }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: #2a2a2a; color: #D4AF37; }
+
+    .main-content { flex: 1; }
+    .header { background: #1a1a1a; border-bottom: 1px solid #333; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { color: #D4AF37; font-size: 20px; text-transform: uppercase; }
+    .logout-btn { padding: 8px 16px; background: #D4AF37; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+
+    .content { padding: 2rem; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 1.5rem; }
+    .stat-label { color: #666; font-size: 12px; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .stat-value { color: #D4AF37; font-size: 28px; font-weight: bold; }
+
+    .table-container { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+    .table-header { padding: 1.5rem; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+    .table-header h2 { color: #D4AF37; font-size: 16px; text-transform: uppercase; }
+    .add-btn { padding: 8px 16px; background: #D4AF37; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #0a0a0a; border-bottom: 1px solid #333; padding: 12px 1.5rem; text-align: left; color: #D4AF37; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+    td { padding: 12px 1.5rem; border-bottom: 1px solid #333; color: #a8a8a8; font-size: 14px; }
+    tr:hover { background: #2a2a2a; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .loading { text-align: center; padding: 2rem; color: #666; }
+  </style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+  <div class="login-box">
+    <h1>BLAKKHAIL</h1>
+    <p>Admin Dashboard</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="sencere@wise2.net" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="submit-btn">Login</button>
+      <div id="loginError" class="error"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardPage" class="dashboard">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>BLAKKHAIL</h2>
+      <p id="userEmail"></p>
+    </div>
+    <ul class="sidebar-menu">
+      <li><a class="nav-link active" data-section="overview">Dashboard</a></li>
+      <li><a class="nav-link" data-section="products">Products</a></li>
+      <li><a class="nav-link" data-section="orders">Orders</a></li>
+      <li><a class="nav-link" data-section="analytics">Analytics</a></li>
+      <li><a class="nav-link logout" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h1 id="pageTitle">Dashboard</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="content">
+
+      <!-- Overview Section -->
+      <div id="overview" class="section active">
+        <div class="stats-grid" id="statsGrid">
+          <div class="loading">Loading stats...</div>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <div id="products" class="section">
+        <div class="table-container">
+          <div class="table-header">
+            <h2>Products</h2>
+            <button class="add-btn" onclick="showProductForm()">+ Add Product</button>
+          </div>
+          <table id="productsTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>SKU</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsList">
+              <tr><td colspan="4" class="loading">Loading products...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Orders Section -->
+      <div id="orders" class="section">
+        <div class="table-container">
+          <div class="table-header">
+            <h2>Orders</h2>
+          </div>
+          <table id="ordersTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersList">
+              <tr><td colspan="5" class="loading">Loading orders...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Analytics Section -->
+      <div id="analytics" class="section">
+        <div class="table-container">
+          <div class="table-header">
+            <h2>Top Performing Products</h2>
+          </div>
+          <table id="analyticsTable">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsList">
+              <tr><td colspan="3" class="loading">Loading analytics...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let token = localStorage.getItem('adminToken');
+  const API_URL = window.location.origin;
+
+  if (token) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboardPage').classList.add('active');
+    document.getElementById('userEmail').textContent = localStorage.getItem('adminEmail');
+    loadDashboard();
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const res = await fetch(`${API_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+
+      localStorage.setItem('adminToken', data.token);
+      localStorage.setItem('adminEmail', data.user.email);
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboardPage').classList.add('active');
+      document.getElementById('userEmail').textContent = email;
+      loadDashboard();
+    } catch (error) {
+      document.getElementById('loginError').textContent = error.message;
+    }
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const section = e.target.dataset.section;
+      if (!section) return;
+
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      e.target.classList.add('active');
+
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(section).classList.add('active');
+
+      const titles = { overview: 'Dashboard', products: 'Products', orders: 'Orders', analytics: 'Analytics' };
+      document.getElementById('pageTitle').textContent = titles[section];
+
+      if (section === 'overview') loadDashboard();
+      else if (section === 'products') loadProducts();
+      else if (section === 'orders') loadOrders();
+      else if (section === 'analytics') loadAnalytics();
+    });
+  });
+
+  async function loadDashboard() {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/dashboard`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value">${data.stats.totalOrders}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value">$${parseFloat(data.stats.totalRevenue).toFixed(2)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Products</div>
+          <div class="stat-value">${data.stats.totalProducts}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Customers</div>
+          <div class="stat-value">${data.stats.totalCustomers}</div>
+        </div>
+      `;
+    } catch (error) {
+      document.getElementById('statsGrid').innerHTML = `<div class="error">Failed to load stats</div>`;
+    }
+  }
+
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/products`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const products = await res.json();
+
+      document.getElementById('productsList').innerHTML = products.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>$${parseFloat(p.price).toFixed(2)}</td>
+          <td>${p.sku}</td>
+          <td>
+            <button onclick="editProduct('${p.id}')" style="color: #D4AF37; cursor: pointer; border: none; background: none;">Edit</button>
+            <button onclick="deleteProduct('${p.id}')" style="color: #ff4444; cursor: pointer; border: none; background: none; margin-left: 1rem;">Delete</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" style="text-align: center; padding: 2rem;">No products yet</td></tr>';
+    } catch (error) {
+      document.getElementById('productsList').innerHTML = `<tr><td colspan="4" class="error">Failed to load products</td></tr>`;
+    }
+  }
+
+  async function loadOrders() {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/orders`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const orders = await res.json();
+
+      document.getElementById('ordersList').innerHTML = orders.map(o => `
+        <tr>
+          <td>${o.id.substring(0, 8)}</td>
+          <td>${o.customer_email}</td>
+          <td>$${parseFloat(o.total_price).toFixed(2)}</td>
+          <td>${o.status}</td>
+          <td>
+            <select onchange="updateOrderStatus('${o.id}', this.value)" style="background: #0a0a0a; border: 1px solid #333; color: #a8a8a8; padding: 4px; border-radius: 4px;">
+              <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>Processing</option>
+              <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+              <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>Completed</option>
+              <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No orders yet</td></tr>';
+    } catch (error) {
+      document.getElementById('ordersList').innerHTML = `<tr><td colspan="5" class="error">Failed to load orders</td></tr>`;
+    }
+  }
+
+  async function loadAnalytics() {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/analytics/top-products`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const products = await res.json();
+
+      document.getElementById('analyticsList').innerHTML = products.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.units_sold}</td>
+          <td>$${parseFloat(p.revenue).toFixed(2)}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="3" style="text-align: center; padding: 2rem;">No sales data yet</td></tr>';
+    } catch (error) {
+      document.getElementById('analyticsList').innerHTML = `<tr><td colspan="3" class="error">Failed to load analytics</td></tr>`;
+    }
+  }
+
+  async function updateOrderStatus(orderId, status) {
+    try {
+      await fetch(`${API_URL}/api/admin/orders/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      loadOrders();
+    } catch (error) {
+      alert('Failed to update order status');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminEmail');
+    location.reload();
+  }
+</script>
+
+</body>
+</html>

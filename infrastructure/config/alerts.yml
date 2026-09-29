@@ -1,0 +1,176 @@
+# Prometheus Alert Rules
+# Alerting rules for Wise² Core
+
+groups:
+  - name: wise2-core-alerts
+    interval: 30s
+    rules:
+      # Service availability alerts
+      - alert: ServiceDown
+        expr: up{job!="prometheus"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been unavailable for 2 minutes"
+
+      - alert: ServiceUnhealthy
+        expr: up{job!="prometheus"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "Service {{ $labels.job }} is unhealthy"
+          description: "{{ $labels.job }} health check has been failing"
+
+      # Database alerts
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been unavailable for 1 minute"
+
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL has high connection count"
+          description: "PostgreSQL connection count is {{ $value }} (threshold: 80)"
+
+      - alert: PostgreSQLSlowQueries
+        expr: rate(pg_stat_statements_mean_time[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL has slow queries"
+          description: "Average query time is {{ $value }}ms"
+
+      # Redis alerts
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been unavailable for 1 minute"
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}"
+
+      - alert: RedisEvictions
+        expr: rate(redis_evicted_keys_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis is evicting keys"
+          description: "Redis is evicting {{ $value }} keys per second"
+
+      # API performance alerts
+      - alert: HighErrorRate
+        expr: rate(api_request_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "API has high error rate"
+          description: "API error rate is {{ $value | humanizePercentage }}"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(api_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "API has high latency"
+          description: "API p95 latency is {{ $value }}s"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "Service {{ $labels.job }} CPU usage is {{ $value | humanizePercentage }}"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / 1024 / 1024 > 512
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Service {{ $labels.job }} is using {{ $value }}MB"
+
+      # Disk space alerts
+      - alert: LowDiskSpace
+        expr: node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space on {{ $labels.device }}"
+          description: "Available disk space is {{ $value | humanizePercentage }}"
+
+      - alert: CriticalDiskSpace
+        expr: node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes < 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical disk space on {{ $labels.device }}"
+          description: "Available disk space is {{ $value | humanizePercentage }}"
+
+      # Container alerts
+      - alert: ContainerRestarting
+        expr: rate(container_last_seen[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting frequently"
+          description: "Container restart rate is {{ $value }}"
+
+      # Certificate expiration alerts
+      - alert: CertificateExpiringSoon
+        expr: certifi_not_after{} - time() < 86400 * 30
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "SSL Certificate expiring soon"
+          description: "Certificate for {{ $labels.certificate }} expires in {{ $value | humanizeDuration }}"
+
+      - alert: CertificateExpired
+        expr: certifi_not_after{} - time() < 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SSL Certificate has expired"
+          description: "Certificate for {{ $labels.certificate }} has expired"

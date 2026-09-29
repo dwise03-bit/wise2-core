@@ -1,0 +1,91 @@
+openapi: 3.1.0
+info:
+  title: WISE² Custom GPT Actions
+  version: 1.2.0
+  description: WISE² health plus explicitly confirmed business actions.
+servers:
+  - url: https://api.wise2.net
+security:
+  - wise2ToolKey: []
+components:
+  securitySchemes:
+    wise2ToolKey:
+      type: apiKey
+      in: header
+      name: x-wise2-tool-secret
+  schemas:
+    CreateLeadAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_lead }
+        data:
+          type: object
+          additionalProperties: true
+          description: Lead fields accepted by the WISE² Revenue OS.
+    CreateFollowUpAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_follow_up }
+        data:
+          type: object
+          required: [dueAt]
+          additionalProperties: true
+          properties:
+            dueAt: { type: string, format: date-time }
+    CreateEstimateAction:
+      type: object
+      required: [operation, data]
+      properties:
+        operation: { const: create_estimate }
+        data:
+          type: object
+          additionalProperties: true
+          description: Estimate fields accepted by the WISE² Revenue OS.
+paths:
+  /api/assistant/tools/write:
+    post:
+      operationId: performWise2WriteAction
+      summary: Perform a confirmed WISE² business action
+      description: Use only after the user explicitly confirms the exact action. This endpoint is intentionally limited to the three listed operations.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateLeadAction'
+                - $ref: '#/components/schemas/CreateFollowUpAction'
+                - $ref: '#/components/schemas/CreateEstimateAction'
+      responses:
+        '200': { description: Action result, content: { application/json: { schema: { type: object } } } }
+        '401': { description: Invalid authentication }
+  /api/v1/hermes/health:
+    get:
+      operationId: getWise2HermesHealth
+      summary: Check WISE² Hermes health
+      description: Returns Hermes provider, model, and Ollama availability.
+      responses:
+        '200':
+          description: WISE² Hermes health status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, provider, model, ollama]
+                properties:
+                  status: { type: string, example: online }
+                  provider: { type: string, example: ollama }
+                  model: { type: string, example: 'wise2:latest' }
+                  profile: { type: string, example: fast }
+                  context: { type: integer, example: 4096 }
+                  predictTokens: { type: integer, example: 1024 }
+                  think: { type: boolean, example: false }
+                  ollama:
+                    type: object
+                    required: [status, endpoint]
+                    properties:
+                      status: { type: string, example: online }
+                      endpoint: { type: string, format: uri, example: 'http://127.0.0.1:11434' }
+                      error: { type: string }

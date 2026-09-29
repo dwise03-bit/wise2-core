@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISE² Agentic OS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #000000;
+            color: #f5f5f7;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #111111 50%, #0a0a0a 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 85, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(0, 204, 136, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 900px;
+            padding: 40px;
+            animation: heroFadeIn 1.2s ease-out;
+        }
+
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #0055FF 0%, #00CC88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.6rem;
+            color: #a1a1a6;
+            font-weight: 300;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 42px;
+            background: #0055FF;
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #0055FF;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: #0033AA;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 85, 255, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 120px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        section:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #a1a1a6;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Flow System */
+        .flow-system {
+            background: linear-gradient(180deg, rgba(0, 85, 255, 0.05) 0%, rgba(0, 204, 136, 0.05) 100%);
+            border-radius: 24px;
+            padding: 80px 60px;
+            border: 1px solid rgba(0, 85, 255, 0.2);
+        }
+
+        .flow-item {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .flow-label {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #f5f5f7;
+            margin: 30px 0;
+        }
+
+        .flow-label.highlight {
+            color: #0055FF;
+        }
+
+        .flow-icon {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        .flow-arrow {
+            font-size: 2.5rem;
+            color: #0055FF;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Agents Grid */
+        .agents-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .agent-tile {
+            group;
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(30, 30, 30, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 85, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .agent-tile:hover {
+            border-color: #0055FF;
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0, 85, 255, 0.2);
+        }
+
+        .agent-tile:hover::before {
+            opacity: 1;
+        }
+
+        .agent-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .agent-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .agent-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #0055FF;
+        }
+
+        .agent-role {
+            font-size: 1rem;
+            color: #f5f5f7;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .agent-description {
+            font-size: 0.95rem;
+            color: #a1a1a6;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .agent-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .keyword {
+            display: inline-block;
+            background: rgba(0, 85, 255, 0.15);
+            color: #0055FF;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Data Layer */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        .data-item {
+            background: rgba(20, 20, 20, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .data-item:hover {
+            border-color: #00CC88;
+            background: rgba(0, 204, 136, 0.05);
+        }
+
+        .data-icon {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+
+        .data-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f5f5f7;
+            margin-bottom: 8px;
+        }
+
+        .data-desc {
+            font-size: 0.9rem;
+            color: #a1a1a6;
+        }
+
+        /* Example Workflow */
+        .workflow-example {
+            background: linear-gradient(135deg, rgba(0, 85, 255, 0.08) 0%, rgba(0, 204, 136, 0.08) 100%);
+            border: 1px solid rgba(0, 85, 255, 0.3);
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-top: 60px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #0055FF 0%, #0033AA 100%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f5f5f7;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            color: #a1a1a6;
+            font-size: 0.95rem;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .benefit-card {
+            padding: 40px;
+            background: rgba(20, 20, 20, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            border-color: #00CC88;
+            background: rgba(0, 204, 136, 0.08);
+        }
+
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f5f5f7;
+            margin-bottom: 12px;
+        }
+
+        .benefit-desc {
+            color: #a1a1a6;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: #a1a1a6;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            .tagline { font-size: 1.2rem; }
+            .section-title { font-size: 2rem; }
+            .container { padding: 0 20px; }
+            section { padding: 80px 0; }
+            .flow-system { padding: 50px 30px; }
+            .agents-showcase { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The <span class="gradient-text">Operating System</span> for Tomorrow's Work</h1>
+            <p class="tagline">Persistent agents that remember, coordinate, and deliver</p>
+            <button class="cta-button" onclick="document.querySelector('section:nth-of-type(2)').scrollIntoView()">Explore How It Works</button>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">One request. Multiple specialists. Seamless coordination.</p>
+            </div>
+
+            <div class="flow-system">
+                <div class="flow-item">
+                    <div class="flow-icon">👤</div>
+                    <div class="flow-label">You Give a Task</div>
+                    <div style="color: #a1a1a6; font-size: 1rem;">"Design and build the live stream page"</div>
+                </div>
+
+                <div class="flow-arrow">↓</div>
+
+                <div class="flow-item">
+                    <div class="flow-icon">🧠</div>
+                    <div class="flow-label highlight">Kernel Routes</div>
+                    <div style="color: #a1a1a6; font-size: 1rem;">Intelligent routing to specialists</div>
+                </div>
+
+                <div class="flow-arrow">↓</div>
+
+                <div class="flow-item">
+                    <div class="flow-icon">👥</div>
+                    <div class="flow-label">Agents Execute</div>
+                    <div style="color: #a1a1a6; font-size: 1rem;">@design, @dev, @ops, @writer, @researcher</div>
+                </div>
+
+                <div class="flow-arrow">↓</div>
+
+                <div class="flow-item">
+                    <div class="flow-icon">✅</div>
+                    <div class="flow-label highlight">Memory Persists</div>
+                    <div style="color: #a1a1a6; font-size: 1rem;">Context survives across sessions</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Team -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Your Team of Specialists</h2>
+                <p class="section-subtitle">Five focused agents, each optimized for their domain</p>
+            </div>
+
+            <div class="agents-showcase">
+                <div class="agent-tile">
+                    <div class="agent-content">
+                        <div class="agent-icon">💻</div>
+                        <div class="agent-title">@dev</div>
+                        <div class="agent-role">Software Engineer</div>
+                        <div class="agent-description">Builds production-grade code, runs tests, fixes bugs, and deploys with confidence.</div>
+                        <div class="agent-keywords">
+                            <span class="keyword">build</span>
+                            <span class="keyword">fix</span>
+                            <span class="keyword">code</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-tile">
+                    <div class="agent-content">
+                        <div class="agent-icon">🎨</div>
+                        <div class="agent-title">@design</div>
+                        <div class="agent-role">Product Designer</div>
+                        <div class="agent-description">Creates beautiful UI specs, maintains brand coherence, and designs delightful experiences.</div>
+                        <div class="agent-keywords">
+                            <span class="keyword">design</span>
+                            <span class="keyword">component</span>
+                            <span class="keyword">ux</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-tile">
+                    <div class="agent-content">
+                        <div class="agent-icon">🔧</div>
+                        <div class="agent-title">@ops</div>
+                        <div class="agent-role">DevOps Engineer</div>
+                        <div class="agent-description">Manages infrastructure, orchestrates deployments, and ensures systems stay reliable.</div>
+                        <div class="agent-keywords">
+                            <span class="keyword">deploy</span>
+                            <span class="keyword">server</span>
+                            <span class="keyword">docker</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-tile">
+                    <div class="agent-content">
+                        <div class="agent-icon">✍️</div>
+                        <div class="agent-title">@writer</div>
+                        <div class="agent-role">Content Strategist</div>
+                        <div class="agent-description">Crafts compelling copy, writes clear documentation, and launches with powerful messaging.</div>
+                        <div class="agent-keywords">
+                            <span class="keyword">write</span>
+                            <span class="keyword">copy</span>
+                            <span class="keyword">launch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agent-tile">
+                    <div class="agent-content">
+                        <div class="agent-icon">🔍</div>
+                        <div class="agent-title">@researcher</div>
+                        <div class="agent-role">Analyst</div>
+                        <div class="agent-description">Validates assumptions, analyzes markets, and ensures decisions rest on solid ground.</div>
+                        <div class="agent-keywords">
+                            <span class="keyword">research</span>
+                            <span class="keyword">analyze</span>
+                            <span class="keyword">market</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Memory System -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Persistent Memory</h2>
+                <p class="section-subtitle">Knowledge that survives across sessions</p>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-item">
+                    <div class="data-icon">📅</div>
+                    <div class="data-name">Daily Logs</div>
+                    <div class="data-desc">What happened each day</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-icon">📋</div>
+                    <div class="data-name">Decisions</div>
+                    <div class="data-desc">Why decisions were made</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-icon">📊</div>
+                    <div class="data-name">Projects</div>
+                    <div class="data-desc">Project context and specs</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-icon">✅</div>
+                    <div class="data-name">Inbox</div>
+                    <div class="data-desc">New tasks and ideas</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-icon">👥</div>
+                    <div class="data-name">Contacts</div>
+                    <div class="data-desc">Relationships and notes</div>
+                </div>
+                <div class="data-item">
+                    <div class="data-icon">🎯</div>
+                    <div class="data-name">Templates</div>
+                    <div class="data-desc">Reusable formats</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Example -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">See It In Action</h2>
+                <p class="section-subtitle">Multi-agent coordination without context loss</p>
+            </div>
+
+            <div class="workflow-example">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">@design</div>
+                        <div class="step-desc">Reads brand specs → Creates detailed UI component specs → Logs to memory</div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">@dev</div>
+                        <div class="step-desc">Reads design specs from memory → Builds component → Runs tests → Logs work</div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">@writer</div>
+                        <div class="step-desc">Reads what was built → Writes launch announcement → Logs messaging</div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">You</div>
+                        <div class="step-desc">See all outputs integrated. Design → Code → Marketing. Zero context loss.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why It Matters</h2>
+                <p class="section-subtitle">The advantages of persistent, intelligent agents</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-title">Intelligent Routing</div>
+                    <div class="benefit-desc">One request, automatic routing to the right specialist. No manual coordination needed.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🧠</div>
+                    <div class="benefit-title">Persistent Memory</div>
+                    <div class="benefit-desc">Agents remember decisions, context, and work from previous sessions. No re-explaining needed.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-title">Specialized Expertise</div>
+                    <div class="benefit-desc">Each agent is optimized for their domain, not a generalist doing everything.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔄</div>
+                    <div class="benefit-title">Seamless Handoff</div>
+                    <div class="benefit-desc">Multi-agent workflows share context seamlessly. No context loss between specialists.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <div class="benefit-title">Full Audit Trail</div>
+                    <div class="benefit-desc">All decisions logged and tracked. Know exactly why choices were made.</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚀</div>
+                    <div class="benefit-title">Built to Scale</div>
+                    <div class="benefit-desc">Add more agents and automation as your needs grow. The system grows with you.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">WISE² Agentic OS</p>
+            <p class="footer-text" style="font-size: 0.8rem; color: #666;">The operating system for intelligent work</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+[Unit]
+Description=WISE² Edge Appliance Runtime
+Documentation=https://wise2.cloud/docs/edge-appliance
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ wise2_user }}
+Group={{ wise2_group }}
+WorkingDirectory={{ wise2_home }}/app/services/edge-appliance
+
+# Environment
+EnvironmentFile={{ wise2_home }}/.env
+Environment="NODE_ENV=production"
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Process management
+ExecStart=/usr/bin/node {{ wise2_home }}/app/services/edge-appliance/dist/index.js
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=30
+
+# Resource limits
+MemoryLimit=512M
+CPUQuota=75%
+MemoryMax=768M
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths={{ wise2_home }}/data /var/log/wise2-edge-appliance
+
+# Capabilities for GPIO/hardware access
+AmbientCapabilities=CAP_SYS_ADMIN CAP_NET_ADMIN CAP_SYS_RAWIO
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-edge
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+services:
+  edge-runtime:
+    # Raspberry Pi-only hardware access. Keep this overlay off developer
+    # machines and non-Pi hosts; the base stack intentionally has no broad
+    # host-device mounts or privileged capabilities.
+    volumes:
+      - /dev:/dev
+      - /sys:/sys:ro
+      - /proc:/proc:ro
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_RAWIO
+    devices:
+      - /dev/mem:/dev/mem
+      - /dev/gpiomem:/dev/gpiomem

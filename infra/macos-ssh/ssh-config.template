@@ -1,0 +1,21 @@
+# WISE2 macOS SSH client baseline. Never commit private keys.
+Host gpu-nmls
+    HostName 100.68.145.5
+    User dwise
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    StrictHostKeyChecking accept-new
+
+Host wise2-vps
+    HostName gpu-nmls-1.tail44396d.ts.net
+    User dwise
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    Port 22
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    StrictHostKeyChecking accept-new

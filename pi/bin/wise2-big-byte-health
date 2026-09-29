@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BIG_BYTE_URL="${WISE2_BIG_BYTE_URL:-http://127.0.0.1:8787}"
+UPDATE_SERVICE="${WISE2_UPDATE_SERVICE:-wise2-big-byte.service}"
+KIOSK_SERVICE="${WISE2_KIOSK_SERVICE:-wise2-big-byte-kiosk.service}"
+TAILSCALE_SERVICE="${WISE2_TAILSCALE_SERVICE:-tailscaled.service}"
+
+check_endpoint() {
+  local url="$1"
+  if ! command -v curl >/dev/null 2>&1; then
+    return 1
+  fi
+
+  curl -fsS --max-time 5 "$url" >/dev/null 2>&1
+}
+
+restart_service() {
+  local service="$1"
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl restart "$service" >/dev/null 2>&1 || true
+  fi
+}
+
+status=0
+
+if ! check_endpoint "$BIG_BYTE_URL/health"; then
+  restart_service "$UPDATE_SERVICE"
+  status=1
+fi
+
+if command -v pgrep >/dev/null 2>&1; then
+  chromium_count="$(pgrep -x chromium-browser 2>/dev/null | wc -l | tr -d ' ')"
+  chromium_alt_count="$(pgrep -x chromium 2>/dev/null | wc -l | tr -d ' ')"
+  total_count=$((chromium_count + chromium_alt_count))
+  if [ "$total_count" -ne 1 ]; then
+    restart_service "$KIOSK_SERVICE"
+    status=1
+  fi
+fi
+
+if command -v systemctl >/dev/null 2>&1; then
+  if ! systemctl is-active --quiet "$TAILSCALE_SERVICE"; then
+    restart_service "$TAILSCALE_SERVICE"
+    status=1
+  fi
+fi
+
+check_endpoint "$BIG_BYTE_URL/health" || status=1
+
+exit "$status"

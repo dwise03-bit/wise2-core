@@ -1,0 +1,158 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { extractToken } from '../../../services/auth.service';
+import { LiveAuthService } from './live-auth.service';
+
+/**
+ * Live Session Service
+ * Manages JWT validation for live rooms.
+ * CRITICAL: Enforces real JWT auth, explicitly rejects localStorage/demo identities.
+ */
+
+export interface LiveSessionContext {
+  userId: string;
+  email: string;
+  role: string;
+  permissions: string[];
+  iat: number;
+  exp: number;
+}
+
+@Injectable()
+export class LiveSessionService {
+  constructor(
+    private prisma: PrismaService,
+    private liveAuthService: LiveAuthService
+  ) {}
+
+  /**
+   * Validate JWT token for live session
+   * - Extracts and verifies JWT
+   * - Rejects localStorage/demo identities
+   * - Returns session context
+   */
+  async validateToken(authHeader?: string): Promise<LiveSessionContext> {
+    // Extract JWT from "Bearer <token>" header
+    const token = extractToken(authHeader);
+
+    if (!token) {
+      throw new UnauthorizedException(
+        'Missing or invalid Authorization header. Live sessions require real JWT authentication.'
+      );
+    }
+
+    // Verify token signature + expiry using LiveAuthService's JWT secret
+    const decoded = this.liveAuthService.verifyJWT(token);
+
+    if (!decoded) {
+      throw new UnauthorizedException(
+        'Invalid or expired JWT. Live sessions require valid authentication.'
+      );
+    }
+
+    // verifyJWT only checks the signature and expiry, so the demo-identity
+    // rejection promised above still has to happen here: a correctly signed
+    // token carrying a demo identity would otherwise be accepted.
+    const userId: string | undefined = decoded.id || decoded.sub || decoded.userId;
+    const email: string | undefined = decoded.email;
+
+    const looksLikeDemo =
+      (typeof email === 'string' && /(^|[@.])demo(@|\.|$)|^demo[._-]/i.test(email)) ||
+      (typeof userId === 'string' && /^demo[_-]/i.test(userId)) ||
+      decoded.iat === undefined ||
+      decoded.exp === undefined;
+
+    if (looksLikeDemo) {
+      throw new UnauthorizedException(
+        'Live sessions reject demo/localStorage identities. Sign in with a real account.'
+      );
+    }
+
+    return {
+      userId: decoded.id || decoded.sub || decoded.userId,
+      email: decoded.email,
+      role: decoded.role,
+      permissions: decoded.permissions || [],
+      iat: decoded.iat,
+      exp: decoded.exp,
+    };
+  }
+
+  /**
+   * Validate token from request context (extracted in middleware)
+   */
+  async validateSessionContext(req: any): Promise<LiveSessionContext> {
+    if (!req.user) {
+      throw new UnauthorizedException('No user context. Live sessions require JWT authentication.');
+    }
+
+    if (!req.user.id || !req.user.email) {
+      throw new UnauthorizedException('Invalid user context. Missing userId or email.');
+    }
+
+    // Check expiry if available
+    if (req.user.exp && Date.now() / 1000 > req.user.exp) {
+      throw new UnauthorizedException('JWT token expired.');
+    }
+
+    return {
+      userId: req.user.id,
+      email: req.user.email,
+      role: req.user.role || 'user',
+      permissions: req.user.permissions || [],
+      iat: req.user.iat || 0,
+      exp: req.user.exp || 0,
+    };
+  }
+
+  /**
+   * Check if decoded token looks like a demo/localStorage identity
+   * Markers:
+   * - Missing standard claims (iat, exp)
+   * - email contains 'demo' or 'test'
+   * - userId looks synthetic (e.g., starts with 'demo_', 'test_')
+   */
+  private isDemoIdentity(decoded: any): boolean {
+    // Missing standard JWT claims
+    if (!decoded.iat || !decoded.exp) {
+      return true;
+    }
+
+    // Demo/test email
+    const email = (decoded.email || '').toLowerCase();
+    if (email.includes('demo') || email.includes('test')) {
+      return true;
+    }
+
+    // Synthetic userId (check multiple possible field names)
+    const userId = (decoded.userId || decoded.id || decoded.sub || '').toLowerCase();
+    if (userId.startsWith('demo_') || userId.startsWith('test_')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Get user session by userId (for presence tracking)
+   */
+  async getUserSession(userId: string): Promise<{ id: string; email: string; name: string | null } | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, name: true },
+    });
+    return user;
+  }
+
+  /**
+   * Verify user has permission in live context
+   */
+  async hasPermission(
+    userId: string,
+    permission: 'can_speak' | 'can_chat' | 'can_suggest' | 'can_moderate' | 'can_invite'
+  ): Promise<boolean> {
+    // TODO: Look up user's role in live room, check permission bitmap
+    // For now, all authenticated users have basic permissions
+    return true;
+  }
+}

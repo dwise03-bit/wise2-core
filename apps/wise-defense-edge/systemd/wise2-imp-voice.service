@@ -1,0 +1,32 @@
+[Unit]
+Description=WISE² Defense - IMP Voice Integration
+Documentation=man:wise2-imp-voice(8)
+After=network.target sound.target wise2-defense-api.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/wise2/apps/wise-defense-edge
+Environment="PYTHONUNBUFFERED=1"
+Environment="PYTHONPATH=/opt/wise2/apps/wise-defense-edge/app"
+
+# Start IMP voice orchestrator
+ExecStart=/usr/bin/python3 /opt/wise2/apps/wise-defense-edge/app/voice/imp_voice_integration.py
+
+# Restart on failure
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Resource limits
+MemoryMax=512M
+CPUQuota=75%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-imp-voice
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  /* DevOps Dark Theme Palette */
+  --bg-black: #0F0F23;
+  --bg-dark: #1B1B30;
+  --bg-dark-grey: #121212;
+  --primary: #1E1B4B;
+  --secondary: #4338CA;
+  --success: #22C55E;
+  --warning: #FFA500;
+  --critical: #FF0000;
+  --accent: #00D9FF;
+  --border: #312E81;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--bg-black) 0%, #1a1a2e 100%);
+  color: var(--text-primary);
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(30, 27, 75, 0.3);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(67, 56, 202, 0.2);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Fira Code', monospace;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+}
+
+.indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff6b6b;
+  box-shadow: 0 0 6px rgba(255, 107, 107, 0.6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.indicator.online {
+  background: #00FF7F;
+  box-shadow: 0 0 6px rgba(0, 255, 127, 0.6);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.terminal-section {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.dashboard-section {
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  gap: 12px;
+  padding: 12px;
+}
+
+.dashboard-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ai-section {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+}
+
+@media (max-width: 1200px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .dashboard-section {
+    width: 100%;
+    height: 300px;
+  }
+
+  .ai-section {
+    width: 100%;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 10px 12px;
+  }
+
+  .app-header h1 {
+    font-size: 14px;
+  }
+
+  .app-container {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .terminal-section {
+    min-height: 250px;
+  }
+
+  .dashboard-section {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 8px;
+    flex-wrap: wrap;
+  }
+
+  .app-header h1 {
+    font-size: 12px;
+    width: 100%;
+  }
+
+  .header-controls {
+    width: 100%;
+    order: 1;
+  }
+
+  .app-container {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .terminal-section {
+    min-height: 200px;
+  }
+
+  .dashboard-section {
+    height: auto;
+    min-height: 200px;
+  }
+
+  .dashboard-content {
+    padding: 8px;
+    gap: 8px;
+  }
+}

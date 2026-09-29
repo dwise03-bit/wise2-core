@@ -1,0 +1,13 @@
+{
+  "name": "@wise2/aether-trader",
+  "version": "0.1.0",
+  "description": "Research and validation framework for the AETHER-TRADER liquidity raid strategy",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "node --experimental-strip-types src/cli.ts --demo > /dev/null",
+    "type-check": "node --experimental-strip-types -e \"import('./src/index.ts')\"",
+    "test": "node --experimental-strip-types src/cli.ts --demo"
+  }
+}

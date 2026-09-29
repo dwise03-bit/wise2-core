@@ -1,0 +1,555 @@
+// SenCere Creative LLC - Product Catalog
+// Custom apparel, printing, fabrication, and creative services
+
+import { BLAKKHAIL_LEGACY, BLAKKHAIL_PRODUCT_IMAGES } from '@/lib/sencere/blakkhail-legacy';
+
+export interface ProductVariant {
+  id: string;
+  name: string;
+  price: number;
+  options: {
+    [key: string]: string[];
+  };
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  brand?: 'blakkhail' | 'sencere';
+  category: 'apparel' | 'printing' | 'fabrication' | 'service' | 'design';
+  description: string;
+  longDescription: string;
+  basePrice: number;
+  image: string;
+  gallery: string[];
+  variants: ProductVariant[];
+  features: string[];
+  turnaround?: string; // e.g. "3-5 business days"
+  minOrder?: number;
+  available: boolean;
+  badge?: string; // "New", "Best Seller", etc
+}
+
+export const SENCERE_PRODUCTS: Product[] = [
+  {
+    id: 'custom-tees',
+    name: 'Custom Screen-Printed Apparel',
+    slug: 'custom-tees',
+    category: 'apparel',
+    description: 'Premium custom t-shirts, hoodies, and apparel with your design',
+    longDescription: 'Hand-selected 100% ringspun cotton apparel, professionally screen-printed with vibrant, long-lasting color. Perfect for brand launches, team events, or personal collections. Custom designs available; minimum order 12 units.',
+    basePrice: 18,
+    image: '/sencere/apparel-hero.jpg',
+    gallery: [
+      '/sencere/apparel-1.jpg',
+      '/sencere/apparel-2.jpg',
+      '/sencere/apparel-3.jpg',
+    ],
+    features: [
+      '100% Ringspun Cotton',
+      'Professional screen printing',
+      'Custom color matching',
+      'Multiple garment options',
+      '3-5 day turnaround',
+    ],
+    turnaround: '3-5 business days',
+    minOrder: 12,
+    variants: [
+      {
+        id: 'tee-unisex',
+        name: 'Unisex Classic Tee',
+        price: 18,
+        options: {
+          size: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
+          color: ['Black', 'White', 'Navy', 'Heather Gray', 'Stone'],
+        },
+      },
+      {
+        id: 'tee-hoodie',
+        name: 'Premium Hoodie',
+        price: 45,
+        options: {
+          size: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'],
+          color: ['Black', 'Navy', 'Charcoal', 'White'],
+        },
+      },
+      {
+        id: 'tee-longsleeve',
+        name: 'Long Sleeve Tee',
+        price: 22,
+        options: {
+          size: ['XS', 'S', 'M', 'L', 'XL', '2XL'],
+          color: ['Black', 'White', 'Navy', 'Heather Gray'],
+        },
+      },
+    ],
+    available: true,
+    badge: 'Best Seller',
+  },
+  {
+    id: 'custom-prints',
+    name: 'Custom Print Services',
+    slug: 'custom-prints',
+    category: 'printing',
+    description: 'Full-color digital printing for merchandise, signage, and more',
+    longDescription: 'Professional full-color digital printing on apparel, canvas, paper, and custom substrates. From business cards to large-format signage. Each piece is individually printed with precision color accuracy.',
+    basePrice: 5,
+    image: '/sencere/printing-hero.jpg',
+    gallery: [
+      '/sencere/printing-1.jpg',
+      '/sencere/printing-2.jpg',
+      '/sencere/printing-3.jpg',
+    ],
+    features: [
+      'Full-color digital printing',
+      'Precision color accuracy',
+      'Multiple substrate options',
+      'Rush orders available',
+      '1-2 day standard turnaround',
+    ],
+    turnaround: '1-2 business days',
+    minOrder: 1,
+    variants: [
+      {
+        id: 'print-apparel',
+        name: 'Apparel Printing',
+        price: 8,
+        options: {
+          type: ['T-shirt', 'Hoodie', 'Hat', 'Tote Bag'],
+          quantity: ['1', '5', '10', '25'],
+        },
+      },
+      {
+        id: 'print-signage',
+        name: 'Custom Signage',
+        price: 25,
+        options: {
+          size: ['12x18"', '18x24"', '24x36"', '36x48"'],
+          material: ['Vinyl Banner', 'Canvas', 'Metal', 'Wood'],
+        },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'custom-fabrication',
+    name: 'Custom Fabrication & Prototyping',
+    slug: 'custom-fabrication',
+    category: 'fabrication',
+    description: 'One-off custom pieces, prototypes, and bespoke creations',
+    longDescription: 'From idea to reality. Whether you need a custom display, prototype, or one-of-a-kind piece, our fabrication team brings your vision to life. Specializing in wood, metal, acrylic, and mixed media.',
+    basePrice: 150,
+    image: '/sencere/fabrication-hero.jpg',
+    gallery: [
+      '/sencere/fabrication-1.jpg',
+      '/sencere/fabrication-2.jpg',
+      '/sencere/fabrication-3.jpg',
+    ],
+    features: [
+      'Full design consultation',
+      'Material options: wood, metal, acrylic, mixed media',
+      'Professional CAD drawings',
+      'Prototyping and iteration',
+      'Quality craftsmanship',
+    ],
+    variants: [
+      {
+        id: 'fab-consultation',
+        name: 'Design Consultation',
+        price: 0,
+        options: {
+          scope: ['30-min Call', '1-hour Workshop', 'Full Project Planning'],
+        },
+      },
+      {
+        id: 'fab-custom',
+        name: 'Custom Fabrication',
+        price: 150,
+        options: {
+          material: ['Wood', 'Metal', 'Acrylic', 'Mixed Media'],
+          scope: ['Small', 'Medium', 'Large', 'Complex'],
+        },
+      },
+    ],
+    available: true,
+    badge: 'Custom',
+  },
+  {
+    id: 'design-services',
+    name: 'Design Services',
+    slug: 'design-services',
+    category: 'design',
+    description: 'Professional graphic and product design for your brand',
+    longDescription: 'Custom branding, logo design, product design, and creative direction. Our design team collaborates with you to create cohesive visual systems that elevate your brand.',
+    basePrice: 500,
+    image: '/sencere/design-hero.jpg',
+    gallery: [
+      '/sencere/design-1.jpg',
+      '/sencere/design-2.jpg',
+      '/sencere/design-3.jpg',
+    ],
+    features: [
+      'Logo & branding design',
+      'Unlimited revisions',
+      'Professional deliverables',
+      'Brand guidelines',
+      '2-week turnaround standard',
+    ],
+    turnaround: '2 weeks standard',
+    variants: [
+      {
+        id: 'design-logo',
+        name: 'Logo Design',
+        price: 500,
+        options: {
+          package: ['Startup', 'Professional', 'Premium'],
+        },
+      },
+      {
+        id: 'design-branding',
+        name: 'Full Branding Package',
+        price: 2000,
+        options: {
+          scope: ['Logo + Guidelines', 'Logo + Guidelines + Collateral'],
+        },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'merch-packages',
+    name: 'Merchandise Packages',
+    slug: 'merch-packages',
+    category: 'apparel',
+    description: 'Curated merchandise bundles for events, brands, and creators',
+    longDescription: 'Pre-designed merchandise packages optimized for events, content creators, and brand launches. Mix and match items to build your perfect collection.',
+    basePrice: 150,
+    image: '/sencere/merch-hero.jpg',
+    gallery: [
+      '/sencere/merch-1.jpg',
+      '/sencere/merch-2.jpg',
+      '/sencere/merch-3.jpg',
+    ],
+    features: [
+      'Starter, Creator, and Pro bundles',
+      'Flexible customization',
+      'Volume discounts',
+      'White-label available',
+    ],
+    variants: [
+      {
+        id: 'merch-starter',
+        name: 'Starter Bundle',
+        price: 150,
+        options: {
+          items: ['3x Tees + 1x Hat', '5x Tees + 2x Hoodies'],
+        },
+      },
+      {
+        id: 'merch-creator',
+        name: 'Creator Bundle',
+        price: 450,
+        options: {
+          items: ['10x Tees + 5x Hoodies + 5x Hats', 'Full Customization'],
+        },
+      },
+    ],
+    available: true,
+    badge: 'Creator Favorite',
+  },
+  {
+    id: 'strawberry-haze-hoodie',
+    name: 'Strawberry Haze Distressed Hoodie',
+    slug: 'strawberry-haze-hoodie',
+    brand: 'blakkhail', category: 'apparel',
+    description: 'Red distressed short-sleeve hoodie with custom cut-and-sew graphics.',
+    longDescription: 'A hand-finished Blakk Hail piece with raw edges, paint-wash texture, and a statement back graphic.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront, BLAKKHAIL_LEGACY.assets.productCutouts.strawberryBack],
+    features: ['Custom distressed finish', 'Front and back artwork', 'Unisex fit'],
+    variants: [{ id: 'strawberry-haze-hoodie-size', name: 'Strawberry Haze Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
+  },
+  {
+    id: 'berry-kush-hoodie', name: 'No Berry Kush Distressed Hoodie', slug: 'berry-kush-hoodie', brand: 'blakkhail', category: 'apparel',
+    description: 'Stone distressed hoodie with Piff City patchwork and rear skull graphic.',
+    longDescription: 'A raw, utility-minded layer built from a washed stone base and finished with sewn-on Piff City artwork.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.berryFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.berryFront, BLAKKHAIL_LEGACY.assets.productCutouts.berryBack],
+    features: ['Washed stone finish', 'Sewn patch details', 'Limited handmade run'],
+    variants: [{ id: 'berry-kush-hoodie-size', name: 'No Berry Kush Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
+  },
+  {
+    id: 'peach-control-hoodie', name: 'Peach Take Control Hoodie', slug: 'peach-control-hoodie', brand: 'blakkhail', category: 'apparel',
+    description: 'Peach wash short-sleeve hoodie with Piff City control graphic.',
+    longDescription: 'Soft peach pigment wash, oversized cut, and a bold back panel carrying the Blakk Hail command: Take Control.',
+    basePrice: 65, image: BLAKKHAIL_LEGACY.assets.productCutouts.peachFront,
+    gallery: [BLAKKHAIL_LEGACY.assets.productCutouts.peachFront, BLAKKHAIL_LEGACY.assets.productCutouts.peachBack],
+    features: ['Pigment-washed cotton', 'Oversized cut', 'Front pocket artwork'],
+    variants: [{ id: 'peach-control-hoodie-size', name: 'Peach Control Hoodie', price: 65, options: { size: ['S', 'M', 'L', 'XL', '2XL'] } }], available: true, badge: 'New Drop',
+  },
+  {
+    id: 'sencere-distressed-red-01', name: 'SenCere Distressed Hoodie — Red Skull', slug: 'sencere-distressed-red-hoodie-01', brand: 'blakkhail', category: 'apparel',
+    description: 'Hand-distressed red hoodie with SenCere skull artwork and custom patching.',
+    longDescription: 'Premium hand-distressed 100% cotton hoodie featuring an intricate black skull graphic with digital artwork elements. Each piece is individually hand-finished with raw edge cutting, creating a unique, limited aesthetic. SenCere Creative signature patch on chest.',
+    basePrice: 75, image: BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-01'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-01']],
+    features: ['Hand-distressed finish', 'Custom skull artwork', 'Raw cut edges', 'SenCere Creative patch', 'Unisex fit', 'Limited handmade run'],
+    variants: [{ id: 'sencere-red-01-size', name: 'Distressed Red Hoodie', price: 75, options: { size: ['S', 'M', 'L', 'XL', '2XL', '3XL'] } }], available: true, badge: 'SenCere Collab',
+  },
+  {
+    id: 'sencere-distressed-red-02', name: 'SenCere Distressed Hoodie — Mechanical Eyes', slug: 'sencere-distressed-red-hoodie-02', brand: 'blakkhail', category: 'apparel',
+    description: 'Red distressed hoodie featuring intricate mechanical eye artwork and striped shoulder details.',
+    longDescription: 'Hand-distressed red short-sleeve hoodie with bold mechanical eye design and technical line work. Features painted stripe details on shoulders and custom digital skull graphics on back. Each piece individually crafted with paint-wash texture and raw edges.',
+    basePrice: 75, image: BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-02'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-02']],
+    features: ['Hand-distressed finish', 'Mechanical eye graphic', 'Striped shoulder details', 'Custom paint-wash', 'Raw cut edges', 'SenCere Creative exclusive'],
+    variants: [{ id: 'sencere-red-02-size', name: 'Mechanical Eyes Hoodie', price: 75, options: { size: ['S', 'M', 'L', 'XL', '2XL', '3XL'] } }], available: true, badge: 'SenCere Collab',
+  },
+  {
+    id: 'sencere-distressed-red-03', name: 'SenCere Distressed Hoodie — Back Skull Detail', slug: 'sencere-distressed-red-hoodie-03', brand: 'blakkhail', category: 'apparel',
+    description: 'Hand-distressed red hoodie with detailed back skull graphic and tribal patterning.',
+    longDescription: 'Premium hand-distressed 100% cotton hoodie featuring an elaborate skull design on the back with intricate tribal and mechanical patterns. Front features striped detailing and custom cut. Each piece is a unique handmade creation with raw edges and authentic wear texture.',
+    basePrice: 75, image: BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-03'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['distressed-red-hoodie-03']],
+    features: ['Hand-distressed finish', 'Large back skull graphic', 'Tribal patterning', 'Custom front striping', 'Raw cut edges', 'Limited SenCere release'],
+    variants: [{ id: 'sencere-red-03-size', name: 'Tribal Skull Hoodie', price: 75, options: { size: ['S', 'M', 'L', 'XL', '2XL', '3XL'] } }], available: true, badge: 'SenCere Collab',
+  },
+  {
+    id: 'sencere-piff-city-stone-01', name: 'SenCere Piff City Stone Wash Hoodie', slug: 'sencere-piff-city-stone-hoodie', brand: 'blakkhail', category: 'apparel',
+    description: 'Stone wash hoodie with Piff City skull patch and distressed finish.',
+    longDescription: 'Hand-distressed stone wash 100% cotton hoodie featuring a custom Piff City skull patch on the chest with hand-sewn detailing. Back panel features an elaborate Piff City skull design with radiating sun rays and intricate line work. Each piece is individually distressed and finished.',
+    basePrice: 80, image: BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-01'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-01'], BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-02']],
+    features: ['Stone wash finish', 'Hand-sewn Piff City patch', 'Large back graphic', 'Radiating sun ray detail', 'Custom distressing', 'SenCere handmade', 'Limited release'],
+    variants: [{ id: 'piff-city-stone-size', name: 'Piff City Stone Hoodie', price: 80, options: { size: ['S', 'M', 'L', 'XL', '2XL', '3XL'] } }], available: true, badge: 'SenCere Collab',
+  },
+  {
+    id: 'sencere-piff-city-stone-02', name: 'SenCere Piff City Premium Edition', slug: 'sencere-piff-city-premium', brand: 'blakkhail', category: 'apparel',
+    description: 'Premium stone wash Piff City hoodie with enhanced back graphics and detailing.',
+    longDescription: 'Hand-distressed premium stone wash hoodie with enhanced Piff City skull artwork featuring intricate sun ray patterns and digital line work. Features multiple patch details and custom hem finishes. Each piece is a unique handmade creation with authentic wear-in patina.',
+    basePrice: 85, image: BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-02'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-02'], BLAKKHAIL_PRODUCT_IMAGES['piff-city-stone-01']],
+    features: ['Premium stone wash', 'Enhanced back graphic', 'Sun ray detailing', 'Multiple patch details', 'Custom distressing', 'Handmade in SenCere studio', 'Limited edition'],
+    variants: [{ id: 'piff-city-premium-size', name: 'Piff City Premium', price: 85, options: { size: ['S', 'M', 'L', 'XL', '2XL', '3XL'] } }], available: true, badge: 'SenCere Premium',
+  },
+  {
+    id: 'chain-gang-black',
+    name: 'Chain Gang - Black',
+    slug: 'chain-gang-black',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Blakk Hail signature tee — Chain Gang edition in black',
+    longDescription:
+      'Original Blakk Hail graphic tee. Premium cotton, gold-accent print, built for the culture since 1994.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['chain-gang-black'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['chain-gang-black']],
+    features: ['Premium cotton', 'Blakk Hail original art', 'Unisex fit'],
+    variants: [
+      {
+        id: 'chain-gang-black-tee',
+        name: 'Chain Gang Tee',
+        price: 24.99,
+        options: {
+          size: ['S', 'M', 'L', 'XL', '2XL'],
+        },
+      },
+    ],
+    available: true,
+    badge: 'Legacy',
+  },
+  {
+    id: '2cans-rwg',
+    name: '2Cans - Red/White/Gold',
+    slug: '2cans-rwg',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: '2Cans colorway — red, white, and gold',
+    longDescription: 'Limited Blakk Hail 2Cans colorway with heritage palette styling.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['2cans-rwg'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['2cans-rwg']],
+    features: ['Heritage colorway', 'Soft-hand print', 'Limited run'],
+    variants: [
+      {
+        id: '2cans-rwg-tee',
+        name: '2Cans Tee',
+        price: 24.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: '2cans-bwb',
+    name: '2Cans - Blue/White/Black',
+    slug: '2cans-bwb',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: '2Cans colorway — blue, white, and black',
+    longDescription: 'Street-ready 2Cans edition in blue, white, and black.',
+    basePrice: 24.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['2cans-bwb'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['2cans-bwb']],
+    features: ['Contrast color blocking', 'Original artwork', 'Unisex fit'],
+    variants: [
+      {
+        id: '2cans-bwb-tee',
+        name: '2Cans Tee',
+        price: 24.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-gray',
+    name: 'Alien Alliance - Gray',
+    slug: 'alien-alliance-gray',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in heather gray',
+    longDescription: 'Blakk Hail Alien Alliance graphic on premium heather gray.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-gray'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-gray']],
+    features: ['Heather gray base', 'Oversized graphic', 'Collector piece'],
+    variants: [
+      {
+        id: 'alien-alliance-gray-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-black',
+    name: 'Alien Alliance - Black',
+    slug: 'alien-alliance-black',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in black',
+    longDescription: 'Core black colorway of the Alien Alliance Blakk Hail drop.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-black'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-black']],
+    features: ['Jet black base', 'Gold-accent print', 'Legacy fit'],
+    variants: [
+      {
+        id: 'alien-alliance-black-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+  {
+    id: 'alien-alliance-white',
+    name: 'Alien Alliance - White',
+    slug: 'alien-alliance-white',
+    brand: 'blakkhail',
+    category: 'apparel',
+    description: 'Alien Alliance tee in white',
+    longDescription: 'Clean white base with Blakk Hail Alien Alliance artwork.',
+    basePrice: 26.99,
+    image: BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-white'],
+    gallery: [BLAKKHAIL_PRODUCT_IMAGES['alien-alliance-white']],
+    features: ['Crisp white base', 'High-contrast art', 'Summer staple'],
+    variants: [
+      {
+        id: 'alien-alliance-white-tee',
+        name: 'Alien Alliance Tee',
+        price: 26.99,
+        options: { size: ['S', 'M', 'L', 'XL', '2XL'] },
+      },
+    ],
+    available: true,
+  },
+];
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return SENCERE_PRODUCTS.find((p) => p.slug === slug);
+}
+
+export function getBlakkhailProducts(): Product[] {
+  return SENCERE_PRODUCTS.filter((p) => p.brand === 'blakkhail');
+}
+
+export function getProductsByCategory(
+  category: Product['category']
+): Product[] {
+  return SENCERE_PRODUCTS.filter((p) => p.category === category);
+}
+
+export function getAllProductCategories(): Product['category'][] {
+  return Array.from(new Set(SENCERE_PRODUCTS.map((p) => p.category)));
+}
+
+// "Complete the Fit" outfit bundles
+export interface OutfitBundle {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  productIds: string[];
+  bundlePrice: number;
+  savings: number;
+  image: string;
+  featured?: boolean;
+}
+
+export const BLAKKHAIL_OUTFITS: OutfitBundle[] = [
+  {
+    id: 'peach-control-fit',
+    name: 'Take Control Fit',
+    tagline: 'Oversized confidence meets utility.',
+    description: 'Pair the Peach Control hoodie with classic tees for the complete Blakk Hail command aesthetic.',
+    productIds: ['peach-control-hoodie', 'chain-gang-black', '2cans-rwg'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.peachFront,
+    featured: true,
+  },
+  {
+    id: 'berry-stone-fit',
+    name: 'Stone Utility Fit',
+    tagline: 'Raw edges. Real attitude.',
+    description: 'The Berry Kush hoodie layered with contrasting tees for a street-ready complete look.',
+    productIds: ['berry-kush-hoodie', '2cans-bwb', 'alien-alliance-gray'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.berryFront,
+    featured: true,
+  },
+  {
+    id: 'strawberry-statement-fit',
+    name: 'Statement Drop Fit',
+    tagline: 'Bold color. Bolder moves.',
+    description: 'Red distressed hoodie with statement tees to complete your signature Blakk Hail look.',
+    productIds: ['strawberry-haze-hoodie', 'alien-alliance-black', 'alien-alliance-white'],
+    bundlePrice: 99.99,
+    savings: 15,
+    image: BLAKKHAIL_LEGACY.assets.productCutouts.strawberryFront,
+    featured: true,
+  },
+];
+
+export function getBlakkhailOutfits(): OutfitBundle[] {
+  return BLAKKHAIL_OUTFITS;
+}
+
+export function getOutfitByBundleId(id: string): OutfitBundle | undefined {
+  return BLAKKHAIL_OUTFITS.find((o) => o.id === id);
+}
+
+export function getOutfitProducts(bundleId: string): Product[] {
+  const outfit = getOutfitByBundleId(bundleId);
+  if (!outfit) return [];
+  return outfit.productIds
+    .map((id) => SENCERE_PRODUCTS.find((p) => p.id === id))
+    .filter((p): p is Product => p !== undefined);
+}

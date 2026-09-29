@@ -1,0 +1,11 @@
+[Unit]
+Description=WISE2 optional Meshtastic integration probe
+After=network.target wise2-defense.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'test -e /dev/ttyACM0 -o -e /dev/ttyUSB0 || true'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

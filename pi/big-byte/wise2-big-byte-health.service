@@ -1,0 +1,14 @@
+[Unit]
+Description=WISE² Big Byte Health Check
+After=wise2-big-byte.service
+Requires=wise2-big-byte.service
+
+[Service]
+Type=oneshot
+User=wise2
+Group=wise2
+EnvironmentFile=-/etc/wise2/big-byte.env
+ExecStart=/usr/local/bin/wise2-big-byte-health
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-big-byte-health

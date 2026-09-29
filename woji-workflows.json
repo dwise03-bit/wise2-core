@@ -1,0 +1,69 @@
+{
+  "name": "WISE² WOJI",
+  "version": "1.0",
+  "locked_core": {
+    "👌": "approve",
+    "🔒": "lock_it_in",
+    "💚": "preferred_like",
+    "🔄": "revise",
+    "👀": "option_or_inspect",
+    "🎨": "visual",
+    "🛠️": "build",
+    "📦": "package_handoff",
+    "🧪": "test_qa",
+    "🚀": "launch",
+    "⏭️": "next",
+    "⏸️": "pause",
+    "❌": "remove",
+    "💡": "idea",
+    "📋": "full_breakdown",
+    "📝": "easy_copy",
+    "🏃🏁📦": "run_to_completion_and_package"
+  },
+  "packs": {
+    "meme": {
+      "😂": "meme",
+      "🖼️": "static_image",
+      "✍️": "caption_copy",
+      "📱": "social_mobile"
+    },
+    "video": {
+      "🎬": "video_scene",
+      "🎞️": "sequence_edit",
+      "⏱️": "timing",
+      "🎵": "audio_music",
+      "🗣️": "dialogue_voiceover",
+      "🔁": "loop",
+      "📐": "aspect_ratio_framing"
+    },
+    "web_app": {
+      "🌐": "website",
+      "📱": "app_mobile",
+      "🧭": "navigation_flow",
+      "🧱": "section_component",
+      "⚙️": "functionality",
+      "🐛": "bug",
+      "📏": "layout_spacing",
+      "⚡": "performance",
+      "🔗": "integration_link",
+      "🔐": "security_access"
+    },
+    "code": {
+      "💻": "code_task",
+      "🧠": "architecture_reasoning",
+      "🧾": "spec_docs",
+      "🌿": "branch",
+      "💾": "commit",
+      "🔀": "merge_pr",
+      "🧹": "cleanup_refactor"
+    },
+    "status": {
+      "🟢": "ready",
+      "🟡": "in_progress_review",
+      "🔴": "blocked_failed",
+      "✅": "complete",
+      "⚠️": "warning",
+      "🕒": "pending"
+    }
+  }
+}

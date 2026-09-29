@@ -1,0 +1,18 @@
+{
+  "project": "Managers for Managers",
+  "generationId": "suno_8d06cc82f794b66e5da06c58",
+  "trackId": "managers-for-managers-1787026429",
+  "timestamp": "2026-08-18T04:14:50Z",
+  "model": "v5",
+  "bpm": 95,
+  "duration": "4:30",
+  "status": "completed",
+  "vocalists": ["WISE", "HARLEY"],
+  "genre": "Hip-Hop/Trap with Country Soul",
+  "files": {
+    "lyrics": "managers-for-managers-morgan-young-ma.txt",
+    "sunoPrompt": "managers-for-managers-suno-prompt.md",
+    "designSystem": "SOUND_LAB_UI_DESIGN_SYSTEM.md",
+    "components": "SOUND_LAB_COMPONENTS.tsx"
+  }
+}

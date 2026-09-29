@@ -1,0 +1,24 @@
+{
+  "name": "@wise2/api-keys",
+  "version": "0.1.0",
+  "description": "Interactive client workflow for gathering and storing WISE² API keys",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "wise2-api-keys": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "node src/cli.ts",
+    "mcp": "node src/mcp.ts",
+    "test": "node --test src/*.test.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}

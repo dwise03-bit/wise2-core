@@ -1,0 +1,44 @@
+[Unit]
+Description=WISE² Big Byte Agent
+Documentation=https://wise2.net
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wise2
+Group=wise2
+WorkingDirectory=/opt/wise2/big-byte
+EnvironmentFile=-/etc/wise2/big-byte.env
+Environment=NODE_ENV=production
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/usr/bin/node /opt/wise2/big-byte/wise2-big-byte.mjs
+Restart=always
+RestartSec=10
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+# Lightweight Pi-friendly limits
+MemoryMax=256M
+CPUQuota=40%
+TasksMax=64
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+ReadWritePaths=/opt/wise2/big-byte /etc/wise2 /var/log/wise2 /var/lib/wise2
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-big-byte
+
+[Install]
+WantedBy=multi-user.target

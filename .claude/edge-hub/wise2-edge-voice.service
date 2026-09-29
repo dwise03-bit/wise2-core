@@ -1,0 +1,38 @@
+[Unit]
+Description=WISE² Edge Hub - Voice API
+Documentation=https://wise2.net/docs/edge-hub
+After=network-online.target mosquitto.service pulseaudio.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-edge/app
+Environment="NODE_ENV=production"
+Environment="MQTT_URL=mqtt://127.0.0.1:1883"
+Environment="VOICE_PORT=4901"
+Environment="HERMES_URL=http://127.0.0.1:3012"
+Environment="OLLAMA_URL=http://127.0.0.1:11434"
+Environment="LOG_LEVEL=info"
+ExecStart=/usr/bin/node /home/dwise/wise2-edge/app/dist/voice-api.js
+
+Restart=on-failure
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+
+MemoryMax=300M
+CPUQuota=80%
+TasksMax=150
+
+StandardOutput=append:/home/dwise/wise2-edge/app/logs/voice-out.log
+StandardError=append:/home/dwise/wise2-edge/app/logs/voice-error.log
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/dwise/wise2-edge/app/logs:/tmp
+
+[Install]
+WantedBy=multi-user.target

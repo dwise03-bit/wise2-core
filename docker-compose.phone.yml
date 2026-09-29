@@ -1,0 +1,128 @@
+# WISE² Phone Service Docker Compose
+# Spins up complete phone service with STT, TTS, and background workers
+# Integrates with existing PostgreSQL and Redis
+
+version: '3.8'
+
+services:
+  # WISE² Phone API with background workers
+  phone-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.phone-api
+    container_name: wise2-phone-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://wise2:wise2_password@host.docker.internal:5433/wise2_prod
+      REDIS_URL: redis://:redis_password@host.docker.internal:6380/1
+
+      # Phone Configuration
+      PHONE_PUBLIC_BASE_URL: https://${DOMAIN:-localhost}/phone
+      PHONE_WEBHOOK_URL: https://${DOMAIN:-localhost}/api/v1/phone/webhook
+      PHONE_WEBHOOK_SECRET: ${PHONE_WEBHOOK_SECRET:-dev-secret}
+      GOOGLE_VOICE_NUMBER: ${GOOGLE_VOICE_NUMBER}
+
+      # STT (Whisper)
+      WHISPER_URL: http://whisper:8000/v1/audio/transcriptions
+      STT_PROVIDER: whisper
+
+      # TTS (gTTS is free, no configuration needed)
+      TTS_PROVIDER: gtts
+
+      # Hermes/Ollama LLM
+      HERMES_ENDPOINT: http://ollama:11435/v1/chat/completions
+      HERMES_CHAT_MODEL: hermes2-pro
+      HERMES_TIMEOUT_MS: 90000
+
+      # Logging
+      LOG_LEVEL: info
+
+    depends_on:
+      ollama:
+        condition: service_started
+
+    networks:
+      - wise2
+    volumes:
+      - phone-audio:/tmp/wise2-phone-audio
+
+  # Whisper STT Service (Local speech-to-text)
+  # NOTE: Disabled - waiting for valid Docker image
+  # whisper:
+  #   image: rungalileo/whisper-api:latest
+  #   container_name: wise2-whisper
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     MODEL: base
+  #     DEVICE: cpu
+  #   networks:
+  #     - wise2
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+  # Ollama / Hermes (Local LLM)
+  # Note: If already running on host at 11435, comment this out
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wise2-ollama
+    restart: unless-stopped
+    ports:
+      - "11435:11435"
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11435
+    networks:
+      - wise2
+    # volumes:
+    #   - ollama-data:/root/.ollama
+    # Pull Hermes model on startup:
+    # entrypoint: sh -c 'ollama serve & sleep 5 && ollama pull hermes2-pro && wait'
+
+  # PostgreSQL (Shared with main app, if not already running)
+  # Uncomment if not using existing PostgreSQL
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: wise2-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: wise2_prod
+  #     POSTGRES_USER: wise2
+  #     POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-wise2}
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - wise2
+
+  # Redis (Shared with main app, if not already running)
+  # Uncomment if not using existing Redis
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: wise2-redis
+  #   restart: unless-stopped
+  #   command: redis-server --requirepass ${REDIS_PASSWORD:-redis123}
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - wise2
+
+networks:
+  wise2:
+    driver: bridge
+
+volumes:
+  phone-audio:
+  # ollama-data:
+  # postgres_data:
+  # redis_data:

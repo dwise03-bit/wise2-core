@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  # WISE Defense Edge API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: wise-defense-api
+    ports:
+      - "3014:3014"
+    environment:
+      WISE_DEFENSE_DEVICE_ID: "EDGE-DEV"
+      WISE_DEFENSE_API_PORT: 3014
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./app:/opt/wise2-defense/app:ro
+      - ./data:/opt/wise2-defense/data
+      - ./logs:/var/log/wise2-defense
+    networks:
+      - wise-defense
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3014/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  # SQLite Browser (optional)
+  sqlite-web:
+    image: coleifer/sqlite-web:latest
+    container_name: wise-defense-db-browser
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/opt/data:ro
+    environment:
+      DATABASE: "/opt/data/wise2-defense.db"
+    networks:
+      - wise-defense
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  data:
+  logs:
+
+networks:
+  wise-defense:
+    driver: bridge

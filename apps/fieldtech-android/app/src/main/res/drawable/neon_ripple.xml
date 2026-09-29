@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- WISE² v2.0 Neon Cyan Ripple Effect -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#6600D9FF"
+    android:radius="16dp">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <!-- Base glass background -->
+            <solid android:color="#401A1D2E" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</ripple>

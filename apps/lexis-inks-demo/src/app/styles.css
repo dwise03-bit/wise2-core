@@ -1,0 +1,71 @@
+/* Lexi's Inks Theme */
+:root {
+  --navy: #0a1f3d;
+  --navy-light: #0d2850;
+  --navy-dark: #051428;
+  --blue: #0066ff;
+  --blue-light: #3d8fff;
+  --cyan: #00d4ff;
+  --silver: #e8e8e8;
+  --silver-dark: #999;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--navy);
+  color: white;
+}
+
+main {
+  background-color: var(--navy);
+  color: white;
+}
+
+nav {
+  background-color: var(--navy-dark);
+  border-color: var(--navy-light);
+}
+
+.bg-navy { background-color: var(--navy); }
+.bg-navy-light { background-color: var(--navy-light); }
+.bg-navy-dark { background-color: var(--navy-dark); }
+.bg-blue { background-color: var(--blue); }
+.bg-cyan { background-color: var(--cyan); }
+
+.text-white { color: white; }
+.text-cyan { color: var(--cyan); }
+.text-silver-dark { color: var(--silver-dark); }
+
+.border-navy { border-color: var(--navy); }
+.border-navy-light { border-color: var(--navy-light); }
+.border-cyan { border-color: var(--cyan); }
+
+.hover\:border-cyan:hover { border-color: var(--cyan); }
+.hover\:text-cyan:hover { color: var(--cyan); }
+.hover\:bg-blue-light:hover { background-color: var(--blue-light); }
+.hover\:text-cyan-glow:hover { color: var(--cyan); }
+
+section {
+  background-color: var(--navy);
+}
+
+.py-20 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}

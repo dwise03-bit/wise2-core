@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+EXPECTED_PROJECT="/home/dwise/wise2-core/apps/wise2-xr"
+if [[ -n "${WISE2_XR_REQUIRE_CANONICAL:-}" && "$PROJECT_DIR" != "$EXPECTED_PROJECT" ]]; then
+  echo "Refusing non-canonical Quest project: $PROJECT_DIR" >&2
+  echo "Use $EXPECTED_PROJECT as the Quest source of truth." >&2
+  exit 2
+fi
+UNITY_BIN="${UNITY_BIN:-/sdb-disk/unity/Hub/Editor/Editor/Unity}"
+[[ -x "$UNITY_BIN" ]] || { echo "Unity not found at $UNITY_BIN. Set UNITY_BIN to your Unity executable." >&2; exit 1; }
+BUILD_DIR="${WISE2_XR_BUILD_DIR:-/sdb-disk/unity/builds/wise2-xr}"
+export WISE2_XR_BUILD_DIR="$BUILD_DIR"
+LOG_DIR="${WISE2_XR_LOG_DIR:-/sdb-disk/unity/logs/wise2-xr}"
+mkdir -p "$BUILD_DIR" "$LOG_DIR"
+export TMPDIR="${TMPDIR:-/sdb-disk/unity/cache/tmp}"
+mkdir -p "$TMPDIR"
+export ANDROID_HOME="${ANDROID_HOME:-/opt/android-sdk}"
+export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+export ANDROID_NDK_ROOT="${ANDROID_NDK_ROOT:-$ANDROID_HOME/ndk/27.2.12479018}"
+export WISE2_USB_DEV="${WISE2_USB_DEV:-0}"
+# Unity's generated Android PlayerDataCache can retain a locked resource after
+# an interrupted batch build. Clear only generated Android build state so the
+# VPS build remains reproducible without touching project assets or settings.
+rm -rf "$PROJECT_DIR/Library/PlayerDataCache" "$PROJECT_DIR/Library/Bee/artifacts/AndroidPlayer"
+"$UNITY_BIN" -batchmode -nographics -quit -projectPath "$PROJECT_DIR" -buildTarget Android -executeMethod Wise2.XR.Editor.BuildQuest.PerformBuild -logFile "$LOG_DIR/unity-build.log"

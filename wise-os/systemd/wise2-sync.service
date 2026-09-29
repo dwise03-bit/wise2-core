@@ -1,0 +1,8 @@
+[Unit]
+Description=WISE2 edge synchronization placeholder
+After=network-online.target wise2-defense.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/wise2-defense/wise2-defense.env
+ExecStart=/bin/sh -c 'test -n "$WISE2_API_URL" || exit 0'

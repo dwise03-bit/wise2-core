@@ -1,0 +1,30 @@
+# PlatformIO
+.pio/
+.vscode/
+build/
+*.o
+*.a
+*.elf
+*.bin
+*.hex
+*.map
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Dependencies
+.pioenvs/
+.piolibdeps/
+lib/

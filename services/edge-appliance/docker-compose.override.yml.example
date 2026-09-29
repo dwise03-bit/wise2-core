@@ -1,0 +1,68 @@
+# Docker Compose Override - Development Configuration
+# Copy to docker-compose.override.yml and customize as needed
+# This file is not tracked by git and is specific to your deployment
+
+version: '3.9'
+
+services:
+  edge-runtime:
+    # Override environment variables
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+      OFFLINE_MODE: 'false'
+
+    # Override port mappings
+    ports:
+      - '3000:3000'
+      - '3002:3002'
+      - '9229:9229'  # Node debugger
+
+    # Override volume mounts for development
+    volumes:
+      - ./src:/app/src:ro  # Mount source for hot reload
+      - ./data:/data
+      - ./models:/models:ro
+
+    # Override resource limits for development
+    mem_limit: 1g
+    cpus: 1
+
+    # Override restart policy
+    restart: on-failure
+
+  ollama:
+    # Keep Ollama configuration but can override if needed
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+
+    # Override volume for model storage
+    volumes:
+      - ollama-data:/root/.ollama
+      - ./models:/models:ro
+
+  # Add pgAdmin for database inspection (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: wise2-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    networks:
+      - wise2-edge
+    profiles:
+      - development
+
+  # Add MailHog for email testing (optional)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: wise2-mailhog
+    ports:
+      - '1025:1025'  # SMTP
+      - '8025:8025'  # Web UI
+    networks:
+      - wise2-edge
+    profiles:
+      - development

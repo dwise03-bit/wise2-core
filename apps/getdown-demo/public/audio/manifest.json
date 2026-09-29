@@ -1,0 +1,21 @@
+{
+  "provider": "edge",
+  "voice": "en-US-AvaMultilingualNeural",
+  "generatedFrom": "lib/data/narration.json",
+  "tracks": {
+    "overview": "/audio/overview.mp3",
+    "pipeline": "/audio/pipeline.mp3",
+    "estimates": "/audio/estimates.mp3",
+    "dispatch": "/audio/dispatch.mp3",
+    "customer": "/audio/customer.mp3",
+    "properties": "/audio/properties.mp3",
+    "contracts": "/audio/contracts.mp3",
+    "lighting": "/audio/lighting.mp3",
+    "followups": "/audio/followups.mp3",
+    "ai": "/audio/ai.mp3",
+    "content": "/audio/content.mp3",
+    "growth": "/audio/growth.mp3",
+    "closing": "/audio/closing.mp3",
+    "greeting": "/audio/greeting.mp3"
+  }
+}

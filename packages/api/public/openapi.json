@@ -1,0 +1,204 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WISE² Desktop Commander API",
+    "description": "Mac control via ChatGPT",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "dwise03@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://100.109.186.4:9999",
+      "description": "WISE² Mac Bridge (Tailscale)"
+    },
+    {
+      "url": "http://localhost:9999",
+      "description": "Local (localhost only)"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Register device with Desktop Commander",
+        "operationId": "registerDevice",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_id": {
+                    "type": "string",
+                    "description": "Unique device identifier"
+                  },
+                  "api_key": {
+                    "type": "string",
+                    "description": "API key for authentication"
+                  },
+                  "app_name": {
+                    "type": "string",
+                    "description": "Application name (e.g., ChatGPT)"
+                  }
+                },
+                "required": ["device_id", "api_key"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Device registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "registered_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "device_id": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/exec": {
+      "post": {
+        "summary": "Execute shell command on Mac",
+        "operationId": "executeCommand",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "description": "Shell command to execute"
+                  }
+                },
+                "required": ["command"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "stdout": {
+                      "type": "string"
+                    },
+                    "stderr": {
+                      "type": "string"
+                    },
+                    "command": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Command execution error"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Check bridge health",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "Bridge is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["healthy"]
+                    },
+                    "pid": {
+                      "type": "integer"
+                    },
+                    "uptime": {
+                      "type": "integer"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Get bridge status",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "Bridge status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "pid": {
+                      "type": "integer"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "uptime": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

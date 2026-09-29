@@ -1,0 +1,373 @@
+# Docker Compose configuration for Wise² Core
+# Compatible with docker-compose 3.x and above
+
+# Wise² Core Docker Compose Configuration
+# This orchestrates all Wise² Core services on Raspberry Pi
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose down            # Stop all services
+#   docker-compose logs -f         # Follow logs
+#   docker-compose ps             # Show service status
+
+services:
+  # ============================================================================
+  # Database Services
+  # ============================================================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: wise2-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/config/postgres.conf:/etc/postgresql/postgresql.conf:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: wise2-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================================================
+  # AI Services
+  # ============================================================================
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: wise2-ollama
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - wise2-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================================================
+  # Core Application Services
+  # ============================================================================
+
+  # API Gateway / Main Application
+  api:
+    build:
+      context: ./services/api
+    container_name: wise2-api
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      ENVIRONMENT: ${ENVIRONMENT}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - wise2-network
+    volumes:
+      - ./src:/app/src
+      - ./config:/app/config
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+    # Uncomment for development hot reload:
+    # command: npm run dev
+
+  # Dashboard (Web UI)
+  dashboard:
+    build:
+      context: ./services/dashboard
+    container_name: wise2-dashboard
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+      NEXT_PUBLIC_WS_URL: ws://localhost:3000
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Admin Dashboard
+  admin-dashboard:
+    build:
+      context: ./services/admin-dashboard
+    container_name: wise2-admin-dashboard
+    environment:
+      API_URL: http://api:3000
+    ports:
+      - "3002:3000"
+    depends_on:
+      - api
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Discord Bot
+  bot:
+    build:
+      context: ./services/bot
+    container_name: wise2-bot
+    environment:
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      API_URL: http://api:3000
+      ADMIN_ID: ${ADMIN_ID}
+      BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+    depends_on:
+      - api
+      - redis
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Background Worker
+  worker:
+    build:
+      context: ./services/worker
+    container_name: wise2-worker
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NODE_ENV: ${NODE_ENV}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================================================
+  # Monitoring & Observability
+  # ============================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wise2-prometheus
+    volumes:
+      - ./infrastructure/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wise2-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_SERVER_ROOT_URL: http://localhost:3001
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infrastructure/config/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - wise2-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # ============================================================================
+  # Message Queue Services
+  # ============================================================================
+
+  # Redis is used for message queue (see above)
+  # Upgrade to RabbitMQ in Phase 2 if needed
+
+  # ============================================================================
+  # Reverse Proxy / Load Balancer
+  # ============================================================================
+
+  # (To be added in Phase 2)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: wise2-nginx
+  #   volumes:
+  #     - ./infrastructure/config/nginx.conf:/etc/nginx/nginx.conf:ro
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - wise2-network
+  #   restart: unless-stopped
+
+  # ============================================================================
+  # Backup & Maintenance Services
+  # ============================================================================
+
+  # (To be added in Phase 2)
+  # backup:
+  #   build:
+  #     context: .
+  #     dockerfile: infrastructure/docker/backup.Dockerfile
+  #   container_name: wise2-backup
+  #   environment:
+  #     BACKUP_DIR: ${BACKUP_DIR}
+  #     BACKUP_SCHEDULE: ${BACKUP_SCHEDULE}
+  #     DB_HOST: postgres
+  #     DB_USER: ${DB_USER}
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #   volumes:
+  #     - ${BACKUP_DIR}:/backups
+  #     - postgres_data:/var/lib/postgresql/data:ro
+  #   networks:
+  #     - wise2-network
+  #   restart: unless-stopped
+
+# ============================================================================
+# Networks
+# ============================================================================
+
+networks:
+  wise2-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ============================================================================
+# Volumes
+# ============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# ============================================================================
+# Configuration Notes
+# ============================================================================
+#
+# 1. Copy .env.example to .env and fill in values before running
+# 2. Build images with: docker-compose build
+# 3. Start services with: docker-compose up -d
+# 4. View logs: docker-compose logs -f [service-name]
+# 5. For Raspberry Pi, use: docker-compose -f docker-compose.yml -f docker-compose.rpi.yml up -d
+#
+# Health Checks:
+# - PostgreSQL: docker-compose exec postgres pg_isready
+# - Redis: docker-compose exec redis redis-cli ping
+# - API: curl http://localhost:3000/health
+# - Prometheus: curl http://localhost:9090/-/healthy
+# - Grafana: curl http://localhost:3001/api/health
+#
+# Resource Constraints:
+# Adjust deploy.resources for Raspberry Pi performance
+#
+# Persistence:
+# All volumes are stored in /var/lib/docker/volumes/
+#
+# ============================================================================

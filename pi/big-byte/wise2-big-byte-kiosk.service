@@ -1,0 +1,29 @@
+[Unit]
+Description=WISE² Chromium Kiosk
+After=graphical.target network-online.target wise2-big-byte.service
+Wants=graphical.target network-online.target wise2-big-byte.service
+
+[Service]
+Type=simple
+User=wise2
+Group=wise2
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/wise2/.Xauthority
+Environment=CHROMIUM_FLAGS=--no-first-run --disable-features=Translate,AutofillServerCommunication --disable-infobars --disable-session-crashed-bubble --disable-prompt-on-repost --disable-restore-session-state --disable-translate --disable-sync --disable-background-networking --disable-default-apps --disable-component-update --password-store=basic --use-mock-keychain --overscroll-history-navigation=0 --kiosk --app=https://command.wise2.net
+ExecStartPre=/bin/sh -lc 'pkill -x chromium-browser || pkill -x chromium || true'
+ExecStart=/bin/sh -lc 'exec chromium-browser ${CHROMIUM_FLAGS} || exec chromium ${CHROMIUM_FLAGS}'
+Restart=always
+RestartSec=5
+TimeoutStartSec=30
+
+# Avoid duplicate browser instances and keep the appliance small
+StartLimitIntervalSec=0
+MemoryMax=384M
+CPUQuota=50%
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wise2-big-byte-kiosk
+
+[Install]
+WantedBy=graphical.target

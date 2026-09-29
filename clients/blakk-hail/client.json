@@ -1,0 +1,31 @@
+{
+  "clientId": "blakk-hail",
+  "name": "Blakk Hail",
+  "status": "active",
+  "onboardedAt": "2026-09-09",
+  "clientEmail": "blakkhail@gmail.com",
+  "accountManager": {
+    "brand": "SenCere Creative LLC",
+    "email": "sencere@wise2.net"
+  },
+  "operatingModel": "Blakk Hail -> SenCere Creative -> WISE2 Core",
+  "services": {
+    "crm": "active",
+    "storefront": "active",
+    "creative": "sencere",
+    "hosting": "provisioning",
+    "payments": "provisioning",
+    "fulfillment": "provisioning",
+    "shipping": "provisioning",
+    "aiPhone": "provisioning",
+    "messaging": "provisioning",
+    "support": "active",
+    "automation": "active",
+    "analytics": "active"
+  },
+  "github": {
+    "repository": "dwise03-bit/wise2-core",
+    "masterIssue": 71,
+    "storefrontPr": 69
+  }
+}

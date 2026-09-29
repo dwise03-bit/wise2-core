@@ -1,0 +1,201 @@
+/* ============================================================================
+   STATS SECTION - Key Metrics & Key Performance Indicators
+   ============================================================================ */
+
+.statsSection {
+  position: relative;
+  z-index: 10;
+  padding: 80px 20px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(166, 60, 255, 0.03));
+  border-top: 1px solid rgba(166, 60, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 148, 255, 0.1);
+}
+
+.statsContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.statsHeader {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.statsTitle {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 0 30px rgba(166, 60, 255, 0.2);
+}
+
+.statsSubtitle {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-family: 'Rajdhani', monospace;
+  color: #a0a0a0;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 0;
+}
+
+/* Stat Card */
+.statCard {
+  position: relative;
+  padding: 40px 24px;
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, transparent 100%);
+  border-top: 4px solid var(--accent-color);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-top-width: 4px;
+  border-radius: 12px;
+  text-align: center;
+  transition: all 300ms ease-out;
+  will-change: transform, box-shadow, border-color;
+  overflow: hidden;
+}
+
+.statCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(var(--accent-rgb), 0.5);
+  box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.4), inset 0 0 30px rgba(var(--accent-rgb), 0.08);
+}
+
+/* Stat Value - Big Bold Number/Symbol */
+.statValue {
+  font-size: 72px;
+  font-weight: 900;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+  color: var(--accent-color);
+  margin-bottom: 16px;
+  letter-spacing: -2px;
+  text-shadow: 0 0 40px rgba(var(--accent-rgb), 0.3);
+}
+
+/* Stat Label */
+.statLabel {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Rajdhani', monospace;
+  text-transform: uppercase;
+}
+
+/* Stat Description */
+.statDescription {
+  font-size: 13px;
+  color: #a0a0a0;
+  line-height: 1.5;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Rajdhani', monospace;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .statsSection {
+    padding: 60px 16px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .statCard {
+    padding: 32px 20px;
+  }
+
+  .statValue {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  .statLabel {
+    font-size: 14px;
+  }
+
+  .statDescription {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .statCard {
+    padding: 36px 24px;
+  }
+
+  .statValue {
+    font-size: 64px;
+  }
+
+  .statLabel {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .statsSection {
+    padding: 100px 40px;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  .statCard {
+    padding: 44px 28px;
+  }
+}
+
+/* ============================================================================
+   ACCENT COLOR VARIANTS (handled via CSS variables set in component)
+   ============================================================================ */
+
+/* ============================================================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .statCard {
+    border-width: 2px;
+    box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.4);
+  }
+
+  .statLabel {
+    text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.4);
+  }
+
+  .statValue {
+    text-shadow: 0 0 50px rgba(var(--accent-rgb), 0.5);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .statCard:active {
+    transform: translateY(-4px);
+  }
+}

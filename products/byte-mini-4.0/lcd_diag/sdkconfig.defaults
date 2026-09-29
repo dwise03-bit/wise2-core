@@ -1,0 +1,17 @@
+# LCD-ONLY DIAGNOSTIC — every non-display subsystem is off by design.
+CONFIG_FREERTOS_HZ=1000
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# CONSOLE ROUTING — verified, not assumed.
+# The board's /dev/cu.usbmodem5B7B0330051 enumerates as USB vendor 0x1A86
+# (WCH), product "USB Single Serial": a CH343 USB-UART BRIDGE, not the C5's
+# native USB-Serial/JTAG. Console must therefore go to UART0, which the bridge
+# is wired to. Selecting USB_SERIAL_JTAG sends output to the C5's native USB
+# pins, which are not connected to the host — the firmware runs correctly and
+# prints nothing, which looks identical to a hang.
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+# CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG is not set
+# CONFIG_ESP_CONSOLE_SECONDARY_NONE is set
+# CONFIG_ESP_CONSOLE_SECONDARY_USB_SERIAL_JTAG is not set
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+CONFIG_IDF_TARGET_ESP32C5_MP_VERSION=y

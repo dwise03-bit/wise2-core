@@ -1,0 +1,16 @@
+{
+  "name": "@wise2/k10-api",
+  "version": "1.0.0",
+  "description": "WISE² UNIHIKER K10 Device API Client",
+  "main": "k10-client.js",
+  "scripts": {
+    "test": "node test-k10.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

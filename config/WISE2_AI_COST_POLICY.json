@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "WISE² AI Cost Policy - FREE-FIRST model routing",
+    "lastUpdated": "2026-07-27",
+    "owner": "dwise"
+  },
+  "policy": {
+    "mode": "FREE-FIRST",
+    "description": "Hermes routes to local and free models first. Paid providers only if explicitly enabled.",
+    "priority": [
+      {
+        "rank": 1,
+        "type": "LOCAL",
+        "description": "Models running on local infrastructure (Ollama)",
+        "cost": 0,
+        "enabled": true
+      },
+      {
+        "rank": 2,
+        "type": "FREE-TIER",
+        "description": "Free tier models from cloud providers",
+        "cost": 0,
+        "enabled": true
+      },
+      {
+        "rank": 3,
+        "type": "PAID",
+        "description": "Paid API providers (Claude, OpenAI, Gemini)",
+        "cost": "variable",
+        "enabled": false,
+        "requiresApproval": true
+      }
+    ]
+  },
+  "providers": {
+    "ollama": {
+      "enabled": true,
+      "cost": 0,
+      "type": "LOCAL",
+      "description": "Local model inference via Ollama",
+      "url": "http://localhost:11434"
+    },
+    "claude": {
+      "enabled": false,
+      "cost": "variable",
+      "type": "PAID",
+      "description": "Anthropic Claude API",
+      "apiKeyRequired": true,
+      "requiresApproval": true
+    },
+    "openai": {
+      "enabled": false,
+      "cost": "variable",
+      "type": "PAID",
+      "description": "OpenAI GPT API",
+      "apiKeyRequired": true,
+      "requiresApproval": true
+    },
+    "gemini": {
+      "enabled": false,
+      "cost": "variable",
+      "type": "PAID",
+      "description": "Google Gemini API",
+      "apiKeyRequired": true,
+      "requiresApproval": true
+    }
+  },
+  "safeguards": {
+    "maxDailySpend": 0,
+    "circuitBreakerThreshold": 3,
+    "fallbackChainLength": 3,
+    "healthCheckInterval": 60000,
+    "preventSilentCostIncrease": true
+  },
+  "logging": {
+    "trackModelSelection": true,
+    "trackFallbacks": true,
+    "trackEstimatedCosts": true,
+    "warnOnUnexpectedCost": true,
+    "logPath": "./data/logs/ai-routing.log"
+  },
+  "notes": "This policy ensures WISE² never silently incurs AI costs. Paid providers require explicit environment flag and admin approval to enable. All routing decisions logged for audit."
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BIG_BYTE_URL="${WISE2_BIG_BYTE_URL:-http://127.0.0.1:8787}"
+STATE_FILE="${WISE2_STATE_FILE:-/opt/wise2/big-byte/state/status.json}"
+
+if command -v curl >/dev/null 2>&1; then
+  if curl -fsS "$BIG_BYTE_URL/status" >/dev/null 2>&1; then
+    curl -fsS "$BIG_BYTE_URL/status"
+    exit 0
+  fi
+fi
+
+if [ -f "$STATE_FILE" ]; then
+  cat "$STATE_FILE"
+  exit 0
+fi
+
+echo '{"status":"unknown","error":"big byte runtime unavailable"}'

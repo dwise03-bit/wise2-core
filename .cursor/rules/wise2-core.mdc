@@ -1,0 +1,20 @@
+---
+description: WISE² repository architecture, workflow, safety, and verification rules
+globs:
+alwaysApply: true
+---
+
+# WISE² Core project rules
+
+Use `CLAUDE.md` as the shared WISE² architecture and product context. References there to Claude mean the active coding agent, including Cursor.
+
+@CLAUDE.md
+
+- This is a large, active pnpm/Turborepo monorepo. Inspect the nearest component `README.md`, `AGENTS.md`, or `CLAUDE.md` before changing it.
+- Preserve unrelated working-tree changes. Never discard, overwrite, or broadly reformat user work outside the requested scope.
+- Never read, print, commit, or copy secret values from `.env*`, credentials, certificates, or production configuration. Use tracked example files for variable names only.
+- Use `pnpm` from the repository root and prefer workspace-scoped commands before full-repository commands.
+- Before editing, inspect relevant code and git status. After editing, run the narrowest relevant type-check, lint, or test and state what was not verified.
+- Ask before deployments, destructive commands, production data changes, external messages, purchases, or account-level configuration changes.
+- Do not automatically create daily logs, decisions, reflections, or other operational records unless the user asks or the task materially requires one.
+

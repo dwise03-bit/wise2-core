@@ -1,0 +1,10 @@
+{
+  "activeProfile": "NOT CONFIGURED",
+  "receiveOnly": true,
+  "profiles": [
+    { "name": "NOAA", "frequencies": [], "notes": "Add locally authorized receive frequencies." },
+    { "name": "GMRS", "frequencies": [], "notes": "Configuration only; no transmit controls are provided." },
+    { "name": "HAM", "frequencies": [], "notes": "Add licensed local repeater or simplex information." },
+    { "name": "CUSTOM", "frequencies": [], "notes": "Receive-only monitoring profile." }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "kick": {
+    "name": "Kick Drum",
+    "file": "kick.wav",
+    "category": "drums",
+    "duration": 0.5,
+    "description": "Deep 808 kick"
+  },
+  "snare": {
+    "name": "Snare Hit",
+    "file": "snare.wav",
+    "category": "drums",
+    "duration": 0.3,
+    "description": "Crisp snare crack"
+  },
+  "hihat": {
+    "name": "Hi-Hat",
+    "file": "hihat.wav",
+    "category": "drums",
+    "duration": 0.15,
+    "description": "Closed hi-hat"
+  },
+  "cymbal": {
+    "name": "Crash Cymbal",
+    "file": "cymbal.wav",
+    "category": "drums",
+    "duration": 2.0,
+    "description": "Bright crash cymbal"
+  },
+  "bass": {
+    "name": "Bass Tone",
+    "file": "bass.wav",
+    "category": "bass",
+    "duration": 1.0,
+    "description": "Warm bass note"
+  },
+  "lead": {
+    "name": "Lead Synth",
+    "file": "lead.wav",
+    "category": "synth",
+    "duration": 1.5,
+    "description": "Bright synth lead"
+  },
+  "pad": {
+    "name": "Pad Chord",
+    "file": "pad.wav",
+    "category": "synth",
+    "duration": 4.0,
+    "description": "Lush pad chord"
+  },
+  "uplifter": {
+    "name": "Uplifter",
+    "file": "uplifter.wav",
+    "category": "effects",
+    "duration": 2.0,
+    "description": "Sweeping uplifter"
+  },
+  "transition": {
+    "name": "Transition",
+    "file": "transition.wav",
+    "category": "effects",
+    "duration": 1.0,
+    "description": "Creative transition"
+  },
+  "applause": {
+    "name": "Applause",
+    "file": "applause.wav",
+    "category": "sfx",
+    "duration": 3.0,
+    "description": "Crowd applause"
+  },
+  "ding": {
+    "name": "Bell Ding",
+    "file": "ding.wav",
+    "category": "sfx",
+    "duration": 0.8,
+    "description": "Bright bell ding"
+  },
+  "notification": {
+    "name": "Notification",
+    "file": "notification.wav",
+    "category": "sfx",
+    "duration": 0.5,
+    "description": "Alert notification tone"
+  }
+}

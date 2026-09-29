@@ -1,0 +1,78 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Setup provisioning & certificates"
+  lane :setup_provisioning do
+    setup_ci if is_ci
+
+    # Register device
+    register_device(
+      name: "iPhone 16e",
+      udid: "FC32D545-F2C4-515A-913D-FCF2EE5A84AD"
+    )
+
+    # Get certificates
+    get_certificates(
+      username: "dwise954@icloud.com",
+      team_id: "757UN8CV9G",
+      team_name: "Daniel Wise"
+    )
+
+    # Create provisioning profile
+    create_app_identifier(
+      app_identifier: "com.sencere.blakkhail",
+      team_id: "757UN8CV9G"
+    )
+
+    get_provisioning_profile(
+      app_identifier: "com.sencere.blakkhail",
+      provisioning_name: "Blakk Hail Development",
+      team_id: "757UN8CV9G",
+      filename: "BlakkhailDev.mobileprovision"
+    )
+
+    UI.success("✅ Provisioning complete")
+  end
+
+  desc "Build and install to device"
+  lane :install_device do
+    setup_provisioning
+
+    build_app(
+      workspace: "Blakkhail.xcworkspace",
+      scheme: "Blakkhail",
+      configuration: "Release",
+      sdk: "iphoneos",
+      derived_data_path: "build",
+      destination: "generic/platform=iOS",
+      provisioning_profile_path: "BlakkhailDev.mobileprovision",
+      export_method: "development",
+      skip_package_ipa: true,
+      skip_package_pkg: true,
+      build_for_testing: false
+    )
+
+    install_on_device(
+      device_id: "FC32D545-F2C4-515A-913D-FCF2EE5A84AD",
+      bundle_id: "com.sencere.blakkhail"
+    )
+
+    UI.success("✅ App installed to iPhone 16e")
+  end
+
+  desc "Full automation: setup + build + install + test"
+  lane :full_deploy do
+    install_device
+
+    # Verify installation
+    scan(
+      workspace: "Blakkhail.xcworkspace",
+      scheme: "Blakkhail",
+      configuration: "Release",
+      skip_testing: true,
+      destination: "id=FC32D545-F2C4-515A-913D-FCF2EE5A84AD"
+    )
+
+    UI.success("🎉 Full deployment complete")
+  end
+end

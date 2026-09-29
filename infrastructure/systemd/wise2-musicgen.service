@@ -1,0 +1,17 @@
+[Unit]
+Description=WISE² fine-tuned MusicGen GPU service
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/dwise
+Environment=MUSICGEN_MODEL_PATH=/home/dwise/wise2-musicgen-v1/epoch_1
+Environment=MUSICGEN_OUTPUT_DIR=/tmp/musicgen-outputs
+ExecStart=/home/dwise/musicgen-env/bin/uvicorn musicgen_finetuned_server:app --host 100.68.145.5 --port 4900 --workers 1
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

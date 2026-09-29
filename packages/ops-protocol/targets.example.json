@@ -1,0 +1,56 @@
+[
+  {
+    "alias": "wise2-core",
+    "address": "100.64.0.10",
+    "transport": "control-bridge",
+    "controlPort": 3099,
+    "environment": "production",
+    "allowedProfiles": [
+      "status",
+      "services",
+      "logs",
+      "diagnose",
+      "restart",
+      "deploy",
+      "rollback",
+      "maintenance"
+    ],
+    "healthCheckProfile": "status",
+    "bridgeTokenRef": "WISE2_BRIDGE_TOKEN_CORE"
+  },
+  {
+    "alias": "wise2-core-tunnel",
+    "address": "173.208.147.165",
+    "transport": "ssh",
+    "sshUser": "wise2-ops",
+    "sshKeyRef": "~/.ssh/wise2-ops",
+    "forwardPort": 4799,
+    "environment": "production",
+    "allowedProfiles": [
+      "status",
+      "services",
+      "logs",
+      "restart"
+    ],
+    "healthCheckProfile": "status",
+    "bridgeTokenRef": "WISE2_BRIDGE_TOKEN_CORE"
+  },
+  {
+    "alias": "wise2-dev",
+    "address": "100.64.0.20",
+    "transport": "control-bridge",
+    "controlPort": 3099,
+    "environment": "staging",
+    "allowedProfiles": [
+      "status",
+      "services",
+      "logs",
+      "diagnose",
+      "restart",
+      "deploy",
+      "rollback"
+    ],
+    "healthCheckProfile": "status",
+    "bridgeTokenRef": "WISE2_BRIDGE_TOKEN_DEV"
+  }
+]

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+units=(
+  "${WISE2_BIG_BYTE_SERVICE:-wise2-big-byte.service}"
+  "${WISE2_KIOSK_SERVICE:-wise2-big-byte-kiosk.service}"
+  "${WISE2_HEALTH_SERVICE:-wise2-big-byte-health.service}"
+)
+
+if command -v journalctl >/dev/null 2>&1; then
+  journalctl -u "${units[0]}" -u "${units[1]}" -u "${units[2]}" -n "${WISE2_LOG_LINES:-200}" --no-pager
+else
+  echo "journalctl is not available"
+  exit 1
+fi

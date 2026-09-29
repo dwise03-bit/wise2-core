@@ -1,0 +1,26 @@
+[Unit]
+Description=WISE² API Health Monitor
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-core
+Environment="NODE_ENV=production"
+EnvironmentFile=/home/dwise/wise2-core/.env.production
+ExecStart=/usr/bin/node /home/dwise/wise2-core/services/api-health-monitor.js
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/wise2-api-health.log
+StandardError=append:/var/log/wise2-api-health.log
+SyslogIdentifier=wise2-api-health
+
+# Security hardening
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

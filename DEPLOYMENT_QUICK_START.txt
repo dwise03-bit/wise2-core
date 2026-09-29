@@ -1,0 +1,131 @@
+═══════════════════════════════════════════════════════════════════════════════
+  WISE HVAC FIELD TECH — DEPLOYMENT QUICK START
+  Built: 2026-08-24 | Ready for production field use
+═══════════════════════════════════════════════════════════════════════════════
+
+📦 WHAT'S READY
+───────────────────────────────────────────────────────────────────────────────
+  ✅ APK:  dist/hvac-field-tech/WISE-FieldTech-v1.0.0.apk (3.0 MB, signed)
+  ✅ AAB:  dist/hvac-field-tech/WISE-FieldTech-v1.0.0.aab (2.9 MB, signed)
+  ✅ Code: Pushed to GitHub (main branch)
+
+📋 CHOOSE YOUR PATH
+───────────────────────────────────────────────────────────────────────────────
+
+PATH 1: DIRECT INSTALL (FASTEST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  For immediate field tech testing (no Play Store needed)
+
+  1. Get APK:
+     - File: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.apk
+     - Or: apps/wise-hvac-demo/android/app/build/outputs/apk/release/app-release.apk
+
+  2. On Android device:
+     - Settings > Security > Enable "Install from Unknown Sources"
+     - Open file manager
+     - Find + tap APK
+     - Tap "Install"
+
+  3. Launch app
+     - Sign in with Google
+     - Browse jobs
+     - Submit demo request
+
+  ⏱️  Time to field: 5 minutes
+
+
+PATH 2: GOOGLE PLAY STORE (OFFICIAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  For public release + automatic updates
+
+  1. Open Google Play Console:
+     https://play.google.com/console
+
+  2. Select "WISE Field Tech" app
+
+  3. Go to: Release > Production > Create new release
+
+  4. Upload:
+     - File: dist/hvac-field-tech/WISE-FieldTech-v1.0.0.aab
+
+  5. Add release notes:
+     "WISE Field Tech v1.0.0 - Real-time job dispatch for HVAC technicians"
+
+  6. Click "Review release" > "Start rollout"
+
+  7. Select rollout: 25% (first 2 hours) > 50% > 100%
+
+  ✅ Now live: https://play.google.com/store/apps/details?id=com.wise2.fieldtech
+
+  ⏱️  Time to Play Store: 5 min upload + 2-24 hours review
+
+
+PATH 3: WEB VERSION (OPTIONAL FALLBACK)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  For browser access (in addition to APK)
+
+  1. SSH to VPS:
+     ssh dwise@173.208.147.165
+
+  2. Fix permissions (requires sudo password):
+     sudo chown -R dwise:dwise /opt/wise2-core
+
+  3. Deploy:
+     cd /opt/wise2-core
+     git stash --include-untracked
+     git pull origin main
+     cd apps/wise-hvac-demo
+     pnpm install --no-frozen-lockfile
+     pnpm build
+     pm2 stop wise-hvac-demo || true
+     pm2 start "node .next/standalone/server.js" --name wise-hvac-demo -- -p 3024
+
+  4. Verify:
+     curl https://wise2.net/wise-hvac-demo
+
+  ⏱️  Time to web: 10-15 min (requires VPS sudo password)
+
+
+🎯 RECOMMENDED SEQUENCE
+───────────────────────────────────────────────────────────────────────────────
+  NOW (right now):
+    → PATH 1: Send APK to field team for immediate testing
+
+  NEXT (while waiting for Play Store approval):
+    → PATH 3: Fix VPS and deploy web version as backup
+
+  TOMORROW (when Play Store approves):
+    → PATH 2: Announce Play Store availability to field team
+
+
+⚠️  BLOCKERS & WORKAROUNDS
+───────────────────────────────────────────────────────────────────────────────
+  VPS password required for web deployment?
+    → Use PATH 1 (APK) instead — no auth needed, immediate
+    → Or ask system admin to run: sudo chown -R dwise:dwise /opt/wise2-core
+
+  Play Store account issues?
+    → Use PATH 1 (APK) for internal testing
+    → Can submit to Play Store later
+
+
+📞 SUPPORT
+───────────────────────────────────────────────────────────────────────────────
+  APK installation issues:
+    → Enable Developer Mode (tap Android version 7x)
+    → Check Settings > Apps > Unknown apps > Allow installation
+
+  Play Store upload issues:
+    → Check app isn't already live (might just need update)
+    → See: WISE_HVAC_DEPLOYMENT_READY.md (full guide)
+
+  Web deployment issues:
+    → See WISE_HVAC_DEPLOYMENT_READY.md > Option 3
+
+
+✅ YOU'RE LIVE
+───────────────────────────────────────────────────────────────────────────────
+  Field team can use the app IMMEDIATELY via PATH 1.
+
+  No dependencies. No blockers. Just share the APK:
+    dist/hvac-field-tech/WISE-FieldTech-v1.0.0.apk

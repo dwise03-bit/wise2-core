@@ -1,0 +1,36 @@
+[Unit]
+Description=WISE² Edge Hub - Remote Support & OTA
+Documentation=https://wise2.net/docs/edge-hub
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-edge/app
+Environment="NODE_ENV=production"
+Environment="MQTT_URL=mqtt://127.0.0.1:1883"
+Environment="SUPPORT_PORT=4902"
+Environment="LOG_LEVEL=info"
+ExecStart=/usr/bin/node /home/dwise/wise2-edge/app/dist/support-api.js
+
+Restart=on-failure
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+
+MemoryMax=150M
+CPUQuota=40%
+TasksMax=100
+
+StandardOutput=append:/home/dwise/wise2-edge/app/logs/support-out.log
+StandardError=append:/home/dwise/wise2-edge/app/logs/support-error.log
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/dwise/wise2-edge/app/logs:/home/dwise/wise2-edge/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,48 @@
+name: iOS Auto-Deploy to Hub
+
+on:
+  push:
+    paths:
+      - 'apps/wise2-ios/**'
+      - 'apps/wise2-live-controller/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup SSH to Mac
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.MAC_DEPLOY_KEY }}
+      
+      - name: Trigger Mac Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no dwise@100.109.186.4 \
+            '/tmp/ios-auto-deploy.sh check'
+          
+          echo "✅ Deploy hub updated"
+      
+      - name: Notify Discord
+        if: always()
+        run: |
+          curl -X POST "${{ secrets.DISCORD_WEBHOOK_WISE2 }}" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "content": "📱 iOS build triggered",
+              "embeds": [{
+                "title": "Auto-Deploy to iPhone 175",
+                "description": "New .ipa files deployed to hub",
+                "url": "http://100.109.186.4:3025",
+                "color": 65280,
+                "fields": [
+                  {"name": "Status", "value": "✅ Deployed", "inline": true},
+                  {"name": "Hub URL", "value": "http://100.109.186.4:3025", "inline": true},
+                  {"name": "Target", "value": "iPhone 175", "inline": false}
+                ]
+              }]
+            }'

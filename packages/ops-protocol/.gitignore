@@ -1,0 +1,4 @@
+dist/
+node_modules/
+# tsc must never emit next to the sources: stray .js files shadow the .ts modules
+src/**/*.js

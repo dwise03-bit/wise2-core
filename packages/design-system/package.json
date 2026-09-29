@@ -1,0 +1,47 @@
+{
+  "name": "@wise2/design-system",
+  "version": "1.0.0",
+  "description": "Unified design system for WISE² platform",
+  "main": "tokens.ts",
+  "types": "tokens.ts",
+  "exports": {
+    ".": {
+      "types": "./tokens.ts",
+      "default": "./tokens.ts"
+    },
+    "./tokens": {
+      "types": "./tokens.ts",
+      "default": "./tokens.ts"
+    },
+    "./tailwind": {
+      "types": "./tailwind.config.ts",
+      "default": "./tailwind.config.ts"
+    },
+    "./css": "./design-tokens.css",
+    "./components": {
+      "types": "./components/index.ts",
+      "default": "./components/index.ts"
+    }
+  },
+  "files": [
+    "tokens.ts",
+    "tailwind.config.ts",
+    "design-tokens.css",
+    "components",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "keywords": [
+    "design-system",
+    "wise2",
+    "tokens",
+    "tailwind",
+    "css",
+    "ui"
+  ],
+  "author": "WISE² Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

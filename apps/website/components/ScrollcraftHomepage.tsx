@@ -1,0 +1,60 @@
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, ChevronDown, Cloud, Database, Globe2, LockKeyhole, Server, ShieldCheck, Sparkles, Users, Wifi, type LucideIcon } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+
+const services = [['WEB HOSTING', Globe2], ['BUSINESS PACKAGES', Users], ['VPS SERVERS', Server], ['DOMAINS', Globe2], ['BUSINESS EMAIL', Wifi], ['SSL & SECURITY', LockKeyhole], ['DAILY BACKUPS', Cloud], ['MANAGED HOSTING', ShieldCheck]] as const;
+const plans = [['LAUNCH', '$4.99', 'Perfect for getting started'], ['GROW', '$9.99', 'Built for growing businesses'], ['SCALE', '$19.99', 'For established businesses'], ['PERFORMANCE', '$39.99', 'Maximum power & speed']] as const;
+function Fade({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) { return <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .55, delay }}>{children}</motion.div>; }
+function Panel({ children }: { children: React.ReactNode }) { return <div className="wise-panel">{children}</div>; }
+
+export function ScrollcraftHomepage() { const reduced = useReducedMotion(); return <main className="wise-cloud min-h-screen overflow-hidden bg-[#030504] text-[#f5f7f2]">
+  <header className="fixed inset-x-0 top-0 z-50 border-b border-[#b9ff00]/35 bg-black/90 backdrop-blur-xl"><div className="mx-auto flex h-[72px] max-w-[1500px] items-center justify-between px-5 lg:px-8"><Link href="/" className="leading-none"><span className="block text-3xl font-black tracking-[-.08em] text-[#d9dadd]">WISE<sup className="text-lg text-[#b9ff00]">2</sup></span><span className="block pl-8 text-[10px] font-bold tracking-[.45em] text-[#b9ff00]">CLOUD</span></Link><nav className="hidden items-center gap-7 text-[11px] font-semibold lg:flex">{['HOSTING','RESELLER','VPS'].map(x=><Link key={x} href="/platform" className="flex items-center gap-1 hover:text-[#b9ff00]">{x}<ChevronDown size={13}/></Link>)}<Link href="/platform">DOMAINS</Link><Link href="/platform">SOLUTIONS⌄</Link><Link href="/work">RESOURCES</Link><Link href="/about">COMPANY</Link></nav><Link href="/pricing" className="border border-[#b9ff00] px-5 py-3 text-[11px] font-bold text-[#dfff42] hover:bg-[#b9ff00] hover:text-black">GET STARTED <ArrowRight className="inline" size={14}/></Link></div></header>
+  <section className="relative isolate min-h-[650px] border-b border-[#b9ff00]/40 pt-[72px]"><Image src="/brand/wise2-hero-united.webp" alt="WISE² Cloud founders" fill priority sizes="100vw" className="-z-20 object-cover object-center opacity-70"/><div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#020302,rgba(2,3,2,.82)_30%,rgba(2,3,2,.18)_70%,#020302)]"/><div className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,#030504,transparent_55%,rgba(0,0,0,.55))]"/><div className="mx-auto flex min-h-[578px] max-w-[1500px] items-center justify-center px-5 text-center"><Fade><div className="max-w-2xl"><div className="mb-5 inline-flex items-center gap-2 text-xs font-bold tracking-[.35em] text-[#b9ff00]"><Cloud size={22}/> WISE<sup>2</sup> CLOUD</div><h1 className="text-5xl font-black uppercase leading-[.88] sm:text-7xl lg:text-[5.4rem]">Your business.<br/><span className="text-[#b9ff00]">Our infrastructure.</span></h1><p className="mx-auto mt-5 max-w-lg text-sm leading-6 text-white/85 sm:text-base">Enterprise-grade hosting and infrastructure built for performance, security, and growth.</p><p className="mt-4 text-xs font-bold tracking-[.2em] text-[#b9ff00]">FAST. SECURE. SCALABLE. RELIABLE.</p><div className="mt-7 flex justify-center gap-3"><Link href="/pricing" className="bg-[#b9ff00] px-6 py-3 text-xs font-bold text-black">GET STARTED <ArrowRight className="inline" size={16}/></Link><Link href="/platform" className="border border-[#b9ff00] px-6 py-3 text-xs font-bold text-[#dfff42]">BUILD YOUR CLOUD <ArrowRight className="inline" size={16}/></Link></div></div></Fade></div></section>
+  <div className="border-b border-[#b9ff00]/40 bg-[#050805]"><div className="mx-auto grid max-w-[1500px] grid-cols-2 md:grid-cols-4 lg:grid-cols-8">{services.map(([name, Icon])=><Link href="/platform" key={name} className="flex min-h-14 items-center justify-center gap-2 border-r border-[#b9ff00]/15 px-2 text-center text-[9px] font-bold hover:bg-[#b9ff00]/10 hover:text-[#b9ff00]"><Icon size={20} className="text-[#b9ff00]"/>{name}</Link>)}</div></div>
+  <section className="mx-auto grid max-w-[1500px] gap-3 px-5 py-4 lg:grid-cols-[1.05fr_1fr] lg:px-8"><Fade><Panel><h2 className="section-title">WISE<sup>2</sup> CLOUD COMMAND CENTER</h2><div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">{[['UPTIME','99.99%'],['ACTIVE SERVERS','128'],['TOTAL DOMAINS','542'],['BANDWIDTH','12.4 TB'],['STORAGE USED','3.6 TB / 10 TB'],['DATABASES','256'],['CUSTOMERS','1,248'],['MONTHLY REVENUE','$24,780']].map(([a,b])=><div key={a} className="border border-[#b9ff00]/20 bg-black/50 p-3"><p className="text-[8px] text-white/60">{a}</p><p className="mt-2 text-xl font-bold">{b}</p><div className="mt-2 h-1 bg-[#b9ff00]/20"><motion.div animate={reduced?undefined:{width:['30%','85%','52%']}} transition={{duration:4,repeat:Infinity}} className="h-full bg-[#b9ff00]"/></div></div>)}</div><p className="mt-3 text-center text-[9px] font-bold tracking-[.18em] text-[#b9ff00]">REAL-TIME MONITORING. 24/7 PROTECTION. MAXIMUM PERFORMANCE.</p></Panel></Fade><Fade delay={.08}><Panel><h2 className="section-title mb-3 text-center">POWERFUL HOSTING PLANS</h2><div className="grid gap-2 sm:grid-cols-2">{plans.map(([name,price,desc],i)=><div key={name} className={`border p-3 ${i===1?'border-[#b9ff00] bg-[#b9ff00]/10':'border-[#b9ff00]/20 bg-black/40'}`}><h3 className="text-sm font-bold">{name}</h3><p className="mt-1 text-[9px] text-white/60">{desc}</p><p className="mt-2 text-2xl font-bold">{price}<small className="text-[9px] text-white/60"> /mo</small></p>{['Unlimited Websites','Free SSL Certificate','Daily Backups'].map(x=><p key={x} className="mt-1 text-[9px] text-white/75">✓ {x}</p>)}<Link href="/checkout" className="mt-3 block bg-[#b9ff00] py-2 text-center text-[9px] font-bold text-black">GET STARTED</Link></div>)}</div></Panel></Fade></section>
+  <section className="mx-auto grid max-w-[1500px] gap-3 px-5 pb-5 lg:grid-cols-5 lg:px-8">{([['RESELLER OPPORTUNITY','Keep 100% of the profit.',Users],['INFRASTRUCTURE THAT PERFORMS','NVMe SSD. Global CDN.',Server],['SECURITY YOU CAN TRUST','DDoS protection and firewall.',LockKeyhole],['AI-POWERED MANAGEMENT','Smarter hosting. Less work.',Sparkles],['SOUNDLABS CREATIVE SUITE','Professional audio & media production.',Cloud]] as [string, string, LucideIcon][]).map(([title,text,Icon])=><Fade key={title}><Link href={title.includes('SOUNDLABS')?'/sound-labs':'/platform'} className="wise-feature"><Icon size={28} className="text-[#b9ff00]"/><h3>{title}</h3><p>{text}</p><ArrowRight size={16} className="mt-4 text-[#b9ff00]"/></Link></Fade>)}</section>
+  <section className="border-y border-[#b9ff00]/35 bg-[#080c08] px-5 py-8 lg:px-8"><div className="mx-auto grid max-w-[1500px] gap-4 lg:grid-cols-3"><Panel><h2 className="section-title">CONSULTING & BUSINESS AUDIT</h2><p className="mt-3 text-sm text-white/70">Let our experts audit your current setup and recommend the perfect infrastructure for growth.</p><Link href="/audit" className="mt-5 inline-block bg-[#b9ff00] px-5 py-3 text-[10px] font-bold text-black">GET YOUR FREE AUDIT <ArrowRight className="inline" size={14}/></Link></Panel><Panel><h2 className="text-center text-2xl font-bold">BUILT DIFFERENT. BUILT <span className="text-[#b9ff00]">WISE<sup>2</sup>.</span></h2><p className="mt-3 text-center text-sm text-white/70">All-in-one cloud platform · enterprise security · automated backups</p></Panel><Panel><h2 className="section-title text-center">READY TO LAUNCH YOUR EMPIRE?</h2><Link href="/pricing" className="mt-5 block bg-[#b9ff00] px-5 py-3 text-center text-[10px] font-bold text-black">BUILD YOUR CLOUD TODAY <ArrowRight className="inline" size={14}/></Link></Panel></div></section>
+  <section className="border-t border-white/5 bg-gradient-to-b from-transparent to-black/30 px-5 py-20 lg:px-8">
+    <div className="mx-auto max-w-[1500px]">
+      <Fade>
+        <div className="mb-16 max-w-2xl">
+          <div className="mb-4 text-xs font-bold tracking-[.3em] uppercase text-amber-600/80">SALES ACADEMY</div>
+          <h2 className="text-5xl font-black uppercase leading-[1.1] tracking-tight">
+            Train Your Team.<br/>Sell WISE².
+          </h2>
+          <p className="mt-8 text-lg text-white/60">
+            Market-specific training. Proven discovery scripts. Local case studies.
+          </p>
+        </div>
+      </Fade>
+      <div className="mt-16 grid gap-8 lg:grid-cols-4">
+        {[
+          { label: 'ENTRY POINT', title: 'Academy Index', desc: 'Select your market & get started.' },
+          { label: 'NORTH CAROLINA', title: 'NC Academy', desc: 'HVAC, construction, trades.' },
+          { label: 'NEW YORK CITY', title: 'NYC Academy', desc: 'FinTech, startups, agencies.' },
+          { label: 'LONG ISLAND', title: 'LI Academy', desc: 'Family businesses, services.' },
+        ].map(({ label, title, desc }, i) => (
+          <Fade key={title} delay={i * 0.07}>
+            <Link
+              href={i === 0 ? '/sales-academy/' : `'/sales-academy/${['', 'nc', 'nyc', 'li'][i]}-academy.html`}
+              className="group flex flex-col border border-amber-600/20 bg-black/40 p-8 backdrop-blur-sm transition-all hover:border-amber-600/50 hover:bg-black/60"
+            >
+              <div className="mb-6 text-[11px] font-bold tracking-[.25em] uppercase text-amber-600/70 group-hover:text-amber-500">
+                {label}
+              </div>
+              <h3 className="text-2xl font-bold">{title}</h3>
+              <p className="mt-4 flex-1 text-sm text-white/60">{desc}</p>
+              <div className="mt-6 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-amber-600/70 group-hover:text-amber-500 transition-colors">
+                Explore <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          </Fade>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <footer className="mx-auto flex max-w-[1500px] flex-wrap gap-5 px-5 py-7 text-[10px] text-white/55 lg:px-8"><span className="text-xl font-black text-white">WISE<sup className="text-[#b9ff00]">2</sup> <small className="text-[9px] tracking-[.3em] text-[#b9ff00]">CLOUD</small></span><span>YOUR BUSINESS. OUR INFRASTRUCTURE.</span><span>HOSTING · RESOURCES · SOLUTIONS · COMPANY · SUPPORT</span></footer>
+ </main>; }

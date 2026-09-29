@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="job_photos" path="job_photos/" />
+    <cache-path name="releases" path="releases/" />
+    <external-files-path name="job_photos_external" path="job_photos/" />
+</paths>

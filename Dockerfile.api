@@ -1,0 +1,48 @@
+# NestJS API Dockerfile
+# Force rebuild: Discord module disabled 2026-08-27
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install runtime dependencies for Prisma (openssl 1.1 for linux-musl binary)
+RUN apt-get update && apt-get install -y --no-install-recommends openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
+
+# Install pnpm
+RUN npm install -g pnpm@8.15.9 node-pre-gyp
+
+# Copy all package.json files for workspace resolution
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages/api/package.json ./packages/api/
+COPY packages/db/package.json ./packages/db/
+COPY packages/ai-phone/package.json ./packages/ai-phone/
+COPY packages/agent-framework/package.json ./packages/agent-framework/
+COPY packages/wise2-hvac-contracts/package.json ./packages/wise2-hvac-contracts/
+COPY packages/db/prisma ./packages/db/prisma
+
+# Install ALL workspace dependencies
+RUN pnpm install --shamefully-hoist --recursive
+
+# Generate Prisma client for current environment (linux-musl)
+RUN cd packages/db && pnpm exec prisma generate
+
+# Copy all source files
+COPY packages/ai-phone ./packages/ai-phone
+COPY packages/api ./packages/api
+COPY packages/db/prisma ./packages/db/prisma
+COPY packages/wise2-hvac-contracts ./packages/wise2-hvac-contracts
+
+# Build with the package's canonical Nest compiler. This preserves decorator
+# metadata and fails the image build on actual TypeScript errors.
+ENV NODE_OPTIONS=--max-old-space-size=4096 \
+    PORT=3000
+# Clear any pnpm cache before building to ensure fresh compilation
+RUN rm -rf ~/.pnpm-store/ node_modules/.pnpm-cache node_modules/.cache .turbo
+RUN pnpm store prune && pnpm --filter @wise2/hvac-contracts build && pnpm --filter @wise2/ai-phone build && pnpm --filter @wise2/api build
+
+EXPOSE 3000
+
+# Set NODE_PATH for dependency resolution and run compiled entry point
+ENV NODE_PATH=/app/node_modules
+WORKDIR /app
+ENTRYPOINT []
+CMD ["node", "--enable-source-maps", "packages/api/dist/main.js"]

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wise2-api-keys": {
+      "command": "node",
+      "args": ["packages/api-keys/src/mcp.ts"]
+    }
+  }
+}

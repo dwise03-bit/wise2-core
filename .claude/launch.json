@@ -1,0 +1,59 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "packages/api", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "website",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/website", "run", "dev"],
+      "port": 3001
+    },
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/dashboard", "run", "dev"],
+      "port": 3005
+    },
+    {
+      "name": "studio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/studio", "run", "dev"],
+      "port": 3005
+    },
+    {
+      "name": "wise-hvac-demo",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/wise-hvac-demo", "run", "dev"],
+      "port": 3024
+    },
+    {
+      "name": "getdown-demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@wise2/getdown-demo", "dev"],
+      "port": 3020
+    },
+    {
+      "name": "wise2-command-center",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "wise2-command-center", "run", "dev"],
+      "port": 3006
+    },
+    {
+      "name": "cherry-count",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/cherry-count", "run", "dev"],
+      "port": 3025
+    },
+    {
+      "name": "fergies-table",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/fergies-table", "run", "dev"],
+      "port": 3026
+    }
+  ]
+}
