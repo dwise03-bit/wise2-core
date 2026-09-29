@@ -146,6 +146,82 @@ export default function RootLayout({
           .hover\\:bg-green-400:hover { background: #4ade80; }
           .hover\\:bg-blue-400:hover { background: #60a5fa; }
         ` }} />
+        <style dangerouslySetInnerHTML={{ __html: `
+          /* PREMIUM 4K 3D GLOBAL STYLING */
+          html { perspective: 1500px; }
+          body { transform-style: preserve-3d; will-change: transform; }
+
+          /* Premium Cards & Panels */
+          [class*="card"], [class*="panel"], [class*="container"], article, section {
+            border-radius: 18px !important;
+            transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+            transform-style: preserve-3d !important;
+            will-change: transform, box-shadow !important;
+          }
+
+          [class*="card"]:hover, [class*="panel"]:hover, article:hover, section:hover {
+            transform: perspective(800px) translateY(-6px) rotateX(2deg) scale(1.01) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 50px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+          }
+
+          /* Premium Buttons */
+          button, [role="button"], .btn, .button {
+            border-radius: 12px !important;
+            transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+            transform-style: preserve-3d !important;
+            will-change: transform, box-shadow !important;
+          }
+
+          button:hover, [role="button"]:hover, .btn:hover, .button:hover {
+            transform: perspective(1000px) translateY(-3px) rotateX(1deg) rotateY(2deg) scale(1.04) !important;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25), 0 0 40px rgba(32, 125, 249, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.05) !important;
+          }
+
+          /* Premium Input Fields */
+          input, textarea, select {
+            border-radius: 12px !important;
+            border: 1px solid rgba(12, 126, 216, 0.3) !important;
+            background: rgba(6, 26, 51, 0.7) !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 300ms ease !important;
+            will-change: box-shadow, border-color !important;
+          }
+
+          input:focus, textarea:focus, select:focus {
+            outline: none !important;
+            border-color: #FFD700 !important;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 30px rgba(255, 215, 0, 0.3) !important;
+            transform: perspective(600px) scale(1.01) !important;
+          }
+
+          /* Premium Links */
+          a {
+            transition: all 200ms ease !important;
+            position: relative !important;
+          }
+
+          a:hover {
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4) !important;
+            transform: perspective(800px) scale(1.02) !important;
+          }
+
+          /* 3D Animations */
+          @keyframes float3d {
+            0%, 100% { transform: perspective(1000px) translateY(0px) rotateX(0deg); }
+            50% { transform: perspective(1000px) translateY(-8px) rotateX(1deg); }
+          }
+
+          @keyframes rotate3d-global {
+            0% { transform: perspective(800px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: perspective(800px) rotateX(1deg) rotateY(2deg); }
+            50% { transform: perspective(800px) rotateX(0deg) rotateY(3deg); }
+            75% { transform: perspective(800px) rotateX(-1deg) rotateY(2deg); }
+            100% { transform: perspective(800px) rotateX(0deg) rotateY(0deg); }
+          }
+
+          .animate-3d-float { animation: float3d 3s ease-in-out infinite !important; }
+          .animate-3d-rotate { animation: rotate3d-global 6s ease-in-out infinite !important; }
+        ` }} />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
         <SessionProvider session={undefined}>
