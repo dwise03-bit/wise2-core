@@ -39,6 +39,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import MarketChart from './MarketChart';
 import AITradingAssistant from './AITradingAssistant';
+import TradingJournal from './TradingJournal';
 
 // Design Tokens
 const COLORS = {
@@ -269,6 +270,9 @@ export default function TradingDashboard() {
 
         {/* Main Content */}
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          {activeNav === 'journal' ? (
+            <TradingJournal />
+          ) : (<>
           {/* Search Bar */}
           <div className="flex items-center justify-between gap-3 border-b border-[#00D9FF]/20 bg-[#050607] px-4 py-4 sm:px-6">
             <button
@@ -486,6 +490,7 @@ export default function TradingDashboard() {
               </div>
             </div>
           </div>
+          </>)}
         </div>
       </div>
       <AITradingAssistant
