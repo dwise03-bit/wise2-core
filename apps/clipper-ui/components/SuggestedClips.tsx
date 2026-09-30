@@ -108,7 +108,7 @@ export default function SuggestedClips({
       <div className="bg-wise-neon/5 border border-wise-neon/20 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-wise-neon">🤖 AI-Suggested Clips</h2>
+            <h2 className="text-2xl font-bold text-wise-neon">AI-Suggested Clips</h2>
             <p className="text-wise-neon/60 mt-1">
               Automatically detected high-engagement moments
             </p>
@@ -122,13 +122,13 @@ export default function SuggestedClips({
                 : 'bg-wise-neon text-wise-navy hover:bg-wise-neon/80'
             }`}
           >
-            {analyzing ? '⏳ Analyzing...' : '🔍 Analyze Media'}
+            {analyzing ? 'Analyzing...' : 'Analyze Media'}
           </button>
         </div>
 
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-wise-neon/60">⏳ Loading suggestions...</p>
+            <p className="text-wise-neon/60">Loading suggestions...</p>
           </div>
         ) : clips.length === 0 ? (
           <div className="text-center py-12 bg-wise-neon/10 rounded-lg border border-wise-neon/20">
@@ -142,7 +142,7 @@ export default function SuggestedClips({
                   : 'bg-wise-neon text-wise-navy hover:bg-wise-neon/80'
               }`}
             >
-              {analyzing ? '⏳ Analyzing...' : '🔍 Start Analysis'}
+              {analyzing ? 'Analyzing...' : 'Start Analysis'}
             </button>
           </div>
         ) : (
@@ -187,7 +187,7 @@ export default function SuggestedClips({
                   onClick={() => handleCreateFromSuggestion(clip)}
                   className="w-full px-4 py-2 bg-wise-neon/20 text-wise-neon border border-wise-neon/40 rounded hover:bg-wise-neon hover:text-wise-navy transition font-medium text-sm"
                 >
-                  ✂️ Create Clip from This Suggestion
+                  Create Clip from This Suggestion
                 </button>
               </div>
             ))}
@@ -198,7 +198,7 @@ export default function SuggestedClips({
       {/* Detection Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-wise-cyan/10 border border-wise-cyan/20 rounded-lg p-4">
-          <p className="text-wise-cyan font-semibold mb-2">🎯 Detection Methods</p>
+          <p className="text-wise-cyan font-semibold mb-2">Detection Methods</p>
           <ul className="space-y-1 text-xs text-wise-cyan/80">
             <li>• Audio energy spikes (excitement)</li>
             <li>• Laughter & applause detection</li>
@@ -208,7 +208,7 @@ export default function SuggestedClips({
           </ul>
         </div>
         <div className="bg-wise-gold/10 border border-wise-gold/20 rounded-lg p-4">
-          <p className="text-wise-gold font-semibold mb-2">⚙️ AI Models</p>
+          <p className="text-wise-gold font-semibold mb-2">AI Models</p>
           <ul className="space-y-1 text-xs text-wise-gold/80">
             <li>• Librosa: Audio analysis</li>
             <li>• Whisper: Transcription</li>

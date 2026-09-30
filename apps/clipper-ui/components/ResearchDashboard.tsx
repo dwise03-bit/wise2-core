@@ -1,7 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import axios from 'axios';
+import {
+  ChartIcon,
+  CheckIcon,
+  ClipboardIcon,
+  ClockIcon,
+  GearIcon,
+  PinIcon,
+  PlayIcon,
+  SearchIcon,
+  SparklesIcon,
+  SpinnerIcon,
+  TargetIcon,
+  TrendingIcon,
+} from './icons';
 
 interface Creator {
   id: string;
@@ -88,20 +103,20 @@ const SkeletonCard = () => (
 // Animated Status Badge Component
 const StatusBadge = ({ status, count }: { status: string; count: number }) => {
   const statusConfig = {
-    SCHEDULED: { label: 'Ready to Extract', color: 'text-wise-cyan', bgColor: 'bg-wise-cyan/20', icon: '📋' },
-    PROCESSING: { label: 'Currently Extracting', color: 'text-wise-neon', bgColor: 'bg-wise-neon/20', icon: '⚙️' },
-    EXTRACTED: { label: 'Ready to Publish', color: 'text-wise-gold', bgColor: 'bg-wise-gold/20', icon: '✨' },
-    PUBLISHED: { label: 'Published to Platforms', color: 'text-green-400', bgColor: 'bg-green-400/20', icon: '🎉' },
+    SCHEDULED: { label: 'Ready to Extract', color: 'text-wise-cyan', bgColor: 'bg-wise-cyan/20', icon: <ClipboardIcon size={18} /> },
+    PROCESSING: { label: 'Currently Extracting', color: 'text-wise-neon', bgColor: 'bg-wise-neon/20', icon: <GearIcon size={18} /> },
+    EXTRACTED: { label: 'Ready to Publish', color: 'text-wise-gold', bgColor: 'bg-wise-gold/20', icon: <SparklesIcon size={18} /> },
+    PUBLISHED: { label: 'Published to Platforms', color: 'text-green-400', bgColor: 'bg-green-400/20', icon: <CheckIcon size={18} /> },
   };
 
   const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.SCHEDULED;
 
   return (
-    <div className={`${config.bgColor} border border-current rounded-lg p-4 transition-all duration-300 hover:shadow-lg hover:shadow-wise-cyan/20 transform hover:scale-102`}>
+    <div className={`${config.bgColor} border border-current rounded-lg p-4 transition-all duration-300 hover:shadow-lg hover:shadow-wise-cyan/20`}>
       <div className="flex justify-between items-center">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-lg animate-bounce">{config.icon}</span>
+            <span className="text-lg">{config.icon}</span>
             <h3 className={`font-bold ${config.color}`}>{config.label}</h3>
           </div>
           <p className={`text-sm ${config.color}/60`}>Last updated: 5 minutes ago</p>
@@ -118,7 +133,7 @@ const StatusBadge = ({ status, count }: { status: string; count: number }) => {
 };
 
 // Metric Card Component
-const MetricCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: string; color: string }) => (
+const MetricCard = ({ label, value, icon, color }: { label: string; value: number | string; icon: ReactNode; color: string }) => (
   <div className={`group bg-gradient-to-br from-${color}/10 to-${color}/5 border border-${color}/20 rounded-xl p-6 transition-all duration-300 hover:border-${color}/40 hover:shadow-lg cursor-default transform hover:scale-102`}>
     <div className="flex items-start justify-between mb-4">
       <div>
@@ -131,7 +146,7 @@ const MetricCard = ({ label, value, icon, color }: { label: string; value: numbe
           <p className={`text-4xl font-bold text-${color}`}>{value}</p>
         )}
       </div>
-      <span className="text-3xl opacity-60 group-hover:opacity-100 transition-opacity">{icon}</span>
+      <span className="opacity-60 group-hover:opacity-100 transition-opacity">{icon}</span>
     </div>
     <div className="h-1 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-full" />
   </div>
@@ -228,7 +243,7 @@ export default function ResearchDashboard() {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-3xl animate-pulse">🤖</span>
+                <span className="text-wise-cyan"><SearchIcon size={32} /></span>
                 <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-wise-cyan to-wise-neon bg-clip-text text-transparent">
                   Research Dashboard
                 </h1>
@@ -247,12 +262,12 @@ export default function ResearchDashboard() {
               <span className="relative flex items-center gap-2">
                 {jobRunning ? (
                   <>
-                    <span className="animate-spin">⏳</span>
+                    <SpinnerIcon size={18} className="animate-spin" />
                     Running...
                   </>
                 ) : (
                   <>
-                    <span className="group-hover:translate-x-1 transition-transform">▶️</span>
+                    <PlayIcon size={18} />
                     Run Research
                   </>
                 )}
@@ -269,13 +284,13 @@ export default function ResearchDashboard() {
           <MetricCard
             label="Creators Discovered"
             value={researchJob?.creatorsFound || 0}
-            icon="🎯"
+            icon={<TargetIcon size={32} />}
             color="wise-cyan"
           />
           <MetricCard
             label="Clips Scheduled"
             value={researchJob?.clipsScheduled || 0}
-            icon="📊"
+            icon={<ChartIcon size={32} />}
             color="wise-neon"
           />
           <div className="bg-gradient-to-br from-wise-gold/10 to-wise-gold/5 border border-wise-gold/20 rounded-xl p-6 transition-all duration-300 hover:border-wise-gold/40 hover:shadow-lg transform hover:scale-102">
@@ -291,12 +306,12 @@ export default function ResearchDashboard() {
             >
               {loading ? (
                 <>
-                  <span className="animate-spin">⏳</span>
+                  <SpinnerIcon size={18} className="animate-spin" />
                   Processing...
                 </>
               ) : (
                 <>
-                  <span>⚙️</span>
+                  <GearIcon size={18} />
                   Process Clips
                 </>
               )}
@@ -308,22 +323,23 @@ export default function ResearchDashboard() {
         <div className="mb-8 border-b border-wise-cyan/20 backdrop-blur-sm">
           <div className="flex gap-1 sm:gap-4 overflow-x-auto scrollbar-hide">
             {[
-              { id: 'trending' as const, label: '📈 Trending Creators', icon: '📈' },
-              { id: 'scheduled' as const, label: '⏱️ Scheduled Clips', icon: '⏱️' },
-              { id: 'research' as const, label: '🔍 Research Trends', icon: '🔍' },
+              { id: 'trending' as const, label: 'Trending Creators', icon: <TrendingIcon size={18} /> },
+              { id: 'scheduled' as const, label: 'Scheduled Clips', icon: <ClockIcon size={18} /> },
+              { id: 'research' as const, label: 'Research Trends', icon: <SearchIcon size={18} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-4 sm:px-6 py-3 sm:py-4 font-semibold text-sm sm:text-base whitespace-nowrap transition-all duration-300 ${
+                className={`relative flex items-center gap-2 min-h-[48px] px-4 sm:px-6 py-3 sm:py-4 font-semibold text-sm sm:text-base whitespace-nowrap transition-all duration-300 ${
                   activeTab === tab.id
                     ? 'text-wise-cyan'
                     : 'text-wise-cyan/60 hover:text-wise-cyan/80'
                 }`}
               >
+                {tab.icon}
                 {tab.label}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-wise-cyan via-wise-neon to-wise-cyan animate-pulse" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-wise-cyan via-wise-neon to-wise-cyan" />
                 )}
               </button>
             ))}
@@ -347,7 +363,7 @@ export default function ResearchDashboard() {
                     onClick={runDailyResearch}
                     className="px-8 py-3 bg-gradient-to-r from-wise-cyan to-wise-neon text-wise-navy rounded-lg font-semibold hover:shadow-lg hover:shadow-wise-cyan/50 transition-all transform hover:scale-105"
                   >
-                    🔍 Start Discovery
+                    Start Discovery
                   </button>
                 </div>
               ) : (
@@ -403,7 +419,7 @@ export default function ResearchDashboard() {
                       </div>
 
                       <button className="w-full py-2.5 px-4 bg-gradient-to-r from-wise-cyan/20 to-wise-neon/20 text-wise-cyan border border-wise-cyan/40 rounded-lg hover:from-wise-cyan/30 hover:to-wise-neon/30 transition-all duration-300 text-sm font-semibold transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-                        <span>📺</span>
+                        <ClockIcon size={16} />
                         Schedule Clips
                       </button>
                     </div>
@@ -419,7 +435,7 @@ export default function ResearchDashboard() {
           <div className="space-y-6 animate-fade-in">
             <div className="bg-wise-navy/40 border border-wise-neon/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
               <h2 className="text-2xl sm:text-3xl font-bold text-wise-neon mb-8 flex items-center gap-2">
-                <span>⏱️</span>
+                <ClockIcon size={28} />
                 Scheduled Extraction Jobs
               </h2>
               <div className="space-y-3">
@@ -436,7 +452,7 @@ export default function ResearchDashboard() {
 
             <div className="bg-wise-cyan/10 border border-wise-cyan/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
               <h3 className="font-bold text-wise-cyan mb-6 text-xl flex items-center gap-2">
-                <span className="animate-bounce">🎬</span>
+                <PlayIcon size={24} />
                 Sample Scheduled Clips
               </h3>
               <div className="space-y-3">
@@ -453,11 +469,11 @@ export default function ResearchDashboard() {
                       <div className="flex-1">
                         <p className="font-semibold text-wise-cyan group-hover:text-wise-neon transition-colors">{clip.title}</p>
                         <p className="text-xs text-wise-cyan/60 mt-2">
-                          <span className="inline-block">📍 {clip.platform}</span>
+                          <span className="inline-flex items-center gap-1"><PinIcon size={12} /> {clip.platform}</span>
                           <span className="mx-2">•</span>
-                          <span className="inline-block">⏱️ {clip.duration}</span>
+                          <span className="inline-flex items-center gap-1"><ClockIcon size={12} /> {clip.duration}</span>
                           <span className="mx-2">•</span>
-                          <span className="inline-block font-bold text-wise-neon">✨ {clip.score}/100</span>
+                          <span className="inline-flex items-center gap-1 font-bold text-wise-neon"><SparklesIcon size={12} /> {clip.score}/100</span>
                         </p>
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
@@ -481,7 +497,7 @@ export default function ResearchDashboard() {
           <div className="space-y-6 animate-fade-in">
             <div className="bg-wise-navy/40 border border-wise-gold/10 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
               <h2 className="text-2xl sm:text-3xl font-bold text-wise-gold mb-8 flex items-center gap-2">
-                <span>📊</span>
+                <ChartIcon size={28} />
                 Trending Topics
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -521,7 +537,7 @@ export default function ResearchDashboard() {
 
             <div className="bg-wise-neon/10 border border-wise-neon/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
               <h3 className="font-bold text-wise-neon mb-6 text-xl flex items-center gap-2">
-                <span>🎯</span>
+                <TargetIcon size={24} />
                 Top Creators in Trending Topics
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -12,12 +12,12 @@ interface Props {
 }
 
 const PLATFORMS = [
-  { id: 'INSTAGRAM', name: 'Instagram Reels', icon: '📷', color: 'from-pink-500 to-rose-500' },
-  { id: 'TIKTOK', name: 'TikTok', icon: '🎵', color: 'from-black to-gray-900' },
-  { id: 'YOUTUBE', name: 'YouTube Shorts', icon: '▶️', color: 'from-red-500 to-red-600' },
-  { id: 'TWITTER', name: 'Twitter/X', icon: '𝕏', color: 'from-gray-900 to-black' },
-  { id: 'DISCORD', name: 'Discord', icon: '💜', color: 'from-indigo-600 to-indigo-700' },
-  { id: 'LINKEDIN', name: 'LinkedIn', icon: '💼', color: 'from-blue-600 to-blue-700' },
+  { id: 'INSTAGRAM', name: 'Instagram Reels', icon: 'IG', color: 'from-pink-500 to-rose-500' },
+  { id: 'TIKTOK', name: 'TikTok', icon: 'TT', color: 'from-black to-gray-900' },
+  { id: 'YOUTUBE', name: 'YouTube Shorts', icon: 'YT', color: 'from-red-500 to-red-600' },
+  { id: 'TWITTER', name: 'Twitter/X', icon: 'X', color: 'from-gray-900 to-black' },
+  { id: 'DISCORD', name: 'Discord', icon: 'DC', color: 'from-indigo-600 to-indigo-700' },
+  { id: 'LINKEDIN', name: 'LinkedIn', icon: 'in', color: 'from-blue-600 to-blue-700' },
 ];
 
 export default function PublishManager({
@@ -67,7 +67,7 @@ export default function PublishManager({
         setPublishingJobs((prev) => [...prev, response.data]);
       }
       setSuccess(
-        `✓ Publishing to ${selectedPlatforms.length} platform${
+        `Publishing to ${selectedPlatforms.length} platform${
           selectedPlatforms.length > 1 ? 's' : ''
         } initiated!`
       );
@@ -103,7 +103,7 @@ export default function PublishManager({
                     : 'border-wise-gold/20 bg-wise-navy/40 text-wise-gold/60 hover:border-wise-gold/40'
                 }`}
               >
-                <div className="text-3xl mb-2">{platform.icon}</div>
+                <div className="text-2xl font-bold tracking-tight mb-2" aria-hidden="true">{platform.icon}</div>
                 <p className="text-sm font-semibold">{platform.name}</p>
               </button>
             ))}
@@ -138,8 +138,8 @@ export default function PublishManager({
           }`}
         >
           {loading
-            ? `⏳ Publishing to ${selectedPlatforms.length} platform${selectedPlatforms.length > 1 ? 's' : ''}...`
-            : `📱 Publish to ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}`}
+            ? `Publishing to ${selectedPlatforms.length} platform${selectedPlatforms.length > 1 ? 's' : ''}...`
+            : `Publish to ${selectedPlatforms.length} Platform${selectedPlatforms.length > 1 ? 's' : ''}`}
         </button>
       </div>
 
@@ -176,7 +176,7 @@ export default function PublishManager({
 
       {/* Best Practices */}
       <div className="bg-wise-neon/5 border border-wise-neon/20 rounded-lg p-4">
-        <h4 className="font-semibold text-wise-neon mb-3">📋 Publishing Best Practices</h4>
+        <h4 className="font-semibold text-wise-neon mb-3">Publishing Best Practices</h4>
         <ul className="space-y-2 text-sm text-wise-neon/80">
           <li>• <strong>Captions required</strong> - 85% higher engagement with captions</li>
           <li>• <strong>Hook early</strong> - Grab attention in first 3 seconds</li>

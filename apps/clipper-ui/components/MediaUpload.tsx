@@ -146,7 +146,7 @@ export default function MediaUpload({
                 : 'bg-wise-cyan text-wise-navy hover:bg-wise-cyan/80'
             }`}
           >
-            {loading ? '⏳ Uploading...' : '📤 Upload Media'}
+            {loading ? 'Uploading...' : 'Upload Media'}
           </button>
         </form>
       </div>
@@ -154,19 +154,19 @@ export default function MediaUpload({
       {/* Features */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-wise-neon/10 border border-wise-neon/20 rounded-lg p-4">
-          <p className="text-wise-neon font-semibold mb-2">🎯 AI Analysis</p>
+          <p className="text-wise-neon font-semibold mb-2">AI Analysis</p>
           <p className="text-xs text-wise-neon/60">
             Automatically detect moments, transcribe audio, identify high-engagement segments
           </p>
         </div>
         <div className="bg-wise-gold/10 border border-wise-gold/20 rounded-lg p-4">
-          <p className="text-wise-gold font-semibold mb-2">⚡ Fast Processing</p>
+          <p className="text-wise-gold font-semibold mb-2">Fast Processing</p>
           <p className="text-xs text-wise-gold/60">
             GPU-accelerated video extraction with NVIDIA NVENC + CPU fallback
           </p>
         </div>
         <div className="bg-wise-cyan/10 border border-wise-cyan/20 rounded-lg p-4">
-          <p className="text-wise-cyan font-semibold mb-2">📊 Metrics</p>
+          <p className="text-wise-cyan font-semibold mb-2">Metrics</p>
           <p className="text-xs text-wise-cyan/60">
             Engagement scoring, moment detection confidence, quality metrics
           </p>

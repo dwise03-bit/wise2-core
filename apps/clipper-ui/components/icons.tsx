@@ -80,3 +80,61 @@ export const PlayIcon = (p: IconProps) => (
     <path d="m10 9 5 3-5 3Z" />
   </Icon>
 );
+
+export const TargetIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" />
+  </Icon>
+);
+
+export const ChartIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3 3v18h18" />
+    <path d="M18 17V9" />
+    <path d="M13 17V5" />
+    <path d="M8 17v-3" />
+  </Icon>
+);
+
+export const TrendingIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m22 7-8.5 8.5-5-5L2 17" />
+    <path d="M16 7h6v6" />
+  </Icon>
+);
+
+export const ClockIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </Icon>
+);
+
+export const ClipboardIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="8" y="2" width="8" height="4" rx="1" />
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+  </Icon>
+);
+
+export const GearIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+  </Icon>
+);
+
+export const SpinnerIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M21 12a9 9 0 1 1-6.22-8.56" />
+  </Icon>
+);
+
+export const PinIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" />
+    <circle cx="12" cy="10" r="3" />
+  </Icon>
+);
