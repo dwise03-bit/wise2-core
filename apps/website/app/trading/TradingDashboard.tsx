@@ -76,7 +76,7 @@ function MarketTickerBar() {
   ];
 
   return (
-    <div className="bg-[#050607] border-b border-[#00D9FF]/20 px-6 py-3 flex gap-8 overflow-x-auto">
+    <div className="flex gap-5 overflow-x-auto border-b border-[#00D9FF]/20 bg-[#050607] px-4 py-3 sm:gap-8 sm:px-6">
       {markets.map((m, i) => (
         <div key={i} className="flex items-center gap-3 flex-shrink-0">
           <span className="text-xs font-bold text-[#00D9FF] uppercase">{m.symbol}</span>
@@ -180,12 +180,12 @@ export default function TradingDashboard() {
 
   // ===== NOW RENDER THE DASHBOARD =====
   return (
-    <div className="sjs-cinematic flex flex-col bg-[#050607] text-white min-h-screen">
+    <div className="sjs-cinematic flex min-h-screen flex-col overflow-x-hidden bg-[#050607] text-white">
       <MarketTickerBar />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-w-0 flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <div className="lg:w-64 md:w-48 w-0 md:block hidden border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 overflow-y-auto">
+        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 lg:block">
           <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
             <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={270} height={150} sizes="(max-width: 1024px) 180px, 210px" className="h-auto w-full object-contain" priority />
             <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
@@ -223,13 +223,13 @@ export default function TradingDashboard() {
               <span>Logout</span>
             </button>
           </div>
-        </div>
+        </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* Search Bar */}
-          <div className="bg-[#050607] border-b border-[#00D9FF]/20 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2 bg-[#0b0d1c] border border-[#00D9FF]/20 rounded px-3 py-2 flex-1 md:w-80">
+          <div className="flex items-center justify-between gap-3 border-b border-[#00D9FF]/20 bg-[#050607] px-4 py-4 sm:px-6">
+            <div className="flex min-w-0 flex-1 items-center gap-2 rounded border border-[#00D9FF]/20 bg-[#0b0d1c] px-3 py-2 md:max-w-md">
               <Search size={16} className="text-[#00D9FF]/60" />
               <input
                 type="text"
@@ -249,20 +249,20 @@ export default function TradingDashboard() {
 
           {/* Content Grid */}
           <div className="flex-1 overflow-auto bg-[#050607]">
-            <div className="p-6 grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-1 gap-4 p-4 sm:gap-6 sm:p-6 xl:grid-cols-12">
               {/* Left Column - Main Chart */}
-              <div className="col-span-9 space-y-6">
-                <div className="bg-[#0b0d1c] border border-[#00D9FF]/20 rounded-lg p-6">
-                  <div className="flex items-start justify-between mb-4">
+              <div className="min-w-0 space-y-4 sm:space-y-6 xl:col-span-9">
+                <div className="rounded-lg border border-[#00D9FF]/20 bg-[#0b0d1c] p-4 sm:p-6">
+                  <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h2 className="text-3xl font-bold mb-1">{selectedSymbol}</h2>
                       <p className="text-sm text-gray-400">Apple Inc.</p>
-                      <div className="flex items-center gap-4 mt-3">
+                      <div className="mt-3 flex flex-wrap items-center gap-3 sm:gap-4">
                         <span className="text-2xl font-bold text-white">$179.32</span>
                         <span className="text-[#00FF7F] font-semibold">+2.18 (+1.23%)</span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 sm:justify-end">
                       {['1D', '5D', '1M', '3M', '6M', '1Y', '5Y'].map(interval => (
                         <button
                           key={interval}
@@ -294,7 +294,7 @@ export default function TradingDashboard() {
                 {/* Candlestick Guide */}
                 <div className="bg-[#0b0d1c] border border-[#00D9FF]/20 rounded-lg p-6">
                   <h3 className="text-lg font-bold mb-4 uppercase tracking-wider">CANDLESTICK GUIDE - EASY TO READ, EASY TO TRADE</h3>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
                     {[
                       { title: 'GREEN CANDLE', desc: 'Price closed above open. Buying pressure during that period.', color: '#00FF7F' },
                       { title: 'RED CANDLE', desc: 'Price closed below open. Selling pressure during that period.', color: '#FF0055' },
@@ -331,7 +331,7 @@ export default function TradingDashboard() {
               </div>
 
               {/* Right Column - PLOT & Insights */}
-              <div className="col-span-3 space-y-6">
+              <div className="min-w-0 space-y-4 sm:space-y-6 xl:col-span-3">
                 {/* PLOT AI */}
                 <div className="bg-gradient-to-br from-[#0b0d1c] to-[#050607] border border-[#C4A369]/30 rounded-lg p-6">
                   <div className="flex items-center gap-2 mb-4">
