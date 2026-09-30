@@ -33,6 +33,8 @@ import {
   Radio,
   Users,
   Heart,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import MarketChart from './MarketChart';
@@ -117,6 +119,7 @@ export default function TradingDashboard() {
   const [selectedSymbol, setSelectedSymbol] = useState('BTCUSD');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [activeNav, setActiveNav] = useState('dashboard');
+  const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
   const [chartInterval, setChartInterval] = useState('1D');
   const [alpacaMode, setAlpacaMode] = useState<'paper' | 'live'>('paper');
   const [alpacaStatus, setAlpacaStatus] = useState<'idle' | 'connected' | 'error'>('idle');
@@ -183,6 +186,45 @@ export default function TradingDashboard() {
     <div className="sjs-cinematic flex min-h-screen flex-col overflow-x-hidden bg-[#050607] text-white">
       <MarketTickerBar />
 
+      {/* Mobile navigation mirrors the desktop rail instead of hiding access below lg. */}
+      {isMobileNavigationOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="SAS navigation">
+          <button
+            type="button"
+            aria-label="Close navigation"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsMobileNavigationOpen(false)}
+          />
+          <aside className="relative flex h-full w-[min(18rem,86vw)] flex-col overflow-y-auto border-r border-[#00D9FF]/30 bg-[#0b0d1c] p-5 shadow-[18px_0_45px_rgba(0,0,0,0.55)]">
+            <div className="mb-7 flex items-start justify-between gap-3">
+              <div className="min-w-0 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
+                <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={220} height={122} sizes="220px" className="h-auto w-full object-contain" priority />
+                <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
+              </div>
+              <button type="button" aria-label="Close navigation" onClick={() => setIsMobileNavigationOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#00D9FF]/20 text-[#00D9FF] transition hover:bg-[#00D9FF]/10">
+                <X size={19} />
+              </button>
+            </div>
+            <nav className="space-y-1">
+              <NavItem icon={<Home size={18} />} label="Dashboard" active={activeNav === 'dashboard'} onClick={() => { setActiveNav('dashboard'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<TrendingUp size={18} />} label="Markets" active={activeNav === 'markets'} onClick={() => { setActiveNav('markets'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<LineChart size={18} />} label="Charts" active={activeNav === 'charts'} onClick={() => { setActiveNav('charts'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<Heart size={18} />} label="Watchlist" active={activeNav === 'watchlist'} onClick={() => { setActiveNav('watchlist'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<MessageSquare size={18} />} label="PLOT AI" active={activeNav === 'ai-assistant'} onClick={() => { setActiveNav('ai-assistant'); setIsAssistantOpen(true); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<Zap size={18} />} label="Trade Lab" active={activeNav === 'trade-lab'} onClick={() => { setActiveNav('trade-lab'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<BookOpen size={18} />} label="Learn" active={activeNav === 'learn'} onClick={() => { setActiveNav('learn'); setIsMobileNavigationOpen(false); }} />
+              <NavItem icon={<BookOpen size={18} />} label="Journal" active={activeNav === 'journal'} onClick={() => { setActiveNav('journal'); setIsMobileNavigationOpen(false); }} />
+            </nav>
+            <div className="mt-auto border-t border-[#00D9FF]/20 pt-5">
+              {user && <p className="mb-3 truncate font-mono text-xs text-[#00D9FF]">{user.email}</p>}
+              <button onClick={logout} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/10">
+                <LogOut size={16} /><span>Logout</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
+
       <div className="flex min-w-0 flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 lg:block">
@@ -229,6 +271,15 @@ export default function TradingDashboard() {
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* Search Bar */}
           <div className="flex items-center justify-between gap-3 border-b border-[#00D9FF]/20 bg-[#050607] px-4 py-4 sm:px-6">
+            <button
+              type="button"
+              aria-label="Open navigation"
+              aria-expanded={isMobileNavigationOpen}
+              onClick={() => setIsMobileNavigationOpen(true)}
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#00D9FF]/30 bg-[#07111f] text-[#00D9FF] transition hover:bg-[#00D9FF]/10 lg:hidden"
+            >
+              <Menu size={19} />
+            </button>
             <div className="flex min-w-0 flex-1 items-center gap-2 rounded border border-[#00D9FF]/20 bg-[#0b0d1c] px-3 py-2 md:max-w-md">
               <Search size={16} className="text-[#00D9FF]/60" />
               <input
