@@ -167,6 +167,9 @@ services:
       NEXT_PUBLIC_API_URL: http://wise2-api-platform:3001/api
       API_URL: http://wise2-api-platform:3001/api
       NEXT_PUBLIC_BRAIN_API_URL: /brain-api
+      SMTP_HOST: ${SMTP_HOST:-172.17.0.1}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      MAIL_FROM: ${MAIL_FROM:-noreply@wise2.net}
     ports:
       - "3002:3000"
     networks:
@@ -215,6 +218,9 @@ services:
       WISE2_GROK_TIMEOUT_MS: ${WISE2_GROK_TIMEOUT_MS:-30000}
       WISE2_GROK_MAX_TOKENS: ${WISE2_GROK_MAX_TOKENS:-1200}
       WISE2_GROK_TEMPERATURE: ${WISE2_GROK_TEMPERATURE:-0.2}
+      SMTP_HOST: ${SMTP_HOST:-172.17.0.1}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      MAIL_FROM: ${MAIL_FROM:-noreply@wise2.net}
     depends_on:
       - redis
     networks:
@@ -240,6 +246,9 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      SMTP_HOST: ${SMTP_HOST:-172.17.0.1}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      MAIL_FROM: ${MAIL_FROM:-noreply@wise2.net}
     depends_on:
       postgres:
         condition: service_healthy
