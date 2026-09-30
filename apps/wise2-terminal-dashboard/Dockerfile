@@ -1,5 +1,6 @@
 # WISE² Terminal Dashboard Production Build
-FROM node:20-alpine
+# Node 22: better-sqlite3 13.x segfaults on Node 20 (verified), so do not lower this.
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -9,14 +10,14 @@ RUN apk add --no-cache python3 make g++
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --omit=dev
+# Install all dependencies: vite (a devDependency) is needed for the build step
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build the frontend
-RUN npm run build
+# Build the frontend, then drop devDependencies from the runtime image
+RUN npm run build && npm prune --omit=dev
 
 # Expose port
 EXPOSE 3030
