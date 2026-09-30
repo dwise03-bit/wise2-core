@@ -153,7 +153,7 @@ function LoginPageContent() {
           <h1 className="text-3xl font-bold text-wise-primary mb-2">Welcome back!</h1>
           <p className="text-wise-muted mb-6">You have been signed in successfully.</p>
           <a
-            href="/"
+            href="/dashboard"
             className="inline-block px-6 py-2 bg-wise-primary hover:bg-wise-primary-hover text-wise font-semibold rounded-md transition-colors shadow-glow-blue-sm hover:shadow-glow-blue-md"
           >
             Go to Dashboard
@@ -321,7 +321,7 @@ function LoginPageContent() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-wise-subtle text-center text-xs text-wise-muted">
-          <a href="/" className="hover:text-wise-primary">← Back to home</a>
+          <a href="https://wise2.net/" className="hover:text-wise-primary">← Back to WISE² home</a>
         </div>
       </div>
     </div>
