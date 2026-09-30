@@ -62,7 +62,7 @@ services:
       SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-}
       APP_URL: ${APP_URL}
       API_BASE_URL: ${API_BASE_URL}
-      CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://api.wise2.net,https://cloud.wise2.net}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://api.wise2.net,https://cloud.wise2.net,https://clipper.wise2.net}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL_API:-https://api.wise2.net/api/v1/auth/google/callback}

@@ -1,8 +1,11 @@
 name: Deploy to wise2.net
 
+# Manual only. This job was failing on every push to main (docker-compose v1 is
+# not on the runner), and if it did run it would rebuild and recreate every
+# service in docker-compose.prod.yml and run `prisma db push` against production,
+# which conflicts with the rule that deployments recreate only their own service.
+# Production deploys go through deploy.yml; clipper.wise2.net through its own script.
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 env:

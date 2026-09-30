@@ -74,7 +74,7 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production'
     env:
       # Authentication
-      JWT_SECRET: ${{ secrets.JWT_SECRET || 'dev-key-change-in-production' }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
       # Stripe (Payment Processing)
       STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
