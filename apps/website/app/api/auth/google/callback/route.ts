@@ -26,6 +26,8 @@ export async function GET(request: NextRequest) {
   }
 
   const savedState = request.cookies.get('google_oauth_state')?.value;
+  const returnTo = request.cookies.get('google_oauth_return_to')?.value;
+  const postLoginUrl = returnTo === 'https://sjs.wise2.net' ? returnTo : PUBLIC_SITE_URL;
   if (state && savedState && state !== savedState) {
     return NextResponse.redirect(
       new URL('/auth/signin?error=state_mismatch', PUBLIC_SITE_URL),
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    return await completeOAuthLogin('google', code, REDIRECT_URI);
+    return await completeOAuthLogin('google', code, REDIRECT_URI, postLoginUrl);
   } catch (err) {
     console.error('Google OAuth callback error:', err);
     return NextResponse.redirect(

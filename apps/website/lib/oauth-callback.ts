@@ -45,9 +45,11 @@ export async function completeOAuthLogin(
   provider: OAuthProvider,
   code: string,
   redirectUri: string,
+  postLoginSiteUrl?: string,
 ): Promise<NextResponse> {
   const siteUrl = getSiteUrl();
-  const dashboardUrl = getDashboardUrl();
+  const redirectSiteUrl = postLoginSiteUrl === 'https://sjs.wise2.net' ? postLoginSiteUrl : siteUrl;
+  const dashboardUrl = `${redirectSiteUrl}/dashboard`;
   const cookieDomain = getCookieDomain();
   const isProduction = process.env.NODE_ENV === 'production';
 
@@ -121,5 +123,6 @@ export async function completeOAuthLogin(
   }
 
   response.cookies.delete(`${provider}_oauth_state`);
+  response.cookies.delete('google_oauth_return_to');
   return response;
 }

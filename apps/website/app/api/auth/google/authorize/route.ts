@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
   }
 
   const state = crypto.randomUUID();
+  const requestHost = request.headers.get('host')?.split(':')[0].toLowerCase();
+  const returnTo = requestHost === 'sjs.wise2.net' ? 'https://sjs.wise2.net' : PUBLIC_SITE_URL;
 
   const params = new URLSearchParams({
     client_id: GOOGLE_CLIENT_ID,
@@ -43,6 +45,15 @@ export async function GET(request: NextRequest) {
     sameSite: 'lax',
     maxAge: 600,
     path: '/',
+  });
+
+  response.cookies.set('google_oauth_return_to', returnTo, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 600,
+    path: '/',
+    domain: '.wise2.net',
   });
 
   return response;
