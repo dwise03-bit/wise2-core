@@ -17,7 +17,11 @@ const pool = new Pool({
   max: 5,
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'wise2-auth-gateway-2026';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('JWT_SECRET is required');
+  process.exit(1);
+}
 
 // Middleware
 app.use(express.json());
