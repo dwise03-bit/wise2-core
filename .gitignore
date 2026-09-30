@@ -37,6 +37,7 @@ dist/
 build/
 *.compiled.js
 out/
+.gradle/
 
 # Logs
 logs/

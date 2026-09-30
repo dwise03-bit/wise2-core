@@ -183,6 +183,7 @@ docker-compose -f docker-compose.local.yml up -d --build
 - **Health**: http://localhost:3000/api/health
 - **GitHub**: https://github.com/dwise03-bit/wise2-core
 - **Deployment**: See DEPLOYMENT.md
+- **Project layout audit**: See [docs/PROJECT_ORGANIZATION_AUDIT.md](docs/PROJECT_ORGANIZATION_AUDIT.md)
 
 ---
 
