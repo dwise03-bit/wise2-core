@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE = 'https://edt.railway.app/api';
+const API_BASE = 'https://every-day-trader-web-production.up.railway.app/api';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
