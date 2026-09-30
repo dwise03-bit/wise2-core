@@ -233,10 +233,10 @@ export class AnalysisService {
     const avgVolume = totalVolume / candles.length;
 
     // Volume trend (last 3 vs previous 3)
-    const recentVols = volumes.slice(-3).filter((v) => v !== undefined);
-    const prevVols = volumes.slice(-6, -3).filter((v) => v !== undefined);
-    const recentVolumes = recentVols.length > 0 ? recentVols.reduce((a, b) => a + b, 0) / recentVols.length : 0;
-    const previousVolumes = prevVols.length > 0 ? prevVols.reduce((a, b) => a + b, 0) / prevVols.length : 0;
+    const recentVols = volumes.slice(-3).filter((v): v is number => v !== undefined);
+    const prevVols = volumes.slice(-6, -3).filter((v): v is number => v !== undefined);
+    const recentVolumes = recentVols.length > 0 ? recentVols.reduce((a, b) => (a || 0) + (b || 0), 0) / recentVols.length : 0;
+    const previousVolumes = prevVols.length > 0 ? prevVols.reduce((a, b) => (a || 0) + (b || 0), 0) / prevVols.length : 0;
 
     let volumeTrend: 'increasing' | 'decreasing' | 'neutral' = 'neutral';
     if (recentVolumes > previousVolumes * 1.2) volumeTrend = 'increasing';

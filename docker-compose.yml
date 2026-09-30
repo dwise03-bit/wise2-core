@@ -90,6 +90,21 @@ services:
         max-size: "100m"
         max-file: "3"
 
+  # WISE² Video Clipper
+  clipper:
+    build:
+      context: .
+      dockerfile: ./apps/clipper-ui/Dockerfile
+    container_name: wise2-clipper
+    ports:
+      - "3015:3015"
+    environment:
+      - NODE_ENV=production
+      - PORT=3015
+    networks:
+      - wise2-network
+    restart: unless-stopped
+
   # ============================================================================
   # AI Services
   # ============================================================================
