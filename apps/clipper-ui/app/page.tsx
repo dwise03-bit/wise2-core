@@ -72,8 +72,9 @@ export default function ClipperDashboard() {
   useEffect(() => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
-    fetch(`${API_BASE}/api/v1/health`, { signal: controller.signal })
-      .then((res) => setApiStatus(res.ok ? 'online' : 'offline'))
+    // no-cors: any HTTP answer counts as reachable and CORS config cannot cause a false "offline"
+    fetch(`${API_BASE}/api/health`, { mode: 'no-cors', cache: 'no-store', signal: controller.signal })
+      .then(() => setApiStatus('online'))
       .catch(() => setApiStatus('offline'))
       .finally(() => clearTimeout(timeout));
     return () => {
