@@ -38,7 +38,7 @@
       "action": "check",
       "src":    ["autogroup:member"],
       "dst":    ["tag:ops-host"],
-      "users":  ["dwise", "darrin", "wisevillian86"],
+      "users":  ["dwise", "darrin", "wisevillain86"],
       "checkPeriod": "12h"
     }
   ],
