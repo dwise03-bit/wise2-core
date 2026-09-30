@@ -3,7 +3,7 @@ import { ClipPlatform } from '@prisma/client';
 
 export class PublishClipDto {
   @IsEnum(ClipPlatform)
-  platform: ClipPlatform;
+  platform!: ClipPlatform;
 
   @IsOptional()
   @IsDateString()

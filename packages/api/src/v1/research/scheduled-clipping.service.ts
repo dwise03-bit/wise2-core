@@ -31,7 +31,7 @@ export class ScheduledClippingService {
 
     this.logger.log(`Found ${readyClips.length} clips ready for processing`);
 
-    const results = [];
+    const results: any[] = [];
 
     for (const scheduledClip of readyClips) {
       try {
@@ -63,7 +63,7 @@ export class ScheduledClippingService {
         }
 
         results.push({ id: scheduledClip.id, status: 'success' });
-      } catch (error) {
+      } catch (error: any) {
         this.logger.error(`Failed to process clip ${scheduledClip.id}: ${error.message}`);
 
         await this.prisma.scheduledClip.update({

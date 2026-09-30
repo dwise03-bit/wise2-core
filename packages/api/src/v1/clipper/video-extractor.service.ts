@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as ffmpeg from 'fluent-ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -129,10 +129,10 @@ export class VideoExtractorService {
   async getVideoMetadata(filePath: string): Promise<{ duration: number; resolution: string }> {
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(filePath, (error, metadata) => {
-        if (error) reject(error);
+        if (error) return reject(error);
 
         const stream = metadata.streams.find((s) => s.codec_type === 'video');
-        if (!stream) reject(new Error('No video stream found'));
+        if (!stream) return reject(new Error('No video stream found'));
 
         resolve({
           duration: metadata.format.duration || 0,

@@ -1,10 +1,11 @@
 import { Controller, Post, Get, Param, Query, Body } from '@nestjs/common';
+import { PlatformSource } from '@prisma/client';
 import { ResearchAgentService } from './research-agent.service';
 import { CreatorDiscoveryService } from './creator-discovery.service';
 import { PlatformMonitorService } from './platform-monitor.service';
 import { ScheduledClippingService } from './scheduled-clipping.service';
 
-@Controller('api/v1/research')
+@Controller('v1/research')
 export class ResearchController {
   constructor(
     private agent: ResearchAgentService,
@@ -76,7 +77,7 @@ export class ResearchController {
    */
   @Post('schedule-clips')
   async scheduleClips(
-    @Body() { creatorHandle, platforms }: { creatorHandle: string; platforms: string[] },
+    @Body() { creatorHandle, platforms }: { creatorHandle: string; platforms: PlatformSource[] },
   ) {
     return this.monitor.scheduleClipsFromLiveContent(creatorHandle, platforms);
   }

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BasePublisher, PublishResult } from './base-publisher';
 import { ClipPlatform } from '@prisma/client';
 import axios from 'axios';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import * as fs from 'fs';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class TwitterPublisher extends BasePublisher {
         platformUrl: `https://twitter.com/user/status/${tweetResponse.tweetId}`,
         platformPostId: tweetResponse.tweetId,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Twitter publish failed: ${error.message}`);
       return {
         platform: this.platform,

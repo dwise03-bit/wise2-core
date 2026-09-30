@@ -84,7 +84,7 @@ export class PublishingCoordinatorService {
           platform.toLowerCase() as any,
         );
         clipAssets.set(platform, optimized.file);
-      } catch (error) {
+      } catch (error: any) {
         this.logger.warn(`Failed to optimize for ${platform}: ${error.message}`);
       }
     }
@@ -128,7 +128,7 @@ export class PublishingCoordinatorService {
         } else {
           throw new Error(result.error);
         }
-      } catch (error) {
+      } catch (error: any) {
         this.logger.error(`Failed to publish to ${job.platform}: ${error.message}`);
         await this.prisma.clipPublishingJob.update({
           where: { id: job.id },

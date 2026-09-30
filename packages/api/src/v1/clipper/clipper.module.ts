@@ -12,8 +12,10 @@ import { InstagramPublisher } from './publishers/instagram-publisher';
 import { TikTokPublisher } from './publishers/tiktok-publisher';
 import { YouTubePublisher } from './publishers/youtube-publisher';
 import { TwitterPublisher } from './publishers/twitter-publisher';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 @Module({
+  imports: [PrismaModule],
   controllers: [ClipperController],
   providers: [
     ClipperService,

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BasePublisher, PublishResult } from './base-publisher';
 import { ClipPlatform } from '@prisma/client';
 import axios from 'axios';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import * as fs from 'fs';
 
 @Injectable()
@@ -45,7 +45,7 @@ export class TikTokPublisher extends BasePublisher {
         platformUrl: `https://www.tiktok.com/@${publishResponse.author}/video/${publishResponse.videoId}`,
         platformPostId: publishResponse.videoId,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`TikTok publish failed: ${error.message}`);
       return {
         platform: this.platform,

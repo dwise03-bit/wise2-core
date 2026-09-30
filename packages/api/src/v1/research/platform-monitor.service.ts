@@ -24,7 +24,7 @@ export class PlatformMonitorService {
 
     if (!creator) throw new Error('Creator not found');
 
-    const scheduledClips = [];
+    const scheduledClips: any[] = [];
 
     // Monitor each platform
     for (const platform of platforms) {

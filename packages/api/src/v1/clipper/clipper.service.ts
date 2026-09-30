@@ -55,7 +55,7 @@ export class ClipperService {
 
     // Phase 2: Transcribe audio
     const transcript = await this.transcription.transcribeAudio(
-      mediaAsset.filePath || mediaAsset.sourceUrl,
+      mediaAsset.filePath || mediaAsset.sourceUrl || '',
     );
 
     // Update media asset with processed status
@@ -97,7 +97,7 @@ export class ClipperService {
     if (!autoCaption) {
       try {
         const transcript = await this.transcription.transcribeAudio(
-          mediaAsset.filePath || mediaAsset.sourceUrl,
+          mediaAsset.filePath || mediaAsset.sourceUrl || '',
         );
         autoCaption = await this.captionGenerator.generateClipCaption(
           transcript,
@@ -131,7 +131,7 @@ export class ClipperService {
   async getClip(userId: string, clipId: string) {
     const clip = await this.prisma.clip.findUnique({
       where: { id: clipId },
-      include: { clipAssets: true, publishingJobs: true },
+      include: { clipAssets: true, publishingJobs: true, mediaAsset: true },
     });
 
     if (!clip) throw new NotFoundException('Clip not found');
@@ -146,7 +146,7 @@ export class ClipperService {
     try {
       // Extract video using FFmpeg (with GPU acceleration)
       const extractedPath = await this.videoExtractor.extractClip(
-        clip.mediaAsset.filePath || clip.mediaAsset.sourceUrl,
+        clip.mediaAsset.filePath || clip.mediaAsset.sourceUrl || '',
         clip.startTimeSeconds,
         clip.endTimeSeconds,
       );
@@ -158,7 +158,7 @@ export class ClipperService {
       });
 
       return { status: 'extracted', clipPath: extractedPath };
-    } catch (error) {
+    } catch (error: any) {
       await this.prisma.clip.update({
         where: { id: clipId },
         data: { extractionError: error.message },
@@ -204,7 +204,7 @@ export class ClipperService {
           publishedAt: new Date(),
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       await this.prisma.clipPublishingJob.update({
         where: { id: publishingJob.id },
         data: {

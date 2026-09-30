@@ -8,13 +8,13 @@ import {
   Request,
   HttpCode,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '@shared/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/jwt.guard';
 import { ClipperService } from './clipper.service';
 import { CreateMediaDto } from './dtos/create-media.dto';
 import { CreateClipDto } from './dtos/create-clip.dto';
 import { PublishClipDto } from './dtos/publish-clip.dto';
 
-@Controller('api/v1/clipper')
+@Controller('v1/clipper')
 @UseGuards(JwtAuthGuard)
 export class ClipperController {
   constructor(private clipperService: ClipperService) {}

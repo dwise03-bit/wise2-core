@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as librosa from 'librosa'; // Note: Node.js binding or API call to Python service
 import { spawn } from 'child_process';
 import * as path from 'path';
 

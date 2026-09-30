@@ -2,20 +2,20 @@ import { IsString, IsInt, IsOptional } from 'class-validator';
 
 export class CreateClipDto {
   @IsString()
-  mediaAssetId: string;
+  mediaAssetId!: string;
 
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsInt()
-  startTimeSeconds: number;
+  startTimeSeconds!: number;
 
   @IsInt()
-  endTimeSeconds: number;
+  endTimeSeconds!: number;
 
   @IsOptional()
   @IsString()
