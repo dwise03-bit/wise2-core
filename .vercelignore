@@ -16,6 +16,7 @@ build
 # The website project only needs its own app and shared packages.
 apps/*
 !apps/website
+!apps/jo-credit-os-demo
 services
 clients
 products
