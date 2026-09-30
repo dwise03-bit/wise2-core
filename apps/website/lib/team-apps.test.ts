@@ -1,4 +1,4 @@
-import { findTeamAppBuild, sanitizeTeamAppFilename, teamAppDownloadPath } from './team-apps';
+import { TEAM_APPS, findTeamAppBuild, sanitizeTeamAppFilename, teamAppDownloadPath } from './team-apps';
 
 describe('team-apps', () => {
   it('accepts published ipa and apk names', () => {
@@ -15,5 +15,21 @@ describe('team-apps', () => {
   it('maps catalog files to public download paths', () => {
     expect(teamAppDownloadPath('cherry-count.ipa')).toBe('/downloads/apps/cherry-count.ipa');
     expect(findTeamAppBuild('fergies-table.ipa')?.platform).toBe('ios');
+  });
+
+  it('publishes command launcher metadata for every app', () => {
+    expect(TEAM_APPS).toHaveLength(6);
+    for (const app of TEAM_APPS) {
+      expect(['live', 'beta', 'dev']).toContain(app.status);
+      expect(app.category.length).toBeGreaterThan(0);
+      expect(app.version.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('preserves the legacy workspace and download routes', () => {
+    expect(TEAM_APPS.find((app) => app.id === 'fieldtech')?.webUrl).toBe('/fieldtech');
+    expect(TEAM_APPS.find((app) => app.id === 'sound-labs')?.webUrl).toBe('/sound-labs');
+    expect(TEAM_APPS.find((app) => app.id === 'wise2-xr')?.webUrl).toBe('/quest');
+    expect(findTeamAppBuild('wise2-xr.apk')?.filename).toBe('wise2-xr.apk');
   });
 });
