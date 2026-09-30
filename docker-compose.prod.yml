@@ -222,6 +222,28 @@ services:
       timeout: 10s
       retries: 3
 
+  # WISE² Video Clipper
+  clipper:
+    build:
+      context: .
+      dockerfile: ./apps/clipper-ui/Dockerfile
+    image: wise2-clipper:latest
+    container_name: wise2-clipper
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3015
+      HOSTNAME: 0.0.0.0
+    ports:
+      - "127.0.0.1:3015:3015"
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3015', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Admin Backend (BLAKKHAIL Partner Admin)
   admin-backend:
     build:
