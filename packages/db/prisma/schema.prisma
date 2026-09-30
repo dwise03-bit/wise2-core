@@ -72,7 +72,7 @@ model User {
 
   // Clipper System relationships
   clipperMediaAssets MediaAsset[] @relation("clipperMediaAssets")
-  clipperSettings    UserClipperSettings?
+  clipperSettings    UserClipperSettings? @relation("clipperSettings")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -7785,7 +7785,7 @@ model CreatorResearch {
 
   // Recommended clips
   recommendedTopics String[] @default([])
-  bestPerformingContent String[]? @db.Text[]
+  bestPerformingContent String[] @db.Text
 
   // Status
   status            ResearchStatus @default(PENDING)
