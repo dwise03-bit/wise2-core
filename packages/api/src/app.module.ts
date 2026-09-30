@@ -52,6 +52,8 @@ import { OTAModule } from './ota/ota.module';
 import { ToolsModule } from './tools/tools.module';
 import { OTAUpdatesModule } from './mobile/ota-updates.module';
 import { VoiceModule } from './voice/voice.module';
+import { ClipperModule } from './v1/clipper/clipper.module';
+import { ResearchModule } from './v1/research/research.module';
 
 @Module({
   imports: [
@@ -166,6 +168,8 @@ import { VoiceModule } from './voice/voice.module';
     OTAUpdatesModule,
     ToolsModule,
     VoiceModule,
+    ClipperModule,
+    ResearchModule,
     // AuditsModule, // DEFERRED
     // ReaperModule, // DISABLED: Prisma model name mismatches (lowercase vs CamelCase)
   ],

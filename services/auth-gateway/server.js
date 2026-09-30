@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 
 const app = express();
-const PORT = 3013;
+const PORT = process.env.PORT || 3013;
 
 // Database connection
 const pool = new Pool({
