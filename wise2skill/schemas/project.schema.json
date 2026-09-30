@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WISE2 Cinematic Website Project",
+  "type": "object",
+  "required": ["name", "industry", "audience", "desired_action", "brand_dna", "global_exclusions"],
+  "properties": {
+    "name": {"type": "string", "minLength": 1},
+    "industry": {"type": "string", "minLength": 1},
+    "audience": {"type": "string", "minLength": 1},
+    "desired_action": {"type": "string", "minLength": 1},
+    "locked_decisions": {"type": "array", "items": {"type": "string"}},
+    "production_assumptions": {"type": "array", "items": {"type": "string"}},
+    "global_exclusions": {"type": "array", "contains": {"const": "No crowns or crown-like motifs unless explicitly requested for this project or visual."}},
+    "brand_dna": {"type": "object", "required": ["emotional_tone", "materials", "lighting_language", "typography_direction"], "properties": {"emotional_tone": {"type":"string"}, "materials": {"type":"array", "minItems":2, "items":{"type":"string"}}, "lighting_language":{"type":"string"}, "typography_direction":{"type":"string"}}}
+  }
+}
