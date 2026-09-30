@@ -60,6 +60,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "/Users/danielwise/Projects/every-day-trader-web", "run", "dev"],
       "port": 3002
+    },
+    {
+      "name": "trading-mobile",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/trading-mobile", "run", "preview"],
+      "port": 3008
     }
   ]
 }

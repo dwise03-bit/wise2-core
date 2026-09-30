@@ -1,271 +1,46 @@
 'use client';
 
-import Link from "next/link";
-import { useEffect } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 
-const IconBuild = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5A2.25 2.25 0 008.25 22.5h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25h-2.25m-7.5 11.25h7.5M10.5 7.5h3" />
-  </svg>
-);
+const capabilities = [
+  ['01', 'Brand systems', 'Keep every surface unmistakably yours.', 'cyan'],
+  ['02', 'Customer intelligence', 'Turn signals into the next best move.', 'green'],
+  ['03', 'Agent workflows', 'Move from intent to execution with control.', 'cyan'],
+  ['04', 'GPU infrastructure', 'Know what is running, where, and why.', 'green'],
+] as const;
 
-const IconAutomate = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-  </svg>
-);
-
-const IconScale = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13h6V3H3v10zm8 0h6V5h-6v8zm8-8v8h6V5h-6z" />
-  </svg>
-);
-
-const IconNetwork = () => (
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12a3 3 0 100-6 3 3 0 000 6zm0 0c4.97 0 9 2.686 9 6v1H0v-1c0-3.314 4.03-6 9-6zm9-12a3 3 0 100-6 3 3 0 000 6zm-15 0a3 3 0 100-6 3 3 0 000 6z" />
-  </svg>
-);
+const actions = [
+  { label: 'Build', detail: 'Open a new workstream', icon: '＋', tone: 'cyan' },
+  { label: 'Automate', detail: 'Create an operating loop', icon: '↗', tone: 'green' },
+  { label: 'Scale', detail: 'Review system capacity', icon: '⌁', tone: 'cyan' },
+] as const;
 
 export default function Home() {
-  useEffect(() => {
-    // Dynamic import for GSAP to avoid SSR issues
-    import("gsap").then(({ default: gsap }) => {
-      import("gsap/ScrollTrigger").then(({ default: ScrollTrigger }) => {
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Initialize reveal animations
-        gsap.utils.toArray("[data-reveal]").forEach((element) => {
-          gsap.fromTo(
-            element as Element,
-            { y: 40, opacity: 0, filter: "blur(10px)" },
-            {
-              y: 0,
-              opacity: 1,
-              filter: "blur(0px)",
-              duration: 1,
-              ease: "power4.out",
-              scrollTrigger: {
-                trigger: element as Element,
-                start: "top 85%",
-                once: true,
-              },
-            }
-          );
-        });
-
-        // Hero text animation
-        const heroTitle = document.querySelector("[data-hero-title]");
-        if (heroTitle) {
-          gsap.fromTo(
-            heroTitle,
-            { opacity: 0, y: 60 },
-            { opacity: 1, y: 0, duration: 1.2, ease: "power4.out", delay: 0.2 }
-          );
-        }
-
-        // Glow effect on green accent
-        gsap.utils.toArray("[data-glow]").forEach((element) => {
-          gsap.to(element as Element, {
-            textShadow: "0 0 20px rgba(0, 255, 127, 0.6)",
-            duration: 2,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-          });
-        });
-      });
-    });
-  }, []);
+  const [activeAction, setActiveAction] = useState('');
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-8 text-[#D1D5DB] sm:px-6 lg:px-10">
-      {/* Animated background grid */}
-      <div className="absolute inset-0 -z-10 opacity-20">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0, 217, 255, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 217, 255, 0.1) 1px, transparent 1px)",
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
+    <main className="relative min-h-screen overflow-hidden bg-[#050607] px-4 py-5 text-[#d1d5db] sm:px-6 lg:px-10">
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:linear-gradient(rgba(0,217,255,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(0,217,255,.08)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:linear-gradient(to_bottom,black,transparent_90%)]" />
+      <div className="pointer-events-none absolute -right-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-[#00d9ff]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/3 -z-10 h-80 w-80 rounded-full bg-[#00ff7f]/5 blur-[110px]" />
+      <div className="mx-auto max-w-[1420px]">
+        <header className="flex items-center justify-between border-b border-white/10 py-5">
+          <Link href="/" className="group flex items-center gap-3" aria-label="WISE² home"><span className="grid h-11 w-11 place-items-center rounded-2xl border border-[#00d9ff]/40 bg-[#00d9ff]/10 text-lg font-bold text-[#00d9ff] shadow-[0_0_30px_rgba(0,217,255,.12)] transition group-hover:border-[#00ff7f]/60">W²</span><span><strong className="block text-sm tracking-[.24em] text-white">WISE²</strong><small className="block text-[10px] uppercase tracking-[.3em] text-[#00d9ff]">Command Center</small></span></Link>
+          <nav className="hidden items-center gap-7 text-[11px] uppercase tracking-[.18em] text-[#86939d] md:flex"><Link className="transition hover:text-white" href="/dashboard">Overview</Link><Link className="transition hover:text-white" href="/woji">WOJI</Link><Link className="transition hover:text-white" href="/demo">Demo</Link></nav>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-[.18em] text-[#8ee7bb]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#00ff7f] shadow-[0_0_12px_#00ff7f]" /> All systems online</div>
+        </header>
 
-      {/* Cyan glow accent */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#00D9FF] opacity-5 blur-3xl rounded-full -z-10" />
+        <section className="grid min-h-[650px] items-center gap-14 py-16 lg:grid-cols-[1.2fr_.8fr] lg:py-24">
+          <div><div className="mb-7 flex items-center gap-3 text-[10px] uppercase tracking-[.3em] text-[#00d9ff]"><span className="h-px w-10 bg-[#00d9ff]" /> Business operating system / 01</div><h1 className="max-w-4xl text-6xl font-semibold leading-[.93] tracking-[-.07em] text-[#eef2f4] sm:text-7xl lg:text-[clamp(5rem,9vw,9.2rem)]">Move the whole <span className="block text-[#00ff7f]">business as one.</span></h1><p className="mt-8 max-w-xl text-base leading-8 text-[#8b969e] sm:text-lg">One synchronized command surface for brand, customers, automation, content, and intelligence. See the signal. Make the call. Keep moving.</p><div className="mt-10 flex flex-col gap-3 sm:flex-row"><Link href="/woji" className="group inline-flex items-center justify-center gap-4 rounded-full bg-[#00d9ff] px-7 py-4 text-sm font-bold text-[#031014] shadow-[0_0_35px_rgba(0,217,255,.2)] transition hover:-translate-y-1 hover:bg-[#55e8ff]">Enter WOJI control <span className="transition group-hover:translate-x-1">→</span></Link><Link href="/dashboard" className="inline-flex items-center justify-center gap-3 rounded-full border border-white/15 bg-white/[.03] px-7 py-4 text-sm font-semibold text-white transition hover:border-[#00ff7f]/50 hover:bg-[#00ff7f]/10">Open live overview <span className="text-[#00ff7f]">↗</span></Link></div><div className="mt-12 grid max-w-xl grid-cols-3 border-y border-white/10 py-5">{[['04', 'systems'], ['24/7', 'visibility'], ['01', 'source of truth']].map(([value, label]) => <div key={label} className="border-r border-white/10 pl-0 last:border-0 last:pl-4 first:pl-0 sm:pl-5"><strong className="block text-xl text-white">{value}</strong><span className="mt-1 block text-[9px] uppercase tracking-[.2em] text-[#6e7b84]">{label}</span></div>)}</div></div>
 
-      <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-7xl flex-col justify-center py-12 lg:py-20">
-        {/* Header */}
-        <div className="mb-16 flex items-center justify-between border-b border-[#00D9FF]/20 pb-6 lg:mb-24" data-reveal>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#00D9FF]/40 to-[#00D9FF]/0 blur-lg animate-pulse" />
-              <span className="relative grid h-10 w-10 place-items-center rounded-xl border border-[#00D9FF]/40 bg-[#00D9FF]/10 text-lg font-bold text-[#00D9FF] backdrop-blur-sm">
-                W²
-              </span>
-            </div>
-            <div>
-              <p className="text-sm font-bold tracking-wider text-[#D1D5DB] uppercase">WISE²</p>
-              <p className="text-xs tracking-widest text-[#00D9FF]">Command Center</p>
-            </div>
-          </div>
-          <div className="hidden items-center gap-2 text-xs text-[#00D9FF] sm:flex">
-            <span className="h-2 w-2 rounded-full bg-[#00FF7F] animate-pulse" />
-            <span>Systems online</span>
-          </div>
-        </div>
+          <aside className="relative mx-auto w-full max-w-[460px] lg:mt-12"><div className="absolute -inset-5 rounded-[2rem] border border-[#00d9ff]/10 bg-[#00d9ff]/[.03]" /><div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#0a1015]/90 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl"><div className="flex items-center justify-between border-b border-white/10 pb-5"><div><p className="text-[10px] uppercase tracking-[.24em] text-[#00d9ff]">Live network</p><p className="mt-1 text-sm text-white">WISE² / core mesh</p></div><span className="rounded-full border border-[#00ff7f]/30 bg-[#00ff7f]/10 px-3 py-1 text-[9px] font-bold tracking-[.18em] text-[#7dffb8]">ONLINE</span></div><div className="relative my-8 grid place-items-center"><div className="absolute h-48 w-48 animate-pulse rounded-full border border-[#00d9ff]/20 shadow-[0_0_70px_rgba(0,217,255,.12)]" /><div className="absolute h-32 w-32 rounded-full border border-[#00ff7f]/25" /><div className="grid h-24 w-24 place-items-center rounded-full border border-[#00d9ff]/50 bg-[#00d9ff]/10 text-3xl font-semibold text-white shadow-[0_0_35px_rgba(0,217,255,.28)]">W²</div></div><div className="grid grid-cols-2 gap-2">{[['MAC NODE', 'READY', 'cyan'], ['VPS', 'HEALTHY', 'green'], ['AI MESH', 'READY', 'cyan'], ['AUTOMATION', '3 ACTIVE', 'green']].map(([label, value, tone]) => <div key={label} className="rounded-xl border border-white/10 bg-white/[.035] p-3"><span className="block text-[9px] tracking-[.16em] text-[#687680]">{label}</span><strong className={`mt-2 block text-xs ${tone === 'green' ? 'text-[#7dffb8]' : 'text-[#72e8ff]'}`}>{value}</strong></div>)}</div><div className="mt-4 flex items-center justify-between rounded-xl border border-[#00d9ff]/15 bg-[#00d9ff]/[.05] px-3 py-3 text-[10px] text-[#8e9ca4]"><span>Last sync</span><span className="font-mono text-[#d1d5db]">just now · 99.98%</span></div></div></aside>
+        </section>
 
-        {/* Hero Section */}
-        <div className="grid items-end gap-12 lg:gap-16 lg:grid-cols-[1.3fr_0.7fr] mb-20">
-          <section className="space-y-8">
-            <div>
-              <p className="text-xs font-bold tracking-widest text-[#00D9FF] uppercase mb-4" data-reveal>
-                Building empires. changing culture. together.
-              </p>
-              <h1
-                className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-[#D1D5DB]"
-                data-hero-title
-                data-reveal
-              >
-                Move the whole
-                <span className="block text-[#00FF7F] mt-2" data-glow>
-                  business as one.
-                </span>
-              </h1>
-            </div>
-            <p className="max-w-xl text-base leading-8 text-gray-400" data-reveal>
-              WISE² syncs brand, CRM, automation, content, and intelligence into one command surface. Ship faster. Scale further. Build different.
-            </p>
+        <section className="border-t border-white/10 py-12"><div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><p className="text-[10px] uppercase tracking-[.3em] text-[#00d9ff]">Start anywhere</p><h2 className="mt-2 text-2xl font-semibold tracking-[-.03em] text-white">Turn intent into motion.</h2></div><p className="max-w-sm text-xs leading-5 text-[#77848c]">Every entry point is connected to the same operating picture.</p></div><div className="grid gap-3 md:grid-cols-3">{actions.map((action) => <button key={action.label} type="button" onClick={() => setActiveAction(action.label)} className={`group flex items-center justify-between rounded-2xl border p-5 text-left transition hover:-translate-y-1 ${action.tone === 'green' ? 'border-[#00ff7f]/20 bg-[#00ff7f]/[.04] hover:border-[#00ff7f]/60' : 'border-[#00d9ff]/20 bg-[#00d9ff]/[.04] hover:border-[#00d9ff]/60'}`}><span><strong className="block text-lg text-white">{action.label}</strong><span className="mt-1 block text-xs text-[#7d8991]">{activeAction === action.label ? 'Workspace queued — choose a destination' : action.detail}</span></span><span className={`grid h-11 w-11 place-items-center rounded-xl border text-xl transition group-hover:rotate-12 ${action.tone === 'green' ? 'border-[#00ff7f]/30 text-[#7dffb8]' : 'border-[#00d9ff]/30 text-[#72e8ff]'}`}>{action.icon}</span></button>)}</div></section>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4" data-reveal>
-              <Link
-                href="/dashboard"
-                className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-[#00D9FF] px-8 py-3 text-sm font-bold text-[#050607] transition-all duration-300 hover:shadow-lg hover:shadow-[#00D9FF]/40 hover:scale-105 hover:bg-cyan-400"
-              >
-                Enter the command center
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-              <Link
-                href="/demo"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-[#00D9FF]/40 bg-[#00D9FF]/5 px-8 py-3 text-sm font-bold text-[#00D9FF] backdrop-blur-sm transition-all duration-300 hover:bg-[#00D9FF]/15 hover:border-[#00D9FF]/60"
-              >
-                Explore demo
-                <span className="text-[#00FF7F]">→</span>
-              </Link>
-              <Link
-                href="/demo/admin"
-                className="group inline-flex items-center justify-center gap-2 rounded-full border border-[#00FF7F]/40 bg-[#00FF7F]/5 px-8 py-3 text-sm font-bold text-[#00FF7F] backdrop-blur-sm transition-all duration-300 hover:bg-[#00FF7F]/15 hover:border-[#00FF7F]/60"
-              >
-                Admin demo
-                <span className="text-[#00FF7F]">→</span>
-              </Link>
-            </div>
-          </section>
-
-          {/* Side Cards */}
-          <aside className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            {/* Live Network Card */}
-            <div
-              className="group relative rounded-2xl border border-[#00D9FF]/20 bg-gradient-to-br from-[#00D9FF]/10 to-[#00D9FF]/0 p-6 backdrop-blur-xl transition-all duration-300 hover:border-[#00D9FF]/40 hover:bg-gradient-to-br hover:from-[#00D9FF]/15 hover:to-[#00D9FF]/5"
-              data-reveal
-            >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00D9FF]/0 via-[#00D9FF]/0 to-[#00D9FF]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-10" />
-              <div className="relative space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold tracking-widest text-[#00D9FF] uppercase">
-                    Live Network
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#00FF7F]/20 px-3 py-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#00FF7F] animate-pulse" />
-                    <span className="text-xs font-bold text-[#00FF7F]">ONLINE</span>
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-[#D1D5DB]">One source of truth.</h3>
-                  <p className="mt-3 text-sm leading-6 text-gray-400">
-                    Your Mac, GPU, VPS, and AI unified. Observable. Real-time.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Start Anywhere Card */}
-            <div
-              className="group relative rounded-2xl border border-[#00FF7F]/20 bg-gradient-to-br from-[#00FF7F]/10 to-[#00FF7F]/0 p-6 backdrop-blur-xl transition-all duration-300 hover:border-[#00FF7F]/40 hover:bg-gradient-to-br hover:from-[#00FF7F]/15 hover:to-[#00FF7F]/5"
-              data-reveal
-            >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00FF7F]/0 via-[#00FF7F]/0 to-[#00FF7F]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-10" />
-              <div className="relative space-y-4">
-                <p className="text-xs font-bold tracking-widest text-[#00FF7F] uppercase">
-                  Start Anywhere
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    aria-label="Build"
-                    className="group/btn relative rounded-lg border border-[#00D9FF]/20 bg-[#00D9FF]/5 px-3 py-4 text-xs font-bold text-[#00D9FF] transition-all duration-300 hover:bg-[#00D9FF]/15 hover:border-[#00D9FF]/40 flex items-center justify-center gap-2"
-                  >
-                    <IconBuild />
-                    Build
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Automate"
-                    className="group/btn relative rounded-lg border border-[#00D9FF]/20 bg-[#00D9FF]/5 px-3 py-4 text-xs font-bold text-[#00D9FF] transition-all duration-300 hover:bg-[#00D9FF]/15 hover:border-[#00D9FF]/40 flex items-center justify-center gap-2"
-                  >
-                    <IconAutomate />
-                    Automate
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Scale"
-                    className="group/btn relative rounded-lg border border-[#00FF7F]/20 bg-[#00FF7F]/5 px-3 py-4 text-xs font-bold text-[#00FF7F] transition-all duration-300 hover:bg-[#00FF7F]/15 hover:border-[#00FF7F]/40 flex items-center justify-center gap-2"
-                  >
-                    <IconScale />
-                    Scale
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
-
-        {/* Capabilities */}
-        <div className="space-y-4 border-t border-[#00D9FF]/20 pt-12 lg:pt-16" data-reveal>
-          <p className="text-xs font-bold tracking-widest text-[#00D9FF] uppercase">Integrated Capabilities</p>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { icon: IconNetwork, label: "Brand systems", color: "cyan" },
-              { icon: IconAutomate, label: "Customer intelligence", color: "green" },
-              { icon: IconBuild, label: "Agent workflows", color: "cyan" },
-              { icon: IconScale, label: "GPU infrastructure", color: "green" },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className={`group relative rounded-lg border transition-all duration-300 p-4 backdrop-blur-sm cursor-pointer ${
-                  item.color === "cyan"
-                    ? "border-[#00D9FF]/20 bg-[#00D9FF]/5 hover:bg-[#00D9FF]/15 hover:border-[#00D9FF]/40"
-                    : "border-[#00FF7F]/20 bg-[#00FF7F]/5 hover:bg-[#00FF7F]/15 hover:border-[#00FF7F]/40"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`flex-shrink-0 ${
-                      item.color === "cyan" ? "text-[#00D9FF]" : "text-[#00FF7F]"
-                    }`}
-                  >
-                    <item.icon />
-                  </div>
-                  <span className="text-sm font-medium text-gray-400 group-hover:text-[#D1D5DB] transition-colors">
-                    {item.label}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <section className="border-t border-white/10 py-12"><div className="mb-6 flex items-end justify-between"><div><p className="text-[10px] uppercase tracking-[.3em] text-[#00d9ff]">Integrated capabilities</p><h2 className="mt-2 text-2xl font-semibold tracking-[-.03em] text-white">One system. Many levers.</h2></div><span className="hidden text-[10px] uppercase tracking-[.2em] text-[#55636c] sm:block">WISE² / 2026</span></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{capabilities.map(([number, title, detail, tone]) => <div key={title} className="group rounded-2xl border border-white/10 bg-white/[.025] p-5 transition hover:border-white/25 hover:bg-white/[.05]"><div className="flex items-start justify-between"><span className={`text-xs ${tone === 'green' ? 'text-[#7dffb8]' : 'text-[#72e8ff]'}`}>{number}</span><span className="text-white/30 transition group-hover:text-white">↗</span></div><h3 className="mt-9 text-sm font-semibold text-white">{title}</h3><p className="mt-2 text-xs leading-5 text-[#77848c]">{detail}</p></div>)}</div></section>
+        <footer className="flex flex-col gap-4 border-t border-white/10 py-7 text-[10px] uppercase tracking-[.18em] text-[#58656d] sm:flex-row sm:items-center sm:justify-between"><span>WISE² command center / systems online</span><span>Built to move at the speed of intent.</span></footer>
       </div>
     </main>
   );
