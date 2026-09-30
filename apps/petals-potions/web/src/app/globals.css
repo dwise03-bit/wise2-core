@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-purple: #3B1E54;
+  --color-indigo: #1D386F;
+  --color-green: #2E7D4E;
+  --color-gold: #F4C542;
+  --color-cream: #F7F2E9;
+  --color-dark: #08090C;
+  --color-navy: #0D1117;
+  --color-midnight: #15101B;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-pp-dark text-pp-cream font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif-header;
+  }
+
+  p, span, a, li {
+    @apply font-serif-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-pp-gold hover:bg-pp-cream text-pp-purple font-bold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-pp-purple hover:bg-pp-indigo text-pp-cream font-bold py-3 px-8 rounded-lg transition-all duration-300 border border-pp-gold;
+  }
+
+  .btn-ghost {
+    @apply text-pp-gold hover:text-pp-cream border border-pp-gold hover:bg-pp-gold hover:text-pp-purple transition-all duration-300 py-2 px-6 rounded-lg;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+  }
+
+  .divider-gold {
+    @apply h-1 bg-gradient-to-r from-pp-purple via-pp-gold to-pp-green opacity-50;
+  }
+
+  .card-luxury {
+    @apply bg-pp-navy/50 backdrop-blur border border-pp-gold/20 rounded-2xl p-6 hover:border-pp-gold/40 transition-all duration-300 shadow-card hover:shadow-luxury;
+  }
+
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-pp-gold to-pp-cream bg-clip-text text-transparent;
+  }
+
+  .botanical-divider {
+    @apply flex items-center gap-4 my-8 opacity-60;
+  }
+
+  .botanical-divider::before,
+  .botanical-divider::after {
+    content: '';
+    @apply flex-1 h-px bg-gradient-to-r from-pp-gold to-transparent;
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cream);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-purple);
+}
+
+/* Hero animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(244, 197, 66, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(244, 197, 66, 0.6);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
