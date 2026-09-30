@@ -23,6 +23,18 @@ body {
 }
 
 @layer components {
+  .wordmark {
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: #fff;
+  }
+  .wordmark sup {
+    font-size: 0.5em;
+    vertical-align: super;
+    margin-left: 0.05em;
+  }
+
   .btn-primary {
     @apply inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg bg-wise-cyan px-6 py-2 font-medium text-wise-navy transition-colors duration-200 hover:bg-wise-cyan/80 disabled:cursor-not-allowed disabled:opacity-50;
   }
@@ -48,6 +60,21 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-in {
+  animation: step-in 0.35s ease-out both;
 }
 
 @keyframes status-ping {

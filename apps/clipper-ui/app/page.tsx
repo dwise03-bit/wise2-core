@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent } from 'react';
 import MediaUpload from '@/components/MediaUpload';
 import ClipEditor from '@/components/ClipEditor';
 import PublishManager from '@/components/PublishManager';
@@ -10,26 +10,21 @@ import ResearchDashboard from '@/components/ResearchDashboard';
 import {
   AlertIcon,
   CheckIcon,
-  PlayIcon,
-  ScissorsIcon,
-  SearchIcon,
-  SendIcon,
-  SparklesIcon,
-  UploadIcon,
 } from '@/components/icons';
 
 type Tab = 'upload' | 'clips' | 'publish' | 'suggested' | 'research';
 type ApiStatus = 'checking' | 'online' | 'offline';
 
-const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
-  { id: 'research', label: 'Research', icon: <SearchIcon /> },
-  { id: 'upload', label: 'Upload Media', icon: <UploadIcon /> },
-  { id: 'clips', label: 'Create Clips', icon: <ScissorsIcon /> },
-  { id: 'suggested', label: 'AI Suggestions', icon: <SparklesIcon /> },
-  { id: 'publish', label: 'Publish', icon: <SendIcon /> },
+const TABS: { id: Tab; label: string; hint: string }[] = [
+  { id: 'upload', label: 'Upload', hint: 'Podcast, interview or livestream' },
+  { id: 'clips', label: 'Create clips', hint: 'Pick the moment, add captions' },
+  { id: 'suggested', label: 'AI suggestions', hint: 'AI finds your best moments' },
+  { id: 'publish', label: 'Approve & publish', hint: 'Send to your channels' },
+  { id: 'research', label: 'Research & growth', hint: 'Creators, trends, results' },
 ];
 
-const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'X (Twitter)', 'Discord', 'LinkedIn'];
+const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'X (Twitter)', 'Discord'];
+const COMING_SOON = ['LinkedIn', 'Facebook'];
 
 const STATUS_COPY: Record<ApiStatus, { label: string; dot: string; text: string }> = {
   checking: { label: 'Checking API', dot: 'bg-wise-gold', text: 'text-wise-gold' },
@@ -128,26 +123,26 @@ export default function ClipperDashboard() {
   const status = STATUS_COPY[apiStatus];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-wise-navy via-wise-navy to-black text-white">
-      <header className="border-b border-wise-cyan/20 bg-wise-navy/90 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
+    <div className="min-h-screen bg-wise-navy text-white">
+      <header className="border-b border-wise-cyan/15 bg-wise-navy/90 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-wise-cyan/30 bg-wise-cyan/10 text-wise-cyan">
-                <PlayIcon size={24} />
-              </span>
-              <div className="min-w-0">
-                <h1 className="text-2xl sm:text-4xl font-bold leading-tight bg-gradient-to-r from-wise-cyan to-wise-neon bg-clip-text text-transparent">
-                  WISE² Clipper
+            <div className="flex items-center gap-4 min-w-0">
+              <p className="wordmark text-3xl sm:text-4xl" aria-label="WISE squared">
+                WISE<sup className="text-wise-cyan">2</sup>
+              </p>
+              <div className="min-w-0 border-l border-wise-cyan/20 pl-4">
+                <h1 className="text-base sm:text-lg font-bold leading-tight tracking-wide text-white">
+                  Clipper
                 </h1>
-                <p className="hidden sm:block text-wise-cyan/70 text-sm truncate">
-                  AI-powered video extraction &amp; multi-platform publishing
+                <p className="hidden sm:block text-wise-cyan/70 text-xs truncate">
+                  Turn one video into a full content engine
                 </p>
               </div>
             </div>
 
             <div
-              className="shrink-0 flex items-center gap-3 rounded-lg border border-wise-gold/30 bg-wise-gold/10 px-3 py-2"
+              className="shrink-0 flex items-center gap-3 rounded-lg border border-wise-gold/30 bg-wise-gold/10 p-2.5 sm:px-3 sm:py-2"
               role="status"
               aria-live="polite"
             >
@@ -157,7 +152,7 @@ export default function ClipperDashboard() {
                 )}
                 <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${status.dot}`} />
               </span>
-              <div className="leading-tight">
+              <div className="leading-tight sr-only sm:not-sr-only">
                 <p className={`text-xs font-semibold ${status.text}`}>{status.label}</p>
                 <p className="text-[11px] text-wise-gold/80">v2.0</p>
               </div>
@@ -199,49 +194,63 @@ export default function ClipperDashboard() {
           )}
         </div>
 
-        <div className="mb-8 border-b border-wise-cyan/20">
-          <div
-            role="tablist"
-            aria-label="Clipper workflow"
-            className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide"
-          >
-            {TABS.map((tab, index) => {
-              const selected = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  ref={(el) => {
-                    tabRefs.current[tab.id] = el;
-                  }}
-                  type="button"
-                  role="tab"
-                  id={`tab-${tab.id}`}
-                  aria-selected={selected}
-                  aria-controls={`panel-${tab.id}`}
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => setActiveTab(tab.id)}
-                  onKeyDown={(e) => handleTabKeyDown(e, index)}
-                  className={`relative flex min-h-[48px] cursor-pointer items-center gap-2 rounded-t-lg px-4 sm:px-5 py-3 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors duration-200 ${
-                    selected
-                      ? 'text-wise-cyan bg-wise-cyan/5'
-                      : 'text-wise-cyan/70 hover:text-wise-cyan hover:bg-wise-cyan/5'
+        <div
+          role="tablist"
+          aria-label="Clipper workflow"
+          className="mb-8 flex gap-3 overflow-x-auto scrollbar-hide snap-x lg:grid lg:grid-cols-5 lg:overflow-visible pb-1"
+        >
+          {TABS.map((tab, index) => {
+            const selected = activeTab === tab.id;
+            const done = !!stepDone[tab.id];
+            return (
+              <button
+                key={tab.id}
+                ref={(el) => {
+                  tabRefs.current[tab.id] = el;
+                }}
+                type="button"
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-selected={selected}
+                aria-controls={`panel-${tab.id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActiveTab(tab.id)}
+                onKeyDown={(e) => handleTabKeyDown(e, index)}
+                style={{ animationDelay: `${index * 60}ms` }}
+                className={`step-card step-in relative min-w-[210px] snap-start lg:min-w-0 flex min-h-[88px] cursor-pointer items-start gap-3 rounded-2xl border p-4 text-left transition-colors duration-200 ${
+                  selected
+                    ? 'border-wise-cyan bg-wise-cyan/10'
+                    : 'border-wise-cyan/15 bg-wise-navy/60 hover:border-wise-cyan/50 hover:bg-wise-cyan/5'
+                }`}
+              >
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 text-base font-bold ${
+                    done
+                      ? 'border-wise-neon bg-wise-neon/15 text-wise-neon'
+                      : selected
+                        ? 'border-wise-cyan bg-wise-cyan text-wise-navy'
+                        : 'border-wise-cyan/50 text-wise-cyan'
                   }`}
+                  aria-hidden="true"
                 >
-                  {tab.icon}
-                  <span>{tab.label}</span>
-                  {stepDone[tab.id] && (
-                    <>
-                      <span className="h-1.5 w-1.5 rounded-full bg-wise-neon" aria-hidden="true" />
-                      <span className="sr-only">(complete)</span>
-                    </>
-                  )}
-                  {selected && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-wise-cyan via-wise-neon to-wise-cyan" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+                  {done ? <CheckIcon size={18} /> : index + 1}
+                </span>
+                <span className="min-w-0">
+                  <span
+                    className={`flex items-center gap-2 text-sm font-bold ${
+                      selected ? 'text-white' : 'text-white/90'
+                    }`}
+                  >
+                    {tab.label}
+                    {done && <span className="sr-only">(complete)</span>}
+                  </span>
+                  <span className="mt-0.5 block text-xs leading-snug text-wise-cyan/70">
+                    {tab.hint}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div
@@ -249,7 +258,7 @@ export default function ClipperDashboard() {
           id={`panel-${activeTab}`}
           aria-labelledby={`tab-${activeTab}`}
           tabIndex={0}
-          className="bg-wise-navy/40 border border-wise-cyan/10 rounded-2xl p-6 sm:p-8 backdrop-blur animate-fade-in focus-visible:outline-none"
+          className="bg-wise-navy/60 border border-wise-cyan/15 rounded-2xl p-6 sm:p-8 animate-fade-in focus-visible:outline-none"
         >
           {activeTab === 'research' && <ResearchDashboard />}
 
@@ -318,7 +327,7 @@ export default function ClipperDashboard() {
         <div className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
           <section
             aria-labelledby="api-endpoint-heading"
-            className="bg-gradient-to-br from-wise-gold/10 to-wise-gold/5 border border-wise-gold/20 rounded-xl p-5 sm:p-6 transition-colors duration-200 hover:border-wise-gold/50"
+            className="bg-wise-navy/60 border border-wise-gold/25 rounded-2xl p-5 sm:p-6 transition-colors duration-200 hover:border-wise-gold/60"
           >
             <h2 id="api-endpoint-heading" className="text-wise-gold font-semibold mb-2">
               API Endpoint
@@ -329,10 +338,10 @@ export default function ClipperDashboard() {
           </section>
           <section
             aria-labelledby="platforms-heading"
-            className="bg-gradient-to-br from-wise-neon/10 to-wise-neon/5 border border-wise-neon/20 rounded-xl p-5 sm:p-6 transition-colors duration-200 hover:border-wise-neon/50"
+            className="bg-wise-navy/60 border border-wise-neon/25 rounded-2xl p-5 sm:p-6 transition-colors duration-200 hover:border-wise-neon/60"
           >
             <h2 id="platforms-heading" className="text-wise-neon font-semibold mb-2">
-              Supported Platforms
+              Publishing to
             </h2>
             <ul className="flex flex-wrap gap-2">
               {PLATFORMS.map((platform) => (
@@ -344,6 +353,9 @@ export default function ClipperDashboard() {
                 </li>
               ))}
             </ul>
+            <p className="mt-3 text-xs text-wise-cyan/70">
+              Coming soon: {COMING_SOON.join(', ')}
+            </p>
           </section>
         </div>
       </main>
