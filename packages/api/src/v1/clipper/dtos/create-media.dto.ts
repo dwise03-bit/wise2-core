@@ -3,14 +3,14 @@ import { MediaSourceType } from '@prisma/client';
 
 export class CreateMediaDto {
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsEnum(MediaSourceType)
-  sourceType: MediaSourceType;
+  sourceType!: MediaSourceType;
 
   @IsOptional()
   @IsString()

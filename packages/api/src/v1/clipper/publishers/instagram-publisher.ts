@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BasePublisher, PublishResult } from './base-publisher';
 import { ClipPlatform } from '@prisma/client';
 import axios from 'axios';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import * as fs from 'fs';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class InstagramPublisher extends BasePublisher {
         platformUrl: `https://instagram.com/reel/${publishResponse.mediaId}`,
         platformPostId: publishResponse.mediaId,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Instagram publish failed: ${error.message}`);
       return {
         platform: this.platform,

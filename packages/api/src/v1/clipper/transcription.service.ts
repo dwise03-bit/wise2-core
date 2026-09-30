@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import * as fs from 'fs';
 
 export interface TranscriptSegment {
@@ -72,7 +72,7 @@ export class TranscriptionService {
         })),
         duration: response.data.duration || 0,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Transcription failed: ${error.message}`);
       throw error;
     }

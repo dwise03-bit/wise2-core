@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
+import FormData from 'form-data';
 import * as fs from 'fs';
 
 @Injectable()
@@ -43,7 +44,7 @@ export class DiscordPublisherService {
 
       await axios.post(this.discordWebhookUrl, message);
       this.logger.log(`Clip published to Discord: ${clip.id}`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to publish clip to Discord: ${error.message}`);
       throw error;
     }
@@ -65,11 +66,11 @@ export class DiscordPublisherService {
       formData.append('file', fileStream as any);
 
       await axios.post(url, formData, {
-        headers: formData.getHeaders?.(),
+        headers: formData.getHeaders(),
       });
 
       this.logger.log(`Clip file uploaded to Discord: ${clipPath}`);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to upload clip file to Discord: ${error.message}`);
       throw error;
     }

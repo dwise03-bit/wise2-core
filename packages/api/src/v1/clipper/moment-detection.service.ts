@@ -32,17 +32,17 @@ export class MomentDetectionService {
 
     // 1. Audio analysis for energy spikes, laughter, applause
     try {
-      const audioMoments = await this.detectFromAudio(mediaAsset.filePath || mediaAsset.sourceUrl);
+      const audioMoments = await this.detectFromAudio(mediaAsset.filePath || mediaAsset.sourceUrl || '');
       moments.push(...audioMoments);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(`Audio analysis failed: ${error.message}`);
     }
 
     // 2. Transcription-based detection (topic changes, emphasis)
     try {
-      const transcriptMoments = await this.detectFromTranscript(mediaAsset.filePath || mediaAsset.sourceUrl);
+      const transcriptMoments = await this.detectFromTranscript(mediaAsset.filePath || mediaAsset.sourceUrl || '');
       moments.push(...transcriptMoments);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.warn(`Transcript analysis failed: ${error.message}`);
     }
 

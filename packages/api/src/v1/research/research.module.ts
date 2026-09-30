@@ -4,11 +4,11 @@ import { ResearchAgentService } from './research-agent.service';
 import { CreatorDiscoveryService } from './creator-discovery.service';
 import { PlatformMonitorService } from './platform-monitor.service';
 import { ScheduledClippingService } from './scheduled-clipping.service';
-import { PrismaService } from '@shared/prisma';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { ClipperModule } from '../clipper/clipper.module';
 
 @Module({
-  imports: [ClipperModule],
+  imports: [PrismaModule, ClipperModule],
   controllers: [ResearchController],
   providers: [
     ResearchAgentService,

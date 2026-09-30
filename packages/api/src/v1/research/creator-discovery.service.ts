@@ -147,7 +147,7 @@ export class CreatorDiscoveryService {
   }
 
   private async saveCreatorProfiles(creators: any[]) {
-    const saved = [];
+    const saved: any[] = [];
 
     for (const creator of creators) {
       const existing = await this.prisma.creatorProfile.findUnique({

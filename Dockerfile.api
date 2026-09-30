@@ -4,8 +4,8 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Install runtime dependencies for Prisma (openssl 1.1 for linux-musl binary)
-RUN apt-get update && apt-get install -y --no-install-recommends openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
+# Runtime deps: openssl for Prisma, ffmpeg for clip extraction (fluent-ffmpeg), build tools for native modules
+RUN apt-get update && apt-get install -y --no-install-recommends openssl python3 make g++ ffmpeg && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 RUN npm install -g pnpm@8.15.9 node-pre-gyp

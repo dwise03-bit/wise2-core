@@ -81,7 +81,7 @@ export class ResearchAgentService {
           score: c.clippingScore,
         })),
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`❌ Research job failed: ${error.message}`, error);
 
       await this.prisma.researchJob.update({

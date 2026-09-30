@@ -61,9 +61,9 @@ export class YouTubePublisher extends BasePublisher {
         platform: this.platform,
         success: true,
         platformUrl: `https://youtu.be/${videoId}`,
-        platformPostId: videoId,
+        platformPostId: videoId ?? undefined,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`YouTube publish failed: ${error.message}`);
       return {
         platform: this.platform,

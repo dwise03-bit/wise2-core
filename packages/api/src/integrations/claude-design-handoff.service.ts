@@ -76,7 +76,7 @@ export class ClaudeDesignHandoffService {
       );
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to submit design brief: ${error.message}`, error);
       throw error;
     }
@@ -93,7 +93,7 @@ export class ClaudeDesignHandoffService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       if (error.response?.status === 404) {
         throw new NotFoundException(`Design brief ${briefId} not found`);
       }
@@ -120,7 +120,7 @@ export class ClaudeDesignHandoffService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to list design briefs: ${error.message}`, error);
       throw error;
     }
@@ -149,7 +149,7 @@ export class ClaudeDesignHandoffService {
       );
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to update design brief: ${error.message}`, error);
       throw error;
     }
@@ -199,7 +199,7 @@ export class ClaudeDesignHandoffService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get pending briefs: ${error.message}`, error);
       return [];
     }
@@ -221,7 +221,7 @@ export class ClaudeDesignHandoffService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get brief stats: ${error.message}`, error);
       return { total: 0, submitted: 0, inProgress: 0, completed: 0, pending: 0 };
     }
