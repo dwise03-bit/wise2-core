@@ -25,12 +25,12 @@ export class TradingBotService {
     client: Client,
     priceDataService: PriceDataService,
     chartService: ChartService,
-    prisma: PrismaClient
+    prisma?: PrismaClient
   ) {
     this.client = client;
     this.priceDataService = priceDataService;
     this.chartService = chartService;
-    this.prisma = prisma;
+    this.prisma = prisma || null;
   }
 
   /**

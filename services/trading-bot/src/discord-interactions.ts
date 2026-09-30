@@ -12,7 +12,7 @@ export async function handleButtonInteraction(interaction: ButtonInteraction) {
     if (customId === 'trade_buy') {
       await interaction.reply({
         embeds: [createPortfolioEmbed(50000, 1234, 65)],
-        components: [createTradeButtons()],
+        components: [createTradeButtons() as any],
         ephemeral: false
       });
     } 

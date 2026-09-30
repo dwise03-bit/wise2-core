@@ -63,4 +63,4 @@ process.on('SIGINT', async () => {
 
 client.login(process.env.DISCORD_TOKEN);
 
-export { client, tradingBotService, commandHandler, prisma };
+export { client, tradingBotService };

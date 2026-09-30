@@ -206,8 +206,8 @@ export class AnalysisService {
     }
 
     const prices = candles.map((c) => c.close);
-    const volumes = candles.map((c) => c.volume);
-    const totalVolume = volumes.reduce((a, b) => a + b, 0);
+    const volumes = candles.map((c) => c.volume).filter((v): v is number => v !== undefined);
+    const totalVolume = volumes.length > 0 ? volumes.reduce((a, b) => a + b, 0) : 0;
 
     // Point of Control (price with most volume)
     let maxVolumePrice = prices[0] || 0;
