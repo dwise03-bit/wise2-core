@@ -333,12 +333,7 @@ export default function TradingDashboard() {
                       ))}
                     </div>
                   </div>
-                  <div className="bg-[#050607] rounded md:h-64 h-40 border border-[#00D9FF]/10 flex items-center justify-center mb-4">
-                    <div className="text-center">
-                      <LineChart size={48} className="text-[#00D9FF]/30 mx-auto mb-2" />
-                      <p className="text-sm text-gray-500">Live chart - Connect TradingView API</p>
-                    </div>
-                  </div>
+                  <MarketChart symbol={selectedSymbol} data={chartData} />
                   <div className="flex gap-2 flex-wrap text-xs">
                     {['Volume', 'RSI', 'MACD', 'EMA', 'Bollinger Bands', 'VWAP'].map(tool => (
                       <span key={tool} className="px-3 py-1 bg-[#00D9FF]/10 border border-[#00D9FF]/20 rounded text-gray-300">{tool}</span>
