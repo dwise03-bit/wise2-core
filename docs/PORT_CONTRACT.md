@@ -64,6 +64,15 @@ Every service has an assigned port. Changes to port assignments require approval
 | **Dashboard** | 3001 | yes | :80/:443 | https://dashboard.wise2.io | User portal |
 | **Second Brain** | 3012 | yes | :80/:443 | https://brain.wise2.io | Knowledge API |
 
+### Apps moved off Vercel (deploy/docker-compose.jo-auth.yml)
+
+Bound to 127.0.0.1 only; nginx is the public entry point.
+
+| Service | Host Port | Container Port | Internal | Notes |
+|---------|-----------|----------------|----------|-------|
+| **jo-credit-os-demo** | 3031 | 3000 | yes | Next.js app formerly on Vercel (wise2-jocredit) |
+| **auth-gateway** | 3032 | 3013 | yes | Express auth service formerly on Vercel |
+
 ### Hermes & Automation
 
 | Service | Port | Internal | Notes |

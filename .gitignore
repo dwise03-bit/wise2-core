@@ -31,6 +31,8 @@ yarn.lock
 apps/*/package-lock.json
 packages/*/package-lock.json
 services/*/package-lock.json
+# auth-gateway deploys on Vercel outside the pnpm workspace; its own lockfile makes Vercel use npm
+!services/auth-gateway/package-lock.json
 
 # Build outputs
 dist/

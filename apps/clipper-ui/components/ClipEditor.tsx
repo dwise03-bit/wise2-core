@@ -87,7 +87,7 @@ export default function ClipEditor({
           },
         }
       );
-      alert('✓ Clip extracted successfully! Ready for publishing.');
+      alert('Clip extracted successfully! Ready for publishing.');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to extract clip');
     } finally {
@@ -166,7 +166,7 @@ export default function ClipEditor({
 
           <div className="bg-wise-neon/10 border border-wise-neon/20 rounded p-3">
             <p className="text-sm text-wise-neon">
-              ⏱️ Duration: <span className="font-bold">{endTime - startTime} seconds</span>
+              Duration: <span className="font-bold">{endTime - startTime} seconds</span>
             </p>
           </div>
 
@@ -196,7 +196,7 @@ export default function ClipEditor({
               disabled={loading}
             />
             <label htmlFor="autoCaption" className="text-sm text-wise-neon">
-              ✓ Auto-generate captions from transcript
+              Auto-generate captions from transcript
             </label>
           </div>
 
@@ -210,7 +210,7 @@ export default function ClipEditor({
                 : 'bg-wise-neon text-wise-navy hover:bg-wise-neon/80'
             }`}
           >
-            {loading ? '⏳ Creating...' : '✂️ Create Clip'}
+            {loading ? 'Creating...' : 'Create Clip'}
           </button>
         </form>
       </div>
