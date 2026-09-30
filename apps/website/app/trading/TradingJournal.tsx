@@ -63,24 +63,24 @@ export default function TradingJournal() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#070812] via-[#101329] to-[#070812] p-6">
+    <div className="min-h-full bg-[#050607] p-4 text-white sm:p-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 flex items-center justify-between"
+        className="mb-6 flex flex-col gap-4 rounded-xl border border-[#00D9FF]/25 bg-[linear-gradient(115deg,rgba(7,31,53,.96),rgba(5,6,7,.92))] p-4 shadow-[0_0_32px_rgba(0,217,255,0.10)] sm:mb-8 sm:flex-row sm:items-center sm:p-6"
       >
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+          <h1 className="mb-2 flex items-center gap-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
             <BookOpen className="w-8 h-8" />
             Trading Journal
           </h1>
-          <p className="text-slate-400">Reflect on every trade for continuous improvement</p>
+          <p className="text-gray-400">Reflect on every trade for continuous improvement</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}
           onClick={() => setShowNewEntry(!showNewEntry)}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#00D9FF]/60 bg-[#006bff] px-4 py-2 font-semibold text-white shadow-[0_0_20px_rgba(0,217,255,0.22)] transition hover:bg-[#087cff]"
         >
           <Plus className="w-5 h-5" />
           New Entry
@@ -92,24 +92,24 @@ export default function TradingJournal() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8"
+        className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 sm:gap-4 sm:mb-8"
       >
         <StatCard label="Total Entries" value={stats.totalEntries} />
         <StatCard
           label="Wins"
           value={stats.wins}
-          color="text-emerald-400"
+          color="text-[#00FF7F]"
         />
         <StatCard
           label="Losses"
           value={stats.losses}
-          color="text-red-400"
+          color="text-[#ff7197]"
         />
         <StatCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} />
         <StatCard
           label="Total P&L"
           value={`$${stats.totalPnL.toLocaleString()}`}
-          color={stats.totalPnL > 0 ? 'text-emerald-400' : 'text-red-400'}
+          color={stats.totalPnL > 0 ? 'text-[#00FF7F]' : 'text-[#ff7197]'}
         />
       </motion.div>
 
@@ -120,9 +120,9 @@ export default function TradingJournal() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="mb-6 flex items-center gap-3"
+        className="mb-6 flex flex-wrap items-center gap-3 rounded-lg border border-[#00D9FF]/15 bg-[#07111f] p-3"
       >
-        <Filter className="w-5 h-5 text-slate-400" />
+        <Filter className="w-5 h-5 text-gray-400" />
         <div className="flex gap-2">
           {['all', 'WIN', 'LOSS'].map(f => (
             <button
@@ -130,8 +130,8 @@ export default function TradingJournal() {
               onClick={() => setFilter(f as any)}
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
                 filter === f
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-slate-800/50 text-slate-400 hover:text-white'
+                  ? 'border border-[#00D9FF]/60 bg-[#006bff] text-white'
+                  : 'border border-[#00D9FF]/20 bg-[#0b0d1c] text-gray-400 hover:border-[#00D9FF]/50 hover:text-white'
               }`}
             >
               {f === 'all' ? 'All Trades' : f}
@@ -148,13 +148,13 @@ export default function TradingJournal() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 backdrop-blur hover:border-slate-600 transition"
+            className="rounded-xl border border-[#00D9FF]/20 bg-[#0b0d1c] p-4 shadow-[0_0_26px_rgba(0,217,255,0.06)] transition hover:border-[#00D9FF]/45 sm:p-6"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <div>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-gray-400">
                     {entry.date.toLocaleDateString()}
                   </p>
                   <p className="text-lg font-bold text-white">
@@ -164,42 +164,42 @@ export default function TradingJournal() {
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     entry.result === 'WIN'
-                      ? 'bg-emerald-400/20 text-emerald-400'
+                      ? 'border border-[#00FF7F]/30 bg-[#00FF7F]/10 text-[#00FF7F]'
                       : entry.result === 'LOSS'
-                      ? 'bg-red-400/20 text-red-400'
-                      : 'bg-slate-600/20 text-slate-400'
+                      ? 'border border-[#FF0055]/30 bg-[#FF0055]/10 text-[#ff7197]'
+                      : 'border border-white/10 bg-white/5 text-gray-400'
                   }`}
                 >
                   {entry.result}
                 </div>
               </div>
               <div className="text-right">
-                <p className={`text-2xl font-bold font-mono ${entry.pnl > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <p className={`text-2xl font-bold font-mono ${entry.pnl > 0 ? 'text-[#00FF7F]' : 'text-[#ff7197]'}`}>
                   {entry.pnl > 0 ? '+' : ''}{entry.pnl}
                 </p>
-                <p className="text-xs text-slate-400">{entry.setupType}</p>
+                <p className="text-xs text-gray-400">{entry.setupType}</p>
               </div>
             </div>
 
             {/* Emotional State */}
             {entry.emotionalState && (
-              <div className="mb-4 inline-block px-3 py-1 bg-blue-400/10 text-blue-300 text-xs font-semibold rounded">
+              <div className="mb-4 inline-block px-3 py-1 border border-[#00D9FF]/25 bg-[#00D9FF]/10 text-[#83edff] text-xs font-semibold rounded">
                 Mood: {entry.emotionalState}
               </div>
             )}
 
             {/* Reflection */}
             {(entry.whatWentWell || entry.lessonsLearned) && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
                 {entry.whatWentWell && (
                   <div>
-                    <p className="text-slate-400 mb-1 font-semibold">What went well</p>
+                    <p className="text-gray-400 mb-1 font-semibold">What went well</p>
                     <p className="text-slate-300">{entry.whatWentWell}</p>
                   </div>
                 )}
                 {entry.lessonsLearned && (
                   <div>
-                    <p className="text-slate-400 mb-1 font-semibold">Lessons learned</p>
+                    <p className="text-gray-400 mb-1 font-semibold">Lessons learned</p>
                     <p className="text-slate-300">{entry.lessonsLearned}</p>
                   </div>
                 )}
@@ -212,7 +212,7 @@ export default function TradingJournal() {
       {/* Export Button */}
       <motion.button
         whileHover={{ scale: 1.02 }}
-        className="mt-8 w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition"
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg border border-[#00D9FF]/35 bg-[#07111f] px-4 py-3 font-semibold text-white transition hover:border-[#00D9FF]/70 hover:bg-[#0b0d1c]"
       >
         <Download className="w-5 h-5" />
         Export Journal (PDF)
@@ -224,7 +224,7 @@ export default function TradingJournal() {
 function StatCard({
   label,
   value,
-  color = 'text-slate-300',
+  color = 'text-gray-200',
 }: {
   label: string;
   value: string | number;
@@ -233,9 +233,9 @@ function StatCard({
   return (
     <motion.div
       whileHover={{ borderColor: 'rgba(52, 211, 153, 0.3)' }}
-      className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 backdrop-blur transition"
+      className="rounded-lg border border-[#00D9FF]/20 bg-[#07111f] p-4 shadow-[0_0_18px_rgba(0,217,255,0.05)] transition"
     >
-      <p className="text-xs text-slate-400 mb-1">{label}</p>
+      <p className="text-xs text-gray-400 mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
     </motion.div>
   );
@@ -252,7 +252,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
       <form className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-slate-400 mb-2">Symbol</label>
+            <label className="block text-sm text-gray-400 mb-2">Symbol</label>
             <input
               type="text"
               placeholder="NQ"
@@ -260,7 +260,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm text-slate-400 mb-2">Direction</label>
+            <label className="block text-sm text-gray-400 mb-2">Direction</label>
             <select className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-emerald-500">
               <option>LONG</option>
               <option>SHORT</option>
@@ -270,7 +270,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
 
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm text-slate-400 mb-2">Result</label>
+            <label className="block text-sm text-gray-400 mb-2">Result</label>
             <select className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-emerald-500">
               <option>WIN</option>
               <option>LOSS</option>
@@ -278,7 +278,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
             </select>
           </div>
           <div>
-            <label className="block text-sm text-slate-400 mb-2">P&L</label>
+            <label className="block text-sm text-gray-400 mb-2">P&L</label>
             <input
               type="number"
               placeholder="0"
@@ -286,7 +286,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
             />
           </div>
           <div>
-            <label className="block text-sm text-slate-400 mb-2">Setup Type</label>
+            <label className="block text-sm text-gray-400 mb-2">Setup Type</label>
             <select className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-emerald-500">
               <option>LIQUIDITY_SWEEP</option>
               <option>RANGE_BREAKOUT</option>
@@ -296,7 +296,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
         </div>
 
         <div>
-          <label className="block text-sm text-slate-400 mb-2">What went well?</label>
+          <label className="block text-sm text-gray-400 mb-2">What went well?</label>
           <textarea
             placeholder="Describe what you did right..."
             rows={2}
@@ -305,7 +305,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
         </div>
 
         <div>
-          <label className="block text-sm text-slate-400 mb-2">Lessons learned</label>
+          <label className="block text-sm text-gray-400 mb-2">Lessons learned</label>
           <textarea
             placeholder="What will you do differently next time?"
             rows={2}
@@ -316,7 +316,7 @@ function NewEntryForm({ onClose }: { onClose: () => void }) {
         <div className="flex gap-3">
           <button
             type="submit"
-            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition"
+            className="flex-1 py-2 rounded-lg border border-[#00D9FF]/60 bg-[#006bff] px-4 py-2 font-semibold text-white shadow-[0_0_20px_rgba(0,217,255,0.22)] transition hover:bg-[#087cff]"
           >
             Save Entry
           </button>
