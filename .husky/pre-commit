@@ -1,0 +1,51 @@
+#!/bin/sh
+# Pre-commit hook for WISE² Git workflow
+# Runs before commit is finalized
+# Install: ./scripts/setup-git-hooks.sh
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Check for secrets
+echo "🔐 Checking for secrets..."
+if echo "$STAGED_FILES" | grep -qE '\.(env|key|pem|secret)'; then
+    echo "❌ ERROR: Potential secret file detected!"
+    echo "   Do not commit .env, keys, or secrets"
+    exit 1
+fi
+
+# Check for large files (> 10MB)
+echo "📦 Checking file sizes..."
+LARGE_FILES=$(git diff --cached --name-only | while read file; do
+    SIZE=$(git cat-file -s :0:"$file" 2>/dev/null || echo 0)
+    if [ "$SIZE" -gt 10485760 ]; then
+        echo "$file"
+    fi
+done)
+
+if [ -n "$LARGE_FILES" ]; then
+    echo "❌ ERROR: Large files detected (>10MB):"
+    echo "$LARGE_FILES"
+    exit 1
+fi
+
+# Prevent direct main commits
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" = "main" ]; then
+    echo "❌ ERROR: You're trying to commit directly to main!"
+    echo "   Use: git checkout -b feature/your-feature"
+    exit 1
+fi
+
+# Check commit message will be provided
+if [ -z "$COMMIT_MSG" ] && [ ! -f "$1" ]; then
+    echo "✅ Pre-commit checks passed"
+    exit 0
+fi
+
+echo "✅ Pre-commit checks passed"
+exit 0

@@ -1,61 +1,127 @@
-# Contributing to WISE² Core
+# Contributing to WISE² Genesis
+
+Welcome to the WISE² team! This guide ensures smooth collaboration.
+
+## Quick Start
+
+```bash
+git clone https://github.com/dwise03-bit/wise2-core.git
+cd wise2-core
+git config user.name "Your Name"
+git config user.email "your.email@example.com"
+./scripts/setup-git-hooks.sh
+pnpm install
+```
+
+## Development Workflow
+
+```bash
+# Create feature branch
+git checkout -b feature/what-you-are-building
+
+# Make changes & test
+npm test
+npm run lint
+
+# Commit with format: type(scope): description
+git commit -m "feat(tailscale): add user to ACL"
+
+# Sync with main
+./scripts/git-team-sync.sh
+
+# Push & create PR
+git push origin feature/what-you-are-building
+gh pr create --fill
+```
+
+## Commit Format
+
+```
+type(scope): description
+
+type: feat, fix, chore, docs, refactor, perf, test, ci, security
+```
 
 ## Code Standards
 
-### TypeScript
-- Strict mode enabled
-- No `any` types (use generics or union types)
-- All public APIs must be typed
-- Prefix unused parameters with `_`
+- TypeScript required
+- 80% test coverage minimum
+- ESLint & Prettier enforced
+- Documentation for public APIs
 
-### Formatting
-- Prettier enforces code style
-- 2-space indentation
-- Semicolons required
-- Run `npm run format` before commit
+```bash
+npm run format
+npm run lint
+npm test -- --coverage
+```
 
-### Testing
-- Unit tests for utilities
-- Integration tests for database/API
-- Minimum 80% coverage target
-- Run tests locally: `npm test`
+## Pull Request Checklist
 
-### Commits
-- Descriptive messages: `fix: description` not `fixed stuff`
-- Reference issues: `fixes #123`
-- Atomic commits (one logical change)
-- Example: `fix: Handle null user in auth middleware (fixes #42)`
+- [ ] Tests pass
+- [ ] Linting passes
+- [ ] No secrets committed
+- [ ] Documentation updated
+- [ ] Issue linked
+- [ ] Branch synced with main
 
-## Process
+## Security
 
-1. **Before committing**
-   ```bash
-   npm run format      # Auto-fix formatting
-   npm run type-check  # Verify types
-   npm test           # Run tests
-   npm run lint       # Check style
-   ```
+### Never Commit
+- API keys or tokens
+- Passwords
+- Database credentials
+- Private keys
 
-2. **Before pushing**
-   ```bash
-   npm run build      # Verify production build
-   docker-compose build  # Test Docker builds
-   ```
+### Git Hooks Protect
+- Pre-commit: blocks secrets, large files, direct main commits
+- Commit-msg: enforces conventional commits format
 
-3. **Create pull request**
-   - Link related issues
-   - Describe what changed and why
-   - Reference testing done
+## Git Hooks
 
-4. **Code review**
-   - At least one approval required
-   - All CI checks must pass
-   - No unresolved feedback
+Install once:
+```bash
+./scripts/setup-git-hooks.sh
+```
 
-## Getting Help
+What they check:
+- No secrets (env files, keys, etc)
+- No large files (>10MB)
+- No direct commits to main
+- Proper commit message format
 
-- **Setup issues**: See [Development Setup](./docs/guides/DEVELOPMENT_SETUP.md)
-- **Architecture questions**: See [Architecture Guide](./docs/architecture/ARCHITECTURE.md)
-- **API questions**: See [API Reference](./docs/api/REFERENCE.md)
-- **Other**: Open a GitHub issue
+## Review Process
 
+**Before Opening PR**:
+- Code tested locally
+- Branch synced with main (`./scripts/git-team-sync.sh`)
+- All checks pass
+
+**Merge Requirements**:
+- All checks pass ✅
+- At least 1 approval ✅
+- No unresolved conversations ✅
+- Branch up-to-date ✅
+
+## Code Review
+
+**As Reviewer**:
+- Check correctness
+- Review performance impact
+- Verify security
+- Approve when satisfied
+
+**As Author**:
+- Respond to feedback
+- Create new commits (don't force-push)
+- Ask for clarification if needed
+
+## Questions?
+
+- **Quick Start**: GIT_QUICK_START.md
+- **Full Guide**: .github/COLLABORATION.md
+- **Code Owners**: .github/CODEOWNERS
+- **Issues**: GitHub Issues
+
+---
+
+**Thank you for contributing to WISE² Genesis! 🚀**
