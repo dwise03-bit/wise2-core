@@ -1,0 +1,15 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"WISE2 Visual Board",
+  "type":"object",
+  "required":["master_hero","materials","lighting","typography","interface_direction","section_scenes","mobile_treatment","transition_language"],
+  "properties": {
+    "master_hero":{"$ref":"#/$defs/scene"},
+    "materials":{"type":"array","minItems":2,"items":{"type":"string"}},
+    "lighting":{"type":"array","minItems":2,"items":{"type":"string"}},
+    "typography":{"type":"string"}, "interface_direction":{"type":"string"},
+    "section_scenes":{"type":"array","minItems":2,"items":{"$ref":"#/$defs/scene"}},
+    "mobile_treatment":{"type":"string"}, "transition_language":{"type":"string"}
+  },
+  "$defs":{"scene":{"type":"object","required":["name","reason","foreground","midground","background","safe_zone","mobile_crop"],"properties":{"name":{"type":"string"},"reason":{"type":"string"},"foreground":{"type":"string"},"midground":{"type":"string"},"background":{"type":"string"},"safe_zone":{"type":"string"},"mobile_crop":{"type":"string"}}}}
+}
