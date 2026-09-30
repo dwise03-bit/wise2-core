@@ -9,7 +9,6 @@ import {
   ClipboardIcon,
   ClockIcon,
   GearIcon,
-  PinIcon,
   PlayIcon,
   SearchIcon,
   SparklesIcon,
@@ -28,22 +27,13 @@ interface Creator {
   platforms?: string[];
 }
 
-interface ScheduledClip {
-  id: string;
-  title?: string;
-  sourcePlatform: string;
-  clipPotentialScore?: number;
-  status: string;
-  scheduledFor: string;
-  publishTo?: string[];
+interface Trend {
+  topic: string;
+  volume: number;
+  relevance: number;
 }
 
-interface ResearchJob {
-  status: string;
-  creatorsFound: number;
-  clipsScheduled: number;
-  topCreators: Creator[];
-}
+const JOB_STATUSES = ['SCHEDULED', 'PROCESSING', 'EXTRACTED', 'PUBLISHED'] as const;
 
 // Animated Counter Component
 const AnimatedCounter = ({ value, duration = 2000 }: { value: number; duration?: number }) => {
@@ -119,7 +109,6 @@ const StatusBadge = ({ status, count }: { status: string; count: number }) => {
             <span className="text-lg">{config.icon}</span>
             <h3 className={`font-bold ${config.color}`}>{config.label}</h3>
           </div>
-          <p className={`text-sm ${config.color}/60`}>Last updated: 5 minutes ago</p>
         </div>
         <div className="text-right">
           <p className={`text-3xl font-bold ${config.color}`}>
@@ -155,8 +144,8 @@ const MetricCard = ({ label, value, icon, color }: { label: string; value: numbe
 export default function ResearchDashboard() {
   const [activeTab, setActiveTab] = useState<'trending' | 'scheduled' | 'research'>('trending');
   const [trendingCreators, setTrendingCreators] = useState<Creator[]>([]);
-  const [scheduledClips, setScheduledClips] = useState<ScheduledClip[]>([]);
-  const [researchJob, setResearchJob] = useState<ResearchJob | null>(null);
+  const [scheduledStats, setScheduledStats] = useState<Record<string, number>>({});
+  const [trends, setTrends] = useState<Trend[]>([]);
   const [loading, setLoading] = useState(false);
   const [jobRunning, setJobRunning] = useState(false);
   const [hoveredCreator, setHoveredCreator] = useState<string | null>(null);
@@ -184,16 +173,7 @@ export default function ResearchDashboard() {
   const fetchScheduledClips = async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/v1/research/scheduled-stats`);
-      if (response.data?.byStatus) {
-        setScheduledClips(Object.entries(response.data.byStatus).map(([status, count]) => ({
-          id: status,
-          status,
-          sourcePlatform: 'MIXED',
-          clipPotentialScore: Math.random() * 100,
-          scheduledFor: new Date().toISOString(),
-          publishTo: [],
-        })));
-      }
+      setScheduledStats(response.data?.byStatus || {});
     } catch (error) {
       console.error('Failed to fetch scheduled clips:', error);
     }
@@ -202,7 +182,7 @@ export default function ResearchDashboard() {
   const fetchResearchStats = async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/v1/research/trends`);
-      setResearchJob(response.data as ResearchJob);
+      setTrends(response.data?.trends || []);
     } catch (error) {
       console.error('Failed to fetch research stats:', error);
     }
@@ -211,8 +191,7 @@ export default function ResearchDashboard() {
   const runDailyResearch = async () => {
     setJobRunning(true);
     try {
-      const response = await axios.post(`${API_BASE}/api/v1/research/daily`);
-      setResearchJob(response.data);
+      await axios.post(`${API_BASE}/api/v1/research/daily`);
       await fetchTrendingCreators();
       await fetchScheduledClips();
     } catch (error) {
@@ -236,17 +215,16 @@ export default function ResearchDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-wise-navy via-wise-navy to-black">
-      {/* Enhanced Header */}
-      <header className="border-b border-wise-cyan/20 bg-gradient-to-r from-wise-navy/95 to-wise-navy/80 backdrop-blur-xl sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+    <div>
+      <header className="border-b border-wise-cyan/20">
+        <div className="max-w-7xl mx-auto px-0 py-6 sm:py-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-wise-cyan"><SearchIcon size={32} /></span>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-wise-cyan to-wise-neon bg-clip-text text-transparent">
+                <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-wise-cyan to-wise-neon bg-clip-text text-transparent">
                   Research Dashboard
-                </h1>
+                </h2>
               </div>
               <p className="text-wise-cyan/60 text-sm sm:text-base">AI-powered creator discovery & automatic clipping</p>
             </div>
@@ -278,18 +256,18 @@ export default function ResearchDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
+      <main className="max-w-7xl mx-auto px-0 py-8 sm:py-12">
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8">
           <MetricCard
             label="Creators Discovered"
-            value={researchJob?.creatorsFound || 0}
+            value={trendingCreators.length}
             icon={<TargetIcon size={32} />}
             color="wise-cyan"
           />
           <MetricCard
             label="Clips Scheduled"
-            value={researchJob?.clipsScheduled || 0}
+            value={Object.values(scheduledStats).reduce((sum, n) => sum + n, 0)}
             icon={<ChartIcon size={32} />}
             color="wise-neon"
           />
@@ -439,53 +417,8 @@ export default function ResearchDashboard() {
                 Scheduled Extraction Jobs
               </h2>
               <div className="space-y-3">
-                {[
-                  { status: 'SCHEDULED', count: 12 },
-                  { status: 'PROCESSING', count: 3 },
-                  { status: 'EXTRACTED', count: 8 },
-                  { status: 'PUBLISHED', count: 45 },
-                ].map((item) => (
-                  <StatusBadge key={item.status} status={item.status} count={item.count} />
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-wise-cyan/10 border border-wise-cyan/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
-              <h3 className="font-bold text-wise-cyan mb-6 text-xl flex items-center gap-2">
-                <PlayIcon size={24} />
-                Sample Scheduled Clips
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { title: 'Tech Creator - AI Breakthrough', platform: 'YOUTUBE', duration: '45s', score: 85 },
-                  { title: 'Business Insights - Market Analysis', platform: 'TWITCH', duration: '60s', score: 78 },
-                  { title: 'Growth Strategy - Viral Moment', platform: 'YOUTUBE', duration: '30s', score: 92 },
-                ].map((clip, i) => (
-                  <div
-                    key={i}
-                    className="group bg-gradient-to-r from-wise-navy/40 to-wise-navy/20 border border-wise-cyan/20 rounded-xl p-4 sm:p-5 hover:border-wise-cyan/40 transition-all duration-300 hover:shadow-lg hover:shadow-wise-cyan/20 transform hover:scale-102 cursor-default"
-                  >
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex-1">
-                        <p className="font-semibold text-wise-cyan group-hover:text-wise-neon transition-colors">{clip.title}</p>
-                        <p className="text-xs text-wise-cyan/60 mt-2">
-                          <span className="inline-flex items-center gap-1"><PinIcon size={12} /> {clip.platform}</span>
-                          <span className="mx-2">•</span>
-                          <span className="inline-flex items-center gap-1"><ClockIcon size={12} /> {clip.duration}</span>
-                          <span className="mx-2">•</span>
-                          <span className="inline-flex items-center gap-1 font-bold text-wise-neon"><SparklesIcon size={12} /> {clip.score}/100</span>
-                        </p>
-                      </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <button className="px-3 py-1.5 text-xs bg-gradient-to-r from-wise-neon to-wise-neon/80 text-wise-navy rounded-lg hover:shadow-lg hover:shadow-wise-neon/50 transition-all transform hover:scale-105 active:scale-95 font-semibold">
-                          Extract
-                        </button>
-                        <button className="px-3 py-1.5 text-xs bg-wise-cyan/20 text-wise-cyan rounded-lg hover:bg-wise-cyan/30 transition-all transform hover:scale-105 active:scale-95 font-semibold border border-wise-cyan/30">
-                          Reschedule
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {JOB_STATUSES.map((status) => (
+                  <StatusBadge key={status} status={status} count={scheduledStats[status] ?? 0} />
                 ))}
               </div>
             </div>
@@ -500,15 +433,11 @@ export default function ResearchDashboard() {
                 <ChartIcon size={28} />
                 Trending Topics
               </h2>
+              {trends.length === 0 && (
+                <p className="text-wise-gold/70">No trending topics available yet.</p>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  { topic: 'AI Breakthroughs', volume: 10000, relevance: 0.95, trending: '↑ +45%' },
-                  { topic: 'Web3 & Crypto', volume: 5000, relevance: 0.7, trending: '↓ -12%' },
-                  { topic: 'Tech Layoffs', volume: 8000, relevance: 0.85, trending: '↑ +23%' },
-                  { topic: 'Remote Work', volume: 4200, relevance: 0.68, trending: '→ +2%' },
-                  { topic: 'Startup News', volume: 6800, relevance: 0.79, trending: '↑ +18%' },
-                  { topic: 'SaaS Growth', volume: 5500, relevance: 0.82, trending: '↑ +31%' },
-                ].map((item, i) => (
+                {trends.map((item, i) => (
                   <div
                     key={i}
                     className="group bg-gradient-to-br from-wise-navy/40 to-wise-navy/20 border border-wise-gold/20 rounded-xl p-5 sm:p-6 hover:border-wise-gold/40 transition-all duration-300 transform hover:scale-102 hover:shadow-lg hover:shadow-wise-gold/20"
@@ -524,58 +453,7 @@ export default function ResearchDashboard() {
                         <AnimatedProgressBar value={item.relevance * 100} color="bg-wise-gold" />
                         <p className="text-wise-gold font-bold mt-2">{Math.round(item.relevance * 100)}%</p>
                       </div>
-                      <div className="pt-3 border-t border-wise-gold/20">
-                        <p className={`font-bold ${item.trending.includes('+') ? 'text-wise-neon' : 'text-red-400'}`}>
-                          {item.trending}
-                        </p>
-                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-wise-neon/10 border border-wise-neon/20 rounded-2xl p-6 sm:p-8 backdrop-blur-sm">
-              <h3 className="font-bold text-wise-neon mb-6 text-xl flex items-center gap-2">
-                <TargetIcon size={24} />
-                Top Creators in Trending Topics
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  {
-                    topic: 'AI Breakthroughs',
-                    creators: [
-                      { name: 'TechCrunch', followers: '450K' },
-                      { name: 'AI Research Lab', followers: '280K' },
-                      { name: 'OpenAI Updates', followers: '195K' },
-                    ],
-                  },
-                  {
-                    topic: 'SaaS Growth',
-                    creators: [
-                      { name: 'SaaS News Daily', followers: '320K' },
-                      { name: 'Growth Hacker Hub', followers: '210K' },
-                      { name: 'Startup Insights', followers: '185K' },
-                    ],
-                  },
-                ].map((section, i) => (
-                  <div
-                    key={i}
-                    className="group bg-gradient-to-br from-wise-navy/40 to-wise-navy/20 rounded-xl p-5 sm:p-6 border border-wise-neon/20 hover:border-wise-neon/40 transition-all duration-300 transform hover:scale-102 hover:shadow-lg hover:shadow-wise-neon/20"
-                  >
-                    <p className="font-bold text-wise-neon mb-4 text-lg group-hover:text-wise-cyan transition-colors">{section.topic}</p>
-                    <ul className="space-y-2.5 text-sm">
-                      {section.creators.map((creator, idx) => (
-                        <li
-                          key={idx}
-                          className="text-wise-neon/80 hover:text-wise-neon transition-colors flex items-center gap-2 group/item"
-                        >
-                          <span className="group-hover/item:translate-x-1 transition-transform">→</span>
-                          <span>{creator.name}</span>
-                          <span className="text-wise-neon/60">({creator.followers})</span>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 ))}
               </div>
