@@ -163,14 +163,29 @@ function workspaceDisplayName(name) {
   return name.replace(/_shannon-\d+$/, "") || name;
 }
 
+// Shannon only names its workspace directory once it actually starts
+// running (see docs/workspaces.md), so there is no name to match against
+// the moment a scan is launched. Instead, while a scan is RUNNING, treat
+// the newest workspace created since that scan's startedAt as "the" active
+// one. Before that workspace exists on disk, there is nothing to point at
+// yet, and the caller should treat findings as not-yet-available rather
+// than stale data from a previous run.
+function activeWorkspace(workspaces) {
+  if (shannonScan?.state !== "RUNNING" || !shannonScan.startedAt) return null;
+  const startedMs = Date.parse(shannonScan.startedAt);
+  return workspaces.find((item) => item.mtimeMs >= startedMs) || null;
+}
+
 function listShannonScans(limit = 10) {
-  return listShannonWorkspaces().slice(0, limit).map((item) => {
+  const workspaces = listShannonWorkspaces();
+  const active = activeWorkspace(workspaces);
+  return workspaces.slice(0, limit).map((item) => {
     const findings = parseShannonSarif(item.full);
     const counts = findings.reduce((acc, f) => { acc[f.level] = (acc[f.level] || 0) + 1; return acc; }, {});
     return {
       workspace: item.name,
       target: workspaceDisplayName(item.name),
-      state: shannonScan?.workspace === item.name && shannonScan?.state === "RUNNING" ? "RUNNING" : workspaceReportState(item.full),
+      state: active?.name === item.name ? "RUNNING" : workspaceReportState(item.full),
       findingCount: findings.length,
       counts,
       updatedAt: new Date(item.mtimeMs).toISOString()
@@ -181,20 +196,27 @@ function listShannonScans(limit = 10) {
 async function getShannonStatus() {
   const installed = fs.existsSync(SHANNON_BIN);
   const workspaces = listShannonWorkspaces();
-  const latest = workspaces[0] || null;
-  const findings = latest ? parseShannonSarif(latest.full) : [];
+  const active = activeWorkspace(workspaces);
+  const running = shannonScan?.state === "RUNNING";
+  const launchError = shannonScan?.state === "ERROR";
+  // While running, only count findings from the workspace this run created
+  // (if Shannon has created it yet) — never from an older, unrelated scan.
+  const current = running ? active : workspaces[0] || null;
+  const findings = current ? parseShannonSarif(current.full) : [];
   const counts = findings.reduce((acc, f) => { acc[f.level] = (acc[f.level] || 0) + 1; return acc; }, {});
   return {
     installed,
     target: shannonScan?.target || SHANNON_DEFAULT_TARGET,
     repo: shannonScan?.repo || SHANNON_DEFAULT_REPO,
-    running: shannonScan?.state === "RUNNING",
-    workspace: latest?.name || shannonScan?.workspace || null,
-    state: shannonScan?.state === "RUNNING" ? "RUNNING" : (latest ? workspaceReportState(latest.full) : "NOT_RUN"),
+    running,
+    workspace: current?.name || null,
+    // A failed launch (e.g. the binary is missing) must not be masked by
+    // whatever an earlier, unrelated scan's workspace happens to show.
+    state: running ? "RUNNING" : launchError ? "LAUNCH_ERROR" : (current ? workspaceReportState(current.full) : "NOT_RUN"),
     findingCount: findings.length,
     counts,
     scanCount: workspaces.length,
-    sarifAvailable: latest ? fs.existsSync(path.join(latest.full, "report.sarif")) : false,
+    sarifAvailable: current ? fs.existsSync(path.join(current.full, "report.sarif")) : false,
     startedAt: shannonScan?.startedAt || null,
     finishedAt: shannonScan?.finishedAt || null
   };
@@ -257,13 +279,19 @@ app.post("/api/shannon/scan", asyncRoute(async (req, res) => {
   const emitLine = (line) => { if (line.trim()) io.emit("shannon:log", line); };
   child.stdout.on("data", (chunk) => String(chunk).split("\n").forEach(emitLine));
   child.stderr.on("data", (chunk) => String(chunk).split("\n").forEach(emitLine));
+  // A spawn that fails to launch at all (bad path, EACCES, ...) emits BOTH
+  // 'error' and 'close' — 'close' must not clobber the state 'error' sets.
+  let launchFailed = false;
   child.on("close", async (exitCode) => {
+    if (launchFailed) return;
     shannonScan = { ...shannonScan, state: "DONE", finishedAt: new Date().toISOString(), exitCode };
     io.emit("shannon:status", await getShannonStatus());
   });
-  child.on("error", (error) => {
+  child.on("error", async (error) => {
+    launchFailed = true;
     shannonScan = { ...shannonScan, state: "ERROR", finishedAt: new Date().toISOString(), exitCode: null };
     io.emit("shannon:log", `[wise2-dashboard] failed to launch wise2-shannon: ${error.message}`);
+    io.emit("shannon:status", await getShannonStatus());
   });
   res.json({ started: true, target, repo });
 }));
