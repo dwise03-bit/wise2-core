@@ -52,9 +52,18 @@ mkdir -p "$HOME/.local/bin" "$HOME/.local/share/applications"
 cat > "$HOME/.local/bin/wise2-shannon" <<EOF
 #!/usr/bin/env bash
 # WISE² wrapper for Shannon (local Ollama provider, no API cost).
-# Usage: wise2-shannon [-u URL] [-r REPO] [shannon args...]
+# Usage: wise2-shannon [-u URL] [-r REPO] [-w WORKSPACE] [shannon start args...]
+#        wise2-shannon setup | scans | --help | --version   (passthrough)
 set -Eeuo pipefail
 source "$SHANNON_HOME/env"
+
+# Subcommands that take no -u/-r of their own pass straight through.
+case "\${1:-}" in
+  setup|scans|--help|-h|--version|-v)
+    exec npx --yes "@keygraph/shannon@${SHANNON_VERSION}" "\$@"
+    ;;
+esac
+
 URL="\${WISE2_SHANNON_TARGET:-http://127.0.0.1:3080}"
 REPO="${DEFAULT_TARGET_REPO}"
 ARGS=()
@@ -65,9 +74,6 @@ while [[ \$# -gt 0 ]]; do
     *) ARGS+=("\$1"); shift;;
   esac
 done
-if [[ \${1:-} == setup ]]; then
-  exec npx --yes "@keygraph/shannon@${SHANNON_VERSION}" setup
-fi
 exec npx --yes "@keygraph/shannon@${SHANNON_VERSION}" start \\
   -u "\$URL" -r "\$REPO" --models-config "$SHANNON_HOME/models.json" "\${ARGS[@]}"
 EOF

@@ -5,7 +5,7 @@ const http = require("http");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const { execFile } = require("child_process");
+const { execFile, spawn } = require("child_process");
 const { promisify } = require("util");
 const { Server } = require("socket.io");
 const si = require("systeminformation");
@@ -16,6 +16,11 @@ const CONFIG_DIR = process.env.WISE2_CONFIG_DIR || path.join(ROOT, "config");
 const DATA_DIR = process.env.WISE2_DATA_DIR || path.join(ROOT, "data");
 const PORT = Number(process.env.WISE2_PORT || 3000);
 const DEMO_MODE = process.env.WISE2_DEMO_MODE === "true";
+
+const SHANNON_BIN = process.env.WISE2_SHANNON_BIN || path.join(os.homedir(), ".local", "bin", "wise2-shannon");
+const SHANNON_WORKSPACES_DIR = process.env.WISE2_SHANNON_WORKSPACES_DIR || path.join(os.homedir(), ".shannon", "workspaces");
+const SHANNON_DEFAULT_TARGET = process.env.WISE2_SHANNON_TARGET || "http://127.0.0.1:3080";
+const SHANNON_DEFAULT_REPO = process.env.WISE2_SHANNON_REPO || "/opt/wise2/core";
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -91,6 +96,80 @@ async function getGps() {
   return { state: configured ? "CONFIGURED" : "HARDWARE NOT DETECTED", latitude: null, longitude: null, source: configured ? "configured" : null };
 }
 
+// --- Shannon (AI pentester, github.com/KeygraphHQ/shannon) integration ---
+// The dashboard never runs exploits itself; it shells out to the wise2-shannon
+// wrapper (installed by install-shannon.sh) and reads the workspace it writes.
+let shannonScan = null; // { workspace, target, repo, state, startedAt, finishedAt, exitCode }
+
+function listShannonWorkspaces() {
+  try {
+    return fs.readdirSync(SHANNON_WORKSPACES_DIR)
+      .map((name) => {
+        const full = path.join(SHANNON_WORKSPACES_DIR, name);
+        const stat = fs.statSync(full);
+        return { name, full, mtimeMs: stat.mtimeMs };
+      })
+      .filter((item) => fs.statSync(item.full).isDirectory())
+      .sort((a, b) => b.mtimeMs - a.mtimeMs);
+  } catch {
+    return [];
+  }
+}
+
+function workspaceReportState(workspaceDir) {
+  const hasReport = fs.existsSync(path.join(workspaceDir, "Security-Assessment-Report.md")) ||
+    fs.existsSync(path.join(workspaceDir, "Security-Assessment-Report.pdf"));
+  const hasSarif = fs.existsSync(path.join(workspaceDir, "report.sarif"));
+  if (hasReport) return "COMPLETED";
+  if (fs.existsSync(path.join(workspaceDir, ".shannon"))) return "INCOMPLETE";
+  return hasSarif ? "COMPLETED" : "UNKNOWN";
+}
+
+// SARIF 2.1.0: level is derived by Shannon from severity (critical/high -> error,
+// medium -> warning, else -> note). The original critical/high split isn't
+// recoverable from SARIF alone, so the UI shows the SARIF level, not a
+// fabricated severity.
+function parseShannonSarif(workspaceDir) {
+  try {
+    const raw = fs.readFileSync(path.join(workspaceDir, "report.sarif"), "utf8");
+    const doc = JSON.parse(raw);
+    const results = doc.runs?.[0]?.results || [];
+    return results.map((result, index) => {
+      const location = result.locations?.[0]?.physicalLocation;
+      return {
+        id: `${index}`,
+        rule: result.ruleId || "shannon/miscellaneous",
+        level: result.level || "note",
+        message: result.message?.text || "",
+        file: location?.artifactLocation?.uri || null,
+        line: location?.region?.startLine ?? null
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+async function getShannonStatus() {
+  const installed = fs.existsSync(SHANNON_BIN);
+  const workspaces = listShannonWorkspaces();
+  const latest = workspaces[0] || null;
+  const findings = latest ? parseShannonSarif(latest.full) : [];
+  const counts = findings.reduce((acc, f) => { acc[f.level] = (acc[f.level] || 0) + 1; return acc; }, {});
+  return {
+    installed,
+    target: shannonScan?.target || SHANNON_DEFAULT_TARGET,
+    repo: shannonScan?.repo || SHANNON_DEFAULT_REPO,
+    running: shannonScan?.state === "RUNNING",
+    workspace: latest?.name || shannonScan?.workspace || null,
+    state: shannonScan?.state === "RUNNING" ? "RUNNING" : (latest ? workspaceReportState(latest.full) : "NOT_RUN"),
+    findingCount: findings.length,
+    counts,
+    startedAt: shannonScan?.startedAt || null,
+    finishedAt: shannonScan?.finishedAt || null
+  };
+}
+
 function getIncidents() {
   if (!DEMO_MODE) return [];
   return [
@@ -123,6 +202,34 @@ const asyncRoute = (handler) => async (req, res) => {
 };
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", name: "WISE² Defense IMP", version: "1.0.0" }));
+app.get("/api/shannon/status", asyncRoute(async (req, res) => res.json(await getShannonStatus())));
+app.get("/api/shannon/findings", (req, res) => {
+  const latest = listShannonWorkspaces()[0];
+  res.json(latest ? parseShannonSarif(latest.full) : []);
+});
+app.post("/api/shannon/scan", asyncRoute(async (req, res) => {
+  if (!fs.existsSync(SHANNON_BIN)) return res.status(503).json({ error: "SHANNON_NOT_INSTALLED" });
+  if (shannonScan?.state === "RUNNING") return res.status(409).json({ error: "SCAN_ALREADY_RUNNING" });
+  const target = String(req.body.target || SHANNON_DEFAULT_TARGET).trim();
+  const repo = String(req.body.repo || SHANNON_DEFAULT_REPO).trim();
+  if (!/^https?:\/\//.test(target)) return res.status(400).json({ error: "INVALID_TARGET" });
+
+  shannonScan = { workspace: null, target, repo, state: "RUNNING", startedAt: new Date().toISOString(), finishedAt: null, exitCode: null };
+  // No shell is invoked: args are passed as an array, not interpolated into a command string.
+  const child = spawn(SHANNON_BIN, ["-u", target, "-r", repo], { stdio: ["ignore", "pipe", "pipe"] });
+  const emitLine = (line) => { if (line.trim()) io.emit("shannon:log", line); };
+  child.stdout.on("data", (chunk) => String(chunk).split("\n").forEach(emitLine));
+  child.stderr.on("data", (chunk) => String(chunk).split("\n").forEach(emitLine));
+  child.on("close", async (exitCode) => {
+    shannonScan = { ...shannonScan, state: "DONE", finishedAt: new Date().toISOString(), exitCode };
+    io.emit("shannon:status", await getShannonStatus());
+  });
+  child.on("error", (error) => {
+    shannonScan = { ...shannonScan, state: "ERROR", finishedAt: new Date().toISOString(), exitCode: null };
+    io.emit("shannon:log", `[wise2-dashboard] failed to launch wise2-shannon: ${error.message}`);
+  });
+  res.json({ started: true, target, repo });
+}));
 app.get("/api/status", asyncRoute(async (req, res) => res.json(await buildStatus())));
 app.get("/api/system", asyncRoute(async (req, res) => res.json(await getSystem())));
 app.get("/api/incidents", (req, res) => res.json({ state: DEMO_MODE ? "DEMO DATA" : "CRIMERADAR_PROVIDER_NOT_CONFIGURED", incidents: getIncidents() }));

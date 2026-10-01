@@ -65,7 +65,66 @@ $("keyboardBtn").addEventListener("click", () => { $("commandForm").hidden = !$(
 $("voiceBtn").addEventListener("click", () => { $("impMessage").textContent = "“Push-to-talk hardware is not configured. Keyboard control remains available.”"; });
 $("commandForm").addEventListener("submit", (event) => { event.preventDefault(); const value = $("commandInput").value.trim(); if (value) askImp(value); $("commandInput").value = ""; });
 document.querySelectorAll("[data-command]").forEach((button) => button.addEventListener("click", () => askImp(button.dataset.command)));
-document.querySelectorAll(".nav button").forEach((button) => button.addEventListener("click", () => { document.querySelectorAll(".nav button").forEach((item) => item.classList.remove("active")); button.classList.add("active"); askImp(`${button.dataset.view} status`); }));
+document.querySelectorAll(".nav button").forEach((button) => button.addEventListener("click", () => {
+  document.querySelectorAll(".nav button").forEach((item) => item.classList.remove("active"));
+  button.classList.add("active");
+  const view = button.dataset.view;
+  document.querySelectorAll(".view").forEach((panel) => panel.classList.toggle("active", panel.classList.contains(`view-${view === "security" ? "security" : "home"}`)));
+  if (view === "security") refreshShannon(); else askImp(`${view} status`);
+}));
 setInterval(() => { $("clock").textContent = new Date().toLocaleTimeString([], { hour12: false }); }, 1000);
-const socket = io({ transports: ["websocket", "polling"] }); socket.on("status", render);
+
+// --- Security Center (Shannon AI pentester) ---
+const levelClass = (level) => ["error", "warning", "note"].includes(level) ? level : "note";
+
+function renderShannonStatus(status) {
+  $("shannonState").textContent = status.installed ? status.state : "NOT INSTALLED";
+  $("shannonTarget").textContent = status.target;
+  $("shannonRepo").textContent = status.repo;
+  $("shannonWorkspace").textContent = status.workspace || "NONE";
+  $("shannonFindingCount").textContent = status.findingCount;
+  if (!$("shannonTargetInput").value) $("shannonTargetInput").value = status.target;
+  if (!$("shannonRepoInput").value) $("shannonRepoInput").value = status.repo;
+  $("shannonScanBtn").disabled = status.running;
+  $("shannonScanBtn").textContent = status.running ? "⏳ SCANNING…" : "▶ START SCAN";
+}
+
+function renderShannonFindings(findings) {
+  $("shannonFindingsMeta").textContent = findings.length ? `${findings.length} FOUND` : "";
+  $("shannonFindings").innerHTML = findings.length
+    ? findings.map((f) => `<div class="finding-item"><span class="level ${levelClass(f.level)}">${escapeHtml(f.level)}</span><div><small class="rule">${escapeHtml(f.rule)}</small><span class="message">${escapeHtml(f.message)}</span>${f.file ? `<small class="location">${escapeHtml(f.file)}${f.line ? ":" + f.line : ""}</small>` : ""}</div></div>`).join("")
+    : '<div class="empty">NO FINDINGS — RUN A SCAN</div>';
+}
+
+async function refreshShannon() {
+  try {
+    const [statusRes, findingsRes] = await Promise.all([fetch("/api/shannon/status"), fetch("/api/shannon/findings")]);
+    const [status, findings] = await Promise.all([statusRes.json(), findingsRes.json()]);
+    renderShannonStatus(status); renderShannonFindings(findings);
+  } catch { $("shannonState").textContent = "LOCAL API UNAVAILABLE"; }
+}
+
+function appendTerminalLine(line) {
+  const term = $("shannonTerminal");
+  if (term.querySelector(".empty")) term.innerHTML = "";
+  const div = document.createElement("div"); div.className = "line"; div.textContent = line;
+  term.appendChild(div); term.scrollTop = term.scrollHeight;
+}
+
+$("shannonScanBtn").addEventListener("click", async () => {
+  const target = $("shannonTargetInput").value.trim();
+  const repo = $("shannonRepoInput").value.trim();
+  $("shannonTerminal").innerHTML = "";
+  try {
+    const res = await fetch("/api/shannon/scan", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ target, repo }) });
+    if (!res.ok) { const err = await res.json(); appendTerminalLine(`[wise2-dashboard] scan not started: ${err.error}`); return; }
+    refreshShannon();
+  } catch { appendTerminalLine("[wise2-dashboard] local API unavailable."); }
+});
+
+const socket = io({ transports: ["websocket", "polling"] });
+socket.on("status", render);
+socket.on("shannon:log", appendTerminalLine);
+socket.on("shannon:status", (status) => { renderShannonStatus(status); refreshShannon(); });
+
 refresh(); setInterval(refresh, 30000);

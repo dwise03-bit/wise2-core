@@ -14,9 +14,10 @@
   <div class="shell">
     <header class="brandbar"><div><strong>WISE² DEFENSE IMP</strong><span>EDGE INTELLIGENCE NODE</span></div><b>TRAIN. TEACH. PROTECT.</b></header>
     <nav class="nav" aria-label="Primary">
-      <button class="active" data-view="home">⌂<span>HOME</span></button><button data-view="map">◇<span>MAP</span></button><button data-view="incidents">△<span>INCIDENTS</span></button><button data-view="radio">⌁<span>RADIO</span></button><button data-view="sdr">▥<span>SDR</span></button><button data-view="mesh">⌘<span>MESH</span></button><button data-view="weather">☁<span>WEATHER</span></button><button data-view="zones">⌖<span>WATCH ZONES</span></button><button data-view="sitrep">◎<span>SITREP</span></button><button data-view="imp">▣<span>IMP</span></button><button data-view="system">⚙<span>SYSTEM</span></button>
+      <button class="active" data-view="home">⌂<span>HOME</span></button><button data-view="map">◇<span>MAP</span></button><button data-view="incidents">△<span>INCIDENTS</span></button><button data-view="radio">⌁<span>RADIO</span></button><button data-view="sdr">▥<span>SDR</span></button><button data-view="mesh">⌘<span>MESH</span></button><button data-view="weather">☁<span>WEATHER</span></button><button data-view="zones">⌖<span>WATCH ZONES</span></button><button data-view="sitrep">◎<span>SITREP</span></button><button data-view="imp">▣<span>IMP</span></button><button data-view="system">⚙<span>SYSTEM</span></button><button data-view="security">⛨<span>SECURITY</span></button>
     </nav>
     <main>
+      <div class="view view-home active">
       <aside class="imp-column panel">
         <div class="section-title"><span>WISE² IMP</span><small id="impState">IDLE</small></div>
         <div class="imp-avatar" id="impAvatar" aria-label="IMP assistant status idle"><div class="radar-ring"></div><div class="ear left"></div><div class="ear right"></div><div class="face"><div class="brow l"></div><div class="brow r"></div><div class="eye l"><i></i></div><div class="eye r"><i></i></div><div class="nose"></div><div class="mouth"></div></div><div class="headset"></div><div class="mic"></div><div class="vest">WISE²</div></div>
@@ -38,6 +39,34 @@
         <div class="twin"><section class="panel status-panel"><div class="section-title"><span>SDR STATUS</span><small id="sdrState">CHECKING</small></div><dl id="sdrDetails"></dl></section><section class="panel status-panel"><div class="section-title"><span>MESH STATUS</span><small id="meshState">CHECKING</small></div><dl id="meshDetails"></dl></section></div>
         <section class="panel system-panel"><div class="section-title"><span>SYSTEM STATUS</span><small id="coreState">CHECKING</small></div><div class="system-grid" id="systemDetails"></div></section>
       </aside>
+      </div>
+      <div class="view view-security">
+        <section class="panel security-top">
+          <div class="section-title"><span>SECURITY CENTER — SHANNON AI PENTESTER</span><small id="shannonState">CHECKING</small></div>
+          <dl class="summary-row">
+            <div><dt>TARGET</dt><dd id="shannonTarget">—</dd></div>
+            <div><dt>REPO</dt><dd id="shannonRepo">—</dd></div>
+            <div><dt>WORKSPACE</dt><dd id="shannonWorkspace">NONE</dd></div>
+            <div><dt>FINDINGS</dt><dd id="shannonFindingCount">0</dd></div>
+          </dl>
+          <div class="scan-controls">
+            <input id="shannonTargetInput" placeholder="https://target-app.example" autocomplete="off">
+            <input id="shannonRepoInput" placeholder="/opt/wise2/core" autocomplete="off">
+            <button id="shannonScanBtn">▶ START SCAN</button>
+          </div>
+          <p class="warn">Only scan applications you own or are explicitly authorized to test. Shannon executes real exploits — do not point it at production.</p>
+        </section>
+        <div class="security-grid">
+          <section class="panel findings">
+            <div class="section-title"><span>FINDINGS</span><small id="shannonFindingsMeta"></small></div>
+            <div id="shannonFindings" class="finding-list"><div class="empty">NO SCAN RUN YET</div></div>
+          </section>
+          <section class="panel terminal-panel">
+            <div class="section-title"><span>LIVE SCAN TERMINAL</span></div>
+            <div id="shannonTerminal" class="terminal"><div class="empty">IDLE — START A SCAN TO SEE LIVE OUTPUT</div></div>
+          </section>
+        </div>
+      </div>
     </main>
     <footer><div id="edgeStatus"><i></i>EDGE CHECKING</div><div id="wiseStatus"><i></i>WISE² CHECKING</div><div id="footerSdr"><i></i>SDR CHECKING</div><div id="footerMesh"><i></i>MESH CHECKING</div><div id="footerGps"><i></i>GPS CHECKING</div><span>LAST SYNC <b id="lastSync">NEVER</b></span><time id="clock">--:--:--</time></footer>
   </div>
