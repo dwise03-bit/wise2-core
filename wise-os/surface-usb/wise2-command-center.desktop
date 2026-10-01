@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=WISE² Command Center
+Comment=Local WISE² system dashboard
+Exec=xdg-open http://127.0.0.1:3080
+Icon=utilities-system-monitor
+Categories=System;
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=10

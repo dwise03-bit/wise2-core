@@ -1,0 +1,44 @@
+WISE² LINUX OS — SURFACE LAPTOP 4 / INTEL / 16 GB
+
+This USB contains an Ubuntu 24.04 amd64 installer and WISE² workstation setup.
+It is not yet a remastered WISE² live OS image.
+
+1. Boot this USB from Surface UEFI. With Secure Boot enabled, allow
+   Microsoft & 3rd-party CA signatures. Connect a USB keyboard/mouse if needed.
+2. Choose WISE2 Linux OS - Start Ubuntu installer. If the display fails,
+   choose Safe graphics. Boot diagnostics exposes error messages.
+3. Install Ubuntu to the disk you actually intend to use. The attached USB
+   also has a 247.5 GB Linux partition: do not assume it is empty or format it
+   without checking its contents. These scripts do not partition any disk.
+4. Reboot into installed Ubuntu and connect to the internet.
+5. Open the WISE2INST volume in Files, open wise2-branding, right-click blank
+   space and choose Open in Terminal. Run:
+
+   bash START-WISE2.sh --no-ollama-model
+
+   Omit --no-ollama-model to download the selected local AI model as well.
+
+6. Reboot. If the blue Surface MOK enrollment screen appears, select Enroll
+   MOK, Continue, Yes; password: surface (QWERTY layout).
+7. WISE² Command Center starts at desktop login. WISE² Research opens the
+   Agent-Reach channel diagnostics. WISE² Shannon Security runs AI pentests.
+   Tailscale sign-in: sudo tailscale up
+
+Installation log: ~/.local/state/wise2/install.log
+Dashboard: http://127.0.0.1:3080
+Dashboard service: systemctl status wise2-command-center
+Surface kernel: uname -r (look for surface after reboot)
+
+Shannon (github.com/KeygraphHQ/shannon, AGPLv3, pinned v3.3.0) is an
+autonomous AI pentester. install-shannon.sh wires it to the local Ollama
+model wise2-setup.sh already installs, so scans run at zero API cost.
+Launch: wise2-shannon -u <target-url> -r <repo-path>
+(defaults: http://127.0.0.1:3080, /opt/wise2/core). It only reports findings
+with a working exploit. Only scan apps you own or are authorized to test —
+do not point it at production. First-time provider setup: wise2-shannon setup.
+
+The dashboard payload currently uses the existing Defense IMP interface.
+The supplied Shannon command-center design (Security Center tab/tile) is
+still pending implementation in the dashboard UI itself.
+Agent-Reach account-dependent channels need setup.
+Upstream software names/licenses are retained. Ubuntu remains the base OS.
