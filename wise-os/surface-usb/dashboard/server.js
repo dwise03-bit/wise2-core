@@ -201,7 +201,7 @@ const asyncRoute = (handler) => async (req, res) => {
   catch (error) { res.status(503).json({ error: "SERVICE_UNAVAILABLE", detail: error.message }); }
 };
 
-app.get("/api/health", (req, res) => res.json({ status: "ok", name: "WISE² Defense IMP", version: "1.0.0" }));
+app.get("/api/health", (req, res) => res.json({ status: "ok", name: "WISE² Command Center", version: "1.0.0" }));
 app.get("/api/shannon/status", asyncRoute(async (req, res) => res.json(await getShannonStatus())));
 app.get("/api/shannon/findings", (req, res) => {
   const latest = listShannonWorkspaces()[0];
@@ -272,6 +272,6 @@ io.on("connection", async (socket) => {
 });
 
 const HOST = process.env.WISE2_HOST || "0.0.0.0";
-server.listen(PORT, HOST, () => console.log(`WISE² Defense IMP listening on http://${HOST}:${server.address().port}`));
+server.listen(PORT, HOST, () => console.log(`WISE² Command Center listening on http://${HOST}:${server.address().port}`));
 
 module.exports = { app, server, buildStatus };
