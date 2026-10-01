@@ -10,6 +10,11 @@ It is not yet a remastered WISE² live OS image.
 3. Install Ubuntu to the disk you actually intend to use. The attached USB
    also has a 247.5 GB Linux partition: do not assume it is empty or format it
    without checking its contents. These scripts do not partition any disk.
+   IMPORTANT: the installer's disk list shows both this external USB drive
+   and the Surface's own internal disk. Check the device size and/or model
+   name in the installer before confirming — it is easy to pick the wrong
+   one by accident, and installing to the internal disk instead of this USB
+   will not boot the way these instructions expect.
 4. Reboot into installed Ubuntu and connect to the internet.
 5. Open the WISE2INST volume in Files, open wise2-branding, right-click blank
    space and choose Open in Terminal. Run:
@@ -37,8 +42,22 @@ Launch: wise2-shannon -u <target-url> -r <repo-path>
 with a working exploit. Only scan apps you own or are authorized to test —
 do not point it at production. First-time provider setup: wise2-shannon setup.
 
-The dashboard payload currently uses the existing Defense IMP interface.
-The supplied Shannon command-center design (Security Center tab/tile) is
-still pending implementation in the dashboard UI itself.
+Dashboard: WISE² Command Center (topbar + sidebar chrome, Command Center
+view with the original map/incidents/IMP-assistant panels, and a Security
+Center view wired to Shannon — scan controls, live terminal, findings,
+vulnerability breakdown). Sidebar items without a built feature yet
+(Development, Projects, Clients, Edge Devices, Deploy, Monitor, Storage,
+Network, Settings) show an explicit "not yet implemented" placeholder
+instead of silently doing nothing.
+
+install-wise2-theme.sh themes GNOME itself: top bar + accent color (GNOME
+Shell), login screen background (GDM), and a WISE² boot splash (Plymouth).
+Files, Settings, and the Activities overview stay standard GNOME, just
+styled — this is not a full custom shell. UNVERIFIED beyond syntax checks:
+it was written on macOS, which has no GNOME/GDM/Plymouth to test against.
+Reboot to see the boot splash and login screen; log out/in to see the top
+bar theme (enable the User Themes extension manually if it doesn't
+auto-enable).
+
 Agent-Reach account-dependent channels need setup.
 Upstream software names/licenses are retained. Ubuntu remains the base OS.

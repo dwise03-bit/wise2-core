@@ -25,6 +25,7 @@ bash "$HERE/wise2-setup.sh" "$@"
 if [[ $(cat /sys/class/dmi/id/product_name) == 'Surface Laptop 4' ]]; then
   bash "$HERE/wise2-surface-kernel.sh"
 fi
+bash "$HERE/install-wise2-theme.sh"
 bash "$HERE/install-dashboard.sh"
 bash "$HERE/install-agent-reach.sh"
 bash "$HERE/install-shannon.sh"
