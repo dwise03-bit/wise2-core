@@ -51,17 +51,23 @@ const hasUsb = (pattern) => {
 };
 
 async function getSystem() {
-  const [load, memory, temperature, disks, network] = await Promise.all([
-    si.currentLoad(), si.mem(), si.cpuTemperature(), si.fsSize(), si.networkStats()
+  const [load, memory, temperature, disks, network, graphics] = await Promise.all([
+    si.currentLoad(), si.mem(), si.cpuTemperature(), si.fsSize(), si.networkStats(), si.graphics().catch(() => null)
   ]);
   const rootDisk = disks.find((disk) => disk.mount === "/") || disks[0] || {};
+  const gpuController = graphics?.controllers?.find((c) => c.utilizationGpu != null);
+  const totalRxSec = network.reduce((sum, item) => sum + (item.rx_sec || 0), 0);
+  const totalTxSec = network.reduce((sum, item) => sum + (item.tx_sec || 0), 0);
   return {
     cpu: Math.round(load.currentLoad || 0),
+    gpu: gpuController ? Math.round(gpuController.utilizationGpu) : null,
     ram: Math.round((memory.active / memory.total) * 100) || 0,
     ramUsedMb: Math.round(memory.active / 1048576),
     temperature: temperature.main == null ? null : Number(temperature.main.toFixed(1)),
     disk: Math.round(rootDisk.use || 0),
     network: hasNetwork() ? (network.some((item) => item.iface.startsWith("eth")) ? "Ethernet" : "Wi-Fi") : "Offline",
+    downMbps: Number(((totalRxSec * 8) / 1e6).toFixed(1)),
+    upMbps: Number(((totalTxSec * 8) / 1e6).toFixed(1)),
     uptimeSeconds: Math.floor(os.uptime()),
     hostname: os.hostname()
   };
@@ -150,6 +156,28 @@ function parseShannonSarif(workspaceDir) {
   }
 }
 
+// Workspace names are auto-generated as "<host>_shannon-<session-id>" (see
+// docs/workspaces.md); recover a readable target label from that prefix.
+// This is a display convenience, not data Shannon itself stores per-workspace.
+function workspaceDisplayName(name) {
+  return name.replace(/_shannon-\d+$/, "") || name;
+}
+
+function listShannonScans(limit = 10) {
+  return listShannonWorkspaces().slice(0, limit).map((item) => {
+    const findings = parseShannonSarif(item.full);
+    const counts = findings.reduce((acc, f) => { acc[f.level] = (acc[f.level] || 0) + 1; return acc; }, {});
+    return {
+      workspace: item.name,
+      target: workspaceDisplayName(item.name),
+      state: shannonScan?.workspace === item.name && shannonScan?.state === "RUNNING" ? "RUNNING" : workspaceReportState(item.full),
+      findingCount: findings.length,
+      counts,
+      updatedAt: new Date(item.mtimeMs).toISOString()
+    };
+  });
+}
+
 async function getShannonStatus() {
   const installed = fs.existsSync(SHANNON_BIN);
   const workspaces = listShannonWorkspaces();
@@ -165,9 +193,16 @@ async function getShannonStatus() {
     state: shannonScan?.state === "RUNNING" ? "RUNNING" : (latest ? workspaceReportState(latest.full) : "NOT_RUN"),
     findingCount: findings.length,
     counts,
+    scanCount: workspaces.length,
+    sarifAvailable: latest ? fs.existsSync(path.join(latest.full, "report.sarif")) : false,
     startedAt: shannonScan?.startedAt || null,
     finishedAt: shannonScan?.finishedAt || null
   };
+}
+
+function getWeather() {
+  if (!DEMO_MODE) return { state: "NOT CONFIGURED", city: null, tempF: null, condition: null, alerts: [] };
+  return { state: "DEMO DATA", city: "Atlanta, GA", tempF: 72, condition: "Partly Cloudy", alerts: [] };
 }
 
 function getIncidents() {
@@ -183,14 +218,15 @@ async function buildStatus() {
   const [system, sdr, mesh, gps] = await Promise.all([getSystem(), getSdr(), getMesh(), getGps()]);
   const providerConfigured = Boolean(process.env.CRIMERADAR_API_URL && process.env.CRIMERADAR_API_TOKEN);
   const wiseConfigured = Boolean(process.env.WISE2_API_URL && process.env.WISE2_DEVICE_TOKEN);
-  const tailscaleInstalled = await commandExists("tailscale");
+  const [tailscaleInstalled, dockerInstalled] = await Promise.all([commandExists("tailscale"), commandExists("docker")]);
   return {
     core: "ONLINE", dashboard: "ONLINE", demoMode: DEMO_MODE,
     system, sdr, mesh, gps,
     incidents: { state: providerConfigured ? "CONFIGURED" : "CRIMERADAR_PROVIDER_NOT_CONFIGURED", count: getIncidents().length },
-    weather: { state: "NOT CONFIGURED", alerts: [] },
+    weather: getWeather(),
     wise2: { state: wiseConfigured ? "CONFIGURED" : "NOT CONFIGURED" },
     tailscale: { state: tailscaleInstalled ? "INSTALLED" : "NOT INSTALLED" },
+    docker: { state: dockerInstalled ? "INSTALLED" : "NOT INSTALLED" },
     lastSync: null,
     timestamp: new Date().toISOString()
   };
@@ -203,6 +239,7 @@ const asyncRoute = (handler) => async (req, res) => {
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", name: "WISE² Command Center", version: "1.0.0" }));
 app.get("/api/shannon/status", asyncRoute(async (req, res) => res.json(await getShannonStatus())));
+app.get("/api/shannon/scans", (req, res) => res.json(listShannonScans()));
 app.get("/api/shannon/findings", (req, res) => {
   const latest = listShannonWorkspaces()[0];
   res.json(latest ? parseShannonSarif(latest.full) : []);
@@ -239,7 +276,7 @@ app.get("/api/sdr", asyncRoute(async (req, res) => res.json(await getSdr())));
 app.get("/api/sdr/status", asyncRoute(async (req, res) => res.json(await getSdr())));
 app.get("/api/mesh", asyncRoute(async (req, res) => res.json(await getMesh())));
 app.get("/api/mesh/nodes", (req, res) => res.json([]));
-app.get("/api/weather", (req, res) => res.json({ state: "NOT CONFIGURED", alerts: [] }));
+app.get("/api/weather", (req, res) => res.json(getWeather()));
 app.get("/api/alerts", (req, res) => res.json([]));
 app.get("/api/sitrep", asyncRoute(async (req, res) => {
   const status = await buildStatus();

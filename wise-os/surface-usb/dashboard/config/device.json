@@ -1,6 +1,6 @@
 {
-  "name": "WISE² Defense IMP",
-  "designation": "EDGE INTELLIGENCE NODE",
+  "name": "WISE² Command Center",
+  "designation": "INTELLIGENCE. EVERYWHERE.",
   "port": 3000,
   "location": { "latitude": null, "longitude": null, "source": "not_configured" }
 }
