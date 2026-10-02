@@ -56,12 +56,14 @@ export class PrismaAuthService {
       },
     });
 
-    // Send verification email
-    await this.emailService.sendVerificationEmail(
+    // Send verification email (non-blocking)
+    this.emailService.sendVerificationEmail(
       user.email,
       verificationToken,
       user.name || 'User',
-    );
+    ).catch(err => {
+      this.logger.error(`Failed to send verification email to ${user.email}: ${err.message}`);
+    });
 
     const accessToken = this.jwt.sign(
       { sub: user.id, email: user.email, role: user.role },
@@ -196,9 +198,11 @@ export class PrismaAuthService {
       },
     });
 
-    // Send welcome email to new users
+    // Send welcome email to new users (non-blocking)
     if (isNewUser) {
-      await this.emailService.sendWelcome(user.email, user.name || 'User');
+      this.emailService.sendWelcome(user.email, user.name || 'User').catch(err => {
+        this.logger.error(`Failed to send welcome email to ${user.email}: ${err.message}`);
+      });
     }
 
     return this.issueAuthTokens(user);
@@ -363,9 +367,11 @@ export class PrismaAuthService {
       },
     });
 
-    // Send welcome email to new users
+    // Send welcome email to new users (non-blocking)
     if (isNewUser) {
-      await this.emailService.sendWelcome(user.email, user.name || 'User');
+      this.emailService.sendWelcome(user.email, user.name || 'User').catch(err => {
+        this.logger.error(`Failed to send welcome email to ${user.email}: ${err.message}`);
+      });
     }
 
     return this.issueAuthTokens(user);
@@ -449,12 +455,14 @@ export class PrismaAuthService {
       },
     });
 
-    // Send password reset email
-    await this.emailService.sendPasswordReset(
+    // Send password reset email (non-blocking)
+    this.emailService.sendPasswordReset(
       user.email,
       resetToken,
       user.name || 'User',
-    );
+    ).catch(err => {
+      this.logger.error(`Failed to send password reset email to ${user.email}: ${err.message}`);
+    });
 
     return { message: 'If email exists, a reset link has been sent' };
   }
