@@ -23,7 +23,7 @@ BUILD-REPORT.md · INSTALL-PLAN.md.
 
 ## Pending — needs Daniel (auth / secret / sudo / approval)
 
-- [ ] install wise2 CLI: `sudo ln -sf /opt/wise2/scripts/wise2 /usr/local/bin/wise2`
+- [x] wise2 CLI installed: /usr/local/bin/wise2 -> scripts/wise2
 - [ ] systemd units (install templates when always-on wanted) (sudo)
 - [ ] Git repo init + remote + first push (show status first; never force-push)
 - [ ] branding Phase 13 (GRUB/Plymouth/GDM/wallpaper) (sudo + approval, back up first)

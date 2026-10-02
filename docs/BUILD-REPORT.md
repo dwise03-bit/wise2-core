@@ -40,7 +40,7 @@
 
 ## Installed 2026-10-02
 
-git identity (Daniel Wise) · git-lfs/btop/tree/shellcheck · GitHub CLI gh 2.102.0 (authed dwise03-bit) · OpenAI Codex @openai/codex 0.160.0 (logged in via ChatGPT) · Shannon AI backend available · wise2 CLI symlink still pending (sudo) · 2 local commits (no remote). `wise2 doctor`: 24 PASS / 0 WARN / 0 FAIL.
+git identity (Daniel Wise) · git-lfs/btop/tree/shellcheck · GitHub CLI gh 2.102.0 (authed dwise03-bit) · OpenAI Codex @openai/codex 0.160.0 (logged in via ChatGPT) · Shannon AI backend available · wise2 CLI installed at /usr/local/bin/wise2 · 2 local commits (no remote). `wise2 doctor`: 24 PASS / 0 WARN / 0 FAIL.
 
 ## Pending — needs Daniel (auth / secret / sudo / approval)
 
