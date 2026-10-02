@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
 
 interface EmailOptions {
   to: string
@@ -9,7 +10,7 @@ interface EmailOptions {
   replyTo?: string
 }
 
-type EmailProvider = 'resend' | 'sendgrid' | 'mock'
+type EmailProvider = 'smtp' | 'resend' | 'sendgrid' | 'mock'
 
 @Injectable()
 export class EmailService {
@@ -25,6 +26,10 @@ export class EmailService {
    * Automatically select email provider based on available credentials
    */
   private selectProvider(): EmailProvider {
+    // Check for self-hosted SMTP first (highest priority)
+    if (this.configService.get('SMTP_HOST')) {
+      return 'smtp';
+    }
     if (this.configService.get('RESEND_API_KEY')) {
       return 'resend';
     }
@@ -165,6 +170,8 @@ export class EmailService {
   private async send(options: EmailOptions): Promise<boolean> {
     try {
       switch (this.provider) {
+        case 'smtp':
+          return await this.sendViaSMTP(options);
         case 'resend':
           return await this.sendViaResend(options);
         case 'sendgrid':
@@ -177,6 +184,40 @@ export class EmailService {
       }
     } catch (error) {
       this.logger.error(`Failed to send email to ${options.to}: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+  }
+
+  /**
+   * Send via self-hosted SMTP (e.g., Postfix/Exim on VPS)
+   */
+  private async sendViaSMTP(options: EmailOptions): Promise<boolean> {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: this.configService.get('SMTP_HOST', 'localhost'),
+        port: this.configService.get('SMTP_PORT', 25),
+        secure: this.configService.get('SMTP_SECURE', false), // true for 465, false for other ports
+        auth: this.configService.get('SMTP_USER')
+          ? {
+              user: this.configService.get('SMTP_USER'),
+              pass: this.configService.get('SMTP_PASSWORD'),
+            }
+          : undefined,
+      });
+
+      await transporter.sendMail({
+        from: this.configService.get('EMAIL_FROM', 'noreply@wise2.net'),
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        text: options.text,
+        replyTo: options.replyTo,
+      });
+
+      this.logger.log(`✉️  Email sent to ${options.to} via SMTP (${this.configService.get('SMTP_HOST')})`);
+      return true;
+    } catch (error) {
+      this.logger.error(`SMTP error: ${error instanceof Error ? error.message : String(error)}`);
       return false;
     }
   }
