@@ -172,7 +172,13 @@
 .petals-hero-image {
   position: relative;
   height: 500px;
-  display: none; /* Images not loading */
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 255, 127, 0.1) 100%);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: rgba(246, 240, 228, 0.5);
 }
 
 .petals-hero-image img {
@@ -311,7 +317,13 @@
 .petals-founder-image {
   position: relative;
   height: 450px;
-  display: none; /* Images not loading */
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 255, 127, 0.1) 100%);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: rgba(246, 240, 228, 0.5);
 }
 
 .petals-founder h2 {
