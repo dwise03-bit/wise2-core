@@ -9,7 +9,7 @@
 - CPU i7-1185G7 (4C/4T) · 15 GiB RAM + 4 GiB swap · ~222 GB free on `/`
 - Secure Boot disabled · Firmware 33.108.143
 - Tailscale IP: `100.97.230.73` · LAN: `192.168.1.14/24`
-- `wise2 doctor`: 21 PASS / 3 WARN / 0 FAIL
+- `wise2 doctor`: 24 PASS / 0 WARN / 0 FAIL
 
 ## Done this session (safe, no sudo)
 
@@ -19,12 +19,10 @@ Audit · SURFACE-HARDWARE.md · canonical tree · context layer + CLAUDE.md ·
 REMOTE-ACCESS.md · backup (tested) + recovery docs · device manifest ·
 BUILD-REPORT.md · INSTALL-PLAN.md.
 
+**Installed 2026-10-02:** git identity (Daniel Wise), git-lfs/btop/tree/shellcheck, GitHub CLI `gh` 2.102.0 (authed as dwise03-bit), OpenAI Codex `@openai/codex` 0.160.0 (install verified; **codex login still pending — interactive**). First local git commit 720da6b (no remote).
+
 ## Pending — needs Daniel (auth / secret / sudo / approval)
 
-- [ ] apt: `git-lfs btop tree shellcheck` (sudo) — docs/INSTALL-PLAN.md
-- [ ] GitHub CLI `gh` (sudo) + `gh auth login`
-- [ ] OpenAI Codex `sudo npm i -g @openai/codex` + `codex login` (also Shannon backend)
-- [ ] git identity (`user.name` / `user.email`)
 - [ ] install wise2 CLI: `sudo ln -sf /opt/wise2/scripts/wise2 /usr/local/bin/wise2`
 - [ ] systemd units (install templates when always-on wanted) (sudo)
 - [ ] Git repo init + remote + first push (show status first; never force-push)

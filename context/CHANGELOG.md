@@ -1,5 +1,11 @@
 # WISE² Changelog
 
+## 2026-10-02 — Toolchain installs (Steps 1-3) + first commit
+- git identity set (Daniel Wise); git-lfs, btop, tree, shellcheck installed.
+- GitHub CLI gh 2.102.0 installed + authenticated (dwise03-bit). Read-only repo inventory recorded.
+- OpenAI Codex @openai/codex 0.160.0 installed (official scoped). codex login PENDING (interactive).
+- First LOCAL commit 720da6b (54 files); no remote, no push. wise2 doctor: 24 PASS / 0 WARN / 0 FAIL.
+
 ## 2026-10-02 — Desktop integration + WISE² branding (user-level)
 - Branding assets (placeholder): branding/wise2-logo.svg, wise2-wallpaper.svg.
 - wise2-fetch branded panel; wise2-cc-open; wise2-apply-wallpaper; run-wrappers.
