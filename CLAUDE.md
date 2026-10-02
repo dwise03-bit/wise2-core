@@ -331,6 +331,57 @@ Kernel Synthesizes A, B, C → User Response
 
 **Never say "done", "working", "fixed", "deployed", or "complete" — and never move to the next task — until the actual goal is verified as reached in reality.** Every task, every fix, every feature, every deployment. No exceptions.
 
+### Verification Checklist by Task Type
+
+**Before claiming ANY task is complete, verify using this checklist:**
+
+#### 🚀 Deployments / Infrastructure
+- [ ] Service is accessible at the public URL/port from outside the server
+- [ ] Core features work (tested manually, not just "service running")
+- [ ] No error logs in the service output
+- [ ] End user can access it (not just "deployment succeeded")
+- [ ] Provide proof: curl output, screenshot, or browser test result
+- **Never say**: "deployed" — say: "✅ Verified: Accessible at http://[URL], tested [feature]"
+
+#### 🐛 Bug Fixes / Code Changes
+- [ ] Locally reproduced the original bug
+- [ ] Verified the fix resolves the bug (not just "code looks right")
+- [ ] All CI checks passed (GitHub Actions, not Vercel)
+- [ ] Tested edge cases and related features still work
+- [ ] No new errors introduced
+- **Never say**: "fixed" — say: "✅ Verified: Bug reproduced then fixed, [specific test result]"
+
+#### ✨ Features / New Functionality
+- [ ] End user can access and use the feature
+- [ ] Tested in production environment (or actual target environment)
+- [ ] Feature works as described in requirements
+- [ ] No regressions in other features
+- [ ] Provide proof: screenshot, test output, or working demo
+- **Never say**: "complete" or "ready" — say: "✅ Verified: Feature works at [location], tested [action]"
+
+#### 📝 Documentation / Configuration
+- [ ] Documented exactly where the change was made
+- [ ] Provided the exact path/file and line numbers
+- [ ] Verified the documentation is accurate (not aspirational)
+- **Never say**: "documented" — say: "✅ Verified: Added to [file path], line [#]"
+
+### Language Requirements
+
+❌ **Never use these words alone:**
+- "done"
+- "fixed"
+- "deployed"
+- "complete"
+- "working"
+- "ready"
+- "live"
+
+✅ **Always include:**
+- What was actually verified
+- How it was tested
+- Proof (output, screenshot, URL test result)
+- Example: "✅ Verified: Site loads at http://173.208.147.165:3001/petals-and-potions, ritual builder form responds to input"
+
 ### Port governance
 
 - Existing project host ports are immutable. Do not change, rebind, or “clean up” an existing port used by another project.
