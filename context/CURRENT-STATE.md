@@ -19,7 +19,7 @@ Audit · SURFACE-HARDWARE.md · canonical tree · context layer + CLAUDE.md ·
 REMOTE-ACCESS.md · backup (tested) + recovery docs · device manifest ·
 BUILD-REPORT.md · INSTALL-PLAN.md.
 
-**Installed 2026-10-02:** git identity (Daniel Wise), git-lfs/btop/tree/shellcheck, GitHub CLI `gh` 2.102.0 (authed as dwise03-bit), OpenAI Codex `@openai/codex` 0.160.0 (install verified; **codex login still pending — interactive**). First local git commit 720da6b (no remote).
+**Installed 2026-10-02:** git identity (Daniel Wise), git-lfs/btop/tree/shellcheck, GitHub CLI `gh` 2.102.0 (authed as dwise03-bit), OpenAI Codex `@openai/codex` 0.160.0 (installed + **logged in via ChatGPT** 2026-10-02). First local git commit 720da6b (no remote).
 
 ## Pending — needs Daniel (auth / secret / sudo / approval)
 
@@ -28,6 +28,10 @@ BUILD-REPORT.md · INSTALL-PLAN.md.
 - [ ] Git repo init + remote + first push (show status first; never force-push)
 - [ ] branding Phase 13 (GRUB/Plymouth/GDM/wallpaper) (sudo + approval, back up first)
 - [ ] Hermes implementation (confirm stack / existing port)
+
+## Milestone
+
+Toolchain complete; Codex authenticated; Shannon AI backend (openai-codex:gpt-5.6-sol) available. `wise2 doctor` 24 PASS / 0 WARN / 0 FAIL. Local commits 720da6b, 9c7e8cc (no remote).
 
 ## Known warnings
 

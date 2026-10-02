@@ -1,5 +1,10 @@
 # WISE² Changelog
 
+## 2026-10-02 — Codex authenticated; Shannon AI backend available
+- codex login complete (ChatGPT). codex login status OK; v0.160.0.
+- Shannon backend openai-codex:gpt-5.6-sol now available (codex authed); launcher unchanged; no scan run.
+- wise2 doctor: 24 PASS / 0 WARN / 0 FAIL. Commits: 720da6b, 9c7e8cc (local only).
+
 ## 2026-10-02 — Toolchain installs (Steps 1-3) + first commit
 - git identity set (Daniel Wise); git-lfs, btop, tree, shellcheck installed.
 - GitHub CLI gh 2.102.0 installed + authenticated (dwise03-bit). Read-only repo inventory recorded.
