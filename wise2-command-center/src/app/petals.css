@@ -83,19 +83,21 @@
 
 /* Hero Section */
 .petals-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-  padding: 6rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 4rem !important;
+  align-items: center !important;
+  padding: 6rem 2rem !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
 }
 
 .petals-hero-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important;
+  min-width: 0;
 }
 
 .petals-kicker {
