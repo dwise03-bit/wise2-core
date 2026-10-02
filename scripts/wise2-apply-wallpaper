@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Apply the WISE² wallpaper in the current GNOME session (user-level, reversible).
+# Run this from your desktop session (not over plain SSH) so gsettings can reach it.
+set -euo pipefail
+WP="/opt/wise2/branding/wise2-wallpaper.png"
+[ -f "$WP" ] || WP="/opt/wise2/branding/wise2-wallpaper.svg"
+if ! command -v gsettings >/dev/null; then echo "gsettings not available"; exit 1; fi
+# back up current settings
+mkdir -p /opt/wise2/backups
+{ echo "picture-uri=$(gsettings get org.gnome.desktop.background picture-uri 2>/dev/null)";
+  echo "picture-uri-dark=$(gsettings get org.gnome.desktop.background picture-uri-dark 2>/dev/null)"; } \
+  > "/opt/wise2/backups/wallpaper-prev.$(date -u +%Y%m%dT%H%M%SZ).txt" 2>/dev/null || true
+gsettings set org.gnome.desktop.background picture-uri "file://$WP"
+gsettings set org.gnome.desktop.background picture-uri-dark "file://$WP"
+gsettings set org.gnome.desktop.background picture-options "zoom"
+echo "WISE² wallpaper applied: $WP (previous saved in /opt/wise2/backups/)"

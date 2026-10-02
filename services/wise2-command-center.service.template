@@ -1,0 +1,25 @@
+# WISE² Command Center unit TEMPLATE — do NOT install until the app exists.
+# Install: sudo cp .../wise2-command-center.service.template \
+#            /etc/systemd/system/wise2-command-center.service && sudo systemctl daemon-reload
+[Unit]
+Description=WISE2 Command Center
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+Group=dwise
+WorkingDirectory=/opt/wise2/command-center
+# Bind localhost only. Adjust ExecStart to the real server once built.
+ExecStart=/usr/bin/python3 /opt/wise2/command-center/server.py
+EnvironmentFile=-/opt/wise2/command-center/.env
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/wise2
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

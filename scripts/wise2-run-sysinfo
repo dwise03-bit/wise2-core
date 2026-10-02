@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+/opt/wise2/scripts/wise2-fetch
+/opt/wise2/scripts/wise2 status
+echo
+read -r -p "Press Enter to close… " _

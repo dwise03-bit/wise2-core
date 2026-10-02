@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# WISE² branded system-info panel (neofetch-style, dependency-free, read-only).
+set -euo pipefail
+WISE2_ROOT="${WISE2_ROOT:-/opt/wise2}"
+source "$WISE2_ROOT/scripts/lib/common.sh" 2>/dev/null || { C_GREEN=; C_RESET=; C_SILVER=; C_CYAN=; C_BOLD=; }
+
+os="$(. /etc/os-release; echo "$PRETTY_NAME")"
+ker="$(uname -r)"
+cpu="$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | sed 's/^ //')"
+mem="$(free -h | awk '/^Mem:/{print $3" / "$2}')"
+disk="$(df -h / | awk 'NR==2{print $3" / "$2" ("$5")"}')"
+up="$(uptime -p 2>/dev/null | sed 's/^up //')"
+tsip="$(tailscale ip -4 2>/dev/null | head -1)"
+bat=""; [ -r /sys/class/power_supply/BAT1/capacity ] && bat="$(cat /sys/class/power_supply/BAT1/capacity)% $(cat /sys/class/power_supply/BAT1/status 2>/dev/null)"
+
+L=(
+"${C_GREEN}        __        ${C_RESET}"
+"${C_GREEN}  __  __\\ \\__  __ ${C_RESET}"
+"${C_GREEN}  \\ \\/\\ \\ \\ \\/\\ \\ ${C_RESET}"
+"${C_GREEN}   \\ \\_/ \\ \\_/ \\ \\${C_RESET}"
+"${C_GREEN}    \\___/ \\___/\\_\\${C_RESET}"
+"${C_GREEN}      WISE${C_CYAN}²${C_RESET}       "
+"                 "
+)
+R=(
+"${C_BOLD}WISE² Linux${C_RESET} — AI / Security / Dev Workstation"
+"${C_SILVER}os${C_RESET}      $os"
+"${C_SILVER}kernel${C_RESET}  $ker ${C_CYAN}(surface)${C_RESET}"
+"${C_SILVER}cpu${C_RESET}     $cpu"
+"${C_SILVER}memory${C_RESET}  $mem    ${C_SILVER}disk${C_RESET} $disk"
+"${C_SILVER}uptime${C_RESET}  ${up:-?}    ${C_SILVER}battery${C_RESET} ${bat:-n/a}"
+"${C_SILVER}tailscale${C_RESET} ${tsip:-n/a}    ${C_SILVER}cli${C_RESET} wise2 status | wise2 doctor"
+)
+echo
+n=${#L[@]}; [ ${#R[@]} -gt $n ] && n=${#R[@]}
+for ((i=0;i<n;i++)); do printf '  %b   %b\n' "${L[i]:-                 }" "${R[i]:-}"; done
+echo

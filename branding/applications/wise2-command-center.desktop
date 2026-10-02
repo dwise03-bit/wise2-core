@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=WISE² Command Center
+Comment=Open the WISE² Command Center dashboard
+Exec=/opt/wise2/scripts/wise2-cc-open
+Icon=/opt/wise2/branding/wise2-logo.svg
+Terminal=false
+Categories=Development;
+StartupNotify=true

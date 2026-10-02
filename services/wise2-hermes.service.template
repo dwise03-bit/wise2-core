@@ -1,0 +1,23 @@
+# WISE² Hermes unit TEMPLATE — do NOT install until Hermes exists.
+[Unit]
+Description=WISE2 Hermes Second Brain
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dwise
+Group=dwise
+WorkingDirectory=/opt/wise2/hermes
+# Historic port 3012, localhost. Set ExecStart to the real Hermes entrypoint.
+ExecStart=/usr/bin/env HERMES_BIND=127.0.0.1:3012 /opt/wise2/hermes/run.sh
+EnvironmentFile=-/opt/wise2/hermes/.env
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/wise2
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

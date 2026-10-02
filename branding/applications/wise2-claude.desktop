@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=WISE² Claude
+Comment=Launch Claude Code agent
+Exec=/opt/wise2/scripts/wise2-run-claude
+Icon=/opt/wise2/branding/wise2-logo.svg
+Terminal=true
+Categories=Development;
+StartupNotify=true

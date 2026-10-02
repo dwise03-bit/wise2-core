@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Start the WISE² Command Center (localhost) if not already running, then open it.
+set -euo pipefail
+WISE2_ROOT="${WISE2_ROOT:-/opt/wise2}"
+PORT="${CC_PORT:-3010}"
+URL="http://127.0.0.1:$PORT/"
+if ! curl -fsS -m 2 -o /dev/null "$URL" 2>/dev/null; then
+  ( cd "$WISE2_ROOT/command-center" && nohup python3 server.py >/tmp/wise2-cc.log 2>&1 & )
+  for _ in 1 2 3 4 5 6 7 8 9 10; do curl -fsS -m 1 -o /dev/null "$URL" 2>/dev/null && break; sleep 0.5; done
+fi
+command -v xdg-open >/dev/null && xdg-open "$URL" >/dev/null 2>&1 || echo "Open $URL in your browser."

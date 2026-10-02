@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <radialGradient id="g" cx=".75" cy=".15" r="1"><stop offset="0" stop-color="#0c1c38"/><stop offset=".55" stop-color="#070d18"/><stop offset="1" stop-color="#04060a"/></radialGradient>
+    <linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8eef5"/><stop offset=".5" stop-color="#9fb0c0"/><stop offset="1" stop-color="#5a6b7d"/></linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#g)"/>
+  <g stroke="#1dff7b" stroke-opacity=".08" stroke-width="1">
+    <line x1="0" y1="270" x2="1920" y2="270"/><line x1="0" y1="540" x2="1920" y2="540"/><line x1="0" y1="810" x2="1920" y2="810"/>
+    <line x1="480" y1="0" x2="480" y2="1080"/><line x1="960" y1="0" x2="960" y2="1080"/><line x1="1440" y1="0" x2="1440" y2="1080"/>
+  </g>
+  <text x="960" y="520" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="800" font-size="200" fill="url(#c)">WISE<tspan font-size="96" fill="#1dff7b" dy="-70">²</tspan></text>
+  <text x="960" y="600" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="500" font-size="30" letter-spacing="12" fill="#8a97a6">AI · SECURITY · DEVELOPMENT WORKSTATION</text>
+</svg>

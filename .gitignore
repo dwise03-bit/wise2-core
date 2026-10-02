@@ -1,0 +1,120 @@
+# ==========================================================================
+# WISE² .gitignore — protect secrets, evidence, and local noise.
+# Rule: context/docs/scripts/config(non-secret) MAY sync. Secrets NEVER sync.
+# ==========================================================================
+
+# ---- Secrets & credentials (NEVER commit) ----
+.env
+.env.*
+*.env
+secrets/
+**/secrets/
+credentials
+credentials.*
+**/credentials*
+*.secret
+*.secrets
+tokens
+*.token
+*.tokens
+auth.json
+.netrc
+
+# ---- Keys & certificates ----
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.cer
+*.der
+*.gpg
+*.asc
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+*.ppk
+.ssh/
+known_hosts
+
+# ---- Cloud / service credentials ----
+.aws/
+.gcloud/
+.gcp/
+*service-account*.json
+.npmrc
+.pypirc
+.docker/config.json
+kubeconfig
+*.kubeconfig
+
+# ---- Security evidence & engagement data (local only unless approved) ----
+security/evidence/
+security/engagements/
+security/reports/
+security/logs/
+evidence/
+**/evidence/
+**/raw-captures/
+*.pcap
+*.pcapng
+
+# ---- Databases & dumps (not unless intentionally approved) ----
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+dumps/
+
+# ---- Logs & temp ----
+logs/
+*.log
+*.tmp
+*.temp
+tmp/
+*.swp
+*~
+
+# ---- Backups (local only) ----
+backups/
+*.tar.gz
+*.tgz
+*.zip
+# (allow intentional release archives by force-adding)
+
+# ---- Local agent credentials / state ----
+.claude/
+.codex/
+.config/gh/
+agents/**/credentials*
+agents/**/*.token
+
+# ---- Language / build artifacts ----
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+dist/
+build/
+.cache/
+.next/
+.parcel-cache/
+coverage/
+
+# ---- OS noise ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================================================
+# NOTE: directories above are ignored broadly. To intentionally track a
+# specific non-secret file inside an ignored dir, force-add it:
+#   git add -f path/to/file   (after confirming it contains NO secrets)
+# ==========================================================================

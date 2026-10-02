@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+/opt/wise2/scripts/wise2 shannon
+echo
+read -r -p "Press Enter to close… " _
