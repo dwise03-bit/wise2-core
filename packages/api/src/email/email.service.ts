@@ -191,6 +191,7 @@ export class EmailService {
         throw new Error('RESEND_API_KEY not configured');
       }
 
+      const from = this.configService.get('EMAIL_FROM', 'noreply@wise2.net');
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -198,7 +199,7 @@ export class EmailService {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          from: this.configService.get('EMAIL_FROM', 'noreply@wise2.net'),
+          from,
           to: options.to,
           subject: options.subject,
           html: options.html,

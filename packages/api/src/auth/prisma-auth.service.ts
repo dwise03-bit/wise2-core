@@ -3,9 +3,11 @@ import {
   UnauthorizedException,
   BadRequestException,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { google } from 'googleapis';
@@ -13,9 +15,12 @@ import { roleForEmail } from './master-account';
 
 @Injectable()
 export class PrismaAuthService {
+  private readonly logger = new Logger('PrismaAuthService');
+
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
+    private emailService: EmailService,
   ) {}
 
   async signup(email: string, password: string, name?: string) {
@@ -50,6 +55,13 @@ export class PrismaAuthService {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
     });
+
+    // Send verification email
+    await this.emailService.sendVerificationEmail(
+      user.email,
+      verificationToken,
+      user.name || 'User',
+    );
 
     const accessToken = this.jwt.sign(
       { sub: user.id, email: user.email, role: user.role },
@@ -149,6 +161,10 @@ export class PrismaAuthService {
     const role = roleForEmail(payload.email);
     // Only ever promote on update: a non-master user may have been granted an
     // elevated role by hand, and re-authenticating must not demote them.
+    const isNewUser = !(await this.prisma.user.findUnique({
+      where: { email: payload.email },
+    }));
+
     const user = await this.prisma.user.upsert({
       where: { email: payload.email },
       update: {
@@ -179,6 +195,11 @@ export class PrismaAuthService {
         id_token: idToken,
       },
     });
+
+    // Send welcome email to new users
+    if (isNewUser) {
+      await this.emailService.sendWelcome(user.email, user.name || 'User');
+    }
 
     return this.issueAuthTokens(user);
   }
@@ -296,6 +317,10 @@ export class PrismaAuthService {
     const generatedPasswordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
     const role = roleForEmail(email);
     // Promote-only on update; see loginWithGoogle for the rationale.
+    const isNewUser = !(await this.prisma.user.findUnique({
+      where: { email },
+    }));
+
     const user = await this.prisma.user.upsert({
       where: { email },
       update: {
@@ -337,6 +362,11 @@ export class PrismaAuthService {
         scope: 'identify email guilds',
       },
     });
+
+    // Send welcome email to new users
+    if (isNewUser) {
+      await this.emailService.sendWelcome(user.email, user.name || 'User');
+    }
 
     return this.issueAuthTokens(user);
   }
@@ -418,6 +448,13 @@ export class PrismaAuthService {
         expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
       },
     });
+
+    // Send password reset email
+    await this.emailService.sendPasswordReset(
+      user.email,
+      resetToken,
+      user.name || 'User',
+    );
 
     return { message: 'If email exists, a reset link has been sent' };
   }

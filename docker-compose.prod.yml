@@ -59,8 +59,8 @@ services:
       # Email is optional. Empty values keep the stack deployable when
       # SendGrid is not configured; the API disables email delivery.
       SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
-      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-}
-      APP_URL: ${APP_URL}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@wise2.net}
+      APP_URL: ${APP_URL:-https://wise2.net}
       API_BASE_URL: ${API_BASE_URL}
       CORS_ORIGIN: ${CORS_ORIGIN:-https://wise2.net,https://www.wise2.net,https://api.wise2.net,https://cloud.wise2.net,https://clipper.wise2.net}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
