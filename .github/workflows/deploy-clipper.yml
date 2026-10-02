@@ -1,0 +1,79 @@
+name: Deploy Clipper
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy
+        required: false
+        default: main
+      rollback:
+        description: Roll back to the previously deployed commit
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: clipper-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY" || { echo "VPS_SSH_KEY is not configured"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/wise2
+          chmod 600 ~/.ssh/wise2
+          ssh-keyscan -H 173.208.147.165 >> ~/.ssh/known_hosts
+
+      - name: Deploy only WISE2 Clipper
+        env:
+          DEPLOY_REF: ${{ inputs.ref }}
+          ROLLBACK: ${{ inputs.rollback }}
+        run: |
+          ssh -i ~/.ssh/wise2 dwise@173.208.147.165 "DEPLOY_REF='$DEPLOY_REF' ROLLBACK='$ROLLBACK' bash -s" <<'REMOTE'
+          set -Eeuo pipefail
+          cd /home/dwise/wise2-core
+          STATE_DIR=/home/dwise/.wise2-deploy
+          mkdir -p "$STATE_DIR"
+          STATE_FILE="$STATE_DIR/clipper-previous-ref"
+          current_ref="$(git rev-parse HEAD)"
+          target_ref="$DEPLOY_REF"
+          if [ "$ROLLBACK" = "true" ]; then
+            test -s "$STATE_FILE" || { echo "No previous Clipper deployment is recorded."; exit 1; }
+            target_ref="$(cat "$STATE_FILE")"
+          fi
+          git fetch --prune origin
+          target_sha="$(git rev-parse "origin/$target_ref" 2>/dev/null || git rev-parse "$target_ref")"
+          printf '%s\n' "$current_ref" > "$STATE_FILE"
+          echo "Deploying Clipper commit $target_sha"
+          git checkout --detach "$target_sha"
+          docker compose build clipper
+          docker compose up -d --no-deps clipper
+          for attempt in $(seq 1 18); do
+            if curl --fail --silent --show-error http://127.0.0.1:3015/ >/dev/null; then
+              echo "Clipper container is healthy."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Clipper health check failed. Restoring $current_ref"
+          git checkout --detach "$current_ref"
+          docker compose build clipper
+          docker compose up -d --no-deps clipper
+          exit 1
+          REMOTE
+
+      - name: Verify public endpoint
+        run: |
+          curl --fail --show-error --silent --retry 6 --retry-delay 5 https://clipper.wise2.net/ >/dev/null
+          echo "clipper.wise2.net is responding."
