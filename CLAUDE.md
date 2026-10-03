@@ -63,7 +63,8 @@ hosts, GitHub remotes) as production. Changing it needs Daniel's go-ahead.
 
 ## 8. Git workflow
 
-- No global git identity is set yet — **pause for Daniel** to set name/email.
+- Git identity is configured in the preserved baseline; verify it read-only.
+  If missing, ask Daniel rather than inventing a name/email.
 - `.gitignore` must protect secrets (`.env*`, `*.pem`, `*.key`, credentials,
   tokens, SSH material, security evidence, local agent creds).
 - **Before pushing anything**, show remotes + status and **ask Daniel**.

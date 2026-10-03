@@ -1,34 +1,33 @@
-# WISE² Command Center (scaffold v0.1)
+# WISE² Command Center v0.2
 
-Read-only system/security/agent dashboard. Dependency-free (Python 3 stdlib).
+**STAGED source upgrade** of the existing working localhost dashboard.
+Application/live validation is blocked by the current session. See
+`docs/OPERATIONS.md` and `docs/ACCEPTANCE.md` for exact status and rollout.
 
-## Run (localhost only)
-```bash
-python3 /opt/wise2/command-center/server.py      # http://127.0.0.1:3010
-# or: wise2 command   (status check)
+Python standard library only. Preserves the existing user service and port
+127.0.0.1:3010. Fixed read-only probes in `core/runtime.py`; no shell from HTTP
+input, no mutation endpoints, no scan or credential response. Static paths use
+resolved path containment. Browser renders values with textContent, never raw
+status HTML. Shared background cache coalesces probes; old results are STALE.
+
+SYSTEM, AI, SECURITY, DEVICES, PROJECTS, DEPLOYMENTS, SUPPORT, ALERTS, LOGS,
+BACKUPS and SETTINGS select actual module views. Unconnected deployment,
+support and remote agent/job/approval integrations show NOT CONFIGURED.
+Remote service/hardware state is never inferred from Tailscale presence.
+
+Routes: `/`, `/app.js`, `/healthz`, `/api/status`. v0.2 status schema is paired
+with this UI. Healthz is a cheap HTTP liveness probe, not full system health.
+Environment: `WISE2_ROOT`, `CC_HOST` (must be 127.0.0.1), `CC_PORT` (3010 in the
+installed unit). No new dependencies or unit changes are required.
+
+Operations:
 ```
-Env: `CC_HOST` (default 127.0.0.1), `CC_PORT` (default 3010).
-
-## Safety contract
-- Binds to **127.0.0.1 only**. No public/tailnet exposure without Daniel's approval.
-- **READ-ONLY.** `/api/status` runs a fixed set of safe collectors.
-- **No arbitrary shell from the browser.** Routes are an allowlist; collectors
-  use fixed argument vectors (never shell=True, never HTTP input in a command).
-- Static files served only from `./public` (path-traversal guarded).
-- Security scans run only via the authorized `wise2-pentest` gate — never here.
-
-## Layout
-- `server.py` — status server (allowlisted, read-only).
-- `public/index.html` — dashboard (deep black/navy, chrome, electric green).
-
-## Roadmap (needs Daniel's direction on stack before expanding)
-- Shannon adapter (see `security/configs/command-center-adapter.md`) — read-only
-  engagements/findings/evidence/reports.
-- Nav sections (ENGAGEMENTS, FINDINGS, DEVICES, …) currently anchor to HOME;
-  wire to adapter endpoints as modules land.
-- Optional: upgrade to a framework build if/when complexity warrants. v0 stays
-  dependency-free and maintainable.
-
-## Service
-Install template: `/opt/wise2/services/wise2-command-center.service.template`
-(needs sudo; install only when you want it always-on).
+wise2 command-center status
+wise2 command-center restart
+wise2 command-center logs
+```
+Logs expose metadata only. Restart is narrow, disclosed and verified. Existing
+Restart=on-failure, RestartSec=3, user linger, NoNewPrivileges and PrivateTmp
+are preserved. Resource-limit tuning requires live measurements; it is not
+silently added here. Never install the legacy root-unit template alongside the
+existing user service. Hermes remains a remote client, not a local daemon.

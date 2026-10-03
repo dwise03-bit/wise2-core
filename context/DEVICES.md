@@ -42,3 +42,10 @@
 > compute. `gl-mt3600be` is a GL.iNet travel router on the tailnet. Confirm roles
 > with Daniel before relying on them. The structured machine manifest for THIS
 > node lives in `/opt/wise2/devices/` (Phase 14).
+
+## Registry upgrade (STAGED 2026-10-03)
+
+The table above is a historical tailnet snapshot, not today's telemetry or
+automatic enrollment. `devices/registry.json` registers only Surface initially.
+`wise2 devices` derives observed presence separately and never invents remote
+hardware/service state. See `docs/DEVICE-REGISTRY.md`.

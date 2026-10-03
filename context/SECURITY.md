@@ -19,7 +19,7 @@
 - Launcher: `/usr/local/bin/wise2-shannon`
   - `cd /opt/wise2/shannon` → `npx --yes @keygraph/shannon@latest "$@"`
   - env: `SHANNON_USE_PI_AUTH=1`, `SHANNON_AI_MODEL=openai-codex:gpt-5.6-sol`
-  - ⇒ Shannon's AI backend depends on **OpenAI Codex** (install in Phase 2).
+  - ⇒ Shannon's AI backend depends on **OpenAI Codex** (installed; authentication requires a separate check).
 - Guarded launcher: `/usr/local/bin/wise2-pentest`
   - Prompts: engagement name, authorized target, repo path, **authorization
     (must type `yes`)**. Anything but `yes` → "Scan cancelled", exit 1.

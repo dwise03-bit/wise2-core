@@ -18,7 +18,7 @@ Linux AI / Security / Development Workstation**.
 1. **Foundation** — Ubuntu 24.04.5 LTS + Surface kernel (`6.19.8-surface-3`).
 2. **Workspace** — `/opt/wise2` canonical tree (owned by `dwise`).
 3. **Shared context** — `/opt/wise2/context` (this layer): one truth for all agents.
-4. **AI agents** — Claude Code (native), OpenAI Codex (planned), future WISE² agents.
+4. **AI agents** — Claude Code (native), OpenAI Codex (installed; auth separately verified), future WISE² agents.
 5. **Hermes** — the durable second-brain / memory & orchestration layer.
 6. **Shannon** — AI-assisted *authorized* security testing (flagship capability).
 7. **Command Center** — web UI surfacing system, security, and agent state.

@@ -1,6 +1,6 @@
 # WISE² Architecture
 
-> Last updated: 2026-10-02
+> Last updated: 2026-10-03
 
 ## Directory map (`/opt/wise2`)
 
@@ -42,14 +42,15 @@ content only). This is how Claude / Codex / Hermes stay coherent.
 ### Agents
 - **Claude Code** — native install at `~/.local/bin/claude`, authenticated.
   Primary development + ops agent. Reads `/opt/wise2/CLAUDE.md`.
-- **OpenAI Codex** — planned (Phase 2). Shannon's AI backend is configured as
+- **OpenAI Codex** — installed; version command verified (auth is separate). Shannon's AI backend is configured as
   `openai-codex:gpt-5.6-sol`, so Codex is also a Shannon dependency.
 - **Future WISE² agents** — must conform to `AGENT-RULES.md` + `HANDOFF-TEMPLATE.md`.
 
 ### Hermes (second brain)
-Durable memory + orchestration. Historically port **3012** (localhost). Provides
-shared context to Claude, Codex, Command Center, agents, and future clients.
-Durable memory ≠ model-local chat memory (see `hermes/README` once created).
+Surface is a disabled client of the existing remote production Hermes, not a
+local Hermes host. ADR-0004/0005 and the existing connection record govern it.
+No competing brain/Mongo service is installed. Endpoint and dedicated device
+credential remain prerequisites owned by Daniel.
 
 ### Shannon (security center)
 AI-assisted authorized pentesting. Invoked only via `wise2-shannon` /
@@ -88,3 +89,12 @@ OpenSSH over Tailscale is the supported path.
 - Browser UI → **read-only** status + allowlisted operations only.
 - Secrets live outside Git and outside context (env files, OS keyring, Tailscale).
 - Security evidence stays local; only appropriate non-secret artifacts sync.
+
+## v0.2 source upgrade — STAGED, host rollout blocked
+
+`core/runtime.py` supplies fixed shared probes to CLI/dashboard; `core/backup.py`
+provides allowlisted manifest backups and enum-only rotated logs; `core/hermes.py`
+implements the existing read-only client contract without argv credentials.
+Registry is local-first with separate derived observation fields. The dashboard
+has no mutation routes. Source tests do not establish live service resilience.
+See `docs/OPERATIONS.md` and `CURRENT-STATE.md` for status and deployment limits.

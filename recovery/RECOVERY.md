@@ -1,74 +1,71 @@
-# WISE² Recovery
+# WISE² recovery
 
-> Last updated: 2026-10-02. Keep this readable from a rescue shell.
-> **Golden rule: never remove the generic Ubuntu fallback kernels.**
+Updated 2026-10-03. v0.2 recovery tooling is STAGED. No automatic destructive
+restore. Read `docs/BACKUP-RECOVERY.md` before replacing files.
 
 ## Boot / kernel
 
-- **Working Surface kernel:** `6.19.8-surface-3` (GRUB default via
-  *Advanced options for Ubuntu → Ubuntu, with Linux 6.19.8-surface-3*).
-- **Fallback:** the generic Ubuntu kernels (kept intentionally). If the Surface
-  kernel fails to boot, pick a generic kernel from the GRUB *Advanced options*
-  submenu.
-- Show installed kernels: `dpkg -l | grep -E 'linux-image'`.
-- Rebuild GRUB (only if needed, with care): `sudo update-grub`.
-- Secure Boot is **disabled** by design (unsigned Surface modules).
+Preserve Surface kernel 6.19.8-surface-3 and generic Ubuntu fallbacks. Use
+GRUB Advanced options to choose a fallback if necessary. Do not change GRUB,
+Secure Boot, firmware or the kernel as part of a cosmetic upgrade.
+Historical hardware details: `docs/SURFACE-HARDWARE.md`.
 
-## GRUB recovery
+## Diagnostics first
 
-- Hold **Shift** (BIOS) or press **Esc** (UEFI) during boot for the GRUB menu.
-- Boot a known-good kernel from *Advanced options*.
-- Do not change the bootloader for cosmetic reasons. Back up `/etc/default/grub`
-  and `/boot/grub/grub.cfg` before any GRUB edit.
+On an unrestricted host terminal: `wise2 doctor`, `wise2 services`,
+`ip -brief address`, `ip route`, `resolvectl status`, `tailscale status`,
+`docker info`, `systemctl --failed`, `systemctl --user --failed`.
+A denied D-Bus/socket/network observation does not prove a service outage.
+Do not restart unrelated system services to repair an observation restriction.
 
-## Network recovery
+## Surface touch
 
-- Wi-Fi iface: `wlp0s20f3`. Check: `ip -brief address`, `nmcli device status`.
-- Restart networking: `sudo systemctl restart NetworkManager`.
-- DNS: `resolvectl status`; LAN resolver `192.168.1.1`, MagicDNS `100.100.100.100`.
+Inspect `systemctl list-units --all 'iptsd@*.service'`. Instance identifiers
+change after boot. Verify physical touch/stylus, then investigate the actual
+current instance/logs. Never hardcode a historic hidraw device for recovery.
+Restarting/changing a system touch service needs an appropriate approved host
+session; preserve the working kernel and driver stack.
 
-## SSH recovery
+## Command Center
 
-- Status: `systemctl status ssh`. Restart: `sudo systemctl restart ssh`.
-- Config: `/etc/ssh/sshd_config` (back up before editing; test with
-  `sudo sshd -t`). Port 22.
+Use the existing **user** service, not a root unit:
 
-## Tailscale recovery
+```
+systemctl --user status wise2-command-center
+wise2 command-center status
+wise2 command-center logs
+```
 
-- `tailscale status`; reconnect: `sudo tailscale up`.
-- Service: `sudo systemctl restart tailscaled`.
-- This node IP: `100.97.230.73`. **Do not alter the tailnet ACL here** — that is
-  done in the Tailscale admin console by Daniel.
+After reviewing the intended local action, `wise2 command-center restart`
+restarts only this service and verifies HTTP. Inspect 127.0.0.1:3010 and the
+root page plus `/healthz`. Preserve linger, Restart=on-failure, RestartSec=3,
+NoNewPrivileges, PrivateTmp and loopback binding. Do not install a duplicate
+root template. Raw journals are private; redact before sharing.
 
-## Docker recovery
+## Hermes
 
-- `systemctl status docker`; restart: `sudo systemctl restart docker`.
-- User `dwise` is in the `docker` group. Data root: `/var/lib/docker`.
+Surface is a **client** of the existing production Hermes. Run
+`wise2 hermes status`. Disabled is NOT CONFIGURED, not an outage or READY.
+Do not start a local Hermes/Mongo replacement. Review the existing pending
+connection record; credentials/VPS/DNS changes require Daniel's approval.
 
-## Touch / Surface recovery
+## SSH / Tailscale / Docker / network
 
-- Touch daemon: `systemctl status 'iptsd@dev-hidraw0'`.
-- Restart: `sudo systemctl restart 'iptsd@dev-hidraw0'`.
-- Packages: `iptsd`, `libwacom-surface`.
+Inspect the real service, route, resolver, ACL/exposure and socket errors before
+acting. Existing system configurations are preserved by this level-up.
+System-service restarts and config edits need a reviewed target/rollback and
+appropriate access; do not re-authenticate Tailscale, alter ACLs or firewall,
+replace Docker volumes, or reset networking blindly.
 
-## Command Center recovery
+## Source / metadata recovery
 
-- Scaffold under `/opt/wise2/command-center`. If a service exists:
-  `sudo systemctl restart wise2-command-center` and `journalctl -u wise2-command-center`.
-- Binds to localhost; no external exposure to restore.
+The local stable tag preserves baseline versioned files at c04bfb2. Compare
+selected files with `git show wise2-linux-stable-2026-10-03:path/to/file`.
+Back up the current state and review a selected replacement rather than a
+broad reset/clean/restore. No Git push is implied.
 
-## Hermes recovery
-
-- `/opt/wise2/hermes`. If a service exists: `sudo systemctl restart wise2-hermes`,
-  logs via `journalctl -u wise2-hermes`. Historic port 3012 (localhost).
-
-## WISE² context recovery
-
-- Restore from a backup in `/opt/wise2/backups/` (made by `wise2 backup`):
-  `tar -xzf /opt/wise2/backups/wise2-config-<stamp>.tar.gz -C /opt/wise2`.
-- Context layer is also version-controllable via Git (no secrets).
-
-## Full re-audit
-
-- Re-run the audit anytime: compare against
-  `/opt/wise2/logs/setup-audit-20261002-122926.txt`, or run `wise2 doctor`.
+Verify a metadata archive before inspecting it in a new empty staging directory.
+Do not extract directly over the workstation. Secrets, system configuration,
+project data and Docker volumes are deliberately excluded and require separate
+trusted recovery procedures. Full restore design: `docs/BACKUP-RECOVERY.md`.
+After a reviewed recovery run `docs/ACCEPTANCE.md`; reboot requires approval.

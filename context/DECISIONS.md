@@ -3,6 +3,20 @@
 > Append-only log of decisions that shape WISE². Each entry: date, decision,
 > rationale, consequences. Newest at top. Last updated: 2026-10-02.
 
+## ADR-0006 — Shared observations and metadata-only recovery (2026-10-03)
+**Decision:** CLI/dashboard use one standard-library read-only probe layer;
+registration is separate from observation. Backups use a compiled source/metadata
+allowlist with full manifest verification, excluding credentials, runtime env,
+security evidence and arbitrary system/project data. Operation logs accept only
+fixed safe event fields. Hermes stays the existing remote client contract.
+**Rationale:** Prevent false PASS/telemetry drift and avoid treating file presence
+or incomplete archives as health/recovery evidence. Keep authorization boundaries
+and existing service/launchers intact.
+**Consequences:** v0.2 is staged in a separate writable checkout because this
+session cannot apply/test live operations on `/opt/wise2`. Host rollout,
+physical/browser checks and post-reboot acceptance remain required. No automatic
+restore, remote job/approval engine or competing Hermes daemon is created.
+
 ## ADR-0005 — Hermes: Tailscale-private target + dedicated device credential (2026-10-02)
 **Decision:** Surface connects to the existing production Hermes over a
 Tailscale-PRIVATE endpoint using a dedicated, scoped, revocable WISE² device

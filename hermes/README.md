@@ -37,10 +37,16 @@ client reconciles it with the canonical brain (no divergent per-agent memory).
 
 - Replace production Hermes with a local stub, or deploy another instance.
 - Modify production or expose it publicly.
-- Commit secrets (Hermes token lives in a git-ignored `.env`, never in context).
+- Commit secrets (Hermes token lives in the approved owner-only device credential file, never in context).
 
-## Next (needs Daniel)
+## Next (needs Daniel / production access)
 
-1. Confirm the live Hermes endpoint (Tailscale node:3012 vs public URL).
-2. `gh auth login`, then optionally read-only `git clone dwise03-bit/wise2-core`.
-3. Agree the Surface→Hermes auth + sync contract; then I build the thin client.
+Confirm existing production runtime/private endpoint and supply its approved
+scoped device credential; then explicitly enable the Surface connection.
+The local v0.2 probe is STAGED and implements the same four-state read-only
+contract. Literal config is not executed; credentials never enter process argv,
+UI or logs. No token was minted, configured or modified. Details/status:
+`docs/OPERATIONS.md`, `HERMES-PRODUCTION-CONNECTION-PENDING.md`.
+
+Jobs, pending approvals and remote agent telemetry remain NOT CONFIGURED;
+we will integrate the existing production contract, not create a local brain.

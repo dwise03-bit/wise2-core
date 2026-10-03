@@ -1,50 +1,63 @@
-# WISE² Current State
+# WISE² current state
 
-> **Living document.** Every agent updates this at the end of a task.
-> Last updated: 2026-10-02 by Claude (Opus 4.8) — initial WISE² build session.
+Updated 2026-10-03 by Codex. **Distinguish host baseline from staged source.**
 
-## Machine (audited 2026-10-02)
+## Preserved host baseline
 
-- Host: `Wise2-surface` · Ubuntu 24.04.5 LTS · kernel `6.19.8-surface-3`
-- CPU i7-1185G7 (4C/4T) · 15 GiB RAM + 4 GiB swap · ~222 GB free on `/`
-- Secure Boot disabled · Firmware 33.108.143
-- Tailscale IP: `100.97.230.73` · LAN: `192.168.1.14/24`
-- `wise2 doctor`: 25 PASS / 0 WARN / 0 FAIL (incl. real Command Center port check)
+`/opt/wise2`, main at c04bfb2, six commits, clean, one ahead of origin/main.
+Local annotated tag `wise2-linux-stable-2026-10-03` points at c04bfb2. No push.
+Ubuntu 24.04.5 LTS, WISE² identity, Surface Laptop 4, Surface kernel
+6.19.8-surface-3, 15 GiB RAM, ~203 GiB free root at audit.
+All requested development tools execute version commands. IPTSD virtual
+screen/stylus and camera/audio/Bluetooth/Wi-Fi device nodes are present.
 
-## Done this session (safe, no sudo)
+Prior operator evidence: Command Center user service on 127.0.0.1:3010,
+enabled + linger, Restart=on-failure, SIGKILL/reboot persistence tested,
+dynamic iptsd CLI detection, doctor 25 PASS / 0 WARN / 0 FAIL.
+That remains **historical evidence**, not a current live test.
 
-Audit · SURFACE-HARDWARE.md · canonical tree · context layer + CLAUDE.md ·
-.gitignore · Hermes skeleton · Shannon adapter contract · Command Center scaffold
-(tested, localhost) · wise2 CLI (tested) · unit templates (staged) ·
-REMOTE-ACCESS.md · backup (tested) + recovery docs · device manifest ·
-BUILD-REPORT.md · INSTALL-PLAN.md.
+This session denies D-Bus/netlink/Docker socket/network access and writes to
+`/opt/wise2`. Legacy doctor here returned 19 PASS / 1 WARN / 5 FAIL, including
+observation-denied checks. Do not infer host outages from that environment.
+GNOME/Wayland, live networking/service health and interactive touch require
+host verification. Audit: `docs/LEVEL-UP-AUDIT-2026-10-03.md`.
 
-**Installed 2026-10-02:** git identity (Daniel Wise), git-lfs/btop/tree/shellcheck, GitHub CLI `gh` 2.102.0 (authed as dwise03-bit), OpenAI Codex `@openai/codex` 0.160.0 (installed + **logged in via ChatGPT** 2026-10-02). First local git commit 720da6b (no remote).
+## Source upgrade — STAGED, not applied to host
 
-## Pending — needs Daniel (auth / secret / sudo / approval)
+Isolated checkout `/home/dwise/wise2-level-up`, branch level-up-2026-10-03,
+no remotes. Implemented CLI v0.2/shared probes, functional doctor, manifest
+backups, safe rotated logs, local-first registry, existing Hermes client
+improvements, read-only dashboard modules/cache/stale labels and acceptance
+script. Existing unit and `/usr/local/bin/wise2-{shannon,pentest}` preserved.
 
-- [x] wise2 CLI installed: /usr/local/bin/wise2 -> scripts/wise2
-- [ ] systemd units (install templates when always-on wanted) (sudo)
-- [ ] Git repo init + remote + first push (show status first; never force-push)
-- [ ] branding Phase 13 (GRUB/Plymouth/GDM/wallpaper) (sudo + approval, back up first)
-- [ ] Hermes implementation (confirm stack / existing port)
+Offline tests and staging backup verification pass. Exact final verification
+and commit records are in `docs/LEVEL-UP-STATUS.md` and the delivery record.
+Fixture tests do not replace live acceptance. Documentation describes source
+behavior after application, not an installed production upgrade.
 
-## Milestone
+## Component status
 
-Toolchain complete; Codex authenticated; Shannon AI backend (openai-codex:gpt-5.6-sol) available. `wise2 doctor` 24 PASS / 0 WARN / 0 FAIL. Local commits 720da6b, 9c7e8cc (no remote).
+| Component | State |
+|---|---|
+| Development CLI tools | Version execution verified; account authentication not re-tested |
+| Command Center baseline | Existing unit/code present, historical recovery proven; fresh live state UNKNOWN |
+| v0.2 doctor/CLI/dashboard | STAGED implementation, offline tested |
+| Metadata backup/rotation | STAGED implementation, real local archive verified |
+| Local device registry | STAGED; remote agent telemetry NOT CONFIGURED |
+| Hermes | Existing remote implementation; Surface connection disabled, NOT CONFIGURED |
+| Shannon | Existing launchers intact; local package 3.3.0 cached; no engagement/scan started |
+| Deployment/remote job/approval backends | NOT CONFIGURED / PLANNED |
+| Visual inspection on Surface | BLOCKED until host rollout |
+| Live acceptance/recovery/reboot | BLOCKED by session access; reboot requires Daniel |
 
-## Command Center
+## Next checkpoints
 
-Runs as a **systemd --user service** `wise2-command-center` (dwise, no root), bound **127.0.0.1:3010** only, Restart=on-failure, enabled at user-session start. `wise2 doctor` now includes a counted runtime check (PASS if the port answers, FAIL if not). Unit (versioned): `services/wise2-command-center.user.service` → installed to `~/.config/systemd/user/`.
+Apply only after inspecting current host Git and preserving any new edits.
+Follow `docs/ACCEPTANCE.md`: verified pre-change metadata backup, patch check,
+reviewed apply, narrow Command Center restart, new backup/doctor/acceptance,
+intentional recovery. Prepare a saved-work/health/Git/service record and obtain
+Daniel's explicit approval before reboot. Then repeat acceptance after boot.
 
-## Known warnings
-
-- SSH on `0.0.0.0:22` (LAN + Tailscale; no router port-forward). Documented.
-- Shannon depends on npx + network + npm cache; offline first-run may fail.
-- Shannon AI backend (`openai-codex:gpt-5.6-sol`) unavailable until Codex installed.
-
-## Do-not-touch (validated working)
-
-Surface kernel · generic fallback kernels · touch stack · Claude native install ·
-Tailscale + its ACL · OpenSSH config · Docker · Shannon launchers · existing
-`/opt/wise2/security` contents.
+Production Hermes/VPS/DNS/credentials and Tailscale/firewall/kernel boundaries
+remain untouched. Hermes connection prerequisites stay in its existing pending
+record; do not deploy a competing local brain. Never push without authorization.

@@ -1,5 +1,18 @@
 # WISE² Changelog
 
+## 2026-10-03 — Master level-up staged in isolated checkout (Codex)
+- Read-only audit reconfirmed clean c04bfb2 and existing stable tag on `/opt/wise2`.
+- Restricted session cannot observe host D-Bus/network/socket state or write to
+  `/opt/wise2`; original source/unit/launchers preserved.
+- STAGED CLI v0.2/shared functional doctor, verified metadata backups, safe
+  rotated logs, registry, read-only dashboard modules/cache/stale labels and
+  credential-safe existing Hermes probe. No backend or telemetry invented.
+- Offline regression tests and real staging backup creation/verification pass;
+  fixture success is not live workstation acceptance.
+- Updated architecture/context/operations/recovery/enrollment/approval docs;
+  acceptance/recovery script prepared. Live rollout/recovery/reboot blocked.
+- No push, reboot, credential/production/security-boundary change or scan.
+
 ## 2026-10-02 — Codex authenticated; Shannon AI backend available
 - codex login complete (ChatGPT). codex login status OK; v0.160.0.
 - Shannon backend openai-codex:gpt-5.6-sol now available (codex authed); launcher unchanged; no scan run.

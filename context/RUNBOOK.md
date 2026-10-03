@@ -1,33 +1,27 @@
-# WISE² Runbook
+# WISE² runbook
 
-> Operational procedures. Commands assume user `dwise` on `Wise2-surface`.
-> Last updated: 2026-10-02.
+Updated 2026-10-03. v0.2 operations below are STAGED until the host rollout.
+Current source/application status: `CURRENT-STATE.md`.
 
-## Health check
-- `wise2 doctor` (once Phase 9 lands) — PASS/WARN/FAIL diagnostic.
-- Manual: `systemctl is-active ssh tailscaled docker bluetooth`,
-  `tailscale status`, `df -h /`, `free -h`.
+- Health: `wise2 doctor`; 0 complete, 1 FAIL, 2 WARN/incomplete.
+- User dashboard: `wise2 command-center status|restart|logs`.
+- Registry: `wise2 devices`, `wise2 node`; remote presence is not agent health.
+- Safe logs: `wise2 logs`; no raw credentials/process output.
+- Snapshot: `wise2 backup create`, `wise2 backup list`, `wise2 backup verify`.
+- Hermes: `wise2 hermes status`; existing remote client, NOT CONFIGURED until
+  Daniel supplies its approved endpoint/device credential.
+- Shannon: `wise2 shannon status`; never starts a scanner. Authorized manual
+  engagements use `wise2 pentest` and explicit ownership/scope/yes confirmation.
+- Updates: `wise2 update` inventories versions only.
 
-## Remote in
-- `ssh dwise@100.97.230.73` from an authorized tailnet device. See
-  `/opt/wise2/docs/REMOTE-ACCESS.md`.
+Existing remote administration: OpenSSH over the authorized private tailnet.
+The baseline Surface address 100.97.230.73 is historical; verify current mesh
+IP before relying on it. Do not change router exposure, ACL or firewall.
 
-## Shannon (authorized testing only)
-- Guarded: `wise2-pentest` (prompts for authorization; type `yes`).
-- Direct: `wise2-shannon <args>` (Shannon CLI).
-- **Never** run against systems not owned/authorized. See `context/SECURITY.md`.
+Detailed operators' reference: `docs/OPERATIONS.md`, `docs/BACKUP-RECOVERY.md`,
+`docs/DEVICE-REGISTRY.md`, `docs/APPROVAL-MODEL.md`, `docs/ACCEPTANCE.md`.
+Recovery: `recovery/RECOVERY.md`. Preserve Surface and generic fallback kernels.
 
-## Docker
-- `docker ps`, `docker compose version`. User `dwise` is in `docker` group.
-
-## Updating context after a task
-1. Edit `CURRENT-STATE.md`. 2. Append to `CHANGELOG.md`.
-3. Add `DECISIONS.md` entry if architectural. 4. Handoff record if needed.
-
-## Backups (Phase 12)
-- `wise2 backup` (once available) snapshots config + context to `/opt/wise2/backups`.
-- Back up unknown/production config **before** modifying it.
-
-## Recovery
-- See `/opt/wise2/recovery/RECOVERY.md`. Generic Ubuntu kernels are the fallback;
-  never remove them.
+After meaningful work update CURRENT-STATE + CHANGELOG and relevant decisions;
+write a handoff when leaving required validation unfinished. Never call staged
+source, disabled Hermes, planned agents or unobserved services production-ready.

@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Host acceptance. Recovery changes only the explicitly selected CC service."""
+import argparse
+import json
+import os
+import sys
+import time
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from core import runtime, backup
+
+
+def wait_healthy():
+    deadline = time.monotonic() + 30
+    while time.monotonic() < deadline:
+        if runtime.unit('wise2-command-center', user=True) == 'ONLINE' and runtime.cc_http() == 'ONLINE' and runtime.cc_http(page=True) == 'ONLINE':
+            return True
+        time.sleep(1)
+    return False
+
+
+def recovery():
+    print('ACTION: SIGKILL the Command Center main process\nTARGET: wise2-command-center user service\n'
+          'REASON: verify existing Restart=on-failure policy\nEXPECTED EFFECT: brief dashboard interruption\n'
+          'ROLLBACK METHOD: start the unchanged user service if automatic recovery fails', flush=True)
+    policy = runtime.run(['systemctl','--user','show','wise2-command-center','--property=Restart','--value'])
+    before = runtime.run(['systemctl','--user','show','wise2-command-center','--property=NRestarts','--value'])
+    if policy.text != 'on-failure' or not before.ok or not before.text.isdigit() or not wait_healthy():
+        print('[ FAIL ] Recovery preconditions unavailable; nothing killed')
+        return False
+    killed = runtime.run(['systemctl','--user','kill','--kill-whom=main','--signal=KILL','wise2-command-center'])
+    if not killed.ok:
+        print('[ FAIL ] Kill request unavailable or failed')
+        return False
+    healthy = wait_healthy()
+    after = runtime.run(['systemctl','--user','show','wise2-command-center','--property=NRestarts','--value'])
+    recovered = healthy and after.ok and after.text.isdigit() and int(after.text) > int(before.text)
+    if not recovered:
+        print('[ FAIL ] Automatic recovery not verified; attempting to restore the existing service')
+        runtime.run(['systemctl','--user','start','wise2-command-center'])
+        restored = wait_healthy()
+        print('[ INFO ] Service restored' if restored else '[ FAIL ] Service restoration requires operator attention')
+    backup.log_event(runtime.ROOT,'recovery_test','PASS' if recovered else 'FAIL')
+    print('[ PASS ] Automatic restart and HTTP verified' if recovered else '[ FAIL ] Recovery test failed')
+    return recovered
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--recovery', action='store_true', help='explicitly test Command Center SIGKILL recovery; never reboot')
+    args = parser.parse_args()
+    baseline = runtime.doctor()
+    print(json.dumps(baseline,indent=2,ensure_ascii=False))
+    if baseline['exit_code']:
+        print('[ FAIL ] Acceptance incomplete; resolve reported failures/warnings before recovery or reboot')
+        backup.log_event(runtime.ROOT,'acceptance','FAIL')
+        return baseline['exit_code']
+    if args.recovery and not recovery():
+        return 1
+    final = runtime.doctor() if args.recovery else baseline
+    passed = final['exit_code'] == 0
+    backup.log_event(runtime.ROOT,'acceptance','PASS' if passed else 'FAIL')
+    print('[ PASS ] Acceptance checks passed' if passed else '[ FAIL ] Final acceptance checks failed')
+    return final['exit_code']
+
+
+if __name__ == '__main__':
+    try:
+        sys.exit(main())
+    except (OSError, ValueError):
+        print('[ FAIL ] Acceptance could not complete; no successful result recorded',file=sys.stderr)
+        sys.exit(1)

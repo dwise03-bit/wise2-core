@@ -1,40 +1,28 @@
-# WISE² Services
+# WISE² services
 
-> Audited 2026-10-02. Only services that actually exist are listed.
-> **No fake services.** New units are created only when real software backs them.
+Updated 2026-10-03. Live service state is UNKNOWN to the restricted Codex
+session; this table distinguishes installed roles from fresh observations.
 
-## System services (enabled)
-
-| Unit | State | Role |
-|---|---|---|
-| `ssh.service` | active, enabled | OpenSSH remote admin (port 22) |
-| `tailscaled.service` | active, enabled | Tailscale mesh |
-| `docker.service` + `docker.socket` | active, enabled | Containers |
-| `iptsd@dev-hidraw0.service` | active (static template) | Surface touch daemon |
-| `bluetooth.service` | active | Bluetooth |
-| systemd-resolved | active | DNS |
-| CUPS | active (localhost) | Printing |
-
-## WISE² services (planned — not yet created)
-
-| Unit | Backed by | Status |
-|---|---|---|
-| `wise2-command-center.service` | Command Center app (Phase 8) | ⛔ not created — app doesn't exist yet |
-| `wise2-hermes.service` | Hermes (Phase 6, port 3012 localhost) | ⛔ not created — service doesn't exist yet |
-
-### Rules for WISE² units (Phase 10)
-
-- Create a unit **only** when the software it runs actually exists and runs.
-- `Restart=on-failure`, explicit `WorkingDirectory`, least-privilege `User=`.
-- Environment via `EnvironmentFile=` pointing outside Git; **never inline secrets**.
-- Bind to localhost unless Daniel approves exposure.
-- Logs via journald (`journalctl -u <unit>`).
-- Installing units to `/etc/systemd/system` requires sudo → **pause for Daniel**.
-
-## On-demand launchers (not daemons)
-
-| Command | Purpose |
+| Unit | Role / evidence |
 |---|---|
-| `wise2-shannon` | Shannon via `npx @keygraph/shannon@latest` (cd /opt/wise2/shannon) |
-| `wise2-pentest` | Guarded authorized-engagement wrapper (authorization gate) |
-| `wise2` (planned) | WISE² control CLI (Phase 9) |
+| ssh | Existing OpenSSH; prior active/enabled baseline, unchanged |
+| tailscaled | Existing mesh; prior active/enabled baseline, unchanged |
+| docker + docker.socket | Existing containers; prior working baseline, unchanged |
+| iptsd@*.service | Dynamic Surface touch instances; virtual input devices observed |
+| bluetooth | Existing controller/service; unchanged |
+| systemd-resolved | Existing DNS; fresh resolution blocked here |
+| wise2-command-center (user) | Existing dwise service, localhost:3010, enabled/linger, Restart=on-failure; prior boot/recovery passed |
+
+Versioned Command Center unit: `services/wise2-command-center.user.service`;
+installed path `~/.config/systemd/user/wise2-command-center.service`.
+The level-up changes source only and preserves unit/restart behavior.
+Use `wise2 services`, `wise2 command-center status`, and `wise2 doctor` on the
+host for actual state. See `docs/OPERATIONS.md` for staging/exit semantics.
+
+Hermes is an existing **remote** service. Surface is a disabled client, not a
+Hermes host. Legacy root-service/Hermes unit templates are not instructions to
+install a competing service. No new persistent services are introduced.
+
+Unit edits, dependency/resource/hardening changes require reviewed rollback
+and recovery verification. Do not restart unrelated services. Journald stores
+service output; safe CLI logs expose metadata without raw messages.

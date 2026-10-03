@@ -6,7 +6,8 @@ Start here if something is broken.
    (fallbacks are kept on purpose). See `RECOVERY.md` → Boot / kernel.
 2. **Can't reach the machine?** → `RECOVERY.md` → Network / SSH / Tailscale.
 3. **Service down?** → `wise2 doctor`, then `RECOVERY.md` for that component.
-4. **Config broke after a change?** → restore from `/opt/wise2/backups/`.
+4. **Config broke after a change?** → verify a metadata archive, inspect selected files in a new staging directory,
+   and review replacement first (`docs/BACKUP-RECOVERY.md`).
 
 Quick diagnostic: `wise2 doctor` (PASS/WARN/FAIL).
 Full reference: `RECOVERY.md` in this directory.

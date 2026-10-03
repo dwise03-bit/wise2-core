@@ -1,151 +1,16 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WISE² Command Center</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WISE² · Primary Command Center</title>
 <style>
-  :root{
-    --black:#05070a; --navy:#0a1424; --navy2:#0e1c33; --panel:#0c1526;
-    --chrome:#c7d0d9; --silver:#8a97a6; --green:#1dff7b; --green-dim:#0f8f47;
-    --line:#13243f; --text:#e6edf3; --warn:#ffcc33; --red:#ff4d5e;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:
-      radial-gradient(1200px 600px at 80% -10%, #0c1c38 0%, transparent 60%),
-      linear-gradient(180deg,var(--black),#04060a 60%);
-      color:var(--text);font:15px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      min-height:100vh}
-  header{display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line);
-      background:linear-gradient(90deg,rgba(10,20,36,.9),rgba(5,7,10,.6));position:sticky;top:0;backdrop-filter:blur(6px)}
-  .logo{font-weight:800;letter-spacing:.14em;font-size:20px;
-      background:linear-gradient(90deg,var(--chrome),#fff 40%,var(--silver));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .logo b{color:var(--green);-webkit-text-fill-color:var(--green)}
-  .tag{color:var(--silver);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
-  .dot{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--silver);font-size:12px}
-  .pulse{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-  .wrap{display:grid;grid-template-columns:200px 1fr;gap:0;min-height:calc(100vh - 61px)}
-  nav{border-right:1px solid var(--line);padding:14px 8px;background:rgba(8,14,26,.5)}
-  nav a{display:block;padding:9px 12px;margin:2px 0;border-radius:8px;color:var(--silver);
-      text-decoration:none;font-size:13px;letter-spacing:.04em}
-  nav a:hover{background:var(--navy2);color:var(--text)}
-  nav a.active{background:linear-gradient(90deg,rgba(29,255,123,.14),transparent);color:var(--green);
-      border-left:2px solid var(--green)}
-  main{padding:22px}
-  h1{font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--silver);margin:0 0 14px;font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
-  .card{background:linear-gradient(160deg,var(--panel),#08101d);border:1px solid var(--line);
-      border-radius:14px;padding:16px 16px 14px;position:relative;overflow:hidden}
-  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;
-      background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.5}
-  .card h2{margin:0 0 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--silver)}
-  .big{font-size:26px;font-weight:700;color:#fff}
-  .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line);font-size:13px}
-  .row:last-child{border-bottom:0}
-  .k{color:var(--silver)} .v{color:var(--text);font-variant-numeric:tabular-nums}
-  .st{display:inline-flex;align-items:center;gap:6px;font-size:12px}
-  .st .b{width:8px;height:8px;border-radius:50%}
-  .ok .b{background:var(--green);box-shadow:0 0 8px var(--green)} .ok{color:var(--green)}
-  .warn .b{background:var(--warn)} .warn{color:var(--warn)}
-  .bad .b{background:var(--red)} .bad{color:var(--red)}
-  .bar{height:8px;border-radius:6px;background:#0a1830;overflow:hidden;margin-top:8px}
-  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--green-dim),var(--green))}
-  footer{color:var(--silver);font-size:11px;padding:14px 22px;border-top:1px solid var(--line)}
-  .muted{color:var(--silver);font-size:12px}
-  @media(max-width:720px){.wrap{grid-template-columns:1fr}nav{display:flex;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}nav a{flex:1 1 auto;text-align:center}}
+:root{color-scheme:dark;--bg:#04070d;--panel:#0b1423;--line:#233148;--text:#e8edf3;--muted:#a2b1c3;--green:#30f591;--amber:#f4c661;--red:#ff7888}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#12223b,transparent 60%),var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif}header{display:flex;align-items:center;gap:24px;padding:18px 24px;border-bottom:1px solid var(--line);background:#070d17;flex-wrap:wrap}.logo{font-size:29px;font-weight:850;letter-spacing:.12em;background:linear-gradient(#fff,#aebbc9 45%,#fff 50%,#697787);color:transparent;background-clip:text}.logo sup{color:var(--green);font-size:19px}.tag{font-size:11px;letter-spacing:.13em;color:var(--muted)}#connection{margin-left:auto;font-size:12px;color:var(--amber)}.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 102px)}nav{padding:22px 12px;border-right:1px solid var(--line)}nav a{display:flex;align-items:center;min-height:46px;padding:10px 14px;color:var(--muted);text-decoration:none;border-radius:6px;font-size:12px;letter-spacing:.12em;margin-bottom:4px}nav a:hover,nav a:focus-visible{background:#18263c;color:white}nav a[aria-current=page]{background:#102c26;color:var(--green);border-left:3px solid var(--green)}main{padding:28px;max-width:1600px;width:100%}.eyebrow{color:var(--green);font-size:11px;letter-spacing:.15em}h1{margin:8px 0 4px;font-size:27px;font-weight:650}#subtitle{color:var(--muted);margin:0 0 24px;font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:linear-gradient(140deg,#111d2f,var(--panel));min-width:0}.card h2{margin:0 0 16px;font-size:11px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase}.row{display:flex;justify-content:space-between;gap:18px;padding:8px 0;border-bottom:1px solid #1b293d;font-size:13px}.row:last-child{border:0}.key{color:var(--muted)}.value{text-align:right;overflow-wrap:anywhere;max-width:70%}.good{color:var(--green)}.warning{color:var(--amber)}.bad{color:var(--red)}.note{color:var(--muted);font-size:13px;overflow-wrap:anywhere}.metric{font-size:34px;letter-spacing:-.04em;font-weight:650}.bar{height:7px;background:#1f2c40;border-radius:5px;overflow:hidden;margin-top:16px}.bar i{display:block;height:100%;background:var(--green)}footer{border-top:1px solid var(--line);padding:12px 24px;font-size:11px;color:var(--muted)}a:focus-visible{outline:2px solid var(--green);outline-offset:2px}@media(max-width:800px){.layout{grid-template-columns:1fr}nav{display:flex;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);border-right:0;gap:4px}nav a{margin:0;flex:1 0 auto;justify-content:center}main{padding:20px}header{gap:12px;padding:16px}#connection{width:100%;margin:0}.tag{font-size:10px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
+<script src="/app.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="logo">WISE<b>²</b></div>
-  <div class="tag">Command Center</div>
-  <div class="dot"><span class="pulse"></span><span id="host">connecting…</span></div>
-</header>
-<div class="wrap">
-  <nav>
-    <a class="active" href="#home">HOME</a>
-    <a href="#shannon">SHANNON</a>
-    <a href="#engagements">ENGAGEMENTS</a>
-    <a href="#targets">AUTHORIZED TARGETS</a>
-    <a href="#live">LIVE OPERATIONS</a>
-    <a href="#findings">FINDINGS</a>
-    <a href="#evidence">EVIDENCE</a>
-    <a href="#reports">REPORTS</a>
-    <a href="#ai">AI</a>
-    <a href="#hermes">HERMES</a>
-    <a href="#agents">AGENTS</a>
-    <a href="#projects">PROJECTS</a>
-    <a href="#devices">DEVICES</a>
-    <a href="#support">SUPPORT</a>
-    <a href="#network">NETWORK</a>
-    <a href="#system">SYSTEM</a>
-    <a href="#settings">SETTINGS</a>
-  </nav>
-  <main>
-    <h1>Surface Health — live, read-only</h1>
-    <div class="grid" id="grid"><div class="card"><h2>Loading</h2><div class="muted">Querying /api/status…</div></div></div>
-    <p class="muted" style="margin-top:18px">Data is read live from this host via a fixed, read-only status API.
-      This UI cannot execute shell commands. Security scans only run via the authorized
-      <code>wise2-pentest</code> gate — never from this page.</p>
-  </main>
-</div>
-<footer>WISE² Linux · AI / Security / Development Workstation · bound to localhost · <span id="ts"></span></footer>
-<script>
-const stx = s => s==="active" ? "ok" : (s==="unknown"||s==="skeleton"||s==="not installed") ? "warn" : "bad";
-function stCell(label, state){return `<span class="st ${stx(state)}"><span class="b"></span>${label}: ${state}</span>`;}
-// Hermes honest states: boolean true=ok(green), false=warn(amber). Never "ready" unless h.ready.
-function hBool(v){return `<span class="st ${v?"ok":"warn"}"><span class="b"></span>${v?"yes":"no"}</span>`;}
-function hermesReadyLabel(h){
-  if(!h || typeof h!=="object") return stCell("","unknown");
-  return h.ready ? `<span class="st ok"><span class="b"></span>READY</span>`
-                 : `<span class="st warn"><span class="b"></span>pending</span>`;
-}
-function hermesCard(h){
-  if(!h || typeof h!=="object") return `<div class="muted">unavailable</div>`;
-  return `
-    <div class="row"><span class="k">CONFIGURED</span><span class="v">${hBool(h.configured)}</span></div>
-    <div class="row"><span class="k">REACHABLE</span><span class="v">${hBool(h.reachable)}</span></div>
-    <div class="row"><span class="k">AUTHENTICATED</span><span class="v">${hBool(h.authenticated)}</span></div>
-    <div class="row"><span class="k">MEMORY AVAILABLE</span><span class="v">${hBool(h.memory)}</span></div>
-    <div class="row"><span class="k">STATUS</span><span class="v">${h.ready?'<span class="st ok"><span class="b"></span>READY</span>':'<span class="st warn"><span class="b"></span>NOT READY</span>'}</span></div>
-    <p class="muted" style="margin:8px 0 0">${h.ready?'':'Production connection pending (device credential + private endpoint).'}</p>`;
-}
-async function load(){
-  try{
-    const r = await fetch("/api/status"); const d = await r.json();
-    document.getElementById("host").textContent = d.host;
-    const mem = d.mem||{}, disk = d.disk||{}, bat = d.battery;
-    const memPct = mem.total_gib? Math.round((mem.total_gib-mem.avail_gib)/mem.total_gib*100):0;
-    const svc = d.services||{}, ag = d.agents||{}, mod = d.modules||{};
-    const cards = [
-      ["System", `
-        <div class="row"><span class="k">Host</span><span class="v">${d.host}</span></div>
-        <div class="row"><span class="k">OS</span><span class="v">${d.os}</span></div>
-        <div class="row"><span class="k">Kernel</span><span class="v">${d.kernel}</span></div>
-        <div class="row"><span class="k">CPU</span><span class="v">${(d.cpu||"").replace(/\\(R\\)|\\(TM\\)/g,"")}</span></div>
-        <div class="row"><span class="k">Uptime</span><span class="v">${d.uptime||"-"}</span></div>`],
-      ["Memory", `<div class="big">${memPct}%</div><div class="muted">${mem.avail_gib||0} GiB free of ${mem.total_gib||0} GiB</div><div class="bar"><i style="width:${memPct}%"></i></div>`],
-      ["Storage /", `<div class="big">${disk.used_pct||0}%</div><div class="muted">${disk.free_gb||0} GB free of ${disk.total_gb||0} GB</div><div class="bar"><i style="width:${disk.used_pct||0}%"></i></div>`],
-      ["Battery", bat? `<div class="big">${bat.capacity}%</div><div class="muted">${bat.status}</div><div class="bar"><i style="width:${bat.capacity}%"></i></div>`:`<div class="muted">n/a</div>`],
-      ["Services", Object.entries(svc).map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v">${stCell("",v)}</span></div>`).join("")],
-      ["AI Agents", `
-        <div class="row"><span class="k">Claude</span><span class="v">${ag.claude}</span></div>
-        <div class="row"><span class="k">Codex</span><span class="v">${stCell("",ag.codex)}</span></div>
-        <div class="row"><span class="k">Shannon</span><span class="v">${ag.shannon}</span></div>`],
-      ["WISE² Modules", `
-        <div class="row"><span class="k">Hermes</span><span class="v">${hermesReadyLabel(mod.hermes)}</span></div>
-        <div class="row"><span class="k">Command Center</span><span class="v">${stCell("",mod.command_center==="running"?"active":mod.command_center)}</span></div>
-        <div class="row"><span class="k">Engagements</span><span class="v">${mod.engagements}</span></div>`],
-      ["Hermes / Second Brain", hermesCard(mod.hermes)],
-      ["Mesh", `<div class="row"><span class="k">Tailscale</span><span class="v">${stCell("",svc.tailscale)}</span></div><div class="row"><span class="k">IPv4</span><span class="v">${d.tailscale_ip||"-"}</span></div>`],
-    ];
-    document.getElementById("grid").innerHTML = cards.map(([t,b])=>`<div class="card"><h2>${t}</h2>${b}</div>`).join("");
-    document.getElementById("ts").textContent = new Date().toLocaleString();
-  }catch(e){
-    document.getElementById("grid").innerHTML = `<div class="card"><h2 class="bad">Offline</h2><div class="muted">status API unreachable</div></div>`;
-  }
-}
-load(); setInterval(load, 5000);
-</script>
-</body>
-</html>
+<header><div class="logo">WISE<sup>²</sup></div><div><div>LINUX COMMAND CENTER</div><div class="tag">PRIMARY NODE · SURFACE LAPTOP 4</div></div><div id="connection" role="status" aria-live="polite">Collecting observations…</div></header>
+<div class="layout"><nav aria-label="Modules" id="navigation"></nav><main><div class="eyebrow">WORKSTATION CONTROL PLANE</div><h1 id="title">System</h1><p id="subtitle">Live observations and clearly marked integration status.</p><div id="grid" class="grid"></div></main></div>
+<footer>Localhost · Read-only dashboard · Security operations require Daniel’s authorization · <span id="observed">No observation yet</span></footer>
+</body></html>
