@@ -47,4 +47,3 @@ class ServerTests(unittest.TestCase):
         clock[0]=40
         cache.running=True  # refresh in progress cannot make old data live
         self.assertEqual(cache.get()['collection_state'],'STALE')
-
