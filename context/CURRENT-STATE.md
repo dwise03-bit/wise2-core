@@ -9,7 +9,7 @@
 - CPU i7-1185G7 (4C/4T) · 15 GiB RAM + 4 GiB swap · ~222 GB free on `/`
 - Secure Boot disabled · Firmware 33.108.143
 - Tailscale IP: `100.97.230.73` · LAN: `192.168.1.14/24`
-- `wise2 doctor`: 24 PASS / 0 WARN / 0 FAIL
+- `wise2 doctor`: 25 PASS / 0 WARN / 0 FAIL (incl. real Command Center port check)
 
 ## Done this session (safe, no sudo)
 
@@ -32,6 +32,10 @@ BUILD-REPORT.md · INSTALL-PLAN.md.
 ## Milestone
 
 Toolchain complete; Codex authenticated; Shannon AI backend (openai-codex:gpt-5.6-sol) available. `wise2 doctor` 24 PASS / 0 WARN / 0 FAIL. Local commits 720da6b, 9c7e8cc (no remote).
+
+## Command Center
+
+Runs as a **systemd --user service** `wise2-command-center` (dwise, no root), bound **127.0.0.1:3010** only, Restart=on-failure, enabled at user-session start. `wise2 doctor` now includes a counted runtime check (PASS if the port answers, FAIL if not). Unit (versioned): `services/wise2-command-center.user.service` → installed to `~/.config/systemd/user/`.
 
 ## Known warnings
 

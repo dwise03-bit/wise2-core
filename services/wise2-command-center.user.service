@@ -1,0 +1,22 @@
+[Unit]
+Description=WISE2 Command Center (localhost read-only dashboard)
+Documentation=file:/opt/wise2/command-center/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/wise2/command-center
+# Bind localhost ONLY. server.py honours CC_HOST/CC_PORT.
+Environment=CC_HOST=127.0.0.1
+Environment=CC_PORT=3010
+Environment=WISE2_ROOT=/opt/wise2
+ExecStart=/usr/bin/python3 /opt/wise2/command-center/server.py
+Restart=on-failure
+RestartSec=3
+# hardening (user service; no root)
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
