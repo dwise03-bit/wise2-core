@@ -1,7 +1,7 @@
 {
   "device": "WISE² Surface",
   "hostname": "Wise2-surface",
-  "role": "AI / Security / Development Workstation (primary)",
+  "role": "PRIMARY COMMAND CENTER",
   "wise2_version": "build-2026-10-02",
   "os": "Ubuntu 24.04.5 LTS",
   "kernel": "6.19.8-surface-3",
@@ -15,9 +15,17 @@
     "gpu": "Intel Iris Xe"
   },
   "capabilities": [
-    "claude-code", "codex-pending", "hermes-pending", "shannon-security",
-    "docker", "git", "tailscale-mesh", "openssh-remote-admin",
-    "touchscreen", "stylus", "wayland-desktop"
+    "claude-code",
+    "codex",
+    "hermes-pending",
+    "shannon-security",
+    "docker",
+    "git",
+    "tailscale-mesh",
+    "openssh-remote-admin",
+    "touchscreen",
+    "stylus",
+    "wayland-desktop"
   ],
   "network": {
     "tailscale_hostname": "wise2-surface",
@@ -25,10 +33,13 @@
     "lan_ipv4": "192.168.1.14"
   },
   "services": {
-    "ssh": "active", "tailscaled": "active", "docker": "active",
-    "iptsd": "active", "bluetooth": "active"
+    "ssh": "UNKNOWN",
+    "tailscaled": "UNKNOWN",
+    "docker": "UNKNOWN",
+    "iptsd": "UNKNOWN",
+    "bluetooth": "UNKNOWN"
   },
   "machine_id_prefix": "e72fe261",
-  "note": "Non-secret manifest. No keys or tokens. Generated 2026-10-02.",
+  "note": "Historical hardware inventory (2026-10-02), not live telemetry. Runtime registry: devices/registry.json; query wise2 node.",
   "generated_utc": "2026-10-02T16:40:44Z"
 }

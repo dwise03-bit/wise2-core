@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "devices": [
+    {
+      "id": "wise2-surface",
+      "hostname": "Wise2-surface",
+      "display_name": "Surface Laptop 4",
+      "role": "PRIMARY COMMAND CENTER",
+      "os": "WISE² Linux",
+      "architecture": "x86_64",
+      "registration": "REGISTERED",
+      "local": true,
+      "tailscale_node_id": null,
+      "capabilities": ["local-health", "command-center", "ai-development", "authorized-security", "metadata-backup"]
+    }
+  ],
+  "planned_device_types": ["MacBook Pro", "WISE² server/VPS", "Pixel Slate", "Raspberry Pi", "Unihiker K10", "iPhone", "Go GO Gadet Watch"]
+}

@@ -1,0 +1,11 @@
+# Literal KEY=value only. Copy/review manually; never commit runtime credentials.
+# Existing production endpoint and device token must be arranged by Daniel.
+HERMES_ENABLED=false
+HERMES_BASE_URL=""
+HERMES_BRAIN_PREFIX="/brain-api"
+HERMES_HEALTH_PATH="/api/health"
+HERMES_AUTH_CHECK_PATH="/api/v1/brain-auth/status"
+HERMES_MEMORY_PATH="/api/v1/brain-auth/knowledge/graph/stats"
+HERMES_DEVICE_ID="wise2-surface"
+HERMES_CREDENTIAL_FILE="/opt/wise2/hermes/credentials/device-token"
+HERMES_TIMEOUT=4
