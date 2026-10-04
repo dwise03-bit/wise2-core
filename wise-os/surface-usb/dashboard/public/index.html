@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#05090d">
+  <title>WISE² Command Center</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <div class="boot" id="boot" aria-live="polite"><div class="boot-mark">WISE²</div><h1>COMMAND CENTER</h1><p>INTELLIGENCE. EVERYWHERE.</p><div class="boot-line"></div><div class="boot-state">INITIALIZING LOCAL SYSTEMS...</div><small>BUILD. TEST. ATTACK. FIX.</small></div>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">W²</span><div><strong>WISE² LINUX OS</strong><span>INTELLIGENCE. EVERYWHERE.</span></div></div>
+      <nav class="applauncher" aria-label="Quick launch">
+        <button data-view="home" title="Command Center">⌂<span>Command</span></button>
+        <button class="inert" title="Terminal — launch from the desktop">⌨<span>Terminal</span></button>
+        <button class="inert" title="Files — launch from the desktop">▤<span>Files</span></button>
+        <button class="inert" title="Browser — launch from the desktop">◍<span>Browser</span></button>
+        <button class="inert" title="VS Code — launch from the desktop">❮<span>VS Code</span></button>
+        <button class="inert" title="Claude Code — launch from the desktop">◆<span>Claude Code</span></button>
+        <button class="inert" title="Codex — launch from the desktop">▧<span>Codex</span></button>
+        <button class="inert" title="Ollama — launch from the desktop">●<span>Ollama</span></button>
+        <button data-view="security" class="active" title="Shannon Security Center">⛨<span>Shannon</span></button>
+        <button class="inert" title="Docker — launch from the desktop">▥<span>Docker</span></button>
+        <button class="inert" title="Discord — launch from the desktop">◈<span>Discord</span></button>
+        <button class="inert" title="Settings — not yet implemented">⚙<span>Settings</span></button>
+      </nav>
+      <div class="topbar-status">
+        <time id="topClock">--:--</time>
+        <i class="stat-icon" id="wifiIcon" title="Network">📶</i>
+        <i class="stat-icon" title="Lock screen — not yet implemented">🔒</i>
+        <i class="stat-icon" title="Power — not yet implemented">⏻</i>
+      </div>
+    </header>
+    <div class="shell-body">
+      <aside class="sidebar">
+        <nav class="side-nav" aria-label="Sections">
+          <button data-view="home" class="active"><i>⌂</i><div><strong>Command Center</strong><small>Home &amp; Overview</small></div></button>
+          <button data-view="home"><i>◈</i><div><strong>AI / IMP</strong><small>Ollama &amp; Agents</small></div></button>
+          <button data-view="security" id="sideSecurityBtn" class="active"><i>⛨</i><div><strong>Security Center</strong><small>Shannon AI Pentester</small></div></button>
+          <button data-view="placeholder" data-label="Development"><i>❮</i><div><strong>Development</strong><small>VS Code &amp; Tools</small></div></button>
+          <button data-view="placeholder" data-label="Projects"><i>▤</i><div><strong>Projects</strong><small>Build &amp; Deploy</small></div></button>
+          <button data-view="placeholder" data-label="Clients"><i>☷</i><div><strong>Clients</strong><small>Manage &amp; Grow</small></div></button>
+          <button data-view="placeholder" data-label="Edge Devices"><i>◇</i><div><strong>Edge Devices</strong><small>Pi / ESP32 / K10</small></div></button>
+          <button data-view="placeholder" data-label="Deploy"><i>⇪</i><div><strong>Deploy</strong><small>Apps &amp; Sites</small></div></button>
+          <button data-view="placeholder" data-label="Monitor"><i>◎</i><div><strong>Monitor</strong><small>Health &amp; Status</small></div></button>
+          <button data-view="placeholder" data-label="Storage"><i>▣</i><div><strong>Storage</strong><small>Files &amp; Backups</small></div></button>
+          <button data-view="placeholder" data-label="Network"><i>⌁</i><div><strong>Network</strong><small>Tailscale &amp; VPN</small></div></button>
+          <button data-view="placeholder" data-label="Settings"><i>⚙</i><div><strong>Settings</strong><small>System &amp; OS</small></div></button>
+        </nav>
+        <section class="weather-card">
+          <div class="weather-head"><span id="weatherIcon">☁</span><div><strong id="weatherCity">—</strong><small id="weatherCond">CHECKING</small></div></div>
+          <div class="weather-temp" id="weatherTemp">--°</div>
+        </section>
+        <section class="gauge-card">
+          <div class="gauge-mini"><svg viewBox="0 0 120 120"><circle class="g-bg" cx="60" cy="60" r="50"></circle><circle class="g-fg" id="cpuGauge" cx="60" cy="60" r="50"></circle></svg><b id="cpuGaugeValue">0%</b><label>CPU</label></div>
+          <div class="gauge-mini"><svg viewBox="0 0 120 120"><circle class="g-bg" cx="60" cy="60" r="50"></circle><circle class="g-fg" id="gpuGauge" cx="60" cy="60" r="50"></circle></svg><b id="gpuGaugeValue">N/A</b><label>GPU</label></div>
+          <div class="gauge-mini"><svg viewBox="0 0 120 120"><circle class="g-bg" cx="60" cy="60" r="50"></circle><circle class="g-fg" id="ramGauge" cx="60" cy="60" r="50"></circle></svg><b id="ramGaugeValue">0%</b><label>RAM</label></div>
+          <div class="gauge-mini"><svg viewBox="0 0 120 120"><circle class="g-bg" cx="60" cy="60" r="50"></circle><circle class="g-fg" id="diskGauge" cx="60" cy="60" r="50"></circle></svg><b id="diskGaugeValue">0%</b><label>Disk</label></div>
+        </section>
+        <section class="network-card">
+          <div class="section-title"><span>NETWORK</span></div>
+          <div class="net-speeds"><span>↓ <b id="netDown">0.0</b> Mb/s</span><span>↑ <b id="netUp">0.0</b> Mb/s</span></div>
+        </section>
+      </aside>
+      <main>
+      <div class="view view-home">
+        <aside class="imp-column panel">
+          <div class="section-title"><span>WISE² IMP</span><small id="impState">IDLE</small></div>
+          <div class="imp-avatar" id="impAvatar" aria-label="IMP assistant status idle"><div class="radar-ring"></div><div class="ear left"></div><div class="ear right"></div><div class="face"><div class="brow l"></div><div class="brow r"></div><div class="eye l"><i></i></div><div class="eye r"><i></i></div><div class="nose"></div><div class="mouth"></div></div><div class="headset"></div><div class="mic"></div><div class="vest">WISE²</div></div>
+          <blockquote id="impMessage">“What do you want me to check?”</blockquote>
+          <div class="input-actions"><button id="voiceBtn">●<span>VOICE</span></button><button id="keyboardBtn">⌨<span>KEYBOARD</span></button></div>
+          <form id="commandForm" hidden><input id="commandInput" maxlength="160" placeholder="Ask IMP…" autocomplete="off"><button>RUN</button></form>
+          <h2>QUICK ACTIONS</h2>
+          <div class="quick-actions"><button data-command="What is happening near me?">◉ SCAN AREA</button><button data-command="Give me the local situation report">▤ LOCAL SITREP</button><button data-command="Show recent incidents">☷ RECENT INCIDENTS</button><button data-command="Is the SDR connected?">⌁ RADIO STATUS</button><button data-command="Show my Meshtastic nodes">⌘ MESH STATUS</button><button data-command="Check weather">☁ WEATHER</button><button data-command="Check system health">⌁ SYSTEM CHECK</button></div>
+        </aside>
+        <section class="center-column">
+          <section class="map-panel panel">
+            <div class="section-title"><span>DEFENSE INTELLIGENCE MAP</span><div class="filters"><small>FILTERS</small><button class="blue">⬟</button><button class="red">♨</button><button class="amber">★</button><button class="green">☁</button><button class="purple">⌘</button></div></div>
+            <div class="map" id="map"><div class="map-grid"></div><div class="road r1"></div><div class="road r2"></div><div class="road r3"></div><div class="zone z1"></div><div class="zone z2"></div><div class="location"><i></i></div><span class="place p1">LOCAL OPERATING AREA</span><span class="place p2">NO MAP PROVIDER CONFIGURED</span><div class="markers" id="markers"></div><div class="map-controls"><button>+</button><button>−</button><button>⌾</button></div></div>
+          </section>
+          <div class="lower-grid"><section class="panel summary"><h2>SITUATION SUMMARY</h2><dl><div><dt>INCIDENTS NEARBY</dt><dd id="incidentCount">0</dd></div><div><dt>WATCH ZONES</dt><dd id="zoneCount">0</dd></div><div><dt>ALERT LEVEL</dt><dd class="amber-text" id="alertLevel">INFO</dd></div><div><dt>LAST UPDATE</dt><dd class="green-text" id="lastUpdate">--:--:--</dd></div></dl></section><section class="panel feed"><h2>ALERT FEED <small id="demoBadge"></small></h2><div id="alertFeed" class="feed-list"><div class="empty">NO LIVE INCIDENT PROVIDER CONFIGURED</div></div></section></div>
+        </section>
+        <aside class="intel-column">
+          <section class="panel incidents"><div class="section-title"><span>INCIDENTS</span><small id="providerState">CHECKING</small></div><div id="incidentList" class="incident-list"><div class="empty">CHECKING PROVIDER…</div></div></section>
+          <div class="twin"><section class="panel status-panel"><div class="section-title"><span>SDR STATUS</span><small id="sdrState">CHECKING</small></div><dl id="sdrDetails"></dl></section><section class="panel status-panel"><div class="section-title"><span>MESH STATUS</span><small id="meshState">CHECKING</small></div><dl id="meshDetails"></dl></section></div>
+          <section class="panel system-panel"><div class="section-title"><span>SYSTEM STATUS</span><small id="coreState">CHECKING</small></div><div class="system-grid" id="systemDetails"></div></section>
+        </aside>
+      </div>
+
+      <div class="view view-security active">
+        <div class="hero-row">
+        <section class="hero">
+          <img class="hero-photo p1" src="img/daniel-wise.jpg" alt="Daniel Wise">
+          <img class="hero-photo p2" src="img/darrin-cook.jpg" alt="Darrin Cook">
+          <div class="hero-copy"><span class="hero-mark">W²</span><h1>WISE² LINUX OS</h1><p>INTELLIGENCE. EVERYWHERE.</p></div>
+        </section>
+        <section class="imp-card">
+          <div class="imp-card-head"><i class="imp-dot"></i><div><strong>WISE² IMP</strong><small>Your AI Operations Assistant</small></div></div>
+          <ul class="imp-card-list" id="impCardList">
+            <li>System Online</li><li>AI Models Ready</li><li id="impShannonReady">Shannon —</li><li id="impDockerReady">Docker —</li>
+            <li id="impTailscaleReady">Tailscale —</li><li>Edge Devices Online</li>
+          </ul>
+        </section>
+        </div>
+
+        <section class="panel shannon-brand">
+          <div class="shannon-brand-left">
+            <div class="shannon-brand-head"><span class="shannon-mark">S</span><div><strong>SHANNON 3.0</strong><small>AI PENTESTER BY KEYGRAPH</small></div></div>
+            <p class="shannon-tagline">Find. Exploit. Validate. Report.</p>
+            <div class="shannon-features">
+              <div><i>◍</i><div><b>Code Review</b><small>Source Analysis</small></div></div>
+              <div><i>⛨</i><div><b>Active Pentesting</b><small>Real Exploit Validation</small></div></div>
+              <div><i>◎</i><div><b>OWASP Testing</b><small>Web App Security</small></div></div>
+              <div><i>▤</i><div><b>Architecture Mapping</b><small>Auto Discovery</small></div></div>
+              <div><i>▧</i><div><b>Reports</b><small>PDF / SARIF / Markdown</small></div></div>
+              <div><i>⟳</i><div><b>CI / CD Integration</b><small>GitHub Actions</small></div></div>
+              <div><i>●</i><div><b>Local AI Models</b><small>Ollama / vLLM / LM Studio</small></div></div>
+              <div><i>▥</i><div><b>Comprehensive Scanning</b><small>APIs, Auth, XSS, SSRF, RCE</small></div></div>
+            </div>
+          </div>
+          <ul class="shannon-brand-bullets">
+            <li>AUTOMATED SECURITY TESTING</li>
+            <li>REAL EXPLOIT VALIDATION</li>
+            <li>DETAILED REPORTING</li>
+            <li>OPEN SOURCE (AGPLv3)</li>
+            <li>LOCAL &amp; SELF-HOSTED AI</li>
+            <li>SAFE ISOLATED ENVIRONMENTS</li>
+          </ul>
+        </section>
+
+        <section class="panel security-tabbar">
+          <div class="security-tabs" id="securityTabs">
+            <button class="tab-btn active" data-tab="dashboard">◎ Scan Dashboard</button>
+            <button class="tab-btn" data-tab="target">▥ Target Setup</button>
+            <button class="tab-btn" data-tab="live">◉ Live Scan</button>
+            <button class="tab-btn" data-tab="findings">⚠ Findings</button>
+            <button class="tab-btn" data-tab="exploit">⚒ Exploit Validation</button>
+            <button class="tab-btn" data-tab="reports">▤ Reports</button>
+            <button class="tab-btn" data-tab="integrations">⟳ Integrations</button>
+            <button class="tab-btn" data-tab="settings">⚙ Settings</button>
+          </div>
+          <button id="shannonScanBtn" class="new-scan-btn">▶ New Scan</button>
+        </section>
+
+        <p class="warn">Only scan applications you own or are explicitly authorized to test. Shannon executes real exploits — do not point it at production.</p>
+
+        <div class="security-stats">
+          <div class="stat-tile"><i class="blue">◎</i><div><b id="statTargets">0</b><small>Targets Scanned</small></div></div>
+          <div class="stat-tile"><i class="amber">⚠</i><div><b id="statFindings">0</b><small>Vulnerabilities Found</small></div></div>
+          <div class="stat-tile"><i class="red">⛨</i><div><b id="statExploits">0</b><small>Exploits Validated</small></div></div>
+          <div class="stat-tile"><i class="red">✕</i><div><b id="statErrors">0</b><small>Errors (Critical/High)</small></div></div>
+          <div class="stat-tile"><i class="amber">!</i><div><b id="statWarnings">0</b><small>Warnings (Medium)</small></div></div>
+          <div class="stat-tile"><i class="green">◷</i><div><b id="statLastScan">—</b><small>Last Scan</small></div></div>
+        </div>
+
+        <div class="security-mid">
+          <div class="mid-left">
+            <section class="panel recent-scans">
+              <div class="section-title"><span>RECENT SCANS</span><small id="scansMeta"></small></div>
+              <table class="scans-table">
+                <thead><tr><th>Target</th><th>Status</th><th>Findings</th><th>Updated</th></tr></thead>
+                <tbody id="scansTableBody"><tr><td colspan="4" class="empty">NO SCANS YET</td></tr></tbody>
+              </table>
+            </section>
+            <section class="panel terminal-panel">
+              <div class="section-title"><span>LIVE SCAN TERMINAL</span></div>
+              <div id="shannonTerminal" class="terminal"><div class="empty">IDLE — START A SCAN TO SEE LIVE OUTPUT</div></div>
+            </section>
+          </div>
+          <section class="panel donut-card">
+            <div class="section-title"><span>VULNERABILITY BREAKDOWN</span></div>
+            <div class="donut-wrap">
+              <svg viewBox="0 0 120 120" class="donut-svg">
+                <circle class="donut-bg" cx="60" cy="60" r="50"></circle>
+                <circle class="donut-seg" id="donutError" cx="60" cy="60" r="50"></circle>
+                <circle class="donut-seg" id="donutWarning" cx="60" cy="60" r="50"></circle>
+                <circle class="donut-seg" id="donutNote" cx="60" cy="60" r="50"></circle>
+              </svg>
+              <div class="donut-center"><b id="donutTotal">0</b><small>Total Findings</small></div>
+            </div>
+            <ul class="donut-legend">
+              <li><i class="red"></i>Errors (Critical/High) <b id="legendError">0</b></li>
+              <li><i class="amber"></i>Warnings (Medium) <b id="legendWarning">0</b></li>
+              <li><i class="blue"></i>Notes (Low/Info) <b id="legendNote">0</b></li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="security-bottom">
+          <section class="panel target-controls">
+            <div class="section-title"><span>TARGET CONTROLS</span></div>
+            <label>Target URL<input id="shannonTargetInput" placeholder="https://target-app.example" autocomplete="off"></label>
+            <label>Repo Path<input id="shannonRepoInput" placeholder="/opt/wise2/core" autocomplete="off"></label>
+            <div class="checklist">
+              <label><input type="checkbox" checked disabled> Include API Endpoints</label>
+              <label><input type="checkbox" checked disabled> Include Authentication Tests</label>
+              <label><input type="checkbox" checked disabled> Include Exploit Validation</label>
+            </div>
+            <button id="shannonScanBtn2" class="start-scan-btn">▶ Start Scan</button>
+          </section>
+          <section class="panel scan-progress">
+            <div class="section-title"><span>SCAN PROGRESS</span><small id="shannonState">IDLE</small></div>
+            <ol class="phase-list" id="phaseList">
+              <li data-phase="recon"><span class="phase-dot"></span>Recon &amp; Mapping</li>
+              <li data-phase="deps"><span class="phase-dot"></span>Dependency Analysis</li>
+              <li data-phase="scan"><span class="phase-dot"></span>Vulnerability Scanning</li>
+              <li data-phase="exploit"><span class="phase-dot"></span>Exploit Validation</li>
+              <li data-phase="report"><span class="phase-dot"></span>Generating Report</li>
+            </ol>
+          </section>
+          <section class="panel findings">
+            <div class="section-title"><span>TOP FINDINGS</span><small id="shannonFindingsMeta"></small></div>
+            <div id="shannonFindings" class="finding-list"><div class="empty">NO SCAN RUN YET</div></div>
+          </section>
+          <section class="panel integrations">
+            <div class="section-title"><span>INTEGRATION &amp; CI/CD</span></div>
+            <dl class="integ-list">
+              <div><dt>Docker</dt><dd id="integDocker">CHECKING</dd></div>
+              <div><dt>GitHub Actions</dt><dd>shannon-action (external)</dd></div>
+              <div><dt>SARIF Upload</dt><dd id="integSarif">NO REPORT YET</dd></div>
+              <div><dt>Slack / Discord Alerts</dt><dd>NOT CONFIGURED</dd></div>
+            </dl>
+          </section>
+        </div>
+      </div>
+
+      <div class="view view-placeholder">
+        <section class="panel placeholder-panel">
+          <div class="section-title"><span id="placeholderTitle">SECTION</span></div>
+          <div class="empty">Not yet implemented in this edition. Reach it from the desktop launcher until it ships here.</div>
+        </section>
+      </div>
+      </main>
+    </div>
+    <footer class="ribbon"><span>EDGE <i id="edgeStatus" class="online"></i></span><span>WISE² <i id="wiseStatus"></i></span><span>SDR <i id="footerSdr"></i></span><span>MESH <i id="footerMesh"></i></span><span>GPS <i id="footerGps"></i></span><span class="sync">SYNC <b id="lastSync">NEVER</b></span><span class="ribbon-tagline">“BUILD. TEST. ATTACK. FIX. VERIFY. DEPLOY.” <b>W²</b></span><time id="clock">--:--:--</time></footer>
+  </div>
+</body>
+</html>

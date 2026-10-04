@@ -1,0 +1,5 @@
+{
+  "incident": { "provider": "CrimeRadar", "state": "CRIMERADAR_PROVIDER_NOT_CONFIGURED" },
+  "weather": { "provider": "NWS", "state": "NOT_CONFIGURED" },
+  "map": { "provider": null, "state": "NOT_CONFIGURED" }
+}
