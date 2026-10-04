@@ -164,6 +164,13 @@ jobs:
               exit 1
             fi
 
+            if [ "$DEPLOY_MODE" = "website-only" ]; then
+              echo "🔨 Building the website image..."
+              docker compose -f docker-compose.prod.yml build website
+              echo "🚀 Recreating the website container..."
+              docker compose -f docker-compose.prod.yml up -d --no-deps website
+            fi
+
             echo "✅ Deployment successful"
 
       - name: Verify deployment
