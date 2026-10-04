@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { useSoundLabsProduction } from '@/lib/hooks/useSoundLabsProduction';
 
 interface MusicGenerationPanelProps {
@@ -80,11 +81,13 @@ export function MusicGenerationPanel({ client }: MusicGenerationPanelProps) {
 
           {/* Generate Button */}
           <button
+            type="button"
             onClick={handleGenerate}
             disabled={isLoading || !prompt.trim()}
-            className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D9FF]/60"
           >
-            {isLoading ? 'Generating...' : '✨ Generate Track'}
+            <Sparkles size={18} strokeWidth={2} aria-hidden="true" />
+            {isLoading ? 'Generating...' : 'Generate Track'}
           </button>
         </div>
       </div>

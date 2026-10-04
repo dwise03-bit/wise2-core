@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FolderOpen, Plus, ArrowRight } from 'lucide-react';
 import { useSoundLabsProduction } from '@/lib/hooks/useSoundLabsProduction';
 
 interface ProjectsManagerProps {
@@ -63,11 +64,13 @@ export function ProjectsManager({ projects, isLoading }: ProjectsManagerProps) {
           </div>
 
           <button
+            type="button"
             onClick={handleCreateProject}
             disabled={isCreating || isLoading || !newProjectName.trim()}
-            className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D9FF]/60"
           >
-            {isCreating ? 'Creating...' : '+ New Project'}
+            <Plus size={18} strokeWidth={2.25} aria-hidden="true" />
+            {isCreating ? 'Creating...' : 'New Project'}
           </button>
         </div>
       </div>
@@ -98,14 +101,15 @@ export function ProjectsManager({ projects, isLoading }: ProjectsManagerProps) {
                       <p className="text-[#00D9FF]/60 text-sm mt-1 line-clamp-2">{project.description}</p>
                     )}
                   </div>
-                  <span className="text-xl">📁</span>
+                  <FolderOpen size={20} strokeWidth={1.75} className="text-[#00D9FF] shrink-0" aria-hidden="true" />
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-[#00D9FF]/10">
                   <span className="text-xs text-[#00D9FF]/60">{formatDate(project.created_at)}</span>
-                  <button className="text-[#00D9FF] hover:text-[#00FF7F] transition-colors text-sm font-semibold">
-                    Open →
-                  </button>
+                  <span className="inline-flex items-center gap-1 text-[#00D9FF] group-hover:text-[#00FF7F] transition-colors text-sm font-semibold">
+                    Open
+                    <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+                  </span>
                 </div>
               </div>
             ))}

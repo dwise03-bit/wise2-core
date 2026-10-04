@@ -1,8 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, type Variants } from 'framer-motion';
 import { UtensilsCrossed, HardHat, Mic, Church, Car, Dumbbell } from 'lucide-react';
 import { AudioPlayer } from './AudioPlayer';
+import { SectionHeading } from './SectionHeading';
+
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+const item: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
 
 // Shared demo track — swap each `src` below for the category's real master
 // once produced. Never presented as anything but a preview.
@@ -23,19 +34,24 @@ export function SampleGallery() {
   return (
     <section id="samples" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-[1440px] mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-2">
-          SOUND <span className="text-[#b08d57] drop-shadow-[0_0_12px_rgba(176,141,87,0.35)]">SAMPLES</span>
-        </h2>
-        <p className="text-center text-xs tracking-widest text-gray-500 mb-12">LISTEN. GET INSPIRED.</p>
+        <SectionHeading index="04" kicker="Listen. Get Inspired." title="SOUND" highlight="SAMPLES" />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
           {SAMPLES.map(({ id, icon: Icon, category, title, src }) => (
-            <div
+            <motion.div
               key={id}
-              className="rounded-lg border border-white/10 bg-[#0a0a0a] overflow-hidden hover:border-[#b08d57]/50 transition-colors"
+              variants={item}
+              className="group rounded-xl border border-white/10 bg-gradient-to-br from-[#0c0c0c] to-[#060606] overflow-hidden hover:border-[#b08d57]/50 transition-colors"
             >
-              <div className="h-28 bg-gradient-to-br from-[#111] to-black flex items-center justify-center relative">
-                <Icon size={36} className="text-[#b08d57]/70" />
+              <div className="h-28 bg-gradient-to-br from-[#141414] to-black flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-[radial-gradient(circle_at_center,rgba(176,141,87,0.15),transparent_70%)]" />
+                <Icon size={36} className="relative text-[#b08d57]/70 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
                 <span className="absolute top-2 right-2 text-[9px] font-bold tracking-widest text-gray-500 bg-black/60 px-2 py-0.5 rounded">
                   PREVIEW
                 </span>
@@ -50,9 +66,9 @@ export function SampleGallery() {
                   onPause={() => setPlayingId((p) => (p === id ? null : p))}
                 />
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="text-center mt-10">
           <button className="px-6 py-3 rounded border border-[#b08d57] text-[#b08d57] text-xs font-black tracking-wide hover:bg-[#b08d57]/10 transition-colors cursor-pointer">

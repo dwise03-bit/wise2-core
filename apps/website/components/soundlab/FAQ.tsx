@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { SectionHeading } from './SectionHeading';
 
 const FAQS = [
   {
@@ -42,11 +43,11 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
+    <section id="faq" className="bg-black py-24 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-12">
-          FAQ
-        </h2>
+        <SectionHeading index="06" kicker="Answers" title="FREQUENTLY" highlight="ASKED" />
+      </div>
+      <div className="max-w-3xl mx-auto">
 
         <div className="space-y-3">
           {FAQS.map((item, i) => {

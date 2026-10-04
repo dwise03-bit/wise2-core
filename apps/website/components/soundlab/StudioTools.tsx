@@ -1,5 +1,6 @@
 'use client';
 
+import { motion, type Variants } from 'framer-motion';
 import {
   PenLine,
   Music3,
@@ -13,9 +14,11 @@ import {
   AudioWaveform,
   Gauge,
   Image as ImageIcon,
+  type LucideIcon,
 } from 'lucide-react';
+import { SectionHeading } from './SectionHeading';
 
-const TOOLS = [
+const TOOLS: { icon: LucideIcon; label: string }[] = [
   { icon: PenLine, label: 'AI LYRIC WRITER' },
   { icon: Music3, label: 'MELODY COMPOSER' },
   { icon: Mic, label: 'AI VOCAL SUITE' },
@@ -30,29 +33,47 @@ const TOOLS = [
   { icon: ImageIcon, label: 'COVER ART GENERATOR' },
 ];
 
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04 } },
+};
+const item: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+};
+
 export function StudioTools() {
   return (
-    <section id="studio-tools" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
+    <section id="studio-tools" className="relative bg-black py-24 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-[1440px] mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-2">
-          PRO STUDIO <span className="text-[#b08d57] drop-shadow-[0_0_12px_rgba(176,141,87,0.35)]">TOOLS</span>
-        </h2>
-        <p className="text-center text-xs tracking-widest text-gray-500 mb-12">BUILT FOR CREATORS</p>
+        <SectionHeading
+          index="03"
+          kicker="Built For Creators"
+          title="PRO STUDIO"
+          highlight="TOOLS"
+        />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+        >
           {TOOLS.map(({ icon: Icon, label }) => (
-            <div
+            <motion.div
               key={label}
-              className="flex items-center gap-3 rounded-md border border-white/10 bg-[#0a0a0a] px-4 py-3.5 hover:border-[#b08d57]/50 hover:bg-[#b08d57]/5 transition-colors cursor-default"
+              variants={item}
+              className="group flex items-center gap-3 rounded-lg border border-white/10 bg-gradient-to-br from-[#0c0c0c] to-[#060606] px-4 py-3.5 transition-all duration-300 hover:border-[#b08d57]/50 hover:-translate-y-0.5 hover:shadow-[0_0_24px_rgba(176,141,87,0.12)]"
             >
-              <div className="w-8 h-8 rounded bg-[#b08d57]/10 flex items-center justify-center shrink-0">
-                <Icon size={16} className="text-[#b08d57]" />
+              <div className="w-8 h-8 rounded bg-[#b08d57]/10 flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#b08d57]/20">
+                <Icon size={16} className="text-[#b08d57]" aria-hidden="true" />
               </div>
               <span className="text-[11px] font-bold tracking-wide text-gray-300">{label}</span>
-              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#b08d57]/60" />
-            </div>
+              <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#b08d57]/60 group-hover:bg-[#00FF7F] group-hover:shadow-[0_0_8px_#00FF7F] motion-safe:group-hover:animate-pulse transition-colors" />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

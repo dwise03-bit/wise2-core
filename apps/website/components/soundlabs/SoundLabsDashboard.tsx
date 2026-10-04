@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Music } from 'lucide-react';
 import { useSoundLabsProduction } from '@/lib/hooks/useSoundLabsProduction';
 import { LoginPanel } from './LoginPanel';
 import { DashboardOverview } from './DashboardOverview';
@@ -16,20 +17,25 @@ export function SoundLabsDashboard() {
     isLoading,
     error,
     login,
+    register,
     logout,
     listProjects,
   } = useSoundLabsProduction();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'generate' | 'reaper' | 'stream' | 'projects'>('overview');
 
+  // Load projects once per authenticated token. Keep `listProjects` out of the
+  // dependency array — it is an unstable callback and churns the effect.
+  const listProjectsRef = useRef(listProjects);
+  listProjectsRef.current = listProjects;
   useEffect(() => {
     if (client?.token) {
-      listProjects();
+      listProjectsRef.current();
     }
-  }, [client?.token, listProjects]);
+  }, [client?.token]);
 
   if (!client) {
-    return <LoginPanel onLogin={login} isLoading={isLoading} error={error} />;
+    return <LoginPanel onLogin={login} onRegister={register} isLoading={isLoading} error={error} />;
   }
 
   return (
@@ -39,7 +45,7 @@ export function SoundLabsDashboard() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00D9FF] to-[#00FF7F] flex items-center justify-center">
-              <span className="text-[#050607] font-bold text-lg">♪</span>
+              <Music size={20} strokeWidth={2.25} className="text-[#050607]" aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Sound Labs</h1>
@@ -86,7 +92,9 @@ export function SoundLabsDashboard() {
           </div>
         )}
 
-        {activeTab === 'overview' && <DashboardOverview client={client} projectCount={projects.length} />}
+        {activeTab === 'overview' && (
+          <DashboardOverview client={client} projectCount={projects.length} onNavigate={setActiveTab} />
+        )}
         {activeTab === 'generate' && <MusicGenerationPanel client={client} />}
         {activeTab === 'reaper' && <ReaperControls />}
         {activeTab === 'stream' && <StreamingPanel client={client} />}

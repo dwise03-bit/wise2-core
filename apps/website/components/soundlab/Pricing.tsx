@@ -2,6 +2,7 @@
 
 import { Check, Mic, Headphones, Crown } from 'lucide-react';
 import { useSoundLabModals } from './SoundLabModals';
+import { SectionHeading } from './SectionHeading';
 
 const TIERS = [
   {
@@ -68,11 +69,15 @@ export function Pricing() {
   const { openIntake } = useSoundLabModals();
 
   return (
-    <section id="packages" className="bg-black py-20 px-5 md:px-8 scroll-mt-16">
+    <section id="packages" className="bg-black py-24 px-5 md:px-8 scroll-mt-16">
       <div className="max-w-[1440px] mx-auto">
-        <h2 className="text-center text-2xl md:text-3xl font-black tracking-widest mb-12">
-          PACKAGES
-        </h2>
+        <SectionHeading
+          index="05"
+          kicker="Pricing"
+          title="CHOOSE YOUR"
+          highlight="PACKAGE"
+          sub="Transparent tiers — from a single signature jingle to a complete sonic brand system."
+        />
 
         <div className="grid md:grid-cols-3 gap-6 items-start">
           {TIERS.map((tier) => {
