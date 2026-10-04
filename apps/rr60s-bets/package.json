@@ -1,0 +1,15 @@
+{
+  "name": "@wise2/rr60s-bets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3016",
+    "build": "next build",
+    "start": "next start -p 3016",
+    "type-check": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test lib/*.test.mjs"
+  },
+  "dependencies": {"next":"14.2.35","react":"18.2.0","react-dom":"18.2.0","lucide-react":"^0.408.0"},
+  "devDependencies": {"typescript":"^5.3.0","@types/node":"^20.10.0","@types/react":"18.2.0","@types/react-dom":"18.2.7"}
+}

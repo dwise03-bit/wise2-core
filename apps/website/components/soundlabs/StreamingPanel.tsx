@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { MessageCircle, Youtube, Twitch, Link2, Radio, Square, type LucideIcon } from 'lucide-react';
 import { useSoundLabsProduction } from '@/lib/hooks/useSoundLabsProduction';
 
 interface StreamingPanelProps {
@@ -31,12 +32,16 @@ export function StreamingPanel({ client }: StreamingPanelProps) {
     }
   };
 
-  const platforms = [
-    { id: 'discord', label: 'Discord', icon: '💬' },
-    { id: 'youtube', label: 'YouTube', icon: '▶️' },
-    { id: 'twitch', label: 'Twitch', icon: '🎮' },
-    { id: 'custom_rtmp', label: 'Custom RTMP', icon: '🔗' },
-  ] as const;
+  const platforms: ReadonlyArray<{
+    id: 'discord' | 'youtube' | 'twitch' | 'custom_rtmp';
+    label: string;
+    icon: LucideIcon;
+  }> = [
+    { id: 'discord', label: 'Discord', icon: MessageCircle },
+    { id: 'youtube', label: 'YouTube', icon: Youtube },
+    { id: 'twitch', label: 'Twitch', icon: Twitch },
+    { id: 'custom_rtmp', label: 'Custom RTMP', icon: Link2 },
+  ];
 
   return (
     <div className="space-y-6">
@@ -61,41 +66,51 @@ export function StreamingPanel({ client }: StreamingPanelProps) {
         <div className="mb-6">
           <label className="block text-sm font-medium text-[#00D9FF] mb-3">Platform</label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {platforms.map((platform) => (
-              <button
-                key={platform.id}
-                onClick={() => setSelectedPlatform(platform.id)}
-                disabled={isLoading || !!activeStream}
-                className={`p-4 rounded-lg transition-all ${
-                  selectedPlatform === platform.id
-                    ? 'bg-[#00D9FF] text-[#050607]'
-                    : 'bg-[#050607] border border-[#00D9FF]/20 text-[#00D9FF] hover:border-[#00D9FF]'
-                }`}
-              >
-                <div className="text-2xl mb-2">{platform.icon}</div>
-                <p className="text-xs font-semibold">{platform.label}</p>
-              </button>
-            ))}
+            {platforms.map((platform) => {
+              const Icon = platform.icon;
+              const selected = selectedPlatform === platform.id;
+              return (
+                <button
+                  key={platform.id}
+                  type="button"
+                  onClick={() => setSelectedPlatform(platform.id)}
+                  disabled={isLoading || !!activeStream}
+                  aria-pressed={selected}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D9FF]/60 ${
+                    selected
+                      ? 'bg-[#00D9FF] text-[#050607]'
+                      : 'bg-[#050607] border border-[#00D9FF]/20 text-[#00D9FF] hover:border-[#00D9FF]'
+                  }`}
+                >
+                  <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+                  <span className="text-xs font-semibold">{platform.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Stream Control */}
         <div className="flex gap-3">
           <button
+            type="button"
             onClick={handleStartStream}
             disabled={isLoading || !!activeStream || !streamTitle.trim()}
-            className="flex-1 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#00D9FF] to-[#00FF7F] text-[#050607] font-semibold hover:shadow-lg hover:shadow-[#00D9FF]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00D9FF]/60"
           >
-            📡 Go Live
+            <Radio size={18} strokeWidth={2} aria-hidden="true" />
+            Go Live
           </button>
 
           {activeStream && (
             <button
+              type="button"
               onClick={handleStopStream}
               disabled={isLoading}
-              className="flex-1 px-6 py-3 rounded-lg bg-red-500/20 border border-red-500/50 text-red-400 font-semibold hover:border-red-500 transition-all"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-red-500/20 border border-red-500/50 text-red-400 font-semibold hover:border-red-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
-              ⏹ Stop Stream
+              <Square size={16} fill="currentColor" strokeWidth={0} aria-hidden="true" />
+              Stop Stream
             </button>
           )}
         </div>

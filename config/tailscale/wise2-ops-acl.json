@@ -33,6 +33,15 @@
 
   "ssh": [
     {
+      // Owner access to owner-operated devices, as the dwise and wise2ops accounts.
+      // Tailscale SSH requires both this rule and network access; the self ACL above supplies port 22.
+      "action": "check",
+      "src":    ["dwise03@gmail.com"],
+      "dst":    ["autogroup:self"],
+      "users":  ["dwise", "wise2ops"],
+      "checkPeriod": "12h"
+    },
+    {
       // Tailscale SSH for break-glass administration only — never for ops actions.
       // Ops actions go through the control bridge, which runs no arbitrary commands.
       "action": "check",

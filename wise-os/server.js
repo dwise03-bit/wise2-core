@@ -164,6 +164,7 @@ io.on("connection", async (socket) => {
   try { socket.emit("status", latest || await buildStatus()); } catch {}
 });
 
-server.listen(PORT, "0.0.0.0", () => console.log(`WISE² Defense IMP listening on http://0.0.0.0:${PORT}`));
+const HOST = process.env.WISE2_HOST || "0.0.0.0";
+server.listen(PORT, HOST, () => console.log(`WISE² Defense IMP listening on http://${HOST}:${server.address().port}`));
 
 module.exports = { app, server, buildStatus };
