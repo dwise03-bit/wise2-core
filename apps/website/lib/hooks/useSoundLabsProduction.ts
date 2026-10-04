@@ -1,8 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const BRIDGE_URL = process.env.NEXT_PUBLIC_BRIDGE_URL || 'http://localhost:8788';
+
+// Same-origin auth (served by Next.js via nginx). Do NOT point auth at the
+// bridge/localhost — that is why SoundLabs login failed in production.
+const AUTH_LOGIN_URL = '/api/v1/auth/login';
+const AUTH_REGISTER_URL = '/api/v1/auth/signup';
 
 export interface SoundLabsClient {
   email: string;
@@ -37,15 +42,49 @@ export function useSoundLabsProduction() {
 
   // AUTHENTICATION
 
+  const persistSession = useCallback((clientData: SoundLabsClient) => {
+    setClient(clientData);
+    if (clientData.token) {
+      localStorage.setItem('soundlabs_token', clientData.token);
+      // Mirror into the shared app token so the rest of wise2.net sees the session.
+      localStorage.setItem('auth_token', clientData.token);
+    }
+    localStorage.setItem('soundlabs_client', JSON.stringify(clientData));
+  }, []);
+
   const register = useCallback(async (email: string, password: string, name: string) => {
     setIsLoading(true);
+    setError(null);
     try {
-      const res = await fetch(`${BRIDGE_URL}/soundlabs/auth/register`, {
+      const [firstName, ...rest] = (name || '').trim().split(' ');
+      const res = await fetch(AUTH_REGISTER_URL, {
         method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name })
+        body: JSON.stringify({
+          email,
+          password,
+          firstName: firstName || email.split('@')[0],
+          lastName: rest.join(' ') || 'User',
+        })
       });
-      if (!res.ok) throw new Error('Registration failed');
+
+      const payload = await res.json().catch(() => null);
+      if (!res.ok || !payload?.success) {
+        throw new Error(payload?.error?.message || 'Registration failed');
+      }
+
+      const data = payload.data ?? payload;
+      const clientData: SoundLabsClient = {
+        email,
+        client_id: data.user?.id || email.split('@')[0],
+        name: name || data.user?.firstName || email,
+        plan: 'starter',
+        token: data.tokens?.accessToken ?? data.accessToken,
+      };
+
+      persistSession(clientData);
       return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration error');
@@ -53,31 +92,37 @@ export function useSoundLabsProduction() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [persistSession]);
 
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
+    setError(null);
     try {
-      const res = await fetch(`${BRIDGE_URL}/soundlabs/auth/login`, {
+      const res = await fetch(AUTH_LOGIN_URL, {
         method: 'POST',
+        credentials: 'same-origin',
+        cache: 'no-store',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      if (!res.ok) throw new Error('Login failed');
 
-      const data = await res.json();
+      const payload = await res.json().catch(() => null);
+      if (!res.ok || !payload?.success) {
+        throw new Error(payload?.error?.message || 'Invalid email or password');
+      }
+
+      const data = payload.data ?? payload;
       const clientData: SoundLabsClient = {
         email,
-        client_id: data.client_id || email.split('@')[0],
-        name: data.name || email,
+        client_id: data.user?.id || email.split('@')[0],
+        name: data.user?.firstName
+          ? `${data.user.firstName}${data.user.lastName ? ' ' + data.user.lastName : ''}`
+          : email,
         plan: 'starter',
-        token: data.token
+        token: data.tokens?.accessToken ?? data.accessToken,
       };
 
-      setClient(clientData);
-      localStorage.setItem('soundlabs_token', data.token);
-      localStorage.setItem('soundlabs_client', JSON.stringify(clientData));
-
+      persistSession(clientData);
       return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login error');
@@ -85,14 +130,29 @@ export function useSoundLabsProduction() {
     } finally {
       setIsLoading(false);
     }
+  }, [persistSession]);
+
+  // Restore a persisted session on mount so a refresh does not log the user out.
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('soundlabs_client');
+      if (stored) {
+        const parsed = JSON.parse(stored) as SoundLabsClient;
+        if (parsed?.token) setClient(parsed);
+      }
+    } catch {
+      // ignore malformed session
+    }
   }, []);
 
   const logout = useCallback(() => {
     setClient(null);
     setProjects([]);
     setCurrentProject(null);
+    setError(null);
     localStorage.removeItem('soundlabs_token');
     localStorage.removeItem('soundlabs_client');
+    localStorage.removeItem('auth_token');
   }, []);
 
   // PROJECT MANAGEMENT
@@ -150,8 +210,10 @@ export function useSoundLabsProduction() {
 
       const data = await res.json();
       setProjects(data.projects || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Load error');
+    } catch {
+      // Projects live on the optional bridge backend; a missing bridge must not
+      // break the signed-in dashboard. Fail soft with an empty list.
+      setProjects([]);
     } finally {
       setIsLoading(false);
     }
