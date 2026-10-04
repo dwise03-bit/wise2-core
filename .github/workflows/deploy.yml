@@ -149,7 +149,7 @@ jobs:
             echo "🚀 Starting deployment..."
             chmod +x ./deploy.sh
             echo "Deploy mode: $DEPLOY_MODE"
-            if ! ./deploy.sh "$DEPLOY_MODE"; then
+            if ! printf 'y\n' | ./deploy.sh "$DEPLOY_MODE"; then
               echo ""
               echo "❌ Deployment script failed. Collecting debug info..."
               echo ""
