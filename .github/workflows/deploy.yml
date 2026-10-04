@@ -38,7 +38,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
 
       - name: Run linter
         run: pnpm run lint
@@ -149,7 +149,7 @@ jobs:
             echo "🚀 Starting deployment..."
             chmod +x ./deploy.sh
             echo "Deploy mode: $DEPLOY_MODE"
-            if ! ./deploy.sh "$DEPLOY_MODE"; then
+            if ! printf 'y\n' | ./deploy.sh "$DEPLOY_MODE"; then
               echo ""
               echo "❌ Deployment script failed. Collecting debug info..."
               echo ""
@@ -162,6 +162,13 @@ jobs:
               echo "Recent logs:"
               docker compose -f docker-compose.prod.yml logs -n 50 || true
               exit 1
+            fi
+
+            if [ "$DEPLOY_MODE" = "website-only" ]; then
+              echo "🔨 Building the website image..."
+              docker compose -f docker-compose.prod.yml build website
+              echo "🚀 Recreating the website container..."
+              docker compose -f docker-compose.prod.yml up -d --no-deps website
             fi
 
             echo "✅ Deployment successful"

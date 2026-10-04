@@ -1,0 +1,19 @@
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY package.json next.config.mjs tsconfig.json next-env.d.ts ./
+RUN npm install --no-audit --no-fund
+COPY app ./app
+COPY components ./components
+COPY lib ./lib
+COPY public ./public
+RUN npm run build
+
+FROM node:22-alpine
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
+WORKDIR /app
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s CMD node -e "require('http').get('http://127.0.0.1:3000/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
+CMD ["node", "server.js"]

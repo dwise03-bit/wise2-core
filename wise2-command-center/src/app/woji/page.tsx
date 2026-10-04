@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import AppNav from "@/components/AppNav";
 import {
   canMarkComplete,
   nextCompletionChain,
@@ -91,22 +90,29 @@ export default function WojiControlPage() {
   const outcome = result?.outcomes.at(-1);
 
   return (
-    <>
-      <AppNav />
-      <main className="min-h-screen bg-[#050505] px-5 py-6 text-[#f6f0e4] sm:px-8 lg:ml-[200px] lg:px-12 lg:py-10">
-        <div className="mx-auto max-w-[1500px]">
-          <header className="mb-8 flex flex-col gap-5 border-b border-white/10 pb-7 xl:flex-row xl:items-end xl:justify-between">
+    <main className="relative min-h-screen overflow-hidden bg-[#03070d] px-4 py-6 text-[#f4f7fb] sm:px-8 lg:px-12 lg:py-10">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(rgba(41,137,216,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(41,137,216,.08)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(3,7,13,.35),rgba(3,7,13,.92)),url('/woji/board/atlanta-cinematic.png')] bg-cover bg-center opacity-50" />
+      <div className="mx-auto max-w-[1500px]">
+          <header className="mb-8 flex flex-col gap-5 border-b border-[#4aa9ef]/30 pb-7 xl:flex-row xl:items-end xl:justify-between">
             <div>
-              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-[#d8a43a]">WISE² / Control Surface</p>
-              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-[#f6f0e4] md:text-6xl">WOJI Control Deck</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#a9a39a]">The command contract, permission gate, lock memory, orchestrator, event log, and recovery checkpoints in one operating view.</p>
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-[#7cc9ff]">WISE² Executive Ecosystem · Atlanta, Georgia</p>
+              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-white md:text-6xl">WOJI Control Deck</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#b4c2ce]">Powered by the WISE² Business OS. One operating system for two powered businesses — with verified commands, memory, and recovery in one view.</p>
             </div>
-            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] px-4 py-3 text-sm text-emerald-200">
-              <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-300" /> Engine connected · {record.contractVersion}
+            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.08] px-4 py-3 text-sm text-emerald-200">
+              <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_14px_#86efac]" /> Engine connected · {record.contractVersion}
             </div>
           </header>
 
-          <section className="grid gap-4 rounded-3xl border border-[#d8a43a]/25 bg-[radial-gradient(circle_at_top_right,rgba(216,164,58,0.16),transparent_36%),linear-gradient(135deg,rgba(255,255,255,0.045),rgba(255,255,255,0.015))] p-5 shadow-2xl shadow-black/20 lg:grid-cols-[1.35fr_0.65fr] lg:p-7">
+          <section className="relative mb-5 grid gap-4 lg:grid-cols-[250px_1fr_250px] lg:items-center">
+            <ExecutiveCard image="/woji/board/daniel-wise.jpg" name="Daniel Wise" role="Founder · CEO · System Architect" accent="cyan" />
+            <div className="order-first rounded-3xl border border-[#1198ff]/60 bg-[#050a12]/85 p-6 text-center shadow-[0_0_50px_rgba(17,152,255,.12)] backdrop-blur-md lg:order-none"><p className="text-[10px] uppercase tracking-[.28em] text-[#9caebe]">WISE²</p><h2 className="mt-2 font-serif text-4xl font-bold text-white">THE BUSINESS OPERATING SYSTEM</h2><p className="mt-3 text-[10px] uppercase tracking-[.2em] text-[#69c9ff]">Organized chaos · built to operate</p><div className="mx-auto mt-5 h-px max-w-xs bg-gradient-to-r from-transparent via-[#1198ff] to-transparent" /><div className="mt-5 grid gap-3 sm:grid-cols-2"><BusinessCard title="PIFF CITY" subtitle="Retail · Culture · Commerce" accent="purple" /><BusinessCard title="WISE SHINE" subtitle="Mobile Detailing · Atlanta" accent="gold" /></div></div>
+            <ExecutiveCard image="/woji/board/darrin-cook.jpg" name="Darrin Cook" role="Partner · COO · Operations" accent="purple" />
+          </section>
+          <div className="mb-6 rounded-2xl border border-white/15 bg-[#050a12]/80 px-5 py-4 text-center backdrop-blur-md"><p className="font-serif text-lg font-bold tracking-wide text-white">ONE OS · TWO POWERED BUSINESSES</p><p className="mt-1 text-[10px] uppercase tracking-[.25em] text-[#9caebe]">AI · CRM · Automation · Payments · Analytics · Operations</p></div>
+
+          <section className="grid gap-4 rounded-3xl border border-[#1198ff]/35 bg-[radial-gradient(circle_at_top_right,rgba(17,152,255,0.2),transparent_36%),linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] p-5 shadow-2xl shadow-black/40 lg:grid-cols-[1.35fr_0.65fr] lg:p-7">
             <div>
               <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-[#a9a39a]"><span className="rounded-full border border-[#d8a43a]/30 px-3 py-1 text-[#d8a43a]">Project Pulse</span><span>Verified state only</span></div>
               <h2 className="mt-5 text-2xl font-semibold">{record.target ?? "No target synchronized"}</h2>
@@ -138,9 +144,16 @@ export default function WojiControlPage() {
 
           <section className="mt-5 rounded-3xl border border-white/10 bg-white/[0.035] p-5 lg:p-6"><div className="flex items-end justify-between"><div><p className="text-xs uppercase tracking-[0.22em] text-[#a9a39a]">📡 History</p><h2 className="mt-1 text-xl font-semibold">Event log</h2></div><span className="text-xs text-[#817b74]">{record.updatedAt}</span></div>{record.events.length === 0 ? <p className="mt-5 rounded-xl border border-dashed border-white/10 p-4 text-sm text-[#817b74]">No events yet. Every accepted command will appear here with its actor, action, result, and checkpoint context.</p> : <div className="mt-5 grid gap-2 md:grid-cols-2">{record.events.slice().reverse().map((event) => <div key={event.id} className="rounded-xl border border-white/10 bg-[#0f121a] p-3 text-sm"><div className="flex items-center justify-between gap-3"><span className="text-[#d8a43a]">{event.woji} {event.action}</span><time className="text-[0.65rem] text-[#817b74]">{event.at}</time></div><p className="mt-1 text-xs text-[#a9a39a]">{event.result} · {event.actor}</p></div>)}</div>}</section>
         </div>
-      </main>
-    </>
+    </main>
   );
+}
+
+function ExecutiveCard({ image, name, role, accent }: { image: string; name: string; role: string; accent: "cyan" | "purple" }) {
+  return <div className={`overflow-hidden rounded-[2rem] border-2 bg-[#050a12]/90 shadow-2xl backdrop-blur-md ${accent === "cyan" ? "border-[#1198ff]" : "border-[#a646ff]"}`}><img src={image} alt={name} className="h-52 w-full object-cover object-center" /><div className="p-4 text-center"><h3 className="font-serif text-xl font-bold uppercase text-white">{name}</h3><p className={`mt-1 text-[9px] font-semibold uppercase tracking-[.14em] ${accent === "cyan" ? "text-[#69c9ff]" : "text-[#d493ff]"}`}>{role}</p></div></div>;
+}
+
+function BusinessCard({ title, subtitle, accent }: { title: string; subtitle: string; accent: "purple" | "gold" }) {
+  return <div className={`rounded-2xl border-2 bg-[#050a12]/80 p-4 ${accent === "purple" ? "border-[#a646ff]" : "border-[#f0b82f]"}`}><h3 className="font-serif text-xl font-bold text-white">{title}</h3><p className={`mt-1 text-[9px] uppercase tracking-[.12em] ${accent === "purple" ? "text-[#d493ff]" : "text-[#f5c95b]"}`}>{subtitle}</p></div>;
 }
 
 function PulseStat({ label, value, tone }: { label: string; value: string; tone: string }) {
