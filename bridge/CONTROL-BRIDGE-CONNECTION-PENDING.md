@@ -11,13 +11,25 @@
   granted per-operation-profile, approved by Daniel.
 - Surface client built but **DISABLED** until endpoint + credential exist.
 
+## 2026-10-05 findings (read-only probe from Surface)
+
+- **VPS confirmed as `gpu-nmls-1`** (tailnet `100.68.145.5`). TSMP pong 264 ms.
+- **TCP 3099 closed from tailnet** — control-bridge is bound to the VPS
+  loopback (`127.0.0.1`) as documented. No change needed on 3099 itself.
+- **nginx TLS gap:** HTTPS handshakes to `100.68.145.5:443` fail with
+  `TLSv1.3 internal error` for every SNI tried. Any HTTPS reverse-proxy path
+  (Option B) is blocked until the nginx cert is fixed; the preferred fix is
+  `tailscale serve` (Option A), which uses the automatic Tailscale cert and
+  does not touch nginx.
+
 ## Blocking items (owner: Daniel / production)
-- [ ] **VPS status** — confirm `wise2-control-bridge-prod` is running
-      (`docker ps`, port 3099 bound to 127.0.0.1); `curl -s http://127.0.0.1:3099/v1/control/health`.
-- [ ] **Private reach** — expose `/v1/control/*` to Surface over Tailscale only
-      (preferred: `tailscale serve` on the VPS; alt: nginx server block bound to
-      the VPS tailnet IP). No new public port. Record the tailnet URL to set
-      `BRIDGE_BASE_URL`.
+- [ ] **VPS status** — confirm `wise2-control-bridge-prod` is running on
+      `gpu-nmls-1` (`docker ps`, port 3099 bound to 127.0.0.1);
+      `curl -fsS http://127.0.0.1:3099/v1/control/health` on the VPS.
+- [ ] **Private reach (preferred: `tailscale serve`)** — on `gpu-nmls-1`, run
+      the steps in `docs/VPS-TAILSCALE-SERVE-RUNBOOK.md` to publish
+      `/v1/control → 127.0.0.1:3099` on the tailnet. Record the resulting
+      `https://gpu-nmls-1.<tailnet>.ts.net` URL in `BRIDGE_BASE_URL`.
 - [ ] **Device Bearer** — issue a dedicated `device:wise2-surface` Bearer token
       distinct from the human/ChatGPT token; add it to the VPS environment so
       the bridge accepts it; deliver out-of-band for installation to

@@ -1,7 +1,7 @@
 # WISE² Current State
 
 > **Living document.** Every agent updates this at the end of a task.
-> Last updated: 2026-10-05 by Claude (Opus 4.7) — reviewed Hermes/bridge pending work (no state change).
+> Last updated: 2026-10-05 by Claude (Opus 4.7) — confirmed VPS=gpu-nmls-1, nginx TLS gap, wrote VPS tailscale-serve runbook.
 
 ## Machine (audited 2026-10-02)
 
@@ -32,6 +32,13 @@ BUILD-REPORT.md · INSTALL-PLAN.md.
       dedicated `device:wise2-surface` Bearer. See
       `bridge/CONTROL-BRIDGE-CONNECTION-PENDING.md`. Client scaffold present
       and **DISABLED**; `wise2 bridge` reports NOT READY as expected.
+- [ ] **VPS=`gpu-nmls-1`** confirmed 2026-10-05 (TSMP pong 264 ms). nginx:443
+      TLS handshake fails on every SNI tried → Hermes/bridge both blocked on a
+      VPS-side change. **Preferred fix:** run
+      `docs/VPS-TAILSCALE-SERVE-RUNBOOK.md` on `gpu-nmls-1` (adds two
+      `tailscale serve` mounts; no nginx edit, no new public port). After
+      that: deliver Hermes JWT + control-bridge Bearer out-of-band, then
+      Claude flips both `*_ENABLED=true` locally.
 
 ## Milestone
 
