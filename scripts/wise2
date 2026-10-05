@@ -42,6 +42,7 @@ ${C_BOLD}Usage:${C_RESET} wise2 <command>
   ${C_CYAN}claude${C_RESET}     Claude Code agent status
   ${C_CYAN}codex${C_RESET}      OpenAI Codex agent status
   ${C_CYAN}hermes${C_RESET}     Hermes second-brain status
+  ${C_CYAN}bridge${C_RESET}     WISE² control-bridge client status
   ${C_CYAN}shannon${C_RESET}    Shannon security engine status (no scan)
   ${C_CYAN}pentest${C_RESET}    Launch guarded authorized engagement (prompts)
   ${C_CYAN}command${C_RESET}    Command Center status
@@ -114,6 +115,17 @@ cmd_hermes() {
     wise2_info "Surface is a CLIENT of production Hermes. Pending: HERMES-PRODUCTION-CONNECTION-PENDING.md"
   else
     wise2_warn "Hermes client missing ($client)"
+  fi
+}
+
+cmd_bridge() {
+  wise2_hr
+  local client="$WISE2_ROOT/bridge/client/bridge-client.sh"
+  if [ -x "$client" ]; then
+    "$client" status
+    wise2_info "Surface is a CLIENT of production control-bridge. Pending: CONTROL-BRIDGE-CONNECTION-PENDING.md"
+  else
+    wise2_warn "control-bridge client missing ($client)"
   fi
 }
 
@@ -273,6 +285,13 @@ cmd_doctor() {
     wise2_warn "Hermes client missing"
   fi
 
+  wise2_hr; printf '%sControl-bridge (client; informational — not counted):%s\n' "$C_BOLD" "$C_RESET"
+  if [ -x "$WISE2_ROOT/bridge/client/bridge-client.sh" ]; then
+    "$WISE2_ROOT/bridge/client/bridge-client.sh" status 2>/dev/null | sed 's/^/  /'
+  else
+    wise2_warn "control-bridge client missing"
+  fi
+
   echo; wise2_hr
   printf '%sSummary:%s %s%d PASS%s  %s%d WARN%s  %s%d FAIL%s\n' \
     "$C_BOLD" "$C_RESET" "$C_GREEN" "$pass" "$C_RESET" "$C_YELLOW" "$warn" "$C_RESET" "$C_RED" "$fail" "$C_RESET"
@@ -292,6 +311,7 @@ main() {
     claude)    cmd_claude "$@" ;;
     codex)     cmd_codex "$@" ;;
     hermes)    cmd_hermes "$@" ;;
+    bridge)    cmd_bridge "$@" ;;
     shannon)   cmd_shannon "$@" ;;
     pentest)   cmd_pentest "$@" ;;
     command|command-center) cmd_command "$@" ;;

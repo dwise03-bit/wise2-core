@@ -1,7 +1,7 @@
 # WISE² Current State
 
 > **Living document.** Every agent updates this at the end of a task.
-> Last updated: 2026-10-02 by Claude (Opus 4.8) — initial WISE² build session.
+> Last updated: 2026-10-04 by Claude (Opus 4.7) — control-bridge client scaffolded (disabled).
 
 ## Machine (audited 2026-10-02)
 
@@ -28,6 +28,10 @@ BUILD-REPORT.md · INSTALL-PLAN.md.
 - [ ] Git repo init + remote + first push (show status first; never force-push)
 - [ ] branding Phase 13 (GRUB/Plymouth/GDM/wallpaper) (sudo + approval, back up first)
 - [ ] Hermes implementation (confirm stack / existing port)
+- [ ] Control-bridge wiring: private tailnet reach to VPS `127.0.0.1:3099` + a
+      dedicated `device:wise2-surface` Bearer. See
+      `bridge/CONTROL-BRIDGE-CONNECTION-PENDING.md`. Client scaffold present
+      and **DISABLED**; `wise2 bridge` reports NOT READY as expected.
 
 ## Milestone
 

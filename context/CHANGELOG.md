@@ -1,5 +1,20 @@
 # WISE² Changelog
 
+## 2026-10-04 — Control-bridge client scaffolded on Surface (DISABLED)
+- Read-only discovery of `services/control-bridge/` in `dwise03-bit/wise2-core`
+  (Fastify + zod + rate-limit, container `wise2-control-bridge-prod`, binds
+  `127.0.0.1:3099`, base path `/v1/control/*`, Bearer `WISE2_CONTROL_TOKEN`,
+  HMAC-signed writes via `WISE2_OPS_SIGNING_KEYS`).
+- Scaffolded Surface client at `/opt/wise2/bridge/{README.md,
+  CONTROL-BRIDGE-INTEGRATION.md, CONTROL-BRIDGE-CONNECTION-PENDING.md,
+  DEVICE-CREDENTIAL.md, config/bridge.conf, client/bridge-client.sh,
+  credentials/README.md}`. `BRIDGE_ENABLED=false`,
+  `BRIDGE_ALLOW_WRITES=false`, 0700 credentials dir.
+- `wise2 bridge` subcommand added; `wise2 doctor` gains an informational
+  control-bridge panel. Doctor remains 25 PASS / 0 WARN / 0 FAIL.
+- NO production change. NO Tailscale/DNS/firewall change. NO credential minted.
+  Blocked on Daniel (private tailnet reach + device Bearer).
+
 ## 2026-10-02 — Codex authenticated; Shannon AI backend available
 - codex login complete (ChatGPT). codex login status OK; v0.160.0.
 - Shannon backend openai-codex:gpt-5.6-sol now available (codex authed); launcher unchanged; no scan run.
