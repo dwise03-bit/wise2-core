@@ -1,7 +1,8 @@
 # HERMES-PRODUCTION-CONNECTION-PENDING
 
 > Tracking record for the unresolved production work required before Surface can
-> actually connect to Hermes. Opened 2026-10-02. **No production changes made.**
+> actually connect to Hermes. Opened 2026-10-02. Last reviewed 2026-10-05 —
+> still blocked on the items below. **No production changes made.**
 
 ## Target architecture (approved)
 - **Tailscale-private** reach: Surface → private Hermes endpoint → authenticated API.
