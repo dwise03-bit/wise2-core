@@ -1,7 +1,7 @@
 # WISE² Current State
 
 > **Living document.** Every agent updates this at the end of a task.
-> Last updated: 2026-10-04 by Claude (Opus 4.7) — control-bridge client scaffolded (disabled).
+> Last updated: 2026-10-05 by Claude (Opus 4.7) — reviewed Hermes/bridge pending work (no state change).
 
 ## Machine (audited 2026-10-02)
 
