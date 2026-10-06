@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodemailer from 'nodemailer';
 
 interface EmailOptions {
   to: string
@@ -9,7 +10,7 @@ interface EmailOptions {
   replyTo?: string
 }
 
-type EmailProvider = 'resend' | 'sendgrid' | 'mock'
+type EmailProvider = 'smtp' | 'resend' | 'sendgrid' | 'mock'
 
 @Injectable()
 export class EmailService {
@@ -25,6 +26,10 @@ export class EmailService {
    * Automatically select email provider based on available credentials
    */
   private selectProvider(): EmailProvider {
+    // Check for self-hosted SMTP first (highest priority)
+    if (this.configService.get('SMTP_HOST')) {
+      return 'smtp';
+    }
     if (this.configService.get('RESEND_API_KEY')) {
       return 'resend';
     }
@@ -165,6 +170,8 @@ export class EmailService {
   private async send(options: EmailOptions): Promise<boolean> {
     try {
       switch (this.provider) {
+        case 'smtp':
+          return await this.sendViaSMTP(options);
         case 'resend':
           return await this.sendViaResend(options);
         case 'sendgrid':
@@ -182,6 +189,56 @@ export class EmailService {
   }
 
   /**
+   * Send via self-hosted SMTP (e.g., Postfix/Exim on VPS)
+   */
+  private async sendViaSMTP(options: EmailOptions): Promise<boolean> {
+    try {
+      // Env values come through as strings; coerce explicitly. The literal
+      // string "false" is truthy in JavaScript, so a naive `get('SMTP_SECURE', false)`
+      // would make nodemailer attempt implicit TLS on port 25 and fail with
+      // "wrong version number".
+      const smtpPort = Number(this.configService.get('SMTP_PORT', 25));
+      const smtpSecure =
+        this.configService.get('SMTP_SECURE', 'false') === 'true';
+      const transporter = nodemailer.createTransport({
+        host: this.configService.get('SMTP_HOST', 'localhost'),
+        port: smtpPort,
+        secure: smtpSecure, // true for 465, false for 25/587
+        auth: this.configService.get('SMTP_USER')
+          ? {
+              user: this.configService.get('SMTP_USER'),
+              pass: this.configService.get('SMTP_PASSWORD'),
+            }
+          : undefined,
+        // Internal docker→host SMTP relay uses postfix on docker bridge gateway.
+        // Postfix advertises STARTTLS but its cert is for mail.wise2.net, not the
+        // internal IP. Skip cert hostname verification for this hop only; the
+        // traffic never leaves the host. Set SMTP_TLS_REJECT_UNAUTHORIZED=true to
+        // re-enable strict verification when SMTP_HOST matches a cert altname.
+        tls: {
+          rejectUnauthorized:
+            this.configService.get('SMTP_TLS_REJECT_UNAUTHORIZED', 'false') === 'true',
+        },
+      });
+
+      await transporter.sendMail({
+        from: this.configService.get('EMAIL_FROM', 'noreply@wise2.net'),
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        text: options.text,
+        replyTo: options.replyTo,
+      });
+
+      this.logger.log(`✉️  Email sent to ${options.to} via SMTP (${this.configService.get('SMTP_HOST')})`);
+      return true;
+    } catch (error) {
+      this.logger.error(`SMTP error: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+  }
+
+  /**
    * Send via Resend
    */
   private async sendViaResend(options: EmailOptions): Promise<boolean> {
@@ -191,6 +248,7 @@ export class EmailService {
         throw new Error('RESEND_API_KEY not configured');
       }
 
+      const from = this.configService.get('EMAIL_FROM', 'noreply@wise2.net');
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -198,7 +256,7 @@ export class EmailService {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          from: this.configService.get('EMAIL_FROM', 'noreply@wise2.net'),
+          from,
           to: options.to,
           subject: options.subject,
           html: options.html,
