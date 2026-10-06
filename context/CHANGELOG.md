@@ -1,5 +1,27 @@
 # WISE² Changelog
 
+## 2026-10-06 — Hermes Cloudflare Tunnel created (not yet running) (Claude)
+- Installed `cloudflared` v2026.10.0 locally on Surface at `~/.local/bin/`
+  (user-local, no sudo).
+- Authenticated to Cloudflare for the `wise2.net` zone;
+  `~/.cloudflared/cert.pem` (0600).
+- Created tunnel `wise2-hermes`,
+  UUID `caa3dcb1-a944-4e46-9478-8490629f3b23`. Credentials JSON at
+  `~/.cloudflared/<UUID>.json` (0400) — never commited, never left disk.
+- Added DNS CNAME `hermes.wise2.net` → `<UUID>.cfargotunnel.com` (proxied,
+  via `cloudflared tunnel route dns`). Verified propagation; HTTPS probe
+  returns Cloudflare 530 (expected — tunnel origin not yet running).
+- Tunnel origin deploy on `gpu-nmls-1` still pending: Tailscale ACL demands
+  one-time interactive check-mode approval before the backgrounded `!`
+  deploy script can SSH in. Documented in
+  `hermes/HERMES-PRODUCTION-CONNECTION-PENDING.md`.
+- Cloudflare Access policy for `hermes.wise2.net` not yet created
+  (dashboard clicks). Public endpoint is currently reachable without auth
+  only because there is no tunnel origin; once origin is up, Access must be
+  in place before anyone hits it with a real identity.
+- No change to production VPS, DNS beyond the single tunnel CNAME,
+  Tailscale ACL, nginx, or Hermes code.
+
 ## 2026-10-06 — Voice control + camera preview + Hermes reach via Cloudflare Access (Claude)
 - Agent Command Graph UI (`command-center-ui/`): voice control panel using
   Web Speech API with command dispatcher (`fit view`, `zoom in/out`,
