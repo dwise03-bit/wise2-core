@@ -6,11 +6,14 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/opt/wise2/scripts/wise2-sync
-# Hard safety: never run with elevated privileges, never allow new privileges.
+# Prefer the staging script until main includes it; after the merge lands,
+# switch to /opt/wise2/scripts/wise2-sync. Pass each repo as an argument so
+# both the production tree (/opt/wise2) and the staging tree stay in sync.
+ExecStart=%h/wise2-level-up/scripts/wise2-sync /opt/wise2 %h/wise2-level-up
+# Hard safety: never run with elevated privileges.
 NoNewPrivileges=true
-# Prevent accidental writes outside the user's own dirs via systemd's sandbox.
+# Prevent accidental writes outside the dirs listed below.
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=%h/wise2-level-up %h/.local/share/wise2
+ReadWritePaths=/opt/wise2 %h/wise2-level-up %h/.local/share/wise2
 PrivateTmp=true
