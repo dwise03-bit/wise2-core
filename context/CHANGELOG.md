@@ -1,5 +1,19 @@
 # WISE² Changelog
 
+## 2026-10-06 — Tailnet SSH policy + per-device bootstrap (Claude)
+- Added `scripts/wise2-bootstrap-device.sh`: idempotent, one-time per
+  device. Sets `tailscale --operator=$SUDO_USER`, enables Tailscale SSH
+  (`RunSSH=true`), installs the `wise2-sync.user.timer` for the invoking
+  user. Needs sudo once; no second-brain credentials involved.
+- Added `docs/TAILNET-SSH-POLICY.md`: explains the two independent layers
+  (per-node `RunSSH` vs. tailnet ACL), drafts a HuJSON ACL that gives the
+  tailnet owner (`autogroup:owner`) `action: accept` SSH to any member
+  (no check URL — unblocks backgrounded `!` SSH flows like the Cloudflare
+  Tunnel deploy on `gpu-nmls-1`), keeps non-owner members gated behind
+  `action: check` with a 12h period, and shows verification + rollback.
+- ACL changes still Daniel's to apply in
+  https://login.tailscale.com/admin/acls (classifier gate on ACL writes).
+
 ## 2026-10-06 — Cross-device git sync (safe, user-level) (Claude)
 - Added `scripts/wise2-sync`: non-destructive git sync loop. Per repo:
   skip on dirty tree, `git fetch`, `git pull --ff-only` only, `git push`
