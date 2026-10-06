@@ -193,16 +193,32 @@ export class EmailService {
    */
   private async sendViaSMTP(options: EmailOptions): Promise<boolean> {
     try {
+      // Env values come through as strings; coerce explicitly. The literal
+      // string "false" is truthy in JavaScript, so a naive `get('SMTP_SECURE', false)`
+      // would make nodemailer attempt implicit TLS on port 25 and fail with
+      // "wrong version number".
+      const smtpPort = Number(this.configService.get('SMTP_PORT', 25));
+      const smtpSecure =
+        this.configService.get('SMTP_SECURE', 'false') === 'true';
       const transporter = nodemailer.createTransport({
         host: this.configService.get('SMTP_HOST', 'localhost'),
-        port: this.configService.get('SMTP_PORT', 25),
-        secure: this.configService.get('SMTP_SECURE', false), // true for 465, false for other ports
+        port: smtpPort,
+        secure: smtpSecure, // true for 465, false for 25/587
         auth: this.configService.get('SMTP_USER')
           ? {
               user: this.configService.get('SMTP_USER'),
               pass: this.configService.get('SMTP_PASSWORD'),
             }
           : undefined,
+        // Internal docker→host SMTP relay uses postfix on docker bridge gateway.
+        // Postfix advertises STARTTLS but its cert is for mail.wise2.net, not the
+        // internal IP. Skip cert hostname verification for this hop only; the
+        // traffic never leaves the host. Set SMTP_TLS_REJECT_UNAUTHORIZED=true to
+        // re-enable strict verification when SMTP_HOST matches a cert altname.
+        tls: {
+          rejectUnauthorized:
+            this.configService.get('SMTP_TLS_REJECT_UNAUTHORIZED', 'false') === 'true',
+        },
       });
 
       await transporter.sendMail({
