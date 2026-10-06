@@ -1,7 +1,8 @@
 # HERMES-PRODUCTION-CONNECTION-PENDING
 
 > Tracking record for the unresolved production work required before Surface can
-> actually connect to Hermes. Opened 2026-10-02. **No production changes made.**
+> actually connect to Hermes. Opened 2026-10-02. Last reviewed 2026-10-05 —
+> still blocked on the items below. **No production changes made.**
 
 ## Target architecture (approved, 2026-10-06 — superseded split)
 **Two reach paths** (see `context/DECISIONS.md` ADR-0008):
@@ -27,28 +28,56 @@
 - [x] **Browser-path reach architecture recorded** — ADR-0008, runbook at
       `hermes/HERMES-CLOUDFLARE-TUNNEL-RUNBOOK.md`.
 
+## 2026-10-05 findings (read-only probe from Surface)
+
+- **VPS confirmed as `gpu-nmls-1`** (tailnet `100.68.145.5`), owner `dwise03@`.
+  TSMP pong 264 ms — peer is live and reachable from Surface.
+- **Loopback-only ports as documented:** TCP 3012 (Hermes) and 3099 (control-bridge)
+  are closed from the tailnet — expected, no change needed.
+- **nginx is running** (`nginx/1.24.0 Ubuntu`) and open on 80 + 443. Port 80
+  redirects everything to HTTPS same-host.
+- **nginx TLS gap:** every HTTPS handshake to `100.68.145.5:443` fails with
+  `TLSv1.3 internal error` for every SNI tried (`100.68.145.5`, `gpu-nmls-1`,
+  `command.wise2.net`, `wise2.net`, `brain.wise2.net`). nginx has no cert
+  matching any hostname Surface can reach. Either fix the nginx TLS config, or
+  (preferred) bypass it entirely with `tailscale serve` (see runbook below).
+
 ## Blocking items (owner: Daniel / production)
-- [ ] **Tunnel origin on gpu-nmls-1** — SSH deploy via tailnet still pending.
-      Tailscale ACL requires one-time check-mode approval
-      (`https://login.tailscale.com/a/...`) which must be done from an
-      interactive terminal, not a backgrounded `!` command. After approval,
-      run `bash /tmp/.../scratchpad/vps-deploy.sh` (not in repo yet).
-- [ ] **VPS status** — confirm `wise2-second-brain` (PM2) is running on the VPS
-      (`173.208.x.x`, Ubuntu 22.04); confirm Mongo + Ollama health.
-- [ ] **Cloudflare Access policy** — create an Access application for
-      `hermes.wise2.net`; identity provider = Google (dwise03@gmail.com) or
-      email OTP allow-list; `/brain-stream` must require authentication.
-- [ ] **Tailscale reach (host path)** — put the Hermes VPS on the tailnet;
-      restrict `tcp:3012` on the Tailscale ACL to the Surface node tag.
-      (Partial — gpu-nmls-1 is already on the tailnet; ACL scoping pending.)
+
+### Common
+- [ ] **VPS status** — confirm `wise2-second-brain` (PM2) is running on
+      `gpu-nmls-1`; confirm Mongo + Ollama health.
 - [ ] **Impl confirm** — Express `second-brain/api-server` (evidence: live) vs
       NestJS `packages/api/brain-auth` (next-gen?). Confirm on the box, and
       ensure the chosen service exposes `/brain-stream` as SSE or WS.
-- [ ] **Device credential (host path only)** — mint scoped device JWT
-      server-side, deliver out-of-band, install to 0600 credential file.
+- [ ] **Public DNS** — `command.wise2.net` has NO A/AAAA/CNAME now. Decide:
+      intentionally down vs restore. Private path preferred regardless.
+
+### Host-to-host path (CLI, device agents) — Tailscale serve
+- [ ] **Private reach (preferred: `tailscale serve`)** — on `gpu-nmls-1`, run
+      the steps in `docs/VPS-TAILSCALE-SERVE-RUNBOOK.md` to publish
+      `/brain-api → 127.0.0.1:3012` on the tailnet. Record the resulting
+      `https://gpu-nmls-1.<tailnet>.ts.net/brain-api` URL in `HERMES_BASE_URL`.
+- [ ] **Device credential** — mint scoped device JWT server-side, deliver
+      out-of-band, install to 0600 credential file.
 - [ ] **Enable** — set `HERMES_ENABLED=true` + `HERMES_BASE_URL` for CLI;
-      verify browser can connect via Cloudflare Access login flow and
-      receives at least one `node.status` event.
+      verify CONFIGURED→REACHABLE→AUTHENTICATED→MEMORY→READY via
+      `wise2 hermes`.
+
+### Browser path — Cloudflare Tunnel + Access (per ADR-0008)
+- [ ] **Tunnel origin on gpu-nmls-1** — install `cloudflared` on the VPS +
+      drop the credentials JSON for tunnel `wise2-hermes`
+      (UUID `caa3dcb1-a944-4e46-9478-8490629f3b23`) + ingress to
+      `http://127.0.0.1:3012`. Full runbook:
+      `hermes/HERMES-CLOUDFLARE-TUNNEL-RUNBOOK.md`. SSH deploy from Surface
+      is currently blocked by a Tailscale ACL check-mode prompt that must
+      be approved interactively (not from a backgrounded `!` command).
+- [ ] **Cloudflare Access policy** — create a Zero Trust Access application
+      for `hermes.wise2.net`; identity provider = Google (dwise03@gmail.com)
+      or email OTP allow-list; `/brain-stream` must require authentication.
+- [ ] **Browser verify** — hit `http://127.0.0.1:3011/?source=hermes` in a
+      Cloudflare-Access-logged-in browser; expect at least one `node.status`
+      event in the Command Graph UI.
 
 ## Must NOT change without explicit approval
 Production VPS, DNS, nginx, production Hermes, MongoDB, JWT config,

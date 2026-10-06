@@ -1,6 +1,10 @@
 # WISE² current state
 
-Updated 2026-10-03 by Codex. **Distinguish host baseline from staged source.**
+> **Living document.** Every agent updates this at the end of a task.
+> Last updated: 2026-10-06 by Claude (Opus 4.7) — Agent Command Graph UI
+> first slice + voice/camera + Cloudflare Tunnel `wise2-hermes` created on
+> top of the 2026-10-05 VPS probe findings.
+> **Distinguish host baseline from staged source.**
 
 ## Preserved host baseline
 
@@ -34,6 +38,32 @@ Offline tests and staging backup verification pass. Exact final verification
 and commit records are in `docs/LEVEL-UP-STATUS.md` and the delivery record.
 Fixture tests do not replace live acceptance. Documentation describes source
 behavior after application, not an installed production upgrade.
+
+## Pending (per device, as of 2026-10-06)
+
+- [x] wise2 CLI installed: /usr/local/bin/wise2 -> scripts/wise2
+- [x] Git remotes wired: `origin=dwise03-bit/wise2-core` (unrelated history,
+      kept for cross-reference), `linux=dwise03-bit/wise2-linux` (the real
+      upstream for this tree). First sync + push 2026-10-06.
+- [ ] systemd units (install templates when always-on wanted) (sudo)
+- [ ] branding Phase 13 (GRUB/Plymouth/GDM/wallpaper) (sudo + approval, back up first)
+- [ ] Hermes implementation (confirm stack / existing port)
+- [ ] Control-bridge wiring: private tailnet reach to VPS `127.0.0.1:3099` + a
+      dedicated `device:wise2-surface` Bearer. See
+      `bridge/CONTROL-BRIDGE-CONNECTION-PENDING.md`. Client scaffold present
+      and **DISABLED**; `wise2 bridge` reports NOT READY as expected.
+- [ ] **VPS=`gpu-nmls-1`** confirmed 2026-10-05 (TSMP pong 264 ms). Two
+      reach options now scaffolded (pick one or run both):
+      - **Preferred (host-to-host CLI, no public exposure):**
+        `docs/VPS-TAILSCALE-SERVE-RUNBOOK.md` on `gpu-nmls-1` adds two
+        `tailscale serve` mounts; no nginx edit, no new public port. After
+        that, deliver Hermes JWT + control-bridge Bearer out-of-band and
+        flip `*_ENABLED=true` locally.
+      - **Browser path (public hostname w/ Access gate):** Cloudflare Tunnel
+        `wise2-hermes` already created, DNS `hermes.wise2.net` live. Still
+        needs tunnel origin deploy on gpu-nmls-1 and a Cloudflare Access
+        policy. Runbook: `hermes/HERMES-CLOUDFLARE-TUNNEL-RUNBOOK.md`.
+        ADR-0008.
 
 ## Component status
 

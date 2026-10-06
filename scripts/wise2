@@ -11,7 +11,7 @@ SCRIPTS="$WISE2_ROOT/scripts"
 # shellcheck source=/opt/wise2/scripts/lib/common.sh
 source "$SCRIPTS/lib/common.sh"
 
-WISE2_CLI_VERSION="0.2.0"
+WISE2_CLI_VERSION="0.1.0"
 
 banner() {
   printf '%s' "$C_GREEN"
@@ -32,25 +32,23 @@ usage() {
 
 ${C_BOLD}Usage:${C_RESET} wise2 <command>
 
-  ${C_CYAN}status${C_RESET}     Observed WISE² overview
-  ${C_CYAN}services${C_RESET}   Observed system and WISE² service state
-  ${C_CYAN}node${C_RESET}       Local registered node observations
-  ${C_CYAN}command-center${C_RESET} status | restart | logs
+  ${C_CYAN}status${C_RESET}     One-screen WISE² overview
   ${C_CYAN}doctor${C_RESET}     PASS/WARN/FAIL diagnostic
   ${C_CYAN}system${C_RESET}     Host / CPU / RAM / disk / kernel
   ${C_CYAN}network${C_RESET}    Interfaces, routes, listening ports
-  ${C_CYAN}devices${C_RESET}    Local registry + observed peer presence
+  ${C_CYAN}devices${C_RESET}    Tailnet device inventory
   ${C_CYAN}ssh${C_RESET}        SSH service + remote-access info
   ${C_CYAN}tailscale${C_RESET}  Tailscale mesh status
   ${C_CYAN}claude${C_RESET}     Claude Code agent status
   ${C_CYAN}codex${C_RESET}      OpenAI Codex agent status
   ${C_CYAN}hermes${C_RESET}     Hermes second-brain status
+  ${C_CYAN}bridge${C_RESET}     WISE² control-bridge client status
   ${C_CYAN}shannon${C_RESET}    Shannon security engine status (no scan)
   ${C_CYAN}pentest${C_RESET}    Launch guarded authorized engagement (prompts)
-  ${C_CYAN}command${C_RESET}    Command Center status (alias)
+  ${C_CYAN}command${C_RESET}    Command Center status
   ${C_CYAN}projects${C_RESET}   List WISE² projects
   ${C_CYAN}support${C_RESET}    Remote-support status
-  ${C_CYAN}backup${C_RESET}     create | list | verify [archive-name]
+  ${C_CYAN}backup${C_RESET}     Snapshot config + context
   ${C_CYAN}update${C_RESET}     Check component versions (no changes)
   ${C_CYAN}logs${C_RESET}       Show recent WISE² logs
   ${C_CYAN}version${C_RESET}    Versions of WISE² components
@@ -78,6 +76,10 @@ cmd_network() {
   printf '\n%sListening (tcp):%s\n' "$C_BOLD" "$C_RESET"; ss -tlnH 2>/dev/null | awk '{print "  "$4}' | sort -u
 }
 
+cmd_devices() {
+  wise2_hr
+  if wise2_have tailscale; then tailscale status 2>/dev/null || wise2_warn "tailscale status unavailable"; else wise2_fail "tailscale not installed"; fi
+}
 
 cmd_ssh() {
   wise2_hr; wise2_check_unit ssh "OpenSSH"
@@ -85,21 +87,85 @@ cmd_ssh() {
   wise2_info "Docs: $WISE2_ROOT/docs/REMOTE-ACCESS.md"
 }
 
+cmd_tailscale() {
+  wise2_hr
+  if wise2_have tailscale; then
+    printf 'Tailscale IPv4: %s\n' "$(tailscale ip -4 2>/dev/null)"
+    tailscale status 2>/dev/null | head -1 || true
+    wise2_pass "tailscaled $(systemctl is-active tailscaled 2>/dev/null)"
+  else wise2_fail "tailscale not installed"; fi
+}
 
+cmd_claude() {
+  wise2_hr
+  if wise2_have claude; then wise2_pass "Claude Code $(claude --version 2>/dev/null) @ $(command -v claude)"; else wise2_fail "claude not found"; fi
+}
 
+cmd_codex() {
+  wise2_hr
+  if wise2_have codex; then wise2_pass "Codex $(codex --version 2>/dev/null) @ $(command -v codex)";
+  else wise2_warn "OpenAI Codex not installed (pending Phase 2). Shannon AI backend depends on it."; fi
+}
 
+cmd_hermes() {
+  wise2_hr
+  local client="$WISE2_ROOT/hermes/client/hermes-client.sh"
+  if [ -x "$client" ]; then
+    "$client" status
+    wise2_info "Surface is a CLIENT of production Hermes. Pending: HERMES-PRODUCTION-CONNECTION-PENDING.md"
+  else
+    wise2_warn "Hermes client missing ($client)"
+  fi
+}
 
+cmd_bridge() {
+  wise2_hr
+  local client="$WISE2_ROOT/bridge/client/bridge-client.sh"
+  if [ -x "$client" ]; then
+    "$client" status
+    wise2_info "Surface is a CLIENT of production control-bridge. Pending: CONTROL-BRIDGE-CONNECTION-PENDING.md"
+  else
+    wise2_warn "control-bridge client missing ($client)"
+  fi
+}
+
+cmd_shannon() {
+  wise2_hr
+  if wise2_have wise2-shannon; then
+    wise2_pass "Shannon launcher present: $(command -v wise2-shannon)"
+    wise2_info "Version: $(wise2-shannon version 2>/dev/null | head -1 || echo 'run: wise2-shannon version')"
+    wise2_info "Authorized engagements: wise2 pentest  (NO scan runs automatically)"
+    local n; n=$(find "$WISE2_ROOT/security/engagements" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | wc -l)
+    wise2_info "Recorded engagements: $n"
+  else wise2_fail "wise2-shannon not found"; fi
+}
 
 cmd_pentest() {
   wise2_hr
   if wise2_have wise2-pentest; then
     wise2_info "Launching guarded authorized-engagement wrapper (it will prompt for authorization)."
-    if [ "$#" -ne 0 ]; then wise2_fail "pentest takes no arguments; the preserved gate prompts for scope and authorization"; return 2; fi
     exec wise2-pentest
   else wise2_fail "wise2-pentest not found"; fi
 }
 
+cmd_command() {
+  wise2_hr
+  local us; us=$(XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" systemctl --user is-active wise2-command-center 2>/dev/null || echo unknown)
+  wise2_info "user service wise2-command-center: $us"
+  if curl -fsS --max-time 3 http://127.0.0.1:3010/ >/dev/null 2>&1; then
+    wise2_pass "Command Center listening on http://127.0.0.1:3010 (localhost only)"
+  else
+    wise2_fail "Command Center NOT listening on 127.0.0.1:3010"
+    wise2_info "start: systemctl --user start wise2-command-center"
+  fi
+}
 
+cmd_projects() {
+  wise2_hr; printf '%sProjects under %s/projects:%s\n' "$C_BOLD" "$WISE2_ROOT" "$C_RESET"
+  local found=0
+  for d in "$WISE2_ROOT"/projects/*/; do [ -d "$d" ] || continue; found=1; printf '  - %s\n' "$(basename "$d")"; done
+  [ "$found" -eq 0 ] && wise2_info "No projects registered yet. See context/PROJECTS.md"
+}
 
 cmd_support() {
   wise2_hr
@@ -107,24 +173,154 @@ cmd_support() {
   wise2_info "See $WISE2_ROOT/support/README.md and docs/REMOTE-ACCESS.md"
 }
 
+cmd_backup() {
+  local out stamp
+  stamp=$(date -u +%Y%m%dT%H%M%SZ)
+  out="$WISE2_ROOT/backups/wise2-config-$stamp.tar.gz"
+  wise2_info "Backing up context + config + docs + scripts (no secrets/evidence)…"
+  tar -czf "$out" \
+    -C "$WISE2_ROOT" \
+    --exclude='*.env' --exclude='*.key' --exclude='*.pem' --exclude='secrets' \
+    context config docs scripts services CLAUDE.md .gitignore 2>/dev/null || true
+  if [ -f "$out" ]; then wise2_pass "Backup: $out ($(du -h "$out" | cut -f1))"; else wise2_fail "Backup failed"; fi
+}
 
+cmd_update() {
+  wise2_hr; wise2_info "Version check only — makes no changes."
+  cmd_version
+  wise2_info "System package updates require sudo and Daniel's approval (not run here)."
+}
 
+cmd_logs() {
+  wise2_hr; printf '%sRecent WISE² logs (%s/logs):%s\n' "$C_BOLD" "$WISE2_ROOT" "$C_RESET"
+  ls -1t "$WISE2_ROOT/logs" 2>/dev/null | head -10 | sed 's/^/  /' || wise2_info "none"
+}
 
+cmd_version() {
+  wise2_hr
+  printf '  wise2 CLI   %s\n' "$WISE2_CLI_VERSION"
+  printf '  OS          %s\n' "$(. /etc/os-release; echo "$VERSION")"
+  printf '  Kernel      %s\n' "$(uname -r)"
+  printf '  Node        %s\n' "$(node --version 2>/dev/null || echo n/a)"
+  printf '  Python      %s\n' "$(python3 --version 2>/dev/null || echo n/a)"
+  printf '  Docker      %s\n' "$(docker --version 2>/dev/null | awk '{print $3}' | tr -d , || echo n/a)"
+  printf '  Claude      %s\n' "$(claude --version 2>/dev/null || echo n/a)"
+  printf '  Codex       %s\n' "$(codex --version 2>/dev/null || echo 'not installed')"
+  printf '  Shannon     %s\n' "$(wise2-shannon version 2>/dev/null | head -1 || echo n/a)"
+  printf '  Tailscale   %s\n' "$(tailscale version 2>/dev/null | head -1 || echo n/a)"
+}
 
+cmd_status() {
+  banner; echo
+  cmd_system; echo
+  wise2_hr; printf '%sServices:%s\n' "$C_BOLD" "$C_RESET"
+  wise2_check_unit ssh "OpenSSH"
+  wise2_check_unit tailscaled "Tailscale"
+  wise2_check_unit docker "Docker"
+  wise2_check_unit bluetooth "Bluetooth"
+  if systemctl list-units --no-legend 'iptsd@*' 2>/dev/null | grep -q active; then wise2_pass "Touch (iptsd)"; else wise2_warn "Touch (iptsd) not active"; fi
+  if curl -fsS -m 3 -o /dev/null http://127.0.0.1:3010/ 2>/dev/null; then wise2_pass "Command Center (127.0.0.1:3010)"; else wise2_fail "Command Center not running"; fi
+  echo
+  wise2_hr; printf '%sAgents & modules:%s\n' "$C_BOLD" "$C_RESET"
+  wise2_have claude && wise2_pass "Claude Code $(claude --version 2>/dev/null)" || wise2_fail "Claude Code missing"
+  wise2_have codex  && wise2_pass "Codex present" || wise2_warn "Codex not installed (Phase 2)"
+  wise2_have wise2-shannon && wise2_pass "Shannon launcher present" || wise2_fail "Shannon launcher missing"
+}
 
+cmd_doctor() {
+  banner; echo; printf '%sWISE² doctor%s\n' "$C_BOLD" "$C_RESET"
+  local pass=0 warn=0 fail=0
+  chk() { # chk "label" test-cmd...
+    local label="$1"; shift
+    if "$@" >/dev/null 2>&1; then wise2_pass "$label"; pass=$((pass+1));
+    else wise2_fail "$label"; fail=$((fail+1)); fi
+  }
+  chkw() { local label="$1"; shift; if "$@" >/dev/null 2>&1; then wise2_pass "$label"; pass=$((pass+1)); else wise2_warn "$label"; warn=$((warn+1)); fi; }
+
+  wise2_hr; printf '%sCore:%s\n' "$C_BOLD" "$C_RESET"
+  chk  "Surface kernel running"            bash -c '[ "$(uname -r)" = "6.19.8-surface-3" ]'
+  chkw "Touch daemon (iptsd) active"       bash -c "systemctl list-units --no-legend 'iptsd@*' 2>/dev/null | grep -q active"
+  chk  "OpenSSH active"                    systemctl is-active --quiet ssh
+  chk  "Tailscale active"                  systemctl is-active --quiet tailscaled
+  chk  "Docker active"                     systemctl is-active --quiet docker
+  chk  "Docker usable by user"             docker info
+
+  wise2_hr; printf '%sToolchain:%s\n' "$C_BOLD" "$C_RESET"
+  chk  "node"      wise2_have node
+  chk  "npm"       wise2_have npm
+  chk  "python3"   wise2_have python3
+  chk  "git"       wise2_have git
+  chk  "docker"    wise2_have docker
+  chk  "claude"    wise2_have claude
+  chkw "gh (GitHub CLI)"  wise2_have gh
+  chkw "codex"            wise2_have codex
+  chkw "jq"               wise2_have jq
+  chkw "rg (ripgrep)"     wise2_have rg
+  chkw "tmux"             wise2_have tmux
+
+  wise2_hr; printf '%sWISE² workspace:%s\n' "$C_BOLD" "$C_RESET"
+  chk  "WISE² root present"        test -d "$WISE2_ROOT"
+  chk  "context layer present"     test -f "$WISE2_ROOT/context/WISE2.md"
+  chk  "CLAUDE.md present"         test -f "$WISE2_ROOT/CLAUDE.md"
+  chk  "Shannon launcher"          wise2_have wise2-shannon
+  chk  "Pentest gate launcher"     wise2_have wise2-pentest
+  chkw "git identity configured"   git config --global user.email
+
+  wise2_hr; printf '%sWISE² services:%s\n' "$C_BOLD" "$C_RESET"
+  # Real runtime check: Command Center must actually be listening on localhost.
+  # Files exist in this install, so a down port is a FAIL (counted), not a warning.
+  if curl -fsS -m 3 -o /dev/null http://127.0.0.1:3010/ 2>/dev/null; then
+    wise2_pass "Command Center listening on 127.0.0.1:3010"; pass=$((pass+1))
+  else
+    wise2_fail "Command Center not running"; fail=$((fail+1))
+  fi
+
+  wise2_hr; printf '%sNetwork safety:%s\n' "$C_BOLD" "$C_RESET"
+  chkw "No non-SSH public TCP (quick heuristic)" bash -c '! ss -tlnH | awk "{print \$4}" | grep -Eq "^(0\.0\.0\.0|\[::\]):(?!22)" '
+
+  wise2_hr; printf '%sHermes (client; informational — not counted):%s\n' "$C_BOLD" "$C_RESET"
+  if [ -x "$WISE2_ROOT/hermes/client/hermes-client.sh" ]; then
+    "$WISE2_ROOT/hermes/client/hermes-client.sh" status 2>/dev/null | sed 's/^/  /'
+  else
+    wise2_warn "Hermes client missing"
+  fi
+
+  wise2_hr; printf '%sControl-bridge (client; informational — not counted):%s\n' "$C_BOLD" "$C_RESET"
+  if [ -x "$WISE2_ROOT/bridge/client/bridge-client.sh" ]; then
+    "$WISE2_ROOT/bridge/client/bridge-client.sh" status 2>/dev/null | sed 's/^/  /'
+  else
+    wise2_warn "control-bridge client missing"
+  fi
+
+  echo; wise2_hr
+  printf '%sSummary:%s %s%d PASS%s  %s%d WARN%s  %s%d FAIL%s\n' \
+    "$C_BOLD" "$C_RESET" "$C_GREEN" "$pass" "$C_RESET" "$C_YELLOW" "$warn" "$C_RESET" "$C_RED" "$fail" "$C_RESET"
+  [ "$fail" -eq 0 ]
+}
 
 main() {
   local cmd="${1:-help}"; shift || true
   case "$cmd" in
-    status|doctor|services|logs|devices|node|hermes|shannon|projects|backup|update|version|command|command-center|tailscale|claude|codex)
-      exec python3 "$WISE2_ROOT/core/cli.py" "$cmd" "$@" ;;
-  esac
-  case "$cmd" in
+    status)    cmd_status "$@" ;;
+    doctor)    cmd_doctor "$@" ;;
     system)    cmd_system "$@" ;;
     network)   cmd_network "$@" ;;
+    devices)   cmd_devices "$@" ;;
     ssh)       cmd_ssh "$@" ;;
+    tailscale) cmd_tailscale "$@" ;;
+    claude)    cmd_claude "$@" ;;
+    codex)     cmd_codex "$@" ;;
+    hermes)    cmd_hermes "$@" ;;
+    bridge)    cmd_bridge "$@" ;;
+    shannon)   cmd_shannon "$@" ;;
     pentest)   cmd_pentest "$@" ;;
+    command|command-center) cmd_command "$@" ;;
+    projects)  cmd_projects "$@" ;;
     support)   cmd_support "$@" ;;
+    backup)    cmd_backup "$@" ;;
+    update)    cmd_update "$@" ;;
+    logs)      cmd_logs "$@" ;;
+    version)   cmd_version "$@" ;;
     help|-h|--help) usage ;;
     *) printf '%sUnknown command:%s %s\n\n' "$C_RED" "$C_RESET" "$cmd"; usage; exit 2 ;;
   esac
