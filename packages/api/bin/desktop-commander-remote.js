@@ -19,6 +19,7 @@ const execAsync = promisify(exec);
 const PORT = process.env.WISE2_BRIDGE_PORT || 9999;
 const LOG_DIR = path.join(process.env.HOME || '/Users/danielwise', '.wise2');
 const LOG_FILE = path.join(LOG_DIR, 'bridge.log');
+const MAX_LOG_BYTES = 1024 * 1024;
 const STATUS_FILE = path.join(LOG_DIR, 'bridge.status');
 
 // Ensure log directory exists
@@ -31,7 +32,14 @@ function log(message, level = 'INFO') {
   const timestamp = new Date().toISOString();
   const logMessage = `[${timestamp}] [${level}] ${message}\n`;
   process.stdout.write(logMessage);
-  fs.appendFileSync(LOG_FILE, logMessage, { flag: 'a' });
+  try {
+    if (fs.existsSync(LOG_FILE) && fs.statSync(LOG_FILE).size > MAX_LOG_BYTES) {
+      fs.renameSync(LOG_FILE, `${LOG_FILE}.1`);
+    }
+    fs.appendFileSync(LOG_FILE, logMessage, { flag: 'a' });
+  } catch (error) {
+    process.stderr.write(`[${timestamp}] [WARN] Failed to write bridge log: ${error.message}\n`);
+  }
 }
 
 // Status tracker
@@ -42,7 +50,11 @@ function updateStatus(status) {
     timestamp: new Date().toISOString(),
     uptime: Math.round(process.uptime()),
   };
-  fs.writeFileSync(STATUS_FILE, JSON.stringify(statusData, null, 2));
+  try {
+    fs.writeFileSync(STATUS_FILE, JSON.stringify(statusData, null, 2));
+  } catch (error) {
+    log(`Failed to write bridge status: ${error.message}`, 'WARN');
+  }
 }
 
 // Handle signals

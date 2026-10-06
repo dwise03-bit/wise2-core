@@ -44,6 +44,10 @@ The separate app has no signup/login, persistent cross-device storage, live odds
 
 `rr60sbets.wise2.net` uses a separate `wise2-rr60s-bets` container on VPS loopback port 3017 and a dedicated nginx virtual host. Build the Linux image from this app source with `Dockerfile.release`, then start `docker-compose.yml` on the VPS. The HTTPS virtual host is defined in `infrastructure/nginx/rr60sbets.wise2.net.conf`. The app remains demo-only at this public endpoint.
 
+## Android APK
+
+The Android WebView shell source and build instructions are in `android/README.md`. The signed 0.1.0 APK is on the VPS at `/home/dwise/rr60s-bets/releases/android/RR60s-Bets-0.1.0.apk`. It loads the public demo site over HTTPS and requires connectivity. Android build, lint, package metadata, and signature checks passed; device launch remains unverified because no Android device or emulator was connected.
+
 ### Deployment status — 2026-10-04
 
 - VPS image `wise2-rr60s-bets:20261004b` built from source at `/home/dwise/rr60s-bets/releases/20261004-source`.

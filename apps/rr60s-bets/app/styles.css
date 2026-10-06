@@ -3,3 +3,7 @@
    keep the live interface in a separate layer on narrow screens. */
 @media(min-width:801px){.hero-art{background-position:center,center -95px}}
 @media(max-width:540px){.hero{min-height:760px;display:block;padding-top:295px}.hero-art{inset:0 0 auto;height:300px;background-size:cover,100% auto;background-position:center,center -16px;mask-image:linear-gradient(#000 77%,transparent)}.hero:after{display:none}.hero-overlay{margin:0 16px 24px;min-height:430px;background:#020913e8;box-shadow:0 0 30px #000;border-top:2px solid var(--blue)}}
+
+.live-tag{border:1px solid #1f7a44;color:var(--green);background:#07220f;padding:5px 11px;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.08em;white-space:nowrap;text-shadow:0 0 10px #21f96b66}
+@media(max-width:540px){.live-tag{display:none}}
+@media(max-height:640px){.topbar{height:58px}.hero{min-height:auto;padding-top:196px}.hero-art{height:186px}.hero:after{display:none}.hero-overlay{min-height:auto;margin:0 12px 16px;padding:16px 16px 18px;box-shadow:0 0 24px #000;border-top:2px solid var(--blue)}.hero-overlay h1{font-size:clamp(2.1rem,9vw,3rem)}.hero-overlay p{font-size:.9rem}.section{padding-top:22px;padding-bottom:22px}.feature-strip{padding:14px 12px}.cards{gap:12px}}
