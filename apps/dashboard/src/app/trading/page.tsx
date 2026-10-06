@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { EmbedBuilder } from 'discord.js';
 
 interface Portfolio {
   account: { id: string; name: string; type: string; equity: number };
