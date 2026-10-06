@@ -1,0 +1,18 @@
+.graph-root {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+}
+
+.react-flow {
+  background: transparent;
+}
+.react-flow__node { background: transparent !important; border: 0 !important; padding: 0 !important; }
+.react-flow__attribution { display: none; }
+.react-flow__controls button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+.react-flow__controls button:hover { background: #18263c; }
+.react-flow__minimap { border-radius: 10px; }

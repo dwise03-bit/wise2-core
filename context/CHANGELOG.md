@@ -1,5 +1,25 @@
 # WISE² Changelog
 
+## 2026-10-06 — Agent Command Graph UI first-slice staged (Claude)
+- Added `command-center-ui/`: Vite + React + TypeScript + `@xyflow/react` +
+  `zustand`, bound to 127.0.0.1:3011 via `vite.config.ts` (`strictPort`).
+- First-slice vertical: Hermes node (breathing + rotating activity rings),
+  five registered nodes (Planner, Claude Agent, QA, Deploy, GitHub tool) plus
+  an Approval node, animated edges with per-packet SVG `animateMotion`,
+  drag/pan/zoom, selection, right-side Inspector, bottom Timeline with
+  live/replay toggle, step/speed controls, and Follow Execution camera that
+  recenters on each new execution step.
+- Event schema in `src/types/events.ts`; `EventSource` adapter in
+  `src/events/adapter.ts` with `SimulatedEventSource` (used by default) and
+  `WebSocketEventSource` (stubbed to a 127.0.0.1 loopback path; not active).
+- Hermes gateway host recorded as `hermes.wise2.net`; production connection
+  still a pause point (ADR-0005, hermes/HERMES-PRODUCTION-CONNECTION-PENDING).
+- No change to Python `command-center/` or its service; existing 127.0.0.1:3010
+  port and read-only loopback contract preserved.
+- `npm run build` passes (416 kB JS / 130 kB gzipped, 27 kB CSS).
+- No push, no new systemd unit, no sudo required; feature is staged.
+- ADR-0007 recorded.
+
 ## 2026-10-03 — Master level-up staged in isolated checkout (Codex)
 - Read-only audit reconfirmed clean c04bfb2 and existing stable tag on `/opt/wise2`.
 - Restricted session cannot observe host D-Bus/network/socket state or write to

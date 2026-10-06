@@ -41,6 +41,7 @@ behavior after application, not an installed production upgrade.
 |---|---|
 | Development CLI tools | Version execution verified; account authentication not re-tested |
 | Command Center baseline | Existing unit/code present, historical recovery proven; fresh live state UNKNOWN |
+| Command Center UI (Agent Command Graph) | STAGED in `command-center-ui/`; Vite+React+@xyflow/react, 127.0.0.1:3011, simulated events only; `npm run build` passes; not auto-started, no systemd unit, Python server on :3010 unchanged (ADR-0007) |
 | v0.2 doctor/CLI/dashboard | STAGED implementation, offline tested |
 | Metadata backup/rotation | STAGED implementation, real local archive verified |
 | Local device registry | STAGED; remote agent telemetry NOT CONFIGURED |

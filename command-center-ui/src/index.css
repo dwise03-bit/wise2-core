@@ -1,0 +1,4 @@
+/* Deliberately minimal — theme.css carries the design tokens.
+   Keep this file for component-wide resets only. */
+
+::selection { background: color-mix(in oklab, var(--green) 35%, transparent); color: var(--text); }

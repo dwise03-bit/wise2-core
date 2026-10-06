@@ -1,0 +1,81 @@
+:root {
+  color-scheme: dark;
+  --bg: #04070d;
+  --panel: #0b1423;
+  --panel-raised: #111d2f;
+  --line: #233148;
+  --line-strong: #334667;
+  --text: #e8edf3;
+  --muted: #a2b1c3;
+  --green: #30f591;
+  --electric: #4ab8ff;
+  --purple: #a781ff;
+  --amber: #f4c661;
+  --red: #ff7888;
+  --chrome: #aebbc9;
+
+  --node-online: var(--green);
+  --node-thinking: var(--electric);
+  --node-executing: var(--electric);
+  --node-waiting: var(--chrome);
+  --node-approval: var(--amber);
+  --node-paused: var(--muted);
+  --node-warning: var(--amber);
+  --node-failed: var(--red);
+  --node-offline: #4a5568;
+
+  --edge-idle: #2b3a56;
+  --edge-active: var(--electric);
+  --edge-success: var(--green);
+  --edge-approval: var(--amber);
+  --edge-failed: var(--red);
+
+  --packet-task: var(--electric);
+  --packet-tool: var(--purple);
+  --packet-result: var(--green);
+  --packet-approval: var(--amber);
+  --packet-security: var(--red);
+
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-ring: 0 0 0 1px var(--line);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at top right, #12223b, transparent 55%),
+    radial-gradient(ellipse at bottom left, #0d1a2e, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+button:hover { background: #18263c; border-color: var(--line-strong); }
+button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+button[aria-pressed="true"] { background: #102c26; border-color: var(--green); color: var(--green); }
+
+a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-scale: 0; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

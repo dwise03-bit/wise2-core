@@ -1,0 +1,41 @@
+.edge-base {
+  stroke: var(--edge-idle);
+  stroke-width: 1.6;
+  fill: none;
+  transition: stroke 180ms linear, stroke-width 180ms linear;
+}
+.edge-base.active {
+  stroke: var(--edge-active);
+  stroke-width: 2.1;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--edge-active) 70%, transparent));
+}
+.edge-base.selected {
+  stroke: var(--green);
+  stroke-width: 2.4;
+}
+.edge-base.kind-tool    { stroke-dasharray: 6 4; }
+.edge-base.kind-approval { stroke-dasharray: 2 4; }
+.edge-base.kind-result   { stroke: var(--edge-success); }
+
+.packet circle { fill: var(--packet-task); }
+.packet-halo { fill: transparent; stroke: var(--packet-task); stroke-opacity: 0.3; }
+
+.packet-task       circle { fill: var(--packet-task); }
+.packet-task       .packet-halo { stroke: var(--packet-task); }
+
+.packet-tool_call  circle { fill: var(--packet-tool); }
+.packet-tool_call  .packet-halo { stroke: var(--packet-tool); }
+
+.packet-result     circle { fill: var(--packet-result); }
+.packet-result     .packet-halo { stroke: var(--packet-result); }
+
+.packet-approval   circle { fill: var(--packet-approval); }
+.packet-approval   .packet-halo { stroke: var(--packet-approval); }
+
+.packet-security_alert circle { fill: var(--packet-security); }
+.packet-security_alert .packet-halo { stroke: var(--packet-security); }
+
+@media (prefers-reduced-motion: reduce) {
+  .packet circle, .packet-halo { animation-duration: 0.001ms !important; }
+  .edge-base.active { filter: none; }
+}

@@ -1,0 +1,31 @@
+.timeline {
+  position: absolute;
+  left: 16px; right: 16px; bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #0d1a2e, #091425);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -20px #000;
+}
+.timeline-divider { width: 1px; height: 22px; background: var(--line); }
+.timeline-track {
+  flex: 1;
+  height: 6px;
+  background: #152338;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+.timeline-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--electric), var(--green));
+  transition: width 220ms linear;
+}
+.timeline-count {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  min-width: 72px;
+  text-align: right;
+}

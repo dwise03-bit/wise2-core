@@ -1,0 +1,62 @@
+@keyframes slide-in {
+  from { transform: translateX(16px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+.inspector {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  bottom: 72px;
+  width: 320px;
+  padding: 16px 18px;
+  background: linear-gradient(180deg, #0d1a2e, #091425);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px -22px #000;
+  overflow-y: auto;
+  animation: slide-in 220ms cubic-bezier(.2,.8,.2,1);
+}
+.inspector header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.inspector-title { font-size: 15px; letter-spacing: 0.04em; }
+.inspector-close { padding: 2px 8px; }
+
+.inspector .section { margin-bottom: 16px; }
+.inspector .section h3 {
+  margin: 0 0 8px;
+  font-size: 11px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase;
+}
+.inspector .row {
+  display: flex; justify-content: space-between; gap: 10px;
+  padding: 6px 0; font-size: 13px;
+  border-bottom: 1px solid #1b293d;
+}
+.inspector .row:last-child { border-bottom: 0; }
+.inspector .row span:first-child { color: var(--muted); }
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px; letter-spacing: 0.1em;
+  background: #11223b;
+  border: 1px solid var(--line);
+}
+.chip-executing, .chip-thinking { color: var(--electric); border-color: var(--electric); }
+.chip-approval { color: var(--amber); border-color: var(--amber); }
+.chip-failed { color: var(--red); border-color: var(--red); }
+.chip-online { color: var(--green); border-color: color-mix(in oklab, var(--green) 60%, transparent); }
+.chip-idle { color: var(--muted); }
+
+.event-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.event-list li {
+  display: flex; gap: 10px; align-items: center;
+  padding: 6px 8px; border-radius: 6px;
+  background: #0d1a2e;
+  font-size: 12px;
+}
+.event-time { color: var(--muted); font-variant-numeric: tabular-nums; }
+.event-type { color: var(--text); }
+.event-kind { color: var(--electric); margin-left: auto; font-size: 11px; letter-spacing: 0.12em; }
+
+.empty { color: var(--muted); font-size: 13px; }

@@ -1,0 +1,46 @@
+.shell {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(7,13,23,0.95), rgba(7,13,23,0.75));
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+.logo {
+  font-size: 24px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  background: linear-gradient(#fff, #aebbc9 45%, #fff 50%, #697787);
+  color: transparent;
+  background-clip: text;
+}
+.logo sup { color: var(--green); font-size: 15px; }
+.topbar-text { display: flex; flex-direction: column; }
+.topbar-title { font-size: 14px; letter-spacing: 0.18em; }
+.topbar-sub { font-size: 10px; letter-spacing: 0.18em; color: var(--muted); }
+.topbar-exec { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  font-size: 11px; letter-spacing: 0.13em;
+  background: #11223b; color: var(--electric);
+  border: 1px solid color-mix(in oklab, var(--electric) 50%, var(--line));
+  border-radius: 999px;
+}
+.pill-muted { color: var(--muted); border-color: var(--line); background: #0b1423; }
+
+.stage {
+  position: absolute;
+  inset: 56px 0 72px 0;
+}

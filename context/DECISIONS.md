@@ -1,7 +1,37 @@
 # WISE² Architecture Decisions
 
 > Append-only log of decisions that shape WISE². Each entry: date, decision,
-> rationale, consequences. Newest at top. Last updated: 2026-10-02.
+> rationale, consequences. Newest at top. Last updated: 2026-10-06.
+
+## ADR-0007 — Agent Command Graph UI as a sibling React app (2026-10-06)
+**Decision:** Add `command-center-ui/` next to the existing Python
+`command-center/` as a Vite + React + TypeScript app using `@xyflow/react` and
+`zustand`, bound to 127.0.0.1:3011. The existing stdlib HTTP server at
+127.0.0.1:3010 is untouched. Live events flow through an `EventSource` adapter;
+`SimulatedEventSource` drives development, `WebSocketEventSource` is wired to
+connect through a same-origin loopback path (e.g. `ws://127.0.0.1:3010/brain-stream`)
+once Daniel confirms the production Hermes gateway (`hermes.wise2.net`) and
+supplies the scoped device credential.
+**Rationale:** The pasted Command Center 4.0 spec requires an animated,
+interactive, real-time graph canvas — React Flow + custom SVG edges with
+`animateMotion` cover the first-slice vertical (Hermes + 5 agents, animated
+edges, drag/pan/zoom, selection, inspector, follow-execution, timeline, replay).
+A vanilla-JS implementation inside `command-center/public/` is possible but
+would duplicate the viewport primitives React Flow already provides and does
+not scale cleanly to the full spec's node inspector, timeline replay, and
+layer toggles. Keeping the two UIs side-by-side preserves the audited Python
+server, respects CLAUDE.md's "small, reversible changes" guidance, and lets
+the new app be removed as a unit if a different stack is chosen.
+**Consequences:** New npm dependencies (`react`, `react-dom`, `@xyflow/react`,
+`zustand`) locked to this subdirectory only. No systemd unit is added; the
+app is launched manually via `npm run dev` or built static assets served by a
+future same-origin route under the Python server (loopback only, read-only).
+Browser never holds Hermes credentials; a loopback proxy is required before
+`WebSocketEventSource` becomes the active source. CSP for any route that
+serves the built bundle must widen beyond the current `script-src 'self'`
+only enough for a hashed/served bundle — no external CDNs. First slice is
+STAGED and runs against simulated events; it is not wired to production and
+is not reachable off-loopback.
 
 ## ADR-0006 — Shared observations and metadata-only recovery (2026-10-03)
 **Decision:** CLI/dashboard use one standard-library read-only probe layer;

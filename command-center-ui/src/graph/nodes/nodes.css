@@ -1,0 +1,146 @@
+/* Shared node primitives — all colors come from theme tokens so dark/light
+   adjustments live in one place. No absolute positioning fights React Flow
+   handles. Idle motion is restrained; active states intensify. */
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.04); opacity: 1; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes amber-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--amber) 60%, transparent); }
+  50%      { box-shadow: 0 0 0 10px color-mix(in oklab, var(--amber) 0%, transparent); }
+}
+@keyframes failed-flicker {
+  0%, 100% { outline-color: var(--red); }
+  50%      { outline-color: color-mix(in oklab, var(--red) 50%, transparent); }
+}
+
+/* ---------- Hermes ---------- */
+.hermes-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px 14px 14px;
+  background: linear-gradient(140deg, #0f1d33, #091425);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px -18px #000;
+  min-width: 160px;
+  color: var(--text);
+}
+.hermes-node.selected { border-color: var(--green); }
+
+.hermes-core {
+  position: relative;
+  width: 56px; height: 56px;
+  display: grid; place-items: center;
+}
+.hermes-core .ring {
+  position: absolute; inset: 0;
+  border: 1px solid color-mix(in oklab, var(--electric) 55%, transparent);
+  border-radius: 50%;
+  animation: spin-slow 24s linear infinite;
+}
+.hermes-core .ring-2 { inset: 6px;  border-color: color-mix(in oklab, var(--green) 50%, transparent); animation-duration: 32s; animation-direction: reverse; }
+.hermes-core .ring-3 { inset: 12px; border-color: color-mix(in oklab, var(--purple) 50%, transparent); animation-duration: 18s; }
+.hermes-glyph {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 30% 30%, var(--electric), #0b2748 65%);
+  color: #04070d;
+  font-weight: 800;
+  border-radius: 50%;
+  animation: breathe 4.5s ease-in-out infinite;
+}
+
+.hermes-node.intense .hermes-glyph { animation-duration: 1.6s; }
+.hermes-node.intense .ring-1 { border-color: color-mix(in oklab, var(--electric) 85%, transparent); }
+
+.hermes-meta { display: flex; flex-direction: column; }
+.hermes-label {
+  font-size: 11px; letter-spacing: 0.18em; color: var(--muted);
+}
+.hermes-sub {
+  font-size: 15px; letter-spacing: 0.04em; color: var(--electric);
+}
+
+/* ---------- Agents / Tools / Approvals ---------- */
+.agent-node {
+  position: relative;
+  display: flex; align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: linear-gradient(140deg, var(--panel-raised), var(--panel));
+  border: 1px solid var(--line);
+  min-width: 150px;
+  color: var(--text);
+}
+.agent-node.selected { border-color: var(--green); }
+
+.agent-ring {
+  position: absolute; inset: -3px;
+  border: 1px solid transparent;
+  border-radius: calc(var(--radius) + 3px);
+  pointer-events: none;
+}
+.agent-core {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.agent-glyph {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  background: #10243f;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--chrome);
+  font-weight: 700;
+  font-size: 13px;
+}
+.agent-text { display: flex; flex-direction: column; }
+.agent-label { font-size: 11px; letter-spacing: 0.15em; color: var(--muted); }
+.agent-status { font-size: 13px; }
+
+/* Kind accents */
+.kind-tool .agent-glyph { background: #1a1230; border-color: color-mix(in oklab, var(--purple) 50%, var(--line-strong)); color: var(--purple); }
+.kind-approval .agent-glyph { background: #2b1f0f; border-color: color-mix(in oklab, var(--amber) 50%, var(--line-strong)); color: var(--amber); }
+
+/* Status animations */
+.status-online  .agent-ring { border-color: color-mix(in oklab, var(--node-online) 40%, transparent); }
+.status-online  .agent-status { color: var(--node-online); }
+
+.status-idle    .agent-status { color: var(--muted); }
+
+.status-thinking .agent-ring { border-color: color-mix(in oklab, var(--node-thinking) 70%, transparent); animation: spin-slow 6s linear infinite; }
+.status-thinking .agent-status { color: var(--node-thinking); }
+
+.status-executing .agent-ring { border-color: var(--node-executing); animation: breathe 1.6s ease-in-out infinite; }
+.status-executing .agent-status { color: var(--node-executing); }
+
+.status-waiting   .agent-ring { border-color: color-mix(in oklab, var(--node-waiting) 50%, transparent); animation: breathe 3.4s ease-in-out infinite; }
+.status-waiting   .agent-status { color: var(--node-waiting); }
+
+.status-approval  .agent-ring { border-color: var(--node-approval); animation: amber-pulse 1.4s ease-in-out infinite; }
+.status-approval  .agent-status { color: var(--node-approval); }
+
+.status-paused    .agent-node, .status-paused .agent-core { filter: grayscale(0.4); }
+.status-paused    .agent-status { color: var(--muted); }
+
+.status-warning   .agent-ring { border-color: color-mix(in oklab, var(--amber) 70%, transparent); }
+.status-warning   .agent-status { color: var(--amber); }
+
+.status-failed    .agent-ring { border-color: var(--red); animation: failed-flicker 1.6s ease-in-out infinite; outline: 2px solid var(--red); outline-offset: -2px; }
+.status-failed    .agent-status { color: var(--red); }
+
+.status-offline   { opacity: 0.45; filter: grayscale(0.6); }
+.status-offline   .agent-status { color: var(--muted); }
+
+/* Hermes status accents */
+.hermes-node.status-thinking .ring-1 { animation-duration: 10s; }
+.hermes-node.status-executing .ring-1 { border-color: var(--electric); }
+.hermes-node.status-approval .ring-1 { border-color: var(--amber); }
+.hermes-node.status-failed .ring-1 { border-color: var(--red); }
