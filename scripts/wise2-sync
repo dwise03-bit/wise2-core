@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# WISE² cross-device git sync — safe, non-destructive, user-level.
+#
+# Behavior for each configured repo:
+#   1. Must be on a tracked branch with an upstream.
+#   2. Working tree must be clean. Dirty trees are SKIPPED (never auto-stashed).
+#   3. git fetch.
+#   4. If upstream is ahead and local is clean: git pull --ff-only.
+#   5. If local is ahead: git push (never --force).
+#   6. If diverged: log and skip (requires human merge/rebase).
+#
+# All actions log to ~/.local/share/wise2/sync.log. No sudo. No destructive ops.
+#
+# Usage:
+#   wise2-sync                    # sync default repo ($HOME/wise2-level-up)
+#   wise2-sync <path> [<path>...]  # sync one or more specific repos
+set -euo pipefail
+
+LOG="${WISE2_SYNC_LOG:-$HOME/.local/share/wise2/sync.log}"
+mkdir -p "$(dirname "$LOG")"
+
+log() {
+  printf '%s  %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$*" | tee -a "$LOG"
+}
+
+sync_repo() {
+  local repo="$1"
+
+  if [[ ! -d "$repo/.git" ]]; then
+    log "SKIP: $repo is not a git repo"
+    return 0
+  fi
+
+  cd "$repo"
+
+  local branch
+  branch=$(git symbolic-ref --short -q HEAD) || {
+    log "SKIP: $repo HEAD is detached"
+    return 0
+  }
+
+  local upstream
+  upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null) || {
+    log "SKIP: $repo/$branch has no upstream"
+    return 0
+  }
+
+  if [[ -n "$(git status --porcelain)" ]]; then
+    log "SKIP: $repo/$branch has uncommitted changes"
+    return 0
+  fi
+
+  if ! git fetch --quiet 2>>"$LOG"; then
+    log "WARN: fetch failed on $repo"
+    return 1
+  fi
+
+  local ahead behind
+  ahead=$(git rev-list --count "${upstream}..HEAD")
+  behind=$(git rev-list --count "HEAD..${upstream}")
+
+  if (( behind > 0 && ahead == 0 )); then
+    if git pull --ff-only --quiet 2>>"$LOG"; then
+      log "PULL: $repo/$branch advanced $behind commits from $upstream"
+    else
+      log "WARN: pull --ff-only failed on $repo/$branch"
+      return 1
+    fi
+  elif (( behind > 0 && ahead > 0 )); then
+    log "SKIP: $repo/$branch diverged (ahead $ahead, behind $behind) — manual resolve required"
+    return 0
+  fi
+
+  # Recompute after any pull.
+  ahead=$(git rev-list --count "${upstream}..HEAD")
+
+  if (( ahead > 0 )); then
+    if git push --quiet 2>>"$LOG"; then
+      log "PUSH: $repo/$branch pushed $ahead commits to $upstream"
+    else
+      log "WARN: push failed on $repo/$branch (try 'git push' manually to see the error)"
+      return 1
+    fi
+  fi
+
+  log "OK: $repo/$branch in sync"
+}
+
+main() {
+  local -a repos=()
+  if [[ $# -eq 0 ]]; then
+    repos+=("$HOME/wise2-level-up")
+  else
+    repos+=("$@")
+  fi
+
+  local rc=0
+  for repo in "${repos[@]}"; do
+    sync_repo "$repo" || rc=1
+  done
+  return $rc
+}
+
+main "$@"

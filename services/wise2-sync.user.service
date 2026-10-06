@@ -1,0 +1,16 @@
+[Unit]
+Description=WISE² cross-device git sync (safe, non-destructive)
+Documentation=file:///opt/wise2/docs/CROSS-DEVICE-SYNC.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/wise2/scripts/wise2-sync
+# Hard safety: never run with elevated privileges, never allow new privileges.
+NoNewPrivileges=true
+# Prevent accidental writes outside the user's own dirs via systemd's sandbox.
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/wise2-level-up %h/.local/share/wise2
+PrivateTmp=true

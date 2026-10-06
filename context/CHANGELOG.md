@@ -1,5 +1,27 @@
 # WISE² Changelog
 
+## 2026-10-06 — Cross-device git sync (safe, user-level) (Claude)
+- Added `scripts/wise2-sync`: non-destructive git sync loop. Per repo:
+  skip on dirty tree, `git fetch`, `git pull --ff-only` only, `git push`
+  only when strictly ahead, log everything to `~/.local/share/wise2/sync.log`.
+  No `--force`, no auto-merge, no detached HEAD, no missing upstream.
+- Added user-level systemd units `services/wise2-sync.user.{service,timer}`:
+  installs to `~/.config/systemd/user/`, runs every 5 min after boot.
+  Sandboxed with `ProtectHome=read-only` + scoped `ReadWritePaths`.
+- Docs: `docs/CROSS-DEVICE-SYNC.md` covers per-device install, verification,
+  safety guarantees, and rollback. Also notes Tailscale as the device
+  registry source of truth (`tailscale status --json`) — code integration
+  tracked as separate WIP.
+- Nothing installed on Surface yet by this commit; the units are STAGED,
+  Daniel installs them per device.
+
+## 2026-10-06 — Hermes host-path config enabled on Surface (Claude)
+- `hermes/config/hermes.conf`: `HERMES_ENABLED=true`,
+  `HERMES_BASE_URL=http://100.68.145.5:3012` (gpu-nmls-1 tailnet IP).
+- Expect `wise2 doctor` to show Hermes UNREACHABLE until `tailscale serve`
+  mounts the private endpoint on gpu-nmls-1 and a scoped device JWT is
+  minted and placed in the credential file.
+
 ## 2026-10-06 — Hermes Cloudflare Tunnel created (not yet running) (Claude)
 - Installed `cloudflared` v2026.10.0 locally on Surface at `~/.local/bin/`
   (user-local, no sudo).
