@@ -445,6 +445,35 @@ services:
       timeout: 10s
       retries: 3
 
+  # Next.js Dashboard (Admin Email, etc.)
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+        INTERNAL_API_URL: http://api:3000/api
+    image: wise2-core-dashboard:latest
+    container_name: wise2-dashboard
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.wise2.net}
+      INTERNAL_API_URL: http://api:3000/api
+    ports:
+      - "127.0.0.1:3003:3000"
+    depends_on:
+      - api
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://'+require('os').hostname()+':3000/', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Redis Cache & Queue
   redis:
     image: redis:7-alpine
@@ -502,6 +531,7 @@ services:
     depends_on:
       - api
       - website
+      - dashboard
       - studio
       - prompt-shop
       - getdown-demo

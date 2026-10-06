@@ -168,7 +168,7 @@ export class EmailLogsController {
       this.logger.error('Test send failed', error);
       return {
         success: false,
-        message: `Failed: ${error.message}`,
+        message: `Failed: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -211,7 +211,7 @@ export class EmailLogsController {
       this.logger.error('Failed to purge queue', error);
       return {
         success: false,
-        message: `Purge failed: ${error.message}`,
+        message: `Purge failed: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -231,7 +231,7 @@ export class EmailLogsController {
       this.logger.error('Failed to retry messages', error);
       return {
         success: false,
-        message: `Retry failed: ${error.message}`,
+        message: `Retry failed: ${error instanceof Error ? error.message : String(error)}`,
         count: 0,
       };
     }
@@ -256,7 +256,7 @@ export class EmailLogsController {
       this.logger.error('Failed to toggle hold', error);
       return {
         success: false,
-        message: `Toggle failed: ${error.message}`,
+        message: `Toggle failed: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
