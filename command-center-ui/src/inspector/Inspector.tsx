@@ -1,19 +1,43 @@
+import { useCallback, useMemo } from 'react';
 import { useGraphStore } from '../state/store';
 import './inspector.css';
 
 export function Inspector() {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const selectedEdgeId = useGraphStore((s) => s.selectedEdgeId);
-  const node = useGraphStore((s) => s.nodes.find((n) => n.id === selectedNodeId));
-  const edge = useGraphStore((s) => s.edges.find((e) => e.id === selectedEdgeId));
-  const history = useGraphStore((s) =>
-    s.history.filter((event) => {
-      if (selectedNodeId) return event.source_node === selectedNodeId || event.target_node === selectedNodeId;
-      if (selectedEdgeId && edge) return event.source_node === edge.source && event.target_node === edge.target;
-      return false;
-    }).slice(-20).reverse(),
+  const nodes = useGraphStore((s) => s.nodes);
+  const edges = useGraphStore((s) => s.edges);
+  const historyAll = useGraphStore((s) => s.history);
+  const selectNode = useGraphStore((s) => s.selectNode);
+  const selectEdge = useGraphStore((s) => s.selectEdge);
+
+  const node = useMemo(
+    () => nodes.find((n) => n.id === selectedNodeId),
+    [nodes, selectedNodeId],
   );
-  const clear = useGraphStore((s) => () => { s.selectNode(null); s.selectEdge(null); });
+  const edge = useMemo(
+    () => edges.find((e) => e.id === selectedEdgeId),
+    [edges, selectedEdgeId],
+  );
+  const history = useMemo(() => {
+    return historyAll
+      .filter((event) => {
+        if (selectedNodeId) {
+          return event.source_node === selectedNodeId || event.target_node === selectedNodeId;
+        }
+        if (selectedEdgeId && edge) {
+          return event.source_node === edge.source && event.target_node === edge.target;
+        }
+        return false;
+      })
+      .slice(-20)
+      .reverse();
+  }, [historyAll, selectedNodeId, selectedEdgeId, edge]);
+
+  const clear = useCallback(() => {
+    selectNode(null);
+    selectEdge(null);
+  }, [selectNode, selectEdge]);
 
   const open = Boolean(node ?? edge);
   if (!open) return null;
@@ -21,7 +45,9 @@ export function Inspector() {
   return (
     <aside className="inspector" aria-live="polite">
       <header>
-        <div className="inspector-title">{node ? node.label : edge ? `${edge.source} → ${edge.target}` : ''}</div>
+        <div className="inspector-title">
+          {node ? node.label : edge ? `${edge.source} → ${edge.target}` : ''}
+        </div>
         <button className="inspector-close" onClick={clear} aria-label="Close inspector">✕</button>
       </header>
       {node && (

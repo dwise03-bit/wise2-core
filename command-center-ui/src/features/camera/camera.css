@@ -1,0 +1,38 @@
+.camera-panel {
+  position: absolute;
+  bottom: 92px;
+  right: 16px;
+  width: 240px;
+  padding: 10px 12px 12px;
+  background: linear-gradient(180deg, #0d1a2e, #091425);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px -22px #000;
+  z-index: 11;
+}
+.camera-panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.camera-title { font-size: 10px; letter-spacing: 0.18em; color: var(--muted); }
+.camera-close { padding: 2px 8px; }
+
+.camera-viewport {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #04070d;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.camera-viewport video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror for selfie orientation */
+}
+.camera-note {
+  padding: 10px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.camera-hint { color: var(--muted); font-size: 11px; margin: 8px 0 0; letter-spacing: 0.03em; }

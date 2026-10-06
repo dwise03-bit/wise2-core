@@ -3,6 +3,32 @@
 > Append-only log of decisions that shape WISE². Each entry: date, decision,
 > rationale, consequences. Newest at top. Last updated: 2026-10-06.
 
+## ADR-0008 — Hermes reach: Cloudflare Access in the browser, Tailscale host-to-host (2026-10-06)
+**Decision:** Browser clients (Command Graph UI) reach Hermes through
+`wss://hermes.wise2.net/brain-stream`, where the hostname is a Cloudflare
+Tunnel origin protected by a Cloudflare Access policy. The browser
+authenticates via the Cloudflare Access session cookie; no Hermes token lives
+in the JS bundle. Tailscale remains the private reach between the VPS and
+other WISE² hosts (CLI tooling, device agents) — the browser does not join
+the tailnet. ADR-0005's "Tailscale-private only, DISABLED until endpoint
++ credential exist" is superseded for the browser path; its credential-
+custody principle still binds every non-browser integration.
+**Rationale:** Browsers can't reasonably join a Tailscale network, and
+putting a Hermes device JWT in a bundle (even locally served) leaks it to
+every page viewer. Cloudflare Access gives revocable per-identity auth that
+the browser already understands (cookie, SSO), the Tunnel keeps the VPS
+origin private (no public port, no public DNS A record pointing at the box),
+and the server-side token custody that ADR-0005 required is still intact
+for the CLI/device agent paths over Tailscale.
+**Consequences:** New production work owned by Daniel: stand up `cloudflared`
+on the VPS pointing at the second-brain `/brain-stream` SSE/WS endpoint;
+create a Cloudflare Access application for `hermes.wise2.net` with an email
+allow-list or SSO identity provider; publish the `wss://` endpoint. The UI
+is opt-in: default source stays `SimulatedEventSource` and the real client
+only activates with `?source=hermes` in the URL. The real client reconnects
+on close with a 3-second backoff and never sends auth material in the URL.
+Updates in `hermes/HERMES-PRODUCTION-CONNECTION-PENDING.md`.
+
 ## ADR-0007 — Agent Command Graph UI as a sibling React app (2026-10-06)
 **Decision:** Add `command-center-ui/` next to the existing Python
 `command-center/` as a Vite + React + TypeScript app using `@xyflow/react` and

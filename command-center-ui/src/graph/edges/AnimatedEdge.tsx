@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { BaseEdge, getBezierPath, type EdgeProps } from '@xyflow/react';
 import { useGraphStore, type Packet } from '../../state/store';
 import type { GraphEdge } from '../../types/events';
@@ -6,6 +7,9 @@ import './edges.css';
 /**
  * Custom edge: draws the base bezier and overlays live traveling packets.
  * Each packet rides the SAME path as the edge via `animateMotion` + `mpath`.
+ *
+ * Selectors subscribe to the raw store collections; derived filters live in
+ * `useMemo` so React doesn't see a fresh array identity every render.
  */
 export function AnimatedEdge(props: EdgeProps) {
   const [path] = getBezierPath({
@@ -17,8 +21,17 @@ export function AnimatedEdge(props: EdgeProps) {
     targetPosition: props.targetPosition,
   });
 
-  const packets = useGraphStore((s) => s.packets.filter((p) => p.edgeId === props.id));
-  const graphEdge = useGraphStore((s) => s.edges.find((e) => e.id === props.id)) as GraphEdge | undefined;
+  const packetsAll = useGraphStore((s) => s.packets);
+  const edges = useGraphStore((s) => s.edges);
+  const packets = useMemo(
+    () => packetsAll.filter((p) => p.edgeId === props.id),
+    [packetsAll, props.id],
+  );
+  const graphEdge = useMemo(
+    () => edges.find((e) => e.id === props.id) as GraphEdge | undefined,
+    [edges, props.id],
+  );
+
   const active = graphEdge?.active ?? false;
   const edgeKind = graphEdge?.kind ?? 'communication';
   const pathId = `path-${props.id}`;

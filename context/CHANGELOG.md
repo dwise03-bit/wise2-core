@@ -1,5 +1,28 @@
 # WISE² Changelog
 
+## 2026-10-06 — Voice control + camera preview + Hermes reach via Cloudflare Access (Claude)
+- Agent Command Graph UI (`command-center-ui/`): voice control panel using
+  Web Speech API with command dispatcher (`fit view`, `zoom in/out`,
+  `select <node>`, `clear selection`, `follow execution` / `exit follow`,
+  `replay` / `play` / `pause`). Chrome/Edge supported; Firefox shows an
+  "unsupported" message. All processing in-browser, no audio off-page.
+- Local-only camera preview panel using `getUserMedia`; mirrors the frame;
+  releases the track on panel close/unmount; graceful states for denied,
+  unsupported, error.
+- `WebSocketEventSource` rewritten to target
+  `wss://hermes.wise2.net/brain-stream` with 3-second reconnect backoff;
+  authentication is carried by the Cloudflare Access session cookie, so no
+  Hermes token lives in the JS bundle. Still OFF by default — opt in with
+  `?source=hermes`.
+- Fixed infinite-render loop from zustand selectors returning fresh
+  arrays/functions (Inspector + AnimatedEdge now subscribe to raw state and
+  derive via `useMemo`; FollowCamera deps narrowed to last-step node id).
+- ADR-0008 recorded; `hermes/HERMES-PRODUCTION-CONNECTION-PENDING.md`
+  updated to split browser (Cloudflare Access) vs host-to-host (Tailscale +
+  device JWT) reach paths. Production work still owned by Daniel.
+- `CURRENT-STATE.md` component row updated.
+- No production changes. No Cloudflare, Tailscale ACL, VPS or DNS writes.
+
 ## 2026-10-06 — Agent Command Graph UI first-slice staged (Claude)
 - Added `command-center-ui/`: Vite + React + TypeScript + `@xyflow/react` +
   `zustand`, bound to 127.0.0.1:3011 via `vite.config.ts` (`strictPort`).

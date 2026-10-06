@@ -3,29 +3,41 @@
 > Tracking record for the unresolved production work required before Surface can
 > actually connect to Hermes. Opened 2026-10-02. **No production changes made.**
 
-## Target architecture (approved)
-- **Tailscale-private** reach: Surface → private Hermes endpoint → authenticated API.
-- **Dedicated WISE² device credential** (see DEVICE-CREDENTIAL.md). Never share JWT_SECRET.
-- Surface client built but **DISABLED** until endpoint + credential exist.
+## Target architecture (approved, 2026-10-06 — superseded split)
+**Two reach paths** (see `context/DECISIONS.md` ADR-0008):
+- **Browser → Hermes:** `wss://hermes.wise2.net/brain-stream`, Cloudflare
+  Tunnel origin behind a Cloudflare Access policy. Access cookie carries
+  auth; no Hermes token in the JS bundle. Browser does NOT join the tailnet.
+- **Host-to-host (CLI, device agents) → Hermes:** Tailscale-private; scoped
+  WISE² device credential (see DEVICE-CREDENTIAL.md). Never share JWT_SECRET.
+- Surface browser UI built but **DISABLED by default**; opt-in with
+  `?source=hermes` once the production path is live.
 
 ## Blocking items (owner: Daniel / production)
 - [ ] **VPS status** — confirm `wise2-second-brain` (PM2) is running on the VPS
       (`173.208.x.x`, Ubuntu 22.04); confirm Mongo + Ollama health.
-- [ ] **Public DNS** — `command.wise2.net` has NO A/AAAA/CNAME now. Decide:
-      intentionally down vs restore. (Private path preferred regardless.)
-- [ ] **Private reach** — put the Hermes VPS on the tailnet (or a relay), expose
-      `/brain-api → :3012` over Tailscale only (no new public port). Record the
-      tailnet IP to set `HERMES_BASE_URL`.
+- [ ] **Cloudflare Tunnel (browser path)** — install `cloudflared` on the VPS;
+      configure a tunnel with ingress rule `hermes.wise2.net → http://127.0.0.1:3012`
+      (SSE) or the WS endpoint; publish the `hermes.wise2.net` CNAME to the
+      tunnel.
+- [ ] **Cloudflare Access policy** — create an Access application for
+      `hermes.wise2.net`; identity provider = Google (dwise03@gmail.com) or
+      email OTP allow-list; `/brain-stream` must require authentication.
+- [ ] **Tailscale reach (host path)** — put the Hermes VPS on the tailnet;
+      restrict `tcp:3012` on the Tailscale ACL to the Surface node tag.
 - [ ] **Impl confirm** — Express `second-brain/api-server` (evidence: live) vs
-      NestJS `packages/api/brain-auth` (next-gen?). Confirm on the box.
-- [ ] **Device credential** — choose design (scoped device JWT recommended),
-      mint server-side, deliver out-of-band, install to 0600 credential file.
-- [ ] **Enable** — set `HERMES_ENABLED=true` + `HERMES_BASE_URL`; verify
-      CONFIGURED→REACHABLE→AUTHENTICATED→MEMORY→READY via `wise2 hermes`.
+      NestJS `packages/api/brain-auth` (next-gen?). Confirm on the box, and
+      ensure the chosen service exposes `/brain-stream` as SSE or WS.
+- [ ] **Device credential (host path only)** — mint scoped device JWT
+      server-side, deliver out-of-band, install to 0600 credential file.
+- [ ] **Enable** — set `HERMES_ENABLED=true` + `HERMES_BASE_URL` for CLI;
+      verify browser can connect via Cloudflare Access login flow and
+      receives at least one `node.status` event.
 
 ## Must NOT change without explicit approval
-Production VPS, DNS, Cloudflare, nginx, production Hermes, MongoDB, JWT config,
-Tailscale ACL. (All currently untouched.)
+Production VPS, DNS, nginx, production Hermes, MongoDB, JWT config,
+Tailscale ACL, Cloudflare Access policies, Cloudflare Tunnel config.
+(All currently untouched by this session.)
 
 ## Evidence
 Read-only inspection: `hermes/HERMES-INTEGRATION.md`. Temp clone (~610 MB) kept

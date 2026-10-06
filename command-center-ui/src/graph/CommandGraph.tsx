@@ -4,7 +4,6 @@ import {
   Controls,
   MiniMap,
   ReactFlow,
-  ReactFlowProvider,
   useReactFlow,
   type Edge,
   type Node,
@@ -35,17 +34,20 @@ const layout: Record<string, { x: number; y: number }> = {
 function FollowCamera() {
   const rf = useReactFlow();
   const follow = useGraphStore((s) => s.followExecution);
-  const execution = useGraphStore((s) => s.currentExecution);
-  const nodes = useGraphStore((s) => s.nodes);
+  // Subscribe only to the last-step node id, so the effect runs when the
+  // active step actually changes — not on every unrelated state write.
+  const lastStepNodeId = useGraphStore((s) => {
+    const steps = s.currentExecution?.steps;
+    return steps && steps.length > 0 ? steps[steps.length - 1].node_id : null;
+  });
   useEffect(() => {
-    if (!follow || !execution) return;
-    const lastStep = execution.steps[execution.steps.length - 1];
-    if (!lastStep) return;
-    const match = nodes.find((n) => n.id === lastStep.node_id);
-    if (!match) return;
-    const pos = layout[match.id] ?? { x: 0, y: 0 };
-    rf.setCenter(pos.x + 80, pos.y + 20, { zoom: Math.max(rf.getZoom(), 0.9), duration: 650 });
-  }, [follow, execution, nodes, rf]);
+    if (!follow || !lastStepNodeId) return;
+    const pos = layout[lastStepNodeId] ?? { x: 0, y: 0 };
+    rf.setCenter(pos.x + 80, pos.y + 20, {
+      zoom: Math.max(rf.getZoom(), 0.9),
+      duration: 650,
+    });
+  }, [follow, lastStepNodeId, rf]);
   return null;
 }
 
@@ -122,9 +124,7 @@ function GraphInner() {
 export function CommandGraph() {
   return (
     <div className="graph-root">
-      <ReactFlowProvider>
-        <GraphInner />
-      </ReactFlowProvider>
+      <GraphInner />
     </div>
   );
 }
