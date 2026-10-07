@@ -1,0 +1,7 @@
+# WISE² Code Owners
+# Defines ownership and review requirements for different parts of the codebase
+
+*                           @dwise03-bit @darrinwisejr
+/apps/**                    @dwise03-bit @darrinwisejr
+/scripts/**                 @dwise03-bit @darrinwisejr
+/.github/**                 @dwise03-bit @darrinwisejr
