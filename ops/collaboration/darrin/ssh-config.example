@@ -1,0 +1,14 @@
+# Merge these entries into ~/.ssh/config on Darrin's workstation.
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_wise2
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+
+# WISE² production/admin traffic should use the approved Tailscale identity.
+# Keep the alias generic; resolve the actual tailnet hostname during enrollment.
+Host vps
+  User wise2ops
+  IdentityFile ~/.ssh/id_ed25519_wise2
+  IdentitiesOnly yes
