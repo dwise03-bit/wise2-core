@@ -1,0 +1,11 @@
+# Trivy ignore file for Grok Bot trading service
+#
+# Format: CVE-YYYY-NNNN or use regex for package names
+# Add entries only for:
+# 1. False positives confirmed not exploitable in this context
+# 2. Vulnerabilities already patched in newer versions being deployed
+# 3. Dependencies with no viable patches (documented with reason)
+#
+# Example:
+# CVE-2023-12345  # false positive: only affects X, we use Y
+# CVE-2024-99999  # patched in fastapi >= 1.0.0, deployed
