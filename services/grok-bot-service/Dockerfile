@@ -1,12 +1,14 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-RUN groupadd -r bot && useradd -r -g bot bot
+RUN addgroup -S bot && adduser -S bot -G bot
 
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools && \
-    pip install --no-cache-dir -r requirements.txt
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev && \
+    pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apk del gcc musl-dev libffi-dev openssl-dev
 
 COPY src/ ./src/
 

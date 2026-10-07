@@ -1,12 +1,14 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-RUN groupadd -r judge && useradd -r -g judge judge
+RUN addgroup -S judge && adduser -S judge -G judge
 
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools && \
-    pip install --no-cache-dir -r requirements.txt
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev && \
+    pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apk del gcc musl-dev libffi-dev openssl-dev
 
 COPY src/judge.py .
 COPY src/questions.py .
