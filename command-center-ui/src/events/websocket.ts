@@ -1,25 +1,45 @@
-import type { AgentEvent } from '../types/events';
+import type { AgentEvent, NodeStatus, PacketKind } from '../types/events';
 import type { EventSource } from './adapter';
 
-/**
- * Real Hermes gateway client.
- *
- * Reach (per ADR-0008): Cloudflare Tunnel exposes the production
- * `wise2-second-brain` as `wss://hermes.wise2.net/brain-stream`, protected by
- * a Cloudflare Access policy. The browser authenticates via the Cloudflare
- * Access session cookie, so **no Hermes token lives in the JS bundle**. If
- * the viewer isn't yet logged into Cloudflare Access they'll be bounced to
- * the Access login on first connection and can retry.
- *
- * Tailscale remains the private reach for host-to-host wire-up between the
- * VPS and Surface (used by the WISE² CLI tooling, not the browser).
- *
- * Status (2026-10-06): endpoint URL recorded; production connection still
- * depends on Daniel standing up the Cloudflare Tunnel + Access policy and
- * the VPS exposing `/brain-stream`. See
- * `hermes/HERMES-PRODUCTION-CONNECTION-PENDING.md`.
- */
-export const HERMES_WSS = 'wss://hermes.wise2.net/brain-stream';
+export const HERMES_WSS = 'ws://127.0.0.1:3100/brain-stream';
+
+type RawEvent = Record<string, unknown>;
+
+const statusMap = (v: unknown): NodeStatus => {
+  const s = String(v ?? '').toUpperCase();
+  const allowed: NodeStatus[] = ['ONLINE','IDLE','THINKING','EXECUTING','WAITING','APPROVAL','PAUSED','WARNING','FAILED','OFFLINE'];
+  return allowed.includes(s as NodeStatus) ? (s as NodeStatus) : 'ONLINE';
+};
+
+function normalize(raw: RawEvent): AgentEvent | null {
+  const rawType = String(raw.event_type ?? '');
+  const payload = (raw.payload && typeof raw.payload === 'object' ? raw.payload : {}) as Record<string, unknown>;
+  const ts = raw.timestamp ?? raw.ts;
+  const timestamp = typeof ts === 'number' ? ts : Date.parse(String(ts ?? '')) || Date.now();
+  const event_id = String(raw.event_id ?? `evt-${timestamp}-${Math.random().toString(36).slice(2,8)}`);
+  const execution_id = raw.execution_id ? String(raw.execution_id) : undefined;
+
+  if (rawType === 'system.heartbeat') {
+    return { event_id, timestamp, event_type: 'node.status', source_node: 'hermes', status: statusMap(raw.status) };
+  }
+  if (rawType === 'hermes.query.started') {
+    return { event_id, timestamp, event_type: 'execution.start', execution_id: execution_id ?? event_id, source_node: 'hermes', message: 'Hermes query started' };
+  }
+  if (rawType === 'hermes.query.completed') {
+    return { event_id, timestamp, event_type: 'execution.complete', execution_id: execution_id ?? event_id, source_node: 'hermes', message: 'Hermes query completed', metadata: { model: String(payload.model ?? '') } };
+  }
+  if (rawType === 'hermes.error') {
+    return { event_id, timestamp, event_type: 'node.status', source_node: 'hermes', status: 'FAILED', message: String(payload.detail ?? 'Hermes error') };
+  }
+  if (rawType === 'knowledge.created' || rawType === 'knowledge.deleted' || rawType === 'chat.completed') {
+    return { event_id, timestamp, event_type: 'packet.send', source_node: 'hermes', target_node: 'planner', packet_kind: (rawType.startsWith('knowledge') ? 'MEMORY' : 'RESULT') as PacketKind, message: rawType };
+  }
+  const supported = ['node.status','edge.activate','edge.deactivate','packet.send','execution.start','execution.step','execution.complete','execution.fail','approval.request','approval.resolve'];
+  if (supported.includes(rawType)) {
+    return { ...(raw as unknown as AgentEvent), event_id, timestamp };
+  }
+  return null;
+}
 
 export class WebSocketEventSource implements EventSource {
   readonly kind = 'websocket' as const;
@@ -29,41 +49,24 @@ export class WebSocketEventSource implements EventSource {
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private stopped = false;
 
-  constructor(url: string = HERMES_WSS) {
-    this.url = url;
-  }
+  constructor(url: string = HERMES_WSS) { this.url = url; }
 
   connect(onEvent: (event: AgentEvent) => void): void {
-    this.stopped = false;
-    this.onEventFn = onEvent;
-    this.open();
+    this.stopped = false; this.onEventFn = onEvent; this.open();
   }
 
   private open(): void {
-    try {
-      // Browsers include the Cloudflare Access cookie automatically for the
-      // same-origin WebSocket — no explicit credentials option exists on the
-      // WebSocket API, and no token is passed in the URL.
-      this.socket = new WebSocket(this.url);
-    } catch {
-      this.scheduleReconnect();
-      return;
-    }
+    try { this.socket = new WebSocket(this.url); }
+    catch { this.scheduleReconnect(); return; }
     this.socket.addEventListener('message', (frame) => {
       if (!this.onEventFn) return;
       try {
-        const parsed = JSON.parse(frame.data) as AgentEvent;
-        if (parsed && typeof parsed.event_type === 'string') this.onEventFn(parsed);
-      } catch {
-        // Malformed frame; swallow silently so one bad event doesn't poison the UI.
-      }
+        const event = normalize(JSON.parse(String(frame.data)) as RawEvent);
+        if (event) this.onEventFn(event);
+      } catch { /* ignore malformed frames */ }
     });
-    this.socket.addEventListener('close', () => {
-      if (!this.stopped) this.scheduleReconnect();
-    });
-    this.socket.addEventListener('error', () => {
-      this.socket?.close();
-    });
+    this.socket.addEventListener('close', () => { if (!this.stopped) this.scheduleReconnect(); });
+    this.socket.addEventListener('error', () => this.socket?.close());
   }
 
   private scheduleReconnect(): void {
@@ -74,9 +77,6 @@ export class WebSocketEventSource implements EventSource {
   disconnect(): void {
     this.stopped = true;
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
-    this.reconnectTimer = null;
-    this.socket?.close();
-    this.socket = null;
-    this.onEventFn = null;
+    this.reconnectTimer = null; this.socket?.close(); this.socket = null; this.onEventFn = null;
   }
 }
