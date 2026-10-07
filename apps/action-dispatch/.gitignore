@@ -1,6 +1,0 @@
-.next
-node_modules
-.deploy
-out
-*.tsbuildinfo
-.DS_Store

@@ -27,28 +27,31 @@ You are now a **full co-owner of WISE²** with complete infrastructure access, d
 
 ### Tailscale Network
 - **Device Name**: darrinwisejr (Windows)
-- **Device IP**: 100.100.26.47
+- **MagicDNS Hostname**: darrinwisejr.tail1dc3bd.ts.net
+- **Device IP**: 100.100.26.47 (authoritative)
 - **Network Status**: Connected to mesh
-- **Access**: All internal systems via Tailscale IPs (no port forwarding needed)
+- **Access**: All internal systems via Tailscale (MagicDNS preferred over IP)
 - **Dashboard**: https://login.tailscale.com/admin/machines
 
 ### VPS (gpu-nmls)
 - **Hostname**: gpu-nmls
-- **Tailscale IP**: 100.68.145.5
+- **MagicDNS**: gpu-nmls.tail1dc3bd.ts.net
+- **Tailscale IP**: 100.68.145.5 (authoritative)
 - **SSH User**: dwise
 - **Auth Method**: Tailscale (no password needed)
-- **SSH Command**: `ssh dwise@100.68.145.5`
+- **SSH Command**: `ssh dwise@gpu-nmls.tail1dc3bd.ts.net` (preferred) or `ssh dwise@100.68.145.5`
 - **Docker**: All services running
 - **Deployed Services**: API, Website, Dashboard, Database, Redis + 8 more
 
 ### TV Hub Display (wise2-surface)
 - **Hostname**: wise2-surface
-- **Tailscale IP**: 100.97.230.73
+- **MagicDNS**: wise2-surface.tail1dc3bd.ts.net
+- **Tailscale IP**: 100.97.230.73 (authoritative)
 - **SSH User**: dwise
 - **Auth Method**: Tailscale (no password needed)
-- **SSH Command**: `ssh dwise@100.97.230.73`
+- **SSH Command**: `ssh dwise@wise2-surface.tail1dc3bd.ts.net` (preferred) or `ssh dwise@100.97.230.73`
 - **Display Service**: wise2-display (systemd)
-- **Display Port**: 3000 (http://100.97.230.73:3000)
+- **Display Port**: 3000 (http://wise2-surface.tail1dc3bd.ts.net:3000 or http://100.97.230.73:3000)
 
 ### Cloudflare
 - **Zone**: wise2.net
@@ -135,8 +138,8 @@ This deploys display updates immediately without waiting for full CI/CD.
 
 Check live deployment status:
 - **GitHub Actions**: https://github.com/dwise03-bit/wise2-core/actions
-- **VPS Logs**: `ssh dwise@100.68.145.5 "docker-compose logs -f"`
-- **TV Hub Logs**: `ssh dwise@100.97.230.73 "journalctl -u wise2-display -f"`
+- **VPS Logs**: `ssh dwise@gpu-nmls.tail1dc3bd.ts.net "docker-compose logs -f"`
+- **TV Hub Logs**: `ssh dwise@wise2-surface.tail1dc3bd.ts.net "journalctl -u wise2-display -f"`
 
 ---
 
@@ -149,8 +152,8 @@ Check live deployment status:
 tailscale status
 
 # Check for urgent issues
-ssh dwise@100.68.145.5 "docker ps"
-ssh dwise@100.97.230.73 "systemctl status wise2-display"
+ssh dwise@gpu-nmls.tail1dc3bd.ts.net "docker ps"
+ssh dwise@wise2-surface.tail1dc3bd.ts.net "systemctl status wise2-display"
 
 # Check recent deployments
 cd ~/Projects/wise2-core && git log --oneline -5
@@ -178,10 +181,10 @@ After each deployment, verify:
 curl https://api.wise2.net/health || echo "API check failed"
 
 # Check TV Hub display
-curl http://100.97.230.73:3000/health || echo "Display check failed"
+curl http://wise2-surface.tail1dc3bd.ts.net:3000/health || echo "Display check failed"
 
 # SSH to verify services
-ssh dwise@100.68.145.5 "docker ps | grep wise2"
+ssh dwise@gpu-nmls.tail1dc3bd.ts.net "docker ps | grep wise2"
 ```
 
 ---
@@ -194,14 +197,20 @@ ssh dwise@100.68.145.5 "docker ps | grep wise2"
 # Test Tailscale connectivity
 tailscale status
 
+# Test VPS connection (use MagicDNS hostname)
+ssh -v dwise@gpu-nmls.tail1dc3bd.ts.net "echo OK"
+
+# Test TV Hub connection
+ssh -v dwise@wise2-surface.tail1dc3bd.ts.net "echo OK"
+
 # Manually specify key if needed
-ssh -i ~/.ssh/id_rsa dwise@100.68.145.5
+ssh -i ~/.ssh/id_rsa dwise@gpu-nmls.tail1dc3bd.ts.net
 
 # Check SSH config
 cat ~/.ssh/config
 
 # Verify host keys
-ssh-keyscan -t rsa 100.68.145.5 >> ~/.ssh/known_hosts
+ssh-keyscan -t rsa gpu-nmls.tail1dc3bd.ts.net >> ~/.ssh/known_hosts
 ```
 
 ### Git Push Fails
@@ -231,14 +240,14 @@ git push origin main
 
 **VPS Down?**
 ```bash
-ssh dwise@100.68.145.5
+ssh dwise@gpu-nmls.tail1dc3bd.ts.net
 docker-compose restart wise2-api
 docker-compose ps
 ```
 
 **TV Hub Down?**
 ```bash
-ssh dwise@100.97.230.73
+ssh dwise@wise2-surface.tail1dc3bd.ts.net
 sudo systemctl restart wise2-display
 systemctl status wise2-display
 ```
@@ -253,7 +262,7 @@ If deployment breaks production:
 
 ```bash
 # SSH to VPS
-ssh dwise@100.68.145.5
+ssh dwise@gpu-nmls.tail1dc3bd.ts.net
 
 # Check recent commits
 git log --oneline -5

@@ -58,10 +58,10 @@ cd wise2-core
 ### 2. Tailscale Setup
 
 **Status**: ✅ Tailscale mesh network active
-- Daniel's Mac: 100.64.72.14
-- Darren's Windows: 100.100.26.47 (darrinwisejr.tail1dc3bd.ts.net)
-- VPS (gpu-nmls): 100.68.145.5
-- TV Hub (wise2-surface): 100.97.230.73
+- Daniel's Mac: [daniel-mac.tail1dc3bd.ts.net]
+- Darren's Windows: darrinwisejr.tail1dc3bd.ts.net (100.100.26.47)
+- VPS (gpu-nmls): gpu-nmls.tail1dc3bd.ts.net (100.68.145.5)
+- TV Hub (wise2-surface): wise2-surface.tail1dc3bd.ts.net (100.97.230.73)
 
 **Verify connection**:
 ```bash

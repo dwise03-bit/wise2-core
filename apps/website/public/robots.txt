@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://wise2.net/sitemap.xml

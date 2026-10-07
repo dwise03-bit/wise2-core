@@ -60,9 +60,9 @@ try {
 }
 
 # Test 4: SSH to VPS
-Write-Host "[4/8] Checking SSH Access to VPS (100.68.145.5)..." -ForegroundColor Cyan
+Write-Host "[4/8] Checking SSH Access to VPS (gpu-nmls.tail1dc3bd.ts.net)..." -ForegroundColor Cyan
 try {
-    $vps_test = ssh dwise@100.68.145.5 "docker ps --format='{{.Names}}' | head -3" 2>&1
+    $vps_test = ssh dwise@gpu-nmls.tail1dc3bd.ts.net "docker ps --format='{{.Names}}' | head -3" 2>&1
     if ($vps_test -match "wise2" -or $vps_test -like "*postgres*" -or $vps_test -like "*redis*") {
         Write-Host "✅ VPS SSH Access: Services running" -ForegroundColor Green
         Write-Host "   Running services: $($vps_test | ForEach-Object { "· $_" })" -ForegroundColor Gray
@@ -72,15 +72,15 @@ try {
         $passed++
     }
 } catch {
-    Write-Host "❌ Cannot SSH to VPS (100.68.145.5)" -ForegroundColor Red
+    Write-Host "❌ Cannot SSH to VPS (gpu-nmls.tail1dc3bd.ts.net)" -ForegroundColor Red
     Write-Host "   Error: $_" -ForegroundColor Gray
     $failed++
 }
 
 # Test 5: SSH to TV Hub
-Write-Host "[5/8] Checking SSH Access to TV Hub (100.97.230.73)..." -ForegroundColor Cyan
+Write-Host "[5/8] Checking SSH Access to TV Hub (wise2-surface.tail1dc3bd.ts.net)..." -ForegroundColor Cyan
 try {
-    $tvhub_test = ssh dwise@100.97.230.73 "systemctl is-active wise2-display" 2>&1
+    $tvhub_test = ssh dwise@wise2-surface.tail1dc3bd.ts.net "systemctl is-active wise2-display" 2>&1
     if ($tvhub_test -match "active") {
         Write-Host "✅ TV Hub SSH Access: Display service running" -ForegroundColor Green
         $passed++
@@ -89,7 +89,7 @@ try {
         $passed++
     }
 } catch {
-    Write-Host "❌ Cannot SSH to TV Hub (100.97.230.73)" -ForegroundColor Red
+    Write-Host "❌ Cannot SSH to TV Hub (wise2-surface.tail1dc3bd.ts.net)" -ForegroundColor Red
     Write-Host "   Error: $_" -ForegroundColor Gray
     $failed++
 }

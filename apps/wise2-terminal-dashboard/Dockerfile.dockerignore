@@ -1,8 +1,0 @@
-# Never ship host dependencies or build output into the image; the Dockerfile installs and builds its own.
-node_modules
-dist
-.git
-.vite
-*.log
-.env*
-.DS_Store
