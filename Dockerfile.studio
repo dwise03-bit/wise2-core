@@ -20,8 +20,10 @@ ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SKIP_ENV_VALIDATION=1
 
+WORKDIR /app
+RUN pnpm -C packages/audio build
 WORKDIR /app/apps/studio
-RUN pnpm build || true
+RUN pnpm build
 
 # Production minimal image
 FROM node:20-alpine
@@ -35,7 +37,7 @@ COPY packages ./packages
 COPY apps/studio/package.json ./apps/studio/
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages ./packages
-COPY --from=builder /app/apps/studio/.next ./apps/studio/.next
+COPY --from=builder /app/apps/studio/.next/ ./apps/studio/.next/
 COPY --from=builder /app/apps/studio/public ./apps/studio/public
 
 EXPOSE 3005

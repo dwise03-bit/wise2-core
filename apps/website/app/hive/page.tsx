@@ -1,0 +1,1 @@
+import {LivingHive} from '@/components/LivingHive';import './hive.css';export default function HivePage(){return <LivingHive/>}

@@ -4,6 +4,7 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const { publishBrainStream } = require('./events-publisher');
 
 // ── Config ──────────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || '3012', 10);
@@ -165,6 +166,14 @@ app.post('/api/brain/knowledge', requireAuth, async (req, res) => {
 
   try {
     const result = await db.collection(COLLECTION).insertOne(entry);
+    publishBrainStream('knowledge.created', {
+      id: String(result.insertedId),
+      title,
+      business,
+      type,
+      tagCount: entry.tags.length,
+      createdBy: entry.createdBy,
+    });
     res.status(201).json({ success: true, id: result.insertedId, entry });
   } catch (err) {
     res.status(500).json({ error: 'Failed to store knowledge', detail: err.message });
@@ -224,6 +233,7 @@ app.delete('/api/brain/knowledge/:id', requireAuth, async (req, res) => {
   try {
     const result = await db.collection(COLLECTION).deleteOne({ _id: new ObjectId(req.params.id) });
     if (result.deletedCount === 0) return res.status(404).json({ error: 'Not found' });
+    publishBrainStream('knowledge.deleted', { id: req.params.id, by: req.user?.sub || req.user?.id || 'unknown' });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Delete failed', detail: err.message });
@@ -275,7 +285,15 @@ ${context ? `\nRelevant knowledge from the knowledge base:\n\n${context}\n\nUse 
 Be concise, direct, and business-focused.`;
 
   try {
+    const chatStart = Date.now();
     const response = await callOllama(message, systemPrompt);
+    publishBrainStream('chat.completed', {
+      scope: 'brain',
+      model: OLLAMA_MODEL,
+      durationMs: Date.now() - chatStart,
+      sourceCount: sources.length,
+      contextUsed: sources.length > 0,
+    });
     res.json({
       response,
       model: OLLAMA_MODEL,
@@ -283,6 +301,7 @@ Be concise, direct, and business-focused.`;
       contextUsed: sources.length > 0,
     });
   } catch (err) {
+    publishBrainStream('chat.error', { scope: 'brain', model: OLLAMA_MODEL, detail: err.message });
     res.status(500).json({ error: 'AI request failed', detail: err.message });
   }
 });
@@ -364,6 +383,7 @@ app.post('/api/hermes/chat', requireAuth, async (req, res) => {
   // Publish start event (no private content)
   publishHermesEvent('hermes.query.started', 'Hermes Query Started',
     'Processing intelligence request', { model: OLLAMA_MODEL });
+  publishBrainStream('hermes.query.started', { model: OLLAMA_MODEL });
 
   if (!ollamaAvailable) {
     return res.status(503).json({ error: 'Ollama unavailable', provider: 'ollama', model: OLLAMA_MODEL });
@@ -431,10 +451,18 @@ app.post('/api/hermes/chat', requireAuth, async (req, res) => {
     publishHermesEvent('hermes.query.completed', 'Hermes Query Completed',
       `Response delivered — context: ${sources.length > 0}, tools: ${toolsUsed.join(', ')}`,
       { model: OLLAMA_MODEL, durationMs: duration, sourceCount: sources.length, toolCount: toolsUsed.length });
+    publishBrainStream('hermes.query.completed', {
+      model: OLLAMA_MODEL,
+      durationMs: duration,
+      sourceCount: sources.length,
+      toolCount: toolsUsed.length,
+      toolsUsed,
+    });
 
     return res.json({ response, model: OLLAMA_MODEL, toolsUsed, sources, contextUsed: sources.length > 0, durationMs: duration });
   } catch (err) {
     publishHermesEvent('hermes.error', 'Hermes Query Failed', err.message, { model: OLLAMA_MODEL });
+    publishBrainStream('hermes.error', { model: OLLAMA_MODEL, detail: err.message });
     return res.status(500).json({ error: 'AI request failed', detail: err.message });
   }
 });

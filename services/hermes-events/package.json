@@ -1,0 +1,14 @@
+{
+  "name": "@wise2/hermes-events",
+  "version": "0.1.0",
+  "description": "WISE2 Hermes Events — local event ingest + WebSocket fan-out for the Agent Command Graph",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

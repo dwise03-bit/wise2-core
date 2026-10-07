@@ -16,6 +16,7 @@ COPY packages ./packages
 
 # Install dependencies with pnpm
 RUN pnpm install --frozen-lockfile --prod=false 2>&1 | tail -20
+RUN pnpm -C packages/db prisma:generate
 
 # Build the API service (includes Ray-Ban)
 RUN pnpm -C packages/api build 2>&1 | grep -E "✔|error" || echo "Build complete"
