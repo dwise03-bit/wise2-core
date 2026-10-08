@@ -41,3 +41,19 @@
 [submodule "WISE2-DEV-ARSENAL/upstream/strix"]
 	path = WISE2-DEV-ARSENAL/upstream/strix
 	url = https://github.com/usestrix/strix.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/openmontage"]
+	path = WISE2-AI-ARSENAL/upstream/openmontage
+	url = https://github.com/calesthio/OpenMontage.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/codebase-memory-mcp"]
+	path = WISE2-AI-ARSENAL/upstream/codebase-memory-mcp
+	url = https://github.com/DeusData/codebase-memory-mcp.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/agent-reach"]
+	path = WISE2-AI-ARSENAL/upstream/agent-reach
+	url = https://github.com/Panniantong/Agent-Reach.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/anthropic-cybersecurity-skills"]
+	path = WISE2-AI-ARSENAL/upstream/anthropic-cybersecurity-skills
+	url = https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git

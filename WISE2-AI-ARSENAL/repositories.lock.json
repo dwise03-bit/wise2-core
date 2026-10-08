@@ -56,7 +56,7 @@
       "commit": "194538dff3e455e335af2c67b950bc42c08b54bc",
       "branch": "dev",
       "license": "MIT",
-      "use": "Repeatable WISE² build, validate and review workflows",
+      "use": "Repeatable WISE\u00b2 build, validate and review workflows",
       "status": "source-pinned; runtime setup required"
     },
     {
@@ -69,6 +69,54 @@
       "license": "Apache-2.0",
       "use": "Persistent coding-session memory",
       "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "openmontage",
+      "repository": "calesthio/OpenMontage",
+      "url": "https://github.com/calesthio/OpenMontage.git",
+      "path": "WISE2-AI-ARSENAL/upstream/openmontage",
+      "commit": "9327439db69021ab4b0e2776729bf3b58fdb5a87",
+      "branch": "main",
+      "license": "AGPL-3.0",
+      "use": "Video planning and production for WISE\u00b2 promos and visualizers",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "codebase-memory-mcp",
+      "repository": "DeusData/codebase-memory-mcp",
+      "url": "https://github.com/DeusData/codebase-memory-mcp.git",
+      "path": "WISE2-AI-ARSENAL/upstream/codebase-memory-mcp",
+      "commit": "92b2dd13d796f22f8001ef70f078e633fd9ec93a",
+      "branch": "main",
+      "license": "MIT",
+      "use": "Code structure indexing for Codex and Claude",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "agent-reach",
+      "repository": "Panniantong/Agent-Reach",
+      "url": "https://github.com/Panniantong/Agent-Reach.git",
+      "path": "WISE2-AI-ARSENAL/upstream/agent-reach",
+      "commit": "94f06c1969dfc1834001269d79d3ad0972d9dee6",
+      "branch": "main",
+      "license": "MIT",
+      "use": "OWL EYE public-source research and channel diagnostics",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "anthropic-cybersecurity-skills",
+      "repository": "mukul975/Anthropic-Cybersecurity-Skills",
+      "url": "https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git",
+      "path": "WISE2-AI-ARSENAL/upstream/anthropic-cybersecurity-skills",
+      "commit": "54a798831d2266a3ca61ce68a7acb80b81160d57",
+      "branch": "main",
+      "license": "Apache-2.0",
+      "use": "Defensive security reference workflows for WISE\u00b2 infrastructure",
+      "status": "source-pinned; runtime setup required"
     }
+  ],
+  "sourceRecordings": [
+    "ScreenRecording_10-07-2026 22-53-06_1.mp4",
+    "ScreenRecording_10-07-2026 23-14-26_1.mp4"
   ]
 }

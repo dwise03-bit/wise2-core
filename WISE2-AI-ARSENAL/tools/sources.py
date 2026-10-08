@@ -23,7 +23,7 @@ def main():
         if not (path / "README.md").is_file():
             raise RuntimeError(f"Missing README for {repo['id']}")
         print(f"OK {repo['id']} {actual}")
-    print("All six source checkouts match the lock file. Runtime installation is separate.")
+    print(f"All {len(manifest['repositories'])} source checkouts match the lock file. Runtime installation is separate.")
 
 if __name__ == "__main__":
     try:
