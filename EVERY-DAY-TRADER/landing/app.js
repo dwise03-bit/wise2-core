@@ -2,6 +2,20 @@ import { mountLIECameraPanel } from "./traffic-feed.js";
 
 const CONFIG = window.EDT_CONFIG || { TRAFFIC_FEED_MODE: "mock" };
 
+/* Recorded road loop: plays only if the file loads and motion is allowed.
+   Otherwise the CSS composition stays in place. */
+const roadLoop = document.querySelector(".scene-video");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (roadLoop && !reduceMotion) {
+  const hero = roadLoop.closest(".hero");
+  const reveal = () => hero.classList.add("has-loop");
+  roadLoop.addEventListener("loadeddata", reveal, { once: true });
+  roadLoop.addEventListener("error", () => hero.classList.remove("has-loop"));
+  const p = roadLoop.play();
+  if (p && p.catch) p.catch(() => {});
+  if (roadLoop.readyState >= 2) reveal();
+}
+
 /* DEMO DATA — NOT LIVE. Fictional values for layout and interaction only. */
 const DEMO_PULSE = [
   { symbol: "SPY", changePct: 0.42, points: [4, 5, 4, 6, 7, 6, 8] },
