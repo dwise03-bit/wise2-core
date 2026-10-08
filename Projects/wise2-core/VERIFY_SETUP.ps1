@@ -98,7 +98,7 @@ try {
 Write-Host "[6/8] Checking GitHub SSH Access..." -ForegroundColor Cyan
 try {
     $github_test = ssh -T git@github.com 2>&1
-    if ($github_test -match "successfully authenticated" -or $github_test -match "darrinwisejr") {
+    if ($github_test -match "successfully authenticated" -or $github_test -match "wisevillain86") {
         Write-Host "✅ GitHub SSH Access: Authenticated" -ForegroundColor Green
         $passed++
     } else {

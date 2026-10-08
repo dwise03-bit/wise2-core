@@ -42,7 +42,7 @@ This document describes the complete integration setup for co-ownership of WISEÂ
 
 **Status**: âœ… Repository configured with co-owner access
 - Repository: `dwise03-bit/wise2-core`
-- CODEOWNERS: Daniel Wise (@dwise03-bit) & Darrin Wise Jr (@darrinwisejr)
+- CODEOWNERS: Daniel Wise (@dwise03-bit) & Darrin Wise Jr (@wisevillain86)
 - Branch protection: Enforced on `main`
 
 **Actions needed by Darrin**:
@@ -195,7 +195,7 @@ ssh dwise@100.97.230.73 "sudo systemctl restart wise2-display"
 - Infrastructure maintenance
 - GitHub repository management
 
-### Darrin Wise Jr (@darrinwisejr)
+### Darrin Wise Jr (@wisevillain86)
 - Windows/deployment management
 - Display & UI coordination
 - Feature development

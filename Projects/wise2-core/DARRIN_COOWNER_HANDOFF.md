@@ -19,7 +19,7 @@ You are now a **full co-owner of WISE²** with complete infrastructure access, d
 ## 🔐 Your Accounts & Access
 
 ### GitHub
-- **Username**: @darrinwisejr
+- **Username**: @wisevillain86
 - **Role**: Co-Owner of dwise03-bit/wise2-core
 - **Permissions**: Push to main, merge PRs, manage deployments, create releases
 - **MFA**: Enable immediately if not already enabled

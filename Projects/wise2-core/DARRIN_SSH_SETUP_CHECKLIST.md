@@ -1,6 +1,6 @@
 # 🔐 Darrin SSH & GitHub Sync Checklist
 
-**Status**: Darrin is a registered co-owner (@darrinwisejr) — now activating SSH access  
+**Status**: Darrin is a registered co-owner (@wisevillain86) — now activating SSH access  
 **Date**: 2026-10-08  
 **Last Verified**: main branch clean & synced
 
@@ -29,7 +29,7 @@
 # Open PowerShell or Windows Terminal
 
 # Generate SSH key (ed25519 is modern & secure)
-ssh-keygen -t ed25519 -f $env:USERPROFILE\.ssh\github_darrin -C "darrin@wise2.net"
+ssh-keygen -t ed25519 -f $env:USERPROFILE\.ssh\github_darrin -C "wisevillain86 WISE2"
 
 # Press Enter 2x (no passphrase needed)
 
@@ -52,7 +52,7 @@ git config --global core.sshCommand "ssh -i ~/.ssh/github_darrin"
 
 # Verify git SSH user (should show Darrin's username)
 ssh -T git@github.com
-# Expected: "Hi darrinwisejr! You've successfully authenticated..."
+# Expected: "Hi wisevillain86! You've successfully authenticated..."
 ```
 
 ### Step 5: Clone the Repository
