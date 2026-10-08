@@ -1,0 +1,23 @@
+[submodule "WISE2-AI-ARSENAL/upstream/claude-code-best-practice"]
+	path = WISE2-AI-ARSENAL/upstream/claude-code-best-practice
+	url = https://github.com/shanraisshan/claude-code-best-practice.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/mcp-for-blender"]
+	path = WISE2-AI-ARSENAL/upstream/mcp-for-blender
+	url = https://github.com/ahujasid/mcp-for-blender.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/voicebox"]
+	path = WISE2-AI-ARSENAL/upstream/voicebox
+	url = https://github.com/jamiepine/voicebox.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/ai-hedge-fund"]
+	path = WISE2-AI-ARSENAL/upstream/ai-hedge-fund
+	url = https://github.com/virattt/ai-hedge-fund.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/archon"]
+	path = WISE2-AI-ARSENAL/upstream/archon
+	url = https://github.com/coleam00/Archon.git
+
+[submodule "WISE2-AI-ARSENAL/upstream/claude-mem"]
+	path = WISE2-AI-ARSENAL/upstream/claude-mem
+	url = https://github.com/thedotmack/claude-mem.git

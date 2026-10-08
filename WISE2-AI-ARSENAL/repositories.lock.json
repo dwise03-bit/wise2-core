@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-08",
+  "sourceRecording": "ScreenRecording_10-07-2026 22-53-06_1.mp4",
+  "sourceStorage": "Original recording remains in ChatGPT attachment; third-party source is pinned below.",
+  "repositories": [
+    {
+      "id": "claude-code-best-practice",
+      "repository": "shanraisshan/claude-code-best-practice",
+      "url": "https://github.com/shanraisshan/claude-code-best-practice.git",
+      "path": "WISE2-AI-ARSENAL/upstream/claude-code-best-practice",
+      "commit": "b8693242f1f78f29a8fe63cbe180c1fd2b455ecc",
+      "branch": "main",
+      "license": "MIT",
+      "use": "Coding practices for Codex/Claude project work",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "mcp-for-blender",
+      "repository": "ahujasid/mcp-for-blender",
+      "url": "https://github.com/ahujasid/mcp-for-blender.git",
+      "path": "WISE2-AI-ARSENAL/upstream/mcp-for-blender",
+      "commit": "7a0373ec9199183cb460068c4f96aed9c579fb4f",
+      "branch": "main",
+      "license": "MIT",
+      "use": "3D asset creation for IMP, game environments and cinematic sites",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "voicebox",
+      "repository": "jamiepine/voicebox",
+      "url": "https://github.com/jamiepine/voicebox.git",
+      "path": "WISE2-AI-ARSENAL/upstream/voicebox",
+      "commit": "8af7efe62fab8d33e2a5dfbedabaa45f68a5184f",
+      "branch": "main",
+      "license": "MIT",
+      "use": "Local voice studio for Wise Villain and authorized collaborator audio",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "ai-hedge-fund",
+      "repository": "virattt/ai-hedge-fund",
+      "url": "https://github.com/virattt/ai-hedge-fund.git",
+      "path": "WISE2-AI-ARSENAL/upstream/ai-hedge-fund",
+      "commit": "78b779c1389e2d1452dc29606d2c4126d859b964",
+      "branch": "main",
+      "license": "MIT",
+      "use": "EVERY DAY TRADER research and paper-trading experiments",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "archon",
+      "repository": "coleam00/Archon",
+      "url": "https://github.com/coleam00/Archon.git",
+      "path": "WISE2-AI-ARSENAL/upstream/archon",
+      "commit": "194538dff3e455e335af2c67b950bc42c08b54bc",
+      "branch": "dev",
+      "license": "MIT",
+      "use": "Repeatable WISE² build, validate and review workflows",
+      "status": "source-pinned; runtime setup required"
+    },
+    {
+      "id": "claude-mem",
+      "repository": "thedotmack/claude-mem",
+      "url": "https://github.com/thedotmack/claude-mem.git",
+      "path": "WISE2-AI-ARSENAL/upstream/claude-mem",
+      "commit": "71ddd11735d6dc38a6356fe376921fc216f2aa38",
+      "branch": "main",
+      "license": "Apache-2.0",
+      "use": "Persistent coding-session memory",
+      "status": "source-pinned; runtime setup required"
+    }
+  ]
+}
