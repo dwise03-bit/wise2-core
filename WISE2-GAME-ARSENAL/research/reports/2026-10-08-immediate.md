@@ -24,16 +24,3 @@ All candidates remain WATCH and uninstalled. Inspect exact revisions/licenses, a
 ## Validation
 
 All 11 gameplay/radar/acquisition tests passed again. The live snapshots yielded no errors for the 25 tracked metadata/commit queries; missing stable releases are handled separately. Discovery metadata does not certify security or performance.
-
-## Vercel deployment investigation
-
-Both `auth-gateway` and `wise2-jocredit` failed on the merge commit too. Available GitHub statuses do not identify the cause. There is no callable Vercel connector or authenticated Vercel CLI exposed in this workspace. Do not claim a root cause or edit deployment configuration without logs.
-
-Authenticated Vercel CLI commands for the latest failed builds:
-
-```sh
-npx vercel inspect dpl_B9ADBgziLTrTFkmV4nkQgVNANMST --logs
-npx vercel inspect dpl_6c6Ua4EwSD3ZdFuaW1qjRXhXuwCD --logs
-```
-
-The Game Arsenal tests passed; that does not mean these application deployments passed. They remain unresolved.
