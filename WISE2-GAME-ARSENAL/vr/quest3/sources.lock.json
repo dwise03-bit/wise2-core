@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-08",
+  "hardware": "Meta Quest 3 (user confirmed)",
+  "repositories": [
+    {
+      "repository": "oculus-samples/Unity-MRUtilityKitSample",
+      "url": "https://github.com/oculus-samples/Unity-MRUtilityKitSample",
+      "commit": "8b6daeb6e592e30faa9d2c2ab423a1e3d5bb1136",
+      "role": "room scanning, mesh collision and navigation",
+      "integration": "pinned-submodule",
+      "license": "MIT (SDK dependencies retain their own licenses)"
+    },
+    {
+      "repository": "oculus-samples/Unity-MRMotifs",
+      "url": "https://github.com/oculus-samples/Unity-MRMotifs",
+      "commit": "3b62d7d5cc5416c09670db757e53fde2d9908458",
+      "role": "placement, grounding shadows and saved spatial anchors",
+      "integration": "pinned-submodule",
+      "license": "MIT (SDK dependencies retain their own licenses)"
+    },
+    {
+      "repository": "oculus-samples/Unity-DepthAPI",
+      "url": "https://github.com/oculus-samples/Unity-DepthAPI",
+      "commit": "82a8f3f6f38e0833a08dee768a7f016a3ca5c86d",
+      "role": "real-world depth occlusion",
+      "integration": "reference-only",
+      "license": "Oculus SDK License"
+    },
+    {
+      "repository": "JonasJakobi/SM64-Quest-3",
+      "url": "https://github.com/JonasJakobi/SM64-Quest-3",
+      "commit": "de8d6b640cd10dcf372ac28a3993ce3f5a61a34e",
+      "role": "Mario reference project",
+      "integration": "reference-only",
+      "license": "not cleared for WISE2 redistribution"
+    },
+    {
+      "repository": "libsm64/libsm64",
+      "url": "https://github.com/libsm64/libsm64",
+      "commit": "fd11813208272b4271d92bd92feb8f3fdbe61be5",
+      "role": "native Mario runtime reference",
+      "integration": "reference-only",
+      "license": "not cleared for WISE2 redistribution"
+    },
+    {
+      "repository": "libsm64/libsm64-unity",
+      "url": "https://github.com/libsm64/libsm64-unity",
+      "commit": "21f67378a9834e0cd91616acc253ee49eafbf426",
+      "role": "Unity binding reference",
+      "integration": "reference-only",
+      "license": "not cleared for WISE2 redistribution"
+    }
+  ]
+}

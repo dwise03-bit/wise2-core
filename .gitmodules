@@ -57,3 +57,11 @@
 [submodule "WISE2-AI-ARSENAL/upstream/anthropic-cybersecurity-skills"]
 	path = WISE2-AI-ARSENAL/upstream/anthropic-cybersecurity-skills
 	url = https://github.com/mukul975/Anthropic-Cybersecurity-Skills.git
+
+[submodule "WISE2-GAME-ARSENAL/vr/upstream/Unity-MRUtilityKitSample"]
+	path = WISE2-GAME-ARSENAL/vr/upstream/Unity-MRUtilityKitSample
+	url = https://github.com/oculus-samples/Unity-MRUtilityKitSample.git
+
+[submodule "WISE2-GAME-ARSENAL/vr/upstream/Unity-MRMotifs"]
+	path = WISE2-GAME-ARSENAL/vr/upstream/Unity-MRMotifs
+	url = https://github.com/oculus-samples/Unity-MRMotifs.git

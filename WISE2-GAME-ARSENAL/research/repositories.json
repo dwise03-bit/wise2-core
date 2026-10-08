@@ -351,6 +351,66 @@
       "archived": false,
       "decision": "WATCH",
       "status": "evaluation only; not installed"
+    },
+    {
+      "repository": "oculus-samples/Unity-MRUtilityKitSample",
+      "url": "https://github.com/oculus-samples/Unity-MRUtilityKitSample",
+      "lane": "vr",
+      "license": "MIT",
+      "observedCommit": "8b6daeb6e592e30faa9d2c2ab423a1e3d5bb1136",
+      "archived": false,
+      "decision": "USE",
+      "status": "pinned submodule; Unity build and headset validation pending"
+    },
+    {
+      "repository": "oculus-samples/Unity-MRMotifs",
+      "url": "https://github.com/oculus-samples/Unity-MRMotifs",
+      "lane": "vr",
+      "license": "MIT",
+      "observedCommit": "3b62d7d5cc5416c09670db757e53fde2d9908458",
+      "archived": false,
+      "decision": "USE",
+      "status": "pinned submodule; Unity build and headset validation pending"
+    },
+    {
+      "repository": "oculus-samples/Unity-DepthAPI",
+      "url": "https://github.com/oculus-samples/Unity-DepthAPI",
+      "lane": "vr",
+      "license": "Oculus-SDK",
+      "observedCommit": "82a8f3f6f38e0833a08dee768a7f016a3ca5c86d",
+      "archived": false,
+      "decision": "REFERENCE ONLY",
+      "status": "reference only; no source integrated"
+    },
+    {
+      "repository": "JonasJakobi/SM64-Quest-3",
+      "url": "https://github.com/JonasJakobi/SM64-Quest-3",
+      "lane": "vr",
+      "license": "UNVERIFIED",
+      "observedCommit": "de8d6b640cd10dcf372ac28a3993ce3f5a61a34e",
+      "archived": false,
+      "decision": "REFERENCE ONLY",
+      "status": "reference only; no source integrated"
+    },
+    {
+      "repository": "libsm64/libsm64",
+      "url": "https://github.com/libsm64/libsm64",
+      "lane": "vr",
+      "license": "UNVERIFIED",
+      "observedCommit": "fd11813208272b4271d92bd92feb8f3fdbe61be5",
+      "archived": false,
+      "decision": "REFERENCE ONLY",
+      "status": "reference only; no source integrated"
+    },
+    {
+      "repository": "libsm64/libsm64-unity",
+      "url": "https://github.com/libsm64/libsm64-unity",
+      "lane": "vr",
+      "license": "UNVERIFIED",
+      "observedCommit": "21f67378a9834e0cd91616acc253ee49eafbf426",
+      "archived": false,
+      "decision": "REFERENCE ONLY",
+      "status": "reference only; no source integrated"
     }
   ]
 }
