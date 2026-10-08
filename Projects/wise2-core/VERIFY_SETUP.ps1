@@ -113,9 +113,8 @@ try {
 # Test 7: Project Structure
 Write-Host "[7/8] Checking Project Files..." -ForegroundColor Cyan
 $files_to_check = @(
-    "$env:USERPROFILE\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md",
-    "$env:USERPROFILE\Projects\wise2-core\.github\workflows\deploy.yml",
-    "$env:USERPROFILE\Projects\wise2-core\scripts\deploy-display.sh"
+    "$env:USERPROFILE\Projects\wise2-core\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md",
+    "$env:USERPROFILE\Projects\wise2-core\.github\CODEOWNERS"
 )
 $files_found = 0
 foreach ($file in $files_to_check) {
@@ -123,11 +122,11 @@ foreach ($file in $files_to_check) {
         $files_found++
     }
 }
-if ($files_found -eq 3) {
-    Write-Host "✅ All Project Files Present ($files_found/3)" -ForegroundColor Green
+if ($files_found -eq 2) {
+    Write-Host "✅ All Project Files Present ($files_found/2)" -ForegroundColor Green
     $passed++
 } else {
-    Write-Host "⚠️  Missing some project files ($files_found/3)" -ForegroundColor Yellow
+    Write-Host "⚠️  Missing some project files ($files_found/2)" -ForegroundColor Yellow
     $passed++
 }
 
@@ -164,7 +163,7 @@ if ($failed -eq 0) {
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "1. Install Claude Desktop App: https://claude.ai/download" -ForegroundColor Cyan
-    Write-Host "2. Read: $env:USERPROFILE\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md" -ForegroundColor Cyan
+    Write-Host "2. Read: $env:USERPROFILE\Projects\wise2-core\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md" -ForegroundColor Cyan
     Write-Host "3. Test your first deployment: git checkout -b feature/test" -ForegroundColor Cyan
 } else {
     Write-Host ""

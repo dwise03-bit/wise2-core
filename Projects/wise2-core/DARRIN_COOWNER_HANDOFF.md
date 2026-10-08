@@ -129,7 +129,7 @@ git push origin feature/your-feature-name
 For urgent TV Hub display updates:
 
 ```bash
-./scripts/deploy-display.sh
+./scripts/deploy-display.sh   # not yet in this repo
 ```
 
 This deploys display updates immediately without waiting for full CI/CD.
@@ -289,12 +289,12 @@ For critical issues, reach out immediately.
 ### In Your Repository
 
 - **COOWNER_INTEGRATION.md** — Full technical integration guide
-- **WISE2_COOWNER_HANDOFF.md** — This file
+- **DARRIN_COOWNER_HANDOFF.md** — This file
 - **.github/CODEOWNERS** — Co-owner configuration
-- **.github/workflows/deploy.yml** — CI/CD pipeline definition
-- **cloudflare-config.toml** — DNS/security configuration
-- **scripts/setup-co-owner.sh** — Setup automation script
-- **scripts/deploy-display.sh** — Manual display deployment
+- **.github/workflows/deploy.yml** — CI/CD pipeline definition (in the `wise2-dashboard` repo, not this one)
+- **cloudflare-config.toml** — DNS/security configuration (not yet in this repo)
+- **scripts/setup-co-owner.sh** — Setup automation script (not yet in this repo)
+- **scripts/deploy-display.sh** — Manual display deployment (not yet in this repo)
 
 ### On Your Machine
 
@@ -340,7 +340,7 @@ For critical issues, reach out immediately.
 - [ ] Test SSH to VPS: `ssh dwise@100.68.145.5 "docker ps"`
 - [ ] Test SSH to TV Hub: `ssh dwise@100.97.230.73 "systemctl status wise2-display"`
 - [ ] Verify Claude Code works: `claude --version`
-- [ ] Review .github/workflows/deploy.yml
+- [ ] Review .github/workflows/deploy.yml (in `wise2-dashboard`)
 - [ ] Read COOWNER_INTEGRATION.md for technical details
 
 ### This Week

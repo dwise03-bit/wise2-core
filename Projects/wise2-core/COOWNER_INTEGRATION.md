@@ -91,14 +91,14 @@ ssh dwise@100.68.145.5 "docker ps"
 
 **Deploy display**:
 ```bash
-./scripts/deploy-display.sh
+./scripts/deploy-display.sh   # not yet in this repo
 ```
 
 ### 5. GitHub Actions CI/CD
 
 **Status**: ✅ Automated deployment configured
 - Trigger: Push to `main` branch
-- Workflow: `.github/workflows/deploy.yml`
+- Workflow: `.github/workflows/deploy.yml` (lives in the `wise2-dashboard` repo)
 - Stages:
   1. Deploy to VPS
   2. Deploy to TV Hub
@@ -114,14 +114,14 @@ ssh dwise@100.68.145.5 "docker ps"
 
 **Status**: ⏳ Needs implementation
 - Zone: wise2.net
-- DNS records: Configured in `cloudflare-config.toml`
+- DNS records: Configured in `cloudflare-config.toml` (not yet in this repo)
 - SSL/TLS: Automatic HTTPS
 - DDoS Protection: Enabled
 
 **Manual setup**:
 1. Go to https://dash.cloudflare.com
 2. Select zone: wise2.net
-3. Update DNS records according to `cloudflare-config.toml`
+3. Update DNS records according to `cloudflare-config.toml` (not yet in this repo)
 4. Enable Page Rules for caching
 
 ## Daily Operations
@@ -140,7 +140,7 @@ git push origin main
 
 ### Deploying to TV Hub
 ```bash
-./scripts/deploy-display.sh
+./scripts/deploy-display.sh   # not yet in this repo
 ```
 
 ### Checking System Status
@@ -183,7 +183,7 @@ ssh dwise@100.97.230.73 "sudo systemctl restart wise2-display"
 
 ### Git push not triggering deployment
 1. Verify GitHub Actions is enabled
-2. Check workflow file: `.github/workflows/deploy.yml`
+2. Check workflow file: `.github/workflows/deploy.yml` (in `wise2-dashboard`)
 3. Verify branch is `main`
 4. Check GitHub Actions logs for errors
 

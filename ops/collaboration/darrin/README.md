@@ -56,4 +56,4 @@ bash ops/collaboration/darrin/verify-access.sh
 
 Full operational access does not bypass the WISE² GREEN deployment gate. Deploy from an exact GitHub commit SHA. Never destroy another developer's dirty working tree and never force-reset production as a sync mechanism.
 
-See `.github/COLLABORATION.md` and `docs/superpowers/specs/2026-09-14-wise2-bridge-sync-design.md`.
+See `.github/COLLABORATION.md` (not yet created) and `docs/superpowers/specs/2026-09-14-wise2-bridge-sync-design.md`.
