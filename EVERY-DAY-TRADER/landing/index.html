@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVERY DAY TRADER — Powered by WISE²</title>
+  <meta name="description" content="Learn the market, test your ideas, and build a repeatable process. Educational tools and paper-trading practice only. Not financial advice.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" data-scrolled="false">
+    <a class="wordmark" href="#top" aria-label="EVERY DAY TRADER home">
+      <span class="wordmark-main">EVERY DAY TRADER</span>
+      <span class="wordmark-sub">Powered by WISE²</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#explore">Explore</a>
+      <a href="#learn">Learn</a>
+      <a href="#journal">Journal</a>
+      <a href="#watchlist">Watchlist</a>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="../dashboard/index.html">Enter the Market</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <a href="#explore">Explore</a>
+    <a href="#learn">Learn</a>
+    <a href="#journal">Journal</a>
+    <a href="#watchlist">Watchlist</a>
+    <a class="btn btn-primary" href="../dashboard/index.html">Enter the Market</a>
+  </div>
+
+  <main id="main">
+    <!-- HERO: the LIE is the market -->
+    <section id="top" class="hero" aria-labelledby="hero-title">
+      <div class="scene" aria-hidden="true">
+        <div class="scene-sky"></div>
+        <div class="scene-skyline"></div>
+        <div class="scene-road">
+          <div class="lanes"></div>
+          <div class="flow flow-a"></div>
+          <div class="flow flow-b"></div>
+          <div class="flow flow-c"></div>
+        </div>
+        <div class="scene-fog"></div>
+        <div class="scene-grain"></div>
+        <!-- Live feed target: populated only by an approved provider. Empty in mock mode. -->
+        <div id="lie-feed" class="lie-feed" hidden></div>
+      </div>
+
+      <div class="hero-status" id="lie-status">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="lie-status-text">LIE ATMOSPHERE — SIMULATED VISUAL</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span id="lie-location">Central LIE</span>
+        <span class="sep" aria-hidden="true">·</span>
+        <span id="lie-road-flow">ROAD FLOW: Simulated</span>
+        <button class="info" type="button" aria-describedby="road-tip" aria-label="About road conditions">i</button>
+        <span id="road-tip" role="tooltip" class="tooltip">Road conditions are visual context only. They are not market data or trading signals.</span>
+      </div>
+
+      <div class="hero-copy">
+        <p class="eyebrow">POWERED BY WISE²</p>
+        <h1 id="hero-title">TRADE THE DAY.<br>BUILD THE DISCIPLINE.</h1>
+        <p class="hero-body">Learn the market, test your ideas, and build a repeatable process—one everyday decision at a time.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="../dashboard/index.html">Enter the Market</a>
+          <a class="btn btn-ghost" href="#system">See How It Works</a>
+        </div>
+        <p class="disclaimer">Educational tools and paper-trading practice only. Not financial advice.</p>
+      </div>
+
+      <aside class="pulse-hud" aria-labelledby="pulse-title">
+        <div class="pulse-head">
+          <h2 id="pulse-title">Market pulse</h2>
+          <span class="badge badge-demo">DEMO DATA — NOT LIVE</span>
+        </div>
+        <ul class="pulse-list" id="pulse-list"></ul>
+      </aside>
+    </section>
+
+    <!-- THE ROAD HAS A SYSTEM -->
+    <section id="system" class="section" aria-labelledby="system-title">
+      <div class="section-head">
+        <p class="eyebrow">THE METHOD</p>
+        <h2 id="system-title">The Road Has a System</h2>
+        <p class="lede">Knowledge builds the route. Discipline keeps you in your lane.</p>
+      </div>
+      <div class="cards" id="learn">
+        <article class="card">
+          <div class="card-marker" aria-hidden="true">01</div>
+          <h3>Learn the Route</h3>
+          <p>Study how price, volume, and trend behave before risking attention on any one move. Education comes first, every time.</p>
+        </article>
+        <article class="card">
+          <div class="card-marker" aria-hidden="true">02</div>
+          <h3>Build the Setup</h3>
+          <p>Write the thesis, the entry, the stop, and the size before you practice. A paper plan makes every assumption visible.</p>
+        </article>
+        <article class="card" id="journal">
+          <div class="card-marker" aria-hidden="true">03</div>
+          <h3>Review the Drive</h3>
+          <p>Journal each practice trade and review it against your plan. The lessons come from the record, not from memory.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- COMMAND CENTER PREVIEW -->
+    <section id="explore" class="section" aria-labelledby="command-title">
+      <div class="section-head">
+        <p class="eyebrow">COMMAND CENTER</p>
+        <h2 id="command-title">A desk built for practice</h2>
+        <p class="lede">This is a visual prototype with demo state. Nothing here connects to a brokerage or places an order.</p>
+      </div>
+
+      <div class="command glass">
+        <div class="tabs" role="tablist" aria-label="Command center sections">
+          <button role="tab" id="tab-paper" aria-controls="panel" aria-selected="true" data-tab="paper" type="button">Paper Trade</button>
+          <button role="tab" id="tab-journal" aria-controls="panel" aria-selected="false" tabindex="-1" data-tab="journal" type="button">Journal</button>
+          <button role="tab" id="tab-watch" aria-controls="panel" aria-selected="false" tabindex="-1" data-tab="watchlist" type="button">Watchlist</button>
+          <button role="tab" id="tab-setup" aria-controls="panel" aria-selected="false" tabindex="-1" data-tab="setup" type="button">Setup Builder</button>
+        </div>
+        <div id="panel" class="panel" role="tabpanel" aria-labelledby="tab-paper" tabindex="0"></div>
+      </div>
+    </section>
+
+    <!-- FROM CHAOS TO PROCESS -->
+    <section id="watchlist" class="section" aria-labelledby="process-title">
+      <div class="section-head">
+        <p class="eyebrow">THE ROUTE</p>
+        <h2 id="process-title">From Chaos to Process</h2>
+      </div>
+      <ol class="lanes-process">
+        <li class="lane"><span class="lane-num">1</span><h3>Observe</h3><p>Watch the flow. Note what is happening before deciding what it means.</p></li>
+        <li class="lane"><span class="lane-num">2</span><h3>Plan</h3><p>Define the thesis, the stop, and the size in writing.</p></li>
+        <li class="lane"><span class="lane-num">3</span><h3>Practice</h3><p>Run the plan on paper. Follow the rules even when it is uncomfortable.</p></li>
+        <li class="lane"><span class="lane-num">4</span><h3>Review</h3><p>Compare outcomes to the plan. Keep what worked; fix what did not.</p></li>
+      </ol>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" aria-labelledby="cta-title">
+      <h2 id="cta-title">Stop chasing noise. Start tracking your process.</h2>
+      <form class="signup" id="signup-form" novalidate>
+        <label for="signup-email" class="visually-hidden">Email address</label>
+        <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required aria-describedby="signup-note">
+        <button class="btn btn-primary" type="submit">Build My Trading Routine</button>
+      </form>
+      <p id="signup-note" class="fine" role="status">Front-end demo. Signup is not connected to a backend yet.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <p class="wordmark-main">EVERY DAY TRADER</p>
+      <p class="wordmark-sub">Powered by WISE²</p>
+    </div>
+    <p class="fine">Educational use only. Nothing on this site is financial advice, a recommendation to buy or sell, or a guarantee of returns. Paper trading does not reflect real execution, fills, or losses.</p>
+    <nav aria-label="Legal">
+      <a href="#privacy">Privacy</a>
+      <a href="#terms">Terms</a>
+    </nav>
+  </footer>
+
+  <script src="config.js"></script>
+  <script type="module" src="traffic-feed.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
