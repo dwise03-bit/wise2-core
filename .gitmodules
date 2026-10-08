@@ -21,3 +21,23 @@
 [submodule "WISE2-AI-ARSENAL/upstream/claude-mem"]
 	path = WISE2-AI-ARSENAL/upstream/claude-mem
 	url = https://github.com/thedotmack/claude-mem.git
+
+[submodule "WISE2-DEV-ARSENAL/upstream/free-for-dev"]
+	path = WISE2-DEV-ARSENAL/upstream/free-for-dev
+	url = https://github.com/ripienaar/free-for-dev.git
+
+[submodule "WISE2-DEV-ARSENAL/upstream/public-apis"]
+	path = WISE2-DEV-ARSENAL/upstream/public-apis
+	url = https://github.com/public-apis/public-apis.git
+
+[submodule "WISE2-DEV-ARSENAL/upstream/awesome-mcp-servers"]
+	path = WISE2-DEV-ARSENAL/upstream/awesome-mcp-servers
+	url = https://github.com/punkpeye/awesome-mcp-servers.git
+
+[submodule "WISE2-DEV-ARSENAL/upstream/EasySpider"]
+	path = WISE2-DEV-ARSENAL/upstream/EasySpider
+	url = https://github.com/NaiboWang/EasySpider.git
+
+[submodule "WISE2-DEV-ARSENAL/upstream/strix"]
+	path = WISE2-DEV-ARSENAL/upstream/strix
+	url = https://github.com/usestrix/strix.git
