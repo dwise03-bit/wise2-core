@@ -63,6 +63,8 @@ export function WiseImp() {
         ...(tourStop
           ? { top: tourStop.top, left: tourStop.left, bottom: 'auto', right: 'auto' }
           : {
+              top: 'auto',
+              left: 'auto',
               bottom: 'max(20px, calc(20px + env(safe-area-inset-bottom)))',
               right: 'max(20px, calc(20px + env(safe-area-inset-right)))',
             }),

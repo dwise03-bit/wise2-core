@@ -19,13 +19,13 @@
   --wise-white: #FFFFFF;
 
   /* Primary Accent - Neon Lime */
-  --wise-neon-green: #C7FF2E;
-  --wise-green-secondary: #E4FF79;
-  --wise-dark-green: #7DAA00;
+  --wise-neon-green: #8CFF00;
+  --wise-green-secondary: #A7FF2A;
+  --wise-dark-green: #5FFF00;
 
   /* Secondary Accent - Studio Purple */
-  --wise-electric-blue: #B36BFF;
-  --wise-hover-blue: #CC9CFF;
+  --wise-electric-blue: #8D28FF;
+  --wise-hover-blue: #B348FF;
 
   /* Status Colors */
   --wise-success: #22C55E;
@@ -101,6 +101,27 @@
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
 }
+
+/* WISE² United compatibility layer.
+   Older routes contain literal utility colors from the former blue system.
+   Normalize those utilities centrally so every route inherits the homepage
+   identity while preserving each page's layout and content. */
+[class*="text-[#0094FF]"], [class*="text-[#8EDBFF]"], [class*="text-blue-"], [class*="text-cyan-"] { color: var(--wise-neon-green) !important; }
+[class*="border-[#8EDBFF]"], [class*="border-[#0094FF]"], [class*="border-blue-"], [class*="border-cyan-"] { border-color: rgba(140, 255, 0, .32) !important; }
+[class*="bg-[#0094FF]"], [class*="bg-blue-"], [class*="bg-cyan-"] { background-color: var(--wise-neon-green) !important; color: var(--wise-black) !important; }
+[class*="bg-[#DCE7EF]"] { background-color: var(--wise-neon-green) !important; }
+[class*="bg-[#050607]"], [class*="bg-[#0A0E12]"], [class*="bg-[#0F171F]"] { background-color: var(--wise-black) !important; }
+[class*="shadow-glow-blue"], [class*="shadow-[0_0_35px_rgba(0,148,255"] { box-shadow: 0 0 24px rgba(140, 255, 0, .22) !important; }
+
+/* Cross-route surface and geometry normalization */
+body { background: var(--wise-black); }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-headers); letter-spacing: -0.025em; }
+button, a[class*="bg-"], a[class*="border-"], [role="button"] { border-radius: 0 !important; }
+[class*="rounded-full"] { border-radius: 2px !important; }
+[class*="rounded-3xl"], [class*="rounded-2xl"], [class*="rounded-xl"], [class*="rounded-lg"] { border-radius: 3px !important; }
+[class*="bg-white/[0.03]"], [class*="bg-white/[0.04]"], [class*="bg-[#111111]"], [class*="bg-[#10151D]"], [class*="bg-[#0A0E12]"] { background: linear-gradient(145deg, #101510, #080b09) !important; }
+[class*="text-[#B7C0CB]"], [class*="text-[#B7BDC8]"], [class*="text-[#C8D0D9]"], [class*="text-[#AEB8C3]"], [class*="text-gray-"] { color: var(--wise-muted-gray) !important; }
+[class*="hover:bg-[#0F171F]"]:hover, [class*="hover:bg-white/5"]:hover { background: rgba(140,255,0,.08) !important; }
 
 @media (max-width: 639px) {
   [data-wise-imp] {

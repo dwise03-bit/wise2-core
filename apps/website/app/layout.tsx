@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './styles/globals.css';
 import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
+import Script from 'next/script';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -11,16 +12,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'WISE² | Intelligent Tools for Real-World Businesses',
-  description: 'WISE² builds field-ready software, AI workflows, edge systems, and client operating infrastructure for real businesses.',
+  title: 'WISE² | AI Business Operating System',
+  description: 'WISE² builds AI-powered business systems, automation, CRM, websites, phone AI, cloud infrastructure, and digital tools designed to help businesses operate and grow.',
   keywords: 'WISE2, WISE², field operations software, AI workflows, HVAC diagnostics, edge systems, business operating system, client infrastructure',
   robots: 'index, follow',
   metadataBase: new URL('https://wise2.net'),
   openGraph: {
     type: 'website',
     url: 'https://wise2.net',
-    title: 'WISE² | Intelligent Tools for Real-World Businesses',
-    description: 'Field-ready software, AI workflows, edge systems, and client operating infrastructure built by WISE².',
+    title: 'WISE² | AI Business Operating System',
+    description: 'WISE² builds AI-powered business systems, automation, CRM, websites, phone AI, cloud infrastructure, and digital tools designed to help businesses operate and grow.',
     siteName: 'WISE²',
     images: [
       {
@@ -34,8 +35,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WISE² | Intelligent Tools for Real-World Businesses',
-    description: 'Field-ready software, AI workflows, edge systems, and client operating infrastructure built by WISE².',
+    title: 'WISE² | AI Business Operating System',
+    description: 'WISE² builds AI-powered business systems, automation, CRM, websites, phone AI, cloud infrastructure, and digital tools designed to help businesses operate and grow.',
+    creator: '@wise2',
+    site: '@wise2',
   },
   alternates: {
     canonical: 'https://wise2.net',
@@ -55,6 +58,22 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="bg-wise-bg-primary text-wise-text-primary">
+        <link rel="stylesheet" href="/scrollcraft/scrollcraft.css" />
+        <Script src="/scrollcraft/scrollcraft.js" strategy="afterInteractive" />
+        <Script src="/scrollcraft/init.js" strategy="afterInteractive" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'WISE²',
+              url: 'https://wise2.net',
+              logo: 'https://wise2.net/favicon.svg',
+              description: 'AI-powered business systems, automation, CRM, websites, phone AI, cloud infrastructure, and digital tools.',
+            }),
+          }}
+        />
         <ToastProvider>
           <SiteChrome>{children}</SiteChrome>
         </ToastProvider>

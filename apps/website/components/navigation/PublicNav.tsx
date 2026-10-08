@@ -11,11 +11,12 @@ interface NavLink {
 }
 
 const PRIMARY_LINKS: NavLink[] = [
-  { href: '/platform', label: 'Platform' },
-  { href: '/hvac', label: 'HVAC' },
-  { href: '/wise-defense', label: 'Defense' },
-  { href: '/case-studies/get-down', label: 'Case Studies' },
-  { href: '/about', label: 'About' },
+  { href: '/platform', label: 'Products' },
+  { href: '/commerce', label: 'Commerce' },
+  { href: '/solutions', label: 'Solutions' },
+  { href: '/fieldtech', label: 'Industries' },
+  { href: '/work', label: 'Our Work' },
+  { href: '/about', label: 'Company' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -30,20 +31,20 @@ export const PublicNav: React.FC = () => {
   if (!mounted) return null;
 
   return (
-    <nav className="fixed left-0 right-0 top-0 z-50 h-16 border-b border-white/10 bg-[#050607]/94 text-white backdrop-blur-md">
+    <nav className="fixed left-0 right-0 top-0 z-50 h-16 border-b border-[#00B8FF]/35 bg-[#050607]/96 text-white shadow-[0_0_28px_rgba(0,184,255,.12)] backdrop-blur-md">
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex min-h-11 items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+          className="flex min-h-11 items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8CFF00]"
           aria-label="WISE² home"
         >
-          <span className="flex h-9 w-9 items-center justify-center border border-[#8EDBFF]/40 bg-[#DCE7EF] text-sm font-black text-[#050607]">
+          <span className="flex h-9 w-9 items-center justify-center border border-[#00B8FF]/70 bg-gradient-to-br from-white via-[#BFC3C7] to-[#5A6168] text-sm font-black text-[#050607] shadow-[0_0_14px_rgba(0,184,255,.22)]">
             W
           </span>
           <span className="flex flex-col leading-none">
-            <span className="text-base font-black tracking-[0.12em]">WISE²</span>
-            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.26em] text-[#8FA0AE] sm:block">
-              Field-built systems
+            <span className="text-base font-black tracking-[0.12em] text-[#F2F2F2]">WISE² <span className="text-[#00B8FF]">UNITED</span></span>
+            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.26em] text-[#868C86] sm:block">
+              AI business operating system
             </span>
           </span>
         </Link>
@@ -53,7 +54,7 @@ export const PublicNav: React.FC = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="min-h-11 px-3 py-3 text-sm font-semibold text-[#B7C0CB] transition duration-200 hover:bg-white/5 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+              className="min-h-11 px-3 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-[#C9CEC9] transition duration-200 hover:bg-[#00B8FF]/10 hover:text-[#00B8FF] focus:outline-none focus:ring-2 focus:ring-[#00B8FF]"
             >
               {link.label}
             </Link>
@@ -63,14 +64,14 @@ export const PublicNav: React.FC = () => {
         <div className="flex items-center gap-2">
           <Link
             href="/start-your-build"
-            className="hidden min-h-11 items-center bg-[#DCE7EF] px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-[#050607] transition duration-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] md:inline-flex"
+            className="hidden min-h-11 items-center border border-[#00B8FF] bg-[#00B8FF] px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-[#050607] shadow-[0_0_18px_rgba(0,184,255,.35)] transition duration-200 hover:bg-white hover:shadow-[0_0_24px_rgba(0,184,255,.55)] focus:outline-none focus:ring-2 focus:ring-[#00B8FF] md:inline-flex"
           >
             Start
           </Link>
           <button
             type="button"
             onClick={() => setMobileOpen((open) => !open)}
-            className="inline-flex h-11 w-11 items-center justify-center border border-white/15 text-[#DCE7EF] transition hover:border-[#8EDBFF]/60 hover:bg-[#8EDBFF]/10 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF] lg:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center border border-[#00B8FF]/45 text-[#DCE7EF] transition hover:border-[#00B8FF] hover:bg-[#00B8FF]/10 focus:outline-none focus:ring-2 focus:ring-[#00B8FF] lg:hidden"
             aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={mobileOpen}
           >
@@ -93,7 +94,7 @@ export const PublicNav: React.FC = () => {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="min-h-12 bg-[#0A0E12] px-4 py-3 text-sm font-semibold text-[#DCE7EF] transition hover:bg-[#0F171F] focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+                  className="min-h-12 bg-[#0A0E12] px-4 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-[#DCE7EF] transition hover:bg-[#00B8FF]/10 hover:text-[#00B8FF] focus:outline-none focus:ring-2 focus:ring-[#00B8FF]"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
@@ -101,7 +102,7 @@ export const PublicNav: React.FC = () => {
               ))}
               <Link
                 href="/start-your-build"
-                className="mt-2 min-h-12 bg-[#DCE7EF] px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.12em] text-[#050607] focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+                className="mt-2 min-h-12 bg-[#00B8FF] px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.12em] text-[#050607] focus:outline-none focus:ring-2 focus:ring-[#00B8FF]"
                 onClick={() => setMobileOpen(false)}
               >
                 Start Your Build

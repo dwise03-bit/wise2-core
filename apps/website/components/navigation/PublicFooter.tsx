@@ -7,6 +7,8 @@ const footerSections = [
     title: 'Products',
     links: [
       { href: '/platform', label: 'WISE² Core' },
+      { href: '/products/imp', label: 'WISE Imp' },
+      { href: '/products/imps', label: 'IMPS BYTE MINI' },
       { href: '/fieldtech', label: 'WISE² HVAC' },
       { href: '/wise-defense', label: 'WISE Defense' },
       { href: '/soundlab', label: 'SoundLab' },
@@ -39,13 +41,13 @@ export const PublicFooter: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_1.4fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]">
-              <span className="flex h-10 w-10 items-center justify-center bg-[#DCE7EF] text-sm font-black text-[#050607]">
+            <Link href="/" className="inline-flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-[#8CFF00]">
+              <span className="flex h-10 w-10 items-center justify-center border border-[#00B8FF]/70 bg-gradient-to-br from-white via-[#BFC3C7] to-[#5A6168] text-sm font-black text-[#050607]">
                 W
               </span>
               <span>
                 <span className="block text-lg font-black tracking-[0.12em]">WISE²</span>
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-[#8FA0AE]">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.26em] text-[#868C86]">
                   Field-built systems
                 </span>
               </span>
@@ -59,13 +61,13 @@ export const PublicFooter: React.FC = () => {
           <div className="grid gap-8 sm:grid-cols-3">
             {footerSections.map((section) => (
               <div key={section.title}>
-                <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#8EDBFF]">{section.title}</h2>
+                <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#00B8FF]">{section.title}</h2>
                 <ul className="mt-4 space-y-3">
                   {section.links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-sm text-[#AEB8C3] transition hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+                        className="text-sm text-[#AEB8C3] transition hover:text-[#00B8FF] focus:outline-none focus:ring-2 focus:ring-[#00B8FF]"
                       >
                         {link.label}
                       </Link>

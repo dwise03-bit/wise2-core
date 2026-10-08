@@ -27,26 +27,26 @@ module.exports = {
         wise: {
           // WISE² Brand Colors - Core
           'bg-primary': '#050505',
-          'bg-secondary': '#0D1117',
-          'bg-card': '#10151D',
+          'bg-secondary': '#090B09',
+          'bg-card': '#0D100D',
 
           // Text Colors
           'text-primary': '#FFFFFF',
-          'text-secondary': '#C9CED6',
-          'text-muted': '#8D98A5',
+          'text-secondary': '#C9CEC9',
+          'text-muted': '#868C86',
 
           // Primary Brand - Electric Blue (WISE²)
-          'primary': '#0094FF',
-          'primary-hover': '#00A8FF',
-          'primary-active': '#0078D4',
-          'primary-light': '#33B1FF',
-          'primary-border': 'rgba(0, 148, 255, 0.3)',
+          'primary': '#8CFF00',
+          'primary-hover': '#A7FF2A',
+          'primary-active': '#5FFF00',
+          'primary-light': '#BFFF72',
+          'primary-border': 'rgba(140, 255, 0, 0.3)',
 
           // Powered Business Colors
-          'piff-city': '#A63CFF',
-          'piff-city-hover': '#B850FF',
-          'piff-city-active': '#8A28D4',
-          'wise-shine': '#F2B632',
+          'piff-city': '#8D28FF',
+          'piff-city-hover': '#B348FF',
+          'piff-city-active': '#5F00C8',
+          'wise-shine': '#C9A548',
           'wise-shine-hover': '#FFB84D',
           'wise-shine-active': '#D49A1A',
 

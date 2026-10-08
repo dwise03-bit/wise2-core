@@ -50,6 +50,11 @@ export function useImpTour(pathname: string, panelOpen: boolean): TourStop | nul
   const stepRef = useRef(0);
   const selectors = useMemo(() => tourSelectors(pathname), [pathname]);
 
+  // IMPS already has product artwork and device imagery in the foreground.
+  // Do not add a second roaming mascot layer on this route; it collides with
+  // the product visuals and the shared chat launcher/panel.
+  const isImpsProductPage = pathname.startsWith('/products/imps');
+
   // Width lives in state, not in a ref read once inside the effect, so that
   // widening a window actually restarts the tour instead of leaving it off
   // until the next navigation.
@@ -69,7 +74,7 @@ export function useImpTour(pathname: string, panelOpen: boolean): TourStop | nul
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (panelOpen) {
+    if (panelOpen || isImpsProductPage) {
       setStop(null);
       return;
     }
@@ -161,7 +166,7 @@ export function useImpTour(pathname: string, panelOpen: boolean): TourStop | nul
       window.clearInterval(timer);
       reduceMotion.removeEventListener('change', onMotionChange);
     };
-  }, [selectors, panelOpen, pathname, wideEnough]);
+  }, [selectors, panelOpen, pathname, wideEnough, isImpsProductPage]);
 
   return stop;
 }

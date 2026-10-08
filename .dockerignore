@@ -23,3 +23,5 @@ README.md
 *.log
 .idea
 .vscode
+.lcd_diag_backup
+**/.lcd_diag_backup
