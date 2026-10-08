@@ -1,0 +1,1 @@
+{"name":"wise2-game-arsenal","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs","radar":"node tools/radar.mjs","serve":"python3 -m http.server 8080"},"engines":{"node":">=22"}}
