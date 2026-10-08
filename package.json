@@ -1,0 +1,39 @@
+{
+  "name": "wise2-core",
+  "version": "2.0.0",
+  "description": "WISE² Core Platform - Unified monorepo for AI, Trading, Games, 3D, Mobile & IoT",
+  "private": true,
+  "author": "WISE² Team",
+  "license": "MIT",
+  "workspaces": [
+    "core/*",
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "lerna exec --parallel -- npm run dev",
+    "build": "lerna run build --stream",
+    "test": "lerna run test --stream",
+    "lint": "lerna run lint --stream",
+    "format": "lerna exec -- npm run format",
+    "clean": "lerna clean --yes && rm -rf node_modules",
+    "bootstrap": "lerna bootstrap",
+    "version": "lerna version",
+    "publish": "lerna publish",
+    "audit": "npm audit && lerna exec -- npm audit",
+    "graph": "lerna graph"
+  },
+  "devDependencies": {
+    "lerna": "^7.0.0",
+    "@babel/core": "^7.23.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "jest": "^29.7.0",
+    "typescript": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

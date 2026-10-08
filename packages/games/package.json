@@ -1,0 +1,16 @@
+{
+  "name": "@wise2/games",
+  "version": "2.0.0",
+  "description": "WISE² Games & VR Platform",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/config": "*",
+    "three": "^r128",
+    "babylon.js": "^6.0.0",
+    "phaser": "^3.55.0"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  }
+}

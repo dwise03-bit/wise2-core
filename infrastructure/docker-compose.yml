@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  web:
+    build: ../apps/web
+    ports:
+      - "3000:3000"
+  api:
+    build: ../core/api
+    ports:
+      - "8000:8000"
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+volumes:
+  postgres_data:

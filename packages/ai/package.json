@@ -1,0 +1,16 @@
+{
+  "name": "@wise2/ai",
+  "version": "2.0.0",
+  "description": "WISE² AI Tools & LLM Integration",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/api": "*",
+    "@wise2/config": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "start": "node dist/server.js"
+  }
+}

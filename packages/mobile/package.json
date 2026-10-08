@@ -1,0 +1,14 @@
+{
+  "name": "@wise2/mobile",
+  "version": "2.0.0",
+  "description": "WISE² Mobile Apps (iOS/Android PWA)",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/api": "*",
+    "@wise2/config": "*"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  }
+}
