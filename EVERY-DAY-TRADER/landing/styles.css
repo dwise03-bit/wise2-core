@@ -343,8 +343,11 @@ p { margin: 0; }
   .nav-links, .nav-cta { display: none; }
   .nav-toggle { display: flex; }
   .pulse-hud { position: relative; right: auto; bottom: auto; margin: 40px 0 0; width: min(360px, 100%); }
-  .hero { padding-top: 130px; }
-  .hero-status { top: 76px; }
+  .hero { padding-top: 96px; }
+  .hero-status {
+    position: relative; top: auto; left: auto; margin: 0 0 28px;
+    border-radius: 14px; max-width: 100%;
+  }
 }
 @media (max-width: 600px) {
   body { font-size: 15px; }
