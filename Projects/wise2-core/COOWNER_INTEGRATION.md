@@ -1,7 +1,7 @@
 # WISE² Co-Owner Integration Guide
 
 ## Overview
-This document describes the complete integration setup for co-ownership of WISE² between Daniel Wise and Darren Wise Jr.
+This document describes the complete integration setup for co-ownership of WISE² between Daniel Wise and Darrin Wise Jr.
 
 ## Infrastructure Architecture
 
@@ -13,7 +13,7 @@ This document describes the complete integration setup for co-ownership of WISE�
 │  GitHub Repository (dwise03-bit/wise2-core)                 │
 │  ├─ Main branch                                              │
 │  ├─ Automated deployment triggers                            │
-│  └─ Co-owner access (Daniel & Darren)                        │
+│  └─ Co-owner access (Daniel & Darrin)                        │
 │                                                               │
 │  ┌─────────────────┬──────────────────┬────────────────┐    │
 │  │                 │                  │                │    │
@@ -25,7 +25,7 @@ This document describes the complete integration setup for co-ownership of WISE�
 │ ├─ Website        ├─ Display UI       ├─ VPS               │
 │ ├─ Dashboard      └─ Surface TV       ├─ TV Hub            │
 │ ├─ Database                          ├─ Daniel's Mac       │
-│ └─ Services                          └─ Darren's Windows   │
+│ └─ Services                          └─ Darrin's Windows   │
 │                                                               │
 │  Cloudflare (wise2.net)                                      │
 │  ├─ DNS routing                                              │
@@ -42,10 +42,10 @@ This document describes the complete integration setup for co-ownership of WISE�
 
 **Status**: ✅ Repository configured with co-owner access
 - Repository: `dwise03-bit/wise2-core`
-- CODEOWNERS: Daniel Wise (@dwise03-bit) & Darren Wise Jr (@darrinwisejr)
+- CODEOWNERS: Daniel Wise (@dwise03-bit) & Darrin Wise Jr (@darrinwisejr)
 - Branch protection: Enforced on `main`
 
-**Actions needed by Darren**:
+**Actions needed by Darrin**:
 ```bash
 # Accept GitHub collaborator invitation
 # Link: https://github.com/dwise03-bit/wise2-core/invitations
@@ -59,7 +59,7 @@ cd wise2-core
 
 **Status**: ✅ Tailscale mesh network active
 - Daniel's Mac: [daniel-mac.tail1dc3bd.ts.net]
-- Darren's Windows: darrinwisejr.tail1dc3bd.ts.net (100.100.26.47)
+- Darrin's Windows: darrinwisejr.tail1dc3bd.ts.net (100.100.26.47)
 - VPS (gpu-nmls): gpu-nmls.tail1dc3bd.ts.net (100.68.145.5)
 - TV Hub (wise2-surface): wise2-surface.tail1dc3bd.ts.net (100.97.230.73)
 
@@ -195,7 +195,7 @@ ssh dwise@100.97.230.73 "sudo systemctl restart wise2-display"
 - Infrastructure maintenance
 - GitHub repository management
 
-### Darren Wise Jr (@darrinwisejr)
+### Darrin Wise Jr (@darrinwisejr)
 - Windows/deployment management
 - Display & UI coordination
 - Feature development

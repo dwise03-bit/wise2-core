@@ -1,6 +1,6 @@
-# 🔐 Darren SSH & GitHub Sync Checklist
+# 🔐 Darrin SSH & GitHub Sync Checklist
 
-**Status**: Darren is a registered co-owner (@darrinwisejr) — now activating SSH access  
+**Status**: Darrin is a registered co-owner (@darrinwisejr) — now activating SSH access  
 **Date**: 2026-10-08  
 **Last Verified**: main branch clean & synced
 
@@ -24,7 +24,7 @@
 [ ] Verify you're now a collaborator with Write access
 ```
 
-### Step 2: Generate SSH Key (on Darren's Windows Machine)
+### Step 2: Generate SSH Key (on Darrin's Windows Machine)
 ```powershell
 # Open PowerShell or Windows Terminal
 
@@ -40,7 +40,7 @@ Get-Content $env:USERPROFILE\.ssh\github_darren.pub
 ### Step 3: Add SSH Key to GitHub
 ```
 [ ] Go to: https://github.com/settings/ssh/new
-[ ] Title: "Windows PC - Darren"
+[ ] Title: "Windows PC - Darrin"
 [ ] Paste the public key from Step 2
 [ ] Click "Add SSH Key"
 ```
@@ -50,7 +50,7 @@ Get-Content $env:USERPROFILE\.ssh\github_darren.pub
 # Tell git which SSH key to use
 git config --global core.sshCommand "ssh -i ~/.ssh/github_darren"
 
-# Verify git SSH user (should show Darren's username)
+# Verify git SSH user (should show Darrin's username)
 ssh -T git@github.com
 # Expected: "Hi darrinwisejr! You've successfully authenticated..."
 ```
@@ -86,7 +86,7 @@ git remote -v
 
 ## 📋 Verification Commands
 
-Run these on Darren's machine to confirm full sync:
+Run these on Darrin's machine to confirm full sync:
 
 ```bash
 # 1. SSH auth working?
@@ -110,7 +110,7 @@ git log --oneline -1
 
 ## 🎯 Next: Collaboration Ready
 
-Once all steps above are ✅, Darren can:
+Once all steps above are ✅, Darrin can:
 - [ ] Create feature branches: `git checkout -b feat/feature-name`
 - [ ] Push to GitHub: `git push origin feat/feature-name`
 - [ ] Create Pull Requests
@@ -152,4 +152,4 @@ Once all steps above are ✅, Darren can:
 
 ---
 
-**Goal**: ✅ Darren fully synced and ready to collaborate on main branch
+**Goal**: ✅ Darrin fully synced and ready to collaborate on main branch

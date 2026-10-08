@@ -1,4 +1,4 @@
-# WISE² Co-Owner Handoff — Darren Wise Jr
+# WISE² Co-Owner Handoff — Darrin Wise Jr
 
 **Date**: October 7, 2026  
 **Status**: ✅ FULLY ACTIVATED & OPERATIONAL  
@@ -398,7 +398,7 @@ For critical issues, reach out immediately.
 - Keep security tight — your access keys are valuable
 - Have fun — you're building production infrastructure!
 
-**Welcome aboard, Darren. Let's build something great together.**
+**Welcome aboard, Darrin. Let's build something great together.**
 
 ---
 

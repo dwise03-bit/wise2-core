@@ -1,9 +1,9 @@
 # WISE² Co-Owner Setup Verification Script
-# Run this in PowerShell to verify Darren's complete setup
+# Run this in PowerShell to verify Darrin's complete setup
 
 Write-Host "======================================"
 Write-Host "WISE² Co-Owner Setup Verification"
-Write-Host "Darren Wise Jr"
+Write-Host "Darrin Wise Jr"
 Write-Host "======================================"
 Write-Host ""
 
@@ -136,7 +136,7 @@ Write-Host "[8/8] Checking Recent Deployments..." -ForegroundColor Cyan
 try {
     $repopath = "$env:USERPROFILE\Projects\wise2-core"
     $commits = git -C "$repopath" log --oneline -5 2>&1
-    if ($commits -match "DEPLOYMENT_TEST" -or $commits -match "Darren") {
+    if ($commits -match "DEPLOYMENT_TEST" -or $commits -match "Darrin") {
         Write-Host "✅ Recent Deployment Test Found" -ForegroundColor Green
         Write-Host "   Recent commits:" -ForegroundColor Gray
         $commits | ForEach-Object { Write-Host "   · $_" -ForegroundColor Gray }
@@ -160,7 +160,7 @@ Write-Host "❌ Failed: $failed" -ForegroundColor Red
 if ($failed -eq 0) {
     Write-Host ""
     Write-Host "🎉 ALL SYSTEMS OPERATIONAL!" -ForegroundColor Green
-    Write-Host "Darren, you are fully set up as a WISE² co-owner." -ForegroundColor Green
+    Write-Host "Darrin, you are fully set up as a WISE² co-owner." -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "1. Install Claude Desktop App: https://claude.ai/download" -ForegroundColor Cyan
