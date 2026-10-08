@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blakkhail Admin TV Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #000;
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tv-container {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #04070d 0%, #1a1f2e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(14px, 3vw, 48px);
+    }
+
+    .tv-login-card {
+      width: 90%;
+      max-width: 1200px;
+      background: rgba(10, 12, 20, 0.9);
+      border: 3px solid #e8c56b;
+      border-radius: 20px;
+      padding: clamp(2rem, 5vw, 4rem);
+      backdrop-filter: blur(10px);
+    }
+
+    .tv-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .tv-header h1 {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: #e8c56b;
+      margin-bottom: 1rem;
+      text-shadow: 0 4px 20px rgba(232, 197, 107, 0.3);
+    }
+
+    .tv-header p {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      color: #aaa;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .tv-form {
+      display: grid;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .tv-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .tv-form-group label {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #ccc;
+    }
+
+    .tv-form-group input {
+      padding: clamp(1rem, 2vw, 1.5rem);
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #555;
+      border-radius: 8px;
+      color: #fff;
+      font-size: clamp(1.25rem, 2.5vw, 2rem);
+      font-family: Arial, Helvetica, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .tv-form-group input:focus {
+      outline: none;
+      border-color: #e8c56b;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 20px rgba(232, 197, 107, 0.2);
+    }
+
+    .tv-button-container {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .tv-submit-btn {
+      padding: clamp(1rem, 2vw, 1.5rem) clamp(2rem, 4vw, 4rem);
+      background: #e8c56b;
+      color: #04070d;
+      border: none;
+      border-radius: 8px;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 300px;
+      box-shadow: 0 8px 20px rgba(232, 197, 107, 0.2);
+    }
+
+    .tv-submit-btn:hover {
+      background: #f5d98d;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(232, 197, 107, 0.3);
+    }
+
+    .tv-submit-btn:active {
+      transform: translateY(-2px);
+    }
+
+    .tv-submit-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .tv-status-messages {
+      text-align: center;
+      min-height: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .tv-error-message {
+      display: none;
+      padding: clamp(1rem, 2vw, 1.5rem);
+      background: rgba(239, 68, 68, 0.15);
+      border: 2px solid #ef4444;
+      border-radius: 8px;
+      color: #fca5a5;
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+    }
+
+    .tv-error-message.show {
+      display: block;
+    }
+
+    .tv-success-message {
+      display: none;
+      padding: clamp(1rem, 2vw, 1.5rem);
+      background: rgba(34, 197, 94, 0.15);
+      border: 2px solid #22c55e;
+      border-radius: 8px;
+      color: #86efac;
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+    }
+
+    .tv-success-message.show {
+      display: block;
+    }
+
+    .tv-footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 2px solid #333;
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      color: #666;
+    }
+
+    .tv-demo-text {
+      display: block;
+      margin-bottom: 1rem;
+      color: #888;
+    }
+
+    .tv-demo-text code {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      color: #e8c56b;
+      font-family: 'Monaco', 'Courier New', monospace;
+      margin: 0.5rem;
+      font-weight: bold;
+    }
+
+    .tv-loading {
+      display: none;
+      text-align: center;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: #e8c56b;
+      margin-top: 1rem;
+    }
+
+    .tv-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #555;
+      border-top-color: #e8c56b;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* TV remote friendly - larger touch targets */
+    @media (max-height: 600px) {
+      .tv-login-card {
+        padding: 2rem 3rem;
+      }
+      .tv-form {
+        gap: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tv-container">
+    <div class="tv-login-card">
+      <div class="tv-header">
+        <h1>BLAKKHAIL</h1>
+        <p>Admin Portal</p>
+      </div>
+
+      <div class="tv-status-messages">
+        <div class="tv-error-message" id="tvErrorMessage"></div>
+        <div class="tv-success-message" id="tvSuccessMessage"></div>
+      </div>
+
+      <form id="tvLoginForm">
+        <div class="tv-form">
+          <div class="tv-form-group">
+            <label for="tvEmail">Email Address</label>
+            <input
+              type="email"
+              id="tvEmail"
+              name="email"
+              required
+              placeholder="owner@example.com"
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="tv-form-group">
+            <label for="tvPassword">Password</label>
+            <input
+              type="password"
+              id="tvPassword"
+              name="password"
+              required
+              placeholder="••••••••"
+              autocomplete="current-password"
+            >
+          </div>
+        </div>
+
+        <div class="tv-button-container">
+          <button type="submit" class="tv-submit-btn" id="tvSubmitBtn">Login</button>
+        </div>
+
+        <div class="tv-loading" id="tvLoadingIndicator">
+          <div class="tv-spinner"></div>
+          Processing...
+        </div>
+      </form>
+
+      <div class="tv-footer">
+        <div class="tv-demo-text">
+          <strong>Demo Credentials:</strong>
+        </div>
+        <div>
+          <code>blakkhail@gmail.com</code>
+        </div>
+        <div>
+          <code>Piffcity</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3014';
+
+    const form = document.getElementById('tvLoginForm');
+    const emailInput = document.getElementById('tvEmail');
+    const passwordInput = document.getElementById('tvPassword');
+    const submitBtn = document.getElementById('tvSubmitBtn');
+    const loadingIndicator = document.getElementById('tvLoadingIndicator');
+    const errorMessage = document.getElementById('tvErrorMessage');
+    const successMessage = document.getElementById('tvSuccessMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError('Email and password are required');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      loadingIndicator.style.display = 'block';
+      clearMessages();
+
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.error || 'Login failed');
+          return;
+        }
+
+        showSuccess('Login successful! Redirecting...');
+
+        // Store token in localStorage
+        localStorage.setItem('blakkhail-admin-token', data.token);
+        localStorage.setItem('blakkhail-admin-user', JSON.stringify(data.user));
+
+        // Redirect to admin dashboard after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/blakkhail-admin-dashboard.html';
+        }, 2000);
+
+      } catch (err) {
+        showError('Connection error. Make sure the admin service is running.');
+        console.error('Login error:', err);
+      } finally {
+        submitBtn.disabled = false;
+        loadingIndicator.style.display = 'none';
+      }
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.add('show');
+    }
+
+    function clearMessages() {
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+    }
+
+    // Pre-fill demo credentials in development
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      emailInput.value = 'blakkhail@gmail.com';
+      passwordInput.focus();
+    }
+  </script>
+</body>
+</html>
