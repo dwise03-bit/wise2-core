@@ -113,7 +113,7 @@ try {
 # Test 7: Project Structure
 Write-Host "[7/8] Checking Project Files..." -ForegroundColor Cyan
 $files_to_check = @(
-    "$env:USERPROFILE\Projects\wise2-core\DARREN_COOWNER_HANDOFF.md",
+    "$env:USERPROFILE\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md",
     "$env:USERPROFILE\Projects\wise2-core\.github\workflows\deploy.yml",
     "$env:USERPROFILE\Projects\wise2-core\scripts\deploy-display.sh"
 )
@@ -164,7 +164,7 @@ if ($failed -eq 0) {
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "1. Install Claude Desktop App: https://claude.ai/download" -ForegroundColor Cyan
-    Write-Host "2. Read: $env:USERPROFILE\Projects\wise2-core\DARREN_COOWNER_HANDOFF.md" -ForegroundColor Cyan
+    Write-Host "2. Read: $env:USERPROFILE\Projects\wise2-core\DARRIN_COOWNER_HANDOFF.md" -ForegroundColor Cyan
     Write-Host "3. Test your first deployment: git checkout -b feature/test" -ForegroundColor Cyan
 } else {
     Write-Host ""
