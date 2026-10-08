@@ -1,0 +1,369 @@
+{
+  "generatedAt": "2026-10-08T02:34:00Z",
+  "execution": "Live GitHub connector reads; original radar collector executed locally against these live API snapshots. No GitHub Actions dispatch was available.",
+  "trackedCount": 25,
+  "changes": [
+    {
+      "repository": "playcanvas/engine",
+      "changed": [
+        "observedCommit"
+      ],
+      "before": {
+        "repository": "playcanvas/engine",
+        "url": "https://github.com/playcanvas/engine",
+        "lane": "web3d",
+        "license": "MIT",
+        "observedCommit": "05ce90eb09a0c40329f023969185ab8cdb918971",
+        "commitDate": "2026-10-07T21:22:58Z",
+        "lastPush": "2026-10-07T21:24:53Z",
+        "latestStableRelease": "v2.23.1",
+        "releaseDate": "2026-10-07T10:49:32Z",
+        "archived": false,
+        "decision": "USE",
+        "status": "approved candidate; not installed"
+      },
+      "after": {
+        "observedCommit": "7cd1be30f3f9ce97e346b2b5e8c370a9cdbba1c9",
+        "latestStableRelease": "v2.23.1",
+        "license": "MIT",
+        "archived": false
+      },
+      "decision": "REVIEW"
+    }
+  ],
+  "prioritizedCandidates": [
+    {
+      "repository": "TokisanGames/Terrain3D",
+      "url": "https://github.com/TokisanGames/Terrain3D",
+      "description": "A high performance, editable terrain system for Godot 4.",
+      "license": "MIT",
+      "lastPush": "2026-10-07T10:20:39Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "TheDuckCow/godot-road-generator",
+      "url": "https://github.com/TheDuckCow/godot-road-generator",
+      "description": "A Godot plugin for creating 3D highways/streets and lane-following traffic",
+      "license": "MIT",
+      "lastPush": "2026-10-08T02:31:18Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "Maaack/Godot-Game-Template",
+      "url": "https://github.com/Maaack/Godot-Game-Template",
+      "description": "Godot template with a main menu, options menus, pause menu, credits, scene loader, extra tools, and an example game scene.",
+      "license": "MIT",
+      "lastPush": "2026-09-10T19:50:33Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "StereoKit/StereoKit",
+      "url": "https://github.com/StereoKit/StereoKit",
+      "description": "An easy-to-use XR engine for building AR and VR applications with C# and OpenXR!",
+      "license": "MIT",
+      "lastPush": "2026-10-08T02:06:47Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "bjornbytes/lovr",
+      "url": "https://github.com/bjornbytes/lovr",
+      "description": "Lua Virtual Reality Framework",
+      "license": "MIT",
+      "lastPush": "2026-10-07T18:17:48Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "RodZill4/material-maker",
+      "url": "https://github.com/RodZill4/material-maker",
+      "description": "A procedural textures authoring and 3D model painting tool based on the Godot game engine",
+      "license": "MIT",
+      "lastPush": "2026-10-07T05:09:54Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "inspect exact revision, dependencies and assets; test before importing"
+    },
+    {
+      "repository": "nobodywho-ooo/nobodywho",
+      "url": "https://github.com/nobodywho-ooo/nobodywho",
+      "description": "NobodyWho is an inference engine that lets you run LLMs locally and efficiently on any device.  ",
+      "license": "EUPL-1.2",
+      "lastPush": "2026-10-07T15:05:24Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "external evaluation only; copyleft review before source import"
+    },
+    {
+      "repository": "Sollumz/Sollumz",
+      "url": "https://github.com/Sollumz/Sollumz",
+      "description": "Grand Theft Auto V modding suite for Blender. This add-on allows the creation of modded game assets: 3D models, maps, interiors, animations, etc.",
+      "license": "GPL-3.0",
+      "lastPush": "2026-09-27T22:41:35Z",
+      "decision": "WATCH",
+      "integrationStatus": "not installed",
+      "restriction": "external evaluation only; copyleft review before source import"
+    }
+  ],
+  "searchResults": [
+    {
+      "topic": "openxr",
+      "repository": "LWJGL/lwjgl3",
+      "url": "https://github.com/LWJGL/lwjgl3"
+    },
+    {
+      "topic": "openxr",
+      "repository": "bjornbytes/lovr",
+      "url": "https://github.com/bjornbytes/lovr"
+    },
+    {
+      "topic": "openxr",
+      "repository": "WiVRn/WiVRn",
+      "url": "https://github.com/WiVRn/WiVRn"
+    },
+    {
+      "topic": "openxr",
+      "repository": "wayvr-org/wayvr",
+      "url": "https://github.com/wayvr-org/wayvr"
+    },
+    {
+      "topic": "openxr",
+      "repository": "KhronosGroup/OpenXR-SDK",
+      "url": "https://github.com/KhronosGroup/OpenXR-SDK"
+    },
+    {
+      "topic": "openxr",
+      "repository": "icosa-foundation/open-brush",
+      "url": "https://github.com/icosa-foundation/open-brush"
+    },
+    {
+      "topic": "openxr",
+      "repository": "StereoKit/StereoKit",
+      "url": "https://github.com/StereoKit/StereoKit"
+    },
+    {
+      "topic": "openxr",
+      "repository": "DiligentGraphics/DiligentCore",
+      "url": "https://github.com/DiligentGraphics/DiligentCore"
+    },
+    {
+      "topic": "openxr",
+      "repository": "OpenKneeboard/OpenKneeboard",
+      "url": "https://github.com/OpenKneeboard/OpenKneeboard"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "rehan-remade/universal-modder",
+      "url": "https://github.com/rehan-remade/universal-modder"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "FWGS/xash3d-fwgs",
+      "url": "https://github.com/FWGS/xash3d-fwgs"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "LostArtefacts/TRX",
+      "url": "https://github.com/LostArtefacts/TRX"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "Kizzuwatnaa/DLSS5-Autopilot",
+      "url": "https://github.com/Kizzuwatnaa/DLSS5-Autopilot"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "thpatch/thcrap",
+      "url": "https://github.com/thpatch/thcrap"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "Sollumz/Sollumz",
+      "url": "https://github.com/Sollumz/Sollumz"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "xenia-canary/game-patches",
+      "url": "https://github.com/xenia-canary/game-patches"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "touhouworldcup/thprac",
+      "url": "https://github.com/touhouworldcup/thprac"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "Ekey/REE.PAK.Tool",
+      "url": "https://github.com/Ekey/REE.PAK.Tool"
+    },
+    {
+      "topic": "game-modding",
+      "repository": "NIGos/dlss5-bridge",
+      "url": "https://github.com/NIGos/dlss5-bridge"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "liangxiegame/QFramework",
+      "url": "https://github.com/liangxiegame/QFramework"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "TokisanGames/Terrain3D",
+      "url": "https://github.com/TokisanGames/Terrain3D"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "hi-godot/godot-ai",
+      "url": "https://github.com/hi-godot/godot-ai"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "Maaack/Godot-Game-Template",
+      "url": "https://github.com/Maaack/Godot-Game-Template"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "CraterCrash/godot-orchestrator",
+      "url": "https://github.com/CraterCrash/godot-orchestrator"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "nobodywho-ooo/nobodywho",
+      "url": "https://github.com/nobodywho-ooo/nobodywho"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "2shady4u/godot-sqlite",
+      "url": "https://github.com/2shady4u/godot-sqlite"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "TheDuckCow/godot-road-generator",
+      "url": "https://github.com/TheDuckCow/godot-road-generator"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "youichi-uda/godot-mcp-pro",
+      "url": "https://github.com/youichi-uda/godot-mcp-pro"
+    },
+    {
+      "topic": "godot-plugin",
+      "repository": "InvadingOctopus/comedot",
+      "url": "https://github.com/InvadingOctopus/comedot"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "JACoders/OpenJK",
+      "url": "https://github.com/JACoders/OpenJK"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "FreezingMoon/AncientBeast",
+      "url": "https://github.com/FreezingMoon/AncientBeast"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "multitheftauto/mtasa-blue",
+      "url": "https://github.com/multitheftauto/mtasa-blue"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "TeamHypersomnia/Hypersomnia",
+      "url": "https://github.com/TeamHypersomnia/Hypersomnia"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "TheSuperHackers/GeneralsGameCode",
+      "url": "https://github.com/TheSuperHackers/GeneralsGameCode"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "Quaver/Quaver",
+      "url": "https://github.com/Quaver/Quaver"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "oil-oil/wolfcha",
+      "url": "https://github.com/oil-oil/wolfcha"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "etlegacy/etlegacy",
+      "url": "https://github.com/etlegacy/etlegacy"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "openmultiplayer/open.mp",
+      "url": "https://github.com/openmultiplayer/open.mp"
+    },
+    {
+      "topic": "multiplayer-game",
+      "repository": "damian-pastorini/reldens",
+      "url": "https://github.com/damian-pastorini/reldens"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "GraphiteEditor/Graphite",
+      "url": "https://github.com/GraphiteEditor/Graphite"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "louis-e/arnis",
+      "url": "https://github.com/louis-e/arnis"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "img2threejs/img2threejs",
+      "url": "https://github.com/img2threejs/img2threejs"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "PixiEditor/PixiEditor",
+      "url": "https://github.com/PixiEditor/PixiEditor"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "veloren/veloren",
+      "url": "https://github.com/veloren/veloren"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "Azgaar/Fantasy-Map-Generator",
+      "url": "https://github.com/Azgaar/Fantasy-Map-Generator"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "RodZill4/material-maker",
+      "url": "https://github.com/RodZill4/material-maker"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "PixelGuys/Cubyz",
+      "url": "https://github.com/PixelGuys/Cubyz"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "jasonwebb/morphogenesis-resources",
+      "url": "https://github.com/jasonwebb/morphogenesis-resources"
+    },
+    {
+      "topic": "procedural-generation",
+      "repository": "pioneerspacesim/pioneer",
+      "url": "https://github.com/pioneerspacesim/pioneer"
+    }
+  ],
+  "errors": [],
+  "deploymentStatus": {
+    "authGateway": "failed after merge; Vercel logs unavailable",
+    "wise2Jocredit": "failed after merge; Vercel logs unavailable"
+  },
+  "installedUpdates": 0
+}
