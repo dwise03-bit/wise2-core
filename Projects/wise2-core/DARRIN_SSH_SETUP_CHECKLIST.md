@@ -29,12 +29,12 @@
 # Open PowerShell or Windows Terminal
 
 # Generate SSH key (ed25519 is modern & secure)
-ssh-keygen -t ed25519 -f $env:USERPROFILE\.ssh\github_darrin -C "wisevillain86 WISE2"
+ssh-keygen -t ed25519 -f $env:USERPROFILE\.ssh\id_ed25519_wise2 -C "wisevillain86 WISE2"
 
 # Press Enter 2x (no passphrase needed)
 
 # View the public key (copy this)
-Get-Content $env:USERPROFILE\.ssh\github_darrin.pub
+Get-Content $env:USERPROFILE\.ssh\id_ed25519_wise2.pub
 ```
 
 ### Step 3: Add SSH Key to GitHub
@@ -48,7 +48,7 @@ Get-Content $env:USERPROFILE\.ssh\github_darrin.pub
 ### Step 4: Configure Git (on Windows)
 ```bash
 # Tell git which SSH key to use
-git config --global core.sshCommand "ssh -i ~/.ssh/github_darrin"
+git config --global core.sshCommand "ssh -i ~/.ssh/id_ed25519_wise2"
 
 # Verify git SSH user (should show Darrin's username)
 ssh -T git@github.com
@@ -123,12 +123,12 @@ Once all steps above are ✅, Darrin can:
 ## ❌ Troubleshooting
 
 **"Permission denied (publickey)"** — SSH key not found
-- Verify key path: `~/.ssh/github_darrin` exists
+- Verify key path: `~/.ssh/id_ed25519_wise2` exists
 - Verify GitHub has the key: https://github.com/settings/ssh/new
-- Re-run: `git config --global core.sshCommand "ssh -i ~/.ssh/github_darrin"`
+- Re-run: `git config --global core.sshCommand "ssh -i ~/.ssh/id_ed25519_wise2"`
 
 **"Could not authenticate"** — GitHub key mismatch
-- Check fingerprint: `ssh-keygen -lf ~/.ssh/github_darrin.pub`
+- Check fingerprint: `ssh-keygen -lf ~/.ssh/id_ed25519_wise2.pub`
 - Compare with GitHub: https://github.com/settings/ssh/new
 - Regenerate if needed
 
