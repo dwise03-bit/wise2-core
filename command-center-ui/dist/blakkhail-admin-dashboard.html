@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blakkhail Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #04070d 0%, #1a1f2e 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: rgba(10, 12, 20, 0.8);
+      border-bottom: 1px solid #333;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #e8c56b;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .user-email {
+      font-size: 0.875rem;
+      color: #aaa;
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: #666;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: #888;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .card {
+      background: rgba(10, 12, 20, 0.8);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #e8c56b;
+    }
+
+    .card p {
+      color: #aaa;
+      line-height: 1.6;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .info-item {
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid #444;
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #e8c56b;
+      word-break: break-all;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid #22c55e;
+      border-radius: 4px;
+      color: #86efac;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #999;
+    }
+
+    .error {
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      border-radius: 4px;
+      color: #fca5a5;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>BLAKKHAIL ADMIN</h1>
+    <div class="user-info">
+      <div>
+        <div style="font-size: 0.75rem; color: #666; text-transform: uppercase;">Logged in as</div>
+        <div class="user-email" id="userEmail">Loading...</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="authError" class="error" style="display: none;"></div>
+
+    <div id="loadingContent" class="loading">
+      <p>Verifying authentication...</p>
+    </div>
+
+    <div id="mainContent" style="display: none;">
+      <div class="card">
+        <h2>Welcome to Blakkhail Admin Portal</h2>
+        <p>You are logged in as an administrator with full access to manage the Blakkhail storefront.</p>
+      </div>
+
+      <div class="card">
+        <h2>Account Information</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value" id="dashboardEmail">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Role</div>
+            <div class="info-value" id="dashboardRole">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Account ID</div>
+            <div class="info-value" id="dashboardId" style="font-size: 0.875rem;">-</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Status</div>
+            <div style="margin-top: 0.5rem;">
+              <span class="status">Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Quick Actions</h2>
+        <p>Additional admin features and settings will be available here.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3014';
+    const token = localStorage.getItem('blakkhail-admin-token');
+    const user = JSON.parse(localStorage.getItem('blakkhail-admin-user') || '{}');
+
+    async function verifySession() {
+      if (!token) {
+        redirectToLogin();
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/verify`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          redirectToLogin();
+          return;
+        }
+
+        const data = await response.json();
+        displayDashboard(data.user);
+      } catch (err) {
+        showError('Failed to verify session: ' + err.message);
+      }
+    }
+
+    function displayDashboard(userData) {
+      document.getElementById('userEmail').textContent = userData.email;
+      document.getElementById('dashboardEmail').textContent = userData.email;
+      document.getElementById('dashboardRole').textContent = userData.role.toUpperCase();
+      document.getElementById('dashboardId').textContent = userData.id;
+
+      document.getElementById('loadingContent').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('authError');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      document.getElementById('loadingContent').style.display = 'none';
+    }
+
+    function redirectToLogin() {
+      localStorage.removeItem('blakkhail-admin-token');
+      localStorage.removeItem('blakkhail-admin-user');
+      window.location.href = '/blakkhail-admin-login.html';
+    }
+
+    async function logout() {
+      try {
+        await fetch(`${API_BASE}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (err) {
+        console.error('Logout error:', err);
+      }
+      redirectToLogin();
+    }
+
+    // Verify session on page load
+    verifySession();
+  </script>
+</body>
+</html>

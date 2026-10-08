@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blakkhail Admin Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #04070d 0%, #1a1f2e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+      background: rgba(10, 12, 20, 0.8);
+      border: 1px solid #333;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: #e8c56b;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      font-size: 0.875rem;
+      color: #aaa;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #ccc;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #e8c56b;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(232, 197, 107, 0.1);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #e8c56b;
+      color: #04070d;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background: #f5d98d;
+      transform: translateY(-2px);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      display: none;
+      padding: 0.75rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      border-radius: 4px;
+      color: #fca5a5;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .success-message {
+      display: none;
+      padding: 0.75rem;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid #22c55e;
+      border-radius: 4px;
+      color: #86efac;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #555;
+      border-top-color: #e8c56b;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .demo-creds {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #333;
+      font-size: 0.75rem;
+      color: #666;
+      text-align: center;
+    }
+
+    .demo-creds code {
+      display: block;
+      margin: 0.25rem 0;
+      color: #999;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h1>BLAKKHAIL</h1>
+      <p>Admin Portal</p>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="owner@example.com"
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="••••••••"
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Login</button>
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+      </div>
+    </form>
+
+    <div class="demo-creds">
+      <strong>Demo Credentials:</strong>
+      <code>Email: blakkhail@gmail.com</code>
+      <code>Password: Piffcity</code>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:3014';
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        showError('Email and password are required');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      loadingIndicator.style.display = 'block';
+      clearMessages();
+
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showError(data.error || 'Login failed');
+          return;
+        }
+
+        showSuccess('Login successful! Redirecting...');
+
+        // Store token in localStorage
+        localStorage.setItem('blakkhail-admin-token', data.token);
+        localStorage.setItem('blakkhail-admin-user', JSON.stringify(data.user));
+
+        // Redirect to admin dashboard after 1 second
+        setTimeout(() => {
+          window.location.href = '/blakkhail-admin-dashboard.html';
+        }, 1000);
+
+      } catch (err) {
+        showError('Connection error. Make sure the admin service is running on port 3014.');
+        console.error('Login error:', err);
+      } finally {
+        submitBtn.disabled = false;
+        loadingIndicator.style.display = 'none';
+      }
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.add('show');
+    }
+
+    function clearMessages() {
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+    }
+
+    // Pre-fill demo credentials in development
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      emailInput.value = 'blakkhail@gmail.com';
+      passwordInput.focus();
+    }
+  </script>
+</body>
+</html>

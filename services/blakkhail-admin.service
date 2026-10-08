@@ -1,0 +1,28 @@
+[Unit]
+Description=Blakkhail Admin Authentication Service
+After=network.target
+StartLimitBurst=5
+StartLimitIntervalSec=30
+
+[Service]
+Type=simple
+User=dwise
+WorkingDirectory=/home/dwise/wise2-level-up
+ExecStart=/usr/bin/node /home/dwise/wise2-level-up/services/blakkhail-admin.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=blakkhail-admin
+Environment="BLAKKHAIL_ADMIN_PORT=3014"
+Environment="NODE_ENV=production"
+
+# Security
+PrivateTmp=yes
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/tmp
+
+[Install]
+WantedBy=multi-user.target
