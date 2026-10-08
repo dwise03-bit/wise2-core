@@ -361,9 +361,5 @@
     }
   ],
   "errors": [],
-  "deploymentStatus": {
-    "authGateway": "failed after merge; Vercel logs unavailable",
-    "wise2Jocredit": "failed after merge; Vercel logs unavailable"
-  },
   "installedUpdates": 0
 }
