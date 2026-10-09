@@ -17,8 +17,8 @@ import {
   Volume2,
   FileText,
 } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import Tabs from '@/components/ui/Tabs'
 import { Input } from '@/components/ui/Input'
 import Checkbox from '@/components/ui/Checkbox'

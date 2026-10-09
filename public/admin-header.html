@@ -1,0 +1,106 @@
+<style>
+  .blakkhail-admin-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: rgba(0, 0, 0, 0.9);
+    border-left: 2px solid #e8c56b;
+    border-bottom: 2px solid #e8c56b;
+    border-radius: 0 0 0 8px;
+  }
+
+  .blakkhail-admin-btn {
+    padding: 0.75rem 1.5rem;
+    background: #e8c56b;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .blakkhail-admin-btn:hover {
+    background: #f5d98d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(232, 197, 107, 0.3);
+  }
+
+  .blakkhail-admin-logout {
+    background: #22c55e;
+  }
+
+  .blakkhail-admin-logout:hover {
+    background: #16a34a;
+  }
+
+  @media (max-width: 600px) {
+    .blakkhail-admin-header {
+      padding: 0.75rem 1rem;
+      border-radius: 0 0 0 4px;
+    }
+    .blakkhail-admin-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<div class="blakkhail-admin-header" id="adminHeader">
+  <a href="/blakkhail-admin-tv-login.html" class="blakkhail-admin-btn" id="adminBtn">
+    🔐 Admin Login
+  </a>
+</div>
+
+<script>
+  (function() {
+    function updateAdminHeader() {
+      const token = localStorage.getItem('blakkhail-admin-token');
+      const user = JSON.parse(localStorage.getItem('blakkhail-admin-user') || '{}');
+      const adminBtn = document.getElementById('adminBtn');
+
+      if (token && user.email) {
+        adminBtn.innerHTML = '✓ ' + user.email;
+        adminBtn.href = '/blakkhail-admin-dashboard.html';
+        adminBtn.className = 'blakkhail-admin-btn blakkhail-admin-logout';
+        adminBtn.onclick = function(e) {
+          e.preventDefault();
+          fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          }).then(() => {
+            localStorage.removeItem('blakkhail-admin-token');
+            localStorage.removeItem('blakkhail-admin-user');
+            window.location.href = '/blakkhail-admin-tv-login.html';
+          });
+        };
+      }
+    }
+
+    // Update on page load
+    updateAdminHeader();
+
+    // Listen for storage changes (logout from another tab)
+    window.addEventListener('storage', updateAdminHeader);
+
+    // Keyboard shortcut: Ctrl+Shift+A for admin
+    document.addEventListener('keydown', function(event) {
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'A') {
+        const token = localStorage.getItem('blakkhail-admin-token');
+        if (token) {
+          window.location.href = '/blakkhail-admin-dashboard.html';
+        } else {
+          window.location.href = '/blakkhail-admin-tv-login.html';
+        }
+      }
+    });
+  })();
+</script>

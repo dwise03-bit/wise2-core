@@ -102,3 +102,6 @@ The homepage should feel like the poster brought to life:
 **Last Updated**: 2026-08-16  
 **Maintained By**: Daniel Wise (Founder)  
 **Status**: Canonical Brand Reference
+
+## Canonical Brand Source
+`docs/WISE2_LIVING_HIVE_BRAND_LOCK.md` is the global parent-brand source of truth. Living Hive + AI Business Operating System supersedes older generic neon/cyberpunk parent-brand direction. Preserve explicitly scoped sub-brand/client locks.

@@ -480,3 +480,6 @@ Before UI work, read `WISE2_UI_CONSTITUTION.md` and follow `WISE2_WORKFLOW_STAND
 ## Shared Claude/Codex Workflows
 
 Use `.agents/skills/` for focused WISE² workflows and `.claude/skills/` for Claude-specific adapters. Prefer `scripts/wise2-preflight.sh`, `scripts/wise2-mobile.sh`, `scripts/wise2-vps.sh`, and `scripts/wise2-sync.sh` over ad-hoc environment changes. Do not expose secrets or signing credentials, and do not silently fall back to a large local model.
+
+## Global WISE² Brand Lock (2026-10-06)
+For all parent-brand and first-party WISE² UI, product, marketing, demo, and agent work, read `docs/WISE2_LIVING_HIVE_BRAND_LOCK.md` before implementation. It is the canonical global WISE² brand direction and overrides older parent-brand guidance when they conflict. Preserve explicitly scoped sub-brand/client locks.

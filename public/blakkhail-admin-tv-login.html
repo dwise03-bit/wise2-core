@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blakkhail Admin - Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Arial', sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .login-container {
+      background: rgba(20, 20, 20, 0.9);
+      border: 3px solid #e8c56b;
+      border-radius: 12px;
+      padding: clamp(2rem, 5vw, 4rem);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 40px rgba(232, 197, 107, 0.2);
+    }
+    h1 { 
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.1em;
+      text-align: center;
+      color: #e8c56b;
+    }
+    .subtitle {
+      font-size: clamp(0.75rem, 2vw, 1rem);
+      color: #999;
+      text-align: center;
+      margin-bottom: 3rem;
+      letter-spacing: 0.05em;
+    }
+    .form-group {
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-size: clamp(0.875rem, 2vw, 1rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    input {
+      width: 100%;
+      padding: clamp(0.75rem, 2vw, 1rem);
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #e8c56b;
+      border-radius: 6px;
+      color: #fff;
+      font-size: clamp(0.875rem, 2vw, 1rem);
+    }
+    input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    button {
+      width: 100%;
+      padding: clamp(0.875rem, 2vw, 1.25rem);
+      background: #e8c56b;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: clamp(0.875rem, 2vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover { background: #f5d98d; transform: translateY(-2px); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error { color: #ff6b6b; margin-top: 1rem; text-align: center; }
+    .success { color: #22c55e; margin-top: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>🔐 BLAKKHAIL</h1>
+    <p class="subtitle">Owner Access</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" value="blakkhail@gmail.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit">LOGIN</button>
+      <div id="message"></div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const messageDiv = document.getElementById('message');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+          localStorage.setItem('blakkhail-admin-token', data.token);
+          localStorage.setItem('blakkhail-admin-user', JSON.stringify(data.user));
+          messageDiv.className = 'success';
+          messageDiv.textContent = 'Login successful! Redirecting...';
+          setTimeout(() => {
+            window.location.href = '/blakkhail-admin-dashboard.html';
+          }, 1000);
+        } else {
+          messageDiv.className = 'error';
+          messageDiv.textContent = data.error || 'Login failed';
+        }
+      } catch (err) {
+        messageDiv.className = 'error';
+        messageDiv.textContent = 'Network error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

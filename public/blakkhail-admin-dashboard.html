@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blakkhail Admin Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Arial', sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 2rem;
+    }
+    .dashboard {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid #e8c56b;
+      border-radius: 12px;
+      padding: 3rem;
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 2rem; color: #e8c56b; }
+    .info-block {
+      background: rgba(232, 197, 107, 0.1);
+      border-left: 3px solid #e8c56b;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 6px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(232, 197, 107, 0.2);
+    }
+    .label { color: #999; text-transform: uppercase; font-size: 0.875rem; }
+    .value { font-weight: 700; color: #fff; font-size: 1rem; }
+    .status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; }
+    .status.active { background: #22c55e; color: #000; }
+    button {
+      background: #e8c56b;
+      color: #000;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+    button:hover { background: #f5d98d; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h1>✓ BLAKKHAIL ADMIN</h1>
+    <div id="accountInfo"></div>
+    <button onclick="logout()">LOGOUT</button>
+  </div>
+
+  <script>
+    async function loadDashboard() {
+      const token = localStorage.getItem('blakkhail-admin-token');
+      const user = JSON.parse(localStorage.getItem('blakkhail-admin-user') || '{}');
+
+      if (!token) {
+        window.location.href = '/blakkhail-admin-tv-login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await res.json();
+
+        if (data.valid) {
+          document.getElementById('accountInfo').innerHTML = `
+            <div class="info-block">
+              <div class="info-row">
+                <span class="label">Email</span>
+                <span class="value">${data.user.email}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Role</span>
+                <span class="value">${data.user.role}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Status</span>
+                <span class="status active">${data.user.status}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">ID</span>
+                <span class="value" style="font-size: 0.75rem; font-family: monospace;">${data.user.id.substring(0, 16)}...</span>
+              </div>
+            </div>
+          `;
+        } else {
+          window.location.href = '/blakkhail-admin-tv-login.html';
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        window.location.href = '/blakkhail-admin-tv-login.html';
+      }
+    }
+
+    function logout() {
+      const token = localStorage.getItem('blakkhail-admin-token');
+      fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      }).then(() => {
+        localStorage.removeItem('blakkhail-admin-token');
+        localStorage.removeItem('blakkhail-admin-user');
+        window.location.href = '/blakkhail-admin-tv-login.html';
+      });
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

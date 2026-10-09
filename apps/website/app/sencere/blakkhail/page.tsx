@@ -15,6 +15,7 @@ import { BlakkhailHeritage } from '@/components/sencere/blakkhail/BlakkhailHerit
 import { BlakkhailDropTimeline } from '@/components/sencere/blakkhail/BlakkhailDropTimeline';
 import { BlakkhailTestimonials } from '@/components/sencere/blakkhail/BlakkhailTestimonials';
 import { BlakkhailPhilosophy } from '@/components/sencere/blakkhail/BlakkhailPhilosophy';
+import BackgroundMusicPlayer from '@/components/sencere/blakkhail/BackgroundMusicPlayer';
 
 export default function BlakkhailPage() {
   useEffect(() => {
@@ -88,6 +89,15 @@ export default function BlakkhailPage() {
 
   return (
     <>
+      {/* Background Music Player */}
+      <BackgroundMusicPlayer
+        musicUrl="/music/blakkhail-ambient.mp3"
+        autoPlay={true}
+        volume={0.25}
+        loop={true}
+        showControls={false}
+      />
+      
       <style>{`
         /* NUCLEAR: Hide everything except BLAKKHAIL */
         body { background: #0A0A0A !important; }
