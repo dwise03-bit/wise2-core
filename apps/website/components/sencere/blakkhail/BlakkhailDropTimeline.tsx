@@ -3,7 +3,7 @@
 export function BlakkhailDropTimeline() {
   const drops = [
     { season: 'Spring 2026', name: 'Genesis Drop', status: 'Coming Soon', desc: 'The beginning. Hand-distressed graphics. Limited 200 pieces.' },
-    { season: 'Summer 2026', name: 'Heat Wave Collection', status: 'Pre-Order', desc: 'Atlanta summer energy captured. Utility layers meet streetwear.' },
+    { season: 'Summer 2026', name: 'Heat Wave Collection', status: 'Pre-Order', desc: 'Queens summer energy captured. Utility layers meet streetwear.' },
     { season: 'Fall 2026', name: 'Nocturnal Series', status: 'Announced', desc: 'Dark, intricate designs. Collaboration with underground artists.' },
     { season: 'Winter 2026', name: 'Legacy Exclusive', status: 'VIP Only', desc: 'Annual limited release. Members only. Numbered. Hand-signed.' }
   ];

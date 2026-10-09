@@ -14,7 +14,7 @@ export function BlakkhailPhilosophy() {
             Grounded in Purpose
           </h2>
           <p className="mt-8 max-w-3xl text-lg leading-relaxed text-[#C8C8C8]">
-            BLAKK HAIL isn't just apparel. It's a movement rooted in Atlanta energy, street culture, and uncompromising vision.
+            BLAKK HAIL isn't just apparel. It's a movement rooted in Queens energy, street culture, and uncompromising vision.
             Every piece carries the weight of intention — designed for those who refuse to apologize for who they are.
           </p>
         </div>
@@ -29,7 +29,7 @@ export function BlakkhailPhilosophy() {
             {
               icon: '🔥',
               title: 'Authenticity',
-              desc: 'Crafted from real culture, real stories, real Atlanta streets. Not manufactured trends.'
+              desc: 'Crafted from real culture, real stories, real Queens streets. Not manufactured trends.'
             },
             {
               icon: '🌙',

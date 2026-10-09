@@ -2,7 +2,7 @@
 
 export function BlakkhailHeritage() {
   const timeline = [
-    { year: '1994', title: 'The Foundation', desc: 'BLAKK HAIL born from Atlanta streets. Raw energy. Unfiltered vision.' },
+    { year: '1994', title: 'The Foundation', desc: 'BLAKK HAIL born from Queens streets. Raw energy. Unfiltered vision.' },
     { year: '2008', title: 'Cultural Movement', desc: 'Evolved into a symbol of authentic streetwear. Collaborated with artists, musicians, creators.' },
     { year: '2016', title: 'National Recognition', desc: 'BLAKK HAIL pieces in galleries. Museum acquisitions. Streetwear becomes art.' },
     { year: '2024', title: 'Global Impact', desc: 'From ATL to the world. Heritage meets future. Legacy continues.' },
