@@ -69,3 +69,10 @@ jobs:
           echo "== site health =="
           curl -ksS -o /dev/null -w "https://wise2.net status=%{http_code}\n" https://wise2.net || true
           REMOTE
+
+      - name: Inspect the public origin TLS certificate
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          printf '' | openssl s_client -connect "$DEPLOY_HOST:443" -servername wise2.net 2>/dev/null | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+          curl --resolve wise2.net:443:"$DEPLOY_HOST" -sS -o /dev/null -w "verified origin HTTPS status=%{http_code}\n" https://wise2.net/prompt-shop/ || true
