@@ -1,0 +1,126 @@
+name: Deploy Prompt Shop
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prompt-shop-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and release Prompt Shop
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/prompt-shop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/prompt-shop/package-lock.json
+
+      - name: Verify and build the production site
+        run: |
+          npm ci
+          npm test
+          npm run build
+
+      - name: Configure temporary SSH access
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_KEY"
+          install -d -m 700 ~/.ssh
+          printf '%s' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload a new immutable static release
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          tar -C dist -czf "$GITHUB_WORKSPACE/prompt-shop-release.tar.gz" .
+          scp -i ~/.ssh/id_ed25519 "$GITHUB_WORKSPACE/prompt-shop-release.tar.gz" "$DEPLOY_USER@$DEPLOY_HOST:/tmp/prompt-shop-release.tar.gz"
+          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+          release_id="$(date -u +%Y%m%dT%H%M%SZ)"
+          release_dir="/var/www/wise2-prompt-shop-releases/$release_id"
+          sudo install -d -m 755 "$release_dir"
+          sudo tar -xzf /tmp/prompt-shop-release.tar.gz -C "$release_dir"
+          rm -f /tmp/prompt-shop-release.tar.gz
+          sudo ln -sfn "$release_dir" /var/www/wise2-prompt-shop-current
+          REMOTE
+
+      - name: Install the Prompt Shop route and reload Nginx
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+          config=/etc/nginx/sites-enabled/wise2.net.conf
+          marker='WISE2 PROMPT SHOP'
+          test -f "$config"
+          backup="/etc/nginx/backups/wise2.net.conf.prompt-shop.$(date -u +%Y%m%dT%H%M%SZ)"
+          sudo cp "$config" "$backup"
+
+          if ! sudo grep -q "$marker" "$config"; then
+            route_file="$(mktemp)"
+            cat > "$route_file" <<'ROUTE'
+    # WISE2 PROMPT SHOP
+    location = /prompt-shop {
+        return 301 /prompt-shop/;
+    }
+
+    location ^~ /prompt-shop/ {
+        alias /var/www/wise2-prompt-shop-current/;
+        try_files $uri $uri/ /prompt-shop/index.html;
+    }
+ROUTE
+            updated_file="$(mktemp)"
+            awk -v route_file="$route_file" '
+              /server_name wise2\.net www\.wise2\.net;/ {
+                seen += 1
+                print
+                if (seen == 2) {
+                  while ((getline line < route_file) > 0) print line
+                  close(route_file)
+                }
+                next
+              }
+              { print }
+            ' "$config" > "$updated_file"
+            test "$(grep -c "$marker" "$updated_file")" -eq 1
+            sudo install -m 644 "$updated_file" "$config"
+            rm -f "$route_file" "$updated_file"
+          fi
+
+          if ! sudo nginx -t; then
+            sudo cp "$backup" "$config"
+            sudo nginx -t
+            exit 1
+          fi
+          if ! sudo systemctl reload nginx; then
+            sudo cp "$backup" "$config"
+            sudo nginx -t
+            sudo systemctl reload nginx
+            exit 1
+          fi
+          REMOTE
+
+      - name: Verify the live route directly at the origin
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          status="$(curl --resolve wise2.net:443:"$DEPLOY_HOST" -ksS -o /dev/null -w '%{http_code}' https://wise2.net/prompt-shop/)"
+          test "$status" = "200"
