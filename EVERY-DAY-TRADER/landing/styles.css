@@ -183,6 +183,11 @@ p { margin: 0; }
 .scene-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
 .hero.has-loop .scene-video { display: block; }
 .hero.has-loop .scene-sky, .hero.has-loop .scene-skyline, .hero.has-loop .scene-road { display: none; }
+/* With the recorded loop, let the footage read as shot: lighter scrim, no fog or grain wash. */
+.hero.has-loop .scene-scrim {
+  background: linear-gradient(90deg, rgba(3,6,12,.72) 0%, rgba(3,6,12,.38) 40%, rgba(3,6,12,.06) 75%, rgba(3,6,12,0) 100%);
+}
+.hero.has-loop .scene-fog, .hero.has-loop .scene-grain { display: none; }
 /* Reserved for an approved live feed. Never obscured by an opaque overlay. */
 .lie-feed { position: absolute; inset: 0; }
 .lie-feed video { width: 100%; height: 100%; object-fit: cover; }
