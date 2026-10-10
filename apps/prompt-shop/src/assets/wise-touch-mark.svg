@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+<title>WISE TOUCH target mark</title>
+<rect width="256" height="256" rx="48" fill="#000"/>
+<circle cx="128" cy="128" r="78" fill="none" stroke="#facc15" stroke-width="12"/>
+<circle cx="128" cy="128" r="36" fill="none" stroke="#facc15" stroke-width="12"/>
+<path d="M128 20v42M128 194v42M20 128h42M194 128h42" stroke="#facc15" stroke-width="12" stroke-linecap="round"/>
+</svg>
