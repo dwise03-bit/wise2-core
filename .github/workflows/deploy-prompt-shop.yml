@@ -77,16 +77,16 @@ jobs:
           if ! sudo grep -q "$marker" "$config"; then
             route_file="$(mktemp)"
             cat > "$route_file" <<'ROUTE'
-    # WISE2 PROMPT SHOP
-    location = /prompt-shop {
-        return 301 /prompt-shop/;
-    }
+              # WISE2 PROMPT SHOP
+              location = /prompt-shop {
+                  return 301 /prompt-shop/;
+              }
 
-    location ^~ /prompt-shop/ {
-        alias /var/www/wise2-prompt-shop-current/;
-        try_files $uri $uri/ /prompt-shop/index.html;
-    }
-ROUTE
+              location ^~ /prompt-shop/ {
+                  alias /var/www/wise2-prompt-shop-current/;
+                  try_files $uri $uri/ /prompt-shop/index.html;
+              }
+            ROUTE
             updated_file="$(mktemp)"
             awk -v route_file="$route_file" '
               /server_name wise2\.net www\.wise2\.net;/ {
