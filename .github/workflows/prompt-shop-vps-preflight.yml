@@ -42,6 +42,18 @@ jobs:
           if command -v nginx >/dev/null 2>&1; then
             echo "== wise2 Nginx configuration files =="
             sudo grep -RIlE "server_name[[:space:]].*wise2\\.net" /etc/nginx 2>/dev/null | sort || true
+            echo "== active wise2 virtual-host configuration =="
+            for config in /etc/nginx/sites-enabled/*; do
+              if sudo grep -qE "server_name[[:space:]].*wise2\\.net" "$config" 2>/dev/null; then
+                echo "-- $config --"
+                sudo sed -E \
+                  -e 's#(ssl_certificate(_key)?[[:space:]]+)[^;]+#\\1[redacted]#' \
+                  -e 's#(proxy_pass[[:space:]]+)[^;]+#\\1[redacted]#' \
+                  "$config"
+              fi
+            done
+            echo "== active HTTPS listeners =="
+            sudo ss -tlpn | grep -E ':(443|8443)[[:space:]]' || true
             echo "== wise2 route directives =="
             sudo grep -RInE "server_name[[:space:]].*wise2\\.net|location[[:space:]]|proxy_pass[[:space:]]|root[[:space:]]|listen[[:space:]]" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | grep -B 8 -A 24 "server_name[[:space:]].*wise2\\.net" | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\\1[redacted]/" || true
             sudo nginx -T 2>/dev/null | grep -E "server_name|location /prompt-shop|proxy_pass|root " | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\1[redacted]/" || true
