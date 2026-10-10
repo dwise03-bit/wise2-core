@@ -78,9 +78,9 @@ jobs:
 
           # This host previously served the blakkhail.com certificate for wise2.net,
           # which Cloudflare correctly rejected with error 526.
-          sudo sed -i -E \
-            -e 's#^([[:space:]]*)ssl_certificate[[:space:]]+[^;]+;#\\1ssl_certificate /etc/letsencrypt/live/wise2.net/fullchain.pem;#' \
-            -e 's#^([[:space:]]*)ssl_certificate_key[[:space:]]+[^;]+;#\\1ssl_certificate_key /etc/letsencrypt/live/wise2.net/privkey.pem;#' \
+          sudo sed -i \
+            -e 's#ssl_certificate [^;]*;#ssl_certificate /etc/letsencrypt/live/wise2.net/fullchain.pem;#' \
+            -e 's#ssl_certificate_key [^;]*;#ssl_certificate_key /etc/letsencrypt/live/wise2.net/privkey.pem;#' \
             "$config"
 
           if ! sudo grep -q "$marker" "$config"; then
