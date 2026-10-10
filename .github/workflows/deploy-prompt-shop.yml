@@ -82,6 +82,11 @@ jobs:
             -e 's#ssl_certificate [^;]*;#ssl_certificate /etc/letsencrypt/live/wise2.net/fullchain.pem;#' \
             -e 's#ssl_certificate_key [^;]*;#ssl_certificate_key /etc/letsencrypt/live/wise2.net/privkey.pem;#' \
             "$config"
+          if ! sudo grep -qE 'listen[^;]*:443[^;]*default_server' "$config"; then
+            sudo sed -i -E \
+              '/^[[:space:]]*listen[[:space:]]+[^;]*:443[[:space:]]+ssl/ s/[[:space:]]ssl/[[:space:]]default_server ssl/' \
+              "$config"
+          fi
 
           if ! sudo grep -q "$marker" "$config"; then
             route_file="$(mktemp)"
