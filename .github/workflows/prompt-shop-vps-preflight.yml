@@ -75,6 +75,9 @@ jobs:
           curl -sS -H "Host: wise2.net" -o /dev/null -w "origin HTTP status=%{http_code}\\n" http://127.0.0.1 || true
           echo "== certificate status =="
           sudo certbot certificates 2>/dev/null | grep -E "Certificate Name:|Domains:|Expiry Date:" || true
+          echo "== Wise2 certificate file used by Nginx =="
+          sudo readlink -f /etc/letsencrypt/live/wise2.net/fullchain.pem || true
+          sudo openssl x509 -in /etc/letsencrypt/live/wise2.net/fullchain.pem -noout -subject -issuer -dates -ext subjectAltName || true
           echo "== site health =="
           curl -ksS -o /dev/null -w "https://wise2.net status=%{http_code}\n" https://wise2.net || true
           REMOTE
