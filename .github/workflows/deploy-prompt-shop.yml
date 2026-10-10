@@ -73,6 +73,15 @@ jobs:
           test -f "$config"
           backup="/etc/nginx/backups/wise2.net.conf.prompt-shop.$(date -u +%Y%m%dT%H%M%SZ)"
           sudo cp "$config" "$backup"
+          test -s /etc/letsencrypt/live/wise2.net/fullchain.pem
+          test -s /etc/letsencrypt/live/wise2.net/privkey.pem
+
+          # This host previously served the blakkhail.com certificate for wise2.net,
+          # which Cloudflare correctly rejected with error 526.
+          sudo sed -i -E \
+            -e 's#^([[:space:]]*)ssl_certificate[[:space:]]+[^;]+;#\\1ssl_certificate /etc/letsencrypt/live/wise2.net/fullchain.pem;#' \
+            -e 's#^([[:space:]]*)ssl_certificate_key[[:space:]]+[^;]+;#\\1ssl_certificate_key /etc/letsencrypt/live/wise2.net/privkey.pem;#' \
+            "$config"
 
           if ! sudo grep -q "$marker" "$config"; then
             route_file="$(mktemp)"
@@ -121,5 +130,5 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
-          status="$(curl --resolve wise2.net:443:"$DEPLOY_HOST" -ksS -o /dev/null -w '%{http_code}' https://wise2.net/prompt-shop/)"
+          status="$(curl --resolve wise2.net:443:"$DEPLOY_HOST" -sS -o /dev/null -w '%{http_code}' https://wise2.net/prompt-shop/)"
           test "$status" = "200"
