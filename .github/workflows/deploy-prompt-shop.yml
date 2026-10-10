@@ -84,7 +84,7 @@ jobs:
             "$config"
           if ! sudo grep -qE 'listen[^;]*:443[^;]*default_server' "$config"; then
             sudo sed -i -E \
-              '/^[[:space:]]*listen[[:space:]]+[^;]*:443[[:space:]]+ssl/ s/[[:space:]]ssl/[[:space:]]default_server ssl/' \
+              '/^[[:space:]]*listen[[:space:]]+[^;]*:443[[:space:]]+ssl/ s/[[:space:]]ssl/ default_server ssl/' \
               "$config"
           fi
 
