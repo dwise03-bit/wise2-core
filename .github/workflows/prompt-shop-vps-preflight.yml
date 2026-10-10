@@ -40,11 +40,20 @@ jobs:
           docker ps --format "{{.Names}} | {{.Image}} | {{.Ports}}" 2>/dev/null || true
           echo "== relevant reverse-proxy routes =="
           if command -v nginx >/dev/null 2>&1; then
+            echo "== wise2 Nginx configuration files =="
+            sudo grep -RIlE "server_name[[:space:]].*wise2\\.net" /etc/nginx 2>/dev/null | sort || true
+            echo "== wise2 route directives =="
+            sudo grep -RInE "server_name[[:space:]].*wise2\\.net|location[[:space:]]|proxy_pass[[:space:]]|root[[:space:]]|listen[[:space:]]" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | grep -B 8 -A 24 "server_name[[:space:]].*wise2\\.net" | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\\1[redacted]/" || true
             sudo nginx -T 2>/dev/null | grep -E "server_name|location /prompt-shop|proxy_pass|root " | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\1[redacted]/" || true
           fi
           if command -v caddy >/dev/null 2>&1; then
             sudo caddy adapt --config /etc/caddy/Caddyfile --pretty 2>/dev/null | grep -E 'host|prompt-shop|reverse_proxy|root' || true
           fi
+          echo "== origin health (bypasses Cloudflare) =="
+          curl -kSs --resolve wise2.net:443:127.0.0.1 -o /dev/null -w "origin HTTPS status=%{http_code}\\n" https://wise2.net || true
+          curl -sS -H "Host: wise2.net" -o /dev/null -w "origin HTTP status=%{http_code}\\n" http://127.0.0.1 || true
+          echo "== certificate status =="
+          sudo certbot certificates 2>/dev/null | grep -E "Certificate Name:|Domains:|Expiry Date:" || true
           echo "== site health =="
           curl -ksS -o /dev/null -w "https://wise2.net status=%{http_code}\n" https://wise2.net || true
           REMOTE
