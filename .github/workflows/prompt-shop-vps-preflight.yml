@@ -1,0 +1,50 @@
+name: Prompt Shop VPS preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-existing-release-path:
+    name: Inspect existing web routing safely
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure temporary SSH access
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_KEY"
+          install -d -m 700 ~/.ssh
+          printf '%s' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Inspect host without changing it
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          test -n "$DEPLOY_USER"
+          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+          echo "== identity =="
+          id -un
+          hostname
+          echo "== home directories =="
+          find "$HOME" -maxdepth 2 -mindepth 1 -type d \( -name "*wise*" -o -name "*prompt*" -o -name "*shop*" \) -print 2>/dev/null | sort
+          echo "== running web containers =="
+          docker ps --format "{{.Names}} | {{.Image}} | {{.Ports}}" 2>/dev/null || true
+          echo "== relevant reverse-proxy routes =="
+          if command -v nginx >/dev/null 2>&1; then
+            sudo nginx -T 2>/dev/null | grep -E "server_name|location /prompt-shop|proxy_pass|root " | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\1[redacted]/" || true
+          fi
+          if command -v caddy >/dev/null 2>&1; then
+            sudo caddy adapt --config /etc/caddy/Caddyfile --pretty 2>/dev/null | grep -E 'host|prompt-shop|reverse_proxy|root' || true
+          fi
+          echo "== site health =="
+          curl -ksS -o /dev/null -w "https://wise2.net status=%{http_code}\n" https://wise2.net || true
+          REMOTE
