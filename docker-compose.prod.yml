@@ -60,6 +60,7 @@ services:
       HERMES_ENDPOINT: ${HERMES_ENDPOINT:-http://172.17.0.1:11435/v1/chat/completions}
       OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-mistral:latest}
       HERMES_TIMEOUT_MS: ${HERMES_TIMEOUT_MS:-90000}
+      CLOUDFLARE_API_KEY: ${CLOUDFLARE_API_KEY:-}
     ports:
       - "127.0.0.1:3010:3000"
     depends_on:
@@ -101,6 +102,7 @@ services:
       OLLAMA_GRAPHICS_MODEL: ${OLLAMA_GRAPHICS_MODEL:-mistral:latest}
       GRAPHICS_OUTPUT_DIR: /app/data/graphics
       OWNER_EMAIL: ${OWNER_EMAIL:-}
+      CLOUDFLARE_API_KEY: ${CLOUDFLARE_API_KEY:-}
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
