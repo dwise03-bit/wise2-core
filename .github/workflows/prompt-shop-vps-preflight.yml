@@ -54,6 +54,13 @@ jobs:
             done
             echo "== exact active Wise2 TLS directives =="
             sudo grep -nE "listen|server_name|ssl_certificate" /etc/nginx/sites-enabled/wise2.net.conf || true
+            echo "== all active Nginx HTTPS virtual hosts =="
+            for config in /etc/nginx/sites-enabled/*; do
+              if sudo grep -qE "listen[[:space:]].*443" "$config" 2>/dev/null; then
+                echo "-- $config --"
+                sudo grep -nE "listen[[:space:]].*443|server_name|ssl_certificate" "$config" || true
+              fi
+            done
             echo "== active HTTPS listeners =="
             sudo ss -tlpn | grep -E ':(443|8443)[[:space:]]' || true
             echo "== wise2 route directives =="
