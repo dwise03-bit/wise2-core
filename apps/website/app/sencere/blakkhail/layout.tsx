@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `SenCere Creative LLC | ${blakkhailBrand.name}`,
     description:
-      'Blakk Hail — legacy streetwear and original fashion from SenCere Creative LLC. Design. Create. Produce. Deliver.',
+      'Blakk Hail — Take Control Subway Car Series from SenCere Creative LLC. Design. Create. Produce. Deliver.',
     metadataBase: onBlackhailDomain ? new URL(blakkhailBrand.siteUrl) : undefined,
     alternates: onBlackhailDomain
       ? { canonical: `${blakkhailBrand.siteUrl}/sencere` }
