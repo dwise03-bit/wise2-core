@@ -54,7 +54,7 @@ export function BlakkhailPhilosophy() {
 
         <div className="mt-16 border-t border-[#8C6518]/20 pt-12">
           <p className="text-center text-[12px] font-bold uppercase tracking-[0.25em] text-[#8C6518]/60">
-            EST. 1994 — ATLANTA HERITAGE — SINCE THE BEGINNING
+            EST. 1994 — QUEENS HERITAGE — SINCE THE BEGINNING
           </p>
         </div>
       </div>

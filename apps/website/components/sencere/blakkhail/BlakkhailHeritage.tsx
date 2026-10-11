@@ -56,7 +56,7 @@ export function BlakkhailHeritage() {
 
         <div className="mt-20 text-center">
           <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#8C6518]/60">
-            FROM ATLANTA TO THE WORLD — THE JOURNEY CONTINUES
+            FROM QUEENS TO THE WORLD — THE JOURNEY CONTINUES
           </p>
         </div>
       </div>

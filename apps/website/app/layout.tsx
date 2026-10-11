@@ -13,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <script src="/queens-injector.js" />
+      </head>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }

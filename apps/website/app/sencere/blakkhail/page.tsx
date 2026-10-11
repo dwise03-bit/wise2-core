@@ -90,13 +90,7 @@ export default function BlakkhailPage() {
   return (
     <>
       {/* Background Music Player */}
-      <BackgroundMusicPlayer
-        musicUrl="/music/blakkhail-ambient.mp3"
-        autoPlay={true}
-        volume={0.25}
-        loop={true}
-        showControls={false}
-      />
+      <BackgroundMusicPlayer />
       
       <style>{`
         /* NUCLEAR: Hide everything except BLAKKHAIL */
@@ -157,7 +151,7 @@ export default function BlakkhailPage() {
                   Take control.<br />No apologies.
                 </h2>
                 <p className="mt-6 max-w-sm text-sm leading-7 text-[#A8A8A8]">
-                  The latest Blakk Hail pieces are built from hand-distressed graphics, utility layers, and Atlanta energy.
+                  The latest Blakk Hail pieces are built from hand-distressed graphics, utility layers, and Queens energy.
                 </p>
               </div>
               <div className="relative z-10 mt-10 flex items-end justify-between gap-4">
