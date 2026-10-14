@@ -10,17 +10,25 @@ services:
   ultimate-hub:
     build: ../apps/ultimate-hub
     ports:
-      - "8765:8765"
+      - "127.0.0.1:8765:8765"
     environment:
       - NODE_ENV=production
       - PORT=8765
+      - LOG_LEVEL=info
     networks:
       - wise2-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8765/api/health"]
       interval: 30s
-      timeout: 3s
+      timeout: 5s
       retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    logs:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   api:
     build: ../core/api
