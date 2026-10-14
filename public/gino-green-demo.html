@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gino Green Global — The 999 Movement</title>
+  <style>
+    :root {
+      --primary: #a5f72c;
+      --dark: #07100c;
+      --panel: #142019;
+      --text: #f4f8f0;
+      --text-muted: #aebcaf;
+      --border: #536a55;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, var(--dark) 0%, #0a1810 100%);
+      color: var(--text);
+      font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Background orbs */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 72% 10%, rgba(42, 92, 44, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 10% 80%, rgba(20, 96, 77, 0.15) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 16, 12, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(165, 247, 44, 0.1);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .logo {
+      font: 700 18px monospace;
+      letter-spacing: 0.12em;
+      color: var(--text);
+    }
+
+    .logo span { color: var(--primary); }
+
+    nav {
+      display: flex;
+      gap: 40px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    nav a {
+      font: 10px monospace;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+      text-transform: uppercase;
+    }
+
+    nav a:hover, nav a.active { color: var(--primary); }
+
+    @media (max-width: 768px) {
+      .header-content { padding: 16px 24px; }
+      nav { display: none; }
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 40px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(165,247,44,0.02)" stroke-width="1"/></pattern></defs><rect width="1200" height="800" fill="url(%23grid)"/></svg>');
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+
+    .location-badge {
+      display: inline-block;
+      font: 11px monospace;
+      letter-spacing: 0.16em;
+      color: var(--primary);
+      margin-bottom: 40px;
+      padding: 12px 20px;
+      border: 1px solid rgba(165, 247, 44, 0.3);
+      border-radius: 4px;
+    }
+
+    h1 {
+      font: 700 clamp(48px, 10vw, 120px) -apple-system, BlinkMacSystemFont, "Segoe UI";
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      margin: 30px 0;
+      text-transform: uppercase;
+    }
+
+    h1 .highlight { color: var(--primary); }
+
+    .tagline {
+      font-size: clamp(16px, 2vw, 22px);
+      color: rgba(244, 248, 240, 0.85);
+      margin: 30px 0 60px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 6px;
+      font: 600 13px monospace;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--dark);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(165, 247, 44, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(165, 247, 44, 0.1);
+      transform: translateY(-4px);
+    }
+
+    /* Ticker */
+    .ticker {
+      position: relative;
+      background: var(--primary);
+      color: var(--dark);
+      padding: 16px 0;
+      font: 700 14px monospace;
+      letter-spacing: 0.08em;
+      overflow: hidden;
+      margin: 80px 0;
+    }
+
+    .ticker-content {
+      display: flex;
+      animation: scroll 30s linear infinite;
+      gap: 40px;
+    }
+
+    .ticker-item { white-space: nowrap; }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Sections */
+    section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 100px 40px;
+      position: relative;
+    }
+
+    section:nth-child(even) {
+      background: rgba(20, 32, 25, 0.5);
+    }
+
+    section h2 {
+      font: 700 clamp(36px, 8vw, 80px) -apple-system, BlinkMacSystemFont, "Segoe UI";
+      line-height: 0.95;
+      margin: 0 0 40px;
+      text-transform: uppercase;
+    }
+
+    section h2 .highlight { color: var(--primary); }
+
+    .section-label {
+      font: 10px monospace;
+      letter-spacing: 0.2em;
+      color: var(--primary);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .section-intro {
+      font-size: 18px;
+      color: rgba(244, 248, 240, 0.85);
+      max-width: 800px;
+      margin-bottom: 60px;
+    }
+
+    /* Green Card Section */
+    .green-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .card-design {
+      aspect-ratio: 1.6;
+      background: linear-gradient(135deg, rgba(42, 92, 44, 0.3) 0%, rgba(20, 96, 77, 0.2) 100%);
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-design::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(165, 247, 44, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-branding {
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-branding h3 {
+      font: 700 24px monospace;
+      letter-spacing: 0.06em;
+      margin: 0 0 20px;
+    }
+
+    .card-branding h3 span { color: var(--primary); }
+
+    .card-number {
+      font: 700 clamp(60px, 12vw, 100px) monospace;
+      color: var(--primary);
+      line-height: 0.8;
+      margin: 20px 0;
+    }
+
+    .card-footer {
+      position: relative;
+      z-index: 2;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(165, 247, 44, 0.2);
+      padding-top: 20px;
+    }
+
+    /* Interactive Reward Card */
+    .reward-card-container {
+      perspective: 1000px;
+      margin: 60px 0;
+    }
+
+    .card-flipper {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .card-flipper.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(135deg, rgba(165, 247, 44, 0.1) 0%, rgba(20, 96, 77, 0.15) 100%);
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .reward-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .reward-item {
+      background: rgba(20, 32, 25, 0.6);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 4px;
+      text-align: center;
+      opacity: 0.4;
+      transition: all 0.4s;
+    }
+
+    .reward-item.unlocked {
+      opacity: 1;
+      border-color: var(--primary);
+      background: rgba(165, 247, 44, 0.05);
+    }
+
+    .reward-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .reward-name {
+      font: 11px monospace;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .reward-item.unlocked .reward-name {
+      color: var(--primary);
+    }
+
+    /* Unlock Section */
+    .unlock-section {
+      text-align: center;
+    }
+
+    .unlock-instruction {
+      font: 12px monospace;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin: 40px 0;
+      text-transform: uppercase;
+    }
+
+    .unlock-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .unlock-btn {
+      width: 70px;
+      height: 70px;
+      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      font: 700 32px monospace;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .unlock-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--primary);
+      transform: scale(0);
+      border-radius: 4px;
+      transition: transform 0.4s ease-out;
+      z-index: -1;
+    }
+
+    .unlock-btn:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(165, 247, 44, 0.3);
+    }
+
+    .unlock-btn.active {
+      background: var(--primary);
+      color: var(--dark);
+      transform: scale(1);
+      animation: pulse 0.5s ease-out;
+    }
+
+    .unlock-btn.active::before {
+      transform: scale(1.5);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .unlock-progress {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .progress-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(165, 247, 44, 0.2);
+      transition: all 0.4s;
+    }
+
+    .progress-dot.active {
+      background: var(--primary);
+      box-shadow: 0 0 12px var(--primary);
+      transform: scale(1.3);
+    }
+
+    .unlock-status {
+      font: 13px monospace;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      margin: 20px 0;
+      min-height: 20px;
+    }
+
+    .unlock-celebration {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font: 700 48px monospace;
+      color: var(--primary);
+      pointer-events: none;
+      z-index: 1000;
+      animation: celebrate 1s ease-out forwards;
+    }
+
+    @keyframes celebrate {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -150%) scale(1);
+      }
+    }
+
+    .card-flip-hint {
+      font: 11px monospace;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-top: 20px;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Style Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin: 60px 0;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      aspect-ratio: 0.75;
+      cursor: pointer;
+      group/item: hover;
+    }
+
+    .gallery-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover .gallery-image {
+      transform: scale(1.05);
+    }
+
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(7, 16, 12, 0.6) 0%, rgba(7, 16, 12, 0.3) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 30px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-item:hover .gallery-overlay {
+      opacity: 1;
+    }
+
+    .gallery-title {
+      font: 700 20px -apple-system, BlinkMacSystemFont, "Segoe UI";
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .gallery-description {
+      font-size: 13px;
+      color: rgba(244, 248, 240, 0.9);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .gallery-products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .product-tag {
+      background: rgba(165, 247, 44, 0.2);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font: 700 monospace;
+      letter-spacing: 0.06em;
+    }
+
+    .gallery-cta {
+      display: inline-block;
+      color: var(--primary);
+      font: 11px monospace;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-cta:hover {
+      opacity: 0.7;
+    }
+
+    /* Collection Grid */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      margin: 60px 0;
+    }
+
+    .collection-item {
+      background: rgba(20, 32, 25, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 30px;
+      transition: all 0.3s;
+    }
+
+    .collection-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 20px 50px rgba(165, 247, 44, 0.1);
+      transform: translateY(-8px);
+    }
+
+    .item-icon {
+      font: 12px monospace;
+      letter-spacing: 0.16em;
+      color: var(--primary);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .collection-item h3 {
+      font: 700 22px -apple-system, BlinkMacSystemFont, "Segoe UI";
+      margin: 16px 0;
+      line-height: 1.3;
+    }
+
+    .collection-item p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* Product Archive */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin: 60px 0;
+    }
+
+    .product-card {
+      background: linear-gradient(135deg, rgba(20, 32, 25, 0.8) 0%, rgba(20, 32, 25, 0.4) 100%);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .product-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 15px 40px rgba(165, 247, 44, 0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, rgba(165, 247, 44, 0.05), rgba(20, 96, 77, 0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: 14px monospace;
+      color: var(--text-muted);
+    }
+
+    .product-info {
+      padding: 24px;
+    }
+
+    .product-label {
+      font: 10px monospace;
+      color: var(--primary);
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .product-card h3 {
+      font: 700 18px -apple-system, BlinkMacSystemFont, "Segoe UI";
+      margin: 8px 0;
+      line-height: 1.3;
+    }
+
+    .product-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 12px 0 0;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: rgba(20, 32, 25, 0.8);
+      border-left: 3px solid var(--primary);
+      padding: 20px;
+      margin: 40px 0;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(7, 16, 12, 0.95);
+      border-top: 1px solid var(--border);
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    footer h3 {
+      font: 700 18px monospace;
+      letter-spacing: 0.08em;
+      margin: 0 0 30px;
+      text-transform: uppercase;
+    }
+
+    footer h3 span { color: var(--primary); }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .social-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font: 12px monospace;
+      letter-spacing: 0.08em;
+      transition: opacity 0.3s;
+    }
+
+    .social-links a:hover { opacity: 0.7; }
+
+    .footer-meta {
+      font: 10px monospace;
+      color: var(--text-muted);
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.08em;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      section { padding: 60px 24px; }
+      .green-card { grid-template-columns: 1fr; gap: 40px; }
+      .cta-group { flex-direction: column; }
+      .btn { width: 100%; }
+      h1 { font-size: clamp(32px, 8vw, 60px); }
+      section h2 { font-size: clamp(28px, 8vw, 48px); }
+      nav { gap: 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo">GINO<span>GREEN</span></div>
+      <nav>
+        <a href="#green-card">Green Card</a>
+        <a href="#style-gallery">Style Gallery</a>
+        <a href="#collection">Collection</a>
+        <a href="#special-drop">Special Drop</a>
+        <a href="#culture">Culture</a>
+        <a href="#connect">Connect</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="top">
+    <div class="hero-content">
+      <div class="location-badge">QUEENS, NEW YORK · G TRAIN · 999</div>
+      <h1>GINO<br><span class="highlight">GREEN</span><br>GLOBAL</h1>
+      <p class="tagline">Original streetwear. Unmistakable 999 culture. A global vision born in New York.</p>
+      <div class="cta-group">
+        <a href="#green-card" class="btn btn-primary">EXPLORE GREEN CARD</a>
+        <a href="#collection" class="btn btn-secondary">VIEW COLLECTION</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-content">
+      <span class="ticker-item">✦ QUEENS NYC ✦ 999 ✦ RAW COTTON VINTAGE EDIT ✦ GINO GREEN GLOBAL ✦</span>
+      <span class="ticker-item">✦ QUEENS NYC ✦ 999 ✦ RAW COTTON VINTAGE EDIT ✦ GINO GREEN GLOBAL ✦</span>
+    </div>
+  </div>
+
+  <!-- 01: Green Card (Interactive Reward) -->
+  <section id="green-card">
+    <div class="section-label">01 / DIGITAL ACCESS</div>
+    <h2>THE <span class="highlight">GREEN</span><br>CARD</h2>
+    <p class="section-intro">Your exclusive entry point. Unlock the collection and earn rewards by tapping the sacred numbers in sequence.</p>
+
+    <div class="reward-card-container">
+      <div class="card-flipper" id="cardFlipper">
+        <!-- Front of card -->
+        <div class="card-front">
+          <div class="green-card">
+            <div class="card-design">
+              <div class="card-branding">
+                <h3>GINO<span> GREEN</span><br>GLOBAL</h3>
+                <div class="card-number" id="cardNumber">999</div>
+              </div>
+              <div class="card-footer">
+                GREEN CARD / 001 · ORIGINAL STREETWEAR · WISE² × GINO GREEN GLOBAL
+              </div>
+            </div>
+
+            <div class="unlock-section">
+              <div class="unlock-instruction">UNLOCK REWARDS · TAP 9 → 9 → 9</div>
+              <div class="unlock-buttons" id="unlockButtons">
+                <button class="unlock-btn" data-position="0" aria-label="First nine">9</button>
+                <button class="unlock-btn" data-position="1" aria-label="Second nine">9</button>
+                <button class="unlock-btn" data-position="2" aria-label="Third nine">9</button>
+              </div>
+              <div class="unlock-progress" id="progressDots">
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+              </div>
+              <div class="unlock-status" id="unlockStatus">TAP TO UNLOCK REWARDS</div>
+              <p class="card-flip-hint" id="flipHint" style="display: none;">✓ FLIP CARD TO VIEW REWARDS</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back of card (Rewards) -->
+        <div class="card-back">
+          <div class="reward-list" id="rewardList">
+            <div class="reward-item" data-reward="0">
+              <div class="reward-icon">🎟️</div>
+              <div class="reward-name">Early Access</div>
+            </div>
+            <div class="reward-item" data-reward="1">
+              <div class="reward-icon">🎁</div>
+              <div class="reward-name">Exclusive Drop</div>
+            </div>
+            <div class="reward-item" data-reward="2">
+              <div class="reward-icon">👑</div>
+              <div class="reward-name">VIP Status</div>
+            </div>
+            <div class="reward-item" data-reward="3">
+              <div class="reward-icon">∞</div>
+              <div class="reward-name">Lifetime Member</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="#collection" class="btn btn-secondary">EXPLORE WITHOUT PUZZLE</a>
+    </div>
+  </section>
+
+  <!-- 02: Style Gallery -->
+  <section id="style-gallery">
+    <div class="section-label">02 / COMMUNITY STYLE</div>
+    <h2>REAL <span class="highlight">999</span><br>FITS</h2>
+    <p class="section-intro">How the community is wearing Gino Green Global. Authentic looks. No filters. Pure style.</p>
+
+    <div class="gallery-grid">
+      <!-- Gallery Item 1 -->
+      <div class="gallery-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 533'%3E%3Crect fill='%23142019' width='400' height='533'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23a5f72c' font-size='24' font-family='monospace' font-weight='bold'%3EQUEANS LIFESTYLE%3C/text%3E%3C/svg%3E" alt="Queens lifestyle" class="gallery-image" style="background: linear-gradient(135deg, #285c2c 0%, #142019 100%);">
+        <div class="gallery-overlay">
+          <div class="gallery-title">QUEENS LIFESTYLE</div>
+          <div class="gallery-description">G Train energy with 999 signature sweatshirt, raw cotton vintage tee, and classic kicks.</div>
+          <div class="gallery-products">
+            <span class="product-tag">SWEATSHIRT</span>
+            <span class="product-tag">TEE</span>
+            <span class="product-tag">ACCESSORIES</span>
+          </div>
+          <a href="#special-drop" class="gallery-cta">SHOP LOOK ↗</a>
+        </div>
+      </div>
+
+      <!-- Gallery Item 2 -->
+      <div class="gallery-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 533'%3E%3Crect fill='%23142019' width='400' height='533'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23a5f72c' font-size='24' font-family='monospace' font-weight='bold'%3EURBAN MINIMAL%3C/text%3E%3C/svg%3E" alt="Urban minimal" class="gallery-image" style="background: linear-gradient(135deg, #1a3a2a 0%, #142019 100%);">
+        <div class="gallery-overlay">
+          <div class="gallery-title">URBAN MINIMAL</div>
+          <div class="gallery-description">Clean 999 graphic tee, premium backpack, and timeless silhouettes for the city.</div>
+          <div class="gallery-products">
+            <span class="product-tag">TEE</span>
+            <span class="product-tag">BACKPACK</span>
+            <span class="product-tag">APPAREL</span>
+          </div>
+          <a href="#special-drop" class="gallery-cta">SHOP LOOK ↗</a>
+        </div>
+      </div>
+
+      <!-- Gallery Item 3 -->
+      <div class="gallery-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 533'%3E%3Crect fill='%23142019' width='400' height='533'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23a5f72c' font-size='24' font-family='monospace' font-weight='bold'%3ELEVATED CASUAL%3C/text%3E%3C/svg%3E" alt="Elevated casual" class="gallery-image" style="background: linear-gradient(135deg, #1a4d3a 0%, #142019 100%);">
+        <div class="gallery-overlay">
+          <div class="gallery-title">ELEVATED CASUAL</div>
+          <div class="gallery-description">999 embroidered cap, silk scarf accent, and signature pieces styled for everyday luxury.</div>
+          <div class="gallery-products">
+            <span class="product-tag">CAP</span>
+            <span class="product-tag">SCARF</span>
+            <span class="product-tag">VINTAGE</span>
+          </div>
+          <a href="#special-drop" class="gallery-cta">SHOP LOOK ↗</a>
+        </div>
+      </div>
+
+      <!-- Gallery Item 4 -->
+      <div class="gallery-item">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 533'%3E%3Crect fill='%23142019' width='400' height='533'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle' fill='%23a5f72c' font-size='24' font-family='monospace' font-weight='bold'%3EGLOBAL MOVEMENT%3C/text%3E%3C/svg%3E" alt="Global movement" class="gallery-image" style="background: linear-gradient(135deg, #145c4d 0%, #142019 100%);">
+        <div class="gallery-overlay">
+          <div class="gallery-title">GLOBAL MOVEMENT</div>
+          <div class="gallery-description">The 999 collection speaks worldwide. Complete capsule with sweatshirts, tees, and statement pieces.</div>
+          <div class="gallery-products">
+            <span class="product-tag">CAPSULE SET</span>
+            <span class="product-tag">COMPLETE LOOK</span>
+            <span class="product-tag">LIMITED</span>
+          </div>
+          <a href="#special-drop" class="gallery-cta">VIEW CAPSULE ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 60px;">
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 30px;">Tag #GINOGREEN999 for a chance to be featured in our community gallery.</p>
+      <a href="https://www.instagram.com/ginogreenglobal/" target="_blank" class="btn btn-primary">SUBMIT YOUR LOOK</a>
+    </div>
+  </section>
+
+  <!-- 03: The Collection -->
+  <section id="collection">
+    <div class="section-label">03 / FOUNDATION</div>
+    <h2>WEAR THE<br><span class="highlight">VISION</span></h2>
+    <p class="section-intro">Authentic 999 streetwear with signature graphics and limited-run pieces. The foundation of a movement.</p>
+
+    <div class="collection-grid">
+      <div class="collection-item">
+        <div class="item-icon">999 / STREETWEAR</div>
+        <h3>The Signature</h3>
+        <p>Original 999 design language defined by Gothic numerals and authentic street culture.</p>
+      </div>
+      <div class="collection-item">
+        <div class="item-icon">GLOBAL / CULTURE</div>
+        <h3>Global Heritage</h3>
+        <p>New York roots. Worldwide vision. A brand built from the pavement up.</p>
+      </div>
+      <div class="collection-item">
+        <div class="item-icon">COMMUNITY / PEOPLE</div>
+        <h3>The People</h3>
+        <p>Real moments. Authentic voices. The culture beyond the clothes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04: Special Drop -->
+  <section id="special-drop">
+    <div class="section-label">04 / LIMITED RELEASE</div>
+    <h2>THE <span class="highlight">999</span><br>SPECIAL DROP</h2>
+    <p class="section-intro">A limited-edition capsule featuring premium streetwear, signature color, and original Gothic 9 artwork.</p>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">SWEATSHIRT</div>
+        <div class="product-info">
+          <div class="product-label">01 / APPAREL</div>
+          <h3>Signature Sweatshirts</h3>
+          <p>Black & purple colorways. Premium construction. Final details pending approval.</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">SILK SCARF</div>
+        <div class="product-info">
+          <div class="product-label">02 / ACCESSORIES</div>
+          <h3>Silk Scarves</h3>
+          <p>Original artwork on luxury silk. Two planned designs. Details TBA.</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">BACKPACK</div>
+        <div class="product-info">
+          <div class="product-label">03 / ACCESSORIES</div>
+          <h3>Premium Backpacks</h3>
+          <p>Designed for the movement. Limited capsule. Release details coming soon.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>EARLY ACCESS IS AN INQUIRY ONLY.</strong> No payment is collected. Prices, stock, sizing, and fulfillment are subject to Gino Green Global approval.
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="#preorder" class="btn btn-primary">REQUEST EARLY ACCESS</a>
+    </div>
+  </section>
+
+  <!-- 05: Product Archive -->
+  <section id="preorder">
+    <div class="section-label">05 / ARCHIVE</div>
+    <h2>PRODUCT<br><span class="highlight">ARCHIVE</span></h2>
+    <p class="section-intro">Authentic pieces from past releases. Request priority access to upcoming availability.</p>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">BLACK TEE</div>
+        <div class="product-info">
+          <div class="product-label">Raw Cotton Vintage Edit</div>
+          <h3>999 Black Graphic Tee</h3>
+          <p>Multicolor Gothic 9 on black. Original artwork preserved.</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">GRAPHIC TEE</div>
+        <div class="product-info">
+          <div class="product-label">Milan × Paris</div>
+          <h3>Graphic Tee</h3>
+          <p>Statement editorial graphics with 999 design language.</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">CAP</div>
+        <div class="product-info">
+          <div class="product-label">Signature Embroidery</div>
+          <h3>999 Embroidered Cap</h3>
+          <p>Multicolor Gothic 9 embroidery on black. Classic piece.</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">WHITE TEE</div>
+        <div class="product-info">
+          <div class="product-label">Signature Essentials</div>
+          <h3>999 White Tee</h3>
+          <p>Red & blue 9 embroidery. Essential piece for collectors.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>PREORDER ACCESS IS AN INQUIRY ONLY.</strong> No payment is collected. All details including prices, sizing, and fulfillment are pending Gino Green Global approval.
+    </div>
+  </section>
+
+  <!-- 06: The Story -->
+  <section id="culture">
+    <div class="section-label">06 / THE STORY</div>
+    <h2>MORE THAN<br>A <span class="highlight">LABEL</span></h2>
+    <p class="section-intro">Official documentary footage coming soon. The culture behind the movement.</p>
+
+    <div style="text-align: center; padding: 80px 0;">
+      <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 40px;">DOCUMENTARY COMING SOON</div>
+      <p>Real stories. Real voices. The authentic narrative of Gino Green Global and the 999 movement.</p>
+    </div>
+  </section>
+
+  <!-- 07: Connect -->
+  <section id="connect">
+    <div class="section-label">07 / COMMUNITY</div>
+    <h2>STAY <span class="highlight">CONNECTED</span></h2>
+    <p class="section-intro">Follow the movement for collection announcements, campaign releases, and behind-the-scenes stories.</p>
+
+    <div class="cta-group" style="justify-content: center;">
+      <a href="https://www.instagram.com/ginogreenglobal/" target="_blank" class="btn btn-primary">FOLLOW ON INSTAGRAM</a>
+      <a href="#top" class="btn btn-secondary">BACK TO TOP</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <h3>GINO<span>GREEN</span></h3>
+      <p>QUEENS · NEW YORK · WORLDWIDE</p>
+      <p style="font-size: 12px; color: var(--text-muted);">999 / ORIGINAL CULTURE EXPERIENCE BY WISE²</p>
+      <div class="footer-meta">
+        © 2026 GINO GREEN GLOBAL · ALL RIGHTS RESERVED<br>
+        DESIGNED & DEVELOPED BY <span style="color: var(--primary);">WISE²</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth navigation
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Active nav indicator
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('section[id]');
+      let current = '';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (scrollY >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Interactive Reward Card System
+    let unlockedCount = 0;
+    const unlockSequence = [0, 1, 2];
+    let currentSequenceIndex = 0;
+    const status = document.querySelector('#unlockStatus');
+
+    document.querySelectorAll('.unlock-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const position = parseInt(btn.dataset.position);
+
+        // Check if correct sequence
+        if (position === unlockSequence[currentSequenceIndex]) {
+          btn.classList.add('active');
+          currentSequenceIndex++;
+          unlockedCount++;
+
+          // Update progress dots
+          const dots = document.querySelectorAll('.progress-dot');
+          if (dots[currentSequenceIndex - 1]) {
+            dots[currentSequenceIndex - 1].classList.add('active');
+          }
+
+          // Show celebration animation
+          const celebration = document.createElement('div');
+          celebration.className = 'unlock-celebration';
+          celebration.textContent = '✓';
+          document.body.appendChild(celebration);
+          setTimeout(() => celebration.remove(), 1000);
+
+          // Update status message
+          if (unlockedCount < 3) {
+            status.textContent = `${3 - unlockedCount} REWARDS TO UNLOCK`;
+            status.style.color = 'var(--primary)';
+          } else {
+            // All unlocked - show celebration
+            status.textContent = '🎉 ALL REWARDS UNLOCKED 🎉';
+            status.style.color = 'var(--primary)';
+            document.querySelector('#flipHint').style.display = 'block';
+
+            // Unlock rewards on back of card
+            setTimeout(() => {
+              document.querySelectorAll('.reward-item').forEach((item) => {
+                item.classList.add('unlocked');
+              });
+            }, 400);
+          }
+        } else {
+          // Wrong button - reset sequence
+          btn.style.opacity = '0.5';
+          setTimeout(() => { btn.style.opacity = '1'; }, 200);
+
+          status.textContent = '❌ WRONG ORDER - START OVER';
+          status.style.color = '#ff6b6b';
+          currentSequenceIndex = 0;
+          unlockedCount = 0;
+
+          // Reset all buttons and progress
+          document.querySelectorAll('.unlock-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.progress-dot').forEach(d => d.classList.remove('active'));
+
+          setTimeout(() => {
+            status.textContent = 'TAP TO UNLOCK REWARDS';
+            status.style.color = 'var(--primary)';
+          }, 1500);
+        }
+      });
+    });
+
+    // Card flip interaction (only when fully unlocked)
+    document.querySelector('#cardFlipper').addEventListener('click', (e) => {
+      if (unlockedCount === 3 && !e.target.closest('.unlock-btn')) {
+        document.querySelector('#cardFlipper').classList.toggle('flipped');
+      }
+    });
+  </script>
+</body>
+</html>
