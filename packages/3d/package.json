@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "dependencies": {
     "@wise2/api": "*",
-    "three": "^r128"
+    "three": "^0.160.0"
   },
   "scripts": {
     "build": "webpack",
