@@ -2,10 +2,12 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const WebSocket = require('ws');
+const Monitor = require('./monitoring');
 
 const app = express();
 const server = http.createServer(app);
 const PORT = 8765;
+const monitor = new Monitor();
 
 app.use(express.static('.'));
 app.use(express.json());
@@ -131,4 +133,41 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`🏥 Health: http://localhost:${PORT}/api/health`);
   console.log(`📡 WebSocket: ws://localhost:${PORT}`);
   console.log(`🤖 AI Ready: /api/ai\n`);
+});
+
+// Advanced monitoring endpoints
+app.get('/api/metrics', (req, res) => {
+  monitor.updateSystemMetrics();
+  res.json(monitor.getMetrics());
+});
+
+app.get('/api/health-score', (req, res) => {
+  monitor.updateSystemMetrics();
+  res.json({
+    score: monitor.getHealthScore(),
+    max: 100,
+    status: monitor.getHealthScore() > 80 ? 'excellent' : 
+           monitor.getHealthScore() > 60 ? 'good' : 
+           monitor.getHealthScore() > 40 ? 'fair' : 'critical',
+    scale_up_recommended: monitor.shouldScaleUp()
+  });
+});
+
+app.get('/api/alerts', (req, res) => {
+  res.json({
+    alerts: monitor.metrics.alerts,
+    critical: monitor.metrics.alerts.filter(a => a.severity === 'critical'),
+    warning: monitor.metrics.alerts.filter(a => a.severity === 'warning')
+  });
+});
+
+app.get('/api/performance', (req, res) => {
+  res.json({
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    connections: wss.clients.size,
+    requests_handled: monitor.metrics.requests,
+    errors: monitor.metrics.errors,
+    avg_latency: monitor.getAverageLatency() + 'ms'
+  });
 });
