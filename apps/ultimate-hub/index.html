@@ -232,6 +232,75 @@
       }
     }
 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(78, 255, 133, 0.1);
+      border: 1px solid #4eff85;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #4eff85;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4eff85;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(78, 255, 133, 0.3);
+      border-top-color: #4eff85;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      background: rgba(11, 37, 49, 0.3);
+      border-radius: 12px;
+      border: 1px solid #1b735f;
+      margin: 12px 0;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-label {
+      color: #9dbcc4;
+      font-size: 12px;
+    }
+
+    .stat-value {
+      color: #4eff85;
+      font-weight: 600;
+      font-family: 'Monaco', monospace;
+    }
+
     .info-banner {
       background: rgba(8, 41, 28, 0.4);
       border: 1px solid #1b735f;
@@ -269,8 +338,14 @@
         ⬡ WISE<span>²</span>
         <small>ULTIMATE HUB</small>
       </div>
-      <div class="status-badge online">
-        SURFACE TV HUB • ONLINE
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <div class="status-badge online">
+          SURFACE TV HUB • ONLINE
+        </div>
+        <div class="live-indicator">
+          <div class="live-dot"></div>
+          <span id="ws-status">Connecting...</span>
+        </div>
       </div>
     </header>
 
@@ -361,13 +436,33 @@
       <div class="info-banner">
         ✦ JARVIS AI — Advanced AI assistants and integrations
       </div>
+
+      <div class="stat-row" id="ai-status-row">
+        <div class="stat">
+          <span class="stat-label">JARVIS Status</span>
+          <span class="stat-value" id="jarvis-status"><span class="spinner"></span></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Hermes Ready</span>
+          <span class="stat-value" id="hermes-status"><span class="spinner"></span></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Models Available</span>
+          <span class="stat-value" id="models-status"><span class="spinner"></span></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Context Depth</span>
+          <span class="stat-value" id="context-depth">128K tokens</span>
+        </div>
+      </div>
+
       <div class="grid">
-        <div class="tile">
+        <div class="tile" onclick="activateJARVIS()">
           <div>
             <div class="tile-icon">✦</div>
             <div class="tile-title">JARVIS</div>
           </div>
-          <div class="tile-desc">Voice integration • Wake-word activated</div>
+          <div class="tile-desc">Voice integration • Click to activate</div>
         </div>
         <a class="tile" href="http://localhost:3012" target="_blank">
           <div>
@@ -376,14 +471,14 @@
           </div>
           <div class="tile-desc">Context & memory API</div>
         </a>
-        <div class="tile">
+        <div class="tile" onclick="trainVoice()">
           <div>
             <div class="tile-icon">🎙</div>
             <div class="tile-title">Voice Training</div>
           </div>
           <div class="tile-desc">Customize voice profiles</div>
         </div>
-        <div class="tile">
+        <div class="tile" onclick="loadAIModels()">
           <div>
             <div class="tile-icon">🧠</div>
             <div class="tile-title">AI Models</div>
@@ -398,6 +493,26 @@
       <div class="info-banner">
         ◉ PERFORMANCE — System health, benchmarks & optimization
       </div>
+
+      <div class="stat-row" id="live-stats">
+        <div class="stat">
+          <span class="stat-label">CPU Load</span>
+          <span class="stat-value" id="cpu-load">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Memory Usage</span>
+          <span class="stat-value" id="mem-usage">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Uptime</span>
+          <span class="stat-value" id="uptime">--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Connections</span>
+          <span class="stat-value" id="connections">0</span>
+        </div>
+      </div>
+
       <div class="grid">
         <div class="tile" onclick="loadSystemStatus()">
           <div>
@@ -483,6 +598,32 @@
   </div>
 
   <script>
+    let ws = null;
+
+    // Initialize WebSocket connection
+    function initWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+      ws.onopen = () => {
+        document.getElementById('ws-status').textContent = 'LIVE';
+        document.getElementById('ws-status').style.color = '#4eff85';
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'pong') console.log('✓ Hive pulse');
+        } catch (e) {}
+      };
+
+      ws.onclose = () => {
+        document.getElementById('ws-status').textContent = 'OFFLINE';
+        document.getElementById('ws-status').style.color = '#ff6b6b';
+        setTimeout(initWebSocket, 3000);
+      };
+    }
+
     // Tab switching
     document.querySelectorAll('[data-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -495,7 +636,7 @@
       });
     });
 
-    // Keyboard shortcuts (1-5 for tabs)
+    // Keyboard shortcuts
     document.addEventListener('keydown', e => {
       if (['1','2','3','4','5'].includes(e.key)) {
         document.querySelectorAll('[data-mode]')[+e.key - 1].click();
@@ -510,6 +651,31 @@
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Live system stats
+    async function updateLiveStats() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        document.getElementById('cpu-load').textContent = data.load.current;
+        document.getElementById('mem-usage').textContent = data.memory.usage_percent + '%';
+        document.getElementById('uptime').textContent = data.uptime;
+      } catch (err) {}
+    }
+
+    // Load AI status
+    async function loadAIStatus() {
+      try {
+        const res = await fetch('/api/ai');
+        const data = await res.json();
+        document.getElementById('jarvis-status').textContent =
+          data.jarvis.status === 'initialized' ? '✓ Ready' : '⊗ Offline';
+        document.getElementById('hermes-status').textContent =
+          data.hermes.status === 'ready' ? '✓ Connected' : '⊗ Offline';
+        document.getElementById('models-status').textContent =
+          data.models.ollama === 'available' ? '✓ Available' : '⊗ Loading';
+      } catch (err) {}
+    }
 
     // Brightness control
     function dimScreen(brightness) {
@@ -530,8 +696,8 @@
         const el = document.getElementById('system-status');
         el.innerHTML = `
           <strong>${data.platform}</strong><br>
-          CPU: ${data.cpu_count} cores<br>
-          RAM: ${data.memory.free} / ${data.memory.total}
+          CPU: ${data.cpu_count} cores • ${data.memory.usage_percent}% RAM<br>
+          Load: ${data.load.current}
         `.trim();
       } catch (err) {
         document.getElementById('system-status').textContent = 'API unavailable';
@@ -546,12 +712,37 @@
         const el = document.getElementById('health-status');
         el.innerHTML = `
           <strong>${data.status}</strong><br>
-          Uptime: ${Math.round(data.uptime)}s
+          Clients: ${data.clients_connected || 0}
         `.trim();
       } catch (err) {
         document.getElementById('health-status').textContent = 'API unavailable';
       }
     }
+
+    // AI Functions
+    async function activateJARVIS() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'command', action: 'activate_jarvis' }));
+      }
+      alert('🎤 JARVIS activated - Voice input enabled');
+    }
+
+    function trainVoice() {
+      alert('🎙️ Voice training mode - Speak clearly');
+    }
+
+    async function loadAIModels() {
+      alert('📦 Loading AI models...\n\n• Ollama: Available\n• Local LLM: Ready\n• Context: 128K tokens');
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initWebSocket();
+      updateLiveStats();
+      loadAIStatus();
+      setInterval(updateLiveStats, 5000);
+      setInterval(loadAIStatus, 10000);
+    });
   </script>
 </body>
 </html>

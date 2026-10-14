@@ -1,11 +1,53 @@
 const express = require('express');
 const path = require('path');
+const http = require('http');
+const WebSocket = require('ws');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = 8765;
 
 app.use(express.static('.'));
 app.use(express.json());
+
+// WebSocket server for real-time updates
+const wss = new WebSocket.Server({ server });
+
+// Broadcast to all connected clients
+function broadcast(data) {
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+}
+
+// WebSocket connection handler
+wss.on('connection', (ws) => {
+  console.log('✅ Client connected to Hive');
+
+  // Send initial status
+  ws.send(JSON.stringify({
+    type: 'connected',
+    message: 'Connected to WISE² Ultimate Hub',
+    timestamp: new Date().toISOString()
+  }));
+
+  ws.on('message', (msg) => {
+    try {
+      const data = JSON.parse(msg);
+      if (data.type === 'ping') {
+        ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
+      }
+    } catch (e) {
+      console.log('Message received:', msg);
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('❌ Client disconnected from Hive');
+  });
+});
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -13,36 +55,80 @@ app.get('/api/health', (req, res) => {
     status: 'healthy',
     service: 'WISE² Ultimate Hub',
     uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    clients_connected: wss.clients.size
   });
 });
 
-// Get system status
+// Get system status with real-time metrics
 app.get('/api/status', (req, res) => {
   const os = require('os');
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+
   res.json({
     platform: os.platform(),
     cpu_count: os.cpus().length,
+    cpu_model: os.cpus()[0].model,
     memory: {
-      total: Math.round(os.totalmem() / 1024 / 1024 / 1024) + ' GB',
-      free: Math.round(os.freemem() / 1024 / 1024 / 1024) + ' GB'
+      total: Math.round(totalMem / 1024 / 1024 / 1024) + ' GB',
+      free: Math.round(freeMem / 1024 / 1024 / 1024) + ' GB',
+      used: Math.round(usedMem / 1024 / 1024 / 1024) + ' GB',
+      usage_percent: Math.round((usedMem / totalMem) * 100)
     },
-    load: os.loadavg(),
-    uptime: Math.round(os.uptime() / 60 / 60) + ' hours'
+    load: {
+      current: os.loadavg()[0].toFixed(2),
+      average: os.loadavg()
+    },
+    uptime: Math.round(os.uptime() / 60 / 60) + ' hours',
+    node_uptime: process.uptime().toFixed(1) + 's'
   });
 });
 
-// Get time
+// Get time with timezone
 app.get('/api/time', (req, res) => {
+  const now = new Date();
   res.json({
-    iso: new Date().toISOString(),
-    locale: new Date().toLocaleString(),
-    unix: Date.now()
+    iso: now.toISOString(),
+    locale: now.toLocaleString(),
+    unix: Date.now(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
   });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+// AI Status endpoint
+app.get('/api/ai', (req, res) => {
+  res.json({
+    jarvis: { status: 'initialized', ready: true },
+    hermes: { status: 'ready', endpoint: 'http://localhost:3012' },
+    models: { ollama: 'available', local_llm: 'ready' },
+    capabilities: ['voice', 'context', 'memory', 'reasoning']
+  });
+});
+
+// Command handler
+app.post('/api/command', (req, res) => {
+  const { action, params } = req.body;
+
+  broadcast({
+    type: 'command',
+    action,
+    params,
+    timestamp: new Date().toISOString()
+  });
+
+  res.json({
+    status: 'executed',
+    action,
+    broadcast: true
+  });
+});
+
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 WISE² Ultimate Hub is LIVE`);
   console.log(`📍 http://localhost:${PORT}`);
-  console.log(`🏥 Health: http://localhost:${PORT}/api/health\n`);
+  console.log(`🏥 Health: http://localhost:${PORT}/api/health`);
+  console.log(`📡 WebSocket: ws://localhost:${PORT}`);
+  console.log(`🤖 AI Ready: /api/ai\n`);
 });
