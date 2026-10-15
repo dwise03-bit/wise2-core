@@ -1,0 +1,17 @@
+{
+  "name": "@wise2/ultimate-hub",
+  "version": "1.0.0",
+  "description": "WISE² Ultimate Hub - Command center with real-time monitoring",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["wise2", "hub", "command-center"],
+  "author": "WISE² Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.3.0",
+    "ws": "^8.22.0"
+  }
+}

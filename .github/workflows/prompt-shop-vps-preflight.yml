@@ -1,0 +1,90 @@
+name: Prompt Shop VPS preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-existing-release-path:
+    name: Inspect existing web routing safely
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure temporary SSH access
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_KEY"
+          install -d -m 700 ~/.ssh
+          printf '%s' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Inspect host without changing it
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          test -n "$DEPLOY_USER"
+          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+          echo "== identity =="
+          id -un
+          hostname
+          echo "== home directories =="
+          find "$HOME" -maxdepth 2 -mindepth 1 -type d \( -name "*wise*" -o -name "*prompt*" -o -name "*shop*" \) -print 2>/dev/null | sort
+          echo "== running web containers =="
+          docker ps --format "{{.Names}} | {{.Image}} | {{.Ports}}" 2>/dev/null || true
+          echo "== relevant reverse-proxy routes =="
+          if command -v nginx >/dev/null 2>&1; then
+            echo "== wise2 Nginx configuration files =="
+            sudo grep -RIlE "server_name[[:space:]].*wise2\\.net" /etc/nginx 2>/dev/null | sort || true
+            echo "== active wise2 virtual-host configuration =="
+            for config in /etc/nginx/sites-enabled/*; do
+              if sudo grep -qE "server_name[[:space:]].*wise2\\.net" "$config" 2>/dev/null; then
+                echo "-- $config --"
+                sudo sed -E \
+                  -e 's#(ssl_certificate(_key)?[[:space:]]+)[^;]+#\\1[redacted]#' \
+                  -e 's#(proxy_pass[[:space:]]+)[^;]+#\\1[redacted]#' \
+                  "$config"
+              fi
+            done
+            echo "== exact active Wise2 TLS directives =="
+            sudo grep -nE "listen|server_name|ssl_certificate" /etc/nginx/sites-enabled/wise2.net.conf || true
+            echo "== all active Nginx HTTPS virtual hosts =="
+            for config in /etc/nginx/sites-enabled/*; do
+              if sudo grep -qE "listen[[:space:]].*443" "$config" 2>/dev/null; then
+                echo "-- $config --"
+                sudo grep -nE "listen[[:space:]].*443|server_name|ssl_certificate" "$config" || true
+              fi
+            done
+            echo "== active HTTPS listeners =="
+            sudo ss -tlpn | grep -E ':(443|8443)[[:space:]]' || true
+            echo "== wise2 route directives =="
+            sudo grep -RInE "server_name[[:space:]].*wise2\\.net|location[[:space:]]|proxy_pass[[:space:]]|root[[:space:]]|listen[[:space:]]" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | grep -B 8 -A 24 "server_name[[:space:]].*wise2\\.net" | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\\1[redacted]/" || true
+            sudo nginx -T 2>/dev/null | grep -E "server_name|location /prompt-shop|proxy_pass|root " | sed -E "s/(proxy_pass[[:space:]]+)[^;]+/\1[redacted]/" || true
+          fi
+          if command -v caddy >/dev/null 2>&1; then
+            sudo caddy adapt --config /etc/caddy/Caddyfile --pretty 2>/dev/null | grep -E 'host|prompt-shop|reverse_proxy|root' || true
+          fi
+          echo "== origin health (bypasses Cloudflare) =="
+          curl -kSs --resolve wise2.net:443:127.0.0.1 -o /dev/null -w "origin HTTPS status=%{http_code}\\n" https://wise2.net || true
+          curl -sS -H "Host: wise2.net" -o /dev/null -w "origin HTTP status=%{http_code}\\n" http://127.0.0.1 || true
+          echo "== certificate status =="
+          sudo certbot certificates 2>/dev/null | grep -E "Certificate Name:|Domains:|Expiry Date:" || true
+          echo "== Wise2 certificate file used by Nginx =="
+          sudo readlink -f /etc/letsencrypt/live/wise2.net/fullchain.pem || true
+          sudo openssl x509 -in /etc/letsencrypt/live/wise2.net/fullchain.pem -noout -subject -issuer -dates -ext subjectAltName || true
+          echo "== site health =="
+          curl -ksS -o /dev/null -w "https://wise2.net status=%{http_code}\n" https://wise2.net || true
+          REMOTE
+
+      - name: Inspect the public origin TLS certificate
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          printf '' | openssl s_client -connect "$DEPLOY_HOST:443" -servername wise2.net 2>/dev/null | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+          curl --resolve wise2.net:443:"$DEPLOY_HOST" -sS -o /dev/null -w "verified origin HTTPS status=%{http_code}\n" https://wise2.net/prompt-shop/ || true

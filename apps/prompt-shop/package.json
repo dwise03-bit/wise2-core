@@ -1,12 +1,11 @@
 {
-  "name": "@wise2/prompt-shop",
+  "name": "wise-touch-complete-baseline",
   "private": true,
   "version": "0.15.0-design-merge",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3002",
+    "dev": "vite",
     "build": "vite build",
-    "start": "node server/index.js",
     "preview": "vite preview",
     "api": "node server/index.js",
     "deploy:validate": "node deploy/validate-env.mjs .env.production",
@@ -18,18 +17,20 @@
     "express-rate-limit": "^8.6.2",
     "helmet": "^8.3.0",
     "jose": "^6.2.9",
-    "lucide-react": "^0.468.0",
+    "lucide-react": "1.54.0",
     "pg": "^8.23.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "sharp": "^0.35.3",
-    "stripe": "^22.5.0"
+    "stripe": "23.0.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "4.3.4",
     "autoprefixer": "^10.4.20",
+    "browserslist": "^4.29.3",
+    "caniuse-lite": "^1.0.30001815",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.0.5"
+    "vite": "6.0.5"
   }
 }

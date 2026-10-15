@@ -1,0 +1,22 @@
+{
+  "name": "@wise2/web",
+  "version": "2.0.0",
+  "description": "WISE² Web Application",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/ai": "*",
+    "@wise2/trading": "*",
+    "@wise2/games": "*",
+    "@wise2/3d": "*",
+    "@wise2/mobile": "*",
+    "@wise2/api": "*",
+    "@wise2/config": "*",
+    "@wise2/security": "*"
+  },
+  "scripts": {
+    "start": "http-server -p 3000",
+    "dev": "http-server -p 3000 --watch",
+    "build": "webpack",
+    "test": "jest"
+  }
+}

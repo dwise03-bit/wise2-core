@@ -1,1 +1,0 @@
-# wise2-dashboard

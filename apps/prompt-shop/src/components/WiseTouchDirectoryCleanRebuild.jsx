@@ -3,7 +3,6 @@ import {
   Boxes,
   Factory,
   FolderKanban,
-  HardHat,
   SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
@@ -41,6 +40,7 @@ import AccountCenter from "../features/account/AccountCenter.jsx";
 import CheckoutPanel from "../features/commerce/CheckoutPanel.jsx";
 import { TAB_LABELS, WEBSITE_TABS, pathFromTab, tabFromPath } from "../routes/websiteRoutes.js";
 import ImageBuilder from "../features/image/ImageBuilder.jsx";
+import BuildForeman from "./BuildForeman.jsx";
 
 function subsystemDescription(subsystem, system) {
   return getSubsystemForSystem(system.id, subsystem)?.description || `${subsystem.replace("™", "")} — ${system.vibe}`;
@@ -406,16 +406,17 @@ export default function WiseTouchDirectoryCleanRebuild() {
             {currentPromptFavorite && <button type="button" onClick={() => toggleFavorite(currentPromptFavorite)} className="mt-3 rounded-xl border border-yellow-500/40 px-4 py-2 text-sm font-black text-yellow-300">{hasFavorite(favoriteState, "prompt", currentPromptFavorite.id) ? "★ Prompt Saved" : "☆ Save Prompt"}</button>}
           </div>
         )}
-        <section className="wt-hero overflow-hidden rounded-[1.5rem] border border-orange-500/40 bg-zinc-950 p-5 sm:p-8">
+        <section className="wt-hero wt-cinematic-hero overflow-hidden rounded-[1.5rem] border border-orange-500/40 p-5 sm:p-8">
           <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-center">
             <div>
-              <div className="flex flex-wrap items-center gap-3"><span className="wt-district">W²</span><span className="text-xs font-black uppercase tracking-[0.35em] text-orange-400">Build District 02 · 建設地区 02</span></div>
-              <h1 className="mt-5 text-4xl font-black uppercase leading-[0.9] sm:text-6xl">WISE TOUCH<br/><span className="text-orange-500">Prompt Shop</span></h1>
-              <p className="mt-5 max-w-2xl text-sm font-bold uppercase tracking-[0.16em] text-zinc-400">The build floor for visual DNA · Build. Mix. Create. Dominate.</p>
-              <button type="button" onClick={() => setTab("directory")} className="wt-primary mt-6 rounded-xl bg-orange-500 px-6 py-4 font-black uppercase text-black">Enter the System Bays →</button>
+              <div className="flex flex-wrap items-center gap-3"><span className="wt-district">W²</span><span className="text-xs font-black uppercase tracking-[0.35em] text-orange-300">Build District 02 · 建設地区 02</span><span className="wt-live-status">Live production floor</span></div>
+              <h1 className="mt-6 max-w-3xl text-5xl font-black uppercase leading-[0.82] tracking-[-0.06em] sm:text-7xl xl:text-8xl">Build the image<br/><span className="text-orange-500">before it exists.</span></h1>
+              <p className="mt-6 max-w-xl text-sm font-bold uppercase leading-6 tracking-[0.14em] text-zinc-200">WISE TOUCH Prompt Shop is the cinematic build floor for visual DNA, precision prompt systems, and next-level creative direction.</p>
+              <div className="mt-7 flex flex-wrap gap-3"><button type="button" onClick={() => setTab("directory")} className="wt-primary rounded-xl bg-orange-500 px-6 py-4 font-black uppercase text-black">Enter the System Bays →</button><button type="button" onClick={() => setTab("meter")} className="rounded-xl border border-white/30 bg-black/35 px-6 py-4 font-black uppercase text-white backdrop-blur-sm transition hover:border-orange-500 hover:text-orange-300">Open Hybrid Mixer</button></div>
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-black uppercase tracking-[0.22em] text-zinc-300"><span>01 — Select systems</span><span>02 — Build visual DNA</span><span>03 — Generate with intent</span></div>
             </div>
             <aside className="wt-foreman rounded-2xl border border-orange-500/40 bg-black/80 p-4">
-              <div className="flex gap-4"><div className="wt-hardhat"><HardHat size={34}/></div><div><div className="text-xs font-black uppercase tracking-[0.25em] text-orange-400">Foreman Mode · Active</div><div className="mt-2 text-lg font-black italic leading-6">“{foremanLine}”</div></div></div>
+              <div className="flex items-center gap-4"><BuildForeman state={meterTotal > 100 ? "failed" : meterTotal === 100 ? "waving" : tab === "video" ? "running" : tab === "directory" ? "review" : "idle"} size={112}/><div><div className="text-xs font-black uppercase tracking-[0.25em] text-orange-400">Foreman Mode · Active</div><div className="mt-2 text-lg font-black italic leading-6">“{foremanLine}”</div></div></div>
               <div className="mt-4 flex items-center justify-between border-t border-orange-500/20 pt-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500"><span>Build technician online</span><span className="text-emerald-400">● Up to code</span></div>
             </aside>
           </div>
@@ -423,7 +424,7 @@ export default function WiseTouchDirectoryCleanRebuild() {
 
         <div className="mt-4"><AuthPanel {...authState} onSubmit={submitAuth} onLogout={async () => { await logout(); setAuthState({ user: null, status: "idle", message: "Signed out. Local backup remains available." }); setSyncReady(false); }} /></div>
 
-        <nav aria-label="Primary website navigation" className="my-6 rounded-3xl border border-zinc-800 bg-zinc-950/80 p-3">
+        <nav aria-label="Primary website navigation" className="wt-product-nav my-6 rounded-3xl border border-zinc-800 p-3">
           <label className="block lg:hidden"><span className="mb-2 block text-[10px] font-black uppercase tracking-[0.25em] text-orange-400">Navigate Build District</span><select aria-label="Current website screen" value={tab} onChange={(event)=>setTab(event.target.value)} className="h-12 w-full rounded-xl border border-zinc-800 bg-black px-4 text-sm font-black uppercase text-white">{WEBSITE_TABS.map((item)=><option key={item} value={item}>{TAB_LABELS[item]}</option>)}</select></label>
           <div className="hidden flex-wrap gap-3 lg:flex">{WEBSITE_TABS.map((item) => (
             <button key={item} onClick={() => setTab(item)} aria-current={tab === item ? "page" : undefined} className={`rounded-xl px-4 py-3 text-xs font-black uppercase tracking-wider ${tab === item ? "bg-orange-500 text-black" : "bg-black/40 text-zinc-400"}`}>{TAB_LABELS[item]}</button>
@@ -444,6 +445,10 @@ export default function WiseTouchDirectoryCleanRebuild() {
 
         {tab === "directory" && (
           <>
+            <section className="wt-bays-intro mb-6 overflow-hidden rounded-3xl border border-orange-500/30 p-6 sm:p-8">
+              <div className="relative z-10 max-w-2xl"><div className="text-[10px] font-black uppercase tracking-[0.34em] text-orange-300">System Bays · Archive 01—{String(DEFAULT_SYSTEMS.length).padStart(2, "0")}</div><h2 className="mt-4 text-4xl font-black uppercase leading-[.86] tracking-[-.045em] sm:text-6xl">Choose the visual<br/><span className="text-orange-500">world you build in.</span></h2><p className="mt-5 max-w-xl text-sm font-bold leading-6 text-zinc-300">Every system is a fully documented visual language. Search the archive, inspect the DNA, then bring it into the mixer.</p></div>
+              <div className="relative z-10 mt-7 flex flex-wrap gap-4 text-[10px] font-black uppercase tracking-[.18em] text-zinc-200"><span>{DEFAULT_SYSTEMS.length} master systems</span><span>{subsystemTotal} modules</span><span>100% mix precision</span></div>
+            </section>
             <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-3xl border border-zinc-800 bg-zinc-950/70 p-5"><div className="text-xs uppercase tracking-widest text-zinc-500">Systems</div><div className="mt-2 text-4xl font-black text-yellow-300">{DEFAULT_SYSTEMS.length}</div></div>
               <div className="rounded-3xl border border-zinc-800 bg-zinc-950/70 p-5"><div className="text-xs uppercase tracking-widest text-zinc-500">Subsystems</div><div className="mt-2 text-4xl font-black text-yellow-300">{subsystemTotal}</div></div>
@@ -620,8 +625,8 @@ export default function WiseTouchDirectoryCleanRebuild() {
         {tab === "account" && <AccountCenter user={authState.user} authStatus={authState.status} favoriteCount={favoriteItems.length} blueprintCount={favoriteItems.filter((item)=>item.type === "hybrid" || item.type === "prompt").length} assetCount={assetState.items.length} onOpen={setTab} onSignOut={async () => { await logout(); setAuthState({ user: null, status: "idle", message: "Signed out. Local backup remains available." }); setSyncReady(false); }} />}
 
         {tab === "meter" && (
-          <section className="rounded-[2rem] border border-zinc-800 bg-zinc-950 p-8">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><div className="text-xs font-black uppercase tracking-[0.3em] text-orange-400">Build District 02 · Engine Room</div><div className="mt-3 flex items-center gap-3"><SlidersHorizontal className="text-yellow-300" /><h2 className="text-4xl font-black uppercase">Hybrid Mixer</h2></div><p className="mt-2 text-xs font-bold uppercase tracking-wider text-zinc-500">Assemble your visual DNA · 100% or nothing.</p></div><div className={`rounded-2xl border px-6 py-4 text-center ${meterReady ? "border-emerald-500/40" : "border-red-500/40"}`}><div className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Influence Total</div><div className={`text-4xl font-black ${meterReady ? "text-emerald-400" : "text-red-400"}`}>{meterTotal}%</div></div></div>
+          <section className="wt-mixer-room overflow-hidden rounded-[2rem] border border-zinc-800 p-6 sm:p-8">
+            <div className="relative z-10 mb-8 flex flex-wrap items-end justify-between gap-4"><div><div className="text-xs font-black uppercase tracking-[0.3em] text-orange-300">Build District 02 · Engine Room</div><div className="mt-3 flex items-center gap-3"><SlidersHorizontal className="text-orange-400" /><h2 className="text-4xl font-black uppercase leading-none sm:text-6xl">Hybrid Mixer</h2></div><p className="mt-3 max-w-xl text-xs font-bold uppercase leading-5 tracking-wider text-zinc-300">Four systems. One visual language. Balance the influence, then lock the build at exactly 100%.</p></div><div className={`rounded-2xl border bg-black/60 px-6 py-4 text-center backdrop-blur-sm ${meterReady ? "border-emerald-500/40" : "border-red-500/40"}`}><div className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Influence Total</div><div className={`text-5xl font-black ${meterReady ? "text-emerald-400" : "text-red-400"}`}>{meterTotal}%</div><div className={`mt-1 text-[10px] font-black uppercase tracking-widest ${meterReady ? "text-emerald-300" : "text-red-300"}`}>{meterReady ? "Blueprint locked" : "Calibration required"}</div></div></div>
             <div className="grid gap-5 md:grid-cols-2">
               {meterSlots.map((slot, index) => {
                 const sourceOptions = slot.sourceType === "subsystem" ? SUBSYSTEMS : DEFAULT_SYSTEMS;
