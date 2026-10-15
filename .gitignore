@@ -10,3 +10,8 @@ build/
 coverage/
 .nyc_output/
 /lerna-debug.log
+# PixelRAG generated visuals and isolated Python environment
+/artifacts/pixelrag/
+.venv-pixelrag/
+__pycache__/
+*.pyc
