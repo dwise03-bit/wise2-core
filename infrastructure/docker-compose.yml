@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  web:
+    build: ../apps/web
+    ports:
+      - "3000:3000"
+    networks:
+      - wise2-network
+
+  ultimate-hub:
+    build: ../apps/ultimate-hub
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      - NODE_ENV=production
+      - PORT=8765
+      - LOG_LEVEL=info
+    networks:
+      - wise2-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    logs:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build: ../core/api
+    ports:
+      - "8000:8000"
+    networks:
+      - wise2-network
+
+  postgres:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wise2-network
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - wise2-network
+
+networks:
+  wise2-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

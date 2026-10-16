@@ -1,0 +1,13 @@
+{
+  "name": "@wise2/api",
+  "version": "2.0.0",
+  "description": "WISE² HTTP API Client",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/config": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  }
+}

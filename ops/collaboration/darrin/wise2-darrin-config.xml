@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wise2CollaborationPack version="1.0" generated="2026-10-07">
+  <identity>
+    <name>Darrin</name>
+    <githubUser>wisevillain86</githubUser>
+    <role>WISE2 Co-Founder / Operations Developer</role>
+  </identity>
+  <sourceOfTruth>
+    <provider>GitHub</provider>
+    <controlRepo>dwise03-bit/wise2-core</controlRepo>
+    <branch>main</branch>
+  </sourceOfTruth>
+  <repositories>
+    <repo permission="write">dwise03-bit/wise2-core</repo>
+    <repo permission="admin">dwise03-bit/wise2.net</repo>
+    <repo permission="admin">dwise03-bit/wise2-dashboard</repo>
+    <repo permission="admin">dwise03-bit/Wise2-hardware</repo>
+  </repositories>
+  <network>
+    <transport>Tailscale</transport>
+    <productionHostAlias>vps</productionHostAlias>
+    <productionAccess>GREEN-gated</productionAccess>
+    <controlBridge>authenticated WISE2 bridge</controlBridge>
+  </network>
+  <ssh>
+    <keyType>ed25519</keyType>
+    <privateKeyPolicy>GENERATE_LOCALLY_NEVER_COMMIT</privateKeyPolicy>
+    <publicKeyFile>~/.ssh/id_ed25519_wise2.pub</publicKeyFile>
+    <privateKeyFile>~/.ssh/id_ed25519_wise2</privateKeyFile>
+    <githubHost>github.com</githubHost>
+  </ssh>
+  <deployment>
+    <source>exact Git commit SHA</source>
+    <gate>GREEN</gate>
+    <directMainPush>false</directMainPush>
+    <preserveDirtyWork>true</preserveDirtyWork>
+    <auditRequired>true</auditRequired>
+  </deployment>
+  <secrets>
+    <commitPrivateKeys>false</commitPrivateKeys>
+    <commitTokens>false</commitTokens>
+    <commitPasswords>false</commitPasswords>
+    <storage>local keychain/ssh-agent and approved secret storage</storage>
+  </secrets>
+  <bootstrap>
+    <guide>ops/collaboration/darrin/README.md</guide>
+    <sshConfig>ops/collaboration/darrin/ssh-config.example</sshConfig>
+    <verifyScript>ops/collaboration/darrin/verify-access.sh</verifyScript>
+  </bootstrap>
+</wise2CollaborationPack>

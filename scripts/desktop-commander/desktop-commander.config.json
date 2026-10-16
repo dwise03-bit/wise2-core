@@ -1,0 +1,58 @@
+{
+  "device": {
+    "name": "$(hostname)",
+    "environment": "production",
+    "region": "nmls",
+    "fleet": "wise2-core",
+    "deviceId": "$(uuidgen || python3 -c 'import uuid; print(uuid.uuid4())')"
+  },
+  "remote": {
+    "api_endpoint": "https://wise2.net/api/devices",
+    "auth_header": "X-Device-Token",
+    "heartbeat_interval": 30000,
+    "reconnect_interval": 5000,
+    "max_reconnect_attempts": 10
+  },
+  "features": {
+    "remote_control": true,
+    "file_sync": true,
+    "command_execution": true,
+    "metrics_reporting": true,
+    "log_streaming": true,
+    "auto_updates": true
+  },
+  "security": {
+    "require_tls": true,
+    "validate_certificates": true,
+    "allowed_commands": [
+      "status",
+      "logs",
+      "restart",
+      "update",
+      "health_check",
+      "metrics",
+      "config_reload"
+    ]
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "output": "/var/log/wise2-dc.log",
+    "max_size": "100M",
+    "max_files": 10
+  },
+  "metrics": {
+    "enabled": true,
+    "interval": 60000,
+    "cpu": true,
+    "memory": true,
+    "disk": true,
+    "network": true
+  },
+  "auto_update": {
+    "enabled": true,
+    "check_interval": 3600000,
+    "auto_restart": true,
+    "restart_delay": 300000
+  }
+}
