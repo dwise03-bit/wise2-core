@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-08",
+  "sourceRecording": "ScreenRecording_10-07-2026 23-00-32_1.mp4",
+  "repositories": [
+    {
+      "id": "free-for-dev",
+      "repository": "ripienaar/free-for-dev",
+      "url": "https://github.com/ripienaar/free-for-dev.git",
+      "path": "WISE2-DEV-ARSENAL/upstream/free-for-dev",
+      "commit": "291770373b6d10934bd883bf7cd25b136f65d6ba",
+      "branch": "master",
+      "kind": "catalog",
+      "license": "not declared in root; retain upstream attribution",
+      "readme": "README.md",
+      "use": "Find infrastructure free tiers",
+      "status": "source verified; catalog usable"
+    },
+    {
+      "id": "public-apis",
+      "repository": "public-apis/public-apis",
+      "url": "https://github.com/public-apis/public-apis.git",
+      "path": "WISE2-DEV-ARSENAL/upstream/public-apis",
+      "commit": "874e5879d20843f7c2a5822cef4c0752127b3775",
+      "branch": "master",
+      "kind": "catalog",
+      "license": "MIT",
+      "readme": "README.md",
+      "use": "Find APIs for OWL EYE and EVERY DAY TRADER",
+      "status": "source verified; catalog usable"
+    },
+    {
+      "id": "awesome-mcp-servers",
+      "repository": "punkpeye/awesome-mcp-servers",
+      "url": "https://github.com/punkpeye/awesome-mcp-servers.git",
+      "path": "WISE2-DEV-ARSENAL/upstream/awesome-mcp-servers",
+      "commit": "3c30195615095be4f22ac120a7cee82f215cf547",
+      "branch": "main",
+      "kind": "catalog",
+      "license": "MIT",
+      "readme": "README.md",
+      "use": "Select connectors for WISE\u00b2 build workflows",
+      "status": "source verified; catalog usable"
+    },
+    {
+      "id": "EasySpider",
+      "repository": "NaiboWang/EasySpider",
+      "url": "https://github.com/NaiboWang/EasySpider.git",
+      "path": "WISE2-DEV-ARSENAL/upstream/EasySpider",
+      "commit": "5f73adec2a6ba5fee97e8da86cac6a03c68aa0f4",
+      "branch": "master",
+      "kind": "application",
+      "license": "AGPL-3.0",
+      "readme": "Readme.md",
+      "use": "Visual data collection for OWL EYE",
+      "status": "source verified; runtime setup required"
+    },
+    {
+      "id": "strix",
+      "repository": "usestrix/strix",
+      "url": "https://github.com/usestrix/strix.git",
+      "path": "WISE2-DEV-ARSENAL/upstream/strix",
+      "commit": "4695290682900eeedf4819a0336976d56dc028e0",
+      "branch": "main",
+      "kind": "application",
+      "license": "Apache-2.0",
+      "readme": "README.md",
+      "use": "Security assessment of WISE\u00b2 staging apps",
+      "status": "source verified; runtime setup required"
+    }
+  ]
+}

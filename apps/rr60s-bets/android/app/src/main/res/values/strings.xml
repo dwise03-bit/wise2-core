@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">RR 60s Bets</string>
-    <string name="unavailable">RR 60s Bets could not load. Check your connection and try again.</string>
-    <string name="retry">Retry</string>
-</resources>

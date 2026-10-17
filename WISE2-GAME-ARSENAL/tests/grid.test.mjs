@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {blast,detonate,key,path} from '../shared/grid.mjs';import {Round} from '../shared/round.mjs';
+const grid=()=>['#######','#..+..#','#.#...#','#.....#','#######'].map(r=>[...r]);
+test('walls stop rays; destroyable tile stops the ray after itself',()=>{const cells=blast(grid(),[1,1],9).map(key);assert(cells.includes('3,1'));assert(!cells.includes('4,1'));assert(!cells.includes('0,1'));});
+test('chain reaction detonates immediately and stops at original block',()=>{const g=grid(),a={id:1,position:[1,3],radius:2},b={id:2,position:[3,3],radius:3};const r=detonate(g,[a,b],a);assert.deepEqual([...r.fired],[1,2]);assert.equal(g[1][3],'.');assert(!r.cells.some(p=>key(p)==='3,0'));});
+test('BFS respects obstacles and danger',()=>{const g=grid();const route=path(g,[1,1],[5,1],new Set(['2,1']));assert(route.length>0);assert(!route.some(p=>key(p)==='2,1'));assert.deepEqual(path(g,[1,1],[5,1],new Set(['2,1','1,2'])),[]);});
+test('fuse, damage and restart reset the round',()=>{const r=new Round({fuse:.2});r.place();r.tick(.1);assert.equal(r.bombs.length,1);r.tick(.1);assert.equal(r.status,'lost');r.restart();assert.equal(r.status,'playing');assert.equal(r.flames.length,0);assert.equal(r.score,0);});
+test('capacity and same-cell placement cannot be exceeded',()=>{const r=new Round({capacity:1});r.place();r.place();r.move(1,0);r.place();assert.equal(r.bombs.length,1);});
+test('pickup changes score and upgrade changes range',()=>{const r=new Round();r.energy=[[2,1]];r.upgrade=[2,1];r.move(1,0);assert.equal(r.score,10);assert.equal(r.radius,3);assert.equal(r.upgrade,null);});
+test('enemy moves along grid path and win condition is restartable',()=>{const r=new Round();const before=key(r.enemy);r.tick(.1);assert.notEqual(key(r.enemy),before);r.enemy=null;r.energy=[];r.check();assert.equal(r.status,'won');r.restart();assert(r.enemy);});
+test('enemy evades a predicted blast when an exit exists',()=>{const r=new Round();r.enemy=[5,1];r.bombs=[{id:1,position:[5,3],radius:2,at:5}];r.tick(.1);assert.notEqual(key(r.enemy),'5,1');assert(!r.danger().has(key(r.enemy)));});
