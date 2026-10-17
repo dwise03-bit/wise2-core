@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --color-purple: #3B1E54;
+  --color-gold: #F4C542;
+  --color-cream: #F7F2E9;
+  --color-sage: #8B9B7F;
+  --color-blush: #E8C4D0;
+  --color-dark: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-dark);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+.display-font {
+  font-family: 'Cinzel Decorative', serif;
+  letter-spacing: 0.05em;
+}
+
+.btn-primary {
+  background-color: var(--color-purple);
+  color: white;
+  padding: 14px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: #2a1641;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 30, 84, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--color-gold);
+  color: var(--color-purple);
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid var(--color-gold);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background-color: transparent;
+  color: var(--color-gold);
+  transform: scale(1.05);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-purple);
+  padding: 10px 20px;
+  border: 2px solid var(--color-purple);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-purple);
+  color: white;
+}
+
+.card-luxury {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(244, 197, 66, 0.1);
+}
+
+.card-luxury:hover {
+  box-shadow: 0 8px 24px rgba(244, 197, 66, 0.15);
+  transform: translateY(-4px);
+}
+
+.divider-gold {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  margin: 2rem 0;
+}
+
+.botanical-divider {
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--color-gold);
+  margin: 2rem 0;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+}
+
+.botanical-divider::before,
+.botanical-divider::after {
+  content: '✤';
+  margin: 0 0.5rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(244, 197, 66, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(244, 197, 66, 0.6);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+}

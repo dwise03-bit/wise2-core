@@ -1,3 +1,0 @@
-# Owner demonstration environment — not for public indexing.
-User-agent: *
-Disallow: /

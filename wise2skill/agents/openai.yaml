@@ -1,4 +1,0 @@
-interface:
-  display_name: "WISE² Cinematic Website Handoff"
-  short_description: "Turn a rough website concept into a cinematic production handoff."
-  default_prompt: "Create a complete WISE² cinematic website production handoff for this project. Preserve known facts, label production assumptions, and include the full visual, asset, prompt, motion, responsive, and implementation system."
