@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  judge:
+    build:
+      context: .
+      dockerfile: judge.Dockerfile
+    environment:
+      TYPESAFE_API_KEY: ${TYPESAFE_API_KEY}
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  bot:
+    build: .
+    depends_on:
+      judge:
+        condition: service_healthy
+    environment:
+      JUDGE_URL: http://judge:8080
+      DESK_SECRET: ${DESK_SECRET}
+      SHADOW_MODE: ${SHADOW_MODE:-true}
+      FOMO_API_KEY: ${FOMO_API_KEY}
+      GECKO_API_KEY: ${GECKO_API_KEY}
+    volumes:
+      - grok-bot-data:/data
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  grok-bot-data:
