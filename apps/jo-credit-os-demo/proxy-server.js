@@ -1873,7 +1873,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname === '/jo-credit-os' || pathname === '/jo-credit-os/') {
+  if (pathname === '/jo-credit-os' || pathname === '/jo-credit-os/' || pathname === '/jo-credit' || pathname === '/jo-credit/') {
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-cache, no-store, must-revalidate',
