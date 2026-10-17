@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  codex-remote:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wise2-codex-remote
+    ports:
+      - "3009:3009"
+    environment:
+      - TAILSCALE_API_KEY=${TAILSCALE_API_KEY}
+      - TAILSCALE_MACHINE_NAME=${TAILSCALE_MACHINE_NAME:-wise2-docker}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4}
+      - PORT=3009
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    volumes:
+      - ./logs:/app/.wise2/logs
+      - ./data:/app/.wise2/data
+    restart: unless-stopped
+    networks:
+      - wise2
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  wise2:
+    driver: bridge
