@@ -1,5 +1,0 @@
-# Enable building native modules
-shamefully-hoist=true
-
-# Ensure bcrypt can find node-pre-gyp
-auto-install-peers=true

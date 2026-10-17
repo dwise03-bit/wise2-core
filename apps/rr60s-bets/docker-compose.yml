@@ -1,8 +1,0 @@
-services:
-  rr60s-bets:
-    image: wise2-rr60s-bets:20261004b
-    container_name: wise2-rr60s-bets
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:3017:3000"
-    mem_limit: 512m

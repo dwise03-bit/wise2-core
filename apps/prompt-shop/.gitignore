@@ -1,7 +1,0 @@
-node_modules
-.npm-cache
-dist
-.env
-.env.*
-!.env.example
-.DS_Store
