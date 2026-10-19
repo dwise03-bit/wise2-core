@@ -34,6 +34,13 @@ const SPRITE_BOTTOM_CROPS = {
   drag: '0%'
 };
 
+// The sleep sheet has a decorative Z high in the transparent corner. It reads
+// like a clipped fragment in the always-on-top window, so omit that corner as
+// well as the lower duplicate frame.
+const SPRITE_CLIP_PATHS = {
+  sleep: 'polygon(0 0, 59% 0, 59% 20%, 76% 20%, 76% 0, 100% 0, 100% 47%, 0 47%)'
+};
+
 // The supplied sit sheet is itself top-trimmed. Until a complete approved sit
 // pose is provided, use the intact perch pose rather than show clipped art.
 const SPRITE_FALLBACKS = { sit: 'land' };
@@ -80,6 +87,9 @@ function setSprite(name) {
   const resolved = SPRITE_FALLBACKS[name] || name;
   imp.src = SPRITES[resolved] || SPRITES.idle;
   imp.style.setProperty('--sprite-bottom-crop', SPRITE_BOTTOM_CROPS[resolved] || '0%');
+  imp.style.setProperty('--sprite-clip-path', SPRITE_CLIP_PATHS[resolved] || 'inset(0 0 var(--sprite-bottom-crop, 0%) 0)');
+  for (const pose of Object.keys(SPRITES)) imp.classList.remove(`pose-${pose}`);
+  imp.classList.add(`pose-${resolved}`);
 }
 
 function showSpeech(text, ms = 1800) {
@@ -151,7 +161,7 @@ function stopScheduler() {
   actionTimer = 0;
 }
 
-function scheduleNext(ms = 4500 + Math.random() * 3500) {
+function scheduleNext(ms = 2200 + Math.random() * 2300) {
   stopScheduler();
   if (!state.wanderEnabled || state.sleeping || state.dragging || state.hidden || state.demoMode) return;
   actionTimer = window.setTimeout(async () => {
@@ -220,22 +230,26 @@ async function doIdleAction() {
     return;
   }
   const roll = Math.random();
-  if (roll < 0.55) {
+  if (roll < 0.72) {
     await wander();
     return;
   }
-  if (roll < 0.75) {
+  if (roll < 0.85) {
     state.busy = true;
     setSprite('sit');
-    await delay(2500);
+    await delay(1250);
     if (!state.dragging && !state.sleeping) setSprite('idle');
     state.busy = false;
+    return;
+  }
+  if (roll < 0.96) {
+    await playClickReaction();
     return;
   }
   state.sleeping = true;
   setSprite('sleep');
   showSpeech('Recharge mode…', 1500);
-  await delay(5500);
+  await delay(1800);
   if (state.sleeping && !state.dragging) {
     state.sleeping = false;
     setSprite('idle');
@@ -404,6 +418,11 @@ menu.addEventListener('click', async (event) => {
     await runProjectReview();
     return;
   }
+  if (action === 'task-list') {
+    stopDemo(false);
+    await createTaskList();
+    return;
+  }
   if (action === 'wake') {
     stopDemo(false);
     state.sleeping = false;
@@ -503,6 +522,26 @@ async function runProjectReview() {
     persistSettings();
   } catch (error) {
     showSpeech(error.message || 'Project review failed.', 4200);
+  } finally {
+    state.busy = false;
+    if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }
+  }
+}
+
+async function createTaskList() {
+  if (state.busy || state.dragging) return;
+  const raw = window.prompt('Enter one task per line. IMP will ask before saving the local task list.');
+  if (raw === null) { showSpeech('Task list creation cancelled.'); return; }
+  const tasks = raw.split(/\r?\n/).map((title) => title.trim()).filter(Boolean).map((title) => ({ title, done: false }));
+  if (!tasks.length) { showSpeech('Add at least one task to create a list.'); return; }
+  stopScheduler();
+  try {
+    const completed = await taskEngine.run('tasks.update', { tasks });
+    showSpeech(`${tasks.length} task${tasks.length === 1 ? '' : 's'} saved and verified.`, 4200);
+    persistSettings();
+    return completed;
+  } catch (error) {
+    showSpeech(error.message || 'Task list was not saved.', 4200);
   } finally {
     state.busy = false;
     if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }

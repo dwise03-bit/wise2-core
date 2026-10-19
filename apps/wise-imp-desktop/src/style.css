@@ -31,7 +31,8 @@ html.web #pet-stage {
 #pet-stage.dragging { cursor: grabbing; }
 /* The locked pose PNGs use different sheet bounds. The renderer supplies a
    per-pose crop so no following frame leaks into a movement. */
-#imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: inset(0 0 var(--sprite-bottom-crop, 0%) 0); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
+#imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: var(--sprite-clip-path, inset(0 0 var(--sprite-bottom-crop, 0%) 0)); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
+#imp.pose-idle { animation: breathe 2.8s ease-in-out infinite; transform-origin: center 62%; }
 #imp.clicked { animation: pop .35s ease; }
 #imp.dancing { animation: imp-dance .62s ease-in-out infinite alternate; transform-origin: center 62%; }
 #speech { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); max-width: 240px; padding: 8px 12px; border: 1px solid rgba(40,190,255,.8); border-radius: 14px; background: rgba(3,10,20,.88); color: #c9f6ff; font-size: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,166,255,.28); pointer-events: none; }
@@ -41,6 +42,7 @@ html.web #pet-stage {
 #menu button:hover { background: rgba(27,132,192,.85); }
 @keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.1) rotate(-2deg)} 100%{transform:scale(1)} }
 @keyframes imp-dance { 0%{transform:translateY(0) rotate(-5deg) scale(1)} 100%{transform:translateY(-12px) rotate(5deg) scale(1.04)} }
+@keyframes breathe { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-4px) scale(1.012)} }
 @media (prefers-reduced-motion: reduce) {
   #imp, #imp.clicked, #imp.dancing { animation: none !important; }
 }
