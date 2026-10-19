@@ -38,7 +38,7 @@ export class TaskEngine {
   async run(id, input, { signal } = {}) {
     if (this.running) throw new CompanionError('BUSY', 'The companion is already executing a task.');
     const skill = this.registry.get(id);
-    const task = { id: crypto.randomUUID(), skill: id, status: TaskStatus.PLANNING, startedAt: new Date().toISOString() };
+    const task = { id: taskId(), skill: id, status: TaskStatus.PLANNING, startedAt: new Date().toISOString() };
     const update = (status, detail) => { task.status = status; task.detail = detail; this.onStatus({ ...task }); this.audit({ ...task }); };
     this.running = task;
     try {
@@ -63,6 +63,10 @@ export class TaskEngine {
       throw normalized;
     } finally { this.running = null; }
   }
+}
+
+function taskId() {
+  return globalThis.crypto?.randomUUID?.() || `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function withTimeout(promise, ms) {
