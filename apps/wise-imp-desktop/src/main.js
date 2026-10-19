@@ -36,6 +36,7 @@ const state = {
   alwaysOnTop: true,
   soundEnabled: false,
   hidden: false,
+  demoMode: false,
   suppressClick: false,
   bounds: { x: 0, y: 0, width: 1920, height: 1080 }
 };
@@ -52,6 +53,7 @@ let actionTimer = 0;
 let saveTimer = 0;
 let flightFrame = 0;
 let firstWander = true;
+let demoRun = 0;
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -132,7 +134,7 @@ function stopScheduler() {
 
 function scheduleNext(ms = 4500 + Math.random() * 3500) {
   stopScheduler();
-  if (!state.wanderEnabled || state.sleeping || state.dragging || state.hidden) return;
+  if (!state.wanderEnabled || state.sleeping || state.dragging || state.hidden || state.demoMode) return;
   actionTimer = window.setTimeout(async () => {
     try {
       await doIdleAction();
@@ -182,7 +184,7 @@ async function animateTo(targetX, targetY, direction) {
 }
 
 async function wander() {
-  if (state.busy || state.dragging || state.sleeping || !state.wanderEnabled) return;
+  if (state.busy || state.dragging || state.sleeping || state.demoMode || !state.wanderEnabled) return;
   const b = state.bounds;
   const rangeX = Math.max(0, b.width - state.width);
   const rangeY = Math.max(0, b.height - state.height);
@@ -222,6 +224,7 @@ async function doIdleAction() {
 }
 
 async function playClickReaction() {
+  if (state.demoMode) stopDemo(false);
   if (state.dragging) return;
   flightFrame += 1;
   state.sleeping = false;
@@ -236,6 +239,66 @@ async function playClickReaction() {
   if (!state.dragging && !state.sleeping) setSprite('idle');
   state.busy = false;
   if (!state.dragging && !state.sleeping) scheduleNext(1800);
+}
+
+function stopDemo(announce = true) {
+  if (!state.demoMode) return;
+  state.demoMode = false;
+  demoRun += 1;
+  flightFrame += 1;
+  state.busy = false;
+  imp.classList.remove('dancing');
+  if (!state.dragging) setSprite(state.sleeping ? 'sleep' : 'idle');
+  if (announce) showSpeech('Showcase paused.');
+  if (!state.sleeping && !state.dragging) scheduleNext(1800);
+}
+
+async function runDemo() {
+  if (state.demoMode || state.dragging) return;
+  state.demoMode = true;
+  state.sleeping = false;
+  const run = ++demoRun;
+  const active = () => state.demoMode && run === demoRun && !state.dragging;
+  const fly = async (x, y, direction) => {
+    if (!active()) return;
+    const b = state.bounds;
+    await animateTo(b.x + Math.max(0, b.width - state.width) * x, b.y + Math.max(0, b.height - state.height) * y, direction);
+  };
+  stopScheduler();
+  showSpeech('Demo mode: watch the WISE² IMP move.', 2600);
+  try {
+    await fly(0.18, 0.22, 'left');
+    await fly(0.72, 0.12, 'right');
+    if (!active()) return;
+    setSprite('sit');
+    showSpeech('Perch. Pose. Power up.', 1800);
+    await delay(1500);
+    if (!active()) return;
+    setSprite('click');
+    imp.classList.add('dancing');
+    showSpeech('The cyan shuffle.', 2200);
+    await delay(2200);
+    imp.classList.remove('dancing');
+    if (!active()) return;
+    setSprite('sleep');
+    showSpeech('Even companions recharge.', 1500);
+    await delay(1300);
+    if (!active()) return;
+    await fly(0.46, 0.30, 'left');
+    if (!active()) return;
+    setSprite('click');
+    showSpeech('Showcase complete.', 2200);
+    await delay(900);
+  } finally {
+    if (run === demoRun) {
+      state.demoMode = false;
+      state.busy = false;
+      imp.classList.remove('dancing');
+      if (!state.dragging) setSprite('idle');
+      persistSettings();
+      if (!state.dragging) scheduleNext(1800);
+    }
+  }
 }
 
 async function finishDrag() {
@@ -263,6 +326,7 @@ stage.addEventListener('pointerdown', (event) => {
     if (startedDrag) return;
     if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < DRAG_THRESHOLD) return;
     startedDrag = true;
+    stopDemo(false);
     state.suppressClick = true;
     state.dragging = true;
     state.busy = true;
@@ -308,17 +372,28 @@ menu.addEventListener('click', async (event) => {
   const action = event.target?.dataset?.action;
   if (!action) return;
   menu.hidden = true;
+  if (action === 'demo') {
+    await runDemo();
+    return;
+  }
+  if (action === 'stop-demo') {
+    stopDemo();
+    return;
+  }
   if (action === 'review') {
+    stopDemo(false);
     await runProjectReview();
     return;
   }
   if (action === 'wake') {
+    stopDemo(false);
     state.sleeping = false;
     setSprite('idle');
     showSpeech('Back online.');
     scheduleNext(800);
   }
   if (action === 'sleep') {
+    stopDemo(false);
     flightFrame += 1;
     state.sleeping = true;
     state.busy = false;
