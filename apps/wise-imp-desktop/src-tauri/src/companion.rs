@@ -54,9 +54,7 @@ fn load_store(app: &tauri::AppHandle) -> CompanionStore {
 
 fn save_store(app: &tauri::AppHandle, store: &CompanionStore) -> Result<(), String> {
   let path = store_path(app)?;
-  let staged = path.with_extension("json.tmp");
-  fs::write(&staged, serde_json::to_vec_pretty(store).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
-  fs::rename(staged, path).map_err(|e| e.to_string())
+  fs::write(path, serde_json::to_vec_pretty(store).map_err(|e| e.to_string())?).map_err(|e| e.to_string())
 }
 
 fn canonical_directory(root: &str) -> Result<PathBuf, String> {
