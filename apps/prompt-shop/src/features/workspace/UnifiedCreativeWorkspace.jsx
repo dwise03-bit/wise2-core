@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ServerCog, Sparkles, Upload } from "lucide-react";
 import { getSubsystemsForSystem } from "../../data/catalog.js";
-import { buildHybridPrompt } from "../hybrid/hybrid.js";
 import { generateImage, getImageEntitlement, listImageProviders, transformImage } from "../image/imageClient.js";
 import {
   ASPECT_RATIOS,
@@ -24,6 +23,7 @@ import {
   startGeneration,
   updateSettings,
 } from "./projectState.js";
+import { blendSourceOptions, generationInput, promptForSelection } from "./workspaceModel.js";
 
 const STORAGE_KEY = "wise-touch-workspace:v1";
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -41,24 +41,6 @@ function loadProject() {
 
 function saveProject(project) {
   try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(serializeProject(project))); } catch { /* storage may be blocked; the workspace still works */ }
-}
-
-/** Plain-language prompt from the current selection. Respects manual edits upstream. */
-function promptFor(project, systemById, subsystemById) {
-  const system = systemById.get(project.systemId);
-  const active = project.blendSlots.filter((slot) => slot.weight > 0);
-  if (active.length >= 2 && blendStatus(project.blendSlots).valid) {
-    const slots = active.map((slot) => ({
-      sourceType: slot.sourceType,
-      weight: slot.weight,
-      source: slot.sourceType === "subsystem" ? subsystemById.get(slot.sourceId) : systemById.get(slot.sourceId),
-    })).filter((slot) => slot.source);
-    return buildHybridPrompt(slots);
-  }
-  if (!system) return "";
-  const sub = project.subsystem ? subsystemById.get(project.subsystem.id) : null;
-  const core = sub?.description || system.coreDNA || system.vibe || system.description || "";
-  return [`WISE TOUCH ${system.name}${sub ? ` — ${sub.name}` : ""}`, core, "Preserve the subject's identity, pose, and key details. Apply the selected art direction."].filter(Boolean).join("\n\n");
 }
 
 export default function UnifiedCreativeWorkspace({ systems = [], initialPrompt = "", onCompleted }) {
@@ -106,7 +88,7 @@ export default function UnifiedCreativeWorkspace({ systems = [], initialPrompt =
   // Keep the generated prompt in step with selections, unless the person has edited it.
   const selectionKey = JSON.stringify([project.systemId, project.subsystem, project.blendSlots]);
   useEffect(() => {
-    const text = promptFor(project, systemById, subsystemById);
+    const text = promptForSelection(project, systemById, subsystemById);
     if (text) setProject((current) => applyGeneratedPrompt(current, text));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionKey, systemById, subsystemById]);
@@ -132,13 +114,7 @@ export default function UnifiedCreativeWorkspace({ systems = [], initialPrompt =
     if (!gate.allowed) { setNotice(gate.reasons[0]); return; }
     const running = startGeneration(project);
     setProject(running);
-    const input = {
-      prompt: running.prompt.draft,
-      negativePrompt: running.settings.negativePrompt,
-      aspectRatio: running.settings.aspectRatio,
-      steps: running.settings.steps,
-      strength: running.settings.strength,
-    };
+    const input = generationInput(running);
     try {
       const result = sourceFile ? await transformImage(sourceFile, input) : await generateImage(input);
       setProject((current) => completeGeneration(current, result));
@@ -159,10 +135,7 @@ export default function UnifiedCreativeWorkspace({ systems = [], initialPrompt =
   };
   const removeSlot = (index) => setProject((current) => setBlendSlots(current, current.blendSlots.filter((_, position) => position !== index)));
 
-  const sourceOptions = [
-    ...systems.map((system) => ({ id: system.id, type: "system", parentId: null, label: system.name })),
-    ...[...subsystemById.values()].map((sub) => ({ id: sub.id, type: "subsystem", parentId: sub.parentSystemId, label: `${systemById.get(sub.parentSystemId)?.name || "System"} — ${sub.name}` })),
-  ];
+  const sourceOptions = blendSourceOptions(systems, subsystemById, systemById);
 
   return (
     <section aria-labelledby="workspace-title" className="rounded-[1.5rem] border border-orange-500/30 bg-zinc-950 text-zinc-100">
@@ -289,7 +262,7 @@ export default function UnifiedCreativeWorkspace({ systems = [], initialPrompt =
           <textarea value={project.prompt.draft} onChange={(event) => setProject((current) => editPrompt(current, event.target.value))} className="mt-2 h-28 w-full rounded-xl border border-zinc-800 bg-black p-3 text-sm leading-6" aria-describedby="prompt-help" />
         </label>
         <p id="prompt-help" className="mt-1 text-xs text-zinc-500">Built from your system, subsystem, and blend. Edit freely; your text is kept.</p>
-        {project.prompt.manualOverride && <button type="button" onClick={() => setProject((current) => applyGeneratedPrompt(current, promptFor(current, systemById, subsystemById), { force: true }))} className="mt-2 text-xs font-black uppercase text-orange-300 underline-offset-4 hover:underline">Use generated prompt again</button>}
+        {project.prompt.manualOverride && <button type="button" onClick={() => setProject((current) => applyGeneratedPrompt(current, promptForSelection(current, systemById, subsystemById), { force: true }))} className="mt-2 text-xs font-black uppercase text-orange-300 underline-offset-4 hover:underline">Use generated prompt again</button>}
 
         <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button type="button" onClick={generate} disabled={!gate.allowed || !providerReady || project.generation.status === "loading"} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF5C00] py-4 font-black uppercase text-black disabled:bg-zinc-800 disabled:text-zinc-500">
