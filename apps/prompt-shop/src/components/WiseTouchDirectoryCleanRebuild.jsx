@@ -40,7 +40,7 @@ import ResourcesCenter from "../features/resources/ResourcesCenter.jsx";
 import AccountCenter from "../features/account/AccountCenter.jsx";
 import CheckoutPanel from "../features/commerce/CheckoutPanel.jsx";
 import { TAB_LABELS, WEBSITE_TABS, pathFromTab, tabFromPath } from "../routes/websiteRoutes.js";
-import ImageBuilder from "../features/image/ImageBuilder.jsx";
+import UnifiedCreativeWorkspace from "../features/workspace/UnifiedCreativeWorkspace.jsx";
 
 function subsystemDescription(subsystem, system) {
   return getSubsystemForSystem(system.id, subsystem)?.description || `${subsystem.replace("™", "")} — ${system.vibe}`;
@@ -601,7 +601,7 @@ export default function WiseTouchDirectoryCleanRebuild() {
 
         {tab === "video" && <VideoBuilder systems={DEFAULT_SYSTEMS} systemById={SYSTEM_BY_ID} subsystemById={SUBSYSTEM_BY_ID} initialPrompt={reusedVideoPrompt} onSavePrompt={(text, system, subsystem) => toggleFavorite(promptFavorite(text, `video:${system.id}:${subsystem?.id || "none"}`, `Video — ${system.name}`))} onAssetCompleted={(job, context) => setAssetState((current) => upsertAsset(current, assetFromVideoJob(job, { prompt: context.prompt, systemId: context.system.id, systemName: context.system.name, subsystemId: context.subsystem?.id, subsystemName: context.subsystem?.name, aspectRatio: context.aspectRatio, duration: context.duration })))} />}
 
-        {tab === "image" && <ImageBuilder systems={DEFAULT_SYSTEMS} initialPrompt={reusedVideoPrompt} onCompleted={(result, context)=>setAssetState((current)=>upsertAsset(current,{ id:`image:${result.id}`, type:"image", name:context.sourceName ? `WISE TOUCH · ${context.sourceName}` : "WISE TOUCH Local Image", assetUrl:result.assetUrl, providerId:result.providerId, prompt:context.prompt, aspectRatio:context.aspectRatio, createdAt:new Date().toISOString(), completedAt:new Date().toISOString() }))} />}
+        {tab === "image" && <UnifiedCreativeWorkspace systems={DEFAULT_SYSTEMS} initialPrompt={reusedVideoPrompt} onCompleted={(result, context)=>setAssetState((current)=>upsertAsset(current,{ id:`image:${result.id}`, type:"image", name:context.sourceName ? `WISE TOUCH · ${context.sourceName}` : "WISE TOUCH Local Image", assetUrl:result.assetUrl, providerId:result.providerId, prompt:context.prompt, aspectRatio:context.aspectRatio, createdAt:new Date().toISOString(), completedAt:new Date().toISOString() }))} />}
 
         {tab === "blueprints" && <BlueprintVault items={favoriteItems} onRemove={toggleFavorite} onBuild={(prompt) => { setReusedVideoPrompt(prompt); setTab("video"); }} />}
 
