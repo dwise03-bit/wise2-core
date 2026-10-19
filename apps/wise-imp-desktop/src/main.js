@@ -1,4 +1,5 @@
 import './style.css';
+import { createDefaultRegistry, TaskEngine, TaskStatus } from './companion-core.js';
 import { invoke, isTauri, followPointerUntilRelease, bootPlatform } from './platform.js';
 
 bootPlatform();
@@ -307,6 +308,10 @@ menu.addEventListener('click', async (event) => {
   const action = event.target?.dataset?.action;
   if (!action) return;
   menu.hidden = true;
+  if (action === 'review') {
+    await runProjectReview();
+    return;
+  }
   if (action === 'wake') {
     state.sleeping = false;
     setSprite('idle');
@@ -361,6 +366,53 @@ async function boot() {
   showSpeech('WISE Imp Alpha 0.1 online.', 2400);
   persistSettings();
   scheduleNext(2500);
+}
+
+const companionApi = (() => {
+  let approvedRoot = null;
+  const ensureApproved = async (root) => {
+    if (approvedRoot !== root) approvedRoot = await invoke('approve_project_root', { root });
+    return approvedRoot;
+  };
+  return {
+    findFiles: async ({ root, query }) => invoke('find_project_files', { root: await ensureApproved(root), query }),
+    summarizeProject: async ({ root }) => invoke('summarize_project', { root: await ensureApproved(root) }),
+    saveTasks: ({ tasks }) => invoke('save_task_list', { tasks }),
+    launchApprovedApp: ({ app, root }) => invoke('launch_approved_app', { name: app, root })
+  };
+})();
+
+const taskEngine = new TaskEngine({
+  registry: createDefaultRegistry(companionApi),
+  permissions: {
+    request: async ({ skill, permissions }) => window.confirm(
+      `Allow WISE Imp to run ${skill}?\\nPermissions: ${permissions.join(', ')}\\nNo shell commands or destructive actions are allowed.`
+    )
+  },
+  onStatus: ({ status, detail }) => {
+    if (status === TaskStatus.WORKING) { state.busy = true; setSprite('sit'); }
+    if (status === TaskStatus.VERIFYING) setSprite('land');
+    if (status === TaskStatus.SUCCESS) { state.busy = false; setSprite('click'); window.setTimeout(() => setSprite('idle'), 900); }
+    if (status === TaskStatus.ERROR || status === TaskStatus.CANCELLED) { state.busy = false; setSprite('idle'); }
+    showSpeech(detail || status, status === TaskStatus.WORKING ? 1600 : 2800);
+  }
+});
+
+async function runProjectReview() {
+  if (state.busy || state.dragging) return;
+  const root = window.prompt('Enter the full path to the project folder to approve for this review.');
+  if (!root?.trim()) { showSpeech('No project folder was selected.'); return; }
+  stopScheduler();
+  try {
+    const completed = await taskEngine.run('project.review', { root: root.trim() });
+    showSpeech(completed.verification.message, 4200);
+    persistSettings();
+  } catch (error) {
+    showSpeech(error.message || 'Project review failed.', 4200);
+  } finally {
+    state.busy = false;
+    if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }
+  }
 }
 
 boot();
