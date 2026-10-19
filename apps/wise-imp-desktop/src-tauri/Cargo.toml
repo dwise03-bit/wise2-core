@@ -1,6 +1,6 @@
 [package]
 name = "wise-imp-desktop"
-version = "0.1.0"
+version = "0.1.1"
 description = "WISE² desktop pet alpha"
 authors = ["WISE²"]
 edition = "2021"
