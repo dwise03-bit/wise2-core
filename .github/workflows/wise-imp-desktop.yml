@@ -1,0 +1,40 @@
+name: WISE IMP desktop validation
+
+on:
+  push:
+    branches: [feat/wise-imp-flagship-companion]
+    paths:
+      - 'apps/wise-imp-desktop/**'
+      - '.github/workflows/wise-imp-desktop.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-package:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/wise-imp-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/wise-imp-desktop/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install JavaScript dependencies
+        run: npm install
+      - name: Run companion-core tests
+        run: npm test
+      - name: Build Windows installer
+        run: npm run desktop:build
+      - name: Upload Windows bundles
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wise-imp-windows-bundles
+          path: apps/wise-imp-desktop/src-tauri/target/release/bundle/**
+          if-no-files-found: warn
