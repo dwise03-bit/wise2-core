@@ -9,6 +9,11 @@ const imp = document.querySelector('#imp');
 const stage = document.querySelector('#pet-stage');
 const speech = document.querySelector('#speech');
 const menu = document.querySelector('#menu');
+const workflow = document.querySelector('#workflow');
+const workflowRoot = document.querySelector('#workflow-root');
+const workflowQuery = document.querySelector('#workflow-query');
+const workflowTasks = document.querySelector('#workflow-tasks');
+const workflowResult = document.querySelector('#workflow-result');
 
 const SPRITES = {
   idle: `${BASE}assets/idle_hover.png`,
@@ -398,7 +403,17 @@ imp.addEventListener('click', async () => {
 
 stage.addEventListener('contextmenu', (event) => {
   event.preventDefault();
+  workflow.hidden = true;
   menu.hidden = !menu.hidden;
+});
+
+workflow.addEventListener('pointerdown', (event) => event.stopPropagation());
+
+workflow.addEventListener('click', async (event) => {
+  const action = event.target?.dataset?.workflowAction;
+  if (!action) return;
+  if (action === 'close') { workflow.hidden = true; return; }
+  await runWorkflowAction(action);
 });
 
 menu.addEventListener('click', async (event) => {
@@ -407,6 +422,12 @@ menu.addEventListener('click', async (event) => {
   menu.hidden = true;
   if (action === 'demo') {
     await runDemo();
+    return;
+  }
+  if (action === 'workflow') {
+    stopDemo(false);
+    workflow.hidden = false;
+    workflowRoot.focus();
     return;
   }
   if (action === 'stop-demo') {
@@ -542,6 +563,57 @@ async function createTaskList() {
     return completed;
   } catch (error) {
     showSpeech(error.message || 'Task list was not saved.', 4200);
+  } finally {
+    state.busy = false;
+    if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }
+  }
+}
+
+function workflowRootValue() {
+  return workflowRoot.value.trim();
+}
+
+function workflowStatus(text) {
+  workflowResult.textContent = text;
+}
+
+async function runWorkflowAction(action) {
+  if (state.busy || state.dragging) return;
+  const root = workflowRootValue();
+  const needsRoot = action === 'find' || action === 'summarize' || action === 'open';
+  if (needsRoot && !root) { workflowStatus('Enter a project folder first.'); return; }
+  let skill;
+  let input;
+  if (action === 'find') {
+    skill = 'project.find';
+    input = { root, query: workflowQuery.value.trim() };
+  } else if (action === 'summarize') {
+    skill = 'project.summarize';
+    input = { root };
+  } else if (action === 'open') {
+    skill = 'app.launch';
+    input = { app: 'explorer', root };
+  } else if (action === 'tasks') {
+    const tasks = workflowTasks.value.split(/\r?\n/).map((title) => title.trim()).filter(Boolean).map((title) => ({ title, done: false }));
+    if (!tasks.length) { workflowStatus('Add at least one task first.'); return; }
+    skill = 'tasks.update';
+    input = { tasks };
+  } else {
+    return;
+  }
+  stopScheduler();
+  workflowStatus('Waiting for confirmation…');
+  try {
+    const completed = await taskEngine.run(skill, input);
+    let detail = completed.verification.message;
+    if (skill === 'project.find') detail = `${completed.result.files.length} permitted file(s) found.`;
+    if (skill === 'project.summarize') detail = completed.result.summary;
+    if (skill === 'app.launch') detail = 'Explorer launch requested for the approved folder.';
+    workflowStatus(detail);
+    showSpeech(detail, 4200);
+  } catch (error) {
+    workflowStatus(error.message || 'Task did not run.');
+    showSpeech(error.message || 'Task did not run.', 4200);
   } finally {
     state.busy = false;
     if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }
