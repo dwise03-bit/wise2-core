@@ -29,9 +29,9 @@ html.web #pet-stage {
   pointer-events: auto;
 }
 #pet-stage.dragging { cursor: grabbing; }
-/* The locked pose PNGs include the beginning of a following sprite below the
-   approved pose. Mask that unused sheet area in the renderer; never alter art. */
-#imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: inset(0 0 22% 0); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
+/* The locked pose PNGs use different sheet bounds. The renderer supplies a
+   per-pose crop so no following frame leaks into a movement. */
+#imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: inset(0 0 var(--sprite-bottom-crop, 0%) 0); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
 #imp.clicked { animation: pop .35s ease; }
 #imp.dancing { animation: imp-dance .62s ease-in-out infinite alternate; transform-origin: center 62%; }
 #speech { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); max-width: 240px; padding: 8px 12px; border: 1px solid rgba(40,190,255,.8); border-radius: 14px; background: rgba(3,10,20,.88); color: #c9f6ff; font-size: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,166,255,.28); pointer-events: none; }
@@ -41,6 +41,9 @@ html.web #pet-stage {
 #menu button:hover { background: rgba(27,132,192,.85); }
 @keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.1) rotate(-2deg)} 100%{transform:scale(1)} }
 @keyframes imp-dance { 0%{transform:translateY(0) rotate(-5deg) scale(1)} 100%{transform:translateY(-12px) rotate(5deg) scale(1.04)} }
+@media (prefers-reduced-motion: reduce) {
+  #imp, #imp.clicked, #imp.dancing { animation: none !important; }
+}
 
 #product { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 28px 22px 80px; }
 .top { display: flex; align-items: center; gap: 10px; margin-bottom: 48px; }

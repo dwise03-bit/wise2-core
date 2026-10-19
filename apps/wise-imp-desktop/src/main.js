@@ -21,6 +21,23 @@ const SPRITES = {
   drag: `${BASE}assets/drag_dangle.png`
 };
 
+// These locked source PNGs are pose sheets, not uniformly framed icons. A few
+// contain the leading pixels of the next pose below the approved character.
+// Keep that spill hidden per pose in the renderer; do not modify original art.
+const SPRITE_BOTTOM_CROPS = {
+  idle: '22%',
+  left: '0%',
+  right: '0%',
+  land: '22%',
+  sleep: '53%',
+  click: '50%',
+  drag: '0%'
+};
+
+// The supplied sit sheet is itself top-trimmed. Until a complete approved sit
+// pose is provided, use the intact perch pose rather than show clipped art.
+const SPRITE_FALLBACKS = { sit: 'land' };
+
 const DRAG_THRESHOLD = 8;
 const SAVE_DEBOUNCE_MS = 250;
 
@@ -60,7 +77,9 @@ function delay(ms) {
 }
 
 function setSprite(name) {
-  imp.src = SPRITES[name] || SPRITES.idle;
+  const resolved = SPRITE_FALLBACKS[name] || name;
+  imp.src = SPRITES[resolved] || SPRITES.idle;
+  imp.style.setProperty('--sprite-bottom-crop', SPRITE_BOTTOM_CROPS[resolved] || '0%');
 }
 
 function showSpeech(text, ms = 1800) {
