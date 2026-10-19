@@ -10,7 +10,8 @@
     "tauri": "tauri",
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build",
-    "build:web": "IMP_BASE=/imp/ vite build"
+    "build:web": "IMP_BASE=/imp/ vite build",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0"
