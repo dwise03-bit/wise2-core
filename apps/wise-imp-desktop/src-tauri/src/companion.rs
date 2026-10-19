@@ -77,6 +77,7 @@ fn collect_files(root: &Path, query: &str, out: &mut Vec<String>) -> Result<(), 
   for entry in fs::read_dir(root).map_err(|e| e.to_string())? {
     if out.len() >= MAX_FILES { break; }
     let entry = entry.map_err(|e| e.to_string())?;
+    if entry.file_type().map_err(|e| e.to_string())?.is_symlink() { continue; }
     let path = entry.path();
     if path.is_dir() {
       let name = path.file_name().and_then(|v| v.to_str()).unwrap_or_default();
