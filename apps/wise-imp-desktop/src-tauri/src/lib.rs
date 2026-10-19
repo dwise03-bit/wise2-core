@@ -1,3 +1,4 @@
+mod companion;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tauri::menu::{Menu, MenuItem};
@@ -264,7 +265,12 @@ pub fn run() {
       save_settings,
       set_always_on_top,
       close_app,
-      left_mouse_down
+      left_mouse_down,
+      companion::approve_project_root,
+      companion::find_project_files,
+      companion::summarize_project,
+      companion::save_task_list,
+      companion::launch_approved_app
     ])
     .setup(|app| {
       let settings = read_settings(app.handle());
