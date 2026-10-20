@@ -39,13 +39,6 @@ const SPRITE_BOTTOM_CROPS = {
   drag: '0%'
 };
 
-// The sleep sheet has a decorative Z high in the transparent corner. It reads
-// like a clipped fragment in the always-on-top window, so omit that corner as
-// well as the lower duplicate frame.
-const SPRITE_CLIP_PATHS = {
-  sleep: 'polygon(0 0, 59% 0, 59% 20%, 76% 20%, 76% 0, 100% 0, 100% 47%, 0 47%)'
-};
-
 // The supplied sit sheet is itself top-trimmed. Until a complete approved sit
 // pose is provided, use the intact perch pose rather than show clipped art.
 const SPRITE_FALLBACKS = { sit: 'land' };
@@ -92,7 +85,7 @@ function setSprite(name) {
   const resolved = SPRITE_FALLBACKS[name] || name;
   imp.src = SPRITES[resolved] || SPRITES.idle;
   imp.style.setProperty('--sprite-bottom-crop', SPRITE_BOTTOM_CROPS[resolved] || '0%');
-  imp.style.setProperty('--sprite-clip-path', SPRITE_CLIP_PATHS[resolved] || 'inset(0 0 var(--sprite-bottom-crop, 0%) 0)');
+  imp.style.setProperty('--sprite-clip-path', 'inset(0 0 var(--sprite-bottom-crop, 0%) 0)');
   for (const pose of Object.keys(SPRITES)) imp.classList.remove(`pose-${pose}`);
   imp.classList.add(`pose-${resolved}`);
 }

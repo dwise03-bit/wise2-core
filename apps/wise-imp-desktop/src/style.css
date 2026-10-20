@@ -33,6 +33,16 @@ html.web #pet-stage {
    per-pose crop so no following frame leaks into a movement. */
 #imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: var(--sprite-clip-path, inset(0 0 var(--sprite-bottom-crop, 0%) 0)); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
 #imp.pose-idle { animation: breathe 2.8s ease-in-out infinite; transform-origin: center 62%; }
+/* The original sleep sheet includes a Z in its upper transparent margin.
+   Subtract only that rectangle while keeping the complete sleeper silhouette. */
+#imp.pose-sleep {
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-position: 0 0, 59% 0;
+  -webkit-mask-size: 100% 47%, 17% 20%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
 #imp.clicked { animation: pop .35s ease; }
 #imp.dancing { animation: imp-dance .62s ease-in-out infinite alternate; transform-origin: center 62%; }
 #speech { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); max-width: 240px; padding: 8px 12px; border: 1px solid rgba(40,190,255,.8); border-radius: 14px; background: rgba(3,10,20,.88); color: #c9f6ff; font-size: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,166,255,.28); pointer-events: none; }
