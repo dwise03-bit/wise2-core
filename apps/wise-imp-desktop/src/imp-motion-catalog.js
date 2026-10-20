@@ -14,7 +14,12 @@ export function createImpMotionCatalog(base) {
     look: { fallback: 'idle', className: 'motion-look', once: true, duration: 1100 },
     fidget: { fallback: 'idle', className: 'motion-fidget', once: true, duration: 1300 },
     hover: { fallback: 'right', className: 'motion-hover', once: true, duration: 1200 },
-    thinking: { fallback: 'land', className: 'motion-thinking', loop: true },
+    thinking: {
+      fallback: 'land',
+      className: 'motion-thinking',
+      loop: true,
+      sheet: { src: asset('motions/higgsfield-thinking.png'), frames: 36, duration: 6 }
+    },
     working: {
       fallback: 'land',
       className: 'motion-working',
