@@ -353,6 +353,8 @@ async function finishDrag() {
 
 stage.addEventListener('pointerdown', (event) => {
   if (event.button !== 0) return;
+  // Controls live over the character. They must never begin a window drag.
+  if (event.target.closest('#menu, #workflow, button, input, textarea')) return;
   menu.hidden = true;
   const startX = event.clientX;
   const startY = event.clientY;
@@ -408,16 +410,17 @@ stage.addEventListener('contextmenu', (event) => {
 });
 
 workflow.addEventListener('pointerdown', (event) => event.stopPropagation());
+menu.addEventListener('pointerdown', (event) => event.stopPropagation());
 
 workflow.addEventListener('click', async (event) => {
-  const action = event.target?.dataset?.workflowAction;
+  const action = event.target.closest('[data-workflow-action]')?.dataset?.workflowAction;
   if (!action) return;
   if (action === 'close') { workflow.hidden = true; return; }
   await runWorkflowAction(action);
 });
 
 menu.addEventListener('click', async (event) => {
-  const action = event.target?.dataset?.action;
+  const action = event.target.closest('[data-action]')?.dataset?.action;
   if (!action) return;
   menu.hidden = true;
   if (action === 'demo') {
