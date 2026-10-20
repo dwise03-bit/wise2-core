@@ -15,7 +15,12 @@ export function createImpMotionCatalog(base) {
     fidget: { fallback: 'idle', className: 'motion-fidget', once: true, duration: 1300 },
     hover: { fallback: 'right', className: 'motion-hover', once: true, duration: 1200 },
     thinking: { fallback: 'land', className: 'motion-thinking', loop: true },
-    working: { fallback: 'land', className: 'motion-working', loop: true },
+    working: {
+      fallback: 'land',
+      className: 'motion-working',
+      loop: true,
+      sheet: { src: asset('motions/higgsfield-working.png'), frames: 36, duration: 6 }
+    },
     success: { fallback: 'click', className: 'motion-celebrate', once: true, duration: 900 },
     error: { fallback: 'land', className: 'motion-error', once: true, duration: 650 }
   };
