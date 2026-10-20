@@ -49,6 +49,8 @@ const FRAME_HEIGHT = args['height'] ? parseInt(args['height'], 10) : null;
 const REMOVE_BG = args['remove-bg'] || 'green';
 const FORMAT = args['format'] || 'horizontal';
 const NAME = args['name'] || 'spritesheet';
+const KEY_COLOR = args['key-color'] || '0x00FF00';
+const KEY_SIMILARITY = args['key-similarity'] || '0.30';
 
 // ---------- Helpers ----------
 
@@ -92,7 +94,10 @@ function getVideoInfo(inputPath) {
 function extractFrames(inputPath, framesDir, fps, width, height) {
   let scaleFilter;
   if (height) {
-    scaleFilter = `scale=${width}:${height}`;
+    // Motion clips are commonly widescreen while desktop companions render in
+    // square stages. Preserve the character's proportions and add transparent
+    // breathing room instead of stretching or clipping the silhouette.
+    scaleFilter = `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=0x00000000`;
   } else {
     scaleFilter = `scale=${width}:-1`;
   }
@@ -110,7 +115,7 @@ function extractFrames(inputPath, framesDir, fps, width, height) {
 
 // ---------- Background removal ----------
 
-function removeGreenScreen(framesDir, frameFiles) {
+function removeGreenScreen(framesDir, frameFiles, keyColor, similarity) {
   // Use ffmpeg's chromakey filter to remove green background
   // Process each frame individually for transparency support
   const processedDir = join(framesDir, 'processed');
@@ -120,13 +125,14 @@ function removeGreenScreen(framesDir, frameFiles) {
     const input = join(framesDir, file);
     const output = join(processedDir, file);
 
-    // chromakey: remove green (0x00FF00) with similarity 0.3 and blend 0.1
-    const cmd = `ffmpeg -y -i "${input}" -vf "chromakey=0x00FF00:0.30:0.10" "${output}"`;
+    // Generated green screens often differ subtly from pure #00FF00. Accept a
+    // sampled key colour so the background clears without eroding cyan details.
+    const cmd = `ffmpeg -y -i "${input}" -vf "chromakey=${keyColor}:${similarity}:0.10,format=rgba" "${output}"`;
     try {
       run(cmd);
     } catch {
       // If chromakey fails, try with a wider range
-      const cmdFallback = `ffmpeg -y -i "${input}" -vf "chromakey=0x00FF00:0.40:0.15" "${output}"`;
+      const cmdFallback = `ffmpeg -y -i "${input}" -vf "chromakey=${keyColor}:0.40:0.15,format=rgba" "${output}"`;
       try {
         run(cmdFallback);
       } catch {
@@ -181,7 +187,9 @@ async function assembleSpriteSheet(sourceDir, frameFiles, outputPath, format) {
   await writeFile(listFile, listContent);
 
   // Use ffmpeg's tile filter with multiple inputs
-  const cmd = `ffmpeg -y ${inputArgs} -filter_complex "xstack=inputs=${frameCount}:layout=${generateLayout(frameCount, fWidth, fHeight, format)}:fill=none" -frames:v 1 "${outputPath}"`;
+  // xstack otherwise negotiates an opaque RGB output and turns keyed pixels
+  // green again. Keep an alpha-capable output through PNG encoding.
+  const cmd = `ffmpeg -y ${inputArgs} -filter_complex "xstack=inputs=${frameCount}:layout=${generateLayout(frameCount, fWidth, fHeight, format)}:fill=none,format=rgba" -frames:v 1 "${outputPath}"`;
 
   try {
     run(cmd);
@@ -337,7 +345,7 @@ async function main() {
   let sourceDir = framesDir;
   if (REMOVE_BG === 'green') {
     console.log('Removing green background...');
-    sourceDir = removeGreenScreen(framesDir, frameFiles);
+    sourceDir = removeGreenScreen(framesDir, frameFiles, KEY_COLOR, KEY_SIMILARITY);
     console.log('  Done');
   }
 
