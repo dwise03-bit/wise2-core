@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDefaultRegistry, TaskEngine, TaskStatus } from '../src/companion-core.js';
+import { createImpMotionCatalog, resolveMotion } from '../src/imp-motion-catalog.js';
 
 test('project review executes real adapter steps and ends verified', async () => {
   const calls = [];
@@ -42,4 +43,11 @@ test('task-list update requests confirmation and verifies the saved list', async
   assert.equal(saved[0].title, 'Ship the IMP');
   assert.equal(output.task.status, TaskStatus.SUCCESS);
   assert.match(output.verification.message, /saved and reloaded/i);
+});
+
+test('motion catalog keeps incomplete poses safe and supports reusable state fallbacks', () => {
+  const catalog = createImpMotionCatalog('/');
+  assert.equal(resolveMotion(catalog, 'sit').id, 'land');
+  assert.equal(resolveMotion(catalog, 'working').spec.pose, 'land');
+  assert.equal(resolveMotion(catalog, 'look').spec.pose, 'idle');
 });

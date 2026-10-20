@@ -1,11 +1,14 @@
 import './style.css';
 import { createDefaultRegistry, TaskEngine, TaskStatus } from './companion-core.js';
 import { invoke, isTauri, followPointerUntilRelease, bootPlatform } from './platform.js';
+import { createImpMotionCatalog } from './imp-motion-catalog.js';
+import { createMotionPlayer } from './motion-player.js';
 
 bootPlatform();
 
 const BASE = import.meta.env.BASE_URL || '/';
 const imp = document.querySelector('#imp');
+const impSheet = document.querySelector('#imp-sheet');
 const stage = document.querySelector('#pet-stage');
 const speech = document.querySelector('#speech');
 const menu = document.querySelector('#menu');
@@ -15,33 +18,8 @@ const workflowQuery = document.querySelector('#workflow-query');
 const workflowTasks = document.querySelector('#workflow-tasks');
 const workflowResult = document.querySelector('#workflow-result');
 
-const SPRITES = {
-  idle: `${BASE}assets/idle_hover.png`,
-  left: `${BASE}assets/fly_left.png`,
-  right: `${BASE}assets/fly_right.png`,
-  land: `${BASE}assets/land_perch.png`,
-  sit: `${BASE}assets/sit.png`,
-  sleep: `${BASE}assets/sleep.png`,
-  click: `${BASE}assets/click_react.png`,
-  drag: `${BASE}assets/drag_dangle.png`
-};
-
-// These locked source PNGs are pose sheets, not uniformly framed icons. A few
-// contain the leading pixels of the next pose below the approved character.
-// Keep that spill hidden per pose in the renderer; do not modify original art.
-const SPRITE_BOTTOM_CROPS = {
-  idle: '22%',
-  left: '0%',
-  right: '0%',
-  land: '22%',
-  sleep: '53%',
-  click: '50%',
-  drag: '0%'
-};
-
-// The supplied sit sheet is itself top-trimmed. Until a complete approved sit
-// pose is provided, use the intact perch pose rather than show clipped art.
-const SPRITE_FALLBACKS = { sit: 'land' };
+const motionCatalog = createImpMotionCatalog(BASE);
+const motionPlayer = createMotionPlayer({ image: imp, sheet: impSheet, catalog: motionCatalog });
 
 const DRAG_THRESHOLD = 8;
 const SAVE_DEBOUNCE_MS = 250;
@@ -82,12 +60,7 @@ function delay(ms) {
 }
 
 function setSprite(name) {
-  const resolved = SPRITE_FALLBACKS[name] || name;
-  imp.src = SPRITES[resolved] || SPRITES.idle;
-  imp.style.setProperty('--sprite-bottom-crop', SPRITE_BOTTOM_CROPS[resolved] || '0%');
-  imp.style.setProperty('--sprite-clip-path', 'inset(0 0 var(--sprite-bottom-crop, 0%) 0)');
-  for (const pose of Object.keys(SPRITES)) imp.classList.remove(`pose-${pose}`);
-  imp.classList.add(`pose-${resolved}`);
+  return motionPlayer.play(name);
 }
 
 function showSpeech(text, ms = 1800) {
@@ -220,6 +193,16 @@ async function wander() {
   await animateTo(targetX, targetY, targetX < state.x ? 'left' : 'right');
 }
 
+async function playAmbientMotion(name, ms, line) {
+  if (state.busy || state.dragging || state.sleeping || state.demoMode) return;
+  state.busy = true;
+  setSprite(name);
+  if (line) showSpeech(line, Math.min(ms, 1600));
+  await delay(ms);
+  if (!state.dragging && !state.sleeping) setSprite('idle');
+  state.busy = false;
+}
+
 async function doIdleAction() {
   if (state.busy || state.dragging || state.sleeping || !state.wanderEnabled) return;
   if (firstWander) {
@@ -228,19 +211,27 @@ async function doIdleAction() {
     return;
   }
   const roll = Math.random();
-  if (roll < 0.72) {
+  if (roll < 0.48) {
     await wander();
     return;
   }
-  if (roll < 0.85) {
-    state.busy = true;
-    setSprite('sit');
-    await delay(1250);
-    if (!state.dragging && !state.sleeping) setSprite('idle');
-    state.busy = false;
+  if (roll < 0.62) {
+    await playAmbientMotion('look', 1100);
     return;
   }
-  if (roll < 0.96) {
+  if (roll < 0.74) {
+    await playAmbientMotion('fidget', 1300);
+    return;
+  }
+  if (roll < 0.84) {
+    await playAmbientMotion('hover', 1200);
+    return;
+  }
+  if (roll < 0.91) {
+    await playAmbientMotion('sit', 1100);
+    return;
+  }
+  if (roll < 0.98) {
     await playClickReaction();
     return;
   }
@@ -396,6 +387,11 @@ imp.addEventListener('click', async () => {
   await playClickReaction();
 });
 
+impSheet.addEventListener('click', async () => {
+  if (!imp.hidden) return;
+  await playClickReaction();
+});
+
 stage.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   workflow.hidden = true;
@@ -520,10 +516,11 @@ const taskEngine = new TaskEngine({
     )
   },
   onStatus: ({ status, detail }) => {
-    if (status === TaskStatus.WORKING) { state.busy = true; setSprite('sit'); }
-    if (status === TaskStatus.VERIFYING) setSprite('land');
-    if (status === TaskStatus.SUCCESS) { state.busy = false; setSprite('click'); window.setTimeout(() => setSprite('idle'), 900); }
-    if (status === TaskStatus.ERROR || status === TaskStatus.CANCELLED) { state.busy = false; setSprite('idle'); }
+    if (status === TaskStatus.PLANNING || status === TaskStatus.AWAITING_CONFIRMATION) { state.busy = true; setSprite('thinking'); }
+    if (status === TaskStatus.WORKING) { state.busy = true; setSprite('working'); }
+    if (status === TaskStatus.VERIFYING) setSprite('thinking');
+    if (status === TaskStatus.SUCCESS) { state.busy = false; setSprite('success'); window.setTimeout(() => setSprite('idle'), 900); }
+    if (status === TaskStatus.ERROR || status === TaskStatus.CANCELLED) { state.busy = false; setSprite('error'); window.setTimeout(() => setSprite('idle'), 700); }
     showSpeech(detail || status, status === TaskStatus.WORKING ? 1600 : 2800);
   }
 });

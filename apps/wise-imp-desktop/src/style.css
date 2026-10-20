@@ -32,7 +32,15 @@ html.web #pet-stage {
 /* The locked pose PNGs use different sheet bounds. The renderer supplies a
    per-pose crop so no following frame leaks into a movement. */
 #imp { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: auto; clip-path: var(--sprite-clip-path, inset(0 0 var(--sprite-bottom-crop, 0%) 0)); filter: drop-shadow(0 10px 12px rgba(0,0,0,.45)); }
+#imp-sheet { position: absolute; inset: 0; pointer-events: auto; background-repeat: no-repeat; background-position: 0 0; }
 #imp.pose-idle { animation: breathe 2.8s ease-in-out infinite; transform-origin: center 62%; }
+#imp.motion-look { animation: look-around 1.1s ease-in-out; transform-origin: center 62%; }
+#imp.motion-fidget { animation: fidget 1.3s ease-in-out; transform-origin: center 68%; }
+#imp.motion-hover { animation: hover-loop 1.2s ease-in-out; transform-origin: center 58%; }
+#imp.motion-thinking { animation: think-pulse 1.25s ease-in-out infinite; transform-origin: center 62%; }
+#imp.motion-working { animation: work-focus .8s ease-in-out infinite alternate; transform-origin: center 66%; }
+#imp.motion-celebrate { animation: celebrate .9s cubic-bezier(.2,.8,.2,1); transform-origin: center 64%; }
+#imp.motion-error { animation: error-shake .65s ease-in-out; transform-origin: center 66%; }
 /* The original sleep sheet includes a Z in its upper transparent margin.
    Subtract only that rectangle while keeping the complete sleeper silhouette. */
 #imp.pose-sleep {
@@ -62,6 +70,13 @@ html.web #pet-stage {
 @keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.1) rotate(-2deg)} 100%{transform:scale(1)} }
 @keyframes imp-dance { 0%{transform:translateY(0) rotate(-5deg) scale(1)} 100%{transform:translateY(-12px) rotate(5deg) scale(1.04)} }
 @keyframes breathe { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-4px) scale(1.012)} }
+@keyframes look-around { 0%,100%{transform:rotate(0) translateY(0)} 25%{transform:rotate(-3deg) translate(-4px,-2px)} 60%{transform:rotate(3deg) translate(4px,-4px)} }
+@keyframes fidget { 0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translate(-4px,2px) rotate(-2deg)} 55%{transform:translate(4px,-3px) rotate(2deg)} 75%{transform:translate(-2px,-1px) rotate(-1deg)} }
+@keyframes hover-loop { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-13px) rotate(3deg) scale(1.025)} }
+@keyframes think-pulse { 0%,100%{transform:translateY(0) scale(1); filter:drop-shadow(0 10px 12px rgba(0,0,0,.45))} 50%{transform:translateY(-5px) scale(1.018); filter:drop-shadow(0 0 16px rgba(40,190,255,.6))} }
+@keyframes work-focus { from{transform:translateY(0) rotate(-1.5deg)} to{transform:translateY(-6px) rotate(1.5deg); filter:drop-shadow(0 0 18px rgba(40,190,255,.7))} }
+@keyframes celebrate { 0%{transform:scale(1) rotate(0)} 35%{transform:translateY(-16px) scale(1.1) rotate(-6deg)} 70%{transform:translateY(-5px) scale(1.05) rotate(6deg)} 100%{transform:scale(1) rotate(0)} }
+@keyframes error-shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px) rotate(-2deg)} 40%,80%{transform:translateX(8px) rotate(2deg)} }
 @media (prefers-reduced-motion: reduce) {
   #imp, #imp.clicked, #imp.dancing { animation: none !important; }
 }
