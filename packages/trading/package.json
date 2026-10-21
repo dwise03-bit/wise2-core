@@ -1,0 +1,15 @@
+{
+  "name": "@wise2/trading",
+  "version": "2.0.0",
+  "description": "WISE² Trading Platform & Backtesting",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/api": "*",
+    "@wise2/config": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  }
+}

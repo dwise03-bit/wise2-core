@@ -1,0 +1,15 @@
+{
+  "description": "Read-only AI Hedge Fund report input for EVERY DAY TRADER",
+  "required": ["symbol", "source", "observed_at"],
+  "properties": {
+    "symbol": {"type": "string"},
+    "source": {"type": "string"},
+    "observed_at": {"type": "string", "description": "ISO-8601 timestamp with timezone"},
+    "recommendation": {"type": "string"},
+    "confidence": {"type": ["number", "null"]},
+    "thesis": {"type": "string"},
+    "risk_flags": {"type": "array", "items": {"type": "string"}},
+    "metrics": {"type": "object"},
+    "data_delay": {"type": "string"}
+  }
+}

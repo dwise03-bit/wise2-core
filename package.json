@@ -1,62 +1,39 @@
 {
-  "name": "wise2-enterprise",
-  "version": "0.1.0",
-  "description": "WISE² Enterprise - AI-powered business operating system",
+  "name": "wise2-core",
+  "version": "2.0.0",
+  "description": "WISE² Core Platform - Unified monorepo for AI, Trading, Games, 3D, Mobile & IoT",
   "private": true,
-  "packageManager": "pnpm@8.15.9",
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "scripts": {
-    "prebuild": "pnpm --filter @wise2/db prisma:generate",
-    "dev": "turbo run dev --parallel",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
-    "type-check": "turbo run type-check",
-    "wise2:start": "bash scripts/wise2-affordable.sh start",
-    "wise2:stop": "bash scripts/wise2-affordable.sh stop",
-    "wise2:status": "bash scripts/wise2-affordable.sh status",
-    "prompt-shop:dev": "npm --prefix apps/prompt-shop run dev",
-    "prompt-shop:build": "npm --prefix apps/prompt-shop run build",
-    "prompt-shop:start": "npm --prefix apps/prompt-shop run start",
-    "prompt-shop:test": "npm --prefix apps/prompt-shop run test",
-    "clean": "turbo run clean && rm -rf node_modules .turbo",
-    "migration:run": "npm --prefix packages/api run migration:run",
-    "migration:revert": "npm --prefix packages/api run migration:revert",
-    "wise:build": "pnpm --dir tools/ghostty build",
-    "wise:test": "pnpm --dir tools/ghostty test",
-    "wise:doctor": "pnpm --dir tools/ghostty dev -- doctor"
-  },
+  "author": "WISE² Team",
+  "license": "MIT",
   "workspaces": [
-    "apps/admin",
-    "apps/command-center",
-    "apps/dashboard",
-    "apps/getdown-demo",
-    "apps/jo-credit-os-demo",
-    "apps/podcast-music",
-    "apps/studio",
-    "apps/website",
-    "apps/wise-hvac-demo",
-    "packages/*"
+    "core/*",
+    "packages/*",
+    "apps/*"
   ],
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "lerna exec --parallel -- npm run dev",
+    "build": "lerna run build --stream",
+    "test": "lerna run test --stream",
+    "lint": "lerna run lint --stream",
+    "format": "lerna exec -- npm run format",
+    "clean": "lerna clean --yes && rm -rf node_modules",
+    "bootstrap": "lerna bootstrap",
+    "version": "lerna version",
+    "publish": "lerna publish",
+    "audit": "npm audit && lerna exec -- npm audit",
+    "graph": "lerna graph"
+  },
   "devDependencies": {
-    "next": "14.2.35",
-    "pnpm": "^8.15.9",
-    "turbo": "^1.10.16"
+    "lerna": "^7.0.0",
+    "@babel/core": "^7.23.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "jest": "^29.7.0",
+    "typescript": "^5.2.0"
   },
-  "pnpm": {
-    "overrides": {
-      "typescript": "^5.3.0",
-      "@types/react": "18.3.31",
-      "@types/react-dom": "18.3.7"
-    }
-  },
-  "dependencies": {
-    "@gsap/react": "^2.1.2",
-    "gsap": "^3.15.0",
-    "pg": "8.11.3",
-    "stripe": "22.5.0"
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }

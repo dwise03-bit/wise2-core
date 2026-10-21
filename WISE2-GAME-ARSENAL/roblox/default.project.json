@@ -1,0 +1,21 @@
+{
+  "name": "WISE2-Arsenal",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Wise2": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Wise2": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}

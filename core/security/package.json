@@ -1,0 +1,13 @@
+{
+  "name": "@wise2/security",
+  "version": "2.0.0",
+  "description": "WISE² Security & Authentication",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/config": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  }
+}

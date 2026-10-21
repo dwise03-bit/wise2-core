@@ -1,0 +1,14 @@
+{
+  "name": "@wise2/3d",
+  "version": "2.0.0",
+  "description": "WISE² 3D Modeling, Viewing & Printing",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@wise2/api": "*",
+    "three": "^0.160.0"
+  },
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  }
+}
