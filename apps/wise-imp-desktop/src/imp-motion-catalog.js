@@ -26,8 +26,8 @@ export function createImpMotionCatalog(base) {
       loop: true,
       sheet: { src: asset('motions/higgsfield-working.png'), frames: 36, duration: 6 }
     },
-    success: { fallback: 'click', className: 'motion-celebrate', once: true, duration: 900 },
-    error: { fallback: 'land', className: 'motion-error', once: true, duration: 650 }
+    success: { fallback: 'click', className: 'motion-celebrate', once: true, duration: 6000, sheet: { src: asset('motions/higgsfield-success.png'), frames: 36, duration: 6, once: true } },
+    error: { fallback: 'land', className: 'motion-error', once: true, duration: 6000, sheet: { src: asset('motions/higgsfield-error.png'), frames: 36, duration: 6, once: true } }
   };
 }
 

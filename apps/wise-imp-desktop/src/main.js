@@ -519,8 +519,8 @@ const taskEngine = new TaskEngine({
     if (status === TaskStatus.PLANNING || status === TaskStatus.AWAITING_CONFIRMATION) { state.busy = true; setSprite('thinking'); }
     if (status === TaskStatus.WORKING) { state.busy = true; setSprite('working'); }
     if (status === TaskStatus.VERIFYING) setSprite('thinking');
-    if (status === TaskStatus.SUCCESS) { state.busy = false; setSprite('success'); window.setTimeout(() => setSprite('idle'), 900); }
-    if (status === TaskStatus.ERROR || status === TaskStatus.CANCELLED) { state.busy = false; setSprite('error'); window.setTimeout(() => setSprite('idle'), 700); }
+    if (status === TaskStatus.SUCCESS) { state.busy = false; setSprite('success'); window.setTimeout(() => setSprite('idle'), 6000); }
+    if (status === TaskStatus.ERROR || status === TaskStatus.CANCELLED) { state.busy = false; setSprite('error'); window.setTimeout(() => setSprite('idle'), 6000); }
     showSpeech(detail || status, status === TaskStatus.WORKING ? 1600 : 2800);
   }
 });
