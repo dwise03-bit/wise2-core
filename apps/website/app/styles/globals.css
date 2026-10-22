@@ -2266,3 +2266,9 @@ a.skip-link:focus {
     );
   }
 }
+
+/* WISE² EMERALD NOIR TRANSIT — shared design tokens */
+:root{--wise-obsidian:#050607;--wise-tunnel:#10201c;--wise-emerald:#51ef8a;--wise-steel:#d8e2dd;--wise-gold:#bda37a;--wise-line:rgba(81,239,138,.28)}
+.wise-station{background:var(--wise-obsidian);color:var(--wise-steel);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.wise-station a:focus-visible,.wise-station button:focus-visible{outline:3px solid var(--wise-emerald);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.wise-station *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
