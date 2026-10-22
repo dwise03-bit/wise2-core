@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrandEcosystemHomepage } from './BrandEcosystemHomepage';
 
-// Official 42.5-second user-approved film. Copy the exact uploaded MP4 to this path
-// before deploying. Do not substitute the previous five-scene Higgsfield montage.
-const OFFICIAL_INTRO = '/videos/wise2-official-intro.mp4';
+// Exact user-approved 42.5-second film, uploaded to media storage with verified SHA-256.
+// Do not substitute the previous five-scene Higgsfield montage.
+const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/63bb8669-0fc0-4751-8b31-f2304b78b42e.mp4';
 
 export function CinematicHomepageExperience() {
   const [entered, setEntered] = useState(false);
