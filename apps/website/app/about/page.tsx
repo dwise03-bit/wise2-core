@@ -14,16 +14,16 @@ export default function AboutPage() {
     <main className="min-h-screen bg-[#050607] text-white">
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-28">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8AE6AD]">
             About WISE²
           </p>
           <h1 className="mt-5 text-5xl font-black leading-tight sm:text-6xl">
             Built from field work, client work, and the need for one better system.
           </h1>
-          <p className="mt-6 text-lg leading-8 text-[#B7C0CB]">
+          <p className="mt-6 text-lg leading-8 text-[#B8C5BE]">
             WISE² exists because real businesses do not operate like clean pitch-deck diagrams. They have customer calls, job notes, equipment data, creative deadlines, deployments, invoices, and decisions scattered everywhere.
           </p>
-          <p className="mt-4 text-base leading-8 text-[#B7C0CB]">
+          <p className="mt-4 text-base leading-8 text-[#B8C5BE]">
             The company builds software and AI workflows around that mess: capture what is true, make it useful, and turn it into the next action.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function AboutPage() {
       <section className="border-y border-white/10 bg-[#0A0E12]">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8EDBFF]">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#8AE6AD]">
               Operating principles
             </p>
             <h2 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">
@@ -57,7 +57,7 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2">
             {principles.map((principle) => (
               <div key={principle} className="flex gap-4 bg-[#090C10] p-6">
-                <CheckCircle2 className="mt-1 h-5 w-5 flex-none text-[#8EDBFF]" aria-hidden="true" />
+                <CheckCircle2 className="mt-1 h-5 w-5 flex-none text-[#8AE6AD]" aria-hidden="true" />
                 <p className="text-base leading-7 text-[#C8D0D9]">{principle}</p>
               </div>
             ))}
@@ -68,12 +68,12 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="max-w-3xl">
           <h2 className="text-3xl font-black leading-tight">Where WISE² is going.</h2>
-          <p className="mt-5 text-base leading-8 text-[#B7C0CB]">
+          <p className="mt-5 text-base leading-8 text-[#B8C5BE]">
             The roadmap is a connected ecosystem: WISE² Core as the operating layer, WISE² HVAC for diagnostics and field service, WISE Defense for training systems, SoundLab for creative infrastructure, and client work that proves the system can ship.
           </p>
           <Link
             href="/work"
-            className="mt-8 inline-flex min-h-12 items-center gap-2 border border-white/20 px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:border-[#8EDBFF]/70 hover:bg-[#8EDBFF]/10 focus:outline-none focus:ring-2 focus:ring-[#8EDBFF]"
+            className="mt-8 inline-flex min-h-12 items-center gap-2 border border-white/20 px-5 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition hover:border-[#8AE6AD]/70 hover:bg-[#8AE6AD]/10 focus:outline-none focus:ring-2 focus:ring-[#8AE6AD]"
           >
             See the work
             <ArrowRight size={16} aria-hidden="true" />
