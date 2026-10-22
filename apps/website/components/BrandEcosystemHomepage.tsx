@@ -2,13 +2,14 @@ export function BrandEcosystemHomepage() {
   return (
     <main className="relative isolate min-h-screen bg-[var(--wise2-surface-0)] text-[var(--wise2-text)] font-sans">
       {/* Continuous background after the cinematic entrance, never a foreground player. */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#07120f]">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#07120f]">
         <video autoPlay loop muted playsInline preload="metadata" className="h-full w-full object-cover motion-reduce:hidden">
           <source src="https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0f5d9c94-83ec-498b-9287-68888bc163e1.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-[#020908]/75" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#020908]/25 via-[#020908]/60 to-[#020908]/90" />
       </div>
+      <div className="relative z-10">
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-5 py-24 text-center sm:px-8 sm:py-36">
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#8AE6AD]">WISE² Business Operating Systems</p>
@@ -169,6 +170,7 @@ export function BrandEcosystemHomepage() {
           Explore All Services
         </a>
       </section>
+      </div>
     </main>
   );
 }
