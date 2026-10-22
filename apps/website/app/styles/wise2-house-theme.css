@@ -1,0 +1,39 @@
+/* WISE² shared cinematic-realism identity. Scoped to the house website; branded client apps retain their own design systems. */
+:root {
+  --wise2-surface-0: #050607;
+  --wise2-surface-1: #0b1211;
+  --wise2-surface-2: #12201c;
+  --wise2-accent: #8ae6ad;
+  --wise2-accent-strong: #00ff7f;
+  --wise2-text: #f5f7f6;
+  --wise2-muted: #b8c5be;
+  --wise2-hairline: rgba(178,225,199,.18);
+  --wise2-radius: 12px;
+}
+body.wise2-house {
+  background: var(--wise2-surface-0);
+  color: var(--wise2-text);
+  accent-color: var(--wise2-accent);
+  color-scheme: dark;
+}
+body.wise2-house :is(a,button,input,textarea,select):focus-visible {
+  outline: 2px solid var(--wise2-accent);
+  outline-offset: 3px;
+}
+body.wise2-house :is(input,textarea,select) {
+  border-color: var(--wise2-hairline);
+}
+body.wise2-house :is(header,footer) {
+  --wise2-panel-border: var(--wise2-hairline);
+}
+body.wise2-house ::selection {
+  background: rgba(138,230,173,.3);
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.wise2-house *, body.wise2-house *::before, body.wise2-house *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
