@@ -1,94 +1,17 @@
 'use client';
 
+const features = [
+  { number: '01', title: 'Always available', text: 'IMP stays on the desktop as a small, movable companion—ready when you choose to ask for help.', detail: 'No background task starts without your request.' },
+  { number: '02', title: 'Low-friction work', text: 'Find approved project files, summarize project information, and build a local task list through an explicit permission step.', detail: 'No unrestricted shell access.' },
+  { number: '03', title: 'Locked identity', text: 'The glossy black body, cyan eyes, hoodie, W² chest mark, horns, and tail are the companion’s approved visual language.', detail: 'One character across every surface.' }
+];
+
+function FeatureGlyph({ number }: { number: string }) {
+  if (number === '01') return <svg aria-hidden="true" viewBox="0 0 64 64" className="h-16 w-16 fill-none stroke-[#00D9FF] stroke-[2]"><path d="M6 32s9-15 26-15 26 15 26 15-9 15-26 15S6 32 6 32Z"/><circle cx="32" cy="32" r="8" fill="#00D9FF" /></svg>;
+  if (number === '02') return <svg aria-hidden="true" viewBox="0 0 64 64" className="h-16 w-16 fill-none stroke-[#00D9FF] stroke-[2]"><path d="m35 5-22 32h17l-2 22 23-34H34l1-20Z"/></svg>;
+  return <svg aria-hidden="true" viewBox="0 0 64 64" className="h-16 w-16 fill-none stroke-[#00D9FF] stroke-[2]"><path d="m32 5 7 19 20 1-16 12 6 21-17-12-17 12 6-21L5 25l20-1 7-19Z" fill="#00D9FF" fillOpacity=".18"/></svg>;
+}
+
 export function ImpFeatures() {
-  const features = [
-    {
-      title: 'Always Watching',
-      description: 'Stay aware. Your IMP monitors your workflow and adapts to your presence.',
-      icon: '👁️',
-      details: ['Presence aware', 'Activity tracking', 'Status responsive'],
-    },
-    {
-      title: 'Quick Access',
-      description: 'Commands, notes, and tools within arm\'s reach on your desktop.',
-      icon: '⚡',
-      details: ['Instant commands', 'Quick notes', 'System tools'],
-    },
-    {
-      title: 'No Friction Setup',
-      description: 'Zero configuration. No accounts. No waiting. Launch and go.',
-      icon: '🚀',
-      details: ['No signup', 'No login', 'No waiting'],
-    },
-    {
-      title: 'Local Everything',
-      description: 'All data stays on your machine. Your settings, your data, your control.',
-      icon: '🔒',
-      details: ['Local storage', 'No cloud sync', 'You own your data'],
-    },
-    {
-      title: 'Companion Personality',
-      description: 'Horns. Cyan eyes. Black hoodie. Spade tail. A personality you\'ll recognize.',
-      icon: '✨',
-      details: ['Locked identity', 'Pose art', 'Memorable design'],
-    },
-    {
-      title: 'Cross-Platform',
-      description: 'Web app, Windows install, K10 hardware—same companion everywhere.',
-      icon: '🌍',
-      details: ['Browser launch', 'Desktop app', 'Hardware edition'],
-    },
-  ];
-
-  return (
-    <section className="relative bg-[#050607] py-20 overflow-hidden">
-      {/* Background effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute bottom-0 left-1/2 w-[800px] h-[400px] bg-[#00D9FF]/5 rounded-full blur-3xl -translate-x-1/2" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="mb-16 text-center space-y-4">
-          <p className="text-sm font-bold tracking-widest text-[#00D9FF]">WHAT SETS IMP APART</p>
-          <h2 className="text-4xl sm:text-5xl font-black text-white">Built for Your Workflow</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">More than a pet. A companion built into your daily work.</p>
-        </div>
-
-        {/* Feature Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="group relative rounded-xl overflow-hidden border border-[#00D9FF]/20 hover:border-[#00D9FF]/50 bg-[#0A0E14]/50 backdrop-blur-sm hover:bg-[#0A0E14]/80 transition duration-300 p-8"
-            >
-              {/* Hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#00D9FF]/0 to-[#00FF7F]/0 group-hover:from-[#00D9FF]/5 group-hover:to-[#00FF7F]/5 transition duration-300 pointer-events-none" />
-
-              <div className="relative space-y-4">
-                {/* Icon */}
-                <div className="text-4xl">{feature.icon}</div>
-
-                {/* Title */}
-                <h3 className="text-xl font-black text-white">{feature.title}</h3>
-
-                {/* Description */}
-                <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
-
-                {/* Details */}
-                <div className="space-y-2 pt-4 border-t border-[#00D9FF]/10">
-                  {feature.details.map((detail) => (
-                    <div key={detail} className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="w-1 h-1 rounded-full bg-[#00D9FF]" />
-                      {detail}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <section className="border-y border-[#00D9FF]/15 bg-[#0A0E14] px-6 py-24 text-white lg:px-8"><div className="mx-auto max-w-7xl"><div className="mb-16 max-w-xl"><p className="text-xs font-bold tracking-[.18em] text-[#00D9FF]">DESIGNED FOR REAL WORK</p><h2 className="mt-4 text-4xl font-black tracking-[-.04em] sm:text-5xl">Companion behavior you can trust.</h2></div><div className="space-y-px bg-[#00D9FF]/20">{features.map((feature, index) => <article key={feature.number} className={`grid gap-8 bg-[#0A0E14] p-8 sm:p-12 md:grid-cols-[130px_1fr] ${index === 1 ? 'md:ml-16' : index === 2 ? 'md:mr-16' : ''}`}><div><FeatureGlyph number={feature.number} /><p className="mt-5 text-xs font-bold tracking-[.18em] text-[#00D9FF]">{feature.number}</p></div><div><h3 className="text-3xl font-black">{feature.title}</h3><p className="mt-4 max-w-2xl text-lg leading-8 text-[#C0C0C0]">{feature.text}</p><p className="mt-6 border-l-2 border-[#00D9FF] pl-4 text-sm leading-6 text-white">{feature.detail}</p></div></article>)}</div></div></section>;
 }
