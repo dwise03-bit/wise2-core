@@ -81,58 +81,67 @@ body.wise2-house ::selection {
 }
 
 
-/* Single approved homepage type system: clear lettering, subtle tactile finish. */
+/* WISE² luxury editorial typography: tactile satin finish, real readable glyphs. */
 .wise2-cinematic-content {
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-family: "Inter", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
   font-feature-settings: "kern" 1;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
-.wise2-cinematic-content h1,
-.wise2-cinematic-content h2,
-.wise2-cinematic-content h3,
-.wise2-cinematic-content h4 {
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+.wise2-cinematic-content :is(h1,h2,h3,h4) {
+  font-family: "Inter", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  font-weight: 800;
   font-stretch: normal;
-  font-weight: 850;
   letter-spacing: -.035em;
-  line-height: 1.13;
+  line-height: 1.14;
+  color: #f2f3ef;
   overflow-wrap: break-word;
-  color: #f4f7f5;
-  /* The texture is a controlled rim-light, not a gradient that hides letters. */
+  /* satin highlight above, subtle engraved base below */
   text-shadow:
-    0 1px 0 rgba(255,255,255,.2),
-    0 3px 0 rgba(0,14,9,.95),
-    0 7px 16px rgba(0,0,0,.85),
-    0 17px 40px rgba(0,0,0,.7);
+    0 -1px 0 rgba(255,255,255,.18),
+    0 2px 0 rgba(10,23,19,.85),
+    0 5px 15px rgba(0,0,0,.78),
+    0 20px 42px rgba(0,0,0,.65);
 }
-.wise2-cinematic-content h1 { letter-spacing: -.045em; }
+.wise2-cinematic-content h1 {
+  font-size: clamp(2.55rem, 5.5vw, 5.2rem);
+  letter-spacing: -.045em;
+  line-height: 1.08;
+  font-weight: 850;
+}
 .wise2-cinematic-content h1 span,
 .wise2-cinematic-content h2 span {
-  color: #a1eec0;
-  -webkit-text-fill-color: #a1eec0;
+  color: #b7dec5;
+  -webkit-text-fill-color: #b7dec5;
   background: none;
   filter: none;
   text-shadow:
-    0 1px 0 rgba(242,255,249,.24),
-    0 3px 0 rgba(6,38,23,.95),
-    0 9px 22px rgba(0,0,0,.9),
-    0 0 18px rgba(48,195,111,.22);
+    0 -1px 0 rgba(236,255,243,.34),
+    0 2px 0 rgba(5,29,18,.95),
+    0 7px 19px rgba(0,0,0,.86),
+    0 0 17px rgba(90,179,125,.18);
 }
+.wise2-cinematic-content h2 {
+  font-weight: 850;
+  letter-spacing: -.025em;
+}
+.wise2-cinematic-content :is(h3,h4) { letter-spacing: -.02em; }
 .wise2-cinematic-content p {
-  letter-spacing: .005em;
-  text-shadow: 0 2px 9px rgba(0,0,0,.95), 0 5px 24px rgba(0,0,0,.65);
+  letter-spacing: .007em;
+  text-shadow: 0 2px 12px rgba(0,0,0,.95);
 }
 .wise2-cinematic-content section > p:first-child {
-  letter-spacing: .18em;
-}
-.wise2-cinematic-content a {
-  text-decoration-thickness: 1px;
+  letter-spacing: .2em;
 }
 .wise2-cinematic-content a:focus-visible {
-  outline: 3px solid #b4ffd4;
+  outline: 3px solid #c5e7cf;
   outline-offset: 4px;
 }
-@media(max-width:640px) {
-  .wise2-cinematic-content h1 { font-size: clamp(2.3rem, 9.5vw, 3.4rem); line-height: 1.16; }
-  .wise2-cinematic-content h2 { line-height: 1.2; }
+@media (max-width:640px) {
+  .wise2-cinematic-content h1 {
+    font-size: clamp(2.25rem, 9.25vw, 3.45rem);
+    line-height: 1.13;
+    letter-spacing: -.04em;
+  }
+  .wise2-cinematic-content h2 { line-height: 1.18; }
 }
