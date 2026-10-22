@@ -184,3 +184,51 @@ body.wise2-house ::selection {
   .wise2-cinematic-content h1 { font-size: clamp(2.5rem, 9.4vw, 4.1rem); line-height: 1.07; }
   .wise2-cinematic-content h1 span { letter-spacing: -.05em; }
 }
+
+
+/* Style 05: WISE² cinematic titles; silver engraved film-title finish. */
+.wise2-cinematic-content h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: clamp(2.65rem, 6.15vw, 6.15rem);
+  line-height: 1.10;
+  letter-spacing: -.045em;
+  color: #ecece7;
+  -webkit-text-fill-color: #ecece7;
+  text-shadow:
+    0 -1px 0 rgba(255,255,255,.46),
+    0 2px 0 rgba(31,44,42,.98),
+    0 4px 1px rgba(0,0,0,.92),
+    0 13px 22px rgba(0,0,0,.92),
+    0 27px 55px rgba(0,0,0,.65);
+}
+.wise2-cinematic-content h1 span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -.045em;
+  color: #bed6c8;
+  -webkit-text-fill-color: #bed6c8;
+  text-shadow:
+    0 -1px 0 rgba(245,255,249,.56),
+    0 2px 0 rgba(20,51,37,.98),
+    0 4px 1px rgba(0,0,0,.85),
+    0 12px 25px rgba(0,0,0,.9),
+    0 0 25px rgba(55,199,126,.22);
+}
+.wise2-cinematic-content :is(h2,h3,h4) {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  text-transform: none;
+  text-shadow: 0 -1px 0 #ffffff3a, 0 2px 1px #071610, 0 10px 25px #000d;
+}
+.wise2-cinematic-content h2 span {
+  color: #bed6c8;
+  -webkit-text-fill-color: #bed6c8;
+}
+@media(max-width:640px) {
+  .wise2-cinematic-content h1 { font-size:clamp(2.25rem,8.4vw,3.8rem); line-height:1.12; }
+}
