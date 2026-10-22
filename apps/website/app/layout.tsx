@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './styles/globals.css';
+import './styles/wise2-house-theme.css';
 // import { SiteChrome } from '@/components/SiteChrome';
 import { ToastProvider } from '@/components/ui/Toast';
 import { isBlackhailBrand, isBlackhailHost, normalizeHost } from '@/lib/site-domains';
@@ -143,7 +144,7 @@ export default function RootLayout({
         ` }} />
 
       </head>
-      <body className="bg-wise-bg-primary text-wise-text-primary">
+      <body className="wise2-house bg-wise-bg-primary text-wise-text-primary">
         <SessionProvider session={undefined}>
           <ToastProvider>
             {children}
