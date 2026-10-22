@@ -1,5 +1,5 @@
-import { BrandEcosystemHomepage } from '@/components/BrandEcosystemHomepage';
+import { CinematicHomepageExperience } from '@/components/CinematicHomepageExperience';
 
 export default function HomePage() {
-  return <BrandEcosystemHomepage />;
+  return <CinematicHomepageExperience />;
 }
