@@ -45,9 +45,12 @@ test('task-list update requests confirmation and verifies the saved list', async
   assert.match(output.verification.message, /saved and reloaded/i);
 });
 
-test('motion catalog keeps incomplete poses safe and supports reusable state fallbacks', () => {
+test('motion catalog uses only approved pose art until a reviewed IMP sheet is available', () => {
   const catalog = createImpMotionCatalog('/');
   assert.equal(resolveMotion(catalog, 'sit').id, 'land');
-  assert.equal(resolveMotion(catalog, 'working').spec.pose, 'land');
+  assert.equal(resolveMotion(catalog, 'working').spec.pose, 'idle');
   assert.equal(resolveMotion(catalog, 'look').spec.pose, 'idle');
+  for (const state of ['thinking', 'working', 'success', 'error']) {
+    assert.equal(resolveMotion(catalog, state).spec.sheet, undefined);
+  }
 });
