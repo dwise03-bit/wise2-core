@@ -15,19 +15,20 @@ export function createImpMotionCatalog(base) {
     fidget: { fallback: 'idle', className: 'motion-fidget', once: true, duration: 1300 },
     hover: { fallback: 'right', className: 'motion-hover', once: true, duration: 1200 },
     thinking: {
-      fallback: 'land',
+      // The approved pose pack is the visual source of truth. Keep task
+      // feedback expressive with CSS motion until an animator supplies a
+      // reviewed IMP-only frame sequence.
+      fallback: 'idle',
       className: 'motion-thinking',
-      loop: true,
-      sheet: { src: asset('motions/higgsfield-thinking.png'), frames: 36, duration: 6 }
+      loop: true
     },
     working: {
-      fallback: 'land',
+      fallback: 'idle',
       className: 'motion-working',
-      loop: true,
-      sheet: { src: asset('motions/higgsfield-working.png'), frames: 36, duration: 6 }
+      loop: true
     },
-    success: { fallback: 'click', className: 'motion-celebrate', once: true, duration: 6000, sheet: { src: asset('motions/higgsfield-success.png'), frames: 36, duration: 6, once: true } },
-    error: { fallback: 'land', className: 'motion-error', once: true, duration: 6000, sheet: { src: asset('motions/higgsfield-error.png'), frames: 36, duration: 6, once: true } }
+    success: { fallback: 'click', className: 'motion-celebrate', once: true, duration: 1100 },
+    error: { fallback: 'land', className: 'motion-error', once: true, duration: 800 }
   };
 }
 
