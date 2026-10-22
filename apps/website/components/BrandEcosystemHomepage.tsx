@@ -6,8 +6,8 @@ export function BrandEcosystemHomepage() {
         <video autoPlay loop muted playsInline preload="metadata" className="h-full w-full object-cover motion-reduce:hidden">
           <source src="/media/wise2-tunnel-background.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#020908]/75" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#020908]/25 via-[#020908]/60 to-[#020908]/90" />
+        <div className="absolute inset-0 bg-[#020908]/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020908]/20 via-[#020908]/35 to-[#020908]/65" />
       </div>
       <div className="relative z-10">
       {/* Hero Section */}
