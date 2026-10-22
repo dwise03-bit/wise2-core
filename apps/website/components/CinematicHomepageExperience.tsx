@@ -16,9 +16,12 @@ export function CinematicHomepageExperience() {
   const video = useRef<HTMLVideoElement>(null);
 
   const enter = () => {
+    if (transitioning || entered) return;
     setTransitioning(true);
     setPlaying(false);
-    window.setTimeout(() => { setEntered(true); setTransitioning(false); }, 650);
+    video.current?.pause();
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => { setEntered(true); setTransitioning(false); }, reducedMotion ? 0 : 650);
   };
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export function CinematicHomepageExperience() {
   }, [entered]);
 
   if (entered) {
-    return <div>
+    return <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
       <div className="fixed bottom-5 right-5 z-50">
         <button
           onClick={() => { setFailed(false); setMuted(true); setEntered(false); }}
