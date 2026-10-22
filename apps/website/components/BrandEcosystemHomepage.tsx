@@ -7,7 +7,8 @@ export function BrandEcosystemHomepage() {
       {/* Hero Section */}
       <section className="mx-auto max-w-7xl px-5 py-24 text-center sm:px-8 sm:py-36">
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#8AE6AD]">WISE² Business Operating Systems</p>
-        <h1 className="mt-5 text-5xl font-black leading-tight sm:text-7xl text-white">
+        <div aria-hidden="true" className="wise2-film-wordmark">WISE<sup>2</sup></div>
+        <h1 className="wise2-film-hero-title mt-5 text-5xl font-black leading-tight sm:text-7xl text-white">
           Intelligent tools for<br />
           <span className="text-[#8AE6AD]">real-world businesses.</span>
         </h1>
