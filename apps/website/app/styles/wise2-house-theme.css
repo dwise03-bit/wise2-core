@@ -232,3 +232,70 @@ body.wise2-house ::selection {
 @media(max-width:640px) {
   .wise2-cinematic-content h1 { font-size:clamp(2.25rem,8.4vw,3.8rem); line-height:1.12; }
 }
+
+
+/* Reference #5: dimensional silver film lettering, not a plain serif and shadow. */
+.wise2-cinematic-content .wise2-film-wordmark {
+  display: block;
+  margin: .16em auto .12em;
+  width: fit-content;
+  max-width: 100%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(5.3rem, 15vw, 12.8rem);
+  font-weight: 700;
+  letter-spacing: -.08em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #e9f4ed; /* fallback */
+  background: linear-gradient(174deg,
+      #ffffff 0%, #ffffff 10%, #b6cac2 18%,
+      #354e49 28%, #f7fff9 34%, #eaf2eb 42%,
+      #7e9b90 50%, #233b35 58%, #e7f7e9 65%,
+      #f9fff8 74%, #7a998b 85%, #e9f3e9 94%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: .5px rgba(238,255,246,.38);
+  filter: drop-shadow(0 2px 0 #091d17) drop-shadow(0 5px 1px #010806)
+    drop-shadow(0 15px 22px rgba(0,0,0,.92))
+    drop-shadow(0 0 22px rgba(59,222,163,.2));
+}
+.wise2-cinematic-content .wise2-film-wordmark sup {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: .30em;
+  font-weight: 400;
+  position: relative;
+  top: -.92em;
+  margin-left: .13em;
+  letter-spacing: 0;
+  -webkit-text-stroke: 0;
+}
+.wise2-cinematic-content .wise2-film-hero-title {
+  max-width: 900px;
+  margin-inline: auto;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 650;
+  font-size: clamp(1.55rem, 3.1vw, 2.65rem);
+  line-height: 1.23;
+  letter-spacing: -.027em;
+  color: #f7f7f2;
+  -webkit-text-fill-color: #f7f7f2;
+  text-shadow: 0 4px 14px #000, 0 15px 30px #000b;
+}
+.wise2-cinematic-content .wise2-film-hero-title span {
+  font-family: inherit;
+  font-size: inherit;
+  font-style: normal;
+  font-weight: inherit;
+  color: #a3e9bf;
+  -webkit-text-fill-color: #a3e9bf;
+  letter-spacing: inherit;
+  text-shadow: 0 4px 14px #000, 0 0 15px #53bb8270;
+}
+@media (max-width: 640px) {
+  .wise2-cinematic-content .wise2-film-wordmark {font-size:clamp(4.4rem,17vw,7.2rem);letter-spacing:-.07em;}
+  .wise2-cinematic-content .wise2-film-hero-title {font-size:clamp(1.5rem,5.5vw,2.1rem);}
+}
+@media (forced-colors: active) {
+  .wise2-cinematic-content .wise2-film-wordmark { background:none; -webkit-text-fill-color:CanvasText; filter:none;}
+}
