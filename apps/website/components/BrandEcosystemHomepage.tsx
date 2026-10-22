@@ -26,20 +26,6 @@ export function BrandEcosystemHomepage() {
         </div>
       </section>
 
-      {/* Creator-approved edited film, preserved exactly as uploaded. */}
-      <section aria-labelledby="wise2-film-title" className="mx-auto max-w-7xl px-5 pb-20 sm:px-8">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-          <div><p className="text-xs font-bold uppercase tracking-[.3em] text-[#8AE6AD]">WISE² / THE EXPERIENCE</p><h2 id="wise2-film-title" className="mt-2 text-2xl font-black text-white sm:text-4xl">Follow the IMP.</h2></div>
-          <a href="/transit" className="text-sm font-semibold text-[#8AE6AD] underline underline-offset-4">Enter WISE² Transit →</a>
-        </div>
-        <div className="overflow-hidden rounded-xl border border-[#8AE6AD]/25 bg-[#0B1211] shadow-[0_25px_70px_rgba(0,0,0,.35)]">
-          <video controls playsInline preload="metadata" className="aspect-video w-full bg-black object-contain" aria-label="WISE² Transit cinematic film, creator's final edit">
-            <source src="https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0cc916c8-ef76-468e-9e88-93b799075c3d.mp4" type="video/mp4" />
-            Your browser does not support embedded video.
-          </video>
-        </div>
-      </section>
-
       {/* Features Grid */}
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
         <h2 className="text-center text-4xl font-black uppercase tracking-[0.02em] text-white mb-16">
