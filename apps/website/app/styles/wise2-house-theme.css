@@ -299,3 +299,76 @@ body.wise2-house ::selection {
 @media (forced-colors: active) {
   .wise2-cinematic-content .wise2-film-wordmark { background:none; -webkit-text-fill-color:CanvasText; filter:none;}
 }
+
+
+/* Style #5 final art direction: embossed cinema-grade silver, green-gold reflections. */
+.wise2-cinematic-content .wise2-film-wordmark {
+  position: relative;
+  isolation: isolate;
+  margin-top: .12em;
+  margin-bottom: .2em;
+  padding: .04em .18em .12em .10em;
+  font-family: "Times New Roman", Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(5rem, 14vw, 12.5rem);
+  line-height: 1.06;
+  letter-spacing: -.075em;
+  background-image:
+    repeating-linear-gradient(177deg, transparent 0px, rgba(255,255,255,.15) 1px, transparent 2px, transparent 6px),
+    linear-gradient(176deg,
+      #fffefa 0%, #f8fdf7 11%, #9baea7 21%, #344945 27%,
+      #ffffff 32%, #fafcf7 40%, #c6d4ca 47%, #405c54 54%,
+      #1d3b31 58%, #eaf8e9 63%, #fefcf1 69%, #9ea99c 76%,
+      #f4fffa 83%, #617b6c 91%, #d2e8d7 100%);
+  background-blend-mode: soft-light, normal;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: .85px rgba(244,255,249,.58);
+  filter: drop-shadow(0 1px 0 rgba(220,255,238,.6))
+    drop-shadow(1px 3px 0 #123a2c)
+    drop-shadow(2px 6px 0 #07130f)
+    drop-shadow(0 14px 15px rgba(0,0,0,.95))
+    drop-shadow(0 0 24px rgba(118,213,157,.19));
+}
+.wise2-cinematic-content .wise2-film-wordmark::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 11%;
+  right: 7%;
+  bottom: 4%;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(206,244,219,.55),transparent);
+  box-shadow: 0 0 20px 2px rgba(97,223,160,.15);
+  pointer-events: none;
+}
+.wise2-cinematic-content .wise2-film-wordmark sup {
+  top: -.78em;
+  margin-left: .10em;
+  font-size: .31em;
+  -webkit-text-stroke: .3px rgba(244,255,249,.6);
+}
+.wise2-cinematic-content .wise2-film-hero-title {
+  margin-top: .3rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 500;
+  letter-spacing: .035em;
+  font-size: clamp(1.3rem, 2.7vw, 2.2rem);
+  line-height: 1.32;
+}
+.wise2-cinematic-content .wise2-film-hero-title span {
+  display: inline-block;
+  margin-top: .12em;
+  letter-spacing: .025em;
+}
+@media(max-width:640px) {
+  .wise2-cinematic-content .wise2-film-wordmark {
+    font-size: clamp(3.65rem, 16vw, 6.5rem);
+    padding-right: .12em;
+  }
+  .wise2-cinematic-content .wise2-film-hero-title {
+    font-size: clamp(1.2rem, 5.1vw, 1.7rem);
+    letter-spacing: 0;
+  }
+}
