@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrandEcosystemHomepage } from './BrandEcosystemHomepage';
 
-// Exact user-approved 42.5-second film, uploaded to media storage with verified SHA-256.
+// Creator-supplied edited video uploaded October 22, 2026; use this as the entrance film.
 // Do not substitute the previous five-scene Higgsfield montage.
-const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/63bb8669-0fc0-4751-8b31-f2304b78b42e.mp4';
+const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0cc916c8-ef76-468e-9e88-93b799075c3d.mp4';
 
 export function CinematicHomepageExperience() {
   const [entered, setEntered] = useState(false);
@@ -16,9 +16,12 @@ export function CinematicHomepageExperience() {
   const video = useRef<HTMLVideoElement>(null);
 
   const enter = () => {
+    if (transitioning || entered) return;
     setTransitioning(true);
     setPlaying(false);
-    window.setTimeout(() => { setEntered(true); setTransitioning(false); }, 650);
+    video.current?.pause();
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => { setEntered(true); setTransitioning(false); }, reducedMotion ? 0 : 650);
   };
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export function CinematicHomepageExperience() {
   }, [entered]);
 
   if (entered) {
-    return <div>
+    return <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
       <div className="fixed bottom-5 right-5 z-50">
         <button
           onClick={() => { setFailed(false); setMuted(true); setEntered(false); }}

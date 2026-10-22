@@ -14,7 +14,7 @@ export default function ServicesPage() {
       description: 'Professional audio and video production powered by AI',
       features: ['Sound Lab', 'Live Studio', 'Jingle Lab', 'Voice Lab', 'Content Factory'],
       icon: '🎬',
-      color: 'from-blue-500/20',
+      color: 'from-emerald-500/20',
     },
     {
       title: 'Consulting Services',
@@ -28,7 +28,7 @@ export default function ServicesPage() {
       description: 'AI-powered workflows to streamline your business',
       features: ['Workflow Builder', 'Task Automation', 'AI Agents', 'Integration Hub'],
       icon: '⚙️',
-      color: 'from-purple-500/20',
+      color: 'from-emerald-500/15',
     },
     {
       title: 'Intelligence Platform',

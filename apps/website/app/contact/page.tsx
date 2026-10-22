@@ -40,12 +40,12 @@ export default function ContactPage() {
         <section className="pt-32 pb-16 px-6 text-center">
           <div
             className="inline-block px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-6"
-            style={{ background: 'rgba(0,148,255,0.1)', border: '1px solid rgba(0,148,255,0.3)', color: '#0094FF' }}
+            style={{ background: 'rgba(138,230,173,0.1)', border: '1px solid rgba(138,230,173,0.3)', color: '#8AE6AD' }}
           >
             LET&apos;S TALK
           </div>
           <h1 className="text-5xl md:text-6xl font-bold mb-4">
-            Get In <span style={{ color: '#0094FF' }}>Touch</span>
+            Get In <span style={{ color: '#8AE6AD' }}>Touch</span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
             Whether you want a consultation, have questions about WISE², or want to explore what&apos;s possible for your business — we&apos;re here.
@@ -53,7 +53,7 @@ export default function ContactPage() {
           <Link
             href="/audit"
             className="inline-block px-6 py-3 rounded-lg font-bold text-sm transition"
-            style={{ background: 'rgba(0,148,255,0.15)', border: '1px solid rgba(0,148,255,0.4)', color: '#0094FF' }}
+            style={{ background: 'rgba(138,230,173,0.15)', border: '1px solid rgba(138,230,173,0.4)', color: '#8AE6AD' }}
           >
             Skip the form — Run your FREE AI Audit →
           </Link>
@@ -69,10 +69,10 @@ export default function ContactPage() {
               {status === 'sent' ? (
                 <div
                   className="rounded-2xl p-10 text-center"
-                  style={{ background: 'rgba(0,148,255,0.08)', border: '1px solid rgba(0,148,255,0.3)' }}
+                  style={{ background: 'rgba(0,148,255,0.08)', border: '1px solid rgba(138,230,173,0.3)' }}
                 >
                   <div className="text-5xl mb-4">✓</div>
-                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#0094FF' }}>Message Received</h3>
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#8AE6AD' }}>Message Received</h3>
                   <p className="text-gray-400">We&apos;ll respond within 1 business day.</p>
                 </div>
               ) : (
@@ -133,7 +133,7 @@ export default function ContactPage() {
                     type="submit"
                     disabled={status === 'sending'}
                     className="w-full py-4 rounded-lg font-bold text-[#050505] transition disabled:opacity-60"
-                    style={{ background: '#0094FF', boxShadow: '0 0 20px rgba(0,148,255,0.35)' }}
+                    style={{ background: '#8AE6AD', boxShadow: '0 0 20px rgba(0,148,255,0.35)' }}
                   >
                     {status === 'sending' ? 'Sending...' : 'Send Message'}
                   </button>
@@ -154,7 +154,7 @@ export default function ContactPage() {
                     <span className="text-2xl">✉️</span>
                     <div>
                       <div className="font-semibold text-white">Email</div>
-                      <div className="text-sm" style={{ color: '#0094FF' }}>hello@wise2.net</div>
+                      <div className="text-sm" style={{ color: '#8AE6AD' }}>hello@wise2.net</div>
                     </div>
                   </a>
                   <Link
@@ -184,7 +184,7 @@ export default function ContactPage() {
 
               <div
                 className="rounded-2xl p-8"
-                style={{ background: 'linear-gradient(135deg, rgba(0,148,255,0.1) 0%, rgba(0,148,255,0.04) 100%)', border: '1px solid rgba(0,148,255,0.2)' }}
+                style={{ background: 'linear-gradient(135deg, rgba(138,230,173,0.1) 0%, rgba(0,148,255,0.04) 100%)', border: '1px solid rgba(0,148,255,0.2)' }}
               >
                 <h3 className="text-xl font-bold mb-3">Enterprise Inquiry?</h3>
                 <p className="text-gray-400 mb-4 text-sm">
@@ -193,7 +193,7 @@ export default function ContactPage() {
                 <Link
                   href="/consulting"
                   className="inline-block px-6 py-3 rounded-lg font-bold text-sm transition"
-                  style={{ background: '#0094FF', color: '#050505' }}
+                  style={{ background: '#8AE6AD', color: '#050505' }}
                 >
                   Book Enterprise Call →
                 </Link>
