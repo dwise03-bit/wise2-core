@@ -145,3 +145,42 @@ body.wise2-house ::selection {
   }
   .wise2-cinematic-content h2 { line-height: 1.18; }
 }
+
+
+/* Distinctive luxury homepage typography, deliberate visual upgrade. */
+.wise2-cinematic-content h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.2rem, 6.5vw, 6.5rem);
+  font-weight: 700;
+  letter-spacing: -.055em;
+  line-height: 1.055;
+  text-wrap: balance;
+  color: #f5f3ed;
+  text-shadow: 0 1px 0 #ffffff40, 0 3px 0 #172920, 0 12px 23px #000d, 0 26px 55px #000b;
+}
+.wise2-cinematic-content h1 span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  color: #b7e2c2;
+  -webkit-text-fill-color: #b7e2c2;
+  letter-spacing: -.06em;
+  text-shadow: 0 1px 0 #e3ffee55, 0 3px 0 #193b26, 0 12px 29px #000d, 0 0 28px #6cdb9c4d;
+}
+.wise2-cinematic-content h2,
+.wise2-cinematic-content h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: -.018em;
+  text-transform: none;
+}
+.wise2-cinematic-content section > p:first-child {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .27em;
+}
+@media(max-width:640px) {
+  .wise2-cinematic-content h1 { font-size: clamp(2.5rem, 9.4vw, 4.1rem); line-height: 1.07; }
+  .wise2-cinematic-content h1 span { letter-spacing: -.05em; }
+}
