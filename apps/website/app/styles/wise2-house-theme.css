@@ -372,3 +372,18 @@ body.wise2-house ::selection {
     letter-spacing: 0;
   }
 }
+
+
+/* Gentle Matrix-style W² digital rain. Always decorative, never interactive. */
+.wise2-code-rain {opacity:.13;mix-blend-mode:screen;mask-image:linear-gradient(to bottom,transparent,#000 12%,#000 85%,transparent);}
+.wise2-code-rain > span {
+  position:absolute;top:-45%;display:flex;flex-direction:column;align-items:center;gap:2rem;
+  color:#91ffba;font:500 12px/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;
+  text-shadow:0 0 7px rgba(74,244,146,.34);
+  animation:wise2-code-fall linear infinite;will-change:transform;
+}
+.wise2-code-rain b {font:inherit;white-space:nowrap;writing-mode:vertical-rl;letter-spacing:.55em;}
+.wise2-code-rain b:nth-child(2n){opacity:.4}
+@keyframes wise2-code-fall {from{transform:translateY(-10vh)}to{transform:translateY(165vh)}}
+@media(prefers-reduced-motion:reduce){.wise2-code-rain{display:none}}
+@media(max-width:600px){.wise2-code-rain{opacity:.075}.wise2-code-rain > span:nth-child(2n){display:none}}
