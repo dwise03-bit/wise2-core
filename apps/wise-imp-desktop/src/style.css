@@ -54,7 +54,8 @@ html.web #pet-stage {
 #imp.clicked { animation: pop .35s ease; }
 #imp.dancing { animation: imp-dance .62s ease-in-out infinite alternate; transform-origin: center 62%; }
 #speech { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); max-width: 240px; padding: 8px 12px; border: 1px solid rgba(40,190,255,.8); border-radius: 14px; background: rgba(3,10,20,.88); color: #c9f6ff; font-size: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,166,255,.28); pointer-events: none; }
-#menu { position: absolute; right: 10px; bottom: 10px; display: grid; gap: 6px; width: 132px; padding: 8px; border: 1px solid rgba(37,184,255,.65); border-radius: 12px; background: rgba(2,8,18,.94); box-shadow: 0 0 24px rgba(0,153,255,.25); }
+#menu { position: absolute; inset: 8px; z-index: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 7px; padding: 12px; border: 1px solid rgba(37,184,255,.65); border-radius: 12px; background: rgba(2,8,18,.97); box-shadow: 0 0 24px rgba(0,153,255,.25); }
+#pet-stage.menu-open #imp, #pet-stage.menu-open #imp-sheet, #pet-stage.menu-open #speech { visibility: hidden; }
 #workflow { position: absolute; inset: 8px; z-index: 3; display: grid; align-content: start; gap: 6px; padding: 10px; border: 1px solid rgba(37,184,255,.8); border-radius: 12px; background: rgba(2,8,18,.97); color: var(--ink); box-shadow: 0 0 24px rgba(0,153,255,.32); font-size: 11px; overflow: auto; }
 #workflow[hidden], #menu[hidden], #speech[hidden], #product[hidden], .status[hidden] { display: none; }
 .workflow-head { display: flex; justify-content: space-between; align-items: center; color: var(--cyan); }
@@ -67,7 +68,7 @@ html.web #pet-stage {
 .workflow-review { background: rgba(20, 126, 178, .9); border: 1px solid rgba(80, 207, 255, .72); font-weight: 700; }
 .workflow-save { background: rgba(23,128,181,.85); }
 #workflow-result { display: block; min-height: 28px; padding-top: 2px; color: rgba(201,246,255,.78); line-height: 1.25; overflow-wrap: anywhere; }
-#menu button { border: 0; border-radius: 8px; padding: 7px 9px; background: rgba(20,87,130,.65); color: white; cursor: pointer; }
+#menu button { min-height: 39px; border: 0; border-radius: 8px; padding: 7px 9px; background: rgba(20,87,130,.65); color: white; cursor: pointer; }
 #menu button:hover { background: rgba(27,132,192,.85); }
 @keyframes pop { 0%{transform:scale(1)} 45%{transform:scale(1.1) rotate(-2deg)} 100%{transform:scale(1)} }
 @keyframes imp-dance { 0%{transform:translateY(0) rotate(-5deg) scale(1)} 100%{transform:translateY(-12px) rotate(5deg) scale(1.04)} }
