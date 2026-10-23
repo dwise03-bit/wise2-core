@@ -1,0 +1,31 @@
+# Trivy ignore policy for Grok Bot trading service
+#
+# SECURITY CONTEXT & THREAT MODEL:
+# The Grok Bot trading service runs in a controlled Docker environment with:
+# - No untrusted input parsing (only API calls to known endpoints)
+# - No deserialization of untrusted data
+# - No public-facing network interfaces (internal service)
+# - Fixed operation: fetch data, filter, make trading decisions
+# - Single-user/single-purpose application
+#
+# ACCEPTANCE CRITERIA:
+# We accept CVEs in Python/system dependencies when:
+# 1. The vulnerability requires input vectors we don't expose (e.g., web parsing,
+#    file upload, untrusted deserialization)
+# 2. The vulnerability is in a transitive dependency and the attack chain is
+#    not realistic in our context
+# 3. The vulnerable code path is not reachable in our usage pattern
+# 4. No viable patched version exists (documented with reason)
+#
+# Python PACKAGE VULNERABILITIES (Context-specific):
+# Most Python package CVEs fall into categories not exploitable here:
+# - SSRF/URL parsing: We only call pre-configured API endpoints
+# - Deserialization attacks: We only call APIs with known JSON schemas
+# - Input validation bypasses: Our inputs are API responses, not user-controlled
+# - Dependency chain issues: We accept lower-priority CVEs in transitive deps
+#
+# FORMAT:
+# CVE-YYYY-NNNN  # CONTEXT: Brief explanation why this is acceptable in our context
+#
+# CURRENT STATUS: Awaiting detailed CVE analysis from Trivy output
+# (Add specific CVE entries as needed based on actual scan findings)
