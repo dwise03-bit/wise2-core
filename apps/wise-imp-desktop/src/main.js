@@ -512,7 +512,11 @@ const taskEngine = new TaskEngine({
   registry: createDefaultRegistry(companionApi),
   permissions: {
     request: async ({ skill, permissions }) => window.confirm(
-      `Allow WISE Imp to run ${skill}?\\nPermissions: ${permissions.join(', ')}\\nNo shell commands or destructive actions are allowed.`
+      `Allow WISE Imp to run ${skill}?
+
+Permissions: ${permissions.join(', ')}
+
+No shell commands or destructive actions are allowed.`
     )
   },
   onStatus: ({ status, detail }) => {
