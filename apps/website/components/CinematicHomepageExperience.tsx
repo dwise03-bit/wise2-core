@@ -10,6 +10,7 @@ const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGq
 export function CinematicHomepageExperience() {
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [selectedTrack, setSelectedTrack] = useState('buku');
   const [, setSoundReady] = useState(false);
   const soundtrack = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -58,11 +59,27 @@ export function CinematicHomepageExperience() {
   }, []);
 
   const soundLayer = (
-    <audio ref={soundtrack} src="/media/wise2-main-theme.mp3" preload="auto" loop
+    <audio ref={soundtrack} src={selectedTrack === "buku" ? "/media/ubuntu-go-buku.mp3" : "/media/wise2-main-theme.mp3"} preload="auto" loop
       muted={muted} onPlay={() => setSoundReady(true)}
       onError={() => setSoundReady(false)} aria-label="WISE² original soundtrack" />
   );
 
+  const songControl = (
+    <select aria-label="Select soundtrack" value={selectedTrack} onChange={(e) => {
+      const choice = e.target.value;
+      setSelectedTrack(choice);
+      const player = soundtrack.current;
+      if (player) {
+        player.pause();
+        player.src = choice === 'buku' ? '/media/ubuntu-go-buku.mp3' : '/media/wise2-main-theme.mp3';
+        player.load();
+        player.play().catch(() => {});
+      }
+    }} className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/90 px-3 py-3 text-xs font-bold text-[#c4ffda]">
+      <option value="buku">Ubuntu Go Buku</option>
+      <option value="villain">Wise Villain</option>
+    </select>
+  );
   const soundControl = (
     <button type="button"
       className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/90 px-4 py-3 text-xs font-bold text-[#c4ffda]"
@@ -74,7 +91,9 @@ export function CinematicHomepageExperience() {
 
   const page = entered ? <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
       <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3">
-        {soundControl}
+        {songControl}
+        {songControl}
+      {soundControl}
         <button
           onClick={() => { setFailed(false); setMuted(true); setEntered(false); }}
           className="rounded-full border border-[#65ffa9] bg-[#071511]/95 px-5 py-3 text-xs font-bold tracking-wider text-[#65ffa9] shadow-xl"
