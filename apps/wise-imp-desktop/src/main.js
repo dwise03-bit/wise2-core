@@ -573,7 +573,7 @@ function workflowStatus(text) {
 async function runWorkflowAction(action) {
   if (state.busy || state.dragging) return;
   const root = workflowRootValue();
-  const needsRoot = action === 'find' || action === 'summarize' || action === 'open';
+  const needsRoot = action === 'find' || action === 'summarize' || action === 'open' || action === 'review';
   if (needsRoot && !root) { workflowStatus('Enter a project folder first.'); return; }
   let skill;
   let input;
@@ -586,6 +586,9 @@ async function runWorkflowAction(action) {
   } else if (action === 'open') {
     skill = 'app.launch';
     input = { app: 'explorer', root };
+  } else if (action === 'review') {
+    skill = 'project.review';
+    input = { root };
   } else if (action === 'tasks') {
     const tasks = workflowTasks.value.split(/\r?\n/).map((title) => title.trim()).filter(Boolean).map((title) => ({ title, done: false }));
     if (!tasks.length) { workflowStatus('Add at least one task first.'); return; }
@@ -602,6 +605,7 @@ async function runWorkflowAction(action) {
     if (skill === 'project.find') detail = `${completed.result.files.length} permitted file(s) found.`;
     if (skill === 'project.summarize') detail = completed.result.summary;
     if (skill === 'app.launch') detail = 'Explorer launch requested for the approved folder.';
+    if (skill === 'project.review') detail = `${completed.verification.message} ${completed.result.files.files.length} permitted file(s) inspected; review checklist saved.`;
     workflowStatus(detail);
     showSpeech(detail, 4200);
   } catch (error) {
