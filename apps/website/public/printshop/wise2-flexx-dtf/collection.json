@@ -1,0 +1,20 @@
+{
+  "collection": "WISE² × FLEXX Individual DTF",
+  "status": "Proof artwork created; printer approval pending",
+  "transferCount": 10,
+  "source": "Original typographic designs, not brand-master assets",
+  "files": [
+    "W2-01 Signature Graffiti 12x14",
+    "W2-02 Chopped Cheese NYC 12x15",
+    "W2-03 Grip Drip 11x13",
+    "W2-04 I'm Really Like That 12x14",
+    "W2-05 Wise Defense 11x13",
+    "W2-06 Metro Edition 12x14",
+    "W2-07 Left Chest 4x4",
+    "W2-08 Sleeve 3x5",
+    "W2-09 FLEXX 4x3",
+    "W2-10 Neck Label 3x2"
+  ],
+  "spec": "Individual transparent PNG, 300 DPI, no crowns, no sports trademarks",
+  "delivery": "Proof ZIP supplied in ChatGPT conversation; upload production assets to CDN after approval"
+}
