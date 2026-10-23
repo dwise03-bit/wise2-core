@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { BrandEcosystemHomepage } from './BrandEcosystemHomepage';
+import { WiseSquaredRain } from './WiseSquaredRain';
 
 // Creator-supplied edited video uploaded October 22, 2026; use this as the entrance film.
 // Do not substitute the previous five-scene Higgsfield montage.
@@ -81,6 +82,7 @@ export function CinematicHomepageExperience() {
         >↺ Replay intro</button>
       </div>
       <BrandEcosystemHomepage />
+      <WiseSquaredRain />
     </div> : <main className={`relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#020606] text-white transition-opacity duration-700 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
     <video
       ref={video}
