@@ -428,7 +428,9 @@ menu.addEventListener('click', async (event) => {
   }
   if (action === 'review') {
     stopDemo(false);
-    await runProjectReview();
+    workflow.hidden = false;
+    workflowStatus('Choose a permitted project folder, then select Run verified project review.');
+    workflowRoot.focus();
     return;
   }
   if (action === 'task-list') {
@@ -528,23 +530,6 @@ No shell commands or destructive actions are allowed.`
     showSpeech(detail || status, status === TaskStatus.WORKING ? 1600 : 2800);
   }
 });
-
-async function runProjectReview() {
-  if (state.busy || state.dragging) return;
-  const root = window.prompt('Enter the full path to the project folder to approve for this review.');
-  if (!root?.trim()) { showSpeech('No project folder was selected.'); return; }
-  stopScheduler();
-  try {
-    const completed = await taskEngine.run('project.review', { root: root.trim() });
-    showSpeech(completed.verification.message, 4200);
-    persistSettings();
-  } catch (error) {
-    showSpeech(error.message || 'Project review failed.', 4200);
-  } finally {
-    state.busy = false;
-    if (!state.sleeping && !state.dragging) { setSprite('idle'); scheduleNext(1800); }
-  }
-}
 
 async function createTaskList() {
   if (state.busy || state.dragging) return;
