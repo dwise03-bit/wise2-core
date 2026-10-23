@@ -10,6 +10,8 @@ const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGq
 export function CinematicHomepageExperience() {
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [, setSoundReady] = useState(false);
+  const soundtrack = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
@@ -20,6 +22,7 @@ export function CinematicHomepageExperience() {
     setTransitioning(true);
     setPlaying(false);
     video.current?.pause();
+    // Soundtrack stays mounted and keeps its timeline through the visual transition.
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.setTimeout(() => { setEntered(true); setTransitioning(false); }, reducedMotion ? 0 : 650);
   };
@@ -31,23 +34,58 @@ export function CinematicHomepageExperience() {
     el.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
   }, [entered]);
 
-  if (entered) {
-    return <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
-      <div className="fixed bottom-5 right-5 z-50">
+  const enableSound = () => {
+    const track = soundtrack.current;
+    if (!track) return;
+    track.muted = false;
+    setMuted(false);
+    track.play().then(() => { setSoundReady(true); })
+      .catch(() => { setSoundReady(false); });
+  };
+
+  useEffect(() => {
+    const track = soundtrack.current;
+    if (!track) return;
+    // Try audible autoplay. Browsers that disallow it fall back to muted playback
+    // on the same timeline, so a later Enable music click does not restart the song.
+    track.muted = false;
+    track.play().then(() => { setMuted(false); setSoundReady(true); })
+      .catch(() => {
+        track.muted = true;
+        setMuted(true);
+        track.play().then(() => setSoundReady(true)).catch(() => setSoundReady(false));
+      });
+  }, []);
+
+  const soundLayer = (
+    <audio ref={soundtrack} src="/media/wise2-main-theme.mp3" preload="auto" loop
+      muted={muted} onPlay={() => setSoundReady(true)}
+      onError={() => setSoundReady(false)} aria-label="WISE² original soundtrack" />
+  );
+
+  const soundControl = (
+    <button type="button"
+      className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/90 px-4 py-3 text-xs font-bold text-[#c4ffda]"
+      onClick={() => {
+        if (muted) enableSound();
+        else { if (soundtrack.current) soundtrack.current.muted = true; setMuted(true); }
+      }}>{muted ? 'Enable music' : 'Mute music'}</button>
+  );
+
+  const page = entered ? <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
+      <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3">
+        {soundControl}
         <button
           onClick={() => { setFailed(false); setMuted(true); setEntered(false); }}
           className="rounded-full border border-[#65ffa9] bg-[#071511]/95 px-5 py-3 text-xs font-bold tracking-wider text-[#65ffa9] shadow-xl"
         >↺ Replay intro</button>
       </div>
       <BrandEcosystemHomepage />
-    </div>;
-  }
-
-  return <main className={`relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#020606] text-white transition-opacity duration-700 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
+    </div> : <main className={`relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-[#020606] text-white transition-opacity duration-700 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
     <video
       ref={video}
       className="absolute inset-0 h-full w-full bg-black object-contain"
-      autoPlay muted={muted} playsInline preload="metadata"
+      autoPlay muted playsInline preload="metadata"
       onEnded={enter}
       onPlay={() => setPlaying(true)}
       onPause={() => setPlaying(false)}
@@ -62,7 +100,7 @@ export function CinematicHomepageExperience() {
       <p className="mt-1 text-[11px] uppercase tracking-[.25em] text-white/75">Two minds. One vision.</p>
     </div>
     <div className="absolute right-5 top-6 z-10 flex flex-wrap justify-end gap-2 sm:right-10 sm:top-9">
-      <button className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/85 px-4 py-3 text-xs font-bold text-[#c4ffda]" onClick={() => setMuted(v => !v)}>{muted ? 'Enable sound' : 'Mute sound'}</button>
+      {soundControl}
       <button className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/85 px-4 py-3 text-xs font-bold text-[#c4ffda]" onClick={() => { const el = video.current; if (!el) return; if (el.paused) el.play().catch(() => setPlaying(false)); else el.pause(); }}>{playing ? 'Pause' : 'Play'}</button>
       <button className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/85 px-4 py-3 text-xs font-bold text-[#c4ffda]" onClick={enter}>Skip intro →</button>
     </div>
@@ -73,4 +111,8 @@ export function CinematicHomepageExperience() {
       <button onClick={enter} className="rounded-md border border-[#65ffa9] bg-[#00150f]/90 px-5 py-3 text-sm font-bold text-[#c4ffda]">Enter WISE² →</button>
     </div>
   </main>;
+  return <>
+    {soundLayer}
+    {page}
+  </>;
 }
