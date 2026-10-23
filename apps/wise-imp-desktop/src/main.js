@@ -17,6 +17,9 @@ const workflowRoot = document.querySelector('#workflow-root');
 const workflowQuery = document.querySelector('#workflow-query');
 const workflowTasks = document.querySelector('#workflow-tasks');
 const workflowResult = document.querySelector('#workflow-result');
+const permission = document.querySelector('#permission');
+const permissionTitle = document.querySelector('#permission-title');
+const permissionDetail = document.querySelector('#permission-detail');
 
 const motionCatalog = createImpMotionCatalog(BASE);
 const motionPlayer = createMotionPlayer({ image: imp, sheet: impSheet, catalog: motionCatalog });
@@ -54,6 +57,7 @@ let saveTimer = 0;
 let flightFrame = 0;
 let firstWander = true;
 let demoRun = 0;
+let pendingPermission = null;
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -463,7 +467,11 @@ menu.addEventListener('click', async (event) => {
 });
 
 window.addEventListener('keydown', async (event) => {
-  if (event.key === 'Escape') menu.hidden = true;
+  if (event.key === 'Escape') {
+    menu.hidden = true;
+    stage.classList.remove('menu-open');
+    if (!permission.hidden) finishPermission(false);
+  }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'q') {
     event.preventDefault();
     await invoke('close_app');
@@ -513,13 +521,7 @@ const companionApi = (() => {
 const taskEngine = new TaskEngine({
   registry: createDefaultRegistry(companionApi),
   permissions: {
-    request: async ({ skill, permissions }) => window.confirm(
-      `Allow WISE Imp to run ${skill}?
-
-Permissions: ${permissions.join(', ')}
-
-No shell commands or destructive actions are allowed.`
-    )
+    request: requestTaskPermission
   },
   onStatus: ({ status, detail }) => {
     if (status === TaskStatus.PLANNING || status === TaskStatus.AWAITING_CONFIRMATION) { state.busy = true; setSprite('thinking'); }
