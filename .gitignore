@@ -136,6 +136,7 @@ out/
 
 # Video files
 *.mp4
+!apps/website/public/hive/*.mp4
 *.mov
 *.avi
 

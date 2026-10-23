@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { BrandEcosystemHomepage } from './BrandEcosystemHomepage';
+import { ExperienceGate, HiveArrival } from './ExperienceGate';
 import { WiseSquaredRain } from './WiseSquaredRain';
 
 // Creator-supplied edited video uploaded October 22, 2026; use this as the entrance film.
@@ -9,6 +10,7 @@ import { WiseSquaredRain } from './WiseSquaredRain';
 const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0cc916c8-ef76-468e-9e88-93b799075c3d.mp4';
 
 export function CinematicHomepageExperience() {
+  const [mode, setMode] = useState<'station' | 'hive' | null>(null);
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(true);
   const [, setSoundReady] = useState(false);
@@ -72,6 +74,9 @@ export function CinematicHomepageExperience() {
         else { if (soundtrack.current) soundtrack.current.muted = true; setMuted(true); }
       }}>{muted ? 'Enable music' : 'Mute music'}</button>
   );
+
+  if (mode === null) return <ExperienceGate onChoose={setMode} />;
+  if (mode === 'hive') return <HiveArrival onBack={() => setMode(null)} />;
 
   const page = entered ? <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
       <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3">
