@@ -1,10 +1,8 @@
 name: Deploy to wise2.net
 
-# Manual only. This job was failing on every push to main (docker-compose v1 is
-# not on the runner), and if it did run it would rebuild and recreate every
-# service in docker-compose.prod.yml and run `prisma db push` against production,
-# which conflicts with the rule that deployments recreate only their own service.
-# Production deploys go through deploy.yml; clipper.wise2.net through its own script.
+# Manual only. This workflow remains a full-stack recovery path: it rebuilds all
+# services in docker-compose.prod.yml and runs `prisma db push` in production.
+# Standard website deploys go through deploy.yml.
 on:
   workflow_dispatch:
 
@@ -30,7 +28,7 @@ jobs:
       - name: Build and push Docker images
         run: |
           echo "Building Docker images for wise2.net deployment..."
-          docker-compose -f docker-compose.prod.yml build
+          docker compose -f docker-compose.prod.yml build
       
       - name: Deploy to VPS via SSH
         env:
@@ -52,12 +50,12 @@ jobs:
           # Pull latest code
           git pull origin main
           
-          # Deploy with docker-compose
-          docker-compose -f docker-compose.prod.yml pull
-          docker-compose -f docker-compose.prod.yml up -d
+          # Deploy with Docker Compose v2
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d
           
           # Run database migrations
-          docker-compose -f docker-compose.prod.yml exec -T api npx prisma db push
+          docker compose -f docker-compose.prod.yml exec -T api npx prisma db push
           
           # Verify deployment
           sleep 10
@@ -72,4 +70,3 @@ jobs:
           echo "Verifying https://wise2.net..."
           curl -sI https://wise2.net || echo "Note: DNS may take time to propagate"
           echo "✅ Deployment workflow complete"
-
