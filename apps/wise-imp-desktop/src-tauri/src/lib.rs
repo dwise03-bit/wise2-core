@@ -138,6 +138,7 @@ fn restore_window(window: &tauri::WebviewWindow, settings: &Settings) -> Result<
     .set_position(PhysicalPosition::new(x, y))
     .map_err(|e| e.to_string())?;
   window.show().map_err(|e| e.to_string())?;
+  window.set_focus().map_err(|e| e.to_string())?;
   Ok(())
 }
 
