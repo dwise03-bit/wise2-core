@@ -62,19 +62,21 @@
         <button data-action="demo">Demo showcase</button>
         <button data-action="stop-demo">Stop demo</button>
         <button data-action="workflow">Workflow tools</button>
-        <button data-action="review">Project review</button>
+        <button data-action="review">Run verified review</button>
         <button data-action="task-list">Create task list</button>
         <button data-action="quit">Quit</button>
       </div>
       <section id="workflow" hidden aria-label="WISE Imp workflow tools">
         <div class="workflow-head"><strong>Workflow tools</strong><button type="button" data-workflow-action="close" aria-label="Close workflow tools">×</button></div>
         <label>Project folder<input id="workflow-root" type="text" placeholder="C:\\path\\to\\project" autocomplete="off" /></label>
+        <p class="workflow-hint">IMP only reads this folder after you approve it. A verified review reads permitted files, creates a local checklist, and reports the result.</p>
         <label>File name contains<input id="workflow-query" type="text" placeholder="e.g. README" autocomplete="off" /></label>
         <div class="workflow-actions">
           <button type="button" data-workflow-action="find">Find files</button>
           <button type="button" data-workflow-action="summarize">Summarize</button>
           <button type="button" data-workflow-action="open">Open folder</button>
         </div>
+        <button class="workflow-review" type="button" data-workflow-action="review">Run verified project review</button>
         <label>One task per line<textarea id="workflow-tasks" rows="3" placeholder="Review build&#10;Check motion pass"></textarea></label>
         <button class="workflow-save" type="button" data-workflow-action="tasks">Create verified task list</button>
         <output id="workflow-result" aria-live="polite">Choose a permitted project folder, then run a task.</output>
