@@ -46,10 +46,15 @@ export function CinematicHomepageExperience() {
   useEffect(() => {
     const track = soundtrack.current;
     if (!track) return;
-    // Browsers allow muted autoplay. Attempt to start the same timeline at page load.
-    track.muted = true;
-    track.play().then(() => { setSoundReady(true); })
-      .catch(() => { setSoundReady(false); });
+    // Try audible autoplay. Browsers that disallow it fall back to muted playback
+    // on the same timeline, so a later Enable music click does not restart the song.
+    track.muted = false;
+    track.play().then(() => { setMuted(false); setSoundReady(true); })
+      .catch(() => {
+        track.muted = true;
+        setMuted(true);
+        track.play().then(() => setSoundReady(true)).catch(() => setSoundReady(false));
+      });
   }, []);
 
   const soundLayer = (
