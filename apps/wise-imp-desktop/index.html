@@ -81,6 +81,16 @@
         <button class="workflow-save" type="button" data-workflow-action="tasks">Create verified task list</button>
         <output id="workflow-result" aria-live="polite">Choose a permitted project folder, then run a task.</output>
       </section>
+      <section id="permission" hidden aria-label="WISE Imp task permission">
+        <strong>Approve a real task?</strong>
+        <p id="permission-title"></p>
+        <p id="permission-detail"></p>
+        <p class="permission-safe">No shell commands. No destructive operations.</p>
+        <div class="permission-actions">
+          <button type="button" data-permission-action="deny">Cancel</button>
+          <button type="button" data-permission-action="allow">Allow task</button>
+        </div>
+      </section>
     </main>
     <script type="module" src="/src/main.js"></script>
   </body>
