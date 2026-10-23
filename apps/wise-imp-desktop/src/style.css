@@ -56,8 +56,17 @@ html.web #pet-stage {
 #speech { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); max-width: 240px; padding: 8px 12px; border: 1px solid rgba(40,190,255,.8); border-radius: 14px; background: rgba(3,10,20,.88); color: #c9f6ff; font-size: 12px; text-align: center; box-shadow: 0 0 20px rgba(0,166,255,.28); pointer-events: none; }
 #menu { position: absolute; inset: 8px; z-index: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 7px; padding: 12px; border: 1px solid rgba(37,184,255,.65); border-radius: 12px; background: rgba(2,8,18,.97); box-shadow: 0 0 24px rgba(0,153,255,.25); }
 #pet-stage.menu-open #imp, #pet-stage.menu-open #imp-sheet, #pet-stage.menu-open #speech { visibility: hidden; }
-#workflow { position: absolute; inset: 8px; z-index: 3; display: grid; align-content: start; gap: 6px; padding: 10px; border: 1px solid rgba(37,184,255,.8); border-radius: 12px; background: rgba(2,8,18,.97); color: var(--ink); box-shadow: 0 0 24px rgba(0,153,255,.32); font-size: 11px; overflow: auto; }
-#workflow[hidden], #menu[hidden], #speech[hidden], #product[hidden], .status[hidden] { display: none; }
+#workflow, #permission { position: absolute; inset: 8px; z-index: 3; display: grid; align-content: start; gap: 6px; padding: 10px; border: 1px solid rgba(37,184,255,.8); border-radius: 12px; background: rgba(2,8,18,.97); color: var(--ink); box-shadow: 0 0 24px rgba(0,153,255,.32); font-size: 11px; overflow: auto; }
+#permission { z-index: 4; align-content: center; gap: 12px; padding: 22px; font-size: 13px; }
+#permission strong { color: var(--cyan); font-size: 16px; }
+#permission p { margin: 0; line-height: 1.35; overflow-wrap: anywhere; }
+#permission-title { color: white; font-weight: 700; }
+#permission-detail { color: rgba(201,246,255,.82); }
+.permission-safe { color: rgba(140,222,255,.9); }
+.permission-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.permission-actions button { min-height: 38px; border: 1px solid rgba(37,184,255,.55); border-radius: 8px; background: rgba(20,87,130,.7); color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.permission-actions button[data-permission-action="allow"] { background: rgba(20, 126, 178, .95); }
+#workflow[hidden], #permission[hidden], #menu[hidden], #speech[hidden], #product[hidden], .status[hidden] { display: none; }
 .workflow-head { display: flex; justify-content: space-between; align-items: center; color: var(--cyan); }
 .workflow-head button { width: 24px; height: 24px; border: 0; border-radius: 6px; background: rgba(20,87,130,.65); color: white; font-size: 18px; line-height: 1; cursor: pointer; }
 #workflow label { display: grid; gap: 3px; color: rgba(201,246,255,.78); }
