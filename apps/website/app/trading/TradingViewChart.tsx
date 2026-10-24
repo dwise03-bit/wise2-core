@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { UTCTimestamp } from 'lightweight-charts';
 
 interface OHLC {
   time: string | number;
@@ -58,7 +59,7 @@ export default function TradingViewChart({ symbol, data }: { symbol: string; dat
           high: candle.high,
           low: candle.low,
           close: candle.close,
-        }));
+        })).map(candle => ({ ...candle, time: candle.time as UTCTimestamp }));
 
         candlestickSeries.setData(formattedData);
         chart.timeScale().fitContent();
