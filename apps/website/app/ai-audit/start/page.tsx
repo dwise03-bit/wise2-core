@@ -4,7 +4,6 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { type AuditInput, type AuditResult } from '@/lib/ai-audit';
-import type { Dispatch, SetStateAction } from 'react';
 
 const initialForm: AuditInput = {
   businessName: '',
@@ -19,7 +18,7 @@ const initialForm: AuditInput = {
   priorityWorkflow: '',
 };
 
-type StringSetter = Dispatch<SetStateAction<string>>;
+type StringSetter = (value: string) => void;
 
 export default function AiAuditStartPage() {
   const [form, setForm] = useState(initialForm);
