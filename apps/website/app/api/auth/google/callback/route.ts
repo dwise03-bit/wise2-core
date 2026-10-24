@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { completeOAuthLogin } from '@/lib/oauth-callback';
+import { GET as completeMailCheckOAuth } from '@/app/api/mail-check/callback/route';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,13 @@ export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
   const state = request.nextUrl.searchParams.get('state');
   const error = request.nextUrl.searchParams.get('error');
+
+  // Mail Check shares this callback only when an existing Google OAuth client
+  // has this URL registered. Keep its token handling isolated from WISE² login.
+  const mailCheckState = request.cookies.get('wise2_mail_check_state')?.value;
+  if (mailCheckState && state === mailCheckState) {
+    return completeMailCheckOAuth(request);
+  }
 
   if (error) {
     return NextResponse.redirect(
