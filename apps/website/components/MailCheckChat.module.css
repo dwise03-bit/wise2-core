@@ -2,8 +2,7 @@
   overflow: hidden;
   border: 1px solid rgba(157, 205, 224, .2);
   border-radius: 14px;
-  background:
-    linear-gradient(135deg, rgba(17, 35, 48, .92), rgba(8, 18, 27, .98));
+  background: linear-gradient(135deg, rgba(17, 35, 48, .92), rgba(8, 18, 27, .98));
   box-shadow: 0 22px 55px rgba(0, 0, 0, .22);
 }
 
@@ -15,46 +14,16 @@
   border-bottom: 1px solid rgba(157, 205, 224, .14);
 }
 
-.header svg {
-  width: 28px;
-  height: 28px;
-  flex: none;
-  color: #62e4c0;
-}
+.header svg { width: 28px; height: 28px; flex: none; color: #62e4c0; }
+.kicker { margin: 0 0 6px; color: #75e5c3; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.header h2 { margin: 0; color: #f0f7fa; font-size: 24px; letter-spacing: -.03em; }
+.description { max-width: 660px; margin: 8px 0 0; color: #9eb2bf; font-size: 14px; line-height: 1.5; }
 
-.kicker {
-  margin: 0 0 6px;
-  color: #75e5c3;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-}
-
-.header h2 {
-  margin: 0;
-  color: #f0f7fa;
-  font-size: 24px;
-  letter-spacing: -.03em;
-}
-
-.description {
-  max-width: 660px;
-  margin: 8px 0 0;
-  color: #9eb2bf;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 18px 25px 0;
-}
+.actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 18px 25px 0; }
 
 .actions button,
 .connect,
+.hostedMail,
 .form button {
   display: inline-flex;
   align-items: center;
@@ -80,13 +49,13 @@
   color: #edfff8;
 }
 
-.connect,
-.form button {
+.hostedMail {
   border-color: #6ce7c1;
   background: #6ce7c1;
   color: #061119;
 }
 
+.hostedMail:hover,
 .connect:hover,
 .form button:hover:not(:disabled) {
   border-color: #b1ffe4;
@@ -95,10 +64,7 @@
 }
 
 .actions button:disabled,
-.form button:disabled {
-  cursor: wait;
-  opacity: .55;
-}
+.form button:disabled { cursor: wait; opacity: .55; }
 
 .form {
   margin: 20px 25px 0;
@@ -108,19 +74,8 @@
   background: rgba(2, 8, 14, .28);
 }
 
-.form label {
-  display: block;
-  margin-bottom: 8px;
-  color: #dce9ee;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.form > div {
-  display: flex;
-  gap: 8px;
-}
-
+.form label { display: block; margin-bottom: 8px; color: #dce9ee; font-size: 12px; font-weight: 700; }
+.form > div { display: flex; gap: 8px; }
 .form input {
   min-width: 0;
   flex: 1;
@@ -133,64 +88,17 @@
   font: inherit;
   font-size: 14px;
 }
-
 .form input::placeholder { color: #60798a; }
 .form input:focus { border-color: #68e5c0; box-shadow: 0 0 0 3px rgba(104, 229, 192, .11); }
 
-.status {
-  margin: 14px 25px 24px;
-  color: #8fa6b5;
-  font-size: 13px;
-}
-
-.results {
-  display: grid;
-  gap: 8px;
-  margin: 0 25px 25px;
-  padding: 0;
-  list-style: none;
-}
-
-.results li {
-  padding: 13px;
-  border: 1px solid rgba(154, 207, 228, .14);
-  border-radius: 8px;
-  background: rgba(3, 11, 17, .4);
-}
-
-.messageTop {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: #e9f4f7;
-}
-
-.messageTop span {
-  flex: none;
-  border-radius: 999px;
-  padding: 3px 7px;
-  background: rgba(102, 229, 192, .15);
-  color: #85f0ce;
-  font-size: 10px;
-  font-weight: 800;
-}
-
-.results p {
-  margin: 5px 0 0;
-  color: #9db1bd;
-  font-size: 13px;
-}
-
-.results small {
-  display: block;
-  margin-top: 5px;
-  color: #728997;
-}
-
-.snippet {
-  color: #bed0d9 !important;
-  line-height: 1.45;
-}
+.status { margin: 14px 25px 24px; color: #8fa6b5; font-size: 13px; }
+.results { display: grid; gap: 8px; margin: 0 25px 25px; padding: 0; list-style: none; }
+.results li { padding: 13px; border: 1px solid rgba(154, 207, 228, .14); border-radius: 8px; background: rgba(3, 11, 17, .4); }
+.messageTop { display: flex; justify-content: space-between; gap: 12px; color: #e9f4f7; }
+.messageTop span { flex: none; border-radius: 999px; padding: 3px 7px; background: rgba(102, 229, 192, .15); color: #85f0ce; font-size: 10px; font-weight: 800; }
+.results p { margin: 5px 0 0; color: #9db1bd; font-size: 13px; }
+.results small { display: block; margin-top: 5px; color: #728997; }
+.snippet { color: #bed0d9 !important; line-height: 1.45; }
 
 @media (max-width: 600px) {
   .header { padding: 20px; }
@@ -198,7 +106,6 @@
   .form { margin: 18px 20px 0; }
   .status { margin: 14px 20px 20px; }
   .results { margin: 0 20px 20px; }
-
   .form > div { flex-direction: column; }
   .form button { width: 100%; }
 }
