@@ -12,12 +12,13 @@ export default function AiAuditResultPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!params?.auditId) { setLoading(false); return; }
     const stored = sessionStorage.getItem(`wise2-audit:${params.auditId}`);
     if (stored) {
       setResult(JSON.parse(stored).result as AuditResult);
     }
     setLoading(false);
-  }, [params.auditId]);
+  }, [params?.auditId]);
 
   if (loading) {
     return <main className="flex min-h-screen items-center justify-center bg-[#050607] text-[#39FF14]"><Loader2 className="animate-spin" /></main>;
