@@ -4,7 +4,7 @@ import { isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 const BLACKHAIL_PREFIX = '/sencere/blakkhail';
 const SENCERE_PREFIX = '/sencere';
 const WISE2_HOSTS = new Set(['wise2.net', 'www.wise2.net']);
-const PLATFORM_PATHS = ['/email', '/admin', '/hive', '/dashboard', '/support'];
+const PLATFORM_PATHS = ['/email'];
 
 function matchesPlatformPath(pathname: string): boolean {
   return PLATFORM_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
