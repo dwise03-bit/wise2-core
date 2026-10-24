@@ -96,7 +96,7 @@ export function ProductConnections() {
                   />
 
                   {/* Emoji */}
-                  <text
+                  <motion.text
                     x={x}
                     y={y - 8}
                     textAnchor="middle"
@@ -107,7 +107,7 @@ export function ProductConnections() {
                     transition={{ delay: idx * 0.1 }}
                   >
                     {product.emoji}
-                  </text>
+                  </motion.text>
 
                   {/* Label */}
                   <text
