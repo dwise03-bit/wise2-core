@@ -73,7 +73,7 @@ export function BlakkhailFooter() {
               {[
                 { name: 'Instagram', url: BLAKKHAIL_LEGACY.social.instagram },
                 { name: 'Twitter', url: BLAKKHAIL_LEGACY.social.twitter },
-                { name: 'Discord', url: BLAKKHAIL_LEGACY.social.discord },
+                
                 { name: 'Email', url: 'mailto:contact@blakkhail.com' }
               ].map((item) => (
                 <li key={item.name}>
