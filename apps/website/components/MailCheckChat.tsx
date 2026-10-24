@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useState } from 'react';
-import { MailCheck, Search, ShieldCheck } from 'lucide-react';
+import { Inbox, MailCheck, Search, ShieldCheck } from 'lucide-react';
 import styles from './MailCheckChat.module.css';
 
 type MailMessage = {
@@ -31,7 +31,7 @@ function labelFor(action: string) {
 
 export function MailCheckChat() {
   const [messages, setMessages] = useState<MailMessage[]>([]);
-  const [status, setStatus] = useState('Connect Gmail, then ask the chat to check mail.');
+  const [status, setStatus] = useState('Open WISE² Mail or connect Gmail, then ask the chat to check mail.');
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
@@ -75,13 +75,17 @@ export function MailCheckChat() {
           <p className={styles.kicker}>Private inbox assistant</p>
           <h2 id="mail-check-title">Mail Check Chat</h2>
           <p className={styles.description}>
-            Search and summarize Gmail headers and snippets. Read-only—this chat cannot send, delete, archive, label, or mark mail as read.
+            Use your WISE² inbox for full self-hosted mail, or connect Gmail for read-only search and summaries.
           </p>
         </div>
         <ShieldCheck aria-hidden="true" />
       </div>
 
       <div className={styles.actions}>
+        <a className={styles.hostedMail} href="/email-client">
+          <Inbox size={17} aria-hidden="true" />
+          Open WISE² Mail
+        </a>
         <a className={styles.connect} href="/api/mail-check/connect">
           <MailCheck size={17} aria-hidden="true" />
           {connected ? 'Reconnect Gmail' : 'Connect Gmail'}
