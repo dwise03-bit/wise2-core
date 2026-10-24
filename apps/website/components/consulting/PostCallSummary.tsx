@@ -19,7 +19,6 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
-import { Tabs } from '@/components/ui/Tabs'
 import { Input } from '@/components/ui/Input'
 import Checkbox from '@/components/ui/Checkbox'
 
@@ -463,12 +462,15 @@ ${summary.consultantNotes ? `\nConsultant Notes:\n${summary.consultantNotes}` : 
         <Card variant="elevated" className="overflow-hidden">
           {/* Tabs Navigation */}
           <div className="p-6 pb-0">
-            <Tabs
-              items={tabItems}
-              value={activeTab}
-              onChange={setActiveTab}
-              className="mb-6"
-            />
+            <div role="tablist" aria-label="Call summary sections" className="mb-6 flex flex-wrap gap-2">
+              {tabItems.map((tab) => (
+                <button key={tab.value} type="button" role="tab" aria-selected={activeTab === tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`rounded-lg px-4 py-2 text-sm font-semibold ${activeTab === tab.value ? 'bg-[#39FF14] text-black' : 'bg-slate-800 text-white'}`}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Tabs Content */}
