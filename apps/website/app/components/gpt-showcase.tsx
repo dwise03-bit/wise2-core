@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { SparklesIcon, CommandLineIcon } from '@heroicons/react/24/outline';
+import { Sparkles as SparklesIcon, Terminal as CommandLineIcon } from 'lucide-react';
 
 const GPTShowcase = () => {
   const features = [
