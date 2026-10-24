@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
-import Tabs from '@/components/ui/Tabs'
+import { Tabs } from '@/components/ui/Tabs'
 import { Input } from '@/components/ui/Input'
 import Checkbox from '@/components/ui/Checkbox'
 
