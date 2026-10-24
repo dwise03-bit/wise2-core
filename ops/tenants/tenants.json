@@ -1,0 +1,28 @@
+{
+  "$schema": "./tenant.schema.json",
+  "platform": {
+    "name": "WISE²",
+    "controlDomains": ["wise2.net", "www.wise2.net", "api.wise2.net", "admin.wise2.net", "hive.wise2.net"],
+    "reservedPaths": ["/", "/admin", "/email", "/hive", "/dashboard", "/support", "/api"]
+  },
+  "tenants": [
+    {
+      "id": "blakkhail",
+      "name": "Blakk Hail",
+      "domains": ["blakkhail.com", "www.blakkhail.com"],
+      "dashboardDomain": "app.blakkhail.com",
+      "deployment": {
+        "service": "blakkhail-web",
+        "network": "tenant-blakkhail",
+        "environmentFile": "ops/tenants/env/blakkhail.env.example",
+        "database": "blakkhail",
+        "storagePrefix": "tenants/blakkhail"
+      },
+      "hive": {
+        "enabled": true,
+        "healthEndpoint": "/health",
+        "alertChannel": "client-blakkhail"
+      }
+    }
+  ]
+}
