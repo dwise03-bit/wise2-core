@@ -55,9 +55,9 @@ export default function AiAuditStartPage() {
           <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#39FF14]">Your opportunity snapshot</p>
           <div className="mt-5 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
             <div className="border border-[#39FF14]/40 bg-[#0A0E12] p-8">
-              <p className="text-sm text-[#9AA6B2]">AI opportunity score</p>
-              <p className="mt-2 text-8xl font-black text-[#39FF14]">{result.score}</p>
-              <p className="text-sm text-[#9AA6B2]">out of 100</p>
+              <p className="text-sm text-[#9AA6B2]">Audit evidence status</p>
+              <p className="mt-2 text-8xl font-black text-[#39FF14]">{result.score === null ? 'Pending' : result.score}</p>
+              <p className="text-sm text-[#9AA6B2]">Score requires verified evidence</p>
               <p className="mt-8 text-sm leading-6 text-[#C7D0DB]">{result.summary}</p>
             </div>
             <div>
