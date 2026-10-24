@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'default';
+type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'outline' | 'secondary' | 'default';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -16,7 +16,9 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
       warning: 'bg-[#F59E0B]/20 text-[#F59E0B] border border-[#F59E0B]/30',
       danger: 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30',
       info: 'bg-[#3B82F6]/20 text-[#3B82F6] border border-[#3B82F6]/30',
-      default: 'bg-[#1A1A1A] text-[#A0A0A0] border border-[#1A1A1A]',
+      outline: 'border border-current bg-transparent',
+      secondary: 'bg-slate-700 text-slate-200',
+      default: 'bg-[#1A1A1A' text-[#A0A0A0] border border-[#1A1A1A]',
     };
 
     return (
