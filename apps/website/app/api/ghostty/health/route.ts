@@ -4,7 +4,7 @@ export async function GET() {
   try {
     // Query Ghostty daemon on VPS
     const ghosttyResponse = await fetch('http://173.208.147.165:3033/health', {
-      timeout: 5000,
+      signal: AbortSignal.timeout(5000),
     }).catch(() => null)
 
     if (!ghosttyResponse?.ok) {
