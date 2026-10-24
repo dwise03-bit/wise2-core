@@ -21,7 +21,8 @@ export type AuditOpportunity = {
 
 export type AuditResult = {
   id: string;
-  score: number;
+  score: number | null;
+  scoreStatus: 'UNSCORED';
   summary: string;
   opportunities: AuditOpportunity[];
   nextStep: string;
@@ -31,18 +32,8 @@ export function buildAuditResult(input: AuditInput, id = `audit-${Date.now()}`):
   const problem = input.primaryProblem.toLowerCase();
   const workflow = input.priorityWorkflow.toLowerCase();
   const tools = input.currentTools.toLowerCase();
-  let score = 42;
-
-  if (input.teamSize === '6-20') score += 10;
-  if (input.teamSize === '21-50') score += 16;
-  if (input.teamSize === '50+') score += 22;
-  if (input.revenueRange === '$250k-$1m') score += 8;
-  if (input.revenueRange === '$1m+') score += 14;
-  if (!tools || tools.includes('spreadsheet') || tools.includes('manual')) score += 12;
-  if (problem.includes('lead') || problem.includes('follow')) score += 8;
-  if (problem.includes('customer') || problem.includes('support')) score += 6;
-  if (workflow.includes('schedule') || workflow.includes('invoice')) score += 6;
-
+  // Intake responses identify opportunities; they are not verified audit evidence.
+  // Never infer a numerical business-health score from team size or revenue.
   const opportunities: AuditOpportunity[] = [];
   if (problem.includes('lead') || problem.includes('sales') || workflow.includes('follow')) {
     opportunities.push({
@@ -81,17 +72,12 @@ export function buildAuditResult(input: AuditInput, id = `audit-${Date.now()}`):
     });
   }
 
-  score = Math.min(96, score);
-  const roundedScore = Math.max(38, Math.round(score));
-
   return {
     id,
-    score: roundedScore,
-    summary:
-      roundedScore >= 70
-        ? 'Your business has visible workflow gaps where focused automation could create near-term leverage.'
-        : 'Your business has a workable foundation, with a few focused systems likely to create the fastest improvement.',
+    score: null,
+    scoreStatus: 'UNSCORED',
+    summary: 'This is an intake-based opportunity snapshot, not a verified business audit. A numerical score requires documented evidence and a review.',
     opportunities: opportunities.slice(0, 3),
-    nextStep: roundedScore >= 70 ? 'Book the $149 deep-dive audit' : 'Talk through your first automation win',
+    nextStep: 'Book an evidence-based business audit',
   };
 }
