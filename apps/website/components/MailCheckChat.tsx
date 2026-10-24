@@ -25,6 +25,7 @@ type MailResult = {
 function labelFor(action: string) {
   if (action === 'unread') return 'Latest unread inbox mail';
   if (action === 'important') return 'Important inbox mail';
+  if (action === 'search') return 'Inbox search';
   return 'Recent inbox mail';
 }
 
@@ -64,14 +65,7 @@ export function MailCheckChat() {
     const trimmed = query.trim();
     if (!trimmed) return;
 
-    const normalized = trimmed.toLowerCase();
-    const action = normalized.includes('unread')
-      ? 'unread'
-      : normalized.includes('important') || normalized.includes('starred')
-        ? 'important'
-        : 'search';
-
-    void checkMail(action, action === 'search' ? trimmed : undefined);
+    void checkMail('search', trimmed);
   }
 
   return (
@@ -110,7 +104,7 @@ export function MailCheckChat() {
             id="mail-check-query"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Try: unread invoices from Stripe"
+            placeholder="Try: from:stripe.com newer_than:30d"
             disabled={loading}
           />
           <button type="submit" disabled={loading || !query.trim()}>
