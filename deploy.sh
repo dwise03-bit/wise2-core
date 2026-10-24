@@ -18,9 +18,9 @@ echo "📋 PRE-FLIGHT CHECKS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Check git
-if [ -n "$(git status --porcelain)" ]; then
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     echo "⚠️  Uncommitted changes detected:"
-    git status --short
+    git status --short --untracked-files=no
     read -p "Continue? (y/n) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -146,4 +146,3 @@ echo "✅ Documentation:     Complete deployment guide"
 echo ""
 echo "All systems are GO for production deployment to wise2.net"
 echo ""
-
