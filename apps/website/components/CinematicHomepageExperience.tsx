@@ -13,6 +13,7 @@ export function CinematicHomepageExperience() {
   const [mode, setMode] = useState<'station' | 'hive' | null>(null);
   const [entered, setEntered] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [selectedTrack, setSelectedTrack] = useState('buku');
   const [, setSoundReady] = useState(false);
   const soundtrack = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -61,11 +62,27 @@ export function CinematicHomepageExperience() {
   }, []);
 
   const soundLayer = (
-    <audio ref={soundtrack} src="/media/wise2-main-theme.mp3" preload="auto" loop
+    <audio ref={soundtrack} src={selectedTrack === "buku" ? "/media/ubuntu-go-buku.mp3" : "/media/wise2-main-theme.mp3"} preload="auto" loop
       muted={muted} onPlay={() => setSoundReady(true)}
       onError={() => setSoundReady(false)} aria-label="WISE² original soundtrack" />
   );
 
+  const songControl = (
+    <select aria-label="Select soundtrack" value={selectedTrack} onChange={(e) => {
+      const choice = e.target.value;
+      setSelectedTrack(choice);
+      const player = soundtrack.current;
+      if (player) {
+        player.pause();
+        player.src = choice === 'buku' ? '/media/ubuntu-go-buku.mp3' : '/media/wise2-main-theme.mp3';
+        player.load();
+        player.play().catch(() => {});
+      }
+    }} className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/90 px-3 py-3 text-xs font-bold text-[#c4ffda]">
+      <option value="buku">Ubuntu Go Buku</option>
+      <option value="villain">Wise Villain</option>
+    </select>
+  );
   const soundControl = (
     <button type="button"
       className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/90 px-4 py-3 text-xs font-bold text-[#c4ffda]"
@@ -80,6 +97,7 @@ export function CinematicHomepageExperience() {
 
   const page = entered ? <div id="wise2-website" className="animate-in fade-in duration-700 motion-reduce:animate-none">
       <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3">
+        {songControl}
         {soundControl}
         <button
           onClick={() => { setFailed(false); setMuted(true); setEntered(false); }}
@@ -107,6 +125,7 @@ export function CinematicHomepageExperience() {
       <p className="mt-1 text-[11px] uppercase tracking-[.25em] text-white/75">Two minds. One vision.</p>
     </div>
     <div className="absolute right-5 top-6 z-10 flex flex-wrap justify-end gap-2 sm:right-10 sm:top-9">
+      {songControl}
       {soundControl}
       <button className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/85 px-4 py-3 text-xs font-bold text-[#c4ffda]" onClick={() => { const el = video.current; if (!el) return; if (el.paused) el.play().catch(() => setPlaying(false)); else el.pause(); }}>{playing ? 'Pause' : 'Play'}</button>
       <button className="rounded-md border border-[#65ffa9]/70 bg-[#00150f]/85 px-4 py-3 text-xs font-bold text-[#c4ffda]" onClick={enter}>Skip intro →</button>
