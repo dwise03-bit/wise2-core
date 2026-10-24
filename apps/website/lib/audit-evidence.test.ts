@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { AUDIT_CATEGORIES, calculateEvidenceScore, type EvidenceFinding } from './audit-evidence';
 
 const complete: EvidenceFinding[] = AUDIT_CATEGORIES.map((category) => ({
