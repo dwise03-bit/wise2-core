@@ -1,0 +1,154 @@
+.panel {
+  margin: 14px 0;
+  padding: 20px;
+  border: 1px solid #7ca6c1;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #effaff, #fff);
+  box-shadow: 0 5px 18px #0b3d6214;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.header svg {
+  width: 36px;
+  height: 36px;
+  color: #0873d6;
+}
+.kicker {
+  margin: 0 0 4px;
+  color: #0b6b9f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.header h2 {
+  margin: 0;
+  color: #082852;
+  font-size: 24px;
+}
+.description {
+  max-width: 720px;
+  margin: 7px 0 0;
+  color: #3a5368;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+.actions button,
+.connect,
+.form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 37px;
+  border: 1px solid #1c74b1;
+  border-radius: 6px;
+  padding: 0 13px;
+  background: #fff;
+  color: #0a4774;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.connect,
+.form button {
+  background: #0873d6;
+  color: #fff;
+}
+.actions button:disabled,
+.form button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+.form {
+  margin-top: 6px;
+}
+.form label {
+  display: block;
+  margin-bottom: 6px;
+  color: #163b57;
+  font-size: 13px;
+  font-weight: 700;
+}
+.form > div {
+  display: flex;
+  gap: 8px;
+}
+.form input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #a8c4d8;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #102d45;
+  font: inherit;
+}
+.status {
+  margin: 12px 0 0;
+  color: #315874;
+  font-size: 14px;
+}
+.results {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.results li {
+  padding: 12px;
+  border: 1px solid #d0e0ea;
+  border-radius: 7px;
+  background: #fff;
+}
+.messageTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #092b4a;
+}
+.messageTop span {
+  flex: none;
+  border-radius: 999px;
+  padding: 2px 7px;
+  background: #dff7e6;
+  color: #087332;
+  font-size: 11px;
+  font-weight: 700;
+}
+.results p {
+  margin: 5px 0 0;
+  color: #486175;
+  font-size: 13px;
+}
+.results small {
+  display: block;
+  margin-top: 5px;
+  color: #657a8a;
+}
+.snippet {
+  color: #263d4f !important;
+  line-height: 1.4;
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 15px;
+  }
+  .form > div {
+    flex-direction: column;
+  }
+  .form button {
+    width: 100%;
+  }
+}

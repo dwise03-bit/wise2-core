@@ -9,6 +9,7 @@ import {
   Box,
 } from "lucide-react";
 import styles from "./page.module.css";
+import { MailCheckChat } from "@/components/MailCheckChat";
 
 export const metadata: Metadata = {
   title: "WISE² Email Master Reference Sheet",
@@ -481,6 +482,7 @@ export default function EmailReferencePage() {
               </tbody>
             </table>
           </div>
+          <MailCheckChat />
           <div className={styles.bottomGrid}>
             <Panel title="Recommended Email Structure">
               <div className={styles.structure}>
