@@ -289,7 +289,7 @@ export default function SoundLabPro() {
                   max="100"
                   value={track.volume}
                   onChange={(e) => updateTrack(track.id, { volume: Number(e.target.value) })}
-                  style={{ width: '22px', height: '60px', writingMode: 'bt-lr', cursor: 'pointer' }}
+                  style={{ width: '22px', height: '60px', writingMode: 'vertical-rl', cursor: 'pointer' }}
                 />
 
                 {/* MUTE/SOLO */}
