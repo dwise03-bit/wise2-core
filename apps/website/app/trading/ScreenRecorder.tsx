@@ -32,9 +32,7 @@ export default function ScreenRecorder({ isRecording, onToggle }: ScreenRecorder
     try {
       // Get display media (screen)
       const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: 'always',
-        },
+        video: true,
         audio: false,
       });
 
