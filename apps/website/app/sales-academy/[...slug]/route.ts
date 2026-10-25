@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string[] }> }
 ) {
   const slug = await params;
-  let fileName = slug.join('/');
+  let fileName = slug.slug.join('/');
 
   // Serve index.html for directory requests (empty slug or trailing slash)
   if (!fileName || fileName === '') {

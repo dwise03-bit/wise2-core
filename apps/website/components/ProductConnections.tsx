@@ -44,9 +44,9 @@ export function ProductConnections() {
             />
 
             {/* Core label */}
-            <text x="600" y="300" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#00d9ff" dy="0.3em">
+            <motion.text x="600" y="300" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#00d9ff" dy="0.3em">
               WISE² Operating Layer
-            </text>
+            </motion.text>
 
             {/* Products positioned in circle */}
             {[
@@ -96,7 +96,7 @@ export function ProductConnections() {
                   />
 
                   {/* Emoji */}
-                  <text
+                  <motion.text
                     x={x}
                     y={y - 8}
                     textAnchor="middle"
@@ -107,7 +107,7 @@ export function ProductConnections() {
                     transition={{ delay: idx * 0.1 }}
                   >
                     {product.emoji}
-                  </text>
+                  </motion.text>
 
                   {/* Label */}
                   <text

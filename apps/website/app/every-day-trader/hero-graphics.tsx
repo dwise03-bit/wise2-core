@@ -74,7 +74,7 @@ export const DashboardPreview = () => (
     <text x="100" y="32" fill="#00D9FF" fontSize="16" fontWeight="bold" fontFamily="system-ui">EVERY DAY TRADER</text>
 
     {/* Chart area */}
-    <rect x="100" y="70" width="380" height="200" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" opacity="0.1" rx="8"/>
+    <rect x="100" y="70" width="380" height="200" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" rx="8"/>
     {[0, 1, 2, 3, 4, 5].map((i) => {
       const h = 30 + Math.random() * 100;
       return (
@@ -83,11 +83,11 @@ export const DashboardPreview = () => (
     })}
 
     {/* Info panels */}
-    <rect x="500" y="70" width="260" height="90" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" opacity="0.1" rx="8"/>
+    <rect x="500" y="70" width="260" height="90" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" rx="8"/>
     <text x="520" y="100" fill="#00D9FF" fontSize="12" fontFamily="system-ui">PLOT AI • 72%</text>
     <circle cx="730" cy="110" r="25" fill="#00FF7F" opacity="0.1"/>
 
-    <rect x="500" y="170" width="260" height="100" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" opacity="0.1" rx="8"/>
+    <rect x="500" y="170" width="260" height="100" fill="#00D9FF" opacity="0.02" stroke="#00D9FF" strokeWidth="1" rx="8"/>
     <text x="520" y="200" fill="#00D9FF" fontSize="12" fontFamily="system-ui">KEY LEVELS</text>
     <text x="520" y="225" fill="#FF3B7F" fontSize="11" fontFamily="system-ui">Resistance: $228.50</text>
     <text x="520" y="245" fill="#FFD700" fontSize="11" fontFamily="system-ui">Entry: $223-224</text>
@@ -152,7 +152,7 @@ export const TradingSetupCard = () => (
     <text x="235" y="60" fill="#00FF7F" fontSize="12" fontFamily="system-ui" fontWeight="bold">T</text>
 
     {/* Risk/Reward */}
-    <rect x="20" y="85" width="240" height="55" fill="#00D9FF" opacity="0.05" stroke="#00D9FF" strokeWidth="0.5" opacity="0.2" rx="6"/>
+    <rect x="20" y="85" width="240" height="55" fill="#00D9FF" opacity="0.05" stroke="#00D9FF" strokeWidth="0.5" rx="6"/>
     <text x="30" y="105" fill="#00D9FF" fontSize="11" fontFamily="system-ui">Risk / Reward</text>
     <text x="30" y="130" fill="#00FF7F" fontSize="14" fontFamily="system-ui" fontWeight="bold">1 : 2.1</text>
     <text x="150" y="105" fill="#00D9FF" fontSize="11" fontFamily="system-ui">Position Size</text>

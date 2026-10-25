@@ -73,7 +73,7 @@ export function BlakkhailStory() {
                 <div
                   key={idx}
                   className="relative pl-8 border-l-4 transition-all duration-400 hover:pl-10 hover:border-opacity-100 group"
-                  style={{ borderColor: '#C4A369', borderOpacity: 0.7 }}
+                  style={{ borderColor: 'rgba(196, 163, 105, 0.7)' }}
                 >
                   <p className="text-xs font-black uppercase tracking-[0.2em] mb-3" style={{ color: '#C4A369' }}>
                     {item.label}

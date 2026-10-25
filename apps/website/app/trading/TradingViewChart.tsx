@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { UTCTimestamp } from 'lightweight-charts';
 
 interface OHLC {
   time: string | number;
@@ -23,7 +24,7 @@ export default function TradingViewChart({ symbol, data }: { symbol: string; dat
     if (!isReady || !containerRef.current || !data.length) return;
 
     // Dynamically import lightweight-charts on client side only
-    import('lightweight-charts').then(({ createChart, ColorType }) => {
+    import('lightweight-charts').then(({ createChart, ColorType, CandlestickSeries }) => {
       if (!containerRef.current) return;
 
       try {
@@ -40,7 +41,7 @@ export default function TradingViewChart({ symbol, data }: { symbol: string; dat
           },
         });
 
-        const candlestickSeries = chart.addCandlestickSeries({
+        const candlestickSeries = chart.addSeries(CandlestickSeries, {
           upColor: '#10b981',
           downColor: '#ef4444',
           borderUpColor: '#10b981',
@@ -58,7 +59,7 @@ export default function TradingViewChart({ symbol, data }: { symbol: string; dat
           high: candle.high,
           low: candle.low,
           close: candle.close,
-        }));
+        })).map(candle => ({ ...candle, time: candle.time as UTCTimestamp }));
 
         candlestickSeries.setData(formattedData);
         chart.timeScale().fitContent();
