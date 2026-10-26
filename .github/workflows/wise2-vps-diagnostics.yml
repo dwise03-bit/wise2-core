@@ -12,9 +12,15 @@ jobs:
     timeout-minutes: 8
     environment: vps-diagnostics
     steps:
+      - name: Connect runner to existing Tailscale network
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
       - name: Validate required SSH configuration
         env:
-          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
+          VPS_HOST: 100.68.145.5
           VPS_USER: ${{ secrets.DEPLOY_USER }}
           VPS_KEY: ${{ secrets.DEPLOY_KEY }}
           VPS_HOST_KEY: ${{ secrets.WISE2_VPS_KNOWN_HOST }}
@@ -31,7 +37,7 @@ jobs:
           echo "SSH configuration loaded; host key pinning enabled."
       - name: Check VPS health without changing state
         env:
-          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
+          VPS_HOST: 100.68.145.5
           VPS_USER: ${{ secrets.DEPLOY_USER }}
         run: |
           set -euo pipefail
