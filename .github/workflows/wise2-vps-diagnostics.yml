@@ -14,9 +14,9 @@ jobs:
     steps:
       - name: Validate required SSH configuration
         env:
-          VPS_HOST: ${{ secrets.WISE2_VPS_HOST }}
-          VPS_USER: ${{ secrets.WISE2_VPS_USER }}
-          VPS_KEY: ${{ secrets.WISE2_VPS_SSH_KEY }}
+          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
+          VPS_USER: ${{ secrets.DEPLOY_USER }}
+          VPS_KEY: ${{ secrets.DEPLOY_KEY }}
           VPS_HOST_KEY: ${{ secrets.WISE2_VPS_KNOWN_HOST }}
         run: |
           set -euo pipefail
@@ -31,8 +31,8 @@ jobs:
           echo "SSH configuration loaded; host key pinning enabled."
       - name: Check VPS health without changing state
         env:
-          VPS_HOST: ${{ secrets.WISE2_VPS_HOST }}
-          VPS_USER: ${{ secrets.WISE2_VPS_USER }}
+          VPS_HOST: ${{ secrets.DEPLOY_HOST }}
+          VPS_USER: ${{ secrets.DEPLOY_USER }}
         run: |
           set -euo pipefail
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=12 "$VPS_USER@$VPS_HOST" 'set -eu; echo "== hostname =="; hostname; echo "== uptime =="; uptime; echo "== disk =="; df -h /; echo "== memory =="; free -h; echo "== docker =="; if command -v docker >/dev/null 2>&1; then docker ps --format "{{.Names}} {{.Status}}" || true; fi'
