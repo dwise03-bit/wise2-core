@@ -55,3 +55,12 @@ Do not publish full environment files, API keys, passwords, employee compensatio
 - Production deployment: NOT PERFORMED
 
 Tracking issue: #212.
+
+## Confirmed code-path findings (2026-11-01)
+- Main API controller: `packages/api/src/v1/billing/stripe-webhook.controller.ts` registers `@Controller('webhooks/stripe')` and `@Post()`, uses raw bytes for Stripe signature verification. Effective public path depends on NestJS global prefix and ingress routing; do not guess.
+- Duplicate dashboard service controller: `services/dashboard/packages/api/src/billing/stripe-webhook.controller.ts` registers `@Controller('v1/billing/webhook')` and `@Post('stripe')`. It has a JSON.stringify fallback for absent raw body; this should not be used for Stripe signature verification. Determine if the copied service is actually built or deployed before changing it.
+- Paige phone integration already documented in `README_PHONE_AI.md`: signed Telnyx webhook, tenant resolution, CRM call/session records. This does not prove Paige dashboard task delivery.
+- Commit `aa18fa4223549e35cd83fa9ff7ae381f505c12cc` has pending Vercel status checks for auth-gateway and wise2-jocredit; no passing CI evidence yet.
+
+## Deployment prerequisite
+Read-only access to the production host through an authorized connection is still required. Do not merge or restart services based only on repository documentation.
