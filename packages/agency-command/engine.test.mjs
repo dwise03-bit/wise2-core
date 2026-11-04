@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { planJob, idempotencyKey } from './engine.mjs';
+const job = {tenantId:'client1',agentId:'lead-finder',eventId:'evt1',payload:{query:'plumbers'}};
+test('requires explicit approval',()=>assert.equal(planJob(job,{tenantId:'client1'}).status,'awaiting-approval'));
+test('rejects cross-tenant access',()=>assert.throws(()=>planJob(job,{tenantId:'client2'}),/tenant mismatch/));
+test('stable idempotency key',()=>assert.equal(idempotencyKey(job),idempotencyKey({...job})));
+test('different tenants have different keys',()=>assert.notEqual(idempotencyKey(job),idempotencyKey({...job,tenantId:'client2'})));
+test('rejects unknown agents',()=>assert.throws(()=>planJob({...job,agentId:'unknown'},{tenantId:'client1'}),/unknown agent/));
+test('requires email consent',()=>assert.equal(planJob({...job,agentId:'email-campaign'},{tenantId:'client1'}).status,'blocked'));
+test('trend radar is adapter-ready only',()=>assert.equal(planJob({...job,agentId:'trend-radar'},{tenantId:'client1'}).status,'ready-for-adapter'));

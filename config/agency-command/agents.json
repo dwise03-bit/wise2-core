@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "product": "WISE2 Agency Command",
+  "status": "scaffold",
+  "agents": [
+    {
+      "id": "lead-finder",
+      "name": "Local Business Lead Finder",
+      "provider": "google-places",
+      "requires": [
+        "PLACES_API_KEY"
+      ],
+      "approval": "import"
+    },
+    {
+      "id": "content-studio",
+      "name": "AI Video and Carousel Generator",
+      "provider": "hermes",
+      "approval": "publish"
+    },
+    {
+      "id": "email-campaign",
+      "name": "Gmail Campaign Engine",
+      "provider": "gmail",
+      "approval": "send",
+      "requirements": [
+        "consent",
+        "unsubscribe",
+        "suppression"
+      ]
+    },
+    {
+      "id": "voice-receptionist",
+      "name": "AI Voice Receptionist",
+      "provider": "telnyx",
+      "approval": "outbound-call"
+    },
+    {
+      "id": "ugc-studio",
+      "name": "UGC Video Studio",
+      "provider": "hermes",
+      "approval": "publish",
+      "requirements": [
+        "likeness-consent"
+      ]
+    },
+    {
+      "id": "trend-radar",
+      "name": "Viral Trend Analyzer",
+      "provider": "public-sources",
+      "approval": "none"
+    },
+    {
+      "id": "sales-onboarding",
+      "name": "WISE2 Sales and Onboarding",
+      "provider": "revenue-os",
+      "approval": "checkout"
+    }
+  ],
+  "runtime": {
+    "tenantIsolation": true,
+    "events": "idempotent",
+    "secrets": "environment",
+    "logging": "redacted",
+    "paidActions": "disabled-until-verified"
+  },
+  "integrations": [
+    "manychat",
+    "hermes",
+    "revenue-os",
+    "stripe"
+  ]
+}
