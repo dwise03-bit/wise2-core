@@ -1,0 +1,24 @@
+{
+  "name": "@wise2/trading",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3017",
+    "build": "next build",
+    "start": "next start -p 3017",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "14.2.35",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "lucide-react": "^0.408.0"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "@types/node": "20.10.8",
+    "@types/react": "18.2.7",
+    "@types/react-dom": "18.2.7",
+    "@types/scheduler": "0.16.8"
+  }
+}

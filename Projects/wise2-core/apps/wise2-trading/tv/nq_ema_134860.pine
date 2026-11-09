@@ -1,0 +1,23 @@
+//@version=5
+indicator("WISE² NQ EMA 13/48/60 Live", overlay=true)
+
+ema13 = ta.ema(close, 13)
+ema48 = ta.ema(close, 48)
+ema60 = ta.ema(close, 60)
+
+longStack = close > ema13 and ema13 > ema48 and ema48 > ema60
+shortStack = close < ema13 and ema13 < ema48 and ema48 < ema60
+bias = longStack ? "LONG" : shortStack ? "SHORT" : "WAIT"
+
+plot(ema13, "EMA 13", color=color.new(#3dff8a, 0))
+plot(ema48, "EMA 48", color=color.new(#7aa2ff, 0))
+plot(ema60, "EMA 60", color=color.new(#c9d1d9, 40))
+
+alertcondition(true, "WISE² live bar", "Fires every confirmed bar so WISE² stays on live CME data.")
+
+jsonMsg = '{"secret":"YOUR_WEBHOOK_SECRET","symbol":"' + syminfo.ticker + '","side":"' + bias + '","price":' + str.tostring(close) + ',"ema13":' + str.tostring(ema13) + ',"ema48":' + str.tostring(ema48) + ',"ema60":' + str.tostring(ema60) + ',"timeframe":"' + timeframe.period + '","strategy":"EMA_13_48_60"}'
+
+if barstate.isconfirmed
+    alert(jsonMsg, alert.freq_once_per_bar)
+
+bgcolor(longStack ? color.new(#3dff8a, 92) : shortStack ? color.new(#ff4d4d, 92) : na)
