@@ -40,6 +40,7 @@ import { useAuth } from '@/hooks/useAuth';
 import MarketChart from './MarketChart';
 import AITradingAssistant from './AITradingAssistant';
 import TradingJournal from './TradingJournal';
+import ChartWorkspace from './ChartWorkspace';
 
 // Design Tokens
 const COLORS = {
@@ -50,22 +51,25 @@ const COLORS = {
   text: { primary: '#FFFFFF', secondary: '#A0A0A8', muted: '#606068' },
 };
 
-interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; }
+interface NavItemProps { icon: React.ReactNode; label: string; active: boolean; onClick: () => void; compact?: boolean; }
 
-function NavItem({ icon, label, active, onClick }: NavItemProps) {
+function NavItem({ icon, label, active, onClick, compact = false }: NavItemProps) {
   return (
-    <motion.button
-      whileHover={{ x: 4 }}
+    <button
+      type="button"
+      title={label}
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${
+      className={`flex items-center rounded-lg transition-all text-sm font-medium ${
+        compact ? 'justify-center px-2 py-3' : 'w-full gap-3 px-4 py-3'
+      } ${
         active
           ? 'bg-[#00D9FF]/20 border border-[#00D9FF]/50 text-[#00D9FF] shadow-lg shadow-[#00D9FF]/20'
           : 'text-gray-400 hover:text-[#00D9FF] hover:bg-[#00D9FF]/10'
       }`}
     >
       {icon}
-      <span>{label}</span>
-    </motion.button>
+      {compact ? <span className="sr-only">{label}</span> : <span>{label}</span>}
+    </button>
   );
 }
 
@@ -139,7 +143,7 @@ export default function TradingDashboard() {
     { symbol: 'MSFT', price: 380, change: -5, changePercent: -1.3, watched: false },
   ]);
 
-  const [marketData] = useState({
+  const [marketData, setMarketData] = useState({
     symbol: 'BTCUSD',
     lastPrice: 43200,
     change: 700,
@@ -182,10 +186,12 @@ export default function TradingDashboard() {
     return null;
   }
 
+  const deskMode = activeNav === 'dashboard' || activeNav === 'charts';
+
   // ===== NOW RENDER THE DASHBOARD =====
   return (
-    <div className="sjs-cinematic flex min-h-screen flex-col overflow-x-hidden bg-[#050607] text-white">
-      <MarketTickerBar />
+    <div className={`sjs-cinematic flex flex-col overflow-x-hidden bg-[#050607] text-white ${deskMode ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+      {!deskMode && <MarketTickerBar />}
 
       {/* Mobile navigation mirrors the desktop rail instead of hiding access below lg. */}
       {isMobileNavigationOpen && (
@@ -228,31 +234,35 @@ export default function TradingDashboard() {
 
       <div className="flex min-w-0 flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <aside className="hidden w-64 shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 lg:block">
-          <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
-            <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={270} height={150} sizes="(max-width: 1024px) 180px, 210px" className="h-auto w-full object-contain" priority />
-            <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
-          </div>
+        <aside className={`hidden shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] lg:block ${deskMode ? 'w-[4.5rem] px-2 py-4' : 'w-64 p-6'}`}>
+          {deskMode ? (
+            <div className="mb-4 grid h-10 place-items-center rounded-lg border border-[#00D9FF]/40 text-xs font-bold tracking-wide text-[#00D9FF]" title="WISE² chart desk">W²</div>
+          ) : (
+            <div className="mb-8 rounded-xl border border-[#00D9FF]/20 bg-[#07111f] p-3">
+              <Image src="/trading/sjs-logo.png" alt="SJS Trading" width={270} height={150} sizes="(max-width: 1024px) 180px, 210px" className="h-auto w-full object-contain" priority />
+              <p className="mt-2 text-[10px] uppercase tracking-[.18em] text-[#27d7ff]">WISE² market partner</p>
+            </div>
+          )}
 
           <nav className="space-y-1 mb-8">
-            <NavItem icon={<Home size={18} />} label="Dashboard" active={activeNav === 'dashboard'} onClick={() => setActiveNav('dashboard')} />
-            <NavItem icon={<TrendingUp size={18} />} label="Markets" active={activeNav === 'markets'} onClick={() => setActiveNav('markets')} />
-            <NavItem icon={<LineChart size={18} />} label="Charts" active={activeNav === 'charts'} onClick={() => setActiveNav('charts')} />
-            <NavItem icon={<Heart size={18} />} label="Watchlist" active={activeNav === 'watchlist'} onClick={() => setActiveNav('watchlist')} />
-            <NavItem icon={<MessageSquare size={18} />} label="AI Assistant" active={activeNav === 'ai-assistant'} onClick={() => setActiveNav('ai-assistant')} />
-            <NavItem icon={<Zap size={18} />} label="Trade Lab" active={activeNav === 'trade-lab'} onClick={() => setActiveNav('trade-lab')} />
-            <NavItem icon={<BookOpen size={18} />} label="Learn" active={activeNav === 'learn'} onClick={() => setActiveNav('learn')} />
-            <NavItem icon={<Grid size={18} />} label="Scanner" active={activeNav === 'scanner'} onClick={() => setActiveNav('scanner')} />
-            <NavItem icon={<Layers size={18} />} label="Options" active={activeNav === 'options'} onClick={() => setActiveNav('options')} />
-            <NavItem icon={<Radio size={18} />} label="News" active={activeNav === 'news'} onClick={() => setActiveNav('news')} />
-            <NavItem icon={<BookOpen size={18} />} label="Journal" active={activeNav === 'journal'} onClick={() => setActiveNav('journal')} />
-            <NavItem icon={<Bell size={18} />} label="Alerts" active={activeNav === 'alerts'} onClick={() => setActiveNav('alerts')} />
-            <NavItem icon={<Users size={18} />} label="Community" active={activeNav === 'community'} onClick={() => setActiveNav('community')} />
-            <NavItem icon={<Settings size={18} />} label="Settings" active={activeNav === 'settings'} onClick={() => setActiveNav('settings')} />
+            <NavItem compact={deskMode} icon={<Home size={18} />} label="Dashboard" active={activeNav === 'dashboard'} onClick={() => setActiveNav('dashboard')} />
+            <NavItem compact={deskMode} icon={<TrendingUp size={18} />} label="Markets" active={activeNav === 'markets'} onClick={() => setActiveNav('markets')} />
+            <NavItem compact={deskMode} icon={<LineChart size={18} />} label="Charts" active={activeNav === 'charts'} onClick={() => setActiveNav('charts')} />
+            <NavItem compact={deskMode} icon={<Heart size={18} />} label="Watchlist" active={activeNav === 'watchlist'} onClick={() => setActiveNav('watchlist')} />
+            <NavItem compact={deskMode} icon={<MessageSquare size={18} />} label="AI Assistant" active={activeNav === 'ai-assistant'} onClick={() => setActiveNav('ai-assistant')} />
+            <NavItem compact={deskMode} icon={<Zap size={18} />} label="Trade Lab" active={activeNav === 'trade-lab'} onClick={() => setActiveNav('trade-lab')} />
+            <NavItem compact={deskMode} icon={<BookOpen size={18} />} label="Learn" active={activeNav === 'learn'} onClick={() => setActiveNav('learn')} />
+            <NavItem compact={deskMode} icon={<Grid size={18} />} label="Scanner" active={activeNav === 'scanner'} onClick={() => setActiveNav('scanner')} />
+            <NavItem compact={deskMode} icon={<Layers size={18} />} label="Options" active={activeNav === 'options'} onClick={() => setActiveNav('options')} />
+            <NavItem compact={deskMode} icon={<Radio size={18} />} label="News" active={activeNav === 'news'} onClick={() => setActiveNav('news')} />
+            <NavItem compact={deskMode} icon={<BookOpen size={18} />} label="Journal" active={activeNav === 'journal'} onClick={() => setActiveNav('journal')} />
+            <NavItem compact={deskMode} icon={<Bell size={18} />} label="Alerts" active={activeNav === 'alerts'} onClick={() => setActiveNav('alerts')} />
+            <NavItem compact={deskMode} icon={<Users size={18} />} label="Community" active={activeNav === 'community'} onClick={() => setActiveNav('community')} />
+            <NavItem compact={deskMode} icon={<Settings size={18} />} label="Settings" active={activeNav === 'settings'} onClick={() => setActiveNav('settings')} />
           </nav>
 
           <div className="pt-6 border-t border-[#00D9FF]/20">
-            {user && (
+            {user && !deskMode && (
               <div className="mb-4">
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Logged in as</p>
                 <p className="text-sm font-mono text-[#00D9FF] truncate">{user.email}</p>
@@ -260,17 +270,36 @@ export default function TradingDashboard() {
             )}
             <button
               onClick={logout}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-all text-sm font-semibold border border-transparent"
+              title="Logout"
+              className={`flex items-center rounded-lg text-red-400 hover:bg-red-500/10 transition-all text-sm font-semibold border border-transparent ${deskMode ? 'w-full justify-center px-2 py-3' : 'w-full gap-2 px-3 py-2'}`}
             >
               <LogOut size={16} />
-              <span>Logout</span>
+              {deskMode ? <span className="sr-only">Logout</span> : <span>Logout</span>}
             </button>
           </div>
         </aside>
 
         {/* Main Content */}
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          {activeNav === 'journal' ? (
+          {deskMode ? (
+            <ChartWorkspace
+              accountLabel={user?.email?.split('@')[0] || 'Paper desk'}
+              onOpenMenu={() => setIsMobileNavigationOpen(true)}
+              onOpenPlot={(context) => {
+                setMarketData((current) => ({
+                  ...current,
+                  symbol: context.symbol,
+                  lastPrice: context.lastPrice,
+                  change: context.change,
+                  changePercent: context.change,
+                  regime: context.regime,
+                  setups: context.setups,
+                }));
+                setIsAssistantOpen(true);
+                setActiveNav('dashboard');
+              }}
+            />
+          ) : activeNav === 'journal' ? (
             <TradingJournal />
           ) : (<>
           {/* Search Bar */}
