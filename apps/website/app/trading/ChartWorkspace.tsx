@@ -1,6 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState, type PointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  CandlestickSeries,
+  ColorType,
+  HistogramSeries,
+  LineSeries,
+  LineStyle,
+  createChart,
+  type IChartApi,
+  type IPriceLine,
+  type ISeriesApi,
+  type UTCTimestamp,
+} from 'lightweight-charts';
+import { Headphones, Menu, Minus, MousePointer2, PenLine, Ruler, Type } from 'lucide-react';
 import styles from './ChartWorkspace.module.css';
 import {
   INSTRUMENTS,
@@ -11,6 +24,7 @@ import {
   emptyBook,
   nudgeLast,
   readTape,
+  type Candle,
   type IntervalId,
   type PaperBook,
   type Side,
@@ -18,20 +32,8 @@ import {
 } from './chart-desk-model';
 
 const INTERVALS: IntervalId[] = ['1m', '5m', '15m', '1H', '4H', 'D'];
-const SYMBOLS = Object.values(INSTRUMENTS);
-
-const SESSION_SOLID = {
-  asia: '#c4a369',
-  london: '#3d8cff',
-  ny: '#00ff7f',
-} as const;
-
-interface OverlayFlags {
-  sessions: boolean;
-  vwap: boolean;
-  shelf: boolean;
-  volume: boolean;
-}
+const STEP: Record<IntervalId, number> = { '1m': 60, '5m': 300, '15m': 900, '1H': 3600, '4H': 14400, D: 86400 };
+const ORIGIN = 1_732_000_000;
 
 interface PlotContext {
   symbol: string;
@@ -44,73 +46,100 @@ interface PlotContext {
 interface ChartWorkspaceProps {
   accountLabel: string;
   onOpenMenu: () => void;
-  // The callback name is part of the type, not a runtime binding.
   // eslint-disable-next-line no-unused-vars
   onOpenPlot: (context: PlotContext) => void;
 }
 
-const VIEW_W = 1000;
-const VIEW_H = 640;
-const PAD = { l: 12, r: 84, t: 16, b: 22 };
+interface Bar extends Candle {
+  time: UTCTimestamp;
+}
+
+const ROOMS = [
+  { id: 'host', name: 'Summerof88', live: true, tone: 'host', note: 'Host desk. The chart on this screen is the MNQ tape.' },
+  { id: 'nyce', name: 'nyceone31', live: true, tone: 'dark', note: 'nyceone31 is in the room.' },
+  { id: 'cam', name: 'Summerof88', live: true, tone: 'cam', note: 'Second camera on the host.' },
+  { id: 'bro', name: 'broman27', live: false, tone: 'gray', note: 'broman27 is on the desk.' },
+  { id: 'kevin', name: 'Kevin tucker', live: true, tone: 'green', note: 'Kevin tucker is on the green cam.' },
+  { id: 'only', name: 'Theonly1', live: true, tone: 'night', note: 'Theonly1 is in the room.' },
+];
 
 function money(value: number): string {
   return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function priceText(value: number): string {
+function px(value: number): string {
   return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function placeScaleTags(tags: Array<{ kind: string; y: number; text: string }>) {
-  const sorted = [...tags].sort((a, b) => a.y - b.y);
-  let previous = 10;
-  return sorted.map((tag) => {
-    const y = Math.max(14, Math.min(VIEW_H - 18, Math.max(tag.y, previous + 34)));
-    previous = y;
-    return { ...tag, y };
+function stamp(candles: Candle[], interval: IntervalId): Bar[] {
+  const step = STEP[interval];
+  const start = ORIGIN - candles.length * step;
+  return candles.map((candle, index) => ({ ...candle, time: (start + index * step) as UTCTimestamp }));
+}
+
+function movingAverage(candles: Bar[], period = 20): Array<{ time: UTCTimestamp; value: number }> {
+  const weight = 2 / (period + 1);
+  let previous = candles[0]?.c ?? 0;
+  return candles.map((candle) => {
+    previous = candle.c * weight + previous * (1 - weight);
+    return { time: candle.time, value: previous };
   });
+}
+
+function roundLevels(low: number, high: number): number[] {
+  const span = high - low;
+  const step = span > 800 ? 200 : span > 200 ? 100 : 20;
+  const levels: number[] = [];
+  for (let price = Math.ceil(low / step) * step; price < high; price += step) levels.push(price);
+  return levels.slice(0, 6);
 }
 
 export default function ChartWorkspace({ accountLabel, onOpenMenu, onOpenPlot }: ChartWorkspaceProps) {
   const [symbol, setSymbol] = useState<SymbolId>('MNQ');
   const [interval, setIntervalId] = useState<IntervalId>('15m');
-  const [overlays, setOverlays] = useState<OverlayFlags>({ sessions: true, vwap: true, shelf: true, volume: true });
   const [symbolOpen, setSymbolOpen] = useState(false);
   const [indicatorOpen, setIndicatorOpen] = useState(false);
+  const [overlays, setOverlays] = useState({ ma: true, volume: true, levels: true });
+  const [tool, setTool] = useState('cursor');
   const [books, setBooks] = useState<Record<SymbolId, PaperBook>>({
-    MNQ: emptyBook(),
-    NQ: emptyBook(),
-    MES: emptyBook(),
-    ES: emptyBook(),
+    MNQ: emptyBook(), NQ: emptyBook(), MES: emptyBook(), ES: emptyBook(),
   });
   const [pendingSide, setPendingSide] = useState<Side | null>(null);
   const [replayTo, setReplayTo] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [tick, setTick] = useState(0);
-  const [hover, setHover] = useState<{ index: number; price: number } | null>(null);
   const [alertOn, setAlertOn] = useState(false);
   const [locked, setLocked] = useState(false);
   const [contestOpen, setContestOpen] = useState(false);
-  const [paperNote, setPaperNote] = useState(false);
-  const [voice, setVoice] = useState('plot');
+  const [voice, setVoice] = useState('host');
+
+  const hostRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candleRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const volumeRef = useRef<ISeriesApi<'Histogram'> | null>(null);
+  const maRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const linesRef = useRef<IPriceLine[]>([]);
+  const readyRef = useRef(false);
+  const [chartEpoch, setChartEpoch] = useState(0);
 
   const instrument = INSTRUMENTS[symbol];
-  const baseCandles = useMemo(() => buildCandles(instrument, interval), [instrument, interval]);
-  const replayCandles = replayTo == null ? baseCandles : baseCandles.slice(0, Math.max(8, replayTo));
-  const candles = replayTo == null ? nudgeLast(replayCandles, tick, instrument.tick) : replayCandles;
-  const tape = useMemo(() => readTape(candles, instrument.tick), [candles, instrument.tick]);
+  const base = useMemo(() => buildCandles(instrument, interval), [instrument, interval]);
+  const sliced = replayTo == null ? base : base.slice(0, Math.max(12, replayTo));
+  const shaped = replayTo == null ? nudgeLast(sliced, tick, instrument.tick) : sliced;
+  const bars = useMemo(() => stamp(shaped, interval), [shaped, interval]);
+  const tape = useMemo(() => readTape(bars, instrument.tick), [bars, instrument.tick]);
   const plan = useMemo(() => buildPlan(tape, instrument.pointValue), [tape, instrument.pointValue]);
   const book = books[symbol];
-  const metrics = accountMetrics(book, candles[candles.length - 1]?.c ?? instrument.start, instrument);
-  const last = candles[candles.length - 1]?.c ?? instrument.start;
-  const shelfTagged = last <= tape.liquidity;
+  const last = bars[bars.length - 1];
+  const metrics = accountMetrics(book, last?.c ?? instrument.start, instrument);
+  const shelfTagged = (last?.c ?? instrument.start) <= tape.liquidity;
+  const dataKey = `${chartEpoch}|${symbol}|${interval}|${replayTo ?? 'live'}|${overlays.ma}|${overlays.volume}|${overlays.levels}`;
 
   useEffect(() => {
     setReplayTo(null);
     setPlaying(false);
     setPendingSide(null);
     setTick(0);
-    setHover(null);
   }, [symbol, interval]);
 
   useEffect(() => {
@@ -121,43 +150,125 @@ export default function ChartWorkspace({ accountLabel, onOpenMenu, onOpenPlot }:
 
   useEffect(() => {
     if (!playing || replayTo == null) return undefined;
-    if (replayTo >= baseCandles.length) {
+    if (replayTo >= base.length) {
       setPlaying(false);
       setReplayTo(null);
       return undefined;
     }
     const id = window.setInterval(() => {
-      setReplayTo((value) => (value == null ? value : Math.min(baseCandles.length, value + 1)));
-    }, 160);
+      setReplayTo((value) => (value == null ? value : Math.min(base.length, value + 1)));
+    }, 140);
     return () => window.clearInterval(id);
-  }, [playing, replayTo, baseCandles.length]);
+  }, [playing, replayTo, base.length]);
 
-  const geometry = useMemo(() => {
-    const prices = candles.flatMap((candle) => [candle.h, candle.l, tape.vwap, tape.liquidity, tape.reclaim]);
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    const span = max - min || instrument.tick * 4;
-    const pad = span * 0.08;
-    const low = min - pad;
-    const high = max + pad;
-    const plotW = VIEW_W - PAD.l - PAD.r;
-    const volumeH = overlays.volume ? 78 : 0;
-    const plotBottom = VIEW_H - PAD.b - volumeH - 8;
-    const plotH = plotBottom - PAD.t;
-    const yOf = (price: number) => PAD.t + ((high - price) / (high - low)) * plotH;
-    const slot = plotW / candles.length;
-    const maxVolume = Math.max(...candles.map((candle) => candle.v), 1);
-    return { low, high, plotW, plotH, plotBottom, volumeH, yOf, slot, maxVolume };
-  }, [candles, instrument.tick, overlays.volume, tape.liquidity, tape.reclaim, tape.vwap]);
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return undefined;
+    const chart = createChart(host, {
+      autoSize: true,
+      layout: {
+        background: { type: ColorType.Solid, color: '#131722' },
+        textColor: '#d1d4dc',
+        fontFamily: '-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif',
+        fontSize: 12,
+      },
+      grid: { vertLines: { color: '#1e222d' }, horzLines: { color: '#1e222d' } },
+      rightPriceScale: { borderColor: '#2a2e39' },
+      timeScale: { borderColor: '#2a2e39', timeVisible: true, secondsVisible: false },
+      crosshair: {
+        vertLine: { color: '#758696', labelBackgroundColor: '#363a45' },
+        horzLine: { color: '#758696', labelBackgroundColor: '#363a45' },
+      },
+    });
+    const candles = chart.addSeries(CandlestickSeries, {
+      upColor: '#089981',
+      downColor: '#f23645',
+      borderUpColor: '#089981',
+      borderDownColor: '#f23645',
+      wickUpColor: '#089981',
+      wickDownColor: '#f23645',
+      priceLineColor: '#f23645',
+    });
+    const volume = chart.addSeries(HistogramSeries, {
+      priceScaleId: 'volume',
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    const average = chart.addSeries(LineSeries, {
+      color: '#2962ff',
+      lineWidth: 2,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      crosshairMarkerVisible: false,
+    });
+    candles.priceScale().applyOptions({ scaleMargins: { top: 0.08, bottom: 0.22 } });
+    chart.priceScale('volume').applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    chartRef.current = chart;
+    candleRef.current = candles;
+    volumeRef.current = volume;
+    maRef.current = average;
+    readyRef.current = false;
+    setChartEpoch((value) => value + 1);
+    return () => {
+      readyRef.current = false;
+      linesRef.current = [];
+      chart.remove();
+      chartRef.current = null;
+    };
+  }, []);
 
-  const impulseAt = Math.floor(candles.length * 0.78);
+  useEffect(() => {
+    const candles = candleRef.current;
+    const volume = volumeRef.current;
+    const average = maRef.current;
+    const chart = chartRef.current;
+    if (!candles || !volume || !average || !chart || bars.length === 0) return;
+    candles.setData(bars.map((bar) => ({ time: bar.time, open: bar.o, high: bar.h, low: bar.l, close: bar.c })));
+    volume.setData(overlays.volume ? bars.map((bar) => ({
+      time: bar.time,
+      value: bar.v,
+      color: bar.c >= bar.o ? 'rgba(8, 153, 129, 0.7)' : 'rgba(242, 54, 69, 0.75)',
+    })) : []);
+    average.setData(overlays.ma ? movingAverage(bars) : []);
+    linesRef.current.forEach((line) => candles.removePriceLine(line));
+    linesRef.current = [];
+    if (overlays.levels) {
+      const low = Math.min(...bars.map((bar) => bar.l));
+      const high = Math.max(...bars.map((bar) => bar.h));
+      roundLevels(low, high).forEach((price) => {
+        linesRef.current.push(candles.createPriceLine({
+          price, color: '#2962ff', lineWidth: 1, axisLabelVisible: true, title: '',
+        }));
+      });
+      linesRef.current.push(candles.createPriceLine({
+        price: tape.vwap, color: '#00d9ff', lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: 'VWAP',
+      }));
+      linesRef.current.push(candles.createPriceLine({
+        price: tape.liquidity, color: '#f2c14e', lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: 'Shelf',
+      }));
+    }
+    chart.timeScale().fitContent();
+    readyRef.current = true;
+  }, [dataKey]);
+
+  useEffect(() => {
+    if (!readyRef.current || replayTo != null || !last) return;
+    candleRef.current?.update({ time: last.time, open: last.o, high: last.h, low: last.l, close: last.c });
+    if (overlays.volume) {
+      volumeRef.current?.update({
+        time: last.time,
+        value: last.v,
+        color: last.c >= last.o ? 'rgba(8, 153, 129, 0.7)' : 'rgba(242, 54, 69, 0.75)',
+      });
+    }
+    candleRef.current?.applyOptions({ priceLineColor: last.c >= last.o ? '#089981' : '#f23645' });
+  }, [tick, last, overlays.volume, replayTo]);
 
   const fill = (side: Side) => {
-    if (locked) return;
-    const qty = 1;
+    if (locked || !last) return;
     setBooks((current) => ({
       ...current,
-      [symbol]: applyFill(current[symbol], side, qty, last, instrument.pointValue),
+      [symbol]: applyFill(current[symbol], side, 1, last.c, instrument.pointValue),
     }));
     setPendingSide(null);
   };
@@ -169,70 +280,42 @@ export default function ChartWorkspace({ accountLabel, onOpenMenu, onOpenPlot }:
   };
 
   const flatten = () => {
-    if (!book.position) return;
+    if (!book.position || !last) return;
     const side: Side = book.position.side === 'buy' ? 'sell' : 'buy';
     setBooks((current) => ({
       ...current,
-      [symbol]: applyFill(current[symbol], side, book.position!.qty, last, instrument.pointValue),
+      [symbol]: applyFill(current[symbol], side, book.position!.qty, last.c, instrument.pointValue),
     }));
     setPendingSide(null);
   };
 
-  const lockDesk = () => {
-    if (book.position) flatten();
-    setLocked(true);
-    setPendingSide(null);
+  const openPlot = () => {
+    if (!last) return;
+    onOpenPlot({
+      symbol: instrument.code,
+      lastPrice: last.c,
+      change: tape.changePercent,
+      regime: tape.regime,
+      setups: plan.action === 'stand_aside' ? 0 : 1,
+    });
   };
 
-  const onPointerMove = (event: PointerEvent<SVGSVGElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * VIEW_W;
-    const y = ((event.clientY - rect.top) / rect.height) * VIEW_H;
-    const index = Math.min(candles.length - 1, Math.max(0, Math.floor((x - PAD.l) / geometry.slot)));
-    const price = geometry.high - ((y - PAD.t) / geometry.plotH) * (geometry.high - geometry.low);
-    setHover({ index, price });
-  };
-
-  const sessionBands = (['asia', 'london', 'ny'] as const).map((session) => {
-    const indexes = candles
-      .map((candle, index) => (candle.session === session ? index : -1))
-      .filter((index) => index >= 0);
-    if (indexes.length === 0) return null;
-    const start = indexes[0];
-    const end = indexes[indexes.length - 1];
-    return { session, x: PAD.l + start * geometry.slot, width: (end - start + 1) * geometry.slot };
-  });
-
-  const riskCopy = pendingSide
-    ? pendingSide === 'buy' && plan.action !== 'long'
-      ? 'Buying into this tape fights the read. One paper contract is still allowed.'
-      : pendingSide === 'sell' && plan.action === 'stand_aside'
-        ? plan.detail
-        : plan.detail
-    : book.position
-      ? `${book.position.side === 'buy' ? 'Long' : 'Short'} ${book.position.qty} @ ${priceText(book.position.avg)}`
-      : 'Make a trade to get started';
-
-  const rooms = [
-    { id: 'you', name: accountLabel || 'Your desk', role: 'Host', live: true, color: '#00d9ff', mark: 'You', note: 'This is your paper desk. Fills stay here.' },
-    { id: 'plot', name: 'PLOT', role: 'AI coach', live: true, color: '#00ff7f', mark: 'AI', note: plan.headline },
-    { id: 'asia', name: 'Asia book', role: 'Session', live: false, color: '#c4a369', mark: 'AS', note: 'Gold band. The overnight range built the shelf.' },
-    { id: 'london', name: 'London book', role: 'Session', live: true, color: '#3d8cff', mark: 'LN', note: 'Blue band. London held the range New York broke.' },
-    { id: 'ny', name: 'New York book', role: 'Session', live: true, color: '#ff3d7a', mark: 'NY', note: 'Green wash, magenta impulse. Cash session did the damage.' },
-  ];
-  const activeRoom = rooms.find((room) => room.id === voice) ?? rooms[1];
+  const room = ROOMS.find((item) => item.id === voice) ?? ROOMS[0];
+  const headline = book.position
+    ? `${book.position.side === 'buy' ? 'Long' : 'Short'} ${book.position.qty} @ ${px(book.position.avg)}`
+    : 'Make a trade to get started';
 
   return (
     <section className={styles.desk} data-testid="chart-desk" aria-label="Paper chart desk">
       <header className={styles.toolbar}>
-        <button type="button" className={styles.menuBtn} onClick={onOpenMenu} aria-label="Open navigation">Menu</button>
+        <button type="button" className={styles.iconBtn} onClick={onOpenMenu} aria-label="Open navigation"><Menu size={16} /></button>
         <div style={{ position: 'relative' }}>
-          <button type="button" className={styles.symbolBtn} data-active={symbolOpen} onClick={() => { setSymbolOpen((open) => !open); setIndicatorOpen(false); }}>
-            {instrument.code}
+          <button type="button" className={styles.symbol} onClick={() => { setSymbolOpen((open) => !open); setIndicatorOpen(false); }}>
+            <i />{instrument.code}
           </button>
           {symbolOpen && (
-            <div className={styles.popover} role="menu">
-              {SYMBOLS.map((item) => (
+            <div className={styles.popover}>
+              {Object.values(INSTRUMENTS).map((item) => (
                 <button key={item.symbol} type="button" data-active={item.symbol === symbol} onClick={() => { setSymbol(item.symbol); setSymbolOpen(false); }}>
                   {item.code} · {item.name}
                 </button>
@@ -240,214 +323,88 @@ export default function ChartWorkspace({ accountLabel, onOpenMenu, onOpenPlot }:
             </div>
           )}
         </div>
-        <div className={styles.symbolMeta}>
-          <strong>{instrument.name}</strong>
-          <span>{interval} · {instrument.exchange} · simulated tape</span>
-        </div>
-        <div className={styles.quote}>
-          <b className={tape.change < 0 ? styles.down : styles.up}>{priceText(last)}</b>
-          <span className={tape.change < 0 ? styles.down : styles.up}>
-            {tape.change >= 0 ? '+' : ''}{tape.change.toFixed(2)} ({tape.changePercent >= 0 ? '+' : ''}{tape.changePercent.toFixed(2)}%)
-          </span>
-        </div>
-        <div className={styles.intervals} role="tablist" aria-label="Interval">
+        <div className={styles.intervals}>
           {INTERVALS.map((item) => (
-            <button key={item} type="button" className={styles.intervalBtn} data-active={item === interval} data-testid={`interval-${item}`} onClick={() => setIntervalId(item)}>
-              {item}
-            </button>
+            <button key={item} type="button" className={styles.textBtn} data-active={item === interval} data-testid={`interval-${item}`} onClick={() => setIntervalId(item)}>{item}</button>
           ))}
         </div>
         <div style={{ position: 'relative' }}>
-          <button type="button" className={styles.toolBtn} data-active={indicatorOpen} onClick={() => { setIndicatorOpen((open) => !open); setSymbolOpen(false); }}>Indicators</button>
+          <button type="button" className={styles.textBtn} data-active={indicatorOpen} onClick={() => { setIndicatorOpen((open) => !open); setSymbolOpen(false); }}>Indicators</button>
           {indicatorOpen && (
             <div className={styles.popover}>
-              {(Object.keys(overlays) as Array<keyof OverlayFlags>).map((key) => (
+              {(['ma', 'volume', 'levels'] as const).map((key) => (
                 <button key={key} type="button" data-active={overlays[key]} onClick={() => setOverlays((current) => ({ ...current, [key]: !current[key] }))}>
-                  {overlays[key] ? 'On' : 'Off'} · {key}
+                  {overlays[key] ? 'On' : 'Off'} · {key === 'ma' ? 'Moving average' : key === 'volume' ? 'Volume' : 'PLOT levels'}
                 </button>
               ))}
             </div>
           )}
         </div>
-        <button type="button" className={styles.toolBtn} data-active={alertOn} onClick={() => setAlertOn((armed) => !armed)}>
-          {alertOn ? 'Alert armed' : 'Alert'}
-        </button>
-        <button
-          type="button"
-          className={styles.toolBtn}
-          data-active={playing}
-          onClick={() => {
-            if (playing) {
-              setPlaying(false);
-              return;
-            }
-            setReplayTo(Math.max(12, Math.floor(baseCandles.length * 0.45)));
-            setPlaying(true);
-          }}
-        >
-          {playing ? 'Pause' : 'Replay'}
-        </button>
+        <button type="button" className={styles.textBtn} data-active={alertOn} onClick={() => setAlertOn((armed) => !armed)}>{alertOn ? 'Alert armed' : 'Alert'}</button>
+        <button type="button" className={styles.textBtn} data-active={playing} onClick={() => {
+          if (playing) { setPlaying(false); return; }
+          setReplayTo(Math.max(16, Math.floor(base.length * 0.45)));
+          setPlaying(true);
+        }}>{playing ? 'Pause' : 'Replay'}</button>
         <div className={styles.spacer} />
-        <div className={styles.pills}>
-          <span className={styles.pillLive}>Simulated paper</span>
-          <button type="button" className={locked ? styles.pillLock : styles.pill} onClick={() => (locked ? setLocked(false) : lockDesk())}>
-            {locked ? 'Desk locked' : 'Kill switch'}
-          </button>
-        </div>
+        <button type="button" className={styles.textBtn} data-active={locked} onClick={() => {
+          if (locked) { setLocked(false); return; }
+          if (book.position) flatten();
+          setLocked(true);
+        }}>{locked ? 'Locked' : 'Kill switch'}</button>
+        <button type="button" className={styles.trade} onClick={() => chooseSide('buy')}>Trade</button>
+        <button type="button" className={styles.plotBtn} onClick={openPlot}>PLOT</button>
       </header>
 
       <div className={styles.stage}>
-        <div className={styles.chartWrap}>
-          <svg
-            className={styles.chartSvg}
-            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-            preserveAspectRatio="none"
-            role="img"
-            aria-label={`${instrument.code} ${interval} simulated candlestick chart`}
-            onPointerMove={onPointerMove}
-            onPointerLeave={() => setHover(null)}
-          >
-            <rect width={VIEW_W} height={VIEW_H} fill="#080d13" />
-            {overlays.sessions && sessionBands.map((band) => band && (
-              <rect key={band.session} x={band.x} y={PAD.t} width={Math.max(band.width, 1)} height={7} fill={SESSION_SOLID[band.session]} />
-            ))}
-            {Array.from({ length: 5 }, (_, index) => {
-              const y = PAD.t + (geometry.plotH / 4) * index;
-              return <line key={index} x1={PAD.l} x2={VIEW_W - PAD.r} y1={y} y2={y} stroke="rgba(0,217,255,0.1)" strokeDasharray="3 6" />;
-            })}
-            {overlays.shelf && impulseAt < candles.length && (
-              <rect
-                x={PAD.l + impulseAt * geometry.slot}
-                y={PAD.t}
-                width={(candles.length - impulseAt) * geometry.slot}
-                height={geometry.plotH}
-                fill="rgba(255,61,122,0.07)"
-              />
-            )}
-            {overlays.vwap && (
-              <line x1={PAD.l} x2={VIEW_W - PAD.r} y1={geometry.yOf(tape.vwap)} y2={geometry.yOf(tape.vwap)} stroke="#00d9ff" strokeWidth="1.4" />
-            )}
-            {overlays.shelf && (
-              <line x1={PAD.l} x2={VIEW_W - PAD.r} y1={geometry.yOf(tape.liquidity)} y2={geometry.yOf(tape.liquidity)} stroke="#c4a369" strokeWidth="1.4" strokeDasharray="6 4" />
-            )}
-            <line x1={PAD.l} x2={VIEW_W - PAD.r} y1={geometry.yOf(tape.reclaim)} y2={geometry.yOf(tape.reclaim)} stroke="#8b7cff" strokeWidth="1.2" strokeDasharray="2 4" />
-            {Math.abs(tape.stop - tape.reclaim) > instrument.tick * 8 && (
-              <line x1={PAD.l} x2={VIEW_W - PAD.r} y1={geometry.yOf(tape.stop)} y2={geometry.yOf(tape.stop)} stroke="#ffb3c7" strokeWidth="1" strokeDasharray="1 6" />
-            )}
-            {candles.map((candle, index) => {
-              const up = candle.c >= candle.o;
-              const x = PAD.l + index * geometry.slot + geometry.slot / 2;
-              const body = Math.max(1.2, Math.abs(geometry.yOf(candle.o) - geometry.yOf(candle.c)));
-              const color = up ? '#00ff7f' : '#ff3d7a';
-              return (
-                <g key={`${candle.o}-${index}`}>
-                  <line x1={x} x2={x} y1={geometry.yOf(candle.h)} y2={geometry.yOf(candle.l)} stroke={color} strokeWidth="1.3" />
-                  <rect x={x - Math.max(1.6, geometry.slot * 0.28)} y={Math.min(geometry.yOf(candle.o), geometry.yOf(candle.c))} width={Math.max(3.2, geometry.slot * 0.56)} height={body} fill={color} opacity={up ? 0.92 : 0.86} />
-                </g>
-              );
-            })}
-            {overlays.volume && candles.map((candle, index) => {
-              const up = candle.c >= candle.o;
-              const height = (candle.v / geometry.maxVolume) * geometry.volumeH;
-              const x = PAD.l + index * geometry.slot + geometry.slot * 0.18;
-              return (
-                <rect
-                  key={`v-${index}`}
-                  x={x}
-                  y={VIEW_H - PAD.b - height}
-                  width={Math.max(1.5, geometry.slot * 0.64)}
-                  height={height}
-                  fill={up ? 'rgba(0,255,127,0.45)' : 'rgba(255,61,122,0.5)'}
-                />
-              );
-            })}
-            {hover && (
-              <g>
-                <line x1={PAD.l + hover.index * geometry.slot + geometry.slot / 2} x2={PAD.l + hover.index * geometry.slot + geometry.slot / 2} y1={PAD.t} y2={geometry.plotBottom} stroke="rgba(0,217,255,0.55)" />
-                <line x1={PAD.l} x2={VIEW_W - PAD.r} y1={geometry.yOf(hover.price)} y2={geometry.yOf(hover.price)} stroke="rgba(0,217,255,0.45)" />
-              </g>
-            )}
-          </svg>
-          <div className={styles.scale}>
-            {placeScaleTags([
-              { kind: tape.change < 0 ? 'last-down' : 'last', y: geometry.yOf(last), text: priceText(last) },
-              ...(overlays.vwap && overlays.shelf && Math.abs(geometry.yOf(tape.vwap) - geometry.yOf(tape.liquidity)) < 36
-                ? [{ kind: 'vwap', y: (geometry.yOf(tape.vwap) + geometry.yOf(tape.liquidity)) / 2, text: 'VWAP / shelf' }]
-                : [
-                    ...(overlays.vwap ? [{ kind: 'vwap', y: geometry.yOf(tape.vwap), text: 'VWAP' }] : []),
-                    ...(overlays.shelf ? [{ kind: 'shelf', y: geometry.yOf(tape.liquidity), text: 'Shelf' }] : []),
-                  ]),
-              { kind: 'reclaim', y: geometry.yOf(tape.reclaim), text: 'Reclaim' },
-              ...(Math.abs(tape.stop - tape.reclaim) > instrument.tick * 8
-                ? [{ kind: 'stop', y: geometry.yOf(tape.stop), text: 'Stop' }]
-                : []),
-              ...(hover ? [{ kind: 'cross', y: geometry.yOf(hover.price), text: priceText(hover.price) }] : []),
-            ]).map((tag) => (
-              <span key={tag.kind} className={tag.kind === 'cross' ? styles.crossTag : styles.scaleTag} data-kind={tag.kind} style={{ top: `${(tag.y / VIEW_H) * 100}%` }}>{tag.text}</span>
-            ))}
-          </div>
-          <div className={styles.chips}>
-            <div className={styles.chip}><i className={styles.dot} data-tone={plan.action === 'stand_aside' ? 'gold' : 'green'} /> {tape.regime.replaceAll('_', ' ')} · {tape.confidence}%</div>
-            <div className={styles.chip}><i className={styles.dot} data-tone="cyan" /> {tape.session === 'ny' ? 'New York' : tape.session === 'london' ? 'London' : 'Asia'}</div>
-            {alertOn && (
-              <div className={styles.chip} data-testid="alert-banner">
-                <i className={styles.dot} data-tone={shelfTagged ? 'gold' : 'cyan'} />
-                {shelfTagged ? 'Liquidity shelf tagged' : 'Alert armed above the shelf'}
-              </div>
-            )}
-            <div className={styles.chip}><button type="button" onClick={() => onOpenPlot({ symbol: instrument.code, lastPrice: last, change: tape.changePercent, regime: tape.regime, setups: plan.action === 'stand_aside' ? 0 : 1 })}>Ask PLOT</button></div>
-          </div>
-          <div className={styles.legend}>
-            <span><i className={styles.swatch} style={{ background: '#c4a369' }} />Asia</span>
-            <span><i className={styles.swatch} style={{ background: '#3d8cff' }} />London</span>
-            <span><i className={styles.swatch} style={{ background: '#00ff7f' }} />New York</span>
-            <span><i className={styles.swatch} style={{ background: '#ff3d7a' }} />Impulse</span>
-          </div>
+        <div className={styles.tools} aria-label="Drawing tools">
+          <button type="button" data-active={tool === 'cursor'} onClick={() => setTool('cursor')} aria-label="Cursor"><MousePointer2 size={16} /></button>
+          <button type="button" data-active={tool === 'trend'} onClick={() => setTool('trend')} aria-label="Trend line"><PenLine size={16} /></button>
+          <button type="button" data-active={tool === 'level'} onClick={() => { setTool('level'); setAlertOn(true); }} aria-label="Price level"><Minus size={16} /></button>
+          <button type="button" data-active={tool === 'text'} onClick={() => setTool('text')} aria-label="Text"><Type size={16} /></button>
+          <button type="button" data-active={tool === 'measure'} onClick={() => setTool('measure')} aria-label="Measure"><Ruler size={16} /></button>
         </div>
-        <aside className={styles.readout}>
-          <h2>PLOT read</h2>
-          <p data-testid="plot-headline">{plan.headline}</p>
-          <p>{tape.detail}</p>
-          <ul className={styles.levelList}>
-            <li><span>VWAP</span><b className={styles.cyan}>{priceText(tape.vwap)}</b></li>
-            <li><span>Shelf</span><b className={styles.gold}>{priceText(tape.liquidity)}</b></li>
-            <li><span>Reclaim</span><b>{priceText(tape.reclaim)}</b></li>
-            <li><span>Stop</span><b className={styles.down}>{priceText(tape.stop)}</b></li>
-            <li><span>Target</span><b className={styles.up}>{priceText(tape.target)}</b></li>
-            <li><span>1-lot risk</span><b>{money(plan.riskPerContract)}</b></li>
-          </ul>
-          <button type="button" className={styles.ask} onClick={() => onOpenPlot({ symbol: instrument.code, lastPrice: last, change: tape.changePercent, regime: tape.regime, setups: plan.action === 'stand_aside' ? 0 : 1 })}>Open PLOT</button>
-        </aside>
-      </div>
-
-      <div className={styles.coach} data-action={plan.action} data-testid="coach">
-        <strong className={plan.action === 'stand_aside' ? styles.gold : styles.up}>{plan.action === 'stand_aside' ? 'Stand aside' : plan.action}</strong>
-        <span>{plan.detail}</span>
+        <div ref={hostRef} className={styles.chartHost} />
+        <div className={styles.legend}>
+          <div className={styles.legendTitle}>
+            <b>{instrument.code}</b>
+            <span>{instrument.name} Index Futures · {interval} · {instrument.exchange}</span>
+          </div>
+          {last && (
+            <div className={styles.ohlc}>
+              <span>O <b>{px(last.o)}</b></span>
+              <span>H <b>{px(last.h)}</b></span>
+              <span>L <b>{px(last.l)}</b></span>
+              <span>C <b className={last.c >= last.o ? styles.up : styles.down}>{px(last.c)}</b></span>
+              <span className={tape.change < 0 ? styles.down : styles.up}>{tape.change.toFixed(2)} ({tape.changePercent.toFixed(2)}%)</span>
+            </div>
+          )}
+          <button type="button" className={styles.plotLine} data-testid="plot-headline" onClick={openPlot}>
+            PLOT · {plan.headline}
+          </button>
+        </div>
+        {alertOn && (
+          <div className={styles.toast} data-testid="alert-banner">
+            {shelfTagged ? 'Alert · liquidity shelf tagged' : 'Alert armed on the shelf'}
+          </div>
+        )}
       </div>
 
       <div className={styles.paper}>
-        <div>
-          <h3>
-            Paper trading
-            <button type="button" onClick={() => setPaperNote((open) => !open)} aria-expanded={paperNote}>Sim</button>
-          </h3>
-          <span className={styles.quote}><span>{accountLabel}</span></span>
-          {paperNote && <p className={styles.warning}>Fills are simulated on this desk. Nothing is routed to a broker.</p>}
+        <div className={styles.metricRow}>
+          <span className={styles.paperLabel}>Paper Trading</span>
+          <span>{accountLabel} · {money(100000)} USD</span>
+          <span>Unrealized P/L <b className={metrics.unrealized > 0 ? styles.up : metrics.unrealized < 0 ? styles.down : undefined}>{money(metrics.unrealized)}</b></span>
+          <span>Realized P/L <b className={metrics.realized > 0 ? styles.up : metrics.realized < 0 ? styles.down : undefined}>{money(metrics.realized)}</b></span>
+          <span>Equity <b data-testid="equity">{money(metrics.equity)}</b></span>
+          <span>Account margin <b>{money(metrics.margin)}</b></span>
+          <span>Available funds <b>{money(metrics.available)}</b></span>
+          <span>Margin buffer <b>{(metrics.cushion * 100).toFixed(2)}%</b></span>
         </div>
-        <div className={styles.metrics}>
-          <Metric label="Unrealized P/L" value={money(metrics.unrealized)} tone={metrics.unrealized} />
-          <Metric label="Realized P/L" value={money(metrics.realized)} tone={metrics.realized} />
-          <Metric label="Equity" value={money(metrics.equity)} testId="equity" />
-          <Metric label="Account margin" value={money(metrics.margin)} />
-          <Metric label="Available funds" value={money(metrics.available)} />
-          <Metric label="Margin cushion" value={`${(metrics.cushion * 100).toFixed(1)}%`} />
-          <Metric label="Margin buffer" value={money(metrics.buffer)} />
-        </div>
-        <div className={styles.tradeBox}>
-          <p>
-            <strong>{riskCopy}</strong>
-            {pendingSide ? 'Confirm the paper fill, or pick the other side.' : 'Red sells. Cyan buys. PLOT sizes the risk.'}
-          </p>
+        <div className={styles.cta}>
+          <strong>{headline}</strong>
+          <em>{pendingSide ? 'Confirm the paper fill.' : 'Red or blue — choose your pill.'}</em>
+          <small data-testid="coach">{plan.detail}</small>
           <div className={styles.actions}>
             <button type="button" className={styles.sell} data-testid="sell-button" disabled={locked} onClick={() => chooseSide('sell')}>
               {pendingSide === 'sell' ? 'Confirm sell' : 'Sell'}
@@ -455,44 +412,34 @@ export default function ChartWorkspace({ accountLabel, onOpenMenu, onOpenPlot }:
             <button type="button" className={styles.buy} data-testid="buy-button" disabled={locked} onClick={() => chooseSide('buy')}>
               {pendingSide === 'buy' ? 'Confirm buy' : 'Buy'}
             </button>
-            {book.position && <button type="button" className={styles.flat} onClick={flatten}>Flatten</button>}
+            {book.position && <button type="button" className={styles.flat} onClick={flatten}>Flat</button>}
           </div>
         </div>
       </div>
 
       <div className={styles.contest}>
-        <span>New community contests. Compare paper discipline with the room.</span>
+        <span>New community contests. Compete with traders worldwide.</span>
         <button type="button" onClick={() => setContestOpen((open) => !open)}>{contestOpen ? 'Hide' : 'Explore'}</button>
       </div>
-      {contestOpen && (
-        <p className={styles.contestNote}>This week’s desk contest scores standing aside when the stop is outside the $200 paper budget. Replay the New York impulse and flatten before the lock.</p>
-      )}
+      {contestOpen && <p className={styles.contestNote}>Paper contest: stand aside when the stop is outside the $200 budget. Replay the selloff, then flatten.</p>}
 
       <div className={styles.live}>
-        <div className={styles.liveLabel}>Every Day Live<small>ON AIR</small></div>
+        <div className={styles.host}>
+          <span className={styles.liveBadge}>LIVE</span>
+          <b>Summerof88</b>
+        </div>
         <div className={styles.tiles}>
-          {rooms.map((room) => (
-            <button key={room.id} type="button" className={styles.tile} data-active={voice === room.id} onClick={() => setVoice(room.id)}>
-              <div className={styles.tileFace} style={{ background: `linear-gradient(145deg, ${room.color}, #0c1218 70%)` }}>
-                <span className={styles.mark} style={{ background: room.color }}>{room.mark}</span>
-                {room.live && <span className={styles.badge}>LIVE</span>}
-              </div>
-              <footer>{room.name}<small>{room.role}</small></footer>
+          {ROOMS.map((item) => (
+            <button key={item.id} type="button" className={styles.tile} data-tone={item.tone} data-active={voice === item.id} onClick={() => setVoice(item.id)}>
+              <span className={styles.bust} />
+              <Headphones size={18} style={{ position: 'absolute', left: '50%', top: 30, marginLeft: -9 }} />
+              {item.live && <span className={styles.tileLive}>LIVE</span>}
+              <span className={styles.tileName}>{item.name}</span>
             </button>
           ))}
         </div>
-        <p className={styles.voice}>{activeRoom.name}: {activeRoom.note}</p>
+        <p className={styles.voice}>{room.name}: {room.note}</p>
       </div>
     </section>
-  );
-}
-
-function Metric({ label, value, tone, testId }: { label: string; value: string; tone?: number; testId?: string }) {
-  const className = tone == null || tone === 0 ? undefined : tone > 0 ? styles.up : styles.down;
-  return (
-    <div>
-      <small>{label}</small>
-      <b className={className} data-testid={testId}>{value}</b>
-    </div>
   );
 }

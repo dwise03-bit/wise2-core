@@ -190,12 +190,12 @@ export default function TradingDashboard() {
 
   // ===== NOW RENDER THE DASHBOARD =====
   return (
-    <div className={`sjs-cinematic flex flex-col overflow-x-hidden bg-[#050607] text-white ${deskMode ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+    <div className={deskMode ? 'flex h-screen flex-col overflow-hidden bg-[#131722] text-white' : 'sjs-cinematic flex min-h-screen flex-col overflow-x-hidden bg-[#050607] text-white'}>
       {!deskMode && <MarketTickerBar />}
 
       {/* Mobile navigation mirrors the desktop rail instead of hiding access below lg. */}
       {isMobileNavigationOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="SAS navigation">
+        <div className={`fixed inset-0 z-50 ${deskMode ? '' : 'lg:hidden'}`} role="dialog" aria-modal="true" aria-label="SAS navigation">
           <button
             type="button"
             aria-label="Close navigation"
@@ -234,7 +234,7 @@ export default function TradingDashboard() {
 
       <div className="flex min-w-0 flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <aside className={`hidden shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] lg:block ${deskMode ? 'w-[4.5rem] px-2 py-4' : 'w-64 p-6'}`}>
+        <aside className={deskMode ? 'hidden' : 'hidden w-64 shrink-0 overflow-y-auto border-r border-[#00D9FF]/20 bg-[#0b0d1c] p-6 lg:block'}>
           {deskMode ? (
             <div className="mb-4 grid h-10 place-items-center rounded-lg border border-[#00D9FF]/40 text-xs font-bold tracking-wide text-[#00D9FF]" title="WISE² chart desk">W²</div>
           ) : (
