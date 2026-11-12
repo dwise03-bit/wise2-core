@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const BRIDGE_URL = process.env.NEXT_PUBLIC_BRIDGE_URL || 'http://localhost:8788';
+// Use same-origin reverse proxy in browsers; localhost would point at the visitor's device.
+const BRIDGE_URL = (process.env.NEXT_PUBLIC_BRIDGE_URL || '/api/soundlabs-bridge').replace(/\/$/, '');
 
 // Same-origin auth (served by Next.js via nginx). Do NOT point auth at the
 // bridge/localhost — that is why SoundLabs login failed in production.
