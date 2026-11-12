@@ -1,0 +1,27 @@
+name: WISE2 Remote Command tests
+
+on:
+  pull_request:
+    paths:
+      - 'tools/wise2-remote-command/**'
+      - '.github/workflows/wise2-remote-command.yml'
+  push:
+    branches:
+      - 'feature/wise2-remote-command-v1'
+    paths:
+      - 'tools/wise2-remote-command/**'
+      - '.github/workflows/wise2-remote-command.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  agent-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile check
+        run: python3 -m py_compile tools/wise2-remote-command/agent.py tools/wise2-remote-command/test_agent.py
+      - name: Unit tests
+        run: cd tools/wise2-remote-command && python3 -m unittest -v test_agent.py
