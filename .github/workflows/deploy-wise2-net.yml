@@ -10,8 +10,6 @@ env:
   REGISTRY: ghcr.io
   IMAGE_API: ghcr.io/${{ github.repository }}/wise2-clipper-api
   IMAGE_WEB: ghcr.io/${{ github.repository }}/wise2-clipper-web
-  VPS_HOST: 173.208.147.165
-  VPS_USER: dwise
   DOMAIN: wise2.net
 
 jobs:
@@ -32,20 +30,25 @@ jobs:
       
       - name: Deploy to VPS via SSH
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_HOST: ${{ env.VPS_HOST }}
-          VPS_USER: ${{ env.VPS_USER }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
         run: |
+          test -n "$DEPLOY_KEY" && test -n "$DEPLOY_HOST" && test -n "$DEPLOY_USER" || {
+            echo "DEPLOY_HOST, DEPLOY_USER, and DEPLOY_KEY must be configured"
+            exit 1
+          }
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/vps-key
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/vps-key
           chmod 600 ~/.ssh/vps-key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
           
-          ssh -i ~/.ssh/vps-key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << 'DEPLOY'
+          ssh -i ~/.ssh/vps-key -o StrictHostKeyChecking=accept-new "$DEPLOY_USER@$DEPLOY_HOST" << 'DEPLOY'
           
           set -e
           cd /home/dwise/wise2-core
           
-          echo "🚀 Starting deployment to wise2.net..."
+          echo "Starting deployment to wise2.net..."
           
           # Pull latest code
           git pull origin main
@@ -61,12 +64,12 @@ jobs:
           sleep 10
           curl -s https://wise2.net/api/v1/health || true
           
-          echo "✅ Deployment to wise2.net complete!"
+          echo "Deployment to wise2.net complete"
           
           DEPLOY
       
       - name: Verify live deployment
         run: |
-          echo "Verifying https://wise2.net..."
+          echo "Verifying public site..."
           curl -sI https://wise2.net || echo "Note: DNS may take time to propagate"
-          echo "✅ Deployment workflow complete"
+          echo "Deployment workflow complete"
