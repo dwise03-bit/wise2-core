@@ -1,0 +1,44 @@
+name: WISE2 VPS read-only diagnostics
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-vps-diagnostics
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    environment: vps-diagnostics
+    steps:
+      - name: Connect runner to existing Tailscale network
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+      - name: Validate required SSH configuration
+        env:
+          VPS_HOST: 100.68.145.5
+          VPS_USER: ${{ secrets.DEPLOY_USER }}
+          VPS_KEY: ${{ secrets.DEPLOY_KEY }}
+          VPS_HOST_KEY: ${{ secrets.WISE2_VPS_KNOWN_HOST }}
+        run: |
+          set -euo pipefail
+          for v in VPS_HOST VPS_USER VPS_KEY VPS_HOST_KEY; do
+            if [[ -z "${!v}" ]]; then echo "::error::Missing secret $v"; exit 1; fi
+          done
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_HOST_KEY" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          echo "SSH configuration loaded; host key pinning enabled."
+      - name: Check VPS health without changing state
+        env:
+          VPS_HOST: 100.68.145.5
+          VPS_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=12 "$VPS_USER@$VPS_HOST" 'set -eu; echo "== hostname =="; hostname; echo "== uptime =="; uptime; echo "== disk =="; df -h /; echo "== memory =="; free -h; echo "== docker =="; if command -v docker >/dev/null 2>&1; then docker ps --format "{{.Names}} {{.Status}}" || true; fi'
