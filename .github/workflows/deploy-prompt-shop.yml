@@ -12,25 +12,62 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Deploy to VPS
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy Prompt Shop on home server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 30m
           script: |
-            cd /home/dwise/wise2-core
-            git pull origin main
-            docker-compose -f docker-compose.prod.yml build --no-cache prompt-shop
-            docker-compose -f docker-compose.prod.yml up -d prompt-shop
-            docker-compose -f docker-compose.prod.yml logs prompt-shop | tail -20
+            set -eu
+            DEPLOY_DIR=/home/dwise/deploy/prompt-shop
+            CLONE_URL=https://github.com/dwise03-bit/wise2-core.git
+            UNIT=prompt-shop.service
+            HEALTH_URL=http://127.0.0.1:3002/
+
+            mkdir -p "$(dirname "$DEPLOY_DIR")"
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              git clone "$CLONE_URL" "$DEPLOY_DIR"
+            fi
+            cd "$DEPLOY_DIR"
+            git fetch origin main
+            git reset --hard origin/main
+
+            if [ -f apps/prompt-shop/package.json ]; then
+              (cd apps/prompt-shop && npm ci --omit=dev && npm run build --if-present)
+            fi
+
+            if systemctl --user list-unit-files --type=service 2>/dev/null | grep -qx "${UNIT}"; then
+              systemctl --user restart "$UNIT"
+            else
+              echo "TODO: create user systemd unit ${UNIT} on the home server for Prompt Shop"
+              exit 1
+            fi
+
+            for attempt in 1 2 3 4 5 6; do
+              if curl -fsS "$HEALTH_URL" >/dev/null 2>&1; then
+                echo "Prompt Shop health check passed (loopback)"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "Prompt Shop health check failed on loopback"
+            exit 1
 
       - name: Notify Success
         if: success()
-        run: echo "✅ Deployment successful!"
+        run: echo "Deployment successful"
 
       - name: Notify Failure
         if: failure()
-        run: echo "❌ Deployment failed - check logs"
+        run: echo "Deployment failed — check workflow logs"
