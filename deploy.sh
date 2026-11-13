@@ -18,7 +18,7 @@ echo "📋 PRE-FLIGHT CHECKS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Check git
-if [ -n "$(git status --porcelain)" ]; then
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     echo "⚠️  Uncommitted changes detected:"
     git status --short
     read -p "Continue? (y/n) " -n 1 -r
