@@ -8,20 +8,27 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'postgres',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'secure_postgres_admin_2026',
+  password: process.env.DB_PASSWORD,
   max: 10,
   idleTimeoutMillis: 10000,
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-2026-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function hashPassword(password: string): string {
+  if (!JWT_SECRET) throw new Error('JWT_SECRET must be configured');
   return crypto.createHash('sha256').update(password + JWT_SECRET).digest('hex');
 }
 
 export async function POST(request: NextRequest) {
   try {
+    if (!JWT_SECRET || !process.env.DB_PASSWORD) {
+      return NextResponse.json({ error: 'Authentication service not configured' }, { status: 503 });
+    }
     const { email, password } = await request.json();
+    if (typeof email !== 'string' || typeof password !== 'string' || email.length > 254 || password.length > 1024) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
@@ -37,7 +44,9 @@ export async function POST(request: NextRequest) {
 
     // Verify password
     const hash = hashPassword(password);
-    if (hash !== user.password_hash) {
+    const expected = typeof user.password_hash === 'string' && /^[a-f0-9]{64}$/i.test(user.password_hash) ? Buffer.from(user.password_hash, 'hex') : Buffer.alloc(32);
+    const supplied = Buffer.from(hash, 'hex');
+    if (!crypto.timingSafeEqual(supplied, expected) || !user.password_hash) {
       // Log failed attempt
       await pool.query(
         'INSERT INTO audit_logs (user_id, action, entity_type, ip_address) VALUES ($1, $2, $3, $4)',
