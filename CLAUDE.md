@@ -498,3 +498,8 @@ Before UI work, read `WISE2_UI_CONSTITUTION.md` and follow `WISE2_WORKFLOW_STAND
 ## Shared Claude/Codex Workflows
 
 Use `.agents/skills/` for focused WISE² workflows and `.claude/skills/` for Claude-specific adapters. Prefer `scripts/wise2-preflight.sh`, `scripts/wise2-mobile.sh`, `scripts/wise2-vps.sh`, and `scripts/wise2-sync.sh` over ad-hoc environment changes. Do not expose secrets or signing credentials, and do not silently fall back to a large local model.
+
+
+## Latest operational context (2026-11-15)
+
+Before planning or executing new WISE² work, read `docs/CLAUDE_WISE2_SYNC_2026-11-15.md`. It is a context handoff, not verified deployment evidence. Reconcile with live systems and preserve existing rules above.
