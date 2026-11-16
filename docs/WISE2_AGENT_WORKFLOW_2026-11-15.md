@@ -40,3 +40,6 @@ The video is titled `Apple's Local AI App for Mac Is Coming (Harbor)`; browser m
 
 ## Guardrails
 No changes to live production, client sites, firewall or credentials without authorization and rollback. Never claim the entire pipeline is live based on a single browser test. Keep WISE² Trading separate from Everyday Trader client work.
+
+## Correction from live runtime probe
+Although `systemctl status ollama` returned `Unit ollama.service could not be found`, the Ollama API **is running** as a user-local process (`/home/dwise/.local/ollama/bin/ollama serve`) and returned version `0.40.16` from `http://127.0.0.1:11434/api/version`. `/api/tags` showed `qwen2.5:3b` and `nomic-embed-text:latest` among models. Do **not** install a second Ollama daemon or create a conflicting service. Check existing process ownership, startup mechanism, and inference health before changing anything. At probe time RAM was 7.7Gi total, 3.5Gi available, swap 4Gi total and 1.6Gi used. Earlier 'Ollama inactive' assessment was inaccurate.
