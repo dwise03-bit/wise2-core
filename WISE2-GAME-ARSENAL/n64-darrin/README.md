@@ -1,21 +1,26 @@
-# N64 Arcade integration — Darrin
+# WISE² Gaming Arsenal — Daniel + Darrin Wise Jr.
 
-Part of WISE² Game Studio's GAME ARSENAL.
+**Shared project ownership:** Daniel and Darrin Wise Jr. This is the joint WISE² Game Studio, not a Darrin-only product. Darrin's N64 setup is one workstream within the shared Gaming Arsenal.
 
-## Source of truth
-[Hardware setup and pull instructions](https://github.com/dwise03-bit/Wise2-hardware/blob/main/arcade/n64-darrin/README.md).
+## Workstreams
+- **Shared cinematic Game Studio:** `apps/website/app/game-studio/page.tsx` — 4K-oriented responsive design, original game prototypes, AI NPCs, cinematics, and deployment testing.
+- **Retro arcade:** Kirby 64: The Crystal Shards and Zelda: Ocarina of Time, emulator and controller integration. Hardware-specific handoff: https://github.com/dwise03-bit/Wise2-hardware/blob/main/arcade/n64-darrin/README.md
+- **Original AI games:** Godot/Unreal/Blender/Hermes workflows, original or licensed assets only.
 
-## Experience
-Two selectable game tiles: Kirby 64: The Crystal Shards and The Legend of Zelda: Ocarina of Time. Controller-friendly navigation, animated focus states, game info, launch/exit. Original/licensed artwork only.
+## Pull both repositories
+```bash
+git clone https://github.com/dwise03-bit/wise2-core.git
+git clone https://github.com/dwise03-bit/Wise2-hardware.git
+```
+For existing checkouts, `git pull origin main` on clean main branches after preserving local changes.
 
-## Integration boundary
-The Game Studio page at `apps/website/app/game-studio/page.tsx` currently links to `WISE2-GAME-ARSENAL`. This directory provides a discoverable handoff entry, not a finished frontend launcher. A game launcher should be added only after target hardware, emulator command, controller mappings and authorized local game files are verified.
+## Acceptance checks
+- [ ] Both owners confirm access and target hardware
+- [ ] Build and test Game Studio frontend
+- [ ] Verify playable prototype and Gaming Hub integration
+- [ ] Validate 4K desktop and mobile responsive rendering
+- [ ] Install and benchmark N64 emulator with authorized local game files
+- [ ] Test controller navigation, launch, exit, and recovery
+- [ ] Verify production deployment independently
 
-## Checklist
-1. Darrin pulls `Wise2-hardware` and `wise2-core`.
-2. Confirm Pi 3B+ versus Linux PC with GTX 1070.
-3. Install/test RetroPie or RetroArch and controller mappings.
-4. Use locally authorized game dumps; do not commit ROMs.
-5. Implement launcher in Game Studio and test end-to-end.
-
-No copyrighted ROMs, credentials or unverified execution scripts included.
+No ROMs, passwords, or private keys are stored here. A GitHub commit is not evidence of deployment.
