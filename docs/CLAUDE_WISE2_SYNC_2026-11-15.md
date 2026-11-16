@@ -55,3 +55,6 @@ This document combines user requests, previously reported host facts, and reposi
 8. Produce an evidence-based deployment matrix with columns `service | old host | target host | dependencies | backup | health check | cutover | rollback | verified status`.
 
 **Related reported endpoints:** Pocket Node local endpoint `192.168.8.232:8899` was supplied by the user; confirm what service owns it and whether that subnet is reachable before using it. `wise2-pocketnode` and `daniels-macbook-pro-2.tail44396d.ts.net` are previously reported Tailscale node identifiers, not verified currently online. Never copy SSH private keys or tokens into Git.
+
+## Verified browser + AI routing workflow update
+Read `docs/WISE2_AGENT_WORKFLOW_2026-11-15.md` for latest verified host details and state-machine instructions. Latest host checks confirm both GTX 1060 6GB GPUs, Tailscale address 100.109.230.122, and working Playwright/Chromium page auditing. Ollama is inactive and should not be treated as ready. Browser metadata identified the Harbor local-AI video; transcript and actual software behavior remain unverified.
