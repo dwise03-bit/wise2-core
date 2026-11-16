@@ -38,3 +38,20 @@ Unify all WISE² nodes via authorized Tailscale/SSH and verified backup route; c
 
 ## Status caution
 This document combines user requests, previously reported host facts, and repository context as of 2026-11-15. It is not a live system audit. The repository's older README and CLAUDE.md may contain outdated production-ready assertions. Validate before repeating them.
+
+## New physical server — explicit inventory and migration plan (added 2026-11-15)
+**Reported, not live-verified:** Ubuntu Server hostname `wise2`, LAN IP `192.168.1.181`, login user `dwise`, 8 GB RAM, dual NVIDIA GTX 1060 6 GB GPUs. Original CPU was described as Celeron; Pentium G4400 was discussed as a possible replacement, **not confirmed installed**. No confirmed public IP, Tailscale IP, OS release, disk capacity, GPU driver version, CUDA availability, or service readiness. Never confuse this physical server with the legacy VPS `173.208.147.165` or the public IP associated with blakkhail.com.
+
+**Access state from recent user reports:** LAN ping succeeded after USB-based DNS recovery, but DNS failures (`temporary failure in name resolution`) and missing Tailscale installation were reported. Ubuntu graphical login remains a problem; user can run terminal commands remotely and wants to type passwords themselves rather than share them. Prefer authorized SSH keys and passwordless *key-based SSH*, while retaining secure login and least privilege; never disable authentication or store user passwords in this repository. The MacBook M4 and Pocket Node can serve as authorized administration/backup access paths once tested.
+
+**Deployment goals (not accomplished merely by this handoff):**
+1. Capture `hostnamectl`, `lsb_release -a`, `lscpu`, `free -h`, `lsblk -f`, `df -h`, `ip -br a`, `ip route`, DNS resolution, `nvidia-smi`, `docker info`, and `tailscale status`; redact identifiers/secrets where appropriate.
+2. Restore working DNS and package access; configure and verify authorized SSH/Tailscale connectivity and an independent recovery path.
+3. Verify both GTX 1060 cards, NVIDIA drivers and compute compatibility before attempting GPU model serving or 4K rendering. Account for 6 GB VRAM per card; do not presume pooled 12 GB VRAM.
+4. Audit disk space, mounts, memory and swap before adding desktop, browser, Steam, AI models or containers. 8 GB host RAM limits concurrent services.
+5. Prepare a non-destructive, reproducible Ubuntu/WISE² installer on the Pocket Node 32GB removable drive, only after confirming the device path and explicit authorization for formatting that device. Support dual displays and local status dashboard.
+6. Inventory running workloads on old VPS, dependencies, databases, volumes, reverse proxy and certificates; make verified backups, then stage and validate migration individually. Preserve public endpoints, SSL and client routing until cutover is proven.
+7. Deploy WISE² services and Hermes/AI agents with explicit health checks, GPU utilization checks, logs, rollback, uptime monitoring and documented ownership. Keep private access on Tailscale; public websites require independently verified DNS/TLS.
+8. Produce an evidence-based deployment matrix with columns `service | old host | target host | dependencies | backup | health check | cutover | rollback | verified status`.
+
+**Related reported endpoints:** Pocket Node local endpoint `192.168.8.232:8899` was supplied by the user; confirm what service owns it and whether that subnet is reachable before using it. `wise2-pocketnode` and `daniels-macbook-pro-2.tail44396d.ts.net` are previously reported Tailscale node identifiers, not verified currently online. Never copy SSH private keys or tokens into Git.
