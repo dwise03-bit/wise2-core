@@ -1,205 +1,278 @@
-# WISE² MLP - DEPLOYMENT HANDOFF
+# WISE² Core - DEPLOYMENT HANDOFF
 
-**Date**: 2026-07-14  
-**Status**: ✅ DEPLOYMENT COMPLETE - ALL SERVICES LIVE  
-**Budget**: Admin service disabled for MVP
+**Date**: 2026-11-18  
+**Last Updated**: 2026-11-18  
+**Status**: 🟡 PARTIAL DEPLOYMENT - Petals & Potions accessibility pending verification  
+**Owner**: dwise (dwise03@gmail.com)
 
 ---
 
 ## CURRENT STATE
 
-✅ **LIVE**:
-- Landing page live at https://wise2.net
-- Dashboard live at https://wise2.net/dashboard (port 3002)
-- API running on port 3010
-- PostgreSQL database running (port 5432)
-- All services healthy and operational
+✅ **CODE COMPLETE**:
+- Petals & Potions code formatted and committed to `claude/petals-potions-lv63d6`
+- All JSX properly unminified and readable
+- TypeScript types added to event handlers
+- Multi-line formatting applied across components
 
-🟢 **No blockers** - fully deployed
+🟡 **DEPLOYMENT STATUS**:
+- Core services running on 173.208.147.165:3001
+- **BLOCKER**: Petals & Potions accessibility not verified with end user (Paige)
+- Need: Production server verification that http://173.208.147.165:3001/petals-and-potions loads
+
+🔴 **Known Issue**:
+- Paige (Petals & Potions owner) reported inability to access site (Oct-Nov 2026)
+- Root cause: Unknown (possible deployment, networking, or DNS issue)
+- Requires: SSH access to 173.208.147.165 to run diagnostics
 
 ---
 
-## IMMEDIATE FIX - GET IT RUNNING NOW
+## IMMEDIATE ACTION - VERIFY PETALS & POTIONS ACCESS
 
-On your server (dwise@173.208.147.165):
+On production server (dwise@173.208.147.165):
 
 ```bash
-# 1. Kill processes on port 3001
-sudo lsof -i :3001 | grep LISTEN | awk '{print $2}' | xargs sudo kill -9
+# 1. Verify port 3001 is listening
+sudo lsof -i :3001 | grep LISTEN
 
-# 2. Remove old containers and networks
-sudo docker-compose -f docker-compose.prod.yml down -v --remove-orphans
-
-# 3. Clean Docker
-sudo docker system prune -af
-
-# 4. Pull latest code
-cd /home/dwise/wise2-core && git pull origin main
-
-# 5. Build and start
-sudo docker-compose -f docker-compose.prod.yml up -d --build
-
-# 6. Wait and check
-sleep 60
+# 2. Check Docker status
+cd /home/dwise/wise2-core
 sudo docker-compose -f docker-compose.prod.yml ps
+
+# 3. Test endpoint locally
+curl http://localhost:3001/petals-and-potions | head -20
+
+# 4. Check service logs
+sudo docker-compose -f docker-compose.prod.yml logs --tail 30 website
 ```
 
-**Expected output**:
-```
-NAME                    COMMAND               STATUS
-wise2-core_postgres_1   "docker-entrypoint"   Up 55s
-wise2-core_api_1        "npm start"           Up 50s
-wise2-core_website_1    "dumb-init node"      Up 45s
-wise2-core_dashboard_1  "dumb-init node"      Up 40s
-```
+**Success criteria**:
+- Port 3001 responds with HTML containing "Petals & Potions"
+- Paige can access http://173.208.147.165:3001/petals-and-potions from her browser
+- Ritual builder loads at /petals-and-potions/ritual
 
-**Test**:
+**If not running**:
 ```bash
-curl https://wise2.net/
-curl https://wise2.net/auth/signup
-curl https://wise2.net/dashboard
+# Pull latest code
+git fetch origin
+git checkout main
+git pull origin main
+
+# Restart services
+sudo docker-compose -f docker-compose.prod.yml down
+sudo docker-compose -f docker-compose.prod.yml up -d --build
+sleep 30
+
+# Verify
+curl http://localhost:3001/petals-and-potions
 ```
 
 ---
 
-## WHAT WAS BUILT
+## WHAT WAS BUILT - PETALS & POTIONS
 
-### Landing Page (`apps/website/app/page.tsx`)
-- Hero: "ORGANIZED CHAOS COMMAND CENTER"
-- 8 module cards
-- Stats: 99.99%, 10M+, 500+, 24/7
-- Social proof, testimonials, pricing
-- "BUILD. AUTOMATE. DOMINATE." CTA
+### Petals & Potions Landing Page
+**Location**: `wise2-command-center/src/components/demo/petals-landing.tsx`
 
-### Dashboard (`apps/dashboard/app/dashboard/page.tsx`)
-- Sidebar navigation with 8 modules
-- 3 stat cards (Revenue, Automations, AI Tasks)
-- System status (99.99% uptime)
-- Dark theme with Electric Blue accents
+**Features**:
+- Navigation with links to Apothecary, Your Ritual, Paige story, Journal
+- Hero section: "Your Ritual. Your Blend. Your Wellness."
+- Philosophy section: Botanical wellness movement
+- 6-part Apothecary (SIP, SOAK, GLOW, CROWN, SCENT, SOUND & SOUL)
+- Founder story: Meet Paige
+- Personalized wellness section with ritual builder CTA
+- Brand footer with tagline
+
+**Images** (in `/public/petals/`):
+- `paige-outdoor.png` - Hero image
+- `paige-brand.png` - Founder image
+
+### Ritual Builder (Form)
+**Location**: `wise2-command-center/src/app/petals-and-potions/ritual/page.tsx`
+
+**Features**:
+- Two-step ritual form:
+  1. "What do you want more of?" (Rest & reset, Energy & focus, Glow & nourish, Clarity & peace)
+  2. "Where should we begin?" (SIP, SOAK, GLOW, SOUND & SOUL)
+- Form submission with React state management
+- Results display showing selected ritual direction
+- Link back to Apothecary exploration
+
+**Code Quality** (Nov 2026 updates):
+- Unminified and properly formatted JSX
+- TypeScript event handler types
+- Readable multi-line component structure
+- Proper React hooks usage (`useState`)
 
 ### Design System
-- Color: Electric Blue (#0055FF), Dark theme
-- Typography: Bold uppercase "ORGANIZED CHAOS"
-- Professional industrial aesthetic
-
-### Code Structure
-- Next.js 14 (website, dashboard)
-- NestJS API
-- PostgreSQL database
-- Docker multi-container setup
+- Brand: Luxury botanical wellness
+- Colors: Earthy, botanical palette
+- Typography: Elegant, intentional messaging
+- Imagery: Paige (founder) and product context
 
 ---
 
-## CRITICAL FIXES APPLIED
+## CODE CHANGES - PETALS & POTIONS (Nov 2026)
 
-### 1. Dashboard Dockerfile (df74aed)
-- Fixed: `.next/standalone` → standard `.next` output
-- Fixed: Working directory path
-- Fixed: Startup command to use `next start`
+### Branch: `claude/petals-potions-lv63d6`
 
-### 2. Admin Globals CSS (bdde2e9)
-- Removed broken import from non-existent UI library
-- Added minimal base styles
+**Formatting & Code Quality**:
+- Unminified `ritual/page.tsx` - Single line JSX split into readable multi-line structure
+- Unminified `petals-landing.tsx` - Navigation, hero, sections properly formatted
+- Added TypeScript types to event handlers
+- Improved readability and maintainability
 
-### 3. API URLs (a9858ee)
-- Fixed: Hardcoded localhost → environment variables
-- Files: dashboard billing, admin page
-- Uses: `process.env.NEXT_PUBLIC_API_URL`
+**Files Modified**:
+- `wise2-command-center/src/app/petals-and-potions/ritual/page.tsx`
+- `wise2-command-center/src/components/demo/petals-landing.tsx`
 
-### 4. Admin Module (a9858ee)
-- Created: `packages/api/src/admin/admin.module.ts`
-- Updated: `app.module.ts` to import AdminModule
-- Updated: `admin/tsconfig.json` with baseUrl/paths
-
-### 5. Admin Service (3057074)
-- Disabled: Admin container in docker-compose (CSS build issues)
-- Reason: Not critical for MVP
-- Can re-enable later after fixing CSS/webpack issues
+**PR Status**: Closed Nov 12, 2026 as formatting-only follow-up (marked stale)
 
 ---
 
-## KNOWN ISSUES (POST-MVP)
+## CRITICAL ISSUES & BLOCKERS
 
-### High Priority
-1. **Admin CSS Build** - Webpack errors in admin globals.css
-   - Fix: Remove admin from MVP, fix CSS separately
-   - Status: Disabled for now
+### PRIMARY BLOCKER: Petals & Potions Accessibility (Oct-Nov 2026)
+**Issue**: Owner Paige cannot access http://173.208.147.165:3001/petals-and-potions
 
-2. **Environment Variables** - Some hardcoded fallbacks remain
-   - Locations: API ports, database host
-   - Fix: Update .env.production with correct values
+**Timeline**:
+- Oct 16: User reported site inaccessible
+- Oct-Nov: Multiple claims that site was "fixed" without verification
+- Nov 12: User escalated: "your costing me thousands for these carless mistakes"
+- Nov 18: Handoff created pending actual verification
 
-### Medium Priority
-3. **Package Manager** - npm vs pnpm inconsistency
-   - Current: Using npm in Dockerfiles
-   - Project: Uses pnpm
-   - Fix: Standardize to pnpm or npm
+**Root Cause**: Unknown - requires SSH debugging on production server
 
-4. **TypeORM Configuration** - Database defaults to localhost
-   - Fix: Ensure docker-compose.prod.yml sets DB_HOST=postgres
+**Resolution Path**:
+1. SSH to 173.208.147.165 as dwise
+2. Verify Docker containers running: `sudo docker-compose ps`
+3. Test endpoint: `curl http://localhost:3001/petals-and-potions`
+4. Check logs for errors
+5. Restart if needed: `sudo docker-compose up -d --build`
+6. Have Paige verify accessibility from her browser
 
-5. **CORS Configuration** - Defaults to localhost origin
-   - Fix: Update to production domain
-
----
-
-## DEPLOYMENT CHECKLIST
-
-- [x] Landing page built and tested
-- [x] Dashboard built and tested
-- [x] API built and tested
-- [x] Docker images created
-- [x] Critical code fixes applied
-- [x] Port conflicts identified
-- [ ] Port 3001 cleaned up (manual step)
-- [ ] Docker containers started
-- [ ] All 4 services running
-- [ ] Website responds at https://wise2.net
-- [ ] Dashboard accessible at /dashboard
-- [ ] Auth pages working
+**Success Criteria**: Paige confirms she can access the site and use the ritual builder form
 
 ---
 
-## GIT COMMITS (Latest First)
+## KNOWN ISSUES & OUTSTANDING BLOCKERS
+
+### 🔴 CRITICAL - Blocking Production Access
+1. **Petals & Potions Inaccessible** (See blockers section above)
+   - User escalation: "carless mistakes" costing thousands
+   - Requires end-to-end verification, not just "code looks right"
+   - See: CLAUDE.md "Verification Before Completion" rule
+
+### 🟡 HIGH PRIORITY - Architecture
+2. **Verification Framework** (Implemented Nov 2026)
+   - Added: CLAUDE.md "Verification Before Completion" section
+   - Rule: Never claim task done without proof of actual goal reached
+   - Applies to: Deployments, bug fixes, features, all work
+   - Language: Never use "done", "fixed", "deployed" alone — include proof
+
+### 🟠 MEDIUM PRIORITY - Outstanding
+3. **Port Governance** - 173.208.147.165:3001 may have conflicts
+   - Verify: `sudo lsof -i :3001` shows only one service
+   - Check: nginx config matches docker-compose port bindings
+
+4. **Environment Variables** - Production .env may need review
+   - Locations: `packages/api/.env.production`, docker-compose.prod.yml
+   - Critical: Database host, API URLs, CORS origins
+
+5. **Admin Service** - Disabled for MVP (CSS/webpack issues)
+   - Status: Not critical for Petals & Potions
+   - Can re-enable post-launch after CSS fixes
+
+---
+
+## DEPLOYMENT CHECKLIST - PETALS & POTIONS
+
+**Current Status**: Code ready, production deployment unverified
+
+- [x] Petals & Potions code written and formatted
+- [x] Ritual builder form implemented
+- [x] Landing page component complete
+- [x] Code committed to `claude/petals-potions-lv63d6`
+- [x] Verification framework added to CLAUDE.md
+- [ ] **BLOCKER**: Paige confirms site accessible at http://173.208.147.165:3001/petals-and-potions
+- [ ] **BLOCKER**: Ritual builder form functional and responsive
+- [ ] Production deployment verified with actual user test
+- [ ] No regressions in other WISE² services
+
+---
+
+## GIT COMMITS - PETALS & POTIONS SESSION (Nov 2026)
+
+**Branch**: `claude/petals-potions-lv63d6`
 
 ```
-3057074 - chore: Disable admin service for MVP
-a9858ee - fix: Critical deployment issues (API URLs, admin module)
-bdde2e9 - fix: Admin app globals.css
-df74aed - fix: Dashboard Dockerfile
-21b0571 - chore: Deployment triggered
-d956cf8 - fix: Use dwise user for deployment
-c74efe0 - refactor: Rebuild MLP to match WISE² spec
+[Recent commits on branch - check with: git log --oneline claude/petals-potions-lv63d6]
 ```
+
+**Key commits this session**:
+- Code formatting: Unminified ritual/page.tsx and petals-landing.tsx
+- Added TypeScript types to event handlers
+- Multi-line JSX formatting for readability
 
 ---
 
 ## REFERENCE DOCS
 
-- `docs/BRAND_BIBLE.md` - v11.0 brand specifications
-- `docs/BRAND_BIBLE_UPDATED.md` - Extended implementation guidelines
+**Brand & Design**:
 - `docs/WISE2_DESIGN_SYSTEM_MASTER_VISUAL.png` - Master visual reference
-- `REBUILD_SUMMARY.md` - Complete rebuild details
+- `docs/BRAND_BIBLE_UPDATED.md` - Brand specifications
+- `.agents/brand-context.md` - Brand guidelines
+
+**Verification Framework** (Critical):
+- `CLAUDE.md` - Verification Before Completion (foundational rule, Nov 2026)
+  - Never claim task done without proof goal was reached
+  - Language requirements: include verification method and proof
+  - Applies to: Deployments, fixes, features, all work
+
+**Deployment**:
+- `docker-compose.prod.yml` - Production container orchestration
+- `OUTSTANDING_ISSUES.md` - Known issues log
+- `fix-petals-access.sh` - Diagnostic/fix script for port 3001 issues
+- `deploy-petals.sh` - Deployment automation script
 
 ---
 
-## NEXT STEPS (POST-LAUNCH)
+## NEXT STEPS - PRIORITY ORDER
 
-1. **Fix admin service** - Resolve CSS/webpack issues
-2. **Add database migrations** - Set up real Prisma ORM
-3. **Implement auth flow** - Real JWT with database
-4. **Add payment processing** - Connect Stripe API
-5. **Build module pages** - Actual SoundLab, Live Studio, etc.
-6. **Deploy to production** - wise2.net with SSL
+### 🔴 IMMEDIATE (Blocking)
+1. **Verify Petals & Potions Production Access**
+   - SSH to 173.208.147.165, check Docker and port 3001
+   - Have Paige test actual browser access
+   - Confirm ritual builder form works
+   - Document proof of accessibility
+   - See: "Verification Before Completion" rule
+
+2. **If not accessible**: Debug and fix
+   - Run diagnostic: `sudo docker-compose logs`
+   - Restart services if needed
+   - Re-verify with Paige
+
+### 🟡 HIGH (After Petals & Potions verified)
+3. **Document root cause** - Why was site inaccessible Oct-Nov?
+4. **Apply verification rule** - Review other WISE² components for similar issues
+5. **Fix outstanding blockers** - See known issues above
+
+### 🟠 MEDIUM (Post-Launch)
+6. **Admin service CSS fixes** - Re-enable when webpack issues resolved
+7. **Database setup** - Real Prisma ORM integration
+8. **Auth implementation** - JWT with database backing
+9. **Other WISE² modules** - Build out remaining components
 
 ---
 
-## CONTACT & SUPPORT
+## HANDOFF NOTES
 
-If deployment fails:
-1. Check port 3001 is free
-2. Verify docker-compose.prod.yml is correct
-3. Check git pull got latest code
-4. Review logs: `sudo docker-compose logs api`
+**To next person**: 
+- This handoff reflects Nov 18, 2026 state
+- Primary blocker: Petals & Potions accessibility verification
+- Critical rule: See CLAUDE.md "Verification Before Completion" — never claim work done without proof
+- Key files: docker-compose.prod.yml, fix-petals-access.sh, deploy-petals.sh
+- Production server: 173.208.147.165 (dwise user, sudo password required)
+- When debugging: Check logs first (`sudo docker-compose logs`), verify port (`sudo lsof -i :3001`), test locally (`curl http://localhost:3001/...`)
 
 Good luck! 🚀
