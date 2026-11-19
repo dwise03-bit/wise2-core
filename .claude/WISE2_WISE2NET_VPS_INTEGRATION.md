@@ -38,8 +38,9 @@
                     ~/.claude/tunnel-manager.sh
                               ⬇️
 ┌─────────────────────────────────────────────────────────────────────┐
-│                   VPS: 173.208.147.165                              │
-│                   (GPU NMLS Instance)                               │
+│                   New Server: 100.109.230.122                       │
+│                   (Tailscale-based, Ubuntu 24.04 LTS)               │
+│                   Hostname: wise2 | LAN: 192.168.8.191              │
 ├─────────────────────────────────────────────────────────────────────┤
 │  🐳 Docker Containers (18 services)                                 │
 │     ├─ wise2-api           ✅ :3000 (healthy)                       │

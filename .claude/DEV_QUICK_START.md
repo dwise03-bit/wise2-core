@@ -187,13 +187,14 @@ pnpm test --watch
 
 ## 8. Production Deployment
 
-**Server**: 173.208.147.165 (dwise user)  
+**Server**: 100.109.230.122 (Tailscale IP, dwise user)  
+**Hostname**: `wise2` | **LAN IP**: `192.168.8.191`  
 **Method**: Docker compose + Nginx SSL  
 **Auto-deploy**: Push to `main` → GitHub Actions triggers build
 
 ```bash
 # Manual deploy (if needed)
-ssh dwise@173.208.147.165
+ssh dwise@100.109.230.122
 cd /home/dwise/wise2-core
 git pull origin main
 docker-compose -f docker-compose.prod.yml up -d

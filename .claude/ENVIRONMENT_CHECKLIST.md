@@ -8,7 +8,7 @@ Last Verified: 2026-08-29
 - [x] pnpm 8.15.9 installed
 - [x] Git configured
 - [x] Docker configured
-- [x] SSH key for 173.208.147.165 set up
+- [x] SSH key and Tailscale access for 100.109.230.122 configured
 
 ## ✅ Claude Code Configuration
 
@@ -50,7 +50,7 @@ Last Verified: 2026-08-29
 
 ## ✅ Deployment Ready
 
-- [x] Production server: 173.208.147.165
+- [x] Production server: 100.109.230.122 (Tailscale IP, hostname: wise2)
 - [x] SSL/HTTPS via Nginx configured
 - [x] Auto-deploy on push to main via GitHub Actions
 - [x] Docker containers running in production
