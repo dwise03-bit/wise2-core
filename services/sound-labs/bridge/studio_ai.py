@@ -44,9 +44,9 @@ class StudioAI:
     Transfers styles, manages live streams
     """
 
-    def __init__(self, ollama_url: str = "http://127.0.0.1:11434", musicgen_api_url: str = "http://173.208.147.165:4900", vps_api_url: str = "https://wise2.net/api/v1"):
+    def __init__(self, ollama_url: str = "http://127.0.0.1:11434", musicgen_api_url: Optional[str] = None, vps_api_url: str = "https://wise2.net/api/v1"):
         self.ollama_url = ollama_url
-        self.musicgen_api_url = musicgen_api_url  # Custom MusicGen-small API
+        self.musicgen_api_url = musicgen_api_url or __import__("os").get("MUSICGEN_API_URL", "http://127.0.0.1:4900")  # Configurable local-first endpoint
         self.vps_api_url = vps_api_url
         self.active_streams: Dict[str, Dict[str, Any]] = {}
         self.generation_queue: asyncio.Queue = asyncio.Queue()
@@ -55,7 +55,7 @@ class StudioAI:
     async def generate_music(
         self,
         prompt: str,
-        style: MusicGenreStyle = MusicGenreStyle.ELECTRONIC,
+        style: MusicGenreStyle | str = MusicGenreStyle.ELECTRONIC,
         duration_seconds: int = 30,
         bpm: int = 120,
         key: str = "C",
@@ -67,6 +67,12 @@ class StudioAI:
         """
         try:
             job_id = f"music_{datetime.now().timestamp()}"
+
+            # API routes pass genre as a string; normalize before accessing .value.
+            try:
+                style = MusicGenreStyle(style)
+            except ValueError:
+                return {"error": f"Unsupported genre: {style}", "status": "failed"}
 
             # Enrich prompt with style + genre info
             enriched_prompt = f"{prompt}, {style.value} music, {bpm} bpm"
