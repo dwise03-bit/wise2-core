@@ -1,0 +1,28 @@
+name: Sound Labs Safe Audit
+on:
+  pull_request:
+    paths:
+      - 'scripts/soundlabs-safe-audit.sh'
+      - '.github/workflows/soundlabs-safe-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  soundlabs-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell syntax
+        run: bash -n scripts/soundlabs-safe-audit.sh
+      - name: Run read-only diagnostics
+        run: bash scripts/soundlabs-safe-audit.sh | tee soundlabs-audit.log
+      - name: Verify WAV smoke test
+        run: grep -q 'PASS local WAV encode/decode' soundlabs-audit.log
+      - name: Upload audit log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: soundlabs-audit
+          path: soundlabs-audit.log
+          retention-days: 7
