@@ -33,8 +33,15 @@ echo "Audio smoke test:"
 if command -v ffmpeg >/dev/null 2>&1 && command -v ffprobe >/dev/null 2>&1; then
  tmp=$(mktemp /tmp/wise2-soundlab-XXXXXX.wav)
  trap 'rm -f "$tmp"' EXIT
- if ffmpeg -hide_banner -loglevel error -f lavfi -i 'sine=frequency=440:duration=1' -ar 48000 -ac 2 -y "$tmp" && ffprobe -v error -show_entries stream=sample_rate,channels -of default=noprint_wrappers=1 "$tmp"; then
-  echo 'PASS local WAV encode/decode'
- else echo 'FAIL local WAV encode/decode'; fi
+ if ffmpeg -hide_banner -loglevel error -f lavfi -i 'sine=frequency=440:duration=1' -ar 48000 -ac 2 -y "$tmp"; then
+  audio_spec=$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate,channels -of csv=p=0 "$tmp" 2>/dev/null || true)
+  echo "Decoded WAV spec: $audio_spec"
+  if [ "$audio_spec" = '48000,2' ]; then
+    echo 'PASS local WAV encode/decode'
+  else
+    echo 'FAIL local WAV encode/decode: expected 48000 Hz stereo'
+    exit 1
+  fi
+ else echo 'FAIL local WAV encode/decode: ffmpeg failed'; exit 1; fi
 else echo 'SKIP audio smoke test: ffmpeg/ffprobe unavailable'; fi
 echo 'Audit complete. No services restarted, no production files modified.'
