@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wise2-trading",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "apps/wise2-trading", "run", "dev"],
+      "port": 3017
+    }
+  ]
+}
