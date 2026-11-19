@@ -86,6 +86,8 @@ async def generate_music(
 
     # Generate music
     result = await _studio_ai.generate_music(prompt, genre, duration)
+    if result.get("status") == "failed" or result.get("error"):
+        raise HTTPException(status_code=422, detail=result.get("error", "Generation request failed"))
     return {
         "status": "ok",
         "generation_id": result.get("job_id"),
