@@ -1,0 +1,34 @@
+name: WISE² Cardputer Website Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wise2-cardputer-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-cardputer:
+    # Runs only on the connected WISE² server runner; never deploy to the old VPS.
+    runs-on: self-hosted
+    timeout-minutes: 45
+    steps:
+      - name: Verify authorized WISE² server
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = "wise2" || { echo "Wrong host: $(hostname)"; exit 1; }
+          test -d /home/dwise/wise2-core/.git
+          command -v docker
+          docker compose version
+      - name: Deploy and verify Cardputer route
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /home/dwise/wise2-core
+          test -z "$(git status --porcelain)" || { echo "Dirty checkout: refusing to overwrite"; exit 1; }
+          git pull --ff-only origin main
+          bash scripts/deploy-cardputer-website.sh
