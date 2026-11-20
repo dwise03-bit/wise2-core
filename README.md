@@ -1,6 +1,8 @@
+> **Operational status notice (2026-11-20):** This README contains a historical July 2026 development snapshot, **not a verified current production-health report**. The only authorized production host is Ubuntu `wise2`. Do not treat old port tables, demo credentials, or VPS examples as live configuration. See [Canonical Single-Server Operations](docs/operations/CANONICAL_SINGLE_SERVER.md) and run `bash scripts/ops/single-server-audit.sh` on `wise2` before deployment decisions.
+
 # WISE² Enterprise - Complete Documentation
 
-**Status**: ✅ **PRODUCTION READY** (API 100% working)  
+**Historical status (July 2026, unverified today)**: Previously documented as production ready  
 **Last Updated**: 2026-07-11  
 **Build**: 15/15 Phases Complete
 
@@ -186,6 +188,6 @@ docker-compose -f docker-compose.local.yml up -d --build
 
 ---
 
-**Status**: ✅ Production Ready  
-**API Readiness**: 100%  
-**Overall Readiness**: 95%
+**Status**: Historical claim only — current deployment unverified  
+**API Readiness**: Not yet independently verified on `wise2`  
+**Overall Readiness**: Pending single-server audit
