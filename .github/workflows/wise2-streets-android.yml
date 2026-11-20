@@ -3,6 +3,8 @@ on:
   push:
     branches: [feature/wise2-streets-android-prototype]
     paths: ['WISE2-GAME-ARSENAL/wise2-streets/**', '.github/workflows/wise2-streets-android.yml']
+  pull_request:
+    paths: ['WISE2-GAME-ARSENAL/wise2-streets/**', '.github/workflows/wise2-streets-android.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -37,6 +39,9 @@ jobs:
       - name: Import project and validate scripts
         working-directory: WISE2-GAME-ARSENAL/wise2-streets
         run: godot --headless --editor --path . --import --quit
+      - name: Headless gameplay smoke test
+        working-directory: WISE2-GAME-ARSENAL/wise2-streets
+        run: godot --headless --path . --quit-after 10
       - name: Export debug APK
         working-directory: WISE2-GAME-ARSENAL/wise2-streets
         env:
