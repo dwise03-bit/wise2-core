@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './mathis.module.css';
 
 const VIDEO = '/mathis/entrance.mp4';
-const GLOBE = '/living-grid/globe/';
+// Set NEXT_PUBLIC_MATHIS_GLOBE_URL only after the independently hosted globe is verified.
+const GLOBE = process.env.NEXT_PUBLIC_MATHIS_GLOBE_URL || '';
 
 export function MathisEntrance() {
   const [entered, setEntered] = useState(false);
@@ -66,7 +67,7 @@ export function MathisEntrance() {
             <h1>POWERING WHAT'S NEXT.</h1>
             <p>Explore the world of Mathis Electric.</p>
           </div>
-          {!globeFailed && (
+          {GLOBE && !globeFailed && (
             <iframe
               title="Interactive Living Grid globe"
               src={GLOBE}
@@ -75,13 +76,14 @@ export function MathisEntrance() {
               onLoad={() => setGlobeReady(true)}
             />
           )}
-          {!globeReady && !globeFailed && <p className={styles.loading}>Loading the Living Grid…</p>}
+          {GLOBE && !globeReady && !globeFailed && <p className={styles.loading}>Loading the Living Grid…</p>}
+          {!GLOBE && <p className={styles.notice}>Interactive globe integration is being prepared. Explore our services below.</p>}
           <div className={styles.gridActions}>
-            <a href={GLOBE} target="_blank" rel="noopener noreferrer">Open full-screen globe</a>
-            <button onClick={() => { setEntered(false); setGlobeReady(false); videoRef.current?.load(); }}>Replay entrance</button>
+            {GLOBE && <a href={GLOBE} target="_blank" rel="noopener noreferrer">Open full-screen globe</a>}
+            <button onClick={() => { setEntered(false); setGlobeReady(false); }}>Replay entrance</button>
             <button onClick={() => setGlobeFailed(true)}>Use standard website</button>
           </div>
-          {globeFailed && <p className={styles.notice}>The interactive globe is not enabled yet. You can still explore our services below.</p>}
+          {GLOBE && globeFailed && <p className={styles.notice}>The interactive globe is not enabled yet. You can still explore our services below.</p>}
         </section>
       )}
 
