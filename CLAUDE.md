@@ -1,3 +1,5 @@
+> **CURRENT OPERATIONS OVERRIDE — 2026-11-20:** Only Ubuntu `wise2` is an active WISE² production server. The old VPS address and disk paths below are **historical and must not be used as deployment targets**. MacBook is for iOS/Apple-specific development. Read `docs/operations/CANONICAL_SINGLE_SERVER.md` first; verify live service health before claiming deployment success. Local Ollama on `wise2` is preferred when healthy; paid models are escalation-only. Do not delete historic machines, credentials, DNS or volumes without dependency review and explicit approval.
+
 # CLAUDE.md - WISE² Genesis — Master System Prompt
 
 **Project**: WISE² Genesis - AI-Native Business Operating System  
@@ -211,7 +213,7 @@ Base System Prompt
 - **Database**: `packages/db/` (Prisma schemas)
 
 ### Deployment
-- **Server**: 173.208.147.165 as user `dwise`
+- **Current production server**: Ubuntu hostname `wise2` (verify its current address and SSH identity before use). Historical VPS `173.208.147.165` is retired/inaccessible; never deploy there.
 - **Container Orchestration**: docker-compose.prod.yml
 - **Auto-Deploy**: GitHub Actions on push to main
 - **Deployment Handoff**: `DEPLOYMENT_HANDOFF.md`
