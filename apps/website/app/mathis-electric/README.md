@@ -6,22 +6,30 @@ Route: `/mathis-electric` in the WISE² Next.js website.
 Place the approved optimized entrance video at:
 `apps/website/public/mathis/entrance.mp4`
 
-The video is intentionally **not** checked in yet. Do not deploy this route as finished until the binary is uploaded to the correct location. The approved source remains in the ChatGPT conversation and is not available to the GitHub text-file connector.
+Use `scripts/mathis-stage-entrance.sh`. The video is gitignored; stage it on the server.
 
-## Globe
-The globe is **not** embedded until `NEXT_PUBLIC_MATHIS_GLOBE_URL` is configured. Set this to a verified same-origin or explicitly trusted URL after the independently hosted God's Eye service is installed, secured, and tested. If unset, visitors see the functional standard website rather than a broken iframe.
+## Globe (approved proxy strategy)
+- Isolated God's Eye View service.
+- Same-origin reverse proxy at `/living-grid/globe/`.
+- Nginx snippet: `infrastructure/nginx/mathis/living-grid-globe.snippet.conf`
+- Production iframe URL (after verification):  
+  `https://mathis.wise2.net/living-grid/globe/?embed=1`
+- GEV must run with `GEV_EMBED_FRAME_ANCESTORS=https://mathis.wise2.net`
+- Set `NEXT_PUBLIC_MATHIS_GLOBE_URL` only after the globe actually renders and responds.
+
+If the env var is unset, visitors see the standard website (no broken iframe).
 
 ## Deployment checklist
-- [ ] Upload optimized entrance.mp4 to public/mathis/entrance.mp4
-- [ ] Verify video returns HTTP 200 and Content-Type video/mp4
-- [ ] Confirm mobile autoplay, skip, mute, and replay
-- [ ] Install God's Eye separately with Node version supported by upstream
-- [ ] Review source/data licenses and tile provider terms for commercial usage
-- [ ] Verify globe origin, frame policy, and secure hosting
-- [ ] Configure NEXT_PUBLIC_MATHIS_GLOBE_URL
-- [ ] Verify actual globe render, not merely iframe onLoad
-- [ ] Run pnpm --dir apps/website type-check and build
-- [ ] Review brand logo asset and actual customer contact details
-- [ ] Deploy only after approval
+- [ ] Stage entrance.mp4
+- [ ] Verify video HTTP 200 / video/mp4
+- [ ] Confirm mobile autoplay, skip, mute, reduced-motion
+- [ ] Install isolated GEV (Node ≥24.14), strip NC datasets
+- [ ] Apply nginx snippet and set GEV_EMBED_FRAME_ANCESTORS
+- [ ] Confirm Cesium assets and /api routes work under the prefix
+- [ ] Verify actual globe render + interaction (not just onLoad)
+- [ ] Set NEXT_PUBLIC_MATHIS_GLOBE_URL
+- [ ] Desktop / mobile / a11y / regression tests
+- [ ] Commercial licensing audit complete
+- [ ] Deploy only after explicit approval
 
 The route does not change the WISE² root homepage or production routing.

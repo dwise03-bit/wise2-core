@@ -47,3 +47,23 @@ Status: integration design branch, no deployment or source overwrite.
 - Current reverse-proxy routes or hosting setup
 - Existing SSH/Tailscale access from this execution environment
 - Commercial rights to all runtime map tiles/data
+
+## Selected URL-prefix strategy (approved, not yet deployed)
+
+- Prefix: `/living-grid/globe/`
+- Isolated GEV service on Node ≥24.14, default preview port 4173.
+- Nginx snippet: `infrastructure/nginx/mathis/living-grid-globe.snippet.conf`
+- Embed URL for Mathis: `https://mathis.wise2.net/living-grid/globe/?embed=1`
+- Required GEV env: `GEV_EMBED_FRAME_ANCESTORS=https://mathis.wise2.net`
+- Set on website only after verified: `NEXT_PUBLIC_MATHIS_GLOBE_URL=https://mathis.wise2.net/living-grid/globe/?embed=1`
+
+Cesium assets and `/api/*` routes are expected to resolve under the same prefix when the proxy is correctly configured (Vite preview + prefix strip or matching `base`).
+
+## Commercial licensing audit (summary)
+
+- Source code: MIT (Bilawal Sidhu, 2026). Retain notices.
+- Bundled data: TeleGeography submarine cables = CC BY-NC-SA 3.0 — **must be removed** for commercial use.
+- Event imagery (Vantor/GeoPera): CC BY-NC — exclude.
+- Live providers (OpenSky, etc.): separate terms; many non-commercial or attribution-only. Defer aircraft/CCTV/military layers.
+- Map tiles (Esri keyless, Cesium ion, Google): audit commercial rights and attribution before enabling.
+- Do not ship NC datasets in the commercial Mathis deployment.
