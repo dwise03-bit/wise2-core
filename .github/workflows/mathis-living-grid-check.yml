@@ -1,0 +1,31 @@
+name: Mathis Living Grid checks
+
+on:
+  push:
+    branches:
+      - integration/gods-eye-living-grid
+    paths:
+      - 'apps/website/app/mathis-electric/**'
+      - '.github/workflows/mathis-living-grid-check.yml'
+  pull_request:
+    paths:
+      - 'apps/website/app/mathis-electric/**'
+
+permissions:
+  contents: read
+
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify isolated route and no missing runtime configuration
+        shell: bash
+        run: |
+          test -f apps/website/app/mathis-electric/page.tsx
+          test -f apps/website/app/mathis-electric/MathisEntrance.tsx
+          test -f apps/website/app/mathis-electric/mathis.module.css
+          grep -q 'NEXT_PUBLIC_MATHIS_GLOBE_URL' apps/website/app/mathis-electric/MathisEntrance.tsx
+          if test ! -s apps/website/public/mathis/entrance.mp4; then
+            echo "::warning::Approved entrance video has not been uploaded to public/mathis/entrance.mp4"
+          fi
