@@ -1,0 +1,52 @@
+name: WISE2 Pocket Node USB Recovery
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "audit (read-only) or transfer (requires verified USB mount path)"
+        type: choice
+        options: [audit, transfer]
+        default: audit
+        required: true
+      usb_mount:
+        description: "Exact verified USB mountpoint on Pocket Node 5; required for transfer"
+        type: string
+        required: false
+permissions:
+  contents: read
+concurrency:
+  group: wise2-pocketnode-usb-recovery
+  cancel-in-progress: false
+jobs:
+  pocketnode-usb:
+    runs-on: [self-hosted, linux, x64, wise2-maintenance]
+    timeout-minutes: 15
+    steps:
+      - name: Validate input
+        shell: bash
+        env:
+          OP: ${{ inputs.operation }}
+          MOUNT: ${{ inputs.usb_mount }}
+        run: |
+          set -euo pipefail
+          [[ "$OP" == audit || "$OP" == transfer ]]
+          if [[ "$OP" == transfer ]]; then
+            [[ "$MOUNT" == /* && "$MOUNT" != "/" ]] || { echo "Specify verified absolute USB mount path"; exit 1; }
+          fi
+      - name: Check Pocket Node connectivity and USB inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes -o ConnectTimeout=12 -o StrictHostKeyChecking=yes dwise@100.111.62.95 \
+            'hostname; tailscale status; lsblk -e7 -o NAME,PATH,SIZE,TRAN,RM,FSTYPE,LABEL,MOUNTPOINTS,MODEL; findmnt -rn -o SOURCE,TARGET,FSTYPE'
+      - name: Transfer recovery files and verify hashes
+        if: ${{ inputs.operation == 'transfer' }}
+        shell: bash
+        env:
+          MOUNT: ${{ inputs.usb_mount }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes -o ConnectTimeout=12 -o StrictHostKeyChecking=yes dwise@100.111.62.95 \
+            'bash -s --' "$MOUNT" < ops/recovery/copy-recovery-to-mounted-usb.sh
+      - name: Report
+        run: echo "Audit completed; transfer performed only when explicitly selected and successful."
