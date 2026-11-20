@@ -1,0 +1,29 @@
+name: WISE2 Server Connectivity Audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-maintenance
+  cancel-in-progress: false
+jobs:
+  connectivity:
+    runs-on: [self-hosted, linux, x64, wise2-maintenance]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout trusted repository
+        uses: actions/checkout@v4
+      - name: Read-only server and Pocket Node checks
+        shell: bash
+        run: |
+          set -u
+          echo "Host: $(hostname)"
+          date -Is
+          systemctl is-enabled tailscaled ssh || true
+          systemctl is-active tailscaled ssh || true
+          tailscale version || true
+          tailscale status || true
+          tailscale ping --c 2 100.111.62.95 || true
+          timeout 5 bash -c 'echo >/dev/tcp/100.111.62.95/22' && echo "Pocket Node SSH reachable" || echo "Pocket Node SSH not reachable"
+          bash -n ops/recovery/enable-persistent-access.sh
+          bash -n ops/recovery/pocket-node5-usb-audit.sh
