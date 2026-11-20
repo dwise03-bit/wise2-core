@@ -22,6 +22,7 @@ jobs:
     runs-on: [self-hosted, linux, x64, wise2-maintenance]
     timeout-minutes: 15
     steps:
+      - uses: actions/checkout@v4
       - name: Validate input
         shell: bash
         env:
