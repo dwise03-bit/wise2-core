@@ -1,0 +1,106 @@
+{
+  "version": "0.1.0",
+  "wake_phrase": "I'm really like that",
+  "arm_phrase": "My bots is on go",
+  "confirmation_phrase": "Full push",
+  "safe_mode": true,
+  "commands": [
+    {
+      "phrase": "My bots is on go",
+      "intent": "mission.activate",
+      "action": "Arm mission orchestration, report available agents and pending tasks",
+      "approval": "none"
+    },
+    {
+      "phrase": "Cook it up",
+      "intent": "website.recipe",
+      "action": "Open WISE² × D's Sauce website recipe and visual spec",
+      "approval": "none"
+    },
+    {
+      "phrase": "Full push",
+      "intent": "pipeline.advance",
+      "action": "Run audit, build/test pipeline; production deploy still requires explicit authorization and passing gates",
+      "approval": "gated"
+    },
+    {
+      "phrase": "What's blocking?",
+      "intent": "blockages.report",
+      "action": "Open Blockage Monitor, summarize critical issues and owners",
+      "approval": "none"
+    },
+    {
+      "phrase": "Clear the block",
+      "intent": "blockages.resolve",
+      "action": "Run approved remediation with tests; close only after verification",
+      "approval": "gated"
+    },
+    {
+      "phrase": "Drop the beat",
+      "intent": "soundlab.open",
+      "action": "Open Sound Lab and music project queue",
+      "approval": "none"
+    },
+    {
+      "phrase": "Route that to Sound Lab",
+      "intent": "soundlab.ingest",
+      "action": "Queue already-authorized audio asset for validation and approval",
+      "approval": "gated"
+    },
+    {
+      "phrase": "Lights, camera, action",
+      "intent": "wisevisions.open",
+      "action": "Launch WiseVisions storyboard/video workflow",
+      "approval": "none"
+    },
+    {
+      "phrase": "Dog and pony",
+      "intent": "show.preflight",
+      "action": "Show run of show, routes and preflight readiness",
+      "approval": "none"
+    },
+    {
+      "phrase": "Pocket Node on deck",
+      "intent": "pocketnode.status",
+      "action": "Check Tailscale reachability and shortcuts",
+      "approval": "none"
+    },
+    {
+      "phrase": "Sauce Vault",
+      "intent": "vault.open",
+      "action": "Open approved asset archive",
+      "approval": "none"
+    },
+    {
+      "phrase": "Hold up",
+      "intent": "mission.pause",
+      "action": "Pause queued noncritical automations when supported",
+      "approval": "none"
+    },
+    {
+      "phrase": "Status check",
+      "intent": "mission.status",
+      "action": "Read active agents, blockers and verified deployments",
+      "approval": "none"
+    }
+  ],
+  "security": {
+    "never_interpret_as": "blanket permission for financial trades, public publishing, deletion, payments, access control changes, or production deployment",
+    "require_confirm_for": [
+      "production deploy",
+      "publish",
+      "payments",
+      "delete",
+      "trade",
+      "external messages"
+    ],
+    "voice_requirements": [
+      "explicit mic opt-in",
+      "visible transcription",
+      "stop/mute",
+      "typed fallback",
+      "authorized speaker"
+    ],
+    "routing": "Hermes -> Living Hive -> approval gate -> action -> independent verification -> Sauce Vault"
+  }
+}
