@@ -443,7 +443,6 @@ export function BrandEcosystemHomepage() {
               Products, services, and field systems stay connected through one operating layer—so every signal can become a decision, an action, or a better customer experience.
             </p>
           </div>
-        </section>
 
         {/* Enhanced Ecosystem Grid */}
         <EnhancedEcosystemGrid />
@@ -456,11 +455,8 @@ export function BrandEcosystemHomepage() {
 
         {/* Product Connections */}
         <ProductConnections />
-
-      <section
-        id="system"
-        className="wise-section mx-auto max-w-[1320px] px-6 py-28 lg:px-10 lg:py-36"
-      >
+        </div>
+      </section>
 
       <section
         id="system"
