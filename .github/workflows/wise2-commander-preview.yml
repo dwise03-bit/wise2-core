@@ -1,0 +1,75 @@
+name: WISE2 Commander - Safe Preview Deployment
+on:
+  push:
+    paths:
+      - .github/workflows/wise2-commander-preview.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-commander-preview
+  cancel-in-progress: false
+jobs:
+  deploy-preview:
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - name: Verify authorized production host
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = "wise2" || { echo "::error::Not on authorized wise2 server"; exit 1; }
+          command -v node
+          command -v npm
+          node -e 'if(+process.versions.node.split(".")[0]<20)process.exit(1)'
+          echo "Host and Node preflight OK"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build Commander standalone preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd apps/command-center
+          npm install --no-audit --no-fund --ignore-scripts
+          npx next build
+          test -f .next/BUILD_ID
+          echo "Commander build verified"
+      - name: Check for available isolated preview port
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import socket
+          s=socket.socket()
+          try:
+              s.bind(('127.0.0.1', 3098))
+          except OSError:
+              raise SystemExit('Preview port 3098 occupied; refusing to overwrite existing service')
+          finally:
+              s.close()
+          print('Port 3098 available')
+          PY
+      - name: Start isolated localhost preview and test HTTP
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd apps/command-center
+          mkdir -p "$HOME/.local/state/wise2-commander"
+          log="$HOME/.local/state/wise2-commander/preview.log"
+          nohup env HOSTNAME=127.0.0.1 PORT=3098 ./node_modules/.bin/next start -p 3098 -H 127.0.0.1 > "$log" 2>&1 < /dev/null &
+          pid=$!
+          echo "$pid" > "$HOME/.local/state/wise2-commander/preview.pid"
+          ok=0
+          for i in $(seq 1 30); do
+            if curl --silent --fail --max-time 3 http://127.0.0.1:3098/commander -o /tmp/wise2-commander-preview.html; then ok=1; break; fi
+            sleep 2
+          done
+          if [ "$ok" != 1 ]; then
+            tail -n 60 "$log"
+            echo "::error::Preview HTTP check failed"
+            exit 1
+          fi
+          grep -qi 'Mission Control' /tmp/wise2-commander-preview.html || { echo "::error::Unexpected page content"; exit 1; }
+          echo "PASS: Commander preview HTTP /commander served on localhost:3098"
+          echo "This is not publicly exposed; reverse proxy and authentication require separate approval"
