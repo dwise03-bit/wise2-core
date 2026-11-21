@@ -13,6 +13,7 @@ export function MathisEntrance() {
   const [videoFailed, setVideoFailed] = useState(false);
   const [globeFailed, setGlobeFailed] = useState(false);
   const [globeReady, setGlobeReady] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -30,9 +31,12 @@ export function MathisEntrance() {
     <main className={styles.shell}>
       <header className={styles.header}>
         <a href="/mathis-electric" className={styles.brand} aria-label="Mathis Electric LLC home"><img src="/mathis/logo.png" alt="Mathis Electric LLC" /></a>
+        <nav className={styles.navigation} aria-label="Primary navigation"><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a><a href="#volt-deck">VOLT DECK</a></nav>
+        <button type="button" className={styles.menuToggle} onClick={() => setMenuOpen(v => !v)} aria-expanded={menuOpen} aria-controls="mathis-mobile-nav">Menu</button>
         <a href="#contact" className={styles.headerLink}>Request an estimate</a>
       </header>
 
+      {menuOpen && <nav id="mathis-mobile-nav" className={styles.mobileNav} aria-label="Mobile navigation"><a onClick={() => setMenuOpen(false)} href="#services">Services</a><a onClick={() => setMenuOpen(false)} href="#about">About</a><a onClick={() => setMenuOpen(false)} href="#contact">Contact</a><a onClick={() => setMenuOpen(false)} href="#volt-deck">VOLT DECK</a></nav>}
       {!entered ? (
         <section className={styles.entrance} aria-label="Mathis Electric cinematic entrance">
           <video
@@ -96,10 +100,12 @@ export function MathisEntrance() {
           <article><h3>Our Work</h3><p>Project gallery and verified case studies coming soon.</p></article>
         </div>
       </section>
+      <section className={styles.about} id="about"><p>OUR COMMITMENT</p><h2>Built on Service. Powered by Purpose.</h2><p>Mathis Electric LLC brings a service-first approach to electrical projects. Get in touch to discuss the scope, requirements, and next steps for your project.</p></section>
+      <section className={styles.volt} id="volt-deck"><p>THE SOUND OF MATHIS ELECTRIC</p><h2>VOLT DECK</h2><p>The approved humanized soundtrack and four player faceplates are being prepared for verified production delivery. Playback will be enabled only when the approved audio assets are hosted and tested.</p><div className={styles.trackGrid} aria-label="Approved soundtrack catalog">{["High Voltage","After Hours","Power Grid","Never Lose Power","Powered by Purpose"].map((track, i) => <div className={styles.track} key={track}><span>{String(i + 1).padStart(2, "0")}</span><strong>{track}</strong><span>Master approved · Playback pending</span></div>)}</div><p className={styles.missingTrack}>Soulful Current: final humanized master pending.</p></section>
       <section className={styles.contact} id="contact">
         <p>LET'S CONNECT</p>
         <h2>Build with purpose.</h2>
-        <p>Contact information and estimate form will be connected after business details are verified.</p>
+        <p>For an estimate, contact Mathis Electric through its verified business channels. Online submission will be enabled after the secure destination and business details are confirmed.</p>
       </section>
     </main>
   );
