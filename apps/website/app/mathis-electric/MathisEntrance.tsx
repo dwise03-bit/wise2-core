@@ -85,7 +85,7 @@ export function MathisEntrance() {
           {!GLOBE && <p className={styles.notice}>Interactive globe integration is being prepared. Explore our services below.</p>}
           <div className={styles.gridActions}>
             {GLOBE && <a href={GLOBE} target="_blank" rel="noopener noreferrer">Open full-screen globe</a>}
-            <button onClick={() => { setEntered(false); setGlobeReady(false); requestAnimationFrame(() => { if (videoRef.current) { videoRef.current.currentTime = 0; void videoRef.current.play().catch(() => setVideoFailed(true)); } }); }}>Replay entrance</button>
+            <button onClick={() => { setVideoFailed(false); setGlobeReady(false); setEntered(false); }}>Replay entrance</button>
             <button onClick={() => setGlobeFailed(true)}>Use standard website</button>
           </div>
           {GLOBE && globeFailed && <p className={styles.notice}>The interactive globe is not enabled yet. You can still explore our services below.</p>}
