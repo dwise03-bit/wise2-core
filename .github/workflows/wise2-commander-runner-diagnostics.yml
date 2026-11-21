@@ -1,0 +1,43 @@
+name: WISE2 Commander - Runner Diagnostics
+on:
+  push:
+    paths:
+      - .github/workflows/wise2-commander-runner-diagnostics.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify GitHub Actions control plane
+        run: |
+          echo "GitHub-hosted preflight OK"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Commit: $GITHUB_SHA"
+          echo "Next: self-hosted job must be assigned to the wise2 runner"
+  runner:
+    needs: preflight
+    runs-on: self-hosted
+    timeout-minutes: 5
+    steps:
+      - name: Check runner host and local MP3 (no changes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Runner hostname: $(hostname)"
+          echo "Runner OS: $(uname -s)"
+          echo "Runner architecture: $(uname -m)"
+          if [ "$(hostname -s)" != "wise2" ]; then
+            echo "::error::Self-hosted runner is not on authorized wise2 host"
+            exit 1
+          fi
+          file="$HOME/wise2-sound-labs/bots-on-go-rage/bots-on-go-boogie-v1.mp3"
+          if test -s "$file"; then
+            echo "MP3 found"; sha256sum "$file"
+          else
+            echo "::warning::MP3 not found under runner HOME=$HOME"
+            echo "Runner account may differ from dwise; check /home/dwise/wise2-sound-labs"
+          fi
+          echo "WISE2 runner connected and verified"
