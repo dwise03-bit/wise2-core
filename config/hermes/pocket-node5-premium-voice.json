@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "device": "wise2-pocketnode5",
+  "voice": {
+    "primary": {
+      "engine": "kokoro-82m",
+      "voice": "am_michael",
+      "use_for": "natural full responses"
+    },
+    "fast_path": {
+      "engine": "piper",
+      "use_for": "short latency-sensitive responses"
+    },
+    "fallback": {
+      "engine": "piper",
+      "use_for": "kokoro unavailable or timeout"
+    },
+    "routing": {
+      "short_response_max_chars": 90,
+      "prefer_fast_path_under_load": true
+    }
+  },
+  "audio": {
+    "preferred_output": "JBL Clip 4 Bluetooth",
+    "input": "existing always-on microphone",
+    "verify_device_at_runtime": true
+  },
+  "speech": {
+    "transcription": "existing Whisper stack",
+    "wake_phrase": "I'm really like that",
+    "arm_phrase": "My bots is on go"
+  },
+  "assistant": {
+    "backend": "Hermes",
+    "command_map": "config/hermes/wise2-voice-command-map.v1.json",
+    "require_explicit_confirmation_for": [
+      "deployment",
+      "deletion",
+      "payments",
+      "trades",
+      "public publishing"
+    ]
+  },
+  "status": "configuration specification only; not deployed or verified",
+  "checks": [
+    "Tailscale SSH connectivity",
+    "Kokoro installed and voice am_michael present",
+    "Piper fallback present",
+    "microphone captured",
+    "Bluetooth JBL Clip 4 connected",
+    "end-to-end wake phrase and Hermes reply",
+    "latency and volume test"
+  ]
+}
