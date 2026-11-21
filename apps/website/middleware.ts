@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isBlackhailHost, normalizeHost } from '@/lib/site-domains';
 
 const BLACKHAIL_PREFIX = '/sencere/blakkhail';
+const MATHIS_HOST = 'mathis.wise2.net';
+const MATHIS_ROUTE = '/mathis-electric';
 const SENCERE_PREFIX = '/sencere';
 const WISE2_HOSTS = new Set(['wise2.net', 'www.wise2.net']);
 const PLATFORM_PATHS = ['/email'];
@@ -20,6 +22,20 @@ function withBlackhailBrand(request: NextRequest): Headers {
 export function middleware(request: NextRequest) {
   const host = normalizeHost(request.headers.get('host'));
   const { pathname } = request.nextUrl;
+
+  // Isolate the Mathis client hostname from WISE² platform and other client routes.
+  // Rewrite the root without changing the public URL; static assets remain available.
+  if (host === MATHIS_HOST) {
+    if (pathname === '/' || pathname === '') {
+      const url = request.nextUrl.clone();
+      url.pathname = MATHIS_ROUTE;
+      return NextResponse.rewrite(url);
+    }
+    if (pathname === MATHIS_ROUTE || pathname.startsWith(`${MATHIS_ROUTE}/`) || pathname === '/favicon.ico' || pathname.startsWith('/mathis/') || pathname.startsWith('/_next/')) {
+      return NextResponse.next();
+    }
+    return new NextResponse('Not Found', { status: 404 });
+  }
 
   // WISE² control pages must never be served through a client hostname.
   if (isBlackhailHost(host) && matchesPlatformPath(pathname)) {
