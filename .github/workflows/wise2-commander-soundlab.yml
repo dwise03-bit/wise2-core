@@ -1,0 +1,57 @@
+name: WISE2 Commander - Sound Labs verification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-commander-soundlab
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - name: Verify runner identity and Sound Labs asset (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Host: $(hostname)"
+          if [ "$(hostname -s)" != "wise2" ]; then
+            echo "::error::Runner is not on the authorized wise2 host"
+            exit 1
+          fi
+          P="$HOME/wise2-sound-labs/bots-on-go-rage/bots-on-go-boogie-v1.mp3"
+          A="$HOME/wise2-staging/dashboard/public/soundlab/bots-on-go-boogie-v1.mp3"
+          test -s "$P" || { echo "::error::Original MP3 missing"; exit 1; }
+          test -s "$A" || { echo "::error::Staging asset missing"; exit 1; }
+          sha256sum "$P" "$A"
+          cmp -s "$P" "$A" || { echo "::error::Asset differs from original"; exit 1; }
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 "$A"
+          echo "Local MP3 verified"
+      - name: Probe local HTTP endpoints and verify audio bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          export AUDIO_PATH="$HOME/wise2-staging/dashboard/public/soundlab/bots-on-go-boogie-v1.mp3"
+          python3 - <<'PY'
+          import hashlib, os, urllib.request
+          path='/soundlab/bots-on-go-boogie-v1.mp3'
+          expected=hashlib.sha256(open(os.environ['AUDIO_PATH'],'rb').read()).hexdigest()
+          found=False
+          for port in (3000,3001,3002,8080):
+              url=f'http://127.0.0.1:{port}{path}'
+              try:
+                  with urllib.request.urlopen(url,timeout=4) as r:
+                      body=r.read(5_000_000)
+                      typ=r.headers.get('Content-Type','')
+                      status=r.status
+                  digest=hashlib.sha256(body).hexdigest()
+                  match=(status==200 and digest==expected)
+                  print(f'{url}: HTTP {status}; type={typ}; sha256_match={match}')
+                  found|=match
+              except Exception as e:
+                  print(f'{url}: unavailable ({type(e).__name__})')
+          if not found:
+              raise SystemExit('No local HTTP endpoint served the verified MP3; no changes made')
+          print('PASS: At least one local endpoint served exact MP3 bytes')
+          PY
