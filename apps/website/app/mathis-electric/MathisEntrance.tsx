@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import styles from './mathis.module.css';
+import { VoltDeck } from './VoltDeck';
 
 const VIDEO = '/mathis/entrance.mp4';
 // Set NEXT_PUBLIC_MATHIS_GLOBE_URL only after the independently hosted globe is verified.
@@ -101,7 +102,7 @@ export function MathisEntrance() {
         </div>
       </section>
       <section className={styles.about} id="about"><p>OUR COMMITMENT</p><h2>Built on Service. Powered by Purpose.</h2><p>Mathis Electric LLC brings a service-first approach to electrical projects. Get in touch to discuss the scope, requirements, and next steps for your project.</p></section>
-      <section className={styles.volt} id="volt-deck"><p>THE SOUND OF MATHIS ELECTRIC</p><h2>VOLT DECK</h2><p>The approved humanized soundtrack and four player faceplates are being prepared for verified production delivery. Playback will be enabled only when the approved audio assets are hosted and tested.</p><div className={styles.trackGrid} aria-label="Approved soundtrack catalog">{["High Voltage","After Hours","Power Grid","Never Lose Power","Powered by Purpose"].map((track, i) => <div className={styles.track} key={track}><span>{String(i + 1).padStart(2, "0")}</span><strong>{track}</strong><span>Master approved · Playback pending</span></div>)}</div><p className={styles.missingTrack}>Soulful Current: final humanized master pending.</p></section>
+      <VoltDeck />
       <section className={styles.contact} id="contact">
         <p>LET'S CONNECT</p>
         <h2>Build with purpose.</h2>
