@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import './c5.css';
 
 const repo = 'https://github.com/dwise03-bit/wise2-core';
 const workflows = [
@@ -26,7 +27,7 @@ export default function CommanderPage() {
     tick(); const t = setInterval(tick, 1000); return () => clearInterval(t);
   }, []);
   const visible = workflows.filter(w => filter === 'ALL' || w.kind === filter);
-  return <main style={{ minHeight:'100vh',background:'#070d17',color:'#edf4ff',fontFamily:'Inter,ui-sans-serif,system-ui,sans-serif',padding:'0 0 65px' }}>
+  return <main className="cmd-c5" style={{ minHeight:'100vh',background:'#070d17',color:'#edf4ff',fontFamily:'Inter,ui-sans-serif,system-ui,sans-serif',padding:'0 0 65px' }}>
     <style>{`
       .cmd-wrap{max-width:1320px;margin:auto;padding:0 30px}
       .cmd-grid{display:grid;grid-template-columns:1.45fr 1fr;gap:20px}
@@ -54,6 +55,7 @@ export default function CommanderPage() {
         <div style={{color:'#9ab4d1',fontSize:12,textAlign:'right'}}><div style={{marginBottom:7}}>LOCAL CONSOLE TIME</div><strong style={{fontSize:14,color:'#e2f4ff'}}>{now || 'Loading...'}</strong></div>
       </div>
       <div style={{padding:'12px 17px',border:'1px solid #665332',background:'#241e15',borderRadius:11,fontSize:12,color:'#f1d6a0',marginBottom:20}}>● LIVE STATUS NOT CONNECTED — This interface does not invent server health. Workflow execution opens authenticated GitHub Actions. No remote shell is exposed.</div>
+      <div className="cmd-c5-banner"><div><div className="cmd-c5-title">WISE² COMMANDER</div><div className="cmd-c5-sub">C5 EDITION · DEPLOY / BUILD / TEST / OPERATE</div></div></div>
       <section className="cmd-stats" style={{marginBottom:20}}>
         {[
           ['01','TARGET HOST','wise2','Ubuntu server'],
@@ -78,7 +80,7 @@ export default function CommanderPage() {
         <section style={{...box,padding:23}}><h2 style={{fontSize:19,margin:'0 0 6px'}}>Commander Activity Notes</h2><p style={{color:'#839ab6',fontSize:12,margin:'0 0 18px'}}>Session-only notes. No commands are executed or transmitted.</p><form onSubmit={e=>{e.preventDefault();if(note.trim()){setNotes([new Date().toLocaleTimeString()+' — '+note.trim(),...notes]);setNote('')}}} style={{display:'flex',gap:8}}><input className="cmd-input" value={note} onChange={e=>setNote(e.target.value)} placeholder="Record a deployment note or finding..." aria-label="Activity note"/><button className="cmd-button" type="submit">ADD</button></form><div style={{marginTop:15}}>{notes.length?notes.map((n,i)=><div key={i} style={{borderBottom:'1px solid #26384c',padding:'10px 0',fontSize:12,color:'#b4cce5'}}>{n}</div>):<div style={{fontSize:12,color:'#748ba7',padding:'13px 0'}}>No activity notes yet.</div>}</div></section>
         <section style={{...box,padding:23}}><h2 style={{fontSize:19,margin:'0 0 8px'}}>Safety & Access</h2><p style={{fontSize:13,lineHeight:1.8,color:'#9bb2cc'}}>Runner execution is handled by GitHub Actions. This dashboard contains no SSH credentials, API tokens, public shell, or unauthenticated command endpoint.</p><a className="cmd-button" href={repo+'/settings/actions/runners'} target="_blank" rel="noreferrer">MANAGE RUNNERS ↗</a><div style={{marginTop:20,fontSize:11,color:'#748ba7'}}>Before production use: require authenticated dashboard access and enforce GitHub environment approvals for deployment operations.</div></section>
       </div>
-      <footer style={{padding:'35px 0 0',fontSize:11,color:'#5f7896',display:'flex',justifyContent:'space-between',gap:10,flexWrap:'wrap'}}><span>WISE² COMMANDER / CONTROL PLANE V0.1</span><span>NO CROWNS. ONE SYSTEM.</span></footer>
+      <footer style={{padding:'35px 0 0',fontSize:11,color:'#5f7896',display:'flex',justifyContent:'space-between',gap:10,flexWrap:'wrap'}}><span>WISE² COMMANDER / CONTROL PLANE V0.2 · C5 EDITION</span><span>NO CROWNS. ONE SYSTEM.</span></footer>
     </div>
   </main>;
 }
