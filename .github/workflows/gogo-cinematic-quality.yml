@@ -1,0 +1,40 @@
+name: Go-Go cinematic release quality gate
+on:
+  pull_request:
+    paths:
+      - 'sites/gogo/**'
+      - '.github/workflows/gogo-cinematic-quality.yml'
+  workflow_dispatch:
+jobs:
+  asset-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate required site assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          root=sites/gogo
+          for file in index.html assets/gogo-bucket.jpg assets/reference.mp4 assets/frame-3.jpg assets/frame-7.jpg assets/frame-11.jpg assets/frame-15.jpg assets/frame-19.jpg quality/audit.json; do
+            if [ ! -s "$root/$file" ]; then
+              echo "::error file=$root/$file::Required cinematic asset missing or empty"
+              exit 1
+            fi
+          done
+          file "$root/assets/reference.mp4" | grep -Eiq 'MP4|ISO Media' || { echo '::error::Invalid video'; exit 1; }
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root=Path('sites/gogo')
+          html=(root/'index.html').read_text()
+          missing=[]
+          for ref in set(re.findall(r'(?:src|poster|href)=[\x22\x27]([^\x22\x27]+)',html)):
+              if ref.startswith(('http:','https:','#','mailto:','tel:','data:','javascript:')): continue
+              path=(root/ref.split('?')[0].split('#')[0])
+              if not path.exists(): missing.append(ref)
+          if missing: raise SystemExit('Missing local references: '+', '.join(missing))
+          print('All local references resolve')
+          PY
+      - name: Hold for visual QA
+        run: |
+          echo 'Asset integrity passed. Human reference-matched motion QA, browser QA and authorized deployment remain required.'
