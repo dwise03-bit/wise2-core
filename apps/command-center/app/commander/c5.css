@@ -1,0 +1,19 @@
+/* WISE2 Commander C5 Edition: hardware-inspired styling */
+.cmd-c5{background:radial-gradient(ellipse at 74% 8%,#0a2b4a 0%,transparent 35%),repeating-linear-gradient(125deg,#070d15 0px,#070d15 4px,#0a121e 5px,#070d15 8px)!important;color:#edf6ff}
+.cmd-c5 header{background:linear-gradient(180deg,#202b3b,#070d15 88%)!important;border-bottom:2px solid #1688f6!important;box-shadow:0 3px 22px #007cff55}
+.cmd-c5 h1,.cmd-c5 header [style*="font-weight: 900"]{background:linear-gradient(180deg,#fff 5%,#b3c2d2 42%,#546779 56%,#f0f5fa 78%,#718aa5);background-clip:text;-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 2px 3px #000)}
+.cmd-c5 .cmd-wrap>section>div,.cmd-c5 .cmd-grid>section{border:1px solid #637b94!important;border-top:2px solid #8ea1b5!important;border-bottom:2px solid #008df5!important;border-radius:8px!important;background:linear-gradient(155deg,#253344 0%,#0a111d 20%,#0b1522 78%,#1c2a3a 100%)!important;box-shadow:inset 0 2px 4px #b0c3d126,inset 0 -3px 7px #007bff35,0 4px 15px #0009,0 0 11px #007fff25;position:relative}
+.cmd-c5 .cmd-grid>section:before{content:'';position:absolute;top:9px;right:9px;width:7px;height:7px;border:2px solid #91a5b8;border-radius:50%;box-shadow:inset 0 0 3px black}
+.cmd-c5 .cmd-grid>section:after{content:'';position:absolute;bottom:9px;left:9px;width:7px;height:7px;border:2px solid #91a5b8;border-radius:50%;box-shadow:inset 0 0 3px black}
+.cmd-c5 .cmd-button{border-radius:6px;background:linear-gradient(180deg,#344b62,#0a1726 72%);border:1px solid #8ca4b9;box-shadow:inset 0 1px #ffffff40,0 0 9px #008dff3b;letter-spacing:.04em}
+.cmd-c5 .cmd-button:hover{background:linear-gradient(180deg,#1769b5,#063c76);box-shadow:0 0 20px #008cff88}
+.cmd-c5 .cmd-service{border-color:#2e4b67}
+.cmd-c5 .cmd-grid h2{color:#e7f5ff;text-transform:uppercase;letter-spacing:.045em;text-shadow:0 0 10px #1288ff66}
+.cmd-c5 .cmd-grid>section:first-child{border-top-color:#00aeff!important}
+.cmd-c5 .cmd-stats>div{min-height:125px}
+.cmd-c5 .cmd-stats>div:nth-child(2){box-shadow:inset 0 0 14px #127ffb35,0 0 16px #007bff44}
+.cmd-c5 .cmd-c5-banner{border:1px solid #326d9f;background:linear-gradient(100deg,#101e30,#061222);box-shadow:inset 0 0 28px #006eff33,0 0 22px #007aff1a;padding:20px 24px;margin:0 0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden}
+.cmd-c5 .cmd-c5-banner:after{content:'S3A   ◈   C5   ◈   HERMES';font-size:12px;letter-spacing:.22em;color:#51bfff;text-shadow:0 0 14px #009dff}
+.cmd-c5 .cmd-c5-title{font-size:clamp(18px,3vw,30px);font-weight:950;letter-spacing:.16em;font-style:italic;background:linear-gradient(#fff,#7e94a8,#fff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.cmd-c5 .cmd-c5-sub{font-size:11px;letter-spacing:.2em;color:#56baff;margin-top:5px}
+@media(max-width:650px){.cmd-c5 .cmd-c5-banner{padding:17px}.cmd-c5 .cmd-c5-banner:after{font-size:10px}.cmd-c5 .cmd-stats>div{min-height:112px}}
