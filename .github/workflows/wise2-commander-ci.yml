@@ -23,8 +23,9 @@ jobs:
           node-version: '22'
       - name: Syntax check
         run: node --check tools/wise2-commander/server.mjs
+          node --check tools/wise2-commander/http-gateway.mjs
       - name: Tests
-        run: node --test tools/wise2-commander/test.mjs
+        run: node --test tools/wise2-commander/test.mjs tools/wise2-commander/http-gateway.test.mjs
       - name: MCP initialize and tool discovery
         shell: bash
         run: |
