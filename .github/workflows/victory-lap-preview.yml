@@ -37,8 +37,11 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          pnpm --filter @wise2/website type-check > /tmp/victory-lap-tsc.log 2>&1
-          rc=$?
+          if pnpm --filter @wise2/website type-check > /tmp/victory-lap-tsc.log 2>&1; then
+            rc=0
+          else
+            rc=$?
+          fi
           cat /tmp/victory-lap-tsc.log
           if [ "$rc" -eq 0 ]; then
             echo "PASS: website TypeScript"
