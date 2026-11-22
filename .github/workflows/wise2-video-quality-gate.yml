@@ -1,0 +1,25 @@
+name: WISE2 Video Quality Gate Tests
+on:
+  push:
+    paths:
+      - 'tools/video-quality-gate/**'
+      - '.github/workflows/wise2-video-quality-gate.yml'
+  pull_request:
+    paths:
+      - 'tools/video-quality-gate/**'
+      - '.github/workflows/wise2-video-quality-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  video-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Syntax check
+        run: python3 -m py_compile tools/video-quality-gate/video_gate.py tools/video-quality-gate/test_video_gate.py
+      - name: Real-media integration test
+        run: python3 tools/video-quality-gate/test_video_gate.py
