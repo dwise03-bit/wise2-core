@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/wise2-pocket-hive-deploy.yml
+      - wise2-command-center/**
   workflow_dispatch:
 permissions:
   contents: read
@@ -65,7 +66,14 @@ jobs:
           echo "$!" > "$state/pid"
           ok=0
           for i in $(seq 1 30); do
-            if curl -fsS --max-time 3 http://127.0.0.1:3099/woji/pocket-hive.html -o "$state/page.html"; then ok=1; break; fi
+            for route in /woji/pocket-hive.html /pocket-hive.html; do
+              if curl -fsS --max-time 3 "http://127.0.0.1:3099$route" -o "$state/page.html"; then
+                echo "Dashboard route: $route"
+                ok=1
+                break
+              fi
+            done
+            if test "$ok" = 1; then break; fi
             sleep 2
           done
           if test "$ok" != 1; then tail -n 60 "$state/preview.log"; exit 1; fi
