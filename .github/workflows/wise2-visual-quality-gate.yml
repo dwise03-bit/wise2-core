@@ -1,0 +1,19 @@
+name: WISE2 Visual Quality Gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-asset-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify campaign asset manifest and image references
+        run: python3 scripts/quality/visual_asset_gate.py campaigns/wise-defense-vegas
+      - name: Block release until independent rendered screenshot review is integrated
+        run: |
+          echo "::error::Rendered desktop/mobile reference comparison and approved real imagery are not yet supplied. Production approval blocked."
+          exit 1
