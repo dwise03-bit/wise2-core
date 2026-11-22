@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import styles from './mathis.module.css';
+import { VoltDeck } from './VoltDeck';
 
 const VIDEO = '/mathis/entrance.mp4';
 // Set NEXT_PUBLIC_MATHIS_GLOBE_URL only after the independently hosted globe is verified.
@@ -13,6 +14,7 @@ export function MathisEntrance() {
   const [videoFailed, setVideoFailed] = useState(false);
   const [globeFailed, setGlobeFailed] = useState(false);
   const [globeReady, setGlobeReady] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -29,10 +31,13 @@ export function MathisEntrance() {
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
-        <div className={styles.brand}>MATHIS <span>ELECTRIC</span> LLC</div>
+        <a href="/mathis-electric" className={styles.brand} aria-label="Mathis Electric LLC home"><img src="/mathis/logo.png" alt="Mathis Electric LLC" /></a>
+        <nav className={styles.navigation} aria-label="Primary navigation"><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a><a href="#volt-deck">VOLT DECK</a></nav>
+        <button type="button" className={styles.menuToggle} onClick={() => setMenuOpen(v => !v)} aria-expanded={menuOpen} aria-controls="mathis-mobile-nav">Menu</button>
         <a href="#contact" className={styles.headerLink}>Request an estimate</a>
       </header>
 
+      {menuOpen && <nav id="mathis-mobile-nav" className={styles.mobileNav} aria-label="Mobile navigation"><a onClick={() => setMenuOpen(false)} href="#services">Services</a><a onClick={() => setMenuOpen(false)} href="#about">About</a><a onClick={() => setMenuOpen(false)} href="#contact">Contact</a><a onClick={() => setMenuOpen(false)} href="#volt-deck">VOLT DECK</a></nav>}
       {!entered ? (
         <section className={styles.entrance} aria-label="Mathis Electric cinematic entrance">
           <video
@@ -80,7 +85,7 @@ export function MathisEntrance() {
           {!GLOBE && <p className={styles.notice}>Interactive globe integration is being prepared. Explore our services below.</p>}
           <div className={styles.gridActions}>
             {GLOBE && <a href={GLOBE} target="_blank" rel="noopener noreferrer">Open full-screen globe</a>}
-            <button onClick={() => { setEntered(false); setGlobeReady(false); }}>Replay entrance</button>
+            <button onClick={() => { setVideoFailed(false); setGlobeReady(false); setEntered(false); }}>Replay entrance</button>
             <button onClick={() => setGlobeFailed(true)}>Use standard website</button>
           </div>
           {GLOBE && globeFailed && <p className={styles.notice}>The interactive globe is not enabled yet. You can still explore our services below.</p>}
@@ -96,10 +101,12 @@ export function MathisEntrance() {
           <article><h3>Our Work</h3><p>Project gallery and verified case studies coming soon.</p></article>
         </div>
       </section>
+      <section className={styles.about} id="about"><p>OUR COMMITMENT</p><h2>Built on Service. Powered by Purpose.</h2><p>Mathis Electric LLC brings a service-first approach to electrical projects. Get in touch to discuss the scope, requirements, and next steps for your project.</p></section>
+      <VoltDeck />
       <section className={styles.contact} id="contact">
         <p>LET'S CONNECT</p>
         <h2>Build with purpose.</h2>
-        <p>Contact information and estimate form will be connected after business details are verified.</p>
+        <p>For an estimate, contact Mathis Electric through its verified business channels. Online submission will be enabled after the secure destination and business details are confirmed.</p>
       </section>
     </main>
   );
