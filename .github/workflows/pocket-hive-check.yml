@@ -1,0 +1,23 @@
+name: Pocket Hive checks
+on:
+  pull_request:
+    paths:
+      - 'wise2-command-center/**'
+      - '.github/workflows/pocket-hive-check.yml'
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wise2-command-center
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: wise2-command-center/package-lock.json
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm run build
