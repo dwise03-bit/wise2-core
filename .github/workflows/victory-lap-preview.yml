@@ -51,7 +51,7 @@ jobs:
           fi
           # Only the two already-confirmed syntax errors in the unrelated
           # .broken.tsx artifact are permitted; all other errors block release.
-          if grep -Ev '^components/BrandEcosystemHomepage[.]broken[.]tsx\\((436,10|460,8)\\): error TS17008:' /tmp/victory-lap-ts-errors.log; then
+          if grep -Ev '^components/BrandEcosystemHomepage[.]broken[.]tsx\((436,10|460,8)\): error TS17008:' /tmp/victory-lap-ts-errors.log; then
             echo "::error::Unexpected TypeScript errors; blocking preview"
             exit 1
           fi
