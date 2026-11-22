@@ -1,0 +1,32 @@
+name: WISE2 Commander MCP CI
+on:
+  push:
+    branches: [feat/wise2-commander-mcp]
+    paths:
+      - 'tools/wise2-commander/**'
+      - '.github/workflows/wise2-commander-ci.yml'
+  pull_request:
+    paths:
+      - 'tools/wise2-commander/**'
+      - '.github/workflows/wise2-commander-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node --check tools/wise2-commander/server.mjs
+      - name: Tests
+        run: node --test tools/wise2-commander/test.mjs
+      - name: MCP initialize and tool discovery
+        shell: bash
+        run: |
+          printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | node tools/wise2-commander/server.mjs > /tmp/commander-mcp.jsonl
+          node --input-type=module -e "import fs from 'node:fs'; const lines=fs.readFileSync('/tmp/commander-mcp.jsonl','utf8').trim().split('\\n').map(JSON.parse);if(lines.length!==2||lines[0].result?.serverInfo?.name!=='wise2-commander'||lines[1].result?.tools?.length!==6)process.exit(1);"
