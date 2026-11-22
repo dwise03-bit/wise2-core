@@ -1,0 +1,76 @@
+name: WISE2 Pocket Hive - Verified Local Deployment
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/wise2-pocket-hive-deploy.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-pocket-hive-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 25
+    steps:
+      - name: Validate canonical host and prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = "wise2" || { echo "::error::Refusing noncanonical host"; exit 1; }
+          command -v node
+          command -v npm
+          node -e 'if (+process.versions.node.split(".")[0] < 20) process.exit(1)'
+          df -h /
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install and build
+        shell: bash
+        working-directory: wise2-command-center
+        run: |
+          set -euo pipefail
+          npm ci --no-audit --no-fund
+          npm run type-check
+          npm run build
+          test -f .next/BUILD_ID
+          test -s public/pocket-hive.html
+      - name: Start isolated preview without touching production
+        shell: bash
+        working-directory: wise2-command-center
+        run: |
+          set -euo pipefail
+          state="$HOME/.local/state/wise2-pocket-hive"
+          mkdir -p "$state"
+          if test -f "$state/pid"; then
+            oldpid="$(cat "$state/pid")"
+            if kill -0 "$oldpid" 2>/dev/null; then
+              echo "::error::Existing Pocket Hive preview is running; refusing to replace"
+              exit 1
+            fi
+          fi
+          python3 - <<'PY'
+          import socket
+          s=socket.socket()
+          try:
+              s.bind(('127.0.0.1', 3099))
+          except OSError:
+              raise SystemExit('Port 3099 occupied; refusing to overwrite')
+          finally:
+              s.close()
+          PY
+          nohup ./node_modules/.bin/next start -p 3099 -H 127.0.0.1 > "$state/preview.log" 2>&1 < /dev/null &
+          echo "$!" > "$state/pid"
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 3 http://127.0.0.1:3099/woji/pocket-hive.html -o "$state/page.html"; then ok=1; break; fi
+            sleep 2
+          done
+          if test "$ok" != 1; then tail -n 60 "$state/preview.log"; exit 1; fi
+          grep -q 'Pocket' "$state/page.html"
+          curl -fsS http://127.0.0.1:3099/woji/api/health/server -o "$state/health.json"
+          node -e 'const h=require(process.argv[1]);if(h.verified!==false||h.status!=="unknown")process.exit(1)' "$state/health.json"
+          echo "PASS: Pocket Hive running on wise2 localhost:3099"
+          echo "Public ingress intentionally unchanged. Health checks remain UNVERIFIED until authenticated collector is connected."
