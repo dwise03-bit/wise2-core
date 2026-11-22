@@ -1,0 +1,50 @@
+name: Victory Lap - Safe Website Preview
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'apps/website/app/victory-lap/**'
+      - '.github/workflows/victory-lap-preview.yml'
+permissions:
+  contents: read
+concurrency:
+  group: victory-lap-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install workspace dependencies
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
+      - name: Check Victory Lap source and referenced local assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/website/app/victory-lap/page.tsx
+          test -f apps/website/public/brand/sound-labs-4k-hyperreal.png
+          test -f apps/website/public/brand/wise2-hero-united.webp
+          echo 'Victory Lap source and existing brand assets found'
+      - name: Type check website
+        run: pnpm --filter @wise2/website type-check
+      - name: Build website
+        run: pnpm --filter @wise2/website build
+      - name: Verify generated route
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/website/.next/BUILD_ID
+          test -f apps/website/.next/server/app/victory-lap/page.js
+          echo 'PASS: /victory-lap compiled'
+      - name: Report deployment gate
+        run: |
+          echo 'Preview build passed. This workflow never changes production.'
+          echo 'Required before public release: approved founder assets, review, deployment authorization, and external HTTP verification.'
