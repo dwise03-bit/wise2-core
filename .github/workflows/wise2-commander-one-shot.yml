@@ -1,0 +1,42 @@
+name: WISE2 Commander One-Shot Verification
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-commander-verification
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check tools/wise2-commander/server.mjs
+          node --check tools/wise2-commander/http-gateway.mjs
+          node --test tools/wise2-commander/test.mjs tools/wise2-commander/http-gateway.test.mjs
+      - name: MCP discovery smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | node tools/wise2-commander/server.mjs > /tmp/commander.jsonl
+          node --input-type=module -e "import fs from 'node:fs';const a=fs.readFileSync('/tmp/commander.jsonl','utf8').trim().split('\\n').map(JSON.parse);if(a[0]?.result?.serverInfo?.name!=='wise2-commander'||a[1]?.result?.tools?.length!==6)process.exit(1)"
+      - name: Verify bearer authentication locally
+        shell: bash
+        env:
+          WISE2_MCP_BEARER_TOKEN: test-token-for-ci-only-12345678901234567890
+        run: |
+          set -euo pipefail
+          node tools/wise2-commander/http-gateway.mjs >/tmp/commander-gateway.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in {1..30}; do if curl -s -o /dev/null http://127.0.0.1:8787/mcp; then break; fi; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8787/mcp -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')" = 401
+          curl -fsS -X POST http://127.0.0.1:8787/mcp -H "Authorization: Bearer $WISE2_MCP_BEARER_TOKEN" -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node --input-type=module -e "let s='';for await(const c of process.stdin)s+=c;const r=JSON.parse(s);if(r.result?.tools?.length!==6)process.exit(1)"
