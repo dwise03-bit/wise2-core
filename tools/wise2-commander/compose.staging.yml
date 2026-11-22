@@ -1,0 +1,18 @@
+services:
+  wise2-commander:
+    build:
+      context: ../..
+      dockerfile: tools/wise2-commander/Dockerfile
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    environment:
+      PORT: "8787"
+      WISE2_MCP_HOST: "0.0.0.0"
+      WISE2_MCP_BEARER_TOKEN: "${WISE2_MCP_BEARER_TOKEN:?Set a 32+ character staging token}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN:?Set a least-privilege GitHub token}"
+      WISE2_ENABLE_DISPATCH: "false"
+    ports:
+      - "127.0.0.1:8787:8787"
