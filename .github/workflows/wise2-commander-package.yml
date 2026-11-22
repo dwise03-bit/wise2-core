@@ -1,0 +1,25 @@
+name: WISE2 Commander Container Build
+on:
+  push:
+    branches: [feat/wise2-commander-mcp]
+    paths:
+      - 'tools/wise2-commander/**'
+      - '.github/workflows/wise2-commander-package.yml'
+  pull_request:
+    paths:
+      - 'tools/wise2-commander/**'
+      - '.github/workflows/wise2-commander-package.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test MCP
+        run: docker build -f tools/wise2-commander/Dockerfile -t wise2-commander:ci .
+      - name: Validate container is non-root
+        run: |
+          docker image inspect wise2-commander:ci --format '{{.Config.User}}' | grep -Fx node
