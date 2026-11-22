@@ -21,4 +21,13 @@ with tempfile.TemporaryDirectory() as d:
  r=cmd(sys.executable,SCRIPT,src,'--config',cfg,'--out',root/'fail',ok=False)
  assert r.returncode==2,r
  assert not (root/'fail'/'input-hero.mp4').exists()
- print('PASS: real ffmpeg audit, contact sheet, failure exit, no automatic export')
+ cfg.write_text(json.dumps(dict(hero_min_seconds=2,hero_max_seconds=4,min_width=320,min_height=180,audio_target_lufs=-14,audio_tolerance_lu=30,palette_hex=['#0eff41'],palette_max_distance=70)))
+ export_dir=root/'exported'
+ cmd(sys.executable,SCRIPT,src,'--config',cfg,'--out',export_dir,'--export','--duration','2.5')
+ hero=export_dir/'input-hero.mp4'
+ assert hero.exists()
+ report=json.loads((export_dir/'export'/'audit.json').read_text())
+ assert report['checks']['duration'] and report['checks']['resolution'],report
+ again=cmd(sys.executable,SCRIPT,src,'--config',cfg,'--out',export_dir,'--export','--duration','2.5',ok=False)
+ assert again.returncode!=0 and hero.exists()
+ print('PASS: audit, contact sheet, fail gate, export, re-audit, no overwrite')
