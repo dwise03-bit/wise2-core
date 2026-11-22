@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "app/mathis-electric/**/*.ts",
+    "app/mathis-electric/**/*.tsx",
+    "middleware.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
