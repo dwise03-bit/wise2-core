@@ -19,9 +19,9 @@ const gates = [
 ];
 const modules = [
   { title: "THE DOG & PONY SHOW", tag: "CINEMATIC DEMONSTRATION", desc: "An original WISE² presentation of working systems, use cases, and real workflows.", href: "https://github.com/dwise03-bit/wise2-core/issues/229", action: "Explore the show", theme: "blue", art: "🎬" },
-  { title: "WISE² CONNECT", tag: "PEOPLE × IDEAS × ACTION", desc: "Capture, audits, projects, client collaboration, and field-ready tools.", href: "https://github.com/dwise03-bit/wise2-core/issues/234", action: "Explore Connect", theme: "green", art: "◈" },
+  { title: "WISE² CONNECT", tag: "PEOPLE × IDEAS × ACTION", desc: "Capture, audits, projects, client collaboration, and field-ready tools.", href: "/platform", action: "Explore Connect", theme: "green", art: "◈" },
   { title: "WISE² SOUND LABS", tag: "THE SOUND OF THE NETWORK", desc: "AI music tools, recording, beat production, mixing, artist collaboration, and streaming.", href: "/sound-labs", action: "Enter Sound Labs", theme: "pink", art: "♫" },
-  { title: "BUSINESS OS", tag: "THE OPERATING SYSTEM", desc: "AI agents, client systems, workflows, payments, booking, and dashboards.", href: "/", action: "Explore Business OS", theme: "blue", art: "⬡" },
+  { title: "BUSINESS OS", tag: "THE OPERATING SYSTEM", desc: "AI agents, client systems, workflows, payments, booking, and dashboards.", href: "/platform", action: "Explore Business OS", theme: "blue", art: "⬡" },
 ];
 export default function VictoryLapPage() {
   return (
