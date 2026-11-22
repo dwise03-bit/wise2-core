@@ -19,7 +19,7 @@ def audit(src,cfg,out,contact):
   loud=float(a[-1]) if a else None;peak=float(b[-1]) if b else None
  with tempfile.TemporaryDirectory() as temp:
   raw=Path(temp)/'frame.rgb'
-  run(['ffmpeg','-v','error','-ss','1','-i',str(src),'-frames:v','1','-vf','scale=64:36,format=rgb24','-f','rawvideo',str(raw)])
+  run(['ffmpeg','-v','error','-ss',str(min(1,duration/2)),'-i',str(src),'-frames:v','1','-vf','scale=64:36,format=rgb24','-f','rawvideo',str(raw)])
   data=raw.read_bytes()
  targets=[tuple(bytes.fromhex(c.lstrip('#'))) for c in cfg['palette_hex']]
  pixels=[tuple(data[i:i+3]) for i in range(0,len(data),3) if max(data[i:i+3])>=45]
@@ -42,7 +42,7 @@ def main():
  if not cfg['hero_min_seconds']<=a.duration<=cfg['hero_max_seconds'] or a.start<0 or a.start+a.duration>source['duration_seconds']:p.error('Invalid hero clip range')
  target=a.out/(a.source.stem+'-hero.mp4')
  if target.exists() or target.resolve()==a.source.resolve():p.error('Refusing to overwrite')
- args=['ffmpeg','-hide_banner','-n','-ss',str(a.start),'-i',str(a.source),'-t',str(a.duration),'-map','0:v:0','-map','0:a:0?','-vf','scale=3840:2160:force_original_aspect_ratio=decrease:flags=lanczos,pad=3840:2160:(ow-iw)/2:(oh-ih)/2','-c:v','libx264','-crf','20','-preset','medium']
+ args=['ffmpeg','-hide_banner','-n','-ss',str(a.start),'-i',str(a.source),'-t',str(a.duration),'-map','0:v:0','-map','0:a:0?','-vf',f'scale={cfg["min_width"]}:{cfg["min_height"]}:force_original_aspect_ratio=decrease:flags=lanczos,pad={cfg["min_width"]}:{cfg["min_height"]}:(ow-iw)/2:(oh-ih)/2','-c:v','libx264','-crf','20','-preset','medium']
  if source['integrated_lufs'] is not None:args+=['-af',f'loudnorm=I={cfg["audio_target_lufs"]}:TP=-1.5:LRA=11','-c:a','aac','-b:a','192k']
  run(args+[str(target)])
  run(['ffmpeg','-v','error','-n','-ss','1','-i',str(target),'-frames:v','1',str(a.out/'poster.jpg')])
