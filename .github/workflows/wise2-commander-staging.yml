@@ -1,0 +1,60 @@
+name: WISE2 Commander Staging Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: 'Reviewed full commit SHA to deploy'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: wise2-commander-staging
+  cancel-in-progress: false
+jobs:
+  deploy:
+    # Requires explicit approval via the GitHub staging environment.
+    environment: wise2-commander-staging
+    runs-on: [self-hosted, linux, wise2-maintenance]
+    timeout-minutes: 20
+    steps:
+      - name: Verify requested revision
+        shell: bash
+        env:
+          REQUESTED_SHA: ${{ inputs.commit_sha }}
+        run: |
+          [[ "$REQUESTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo 'Full SHA required'; exit 1; }
+      - name: Checkout reviewed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+          persist-credentials: false
+      - name: Verify tools and secrets are provisioned
+        shell: bash
+        env:
+          MCP_TOKEN: ${{ secrets.WISE2_MCP_BEARER_TOKEN }}
+          GH_READ_TOKEN: ${{ secrets.WISE2_COMMANDER_GITHUB_TOKEN }}
+        run: |
+          command -v docker >/dev/null
+          docker compose version
+          test "${#MCP_TOKEN}" -ge 32
+          test -n "$GH_READ_TOKEN"
+      - name: Build and run isolated staging service
+        shell: bash
+        env:
+          WISE2_MCP_BEARER_TOKEN: ${{ secrets.WISE2_MCP_BEARER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WISE2_COMMANDER_GITHUB_TOKEN }}
+        run: |
+          docker compose -p wise2-commander-staging -f tools/wise2-commander/compose.staging.yml up -d --build
+      - name: Verify authentication and MCP discovery
+        shell: bash
+        env:
+          MCP_TOKEN: ${{ secrets.WISE2_MCP_BEARER_TOKEN }}
+        run: |
+          status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 -X POST http://127.0.0.1:8787/mcp -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+          test "$status" = 401
+          curl --fail --silent --show-error --max-time 10 -X POST http://127.0.0.1:8787/mcp -H "Authorization: Bearer $MCP_TOKEN" -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const d=JSON.parse(s);if(d.result?.tools?.length!==6)process.exit(1)})"
+      - name: Deployment summary
+        shell: bash
+        run: |
+          echo 'Staging loopback MCP service verified; external HTTPS and ChatGPT integration NOT deployed.' >> "$GITHUB_STEP_SUMMARY"
