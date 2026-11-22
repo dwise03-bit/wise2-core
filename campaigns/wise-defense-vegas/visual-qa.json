@@ -1,0 +1,24 @@
+{
+  "page": "index.html",
+  "required_assets": [
+    "assets/approved-campaign-hero.webp",
+    "assets/pink-black-challenger.webp",
+    "assets/wise-defense-logo.webp",
+    "assets/grip-drip.webp",
+    "assets/bunsandguns.webp"
+  ],
+  "required_sections": [
+    "collections",
+    "tour",
+    "sponsor"
+  ],
+  "minimum_images": 5,
+  "approved_reference_id": null,
+  "reviewer": null,
+  "forbidden_markers": [
+    "placeholder",
+    "coming-soon.jpg",
+    "example.com",
+    "CSS silhouette"
+  ]
+}
