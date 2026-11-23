@@ -1,0 +1,39 @@
+name: Sound Labs Safe Audit
+on:
+  pull_request:
+    paths:
+      - 'scripts/soundlabs-safe-audit.sh'
+      - '.github/workflows/soundlabs-safe-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  soundlabs-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell syntax
+        run: bash -n scripts/soundlabs-safe-audit.sh
+      - name: Compile Sound Labs bridge Python sources
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('services/sound-labs/bridge')
+          files = list(root.rglob('*.py'))
+          assert files, 'Sound Labs bridge Python files missing'
+          for path in files:
+              compile(path.read_bytes(), str(path), 'exec')
+          print(f'PASS compiled {len(files)} Sound Labs Python files')
+          PY
+      - name: Run read-only diagnostics
+        run: bash scripts/soundlabs-safe-audit.sh | tee soundlabs-audit.log
+      - name: Verify WAV smoke test
+        run: grep -q 'PASS local WAV encode/decode' soundlabs-audit.log
+      - name: Upload audit log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: soundlabs-audit
+          path: soundlabs-audit.log
+          retention-days: 7
