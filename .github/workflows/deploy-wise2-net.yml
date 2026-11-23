@@ -1,72 +1,66 @@
 name: Deploy to wise2.net
 
-# Manual only. This workflow remains a full-stack recovery path: it rebuilds all
-# services in docker-compose.prod.yml and runs `prisma db push` in production.
-# Standard website deploys go through deploy.yml.
+# Manual full-stack sync for the home server (Tailscale + user systemd).
+# Public TLS is via Cloudflare tunnel; health checks use loopback only.
 on:
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_API: ghcr.io/${{ github.repository }}/wise2-clipper-api
-  IMAGE_WEB: ghcr.io/${{ github.repository }}/wise2-clipper-web
-  VPS_HOST: 173.208.147.165
-  VPS_USER: dwise
-  DOMAIN: wise2.net
-
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Build and push Docker images
-        run: |
-          echo "Building Docker images for wise2.net deployment..."
-          docker compose -f docker-compose.prod.yml build
-      
-      - name: Deploy to VPS via SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
-          VPS_HOST: ${{ env.VPS_HOST }}
-          VPS_USER: ${{ env.VPS_USER }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/vps-key
-          chmod 600 ~/.ssh/vps-key
-          
-          ssh -i ~/.ssh/vps-key -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << 'DEPLOY'
-          
-          set -e
-          cd /home/dwise/wise2-core
-          
-          echo "🚀 Starting deployment to wise2.net..."
-          
-          # Pull latest code
-          git pull origin main
-          
-          # Deploy with Docker Compose v2
-          docker compose -f docker-compose.prod.yml pull
-          docker compose -f docker-compose.prod.yml up -d
-          
-          # Run database migrations
-          docker compose -f docker-compose.prod.yml exec -T api npx prisma db push
-          
-          # Verify deployment
-          sleep 10
-          curl -s https://wise2.net/api/v1/health || true
-          
-          echo "✅ Deployment to wise2.net complete!"
-          
-          DEPLOY
-      
-      - name: Verify live deployment
-        run: |
-          echo "Verifying https://wise2.net..."
-          curl -sI https://wise2.net || echo "Note: DNS may take time to propagate"
-          echo "✅ Deployment workflow complete"
+      - uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Sync wise2-core on home server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 30m
+          script: |
+            set -eu
+            DEPLOY_DIR=/home/dwise/deploy/wise2-core
+            CLONE_URL=https://github.com/dwise03-bit/wise2-core.git
+            UNITS="wise2-api.service wise2-website.service"
+
+            mkdir -p "$(dirname "$DEPLOY_DIR")"
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              git clone "$CLONE_URL" "$DEPLOY_DIR"
+            fi
+            cd "$DEPLOY_DIR"
+            git fetch origin main
+            git reset --hard origin/main
+
+            restarted=0
+            for UNIT in $UNITS; do
+              if systemctl --user list-unit-files --type=service 2>/dev/null | grep -qx "$UNIT"; then
+                systemctl --user restart "$UNIT"
+                restarted=1
+              else
+                echo "TODO: create user systemd unit ${UNIT} on the home server"
+              fi
+            done
+            if [ "$restarted" -eq 0 ]; then
+              echo "No systemd units were restarted; configure units before relying on this workflow"
+              exit 1
+            fi
+
+      - name: Verify loopback health
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            set -eu
+            curl -fsS http://127.0.0.1:3010/api/health >/dev/null
+            curl -fsS http://127.0.0.1:3001/ >/dev/null
+            echo "Loopback API and website health checks passed"

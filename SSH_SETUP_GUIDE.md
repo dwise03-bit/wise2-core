@@ -4,7 +4,7 @@
 SSH is required for:
 1. GitHub Actions to deploy to production server (173.208.147.165)
 2. Manual SSH access to server as user `dwise`
-3. Automated deployment via `appleboy/ssh-action@master` GitHub Action
+3. Automated deployment via `appleboy/ssh-action@v1.2.0` GitHub Action
 
 ## Step 1: Generate SSH Key Pair
 
