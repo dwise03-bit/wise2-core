@@ -60,6 +60,8 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "components/**/*.broken.tsx",
+    "**/*.broken.tsx"
   ]
 }
