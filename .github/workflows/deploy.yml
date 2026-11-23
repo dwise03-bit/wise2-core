@@ -42,11 +42,9 @@ jobs:
 
       - name: Run linter
         run: pnpm run lint
-        continue-on-error: true
 
       - name: Run tests
         run: pnpm run test
-        continue-on-error: true
         env:
           DATABASE_URL: postgresql://wise2:wise2@localhost:5432/wise2_test
 
@@ -121,10 +119,11 @@ jobs:
             # Decide scope before resetting the checkout. Website-only changes
             # must not recreate API, Postgres, Redis, or worker containers.
             CHANGED_FILES="$(git diff --name-only HEAD origin/main)"
-            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|packages/ui-components/|packages/brand-lock/|packages/db/|Dockerfile.website$|docker-compose.prod.yml$|package.json$|pnpm-lock.yaml$|pnpm-workspace.yaml$|scripts/deploy-website-vps.sh$)'; then
-              DEPLOY_MODE=production
-            else
+            # Website-only deploys must contain exclusively website changes.
+            if [ -n "$CHANGED_FILES" ] && ! printf '%s\n' "$CHANGED_FILES" | grep -Evq '^(apps/website/|packages/ui-components/|packages/brand-lock/|Dockerfile.website$|scripts/deploy-website-vps.sh$)'; then
               DEPLOY_MODE=website-only
+            else
+              DEPLOY_MODE=production
             fi
 
             # Older VPS deployments left some tracked files owned by root.

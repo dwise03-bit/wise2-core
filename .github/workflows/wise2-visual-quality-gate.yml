@@ -1,0 +1,27 @@
+name: WISE2 Visual Quality Gate
+on:
+  pull_request:
+    paths:
+      - 'campaigns/**'
+      - 'scripts/quality/**'
+      - '.github/workflows/wise2-visual-quality-gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'campaigns/**'
+      - 'scripts/quality/**'
+      - '.github/workflows/wise2-visual-quality-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-asset-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate required campaign assets and approvals
+        run: python3 scripts/quality/visual_asset_gate.py campaigns/wise-defense-vegas
+      - name: Explain remaining visual acceptance requirements
+        if: success()
+        run: |
+          echo "::notice::Static asset preflight passed. A separate rendered desktop/mobile screenshot comparison is still required before production signoff."
