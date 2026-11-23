@@ -1,0 +1,13 @@
+{
+  "hero_min_seconds": 6,
+  "hero_max_seconds": 12,
+  "min_width": 3840,
+  "min_height": 2160,
+  "audio_target_lufs": -14,
+  "audio_tolerance_lu": 2,
+  "palette_hex": [
+    "#0eff41",
+    "#0a1828"
+  ],
+  "palette_max_distance": 65
+}
