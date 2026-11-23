@@ -6,7 +6,9 @@
     // Devices that run a control bridge and accept ops jobs.
     "tag:ops-host":  ["autogroup:admin"],
     // The MacBook relay. The only client permitted to reach tag:ops-host.
-    "tag:ops-relay": ["autogroup:admin"]
+    "tag:ops-relay": ["autogroup:admin"],
+    // CI runners may claim tag:ci for narrow SSH deployment access.
+    "tag:ci":        ["autogroup:admin"]
   },
 
   "acls": [
@@ -22,6 +24,12 @@
       "action": "accept",
       "src":    ["tag:ops-relay"],
       "dst":    ["tag:ops-host:443"]
+    },
+    {
+      // CI runners may SSH only to the wise2 node.
+      "action": "accept",
+      "src":    ["tag:ci"],
+      "dst":    ["wise2:22"]
     },
     {
       // Existing personal access. Narrow or remove once every service is tagged.
