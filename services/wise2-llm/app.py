@@ -1,5 +1,6 @@
 """WISE² LLM: local-first OpenAI-compatible inference gateway."""
 import os
+import hmac
 import time
 import uuid
 from typing import Any
@@ -26,7 +27,7 @@ class ChatRequest(BaseModel):
 def authorize(authorization: str | None):
     if not API_KEY:
         raise HTTPException(503, "WISE2_LLM_API_KEY must be configured")
-    if authorization != f"Bearer {API_KEY}":
+    if not authorization or not hmac.compare_digest(authorization, f"Bearer {API_KEY}"):
         raise HTTPException(401, "Unauthorized")
 
 @app.get("/health")
@@ -35,7 +36,10 @@ async def health():
         async with httpx.AsyncClient(timeout=3) as client:
             r = await client.get(f"{OLLAMA_URL}/api/tags")
             r.raise_for_status()
-        return {"status": "ok", "runtime": "reachable"}
+            tags = r.json().get("models", [])
+        if not any(m.get("name") == MODEL or m.get("model") == MODEL for m in tags):
+            raise HTTPException(503, "Configured model is not installed")
+        return {"status": "ok", "runtime": "reachable", "model": MODEL}
     except httpx.HTTPError:
         raise HTTPException(503, "Model runtime unavailable")
 
@@ -66,6 +70,8 @@ async def chat(request: ChatRequest, authorization: str | None = Header(default=
             })
             response.raise_for_status()
             payload = response.json()
+            if not isinstance(payload, dict) or not isinstance(payload.get("message"), dict) or not isinstance(payload["message"].get("content"), str):
+                raise ValueError("Malformed Ollama response")
     except (httpx.HTTPError, ValueError):
         raise HTTPException(502, "Model request failed")
     return {
