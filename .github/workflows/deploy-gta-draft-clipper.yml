@@ -1,0 +1,47 @@
+name: Deploy GTA Draft Clipper
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-gta-draft-clipper.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: gta-draft-clipper-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+      - name: Install GTA draft clipper on WISE2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          command_timeout: 15m
+          script: |
+            set -euo pipefail
+            DEPLOY_DIR=/home/dwise/deploy/wise2-gta6-atlas
+            REPOSITORY=https://github.com/dwise03-bit/wise2-gta6-atlas.git
+            mkdir -p "$(dirname "$DEPLOY_DIR")"
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              git clone "$REPOSITORY" "$DEPLOY_DIR"
+            fi
+            cd "$DEPLOY_DIR"
+            git fetch --prune origin
+            git checkout --force main
+            git reset --hard origin/main
+            bash scripts/server-clipper-bootstrap.sh
+            bash scripts/ai-clipper.sh check
