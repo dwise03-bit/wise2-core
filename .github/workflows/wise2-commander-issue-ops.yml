@@ -12,7 +12,8 @@ jobs:
     if: >-
       github.event.issue.user.login == 'dwise03-bit' &&
       (github.event.issue.title == 'WISE2 OPS: server-health' ||
-       github.event.issue.title == 'WISE2 OPS: public-link-audit')
+       github.event.issue.title == 'WISE2 OPS: public-link-audit' ||
+       github.event.issue.title == 'WISE2 OPS: nginx-route-audit')
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 5
     steps:
@@ -41,8 +42,11 @@ jobs:
                 "https://wise2.net/trading"
                 "https://wise2.net/game/"
                 "https://wise2.net/3ddemo"
+                "https://wise2.net/3ddemo/"
                 "https://wise2.net/gta"
+                "https://wise2.net/gta/"
                 "https://wise2.net/711"
+                "https://wise2.net/711/"
                 "https://wise2.net/queenbaby"
                 "https://mathis.wise2.net/"
                 "https://onboarding.wise2.net/"
@@ -58,6 +62,21 @@ jobs:
                 esac
               done
               test "$failed" -eq 0 || { echo "::error::One or more public HTTPS checks failed"; exit 1; }
+              ;;
+            "WISE2 OPS: nginx-route-audit")
+              echo "=== Nginx config syntax ==="
+              if result="$(sudo -n nginx -t 2>&1)"; then
+                printf '%s\n' "$result"
+              else
+                echo "Nginx config check blocked or failed:"
+                printf '%s\n' "$result"
+              fi
+              echo "=== Active GTA / 3D demo / 7-Eleven route directives ==="
+              if routes="$(sudo -n nginx -T 2>/dev/null | grep -E '^[[:space:]]*location .* /(gta|3ddemo|711)(/|[[:space:]{])')"; then
+                printf '%s\n' "$routes"
+              else
+                echo "No matching active directives found, or Nginx config read is unavailable."
+              fi
               ;;
             *)
               echo "::error::Operation is not allowlisted"
