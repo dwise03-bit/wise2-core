@@ -23,6 +23,7 @@ jobs:
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
       - name: Install GTA draft clipper on WISE2
         uses: appleboy/ssh-action@v1.2.0
         with:
