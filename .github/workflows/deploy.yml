@@ -42,11 +42,9 @@ jobs:
 
       - name: Run linter
         run: pnpm run lint
-        continue-on-error: true
 
       - name: Run tests
         run: pnpm run test
-        continue-on-error: true
         env:
           DATABASE_URL: postgresql://wise2:wise2@localhost:5432/wise2_test
 
@@ -83,10 +81,15 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
+      - name: Verify private deployment route
+        run: |
+          tailscale ping --timeout=10s --c=3 wise2
+          timeout 15 bash -c 'until (echo > /dev/tcp/wise2/22) 2>/dev/null; do sleep 1; done'
+
       - name: Deploy Customer Journey on home server
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
+          host: wise2
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           command_timeout: 30m
@@ -105,7 +108,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            if systemctl --user list-unit-files --type=service 2>/dev/null | grep -qx "${UNIT}"; then
+            if systemctl --user list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -Fxq "${UNIT}"; then
               systemctl --user restart "$UNIT"
             else
               echo "TODO: create user systemd unit ${UNIT} on the home server for Customer Journey"
@@ -126,7 +129,7 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         if: success()
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
+          host: wise2
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
