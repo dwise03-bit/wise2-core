@@ -102,3 +102,7 @@ When something breaks:
 ---
 
 **Load this agent when you need to build, fix, or improve code.**
+
+
+## Cinematic build skill routing
+For cinematic landing pages, reference-video audits, 3D product storytelling, motion UI and visual quality upgrades, load `.agents/skills/wise2-cinematic-build/SKILL.md` before planning. Apply the WISE² UI Constitution and Workflow Standard. Route verification to QA and deployment to Infrastructure via authorized WISE² Commander. Record actual test and deployment evidence; do not claim runtime activation from a Git commit alone.
