@@ -63,8 +63,10 @@ jobs:
               sudo -n nginx -T 2>/dev/null | grep -E '^[[:space:]]*location .* /(gta|3ddemo|711)(/|[[:space:]{])' || true
               ;;
             "WISE2 OPS: repair-public-routes")
-              webroot="/var/www/wise2.net/html"
-              test -d "$webroot" || { echo "::error::Missing webroot $webroot"; exit 1; }
+              queen_page="$(find /var/www /srv /opt /home/wise2runner -type f -path '*/queenbaby/index.html' -print -quit 2>/dev/null || true)"
+              test -n "$queen_page" || { echo "::error::Could not locate live Queen Baby page"; exit 1; }
+              webroot="$(dirname "$(dirname "$queen_page")")"
+              echo "Discovered live webroot: $webroot"
               test -w "$webroot" || { echo "::error::Runner cannot write $webroot"; ls -ld "$webroot"; exit 1; }
               stage="$(mktemp -d)"
               trap 'rm -rf "$stage"' EXIT
