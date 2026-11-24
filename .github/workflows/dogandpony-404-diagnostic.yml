@@ -1,11 +1,11 @@
 name: Diagnose Dog and Pony 404
 on:
   push:
-    branches: [fix/dogandpony-404-diagnostics-20261122]
-  workflow_dispatch:
-  pull_request:
     branches: [main]
-    paths: ['.github/workflows/dogandpony-404-diagnostic.yml']
+    paths: ['.github/workflows/dogandpony-404-diagnostic.yml', 'apps/website/app/dogandpony/**']
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
 jobs:
   diagnose:
     runs-on: [self-hosted]
