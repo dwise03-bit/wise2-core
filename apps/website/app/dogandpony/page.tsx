@@ -14,9 +14,12 @@ const sections = [
   'Team and accountability', 'Launch and growth',
 ]
 const gates = [
-  'Verified domain and website', 'Working lead capture and contact',
-  'Payment and commercial readiness', 'Client onboarding tested',
-  'Security, access and recovery checked', 'Independent production acceptance',
+  'Validate — customer interviews and demand evidence',
+  'Form — entity, ownership and banking evidence',
+  'Build safely — architecture, security and recovery',
+  'Pilot — design partners, signed scopes and metrics',
+  'Launch — pricing, billing, privacy and approval',
+  'Scale — acquisition, margins, hiring and reporting',
 ]
 const milestones = [
   ['Days 1–30', 'Audit and stabilize', 'Validate ownership, source-of-truth, hosting, routes, access and launch blockers.'],
@@ -29,6 +32,9 @@ const universes = [
   ['Living Hive', 'Visual command and project workflow'],
   ['Sound Labs', 'Creative and audio production'],
   ['WISE² Trading', 'Research and trading operations'],
+  ['WISE² Eats', 'Food-business partner operations and ordering concept; implementation pending verification'],
+  ['Uncle Tony’s Freeze Dry WISE', 'Distinct branded Eats partner demo; public customer intake not approved'],
+  ['Victory Lap', 'WISE² Trading initiative; release pending verification'],
   ['Client Universes', 'Branded websites and client services'],
 ]
 
