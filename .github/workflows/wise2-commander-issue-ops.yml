@@ -72,8 +72,11 @@ jobs:
                 if docker info >/dev/null 2>&1; then
                   deploy_mode="docker"
                   echo "Using authorized local Docker service for root-owned webroot"
+                elif ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new dwise@localhost 'sudo -n true' >/dev/null 2>&1; then
+                  deploy_mode="admin-ssh"
+                  echo "Using existing authorized local admin SSH lane"
                 else
-                  echo "::error::Runner cannot write $webroot and has no Docker access"
+                  echo "::error::Runner cannot write $webroot; Docker and admin SSH lanes unavailable"
                   ls -ld "$webroot"
                   exit 1
                 fi
@@ -99,8 +102,10 @@ jobs:
                   rm -rf "$webroot/$route"
                   mv "$stage/$route" "$webroot/$route"
                 done
-              else
+              elif test "$deploy_mode" = "docker"; then
                 docker run --rm -v "$stage:/source:ro" -v "$webroot:/target" alpine:3.20                   sh -c 'set -eu; for route in gta 3ddemo 711; do rm -rf "/target/$route"; cp -a "/source/$route" "/target/$route"; done'
+              else
+                tar -C "$stage" -czf - gta 3ddemo 711 |                   ssh -o BatchMode=yes -o ConnectTimeout=5 dwise@localhost                   "sudo -n sh -c 'set -eu; cd "$webroot"; rm -rf gta 3ddemo 711; tar -xzf -'"
               fi
               find "$webroot/gta" "$webroot/3ddemo" "$webroot/711" -maxdepth 1 -type f -printf '%p\n'
               ;;
