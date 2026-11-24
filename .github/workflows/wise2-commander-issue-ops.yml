@@ -1,0 +1,66 @@
+name: WISE2 Commander Issue Operations
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+concurrency:
+  group: wise2-issue-ops
+  cancel-in-progress: false
+jobs:
+  read-only-ops:
+    if: >-
+      github.event.issue.user.login == 'dwise03-bit' &&
+      (github.event.issue.title == 'WISE2 OPS: server-health' ||
+       github.event.issue.title == 'WISE2 OPS: public-link-audit')
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - name: Verify authorized host and run fixed read-only task
+        shell: bash
+        env:
+          OP_TITLE: ${{ github.event.issue.title }}
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = "wise2" || { echo "::error::Not on authorized wise2 server"; exit 1; }
+          echo "WISE2 host verified"
+          case "$OP_TITLE" in
+            "WISE2 OPS: server-health")
+              echo "=== Host ==="
+              hostname
+              uname -srm
+              uptime -p
+              echo "=== Root filesystem ==="
+              df -h /
+              echo "=== Memory ==="
+              free -h
+              ;;
+            "WISE2 OPS: public-link-audit")
+              urls=(
+                "https://wise2.net/"
+                "https://wise2.net/trading"
+                "https://wise2.net/game/"
+                "https://wise2.net/3ddemo"
+                "https://wise2.net/gta"
+                "https://wise2.net/711"
+                "https://wise2.net/queenbaby"
+                "https://mathis.wise2.net/"
+                "https://onboarding.wise2.net/"
+              )
+              failed=0
+              for url in "${urls[@]}"; do
+                code="$(curl --silent --location --max-time 15 --output /dev/null --write-out '%{http_code}' "$url" 2>/dev/null || true)"
+                code="${code:-000}"
+                printf '%s %s\n' "$code" "$url"
+                case "$code" in
+                  2*|3*) ;;
+                  *) failed=1 ;;
+                esac
+              done
+              test "$failed" -eq 0 || { echo "::error::One or more public HTTPS checks failed"; exit 1; }
+              ;;
+            *)
+              echo "::error::Operation is not allowlisted"
+              exit 1
+              ;;
+          esac
