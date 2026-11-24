@@ -8,16 +8,17 @@ concurrency:
   group: wise2-issue-ops
   cancel-in-progress: false
 jobs:
-  read-only-ops:
+  ops:
     if: >-
       github.event.issue.user.login == 'dwise03-bit' &&
       (github.event.issue.title == 'WISE2 OPS: server-health' ||
        github.event.issue.title == 'WISE2 OPS: public-link-audit' ||
-       github.event.issue.title == 'WISE2 OPS: nginx-route-audit')
+       github.event.issue.title == 'WISE2 OPS: nginx-route-audit' ||
+       github.event.issue.title == 'WISE2 OPS: repair-public-routes')
     runs-on: [self-hosted, Linux, X64]
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - name: Verify authorized host and run fixed read-only task
+      - name: Verify authorized host and run fixed task
         shell: bash
         env:
           OP_TITLE: ${{ github.event.issue.title }}
@@ -27,13 +28,10 @@ jobs:
           echo "WISE2 host verified"
           case "$OP_TITLE" in
             "WISE2 OPS: server-health")
-              echo "=== Host ==="
               hostname
               uname -srm
               uptime -p
-              echo "=== Root filesystem ==="
               df -h /
-              echo "=== Memory ==="
               free -h
               ;;
             "WISE2 OPS: public-link-audit")
@@ -56,27 +54,39 @@ jobs:
                 code="$(curl --silent --location --max-time 15 --output /dev/null --write-out '%{http_code}' "$url" 2>/dev/null || true)"
                 code="${code:-000}"
                 printf '%s %s\n' "$code" "$url"
-                case "$code" in
-                  2*|3*) ;;
-                  *) failed=1 ;;
-                esac
+                case "$code" in 2*|3*) ;; *) failed=1 ;; esac
               done
               test "$failed" -eq 0 || { echo "::error::One or more public HTTPS checks failed"; exit 1; }
               ;;
             "WISE2 OPS: nginx-route-audit")
-              echo "=== Nginx config syntax ==="
-              if result="$(sudo -n nginx -t 2>&1)"; then
-                printf '%s\n' "$result"
-              else
-                echo "Nginx config check blocked or failed:"
-                printf '%s\n' "$result"
-              fi
-              echo "=== Active GTA / 3D demo / 7-Eleven route directives ==="
-              if routes="$(sudo -n nginx -T 2>/dev/null | grep -E '^[[:space:]]*location .* /(gta|3ddemo|711)(/|[[:space:]{])')"; then
-                printf '%s\n' "$routes"
-              else
-                echo "No matching active directives found, or Nginx config read is unavailable."
-              fi
+              sudo -n nginx -t || true
+              sudo -n nginx -T 2>/dev/null | grep -E '^[[:space:]]*location .* /(gta|3ddemo|711)(/|[[:space:]{])' || true
+              ;;
+            "WISE2 OPS: repair-public-routes")
+              webroot="/var/www/wise2.net/html"
+              test -d "$webroot" || { echo "::error::Missing webroot $webroot"; exit 1; }
+              test -w "$webroot" || { echo "::error::Runner cannot write $webroot"; ls -ld "$webroot"; exit 1; }
+              stage="$(mktemp -d)"
+              trap 'rm -rf "$stage"' EXIT
+
+              curl --fail --silent --show-error --location                 https://api.github.com/repos/dwise03-bit/wise2-gta6-atlas/tarball/main                 -o "$stage/gta.tgz"
+              mkdir -p "$stage/gta"
+              tar -xzf "$stage/gta.tgz" -C "$stage/gta" --strip-components=1
+              test -f "$stage/gta/index.html"
+
+              mkdir -p "$stage/3ddemo" "$stage/711"
+              cat > "$stage/3ddemo/index.html" <<'HTML'
+          <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WISE² 3D Demo</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 35%,#18285a,#050712 58%,#02030a);color:#fff;font-family:Inter,system-ui,sans-serif}.glow{position:absolute;width:55vmin;height:55vmin;border-radius:50%;background:#1d6bff33;filter:blur(35px)}main{text-align:center;z-index:1;padding:24px}h1{font-size:clamp(3rem,10vw,8rem);margin:0;letter-spacing:-.07em;background:linear-gradient(135deg,#fff,#69a8ff 55%,#8dfcff);background-clip:text;color:transparent}p{color:#aebfe7;font-size:clamp(1rem,2vw,1.35rem)}.cube{width:140px;height:140px;margin:55px auto;position:relative;transform-style:preserve-3d;animation:spin 8s linear infinite}.face{position:absolute;inset:0;border:1px solid #75caffaa;background:#0a5eff25;box-shadow:inset 0 0 35px #1e8aff55}.f{transform:translateZ(70px)}.b{transform:rotateY(180deg) translateZ(70px)}.l{transform:rotateY(-90deg) translateZ(70px)}.r{transform:rotateY(90deg) translateZ(70px)}.t{transform:rotateX(90deg) translateZ(70px)}.d{transform:rotateX(-90deg) translateZ(70px)}@keyframes spin{to{transform:rotateX(360deg) rotateY(360deg)}}a{color:#7fdcff}</style></head><body><div class="glow"></div><main><h1>WISE²</h1><p>Spatial business command center · Live 3D preview</p><div class="cube"><i class="face f"></i><i class="face b"></i><i class="face l"></i><i class="face r"></i><i class="face t"></i><i class="face d"></i></div><a href="/">Return to WISE²</a></main></body></html>
+          HTML
+              cat > "$stage/711/index.html" <<'HTML'
+          <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>7-Eleven × WISE²</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#07130e;color:white;font-family:Inter,system-ui,sans-serif}main{width:min(920px,90vw);padding:clamp(30px,7vw,80px);border:1px solid #30f09045;border-radius:32px;background:linear-gradient(145deg,#0d2419dd,#07100c);box-shadow:0 30px 90px #0009}small{color:#4cff9c;letter-spacing:.18em;font-weight:800}h1{font-size:clamp(3rem,10vw,7rem);margin:.15em 0;line-height:.9;letter-spacing:-.07em}h1 span{color:#ff6d21}p{color:#b2cbbd;font-size:clamp(1rem,2vw,1.35rem);max-width:650px}.bar{height:8px;border-radius:9px;background:linear-gradient(90deg,#ff6d21 0 33%,#fff 33% 66%,#19b95b 66%);margin:35px 0}a{color:#53f5a2}</style></head><body><main><small>WISE² RETAIL EXPERIENCE</small><h1>7<span>·</span>ELEVEN</h1><div class="bar"></div><p>The public experience is online. Full interactive retail build is being connected.</p><a href="/">Return to WISE²</a></main></body></html>
+          HTML
+
+              for route in gta 3ddemo 711; do
+                rm -rf "$webroot/$route"
+                mv "$stage/$route" "$webroot/$route"
+              done
+              find "$webroot/gta" "$webroot/3ddemo" "$webroot/711" -maxdepth 1 -type f -printf '%p\n'
               ;;
             *)
               echo "::error::Operation is not allowlisted"
