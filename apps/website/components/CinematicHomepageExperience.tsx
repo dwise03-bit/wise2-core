@@ -61,7 +61,7 @@ export function CinematicHomepageExperience() {
   }, []);
 
   const soundLayer = (
-    <audio ref={soundtrack} src="/media/wise2-main-theme.mp3" preload="auto" loop
+    <audio ref={soundtrack} src={AUDIO_TRACKS.villain} preload="auto" loop
       muted={muted} onPlay={() => setSoundReady(true)}
       onError={() => setSoundReady(false)} aria-label="WISE² original soundtrack" />
   );
