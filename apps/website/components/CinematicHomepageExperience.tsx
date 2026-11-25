@@ -8,6 +8,11 @@ import { WiseSquaredRain } from './WiseSquaredRain';
 // Creator-supplied edited video uploaded October 22, 2026; use this as the entrance film.
 // Do not substitute the previous five-scene Higgsfield montage.
 const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0cc916c8-ef76-468e-9e88-93b799075c3d.mp4';
+const CDN_BASE = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0';
+const AUDIO_TRACKS = {
+  buku: `${CDN_BASE}/ubuntu-go-buku.mp3`,
+  villain: `${CDN_BASE}/wise2-main-theme.mp3`,
+};
 
 export function CinematicHomepageExperience() {
   const [mode, setMode] = useState<'station' | 'hive' | null>(null);
