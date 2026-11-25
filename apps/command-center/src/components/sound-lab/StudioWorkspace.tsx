@@ -20,6 +20,7 @@ import {
   restoreVersion,
   reviewRecordingUrl,
   saveMixerState,
+  updateProject,
   setApproval,
   setReviewApproval,
   uploadRecording,
@@ -78,6 +79,8 @@ export default function StudioWorkspace({
   const [proposal, setProposal] = useState<ProducerProposal | null>(null);
   const [prompt, setPrompt] = useState('');
   const [genPrompt, setGenPrompt] = useState('');
+  const [lyrics, setLyrics] = useState('');
+  const [savingLyrics, setSavingLyrics] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [midiNotes, setMidiNotes] = useState<string[]>([]);
   const [midiSupported, setMidiSupported] = useState(false);
@@ -151,6 +154,7 @@ export default function StudioWorkspace({
 
       const project = await getProject(resolvedProjectId);
       setName(project.name);
+      setLyrics(project.lyrics || '');
       const mix = normalizeMixerState(project.mixerState);
       if (!mix.tracks.length && (project.recordings || []).length) {
         const track = createTrack('instrumental', 'IMPORTS');
@@ -549,6 +553,22 @@ export default function StudioWorkspace({
                     <button key={p} className="sl-btn" onClick={() => setProposal(masteringProposal(p))}>{p}</button>
                   ))}
                 </div>
+              </div>
+              <div className="mt-3">
+                <h3 className="sl-kicker">Songwriting</h3>
+                <p className="text-xs text-text-muted mb-2">Write sections and ad-libs here. Save lyrics to this project before producing the final vocal.</p>
+                <textarea className="wise-input w-full min-h-40 text-xs" aria-label="Song lyrics" value={lyrics} onChange={(e) => setLyrics(e.target.value)} placeholder={'[Intro]\n\n[Verse 1]\n\n[Hook]\n\n[Verse 2]\n\n[Outro]'} />
+                <button className="sl-btn w-full mt-2" disabled={savingLyrics || !resolvedProjectId} onClick={async () => {
+                  try {
+                    setSavingLyrics(true);
+                    await updateProject(resolvedProjectId, { lyrics });
+                    setStatus('Lyrics saved to project');
+                  } catch (err) {
+                    setStatus(err instanceof Error ? err.message : 'Could not save lyrics');
+                  } finally {
+                    setSavingLyrics(false);
+                  }
+                }}>{savingLyrics ? 'SAVING…' : 'SAVE LYRICS'}</button>
               </div>
               <div className="mt-3">
                 <h3 className="sl-kicker">Generate (MusicGen)</h3>
