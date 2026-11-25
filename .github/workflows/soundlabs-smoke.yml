@@ -1,0 +1,38 @@
+name: Sound Labs MVP smoke test
+on:
+  pull_request:
+    paths:
+      - 'soundlabs/**'
+      - '.github/workflows/soundlabs-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container
+        run: docker compose -f soundlabs/docker-compose.yml build
+      - name: Start service
+        run: docker compose -f soundlabs/docker-compose.yml up -d
+      - name: Generate fixture and render
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8094/health; then break; fi
+            sleep 2
+          done
+          docker compose -f soundlabs/docker-compose.yml exec -T soundlabs ffmpeg -nostdin -hide_banner -loglevel error -f lavfi -i 'sine=frequency=440:duration=3' -c:a pcm_s16le -y /data/input/smoke.wav
+          curl -fsS -X POST http://127.0.0.1:8094/render -H 'Content-Type: application/json' -d '{"filename":"smoke.wav","title":"Smoke Test"}' | tee /tmp/render.json
+          python3 -c 'import json; assert json.load(open("/tmp/render.json"))["job_id"]'
+          docker compose -f soundlabs/docker-compose.yml exec -T soundlabs sh -c 'test "$(find /data/output -name "*.mp4" -size +0c | wc -l)" -ge 1'
+          docker compose -f soundlabs/docker-compose.yml exec -T soundlabs sh -c 'ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1 /data/output/*.mp4 | grep -q h264'
+      - name: Reject traversal
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:8094/render -H 'Content-Type: application/json' -d '{"filename":"../etc/passwd"}')
+          test "$status" = 400
+      - name: Container logs
+        if: always()
+        run: docker compose -f soundlabs/docker-compose.yml logs --no-color

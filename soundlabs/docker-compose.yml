@@ -1,0 +1,12 @@
+services:
+  soundlabs:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8094:8094"
+    volumes:
+      - ./data:/data
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 2
