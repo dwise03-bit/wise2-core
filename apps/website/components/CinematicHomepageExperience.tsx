@@ -7,6 +7,11 @@ import { CodeRainOverlay } from './CodeRainOverlay';
 // Creator-supplied edited video uploaded October 22, 2026; use this as the entrance film.
 // Do not substitute the previous five-scene Higgsfield montage.
 const OFFICIAL_INTRO = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0/0cc916c8-ef76-468e-9e88-93b799075c3d.mp4';
+const CDN_BASE = 'https://d2ol7oe51mr4n9.cloudfront.net/user_3G8Nn9NFwKLGqBbTrrVrvDTpJm0';
+const AUDIO_TRACKS = {
+  buku: `${CDN_BASE}/ubuntu-go-buku.mp3`,
+  villain: `${CDN_BASE}/wise2-main-theme.mp3`,
+};
 
 export function CinematicHomepageExperience() {
   const [entered, setEntered] = useState(false);
@@ -60,7 +65,7 @@ export function CinematicHomepageExperience() {
   }, []);
 
   const soundLayer = (
-    <audio ref={soundtrack} src={selectedTrack === "buku" ? "/media/ubuntu-go-buku.mp3" : "/media/wise2-main-theme.mp3"} preload="auto" loop
+    <audio ref={soundtrack} src={selectedTrack === "buku" ? AUDIO_TRACKS.buku : AUDIO_TRACKS.villain} preload="auto" loop
       muted={muted} onPlay={() => setSoundReady(true)}
       onError={() => setSoundReady(false)} aria-label="WISE² original soundtrack" />
   );
@@ -72,7 +77,7 @@ export function CinematicHomepageExperience() {
       const player = soundtrack.current;
       if (player) {
         player.pause();
-        player.src = choice === 'buku' ? '/media/ubuntu-go-buku.mp3' : '/media/wise2-main-theme.mp3';
+        player.src = choice === 'buku' ? AUDIO_TRACKS.buku : AUDIO_TRACKS.villain;
         player.load();
         player.play().catch(() => {});
       }
