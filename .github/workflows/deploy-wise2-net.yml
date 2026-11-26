@@ -5,6 +5,13 @@ name: Deploy to wise2.net
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: wise2-net-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -41,7 +48,7 @@ jobs:
 
             restarted=0
             for UNIT in $UNITS; do
-              if systemctl --user list-unit-files --type=service 2>/dev/null | grep -qx "$UNIT"; then
+              if systemctl --user list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -Fxq "$UNIT"; then
                 systemctl --user restart "$UNIT"
                 restarted=1
               else
@@ -64,3 +71,11 @@ jobs:
             curl -fsS http://127.0.0.1:3010/api/health >/dev/null
             curl -fsS http://127.0.0.1:3001/ >/dev/null
             echo "Loopback API and website health checks passed"
+
+      - name: Independently verify public website
+        run: |
+          set -eu
+          curl --fail --silent --show-error --location --max-time 30 --retry 4 https://www.wise2.net/ -o /tmp/wise2-home.html
+          curl --fail --silent --show-error --location --max-time 30 --retry 4 https://www.wise2.net/epic -o /tmp/wise2-epic.html
+          grep -Eiq 'TRAIN WITH|EHR EDUCATION|Healthcare Training' /tmp/wise2-epic.html
+          echo "Public homepage and EPIC content checks passed"
