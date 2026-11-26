@@ -1,11 +1,12 @@
-"""Hardware, toolchain, CUDA, and existing AI model auto-detection for WISE² RECAST ENGINE.
+"""Hardware, AI runtime, acceleration, and Tailscale detection for WISE² GPU Manager.
 
-Prevents heavy local GPU rendering from running on unsupported integrated graphics
-(such as Intel Iris Xe on Lenovo ThinkPad X1) and recommends verified free remote GPU
-backends instead.
+Accurately detects CPU, Intel Iris Xe, OpenVINO, DirectML, NVIDIA CUDA, PyTorch,
+ONNX Runtime, ComfyUI installations, RAM, disk, and Tailscale peers.
 """
 from __future__ import annotations
 
+import importlib.util
+import json
 import os
 import platform
 import shutil
@@ -16,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 _CACHE: dict[str, Any] = {"ts": 0.0, "data": None}
-_CACHE_TTL_SEC = 30.0
+_CACHE_TTL_SEC = 20.0
 
 MIN_LOCAL_VRAM_GB = 12.0
 RECOMMENDED_LOCAL_VRAM_GB = 16.0
@@ -53,10 +54,53 @@ def _detect_windows_hardware() -> dict[str, Any]:
     if not raw:
         return {}
     try:
-        import json
         return json.loads(raw)
     except Exception:
         return {}
+
+
+def _detect_python_accelerators() -> dict[str, Any]:
+    pkgs = {
+        "torch": False,
+        "torch_directml": False,
+        "openvino": False,
+        "onnxruntime": False,
+        "onnxruntime_directml": False,
+        "diffusers": False,
+        "transformers": False,
+        "cv2": False,
+        "PIL": False,
+        "faster_whisper": False,
+    }
+    for name in list(pkgs.keys()):
+        try:
+            pkgs[name] = importlib.util.find_spec(name) is not None
+        except Exception:
+            pkgs[name] = False
+
+    openvino_devices: list[str] = []
+    if pkgs["openvino"]:
+        try:
+            import openvino as ov  # type: ignore
+            openvino_devices = list(ov.Core().available_devices)
+        except Exception:
+            openvino_devices = []
+
+    onnx_providers: list[str] = []
+    if pkgs["onnxruntime"]:
+        try:
+            import onnxruntime as ort  # type: ignore
+            onnx_providers = list(ort.get_available_providers())
+        except Exception:
+            onnx_providers = []
+
+    return {
+        "packages": pkgs,
+        "openvino_available": pkgs["openvino"],
+        "openvino_devices": openvino_devices,
+        "directml_available": pkgs["torch_directml"] or ("DmlExecutionProvider" in onnx_providers),
+        "onnx_providers": onnx_providers,
+    }
 
 
 def _detect_nvidia_cuda() -> dict[str, Any]:
@@ -117,15 +161,18 @@ def _detect_nvidia_cuda() -> dict[str, Any]:
 def _detect_tailscale() -> dict[str, Any]:
     ts = shutil.which("tailscale")
     if not ts:
-        return {"installed": False, "self_ip": None, "peers": []}
+        return {"installed": False, "running": False, "self_ip": None, "self_dns": None, "peers": []}
     ip = _run([ts, "ip", "-4"], timeout=4.0)
     self_ip = ip.splitlines()[0].strip() if ip else None
+    self_dns = None
+    running = False
     peers: list[dict[str, Any]] = []
     status_json = _run([ts, "status", "--json"], timeout=5.0)
     if status_json:
         try:
-            import json
             parsed = json.loads(status_json)
+            running = parsed.get("BackendState") == "Running"
+            self_dns = ((parsed.get("Self") or {}).get("DNSName") or "").rstrip(".") or None
             for peer in (parsed.get("Peer") or {}).values():
                 ips = peer.get("TailscaleIPs") or []
                 peers.append({
@@ -134,10 +181,11 @@ def _detect_tailscale() -> dict[str, Any]:
                     "ip": ips[0] if ips else None,
                     "os": peer.get("OS"),
                     "online": bool(peer.get("Online")),
+                    "last_seen": peer.get("LastSeen"),
                 })
         except Exception:
             pass
-    return {"installed": True, "self_ip": self_ip, "peers": peers}
+    return {"installed": True, "running": running, "self_ip": self_ip, "self_dns": self_dns, "peers": peers}
 
 
 def _scan_existing_ai_installs(data_dir: Path) -> dict[str, Any]:
@@ -150,13 +198,7 @@ def _scan_existing_ai_installs(data_dir: Path) -> dict[str, Any]:
         ("Pinokio", Path(r"C:\pinokio")),
         ("WISE2 Core Repo", home / "Projects" / "wise2-core"),
     ]
-    installs = []
-    for label, path in candidates:
-        installs.append({
-            "name": label,
-            "path": str(path),
-            "exists": path.exists(),
-        })
+    installs = [{"name": label, "path": str(path), "exists": path.exists()} for label, path in candidates]
 
     model_files: list[dict[str, Any]] = []
     search_roots = [
@@ -222,24 +264,29 @@ def detect_hardware(data_dir: Path | None = None, force: bool = False) -> dict[s
     ram_total_gb = round(ram_bytes / (1024 ** 3), 2) if ram_bytes else None
 
     display_gpus = []
+    has_intel_xe = False
     for g in raw_gpus:
         if not isinstance(g, dict):
             continue
+        name = str(g.get("Name") or "Unknown GPU")
         adapter_ram = g.get("AdapterRAM") or 0
+        if "iris" in name.lower() or "intel" in name.lower():
+            has_intel_xe = True
         display_gpus.append({
-            "name": g.get("Name") or "Unknown GPU",
+            "name": name,
             "adapter_ram_gb": round(float(adapter_ram) / (1024 ** 3), 2) if adapter_ram else None,
             "driver_version": g.get("DriverVersion"),
-            "integrated": any(tok in str(g.get("Name") or "").lower() for tok in ("intel", "iris", "uhd", "radeon graphics", "microsoft basic")),
+            "integrated": any(tok in name.lower() for tok in ("intel", "iris", "uhd", "radeon graphics", "microsoft basic")),
         })
 
     cuda = _detect_nvidia_cuda()
+    accelerators = _detect_python_accelerators()
     tailscale = _detect_tailscale()
     ai_scan = _scan_existing_ai_installs(target_dir)
 
     blockers: list[str] = []
     if not cuda["cuda_available"]:
-        blockers.append("No NVIDIA CUDA GPU detected (integrated graphics cannot run MiniMax H3 / FLUX.3 Klein locally).")
+        blockers.append("No NVIDIA CUDA GPU detected (Intel Iris Xe integrated graphics cannot execute MiniMax H3 / FLUX.3 Klein CUDA kernels locally).")
     elif cuda["max_vram_gb"] < MIN_LOCAL_VRAM_GB:
         blockers.append(
             f"Detected NVIDIA VRAM ({cuda['max_vram_gb']} GB) is below the {MIN_LOCAL_VRAM_GB:.0f} GB minimum for OpenJutsu H3 inference."
@@ -250,20 +297,19 @@ def detect_hardware(data_dir: Path | None = None, force: bool = False) -> dict[s
         )
     if disk_free_gb < MIN_DISK_FREE_GB_FOR_MODELS:
         blockers.append(
-            f"Free disk space ({disk_free_gb} GB) is below the {MIN_DISK_FREE_GB_FOR_MODELS:.0f} GB needed for OpenJutsu open-weight model checkpoints."
+            f"Free disk space ({disk_free_gb} GB) is below the {MIN_DISK_FREE_GB_FOR_MODELS:.0f} GB required for MiniMax H3 + Qwen3-VL + SAM 3.1 weights."
         )
 
     local_gpu_capable = cuda["cuda_available"] and cuda["max_vram_gb"] >= MIN_LOCAL_VRAM_GB
     local_render_allowed = local_gpu_capable and disk_free_gb >= 10.0
 
+    recommended_backend = "auto"
     if local_render_allowed:
-        recommended_backend = "local-nvidia"
-        recommendation_reason = "NVIDIA GPU with sufficient VRAM detected; local rendering enabled."
+        recommendation_reason = "Local NVIDIA CUDA GPU detected; AUTO will prioritize local-nvidia."
     else:
-        recommended_backend = "remote-comfyui"
         recommendation_reason = (
-            "Local hardware is protected from unsupported heavy GPU inference. "
-            "Use a Remote ComfyUI server (e.g., WISE² Tailscale GPU node) or free Google Colab / Kaggle GPU backend."
+            "Local hardware cannot execute MiniMax H3 / FLUX.3 Klein video diffusion. "
+            "AUTO mode prioritizes verified free Remote ComfyUI, Kaggle GPU (T4 x2 · 30 GB RAM), or Google Colab GPU."
         )
 
     result = {
@@ -293,7 +339,9 @@ def detect_hardware(data_dir: Path | None = None, force: bool = False) -> dict[s
         },
         "gpu": {
             "display_adapters": display_gpus,
+            "has_intel_xe": has_intel_xe,
             "cuda": cuda,
+            "accelerators": accelerators,
             "local_gpu_capable": local_gpu_capable,
             "local_render_allowed": local_render_allowed,
             "blockers": blockers,

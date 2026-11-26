@@ -528,7 +528,7 @@
       <div class="nav-group">AI Video Forge</div>
       <button class="active" data-page="recast">⚡ RECAST ENGINE</button>
       <button data-page="vault">◈ Character Vault</button>
-      <button data-page="backends">⬡ GPU Backends</button>
+      <button data-page="backends">⬡ GPU Manager</button>
       <button data-page="venom">⬢ VENOM Collector</button>
       <div class="nav-group">WISE² Clip Engine</div>
       <button data-page="studio">▶ Clip Studio</button>
@@ -655,8 +655,10 @@
                 <div id="relight-grid" class="relight-grid"></div>
 
                 <div class="row" style="margin-top:16px">
+                  <button type="button" id="recast-preflight-btn">🩺 Check GPU Readiness</button>
                   <button class="primary" type="submit" id="recast-submit-btn" style="flex:1">⚡ Submit Recast Job</button>
                 </div>
+                <div id="recast-preflight-out" class="notice hidden" style="margin-top:10px"></div>
                 <div id="recast-submit-status" class="status"></div>
               </div>
             </form>
@@ -734,13 +736,29 @@
       </section>
 
       <!-- ========================================================= -->
-      <!-- 3. GPU BACKENDS & HARDWARE COMPATIBILITY                  -->
+      <!-- 3. WISE² GPU MANAGER & AUTO BACKEND SELECTOR              -->
       <!-- ========================================================= -->
       <section id="backends" class="hidden">
-        <h1>GPU Backends &amp; Hardware Guard</h1>
-        <p class="lead">Automatic hardware safety guard protects ThinkPad X1 integrated graphics and routes heavy H3/FLUX renders to free or self-hosted GPU backends.</p>
+        <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:14px">
+          <div>
+            <h1>WISE² GPU Manager</h1>
+            <p class="lead" style="margin-bottom:0">Centralized backend manager supporting Local CPU, Intel Iris Xe, OpenVINO, Local NVIDIA CUDA, Remote ComfyUI, Free Kaggle, Free Colab, Dedicated WISE² GPU Server &amp; Opt-In RunPod. Never reports connected without a live health check.</p>
+          </div>
+          <div class="row">
+            <button type="button" class="primary" id="gpu-live-probe-btn">⚡ Run Live Health Check</button>
+            <button type="button" id="gpu-diag-btn">🩺 Deep Diagnostics</button>
+          </div>
+        </div>
+        <div id="gpu-auto-panel" class="panel">
+          <div class="row" style="justify-content:space-between;margin-bottom:8px">
+            <h2 style="margin:0">AUTO Rendering Mode — Smart Selector</h2>
+            <button type="button" class="chip" id="gpu-activate-auto">Activate AUTO Mode</button>
+          </div>
+          <div id="gpu-auto-summary" class="notice">Checking live compatible backends…</div>
+          <div id="gpu-diag-out" class="notice hidden" style="font-family:monospace;font-size:11.5px;white-space:pre-wrap"></div>
+        </div>
         <div id="hardware-detail-panel" class="panel">
-          <h2>Detected Workstation Hardware</h2>
+          <h2>Detected Workstation Hardware &amp; Tailscale Peers</h2>
           <dl id="hw-dl" class="diag"></dl>
         </div>
         <div id="backends-cards" class="grid-2"></div>
@@ -1012,16 +1030,17 @@ $('#auth-form').onsubmit = async e => {
   }
 };
 
-// ---- Hardware & Backends ----
-async function loadBackendsAndHardware(refresh = false) {
+// ---- Hardware & WISE² GPU Manager ----
+async function loadBackendsAndHardware(refresh = false, liveProbe = false) {
   try {
-    const [hw, bk] = await Promise.all([
+    const [hw, bk, autoSel] = await Promise.all([
       api('/api/hardware' + (refresh ? '?refresh=true' : '')),
-      api('/api/backends')
+      api('/api/gpu/manager?probe=' + (liveProbe ? 'true' : 'false')),
+      liveProbe ? api('/api/gpu/select', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ workflow: 'simple', resolution: '480p', duration_sec: 5, live_probe: true }) }) : Promise.resolve(null)
     ]);
     state.hardware = hw;
     state.backends = bk.backends;
-    state.activeBackend = bk.active_backend;
+    state.activeBackend = bk.active_backend || 'auto';
 
     const hwPill = $('#pill-hw');
     if (hw.gpu.local_render_allowed) {
@@ -1036,9 +1055,15 @@ async function loadBackendsAndHardware(refresh = false) {
       $('#hw-banner').classList.remove('hidden');
     }
 
-    const activeObj = bk.backends.find(b => b.id === bk.active_backend) || bk.backends[0];
-    $('#pill-backend').className = 'pill';
-    $('#pill-backend').innerHTML = '<span class="dot"></span>' + activeObj.name.split('(')[0].trim();
+    const aiReadyCount = (bk.ai_ready_backends || []).length;
+    const bkPill = $('#pill-backend');
+    if (aiReadyCount > 0) {
+      bkPill.className = 'pill ok';
+      bkPill.innerHTML = '<span class="dot"></span>AI GPU Connected (' + aiReadyCount + ')';
+    } else {
+      bkPill.className = 'pill warn';
+      bkPill.innerHTML = '<span class="dot"></span>' + (state.activeBackend === 'auto' ? 'AUTO · No AI GPU Online' : state.activeBackend + ' · Unverified');
+    }
 
     // Tailscale mobile access box
     const ts = hw.network && hw.network.tailscale;
@@ -1051,83 +1076,152 @@ async function loadBackendsAndHardware(refresh = false) {
       $('#mobile-access-box').textContent = 'Local URL: ' + location.origin + '/ (Install Tailscale or Cloudflare Tunnel for away-from-home iPhone access.)';
     }
 
-    // Populate backend select in Recast form
+    // Populate backend select in Recast form (AUTO first!)
     const sel = $('#recast-backend');
-    sel.innerHTML = bk.backends.map(b => {
-      const disabled = (!b.enabled && b.id === 'local-nvidia') || (b.paid && !b.enabled);
-      const tag = b.paid ? ' [PAID · LOCKED]' : (b.id === 'local-nvidia' && !b.hardware_supported ? ' [GUARDED]' : ' [FREE]');
-      return '<option value="' + b.id + '"' + (b.id === bk.active_backend ? ' selected' : '') + (disabled ? ' disabled' : '') + '>' + b.name + tag + '</option>';
+    const autoOpt = '<option value="auto"' + (state.activeBackend === 'auto' ? ' selected' : '') + '>⚡ AUTO — Best Free Compatible AI GPU (Recommended)</option>';
+    sel.innerHTML = autoOpt + bk.backends.filter(b => b.supports_ai_recast).map(b => {
+      const disabled = b.health_status === 'incompatible' || b.health_status === 'locked_paid';
+      const statusTxt = b.connected ? 'CONNECTED ✓' : b.health_status.toUpperCase();
+      return '<option value="' + b.id + '"' + (b.id === state.activeBackend ? ' selected' : '') + (disabled ? ' disabled' : '') + '>' + b.name + ' [' + statusTxt + ']</option>';
     }).join('');
 
+    // AUTO Summary box
+    if (autoSel) {
+      if (autoSel.ready && autoSel.selected_backend) {
+        $('#gpu-auto-summary').className = 'notice';
+        $('#gpu-auto-summary').innerHTML = '<strong>AUTO Selected:</strong> ' + autoSel.selected_backend.name + ' (' + autoSel.selected_backend.comfyui_url + ') — Est. ~' + autoSel.selected_backend.estimated_render_sec + 's for 5s @ 480p.';
+      } else {
+        $('#gpu-auto-summary').className = 'notice warn';
+        $('#gpu-auto-summary').innerHTML = '<strong>AUTO Status: No compatible AI GPU online.</strong> ' + autoSel.blocker_summary;
+      }
+    } else {
+      $('#gpu-auto-summary').className = 'notice';
+      $('#gpu-auto-summary').textContent = 'Active Mode: ' + state.activeBackend.toUpperCase() + '. Click "Run Live Health Check" to verify live ComfyUI connectivity and AUTO ranking.';
+    }
+
     // Hardware details DL
+    const peersStr = (ts && ts.peers && ts.peers.length)
+      ? ts.peers.map(p => p.hostname + ' (' + p.ip + ': ' + (p.online ? 'ONLINE' : 'OFFLINE') + ')').join(' · ')
+      : 'None';
+    const accel = hw.gpu.accelerators || {};
     const rows = [
       ['Machine', (hw.os.manufacturer || '') + ' ' + (hw.os.model || hw.os.system)],
       ['CPU', hw.cpu.name + ' (' + hw.cpu.cores + 'C / ' + hw.cpu.logical_processors + 'T)'],
       ['System RAM', (hw.memory.ram_total_gb || '?') + ' GB'],
       ['Display GPU', hw.gpu.display_adapters.map(g => g.name).join(', ') || 'None'],
-      ['CUDA Available', hw.gpu.cuda.cuda_available ? ('Yes (' + hw.gpu.cuda.max_vram_gb + ' GB VRAM)') : 'No (NVIDIA GPU not present)'],
-      ['Local Heavy Render', hw.gpu.local_render_allowed ? 'ENABLED' : 'BLOCKED BY SAFETY GUARD'],
+      ['CUDA / OpenVINO / DirectML', (hw.gpu.cuda.cuda_available ? 'CUDA ✓' : 'No CUDA') + ' · ' + (accel.openvino_available ? 'OpenVINO ✓' : 'No OpenVINO') + ' · ' + (accel.directml_available ? 'DirectML ✓' : 'No DirectML')],
+      ['Local AI Video Render', hw.gpu.local_render_allowed ? 'ENABLED' : 'BLOCKED BY HARDWARE GUARD'],
       ['Disk Free', hw.disk.free_gb + ' GB / ' + hw.disk.total_gb + ' GB'],
       ['Python / Node / FFmpeg', hw.toolchain.python.version + ' · ' + (hw.toolchain.node.version || 'N/A') + ' · ' + (hw.toolchain.ffmpeg.found ? 'OK' : 'Missing')],
-      ['Tailscale Self IP', (ts && ts.self_ip) || 'Not detected']
+      ['Tailscale Self / Peers', ((ts && ts.self_ip) || 'None') + ' | ' + peersStr]
     ];
     $('#hw-dl').innerHTML = rows.map(([k, v]) => '<dt>' + k + '</dt><dd>' + String(v).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) + '</dd>').join('');
 
-    // Backend cards
+    // Render ALL 9 GPU Manager backend cards
     $('#backends-cards').innerHTML = '';
     bk.backends.forEach(b => {
       const card = document.createElement('div');
       card.className = 'panel';
-      const statusBadge = b.id === bk.active_backend
-        ? '<span class="badge verified">ACTIVE</span>'
-        : (b.paid && !b.enabled ? '<span class="badge blocked">PAID · LOCKED</span>' : (b.id === 'local-nvidia' && !b.hardware_supported ? '<span class="badge restricted">HW GUARDED</span>' : '<span class="badge partial">AVAILABLE</span>'));
+      const st = b.health_status || 'unchecked';
+      const badgeCls = st === 'connected' ? 'verified' : (st === 'locked_paid' || st === 'incompatible' || st === 'offline' ? 'blocked' : 'restricted');
+      const badgeLabel = st === 'connected' ? 'CONNECTED ✓' : st.replaceAll('_', ' ').toUpperCase();
+      const isComfy = b.kind === 'comfyui';
       card.innerHTML = `
-        <div class="row" style="justify-content:space-between;margin-bottom:8px">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px">
           <h3 style="margin:0">${b.name}</h3>
-          ${statusBadge}
+          <span class="badge ${badgeCls}">${badgeLabel}</span>
         </div>
+        <div class="muted" style="font-size:11.5px;margin-bottom:6px">${b.memory_summary || ''} · ${b.paid ? ('Paid ~$' + b.cost_per_hour_usd + '/hr') : 'FREE ($0)'}</div>
         <p class="muted" style="font-size:12px;margin:0 0 8px">${b.notes || ''}</p>
+        ${b.unsupported_reason ? '<div class="notice warn" style="font-size:11.5px">' + b.unsupported_reason + '</div>' : ''}
         ${b.limits ? '<div class="notice" style="font-size:11.5px">' + b.limits + '</div>' : ''}
+        <div class="muted" style="font-size:11px;margin-bottom:8px"><strong>Supported workflows:</strong> ${(b.supported_workflows || []).join(', ')}</div>
         ${b.notebook ? '<div class="muted" style="font-size:11.5px;margin-bottom:8px">Notebook: <code>' + b.notebook + '</code></div>' : ''}
-        <label>ComfyUI URL<input type="url" class="bk-url" value="${b.comfyui_url || ''}" placeholder="https://xxxx.trycloudflare.com or http://100.x.x.x:8188"></label>
-        <div class="row" style="margin-top:8px">
-          <button type="button" class="primary bk-save" ${b.id === 'local-nvidia' && !b.hardware_supported ? 'disabled' : ''}>Save &amp; Activate</button>
-          <button type="button" class="bk-probe">Test ComfyUI</button>
-        </div>
-        <div class="bk-probe-out muted" style="font-size:12px;margin-top:8px"></div>
+        ${isComfy ? `
+          <label>ComfyUI Endpoint URL<input type="url" class="bk-url" value="${b.comfyui_url || ''}" placeholder="https://xxxx.trycloudflare.com or http://&lt;gpu-host&gt;:8188"></label>
+          <div class="row" style="margin-top:8px">
+            <button type="button" class="primary bk-save" ${st === 'incompatible' || st === 'locked_paid' ? 'disabled' : ''}>Save &amp; Set Preferred</button>
+            <button type="button" class="bk-probe">Test Health</button>
+          </div>
+          <div class="bk-probe-out muted" style="font-size:12px;margin-top:8px">${b.last_probe && b.last_probe.error ? b.last_probe.error : ''}</div>
+        ` : ''}
       `;
-      card.querySelector('.bk-save').onclick = async () => {
-        try {
-          await api('/api/backends/' + b.id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, set_active: true })
-          });
-          toast('Backend Saved', b.name + ' is now active.');
-          loadBackendsAndHardware();
-        } catch (err) { toast('Blocked', err.message); }
-      };
-      card.querySelector('.bk-probe').onclick = async () => {
-        const out = card.querySelector('.bk-probe-out');
-        out.textContent = 'Probing ComfyUI & OpenJutsu custom nodes…';
-        try {
-          const res = await api('/api/backends/' + b.id + '/probe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, workflow: 'simple' })
-          });
-          if (res.reachable) {
-            out.innerHTML = '<span style="color:var(--neon)">✓ Connected!</span> Queue: ' + res.queue.running + ' running, ' + res.queue.pending + ' pending. ' +
-              (res.ready_for_workflow ? 'All OpenJutsu nodes ready.' : ('Missing packs: ' + res.missing_packs.map(p => p.name).join(', ')));
-          } else {
-            out.innerHTML = '<span style="color:var(--amber)">Unreachable:</span> ' + res.error;
-          }
-        } catch (err) { out.textContent = 'Error: ' + err.message; }
-      };
+      if (isComfy) {
+        card.querySelector('.bk-save').onclick = async () => {
+          try {
+            await api('/api/backends/' + b.id, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, set_active: true })
+            });
+            toast('Backend Saved', b.name + ' updated.');
+            loadBackendsAndHardware(false, true);
+          } catch (err) { toast('Blocked', err.message); }
+        };
+        card.querySelector('.bk-probe').onclick = async () => {
+          const out = card.querySelector('.bk-probe-out');
+          out.textContent = 'Running live TCP + ComfyUI + OpenJutsu node check…';
+          try {
+            const res = await api('/api/backends/' + b.id + '/probe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, workflow: 'simple' })
+            });
+            if (res.connected) {
+              out.innerHTML = '<span style="color:var(--neon)">✓ CONNECTED!</span> Queue: ' + res.queue.running + ' running, ' + res.queue.pending + ' pending. ' +
+                (res.ready_for_workflow ? 'All OpenJutsu nodes verified.' : ('Missing packs: ' + res.missing_packs.map(p => p.name).join(', ')));
+            } else {
+              out.innerHTML = '<span style="color:var(--crimson)">OFFLINE / UNREACHABLE:</span> ' + res.error;
+            }
+          } catch (err) { out.textContent = 'Error: ' + err.message; }
+        };
+      }
       $('#backends-cards').appendChild(card);
     });
   } catch (err) { console.error(err); }
 }
+
+$('#gpu-live-probe-btn').onclick = () => loadBackendsAndHardware(true, true);
+$('#gpu-activate-auto').onclick = async () => {
+  await api('/api/backends/auto', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ set_active: true }) });
+  toast('AUTO Mode Enabled', 'WISE² GPU Manager will select the best free healthy GPU automatically.');
+  loadBackendsAndHardware(false, true);
+};
+$('#gpu-diag-btn').onclick = async () => {
+  const out = $('#gpu-diag-out');
+  out.classList.remove('hidden');
+  out.textContent = 'Running Tailscale, TCP, HTTP & hardware diagnostics…';
+  try {
+    const d = await api('/api/gpu/diagnostics', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({}) });
+    out.textContent = JSON.stringify(d, null, 2);
+  } catch (err) { out.textContent = 'Diagnostics error: ' + err.message; }
+};
+$('#recast-preflight-btn').onclick = async () => {
+  const out = $('#recast-preflight-out');
+  out.classList.remove('hidden');
+  out.className = 'notice';
+  out.textContent = 'Checking live GPU backend compatibility…';
+  try {
+    const pf = await api('/api/recast/preflight', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        capability_id: state.selectedCap,
+        resolution: $('#recast-res').value,
+        duration_sec: Number($('#recast-duration').value || 5),
+        backend_id: $('#recast-backend').value
+      })
+    });
+    const sel = pf.selection;
+    if (sel.ready && sel.selected_backend) {
+      out.className = 'notice';
+      out.innerHTML = '<strong>✓ AI GPU Ready:</strong> ' + sel.selected_backend.name + ' (est. ~' + sel.selected_backend.estimated_render_sec + 's).';
+    } else {
+      out.className = 'notice warn';
+      out.innerHTML = '<strong>No Compatible AI GPU Online:</strong> ' + sel.blocker_summary + ' (Submitting will still preserve your video & compile the OpenJutsu graph so you can Retry with 1 click once a GPU connects.)';
+    }
+  } catch (err) { out.className = 'notice err'; out.textContent = 'Preflight error: ' + err.message; }
+};
 
 // ---- Capabilities & Relight Presets ----
 async function loadCapabilities() {
@@ -1271,19 +1365,23 @@ function previewRecastJob(job) {
   const v = $('#recast-output-video');
   const dl = $('#recast-download-mp4');
   const gr = $('#recast-download-graph');
-  const url = job.output_url || (job.prepared_clip ? job.prepared_url : job.source_url);
+  const isAiDone = Boolean(job.ai_render_completed && job.output_url);
+  const url = isAiDone ? job.output_url : (job.prepared_clip ? job.prepared_url : job.source_url);
   if (url) {
     v.src = url;
     v.classList.remove('hidden');
     $('#recast-output-placeholder').classList.add('hidden');
     dl.href = url;
+    dl.querySelector('button').textContent = isAiDone ? '⬇ Download AI Replacement MP4' : '⬇ Download Pre-AI Input Clip';
     dl.classList.remove('hidden');
   }
   if (job.compiled_workflow_file) {
     gr.href = job.workflow_url;
     gr.classList.remove('hidden');
   }
-  $('#recast-active-meta').textContent =
+  const stageLabel = isAiDone ? '✓ AI RENDER VERIFIED' : 'PRE-AI INPUT CLIP ONLY (AI RENDER NOT COMPLETED)';
+  $('#recast-active-meta').innerHTML =
+    '<strong>' + stageLabel + '</strong><br>' +
     job.id + ' · ' + job.capability_name + ' · ' + job.status.toUpperCase() + ' (' + job.progress + '%) — ' + (job.message || '');
 }
 
@@ -1309,25 +1407,27 @@ async function loadRecastJobs() {
     const cls = j.status === 'succeeded' ? 'verified' : (j.status === 'failed' ? 'blocked' : 'restricted');
     const el = document.createElement('div');
     el.className = 'job-card';
+    const aiTag = j.ai_render_completed ? '<span class="badge verified">AI VIDEO READY</span>' : '<span class="badge restricted">WORKFLOW ONLY · NO AI RENDER YET</span>';
     el.innerHTML = `
       <div class="row" style="justify-content:space-between">
         <strong>${j.capability_name}</strong>
         <span class="badge ${cls}">${j.status}</span>
       </div>
-      <div class="muted" style="font-size:11.5px;margin-top:4px">${j.id} · ${j.resolution} · ${j.duration_sec}s · ${j.backend_name}</div>
+      <div class="row" style="margin-top:5px">${aiTag}</div>
+      <div class="muted" style="font-size:11.5px;margin-top:4px">${j.id} · ${j.resolution} · ${j.duration_sec}s · seed ${j.seed} · ${j.resolved_backend_name || j.backend_name}</div>
       <div class="progress-bar"><div class="progress-fill" style="width:${j.progress || 0}%"></div></div>
       <div style="font-size:12px;color:#cfe9f5">${j.message || ''}</div>
       ${j.error ? '<div style="font-size:11.5px;color:#ff8ea1;margin-top:4px">' + j.error + '</div>' : ''}
       <div class="row" style="margin-top:8px">
-        <button type="button" class="chip j-preview">Preview</button>
-        <button type="button" class="chip j-retry">↻ Retry</button>
+        <button type="button" class="chip j-preview">${j.ai_render_completed ? 'Preview AI MP4' : 'Preview Input Clip'}</button>
+        <button type="button" class="chip j-retry">↻ Retry (No Re-Upload)</button>
         ${j.status === 'running' || j.status === 'queued' ? '<button type="button" class="chip danger j-cancel">Cancel</button>' : ''}
       </div>
     `;
     el.querySelector('.j-preview').onclick = () => previewRecastJob(j);
     el.querySelector('.j-retry').onclick = async () => {
-      await api('/api/recast/jobs/' + j.id + '/retry', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ backend_id: state.activeBackend }) });
-      toast('Retrying Job', j.id);
+      await api('/api/recast/jobs/' + j.id + '/retry', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ backend_id: state.activeBackend || 'auto' }) });
+      toast('Retrying Without Re-Upload', j.id + ' via ' + (state.activeBackend || 'auto'));
       pollRecastJob(j.id);
     };
     const cbtn = el.querySelector('.j-cancel');

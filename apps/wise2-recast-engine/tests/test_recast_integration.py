@@ -294,3 +294,79 @@ def test_venom_collector_catalog_and_ui_served(isolated_env):
     assert home.status_code == 200
     assert "WISE² RECAST ENGINE" in home.text
     assert "OBSIDIAN // FORGED" in home.text
+
+
+def test_gpu_manager_no_hardcoded_dead_ip_and_auto_fallback(isolated_env):
+    """Verify:
+    1) No hardcoded dead 100.66.102.124 IP in defaults.
+    2) All 9 GPU Manager backends appear and NEVER report connected without a live health check.
+    3) AUTO mode + automatic compatible fallback switches from an offline Remote ComfyUI to a healthy Kaggle mock server.
+    4) Job cloning reuses preserved source video without re-uploading (5s 480p seed 42 test).
+    """
+    client = TestClient(main.app)
+    mgr = client.get("/api/gpu/manager?probe=false").json()
+    assert mgr["active_backend"] == "auto"
+    ids = {b["id"] for b in mgr["backends"]}
+    for expected in ("local-cpu", "local-intel-xe", "local-openvino", "local-nvidia", "remote-comfyui", "kaggle-gpu", "google-colab", "wise2-gpu-server", "runpod"):
+        assert expected in ids
+    for b in mgr["backends"]:
+        assert b.get("comfyui_url") != "http://100.66.102.124:8188"
+        assert b["connected"] is False  # Never claims connected without a live probe!
+
+    # Deep diagnostics works cleanly
+    diag = client.post("/api/gpu/diagnostics", json={}).json()
+    assert diag["probe"]["connected"] is False
+    assert len(diag["recommendations"]) >= 1
+
+    # Configure offline remote-comfyui AND healthy kaggle-gpu mock server -> verify automatic fallback!
+    prof = client.post(
+        "/api/recast/profiles",
+        data={"name": "Silk Vision Single", "role": "the host", "category": "character"},
+        files={"image": ("silk_single.png", _make_png_bytes(), "image/png")},
+    ).json()
+
+    # Prepare a real 5s clip via initial submission against unreachable remote-comfyui
+    client.put("/api/backends/remote-comfyui", json={"comfyui_url": "http://127.0.0.1:19998", "set_active": False})
+    r1 = client.post(
+        "/api/recast/jobs",
+        data={
+            "capability_id": "character_replacement",
+            "profile_ids": json.dumps([prof["id"]]),
+            "resolution": "480p",
+            "duration_sec": "5",
+            "start_sec": "0",
+            "seed": "42",
+            "backend_id": "remote-comfyui",
+            "run_sync": "true",
+        },
+        files={"video": ("synthetic_36s.mp4", FIXTURE_VIDEO.read_bytes(), "video/mp4")},
+    )
+    assert r1.status_code == 202
+    j1 = r1.json()
+    assert j1["status"] == "awaiting_gpu_backend"
+    assert j1["workflow_compiled"] is True
+    assert j1["ai_render_completed"] is False
+
+    # Now bring up a healthy mock Kaggle ComfyUI server while remote-comfyui stays offline
+    prepared_path = recast.get_job_file(j1["id"], "prepared")
+    req_nodes = recast.required_nodes_for_workflow("simple")
+    httpd, kaggle_url, _ = _start_mock_comfyui_server(prepared_path, req_nodes)
+    try:
+        client.put("/api/backends/kaggle-gpu", json={"comfyui_url": kaggle_url, "set_active": False})
+        pf = client.post("/api/recast/preflight", json={"capability_id": "character_replacement", "resolution": "480p", "duration_sec": 5, "backend_id": "auto"}).json()
+        assert pf["selection"]["ready"] is True
+        assert pf["selection"]["selected_backend"]["id"] == "kaggle-gpu"
+
+        # Retry original job (still targeting remote-comfyui) -> verifies automatic compatible fallback to kaggle-gpu without re-uploading!
+        retried = client.post(f"/api/recast/jobs/{j1['id']}/retry", json={"run_sync": True}).json()
+        assert retried["status"] == "succeeded"
+        assert retried["ai_render_completed"] is True
+        assert retried["resolved_backend_id"] == "kaggle-gpu"
+        assert retried["fallback_used"] is True
+
+        # Clone into a 24s job reusing preserved source video without re-uploading
+        cloned = client.post(f"/api/recast/jobs/{j1['id']}/clone", json={"duration_sec": 6, "seed": 42, "backend_id": "auto", "run_sync": True}).json()
+        assert cloned["id"] != j1["id"]
+        assert cloned["status"] == "succeeded"
+    finally:
+        httpd.shutdown()

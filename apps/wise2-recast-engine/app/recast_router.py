@@ -80,8 +80,67 @@ def get_hardware(refresh: bool = False):
 
 
 @router.get("/api/backends", dependencies=[Depends(_require_auth)])
-def get_backends():
-    return backends.list_backends()
+def get_backends(probe: bool = False):
+    return backends.list_backends(live_probe=probe)
+
+
+@router.get("/api/gpu/manager", dependencies=[Depends(_require_auth)])
+def gpu_manager_status(probe: bool = True):
+    return backends.list_backends(live_probe=probe)
+
+
+@router.post("/api/gpu/select", dependencies=[Depends(_require_auth)])
+def gpu_auto_select(payload: dict = Body(default={})):
+    wf = payload.get("workflow") or "simple"
+    res = payload.get("resolution") or "480p"
+    dur = float(payload.get("duration_sec") or 5.0)
+    pref = payload.get("backend_id")
+    if pref == "auto":
+        pref = None
+    try:
+        req_nodes = recast.required_nodes_for_workflow(wf) if payload.get("check_nodes", True) else None
+    except Exception:
+        req_nodes = None
+    return backends.select_best_backend(
+        workflow=wf,
+        resolution=res,
+        duration_sec=dur,
+        preferred_backend_id=pref,
+        required_nodes=req_nodes,
+        live_probe=bool(payload.get("live_probe", True)),
+    )
+
+
+@router.post("/api/gpu/diagnostics", dependencies=[Depends(_require_auth)])
+def gpu_diagnostics(payload: dict = Body(default={})):
+    return backends.run_connection_diagnostics(
+        comfyui_url=payload.get("comfyui_url"),
+        workflow=payload.get("workflow") or "simple",
+    )
+
+
+@router.post("/api/recast/preflight", dependencies=[Depends(_require_auth)])
+def recast_preflight(payload: dict = Body(default={})):
+    cap_id = payload.get("capability_id") or "character_replacement"
+    cap = next((c for c in recast.CAPABILITIES if c["id"] == cap_id), recast.CAPABILITIES[0])
+    wf = cap["workflow"]
+    req_nodes = recast.required_nodes_for_workflow(wf)
+    pref = payload.get("backend_id")
+    if pref == "auto":
+        pref = None
+    sel = backends.select_best_backend(
+        workflow=wf,
+        resolution=payload.get("resolution") or "480p",
+        duration_sec=float(payload.get("duration_sec") or 5.0),
+        preferred_backend_id=pref,
+        required_nodes=req_nodes,
+        live_probe=True,
+    )
+    return {
+        "capability": cap,
+        "required_nodes_count": len(req_nodes),
+        "selection": sel,
+    }
 
 
 @router.put("/api/backends/{backend_id}", dependencies=[Depends(_require_auth)])
@@ -324,18 +383,56 @@ def retry_recast_job(job_id: str, payload: dict = Body(default={})):
         "progress": 0,
         "error": None,
         "attempts": int(job.get("attempts") or 1) + 1,
-        "message": "Re-queued for retry.",
+        "message": "Re-queued for retry (preserved inputs reused — zero re-upload).",
     }
     if payload.get("backend_id"):
         b = backends.get_backend(payload["backend_id"])
         updates["backend_id"] = b["id"]
         updates["backend_name"] = b["name"]
+    if isinstance(payload.get("profile_ids"), list):
+        for pid in payload["profile_ids"]:
+            if recast.get_profile(pid) is None:
+                raise HTTPException(422, f"Character profile '{pid}' not found.")
+        updates["profile_ids"] = payload["profile_ids"]
+    if payload.get("resolution") in recast.RESOLUTION_PRESETS:
+        updates["resolution"] = payload["resolution"]
+    if payload.get("duration_sec") is not None:
+        dur = float(payload["duration_sec"])
+        if dur < 1.0 or dur > 60.0:
+            raise HTTPException(422, "duration_sec must be between 1 and 60.")
+        updates["duration_sec"] = round(dur, 2)
+    if payload.get("start_sec") is not None:
+        updates["start_sec"] = max(0.0, float(payload["start_sec"]))
+    if payload.get("seed") is not None:
+        updates["seed"] = int(payload["seed"])
     recast.patch_recast_job(job_id, **updates)
     if payload.get("run_sync"):
         recast.execute_recast_job(job_id)
         return recast.get_recast_job(job_id)
     recast_executor.submit(recast.execute_recast_job, job_id)
     return recast.get_recast_job(job_id)
+
+
+@router.post("/api/recast/jobs/{job_id}/clone", status_code=202, dependencies=[Depends(_require_auth)])
+def clone_recast_job(job_id: str, payload: dict = Body(default={})):
+    try:
+        new_job = recast.clone_job_without_reupload(
+            job_id,
+            profile_ids=payload.get("profile_ids"),
+            resolution=payload.get("resolution"),
+            duration_sec=float(payload["duration_sec"]) if payload.get("duration_sec") is not None else None,
+            start_sec=float(payload["start_sec"]) if payload.get("start_sec") is not None else None,
+            seed=int(payload["seed"]) if payload.get("seed") is not None else None,
+            backend_id=payload.get("backend_id"),
+            role=payload.get("role"),
+        )
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(404 if isinstance(exc, FileNotFoundError) else 422, str(exc)) from exc
+    if payload.get("run_sync"):
+        recast.execute_recast_job(new_job["id"])
+        return recast.get_recast_job(new_job["id"])
+    recast_executor.submit(recast.execute_recast_job, new_job["id"])
+    return new_job
 
 
 @router.post("/api/recast/jobs/{job_id}/cancel", dependencies=[Depends(_require_auth)])

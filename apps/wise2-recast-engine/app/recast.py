@@ -757,52 +757,76 @@ def execute_recast_job(job_id: str) -> None:
         patch_recast_job(
             job_id,
             progress=32,
+            workflow_compiled=True,
+            ai_render_completed=False,
             compiled_workflow_file=graph_path.name,
             required_nodes_count=len(compiled["required_nodes"]),
         )
 
-        # Step 3: Enforce hardware & backend guards
-        backend = backends.get_backend(job.get("backend_id"))
-        if backend["id"] == "local-nvidia" and not backend.get("hardware_supported"):
-            raise PermissionError(
-                "Local NVIDIA rendering blocked on unsupported ThinkPad X1 integrated graphics. "
-                "Switch to Remote ComfyUI, Google Colab (Free), or Kaggle GPU (Free)."
+        # Step 3: Resolve backend via WISE² GPU Manager (AUTO selection + compatible fallback)
+        requested_backend = job.get("backend_id") or "auto"
+        preferred = None if requested_backend == "auto" else requested_backend
+        if preferred and preferred not in {"auto"}:
+            explicit_b = backends.get_backend(preferred)
+            if explicit_b["id"] == "local-nvidia" and not explicit_b.get("hardware_supported"):
+                raise PermissionError(
+                    "Local NVIDIA rendering blocked on unsupported integrated graphics. "
+                    "Use AUTO mode, Remote ComfyUI, Kaggle Free GPU, or Google Colab Free GPU."
+                )
+            if explicit_b.get("paid") and not explicit_b.get("enabled"):
+                raise PermissionError("Paid RunPod backend is disabled until explicitly authorized.")
+
+        selection = backends.select_best_backend(
+            workflow=job["workflow"],
+            resolution=job["resolution"],
+            duration_sec=float(job.get("duration_sec", 6.0)),
+            preferred_backend_id=preferred,
+            required_nodes=compiled["required_nodes"],
+            live_probe=True,
+        )
+        chosen = selection.get("selected_backend")
+        patch_recast_job(job_id, auto_selection=selection)
+
+        if not chosen:
+            # Find best actionable probe message (prefer requested backend error if set)
+            pref_cand = next((c for c in selection["candidates"] if c["id"] == preferred), None) if preferred else None
+            probe_obj = (pref_cand or {}).get("probe") or {"reachable": False, "error": selection["blocker_summary"]}
+            err_msg = (
+                "; ".join(pref_cand["reasons"])
+                if pref_cand and pref_cand.get("reasons")
+                else selection["blocker_summary"]
             )
-        if backend.get("paid") and not backend.get("enabled"):
-            raise PermissionError("Paid RunPod backend is disabled until explicitly authorized.")
-
-        comfy_url = (backend.get("comfyui_url") or "").strip().rstrip("/")
-        probe = backends.probe_comfyui(comfy_url, required_nodes=compiled["required_nodes"], timeout=4.0)
-        patch_recast_job(job_id, backend_probe=probe)
-
-        if not probe["reachable"]:
+            missing_node_case = bool(probe_obj and probe_obj.get("connected") and not probe_obj.get("ready_for_workflow"))
             patch_recast_job(
                 job_id,
-                status="awaiting_gpu_backend",
+                status="missing_comfy_nodes" if missing_node_case else "awaiting_gpu_backend",
+                stage="missing_comfy_nodes" if missing_node_case else "awaiting_gpu_backend",
                 progress=35,
-                stage="awaiting_gpu_backend",
-                error=probe["error"],
+                workflow_compiled=True,
+                ai_render_completed=False,
+                backend_probe=probe_obj,
+                error=err_msg,
                 message=(
-                    f"Clip & OpenJutsu workflow compiled cleanly, but GPU backend '{backend['name']}' is unreachable. "
-                    "Start your Remote ComfyUI / free Colab / Kaggle notebook, update the backend URL, and click Retry."
+                    "Source clip prepared & OpenJutsu workflow compiled (AI render NOT started). "
+                    + (err_msg or "No compatible AI GPU backend online. Connect Kaggle/Colab or Remote ComfyUI and click Retry (no re-upload needed).")
                 ),
             )
             return
 
-        if not probe["ready_for_workflow"]:
-            missing_names = ", ".join(p["name"] for p in probe["missing_packs"])
-            patch_recast_job(
-                job_id,
-                status="missing_comfy_nodes",
-                progress=35,
-                stage="missing_comfy_nodes",
-                error=f"ComfyUI at {comfy_url} is missing required packs: {missing_names}",
-                message=f"ComfyUI connected, but missing custom nodes: {missing_names}",
-            )
-            return
+        comfy_url = chosen["comfyui_url"].strip().rstrip("/")
+        fallback_used = bool(preferred and chosen["id"] != preferred)
+        patch_recast_job(
+            job_id,
+            resolved_backend_id=chosen["id"],
+            resolved_backend_name=chosen["name"],
+            fallback_used=fallback_used,
+            backend_probe=chosen.get("probe"),
+            estimated_render_sec=chosen.get("estimated_render_sec"),
+        )
 
         # Step 4: Upload inputs & submit real ComfyUI prompt
-        patch_recast_job(job_id, status="running", progress=40, stage="uploading_to_gpu", message=f"Uploading assets to {comfy_url}...")
+        fb_note = f" (automatic fallback from {preferred})" if fallback_used else ""
+        patch_recast_job(job_id, status="running", progress=40, stage="uploading_to_gpu", message=f"Uploading assets to {chosen['name']}{fb_note}...")
         uploaded_video = _upload_file_to_comfyui(comfy_url, prepared_clip)
         uploaded_images = [_upload_file_to_comfyui(comfy_url, ref) for ref in ref_files]
 
@@ -825,20 +849,29 @@ def execute_recast_job(job_id: str) -> None:
         graph_path.write_text(json.dumps(live_compiled["graph"], indent=2), encoding="utf-8")
 
         prompt_id = _submit_comfyui_prompt(comfy_url, live_compiled["graph"], client_id=f"wise2-{job_id}")
-        patch_recast_job(job_id, comfy_prompt_id=prompt_id, progress=45, stage="rendering_gpu", message=f"Submitted to ComfyUI (prompt {prompt_id}).")
+        patch_recast_job(job_id, comfy_prompt_id=prompt_id, progress=45, stage="rendering_gpu", message=f"Submitted to {chosen['name']} (prompt {prompt_id}).")
 
         output_path = _poll_comfyui_job(job_id, comfy_url, prompt_id, folder)
         out_meta = probe_video_metadata(output_path)
+        in_sha = hashlib.sha256(prepared_clip.read_bytes()).hexdigest()
+        out_sha = hashlib.sha256(output_path.read_bytes()).hexdigest()
         patch_recast_job(
             job_id,
             status="succeeded",
             progress=100,
             stage="complete",
+            workflow_compiled=True,
+            ai_render_completed=True,
             output_file=output_path.name,
             output_url=f"/api/recast/jobs/{job_id}/output",
             output_meta=out_meta,
+            output_verified={
+                "valid_mp4": out_meta["width"] > 0 and out_meta["duration_sec"] > 0,
+                "output_sha256": out_sha,
+                "distinct_from_prepared_input": out_sha != in_sha,
+            },
             error=None,
-            message=f"Render complete ({out_meta['width']}x{out_meta['height']}, {out_meta['duration_sec']}s MP4).",
+            message=f"AI Render complete on {chosen['name']} ({out_meta['width']}x{out_meta['height']}, {out_meta['duration_sec']}s MP4).",
         )
 
     except Exception as exc:
@@ -915,7 +948,7 @@ def create_recast_job(
         (folder / fname).write_bytes(ibytes)
         saved_inline.append(fname)
 
-    chosen_backend = backends.get_backend(backend_id)
+    chosen_backend = backends.get_backend(backend_id or "auto")
     job = {
         "id": job_id,
         "capability_id": capability_id,
@@ -924,6 +957,8 @@ def create_recast_job(
         "status": "queued",
         "stage": "queued",
         "progress": 0,
+        "workflow_compiled": False,
+        "ai_render_completed": False,
         "source_filename": safe_video_name,
         "source_orig_name": auth.sanitize_filename(source_filename, safe_video_name),
         "source_bytes": len(source_bytes),
@@ -951,6 +986,45 @@ def create_recast_job(
         "output_url": None,
     }
     return _save_job(job)
+
+
+def clone_job_without_reupload(
+    source_job_id: str,
+    *,
+    profile_ids: list[str] | None = None,
+    resolution: str | None = None,
+    duration_sec: float | None = None,
+    start_sec: float | None = None,
+    seed: int | None = None,
+    backend_id: str | None = None,
+    role: str | None = None,
+) -> dict[str, Any]:
+    """Create a new recast job reusing an existing job's preserved source video with zero re-upload."""
+    orig = get_recast_job(source_job_id)
+    if not orig:
+        raise ValueError(f"Source job '{source_job_id}' not found.")
+    src_file = get_job_file(source_job_id, "source")
+    if not src_file:
+        raise FileNotFoundError(f"Preserved source video for job '{source_job_id}' is missing.")
+    return create_recast_job(
+        capability_id=orig["capability_id"],
+        source_bytes=src_file.read_bytes(),
+        source_filename=orig.get("source_orig_name") or src_file.name,
+        profile_ids=profile_ids if profile_ids is not None else list(orig.get("profile_ids") or []),
+        inline_images=[],
+        resolution=resolution or orig["resolution"],
+        duration_sec=duration_sec if duration_sec is not None else float(orig["duration_sec"]),
+        start_sec=start_sec if start_sec is not None else float(orig.get("start_sec", 0.0)),
+        backend_id=backend_id or "auto",
+        role=role if role is not None else orig.get("role", ""),
+        object_mode=orig.get("object_mode", "change"),
+        object_target=orig.get("object_target", "person"),
+        prompt=orig.get("prompt", ""),
+        relight_preset=orig.get("relight_preset", ""),
+        no_lip_sync=bool(orig.get("no_lip_sync", False)),
+        hat_fix=bool(orig.get("hat_fix", False)),
+        seed=seed if seed is not None else int(orig.get("seed", 42)),
+    )
 
 
 def get_job_file(job_id: str, kind: str) -> Path | None:
