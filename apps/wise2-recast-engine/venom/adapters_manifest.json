@@ -1,0 +1,105 @@
+[
+  {
+    "id": "openjutsu",
+    "name": "OPENjutsu",
+    "repo": "D3voz/openjutsu",
+    "url": "https://github.com/D3voz/openjutsu",
+    "license": "MIT",
+    "commit_sha": "7fe118bb5a61fcfac0148e1bfea3dd29884dbf26",
+    "role": "Core Genjutsu alternative: 1-4 character swap, motion transfer, object/wardrobe/background swap, 17 FLUX.3 relight presets",
+    "domains": [
+      "character_consistency",
+      "motion_capture",
+      "visual_effects",
+      "commercial_production",
+      "music_videos",
+      "product_visualization"
+    ],
+    "integration_mode": "comfyui_workflow",
+    "source_path": "upstream/openjutsu"
+  },
+  {
+    "id": "panorama-stickers",
+    "name": "ComfyUI-Panorama-Stickers",
+    "repo": "nomadoor/ComfyUI-Panorama-Stickers",
+    "url": "https://github.com/nomadoor/ComfyUI-Panorama-Stickers",
+    "license": "MIT",
+    "commit_sha": "732146a0f1dcbafe9ce331401e4465d95e42abe1",
+    "role": "360 Panorama keyframed camera cinematography (Best Overall  winner)",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/panorama-stickers"
+  },
+  {
+    "id": "paintaplate",
+    "name": "ainvfx-paintaplate",
+    "repo": "AInVFX/ainvfx-paintaplate",
+    "url": "https://github.com/AInVFX/ainvfx-paintaplate",
+    "license": "Apache-2.0",
+    "commit_sha": "d95292c1a96073a34bfec82d7462dbd2887d0000",
+    "role": "First-frame VFX plate painting, erase, add, relight (Open Weights VFX winner)",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/paintaplate"
+  },
+  {
+    "id": "oneshot-mv",
+    "name": "ComfyUI-OneShotMV",
+    "repo": "VisualFrisson/ComfyUI-OneShotMV",
+    "url": "https://github.com/VisualFrisson/ComfyUI-OneShotMV",
+    "license": "MIT",
+    "commit_sha": "1528e3ae071936b1f02d9311e1e5450d5d9ac308",
+    "role": "Song + concept to cast-planned music video workflow (Honorable Mention)",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/oneshot-mv"
+  },
+  {
+    "id": "sameface",
+    "name": "comfyui-sameface",
+    "repo": "fixed-42/comfyui-sameface",
+    "url": "https://github.com/fixed-42/comfyui-sameface",
+    "license": "Apache-2.0",
+    "commit_sha": "6aa4a693663ca1e0898a433613f5adeda606837f",
+    "role": "Apache-2.0 facial landmark consistency node (commercial-safe alternative to non-commercial InsightFace)",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/sameface"
+  },
+  {
+    "id": "open-ads-studio",
+    "name": "open-ads-studio",
+    "repo": "jhoard/open-ads-studio",
+    "url": "https://github.com/jhoard/open-ads-studio",
+    "license": "Apache-2.0",
+    "commit_sha": "ba11fd2dcfb3366299d474a3e3de9b8161f69f79",
+    "role": "Open-weights commercial & label-exact product ad studio",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/open-ads-studio"
+  },
+  {
+    "id": "seam",
+    "name": "seam",
+    "repo": "jdnichollsc/seam",
+    "url": "https://github.com/jdnichollsc/seam",
+    "license": "MIT",
+    "commit_sha": "b9f439e2dc72128d961f8e889aee8dae00e9263a",
+    "role": "AI shot-to-shot visual transitions (smoke, water, morphs)",
+    "domains": [
+      "modular_adapter"
+    ],
+    "integration_mode": "comfyui_custom_node",
+    "source_path": "venom-sources/seam"
+  }
+]

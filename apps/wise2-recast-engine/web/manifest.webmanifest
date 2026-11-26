@@ -1,0 +1,10 @@
+{
+  "name": "WISE² Command Center — Clip & Recast Engine",
+  "short_name": "WISE² RECAST",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050607",
+  "theme_color": "#00D9FF",
+  "orientation": "portrait-primary",
+  "description": "OBSIDIAN // FORGED AI Video Production, Character Recast & Clip Engine"
+}

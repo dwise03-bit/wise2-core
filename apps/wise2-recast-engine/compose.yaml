@@ -1,0 +1,13 @@
+services:
+  clip-engine:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - wise2-data:/data
+    environment:
+      WISE2_DATA_DIR: /data
+      WISE2_MAX_UPLOAD_MB: 1024
+    restart: unless-stopped
+volumes:
+  wise2-data:
