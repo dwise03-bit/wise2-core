@@ -6,7 +6,9 @@ permissions:
   contents: read
 jobs:
   audit:
-    if: github.event.issue.user.login == 'dwise03-bit' && github.event.issue.title == 'WISE2 OPS: soundlabs-admin-audit'
+    if: >-
+      github.event.issue.user.login == 'dwise03-bit' &&
+      github.event.issue.title == 'WISE2 OPS: soundlabs-admin-audit'
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 8
     steps:
