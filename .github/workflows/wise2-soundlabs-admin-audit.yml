@@ -1,0 +1,43 @@
+name: WISE2 Sound Labs Admin Audit
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.event.issue.user.login == 'dwise03-bit' && github.event.issue.title == 'WISE2 OPS: soundlabs-admin-audit'
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 8
+    steps:
+      - name: Audit as authorized dwise admin
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = wise2
+          ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new dwise@localhost 'bash -s' <<'REMOTE'
+          set +e
+          echo "=== USER ==="; id
+          echo "=== UNIT ==="
+          systemctl --user show wise2-soundlabs.service --no-pager -p LoadState -p ActiveState -p SubState -p FragmentPath -p MainPID -p ExecStart -p Environment
+          systemctl --user status wise2-soundlabs.service --no-pager -l | tail -n 100
+          echo "=== JOURNAL ==="
+          journalctl --user -u wise2-soundlabs.service -n 120 --no-pager
+          echo "=== UNIT FILE ==="
+          systemctl --user cat wise2-soundlabs.service
+          echo "=== LISTENERS ==="
+          sudo -n ss -lntp | grep -E ':(80|443|3000|3001|3002|3003|3005|3010|8000|8080|8088|7860|8501)\\b'
+          echo "=== LOCAL HTTP ==="
+          for p in 3000 3001 3002 3003 3005 3010 8000 8080 8088 7860 8501; do
+            body="/tmp/sl-$p"; rm -f "$body"
+            code=$(curl -sS -L --max-time 3 -o "$body" -w '%{http_code}' "http://127.0.0.1:$p/" 2>/dev/null)
+            test -f "$body" || : > "$body"
+            printf 'port=%s code=%s bytes=%s title=%s signals=%s\n' "$p" "$code" "$(wc -c < "$body")" "$(grep -io '<title>[^<]*' "$body" | head -1)" "$(grep -Eio 'sound.?labs|studio|audio|music' "$body" | sort -u | tr '\n' ',')"
+          done
+          echo "=== NGINX ==="
+          sudo -n nginx -T 2>&1 | grep -nE 'configuration file|server_name|listen |location |proxy_pass' | tail -n 260
+          echo "=== TUNNEL ==="
+          sudo -n systemctl list-unit-files | grep -i cloudflared
+          sudo -n systemctl status cloudflared --no-pager -l | tail -n 100
+          sudo -n find /etc/cloudflared "$HOME/.cloudflared" -maxdepth 2 -type f \( -name '*.yml' -o -name '*.yaml' \) -print 2>/dev/null
+          REMOTE
