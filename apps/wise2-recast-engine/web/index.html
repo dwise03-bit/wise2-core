@@ -1,0 +1,1585 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050607">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/web/manifest.webmanifest">
+  <title>WISE² Command Center — OBSIDIAN // FORGED · RECAST &amp; CLIP ENGINE</title>
+  <style>
+    :root {
+      --bg-obsidian: #050607;
+      --surface-1: #0a0f1a;
+      --surface-2: #101827;
+      --surface-3: #151f31;
+      --cyan: #00d9ff;
+      --cyan-dim: rgba(0, 217, 255, 0.16);
+      --cyan-glow: rgba(0, 217, 255, 0.35);
+      --neon: #00ff7f;
+      --amber: #f59e0b;
+      --crimson: #ff3b5c;
+      --chrome: #bfc4c9;
+      --text: #eef4fa;
+      --muted: #8f9fb3;
+      --border: rgba(0, 217, 255, 0.18);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: var(--bg-obsidian);
+      /* OBSIDIAN // FORGED subtle carbon-fiber weave + cyan telemetry wash */
+      background-image:
+        radial-gradient(circle at 12% 0%, rgba(0, 217, 255, 0.14), transparent 36%),
+        radial-gradient(circle at 88% 8%, rgba(0, 255, 127, 0.06), transparent 32%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 2px, transparent 2px, transparent 6px),
+        repeating-linear-gradient(-45deg, rgba(0,217,255,0.014) 0px, rgba(0,217,255,0.014) 2px, transparent 2px, transparent 6px),
+        linear-gradient(180deg, #050607 0%, #080d16 55%, #030406 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, textarea, select { font: inherit; color: inherit; }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header & Carbon-Fiber IMP Emblem */
+    header.topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      background: rgba(5, 6, 7, 0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .imp-emblem {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      border: 1px solid rgba(0, 217, 255, 0.45);
+      background:
+        repeating-linear-gradient(45deg, #101622 0 3px, #070a10 3px 6px),
+        radial-gradient(circle at 50% 35%, rgba(0, 217, 255, 0.25), transparent 70%);
+      box-shadow: 0 0 18px rgba(0, 217, 255, 0.22), inset 0 0 10px rgba(0, 217, 255, 0.14);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .brand-title strong {
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      color: #fff;
+    }
+    .brand-title strong span { color: var(--cyan); }
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .header-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: rgba(16, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      color: var(--chrome);
+    }
+    .pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+    .pill.ok .dot { background: var(--neon); box-shadow: 0 0 8px var(--neon); }
+    .pill.warn .dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .pill.err .dot { background: var(--crimson); box-shadow: 0 0 8px var(--crimson); }
+
+    /* Shell layout */
+    .shell {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      min-height: calc(100vh - 67px);
+    }
+    nav.sidebar {
+      padding: 16px 12px;
+      background: rgba(10, 15, 26, 0.72);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-group {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 10px 4px;
+    }
+    nav.sidebar button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 44px;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--chrome);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    nav.sidebar button:hover {
+      background: rgba(0, 217, 255, 0.08);
+      color: #fff;
+      border-color: rgba(0, 217, 255, 0.25);
+    }
+    nav.sidebar button.active {
+      background: linear-gradient(90deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.04));
+      border-color: rgba(0, 217, 255, 0.55);
+      color: #fff;
+      box-shadow: inset 3px 0 0 var(--cyan);
+    }
+    main {
+      padding: 20px;
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Forged panels & controls */
+    .panel {
+      background: linear-gradient(180deg, rgba(16, 24, 39, 0.88), rgba(10, 15, 26, 0.94));
+      border: 1px solid var(--border);
+      border-top: 2px solid rgba(0, 217, 255, 0.35);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    h3 { margin: 0 0 8px; font-size: 14px; color: #fff; }
+    .muted { color: var(--muted); }
+    .lead { margin: 0 0 16px; color: var(--chrome); font-size: 13px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .recast-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.9fr); gap: 16px; align-items: start; }
+    .cols { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; }
+    .formgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+
+    button.btn, button.primary, button.secondary, button.danger, button {
+      cursor: pointer;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 217, 255, 0.28);
+      background: var(--surface-3);
+      color: #fff;
+      padding: 10px 14px;
+      min-height: 44px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    button:hover:not(:disabled) { border-color: var(--cyan); background: #19263c; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.primary {
+      background: linear-gradient(135deg, #00d9ff, #0094ff);
+      color: #03070c;
+      border-color: #00d9ff;
+      font-weight: 800;
+      box-shadow: 0 0 18px rgba(0, 217, 255, 0.25);
+    }
+    button.primary:hover:not(:disabled) {
+      filter: brightness(1.08);
+      box-shadow: 0 0 26px rgba(0, 217, 255, 0.45);
+    }
+    button.danger { border-color: rgba(255, 59, 92, 0.5); color: #ff8ea1; }
+    button.chip {
+      min-height: 36px;
+      padding: 6px 11px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+    button.chip.active {
+      background: var(--cyan);
+      color: #040910;
+      border-color: var(--cyan);
+    }
+
+    label { display: grid; gap: 6px; margin: 8px 0; font-size: 12px; color: var(--chrome); font-weight: 600; }
+    input[type="text"], input[type="password"], input[type="number"], input[type="url"], input[type="file"], input[type="datetime-local"], textarea, select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 217, 255, 0.22);
+      background: rgba(5, 9, 16, 0.92);
+      color: #fff;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.14);
+    }
+    textarea { min-height: 76px; resize: vertical; }
+
+    .dropzone {
+      border: 2px dashed rgba(0, 217, 255, 0.4);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(0, 217, 255, 0.04);
+    }
+    .notice {
+      padding: 11px 13px;
+      border-left: 3px solid var(--cyan);
+      background: rgba(0, 217, 255, 0.08);
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 12.5px;
+      color: #cfe9f5;
+    }
+    .notice.warn {
+      border-left-color: var(--amber);
+      background: rgba(245, 158, 11, 0.1);
+      color: #fde6b4;
+    }
+    .notice.err {
+      border-left-color: var(--crimson);
+      background: rgba(255, 59, 92, 0.12);
+      color: #ffc2cd;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+    .badge.verified { background: rgba(0, 255, 127, 0.14); color: var(--neon); border-color: rgba(0, 255, 127, 0.35); }
+    .badge.partial { background: rgba(0, 217, 255, 0.14); color: var(--cyan); border-color: rgba(0, 217, 255, 0.35); }
+    .badge.restricted { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border-color: rgba(245, 158, 11, 0.45); }
+    .badge.blocked { background: rgba(255, 59, 92, 0.16); color: #ff7c93; border-color: rgba(255, 59, 92, 0.45); }
+
+    /* Capability cards */
+    .cap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 9px;
+    }
+    .cap-card {
+      text-align: left;
+      padding: 11px;
+      border-radius: 11px;
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      background: rgba(7, 11, 20, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 86px;
+    }
+    .cap-card.selected {
+      border-color: var(--cyan);
+      background: rgba(0, 217, 255, 0.13);
+      box-shadow: 0 0 18px rgba(0, 217, 255, 0.18);
+    }
+    .cap-card strong { font-size: 12.5px; color: #fff; }
+    .cap-card small { font-size: 11px; color: var(--muted); line-height: 1.3; }
+
+    /* Profile Vault cards */
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 10px;
+    }
+    .profile-card {
+      border: 1px solid rgba(0, 217, 255, 0.2);
+      border-radius: 11px;
+      background: #080d17;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .profile-card.selected {
+      border-color: var(--neon);
+      box-shadow: 0 0 16px rgba(0, 255, 127, 0.25);
+    }
+    .profile-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #04070d;
+    }
+    .profile-meta { padding: 8px; font-size: 11.5px; }
+    .profile-meta strong { display: block; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Relight grid */
+    .relight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+      gap: 7px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .relight-tile {
+      padding: 4px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #070b13;
+      text-align: center;
+      font-size: 10px;
+      min-height: 0;
+    }
+    .relight-tile.active { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,217,255,0.3); }
+    .relight-tile img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 4px; }
+
+    /* Video preview & progress */
+    .video-box {
+      width: 100%;
+      background: #030508;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+    }
+    .video-box video { width: 100%; max-height: 360px; display: block; object-fit: contain; }
+    .progress-bar { height: 8px; background: #162235; border-radius: 999px; overflow: hidden; margin: 8px 0; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--neon)); width: 0%; transition: width 0.25s ease; }
+
+    .job-card {
+      padding: 12px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: rgba(6, 10, 18, 0.9);
+      margin-bottom: 10px;
+    }
+
+    /* Existing Clip Engine v1.7 styles preserved */
+    .clips { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 9px; }
+    .clip { padding: 6px; }
+    .poster { aspect-ratio: 9/13; background: linear-gradient(140deg, #0b2436, #0a1426 65%, #093d49); display: grid; place-items: center; border-radius: 7px; font-weight: 700; color: var(--cyan); }
+    .preview { width: 220px; max-width: 100%; aspect-ratio: 9/16; background: linear-gradient(140deg, #0c2233, #0e1a2e 65%, #0c3d46); margin: auto; border-radius: 12px; position: relative; display: grid; place-items: center; overflow: hidden; }
+    .preview video { width: 100%; height: 100%; object-fit: contain; }
+    .caption { position: absolute; left: 8%; right: 8%; bottom: 20%; text-align: center; font-weight: 900; font-size: 26px; white-space: pre-line; text-shadow: 1px 2px 5px black; pointer-events: none; }
+    .caption.top { top: 15%; bottom: auto; }
+    .caption.center { top: 45%; bottom: auto; }
+    .caption.karaoke { color: #f6df43; }
+    .caption.neon { color: #00d9ff; text-shadow: 2px 2px #ff3b5c; }
+    .caption.cinematic { font-family: Georgia, serif; font-weight: 400; }
+    .caption.boxed { background: #111b; }
+    .styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .editor-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; }
+    .editor-preview { position: relative; background: #04070d; max-width: 330px; margin: 0 auto; border-radius: 12px; overflow: hidden; }
+    .editor-preview video { display: block; width: 100%; max-height: 460px; object-fit: contain; }
+    .editor-overlay { position: absolute; bottom: 17%; left: 7%; right: 7%; text-align: center; font-size: 22px; font-weight: 900; text-shadow: 1px 2px 5px #000; pointer-events: none; }
+    .word-row { display: grid; grid-template-columns: minmax(0,1fr) 74px 74px 40px; gap: 6px; margin: 6px 0; }
+    .diag { display: grid; grid-template-columns: minmax(130px, 34%) 1fr; gap: 8px 12px; }
+    .diag dt { color: var(--muted); }
+    .diag dd { margin: 0; word-break: break-word; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid rgba(0,217,255,0.12); text-align: left; }
+    th { color: var(--cyan); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .hidden { display: none !important; }
+    .status { color: var(--cyan); margin: 10px 0; font-weight: 600; }
+    #toasts { position: fixed; top: 14px; right: 14px; z-index: 60; display: flex; flex-direction: column; gap: 8px; max-width: 340px; pointer-events: none; }
+    .toast { background: #0f1b2e; border: 1px solid var(--cyan); border-left: 4px solid var(--cyan); border-radius: 10px; padding: 11px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+
+    /* Auth Gate Modal */
+    .auth-overlay {
+      position: fixed; inset: 0; z-index: 80;
+      background: rgba(3, 5, 8, 0.94);
+      backdrop-filter: blur(10px);
+      display: grid; place-items: center; padding: 20px;
+    }
+    .auth-card { max-width: 410px; width: 100%; }
+
+    /* Mobile-First iPhone responsive layout */
+    @media (max-width: 980px) {
+      .recast-layout, .cols, .editor-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      header.topbar { padding: 10px 12px; }
+      .brand-title strong { font-size: 15px; }
+      .shell { display: block; padding-bottom: 74px; }
+      nav.sidebar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        z-index: 40;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+        border-right: none;
+        border-top: 1px solid var(--border);
+        background: rgba(5, 6, 7, 0.96);
+        backdrop-filter: blur(14px);
+      }
+      .nav-group { display: none; }
+      nav.sidebar button {
+        flex: 0 0 auto;
+        min-height: 48px;
+        padding: 8px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      nav.sidebar button.active { box-shadow: inset 0 -3px 0 var(--cyan); }
+      main { padding: 12px; }
+      .grid-2, .grid-3, .formgrid { grid-template-columns: 1fr; }
+      button, input, select { min-height: 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toasts"></div>
+
+  <div id="auth-gate" class="auth-overlay hidden">
+    <div class="panel auth-card">
+      <h2>OBSIDIAN // FORGED · AUTH GATE</h2>
+      <p class="lead">Remote access protection is active. Enter your WISE² access password to unlock Recast &amp; Clip Engine.</p>
+      <form id="auth-form">
+        <label>Access Password
+          <input id="auth-password" type="password" autocomplete="current-password" required placeholder="Minimum 12 characters">
+        </label>
+        <div id="auth-error" class="notice err hidden"></div>
+        <button class="primary" type="submit" style="width:100%;margin-top:8px">Unlock Command Center</button>
+      </form>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="imp-emblem" aria-label="Carbon-Fiber IMP Emblem">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="16,2 29,9.5 29,22.5 16,30 3,22.5 3,9.5" stroke="#00D9FF" stroke-width="1.8" fill="rgba(0,217,255,0.09)"/>
+          <polygon points="16,7 24,11.8 24,20.2 16,25 8,20.2 8,11.8" stroke="#00FF7F" stroke-width="1.2" fill="rgba(5,6,7,0.85)"/>
+          <circle cx="16" cy="16" r="3.4" fill="#00D9FF"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <strong>WISE<span>²</span> COMMAND CENTER</strong>
+        <span class="brand-sub">OBSIDIAN // FORGED · IMP · RECAST × CLIP ENGINE v2.0</span>
+      </div>
+    </div>
+    <div class="header-pills">
+      <span id="pill-hw" class="pill"><span class="dot"></span>Detecting Hardware…</span>
+      <span id="pill-backend" class="pill"><span class="dot"></span>Backend…</span>
+      <span id="pill-auth" class="pill"><span class="dot"></span>Auth…</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <nav class="sidebar" aria-label="Primary Navigation">
+      <div class="nav-group">AI Video Forge</div>
+      <button class="active" data-page="recast">⚡ RECAST ENGINE</button>
+      <button data-page="vault">◈ Character Vault</button>
+      <button data-page="backends">⬡ GPU Manager</button>
+      <button data-page="venom">⬢ VENOM Collector</button>
+      <div class="nav-group">WISE² Clip Engine</div>
+      <button data-page="studio">▶ Clip Studio</button>
+      <button data-page="editor">✂ Timeline Editor</button>
+      <button data-page="social">↗ Social Drafts</button>
+      <button data-page="brands">◫ Brand Templates</button>
+      <button data-page="diagnostics">⚙ System Audit</button>
+    </nav>
+
+    <main>
+      <!-- ========================================================= -->
+      <!-- 1. FLAGSHIP: WISE² RECAST ENGINE (OPENJUTSU INTEGRATION)  -->
+      <!-- ========================================================= -->
+      <section id="recast">
+        <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:14px">
+          <div>
+            <h1>WISE² RECAST ENGINE</h1>
+            <p class="lead" style="margin-bottom:0">Open-source Higgsfield Genjutsu alternative powered by verified OpenJutsu + ComfyUI workflows. Built mobile-first for ThinkPad X1 &amp; iPhone.</p>
+          </div>
+          <button type="button" id="recast-refresh-btn">↻ Refresh Status</button>
+        </div>
+
+        <div id="hw-banner" class="notice warn hidden"></div>
+
+        <div class="recast-layout">
+          <div>
+            <form id="recast-form">
+              <div class="panel">
+                <h2>1 · Source Video</h2>
+                <div class="dropzone">
+                  <label>Upload Video (MP4 / MOV / MKV / WebM)
+                    <input id="recast-video" name="video" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.mkv,.webm" required>
+                  </label>
+                  <div class="video-box" style="margin-top:10px">
+                    <video id="recast-source-preview" controls playsinline muted class="hidden"></video>
+                    <span id="recast-source-placeholder" class="muted">Select a video from ThinkPad or iPhone Camera Roll</span>
+                  </div>
+                </div>
+                <div class="formgrid" style="margin-top:10px">
+                  <label>Resolution
+                    <select id="recast-res" name="resolution">
+                      <option value="480p" selected>480p (Fast / Free GPU friendly)</option>
+                      <option value="736p">736p (OpenJutsu Standard)</option>
+                      <option value="1080p">1080p (High VRAM · 2.5× slower)</option>
+                    </select>
+                  </label>
+                  <label>Clip Duration (seconds, 1–60s)
+                    <input id="recast-duration" name="duration_sec" type="number" min="1" max="60" step="0.5" value="6">
+                  </label>
+                  <label>Start Offset (seconds)
+                    <input id="recast-start" name="start_sec" type="number" min="0" step="0.5" value="0">
+                  </label>
+                  <label>Seed
+                    <input id="recast-seed" name="seed" type="number" min="0" max="99999999" value="42">
+                  </label>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="row" style="justify-content:space-between;margin-bottom:8px">
+                  <h2 style="margin:0">2 · Character / Product Reference</h2>
+                  <button type="button" class="chip" data-jump="vault">+ Manage Vault</button>
+                </div>
+                <p class="muted" style="margin:0 0 10px;font-size:12px">Tap saved profiles below to reuse without re-uploading, or attach a new reference photo.</p>
+                <div id="recast-vault-picker" class="vault-grid"></div>
+                <div class="formgrid" style="margin-top:12px">
+                  <label>Or Upload New Reference Image (PNG / JPG / WebP)
+                    <input id="recast-ref-file" name="reference_image" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp">
+                  </label>
+                  <label>Save Uploaded Image to Vault as (optional)
+                    <input id="recast-save-profile-name" name="save_inline_profile_name" type="text" placeholder="e.g. WISE2 Host / Product Bottle">
+                  </label>
+                </div>
+              </div>
+
+              <div class="panel">
+                <h2>3 · Select Verified OpenJutsu Workflow</h2>
+                <div id="cap-grid" class="cap-grid"></div>
+                <div id="cap-note" class="notice" style="margin-top:12px"></div>
+
+                <div id="face-license-box" class="notice warn hidden">
+                  <label style="display:flex;align-items:center;gap:10px;margin:0;cursor:pointer">
+                    <input id="accept-face-license" type="checkbox" style="width:20px;min-height:20px">
+                    <span>I acknowledge Fix Faces uses InsightFace buffalo_l (non-commercial research only) and Ultralytics YOLO (AGPL-3.0).</span>
+                  </label>
+                </div>
+
+                <div class="formgrid" style="margin-top:10px">
+                  <label>Character Role (never describe clothes)
+                    <input id="recast-role" name="role" type="text" placeholder="e.g. the lead singer, the host">
+                  </label>
+                  <label>Tracked Target (SAM 3.1)
+                    <input id="recast-target" name="object_target" type="text" value="person" placeholder="person, jacket, hair, car">
+                  </label>
+                  <label>Object Swap Mode
+                    <select id="recast-obj-mode" name="object_mode">
+                      <option value="change">Change (swap object / wardrobe)</option>
+                      <option value="background">Background (replace environment)</option>
+                      <option value="remove">Remove object</option>
+                      <option value="add">Add product / object</option>
+                    </select>
+                  </label>
+                  <label>Target GPU Backend
+                    <select id="recast-backend" name="backend_id"></select>
+                  </label>
+                </div>
+
+                <label>Creative Prompt / Scene Description (optional)
+                  <textarea id="recast-prompt" name="prompt" placeholder="Describe object, wardrobe, background, or lighting look..."></textarea>
+                </label>
+
+                <div class="row" style="margin:8px 0 12px">
+                  <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer">
+                    <input id="recast-nolip" type="checkbox" style="width:20px;min-height:20px">
+                    <span>No Lip-Sync (preserve song soundtrack without forcing speech)</span>
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer">
+                    <input id="recast-hatfix" type="checkbox" style="width:20px;min-height:20px">
+                    <span>Hat Fix (expand head mask)</span>
+                  </label>
+                </div>
+
+                <h3>Cinematic Relight Look (17 Verified FLUX.3 Klein Presets)</h3>
+                <div id="relight-grid" class="relight-grid"></div>
+
+                <div class="row" style="margin-top:16px">
+                  <button type="button" id="recast-preflight-btn">🩺 Check GPU Readiness</button>
+                  <button class="primary" type="submit" id="recast-submit-btn" style="flex:1">⚡ Submit Recast Job</button>
+                </div>
+                <div id="recast-preflight-out" class="notice hidden" style="margin-top:10px"></div>
+                <div id="recast-submit-status" class="status"></div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right column: Live Queue, Preview & Mobile Access -->
+          <div>
+            <div class="panel">
+              <h2>Active Render Preview</h2>
+              <div class="video-box">
+                <video id="recast-output-video" controls playsinline class="hidden"></video>
+                <span id="recast-output-placeholder" class="muted" style="padding:18px;text-align:center">Completed MP4 or prepared 480p clip appears here</span>
+              </div>
+              <div id="recast-active-meta" class="muted" style="font-size:12px;margin-top:8px"></div>
+              <div class="row" style="margin-top:10px">
+                <a id="recast-download-mp4" class="hidden" download style="flex:1"><button type="button" class="primary" style="width:100%">⬇ Download MP4</button></a>
+                <a id="recast-download-graph" class="hidden" download><button type="button">JSON Graph</button></a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="row" style="justify-content:space-between;margin-bottom:8px">
+                <h2 style="margin:0">Recast Job Queue</h2>
+                <button type="button" class="chip" id="refresh-recast-jobs">↻ Reload</button>
+              </div>
+              <div id="recast-jobs-list"><p class="muted">No recast jobs yet.</p></div>
+            </div>
+
+            <div class="panel">
+              <h2>iPhone Remote Access</h2>
+              <p class="muted" style="font-size:12px;margin:0 0 8px">Access this Command Center from your iPhone over Tailscale with password auth enabled:</p>
+              <div id="mobile-access-box" class="notice" style="font-family:monospace;font-size:12px">Detecting Tailscale address…</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- 2. CHARACTER & PRODUCT PROFILE VAULT                      -->
+      <!-- ========================================================= -->
+      <section id="vault" class="hidden">
+        <h1>Character &amp; Product Vault</h1>
+        <p class="lead">Persistent reference profiles stored in SQLite + SHA-256 vault. Reuse approved talent, products, outfits, and backgrounds across jobs without re-uploading.</p>
+        <div class="grid-2">
+          <div class="panel">
+            <h2>Add Reference Profile</h2>
+            <form id="vault-form">
+              <label>Profile Name<input name="name" type="text" required placeholder="e.g. Darrin Studio Hero"></label>
+              <div class="formgrid">
+                <label>Category
+                  <select name="category">
+                    <option value="character">Character / Talent</option>
+                    <option value="product">Product / Commercial</option>
+                    <option value="wardrobe">Wardrobe / Outfit</option>
+                    <option value="background">Background / Set</option>
+                  </select>
+                </label>
+                <label>Default Role
+                  <input name="role" type="text" placeholder="e.g. the lead singer">
+                </label>
+              </div>
+              <label>Notes<input name="notes" type="text" placeholder="Approved shoot notes..."></label>
+              <label>Reference Photo (PNG / JPG / WebP)
+                <input name="image" type="file" accept="image/png,image/jpeg,image/webp" required>
+              </label>
+              <button class="primary" type="submit" style="width:100%;margin-top:8px">+ Save to Character Vault</button>
+            </form>
+            <div id="vault-status" class="status"></div>
+          </div>
+          <div class="panel">
+            <h2>Saved Profiles</h2>
+            <div id="vault-list" class="vault-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- 3. WISE² GPU MANAGER & AUTO BACKEND SELECTOR              -->
+      <!-- ========================================================= -->
+      <section id="backends" class="hidden">
+        <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:14px">
+          <div>
+            <h1>WISE² GPU Manager</h1>
+            <p class="lead" style="margin-bottom:0">Centralized backend manager supporting Local CPU, Intel Iris Xe, OpenVINO, Local NVIDIA CUDA, Remote ComfyUI, Free Kaggle, Free Colab, Dedicated WISE² GPU Server &amp; Opt-In RunPod. Never reports connected without a live health check.</p>
+          </div>
+          <div class="row">
+            <button type="button" class="primary" id="gpu-live-probe-btn">⚡ Run Live Health Check</button>
+            <button type="button" id="gpu-diag-btn">🩺 Deep Diagnostics</button>
+          </div>
+        </div>
+        <div id="gpu-auto-panel" class="panel">
+          <div class="row" style="justify-content:space-between;margin-bottom:8px">
+            <h2 style="margin:0">AUTO Rendering Mode — Smart Selector</h2>
+            <button type="button" class="chip" id="gpu-activate-auto">Activate AUTO Mode</button>
+          </div>
+          <div id="gpu-auto-summary" class="notice">Checking live compatible backends…</div>
+          <div id="gpu-diag-out" class="notice hidden" style="font-family:monospace;font-size:11.5px;white-space:pre-wrap"></div>
+        </div>
+        <div id="hardware-detail-panel" class="panel">
+          <h2>Detected Workstation Hardware &amp; Tailscale Peers</h2>
+          <dl id="hw-dl" class="diag"></dl>
+        </div>
+        <div id="backends-cards" class="grid-2"></div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- 4. VENOM COLLECTOR EXPANSION                              -->
+      <!-- ========================================================= -->
+      <section id="venom" class="hidden">
+        <h1>VENOM COLLECTOR · Open-Source Higgsfield Audit</h1>
+        <p class="lead">Complete audit of all 117 upstream open-source Higgsfield repositories across 10 production domains, with modular adapter integration and strict license governance.</p>
+        <div id="venom-summary" class="grid-3" style="margin-bottom:14px"></div>
+        <div class="panel">
+          <h2>Installed Modular Adapters</h2>
+          <div id="venom-adapters" class="grid-3"></div>
+        </div>
+        <div class="panel">
+          <div class="row" style="justify-content:space-between;margin-bottom:10px">
+            <h2 style="margin:0">Ranked Repository Catalog</h2>
+            <div class="row">
+              <select id="venom-domain" style="width:auto">
+                <option value="">All 10 Domains</option>
+                <option value="ai_video_generation">AI Video Generation</option>
+                <option value="character_consistency">Character Consistency</option>
+                <option value="commercial_production">Commercial Production</option>
+                <option value="motion_capture">Motion Capture</option>
+                <option value="cinematography">Cinematography</option>
+                <option value="visual_effects">Visual Effects</option>
+                <option value="animation">Animation</option>
+                <option value="video_editing">Video Editing</option>
+                <option value="product_visualization">Product Visualization</option>
+                <option value="music_videos">Music Videos</option>
+              </select>
+              <select id="venom-decision" style="width:auto">
+                <option value="">All Decisions</option>
+                <option value="ACQUIRED_ADAPTER">Approved &amp; Acquired</option>
+                <option value="APPROVED_CANDIDATE">Approved Candidate</option>
+                <option value="ISOLATED_GPL">Isolated GPL Out-of-Process</option>
+                <option value="QUARANTINED">Quarantined (AGPL / Cloud / Unlicensed)</option>
+              </select>
+              <input id="venom-search" type="text" placeholder="Filter repo..." style="width:180px">
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Rank</th><th>Project</th><th>Score</th><th>Stars</th><th>License</th><th>Decision</th><th>Domains</th></tr>
+              </thead>
+              <tbody id="venom-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- 5-9. EXISTING WISE² CLIP ENGINE v1.7 PRESERVED 100%       -->
+      <!-- ========================================================= -->
+      <section id="studio" class="hidden">
+        <h1>WISE² Clip Studio (v1.7 Engine Preserved)</h1>
+        <div class="cols">
+          <div>
+            <section class="panel">
+              <h2>1 · Upload &amp; Auto-Clip</h2>
+              <div class="formgrid">
+                <form id="upload" class="dropzone">
+                  <label>Processing mode
+                    <select name="processing_mode" id="processing_mode">
+                      <option value="scene-fallback">Scene fallback — label job if ASR missing</option>
+                      <option value="strict-ai">Strict AI — require faster-whisper ASR</option>
+                    </select>
+                  </label>
+                  <label>Caption style
+                    <select name="caption_style" id="caption_style">
+                      <option value="word">Word by word</option>
+                      <option value="phrase">Phrases</option>
+                    </select>
+                  </label>
+                  <label>Choose video<input name="file" type="file" accept=".mp4,.mov,.mkv,.webm" required></label>
+                  <button class="primary" id="generate" style="width:100%">Generate Vertical Clips</button>
+                </form>
+                <div>
+                  <label>Selection goal<select disabled><option>Highlights (9:16)</option></select></label>
+                  <label>Target clips<input disabled value="Up to 20"></label>
+                  <label>Export spec<input disabled value="540×960 MP4 · FFmpeg CPU"></label>
+                </div>
+              </div>
+              <div id="status" class="status">Ready to upload.</div>
+              <a id="zip" class="hidden">Download all clips (ZIP)</a>
+            </section>
+            <section class="panel">
+              <div class="row" style="justify-content:space-between">
+                <h2>2 · Generated Clips</h2>
+                <button id="demo" type="button">Demo Cards</button>
+              </div>
+              <div id="clips" class="clips"><p class="muted">Upload a video or load demo cards.</p></div>
+            </section>
+          </div>
+          <section class="panel">
+            <h2>3 · Caption Style Preview</h2>
+            <div class="preview"><video id="video" controls playsinline class="hidden"></video><div class="caption" id="caption">OBSIDIAN
+FORGED</div></div>
+            <h3 style="margin-top:14px">Presets</h3>
+            <div class="styles">
+              <button class="active" data-style="viral" type="button">Viral</button>
+              <button data-style="karaoke" type="button">Karaoke</button>
+              <button data-style="cinematic" type="button">Cinematic</button>
+              <button data-style="neon" type="button">Neon</button>
+              <button data-style="boxed" type="button">Boxed</button>
+              <button data-style="clean" type="button">Clean</button>
+            </div>
+            <label>Caption text<textarea id="words">OBSIDIAN
+FORGED</textarea></label>
+            <label>Position<select id="position"><option>bottom</option><option>center</option><option>top</option></select></label>
+            <label>Size<input id="size" type="range" min="16" max="44" value="26"></label>
+            <button id="preset" type="button" style="width:100%">Export Caption Style JSON</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="editor" class="hidden">
+        <div class="panel">
+          <h1>Interactive Timeline Editor</h1>
+          <div class="row">
+            <label style="flex:1">Job ID<input id="editor-job" placeholder="12-character job ID" maxlength="12"></label>
+            <button id="editor-load" class="primary" type="button">Load Project</button>
+          </div>
+          <div id="editor-status" class="status">Choose a generated clip or enter a job ID.</div>
+          <div class="editor-grid">
+            <div>
+              <div class="editor-preview"><video id="editor-video" controls playsinline preload="metadata"></video><div id="editor-overlay" class="editor-overlay"></div></div>
+              <div class="row" style="margin-top:8px"><button id="editor-play" type="button">▶ Play / Pause</button><span id="editor-clock" class="muted">0:00</span></div>
+              <label>Scrub footage<input id="editor-seek" type="range" min="0" max="100" step="0.01" value="0"></label>
+              <div class="formgrid">
+                <label>Trim start (s)<input id="editor-start" type="number" min="0" step="0.1" value="0"></label>
+                <label>Trim end (s)<input id="editor-end" type="number" min="0.1" step="0.1" value="25"></label>
+              </div>
+              <div class="row">
+                <button id="editor-set-start" type="button">Start = Playhead</button>
+                <button id="editor-set-end" type="button">End = Playhead</button>
+              </div>
+            </div>
+            <div>
+              <h2>Caption Studio</h2>
+              <div id="editor-words"></div>
+              <button id="editor-add" type="button">+ Add Caption</button>
+              <div class="formgrid">
+                <label>Style<select id="editor-style"><option value="viral">Viral Pop</option><option value="karaoke">Karaoke</option><option value="cinematic">Cinematic</option><option value="neon">Neon</option><option value="boxed">Bold Box</option><option value="clean">Clean</option></select></label>
+                <label>Audio gain (dB)<input id="editor-gain" type="number" min="-20" max="20" step="1" value="0"></label>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <button id="editor-save" type="button">Save Timeline</button>
+                <button class="primary" id="editor-render" type="button">Render MP4</button>
+                <a id="editor-download" class="hidden" download="timeline_edited.mp4">Download Edited MP4</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="social" class="hidden">
+        <h1>Social Draft Studio</h1>
+        <div class="panel">
+          <div class="notice warn">Draft-only UI. Live social publishing remains credential-gated and blocked until official platform credentials are configured.</div>
+          <label>Post description<textarea id="post" placeholder="Write caption and hashtags..."></textarea></label>
+          <div class="row">
+            <label><input type="checkbox" value="YouTube Shorts" checked> YouTube Shorts</label>
+            <label><input type="checkbox" value="Instagram Reels" checked> Instagram Reels</label>
+            <label><input type="checkbox" value="TikTok"> TikTok</label>
+          </div>
+          <label>Intent<select id="mode"><option value="draft">Draft</option><option value="schedule">Schedule metadata</option></select></label>
+          <label>Requested schedule<input type="datetime-local" id="when"></label>
+          <div class="row"><button class="primary" id="save" type="button">Save Draft</button><button id="export" type="button">Export JSON</button></div>
+          <div id="draft-status" class="status"></div>
+          <div id="drafts"></div>
+        </div>
+      </section>
+
+      <section id="brands" class="hidden">
+        <h1>WISE² Brand Templates</h1>
+        <div class="panel">
+          <p>OBSIDIAN // FORGED (`#050607` base, `#00D9FF` cyan, carbon-fiber IMP) is locked as the Command Center default. Distorted Wisdom preset JSON export preserved.</p>
+          <button id="brand" type="button">Export Distorted Wisdom Brand JSON</button>
+        </div>
+      </section>
+
+      <section id="diagnostics" class="hidden">
+        <h1>System Audit &amp; Diagnostics</h1>
+        <div class="panel">
+          <dl id="diag-dl" class="diag"></dl>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const PAGES = ['recast','vault','backends','venom','studio','editor','social','brands','diagnostics'];
+let state = { capabilities: [], relight: [], profiles: [], selectedProfiles: new Set(), selectedCap: 'character_replacement', selectedRelight: '', backends: [], activeBackend: 'remote-comfyui', hardware: null };
+
+function toast(title, body) {
+  const n = document.createElement('div');
+  n.className = 'toast';
+  n.innerHTML = '<strong></strong><div class="muted" style="font-size:12px;margin-top:3px"></div>';
+  n.querySelector('strong').textContent = title;
+  n.querySelector('div').textContent = body || '';
+  $('#toasts').appendChild(n);
+  setTimeout(() => n.remove(), 5500);
+}
+
+async function api(url, opts = {}) {
+  const r = await fetch(url, opts);
+  if (r.status === 401) {
+    $('#auth-gate').classList.remove('hidden');
+    throw new Error('Authentication required');
+  }
+  const ct = r.headers.get('content-type') || '';
+  const data = ct.includes('application/json') ? await r.json() : await r.text();
+  if (!r.ok) throw new Error((data && data.detail) || (typeof data === 'string' ? data : 'Request failed'));
+  return data;
+}
+
+function showPage(page) {
+  $$('nav.sidebar button').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  PAGES.forEach(p => { const el = $('#' + p); if (el) el.classList.toggle('hidden', p !== page); });
+  if (page === 'diagnostics') loadDiagnostics();
+  if (page === 'venom') loadVenom();
+  if (page === 'backends') loadBackendsAndHardware();
+  if (page === 'vault') loadProfiles();
+}
+
+$$('nav.sidebar button').forEach(b => b.onclick = () => showPage(b.dataset.page));
+$$('[data-jump]').forEach(b => b.onclick = () => showPage(b.dataset.jump));
+
+// ---- Auth ----
+async function checkAuth() {
+  try {
+    const st = await fetch('/api/auth/status').then(r => r.json());
+    const pill = $('#pill-auth');
+    if (st.auth_required) {
+      pill.className = st.authenticated ? 'pill ok' : 'pill warn';
+      pill.innerHTML = '<span class="dot"></span>' + (st.authenticated ? 'Auth Locked ✓' : 'Sign-In Required');
+      if (!st.authenticated) { $('#auth-gate').classList.remove('hidden'); return false; }
+    } else {
+      pill.className = 'pill';
+      pill.innerHTML = '<span class="dot"></span>Loopback Local';
+    }
+    $('#auth-gate').classList.add('hidden');
+    return true;
+  } catch { return true; }
+}
+
+$('#auth-form').onsubmit = async e => {
+  e.preventDefault();
+  $('#auth-error').classList.add('hidden');
+  try {
+    await api('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: $('#auth-password').value })
+    });
+    $('#auth-password').value = '';
+    $('#auth-gate').classList.add('hidden');
+    toast('Unlocked', 'WISE² Command Center authenticated.');
+    initAll();
+  } catch (err) {
+    $('#auth-error').textContent = err.message;
+    $('#auth-error').classList.remove('hidden');
+  }
+};
+
+// ---- Hardware & WISE² GPU Manager ----
+async function loadBackendsAndHardware(refresh = false, liveProbe = false) {
+  try {
+    const [hw, bk, autoSel] = await Promise.all([
+      api('/api/hardware' + (refresh ? '?refresh=true' : '')),
+      api('/api/gpu/manager?probe=' + (liveProbe ? 'true' : 'false')),
+      liveProbe ? api('/api/gpu/select', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ workflow: 'simple', resolution: '480p', duration_sec: 5, live_probe: true }) }) : Promise.resolve(null)
+    ]);
+    state.hardware = hw;
+    state.backends = bk.backends;
+    state.activeBackend = bk.active_backend || 'auto';
+
+    const hwPill = $('#pill-hw');
+    if (hw.gpu.local_render_allowed) {
+      hwPill.className = 'pill ok';
+      hwPill.innerHTML = '<span class="dot"></span>NVIDIA CUDA Ready';
+      $('#hw-banner').classList.add('hidden');
+    } else {
+      hwPill.className = 'pill warn';
+      const gpuName = (hw.gpu.display_adapters[0] && hw.gpu.display_adapters[0].name) || 'Integrated GPU';
+      hwPill.innerHTML = '<span class="dot"></span>' + gpuName.slice(0, 22) + ' · Remote GPU Mode';
+      $('#hw-banner').textContent = 'Hardware Safety Guard Active: ' + hw.recommendation_reason + ' (' + hw.disk.free_gb + ' GB free disk).';
+      $('#hw-banner').classList.remove('hidden');
+    }
+
+    const aiReadyCount = (bk.ai_ready_backends || []).length;
+    const bkPill = $('#pill-backend');
+    if (aiReadyCount > 0) {
+      bkPill.className = 'pill ok';
+      bkPill.innerHTML = '<span class="dot"></span>AI GPU Connected (' + aiReadyCount + ')';
+    } else {
+      bkPill.className = 'pill warn';
+      bkPill.innerHTML = '<span class="dot"></span>' + (state.activeBackend === 'auto' ? 'AUTO · No AI GPU Online' : state.activeBackend + ' · Unverified');
+    }
+
+    // Tailscale mobile access box
+    const ts = hw.network && hw.network.tailscale;
+    const port = location.port || '47231';
+    if (ts && ts.self_ip) {
+      $('#mobile-access-box').innerHTML =
+        '<div><strong>iPhone Tailscale URL:</strong> http://' + ts.self_ip + ':' + port + '/</div>' +
+        '<div class="muted" style="margin-top:4px">Set WISE2_ACCESS_PASSWORD (&ge;12 chars) and launch with --host 0.0.0.0 for authenticated iPhone control.</div>';
+    } else {
+      $('#mobile-access-box').textContent = 'Local URL: ' + location.origin + '/ (Install Tailscale or Cloudflare Tunnel for away-from-home iPhone access.)';
+    }
+
+    // Populate backend select in Recast form (AUTO first!)
+    const sel = $('#recast-backend');
+    const autoOpt = '<option value="auto"' + (state.activeBackend === 'auto' ? ' selected' : '') + '>⚡ AUTO — Best Free Compatible AI GPU (Recommended)</option>';
+    sel.innerHTML = autoOpt + bk.backends.filter(b => b.supports_ai_recast).map(b => {
+      const disabled = b.health_status === 'incompatible' || b.health_status === 'locked_paid';
+      const statusTxt = b.connected ? 'CONNECTED ✓' : b.health_status.toUpperCase();
+      return '<option value="' + b.id + '"' + (b.id === state.activeBackend ? ' selected' : '') + (disabled ? ' disabled' : '') + '>' + b.name + ' [' + statusTxt + ']</option>';
+    }).join('');
+
+    // AUTO Summary box
+    if (autoSel) {
+      if (autoSel.ready && autoSel.selected_backend) {
+        $('#gpu-auto-summary').className = 'notice';
+        $('#gpu-auto-summary').innerHTML = '<strong>AUTO Selected:</strong> ' + autoSel.selected_backend.name + ' (' + autoSel.selected_backend.comfyui_url + ') — Est. ~' + autoSel.selected_backend.estimated_render_sec + 's for 5s @ 480p.';
+      } else {
+        $('#gpu-auto-summary').className = 'notice warn';
+        $('#gpu-auto-summary').innerHTML = '<strong>AUTO Status: No compatible AI GPU online.</strong> ' + autoSel.blocker_summary;
+      }
+    } else {
+      $('#gpu-auto-summary').className = 'notice';
+      $('#gpu-auto-summary').textContent = 'Active Mode: ' + state.activeBackend.toUpperCase() + '. Click "Run Live Health Check" to verify live ComfyUI connectivity and AUTO ranking.';
+    }
+
+    // Hardware details DL
+    const peersStr = (ts && ts.peers && ts.peers.length)
+      ? ts.peers.map(p => p.hostname + ' (' + p.ip + ': ' + (p.online ? 'ONLINE' : 'OFFLINE') + ')').join(' · ')
+      : 'None';
+    const accel = hw.gpu.accelerators || {};
+    const rows = [
+      ['Machine', (hw.os.manufacturer || '') + ' ' + (hw.os.model || hw.os.system)],
+      ['CPU', hw.cpu.name + ' (' + hw.cpu.cores + 'C / ' + hw.cpu.logical_processors + 'T)'],
+      ['System RAM', (hw.memory.ram_total_gb || '?') + ' GB'],
+      ['Display GPU', hw.gpu.display_adapters.map(g => g.name).join(', ') || 'None'],
+      ['CUDA / OpenVINO / DirectML', (hw.gpu.cuda.cuda_available ? 'CUDA ✓' : 'No CUDA') + ' · ' + (accel.openvino_available ? 'OpenVINO ✓' : 'No OpenVINO') + ' · ' + (accel.directml_available ? 'DirectML ✓' : 'No DirectML')],
+      ['Local AI Video Render', hw.gpu.local_render_allowed ? 'ENABLED' : 'BLOCKED BY HARDWARE GUARD'],
+      ['Disk Free', hw.disk.free_gb + ' GB / ' + hw.disk.total_gb + ' GB'],
+      ['Python / Node / FFmpeg', hw.toolchain.python.version + ' · ' + (hw.toolchain.node.version || 'N/A') + ' · ' + (hw.toolchain.ffmpeg.found ? 'OK' : 'Missing')],
+      ['Tailscale Self / Peers', ((ts && ts.self_ip) || 'None') + ' | ' + peersStr]
+    ];
+    $('#hw-dl').innerHTML = rows.map(([k, v]) => '<dt>' + k + '</dt><dd>' + String(v).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) + '</dd>').join('');
+
+    // Render ALL 9 GPU Manager backend cards
+    $('#backends-cards').innerHTML = '';
+    bk.backends.forEach(b => {
+      const card = document.createElement('div');
+      card.className = 'panel';
+      const st = b.health_status || 'unchecked';
+      const badgeCls = st === 'connected' ? 'verified' : (st === 'locked_paid' || st === 'incompatible' || st === 'offline' ? 'blocked' : 'restricted');
+      const badgeLabel = st === 'connected' ? 'CONNECTED ✓' : st.replaceAll('_', ' ').toUpperCase();
+      const isComfy = b.kind === 'comfyui';
+      card.innerHTML = `
+        <div class="row" style="justify-content:space-between;margin-bottom:6px">
+          <h3 style="margin:0">${b.name}</h3>
+          <span class="badge ${badgeCls}">${badgeLabel}</span>
+        </div>
+        <div class="muted" style="font-size:11.5px;margin-bottom:6px">${b.memory_summary || ''} · ${b.paid ? ('Paid ~$' + b.cost_per_hour_usd + '/hr') : 'FREE ($0)'}</div>
+        <p class="muted" style="font-size:12px;margin:0 0 8px">${b.notes || ''}</p>
+        ${b.unsupported_reason ? '<div class="notice warn" style="font-size:11.5px">' + b.unsupported_reason + '</div>' : ''}
+        ${b.limits ? '<div class="notice" style="font-size:11.5px">' + b.limits + '</div>' : ''}
+        <div class="muted" style="font-size:11px;margin-bottom:8px"><strong>Supported workflows:</strong> ${(b.supported_workflows || []).join(', ')}</div>
+        ${b.notebook ? '<div class="muted" style="font-size:11.5px;margin-bottom:8px">Notebook: <code>' + b.notebook + '</code></div>' : ''}
+        ${isComfy ? `
+          <label>ComfyUI Endpoint URL<input type="url" class="bk-url" value="${b.comfyui_url || ''}" placeholder="https://xxxx.trycloudflare.com or http://&lt;gpu-host&gt;:8188"></label>
+          <div class="row" style="margin-top:8px">
+            <button type="button" class="primary bk-save" ${st === 'incompatible' || st === 'locked_paid' ? 'disabled' : ''}>Save &amp; Set Preferred</button>
+            <button type="button" class="bk-probe">Test Health</button>
+          </div>
+          <div class="bk-probe-out muted" style="font-size:12px;margin-top:8px">${b.last_probe && b.last_probe.error ? b.last_probe.error : ''}</div>
+        ` : ''}
+      `;
+      if (isComfy) {
+        card.querySelector('.bk-save').onclick = async () => {
+          try {
+            await api('/api/backends/' + b.id, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, set_active: true })
+            });
+            toast('Backend Saved', b.name + ' updated.');
+            loadBackendsAndHardware(false, true);
+          } catch (err) { toast('Blocked', err.message); }
+        };
+        card.querySelector('.bk-probe').onclick = async () => {
+          const out = card.querySelector('.bk-probe-out');
+          out.textContent = 'Running live TCP + ComfyUI + OpenJutsu node check…';
+          try {
+            const res = await api('/api/backends/' + b.id + '/probe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ comfyui_url: card.querySelector('.bk-url').value, workflow: 'simple' })
+            });
+            if (res.connected) {
+              out.innerHTML = '<span style="color:var(--neon)">✓ CONNECTED!</span> Queue: ' + res.queue.running + ' running, ' + res.queue.pending + ' pending. ' +
+                (res.ready_for_workflow ? 'All OpenJutsu nodes verified.' : ('Missing packs: ' + res.missing_packs.map(p => p.name).join(', ')));
+            } else {
+              out.innerHTML = '<span style="color:var(--crimson)">OFFLINE / UNREACHABLE:</span> ' + res.error;
+            }
+          } catch (err) { out.textContent = 'Error: ' + err.message; }
+        };
+      }
+      $('#backends-cards').appendChild(card);
+    });
+  } catch (err) { console.error(err); }
+}
+
+$('#gpu-live-probe-btn').onclick = () => loadBackendsAndHardware(true, true);
+$('#gpu-activate-auto').onclick = async () => {
+  await api('/api/backends/auto', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ set_active: true }) });
+  toast('AUTO Mode Enabled', 'WISE² GPU Manager will select the best free healthy GPU automatically.');
+  loadBackendsAndHardware(false, true);
+};
+$('#gpu-diag-btn').onclick = async () => {
+  const out = $('#gpu-diag-out');
+  out.classList.remove('hidden');
+  out.textContent = 'Running Tailscale, TCP, HTTP & hardware diagnostics…';
+  try {
+    const d = await api('/api/gpu/diagnostics', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({}) });
+    out.textContent = JSON.stringify(d, null, 2);
+  } catch (err) { out.textContent = 'Diagnostics error: ' + err.message; }
+};
+$('#recast-preflight-btn').onclick = async () => {
+  const out = $('#recast-preflight-out');
+  out.classList.remove('hidden');
+  out.className = 'notice';
+  out.textContent = 'Checking live GPU backend compatibility…';
+  try {
+    const pf = await api('/api/recast/preflight', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        capability_id: state.selectedCap,
+        resolution: $('#recast-res').value,
+        duration_sec: Number($('#recast-duration').value || 5),
+        backend_id: $('#recast-backend').value
+      })
+    });
+    const sel = pf.selection;
+    if (sel.ready && sel.selected_backend) {
+      out.className = 'notice';
+      out.innerHTML = '<strong>✓ AI GPU Ready:</strong> ' + sel.selected_backend.name + ' (est. ~' + sel.selected_backend.estimated_render_sec + 's).';
+    } else {
+      out.className = 'notice warn';
+      out.innerHTML = '<strong>No Compatible AI GPU Online:</strong> ' + sel.blocker_summary + ' (Submitting will still preserve your video & compile the OpenJutsu graph so you can Retry with 1 click once a GPU connects.)';
+    }
+  } catch (err) { out.className = 'notice err'; out.textContent = 'Preflight error: ' + err.message; }
+};
+
+// ---- Capabilities & Relight Presets ----
+async function loadCapabilities() {
+  const data = await api('/api/recast/capabilities');
+  state.capabilities = data.capabilities;
+  state.relight = data.relight_presets;
+  renderCapabilities();
+  renderRelight();
+}
+
+function renderCapabilities() {
+  const grid = $('#cap-grid');
+  grid.innerHTML = '';
+  state.capabilities.forEach(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cap-card' + (c.id === state.selectedCap ? ' selected' : '');
+    const badgeCls = c.status === 'verified' ? 'verified' : (c.status === 'partial' ? 'partial' : 'restricted');
+    const badgeTxt = c.status === 'verified' ? 'VERIFIED' : (c.status === 'partial' ? 'COLOR/KEYFRAME' : 'NON-COMMERCIAL');
+    b.innerHTML = '<div class="row" style="justify-content:space-between;width:100%"><span class="badge ' + badgeCls + '">' + badgeTxt + '</span></div><strong>' + c.name + '</strong><small>' + c.description + '</small>';
+    b.onclick = () => { state.selectedCap = c.id; renderCapabilities(); };
+    grid.appendChild(b);
+  });
+  const active = state.capabilities.find(c => c.id === state.selectedCap) || state.capabilities[0];
+  if (active) {
+    $('#cap-note').innerHTML = '<strong>Workflow:</strong> <code>' + active.workflow_file + '</code> — ' + active.notes;
+    $('#face-license-box').classList.toggle('hidden', active.id !== 'facial_consistency');
+  }
+}
+
+function renderRelight() {
+  const grid = $('#relight-grid');
+  grid.innerHTML = '';
+  const noneBtn = document.createElement('button');
+  noneBtn.type = 'button';
+  noneBtn.className = 'relight-tile' + (state.selectedRelight === '' ? ' active' : '');
+  noneBtn.innerHTML = '<div style="aspect-ratio:4/3;display:grid;place-items:center;background:#0e1726;border-radius:6px;margin-bottom:4px;color:var(--cyan)">OFF</div>None';
+  noneBtn.onclick = () => { state.selectedRelight = ''; renderRelight(); };
+  grid.appendChild(noneBtn);
+  state.relight.forEach(r => {
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.className = 'relight-tile' + (state.selectedRelight === r.id ? ' active' : '');
+    t.innerHTML = '<img src="' + r.thumb + '" alt="' + r.label + '" loading="lazy">' + r.label;
+    t.onclick = () => { state.selectedRelight = r.id; renderRelight(); };
+    grid.appendChild(t);
+  });
+}
+
+// ---- Character Vault ----
+async function loadProfiles() {
+  const data = await api('/api/recast/profiles');
+  state.profiles = data.profiles || [];
+  renderProfilePickers();
+}
+
+function renderProfilePickers() {
+  const picker = $('#recast-vault-picker');
+  const vaultList = $('#vault-list');
+  picker.innerHTML = '';
+  vaultList.innerHTML = '';
+  if (!state.profiles.length) {
+    picker.innerHTML = '<p class="muted" style="grid-column:1/-1;margin:0;font-size:12px">No saved profiles yet — upload a reference below or add profiles in Character Vault.</p>';
+    vaultList.innerHTML = '<p class="muted">No saved character or product profiles yet.</p>';
+    return;
+  }
+  state.profiles.forEach(p => {
+    const sel = state.selectedProfiles.has(p.id);
+    const card = document.createElement('div');
+    card.className = 'profile-card' + (sel ? ' selected' : '');
+    card.innerHTML = '<img src="' + p.image_url + '" alt=""><div class="profile-meta"><strong>' + p.name + '</strong><span class="muted">' + p.category + (p.role ? ' · ' + p.role : '') + '</span></div>';
+    card.onclick = () => {
+      if (state.selectedProfiles.has(p.id)) state.selectedProfiles.delete(p.id);
+      else state.selectedProfiles.add(p.id);
+      renderProfilePickers();
+    };
+    picker.appendChild(card);
+
+    const vcard = document.createElement('div');
+    vcard.className = 'profile-card';
+    vcard.innerHTML = '<img src="' + p.image_url + '" alt=""><div class="profile-meta"><strong>' + p.name + '</strong><span class="muted">' + p.category + '</span><button type="button" class="danger chip" style="width:100%;margin-top:6px">Delete</button></div>';
+    vcard.querySelector('button').onclick = async () => {
+      await api('/api/recast/profiles/' + p.id, { method: 'DELETE' });
+      state.selectedProfiles.delete(p.id);
+      toast('Profile Removed', p.name);
+      loadProfiles();
+    };
+    vaultList.appendChild(vcard);
+  });
+}
+
+$('#vault-form').onsubmit = async e => {
+  e.preventDefault();
+  $('#vault-status').textContent = 'Saving profile…';
+  try {
+    const p = await api('/api/recast/profiles', { method: 'POST', body: new FormData(e.target) });
+    e.target.reset();
+    $('#vault-status').textContent = 'Saved ' + p.name + ' (' + p.id + ')';
+    toast('Vault Updated', p.name + ' ready for reuse.');
+    loadProfiles();
+  } catch (err) { $('#vault-status').textContent = 'Error: ' + err.message; }
+};
+
+// ---- Recast Source Preview & Submit ----
+$('#recast-video').onchange = e => {
+  const f = e.target.files && e.target.files[0];
+  const v = $('#recast-source-preview');
+  if (!f) return;
+  v.src = URL.createObjectURL(f);
+  v.classList.remove('hidden');
+  $('#recast-source-placeholder').classList.add('hidden');
+};
+
+$('#recast-form').onsubmit = async e => {
+  e.preventDefault();
+  $('#recast-submit-btn').disabled = true;
+  $('#recast-submit-status').textContent = 'Uploading & preparing OpenJutsu workflow…';
+  try {
+    const fd = new FormData(e.target);
+    fd.set('capability_id', state.selectedCap);
+    fd.set('profile_ids', JSON.stringify([...state.selectedProfiles]));
+    fd.set('relight_preset', state.selectedRelight);
+    fd.set('no_lip_sync', $('#recast-nolip').checked ? 'true' : 'false');
+    fd.set('hat_fix', $('#recast-hatfix').checked ? 'true' : 'false');
+    fd.set('accept_noncommercial_face_license', $('#accept-face-license').checked ? 'true' : 'false');
+    const job = await api('/api/recast/jobs', { method: 'POST', body: fd });
+    $('#recast-submit-status').textContent = 'Job ' + job.id + ' queued (' + job.backend_name + ').';
+    toast('Recast Job Queued', job.capability_name + ' · ' + job.resolution + ' · ' + job.duration_sec + 's');
+    loadProfiles();
+    loadRecastJobs();
+    pollRecastJob(job.id);
+  } catch (err) {
+    $('#recast-submit-status').textContent = 'Error: ' + err.message;
+    toast('Submission Error', err.message);
+  } finally {
+    $('#recast-submit-btn').disabled = false;
+  }
+};
+
+function previewRecastJob(job) {
+  const v = $('#recast-output-video');
+  const dl = $('#recast-download-mp4');
+  const gr = $('#recast-download-graph');
+  const isAiDone = Boolean(job.ai_render_completed && job.output_url);
+  const url = isAiDone ? job.output_url : (job.prepared_clip ? job.prepared_url : job.source_url);
+  if (url) {
+    v.src = url;
+    v.classList.remove('hidden');
+    $('#recast-output-placeholder').classList.add('hidden');
+    dl.href = url;
+    dl.querySelector('button').textContent = isAiDone ? '⬇ Download AI Replacement MP4' : '⬇ Download Pre-AI Input Clip';
+    dl.classList.remove('hidden');
+  }
+  if (job.compiled_workflow_file) {
+    gr.href = job.workflow_url;
+    gr.classList.remove('hidden');
+  }
+  const stageLabel = isAiDone ? '✓ AI RENDER VERIFIED' : 'PRE-AI INPUT CLIP ONLY (AI RENDER NOT COMPLETED)';
+  $('#recast-active-meta').innerHTML =
+    '<strong>' + stageLabel + '</strong><br>' +
+    job.id + ' · ' + job.capability_name + ' · ' + job.status.toUpperCase() + ' (' + job.progress + '%) — ' + (job.message || '');
+}
+
+async function pollRecastJob(jobId) {
+  for (let i = 0; i < 60; i++) {
+    await new Promise(r => setTimeout(r, 1500));
+    try {
+      const job = await api('/api/recast/jobs/' + jobId);
+      previewRecastJob(job);
+      loadRecastJobs();
+      if (['succeeded','failed','canceled','awaiting_gpu_backend','missing_comfy_nodes'].includes(job.status)) break;
+    } catch { break; }
+  }
+}
+
+async function loadRecastJobs() {
+  const data = await api('/api/recast/jobs?limit=25');
+  const box = $('#recast-jobs-list');
+  const jobs = data.jobs || [];
+  if (!jobs.length) { box.innerHTML = '<p class="muted">No recast jobs submitted yet.</p>'; return; }
+  box.innerHTML = '';
+  jobs.forEach(j => {
+    const cls = j.status === 'succeeded' ? 'verified' : (j.status === 'failed' ? 'blocked' : 'restricted');
+    const el = document.createElement('div');
+    el.className = 'job-card';
+    const aiTag = j.ai_render_completed ? '<span class="badge verified">AI VIDEO READY</span>' : '<span class="badge restricted">WORKFLOW ONLY · NO AI RENDER YET</span>';
+    el.innerHTML = `
+      <div class="row" style="justify-content:space-between">
+        <strong>${j.capability_name}</strong>
+        <span class="badge ${cls}">${j.status}</span>
+      </div>
+      <div class="row" style="margin-top:5px">${aiTag}</div>
+      <div class="muted" style="font-size:11.5px;margin-top:4px">${j.id} · ${j.resolution} · ${j.duration_sec}s · seed ${j.seed} · ${j.resolved_backend_name || j.backend_name}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${j.progress || 0}%"></div></div>
+      <div style="font-size:12px;color:#cfe9f5">${j.message || ''}</div>
+      ${j.error ? '<div style="font-size:11.5px;color:#ff8ea1;margin-top:4px">' + j.error + '</div>' : ''}
+      <div class="row" style="margin-top:8px">
+        <button type="button" class="chip j-preview">${j.ai_render_completed ? 'Preview AI MP4' : 'Preview Input Clip'}</button>
+        <button type="button" class="chip j-retry">↻ Retry (No Re-Upload)</button>
+        ${j.status === 'running' || j.status === 'queued' ? '<button type="button" class="chip danger j-cancel">Cancel</button>' : ''}
+      </div>
+    `;
+    el.querySelector('.j-preview').onclick = () => previewRecastJob(j);
+    el.querySelector('.j-retry').onclick = async () => {
+      await api('/api/recast/jobs/' + j.id + '/retry', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ backend_id: state.activeBackend || 'auto' }) });
+      toast('Retrying Without Re-Upload', j.id + ' via ' + (state.activeBackend || 'auto'));
+      pollRecastJob(j.id);
+    };
+    const cbtn = el.querySelector('.j-cancel');
+    if (cbtn) cbtn.onclick = async () => {
+      await api('/api/recast/jobs/' + j.id + '/cancel', { method: 'POST' });
+      loadRecastJobs();
+    };
+    box.appendChild(el);
+  });
+}
+
+$('#refresh-recast-jobs').onclick = loadRecastJobs;
+$('#recast-refresh-btn').onclick = () => { loadBackendsAndHardware(true); loadRecastJobs(); };
+
+// ---- VENOM Collector ----
+async function loadVenom() {
+  const domain = $('#venom-domain').value;
+  const decision = $('#venom-decision').value;
+  const search = $('#venom-search').value;
+  const qs = new URLSearchParams({ limit: '120' });
+  if (domain) qs.set('domain', domain);
+  if (decision) qs.set('decision', decision);
+  if (search) qs.set('search', search);
+  const data = await api('/api/venom/catalog?' + qs.toString());
+  const s = data.summary || {};
+  $('#venom-summary').innerHTML = [
+    ['Audited Repos', data.total_catalog],
+    ['Approved & Acquired', s.acquired_adapters || 0],
+    ['Quarantined (AGPL/Cloud)', s.quarantined || 0]
+  ].map(([k, v]) => '<div class="panel" style="margin:0"><div class="muted" style="font-size:11px;text-transform:uppercase">' + k + '</div><div style="font-size:26px;font-weight:800;color:var(--cyan)">' + v + '</div></div>').join('');
+
+  $('#venom-adapters').innerHTML = (data.adapters || []).map(a =>
+    '<div class="job-card" style="margin:0"><strong>' + a.name + '</strong><div class="muted" style="font-size:11px">' + a.repo + ' · ' + a.license + '</div><div style="font-size:11.5px;margin-top:4px">' + a.role + '</div></div>'
+  ).join('');
+
+  $('#venom-tbody').innerHTML = (data.projects || []).map(p => {
+    const cls = p.decision === 'ACQUIRED_ADAPTER' ? 'verified' : (p.decision === 'QUARANTINED' ? 'blocked' : 'partial');
+    return '<tr><td>#' + p.rank + '</td><td><a href="' + p.url + '" target="_blank" rel="noopener">' + p.name + '</a><div class="muted" style="font-size:11px">' + p.repo + '</div></td><td><strong>' + p.total_score + '</strong></td><td>★' + p.stars + '</td><td>' + (p.license || 'None') + '</td><td><span class="badge ' + cls + '">' + p.decision + '</span></td><td>' + (p.wise2_domains || []).join(', ') + '</td></tr>';
+  }).join('');
+}
+['venom-domain','venom-decision','venom-search'].forEach(id => $('#' + id).oninput = loadVenom);
+
+// ---- Diagnostics ----
+async function loadDiagnostics() {
+  const [d, hw] = await Promise.all([api('/api/diagnostics'), api('/api/hardware')]);
+  const rows = [
+    ['Python', d.python.version],
+    ['FFmpeg / FFprobe', (d.ffmpeg.found ? 'OK' : 'Missing') + ' / ' + (d.ffprobe.found ? 'OK' : 'Missing')],
+    ['faster-whisper ASR', d.faster_whisper.installed ? ('Installed (' + d.faster_whisper.model + ')') : d.faster_whisper.detail],
+    ['Worker Heartbeat', d.worker.alive ? ('Alive (' + d.worker.age_sec + 's ago)') : 'In-process executor active'],
+    ['Disk Free', hw.disk.free_gb + ' GB'],
+    ['Local GPU Guard', hw.gpu.local_render_allowed ? 'CUDA Enabled' : 'Protected (ThinkPad Integrated GPU)'],
+    ['OpenJutsu Upstream', 'D3voz/openjutsu (MIT) · workflows verified'],
+    ['Database', d.paths.db + (d.paths.db_writable ? ' (writable)' : ' (read-only)')]
+  ];
+  $('#diag-dl').innerHTML = rows.map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('');
+}
+
+// ---- Preserved WISE² Clip Engine v1.7 client logic ----
+function dlJson(name, data) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function renderClips(items, demo) {
+  $('#clips').replaceChildren();
+  items.forEach((c, i) => {
+    const b = document.createElement('button'); b.className = 'clip';
+    b.innerHTML = '<div class="poster">▶ CLIP ' + (i + 1) + '</div><small></small>';
+    b.querySelector('small').textContent = c.duration + 's · ' + (demo ? 'DEMO' : 'Rendered');
+    b.onclick = () => { const v = $('#video'); if (demo) { v.classList.add('hidden'); } else { v.src = c.download; v.classList.remove('hidden'); } };
+    $('#clips').append(b);
+  });
+}
+$('#demo').onclick = () => { renderClips([{duration:22},{duration:28},{duration:17}], true); $('#status').textContent = 'Demo cards only.'; };
+$('#upload').onsubmit = async e => {
+  e.preventDefault(); $('#generate').disabled = true; $('#status').textContent = 'Uploading…';
+  try {
+    const d = await api('/api/jobs', { method: 'POST', body: new FormData(e.target) });
+    while (true) {
+      await new Promise(r => setTimeout(r, 1500));
+      const j = await api(d.status_url);
+      $('#status').textContent = j.status + ' · ' + j.completed + '/' + (j.total || '?');
+      if (j.status === 'failed') throw new Error(j.error);
+      if (j.status === 'complete' || j.status === 'succeeded') {
+        renderClips(j.clips, false); $('#editor-job').value = j.job_id;
+        $('#zip').href = j.archive; $('#zip').classList.remove('hidden'); break;
+      }
+    }
+  } catch (err) { $('#status').textContent = 'Error: ' + err.message; }
+  finally { $('#generate').disabled = false; }
+};
+function previewCaption() {
+  const c = $('#caption'); c.textContent = $('#words').value;
+  c.className = 'caption ' + $('#position').value + ' ' + $$('[data-style].active')[0].dataset.style;
+  c.style.fontSize = $('#size').value + 'px';
+}
+$$('[data-style]').forEach(b => b.onclick = () => { $$('[data-style]').forEach(x => x.classList.remove('active')); b.classList.add('active'); previewCaption(); });
+['words','position','size'].forEach(id => $('#' + id).oninput = previewCaption);
+previewCaption();
+$('#preset').onclick = () => dlJson('caption-preset.json', { style: $$('[data-style].active')[0].dataset.style, position: $('#position').value, size: Number($('#size').value), text: $('#words').value });
+$('#brand').onclick = () => dlJson('distorted-wisdom-brand.json', { name: 'Distorted Wisdom', theme: 'OBSIDIAN // FORGED', cyan: '#00d9ff', bg: '#050607' });
+
+const ev = $('#editor-video'), es = $('#editor-status'); let editorDuration = 0, editorJob = '';
+function clock(t) { return Math.floor(t/60) + ':' + String(Math.floor(t%60)).padStart(2,'0'); }
+function addWord(w = {text:'',start:0,end:1}) {
+  const row = document.createElement('div'); row.className = 'word-row';
+  for (const [f, t] of [['text','text'],['start','number'],['end','number']]) {
+    const inp = document.createElement('input'); inp.type = t; inp.dataset.field = f; inp.value = w[f];
+    if (t === 'number') { inp.min = '0'; inp.step = '0.1'; }
+    inp.oninput = updateOverlay; row.append(inp);
+  }
+  const del = document.createElement('button'); del.type = 'button'; del.textContent = '×'; del.onclick = () => { row.remove(); updateOverlay(); }; row.append(del);
+  $('#editor-words').append(row);
+}
+function getWords() { return [...document.querySelectorAll('#editor-words .word-row')].map(r => Object.fromEntries([...r.querySelectorAll('input')].map(x => [x.dataset.field, x.type==='number'?Number(x.value):x.value]))); }
+function updateOverlay() { const t = ev.currentTime - Number($('#editor-start').value); $('#editor-overlay').textContent = getWords().filter(x => t >= x.start && t < x.end).map(x => x.text).join(' '); }
+ev.addEventListener('loadedmetadata', () => { editorDuration = ev.duration; $('#editor-seek').max = editorDuration; });
+ev.addEventListener('timeupdate', () => { $('#editor-seek').value = ev.currentTime; $('#editor-clock').textContent = clock(ev.currentTime) + ' / ' + clock(editorDuration); updateOverlay(); });
+$('#editor-seek').oninput = e => ev.currentTime = Number(e.target.value);
+$('#editor-play').onclick = () => ev.paused ? ev.play() : ev.pause();
+$('#editor-set-start').onclick = () => $('#editor-start').value = ev.currentTime.toFixed(1);
+$('#editor-set-end').onclick = () => $('#editor-end').value = ev.currentTime.toFixed(1);
+$('#editor-add').onclick = () => addWord({text:'Caption',start:0,end:1});
+$('#editor-load').onclick = async () => {
+  try {
+    const job = $('#editor-job').value.trim();
+    const j = await api('/api/jobs/' + job); editorJob = job;
+    ev.src = '/api/jobs/' + job + '/source'; ev.load();
+    es.textContent = 'Loaded project ' + job;
+  } catch (err) { es.textContent = 'Error: ' + err.message; }
+};
+$('#editor-save').onclick = async () => {
+  try {
+    await api('/api/jobs/' + editorJob + '/timeline', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ start: Number($('#editor-start').value), end: Number($('#editor-end').value), words: getWords(), style: $('#editor-style').value, audio_gain_db: Number($('#editor-gain').value) }) });
+    es.textContent = 'Timeline saved.';
+  } catch (err) { es.textContent = 'Error: ' + err.message; }
+};
+$('#editor-render').onclick = async () => {
+  try {
+    const res = await api('/api/jobs/' + editorJob + '/timeline/render', { method: 'POST' });
+    $('#editor-download').href = res.file; $('#editor-download').classList.remove('hidden');
+    es.textContent = 'Export ready: ' + res.qc.width + '×' + res.qc.height + ' MP4';
+  } catch (err) { es.textContent = 'Error: ' + err.message; }
+};
+
+async function initAll() {
+  const ok = await checkAuth();
+  if (!ok) return;
+  await Promise.all([loadCapabilities(), loadProfiles(), loadBackendsAndHardware(), loadRecastJobs()]);
+}
+initAll();
+</script>
+</body>
+</html>

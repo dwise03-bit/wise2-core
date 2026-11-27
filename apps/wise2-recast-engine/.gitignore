@@ -1,0 +1,14 @@
+.env
+.venv/
+.venv-proxy/
+data/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+*.safetensors
+*.ckpt
+*.gguf
+*.pt
+*.pth
+*.onnx
