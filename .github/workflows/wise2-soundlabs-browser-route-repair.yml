@@ -21,18 +21,24 @@ jobs:
           set -euo pipefail
           test "$(hostname -s)" = wise2
           node -e 'if (+process.versions.node.split(".")[0] < 20) process.exit(1)'
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          filter: blob:none
-          sparse-checkout: |
-            apps/sound-labs-ui
-          sparse-checkout-cone-mode: true
+      - name: Sparse fetch Sound Labs source
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$HOME/.local/state/wise2-soundlabs-route/source"
+          rm -rf "$src"
+          mkdir -p "$src"
+          git -C "$src" init
+          git -C "$src" remote add origin https://github.com/dwise03-bit/wise2-core.git
+          git -C "$src" config core.sparseCheckout true
+          printf '/apps/sound-labs-ui/\n' > "$src/.git/info/sparse-checkout"
+          git -C "$src" fetch --depth=1 --filter=blob:none origin main
+          git -C "$src" checkout --detach FETCH_HEAD
       - name: Build Sound Labs controller
         shell: bash
         run: |
           set -euo pipefail
-          cd apps/sound-labs-ui
+          cd "$HOME/.local/state/wise2-soundlabs-route/source/apps/sound-labs-ui"
           npm install --no-audit --no-fund --ignore-scripts
           npm run build
           test -f dist/index.html
@@ -56,7 +62,7 @@ jobs:
             old="$(cat "$state/proxy.pid" 2>/dev/null || true)"
             test -z "$old" || kill "$old" 2>/dev/null || true
           fi
-          cd apps/sound-labs-ui
+          cd "$HOME/.local/state/wise2-soundlabs-route/source/apps/sound-labs-ui"
           RUNNER_TRACKING_ID=wise2-soundlabs-ui nohup ./node_modules/.bin/vite preview --host 0.0.0.0 --port 8088 --strictPort >"$log" 2>&1 </dev/null &
           echo $! > "$pidfile"
           ok=0
