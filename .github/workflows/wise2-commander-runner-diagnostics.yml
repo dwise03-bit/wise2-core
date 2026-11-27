@@ -16,28 +16,44 @@ jobs:
           echo "GitHub-hosted preflight OK"
           echo "Repository: $GITHUB_REPOSITORY"
           echo "Commit: $GITHUB_SHA"
-          echo "Next: self-hosted job must be assigned to the wise2 runner"
   runner:
     needs: preflight
     runs-on: self-hosted
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
-      - name: Check runner host and local MP3 (no changes)
+      - name: Audit Sound Labs route (read-only)
         shell: bash
         run: |
-          set -euo pipefail
-          echo "Runner hostname: $(hostname)"
-          echo "Runner OS: $(uname -s)"
-          echo "Runner architecture: $(uname -m)"
-          if [ "$(hostname -s)" != "wise2" ]; then
-            echo "::error::Self-hosted runner is not on authorized wise2 host"
-            exit 1
-          fi
-          file="$HOME/wise2-sound-labs/bots-on-go-rage/bots-on-go-boogie-v1.mp3"
-          if test -s "$file"; then
-            echo "MP3 found"; sha256sum "$file"
-          else
-            echo "::warning::MP3 not found under runner HOME=$HOME"
-            echo "Runner account may differ from dwise; check /home/dwise/wise2-sound-labs"
-          fi
-          echo "WISE2 runner connected and verified"
+          set -u
+          echo "=== IDENTITY ==="
+          hostname
+          id
+          test "$(hostname -s)" = "wise2" || { echo "::error::Not authorized wise2 host"; exit 1; }
+
+          echo "=== SOUND LABS USER UNIT ==="
+          systemctl --user show wise2-soundlabs.service --no-pager -p LoadState -p ActiveState -p SubState -p FragmentPath -p ExecStart -p Environment 2>&1 || true
+          systemctl --user status wise2-soundlabs.service --no-pager -l 2>&1 | tail -n 80 || true
+          journalctl --user -u wise2-soundlabs.service -n 100 --no-pager 2>&1 || true
+
+          echo "=== LISTENERS ==="
+          ss -lntp 2>&1 | grep -E ':(80|443|3000|3001|3002|3098|8000|8080|8088|7860|8501)\\b' || true
+
+          echo "=== LOCAL HTTP PROBES ==="
+          for port in 3000 3001 3002 3098 8000 8080 8088 7860 8501; do
+            code=$(curl -sS -o "/tmp/wise2-probe-$port" -w '%{http_code}' --max-time 4 "http://127.0.0.1:$port/" 2>/dev/null || true)
+            bytes=$(wc -c < "/tmp/wise2-probe-$port" 2>/dev/null || echo 0)
+            title=$(grep -io '<title>[^<]*' "/tmp/wise2-probe-$port" 2>/dev/null | head -1 || true)
+            echo "port=$port http=$code bytes=$bytes $title"
+          done
+
+          echo "=== NGINX ==="
+          sudo -n nginx -T 2>&1 | grep -nE 'server_name|listen |location .*sound|proxy_pass|root ' | tail -n 160 || true
+          curl -sS -I --max-time 5 http://127.0.0.1/soundlabs 2>&1 || true
+
+          echo "=== CLOUDFLARED ==="
+          systemctl status cloudflared --no-pager -l 2>&1 | tail -n 80 || true
+          systemctl --user status cloudflared --no-pager -l 2>&1 | tail -n 80 || true
+          sudo -n find /etc/cloudflared "$HOME/.cloudflared" -maxdepth 2 -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null | while read -r f; do
+            echo "--- $f"
+            sed -E 's/(token:|credentials-file:).*/\\1 [REDACTED]/' "$f"
+          done
