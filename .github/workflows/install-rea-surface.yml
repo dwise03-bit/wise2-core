@@ -10,19 +10,25 @@ permissions:
   contents: read
 
 concurrency:
-  group: install-rea-wise2-surface-v2
+  group: install-rea-wise2-surface-v3
   cancel-in-progress: false
 
 jobs:
   install:
-    runs-on: [self-hosted, mobile]
+    runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
     steps:
+      - name: Enforce Surface target
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "selected_host=$(hostname)"
+          test "$(hostname)" = "Wise2-surface"
+
       - name: Audit Surface and runtime
         shell: bash
         run: |
           set -euo pipefail
-          test "$(hostname)" = "Wise2-surface"
           echo "host=$(hostname)"
           echo "user=$(id -un)"
           echo "home=$HOME"
