@@ -10,12 +10,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: install-rea-wise2-surface-v3
+  group: install-rea-wise2-surface-v4
   cancel-in-progress: false
 
 jobs:
   install:
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: [wise2-surface]
     timeout-minutes: 20
     steps:
       - name: Enforce Surface target
