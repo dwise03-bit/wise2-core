@@ -1,0 +1,88 @@
+name: WISE2 LLM - Verified Isolated Deploy
+on:
+  push:
+    branches: [feature/wise2-llm-v1]
+    paths: ['.github/workflows/wise2-llm-deploy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wise2-llm-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 35
+    steps:
+      - name: Verify host and available capacity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = wise2
+          command -v python3
+          command -v curl
+          command -v ollama
+          test "$(df -Pk "$HOME" | awk 'NR==2{print $4}')" -gt 6000000 || { echo "Less than 6GB free; refusing deployment"; exit 1; }
+          curl -fsS --max-time 5 http://127.0.0.1:11434/api/tags > /dev/null
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd services/wise2-llm
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip install --disable-pip-version-check -r requirements.txt pytest
+          python -m compileall -q app.py
+          python -m pytest -q tests/
+      - name: Prepare isolated deployment and model
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$HOME/.local/share/wise2-llm"
+          mkdir -p "$root" "$HOME/.config/wise2-llm" "$HOME/.local/state/wise2-llm"
+          chmod 700 "$HOME/.config/wise2-llm"
+          if [ ! -f "$HOME/.config/wise2-llm/api-key" ]; then
+            python3 -c 'import secrets; print(secrets.token_urlsafe(48))' > "$HOME/.config/wise2-llm/api-key"
+            chmod 600 "$HOME/.config/wise2-llm/api-key"
+          fi
+          if ! curl -fsS http://127.0.0.1:11434/api/tags | python3 -c 'import json,sys; assert any(x.get("name")=="qwen2.5:3b" or x.get("model")=="qwen2.5:3b" for x in json.load(sys.stdin).get("models",[]))'; then
+            ollama pull qwen2.5:3b
+          fi
+          cp services/wise2-llm/app.py "$root/app.py"
+          cp -a services/wise2-llm/.venv "$root/.venv.tmp"
+          if [ -d "$root/.venv" ]; then rm -rf "$root/.venv.old"; mv "$root/.venv" "$root/.venv.old"; fi
+          mv "$root/.venv.tmp" "$root/.venv"
+      - name: Start localhost service and verify real inference
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$HOME/.local/share/wise2-llm"
+          state="$HOME/.local/state/wise2-llm"
+          if curl -fsS --max-time 2 http://127.0.0.1:8132/health >/dev/null 2>&1; then
+            echo "::error::Port 8132 already serves a healthy service; refusing overwrite"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import socket
+          s=socket.socket()
+          try: s.bind(("127.0.0.1",8132))
+          except OSError: raise SystemExit("Port 8132 occupied; refusing overwrite")
+          finally: s.close()
+          PY
+          export WISE2_LLM_API_KEY="$(cat "$HOME/.config/wise2-llm/api-key")"
+          export WISE2_LLM_MODEL=qwen2.5:3b
+          export OLLAMA_URL=http://127.0.0.1:11434
+          cd "$root"
+          nohup "$root/.venv/bin/python" -m uvicorn app:app --host 127.0.0.1 --port 8132 > "$state/service.log" 2>&1 < /dev/null &
+          echo "$!" > "$state/service.pid"
+          ready=0
+          for i in $(seq 1 40); do
+            if curl -fsS --max-time 3 http://127.0.0.1:8132/health; then ready=1; break; fi
+            sleep 2
+          done
+          if [ "$ready" != 1 ]; then tail -n 50 "$state/service.log"; exit 1; fi
+          bash "$GITHUB_WORKSPACE/services/wise2-llm/smoke-test.sh"
+          echo "Verified isolated localhost deployment and real model response"
