@@ -1,0 +1,64 @@
+name: WISE2 Sound Labs Browser Route Repair
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+jobs:
+  repair:
+    if: >-
+      github.event.issue.user.login == 'dwise03-bit' &&
+      github.event.issue.title == 'WISE2 OPS: repair-soundlabs-browser-route'
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 8
+    steps:
+      - name: Install persistent user-space browser route
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(hostname -s)" = wise2
+          state="$HOME/.local/state/wise2-soundlabs-route"
+          mkdir -p "$state"
+          script="$state/proxy.mjs"
+          log="$state/proxy.log"
+          pidfile="$state/proxy.pid"
+          cat > "$script" <<'NODE'
+          import http from 'node:http';
+          const upstreamHost='127.0.0.1';
+          const upstreamPort=8080;
+          const listenPort=8088;
+          const server=http.createServer((req,res)=>{
+            const headers={...req.headers,host:'localhost:8080'};
+            const proxy=http.request({
+              hostname:upstreamHost,port:upstreamPort,method:req.method,
+              path:req.url,headers
+            },up=>{
+              res.writeHead(up.statusCode||502,up.headers);
+              up.pipe(res);
+            });
+            proxy.on('error',err=>{
+              if(!res.headersSent) res.writeHead(502,{'content-type':'text/plain'});
+              res.end('Sound Labs upstream unavailable\n');
+            });
+            req.pipe(proxy);
+          });
+          server.listen(listenPort,'0.0.0.0',()=>console.log(`Sound Labs route listening on ${listenPort}`));
+          NODE
+          if test -f "$pidfile"; then
+            old="$(cat "$pidfile" 2>/dev/null || true)"
+            if test -n "$old" && kill -0 "$old" 2>/dev/null; then
+              cmd="$(tr '\0' ' ' < "/proc/$old/cmdline" 2>/dev/null || true)"
+              case "$cmd" in *"$script"*) kill "$old"; for i in $(seq 1 20); do kill -0 "$old" 2>/dev/null || break; sleep .2; done ;; esac
+            fi
+          fi
+          nohup node "$script" >"$log" 2>&1 </dev/null &
+          echo $! > "$pidfile"
+          ok=0
+          for i in $(seq 1 30); do
+            code="$(curl -sS -o /tmp/soundlabs-browser-route -w '%{http_code}' --max-time 4 -H 'Host: wise2:8088' http://127.0.0.1:8088/ 2>/dev/null || true)"
+            if test "$code" = 200 && grep -Eqi '<!doctype|<html|sound.?labs' /tmp/soundlabs-browser-route; then ok=1; break; fi
+            sleep 1
+          done
+          test "$ok" = 1 || { tail -n 80 "$log"; echo "::error::Sound Labs browser route failed"; exit 1; }
+          echo "PASS: http://wise2:8088/ serves Sound Labs through the local upstream"
+          wc -c /tmp/soundlabs-browser-route
