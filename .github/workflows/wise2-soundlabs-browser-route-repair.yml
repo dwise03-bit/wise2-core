@@ -4,6 +4,9 @@ on:
     types: [opened]
 permissions:
   contents: read
+concurrency:
+  group: wise2-soundlabs-browser-route
+  cancel-in-progress: true
 jobs:
   repair:
     if: >-
@@ -21,6 +24,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          filter: blob:none
+          sparse-checkout: |
+            apps/sound-labs-ui
+          sparse-checkout-cone-mode: true
       - name: Build Sound Labs controller
         shell: bash
         run: |
