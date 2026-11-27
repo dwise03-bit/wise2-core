@@ -1,0 +1,76 @@
+name: Install REA on WISE2 Surface
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/install-rea-surface.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: install-rea-wise2-surface
+  cancel-in-progress: false
+
+jobs:
+  install:
+    runs-on: [self-hosted, linux, wise2-surface]
+    timeout-minutes: 20
+    steps:
+      - name: Audit Surface and runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "host=$(hostname)"
+          echo "user=$(id -un)"
+          echo "home=$HOME"
+          uname -a
+          df -h "$HOME"
+          command -v node || true
+          node --version || true
+          command -v npm || true
+          npm --version || true
+
+      - name: Provide supported Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.24.0'
+          cache: 'npm'
+
+      - name: Install REA persistently for Surface user
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/bin" "$HOME/.local/lib"
+          npm install --global --prefix "$HOME/.local" rea-agents@latest
+          PROFILE_LINE='export PATH="$HOME/.local/bin:$PATH"'
+          for profile in "$HOME/.profile" "$HOME/.bashrc"; do
+            touch "$profile"
+            grep -Fqx "$PROFILE_LINE" "$profile" || printf '\n%s\n' "$PROFILE_LINE" >> "$profile"
+          done
+          export PATH="$HOME/.local/bin:$PATH"
+          command -v rea
+          rea --version
+          rea --help >/tmp/rea-help.txt
+          test -s /tmp/rea-help.txt
+
+      - name: Register REA with Codex
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          rea setup --client codex --no-prompt
+
+      - name: Verify installation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+          echo "rea_path=$(command -v rea)"
+          echo "rea_version=$(rea --version)"
+          rea doctor --client codex --json | tee /tmp/rea-doctor.json
+          node -e 'const fs=require("fs"); const x=JSON.parse(fs.readFileSync("/tmp/rea-doctor.json","utf8")); if (!x) process.exit(1)'
+          test -f "$HOME/.codex/config.toml"
+          grep -n -i "rea" "$HOME/.codex/config.toml"
+          echo "REA_INSTALL_VERIFIED=1"
