@@ -15,13 +15,14 @@ concurrency:
 
 jobs:
   install:
-    runs-on: [self-hosted, linux, wise2-surface]
+    runs-on: [self-hosted, mobile]
     timeout-minutes: 20
     steps:
       - name: Audit Surface and runtime
         shell: bash
         run: |
           set -euo pipefail
+          test "$(hostname)" = "Wise2-surface"
           echo "host=$(hostname)"
           echo "user=$(id -un)"
           echo "home=$HOME"
