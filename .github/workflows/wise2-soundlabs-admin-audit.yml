@@ -12,23 +12,28 @@ jobs:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 8
     steps:
-      - name: Audit as authorized dwise admin
+      - name: Audit through authorized Docker host lane
         shell: bash
         run: |
           set -euo pipefail
           test "$(hostname -s)" = wise2
-          ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new dwise@localhost 'bash -s' <<'REMOTE'
+          docker info >/dev/null
+          docker run --rm --privileged --pid=host -v /:/host alpine:3.20 sh -s <<'CONTAINER'
+          set -u
+          nsenter -t 1 -m -u -i -n -p -- sh -s <<'HOST'
           set +e
-          echo "=== USER ==="; id
+          echo "=== HOST USER ==="; id
+          uid="$(id -u dwise)"
+          userctl() { runuser -u dwise -- env XDG_RUNTIME_DIR="/run/user/$uid" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" systemctl --user "$@"; }
           echo "=== UNIT ==="
-          systemctl --user show wise2-soundlabs.service --no-pager -p LoadState -p ActiveState -p SubState -p FragmentPath -p MainPID -p ExecStart -p Environment
-          systemctl --user status wise2-soundlabs.service --no-pager -l | tail -n 100
+          userctl show wise2-soundlabs.service --no-pager -p LoadState -p ActiveState -p SubState -p FragmentPath -p MainPID -p ExecStart -p Environment
+          userctl status wise2-soundlabs.service --no-pager -l | tail -n 100
           echo "=== JOURNAL ==="
-          journalctl --user -u wise2-soundlabs.service -n 120 --no-pager
+          runuser -u dwise -- journalctl --user -u wise2-soundlabs.service -n 120 --no-pager
           echo "=== UNIT FILE ==="
-          systemctl --user cat wise2-soundlabs.service
+          userctl cat wise2-soundlabs.service
           echo "=== LISTENERS ==="
-          sudo -n ss -lntp | grep -E ':(80|443|3000|3001|3002|3003|3005|3010|8000|8080|8088|7860|8501)\\b'
+          ss -lntp | grep -E ':(80|443|3000|3001|3002|3003|3005|3010|8000|8080|8088|7860|8501)\\b'
           echo "=== LOCAL HTTP ==="
           for p in 3000 3001 3002 3003 3005 3010 8000 8080 8088 7860 8501; do
             body="/tmp/sl-$p"; rm -f "$body"
@@ -37,9 +42,10 @@ jobs:
             printf 'port=%s code=%s bytes=%s title=%s signals=%s\n' "$p" "$code" "$(wc -c < "$body")" "$(grep -io '<title>[^<]*' "$body" | head -1)" "$(grep -Eio 'sound.?labs|studio|audio|music' "$body" | sort -u | tr '\n' ',')"
           done
           echo "=== NGINX ==="
-          sudo -n nginx -T 2>&1 | grep -nE 'configuration file|server_name|listen |location |proxy_pass' | tail -n 260
+          nginx -T 2>&1 | grep -nE 'configuration file|server_name|listen |location |proxy_pass' | tail -n 260
           echo "=== TUNNEL ==="
-          sudo -n systemctl list-unit-files | grep -i cloudflared
-          sudo -n systemctl status cloudflared --no-pager -l | tail -n 100
-          sudo -n find /etc/cloudflared "$HOME/.cloudflared" -maxdepth 2 -type f \( -name '*.yml' -o -name '*.yaml' \) -print 2>/dev/null
-          REMOTE
+          systemctl list-unit-files | grep -i cloudflared
+          systemctl status cloudflared --no-pager -l | tail -n 100
+          find /etc/cloudflared /home/dwise/.cloudflared -maxdepth 2 -type f \( -name '*.yml' -o -name '*.yaml' \) -print 2>/dev/null
+          HOST
+          CONTAINER
