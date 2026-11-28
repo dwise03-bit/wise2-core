@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "HERMES",
+    "slug": "wise2-hermes",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "bundleIdentifier": "net.wise2.hermes",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "net.wise2.hermes"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
+  }
+}
